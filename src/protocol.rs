@@ -1,65 +1,84 @@
 use std::collections::{HashMap, VecDeque};
+use std::io::{Cursor, Error};
 use std::net::{SocketAddr, UdpSocket};
 use std::sync::{Mutex, RwLock};
+use byteorder::{BigEndian, ReadBytesExt};
 
 type SequenceNumber = u16;
+type Crc32 = u32;
 
 enum ProtocolOpCode {
     SessionRequest   = 0x01,
     SessionReply     = 0x02,
     MultiPacket      = 0x03,
     Disconnect       = 0x05,
-    Ping             = 0x06,
+    Heartbeat        = 0x06,
     NetStatusRequest = 0x07,
     NetStatusReply   = 0x08,
     Data             = 0x09,
     DataFragment     = 0x0D,
     OutOfOrder       = 0x11,
     Ack              = 0x15,
-    FatalError       = 0x1D,
-    FatalErrorReply  = 0x1E
+    UnknownSender    = 0x1D,
+    RemapConnection  = 0x1E
 }
 
+type SoeProtocolVersion = u32;
+type SessionId = u32;
+type BufferSize = u32;
+type ApplicationProtocol = String;
+type CrcSeed = u32;
+type CrcSize = u8;
+
+enum DisconnectReason {
+
+}
+
+type ClientTick = u16;
+type ServerTick = u32;
+type Timestamp = u32;
+type PacketCount = u64;
+
 enum Packet {
-    SessionRequest,
-    SessionReply,
-    MultiPacket,
-    Disconnect,
-    Ping,
-    NetStatusRequest,
-    NetStatusReply,
-    Data(SequenceNumber),
-    DataFragment(SequenceNumber),
+    SessionRequest(SoeProtocolVersion, SessionId, BufferSize, ApplicationProtocol),
+    SessionReply(SessionId, CrcSeed, CrcSize, bool, bool, BufferSize, SoeProtocolVersion),
+    Disconnect(SessionId, DisconnectReason),
+    Heartbeat,
+    NetStatusRequest(ClientTick, Timestamp, Timestamp, Timestamp, Timestamp,
+                     Timestamp, PacketCount, PacketCount, u16),
+    NetStatusReply(ClientTick, ServerTick, PacketCount, PacketCount,
+                   PacketCount, PacketCount, u16),
+    Data(SequenceNumber, Vec<u8>),
+    DataFragment(SequenceNumber, Vec<u8>),
     OutOfOrder(SequenceNumber),
     Ack(SequenceNumber),
-    FatalError,
-    FatalErrorReply
+    UnknownSender,
+    RemapConnection(SessionId, CrcSeed)
 }
 
 impl Packet {
     pub fn sequence_number(&self) -> Option<SequenceNumber> {
         match self {
-            Packet::Data(n) => Some(*n),
-            Packet::DataFragment(n) => Some(*n),
+            Packet::Data(n, _) => Some(*n),
+            Packet::DataFragment(n, _) => Some(*n),
             _ => None
         }
     }
 
     pub fn op_code(&self) -> ProtocolOpCode {
         match self {
-            Packet::SessionRequest => ProtocolOpCode::SessionRequest,
-            Packet::SessionReply => ProtocolOpCode::SessionReply,
-            Packet::MultiPacket => ProtocolOpCode::MultiPacket,
-            Packet::Disconnect => ProtocolOpCode::Disconnect,
-            Packet::Ping => ProtocolOpCode::Ping,
-            Packet::NetStatusRequest => ProtocolOpCode::NetStatusRequest,
-            Packet::NetStatusReply => ProtocolOpCode::NetStatusReply,
-            Packet::Data(_) => ProtocolOpCode::Data,
-            Packet::DataFragment(_) => ProtocolOpCode::DataFragment,
-            Packet::OutOfOrder(_) => ProtocolOpCode::OutOfOrder,
-            Packet::Ack(_) => ProtocolOpCode::Ack,
-            Packet::FatalError => ProtocolOpCode::FatalError,
-            Packet::FatalErrorReply => ProtocolOpCode::FatalErrorReply
+            Packet::SessionRequest(..) => ProtocolOpCode::SessionRequest,
+            Packet::SessionReply(..) => ProtocolOpCode::SessionReply,
+            Packet::Disconnect(..) => ProtocolOpCode::Disconnect,
+            Packet::Heartbeat => ProtocolOpCode::Heartbeat,
+            Packet::NetStatusRequest(..) => ProtocolOpCode::NetStatusRequest,
+            Packet::NetStatusReply(..) => ProtocolOpCode::NetStatusReply,
+            Packet::Data(..) => ProtocolOpCode::Data,
+            Packet::DataFragment(..) => ProtocolOpCode::DataFragment,
+            Packet::OutOfOrder(..) => ProtocolOpCode::OutOfOrder,
+            Packet::Ack(..) => ProtocolOpCode::Ack,
+            Packet::UnknownSender => ProtocolOpCode::UnknownSender,
+            Packet::RemapConnection(..) => ProtocolOpCode::RemapConnection
         }
     }
 }
@@ -75,6 +94,55 @@ impl PendingPacket {
             acked: false,
             packet
         }
+    }
+}
+
+#[non_exhaustive]
+enum FragmentErr {
+    ExpectedFragment(ProtocolOpCode),
+    IoError(Error)
+}
+
+impl From<Error> for FragmentErr {
+    fn from(value: Error) -> Self {
+        FragmentErr::IoError(value)
+    }
+}
+
+struct FragmentState {
+    buffer: Vec<u8>,
+    remaining_bytes: u32
+}
+
+impl FragmentState {
+    fn add(&mut self, packet: Packet) -> Result<Option<Packet>, FragmentErr> {
+        if let Packet::DataFragment(sequence_number, mut data) = packet {
+            let packet_data;
+            if self.remaining_bytes == 0 {
+                packet_data = &data[4..];
+                self.remaining_bytes = Cursor::new(&data).read_u32::<BigEndian>()?;
+            } else {
+                packet_data = &data;
+            }
+
+            self.remaining_bytes = self.remaining_bytes.checked_sub(packet_data.len() as u32)
+                .unwrap_or(0);
+            self.buffer.extend(packet_data);
+
+            if self.remaining_bytes > 0 {
+                return Ok(None);
+            }
+
+            let old_buffer = self.buffer.clone();
+            self.buffer.clear();
+            return Ok(Some(Packet::Data(sequence_number, old_buffer)))
+        }
+
+        if self.remaining_bytes > 0 {
+            return Err(FragmentErr::ExpectedFragment(packet.op_code()));
+        }
+
+        Ok(Some(packet))
     }
 }
 
@@ -99,7 +167,18 @@ impl Channel {
                 // Special processing for reliable packets
                 if let Some(sequence_number) = packet.sequence_number() {
 
-                    // Request client resend out-of-order packets
+                    // Request client resend out-of-order packets.
+                    // There is an edge case where sequence numbers near
+                    // u16::MAX may have extraneous out-of-order packets
+                    // sent. For example, if these sequence numbers are received:
+                    // 65534, 65535, 0, 65534, 65535, 0
+                    // This case could happen if the first three packets are not
+                    // acked in time and resent by the client. In this case,
+                    // out-of-order packets will be sent for packets 65534 and
+                    // 65535. However, the server will still ack the packets. The
+                    // client should be able to handle this case because there is
+                    // no guarantee that correct out-of-order packets will arrive
+                    // before an ack.
                     if sequence_number > self.next_client_sequence {
                         self.reply_out_of_order(sequence_number);
                         continue;
