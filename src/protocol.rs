@@ -92,7 +92,7 @@ struct PendingPacket {
 impl PendingPacket {
     fn new(packet: Packet) -> Self {
         PendingPacket {
-            needs_ack: true,
+            needs_ack: packet.sequence_number().is_some(),
             packet
         }
     }
