@@ -1,12 +1,10 @@
-use std::collections::{HashMap, VecDeque};
+use std::collections::{BTreeMap, HashMap, VecDeque};
 use std::io::{Cursor, Error};
 use std::net::{SocketAddr, UdpSocket};
 use std::sync::{Mutex, RwLock};
 use byteorder::{BigEndian, ReadBytesExt};
 
-type SequenceNumber = u16;
-type Crc32 = u32;
-
+#[derive(Debug)]
 enum ProtocolOpCode {
     SessionRequest   = 0x01,
     SessionReply     = 0x02,
@@ -17,12 +15,15 @@ enum ProtocolOpCode {
     NetStatusReply   = 0x08,
     Data             = 0x09,
     DataFragment     = 0x0D,
-    OutOfOrder       = 0x11,
-    Ack              = 0x15,
+    Ack              = 0x11,
+    AckAll           = 0x15,
     UnknownSender    = 0x1D,
     RemapConnection  = 0x1E
 }
 
+
+type SequenceNumber = u16;
+type Crc32 = u32;
 type SoeProtocolVersion = u32;
 type SessionId = u32;
 type BufferSize = u32;
@@ -50,8 +51,8 @@ enum Packet {
                    PacketCount, PacketCount, u16),
     Data(SequenceNumber, Vec<u8>),
     DataFragment(SequenceNumber, Vec<u8>),
-    OutOfOrder(SequenceNumber),
     Ack(SequenceNumber),
+    AckAll(SequenceNumber),
     UnknownSender,
     RemapConnection(SessionId, CrcSeed)
 }
@@ -75,8 +76,8 @@ impl Packet {
             Packet::NetStatusReply(..) => ProtocolOpCode::NetStatusReply,
             Packet::Data(..) => ProtocolOpCode::Data,
             Packet::DataFragment(..) => ProtocolOpCode::DataFragment,
-            Packet::OutOfOrder(..) => ProtocolOpCode::OutOfOrder,
             Packet::Ack(..) => ProtocolOpCode::Ack,
+            Packet::AckAll(..) => ProtocolOpCode::AckAll,
             Packet::UnknownSender => ProtocolOpCode::UnknownSender,
             Packet::RemapConnection(..) => ProtocolOpCode::RemapConnection
         }
@@ -84,20 +85,21 @@ impl Packet {
 }
 
 struct PendingPacket {
-    acked: bool,
+    needs_ack: bool,
     packet: Packet
 }
 
 impl PendingPacket {
     fn new(packet: Packet) -> Self {
         PendingPacket {
-            acked: false,
+            needs_ack: true,
             packet
         }
     }
 }
 
 #[non_exhaustive]
+#[derive(Debug)]
 enum FragmentErr {
     ExpectedFragment(ProtocolOpCode),
     IoError(Error)
@@ -116,7 +118,7 @@ struct FragmentState {
 
 impl FragmentState {
     fn add(&mut self, packet: Packet) -> Result<Option<Packet>, FragmentErr> {
-        if let Packet::DataFragment(sequence_number, mut data) = packet {
+        if let Packet::DataFragment(sequence_number, data) = packet {
             let packet_data;
             if self.remaining_bytes == 0 {
                 packet_data = &data[4..];
@@ -149,8 +151,11 @@ impl FragmentState {
 struct Channel {
     socket: UdpSocket,
     buffer_size: usize,
+    recency_limit: SequenceNumber,
+    fragment_state: FragmentState,
     send_queue: VecDeque<PendingPacket>,
     receive_queue: VecDeque<Packet>,
+    reordered_packets: BTreeMap<SequenceNumber, Packet>,
     next_client_sequence: SequenceNumber,
     next_server_sequence: SequenceNumber,
     last_client_ack: SequenceNumber,
@@ -158,7 +163,7 @@ struct Channel {
 }
 
 impl Channel {
-    pub fn receive_next(&mut self, count: u8) {
+    pub fn process_next(&mut self, count: u8) {
         let mut needs_new_ack = false;
 
         for _ in 0..count {
@@ -167,58 +172,45 @@ impl Channel {
                 // Special processing for reliable packets
                 if let Some(sequence_number) = packet.sequence_number() {
 
-                    // Request client resend out-of-order packets.
-                    // There is an edge case where sequence numbers near
-                    // u16::MAX may have extraneous out-of-order packets
-                    // sent. For example, if these sequence numbers are received:
-                    // 65534, 65535, 0, 65534, 65535, 0
-                    // This case could happen if the first three packets are not
-                    // acked in time and resent by the client. In this case,
-                    // out-of-order packets will be sent for packets 65534 and
-                    // 65535. However, the server will still ack the packets. The
-                    // client should be able to handle this case because there is
-                    // no guarantee that correct out-of-order packets will arrive
-                    // before an ack.
-                    if sequence_number > self.next_client_sequence {
-                        self.reply_out_of_order(sequence_number);
-                        continue;
-                    }
+                    // Add out-of-order packets to a separate queue until the expected
+                    // packets arrive.
+                    if sequence_number != self.next_client_sequence {
+                        if self.save_for_reorder(sequence_number) {
+                            self.reordered_packets.insert(sequence_number, packet);
+                            self.acknowledge_one(sequence_number);
+                        }
 
-                    // Ignore already-processed packets
-                    if sequence_number < self.next_client_sequence {
+                        // Assume the packet was already acked. In the worst case, the
+                        // client just has to resend the packet again.
                         continue;
+
                     }
 
                     self.last_server_ack = sequence_number;
                     self.next_client_sequence = self.next_client_sequence.wrapping_add(1);
                     needs_new_ack = true;
-                }
 
-                if let Packet::Ack(acked_sequence_number) = packet {
-
-                    // Since the server always adds packets to the sending queue in order,
-                    // we can assume all packets up until the matching sequence number
-                    // are acked. This avoids edge cases where the sequence number wraps around.
-                    for pending_packet in self.send_queue.iter_mut() {
-                        pending_packet.acked = true;
-
-                        if let Some(sequence_number) = pending_packet.packet.sequence_number() {
-                            if sequence_number == acked_sequence_number {
-                                break;
-                            }
+                    if let Some((&next_reorder_sequence, _)) = self.reordered_packets.first_key_value() {
+                        if next_reorder_sequence == self.next_client_sequence {
+                            let (_, next_packet) = self.reordered_packets.pop_first().unwrap();
+                            self.receive_queue.push_front(next_packet);
                         }
                     }
-
                 }
 
-                // TODO: let server handle packet data
+                match self.fragment_state.add(packet) {
+                    Ok(possible_packet) => if let Some(packet) = possible_packet {
+                        self.process_packet(packet)
+                    },
+                    Err(err) => println!("Unable to process packet: {:?}", err)
+                }
             } else {
                 break;
             }
         }
 
         if needs_new_ack {
-            self.acknowledge(self.last_server_ack);
+            self.acknowledge_all(self.last_server_ack);
         }
     }
 
@@ -232,12 +224,68 @@ impl Channel {
         next_sequence
     }
 
-    fn reply_out_of_order(&mut self, sequence_number: SequenceNumber) {
-        self.send_queue.push_back(PendingPacket::new(Packet::OutOfOrder(sequence_number)));
+    fn save_for_reorder(&self, sequence_number: SequenceNumber) -> bool {
+        let max_sequence_number = self.next_client_sequence.wrapping_add(self.recency_limit);
+
+        // If the max is smaller, the sequence numbers wrapped around
+        if max_sequence_number > self.next_client_sequence {
+            sequence_number <= max_sequence_number
+        } else {
+            sequence_number > self.next_client_sequence || sequence_number < max_sequence_number
+        }
+
     }
 
-    fn acknowledge(&mut self, sequence_number: SequenceNumber) {
+    fn should_client_ack(recency_limit: SequenceNumber, next_server_sequence: SequenceNumber,
+                         max: SequenceNumber, pending: SequenceNumber) -> bool {
+        let min_sequence_number = next_server_sequence.wrapping_sub(recency_limit);
+
+        // If the max is smaller, the sequence numbers wrapped around
+        if min_sequence_number < max {
+            min_sequence_number <= pending
+        } else {
+            pending < max || pending > min_sequence_number
+        }
+    }
+
+    fn process_packet(&mut self, packet: Packet) {
+        match packet {
+            Packet::Ack(acked_sequence) => self.process_ack(acked_sequence),
+            Packet::AckAll(acked_sequence) => self.process_ack_all(acked_sequence),
+            _ => println!("Unimplemented: {:?}", packet.op_code())
+        }
+    }
+
+    fn process_ack(&mut self, acked_sequence: SequenceNumber) {
+        if Channel::should_client_ack(self.recency_limit, self.next_server_sequence,
+                                      self.next_server_sequence, acked_sequence) {
+            for pending_packet in self.send_queue.iter_mut() {
+                if let Some(pending_sequence) = pending_packet.packet.sequence_number() {
+                    if acked_sequence == pending_sequence {
+                        pending_packet.needs_ack = false;
+                    }
+                }
+            }
+        }
+    }
+
+    fn process_ack_all(&mut self, acked_sequence: SequenceNumber) {
+        for pending_packet in self.send_queue.iter_mut() {
+            if let Some(pending_sequence) = pending_packet.packet.sequence_number() {
+                if Channel::should_client_ack(self.recency_limit, self.next_server_sequence,
+                                              acked_sequence, pending_sequence) {
+                    pending_packet.needs_ack = false;
+                }
+            }
+        }
+    }
+
+    fn acknowledge_one(&mut self, sequence_number: SequenceNumber) {
         self.send_queue.push_back(PendingPacket::new(Packet::Ack(sequence_number)));
+    }
+
+    fn acknowledge_all(&mut self, sequence_number: SequenceNumber) {
+        self.send_queue.push_back(PendingPacket::new(Packet::AckAll(sequence_number)));
     }
 }
 
