@@ -227,12 +227,14 @@ impl Channel {
                     self.next_client_sequence = self.next_client_sequence.wrapping_add(1);
                     needs_new_ack = true;
 
+                    // Add a previously-received data packet if it is next in sequence
                     if let Some((&next_reorder_sequence, _)) = self.reordered_packets.first_key_value() {
                         if next_reorder_sequence == self.next_client_sequence {
                             let (_, next_packet) = self.reordered_packets.pop_first().unwrap();
                             self.receive_queue.push_front(next_packet);
                         }
                     }
+
                 }
 
                 match self.fragment_state.add(packet) {
