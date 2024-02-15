@@ -5,6 +5,7 @@ use miniz_oxide::inflate::{decompress_to_vec, DecompressError};
 use crate::hash::{compute_crc, CrcHash};
 use crate::protocol::{DisconnectReason, Packet, ProtocolOpCode, Session};
 
+#[non_exhaustive]
 pub enum DeserializeError {
     IoError(Error),
     DecompressError(DecompressError),
