@@ -3,9 +3,11 @@ use std::io::{Cursor, Error};
 use std::net::{SocketAddr, UdpSocket};
 use std::sync::{Mutex, RwLock};
 use byteorder::{BigEndian, ReadBytesExt};
+use crate::deserialize::{deserialize_packet, DeserializeError};
+use crate::hash::{CrcSeed, CrcSize};
 
 #[derive(Debug)]
-enum ProtocolOpCode {
+pub enum ProtocolOpCode {
     SessionRequest   = 0x01,
     SessionReply     = 0x02,
     MultiPacket      = 0x03,
@@ -21,26 +23,38 @@ enum ProtocolOpCode {
     RemapConnection  = 0x1E
 }
 
+pub type SequenceNumber = u16;
+pub type SoeProtocolVersion = u32;
+pub type SessionId = u32;
+pub type BufferSize = u32;
+pub type ApplicationProtocol = String;
 
-type SequenceNumber = u16;
-type Crc32 = u32;
-type SoeProtocolVersion = u32;
-type SessionId = u32;
-type BufferSize = u32;
-type ApplicationProtocol = String;
-type CrcSeed = u32;
-type CrcSize = u8;
-
-enum DisconnectReason {
-
+pub enum DisconnectReason {
+    Unknown = 0,
+    IcmpError = 1,
+    Timeout = 2,
+    OtherSideTerminated = 3,
+    ManagerDeleted = 4,
+    ConnectFail = 5,
+    Application = 6,
+    UnreachableConnection = 7,
+    UnacknowledgedTimeout = 8,
+    NewConnectionAttempt = 9,
+    ConnectionRefused = 10,
+    ConnectError = 11,
+    ConnectingToSelf = 12,
+    ReliableOverflow = 13,
+    ApplicationReleased = 14,
+    CorruptPacket = 15,
+    ProtocolMismatch = 16
 }
 
-type ClientTick = u16;
-type ServerTick = u32;
-type Timestamp = u32;
-type PacketCount = u64;
+pub type ClientTick = u16;
+pub type ServerTick = u32;
+pub type Timestamp = u32;
+pub type PacketCount = u64;
 
-enum Packet {
+pub enum Packet {
     SessionRequest(SoeProtocolVersion, SessionId, BufferSize, ApplicationProtocol),
     SessionReply(SessionId, CrcSeed, CrcSize, bool, bool, BufferSize, SoeProtocolVersion),
     Disconnect(SessionId, DisconnectReason),
@@ -100,14 +114,15 @@ impl PendingPacket {
 
 #[non_exhaustive]
 #[derive(Debug)]
-enum FragmentErr {
+enum FragmentError {
     ExpectedFragment(ProtocolOpCode),
+    MissingDataLength,
     IoError(Error)
 }
 
-impl From<Error> for FragmentErr {
+impl From<Error> for FragmentError {
     fn from(value: Error) -> Self {
-        FragmentErr::IoError(value)
+        FragmentError::IoError(value)
     }
 }
 
@@ -117,10 +132,14 @@ struct FragmentState {
 }
 
 impl FragmentState {
-    fn add(&mut self, packet: Packet) -> Result<Option<Packet>, FragmentErr> {
+    fn add(&mut self, packet: Packet) -> Result<Option<Packet>, FragmentError> {
         if let Packet::DataFragment(sequence_number, data) = packet {
             let packet_data;
             if self.remaining_bytes == 0 {
+                if data.len() < 8 {
+                    return Err(FragmentError::MissingDataLength);
+                }
+
                 packet_data = &data[4..];
                 self.remaining_bytes = Cursor::new(&data).read_u32::<BigEndian>()?;
             } else {
@@ -141,7 +160,7 @@ impl FragmentState {
         }
 
         if self.remaining_bytes > 0 {
-            return Err(FragmentErr::ExpectedFragment(packet.op_code()));
+            return Err(FragmentError::ExpectedFragment(packet.op_code()));
         }
 
         Ok(Some(packet))
@@ -151,6 +170,10 @@ impl FragmentState {
 struct Channel {
     socket: UdpSocket,
     buffer_size: usize,
+    crc_length: CrcSize,
+    crc_seed: CrcSeed,
+    allow_compression: bool,
+    allow_encryption: bool,
     recency_limit: SequenceNumber,
     fragment_state: FragmentState,
     send_queue: VecDeque<PendingPacket>,
@@ -163,6 +186,20 @@ struct Channel {
 }
 
 impl Channel {
+
+    pub fn receive(&mut self, data: &[u8]) -> Result<u32, DeserializeError> {
+        let mut packets = deserialize_packet(
+            data,
+            self.allow_compression,
+            self.crc_length,
+            self.crc_seed
+        )?;
+
+        let packet_count = packets.len() as u32;
+        packets.drain(..).for_each(|packet| self.receive_queue.push_back(packet));
+        Ok(packet_count)
+    }
+
     pub fn process_next(&mut self, count: u8) {
         let mut needs_new_ack = false;
 

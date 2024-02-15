@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 byteorder = "1.5.0"
+miniz_oxide = "0.7.2"
