@@ -282,6 +282,8 @@ impl Channel {
         for _ in 0..count as usize {
             if let Some(packet) = self.send_queue.pop_front() {
                 packets_to_send.push(packet.packet);
+            } else {
+                break;
             }
         }
 
