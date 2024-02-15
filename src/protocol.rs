@@ -23,6 +23,26 @@ pub enum ProtocolOpCode {
     RemapConnection  = 0x1E
 }
 
+impl ProtocolOpCode {
+    pub fn requires_session(&self) -> bool {
+        match self {
+            ProtocolOpCode::SessionRequest => false,
+            ProtocolOpCode::SessionReply => false,
+            ProtocolOpCode::MultiPacket => true,
+            ProtocolOpCode::Disconnect => true,
+            ProtocolOpCode::Heartbeat => true,
+            ProtocolOpCode::NetStatusRequest => false,
+            ProtocolOpCode::NetStatusReply => false,
+            ProtocolOpCode::Data => true,
+            ProtocolOpCode::DataFragment => true,
+            ProtocolOpCode::Ack => true,
+            ProtocolOpCode::AckAll => true,
+            ProtocolOpCode::UnknownSender => false,
+            ProtocolOpCode::RemapConnection => false
+        }
+    }
+}
+
 pub type SequenceNumber = u16;
 pub type SoeProtocolVersion = u32;
 pub type SessionId = u32;
@@ -112,6 +132,14 @@ impl PendingPacket {
     }
 }
 
+pub struct Session {
+    pub session_id: SessionId,
+    pub crc_length: CrcSize,
+    pub crc_seed: CrcSeed,
+    pub allow_compression: bool,
+    pub use_encryption: bool
+}
+
 #[non_exhaustive]
 #[derive(Debug)]
 enum FragmentError {
@@ -169,11 +197,8 @@ impl FragmentState {
 
 struct Channel {
     socket: UdpSocket,
+    session: Option<Session>,
     buffer_size: usize,
-    crc_length: CrcSize,
-    crc_seed: CrcSeed,
-    allow_compression: bool,
-    allow_encryption: bool,
     recency_limit: SequenceNumber,
     fragment_state: FragmentState,
     send_queue: VecDeque<PendingPacket>,
@@ -188,12 +213,7 @@ struct Channel {
 impl Channel {
 
     pub fn receive(&mut self, data: &[u8]) -> Result<u32, DeserializeError> {
-        let mut packets = deserialize_packet(
-            data,
-            self.allow_compression,
-            self.crc_length,
-            self.crc_seed
-        )?;
+        let mut packets = deserialize_packet(data, &self.session)?;
 
         let packet_count = packets.len() as u32;
         packets.drain(..).for_each(|packet| self.receive_queue.push_back(packet));

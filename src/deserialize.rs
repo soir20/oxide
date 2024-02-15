@@ -2,15 +2,16 @@ use std::io::{Cursor, Error, Read};
 use std::mem::size_of;
 use byteorder::{BigEndian, ReadBytesExt};
 use miniz_oxide::inflate::{decompress_to_vec, DecompressError};
-use crate::hash::{compute_crc, CrcHash, CrcSeed, CrcSize};
-use crate::protocol::{DisconnectReason, Packet, ProtocolOpCode};
+use crate::hash::{compute_crc, CrcHash};
+use crate::protocol::{DisconnectReason, Packet, ProtocolOpCode, Session};
 
 pub enum DeserializeError {
     IoError(Error),
     DecompressError(DecompressError),
     UnknownOpCode(u16),
     MismatchedHash(CrcHash, CrcHash),
-    UnknownDisconnectReason(u16)
+    UnknownDisconnectReason(u16),
+    MissingSession(ProtocolOpCode)
 }
 
 impl From<Error> for DeserializeError {
@@ -268,28 +269,39 @@ fn deserialize_packet_data(data: &[u8], op_code: ProtocolOpCode) -> Result<Vec<P
     }
 }
 
-pub fn deserialize_packet(data: &[u8], allow_compression: bool, crc_length: CrcSize,
-                          crc_seed: CrcSeed) -> Result<Vec<Packet>, DeserializeError> {
+pub fn deserialize_packet(data: &[u8], possible_session: &Option<Session>) -> Result<Vec<Packet>, DeserializeError> {
     let mut cursor = Cursor::new(data);
     let op_code = check_op_code(cursor.read_u16::<BigEndian>()?)?;
-    let compressed = allow_compression && cursor.read_u8()? != 0;
 
-    // Two bytes for the op code and, optionally, one byte for the compression flag
-    let data_offset = if allow_compression { size_of::<u8>() } else { 0 } + size_of::<u16>();
+    let mut packet_data;
+    if op_code.requires_session() {
 
-    let crc_offset = data.len().checked_sub(crc_length as usize).unwrap_or(data_offset);
-    cursor.set_position(crc_offset as u64);
-    let expected_hash = cursor.read_uint::<BigEndian>(crc_length as usize)? as u32;
+        if let Some(session) = possible_session {
+            let compressed = session.allow_compression && cursor.read_u8()? != 0;
 
-    let mut packet_data = data[data_offset..crc_offset].to_vec();
-    if compressed {
-        packet_data = decompress_to_vec(&packet_data)?;
+            // Two bytes for the op code and, optionally, one byte for the compression flag
+            let data_offset = if session.allow_compression { size_of::<u8>() } else { 0 } + size_of::<u16>();
+
+            let crc_offset = data.len().checked_sub(session.crc_length as usize).unwrap_or(data_offset);
+            cursor.set_position(crc_offset as u64);
+            let expected_hash = cursor.read_uint::<BigEndian>(session.crc_length as usize)? as u32;
+
+            packet_data = data[data_offset..crc_offset].to_vec();
+            if compressed {
+                packet_data = decompress_to_vec(&packet_data)?;
+            }
+            let actual_hash = compute_crc(&packet_data, session.crc_seed, session.crc_length);
+
+            if actual_hash != expected_hash {
+                return Err(DeserializeError::MismatchedHash(actual_hash, expected_hash));
+            }
+        } else {
+            return Err(DeserializeError::MissingSession(op_code));
+        }
+
+    } else {
+        packet_data = data.to_vec();
     }
-    let actual_hash = compute_crc(&packet_data, crc_seed, crc_length);
 
-    if actual_hash != expected_hash {
-        return Err(DeserializeError::MismatchedHash(actual_hash, expected_hash));
-    }
-
-    Ok(deserialize_packet_data(&packet_data[..crc_offset], op_code)?)
+    Ok(deserialize_packet_data(&packet_data, op_code)?)
 }
