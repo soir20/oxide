@@ -50,23 +50,23 @@ pub type BufferSize = u32;
 pub type ApplicationProtocol = String;
 
 pub enum DisconnectReason {
-    Unknown = 0,
-    IcmpError = 1,
-    Timeout = 2,
-    OtherSideTerminated = 3,
-    ManagerDeleted = 4,
-    ConnectFail = 5,
-    Application = 6,
+    Unknown               = 0,
+    IcmpError             = 1,
+    Timeout               = 2,
+    OtherSideTerminated   = 3,
+    ManagerDeleted        = 4,
+    ConnectFail           = 5,
+    Application           = 6,
     UnreachableConnection = 7,
     UnacknowledgedTimeout = 8,
-    NewConnectionAttempt = 9,
-    ConnectionRefused = 10,
-    ConnectError = 11,
-    ConnectingToSelf = 12,
-    ReliableOverflow = 13,
-    ApplicationReleased = 14,
-    CorruptPacket = 15,
-    ProtocolMismatch = 16
+    NewConnectionAttempt  = 9,
+    ConnectionRefused     = 10,
+    ConnectError          = 11,
+    ConnectingToSelf      = 12,
+    ReliableOverflow      = 13,
+    ApplicationReleased   = 14,
+    CorruptPacket         = 15,
+    ProtocolMismatch      = 16
 }
 
 pub type ClientTick = u16;
