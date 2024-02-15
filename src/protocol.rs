@@ -1,10 +1,11 @@
 use std::collections::{BTreeMap, HashMap, VecDeque};
 use std::io::{Cursor, Error};
-use std::net::{SocketAddr, UdpSocket};
+use std::net::SocketAddr;
 use std::sync::{Mutex, RwLock};
 use byteorder::{BigEndian, ReadBytesExt};
 use crate::deserialize::{deserialize_packet, DeserializeError};
 use crate::hash::{CrcSeed, CrcSize};
+use crate::serialize::{serialize_packets, SerializeError};
 
 #[derive(Debug)]
 pub enum ProtocolOpCode {
@@ -196,9 +197,8 @@ impl FragmentState {
 }
 
 struct Channel {
-    socket: UdpSocket,
     session: Option<Session>,
-    buffer_size: usize,
+    buffer_size: BufferSize,
     recency_limit: SequenceNumber,
     fragment_state: FragmentState,
     send_queue: VecDeque<PendingPacket>,
@@ -273,8 +273,19 @@ impl Channel {
         }
     }
 
-    pub fn send_next(&mut self, count: u8) {
+    pub fn send_next(&mut self, count: u8) -> Result<Vec<Vec<u8>>, SerializeError> {
+        let mut packets_to_send = Vec::new();
 
+        // If the packet was acked, it was already sent, so don't send it again
+        self.send_queue.retain(|packet| packet.needs_ack);
+
+        for _ in 0..count as usize {
+            if let Some(packet) = self.send_queue.pop_front() {
+                packets_to_send.push(packet.packet);
+            }
+        }
+
+        serialize_packets(&packets_to_send, self.buffer_size, &self.session)
     }
 
     fn next_server_sequence(&mut self) -> SequenceNumber {
