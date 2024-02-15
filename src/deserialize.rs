@@ -285,7 +285,7 @@ pub fn deserialize_packet(data: &[u8], allow_compression: bool, crc_length: CrcS
     if compressed {
         packet_data = decompress_to_vec(&packet_data)?;
     }
-    let actual_hash = compute_crc(&packet_data, crc_seed);
+    let actual_hash = compute_crc(&packet_data, crc_seed, crc_length);
 
     if actual_hash != expected_hash {
         return Err(DeserializeError::MismatchedHash(actual_hash, expected_hash));
