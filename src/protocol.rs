@@ -7,7 +7,7 @@ use crate::deserialize::{deserialize_packet, DeserializeError};
 use crate::hash::{CrcSeed, CrcSize};
 use crate::serialize::{serialize_packets, SerializeError};
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub enum ProtocolOpCode {
     SessionRequest   = 0x01,
     SessionReply     = 0x02,
@@ -50,6 +50,7 @@ pub type SessionId = u32;
 pub type BufferSize = u32;
 pub type ApplicationProtocol = String;
 
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub enum DisconnectReason {
     Unknown               = 0,
     IcmpError             = 1,

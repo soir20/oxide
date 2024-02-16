@@ -2,8 +2,8 @@ use std::collections::VecDeque;
 use std::io::{Error, Write};
 use std::mem::size_of;
 use byteorder::{BigEndian, WriteBytesExt};
-use crate::hash::compute_crc;
-use crate::protocol::{BufferSize, Packet, ProtocolOpCode, Session};
+use crate::hash::{compute_crc, CrcSeed, CrcSize};
+use crate::protocol::{ApplicationProtocol, BufferSize, ClientTick, DisconnectReason, Packet, PacketCount, ProtocolOpCode, SequenceNumber, ServerTick, Session, SessionId, SoeProtocolVersion, Timestamp};
 #[non_exhaustive]
 pub enum SerializeError {
     MissingSession,
@@ -34,8 +34,130 @@ fn write_variable_length_int(buffer: &mut Vec<u8>, value: BufferSize) -> Result<
     Ok(())
 }
 
+fn serialize_session_request(protocol_version: SoeProtocolVersion, session_id: SessionId,
+                             buffer_size: BufferSize, app_protocol: &ApplicationProtocol) -> Result<Vec<u8>, SerializeError> {
+    let mut buffer = Vec::new();
+    buffer.write_u32::<BigEndian>(protocol_version)?;
+    buffer.write_u32::<BigEndian>(session_id)?;
+    buffer.write_u32::<BigEndian>(buffer_size)?;
+    buffer.write_all(app_protocol.as_bytes())?;
+    Ok(buffer)
+}
+
+fn serialize_session_reply(session_id: SessionId, crc_seed: CrcSeed, crc_size: CrcSize,
+                           allow_compression: bool, encrypt: bool, buffer_size: BufferSize,
+                           protocol_version: SoeProtocolVersion) -> Result<Vec<u8>, SerializeError> {
+    let mut buffer = Vec::new();
+    buffer.write_u32::<BigEndian>(session_id)?;
+    buffer.write_u32::<BigEndian>(crc_seed)?;
+    buffer.write_u8(crc_size)?;
+    buffer.write_u8(allow_compression as u8)?;
+    buffer.write_u8(encrypt as u8)?;
+    buffer.write_u32::<BigEndian>(buffer_size)?;
+    buffer.write_u32::<BigEndian>(protocol_version)?;
+    Ok(buffer)
+}
+
+fn serialize_disconnect(session_id: SessionId, disconnect_reason: DisconnectReason) -> Result<Vec<u8>, SerializeError> {
+    let mut buffer = Vec::new();
+    buffer.write_u32::<BigEndian>(session_id)?;
+    buffer.write_u16::<BigEndian>(disconnect_reason as u16)?;
+    Ok(buffer)
+}
+
+fn serialize_net_status_request(client_ticks: ClientTick, last_client_update: Timestamp,
+                                average_update: Timestamp, shortest_update: Timestamp,
+                                longest_update: Timestamp, last_server_update: Timestamp,
+                                packets_sent: PacketCount, packets_received: PacketCount,
+                                unknown: u16) -> Result<Vec<u8>, SerializeError> {
+    let mut buffer = Vec::new();
+    buffer.write_u16::<BigEndian>(client_ticks)?;
+    buffer.write_u32::<BigEndian>(last_client_update)?;
+    buffer.write_u32::<BigEndian>(average_update)?;
+    buffer.write_u32::<BigEndian>(shortest_update)?;
+    buffer.write_u32::<BigEndian>(longest_update)?;
+    buffer.write_u32::<BigEndian>(last_server_update)?;
+    buffer.write_u64::<BigEndian>(packets_sent)?;
+    buffer.write_u64::<BigEndian>(packets_received)?;
+    buffer.write_u16::<BigEndian>(unknown)?;
+    Ok(buffer)
+}
+
+fn serialize_net_status_response(client_ticks: ClientTick, server_ticks: ServerTick,
+                                 client_packets_sent: PacketCount, client_packets_received: PacketCount,
+                                 server_packets_sent: PacketCount, server_packets_received: PacketCount,
+                                 unknown: u16) -> Result<Vec<u8>, SerializeError> {
+    let mut buffer = Vec::new();
+    buffer.write_u16::<BigEndian>(client_ticks)?;
+    buffer.write_u32::<BigEndian>(server_ticks)?;
+    buffer.write_u64::<BigEndian>(client_packets_sent)?;
+    buffer.write_u64::<BigEndian>(client_packets_received)?;
+    buffer.write_u64::<BigEndian>(server_packets_sent)?;
+    buffer.write_u64::<BigEndian>(server_packets_received)?;
+    buffer.write_u16::<BigEndian>(unknown)?;
+    Ok(buffer)
+}
+
+fn serialize_reliable_data(sequence_number: SequenceNumber, data: &[u8]) -> Result<Vec<u8>, SerializeError> {
+    let mut buffer = Vec::new();
+    buffer.write_u16::<BigEndian>(sequence_number)?;
+    buffer.write_all(data)?;
+    Ok(buffer)
+}
+
+fn serialize_ack(sequence_number: SequenceNumber) -> Result<Vec<u8>, SerializeError> {
+    let mut buffer = Vec::new();
+    buffer.write_u16::<BigEndian>(sequence_number)?;
+    Ok(buffer)
+}
+
+fn serialize_remap_connection(session_id: SessionId, crc_seed: CrcSeed) -> Result<Vec<u8>, SerializeError> {
+    let mut buffer = Vec::new();
+    buffer.write_u32::<BigEndian>(session_id)?;
+    buffer.write_u32::<BigEndian>(crc_seed)?;
+    Ok(buffer)
+}
+
 fn serialize_packet_data(packet: &Packet) -> Result<Vec<u8>, SerializeError> {
-    Ok(Vec::new())
+    match packet {
+        Packet::SessionRequest(protocol_version, session_id,
+                               buffer_size, app_protocol) =>
+            serialize_session_request(*protocol_version, *session_id, *buffer_size, app_protocol),
+        Packet::SessionReply(session_id, crc_seed, crc_size,
+                             allow_compression, encrypt, buffer_size,
+                             protocol_version) =>
+            serialize_session_reply(*session_id, *crc_seed, *crc_size, *allow_compression, *encrypt,
+                                    *buffer_size, *protocol_version),
+        Packet::Disconnect(session_id, disconnect_reason) =>
+            serialize_disconnect(*session_id, *disconnect_reason),
+        Packet::Heartbeat => Ok(Vec::new()),
+        Packet::NetStatusRequest(client_ticks, last_client_update,
+                                 average_update, shortest_update,
+                                 longest_update, last_server_update,
+                                 packets_sent, packets_received,
+                                 unknown) =>
+            serialize_net_status_request(*client_ticks, *last_client_update, *average_update,
+                                         *shortest_update, *longest_update, *last_server_update,
+                                         *packets_sent, *packets_received, *unknown),
+        Packet::NetStatusReply(client_ticks, server_ticks,
+                               client_packets_sent, client_packets_received,
+                               server_packets_sent, server_packets_received,
+                               unknown) =>
+            serialize_net_status_response(*client_ticks, *server_ticks, *client_packets_sent,
+                                          *client_packets_received, *server_packets_sent,
+                                          *server_packets_received, *unknown),
+        Packet::Data(sequence_number, data) =>
+            serialize_reliable_data(*sequence_number, data),
+        Packet::DataFragment(sequence_number, data) =>
+            serialize_reliable_data(*sequence_number, data),
+        Packet::Ack(sequence_number) =>
+            serialize_ack(*sequence_number),
+        Packet::AckAll(sequence_number) =>
+            serialize_ack(*sequence_number),
+        Packet::UnknownSender => Ok(Vec::new()),
+        Packet::RemapConnection(session_id, crc_seed) =>
+            serialize_remap_connection(*session_id, *crc_seed)
+    }
 }
 
 fn add_non_session_packets(buffers: &mut Vec<Vec<u8>>, non_session_packets: Vec<&Packet>, buffer_size: BufferSize) -> Result<(), SerializeError> {
