@@ -18,8 +18,9 @@ fn main() {
         let mut buf = [0; 512];
         if let Ok((len, src)) = socket.recv_from(&mut buf) {
             println!("Bytes received: {}", len);
-            println!("Bytes: {:x?}", buf);
-            let receive_result = channel.receive(&buf);
+            let recv_data = &buf[0..len];
+            println!("Bytes: {:x?}", recv_data);
+            let receive_result = channel.receive(&recv_data);
             if let Err(ref err) = receive_result {
                 println!("Receive error: {:?}", err);
             }
