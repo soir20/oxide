@@ -319,7 +319,7 @@ impl Channel {
 
         // If the max is smaller, the sequence numbers wrapped around
         if max_sequence_number > self.next_client_sequence {
-            sequence_number <= max_sequence_number
+            sequence_number <= max_sequence_number && sequence_number > self.next_client_sequence
         } else {
             sequence_number > self.next_client_sequence || sequence_number < max_sequence_number
         }
@@ -332,9 +332,9 @@ impl Channel {
 
         // If the max is smaller, the sequence numbers wrapped around
         if min_sequence_number < max {
-            min_sequence_number <= pending
+            min_sequence_number <= pending && pending < max
         } else {
-            pending < max || pending > min_sequence_number
+            pending < max || pending >= min_sequence_number
         }
     }
 
@@ -392,7 +392,7 @@ impl Channel {
         for pending_packet in self.send_queue.iter_mut() {
             if let Some(pending_sequence) = pending_packet.packet.sequence_number() {
                 if Channel::should_client_ack(self.recency_limit, self.next_server_sequence,
-                                              acked_sequence, pending_sequence) {
+                                              acked_sequence.wrapping_add(1), pending_sequence) {
                     pending_packet.needs_ack = false;
                 }
             }
