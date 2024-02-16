@@ -3,6 +3,7 @@ use std::io::{Cursor, Error};
 use std::net::SocketAddr;
 use std::sync::{Mutex, RwLock};
 use byteorder::{BigEndian, ReadBytesExt};
+use rand::random;
 use crate::deserialize::{deserialize_packet, DeserializeError};
 use crate::hash::{CrcSeed, CrcSize};
 use crate::serialize::{serialize_packets, SerializeError};
@@ -197,7 +198,7 @@ impl FragmentState {
     }
 }
 
-struct Channel {
+pub struct Channel {
     session: Option<Session>,
     buffer_size: BufferSize,
     recency_limit: SequenceNumber,
@@ -212,6 +213,22 @@ struct Channel {
 }
 
 impl Channel {
+
+    pub fn new(initial_buffer_size: BufferSize, recency_limit: SequenceNumber) -> Self {
+        Channel {
+            session: None,
+            buffer_size: initial_buffer_size,
+            recency_limit,
+            fragment_state: FragmentState { buffer: Vec::new(), remaining_bytes: 0 },
+            send_queue: VecDeque::new(),
+            receive_queue: VecDeque::new(),
+            reordered_packets: BTreeMap::new(),
+            next_client_sequence: 0,
+            next_server_sequence: 0,
+            last_client_ack: 0,
+            last_server_ack: 0
+        }
+    }
 
     pub fn receive(&mut self, data: &[u8]) -> Result<u32, DeserializeError> {
         let mut packets = deserialize_packet(data, &self.session)?;
@@ -278,7 +295,7 @@ impl Channel {
         let mut packets_to_send = Vec::new();
 
         // If the packet was acked, it was already sent, so don't send it again
-        self.send_queue.retain(|packet| packet.needs_ack);
+        self.send_queue.retain(|packet| packet.packet.sequence_number().is_none() || packet.needs_ack);
 
         for _ in 0..count as usize {
             if let Some(packet) = self.send_queue.pop_front() {
@@ -322,11 +339,40 @@ impl Channel {
     }
 
     fn process_packet(&mut self, packet: Packet) {
+        println!("Received packet op code {:?}", packet.op_code());
         match packet {
+            Packet::SessionRequest(protocol_version, session_id,
+                                   buffer_size, app_protocol) =>
+                self.process_session_request(protocol_version, session_id, buffer_size, app_protocol),
             Packet::Ack(acked_sequence) => self.process_ack(acked_sequence),
             Packet::AckAll(acked_sequence) => self.process_ack_all(acked_sequence),
-            _ => println!("Unimplemented: {:?}", packet.op_code())
+            _ => {}
         }
+    }
+
+    fn process_session_request(&mut self, protocol_version: SoeProtocolVersion, session_id: SessionId,
+                               buffer_size: BufferSize, app_protocol: ApplicationProtocol) {
+
+        // TODO: disallow session overwrite
+        let session = Session {
+            session_id,
+            crc_length: 3,
+            crc_seed: random::<CrcSeed>(),
+            allow_compression: false,
+            use_encryption: false,
+        };
+
+        self.buffer_size = buffer_size;
+        self.send_queue.push_back(PendingPacket::new(Packet::SessionReply(
+            session_id,
+            session.crc_seed,
+            session.crc_length,
+            session.allow_compression,
+            session.use_encryption,
+            512,
+            3
+        )));
+        self.session = Some(session);
     }
 
     fn process_ack(&mut self, acked_sequence: SequenceNumber) {
