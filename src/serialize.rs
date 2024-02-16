@@ -4,7 +4,9 @@ use std::mem::size_of;
 use byteorder::{BigEndian, WriteBytesExt};
 use crate::hash::{compute_crc, CrcSeed, CrcSize};
 use crate::protocol::{ApplicationProtocol, BufferSize, ClientTick, DisconnectReason, Packet, PacketCount, ProtocolOpCode, SequenceNumber, ServerTick, Session, SessionId, SoeProtocolVersion, Timestamp};
+
 #[non_exhaustive]
+#[derive(Debug)]
 pub enum SerializeError {
     MissingSession,
     NonSessionPacketTooLarge(usize),
@@ -165,7 +167,11 @@ fn add_non_session_packets(buffers: &mut Vec<Vec<u8>>, non_session_packets: Vec<
     // Send non-session packets individually since the multi packet requires a session
     let mut serialized_packets = Vec::new();
     for packet in non_session_packets.into_iter() {
-        serialized_packets.push(serialize_packet_data(packet)?);
+        let mut buffer = Vec::new();
+        buffer.write_u16::<BigEndian>(packet.op_code() as u16)?;
+        let mut packet_data = serialize_packet_data(packet)?;
+        buffer.append(&mut packet_data);
+        serialized_packets.push(buffer);
     }
 
     let max_no_session_len = serialized_packets.iter()
@@ -330,7 +336,7 @@ pub fn serialize_packets(packets: &[Packet], buffer_size: BufferSize,
 
     if let Some(session) = possible_session {
         add_session_packets(&mut buffers, require_session, buffer_size, session, true)?;
-    } else {
+    } else if require_session.len() > 0 {
         return Err(SerializeError::MissingSession);
     }
 
