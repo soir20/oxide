@@ -6,6 +6,7 @@ use crate::hash::{compute_crc, CrcHash};
 use crate::protocol::{DisconnectReason, Packet, ProtocolOpCode, Session};
 
 #[non_exhaustive]
+#[derive(Debug)]
 pub enum DeserializeError {
     IoError(Error),
     DecompressError(DecompressError),
@@ -301,7 +302,7 @@ pub fn deserialize_packet(data: &[u8], possible_session: &Option<Session>) -> Re
         }
 
     } else {
-        packet_data = data.to_vec();
+        packet_data = data[2..].to_vec();
     }
 
     Ok(deserialize_packet_data(&packet_data, op_code)?)
