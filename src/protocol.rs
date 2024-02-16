@@ -7,7 +7,7 @@ use crate::deserialize::{deserialize_packet, DeserializeError};
 use crate::hash::{CrcSeed, CrcSize};
 use crate::serialize::{serialize_packets, SerializeError};
 
-#[derive(Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum ProtocolOpCode {
     SessionRequest   = 0x01,
     SessionReply     = 0x02,
