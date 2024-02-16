@@ -292,7 +292,7 @@ pub fn deserialize_packet(data: &[u8], possible_session: &Option<Session>) -> Re
             if compressed {
                 packet_data = decompress_to_vec(&packet_data)?;
             }
-            let actual_hash = compute_crc(&packet_data, session.crc_seed, session.crc_length);
+            let actual_hash = compute_crc(&data[0..crc_offset], session.crc_seed, session.crc_length);
 
             if actual_hash != expected_hash {
                 return Err(DeserializeError::MismatchedHash(actual_hash, expected_hash));

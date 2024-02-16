@@ -5,12 +5,15 @@ pub type CrcSize = u8;
 pub fn compute_crc(data: &[u8], seed: CrcSeed, crc_size: CrcSize) -> u32 {
     let mut crc = CRC_TABLE[((!seed) & 0xFF) as usize];
     crc ^= 0x00FFFFFF;
+
     let mut index = ((seed >> 8) ^ crc) as usize;
     crc = (crc >> 8) & 0x00FFFFFF;
     crc ^= CRC_TABLE[index & 0xFF];
+
     index = ((seed >> 16) ^ crc) as usize;
     crc = (crc >> 8) & 0x00FFFFFF;
     crc ^= CRC_TABLE[index & 0xFF];
+
     index = ((seed >> 24) ^ crc) as usize;
     crc = (crc >> 8) & 0x00FFFFFF;
     crc ^= CRC_TABLE[index & 0xFF];
@@ -21,7 +24,7 @@ pub fn compute_crc(data: &[u8], seed: CrcSeed, crc_size: CrcSize) -> u32 {
         crc ^= CRC_TABLE[index & 0xFF];
     }
 
-    !crc >> (crc_size as u32 * 8)
+    !crc & (0xFFFFFFFF >> ((4 - crc_size) * 8))
 }
 
 const CRC_TABLE: [u32; 256] = [
