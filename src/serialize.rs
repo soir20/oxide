@@ -247,19 +247,23 @@ fn group_session_packets(session_packets: Vec<&Packet>, buffer_size: BufferSize,
         );
     }
 
-    let mut space_left = 0;
+    let mut space_left = 0u32;
     let mut group = Vec::new();
 
     while !serialized_packets.is_empty() {
         let (need_data_length, op_code, serialized_packet) = serialized_packets.pop_front().unwrap();
 
         if serialized_packet.len() < space_left as usize {
+            space_left -= serialized_packet.len() as BufferSize;
             group.push((op_code, serialized_packet));
         } else if (op_code == ProtocolOpCode::Data) && fits_data_fragment(space_left, need_data_length) {
 
             // Assume data fragment packets are already sufficiently fragmented
             let (fragment1, fragment2) = split(space_left, serialized_packet, need_data_length)?;
+
+            space_left -= fragment1.len() as BufferSize;
             group.push((ProtocolOpCode::DataFragment, fragment1));
+
             serialized_packets.push_front((false, ProtocolOpCode::DataFragment, fragment2));
 
         } else if serialized_packet.len() > data_max_size as usize {
@@ -268,6 +272,7 @@ fn group_session_packets(session_packets: Vec<&Packet>, buffer_size: BufferSize,
             groups.push(group.clone());
             group.clear();
             space_left = data_max_size;
+            serialized_packets.push_front((need_data_length, op_code, serialized_packet));
         }
     }
 
