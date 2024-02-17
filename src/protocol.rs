@@ -420,13 +420,13 @@ impl Channel {
                 let mut end = max_size.min(remaining_data.len());
                 let mut buffer = Vec::new();
                 if is_first {
-                    buffer.write_u32::<BigEndian>(data.len() as u32).unwrap();
+                    buffer.write_u32::<BigEndian>(data.len() as u32).expect("Tried to write data length");
                     end -= size_of::<u32>();
                     is_first = false;
                 }
 
                 let fragment = &remaining_data[0..end];
-                buffer.write_all(fragment).unwrap();
+                buffer.write_all(fragment).expect("Tried to write fragment data");
                 remaining_data = &remaining_data[end..];
 
                 let next_sequence = self.next_server_sequence();
