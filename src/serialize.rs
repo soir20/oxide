@@ -227,15 +227,21 @@ fn split(space_left: BufferSize, data: Vec<u8>, needs_data_length: bool) -> Resu
         Vec::new()
     };
 
+    let cutoff = space_left as usize - fragment1.len();
+
     // The caller already knows the data length is larger than space_left
-    fragment1.extend(&data[0..space_left as usize]);
+    fragment1.extend(&data[0..cutoff]);
 
     // Create a new buffer with space for the op code allocated
     let mut fragment2 = Vec::new();
     fragment2.write_u16::<BigEndian>(ProtocolOpCode::DataFragment as u16)?;
-    fragment2.append(&mut data[space_left as usize..].to_vec());
+    fragment2.append(&mut data[cutoff..].to_vec());
 
     Ok((fragment1, fragment2))
+}
+
+fn is_splittable(op_code: ProtocolOpCode) -> bool {
+    op_code == ProtocolOpCode::Data || op_code == ProtocolOpCode::DataFragment
 }
 
 fn group_session_packets(session_packets: Vec<&Packet>, buffer_size: BufferSize, session: &Session) -> Result<Vec<Vec<(ProtocolOpCode, Vec<u8>)>>, SerializeError> {
@@ -250,7 +256,7 @@ fn group_session_packets(session_packets: Vec<&Packet>, buffer_size: BufferSize,
         );
     }
 
-    let mut space_left = 0u32;
+    let mut space_left = data_max_size;
     let mut group = Vec::new();
 
     while !serialized_packets.is_empty() {
@@ -259,7 +265,7 @@ fn group_session_packets(session_packets: Vec<&Packet>, buffer_size: BufferSize,
         if serialized_packet.len() < space_left as usize {
             space_left -= serialized_packet.len() as BufferSize;
             group.push((op_code, serialized_packet));
-        } else if (op_code == ProtocolOpCode::Data) && fits_data_fragment(space_left, need_data_length) {
+        } else if is_splittable(op_code) && fits_data_fragment(space_left, need_data_length) {
 
             // Assume data fragment packets are already sufficiently fragmented
             let (fragment1, fragment2) = split(space_left, serialized_packet, need_data_length)?;
@@ -269,7 +275,7 @@ fn group_session_packets(session_packets: Vec<&Packet>, buffer_size: BufferSize,
 
             serialized_packets.push_front((false, ProtocolOpCode::DataFragment, fragment2));
 
-        } else if serialized_packet.len() > data_max_size as usize {
+        } else if serialized_packet.len() > data_max_size as usize && (!is_splittable(op_code) || !fits_data_fragment(data_max_size, need_data_length)) {
             return Err(SerializeError::BufferTooSmall(serialized_packet.len()));
         } else {
             groups.push(group.clone());
