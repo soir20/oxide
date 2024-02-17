@@ -341,6 +341,7 @@ impl Channel {
             Packet::SessionRequest(protocol_version, session_id,
                                    buffer_size, app_protocol) =>
                 self.process_session_request(protocol_version, session_id, buffer_size, app_protocol),
+            Packet::Heartbeat => self.process_heartbeat(),
             Packet::Ack(acked_sequence) => self.process_ack(acked_sequence),
             Packet::AckAll(acked_sequence) => self.process_ack_all(acked_sequence),
             _ => {}
@@ -370,6 +371,10 @@ impl Channel {
             3
         )));
         self.session = Some(session);
+    }
+
+    fn process_heartbeat(&mut self) {
+        self.send_queue.push_back(PendingPacket::new(Packet::Heartbeat));
     }
 
     fn process_ack(&mut self, acked_sequence: SequenceNumber) {
