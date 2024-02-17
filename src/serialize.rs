@@ -2,8 +2,11 @@ use std::collections::VecDeque;
 use std::io::{Error, Write};
 use std::mem::size_of;
 use byteorder::{BigEndian, WriteBytesExt};
+use miniz_oxide::deflate::compress_to_vec_zlib;
 use crate::hash::{compute_crc, CrcSeed, CrcSize};
 use crate::protocol::{ApplicationProtocol, BufferSize, ClientTick, DisconnectReason, Packet, PacketCount, ProtocolOpCode, SequenceNumber, ServerTick, Session, SessionId, SoeProtocolVersion, Timestamp};
+
+const ZLIB_COMPRESSION_LEVEL: u8 = 2;
 
 #[non_exhaustive]
 #[derive(Debug)]
@@ -281,18 +284,30 @@ fn group_session_packets(session_packets: Vec<&Packet>, buffer_size: BufferSize,
     Ok(groups)
 }
 
-fn write_header(buffer: &mut Vec<u8>, op_code: ProtocolOpCode, session: &Session, use_compression_if_allowed: bool) -> Result<(), SerializeError> {
+fn write_header(buffer: &mut Vec<u8>, op_code: ProtocolOpCode, session: &Session, compressed: bool) -> Result<(), SerializeError> {
     buffer.write_u16::<BigEndian>(op_code as u16)?;
 
     if session.allow_compression {
-        buffer.write_u8(use_compression_if_allowed as u8)?;
+        buffer.write_u8(compressed as u8)?;
     }
 
     Ok(())
 }
 
+fn try_compress(data: &mut Vec<u8>, session: &Session) -> bool {
+    if session.allow_compression {
+        let compressed_data = compress_to_vec_zlib(&data, ZLIB_COMPRESSION_LEVEL);
+        if data.len() > compressed_data.len() {
+            *data = compressed_data;
+            return true;
+        }
+    }
+
+    false
+}
+
 fn add_session_packets(buffers: &mut Vec<Vec<u8>>, session_packets: Vec<&Packet>, buffer_size: BufferSize,
-                       session: &Session, use_compression_if_allowed: bool) -> Result<(), SerializeError> {
+                       session: &Session) -> Result<(), SerializeError> {
     let groups = group_session_packets(session_packets, buffer_size, session)?;
 
     for mut group in groups.into_iter() {
@@ -302,29 +317,27 @@ fn add_session_packets(buffers: &mut Vec<Vec<u8>>, session_packets: Vec<&Packet>
 
         let mut buffer = Vec::new();
         if group.len() == 1 {
-            let (op_code, data) = group.pop().unwrap();
-            write_header(&mut buffer, op_code, session, use_compression_if_allowed)?;
+            let (op_code, mut data) = group.pop().unwrap();
+            let compressed = try_compress(&mut data, session);
+            write_header(&mut buffer, op_code, session, compressed)?;
             buffer.write_all(&data)?;
-            buffer.write_uint::<BigEndian>(
-                compute_crc(&data, session.crc_seed, session.crc_length) as u64,
-                session.crc_length as usize
-            )?;
         } else {
-            write_header(&mut buffer, ProtocolOpCode::MultiPacket, session, use_compression_if_allowed)?;
-
+            let mut all_data = Vec::new();
             for (op_code, data) in group {
-                write_variable_length_int(&mut buffer, data.len() as BufferSize + 2)?;
-                buffer.write_u16::<BigEndian>(op_code as u16)?;
-                buffer.write_all(&data)?;
+                write_variable_length_int(&mut all_data, data.len() as BufferSize + 2)?;
+                all_data.write_u16::<BigEndian>(op_code as u16)?;
+                all_data.write_all(&data)?;
             }
 
-            let data_start = header_size(session) as usize;
-            buffer.write_uint::<BigEndian>(
-                compute_crc(&buffer[data_start..], session.crc_seed, session.crc_length) as u64,
-                session.crc_length as usize
-            )?;
+            let compressed = try_compress(&mut all_data, session);
+            write_header(&mut buffer, ProtocolOpCode::MultiPacket, session, compressed)?;
+            buffer.write_all(&all_data)?;
         }
 
+        buffer.write_uint::<BigEndian>(
+            compute_crc(&buffer, session.crc_seed, session.crc_length) as u64,
+            session.crc_length as usize
+        )?;
         buffers.push(buffer);
     }
 
@@ -340,7 +353,7 @@ pub fn serialize_packets(packets: &[Packet], buffer_size: BufferSize,
     add_non_session_packets(&mut buffers, no_require_session, buffer_size)?;
 
     if let Some(session) = possible_session {
-        add_session_packets(&mut buffers, require_session, buffer_size, session, true)?;
+        add_session_packets(&mut buffers, require_session, buffer_size, session)?;
     } else if require_session.len() > 0 {
         return Err(SerializeError::MissingSession);
     }
