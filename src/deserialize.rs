@@ -109,18 +109,19 @@ fn deserialize_multi_packet(data: &[u8]) -> Result<Vec<Packet>, DeserializeError
 
     while offset < data.len() {
         let (packet_length, new_offset) = read_variable_length_int(&data[offset..])?;
-        offset = new_offset;
+        offset += new_offset;
         cursor.set_position(offset as u64);
 
         let op_code = check_op_code(cursor.read_u16::<BigEndian>()?)?;
         offset += size_of::<u16>();
+        let remaining_length = packet_length as usize - size_of::<u16>();
 
         let mut new_packets = deserialize_packet_data(
-            &data[offset..(offset + packet_length as usize)],
+            &data[offset..(offset + remaining_length)],
             op_code
         )?;
         packets.append(&mut new_packets);
-        offset += packet_length as usize;
+        offset += remaining_length;
     }
 
     Ok(packets)
