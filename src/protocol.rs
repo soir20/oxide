@@ -1,12 +1,13 @@
 use std::collections::{BTreeMap, HashMap, VecDeque};
-use std::io::{Cursor, Error};
+use std::io::{Cursor, Error, Write};
+use std::mem::size_of;
 use std::net::SocketAddr;
 use std::sync::{Mutex, RwLock};
-use byteorder::{BigEndian, ReadBytesExt};
+use byteorder::{BigEndian, ReadBytesExt, WriteBytesExt};
 use rand::random;
 use crate::deserialize::{deserialize_packet, DeserializeError};
 use crate::hash::{CrcSeed, CrcSize};
-use crate::serialize::{serialize_packets, SerializeError};
+use crate::serialize::{max_fragment_data_size, serialize_packets, SerializeError};
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub enum ProtocolOpCode {
@@ -252,13 +253,12 @@ impl Channel {
                     if sequence_number != self.next_client_sequence {
                         if self.save_for_reorder(sequence_number) {
                             self.reordered_packets.insert(sequence_number, packet);
-                            self.acknowledge_one(sequence_number);
                         }
 
-                        // Assume the packet was already acked. In the worst case, the
-                        // client just has to resend the packet again.
-                        continue;
+                        // Ack single packet in case the client didn't receive the ack
+                        self.acknowledge_one(sequence_number);
 
+                        continue;
                     }
 
                     self.last_server_ack = sequence_number;
@@ -398,6 +398,44 @@ impl Channel {
                     pending_packet.needs_ack = false;
                 }
             }
+        }
+    }
+
+    fn send_data(&mut self, data: Vec<u8>) {
+        let mut remaining_data = &data[..];
+        let mut is_first = true;
+
+        if let Some(session) = &self.session {
+            let max_size = max_fragment_data_size(self.buffer_size, session) as usize;
+
+            if remaining_data.len() <= max_size {
+                let next_sequence = self.next_server_sequence();
+                self.send_queue.push_back(PendingPacket::new(
+                    Packet::Data(next_sequence, data)
+                ));
+                return;
+            }
+
+            while remaining_data.len() > 0 {
+                let mut end = max_size.min(remaining_data.len());
+                let mut buffer = Vec::new();
+                if is_first {
+                    buffer.write_u32::<BigEndian>(data.len() as u32).unwrap();
+                    end -= size_of::<u32>();
+                    is_first = false;
+                }
+
+                let fragment = &remaining_data[0..end];
+                buffer.write_all(fragment).unwrap();
+                remaining_data = &remaining_data[end..];
+
+                let next_sequence = self.next_server_sequence();
+                self.send_queue.push_back(PendingPacket::new(
+                    Packet::DataFragment(next_sequence, buffer)
+                ));
+            }
+        } else {
+            panic!("Cannot send reliable data without a session");
         }
     }
 
