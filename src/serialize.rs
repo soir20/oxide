@@ -221,7 +221,7 @@ fn group_session_packets(session_packets: Vec<&Packet>, buffer_size: BufferSize,
     while !serialized_packets.is_empty() {
         let (need_data_length, op_code, serialized_packet) = serialized_packets.pop_front().unwrap();
 
-        if serialized_packet.len() < space_left as usize {
+        if serialized_packet.len() <= space_left as usize {
             space_left -= serialized_packet.len() as BufferSize;
             group.push((op_code, serialized_packet));
         } else if serialized_packet.len() > data_max_size as usize {
