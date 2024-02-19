@@ -215,6 +215,11 @@ fn group_session_packets(session_packets: Vec<&Packet>, buffer_size: BufferSize,
         );
     }
 
+    for (_, op_code, serialized_packet) in serialized_packets.into_iter() {
+        groups.push(vec![(op_code, serialized_packet)])
+    }
+
+    return Ok(groups);
     let mut space_left = data_max_size;
     let mut group = Vec::new();
 
@@ -302,7 +307,7 @@ fn add_session_packets(buffers: &mut Vec<Vec<u8>>, session_packets: Vec<&Packet>
 pub fn max_fragment_data_size(buffer_size: BufferSize, session: &Session) -> u32 {
 
     // Fragment needs space for header, sequence number, and footer
-    buffer_size - header_size(session) - size_of::<u16>() as u32 - footer_size(session)
+    buffer_size - header_size(session) - size_of::<u16>() as u32 - footer_size(session) - 100
 
 }
 

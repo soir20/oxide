@@ -7,6 +7,7 @@ mod protocol;
 mod hash;
 mod deserialize;
 mod serialize;
+mod login;
 
 fn main() {
     println!("Hello, world!");
@@ -38,7 +39,7 @@ fn main() {
             let packets_to_send = send_result.unwrap_or(Vec::new());
             println!("Sending {} packets", packets_to_send.len());
             for buffer in packets_to_send {
-                println!("Sending: {:x?}", buffer);
+                println!("Sending {} bytes: {:x?}", buffer.len(), buffer);
                 socket.send_to(&buffer, &src).expect("Unable to send packet to client");
             }
         }

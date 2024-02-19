@@ -3,10 +3,11 @@ use std::io::{Cursor, Error, Write};
 use std::mem::size_of;
 use std::net::SocketAddr;
 use std::sync::{Mutex, RwLock};
-use byteorder::{BigEndian, ReadBytesExt, WriteBytesExt};
+use byteorder::{BigEndian, LittleEndian, ReadBytesExt, WriteBytesExt};
 use rand::random;
 use crate::deserialize::{deserialize_packet, DeserializeError};
 use crate::hash::{CrcSeed, CrcSize};
+use crate::login::{make_tunneled_packet, send_item_definitions, send_self_to_client};
 use crate::serialize::{max_fragment_data_size, serialize_packets, SerializeError};
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
@@ -241,6 +242,7 @@ impl Channel {
 
     pub fn process_next(&mut self, count: u8) {
         let mut needs_new_ack = false;
+        let mut packet_to_process = None;
 
         for _ in 0..count {
             if let Some(packet) = self.receive_queue.pop_front() {
@@ -274,7 +276,9 @@ impl Channel {
 
                 match self.fragment_state.add(packet) {
                     Ok(possible_packet) => if let Some(packet) = possible_packet {
-                        self.process_packet(packet)
+                        packet_to_process = Some(packet);
+                    } else {
+                        packet_to_process = None;
                     },
                     Err(err) => println!("Unable to process packet: {:?}", err)
                 }
@@ -286,16 +290,23 @@ impl Channel {
         if needs_new_ack {
             self.acknowledge_all(self.last_server_ack);
         }
+
+        if let Some(packet) = packet_to_process {
+            self.process_packet(packet);
+        }
     }
 
     pub fn send_next(&mut self, count: u8) -> Result<Vec<Vec<u8>>, SerializeError> {
         let mut packets_to_send = Vec::new();
 
         // If the packet was acked, it was already sent, so don't send it again
+        println!("CONTAINS ACK BEFORE? {}", self.send_queue.iter().any(|p| p.packet.op_code() == ProtocolOpCode::Ack || p.packet.op_code() == ProtocolOpCode::AckAll));
         self.send_queue.retain(|packet| packet.packet.sequence_number().is_none() || packet.needs_ack);
+        println!("CONTAINS ACK AFTER? {}", self.send_queue.iter().any(|p| p.packet.op_code() == ProtocolOpCode::Ack || p.packet.op_code() == ProtocolOpCode::AckAll));
 
         for _ in 0..count as usize {
             if let Some(packet) = self.send_queue.pop_front() {
+                println!("IN QUEUE: {:?}", packet.packet.op_code());
                 packets_to_send.push(packet.packet);
             } else {
                 break;
@@ -341,6 +352,38 @@ impl Channel {
             Packet::SessionRequest(protocol_version, session_id,
                                    buffer_size, app_protocol) =>
                 self.process_session_request(protocol_version, session_id, buffer_size, app_protocol),
+            Packet::Data(_, data) => {
+                if data[0] == 1 {
+                    self.send_data(make_tunneled_packet(2, &vec![1]).unwrap());
+
+                    self.send_data(make_tunneled_packet(165, "live".as_bytes()).unwrap());
+
+                    let mut zone_buffer = Vec::new();
+                    zone_buffer.extend("JediTemple".as_bytes());
+                    zone_buffer.write_u32::<LittleEndian>(2).unwrap();
+                    zone_buffer.write_u8(0).unwrap();
+                    zone_buffer.write_u8(0).unwrap();
+                    zone_buffer.extend("".as_bytes());
+                    zone_buffer.write_u8(0).unwrap();
+                    zone_buffer.write_u32::<LittleEndian>(0).unwrap();
+                    zone_buffer.write_u32::<LittleEndian>(5).unwrap();
+                    zone_buffer.write_u8(0).unwrap();
+                    zone_buffer.write_u8(0).unwrap();
+                    self.send_data(make_tunneled_packet(43, &zone_buffer).unwrap());
+
+                    let mut settings_buffer = Vec::new();
+                    settings_buffer.write_u32::<LittleEndian>(4).unwrap();
+                    settings_buffer.write_u32::<LittleEndian>(7).unwrap();
+                    settings_buffer.write_u32::<LittleEndian>(268).unwrap();
+                    settings_buffer.write_u8(1).unwrap();
+                    settings_buffer.write_f32::<LittleEndian>(1.0f32).unwrap();
+                    self.send_data(make_tunneled_packet(143, &settings_buffer).unwrap());
+
+                    self.send_data(send_item_definitions().unwrap());
+
+                    self.send_data(send_self_to_client().unwrap());
+                }
+            }
             Packet::Heartbeat => self.process_heartbeat(),
             Packet::Ack(acked_sequence) => self.process_ack(acked_sequence),
             Packet::AckAll(acked_sequence) => self.process_ack_all(acked_sequence),
@@ -355,7 +398,7 @@ impl Channel {
         let session = Session {
             session_id,
             crc_length: 3,
-            crc_seed: random::<CrcSeed>(),
+            crc_seed: 12345,
             allow_compression: false,
             use_encryption: false,
         };
@@ -440,10 +483,12 @@ impl Channel {
     }
 
     fn acknowledge_one(&mut self, sequence_number: SequenceNumber) {
+        println!("ACKING {}", sequence_number);
         self.send_queue.push_back(PendingPacket::new(Packet::Ack(sequence_number)));
     }
 
     fn acknowledge_all(&mut self, sequence_number: SequenceNumber) {
+        println!("ACKING ALL {}", sequence_number);
         self.send_queue.push_back(PendingPacket::new(Packet::AckAll(sequence_number)));
     }
 }
