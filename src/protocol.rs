@@ -387,7 +387,7 @@ impl Channel {
 
                     //self.send_data(vec![0x51, 2, 0x41, 0]);*/*/
 
-                    self.send_data(send_item_definitions().unwrap());
+                    //self.send_data(send_item_definitions().unwrap());
 
                     //println!("DONE SENDING ITEM DEFINITIONS");
 
