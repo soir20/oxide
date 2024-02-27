@@ -353,14 +353,11 @@ impl Channel {
                 self.process_session_request(protocol_version, session_id, buffer_size, app_protocol),
             Packet::Data(_, data) => {
                 if data[0] == 1 {
-                    /*self.send_data(make_tunneled_packet(2, &vec![1]).unwrap());
+                    self.send_data(make_tunneled_packet(2, &vec![1]).unwrap());
 
                     let mut live_buf = "live".as_bytes().to_vec();
                     live_buf.push(0);
                     self.send_data(make_tunneled_packet(165, &live_buf).unwrap());
-
-
-                    self.send_data(make_tunneled_packet(0xe, &Vec::new()).unwrap());
 
                     let mut zone_buffer = Vec::new();
                     zone_buffer.write_u32::<LittleEndian>(10).unwrap();
@@ -373,19 +370,15 @@ impl Channel {
                     zone_buffer.write_u8(0).unwrap();
                     zone_buffer.write_u32::<LittleEndian>(0).unwrap();
                     zone_buffer.write_u32::<LittleEndian>(5).unwrap();
-                    zone_buffer.write_u8(0).unwrap();
-                    zone_buffer.write_u8(0).unwrap();
                     self.send_data(make_tunneled_packet(43, &zone_buffer).unwrap());
 
-                    /*let mut settings_buffer = Vec::new();
+                    let mut settings_buffer = Vec::new();
                     settings_buffer.write_u32::<LittleEndian>(4).unwrap();
                     settings_buffer.write_u32::<LittleEndian>(7).unwrap();
                     settings_buffer.write_u32::<LittleEndian>(268).unwrap();
                     settings_buffer.write_u8(1).unwrap();
                     settings_buffer.write_f32::<LittleEndian>(1.0f32).unwrap();
                     self.send_data(make_tunneled_packet(143, &settings_buffer).unwrap());
-
-                    //self.send_data(vec![0x51, 2, 0x41, 0]);*/*/
 
                     //self.send_data(send_item_definitions().unwrap());
 
