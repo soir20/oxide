@@ -3,11 +3,12 @@ use std::io::{Cursor, Error, Write};
 use std::mem::size_of;
 use std::net::SocketAddr;
 use std::sync::{Mutex, RwLock};
+use std::time::{SystemTime, UNIX_EPOCH};
 use byteorder::{BigEndian, LittleEndian, ReadBytesExt, WriteBytesExt};
 use rand::random;
 use crate::deserialize::{deserialize_packet, DeserializeError};
 use crate::hash::{CrcSeed, CrcSize};
-use crate::login::{make_tunneled_packet, send_item_definitions, send_self_to_client};
+use crate::login::{extract_tunneled_packet_data, make_tunneled_packet, send_item_definitions, send_self_to_client};
 use crate::serialize::{max_fragment_data_size, serialize_packets, SerializeError};
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
@@ -385,6 +386,103 @@ impl Channel {
                     //println!("DONE SENDING ITEM DEFINITIONS");
 
                     self.send_data(send_self_to_client().unwrap());
+                } else if data[3] == 5 {
+                    let (op_code, payload) = extract_tunneled_packet_data(&data[3..]).unwrap();
+                    if op_code == 13 {
+                        println!("received client ready packet");
+
+                        let mut point_of_interest_buffer = Vec::new();
+                        point_of_interest_buffer.write_u8(1).unwrap();
+                        point_of_interest_buffer.write_u32::<LittleEndian>(3961).unwrap();
+                        point_of_interest_buffer.write_u32::<LittleEndian>(281).unwrap();
+                        point_of_interest_buffer.write_f32::<LittleEndian>(887.30).unwrap();
+                        point_of_interest_buffer.write_f32::<LittleEndian>(173.0).unwrap();
+                        point_of_interest_buffer.write_f32::<LittleEndian>(1546.956).unwrap();
+                        point_of_interest_buffer.write_f32::<LittleEndian>(1.0).unwrap();
+                        point_of_interest_buffer.write_u32::<LittleEndian>(0).unwrap();
+                        point_of_interest_buffer.write_u32::<LittleEndian>(7).unwrap();
+                        point_of_interest_buffer.write_u32::<LittleEndian>(382845).unwrap();
+                        point_of_interest_buffer.write_u32::<LittleEndian>(651).unwrap();
+                        point_of_interest_buffer.write_u32::<LittleEndian>(0).unwrap();
+                        point_of_interest_buffer.write_u32::<LittleEndian>(210020).unwrap();
+                        point_of_interest_buffer.write_u32::<LittleEndian>("spawn".len() as u32).unwrap();
+                        point_of_interest_buffer.write_all("spawn".as_bytes()).unwrap();
+                        point_of_interest_buffer.write_u32::<LittleEndian>(60).unwrap();
+                        point_of_interest_buffer.write_u8(0).unwrap();
+                        let mut poi_buffer2 = Vec::new();
+                        poi_buffer2.write_u32::<LittleEndian>(point_of_interest_buffer.len() as u32).unwrap();
+                        poi_buffer2.write_all(&point_of_interest_buffer).unwrap();
+                        //self.send_data(make_tunneled_packet(0x39, &poi_buffer2).unwrap());
+
+                        let mut hp_buffer = Vec::new();
+                        hp_buffer.write_u16::<LittleEndian>(1).unwrap();
+                        hp_buffer.write_u32::<LittleEndian>(25000).unwrap();
+                        hp_buffer.write_u32::<LittleEndian>(25000).unwrap();
+                        self.send_data(make_tunneled_packet(0x26, &hp_buffer).unwrap());
+
+                        let mut mana_buffer = Vec::new();
+                        mana_buffer.write_u16::<LittleEndian>(0xd).unwrap();
+                        mana_buffer.write_u32::<LittleEndian>(300).unwrap();
+                        mana_buffer.write_u32::<LittleEndian>(300).unwrap();
+                        self.send_data(make_tunneled_packet(0x26, &mana_buffer).unwrap());
+
+                        //self.send_data(make_tunneled_packet(0x24, &vec![0x05, 0x00, 0x01, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, ]).unwrap());
+
+                        //self.send_data(make_tunneled_packet(0x26, &vec![0x10, 0x00, 0x04, 0x00, 0x00, 0x00, 0x55, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x35, 0x0B, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x0E, 0x00, 0x00, 0x00, 0x91, 0xCA, 0x73, 0x95, 0x6A, 0xCC, 0x52, 0x4B, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0xA2, 0x0F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x27, 0x2D, 0x00, 0x00, 0x00, 0x54, 0xB8, 0x06, 0x00, 0xDB, 0x07, 0x00, 0x00]).unwrap());
+
+
+                        let mut stat_buffer = Vec::new();
+                        stat_buffer.write_u16::<LittleEndian>(7).unwrap();
+                        stat_buffer.write_u32::<LittleEndian>(5).unwrap();
+
+                        // Movement speed
+                        stat_buffer.write_u32::<LittleEndian>(2).unwrap();
+                        stat_buffer.write_u32::<LittleEndian>(1).unwrap();
+                        stat_buffer.write_f32::<LittleEndian>(8.0).unwrap();
+                        stat_buffer.write_f32::<LittleEndian>(8.0).unwrap();
+
+                        // Health refill
+                        stat_buffer.write_u32::<LittleEndian>(4).unwrap();
+                        stat_buffer.write_u32::<LittleEndian>(0).unwrap();
+                        stat_buffer.write_f32::<LittleEndian>(1.0).unwrap();
+                        stat_buffer.write_f32::<LittleEndian>(1.0).unwrap();
+
+                        // Energy refill
+                        stat_buffer.write_u32::<LittleEndian>(6).unwrap();
+                        stat_buffer.write_u32::<LittleEndian>(0).unwrap();
+                        stat_buffer.write_f32::<LittleEndian>(1.0).unwrap();
+                        stat_buffer.write_f32::<LittleEndian>(1.0).unwrap();
+
+                        stat_buffer.write_u32::<LittleEndian>(58).unwrap();
+                        stat_buffer.write_u32::<LittleEndian>(0).unwrap();
+                        stat_buffer.write_f32::<LittleEndian>(8.0).unwrap();
+                        stat_buffer.write_f32::<LittleEndian>(8.0).unwrap();
+
+                        stat_buffer.write_u32::<LittleEndian>(59).unwrap();
+                        stat_buffer.write_u32::<LittleEndian>(0).unwrap();
+                        stat_buffer.write_f32::<LittleEndian>(8.0).unwrap();
+                        stat_buffer.write_f32::<LittleEndian>(8.0).unwrap();
+
+                        self.send_data(make_tunneled_packet(0x26, &stat_buffer).unwrap());
+
+                        // Zone done sending init data
+                        self.send_data(make_tunneled_packet(0xe, &Vec::new()).unwrap());
+
+                        // Preload characters
+                        self.send_data(make_tunneled_packet(0x26, &vec![0x1a, 0, 0]).unwrap());
+
+                    } else {
+                        println!("Received unknown op code: {}", op_code);
+                    }
+                } else if data[0] == 5 && data[7] == 0x34 {
+                    let mut buffer = Vec::new();
+                    let time = SystemTime::now().duration_since(UNIX_EPOCH)
+                        .expect("Time went backwards").as_secs();
+                    println!("Sending time: {}", time);
+                    buffer.write_u64::<LittleEndian>(time).unwrap();
+                    buffer.write_u32::<LittleEndian>(0).unwrap();
+                    buffer.write_u8(1).unwrap();
+                    self.send_data(make_tunneled_packet(0x34, &buffer).unwrap());
                 }
             }
             Packet::Heartbeat => self.process_heartbeat(),

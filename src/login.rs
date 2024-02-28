@@ -1,5 +1,5 @@
-use std::io::{Error, Write};
-use byteorder::{LittleEndian, WriteBytesExt};
+use std::io::{Cursor, Error, Read, Write};
+use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
 
 pub fn make_tunneled_packet(op_code: u16, bytes: &[u8]) -> Result<Vec<u8>, Error> {
     let mut buffer = Vec::new();
@@ -9,6 +9,23 @@ pub fn make_tunneled_packet(op_code: u16, bytes: &[u8]) -> Result<Vec<u8>, Error
     buffer.write_u16::<LittleEndian>(op_code)?;
     buffer.write_all(&bytes)?;
     Ok(buffer)
+}
+
+pub fn extract_tunneled_packet_data(data: &[u8]) -> Result<(u16, Vec<u8>), Error> {
+    let mut cursor = Cursor::new(data);
+    let tunneled_op_code = cursor.read_u16::<LittleEndian>()?;
+    if tunneled_op_code != 5 {
+        // TODO: use custom error type
+        panic!("Expected a tunneled packet, but found op code {}", tunneled_op_code);
+    }
+
+    cursor.read_u8()?;
+    let size = cursor.read_u32::<LittleEndian>()?.checked_sub(2).unwrap_or(0);
+    let op_code = cursor.read_u16::<LittleEndian>()?;
+    let mut buffer = vec![0; size as usize];
+    cursor.read_exact(&mut buffer)?;
+
+    Ok((op_code, buffer))
 }
 
 pub fn send_item_definitions() -> Result<Vec<u8>, Error> {
