@@ -379,7 +379,7 @@ impl Channel {
                     settings_buffer.write_u32::<LittleEndian>(268).unwrap();
                     settings_buffer.write_u8(1).unwrap();
                     settings_buffer.write_f32::<LittleEndian>(1.0f32).unwrap();
-                    self.send_data(make_tunneled_packet(143, &settings_buffer).unwrap());
+                    self.send_data(make_tunneled_packet(0x8f, &settings_buffer).unwrap());
 
                     //self.send_data(send_item_definitions().unwrap());
 
@@ -405,8 +405,6 @@ impl Channel {
                         point_of_interest_buffer.write_u32::<LittleEndian>(651).unwrap();
                         point_of_interest_buffer.write_u32::<LittleEndian>(0).unwrap();
                         point_of_interest_buffer.write_u32::<LittleEndian>(210020).unwrap();
-                        point_of_interest_buffer.write_u32::<LittleEndian>("spawn".len() as u32).unwrap();
-                        point_of_interest_buffer.write_all("spawn".as_bytes()).unwrap();
                         point_of_interest_buffer.write_u32::<LittleEndian>(60).unwrap();
                         point_of_interest_buffer.write_u8(0).unwrap();
                         let mut poi_buffer2 = Vec::new();
@@ -455,13 +453,13 @@ impl Channel {
 
                         stat_buffer.write_u32::<LittleEndian>(58).unwrap();
                         stat_buffer.write_u32::<LittleEndian>(0).unwrap();
-                        stat_buffer.write_f32::<LittleEndian>(8.0).unwrap();
-                        stat_buffer.write_f32::<LittleEndian>(8.0).unwrap();
+                        stat_buffer.write_f32::<LittleEndian>(0.0).unwrap();
+                        stat_buffer.write_f32::<LittleEndian>(0.0).unwrap();
 
                         stat_buffer.write_u32::<LittleEndian>(59).unwrap();
                         stat_buffer.write_u32::<LittleEndian>(0).unwrap();
-                        stat_buffer.write_f32::<LittleEndian>(8.0).unwrap();
-                        stat_buffer.write_f32::<LittleEndian>(8.0).unwrap();
+                        stat_buffer.write_f32::<LittleEndian>(0.0).unwrap();
+                        stat_buffer.write_f32::<LittleEndian>(0.0).unwrap();
 
                         self.send_data(make_tunneled_packet(0x26, &stat_buffer).unwrap());
 
@@ -470,6 +468,10 @@ impl Channel {
 
                         // Preload characters
                         self.send_data(make_tunneled_packet(0x26, &vec![0x1a, 0, 0]).unwrap());
+
+                        /*let mut tp_buffer = Vec::new();
+                        tp_buffer.wri
+                        self.send_data(make_tunneled_packet(0x7d, &tp_buffer).unwrap());*/
 
                     } else {
                         println!("Received unknown op code: {}", op_code);
