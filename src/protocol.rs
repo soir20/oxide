@@ -436,26 +436,28 @@ impl Channel {
                         // Movement speed
                         stat_buffer.write_u32::<LittleEndian>(2).unwrap();
                         stat_buffer.write_u32::<LittleEndian>(1).unwrap();
-                        stat_buffer.write_f32::<LittleEndian>(8.0).unwrap();
+                        stat_buffer.write_f32::<LittleEndian>(0.0).unwrap();
                         stat_buffer.write_f32::<LittleEndian>(8.0).unwrap();
 
                         // Health refill
                         stat_buffer.write_u32::<LittleEndian>(4).unwrap();
                         stat_buffer.write_u32::<LittleEndian>(0).unwrap();
-                        stat_buffer.write_f32::<LittleEndian>(1.0).unwrap();
+                        stat_buffer.write_f32::<LittleEndian>(0.0).unwrap();
                         stat_buffer.write_f32::<LittleEndian>(1.0).unwrap();
 
                         // Energy refill
                         stat_buffer.write_u32::<LittleEndian>(6).unwrap();
                         stat_buffer.write_u32::<LittleEndian>(0).unwrap();
-                        stat_buffer.write_f32::<LittleEndian>(1.0).unwrap();
+                        stat_buffer.write_f32::<LittleEndian>(0.0).unwrap();
                         stat_buffer.write_f32::<LittleEndian>(1.0).unwrap();
 
+                        // Extra gravity
                         stat_buffer.write_u32::<LittleEndian>(58).unwrap();
                         stat_buffer.write_u32::<LittleEndian>(0).unwrap();
                         stat_buffer.write_f32::<LittleEndian>(0.0).unwrap();
                         stat_buffer.write_f32::<LittleEndian>(0.0).unwrap();
 
+                        // Extra jump height
                         stat_buffer.write_u32::<LittleEndian>(59).unwrap();
                         stat_buffer.write_u32::<LittleEndian>(0).unwrap();
                         stat_buffer.write_f32::<LittleEndian>(0.0).unwrap();
