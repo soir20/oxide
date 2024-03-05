@@ -232,7 +232,7 @@ fn group_session_packets(session_packets: Vec<&Packet>, buffer_size: BufferSize,
         let (op_code, serialized_packet) = serialized_packets.pop_front().unwrap();
 
         // Add two bytes for the op code
-        let packet_len = serialized_packet.len() + 2;
+        let packet_len = serialized_packet.len() + size_of::<u16>();
 
         let mut total_len = packet_len;
 
@@ -243,7 +243,7 @@ fn group_session_packets(session_packets: Vec<&Packet>, buffer_size: BufferSize,
 
         // Leave space for the data length of the first packet if not already accounted for
         if group.len() == 1 {
-            total_len += variable_length_int_size(group[0].1.len() + 2);
+            total_len += variable_length_int_size(group[0].1.len() + size_of::<u16>());
         }
 
         if total_len <= space_left as usize {
