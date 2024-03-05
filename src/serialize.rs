@@ -39,6 +39,16 @@ fn write_variable_length_int(buffer: &mut Vec<u8>, value: BufferSize) -> Result<
     Ok(())
 }
 
+fn variable_length_int_size(length: usize) -> usize {
+    if length < 0xFF {
+        size_of::<u8>()
+    } else if length < 0xFFFF {
+        size_of::<u16>() + 1
+    } else {
+        size_of::<u32>() + 3
+    }
+}
+
 fn serialize_session_request(protocol_version: SoeProtocolVersion, session_id: SessionId,
                              buffer_size: BufferSize, app_protocol: &ApplicationProtocol) -> Result<Vec<u8>, SerializeError> {
     let mut buffer = Vec::new();
@@ -216,7 +226,7 @@ fn group_session_packets(session_packets: Vec<&Packet>, buffer_size: BufferSize,
     }
 
     let mut space_left = data_max_size;
-    let mut group = Vec::new();
+    let mut group: Vec<(ProtocolOpCode, Vec<u8>)> = Vec::new();
 
     while !serialized_packets.is_empty() {
         let (op_code, serialized_packet) = serialized_packets.pop_front().unwrap();
@@ -224,14 +234,14 @@ fn group_session_packets(session_packets: Vec<&Packet>, buffer_size: BufferSize,
         // Add two bytes for the op code
         let mut packet_len = serialized_packet.len() + 2;
 
-        // Leave 4 bytes for the data length of the first packet
-        if group.len() == 1 {
-            packet_len += 4;
+        // Leave space for the data length of the current packet if it is not the first packet
+        if group.len() > 0 {
+            packet_len += variable_length_int_size(packet_len);
         }
 
-        // Leave 4 bytes for the data length of the current packet if it is not the first packet
-        if group.len() > 0 {
-            packet_len += 4;
+        // Leave space for the data length of the first packet if not already accounted for
+        if group.len() == 1 {
+            packet_len += variable_length_int_size(2 + group[0].1.len());
         }
 
         if packet_len <= space_left as usize {
