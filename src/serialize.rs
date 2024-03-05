@@ -311,7 +311,7 @@ pub fn max_fragment_data_size(buffer_size: BufferSize, session: &Session) -> u32
 
 }
 
-pub fn serialize_packets(packets: &[Packet], buffer_size: BufferSize,
+pub fn serialize_packets(packets: &[&Packet], buffer_size: BufferSize,
                          possible_session: &Option<Session>) -> Result<Vec<Vec<u8>>, SerializeError> {
     let (require_session, no_require_session): (Vec<&Packet>, Vec<&Packet>) = packets.iter()
         .partition(|packet| packet.op_code().requires_session());

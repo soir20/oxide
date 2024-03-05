@@ -125,14 +125,14 @@ impl Packet {
 }
 
 struct PendingPacket {
-    needs_ack: bool,
+    needs_send: bool,
     packet: Packet
 }
 
 impl PendingPacket {
     fn new(packet: Packet) -> Self {
         PendingPacket {
-            needs_ack: packet.sequence_number().is_some(),
+            needs_send: true,
             packet
         }
     }
@@ -298,20 +298,28 @@ impl Channel {
     }
 
     pub fn send_next(&mut self, count: u8) -> Result<Vec<Vec<u8>>, SerializeError> {
-        let mut packets_to_send = Vec::new();
+        let mut indices_to_send = Vec::new();
 
         // If the packet was acked, it was already sent, so don't send it again
-        // TODO: fix send until acked
-        //self.send_queue.retain(|packet| packet.packet.sequence_number().is_none() || packet.needs_ack);
+        self.send_queue.retain(|packet| packet.needs_send);
 
-        for _ in 0..count as usize {
-            // TODO: can't pop here
-            if let Some(packet) = self.send_queue.pop_front() {
-                packets_to_send.push(packet.packet);
-            } else {
-                break;
+        let mut index = 0;
+        while indices_to_send.len() < count as usize && index < self.send_queue.len() {
+            let mut packet = &mut self.send_queue[index];
+
+            // Packets without sequence numbers do not need to be acked, so they
+            // are always sent exactly once.
+            if packet.packet.sequence_number().is_none() {
+                packet.needs_send = false;
             }
+
+            indices_to_send.push(index);
+            index += 1;
         }
+
+        let packets_to_send: Vec<&Packet> = indices_to_send.into_iter()
+            .map(|index| &self.send_queue[index].packet)
+            .collect();
 
         serialize_packets(&packets_to_send, self.buffer_size, &self.session)
     }
@@ -340,9 +348,9 @@ impl Channel {
 
         // If the max is smaller, the sequence numbers wrapped around
         if min_sequence_number < max {
-            min_sequence_number <= pending && pending < max
+            min_sequence_number <= pending && pending <= max
         } else {
-            pending < max || pending >= min_sequence_number
+            min_sequence_number <= pending || pending <= max
         }
     }
 
@@ -521,11 +529,11 @@ impl Channel {
 
     fn process_ack(&mut self, acked_sequence: SequenceNumber) {
         if Channel::should_client_ack(self.recency_limit, self.next_server_sequence,
-                                      self.next_server_sequence, acked_sequence) {
+                                      self.next_server_sequence.wrapping_sub(1), acked_sequence) {
             for pending_packet in self.send_queue.iter_mut() {
                 if let Some(pending_sequence) = pending_packet.packet.sequence_number() {
                     if acked_sequence == pending_sequence {
-                        pending_packet.needs_ack = false;
+                        pending_packet.needs_send = false;
                     }
                 }
             }
@@ -536,8 +544,8 @@ impl Channel {
         for pending_packet in self.send_queue.iter_mut() {
             if let Some(pending_sequence) = pending_packet.packet.sequence_number() {
                 if Channel::should_client_ack(self.recency_limit, self.next_server_sequence,
-                                              acked_sequence.wrapping_add(1), pending_sequence) {
-                    pending_packet.needs_ack = false;
+                                              acked_sequence, pending_sequence) {
+                    pending_packet.needs_send = false;
                 }
             }
         }
@@ -582,12 +590,10 @@ impl Channel {
     }
 
     fn acknowledge_one(&mut self, sequence_number: SequenceNumber) {
-        println!("ACKING {}", sequence_number);
         self.send_queue.push_back(PendingPacket::new(Packet::Ack(sequence_number)));
     }
 
     fn acknowledge_all(&mut self, sequence_number: SequenceNumber) {
-        println!("ACKING ALL {}", sequence_number);
         self.send_queue.push_back(PendingPacket::new(Packet::AckAll(sequence_number)));
     }
 }
