@@ -241,7 +241,7 @@ fn group_session_packets(session_packets: Vec<&Packet>, buffer_size: BufferSize,
 
         // Leave space for the data length of the first packet if not already accounted for
         if group.len() == 1 {
-            packet_len += variable_length_int_size(2 + group[0].1.len());
+            packet_len += variable_length_int_size(group[0].1.len() + 2);
         }
 
         if packet_len <= space_left as usize {
