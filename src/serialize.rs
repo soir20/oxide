@@ -232,25 +232,27 @@ fn group_session_packets(session_packets: Vec<&Packet>, buffer_size: BufferSize,
         let (op_code, serialized_packet) = serialized_packets.pop_front().unwrap();
 
         // Add two bytes for the op code
-        let mut packet_len = serialized_packet.len() + 2;
+        let packet_len = serialized_packet.len() + 2;
+
+        let mut total_len = packet_len;
 
         // Leave space for the data length of the current packet if it is not the first packet
         if group.len() > 0 {
-            packet_len += variable_length_int_size(packet_len);
+            total_len += variable_length_int_size(packet_len);
         }
 
         // Leave space for the data length of the first packet if not already accounted for
         if group.len() == 1 {
-            packet_len += variable_length_int_size(group[0].1.len() + 2);
+            total_len += variable_length_int_size(group[0].1.len() + 2);
         }
 
-        if packet_len <= space_left as usize {
-            space_left -= packet_len as BufferSize;
+        if total_len <= space_left as usize {
+            space_left -= total_len as BufferSize;
             group.push((op_code, serialized_packet));
-        } else if serialized_packet.len() > data_max_size as usize {
+        } else if packet_len > data_max_size as usize {
 
             // Prevent infinite loop if the packet cannot fit into the buffer by itself
-            return Err(SerializeError::BufferTooSmall(serialized_packet.len()));
+            return Err(SerializeError::BufferTooSmall(packet_len));
 
         } else {
             groups.push(group.clone());
