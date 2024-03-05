@@ -211,31 +211,42 @@ fn group_session_packets(session_packets: Vec<&Packet>, buffer_size: BufferSize,
     let mut serialized_packets = VecDeque::new();
     for packet in session_packets.into_iter() {
         serialized_packets.push_back(
-            (true, packet.op_code(), serialize_packet_data(packet)?)
+            (packet.op_code(), serialize_packet_data(packet)?)
         );
     }
 
-    for (_, op_code, serialized_packet) in serialized_packets.into_iter() {
-        groups.push(vec![(op_code, serialized_packet)])
-    }
-
-    return Ok(groups);
     let mut space_left = data_max_size;
     let mut group = Vec::new();
 
     while !serialized_packets.is_empty() {
-        let (need_data_length, op_code, serialized_packet) = serialized_packets.pop_front().unwrap();
+        let (op_code, serialized_packet) = serialized_packets.pop_front().unwrap();
 
-        if serialized_packet.len() <= space_left as usize {
-            space_left -= serialized_packet.len() as BufferSize;
+        // Add two bytes for the op code
+        let mut packet_len = serialized_packet.len() + 2;
+
+        // Leave 4 bytes for the data length of the first packet
+        if group.len() == 1 {
+            packet_len += 4;
+        }
+
+        // Leave 4 bytes for the data length of the current packet if it is not the first packet
+        if group.len() > 0 {
+            packet_len += 4;
+        }
+
+        if packet_len <= space_left as usize {
+            space_left -= packet_len as BufferSize;
             group.push((op_code, serialized_packet));
         } else if serialized_packet.len() > data_max_size as usize {
+
+            // Prevent infinite loop if the packet cannot fit into the buffer by itself
             return Err(SerializeError::BufferTooSmall(serialized_packet.len()));
+
         } else {
             groups.push(group.clone());
             group.clear();
             space_left = data_max_size;
-            serialized_packets.push_front((need_data_length, op_code, serialized_packet));
+            serialized_packets.push_front((op_code, serialized_packet));
         }
     }
 
