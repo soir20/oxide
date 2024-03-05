@@ -8,7 +8,7 @@ use byteorder::{BigEndian, LittleEndian, ReadBytesExt, WriteBytesExt};
 use rand::random;
 use crate::deserialize::{deserialize_packet, DeserializeError};
 use crate::hash::{CrcSeed, CrcSize};
-use crate::login::{extract_tunneled_packet_data, make_tunneled_packet, send_item_definitions, send_self_to_client};
+use crate::login::{extract_tunneled_packet_data, make_tunneled_packet, send_self_to_client};
 use crate::serialize::{max_fragment_data_size, serialize_packets, SerializeError};
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
@@ -497,7 +497,7 @@ impl Channel {
         let session = Session {
             session_id,
             crc_length: 3,
-            crc_seed: 12345,
+            crc_seed: random::<CrcSeed>(),
             allow_compression: false,
             use_encryption: false,
         };
