@@ -232,27 +232,28 @@ fn group_session_packets(session_packets: Vec<&Packet>, buffer_size: BufferSize,
         let (op_code, serialized_packet) = serialized_packets.pop_front().unwrap();
 
         // Add two bytes for the op code
-        let packet_len = serialized_packet.len() + size_of::<u16>();
+        let mut total_len = serialized_packet.len();
 
-        let mut total_len = packet_len;
-
-        // Leave space for the data length of the current packet if it is not the first packet
+        // Leave space for this packet's op code and data length if it is not the first packet.
+        // If it is the first packet, then the op code is included in the header size.
         if group.len() > 0 {
-            total_len += variable_length_int_size(packet_len);
+            total_len += size_of::<u16>();
+            total_len += variable_length_int_size(total_len);
         }
 
-        // Leave space for the data length of the first packet if not already accounted for
+        // Leave space for the op code and data length of the first packet if not accounted for
         if group.len() == 1 {
+            total_len += size_of::<u16>();
             total_len += variable_length_int_size(group[0].1.len() + size_of::<u16>());
         }
 
         if total_len <= space_left as usize {
             space_left -= total_len as BufferSize;
             group.push((op_code, serialized_packet));
-        } else if packet_len > data_max_size as usize {
+        } else if serialized_packet.len() > data_max_size as usize {
 
             // Prevent infinite loop if the packet cannot fit into the buffer by itself
-            return Err(SerializeError::BufferTooSmall(packet_len));
+            return Err(SerializeError::BufferTooSmall(serialized_packet.len()));
 
         } else {
             groups.push(group.clone());
@@ -349,4 +350,58 @@ pub fn serialize_packets(packets: &[&Packet], buffer_size: BufferSize,
     }
 
     Ok(buffers)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_good_session_packets_with_compression_crc_length_three() {
+        let buffer_size = 512;
+        let session_id = 12345;
+        let session = Session {
+            session_id,
+            crc_length: 3,
+            crc_seed: 67890,
+            allow_compression: false,
+            use_encryption: false,
+        };
+        let packets = vec![
+            Packet::Disconnect(session_id, DisconnectReason::Application),
+            Packet::Heartbeat,
+
+            // Data packet should fit exactly
+            // 5 bytes for the wrapper
+            // 9 bytes for disconnect packet and its 1-byte length
+            // 3 bytes for the heartbeat packet and its 1-byte length
+            // 3 bytes for this data packet's length
+            // 2 bytes for this data packet's op code
+            // 2 bytes for this data packet's sequence number
+            Packet::Data(3, vec![4; buffer_size as usize - 5 - 9 - 3 - 3 - 2 - 2]),
+
+            Packet::Disconnect(session_id, DisconnectReason::CorruptPacket),
+            Packet::Heartbeat,
+
+            // Data packet should overflow by 1 byte
+            // 5 bytes for the wrapper
+            // 9 bytes for disconnect packet and its 1-byte length
+            // 3 bytes for the heartbeat packet and its 1-byte length
+            // 3 bytes for this data packet's length
+            // 2 bytes for this data packet's op code
+            // 2 bytes for this data packet's sequence number
+            Packet::Data(7, vec![8; buffer_size as usize - 5 - 9 - 3 - 3 - 2 - 2 + 1]),
+
+            // Data packet should fit by itself exactly
+            // 5 bytes for the wrapper
+            // 2 bytes for this data packet's op code
+            // 2 bytes for this data packet's sequence number
+            Packet::Data(9, vec![10; buffer_size as usize - 5 - 2]),
+
+            Packet::Disconnect(session_id, DisconnectReason::ProtocolMismatch),
+            Packet::Heartbeat,
+        ];
+        println!("{:?}", serialize_packets(&packets.iter().map(|packet| packet).collect::<Vec<&Packet>>(), buffer_size, &Some(session)));
+    }
+
 }
