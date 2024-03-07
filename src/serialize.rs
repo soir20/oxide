@@ -813,4 +813,188 @@ mod tests {
         assert_eq!(actual, expected);
     }
 
+    #[test]
+    fn test_good_mixed_packets_with_compression() {
+        let buffer_size = 512;
+        let session = Session {
+            session_id: 12345,
+            crc_length: 3,
+            crc_seed: 67890,
+            allow_compression: true,
+            use_encryption: false,
+        };
+
+        let packets = vec![
+
+            Packet::SessionRequest(3, 12345, buffer_size, String::from("abcdefghijklmnopqrstuvw")),
+            Packet::UnknownSender,
+
+            Packet::Disconnect(session.session_id, DisconnectReason::Application),
+            Packet::Heartbeat,
+
+            Packet::RemapConnection(12345, 67890),
+
+            // Data packet should fit exactly
+            // 5 bytes for the wrapper
+            // 9 bytes for disconnect packet and its 1-byte length
+            // 3 bytes for the heartbeat packet and its 1-byte length
+            // 3 bytes for this data packet's length
+            // 2 bytes for this data packet's op code
+            // 2 bytes for this data packet's sequence number
+            // 1 byte for compression flag
+            Packet::Data(3, vec![4; buffer_size as usize - 5 - 9 - 3 - 3 - 2 - 2 - 1]),
+
+            Packet::Disconnect(session.session_id, DisconnectReason::CorruptPacket),
+            Packet::Heartbeat,
+
+            Packet::UnknownSender,
+
+            // Data packet should overflow by 1 byte
+            // 5 bytes for the wrapper
+            // 9 bytes for disconnect packet and its 1-byte length
+            // 3 bytes for the heartbeat packet and its 1-byte length
+            // 3 bytes for this data packet's length
+            // 2 bytes for this data packet's op code
+            // 2 bytes for this data packet's sequence number
+            // 1 byte for compression flag
+            Packet::Data(7, vec![8; buffer_size as usize - 5 - 9 - 3 - 3 - 2 - 2 - 1 + 1]),
+
+            Packet::RemapConnection(12345, 67890),
+            Packet::SessionRequest(3, 12345, buffer_size, String::from("abcdefghijklmnopqrstuvwx")),
+            Packet::SessionRequest(3, 12345, buffer_size, String::from("abcdefghijklmnopqrstuvwxyz012345678")),
+
+            // Data packet should fit by itself exactly
+            // 5 bytes for the wrapper
+            // 2 bytes for this data packet's op code
+            // 2 bytes for this data packet's sequence number
+            // 1 byte for compression flag
+            Packet::Data(9, vec![10; buffer_size as usize - 5 - 2 - 1]),
+
+            Packet::SessionReply(12345, 67890, 3, false, false, buffer_size, 3),
+            Packet::NetStatusRequest(0, 1, 2, 3, 4, 5, 6, 7, 8),
+
+            Packet::Ack(11),
+            Packet::AckAll(12),
+
+            Packet::NetStatusReply(9, 10, 11, 12, 13, 14, 15),
+        ];
+
+        let actual = serialize_packets(
+            &packets.iter().map(|packet| packet).collect::<Vec<&Packet>>(),
+            buffer_size,
+            &Some(session)
+        ).unwrap();
+        let expected: Vec<Vec<u8>> = vec![
+
+            // Non-session packets
+            vec![
+                0, 1,
+                0, 0, 0, 3,
+                0, 0, 48, 57,
+                0, 0, 2, 0,
+                97, 98, 99,  100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112,
+                113, 114, 115, 116, 117, 118, 119, 0
+            ],
+            vec![
+                0, 29
+            ],
+            vec![
+                0, 30,
+                0, 0, 48, 57,
+                0, 1, 9, 50
+            ],
+            vec![
+                0, 29
+            ],
+            vec![
+                0, 30,
+                0, 0, 48, 57,
+                0, 1, 9, 50
+            ],
+            vec![
+                0, 1,
+                0, 0, 0, 3,
+                0, 0, 48, 57,
+                0, 0, 2, 0,
+                97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112,
+                113, 114, 115, 116, 117, 118, 119, 120, 0
+            ],
+            vec![
+                0, 1,
+                0, 0, 0, 3,
+                0, 0, 48, 57,
+                0, 0, 2, 0,
+                97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112,
+                113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 48, 49, 50, 51, 52, 53, 54,
+                55, 56, 0],
+            vec![
+                0, 2,
+                0, 0, 48, 57,
+                0, 1, 9, 50,
+                3,
+                0,
+                0,
+                0, 0, 2, 0,
+                0, 0, 0, 3
+            ],
+            vec![
+                0, 7,
+                0, 0,
+                0, 0, 0, 1,
+                0, 0, 0, 2,
+                0, 0, 0, 3,
+                0, 0, 0, 4,
+                0, 0, 0, 5,
+                0, 0, 0, 0, 0, 0, 0, 6,
+                0, 0, 0, 0, 0, 0, 0, 7,
+                0, 8
+            ],
+            vec![
+                0, 8,
+                0, 9,
+                0, 0, 0, 10,
+                0, 0, 0, 0, 0, 0, 0, 11,
+                0, 0, 0, 0, 0, 0, 0, 12,
+                0, 0, 0, 0, 0, 0, 0, 13,
+                0, 0, 0, 0, 0, 0, 0, 14,
+                0, 15
+            ],
+
+            // Session packets
+            vec![
+                0, 3, 1,
+                120, 94, 237, 192, 75, 21, 0, 64, 4, 64, 209, 55, 63, 103, 180, 177, 213, 63,
+                142, 16, 4, 225, 126, 30, 152, 35, 27, 201, 21, 40, 231, 142, 14, 10, 14, 7,
+                10, 24,
+                188, 38, 243
+            ],
+            vec![
+                0, 3, 0,
+                8, 0, 5, 0, 0, 48, 57, 0, 15,
+                2, 0, 6,
+                9, 91, 117
+            ],
+            vec![
+                0, 9, 1,
+                120, 94, 237, 192, 49, 1, 0, 0, 0, 130, 48, 63, 237, 159, 216, 32, 176, 116, 66,
+                56, 160, 187, 15, 72,
+                245, 91, 70
+            ],
+            vec![
+                0, 9, 1,
+                120, 94, 237, 192, 49, 1, 0, 0, 0, 130, 48, 95, 237, 31, 216, 32, 176, 116, 66,
+                58, 127, 240, 19, 186,
+                27, 226, 100
+            ],
+            vec![
+                0, 3, 0,
+                4, 0, 17, 0, 11, 4, 0, 21, 0, 12,
+                217, 39, 71
+            ]
+
+        ];
+
+        assert_eq!(actual, expected);
+    }
+
 }
