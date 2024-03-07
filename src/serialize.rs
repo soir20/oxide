@@ -59,6 +59,10 @@ fn serialize_session_request(protocol_version: SoeProtocolVersion, session_id: S
     buffer.write_u32::<BigEndian>(session_id)?;
     buffer.write_u32::<BigEndian>(buffer_size)?;
     buffer.write_all(app_protocol.as_bytes())?;
+
+    // Null terminator
+    buffer.write_u8(0)?;
+
     Ok(buffer)
 }
 
@@ -402,6 +406,154 @@ mod tests {
             buffer_size,
             &Some(session)
         ).unwrap()
+    }
+
+    #[test]
+    fn test_too_large_non_session_packet() {
+        let buffer_size = 16;
+        let packets = vec![
+            Packet::SessionRequest(3, 12345, buffer_size, String::from("test"))
+        ];
+
+        let actual = serialize_packets(
+            &packets.iter().map(|packet| packet).collect::<Vec<&Packet>>(),
+            buffer_size,
+            &None
+        );
+        assert!(actual.is_err());
+    }
+
+    #[test]
+    fn test_good_non_session_packets_single_full_size_packet() {
+        let buffer_size = 32;
+        let packets = vec![
+            Packet::SessionRequest(3, 12345, buffer_size, String::from("abcdefghijklmnopq"))
+        ];
+
+        let actual = serialize_packets(
+            &packets.iter().map(|packet| packet).collect::<Vec<&Packet>>(),
+            buffer_size,
+            &None
+        ).unwrap();
+        let expected: Vec<Vec<u8>> = vec![
+            vec![
+                0, 1,
+                0, 0, 0, 3,
+                0, 0, 48, 57,
+                0, 0, 0, 32,
+                97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 0
+            ]
+        ];
+
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_good_non_session_packets() {
+        let buffer_size = 50;
+        let packets = vec![
+
+            // Packets add up to 50 bytes but should not be combined because there
+            // are no non-session multi-packets
+            Packet::SessionRequest(3, 12345, buffer_size, String::from("abcdefghijklmnopqrstuvw")),
+            Packet::UnknownSender,
+            Packet::RemapConnection(12345, 67890),
+
+            // Packets add up to 51 bytes but should not be combined because there
+            // are no non-session multi-packets
+            Packet::UnknownSender,
+            Packet::RemapConnection(12345, 67890),
+            Packet::SessionRequest(3, 12345, buffer_size, String::from("abcdefghijklmnopqrstuvwx")),
+
+            // Packet fits buffer exactly
+            Packet::SessionRequest(3, 12345, buffer_size, String::from("abcdefghijklmnopqrstuvwxyz012345678")),
+
+            Packet::SessionReply(12345, 67890, 3, false, false, buffer_size, 3),
+            Packet::NetStatusRequest(0, 1, 2, 3, 4, 5, 6, 7, 8),
+            Packet::NetStatusReply(9, 10, 11, 12, 13, 14, 15)
+        ];
+
+        let actual = serialize_packets(
+            &packets.iter().map(|packet| packet).collect::<Vec<&Packet>>(),
+            buffer_size,
+            &None
+        ).unwrap();
+        let expected: Vec<Vec<u8>> = vec![
+            vec![
+                0, 1,
+                0, 0, 0, 3,
+                0, 0, 48, 57,
+                0, 0, 0, 50,
+                97, 98, 99,  100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112,
+                113, 114, 115, 116, 117, 118, 119, 0
+            ],
+            vec![
+                0, 29
+            ],
+            vec![
+                0, 30,
+                0, 0, 48, 57,
+                0, 1, 9, 50
+            ],
+            vec![
+                0, 29
+            ],
+            vec![
+                0, 30,
+                0, 0, 48, 57,
+                0, 1, 9, 50
+            ],
+            vec![
+                0, 1,
+                0, 0, 0, 3,
+                0, 0, 48, 57,
+                0, 0, 0, 50,
+                97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112,
+                113, 114, 115, 116, 117, 118, 119, 120, 0
+            ],
+            vec![
+                0, 1,
+                0, 0, 0, 3,
+                0, 0, 48, 57,
+                0, 0, 0, 50,
+                97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112,
+                113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 48, 49, 50, 51, 52, 53, 54,
+                55, 56, 0],
+            vec![
+                0, 2,
+                0, 0, 48, 57,
+                0, 1, 9, 50,
+                3,
+                0,
+                0,
+                0, 0, 0, 50,
+                0, 0, 0, 3
+            ],
+            vec![
+                0, 7,
+                0, 0,
+                0, 0, 0, 1,
+                0, 0, 0, 2,
+                0, 0, 0, 3,
+                0, 0, 0, 4,
+                0, 0, 0, 5,
+                0, 0, 0, 0, 0, 0, 0, 6,
+                0, 0, 0, 0, 0, 0, 0, 7,
+                0, 8
+            ],
+            vec![
+                0, 8,
+                0, 9,
+                0, 0, 0, 10,
+                0, 0, 0, 0, 0, 0, 0, 11,
+                0, 0, 0, 0, 0, 0, 0, 12,
+                0, 0, 0, 0, 0, 0, 0, 13,
+                0, 0, 0, 0, 0, 0, 0, 14,
+                0, 15
+            ]
+        ];
+
+        assert_eq!(actual, expected);
     }
 
     #[test]
