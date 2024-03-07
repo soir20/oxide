@@ -6,6 +6,10 @@ use miniz_oxide::deflate::compress_to_vec_zlib;
 use crate::hash::{compute_crc, CrcSeed, CrcSize};
 use crate::protocol::{ApplicationProtocol, BufferSize, ClientTick, DisconnectReason, Packet, PacketCount, ProtocolOpCode, SequenceNumber, ServerTick, Session, SessionId, SoeProtocolVersion, Timestamp};
 
+// Use 100 as an arbitrary threshold to avoid compressing packets that benefit
+// little to nothing from compression
+const ZLIB_COMPRESSION_LENGTH_THRESHOLD: usize = 100;
+
 const ZLIB_COMPRESSION_LEVEL: u8 = 2;
 
 #[non_exhaustive]
@@ -279,7 +283,7 @@ fn write_header(buffer: &mut Vec<u8>, op_code: ProtocolOpCode, session: &Session
 }
 
 fn try_compress(data: &mut Vec<u8>, session: &Session) -> bool {
-    if session.allow_compression {
+    if session.allow_compression && data.len() > ZLIB_COMPRESSION_LENGTH_THRESHOLD {
         let compressed_data = compress_to_vec_zlib(&data, ZLIB_COMPRESSION_LEVEL);
         if data.len() > compressed_data.len() {
             *data = compressed_data;
@@ -356,19 +360,10 @@ pub fn serialize_packets(packets: &[&Packet], buffer_size: BufferSize,
 mod tests {
     use super::*;
 
-    #[test]
-    fn test_good_session_packets_without_compression_crc_length_three() {
-        let buffer_size = 512;
-        let session_id = 12345;
-        let session = Session {
-            session_id,
-            crc_length: 3,
-            crc_seed: 67890,
-            allow_compression: false,
-            use_encryption: false,
-        };
+    fn make_test_session_packets(buffer_size: BufferSize, session: Session) -> Vec<Vec<u8>> {
+        let compression_byte = if session.allow_compression { 1 } else { 0 };
         let packets = vec![
-            Packet::Disconnect(session_id, DisconnectReason::Application),
+            Packet::Disconnect(session.session_id, DisconnectReason::Application),
             Packet::Heartbeat,
 
             // Data packet should fit exactly
@@ -378,9 +373,9 @@ mod tests {
             // 3 bytes for this data packet's length
             // 2 bytes for this data packet's op code
             // 2 bytes for this data packet's sequence number
-            Packet::Data(3, vec![4; buffer_size as usize - 5 - 9 - 3 - 3 - 2 - 2]),
+            Packet::Data(3, vec![4; buffer_size as usize - 5 - 9 - 3 - 3 - 2 - 2 - compression_byte]),
 
-            Packet::Disconnect(session_id, DisconnectReason::CorruptPacket),
+            Packet::Disconnect(session.session_id, DisconnectReason::CorruptPacket),
             Packet::Heartbeat,
 
             // Data packet should overflow by 1 byte
@@ -390,23 +385,37 @@ mod tests {
             // 3 bytes for this data packet's length
             // 2 bytes for this data packet's op code
             // 2 bytes for this data packet's sequence number
-            Packet::Data(7, vec![8; buffer_size as usize - 5 - 9 - 3 - 3 - 2 - 2 + 1]),
+            Packet::Data(7, vec![8; buffer_size as usize - 5 - 9 - 3 - 3 - 2 - 2 - compression_byte + 1]),
 
             // Data packet should fit by itself exactly
             // 5 bytes for the wrapper
             // 2 bytes for this data packet's op code
             // 2 bytes for this data packet's sequence number
-            Packet::Data(9, vec![10; buffer_size as usize - 5 - 2]),
+            Packet::Data(9, vec![10; buffer_size as usize - 5 - 2 - compression_byte]),
 
             Packet::Ack(11),
             Packet::AckAll(12),
         ];
 
-        let actual = serialize_packets(
+        serialize_packets(
             &packets.iter().map(|packet| packet).collect::<Vec<&Packet>>(),
             buffer_size,
             &Some(session)
-        ).unwrap();
+        ).unwrap()
+    }
+
+    #[test]
+    fn test_good_session_packets_without_compression() {
+        let buffer_size = 512;
+        let session = Session {
+            session_id: 12345,
+            crc_length: 3,
+            crc_seed: 67890,
+            allow_compression: false,
+            use_encryption: false,
+        };
+
+        let actual = make_test_session_packets(buffer_size, session);
         let expected: Vec<Vec<u8>> = vec![
             vec![
                 0, 3,
@@ -495,6 +504,54 @@ mod tests {
                 4, 0, 17, 0, 11,
                 4, 0, 21, 0, 12,
                 122, 81, 177
+            ]
+        ];
+
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_good_session_packets_with_compression() {
+        let buffer_size = 512;
+        let session = Session {
+            session_id: 12345,
+            crc_length: 3,
+            crc_seed: 67890,
+            allow_compression: true,
+            use_encryption: false,
+        };
+
+        let actual = make_test_session_packets(buffer_size, session);
+        let expected: Vec<Vec<u8>> = vec![
+            vec![
+                0, 3, 1,
+                120, 94, 237, 192, 75, 21, 0, 64, 4, 64, 209, 55, 63, 103, 180, 177, 213, 63,
+                142, 16, 4, 225, 126, 30, 152, 35, 27, 201, 21, 40, 231, 142, 14, 10, 14, 7,
+                10, 24,
+                188, 38, 243
+            ],
+            vec![
+                0, 3, 0,
+                8, 0, 5, 0, 0, 48, 57, 0, 15,
+                2, 0, 6,
+                9, 91, 117
+            ],
+            vec![
+                0, 9, 1,
+                120, 94, 237, 192, 49, 1, 0, 0, 0, 130, 48, 63, 237, 159, 216, 32, 176, 116, 66,
+                56, 160, 187, 15, 72,
+                245, 91, 70
+            ],
+            vec![
+                0, 9, 1,
+                120, 94, 237, 192, 49, 1, 0, 0, 0, 130, 48, 95, 237, 31, 216, 32, 176, 116, 66,
+                58, 127, 240, 19, 186,
+                27, 226, 100
+            ],
+            vec![
+                0, 3, 0,
+                4, 0, 17, 0, 11, 4, 0, 21, 0, 12,
+                217, 39, 71
             ]
         ];
 
