@@ -16,7 +16,6 @@ const ZLIB_COMPRESSION_LEVEL: u8 = 2;
 #[derive(Debug)]
 pub enum SerializeError {
     MissingSession,
-    NonSessionPacketTooLarge(usize),
     BufferTooSmall(usize),
     IoError(Error)
 }
@@ -197,7 +196,7 @@ fn add_non_session_packets(buffers: &mut Vec<Vec<u8>>, non_session_packets: Vec<
 
     // Fragmented packets require a session, so reject non-session packets that are too large
     if max_no_session_len > buffer_size as usize {
-        return Err(SerializeError::NonSessionPacketTooLarge(max_no_session_len));
+        return Err(SerializeError::BufferTooSmall(max_no_session_len));
     }
 
     buffers.append(&mut serialized_packets);
@@ -403,6 +402,48 @@ mod tests {
             buffer_size,
             &Some(session)
         ).unwrap()
+    }
+
+    #[test]
+    fn test_session_packets_when_missing_session() {
+        let buffer_size = 512;
+        let packets = vec![
+            Packet::Data(9, vec![10; 100])
+        ];
+        let actual = serialize_packets(
+            &packets.iter().map(|packet| packet).collect::<Vec<&Packet>>(),
+            buffer_size,
+            &None
+        );
+        assert!(actual.is_err());
+    }
+
+    #[test]
+    fn test_too_large_session_packet() {
+        let buffer_size = 512;
+        let session = Session {
+            session_id: 12345,
+            crc_length: 3,
+            crc_seed: 67890,
+            allow_compression: false,
+            use_encryption: false,
+        };
+
+        // Data packet should overflow by 1 byte
+        // 5 bytes for the wrapper
+        // 2 bytes for this data packet's op code
+        // 2 bytes for this data packet's sequence number
+        let packet_size = buffer_size as usize - 5 - 2 + 1;
+        let packets = vec![
+            Packet::Data(9, vec![10; packet_size])
+        ];
+
+        let actual = serialize_packets(
+            &packets.iter().map(|packet| packet).collect::<Vec<&Packet>>(),
+            buffer_size,
+            &Some(session)
+        );
+        assert!(actual.is_err());
     }
 
     #[test]
