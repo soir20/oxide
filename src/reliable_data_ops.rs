@@ -86,6 +86,12 @@ fn read_data_bundle_variable_length_int(data: &[u8]) -> Result<(u32, usize), Dat
 }
 
 pub fn unbundle_reliable_data(data: &[u8]) -> Result<Vec<Vec<u8>>, DataError> {
+
+    // Check for the magic bytes 0x00, 0x19 that indicate data packets
+    if data.len() < 2 || data[0] != 0x00 || data[1] != 0x19 {
+        return Ok(vec![data.to_vec()]);
+    }
+
     let mut offset = 0;
     let mut cursor = Cursor::new(data);
     let mut packets = Vec::new();
