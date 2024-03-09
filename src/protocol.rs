@@ -504,7 +504,7 @@ impl Channel {
             let sequence = self.next_server_sequence();
             let sequenced_packet = match packet {
                 DataPacket::Fragment(data) => Packet::DataFragment(sequence, data),
-                DataPacket::Single(data) => Packet::DataFragment(sequence, data)
+                DataPacket::Single(data) => Packet::Data(sequence, data)
             };
 
             self.send_queue.push_back(PendingPacket::new(sequenced_packet));
