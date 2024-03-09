@@ -1,10 +1,21 @@
-use std::io::Cursor;
+use std::io::{Cursor, Error};
 use std::mem::size_of;
 use byteorder::{BigEndian, ReadBytesExt};
-use crate::deserialize::DeserializeError;
+
+#[non_exhaustive]
+#[derive(Debug)]
+pub enum BundleError {
+    IoError(Error)
+}
+
+impl From<Error> for BundleError {
+    fn from(value: Error) -> Self {
+        BundleError::IoError(value)
+    }
+}
 
 //noinspection DuplicatedCode
-fn read_data_bundle_variable_length_int(data: &[u8]) -> Result<(u32, usize), DeserializeError> {
+fn read_data_bundle_variable_length_int(data: &[u8]) -> Result<(u32, usize), BundleError> {
     let mut cursor = Cursor::new(data);
 
     if data.len() >= 1 && data[0] < 0xFF {
@@ -19,7 +30,7 @@ fn read_data_bundle_variable_length_int(data: &[u8]) -> Result<(u32, usize), Des
 
 }
 
-fn unbundle_reliable_data(data: &[u8]) -> Result<Vec<Vec<u8>>, DeserializeError> {
+fn unbundle_reliable_data(data: &[u8]) -> Result<Vec<Vec<u8>>, BundleError> {
     let mut offset = 0;
     let mut cursor = Cursor::new(data);
     let mut packets = Vec::new();
