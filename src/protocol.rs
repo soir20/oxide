@@ -1,15 +1,15 @@
 use std::collections::{BTreeMap, HashMap, VecDeque};
-use std::io::{Cursor, Error, Write};
-use std::mem::size_of;
+use std::io::Write;
 use std::net::SocketAddr;
 use std::sync::{Mutex, RwLock};
 use std::time::{SystemTime, UNIX_EPOCH};
-use byteorder::{BigEndian, LittleEndian, ReadBytesExt, WriteBytesExt};
+use byteorder::{LittleEndian, WriteBytesExt};
 use rand::random;
 use crate::deserialize::{deserialize_packet, DeserializeError};
 use crate::hash::{CrcSeed, CrcSize};
 use crate::login::{extract_tunneled_packet_data, make_tunneled_packet, send_self_to_client};
-use crate::serialize::{max_fragment_data_size, serialize_packets, SerializeError};
+use crate::reliable_data_ops::{DataPacket, fragment_data, FragmentState};
+use crate::serialize::{serialize_packets, SerializeError};
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub enum ProtocolOpCode {
@@ -146,61 +146,6 @@ pub struct Session {
     pub use_encryption: bool
 }
 
-#[non_exhaustive]
-#[derive(Debug)]
-enum FragmentError {
-    ExpectedFragment(ProtocolOpCode),
-    MissingDataLength,
-    IoError(Error)
-}
-
-impl From<Error> for FragmentError {
-    fn from(value: Error) -> Self {
-        FragmentError::IoError(value)
-    }
-}
-
-struct FragmentState {
-    buffer: Vec<u8>,
-    remaining_bytes: u32
-}
-
-impl FragmentState {
-    fn add(&mut self, packet: Packet) -> Result<Option<Packet>, FragmentError> {
-        if let Packet::DataFragment(sequence_number, data) = packet {
-            let packet_data;
-            if self.remaining_bytes == 0 {
-                if data.len() < 8 {
-                    return Err(FragmentError::MissingDataLength);
-                }
-
-                packet_data = &data[4..];
-                self.remaining_bytes = Cursor::new(&data).read_u32::<BigEndian>()?;
-            } else {
-                packet_data = &data;
-            }
-
-            self.remaining_bytes = self.remaining_bytes.checked_sub(packet_data.len() as u32)
-                .unwrap_or(0);
-            self.buffer.extend(packet_data);
-
-            if self.remaining_bytes > 0 {
-                return Ok(None);
-            }
-
-            let old_buffer = self.buffer.clone();
-            self.buffer.clear();
-            return Ok(Some(Packet::Data(sequence_number, old_buffer)))
-        }
-
-        if self.remaining_bytes > 0 {
-            return Err(FragmentError::ExpectedFragment(packet.op_code()));
-        }
-
-        Ok(Some(packet))
-    }
-}
-
 pub struct Channel {
     session: Option<Session>,
     buffer_size: BufferSize,
@@ -222,7 +167,7 @@ impl Channel {
             session: None,
             buffer_size: initial_buffer_size,
             recency_limit,
-            fragment_state: FragmentState { buffer: Vec::new(), remaining_bytes: 0 },
+            fragment_state: FragmentState::new(),
             send_queue: VecDeque::new(),
             receive_queue: VecDeque::new(),
             reordered_packets: BTreeMap::new(),
@@ -552,40 +497,17 @@ impl Channel {
     }
 
     fn send_data(&mut self, data: Vec<u8>) {
-        let mut remaining_data = &data[..];
-        let mut is_first = true;
+        let packets = fragment_data(self.buffer_size, &self.session, data)
+            .expect("Unable to fragment data");
 
-        if let Some(session) = &self.session {
-            let max_size = max_fragment_data_size(self.buffer_size, session) as usize;
+        for packet in packets {
+            let sequence = self.next_server_sequence();
+            let sequenced_packet = match packet {
+                DataPacket::Fragment(data) => Packet::DataFragment(sequence, data),
+                DataPacket::Single(data) => Packet::DataFragment(sequence, data)
+            };
 
-            if remaining_data.len() <= max_size {
-                let next_sequence = self.next_server_sequence();
-                self.send_queue.push_back(PendingPacket::new(
-                    Packet::Data(next_sequence, data)
-                ));
-                return;
-            }
-
-            while remaining_data.len() > 0 {
-                let mut end = max_size.min(remaining_data.len());
-                let mut buffer = Vec::new();
-                if is_first {
-                    buffer.write_u32::<BigEndian>(data.len() as u32).expect("Tried to write data length");
-                    end -= size_of::<u32>();
-                    is_first = false;
-                }
-
-                let fragment = &remaining_data[0..end];
-                buffer.write_all(fragment).expect("Tried to write fragment data");
-                remaining_data = &remaining_data[end..];
-
-                let next_sequence = self.next_server_sequence();
-                self.send_queue.push_back(PendingPacket::new(
-                    Packet::DataFragment(next_sequence, buffer)
-                ));
-            }
-        } else {
-            panic!("Cannot send reliable data without a session");
+            self.send_queue.push_back(PendingPacket::new(sequenced_packet));
         }
     }
 
