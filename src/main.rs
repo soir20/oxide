@@ -8,6 +8,7 @@ mod hash;
 mod deserialize;
 mod serialize;
 mod login;
+mod reliable_data_ops;
 
 fn main() {
     println!("Hello, world!");

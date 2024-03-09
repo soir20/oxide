@@ -47,12 +47,13 @@ fn check_op_code(op_code: u16) -> Result<ProtocolOpCode, DeserializeError> {
     }
 }
 
-fn read_variable_length_int(data: &[u8]) -> Result<(u32, usize), DeserializeError> {
+//noinspection DuplicatedCode
+fn read_multi_packet_variable_length_int(data: &[u8]) -> Result<(u32, usize), DeserializeError> {
     let mut cursor = Cursor::new(data);
 
-    if data.len() > 2 && data[1] == 0 {
+    if data.len() >= 2 && data[1] == 0 {
         Ok((data[0] as u32, size_of::<u8>()))
-    } else if data.len() > 3 && data[1] == 0xFF && data[2] == 0xFF {
+    } else if data.len() >= 3 && data[1] == 0xFF && data[2] == 0xFF {
         cursor.set_position(3);
         Ok((cursor.read_u32::<BigEndian>()?, 3 + size_of::<u32>()))
     } else {
@@ -108,7 +109,7 @@ fn deserialize_multi_packet(data: &[u8]) -> Result<Vec<Packet>, DeserializeError
     let mut packets = Vec::new();
 
     while offset < data.len() {
-        let (packet_length, new_offset) = read_variable_length_int(&data[offset..])?;
+        let (packet_length, new_offset) = read_multi_packet_variable_length_int(&data[offset..])?;
         offset += new_offset;
         cursor.set_position(offset as u64);
 
