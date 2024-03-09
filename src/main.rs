@@ -1,20 +1,18 @@
 use std::net::{SocketAddr, UdpSocket};
 use std::thread;
 use std::time::Duration;
+use crate::game_server::GameServer;
 use crate::protocol::Channel;
 
 mod protocol;
-mod hash;
-mod deserialize;
-mod serialize;
-mod login;
-mod reliable_data_ops;
+mod game_server;
 
 fn main() {
     println!("Hello, world!");
     let socket = UdpSocket::bind(SocketAddr::new("127.0.0.1".parse().unwrap(), "20225".parse().unwrap())).expect("couldn't bind to socket");
 
     let mut channel = Channel::new(200, 1000);
+    let mut game_server = GameServer {};
     let delta = 5u8;
     loop {
         let mut buf = [0; 512];
@@ -31,7 +29,10 @@ fn main() {
             println!("Packets received: {}", received_packets);
 
             println!("Processing at most {} packets", delta);
-            channel.process_next(delta);
+            let packets_for_game_server = channel.process_next(delta);
+            packets_for_game_server.into_iter()
+                .flat_map(|packet| game_server.process_packet(packet).into_iter())
+                .for_each(|packet| channel.send_data(packet));
 
             let send_result = channel.send_next(delta);
             if let Err(ref err) = send_result {

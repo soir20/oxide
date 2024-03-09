@@ -1,15 +1,16 @@
 use std::collections::{BTreeMap, HashMap, VecDeque};
-use std::io::Write;
 use std::net::SocketAddr;
 use std::sync::{Mutex, RwLock};
-use std::time::{SystemTime, UNIX_EPOCH};
-use byteorder::{LittleEndian, WriteBytesExt};
 use rand::random;
-use crate::deserialize::{deserialize_packet, DeserializeError};
-use crate::hash::{CrcSeed, CrcSize};
-use crate::login::{extract_tunneled_packet_data, make_tunneled_packet, send_self_to_client};
-use crate::reliable_data_ops::{DataPacket, fragment_data, FragmentState};
-use crate::serialize::{serialize_packets, SerializeError};
+use crate::protocol::deserialize::{deserialize_packet, DeserializeError};
+use crate::protocol::hash::{CrcSeed, CrcSize};
+use crate::protocol::reliable_data_ops::{DataPacket, fragment_data, FragmentState, unbundle_reliable_data};
+use crate::protocol::serialize::{serialize_packets, SerializeError};
+
+mod hash;
+mod deserialize;
+mod serialize;
+mod reliable_data_ops;
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub enum ProtocolOpCode {
@@ -186,7 +187,7 @@ impl Channel {
         Ok(packet_count)
     }
 
-    pub fn process_next(&mut self, count: u8) {
+    pub fn process_next(&mut self, count: u8) -> Vec<Vec<u8>> {
         let mut needs_new_ack = false;
         let mut packet_to_process = None;
 
@@ -237,8 +238,39 @@ impl Channel {
             self.acknowledge_all(self.last_server_ack);
         }
 
+        let mut packets = Vec::new();
         if let Some(packet) = packet_to_process {
-            self.process_packet(packet);
+
+            // Process the packet inside the protocol
+            self.process_packet(&packet);
+
+            // Only data packets need to be handled outside the protocol. We already
+            // de-fragmented the data packet, so we don't need to check for fragments here.
+            if let Packet::Data(_, data) = packet {
+                if let Ok(unbundled_packets) = unbundle_reliable_data(&data) {
+                    packets = unbundled_packets;
+                } else {
+                    println!("Bad bundled packet");
+                }
+            }
+
+        }
+
+        packets
+    }
+
+    pub fn send_data(&mut self, data: Vec<u8>) {
+        let packets = fragment_data(self.buffer_size, &self.session, data)
+            .expect("Unable to fragment data");
+
+        for packet in packets {
+            let sequence = self.next_server_sequence();
+            let sequenced_packet = match packet {
+                DataPacket::Fragment(data) => Packet::DataFragment(sequence, data),
+                DataPacket::Single(data) => Packet::Data(sequence, data)
+            };
+
+            self.send_queue.push_back(PendingPacket::new(sequenced_packet));
         }
     }
 
@@ -299,152 +331,21 @@ impl Channel {
         }
     }
 
-    fn process_packet(&mut self, packet: Packet) {
+    fn process_packet(&mut self, packet: &Packet) {
         println!("Received packet op code {:?}", packet.op_code());
         match packet {
             Packet::SessionRequest(protocol_version, session_id,
                                    buffer_size, app_protocol) =>
-                self.process_session_request(protocol_version, session_id, buffer_size, app_protocol),
-            Packet::Data(_, data) => {
-                if data[0] == 1 {
-                    self.send_data(make_tunneled_packet(2, &vec![1]).unwrap());
-
-                    let mut live_buf = "live".as_bytes().to_vec();
-                    live_buf.push(0);
-                    self.send_data(make_tunneled_packet(165, &live_buf).unwrap());
-
-                    let mut zone_buffer = Vec::new();
-                    zone_buffer.write_u32::<LittleEndian>(10).unwrap();
-                    zone_buffer.extend("JediTemple".as_bytes());
-                    zone_buffer.write_u32::<LittleEndian>(2).unwrap();
-                    zone_buffer.write_u8(0).unwrap();
-                    zone_buffer.write_u8(0).unwrap();
-                    zone_buffer.write_u32::<LittleEndian>(0).unwrap();
-                    zone_buffer.extend("".as_bytes());
-                    zone_buffer.write_u8(0).unwrap();
-                    zone_buffer.write_u32::<LittleEndian>(0).unwrap();
-                    zone_buffer.write_u32::<LittleEndian>(5).unwrap();
-                    self.send_data(make_tunneled_packet(43, &zone_buffer).unwrap());
-
-                    let mut settings_buffer = Vec::new();
-                    settings_buffer.write_u32::<LittleEndian>(4).unwrap();
-                    settings_buffer.write_u32::<LittleEndian>(7).unwrap();
-                    settings_buffer.write_u32::<LittleEndian>(268).unwrap();
-                    settings_buffer.write_u8(1).unwrap();
-                    settings_buffer.write_f32::<LittleEndian>(1.0f32).unwrap();
-                    //self.send_data(make_tunneled_packet(0x8f, &settings_buffer).unwrap());
-
-                    //self.send_data(send_item_definitions().unwrap());
-
-                    //println!("DONE SENDING ITEM DEFINITIONS");
-
-                    self.send_data(send_self_to_client().unwrap());
-                } else if data[3] == 5 {
-                    let (op_code, payload) = extract_tunneled_packet_data(&data[3..]).unwrap();
-                    if op_code == 13 {
-                        println!("received client ready packet");
-
-                        let mut point_of_interest_buffer = Vec::new();
-                        point_of_interest_buffer.write_u8(1).unwrap();
-                        point_of_interest_buffer.write_u32::<LittleEndian>(3961).unwrap();
-                        point_of_interest_buffer.write_u32::<LittleEndian>(281).unwrap();
-                        point_of_interest_buffer.write_f32::<LittleEndian>(887.30).unwrap();
-                        point_of_interest_buffer.write_f32::<LittleEndian>(173.0).unwrap();
-                        point_of_interest_buffer.write_f32::<LittleEndian>(1546.956).unwrap();
-                        point_of_interest_buffer.write_f32::<LittleEndian>(1.0).unwrap();
-                        point_of_interest_buffer.write_u32::<LittleEndian>(0).unwrap();
-                        point_of_interest_buffer.write_u32::<LittleEndian>(7).unwrap();
-                        point_of_interest_buffer.write_u32::<LittleEndian>(382845).unwrap();
-                        point_of_interest_buffer.write_u32::<LittleEndian>(651).unwrap();
-                        point_of_interest_buffer.write_u32::<LittleEndian>(0).unwrap();
-                        point_of_interest_buffer.write_u32::<LittleEndian>(210020).unwrap();
-                        point_of_interest_buffer.write_u32::<LittleEndian>(60).unwrap();
-                        point_of_interest_buffer.write_u8(0).unwrap();
-                        let mut poi_buffer2 = Vec::new();
-                        poi_buffer2.write_u32::<LittleEndian>(point_of_interest_buffer.len() as u32).unwrap();
-                        poi_buffer2.write_all(&point_of_interest_buffer).unwrap();
-                        //self.send_data(make_tunneled_packet(0x39, &poi_buffer2).unwrap());
-
-                        let mut hp_buffer = Vec::new();
-                        hp_buffer.write_u16::<LittleEndian>(1).unwrap();
-                        hp_buffer.write_u32::<LittleEndian>(25000).unwrap();
-                        hp_buffer.write_u32::<LittleEndian>(25000).unwrap();
-                        self.send_data(make_tunneled_packet(0x26, &hp_buffer).unwrap());
-
-                        let mut mana_buffer = Vec::new();
-                        mana_buffer.write_u16::<LittleEndian>(0xd).unwrap();
-                        mana_buffer.write_u32::<LittleEndian>(300).unwrap();
-                        mana_buffer.write_u32::<LittleEndian>(300).unwrap();
-                        self.send_data(make_tunneled_packet(0x26, &mana_buffer).unwrap());
-
-                        let mut stat_buffer = Vec::new();
-                        stat_buffer.write_u16::<LittleEndian>(7).unwrap();
-                        stat_buffer.write_u32::<LittleEndian>(5).unwrap();
-
-                        // Movement speed
-                        stat_buffer.write_u32::<LittleEndian>(2).unwrap();
-                        stat_buffer.write_u32::<LittleEndian>(1).unwrap();
-                        stat_buffer.write_f32::<LittleEndian>(0.0).unwrap();
-                        stat_buffer.write_f32::<LittleEndian>(8.0).unwrap();
-
-                        // Health refill
-                        stat_buffer.write_u32::<LittleEndian>(4).unwrap();
-                        stat_buffer.write_u32::<LittleEndian>(0).unwrap();
-                        stat_buffer.write_f32::<LittleEndian>(0.0).unwrap();
-                        stat_buffer.write_f32::<LittleEndian>(1.0).unwrap();
-
-                        // Energy refill
-                        stat_buffer.write_u32::<LittleEndian>(6).unwrap();
-                        stat_buffer.write_u32::<LittleEndian>(0).unwrap();
-                        stat_buffer.write_f32::<LittleEndian>(0.0).unwrap();
-                        stat_buffer.write_f32::<LittleEndian>(1.0).unwrap();
-
-                        // Extra gravity
-                        stat_buffer.write_u32::<LittleEndian>(58).unwrap();
-                        stat_buffer.write_u32::<LittleEndian>(0).unwrap();
-                        stat_buffer.write_f32::<LittleEndian>(0.0).unwrap();
-                        stat_buffer.write_f32::<LittleEndian>(0.0).unwrap();
-
-                        // Extra jump height
-                        stat_buffer.write_u32::<LittleEndian>(59).unwrap();
-                        stat_buffer.write_u32::<LittleEndian>(0).unwrap();
-                        stat_buffer.write_f32::<LittleEndian>(0.0).unwrap();
-                        stat_buffer.write_f32::<LittleEndian>(0.0).unwrap();
-
-                        self.send_data(make_tunneled_packet(0x26, &stat_buffer).unwrap());
-
-                        // Welcome screen
-                        self.send_data(make_tunneled_packet(0x5d, &vec![1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]).unwrap());
-
-                        // Zone done sending init data
-                        self.send_data(make_tunneled_packet(0xe, &Vec::new()).unwrap());
-
-                        // Preload characters
-                        self.send_data(make_tunneled_packet(0x26, &vec![0x1a, 0, 0]).unwrap());
-
-                    } else {
-                        println!("Received unknown op code: {}", op_code);
-                    }
-                } else if data[0] == 5 && data[7] == 0x34 {
-                    let mut buffer = Vec::new();
-                    let time = SystemTime::now().duration_since(UNIX_EPOCH)
-                        .expect("Time went backwards").as_secs();
-                    println!("Sending time: {}", time);
-                    buffer.write_u64::<LittleEndian>(time).unwrap();
-                    buffer.write_u32::<LittleEndian>(0).unwrap();
-                    buffer.write_u8(1).unwrap();
-                    self.send_data(make_tunneled_packet(0x34, &buffer).unwrap());
-                }
-            }
+                self.process_session_request(*protocol_version, *session_id, *buffer_size, app_protocol),
             Packet::Heartbeat => self.process_heartbeat(),
-            Packet::Ack(acked_sequence) => self.process_ack(acked_sequence),
-            Packet::AckAll(acked_sequence) => self.process_ack_all(acked_sequence),
+            Packet::Ack(acked_sequence) => self.process_ack(*acked_sequence),
+            Packet::AckAll(acked_sequence) => self.process_ack_all(*acked_sequence),
             _ => {}
         }
     }
 
     fn process_session_request(&mut self, protocol_version: SoeProtocolVersion, session_id: SessionId,
-                               buffer_size: BufferSize, app_protocol: ApplicationProtocol) {
+                               buffer_size: BufferSize, app_protocol: &ApplicationProtocol) {
 
         // TODO: disallow session overwrite
         let session = Session {
@@ -493,21 +394,6 @@ impl Channel {
                     pending_packet.needs_send = false;
                 }
             }
-        }
-    }
-
-    fn send_data(&mut self, data: Vec<u8>) {
-        let packets = fragment_data(self.buffer_size, &self.session, data)
-            .expect("Unable to fragment data");
-
-        for packet in packets {
-            let sequence = self.next_server_sequence();
-            let sequenced_packet = match packet {
-                DataPacket::Fragment(data) => Packet::DataFragment(sequence, data),
-                DataPacket::Single(data) => Packet::Data(sequence, data)
-            };
-
-            self.send_queue.push_back(PendingPacket::new(sequenced_packet));
         }
     }
 

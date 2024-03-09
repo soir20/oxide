@@ -2,7 +2,7 @@ use std::io::{Cursor, Error, Write};
 use std::mem::size_of;
 use byteorder::{BigEndian, ReadBytesExt, WriteBytesExt};
 use crate::protocol::{BufferSize, Packet, ProtocolOpCode, Session};
-use crate::serialize::max_fragment_data_size;
+use crate::protocol::serialize::max_fragment_data_size;
 
 #[non_exhaustive]
 #[derive(Debug)]
@@ -92,19 +92,19 @@ pub fn unbundle_reliable_data(data: &[u8]) -> Result<Vec<Vec<u8>>, DataError> {
         return Ok(vec![data.to_vec()]);
     }
 
-    let mut offset = 0;
+    let mut offset = 2;
     let mut cursor = Cursor::new(data);
+    cursor.set_position(offset as u64);
     let mut packets = Vec::new();
 
+    // TODO: check packet length is valid
     while offset < data.len() {
         let (packet_length, new_offset) = read_data_bundle_variable_length_int(&data[offset..])?;
         offset += new_offset;
         cursor.set_position(offset as u64);
 
-        offset += size_of::<u16>();
-        let remaining_length = packet_length as usize - size_of::<u16>();
-        packets.push(data[offset..(offset + remaining_length)].to_vec());
-        offset += remaining_length;
+        packets.push(data[offset..(offset + packet_length as usize)].to_vec());
+        offset += packet_length as usize;
     }
 
     Ok(packets)

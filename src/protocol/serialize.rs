@@ -3,7 +3,7 @@ use std::io::{Error, Write};
 use std::mem::size_of;
 use byteorder::{BigEndian, WriteBytesExt};
 use miniz_oxide::deflate::compress_to_vec_zlib;
-use crate::hash::{compute_crc, CrcSeed, CrcSize};
+use crate::protocol::hash::{compute_crc, CrcSeed, CrcSize};
 use crate::protocol::{ApplicationProtocol, BufferSize, ClientTick, DisconnectReason, Packet, PacketCount, ProtocolOpCode, SequenceNumber, ServerTick, Session, SessionId, SoeProtocolVersion, Timestamp};
 
 // Use 100 as an arbitrary threshold to avoid compressing packets that benefit

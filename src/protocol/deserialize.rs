@@ -2,7 +2,7 @@ use std::io::{Cursor, Error, Read};
 use std::mem::size_of;
 use byteorder::{BigEndian, ReadBytesExt};
 use miniz_oxide::inflate::{decompress_to_vec_zlib, DecompressError};
-use crate::hash::{compute_crc, CrcHash};
+use crate::protocol::hash::{compute_crc, CrcHash};
 use crate::protocol::{DisconnectReason, Packet, ProtocolOpCode, Session};
 
 #[non_exhaustive]
@@ -108,6 +108,7 @@ fn deserialize_multi_packet(data: &[u8]) -> Result<Vec<Packet>, DeserializeError
     let mut cursor = Cursor::new(data);
     let mut packets = Vec::new();
 
+    // TODO: check packet length is valid
     while offset < data.len() {
         let (packet_length, new_offset) = read_multi_packet_variable_length_int(&data[offset..])?;
         offset += new_offset;
