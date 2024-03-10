@@ -11,6 +11,7 @@ pub enum DataError {
     MissingSession,
     MissingDataLength,
     ExpectedFragment(ProtocolOpCode),
+    BadSubPacketLength,
 }
 
 impl From<Error> for DataError {
@@ -97,11 +98,14 @@ pub fn unbundle_reliable_data(data: &[u8]) -> Result<Vec<Vec<u8>>, DataError> {
     cursor.set_position(offset as u64);
     let mut packets = Vec::new();
 
-    // TODO: check packet length is valid
     while offset < data.len() {
         let (packet_length, new_offset) = read_data_bundle_variable_length_int(&data[offset..])?;
         offset += new_offset;
         cursor.set_position(offset as u64);
+
+        if packet_length as usize > data[offset..].len() {
+            return Err(DataError::BadSubPacketLength);
+        }
 
         packets.push(data[offset..(offset + packet_length as usize)].to_vec());
         offset += packet_length as usize;

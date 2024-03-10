@@ -13,7 +13,8 @@ pub enum DeserializeError {
     UnknownOpCode(u16),
     MismatchedHash(CrcHash, CrcHash),
     UnknownDisconnectReason(u16),
-    MissingSession(ProtocolOpCode)
+    MissingSession(ProtocolOpCode),
+    BadSubPacketLength
 }
 
 impl From<Error> for DeserializeError {
@@ -108,11 +109,14 @@ fn deserialize_multi_packet(data: &[u8]) -> Result<Vec<Packet>, DeserializeError
     let mut cursor = Cursor::new(data);
     let mut packets = Vec::new();
 
-    // TODO: check packet length is valid
     while offset < data.len() {
         let (packet_length, new_offset) = read_multi_packet_variable_length_int(&data[offset..])?;
         offset += new_offset;
         cursor.set_position(offset as u64);
+
+        if packet_length as usize > data[offset..].len() {
+            return Err(DeserializeError::BadSubPacketLength);
+        }
 
         let op_code = check_op_code(cursor.read_u16::<BigEndian>()?)?;
         offset += size_of::<u16>();
