@@ -282,7 +282,7 @@ impl Channel {
 
         let mut index = 0;
         while indices_to_send.len() < count as usize && index < self.send_queue.len() {
-            let mut packet = &mut self.send_queue[index];
+            let packet = &mut self.send_queue[index];
 
             // Packets without sequence numbers do not need to be acked, so they
             // are always sent exactly once.
