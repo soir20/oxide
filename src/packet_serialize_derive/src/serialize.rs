@@ -6,39 +6,39 @@ use syn::spanned::Spanned;
 pub fn add_trait_bounds(mut generics: Generics) -> Generics {
     for param in &mut generics.params {
         if let GenericParam::Type(ref mut type_param) = *param {
-            type_param.bounds.push(parse_quote!(packet_serialize::PacketDeserialize));
+            type_param.bounds.push(parse_quote!(packet_serialize::PacketSerialize));
         }
     }
     generics
 }
 
-pub fn assign_fields(data: &Data) -> TokenStream {
+pub fn write_fields(data: &Data) -> TokenStream {
     match *data {
         Data::Struct(ref data) => {
             match data.fields {
                 Fields::Named(ref fields) => {
-                    let assignments = fields.named.iter().map(|f| {
+                    let writes = fields.named.iter().map(|f| {
                         let name = &f.ident;
                         quote_spanned! {f.span()=>
-                            #name: packet_serialize::PacketDeserialize::deserialize(cursor)?,
+                            packet_serialize::PacketSerialize::serialize(&self.#name, buffer)?;
                         }
                     });
                     quote! {
                         #(
-                            #assignments
+                            #writes
                         )*
                     }
                 }
                 Fields::Unnamed(ref fields) => {
-                    let assignments = fields.unnamed.iter().enumerate().map(|(i, f)| {
+                    let writes = fields.unnamed.iter().enumerate().map(|(i, f)| {
                         let index = Index::from(i);
                         quote_spanned! {f.span()=>
-                            #index: packet_serialize::PacketDeserialize::deserialize(cursor)?,
+                            packet_serialize::PacketSerialize::serialize(&self.#index, buffer)?;
                         }
                     });
                     quote! {
                         #(
-                            #assignments
+                            #writes
                         )*
                     }
                 }
