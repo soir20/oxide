@@ -4,113 +4,113 @@ use byteorder::{LittleEndian, ReadBytesExt};
 
 #[non_exhaustive]
 #[derive(Debug)]
-pub enum PacketDeserializeError {
+pub enum DeserializePacketError {
     IoError(Error),
     InvalidString(FromUtf8Error)
 }
 
-impl From<Error> for PacketDeserializeError {
+impl From<Error> for DeserializePacketError {
     fn from(value: Error) -> Self {
-        PacketDeserializeError::IoError(value)
+        DeserializePacketError::IoError(value)
     }
 }
 
-impl From<FromUtf8Error> for PacketDeserializeError {
+impl From<FromUtf8Error> for DeserializePacketError {
     fn from(value: FromUtf8Error) -> Self {
-        PacketDeserializeError::InvalidString(value)
+        DeserializePacketError::InvalidString(value)
     }
 }
 
-pub trait PacketDeserialize {
-    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<Self, PacketDeserializeError> where Self: Sized;
+pub trait DeserializePacket {
+    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<Self, DeserializePacketError> where Self: Sized;
 }
 
 // Unsigned integers
-impl PacketDeserialize for u8 {
-    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<u8, PacketDeserializeError> {
+impl DeserializePacket for u8 {
+    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<u8, DeserializePacketError> {
         Ok(cursor.read_u8()?)
     }
 }
 
 
-impl PacketDeserialize for u16 {
-    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<u16, PacketDeserializeError> {
+impl DeserializePacket for u16 {
+    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<u16, DeserializePacketError> {
         Ok(cursor.read_u16::<LittleEndian>()?)
     }
 }
 
-impl PacketDeserialize for u32 {
-    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<u32, PacketDeserializeError> {
+impl DeserializePacket for u32 {
+    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<u32, DeserializePacketError> {
         Ok(cursor.read_u32::<LittleEndian>()?)
     }
 }
 
-impl PacketDeserialize for u64 {
-    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<u64, PacketDeserializeError> {
+impl DeserializePacket for u64 {
+    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<u64, DeserializePacketError> {
         Ok(cursor.read_u64::<LittleEndian>()?)
     }
 }
 
-impl PacketDeserialize for u128 {
-    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<u128, PacketDeserializeError> {
+impl DeserializePacket for u128 {
+    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<u128, DeserializePacketError> {
         Ok(cursor.read_u128::<LittleEndian>()?)
     }
 }
 
 // Signed integers
-impl PacketDeserialize for i8 {
-    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<i8, PacketDeserializeError> {
+impl DeserializePacket for i8 {
+    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<i8, DeserializePacketError> {
         Ok(cursor.read_i8()?)
     }
 }
 
 
-impl PacketDeserialize for i16 {
-    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<i16, PacketDeserializeError> {
+impl DeserializePacket for i16 {
+    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<i16, DeserializePacketError> {
         Ok(cursor.read_i16::<LittleEndian>()?)
     }
 }
 
-impl PacketDeserialize for i32 {
-    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<i32, PacketDeserializeError> {
+impl DeserializePacket for i32 {
+    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<i32, DeserializePacketError> {
         Ok(cursor.read_i32::<LittleEndian>()?)
     }
 }
 
-impl PacketDeserialize for i64 {
-    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<i64, PacketDeserializeError> {
+impl DeserializePacket for i64 {
+    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<i64, DeserializePacketError> {
         Ok(cursor.read_i64::<LittleEndian>()?)
     }
 }
 
-impl PacketDeserialize for i128 {
-    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<i128, PacketDeserializeError> {
+impl DeserializePacket for i128 {
+    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<i128, DeserializePacketError> {
         Ok(cursor.read_i128::<LittleEndian>()?)
     }
 }
 
 // Floats
-impl PacketDeserialize for f32 {
-    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<f32, PacketDeserializeError> {
+impl DeserializePacket for f32 {
+    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<f32, DeserializePacketError> {
         Ok(cursor.read_f32::<LittleEndian>()?)
     }
 }
 
-impl PacketDeserialize for f64 {
-    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<f64, PacketDeserializeError> {
+impl DeserializePacket for f64 {
+    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<f64, DeserializePacketError> {
         Ok(cursor.read_f64::<LittleEndian>()?)
     }
 }
 
 // Other types
-impl PacketDeserialize for bool {
-    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<bool, PacketDeserializeError> {
+impl DeserializePacket for bool {
+    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<bool, DeserializePacketError> {
         Ok(cursor.read_u8()? != 0)
     }
 }
 
-impl PacketDeserialize for String {
-    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<String, PacketDeserializeError> {
+impl DeserializePacket for String {
+    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<String, DeserializePacketError> {
         let length = cursor.read_u32::<LittleEndian>()?;
         let mut str_bytes = vec![0; length as usize];
         cursor.read_exact(&mut str_bytes)?;
@@ -118,13 +118,13 @@ impl PacketDeserialize for String {
     }
 }
 
-impl<T: PacketDeserialize> PacketDeserialize for Vec<T> {
-    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<Vec<T>, PacketDeserializeError> {
+impl<T: DeserializePacket> DeserializePacket for Vec<T> {
+    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<Vec<T>, DeserializePacketError> {
         let mut items = Vec::new();
         let length = cursor.read_u32::<LittleEndian>()?;
 
         for _ in 0..length {
-            let item: T = PacketDeserialize::deserialize(cursor)?;
+            let item: T = DeserializePacket::deserialize(cursor)?;
             items.push(item);
         }
 

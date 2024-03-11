@@ -5,7 +5,7 @@ use syn::DeriveInput;
 use quote::quote;
 use syn::parse_macro_input;
 
-#[proc_macro_derive(PacketSerialize)]
+#[proc_macro_derive(SerializePacket)]
 pub fn derive_serialize(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
 
@@ -17,8 +17,8 @@ pub fn derive_serialize(input: proc_macro::TokenStream) -> proc_macro::TokenStre
     let writes = serialize::write_fields(&input.data);
 
     let expanded = quote! {
-        impl #impl_generics packet_serialize::PacketSerialize for #name #ty_generics #where_clause {
-            fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), packet_serialize::PacketSerializeError> {
+        impl #impl_generics packet_serialize::SerializePacket for #name #ty_generics #where_clause {
+            fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), packet_serialize::SerializePacketError> {
                 #writes
                 Ok(())
             }
@@ -28,7 +28,7 @@ pub fn derive_serialize(input: proc_macro::TokenStream) -> proc_macro::TokenStre
     proc_macro::TokenStream::from(expanded)
 }
 
-#[proc_macro_derive(PacketDeserialize)]
+#[proc_macro_derive(DeserializePacket)]
 pub fn derive_deserialize(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
 
@@ -40,8 +40,8 @@ pub fn derive_deserialize(input: proc_macro::TokenStream) -> proc_macro::TokenSt
     let assignments = deserialize::assign_fields(&input.data);
 
     let expanded = quote! {
-        impl #impl_generics packet_serialize::PacketDeserialize for #name #ty_generics #where_clause {
-            fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<Self, packet_serialize::PacketDeserializeError> {
+        impl #impl_generics packet_serialize::DeserializePacket for #name #ty_generics #where_clause {
+            fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<Self, packet_serialize::DeserializePacketError> {
                 Ok(#name {
                     #assignments
                 })

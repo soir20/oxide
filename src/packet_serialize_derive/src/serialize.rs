@@ -6,7 +6,7 @@ use syn::spanned::Spanned;
 pub fn add_trait_bounds(mut generics: Generics) -> Generics {
     for param in &mut generics.params {
         if let GenericParam::Type(ref mut type_param) = *param {
-            type_param.bounds.push(parse_quote!(packet_serialize::PacketSerialize));
+            type_param.bounds.push(parse_quote!(packet_serialize::SerializePacket));
         }
     }
     generics
@@ -20,7 +20,7 @@ pub fn write_fields(data: &Data) -> TokenStream {
                     let writes = fields.named.iter().map(|f| {
                         let name = &f.ident;
                         quote_spanned! {f.span()=>
-                            packet_serialize::PacketSerialize::serialize(&self.#name, buffer)?;
+                            packet_serialize::SerializePacket::serialize(&self.#name, buffer)?;
                         }
                     });
                     quote! {
@@ -33,7 +33,7 @@ pub fn write_fields(data: &Data) -> TokenStream {
                     let writes = fields.unnamed.iter().enumerate().map(|(i, f)| {
                         let index = Index::from(i);
                         quote_spanned! {f.span()=>
-                            packet_serialize::PacketSerialize::serialize(&self.#index, buffer)?;
+                            packet_serialize::SerializePacket::serialize(&self.#index, buffer)?;
                         }
                     });
                     quote! {

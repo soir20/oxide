@@ -3,4 +3,4 @@ mod serialize;
 
 pub use deserialize::*;
 pub use serialize::*;
-pub use packet_serialize_derive::{PacketSerialize, PacketDeserialize};
+pub use packet_serialize_derive::{SerializePacket, DeserializePacket};

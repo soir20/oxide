@@ -3,129 +3,129 @@ use byteorder::{LittleEndian, WriteBytesExt};
 
 #[non_exhaustive]
 #[derive(Debug)]
-pub enum PacketSerializeError {
+pub enum SerializePacketError {
     IoError(Error)
 }
 
-impl From<Error> for PacketSerializeError {
+impl From<Error> for SerializePacketError {
     fn from(value: Error) -> Self {
-        PacketSerializeError::IoError(value)
+        SerializePacketError::IoError(value)
     }
 }
 
-pub trait PacketSerialize {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), PacketSerializeError>;
+pub trait SerializePacket {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError>;
 }
 
 // Unsigned integers
-impl PacketSerialize for u8 {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), PacketSerializeError> {
+impl SerializePacket for u8 {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
         buffer.write_u8(*self)?;
         Ok(())
     }
 }
 
 
-impl PacketSerialize for u16 {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), PacketSerializeError> {
+impl SerializePacket for u16 {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
         buffer.write_u16::<LittleEndian>(*self)?;
         Ok(())
     }
 }
 
-impl PacketSerialize for u32 {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), PacketSerializeError> {
+impl SerializePacket for u32 {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
         buffer.write_u32::<LittleEndian>(*self)?;
         Ok(())
     }
 }
 
-impl PacketSerialize for u64 {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), PacketSerializeError> {
+impl SerializePacket for u64 {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
         buffer.write_u64::<LittleEndian>(*self)?;
         Ok(())
     }
 }
 
-impl PacketSerialize for u128 {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), PacketSerializeError> {
+impl SerializePacket for u128 {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
         buffer.write_u128::<LittleEndian>(*self)?;
         Ok(())
     }
 }
 
 // Signed integers
-impl PacketSerialize for i8 {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), PacketSerializeError> {
+impl SerializePacket for i8 {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
         buffer.write_i8(*self)?;
         Ok(())
     }
 }
 
 
-impl PacketSerialize for i16 {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), PacketSerializeError> {
+impl SerializePacket for i16 {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
         buffer.write_i16::<LittleEndian>(*self)?;
         Ok(())
     }
 }
 
-impl PacketSerialize for i32 {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), PacketSerializeError> {
+impl SerializePacket for i32 {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
         buffer.write_i32::<LittleEndian>(*self)?;
         Ok(())
     }
 }
 
-impl PacketSerialize for i64 {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), PacketSerializeError> {
+impl SerializePacket for i64 {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
         buffer.write_i64::<LittleEndian>(*self)?;
         Ok(())
     }
 }
 
-impl PacketSerialize for i128 {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), PacketSerializeError> {
+impl SerializePacket for i128 {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
         buffer.write_i128::<LittleEndian>(*self)?;
         Ok(())
     }
 }
 
 // Floats
-impl PacketSerialize for f32 {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), PacketSerializeError> {
+impl SerializePacket for f32 {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
         buffer.write_f32::<LittleEndian>(*self)?;
         Ok(())
     }
 }
 
-impl PacketSerialize for f64 {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), PacketSerializeError> {
+impl SerializePacket for f64 {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
         buffer.write_f64::<LittleEndian>(*self)?;
         Ok(())
     }
 }
 
 // Other types
-impl PacketSerialize for bool {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), PacketSerializeError> {
+impl SerializePacket for bool {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
         buffer.write_u8(*self as u8)?;
         Ok(())
     }
 }
 
-impl PacketSerialize for String {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), PacketSerializeError> {
+impl SerializePacket for String {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
         buffer.write_u32::<LittleEndian>(self.len() as u32)?;
         buffer.write_all(self.as_bytes())?;
         Ok(())
     }
 }
 
-impl<T: PacketSerialize> PacketSerialize for Vec<T> {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), PacketSerializeError> {
+impl<T: SerializePacket> SerializePacket for Vec<T> {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
         for index in 0..self.len() {
-            PacketSerialize::serialize(&self[index], buffer)?;
+            SerializePacket::serialize(&self[index], buffer)?;
         }
 
         Ok(())
