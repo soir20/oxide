@@ -1,15 +1,23 @@
-use std::io::{Cursor, Error};
+use std::io::{Cursor, Error, Read};
+use std::string::FromUtf8Error;
 use byteorder::{LittleEndian, ReadBytesExt};
 
 #[non_exhaustive]
 #[derive(Debug)]
 pub enum PacketDeserializeError {
-    IoError(Error)
+    IoError(Error),
+    InvalidString(FromUtf8Error)
 }
 
 impl From<Error> for PacketDeserializeError {
     fn from(value: Error) -> Self {
         PacketDeserializeError::IoError(value)
+    }
+}
+
+impl From<FromUtf8Error> for PacketDeserializeError {
+    fn from(value: FromUtf8Error) -> Self {
+        PacketDeserializeError::InvalidString(value)
     }
 }
 
@@ -98,6 +106,15 @@ impl PacketDeserialize for f64 {
 impl PacketDeserialize for bool {
     fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<bool, PacketDeserializeError> {
         Ok(cursor.read_u8()? != 0)
+    }
+}
+
+impl PacketDeserialize for String {
+    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<String, PacketDeserializeError> {
+        let length = cursor.read_u32::<LittleEndian>()?;
+        let mut str_bytes = vec![0; length as usize];
+        cursor.read_exact(&mut str_bytes)?;
+        Ok(String::from_utf8(str_bytes)?)
     }
 }
 
