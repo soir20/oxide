@@ -100,3 +100,17 @@ impl PacketDeserialize for bool {
         Ok(cursor.read_u8()? != 0)
     }
 }
+
+impl<T: PacketDeserialize> PacketDeserialize for Vec<T> {
+    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<Vec<T>, PacketDeserializeError> {
+        let mut items = Vec::new();
+        let length = cursor.read_u32::<LittleEndian>()?;
+
+        for _ in 0..length {
+            let item: T = PacketDeserialize::deserialize(cursor)?;
+            items.push(item);
+        }
+
+        Ok(items)
+    }
+}
