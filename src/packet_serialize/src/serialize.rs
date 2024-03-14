@@ -1,5 +1,6 @@
 use std::io::{Error, Write};
 use byteorder::{LittleEndian, WriteBytesExt};
+use crate::LengthlessVec;
 
 #[non_exhaustive]
 #[derive(Debug)]
@@ -124,8 +125,20 @@ impl SerializePacket for String {
 
 impl<T: SerializePacket> SerializePacket for Vec<T> {
     fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        SerializePacket::serialize(&(self.len() as u32), buffer)?;
         for index in 0..self.len() {
             SerializePacket::serialize(&self[index], buffer)?;
+        }
+
+        Ok(())
+    }
+}
+
+impl<T: SerializePacket> SerializePacket for LengthlessVec<T> {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        let inner_vec = &self.0;
+        for index in 0..inner_vec.len() {
+            SerializePacket::serialize(&inner_vec[index], buffer)?;
         }
 
         Ok(())

@@ -4,6 +4,7 @@ use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
 use crate::game_server::login::{extract_tunneled_packet_data, make_tunneled_packet, send_player_data};
 
 mod login;
+mod player_data;
 
 pub enum OpCode {
     LoginRequest             = 0x1,
