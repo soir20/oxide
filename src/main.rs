@@ -31,7 +31,7 @@ fn main() {
             println!("Processing at most {} packets", delta);
             let packets_for_game_server = channel.process_next(delta);
             packets_for_game_server.into_iter()
-                .flat_map(|packet| game_server.process_packet(packet).into_iter())
+                .flat_map(|packet| game_server.process_packet(packet).unwrap().into_iter())
                 .for_each(|packet| channel.send_data(packet));
 
             let send_result = channel.send_next(delta);

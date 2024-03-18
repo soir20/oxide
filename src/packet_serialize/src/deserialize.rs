@@ -1,12 +1,14 @@
-use std::io::{Cursor, Error, Read};
+use std::io::{BufRead, Cursor, Error, Read};
 use std::string::FromUtf8Error;
 use byteorder::{LittleEndian, ReadBytesExt};
+use crate::NullTerminatedString;
 
 #[non_exhaustive]
 #[derive(Debug)]
 pub enum DeserializePacketError {
     IoError(Error),
-    InvalidString(FromUtf8Error)
+    InvalidString(FromUtf8Error),
+    MissingNullTerminator,
 }
 
 impl From<Error> for DeserializePacketError {
@@ -115,6 +117,20 @@ impl DeserializePacket for String {
         let mut str_bytes = vec![0; length as usize];
         cursor.read_exact(&mut str_bytes)?;
         Ok(String::from_utf8(str_bytes)?)
+    }
+}
+
+impl DeserializePacket for NullTerminatedString {
+    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<NullTerminatedString, DeserializePacketError> {
+        let mut str_bytes = Vec::new();
+        cursor.read_until(0, &mut str_bytes)?;
+        if let Some(last_byte) = str_bytes.pop() {
+            if last_byte == 0 {
+                return Ok(NullTerminatedString(String::from_utf8(str_bytes)?));
+            }
+        }
+
+        Err(DeserializePacketError::MissingNullTerminator)
     }
 }
 

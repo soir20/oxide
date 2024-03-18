@@ -1,34 +1,79 @@
-use std::io::{Cursor, Error, Read, Write};
-use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
-use packet_serialize::{SerializePacket, SerializePacketError};
-use crate::game_server::OpCode;
-use crate::game_server::player_data::make_test_player;
+use std::io::Error;
+use byteorder::{LittleEndian, WriteBytesExt};
+use packet_serialize::{DeserializePacket, NullTerminatedString, SerializePacket};
+use crate::game_server::game_packet::{GamePacket, OpCode};
 
-pub fn make_tunneled_packet(op_code: u16, bytes: &[u8]) -> Result<Vec<u8>, Error> {
-    let mut buffer = Vec::new();
-    buffer.write_u16::<LittleEndian>(5)?;
-    buffer.write_u8(true as u8)?;
-    buffer.write_u32::<LittleEndian>(bytes.len() as u32 + 2)?;
-    buffer.write_u16::<LittleEndian>(op_code)?;
-    buffer.write_all(&bytes)?;
-    Ok(buffer)
+#[derive(SerializePacket, DeserializePacket)]
+pub struct LoginReply {
+    pub logged_in: bool,
 }
 
-pub fn extract_tunneled_packet_data(data: &[u8]) -> Result<(u16, Vec<u8>), Error> {
-    let mut cursor = Cursor::new(data);
-    let tunneled_op_code = cursor.read_u16::<LittleEndian>()?;
-    if tunneled_op_code != 5 {
-        // TODO: use custom error type
-        panic!("Expected a tunneled packet, but found op code {}", tunneled_op_code);
-    }
+impl GamePacket for LoginReply {
+    const OP_CODE: OpCode = OpCode::LoginReply;
+}
 
-    cursor.read_u8()?;
-    let size = cursor.read_u32::<LittleEndian>()?.checked_sub(2).unwrap_or(0);
-    let op_code = cursor.read_u16::<LittleEndian>()?;
-    let mut buffer = vec![0; size as usize];
-    cursor.read_exact(&mut buffer)?;
+#[derive(SerializePacket, DeserializePacket)]
+pub struct DeploymentEnv {
+    pub environment: NullTerminatedString
+}
 
-    Ok((op_code, buffer))
+impl GamePacket for DeploymentEnv {
+    const OP_CODE: OpCode = OpCode::DeploymentEnv;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct ZoneDetails {
+    pub name: String,
+    pub id: u32,
+    pub unknown2: bool,
+    pub unknown3: bool,
+    pub unknown5: String,
+    pub unknown6: bool,
+    pub unknown7: u32,
+    pub unknown8: u32
+}
+
+impl GamePacket for ZoneDetails {
+    const OP_CODE: OpCode = OpCode::ZoneDetails;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct GameSettings {
+    pub unknown1: u32,
+    pub unknown2: u32,
+    pub unknown3: u32,
+    pub unknown4: bool,
+    pub unknown5: f32
+}
+
+impl GamePacket for GameSettings {
+    const OP_CODE: OpCode = OpCode::ClientGameSettings;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct WelcomeScreenUnknown1 {}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct WelcomeScreenUnknown2 {}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct WelcomeScreen {
+    pub show_ui: bool,
+    pub unknown1: Vec<WelcomeScreenUnknown1>,
+    pub unknown2: Vec<WelcomeScreenUnknown2>,
+    pub unknown3: u32,
+    pub unknown4: u32,
+}
+
+impl GamePacket for WelcomeScreen {
+    const OP_CODE: OpCode = OpCode::WelcomeScreen;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct ZoneDetailsDone {}
+
+impl GamePacket for ZoneDetailsDone {
+    const OP_CODE: OpCode = OpCode::ZoneDetailsDone;
 }
 
 pub fn send_item_definitions() -> Result<Vec<u8>, Error> {
@@ -37,15 +82,6 @@ pub fn send_item_definitions() -> Result<Vec<u8>, Error> {
     buffer.write_u16::<LittleEndian>(0x25)?;
     buffer.write_i32::<LittleEndian>(bytes.len() as i32)?;
     buffer.append(&mut bytes);
-    make_tunneled_packet(0x23, &buffer)
-}
-
-pub fn send_player_data() -> Result<Vec<u8>, SerializePacketError> {
-    let mut bytes = Vec::new();
-    make_test_player().serialize(&mut bytes)?;
-    let mut buffer = Vec::new();
-    buffer.write_u32::<LittleEndian>(bytes.len() as u32)?;
-    buffer.append(&mut bytes);
-    let final_packet = make_tunneled_packet(OpCode::PlayerData as u16, &buffer)?;
-    Ok(final_packet)
+    //make_tunneled_packet(0x23, &buffer)
+    Ok(buffer)
 }

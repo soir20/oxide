@@ -1,6 +1,6 @@
 use std::io::{Error, Write};
 use byteorder::{LittleEndian, WriteBytesExt};
-use crate::LengthlessVec;
+use crate::{LengthlessVec, NullTerminatedString};
 
 #[non_exhaustive]
 #[derive(Debug)]
@@ -119,6 +119,14 @@ impl SerializePacket for String {
     fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
         buffer.write_u32::<LittleEndian>(self.len() as u32)?;
         buffer.write_all(self.as_bytes())?;
+        Ok(())
+    }
+}
+
+impl SerializePacket for NullTerminatedString {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        buffer.write_all(self.0.as_bytes())?;
+        buffer.write_u8(0)?;
         Ok(())
     }
 }

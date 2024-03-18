@@ -1,31 +1,43 @@
-use std::io::{Cursor};
-use std::time::{SystemTime, UNIX_EPOCH};
-use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
-use crate::game_server::login::{extract_tunneled_packet_data, make_tunneled_packet, send_player_data};
+use std::io::{Cursor, Error};
+use byteorder::{LittleEndian, ReadBytesExt};
+use packet_serialize::{DeserializePacket, DeserializePacketError, NullTerminatedString, SerializePacketError};
+use crate::game_server::client_update_packet::{Health, Power, PreloadCharactersDone, Stat, Stats};
+use crate::game_server::login::{DeploymentEnv, GameSettings, LoginReply, WelcomeScreen, ZoneDetails, ZoneDetailsDone};
+use crate::game_server::game_packet::{GamePacket, OpCode};
+use crate::game_server::player_data::make_test_player;
+use crate::game_server::time::make_game_time_sync;
+use crate::game_server::tunnel::TunneledPacket;
 
 mod login;
 mod player_data;
+mod tunnel;
+mod game_packet;
+mod time;
+mod client_update_packet;
 
-pub enum OpCode {
-    LoginRequest             = 0x1,
-    LoginReply               = 0x2,
-    TunneledClient           = 0x5,
-    PlayerData               = 0xc,
-    ClientIsReady            = 0xd,
-    ZoneDetailsDone          = 0xe,
-    ClientUpdate             = 0x26,
-    ZoneDetails              = 0x2b,
-    GameTimeSync             = 0x34,
-    WelcomeScreen            = 0x5d,
-    ClientGameSettings       = 0x8f,
-    DeploymentEnv            = 0xa5,
+#[non_exhaustive]
+#[derive(Debug)]
+pub enum ProcessPacketError {
+    CorruptedPacket,
+    SerializeError(SerializePacketError)
 }
 
-pub enum ClientUpdateOpCode {
-    Health                   = 0x1,
-    Power                    = 0xd,
-    Stats                    = 0x7,
-    PreloadCharactersDone    = 0x1a
+impl From<Error> for ProcessPacketError {
+    fn from(_: Error) -> Self {
+        ProcessPacketError::CorruptedPacket
+    }
+}
+
+impl From<DeserializePacketError> for ProcessPacketError {
+    fn from(_: DeserializePacketError) -> Self {
+        ProcessPacketError::CorruptedPacket
+    }
+}
+
+impl From<SerializePacketError> for ProcessPacketError {
+    fn from(value: SerializePacketError) -> Self {
+        ProcessPacketError::SerializeError(value)
+    }
 }
 
 pub struct GameServer {
@@ -34,124 +46,175 @@ pub struct GameServer {
 
 impl GameServer {
     
-    pub fn process_packet(&mut self, data: Vec<u8>) -> Vec<Vec<u8>> {
-        let mut packets = Vec::new();
-        let mut cursor = Cursor::new(&data);
-        let op_code = cursor.read_u16::<LittleEndian>().unwrap();
-        
-        if op_code == OpCode::LoginRequest as u16 {
-            packets.push(make_tunneled_packet(OpCode::LoginReply as u16, &vec![1]).unwrap());
+    pub fn process_packet(&mut self, data: Vec<u8>) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+        let mut result_packets = Vec::new();
+        let mut cursor = Cursor::new(&data[..]);
+        let raw_op_code = cursor.read_u16::<LittleEndian>()?;
 
-            let mut live_buf = "live".as_bytes().to_vec();
-            live_buf.push(0);
-            packets.push(make_tunneled_packet(OpCode::DeploymentEnv as u16, &live_buf).unwrap());
+        match OpCode::try_from(raw_op_code) {
+            Ok(op_code) => match op_code {
+                OpCode::LoginRequest => {
+                    let login_reply = TunneledPacket {
+                        unknown1: true,
+                        inner: LoginReply {
+                            logged_in: true,
+                        },
+                    };
+                    result_packets.push(GamePacket::serialize(&login_reply)?);
 
-            let mut zone_buffer = Vec::new();
-            zone_buffer.write_u32::<LittleEndian>(10).unwrap();
-            zone_buffer.extend("JediTemple".as_bytes());
-            zone_buffer.write_u32::<LittleEndian>(2).unwrap();
-            zone_buffer.write_u8(0).unwrap();
-            zone_buffer.write_u8(0).unwrap();
-            zone_buffer.write_u32::<LittleEndian>(0).unwrap();
-            zone_buffer.extend("".as_bytes());
-            zone_buffer.write_u8(0).unwrap();
-            zone_buffer.write_u32::<LittleEndian>(0).unwrap();
-            zone_buffer.write_u32::<LittleEndian>(5).unwrap();
-            packets.push(make_tunneled_packet(OpCode::ZoneDetails as u16, &zone_buffer).unwrap());
+                    let deployment_env = TunneledPacket {
+                        unknown1: true,
+                        inner: DeploymentEnv {
+                            environment: NullTerminatedString("prod".to_string()),
+                        },
+                    };
+                    result_packets.push(GamePacket::serialize(&deployment_env)?);
 
-            let mut settings_buffer = Vec::new();
-            settings_buffer.write_u32::<LittleEndian>(4).unwrap();
-            settings_buffer.write_u32::<LittleEndian>(7).unwrap();
-            settings_buffer.write_u32::<LittleEndian>(268).unwrap();
-            settings_buffer.write_u8(1).unwrap();
-            settings_buffer.write_f32::<LittleEndian>(1.0f32).unwrap();
-            packets.push(make_tunneled_packet(OpCode::ClientGameSettings as u16, &settings_buffer).unwrap());
+                    let zone_details = TunneledPacket {
+                        unknown1: true,
+                        inner: ZoneDetails {
+                            name: "JediTemple".to_string(),
+                            id: 2,
+                            unknown2: false,
+                            unknown3: false,
+                            unknown5: "".to_string(),
+                            unknown6: false,
+                            unknown7: 0,
+                            unknown8: 5,
+                        },
+                    };
+                    result_packets.push(GamePacket::serialize(&zone_details)?);
 
-            //packets.push(send_item_definitions().unwrap());
+                    let settings = TunneledPacket {
+                        unknown1: true,
+                        inner: GameSettings {
+                            unknown1: 0,
+                            unknown2: 0,
+                            unknown3: 0,
+                            unknown4: true,
+                            unknown5: 1.0,
+                        },
+                    };
+                    result_packets.push(GamePacket::serialize(&settings)?);
 
-            //println!("DONE SENDING ITEM DEFINITIONS");
+                    let player = TunneledPacket {
+                        unknown1: true,
+                        inner: make_test_player()
+                    };
+                    result_packets.push(GamePacket::serialize(&player)?);
+                },
+                OpCode::TunneledClient => {
+                    let packet: TunneledPacket<Vec<u8>> = DeserializePacket::deserialize(&mut cursor)?;
+                    result_packets.append(&mut self.process_packet(packet.inner)?);
+                },
+                OpCode::ClientIsReady => {
+                    let health = TunneledPacket {
+                        unknown1: true,
+                        inner: Health {
+                            unknown1: 25000,
+                            unknown2: 25000,
+                        },
+                    };
+                    result_packets.push(GamePacket::serialize(&health)?);
 
-            packets.push(send_player_data().unwrap());
-        } else if op_code == OpCode::TunneledClient as u16 {
-            let (op_code, payload) = extract_tunneled_packet_data(&data).unwrap();
-            if op_code == OpCode::ClientIsReady as u16 {
-                println!("received client ready packet");
+                    let power = TunneledPacket {
+                        unknown1: true,
+                        inner: Power {
+                            unknown1: 300,
+                            unknown2: 300,
+                        },
+                    };
+                    result_packets.push(GamePacket::serialize(&power)?);
 
-                let mut hp_buffer = Vec::new();
-                hp_buffer.write_u16::<LittleEndian>(ClientUpdateOpCode::Health as u16).unwrap();
-                hp_buffer.write_u32::<LittleEndian>(25000).unwrap();
-                hp_buffer.write_u32::<LittleEndian>(25000).unwrap();
-                packets.push(make_tunneled_packet(OpCode::ClientUpdate as u16, &hp_buffer).unwrap());
+                    let stats = TunneledPacket {
+                        unknown1: true,
+                        inner: Stats {
+                            stats: vec![
 
-                let mut power_buffer = Vec::new();
-                power_buffer.write_u16::<LittleEndian>(ClientUpdateOpCode::Power as u16).unwrap();
-                power_buffer.write_u32::<LittleEndian>(300).unwrap();
-                power_buffer.write_u32::<LittleEndian>(300).unwrap();
-                packets.push(make_tunneled_packet(OpCode::ClientUpdate as u16, &power_buffer).unwrap());
+                                // Movement speed
+                                Stat {
+                                    id1: 2,
+                                    id2: 1,
+                                    value1: 0.0,
+                                    value2: 8.0,
+                                },
 
-                let mut stat_buffer = Vec::new();
-                stat_buffer.write_u16::<LittleEndian>(ClientUpdateOpCode::Stats as u16).unwrap();
-                stat_buffer.write_u32::<LittleEndian>(5).unwrap();
+                                // Health refill
+                                Stat {
+                                    id1: 4,
+                                    id2: 0,
+                                    value1: 0.0,
+                                    value2: 1.0,
+                                },
 
-                // Movement speed
-                stat_buffer.write_u32::<LittleEndian>(2).unwrap();
-                stat_buffer.write_u32::<LittleEndian>(1).unwrap();
-                stat_buffer.write_f32::<LittleEndian>(0.0).unwrap();
-                stat_buffer.write_f32::<LittleEndian>(8.0).unwrap();
+                                // Power refill
+                                Stat {
+                                    id1: 6,
+                                    id2: 0,
+                                    value1: 0.0,
+                                    value2: 1.0,
+                                },
 
-                // Health refill
-                stat_buffer.write_u32::<LittleEndian>(4).unwrap();
-                stat_buffer.write_u32::<LittleEndian>(0).unwrap();
-                stat_buffer.write_f32::<LittleEndian>(0.0).unwrap();
-                stat_buffer.write_f32::<LittleEndian>(1.0).unwrap();
+                                // Extra gravity
+                                Stat {
+                                    id1: 58,
+                                    id2: 0,
+                                    value1: 0.0,
+                                    value2: 0.0,
+                                },
 
-                // Energy refill
-                stat_buffer.write_u32::<LittleEndian>(6).unwrap();
-                stat_buffer.write_u32::<LittleEndian>(0).unwrap();
-                stat_buffer.write_f32::<LittleEndian>(0.0).unwrap();
-                stat_buffer.write_f32::<LittleEndian>(1.0).unwrap();
+                                // Extra jump height
+                                Stat {
+                                    id1: 59,
+                                    id2: 0,
+                                    value1: 0.0,
+                                    value2: 0.0,
+                                },
 
-                // Extra gravity
-                stat_buffer.write_u32::<LittleEndian>(58).unwrap();
-                stat_buffer.write_u32::<LittleEndian>(0).unwrap();
-                stat_buffer.write_f32::<LittleEndian>(0.0).unwrap();
-                stat_buffer.write_f32::<LittleEndian>(0.0).unwrap();
+                            ],
+                        },
+                    };
+                    result_packets.push(GamePacket::serialize(&stats)?);
 
-                // Extra jump height
-                stat_buffer.write_u32::<LittleEndian>(59).unwrap();
-                stat_buffer.write_u32::<LittleEndian>(0).unwrap();
-                stat_buffer.write_f32::<LittleEndian>(0.0).unwrap();
-                stat_buffer.write_f32::<LittleEndian>(0.0).unwrap();
+                    let welcome_screen = TunneledPacket {
+                        unknown1: true,
+                        inner: WelcomeScreen {
+                            show_ui: true,
+                            unknown1: vec![],
+                            unknown2: vec![],
+                            unknown3: 0,
+                            unknown4: 0,
+                        },
+                    };
+                    result_packets.push(GamePacket::serialize(&welcome_screen)?);
 
-                packets.push(make_tunneled_packet(OpCode::ClientUpdate as u16, &stat_buffer).unwrap());
+                    let zone_details_done = TunneledPacket {
+                        unknown1: true,
+                        inner: ZoneDetailsDone {},
+                    };
+                    result_packets.push(GamePacket::serialize(&zone_details_done)?);
 
-                // Welcome screen
-                packets.push(make_tunneled_packet(OpCode::WelcomeScreen as u16, &vec![1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]).unwrap());
-
-                // Zone done sending init data
-                packets.push(make_tunneled_packet(OpCode::ZoneDetailsDone as u16, &Vec::new()).unwrap());
-
-                // Preload characters
-                let mut preload_characters_buffer = Vec::new();
-                preload_characters_buffer.write_u16::<LittleEndian>(ClientUpdateOpCode::PreloadCharactersDone as u16).unwrap();
-                preload_characters_buffer.write_u8(0).unwrap();
-                packets.push(make_tunneled_packet(OpCode::ClientUpdate as u16, &preload_characters_buffer).unwrap());
-
-            } else if op_code == OpCode::GameTimeSync as u16 {
-                let mut buffer = Vec::new();
-                let time = SystemTime::now().duration_since(UNIX_EPOCH)
-                    .expect("Time went backwards").as_secs();
-                println!("Sending time: {}", time);
-                buffer.write_u64::<LittleEndian>(time).unwrap();
-                buffer.write_u32::<LittleEndian>(0).unwrap();
-                buffer.write_u8(1).unwrap();
-                packets.push(make_tunneled_packet(OpCode::GameTimeSync as u16, &buffer).unwrap());
-            } else {
-                println!("Received unknown op code: {}", op_code);
-            }
+                    let preload_characters_done = TunneledPacket {
+                        unknown1: true,
+                        inner: PreloadCharactersDone {
+                            unknown1: false
+                        },
+                    };
+                    result_packets.push(GamePacket::serialize(&preload_characters_done)?);
+                },
+                OpCode::GameTimeSync => {
+                    let game_time_sync = TunneledPacket {
+                        unknown1: true,
+                        inner: make_game_time_sync(),
+                    };
+                    result_packets.push(GamePacket::serialize(&game_time_sync)?);
+                },
+                _ => println!("Unimplemented: {:?}", op_code)
+            },
+            Err(_) => println!("Unknown op code: {}", raw_op_code)
         }
-        
-        packets
+
+        Ok(result_packets)
     }
     
 }

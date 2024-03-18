@@ -41,7 +41,7 @@ pub fn derive_deserialize(input: proc_macro::TokenStream) -> proc_macro::TokenSt
 
     let expanded = quote! {
         impl #impl_generics packet_serialize::DeserializePacket for #name #ty_generics #where_clause {
-            fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<Self, packet_serialize::DeserializePacketError> {
+            fn deserialize(cursor: &mut std::io::Cursor<&[u8]>) -> Result<Self, packet_serialize::DeserializePacketError> {
                 Ok(#name {
                     #assignments
                 })
