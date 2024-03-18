@@ -338,7 +338,7 @@ fn add_session_packets(buffers: &mut Vec<Vec<u8>>, session_packets: Vec<&Packet>
 pub fn max_fragment_data_size(buffer_size: BufferSize, session: &Session) -> u32 {
 
     // Fragment needs space for header, sequence number, and footer
-    buffer_size - header_size(session) - size_of::<u16>() as u32 - footer_size(session) - 100
+    buffer_size - header_size(session) - size_of::<u16>() as u32 - footer_size(session)
 
 }
 
