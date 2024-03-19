@@ -75,10 +75,10 @@ impl GameServer {
                         inner: ZoneDetails {
                             name: "JediTemple".to_string(),
                             id: 2,
-                            unknown2: false,
-                            unknown3: false,
+                            hide_ui: false,
+                            direction_indicator: false,
                             unknown5: "".to_string(),
-                            unknown6: false,
+                            zoom_out: false,
                             unknown7: 0,
                             unknown8: 5,
                         },

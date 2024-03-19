@@ -25,10 +25,10 @@ impl GamePacket for DeploymentEnv {
 pub struct ZoneDetails {
     pub name: String,
     pub id: u32,
-    pub unknown2: bool,
-    pub unknown3: bool,
+    pub hide_ui: bool,
+    pub direction_indicator: bool,
     pub unknown5: String,
-    pub unknown6: bool,
+    pub zoom_out: bool,
     pub unknown7: u32,
     pub unknown8: u32
 }
