@@ -17,8 +17,7 @@ impl<T: ClientUpdatePacket> GamePacket for T {
     const OP_CODE: OpCode = OpCode::ClientUpdate;
 
     fn serialize(&self) -> Result<Vec<u8>, SerializePacketError> {
-        let mut buffer = Vec::new();
-        buffer.write_u16::<LittleEndian>(OpCode::ClientUpdate as u16)?;
+        let mut buffer = GamePacket::serialize_header(self)?;
         buffer.write_u16::<LittleEndian>(Self::OP_CODE as u16)?;
         SerializePacket::serialize(self, &mut buffer)?;
         Ok(buffer)

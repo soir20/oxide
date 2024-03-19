@@ -44,9 +44,14 @@ impl TryFrom<u16> for OpCode {
 pub trait GamePacket: SerializePacket {
     const OP_CODE: OpCode;
 
-    fn serialize(&self) -> Result<Vec<u8>, SerializePacketError> {
+    fn serialize_header(&self) -> Result<Vec<u8>, SerializePacketError> {
         let mut buffer = Vec::new();
         buffer.write_u16::<LittleEndian>(Self::OP_CODE as u16)?;
+        Ok(buffer)
+    }
+
+    fn serialize(&self) -> Result<Vec<u8>, SerializePacketError> {
+        let mut buffer = self.serialize_header()?;
         SerializePacket::serialize(self, &mut buffer)?;
         Ok(buffer)
     }
