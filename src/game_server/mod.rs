@@ -207,7 +207,7 @@ impl GameServer {
                         unknown1: true,
                         inner: make_game_time_sync(),
                     };
-                    //result_packets.push(GamePacket::serialize(&game_time_sync)?);
+                    result_packets.push(GamePacket::serialize(&game_time_sync)?);
                 },
                 _ => println!("Unimplemented: {:?}", op_code)
             },
