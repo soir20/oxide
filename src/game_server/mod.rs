@@ -77,7 +77,7 @@ impl GameServer {
                             id: 2,
                             hide_ui: false,
                             direction_indicator: false,
-                            unknown5: "".to_string(),
+                            sky_definition_file_name: "".to_string(),
                             zoom_out: false,
                             unknown7: 0,
                             unknown8: 5,
@@ -207,7 +207,7 @@ impl GameServer {
                         unknown1: true,
                         inner: make_game_time_sync(),
                     };
-                    result_packets.push(GamePacket::serialize(&game_time_sync)?);
+                    //result_packets.push(GamePacket::serialize(&game_time_sync)?);
                 },
                 _ => println!("Unimplemented: {:?}", op_code)
             },
