@@ -1,7 +1,7 @@
 use byteorder::{LittleEndian, WriteBytesExt};
 use packet_serialize::{SerializePacket, SerializePacketError};
 
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug)]
 pub enum OpCode {
     LoginRequest             = 0x1,
     LoginReply               = 0x2,
@@ -9,6 +9,7 @@ pub enum OpCode {
     Player                   = 0xc,
     ClientIsReady            = 0xd,
     ZoneDetailsDone          = 0xe,
+    PlayerUpdate             = 0x23,
     ClientUpdate             = 0x26,
     ZoneDetails              = 0x2b,
     GameTimeSync             = 0x34,
@@ -30,6 +31,7 @@ impl TryFrom<u16> for OpCode {
             0xc => Ok(OpCode::Player),
             0xd => Ok(OpCode::ClientIsReady),
             0xe => Ok(OpCode::ZoneDetailsDone),
+            0x23 => Ok(OpCode::PlayerUpdate),
             0x26 => Ok(OpCode::ClientUpdate),
             0x2b => Ok(OpCode::ZoneDetails),
             0x34 => Ok(OpCode::GameTimeSync),
@@ -41,17 +43,20 @@ impl TryFrom<u16> for OpCode {
     }
 }
 
-pub trait GamePacket: SerializePacket {
-    const OP_CODE: OpCode;
-
-    fn serialize_header(&self) -> Result<Vec<u8>, SerializePacketError> {
-        let mut buffer = Vec::new();
-        buffer.write_u16::<LittleEndian>(Self::OP_CODE as u16)?;
-        Ok(buffer)
+impl SerializePacket for OpCode {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        buffer.write_u16::<LittleEndian>(*self as u16)?;
+        Ok(())
     }
+}
+
+pub trait GamePacket: SerializePacket {
+    type Header: SerializePacket;
+    const HEADER: Self::Header;
 
     fn serialize(&self) -> Result<Vec<u8>, SerializePacketError> {
-        let mut buffer = self.serialize_header()?;
+        let mut buffer = Vec::new();
+        SerializePacket::serialize(&Self::HEADER, &mut buffer)?;
         SerializePacket::serialize(self, &mut buffer)?;
         Ok(buffer)
     }

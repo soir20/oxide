@@ -329,7 +329,8 @@ impl SerializePacket for Player {
 }
 
 impl GamePacket for Player {
-    const OP_CODE: OpCode = OpCode::Player;
+    type Header = OpCode;
+    const HEADER: OpCode = OpCode::Player;
 }
 
 pub fn make_test_player() -> Player {

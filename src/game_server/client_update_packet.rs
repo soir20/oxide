@@ -2,6 +2,7 @@ use byteorder::{LittleEndian, WriteBytesExt};
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
 use crate::game_server::game_packet::{GamePacket, OpCode};
 
+#[derive(Copy, Clone, Debug)]
 pub enum ClientUpdateOpCode {
     Health                   = 0x1,
     Power                    = 0xd,
@@ -9,18 +10,11 @@ pub enum ClientUpdateOpCode {
     PreloadCharactersDone    = 0x1a
 }
 
-pub trait ClientUpdatePacket: SerializePacket {
-    const OP_CODE: ClientUpdateOpCode;
-}
-
-impl<T: ClientUpdatePacket> GamePacket for T {
-    const OP_CODE: OpCode = OpCode::ClientUpdate;
-
-    fn serialize(&self) -> Result<Vec<u8>, SerializePacketError> {
-        let mut buffer = GamePacket::serialize_header(self)?;
-        buffer.write_u16::<LittleEndian>(Self::OP_CODE as u16)?;
-        SerializePacket::serialize(self, &mut buffer)?;
-        Ok(buffer)
+impl SerializePacket for ClientUpdateOpCode {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        OpCode::ClientUpdate.serialize(buffer)?;
+        buffer.write_u16::<LittleEndian>(*self as u16)?;
+        Ok(())
     }
 }
 
@@ -30,8 +24,9 @@ pub struct Health {
     pub(crate) unknown2: u32,
 }
 
-impl ClientUpdatePacket for Health {
-    const OP_CODE: ClientUpdateOpCode = ClientUpdateOpCode::Health;
+impl GamePacket for Health {
+    type Header = ClientUpdateOpCode;
+    const HEADER: ClientUpdateOpCode = ClientUpdateOpCode::Health;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -40,8 +35,9 @@ pub struct Power {
     pub(crate) unknown2: u32,
 }
 
-impl ClientUpdatePacket for Power {
-    const OP_CODE: ClientUpdateOpCode = ClientUpdateOpCode::Power;
+impl GamePacket for Power {
+    type Header = ClientUpdateOpCode;
+    const HEADER: ClientUpdateOpCode = ClientUpdateOpCode::Power;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -57,8 +53,9 @@ pub struct Stats {
     pub(crate) stats: Vec<Stat>
 }
 
-impl ClientUpdatePacket for Stats {
-    const OP_CODE: ClientUpdateOpCode = ClientUpdateOpCode::Stats;
+impl GamePacket for Stats {
+    type Header = ClientUpdateOpCode;
+    const HEADER: ClientUpdateOpCode = ClientUpdateOpCode::Stats;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -66,6 +63,7 @@ pub struct PreloadCharactersDone {
     pub(crate) unknown1: bool
 }
 
-impl ClientUpdatePacket for PreloadCharactersDone {
-    const OP_CODE: ClientUpdateOpCode = ClientUpdateOpCode::PreloadCharactersDone;
+impl GamePacket for PreloadCharactersDone {
+    type Header = ClientUpdateOpCode;
+    const HEADER: ClientUpdateOpCode = ClientUpdateOpCode::PreloadCharactersDone;
 }

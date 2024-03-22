@@ -9,7 +9,8 @@ pub struct LoginReply {
 }
 
 impl GamePacket for LoginReply {
-    const OP_CODE: OpCode = OpCode::LoginReply;
+    type Header = OpCode;
+    const HEADER: OpCode = OpCode::LoginReply;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -18,7 +19,8 @@ pub struct DeploymentEnv {
 }
 
 impl GamePacket for DeploymentEnv {
-    const OP_CODE: OpCode = OpCode::DeploymentEnv;
+    type Header = OpCode;
+    const HEADER: OpCode = OpCode::DeploymentEnv;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -34,7 +36,8 @@ pub struct ZoneDetails {
 }
 
 impl GamePacket for ZoneDetails {
-    const OP_CODE: OpCode = OpCode::ZoneDetails;
+    type Header = OpCode;
+    const HEADER: OpCode = OpCode::ZoneDetails;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -47,7 +50,8 @@ pub struct GameSettings {
 }
 
 impl GamePacket for GameSettings {
-    const OP_CODE: OpCode = OpCode::ClientGameSettings;
+    type Header = OpCode;
+    const HEADER: OpCode = OpCode::ClientGameSettings;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -66,14 +70,16 @@ pub struct WelcomeScreen {
 }
 
 impl GamePacket for WelcomeScreen {
-    const OP_CODE: OpCode = OpCode::WelcomeScreen;
+    type Header = OpCode;
+    const HEADER: OpCode = OpCode::WelcomeScreen;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct ZoneDetailsDone {}
 
 impl GamePacket for ZoneDetailsDone {
-    const OP_CODE: OpCode = OpCode::ZoneDetailsDone;
+    type Header = OpCode;
+    const HEADER: OpCode = OpCode::ZoneDetailsDone;
 }
 
 pub fn send_item_definitions() -> Result<Vec<u8>, Error> {

@@ -14,6 +14,7 @@ mod tunnel;
 mod game_packet;
 mod time;
 mod client_update_packet;
+mod player_update_packet;
 
 #[non_exhaustive]
 #[derive(Debug)]

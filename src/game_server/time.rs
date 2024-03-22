@@ -10,7 +10,8 @@ pub struct GameTimeSync {
 }
 
 impl GamePacket for GameTimeSync {
-    const OP_CODE: OpCode = OpCode::GameTimeSync;
+    type Header = OpCode;
+    const HEADER: OpCode = OpCode::GameTimeSync;
 }
 
 pub fn make_game_time_sync() -> GameTimeSync {

@@ -9,14 +9,15 @@ pub struct TunneledPacket<T> {
 }
 
 impl<T: GamePacket> GamePacket for TunneledPacket<T> {
-    const OP_CODE: OpCode = OpCode::TunneledClient;
+    type Header = OpCode;
+    const HEADER: OpCode = OpCode::TunneledClient;
 }
 
 impl<T: GamePacket> SerializePacket for TunneledPacket<T> {
     fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
         buffer.write_u8(self.unknown1 as u8)?;
 
-        let mut inner_buffer = GamePacket::serialize(&self.inner)?;
+        let inner_buffer = GamePacket::serialize(&self.inner)?;
         buffer.write_u32::<LittleEndian>(inner_buffer.len() as u32)?;
         buffer.write_all(&inner_buffer)?;
         Ok(())
