@@ -5,6 +5,7 @@ use crate::game_server::client_update_packet::{Health, Power, PreloadCharactersD
 use crate::game_server::login::{DeploymentEnv, GameSettings, LoginReply, WelcomeScreen, ZoneDetails, ZoneDetailsDone};
 use crate::game_server::game_packet::{GamePacket, OpCode};
 use crate::game_server::player_data::make_test_player;
+use crate::game_server::player_update_packet::make_test_npc;
 use crate::game_server::time::make_game_time_sync;
 use crate::game_server::tunnel::TunneledPacket;
 
@@ -109,6 +110,12 @@ impl GameServer {
                     result_packets.append(&mut self.process_packet(packet.inner)?);
                 },
                 OpCode::ClientIsReady => {
+                    let npc = TunneledPacket {
+                        unknown1: true,
+                        inner: make_test_npc()
+                    };
+                    result_packets.push(GamePacket::serialize(&npc)?);
+
                     let health = TunneledPacket {
                         unknown1: true,
                         inner: Health {
