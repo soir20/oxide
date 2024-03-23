@@ -61,3 +61,34 @@ pub trait GamePacket: SerializePacket {
         Ok(buffer)
     }
 }
+
+#[derive(SerializePacket)]
+pub struct Pos {
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
+    pub rot: f32
+}
+
+#[derive(SerializePacket)]
+pub struct Effect {
+    unknown1: u32,
+    unknown2: u32,
+    unknown3: u32,
+    unknown4: u32,
+    unknown5: u32,
+    unknown6: u32,
+    unknown7: u32,
+    unknown8: bool,
+    unknown9: u64,
+    unknown10: u32,
+    unknown11: u32,
+    unknown12: u32,
+    unknown13: u32,
+    unknown14: u64,
+    unknown15: u32,
+    unknown16: u32,
+    unknown17: bool,
+    unknown18: bool,
+    unknown19: bool,
+}
