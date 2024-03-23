@@ -143,7 +143,7 @@ pub fn make_test_npc() -> AddNpc {
             x: 887.3,
             y: 173.0,
             z: 1546.956,
-            rot: 0.0,
+            rot: 1.0,
         },
         rotation: Pos {
             x: 0.0,
