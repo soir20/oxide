@@ -56,6 +56,20 @@ impl SerializePacket for Icon {
     }
 }
 
+#[derive(Copy, Clone, Debug)]
+pub enum DamageAnimation {
+    None = 0,
+    Explode = 1,
+    SaberStrike = 2,
+}
+
+impl SerializePacket for DamageAnimation {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        buffer.write_u32::<LittleEndian>(*self as u32)?;
+        Ok(())
+    }
+}
+
 #[derive(SerializePacket)]
 pub struct AddNpc {
     guid: u64,
@@ -77,7 +91,7 @@ pub struct AddNpc {
     tint_id: u32,
     unknown11: bool,
     unknown12: u32,
-    unknown13: u32,
+    damage_animation: DamageAnimation,
     unknown14: u32,
     name_override: String,
     hide_name: bool,
@@ -175,7 +189,7 @@ pub fn make_test_npc() -> AddNpc {
         tint_id: 0,
         unknown11: true,
         unknown12: 0,
-        unknown13: 0,
+        damage_animation: DamageAnimation::None,
         unknown14: 0,
         name_override: "".to_string(),
         hide_name: false,
