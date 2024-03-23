@@ -1,5 +1,5 @@
 use byteorder::{LittleEndian, WriteBytesExt};
-use packet_serialize::{SerializePacket, SerializePacketError};
+use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
 
 #[derive(Copy, Clone, Debug)]
 pub enum OpCode {
@@ -62,7 +62,7 @@ pub trait GamePacket: SerializePacket {
     }
 }
 
-#[derive(SerializePacket)]
+#[derive(SerializePacket, DeserializePacket)]
 pub struct Pos {
     pub x: f32,
     pub y: f32,
@@ -70,25 +70,25 @@ pub struct Pos {
     pub rot: f32
 }
 
-#[derive(SerializePacket)]
+#[derive(SerializePacket, DeserializePacket)]
 pub struct Effect {
-    unknown1: u32,
-    unknown2: u32,
-    unknown3: u32,
-    unknown4: u32,
-    unknown5: u32,
-    unknown6: u32,
-    unknown7: u32,
-    unknown8: bool,
-    unknown9: u64,
-    unknown10: u32,
-    unknown11: u32,
-    unknown12: u32,
-    unknown13: u32,
-    unknown14: u64,
-    unknown15: u32,
-    unknown16: u32,
-    unknown17: bool,
-    unknown18: bool,
-    unknown19: bool,
+    pub unknown1: u32,
+    pub unknown2: u32,
+    pub unknown3: u32,
+    pub unknown4: u32,
+    pub unknown5: u32,
+    pub unknown6: u32,
+    pub unknown7: u32,
+    pub unknown8: bool,
+    pub unknown9: u64,
+    pub unknown10: u32,
+    pub unknown11: u32,
+    pub unknown12: u32,
+    pub unknown13: u32,
+    pub unknown14: u64,
+    pub unknown15: u32,
+    pub unknown16: u32,
+    pub unknown17: bool,
+    pub unknown18: bool,
+    pub unknown19: bool,
 }

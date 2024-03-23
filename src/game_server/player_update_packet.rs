@@ -1,7 +1,6 @@
 use byteorder::{LittleEndian, WriteBytesExt};
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
-use crate::game_server::game_packet::{Effect, GamePacket, OpCode};
-use crate::game_server::player_data::Pos;
+use crate::game_server::game_packet::{Effect, GamePacket, OpCode, Pos};
 
 #[derive(Copy, Clone, Debug)]
 pub enum PlayerUpdateOpCode {
@@ -16,6 +15,7 @@ impl SerializePacket for PlayerUpdateOpCode {
     }
 }
 
+#[derive(SerializePacket, DeserializePacket)]
 pub struct Attachment {
     unknown1: String,
     unknown2: String,
@@ -25,6 +25,7 @@ pub struct Attachment {
     unknown6: u32,
 }
 
+#[derive(SerializePacket, DeserializePacket)]
 pub struct Unknown {
     unknown1: u32,
     unknown2: String,
@@ -33,6 +34,7 @@ pub struct Unknown {
     unknown5: String,
 }
 
+#[derive(SerializePacket, DeserializePacket)]
 pub struct Variable {
     unknown1: u32,
     unknown2: String,
