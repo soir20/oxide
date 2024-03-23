@@ -1,10 +1,7 @@
 use std::io::Write;
 use byteorder::{LittleEndian, WriteBytesExt};
 use packet_serialize::{LengthlessVec, SerializePacket, SerializePacketError};
-use crate::game_server::game_packet::{Effect, GamePacket, OpCode, Pos};
-
-pub type StringId = u32;
-pub type ImageId = u32;
+use crate::game_server::game_packet::{Effect, GamePacket, ImageId, OpCode, Pos, StringId};
 
 #[derive(SerializePacket)]
 pub struct EquippedVehicle {}

@@ -1,6 +1,6 @@
 use byteorder::{LittleEndian, WriteBytesExt};
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
-use crate::game_server::game_packet::{Effect, GamePacket, OpCode, Pos};
+use crate::game_server::game_packet::{Effect, GamePacket, OpCode, Pos, StringId};
 
 #[derive(Copy, Clone, Debug)]
 pub enum PlayerUpdateOpCode {
@@ -41,7 +41,22 @@ pub struct Variable {
     unknown3: u32,
 }
 
-#[derive(SerializePacket, DeserializePacket)]
+#[derive(Copy, Clone, Debug)]
+pub enum Icon {
+    None = 0,
+    Member = 1,
+    Enforcer = 2,
+    FancyMember = 3,
+}
+
+impl SerializePacket for Icon {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        buffer.write_u32::<LittleEndian>(*self as u32)?;
+        Ok(())
+    }
+}
+
+#[derive(SerializePacket)]
 pub struct AddNpc {
     guid: u64,
     name_id: u32,
@@ -79,7 +94,7 @@ pub struct AddNpc {
     unknown25: u32,
     unknown26: bool,
     unknown27: bool,
-    unknown28: u32,
+    sub_title_id: StringId,
     unknown29: u32,
     unknown30: u32,
     unknown31: Vec<Effect>,
@@ -121,7 +136,7 @@ pub struct AddNpc {
     unknown69: f32,
     unknown70: f32,
     unknown71: u64,
-    unknown72: u32,
+    icon_id: Icon,
 }
 
 impl GamePacket for AddNpc {
@@ -177,7 +192,7 @@ pub fn make_test_npc() -> AddNpc {
         unknown25: 0,
         unknown26: false,
         unknown27: false,
-        unknown28: 0,
+        sub_title_id: 0,
         unknown29: 0,
         unknown30: 0,
         unknown31: vec![],
@@ -235,6 +250,6 @@ pub fn make_test_npc() -> AddNpc {
         unknown69: 0.0,
         unknown70: 0.0,
         unknown71: 0,
-        unknown72: 0,
+        icon_id: Icon::None,
     }
 }

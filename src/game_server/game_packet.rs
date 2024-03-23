@@ -94,3 +94,6 @@ pub struct Effect {
     pub unknown18: bool,
     pub unknown19: bool,
 }
+
+pub type StringId = u32;
+pub type ImageId = u32;
