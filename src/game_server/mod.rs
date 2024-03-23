@@ -2,6 +2,7 @@ use std::io::{Cursor, Error};
 use byteorder::{LittleEndian, ReadBytesExt};
 use packet_serialize::{DeserializePacket, DeserializePacketError, NullTerminatedString, SerializePacketError};
 use crate::game_server::client_update_packet::{Health, Power, PreloadCharactersDone, Stat, Stats};
+use crate::game_server::command::{Interaction, InteractionList};
 use crate::game_server::login::{DeploymentEnv, GameSettings, LoginReply, WelcomeScreen, ZoneDetails, ZoneDetailsDone};
 use crate::game_server::game_packet::{GamePacket, OpCode};
 use crate::game_server::player_data::make_test_player;
@@ -16,6 +17,7 @@ mod game_packet;
 mod time;
 mod client_update_packet;
 mod player_update_packet;
+mod command;
 
 #[non_exhaustive]
 #[derive(Debug)]
@@ -115,6 +117,31 @@ impl GameServer {
                         inner: make_test_npc()
                     };
                     result_packets.push(GamePacket::serialize(&npc)?);
+
+                    let interactions = TunneledPacket {
+                        unknown1: true,
+                        inner: InteractionList {
+                            guid: 2,
+                            unknown1: true,
+                            interactions: vec![
+                                Interaction {
+                                    unknown1: 1,
+                                    unknown2: 2,
+                                    unknown3: 3,
+                                    unknown4: 4,
+                                    unknown5: 5,
+                                    unknown6: 6,
+                                    unknown7: 7,
+                                    unknown8: 8,
+                                    unknown9: 9,
+                                }
+                            ],
+                            unknown2: "hello world".to_string(),
+                            unknown3: true,
+                            unknown4: true,
+                        },
+                    };
+                    result_packets.push(GamePacket::serialize(&interactions)?);
 
                     let health = TunneledPacket {
                         unknown1: true,
