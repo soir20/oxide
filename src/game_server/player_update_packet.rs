@@ -129,7 +129,7 @@ pub struct AddNpc {
     unknown46: f32,
     target: u32,
     unknown50: Vec<Variable>,
-    unknown51: u32,
+    trick_animation_id: u32,
     unknown52: f32,
     unknown53: Pos,
     unknown54: u32,
@@ -238,7 +238,7 @@ pub fn make_test_npc() -> AddNpc {
         unknown46: 0.0,
         target: 0,
         unknown50: vec![],
-        unknown51: 0,
+        trick_animation_id: 0,
         unknown52: 0.0,
         unknown53: Pos {
             x: 0.0,
