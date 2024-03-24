@@ -79,7 +79,7 @@ pub struct AddNpc {
     unknown4: u32,
     unknown5: u32,
     unknown6: u32,
-    unknown7: f32,
+    scale: f32,
     position: Pos,
     rotation: Pos,
     unknown8: u32,
@@ -167,7 +167,7 @@ pub fn make_test_npc() -> AddNpc {
         unknown4: 0,
         unknown5: 0,
         unknown6: 1,
-        unknown7: 1.0,
+        scale: 1.0,
         position: Pos {
             x: 887.3,
             y: 173.0,
