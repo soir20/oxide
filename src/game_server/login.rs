@@ -46,7 +46,7 @@ pub struct GameSettings {
     pub unknown2: u32,
     pub unknown3: u32,
     pub unknown4: bool,
-    pub unknown5: f32
+    pub time_scale: f32
 }
 
 impl GamePacket for GameSettings {
