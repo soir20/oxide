@@ -4,7 +4,8 @@ use crate::game_server::game_packet::{Effect, GamePacket, OpCode, Pos, StringId}
 
 #[derive(Copy, Clone, Debug)]
 pub enum PlayerUpdateOpCode {
-    AddNpc                   = 0x2
+    AddNpc                   = 0x2,
+    UpdateCharacterState     = 0x14
 }
 
 impl SerializePacket for PlayerUpdateOpCode {
@@ -13,6 +14,17 @@ impl SerializePacket for PlayerUpdateOpCode {
         buffer.write_u16::<LittleEndian>(*self as u16)?;
         Ok(())
     }
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct UpdateCharacterState {
+    pub guid: u64,
+    pub bitflags: u32,
+}
+
+impl GamePacket for UpdateCharacterState {
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::UpdateCharacterState;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
