@@ -93,6 +93,21 @@ impl SerializePacket for WeaponAnimation {
     }
 }
 
+#[derive(Copy, Clone, Debug)]
+pub enum MoveAnimation {
+    Default = 0,
+    Standing = 1,
+    Walking = 2,
+    Running = 3,
+}
+
+impl SerializePacket for MoveAnimation {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        buffer.write_u32::<LittleEndian>(*self as u32)?;
+        Ok(())
+    }
+}
+
 #[derive(SerializePacket)]
 pub struct AddNpc {
     guid: u64,
@@ -128,11 +143,11 @@ pub struct AddNpc {
     unknown22: u32,
     unknown23: u32,
     unknown24: u32,
-    unknown25: u32,
+    move_animation: MoveAnimation,
     unknown26: bool,
     unknown27: bool,
     sub_title_id: StringId,
-    unknown29: u32,
+    move_animation2: MoveAnimation,
     unknown30: u32,
     unknown31: Vec<Effect>,
     unknown32: bool,
@@ -226,11 +241,11 @@ pub fn make_test_npc() -> AddNpc {
         unknown22: 0,
         unknown23: 0,
         unknown24: 0,
-        unknown25: 0,
+        move_animation: MoveAnimation::Default,
         unknown26: false,
         unknown27: false,
         sub_title_id: 0,
-        unknown29: 0,
+        move_animation2: MoveAnimation::Default,
         unknown30: 0,
         unknown31: vec![],
         unknown32: false,
