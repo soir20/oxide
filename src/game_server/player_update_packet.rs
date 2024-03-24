@@ -70,6 +70,29 @@ impl SerializePacket for DamageAnimation {
     }
 }
 
+#[derive(Copy, Clone, Debug)]
+pub enum WeaponAnimation {
+    None = 0,
+    SingleSaber = 1,
+    StaffSaber = 2,
+    ReverseSingleSaber = 3,
+    DoubleSaber = 4,
+    SinglePistol = 5,
+    Rifle = 6,
+    SniperRifle = 7,
+    RocketLauncher = 8,
+    Flamethrower = 9,
+    DoublePistol = 10,
+    Staff = 11,
+}
+
+impl SerializePacket for WeaponAnimation {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        buffer.write_u32::<LittleEndian>(*self as u32)?;
+        Ok(())
+    }
+}
+
 #[derive(SerializePacket)]
 pub struct AddNpc {
     guid: u64,
@@ -92,7 +115,7 @@ pub struct AddNpc {
     unknown11: bool,
     unknown12: u32,
     damage_animation: DamageAnimation,
-    unknown14: u32,
+    unknown14: WeaponAnimation,
     name_override: String,
     hide_name: bool,
     unknown15: f32,
@@ -162,7 +185,7 @@ pub fn make_test_npc() -> AddNpc {
     AddNpc {
         guid: 2,
         name_id: 33927,
-        model_id: 2709,
+        model_id: 2406,
         unknown3: false,
         unknown4: 0,
         unknown5: 0,
@@ -170,7 +193,7 @@ pub fn make_test_npc() -> AddNpc {
         scale: 1.0,
         position: Pos {
             x: 887.3,
-            y: 173.0,
+            y: 171.95,
             z: 1546.956,
             rot: 1.0,
         },
@@ -190,7 +213,7 @@ pub fn make_test_npc() -> AddNpc {
         unknown11: true,
         unknown12: 0,
         damage_animation: DamageAnimation::None,
-        unknown14: 0,
+        unknown14: WeaponAnimation::None,
         name_override: "".to_string(),
         hide_name: false,
         unknown15: 0.0,
