@@ -107,7 +107,6 @@ impl SerializePacket for WeaponAnimation {
 
 #[derive(Copy, Clone, Debug)]
 pub enum MoveAnimation {
-    Default = 0,
     Standing = 1,
     Walking = 2,
     Running = 3,
@@ -253,11 +252,11 @@ pub fn make_test_npc() -> AddNpc {
         unknown22: 0,
         unknown23: 0,
         unknown24: 0,
-        move_animation: MoveAnimation::Default,
+        move_animation: MoveAnimation::Standing,
         unknown26: false,
         unknown27: false,
         sub_title_id: 0,
-        move_animation2: MoveAnimation::Default,
+        move_animation2: MoveAnimation::Standing,
         head_model_id: 0,
         unknown31: vec![],
         unknown32: false,
