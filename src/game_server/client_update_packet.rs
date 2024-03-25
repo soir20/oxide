@@ -1,10 +1,11 @@
 use byteorder::{LittleEndian, WriteBytesExt};
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
-use crate::game_server::game_packet::{GamePacket, OpCode};
+use crate::game_server::game_packet::{GamePacket, OpCode, Pos};
 
 #[derive(Copy, Clone, Debug)]
 pub enum ClientUpdateOpCode {
     Health                   = 0x1,
+    Position                 = 0xc,
     Power                    = 0xd,
     Stats                    = 0x7,
     PreloadCharactersDone    = 0x1a
@@ -16,6 +17,19 @@ impl SerializePacket for ClientUpdateOpCode {
         buffer.write_u16::<LittleEndian>(*self as u16)?;
         Ok(())
     }
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct Position {
+    pub player_pos: Pos,
+    pub camera_pos: Pos,
+    pub unknown1: bool,
+    pub unknown2: bool
+}
+
+impl GamePacket for Position {
+    type Header = ClientUpdateOpCode;
+    const HEADER: Self::Header = ClientUpdateOpCode::Position;
 }
 
 #[derive(SerializePacket, DeserializePacket)]

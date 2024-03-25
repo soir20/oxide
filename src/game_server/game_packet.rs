@@ -17,6 +17,7 @@ pub enum OpCode {
     WelcomeScreen            = 0x5d,
     ClientGameSettings       = 0x8f,
     DeploymentEnv            = 0xa5,
+    Portrait                 = 0x9b
 }
 
 pub struct UnknownOpCode;
@@ -40,6 +41,7 @@ impl TryFrom<u16> for OpCode {
             0x5d => Ok(OpCode::WelcomeScreen),
             0x8f => Ok(OpCode::ClientGameSettings),
             0xa5 => Ok(OpCode::DeploymentEnv),
+            0x9b => Ok(OpCode::Portrait),
             _ => Err(UnknownOpCode)
         }
     }
