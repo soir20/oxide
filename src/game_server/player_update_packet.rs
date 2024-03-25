@@ -131,6 +131,19 @@ impl SerializePacket for MoveAnimation {
     }
 }
 
+#[derive(Copy, Clone, Debug)]
+pub enum HoverGlow {
+    Disabled = 0,
+    Enabled = 1
+}
+
+impl SerializePacket for HoverGlow {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        buffer.write_u32::<LittleEndian>(*self as u32)?;
+        Ok(())
+    }
+}
+
 #[derive(SerializePacket)]
 pub struct AddNpc {
     guid: u64,
@@ -201,7 +214,7 @@ pub struct AddNpc {
     unknown59: String,
     unknown60: String,
     interactable2: bool,
-    unknown62: u32,
+    hover_glow: HoverGlow,
     unknown63: u32,
     unknown64: u32,
     unknown65: u32,
@@ -315,7 +328,7 @@ pub fn make_test_npc() -> AddNpc {
         unknown59: "".to_string(),
         unknown60: "".to_string(),
         interactable2: true,
-        unknown62: 0,
+        hover_glow: HoverGlow::Enabled,
         unknown63: 0,
         unknown64: 0,
         unknown65: 0, // max 32
