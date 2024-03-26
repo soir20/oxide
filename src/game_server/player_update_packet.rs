@@ -216,7 +216,7 @@ pub struct AddNpc {
     interactable2: bool,
     hover_glow: HoverGlow,
     unknown63: u32,
-    unknown64: u32,
+    fly_over_effect: u32,
     unknown65: u32,
     unknown66: u32,
     unknown67: u32,
@@ -329,8 +329,8 @@ pub fn make_test_npc() -> AddNpc {
         unknown60: "".to_string(),
         interactable2: true,
         hover_glow: HoverGlow::Enabled,
-        unknown63: 0,
-        unknown64: 0,
+        unknown63: 0, // max 7
+        fly_over_effect: 0, // max 3
         unknown65: 0, // max 32
         unknown66: 0,
         unknown67: 0,
