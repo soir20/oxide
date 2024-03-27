@@ -158,7 +158,7 @@ pub struct AddNpc {
     rotation: Pos,
     unknown8: u32,
     attachments: Vec<Attachment>,
-    unknown9: u32,
+    is_terrain_object_noninteractable: u32,
     unknown10: u32,
     texture_name: String,
     tint_name: String,
@@ -172,7 +172,7 @@ pub struct AddNpc {
     name_offset_x: f32,
     name_offset_y: f32,
     name_offset_z: f32,
-    invisible2: u32,
+    terrain_object_id: u32,
     invisible: bool,
     unknown20: f32,
     unknown21: bool,
@@ -197,7 +197,7 @@ pub struct AddNpc {
     unknown40: u32,
     unknown41: i32,
     unknown42: u32,
-    interactable: bool,
+    collision: bool,
     unknown44: u64,
     unknown45: u32,
     unknown46: f32,
@@ -213,7 +213,7 @@ pub struct AddNpc {
     unknown58: String,
     unknown59: String,
     unknown60: String,
-    interactable2: bool,
+    is_not_terrain_object: bool,
     hover_glow: HoverGlow,
     unknown63: u32,
     fly_over_effect: u32,
@@ -235,17 +235,17 @@ impl GamePacket for AddNpc {
 pub fn make_test_npc() -> AddNpc {
     AddNpc {
         guid: 2,
-        name_id: 33927,
-        model_id: 2406,
+        name_id: 0,
+        model_id: 0,
         unknown3: false,
         unknown4: 0,
         unknown5: 0,
         unknown6: 1,
         scale: 1.0,
         position: Pos {
-            x: 887.3,
-            y: 171.95,
-            z: 1546.956,
+            x: 0.0,
+            y: 0.0,
+            z: 0.0,
             rot: 1.0,
         },
         rotation: Pos {
@@ -256,7 +256,10 @@ pub fn make_test_npc() -> AddNpc {
         },
         unknown8: 0,
         attachments: vec![],
-        unknown9: 1,
+        is_terrain_object_noninteractable: 0, // Terrain objects only seem interactable
+                                              // when this == 0. Otherwise, click to move
+                                              // targets a spot behind the object. Likely some
+                                              // kind of index in the collision or mesh data.
         unknown10: 0,
         texture_name: "".to_string(),
         tint_name: "".to_string(),
@@ -270,7 +273,7 @@ pub fn make_test_npc() -> AddNpc {
         name_offset_x: 0.0,
         name_offset_y: 0.0,
         name_offset_z: 0.0,
-        invisible2: 0,
+        terrain_object_id: 1278971264,
         invisible: false,
         unknown20: 0.0,
         unknown21: false,
@@ -306,7 +309,8 @@ pub fn make_test_npc() -> AddNpc {
         unknown40: 0,
         unknown41: -1,
         unknown42: 0,
-        interactable: true,
+        collision: true, // To be interactable, every NPC must have collision set,
+                         // even if the model does not actually support collision
         unknown44: 0,
         unknown45: 2,
         unknown46: 0.0,
@@ -327,7 +331,7 @@ pub fn make_test_npc() -> AddNpc {
         unknown58: "".to_string(),
         unknown59: "".to_string(),
         unknown60: "".to_string(),
-        interactable2: true,
+        is_not_terrain_object: false, // Non-terrain NPCs must have this enabled to be interactable
         hover_glow: HoverGlow::Enabled,
         unknown63: 0, // max 7
         fly_over_effect: 0, // max 3
