@@ -1,0 +1,21 @@
+[
+  {
+    "id": 2,
+    "name": "JediTemple",
+    "hide_ui": false,
+    "direction_indicator": false,
+    "doors": [
+      {
+        "terrain_object_id": 1278971264,
+        "destination_pos_x": 1757.0,
+        "destination_pos_y": 11.0,
+        "destination_pos_z": 1694.0,
+        "destination_rot": 0.0,
+        "destination_camera_x": 1757.0,
+        "destination_camera_y": 11.0,
+        "destination_camera_z": 1694.0,
+        "destination_camera_rot": 0.0
+      }
+    ]
+  }
+]

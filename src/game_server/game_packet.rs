@@ -1,4 +1,5 @@
 use byteorder::{LittleEndian, WriteBytesExt};
+use serde::Deserialize;
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
 
 #[derive(Copy, Clone, Debug)]
@@ -66,7 +67,7 @@ pub trait GamePacket: SerializePacket {
     }
 }
 
-#[derive(SerializePacket, DeserializePacket)]
+#[derive(Copy, Clone, SerializePacket, DeserializePacket, Deserialize)]
 pub struct Pos {
     pub x: f32,
     pub y: f32,

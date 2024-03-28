@@ -1,16 +1,20 @@
+use std::collections::BTreeMap;
 use std::io::{Cursor, Error};
+use std::path::Path;
 
 use byteorder::{LittleEndian, ReadBytesExt};
 
 use packet_serialize::{DeserializePacket, DeserializePacketError, NullTerminatedString, SerializePacketError};
 
 use crate::game_server::client_update_packet::{Health, Power, PreloadCharactersDone, Stat, Stats};
+use crate::game_server::command::process_command;
 use crate::game_server::game_packet::{GamePacket, OpCode};
 use crate::game_server::login::{DeploymentEnv, GameSettings, LoginReply, WelcomeScreen, ZoneDetails, ZoneDetailsDone};
 use crate::game_server::player_data::make_test_player;
 use crate::game_server::player_update_packet::make_test_npc;
 use crate::game_server::time::make_game_time_sync;
 use crate::game_server::tunnel::TunneledPacket;
+use crate::game_server::zone::{load_zones, Zone};
 
 mod login;
 mod player_data;
@@ -20,6 +24,7 @@ mod time;
 mod client_update_packet;
 mod player_update_packet;
 mod command;
+mod zone;
 
 #[non_exhaustive]
 #[derive(Debug)]
@@ -47,10 +52,18 @@ impl From<SerializePacketError> for ProcessPacketError {
 }
 
 pub struct GameServer {
-    
+    zones: BTreeMap<u32, Zone>
 }
 
 impl GameServer {
+
+    pub fn new(config_dir: &Path) -> Result<Self, Error> {
+        Ok(
+            GameServer {
+                zones: load_zones(config_dir)?,
+            }
+        )
+    }
     
     pub fn process_packet(&mut self, data: Vec<u8>) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
         let mut result_packets = Vec::new();
@@ -118,7 +131,11 @@ impl GameServer {
                         unknown1: true,
                         inner: make_test_npc()
                     };
-                    result_packets.push(GamePacket::serialize(&npc)?);
+                    //result_packets.push(GamePacket::serialize(&npc)?);
+
+                    // TODO: get player's zone
+                    let mut preloaded_npcs = self.zones[&2].preload_npc_packets()?;
+                    result_packets.append(&mut preloaded_npcs);
 
                     let health = TunneledPacket {
                         unknown1: true,
@@ -220,6 +237,10 @@ impl GameServer {
                         inner: make_game_time_sync(),
                     };
                     result_packets.push(GamePacket::serialize(&game_time_sync)?);
+                },
+                OpCode::Command => {
+                    let mut result_commands = process_command(self, &mut cursor)?;
+                    result_packets.append(&mut result_commands);
                 },
                 _ => println!("Unimplemented: {:?}", op_code)
             },

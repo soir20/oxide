@@ -1,4 +1,5 @@
 use std::net::{SocketAddr, UdpSocket};
+use std::path::Path;
 use std::thread;
 use std::time::Duration;
 use crate::game_server::GameServer;
@@ -12,7 +13,7 @@ fn main() {
     let socket = UdpSocket::bind(SocketAddr::new("127.0.0.1".parse().unwrap(), "20225".parse().unwrap())).expect("couldn't bind to socket");
 
     let mut channel = Channel::new(200, 1000);
-    let mut game_server = GameServer {};
+    let mut game_server = GameServer::new(Path::new("config")).unwrap();
     let delta = 5u8;
     loop {
         let mut buf = [0; 512];
