@@ -10,6 +10,7 @@ use packet_serialize::SerializePacketError;
 use crate::game_server::client_update_packet::Position;
 use crate::game_server::command::InteractionRequest;
 use crate::game_server::game_packet::{GamePacket, Pos};
+use crate::game_server::login::ZoneDetails;
 use crate::game_server::player_update_packet::{AddNpc, DamageAnimation, HoverGlow, Icon, MoveAnimation, Unknown, WeaponAnimation};
 use crate::game_server::tunnel::TunneledPacket;
 
@@ -204,7 +205,27 @@ pub struct Zone {
 }
 
 impl Zone {
-    pub fn preload_npc_packets(&self) -> Result<Vec<Vec<u8>>, SerializePacketError> {
+    pub fn send_self(&self) -> Result<Vec<Vec<u8>>, SerializePacketError> {
+        Ok(vec![
+            GamePacket::serialize(
+                &TunneledPacket {
+                    unknown1: true,
+                    inner: ZoneDetails {
+                        name: self.name.clone(),
+                        id: self.id,
+                        hide_ui: self.hide_ui,
+                        direction_indicator: self.direction_indicator,
+                        sky_definition_file_name: "".to_string(),
+                        zoom_out: false,
+                        unknown7: 0,
+                        unknown8: 0,
+                    },
+                }
+            )?
+        ])
+    }
+
+    pub fn send_npcs(&self) -> Result<Vec<Vec<u8>>, SerializePacketError> {
         let mut packets = Vec::new();
         for (guid, npc) in self.npcs.iter() {
             packets.push(npc.to_packet(*guid)?);

@@ -9,7 +9,7 @@ use packet_serialize::{DeserializePacket, DeserializePacketError, NullTerminated
 use crate::game_server::client_update_packet::{Health, Power, PreloadCharactersDone, Stat, Stats};
 use crate::game_server::command::process_command;
 use crate::game_server::game_packet::{GamePacket, OpCode};
-use crate::game_server::login::{DeploymentEnv, GameSettings, LoginReply, WelcomeScreen, ZoneDetails, ZoneDetailsDone};
+use crate::game_server::login::{DeploymentEnv, GameSettings, LoginReply, WelcomeScreen, ZoneDetailsDone};
 use crate::game_server::player_data::make_test_player;
 use crate::game_server::player_update_packet::make_test_npc;
 use crate::game_server::time::make_game_time_sync;
@@ -89,20 +89,9 @@ impl GameServer {
                     };
                     result_packets.push(GamePacket::serialize(&deployment_env)?);
 
-                    let zone_details = TunneledPacket {
-                        unknown1: true,
-                        inner: ZoneDetails {
-                            name: "JediTemple".to_string(),
-                            id: 2,
-                            hide_ui: false,
-                            direction_indicator: false,
-                            sky_definition_file_name: "".to_string(),
-                            zoom_out: false,
-                            unknown7: 0,
-                            unknown8: 5,
-                        },
-                    };
-                    result_packets.push(GamePacket::serialize(&zone_details)?);
+                    // TODO: get player's zone
+                    let mut zone_details = self.zones[&2].send_self()?;
+                    result_packets.append(&mut zone_details);
 
                     let settings = TunneledPacket {
                         unknown1: true,
@@ -134,7 +123,7 @@ impl GameServer {
                     //result_packets.push(GamePacket::serialize(&npc)?);
 
                     // TODO: get player's zone
-                    let mut preloaded_npcs = self.zones[&2].preload_npc_packets()?;
+                    let mut preloaded_npcs = self.zones[&2].send_npcs()?;
                     result_packets.append(&mut preloaded_npcs);
 
                     let health = TunneledPacket {
