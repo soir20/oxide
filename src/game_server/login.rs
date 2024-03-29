@@ -26,7 +26,7 @@ impl GamePacket for DeploymentEnv {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct ZoneDetails {
     pub name: String,
-    pub id: u32,
+    pub zone_type: u32,
     pub hide_ui: bool,
     pub direction_indicator: bool,
     pub sky_definition_file_name: String,

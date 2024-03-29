@@ -1,4 +1,3 @@
-use std::collections::BTreeMap;
 use std::fs::File;
 use std::io::Error;
 use std::path::Path;
@@ -10,7 +9,9 @@ use packet_serialize::SerializePacketError;
 use crate::game_server::client_update_packet::Position;
 use crate::game_server::command::InteractionRequest;
 use crate::game_server::game_packet::{GamePacket, Pos};
+use crate::game_server::guid::{Guid, GuidTable, GuidTableReadHandle, GuidTableWriteHandle};
 use crate::game_server::login::ZoneDetails;
+use crate::game_server::player_data::PlayerState;
 use crate::game_server::player_update_packet::{AddNpc, DamageAnimation, HoverGlow, Icon, MoveAnimation, Unknown, WeaponAnimation};
 use crate::game_server::tunnel::TunneledPacket;
 
@@ -29,7 +30,7 @@ struct Door {
 
 #[derive(Deserialize)]
 struct ZoneConfig {
-    id: u32,
+    guid: u64,
     name: String,
     hide_ui: bool,
     direction_indicator: bool,
@@ -37,13 +38,21 @@ struct ZoneConfig {
 }
 
 enum Npc {
-    Door(Door)
+    Door(u64, Door)
+}
+
+impl Guid for Npc {
+    fn guid(&self) -> u64 {
+        match self {
+            Npc::Door(guid, _) => *guid
+        }
+    }
 }
 
 impl Npc {
-    pub fn interact(&self) -> Result<Vec<Vec<u8>>, SerializePacketError> {
+    pub fn interact(&mut self) -> Result<Vec<Vec<u8>>, SerializePacketError> {
         match self {
-            Npc::Door(door) => {
+            Npc::Door(_, door) => {
                 let pos_update = TunneledPacket {
                     unknown1: true,
                     inner: Position {
@@ -72,13 +81,13 @@ impl Npc {
         }
     }
 
-    pub fn to_packet(&self, guid: u64) -> Result<Vec<u8>, SerializePacketError> {
+    pub fn to_packet(&self) -> Result<Vec<u8>, SerializePacketError> {
         Ok(
             GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: match self {
-                    Npc::Door(door) => {
-                        Self::door_packet(guid, door)
+                    Npc::Door(guid, door) => {
+                        Self::door_packet(*guid, door)
                     }
                 },
             })?
@@ -197,11 +206,18 @@ impl Npc {
 }
 
 pub struct Zone {
-    id: u32,
+    guid: u64,
     name: String,
     hide_ui: bool,
     direction_indicator: bool,
-    npcs: BTreeMap<u64, Npc>
+    npcs: GuidTable<Npc>,
+    players: GuidTable<PlayerState>
+}
+
+impl Guid for Zone {
+    fn guid(&self) -> u64 {
+        self.guid
+    }
 }
 
 impl Zone {
@@ -212,7 +228,7 @@ impl Zone {
                     unknown1: true,
                     inner: ZoneDetails {
                         name: self.name.clone(),
-                        id: self.id,
+                        zone_type: 2,
                         hide_ui: self.hide_ui,
                         direction_indicator: self.direction_indicator,
                         sky_definition_file_name: "".to_string(),
@@ -227,16 +243,24 @@ impl Zone {
 
     pub fn send_npcs(&self) -> Result<Vec<Vec<u8>>, SerializePacketError> {
         let mut packets = Vec::new();
-        for (guid, npc) in self.npcs.iter() {
-            packets.push(npc.to_packet(*guid)?);
+        for npc in self.npcs.read().values() {
+            packets.push(npc.read().to_packet()?);
         }
 
         Ok(packets)
     }
 
-    pub fn process_npc_interaction(&mut self, request: InteractionRequest) -> Result<Vec<Vec<u8>>, SerializePacketError> {
-        if let Some(npc) = self.npcs.get(&request.target) {
-            npc.interact()
+    pub fn read_players(&self) -> GuidTableReadHandle<PlayerState> {
+        self.players.read()
+    }
+
+    pub fn write_players(&self) -> GuidTableWriteHandle<PlayerState> {
+        self.players.write()
+    }
+
+    pub fn interact_npc(&self, request: InteractionRequest) -> Result<Vec<Vec<u8>>, SerializePacketError> {
+        if let Some(npc) = self.npcs.read().get(request.target) {
+            npc.write().interact()
         } else {
             println!("Received request to interact with unknown NPC {} from {}", request.target, request.requester);
             Ok(vec![])
@@ -246,38 +270,45 @@ impl Zone {
 
 impl From<ZoneConfig> for Zone {
     fn from(zone_config: ZoneConfig) -> Self {
-        let mut npcs = BTreeMap::new();
+        let npcs = GuidTable::new();
 
         // Use the upper half of the GUID for NPC guids to avoid player GUID conflicts
-        let mut guid = 0xFFFFFFFF00000000;
+        let mut guid = 0xFFFFFFFF00000000u64;
 
-        for door in zone_config.doors {
-            npcs.insert(guid, Npc::Door(door));
-            guid += 1;
+        {
+            let mut write_handle = npcs.write();
+            for door in zone_config.doors {
+                write_handle.insert(Npc::Door(guid, door));
+                guid += 1;
+            }
         }
 
         Zone {
-            id: zone_config.id,
+            guid: zone_config.guid,
             name: zone_config.name,
             hide_ui: zone_config.hide_ui,
             direction_indicator: zone_config.direction_indicator,
             npcs,
+            players: GuidTable::new()
         }
     }
 }
 
-pub fn load_zones(config_dir: &Path) -> Result<BTreeMap<u32, Zone>, Error> {
+pub fn load_zones(config_dir: &Path) -> Result<GuidTable<Zone>, Error> {
     let mut file = File::open(config_dir.join("zones.json"))?;
     let zone_configs: Vec<ZoneConfig> = serde_json::from_reader(&mut file)?;
 
-    let mut zones = BTreeMap::new();
-    for zone_config in zone_configs {
-        let zone = Zone::from(zone_config);
-        let id = zone.id;
-        let previous = zones.insert(id, zone);
+    let zones = GuidTable::new();
+    {
+        let mut write_handle = zones.write();
+        for zone_config in zone_configs {
+            let zone = Zone::from(zone_config);
+            let id = zone.guid;
+            let previous = write_handle.insert(zone);
 
-        if let Some(_) = previous {
-            panic!("Two zones have ID {}", id);
+            if let Some(_) = previous {
+                panic!("Two zones have ID {}", id);
+            }
         }
     }
 

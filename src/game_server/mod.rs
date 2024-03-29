@@ -1,4 +1,3 @@
-use std::collections::BTreeMap;
 use std::io::{Cursor, Error};
 use std::path::Path;
 
@@ -9,8 +8,9 @@ use packet_serialize::{DeserializePacket, DeserializePacketError, NullTerminated
 use crate::game_server::client_update_packet::{Health, Power, PreloadCharactersDone, Stat, Stats};
 use crate::game_server::command::process_command;
 use crate::game_server::game_packet::{GamePacket, OpCode};
+use crate::game_server::guid::{Guid, GuidTable, GuidTableReadHandle, GuidTableWriteHandle};
 use crate::game_server::login::{DeploymentEnv, GameSettings, LoginReply, WelcomeScreen, ZoneDetailsDone};
-use crate::game_server::player_data::make_test_player;
+use crate::game_server::player_data::{make_test_player, PlayerState};
 use crate::game_server::player_update_packet::make_test_npc;
 use crate::game_server::time::make_game_time_sync;
 use crate::game_server::tunnel::TunneledPacket;
@@ -25,6 +25,7 @@ mod client_update_packet;
 mod player_update_packet;
 mod command;
 mod zone;
+mod guid;
 
 #[non_exhaustive]
 #[derive(Debug)]
@@ -52,7 +53,7 @@ impl From<SerializePacketError> for ProcessPacketError {
 }
 
 pub struct GameServer {
-    zones: BTreeMap<u32, Zone>
+    zones: GuidTable<Zone>
 }
 
 impl GameServer {
@@ -90,7 +91,7 @@ impl GameServer {
                     result_packets.push(GamePacket::serialize(&deployment_env)?);
 
                     // TODO: get player's zone
-                    let mut zone_details = self.zones[&2].send_self()?;
+                    let mut zone_details = self.zones.read().get(2).unwrap().read().send_self()?;
                     result_packets.append(&mut zone_details);
 
                     let settings = TunneledPacket {
@@ -110,6 +111,10 @@ impl GameServer {
                         inner: make_test_player()
                     };
                     result_packets.push(GamePacket::serialize(&player)?);
+
+                    // TODO: get player's zone
+                    self.zones.read().get(2).unwrap().read().write_players().insert(PlayerState::from(player.inner.data));
+
                 },
                 OpCode::TunneledClient => {
                     let packet: TunneledPacket<Vec<u8>> = DeserializePacket::deserialize(&mut cursor)?;
@@ -123,7 +128,7 @@ impl GameServer {
                     //result_packets.push(GamePacket::serialize(&npc)?);
 
                     // TODO: get player's zone
-                    let mut preloaded_npcs = self.zones[&2].send_npcs()?;
+                    let mut preloaded_npcs = self.zones.read().get(2).unwrap().read().send_npcs()?;
                     result_packets.append(&mut preloaded_npcs);
 
                     let health = TunneledPacket {
@@ -237,6 +242,25 @@ impl GameServer {
         }
 
         Ok(result_packets)
+    }
+
+    pub fn read_zones(&self) -> GuidTableReadHandle<Zone> {
+        self.zones.read()
+    }
+
+    pub fn write_zones(&self) -> GuidTableWriteHandle<Zone> {
+        self.zones.write()
+    }
+
+    pub fn zone_with_player(zones: &GuidTableReadHandle<Zone>, guid: u64) -> Option<u64> {
+        for zone in zones.values() {
+            let read_handle = zone.read();
+            if read_handle.read_players().get(guid).is_some() {
+                return Some(read_handle.guid());
+            }
+        }
+
+        None
     }
     
 }

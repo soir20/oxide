@@ -9,15 +9,15 @@ pub fn process_command(game_server: &mut GameServer, cursor: &mut Cursor<&[u8]>)
     match CommandOpCode::try_from(raw_op_code) {
         Ok(op_code) => match op_code {
             CommandOpCode::InteractionRequest => {
+                let req = InteractionRequest::deserialize(cursor)?;
 
-                // TODO: determine zone from requester GUID
-                if let Some(zone) = game_server.zones.get_mut(&2) {
-                    let interaction_request = InteractionRequest::deserialize(cursor)?;
-                    Ok(zone.process_npc_interaction(interaction_request)?)
+                let zones = game_server.read_zones();
+                if let Some(zone_guid) = GameServer::zone_with_player(&zones, req.requester) {
+                    Ok(zones.get(zone_guid).unwrap().read().interact_npc(req)?)
                 } else {
+                    println!("Received interaction request from invalid requester {}", req.requester);
                     Err(ProcessPacketError::CorruptedPacket)
                 }
-
             },
             _ => {
                 println!("Unimplemented command: {:?}", op_code);

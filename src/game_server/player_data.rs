@@ -2,6 +2,7 @@ use std::io::Write;
 use byteorder::{LittleEndian, WriteBytesExt};
 use packet_serialize::{LengthlessVec, SerializePacket, SerializePacketError};
 use crate::game_server::game_packet::{Effect, GamePacket, ImageId, OpCode, Pos, StringId};
+use crate::game_server::guid::Guid;
 
 #[derive(SerializePacket)]
 pub struct EquippedVehicle {}
@@ -521,5 +522,27 @@ pub fn make_test_player() -> Player {
             unknown18: vec![],
             effects: vec![],
         }
+    }
+}
+
+pub struct PlayerState {
+    pub guid: u64,
+    pub pos: Pos,
+    pub camera_pos: Pos
+}
+
+impl From<PlayerData> for PlayerState {
+    fn from(value: PlayerData) -> Self {
+        PlayerState {
+            guid: value.player_guid,
+            pos: value.pos,
+            camera_pos: value.camera_pos,
+        }
+    }
+}
+
+impl Guid for PlayerState {
+    fn guid(&self) -> u64 {
+        self.guid
     }
 }
