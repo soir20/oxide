@@ -50,7 +50,7 @@ pub struct Attachment {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct Unknown {
+pub struct BaseAttachmentGroup {
     pub unknown1: u32,
     pub unknown2: String,
     pub unknown3: String,
@@ -173,7 +173,7 @@ pub struct AddNpc {
     pub name_offset_y: f32,
     pub name_offset_z: f32,
     pub terrain_object_id: u32,
-    pub invisible: bool,
+    pub load_attachment_groups: bool,
     pub unknown20: f32,
     pub unknown21: bool,
     pub interactable_size_pct: u32,
@@ -192,7 +192,7 @@ pub struct AddNpc {
     pub show_health: bool,
     pub unknown36: bool,
     pub enable_move_to_interact: bool,
-    pub unknown38: Unknown,
+    pub base_attachment_group: BaseAttachmentGroup,
     pub unknown39: Pos,
     pub unknown40: u32,
     pub unknown41: i32,
@@ -210,7 +210,7 @@ pub struct AddNpc {
     pub unknown55: f32,
     pub unknown56: f32,
     pub unknown57: f32,
-    pub unknown58: String,
+    pub attachment_group_unknown: String,
     pub unknown59: String,
     pub unknown60: String,
     pub is_not_terrain_object: bool,
@@ -274,7 +274,7 @@ pub fn make_test_npc() -> AddNpc {
         name_offset_y: 0.0,
         name_offset_z: 0.0,
         terrain_object_id: 1278971264,
-        invisible: false,
+        load_attachment_groups: false,
         unknown20: 0.0,
         unknown21: false,
         interactable_size_pct: 100,
@@ -288,12 +288,12 @@ pub fn make_test_npc() -> AddNpc {
         head_model_id: 0,
         unknown31: vec![],
         unknown32: false,
-        unknown33: 0,
+        unknown33: 0, // If non-zero, crashes when NPC is clicked on
         unknown34: false,
         show_health: false,
         unknown36: false,
         enable_move_to_interact: false,
-        unknown38: Unknown {
+        base_attachment_group: BaseAttachmentGroup {
             unknown1: 0,
             unknown2: "".to_string(),
             unknown3: "".to_string(),
@@ -328,7 +328,7 @@ pub fn make_test_npc() -> AddNpc {
         unknown55: 0.0,
         unknown56: 0.0,
         unknown57: 0.0,
-        unknown58: "".to_string(),
+        attachment_group_unknown: "".to_string(),
         unknown59: "".to_string(),
         unknown60: "".to_string(),
         is_not_terrain_object: false, // Non-terrain NPCs must have this enabled to be interactable

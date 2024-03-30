@@ -12,7 +12,7 @@ use crate::game_server::game_packet::{GamePacket, Pos};
 use crate::game_server::guid::{Guid, GuidTable, GuidTableReadHandle, GuidTableWriteHandle};
 use crate::game_server::login::ZoneDetails;
 use crate::game_server::player_data::PlayerState;
-use crate::game_server::player_update_packet::{AddNpc, DamageAnimation, HoverGlow, Icon, MoveAnimation, Unknown, WeaponAnimation};
+use crate::game_server::player_update_packet::{AddNpc, DamageAnimation, HoverGlow, Icon, MoveAnimation, BaseAttachmentGroup, WeaponAnimation};
 use crate::game_server::tunnel::TunneledPacket;
 
 #[derive(Deserialize)]
@@ -133,7 +133,7 @@ impl Npc {
             name_offset_y: 0.0,
             name_offset_z: 0.0,
             terrain_object_id: door.terrain_object_id,
-            invisible: false,
+            load_attachment_groups: false,
             unknown20: 0.0,
             unknown21: false,
             interactable_size_pct: 100,
@@ -152,7 +152,7 @@ impl Npc {
             show_health: false,
             unknown36: false,
             enable_move_to_interact: false,
-            unknown38: Unknown {
+            base_attachment_group: BaseAttachmentGroup {
                 unknown1: 0,
                 unknown2: "".to_string(),
                 unknown3: "".to_string(),
@@ -186,7 +186,7 @@ impl Npc {
             unknown55: 0.0,
             unknown56: 0.0,
             unknown57: 0.0,
-            unknown58: "".to_string(),
+            attachment_group_unknown: "".to_string(),
             unknown59: "".to_string(),
             unknown60: "".to_string(),
             is_not_terrain_object: false,
