@@ -7,7 +7,7 @@ use serde::Deserialize;
 use packet_serialize::SerializePacketError;
 
 use crate::game_server::client_update_packet::Position;
-use crate::game_server::command::InteractionRequest;
+use crate::game_server::command::SelectPlayer;
 use crate::game_server::game_packet::{GamePacket, Pos};
 use crate::game_server::guid::{Guid, GuidTable, GuidTableReadHandle, GuidTableWriteHandle};
 use crate::game_server::login::ZoneDetails;
@@ -258,7 +258,7 @@ impl Zone {
         self.players.write()
     }
 
-    pub fn interact_npc(&self, request: InteractionRequest) -> Result<Vec<Vec<u8>>, SerializePacketError> {
+    pub fn interact_npc(&self, request: SelectPlayer) -> Result<Vec<Vec<u8>>, SerializePacketError> {
         if let Some(npc) = self.npcs.read().get(request.target) {
             npc.write().interact()
         } else {

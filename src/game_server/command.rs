@@ -8,8 +8,8 @@ pub fn process_command(game_server: &mut GameServer, cursor: &mut Cursor<&[u8]>)
     let raw_op_code = cursor.read_u16::<LittleEndian>()?;
     match CommandOpCode::try_from(raw_op_code) {
         Ok(op_code) => match op_code {
-            CommandOpCode::InteractionRequest => {
-                let req = InteractionRequest::deserialize(cursor)?;
+            CommandOpCode::SelectPlayer => {
+                let req = SelectPlayer::deserialize(cursor)?;
 
                 let zones = game_server.read_zones();
                 if let Some(zone_guid) = GameServer::zone_with_player(&zones, req.requester) {
@@ -34,7 +34,7 @@ pub fn process_command(game_server: &mut GameServer, cursor: &mut Cursor<&[u8]>)
 #[derive(Copy, Clone, Debug)]
 pub enum CommandOpCode {
     InteractionList          = 0x9,
-    InteractionRequest       = 0xf
+    SelectPlayer = 0xf
 }
 
 impl SerializePacket for CommandOpCode {
@@ -53,7 +53,7 @@ impl TryFrom<u16> for CommandOpCode {
     fn try_from(value: u16) -> Result<Self, Self::Error> {
         match value {
             0x9 => Ok(CommandOpCode::InteractionList),
-            0xf => Ok(CommandOpCode::InteractionRequest),
+            0xf => Ok(CommandOpCode::SelectPlayer),
             _ => Err(UnknownCommandOpCode)
         }
     }
@@ -88,12 +88,12 @@ impl GamePacket for InteractionList {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct InteractionRequest {
+pub struct SelectPlayer {
     pub requester: u64,
     pub target: u64
 }
 
-impl GamePacket for InteractionRequest {
+impl GamePacket for SelectPlayer {
     type Header = CommandOpCode;
-    const HEADER: Self::Header = CommandOpCode::InteractionRequest;
+    const HEADER: Self::Header = CommandOpCode::SelectPlayer;
 }
