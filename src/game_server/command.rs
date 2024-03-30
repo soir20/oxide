@@ -4,7 +4,7 @@ use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError}
 use crate::game_server::game_packet::{GamePacket, OpCode};
 use crate::game_server::{GameServer, ProcessPacketError};
 
-pub fn process_command(game_server: &mut GameServer, cursor: &mut Cursor<&[u8]>) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+pub fn process_command(game_server: &GameServer, cursor: &mut Cursor<&[u8]>) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
     let raw_op_code = cursor.read_u16::<LittleEndian>()?;
     match CommandOpCode::try_from(raw_op_code) {
         Ok(op_code) => match op_code {

@@ -1,7 +1,7 @@
-use std::collections::{BTreeMap, HashMap, VecDeque};
-use std::net::SocketAddr;
-use std::sync::{Mutex, RwLock};
+use std::collections::{BTreeMap, VecDeque};
+
 use rand::random;
+
 use crate::protocol::deserialize::{deserialize_packet, DeserializeError};
 use crate::protocol::hash::{CrcSeed, CrcSize};
 use crate::protocol::reliable_data_ops::{DataPacket, fragment_data, FragmentState, unbundle_reliable_data};
@@ -259,7 +259,7 @@ impl Channel {
         packets
     }
 
-    pub fn send_data(&mut self, data: Vec<u8>) {
+    pub fn prepare_to_send_data(&mut self, data: Vec<u8>) {
         let packets = fragment_data(self.buffer_size, &self.session, data)
             .expect("Unable to fragment data");
 
@@ -405,5 +405,3 @@ impl Channel {
         self.send_queue.push_back(PendingPacket::new(Packet::AckAll(sequence_number)));
     }
 }
-
-type ChannelManager = RwLock<HashMap<SocketAddr, Mutex<Channel>>>;

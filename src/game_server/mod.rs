@@ -1,5 +1,6 @@
 use std::io::{Cursor, Error};
 use std::path::Path;
+use std::vec;
 
 use byteorder::{LittleEndian, ReadBytesExt};
 
@@ -26,6 +27,12 @@ mod player_update_packet;
 mod command;
 mod zone;
 mod guid;
+
+#[derive(Debug)]
+pub enum Broadcast {
+    Single(u64, Vec<Vec<u8>>),
+    Multi(Vec<u64>, Vec<Vec<u8>>)
+}
 
 #[non_exhaustive]
 #[derive(Debug)]
@@ -65,22 +72,30 @@ impl GameServer {
             }
         )
     }
-    
-    pub fn process_packet(&mut self, data: Vec<u8>) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
-        let mut result_packets = Vec::new();
+
+    pub fn login(&self, data: Vec<u8>) -> Result<(u64, Vec<Broadcast>), ProcessPacketError> {
         let mut cursor = Cursor::new(&data[..]);
         let raw_op_code = cursor.read_u16::<LittleEndian>()?;
 
         match OpCode::try_from(raw_op_code) {
             Ok(op_code) => match op_code {
                 OpCode::LoginRequest => {
+
+                    // TODO: validate and get GUID from login request
+                    let guid = 1;
+
+                    // TODO: get player's zone
+                    let player_zone = 2;
+
+                    let mut packets = Vec::new();
+
                     let login_reply = TunneledPacket {
                         unknown1: true,
                         inner: LoginReply {
                             logged_in: true,
                         },
                     };
-                    result_packets.push(GamePacket::serialize(&login_reply)?);
+                    packets.push(GamePacket::serialize(&login_reply)?);
 
                     let deployment_env = TunneledPacket {
                         unknown1: true,
@@ -88,11 +103,9 @@ impl GameServer {
                             environment: NullTerminatedString("prod".to_string()),
                         },
                     };
-                    result_packets.push(GamePacket::serialize(&deployment_env)?);
-
-                    // TODO: get player's zone
+                    packets.push(GamePacket::serialize(&deployment_env)?);
                     let mut zone_details = self.zones.read().get(2).unwrap().read().send_self()?;
-                    result_packets.append(&mut zone_details);
+                    packets.append(&mut zone_details);
 
                     let settings = TunneledPacket {
                         unknown1: true,
@@ -104,23 +117,48 @@ impl GameServer {
                             time_scale: 1.0,
                         },
                     };
-                    result_packets.push(GamePacket::serialize(&settings)?);
+                    packets.push(GamePacket::serialize(&settings)?);
 
                     let player = TunneledPacket {
                         unknown1: true,
-                        inner: make_test_player()
+                        inner: make_test_player(guid)
                     };
-                    result_packets.push(GamePacket::serialize(&player)?);
+                    packets.push(GamePacket::serialize(&player)?);
 
-                    // TODO: get player's zone
-                    self.zones.read().get(2).unwrap().read().write_players().insert(PlayerState::from(player.inner.data));
+                    if let Some(zone) = self.zones.read().get(player_zone) {
+                        zone.read().write_players().insert(PlayerState::from(player.inner.data));
+                    } else {
+                        return Err(ProcessPacketError::CorruptedPacket);
+                    }
 
+                    Ok((guid, vec![Broadcast::Single(guid, packets)]))
                 },
+                _ => {
+                    println!("Client tried to log in without a login request");
+                    Err(ProcessPacketError::CorruptedPacket)
+                }
+            },
+            Err(_) => {
+                println!("Unknown op code at login: {}", raw_op_code);
+                Err(ProcessPacketError::CorruptedPacket)
+            }
+        }
+    }
+    
+    pub fn process_packet(&self, sender: u64, data: Vec<u8>) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let mut broadcasts = Vec::new();
+        let mut cursor = Cursor::new(&data[..]);
+        let raw_op_code = cursor.read_u16::<LittleEndian>()?;
+
+        match OpCode::try_from(raw_op_code) {
+            Ok(op_code) => match op_code {
                 OpCode::TunneledClient => {
                     let packet: TunneledPacket<Vec<u8>> = DeserializePacket::deserialize(&mut cursor)?;
-                    result_packets.append(&mut self.process_packet(packet.inner)?);
+                    broadcasts.append(&mut self.process_packet(sender, packet.inner)?);
                 },
                 OpCode::ClientIsReady => {
+                    let mut packets = Vec::new();
+
                     let npc = TunneledPacket {
                         unknown1: true,
                         inner: make_test_npc()
@@ -129,7 +167,7 @@ impl GameServer {
 
                     // TODO: get player's zone
                     let mut preloaded_npcs = self.zones.read().get(2).unwrap().read().send_npcs()?;
-                    result_packets.append(&mut preloaded_npcs);
+                    packets.append(&mut preloaded_npcs);
 
                     let health = TunneledPacket {
                         unknown1: true,
@@ -138,7 +176,7 @@ impl GameServer {
                             unknown2: 25000,
                         },
                     };
-                    result_packets.push(GamePacket::serialize(&health)?);
+                    packets.push(GamePacket::serialize(&health)?);
 
                     let power = TunneledPacket {
                         unknown1: true,
@@ -147,7 +185,7 @@ impl GameServer {
                             unknown2: 300,
                         },
                     };
-                    result_packets.push(GamePacket::serialize(&power)?);
+                    packets.push(GamePacket::serialize(&power)?);
 
                     let stats = TunneledPacket {
                         unknown1: true,
@@ -197,7 +235,7 @@ impl GameServer {
                             ],
                         },
                     };
-                    result_packets.push(GamePacket::serialize(&stats)?);
+                    packets.push(GamePacket::serialize(&stats)?);
 
                     let welcome_screen = TunneledPacket {
                         unknown1: true,
@@ -209,13 +247,13 @@ impl GameServer {
                             unknown4: 0,
                         },
                     };
-                    result_packets.push(GamePacket::serialize(&welcome_screen)?);
+                    packets.push(GamePacket::serialize(&welcome_screen)?);
 
                     let zone_details_done = TunneledPacket {
                         unknown1: true,
                         inner: ZoneDetailsDone {},
                     };
-                    result_packets.push(GamePacket::serialize(&zone_details_done)?);
+                    packets.push(GamePacket::serialize(&zone_details_done)?);
 
                     let preload_characters_done = TunneledPacket {
                         unknown1: true,
@@ -223,25 +261,26 @@ impl GameServer {
                             unknown1: false
                         },
                     };
-                    result_packets.push(GamePacket::serialize(&preload_characters_done)?);
+                    packets.push(GamePacket::serialize(&preload_characters_done)?);
+
+                    broadcasts.push(Broadcast::Single(sender, packets));
                 },
                 OpCode::GameTimeSync => {
                     let game_time_sync = TunneledPacket {
                         unknown1: true,
                         inner: make_game_time_sync(),
                     };
-                    result_packets.push(GamePacket::serialize(&game_time_sync)?);
+                    broadcasts.push(Broadcast::Single(sender, vec![GamePacket::serialize(&game_time_sync)?]));
                 },
                 OpCode::Command => {
-                    let mut result_commands = process_command(self, &mut cursor)?;
-                    result_packets.append(&mut result_commands);
+                    broadcasts.push(Broadcast::Single(sender, process_command(self, &mut cursor)?));
                 },
                 _ => println!("Unimplemented: {:?}", op_code)
             },
             Err(_) => println!("Unknown op code: {}", raw_op_code)
         }
 
-        Ok(result_packets)
+        Ok(broadcasts)
     }
 
     pub fn read_zones(&self) -> GuidTableReadHandle<Zone> {

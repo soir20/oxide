@@ -1,19 +1,24 @@
 use std::net::{SocketAddr, UdpSocket};
 use std::path::Path;
+use std::sync::RwLock;
 use std::thread;
 use std::time::Duration;
+
+use crate::channel_manager::{ChannelManager, ReceiveResult};
 use crate::game_server::GameServer;
 use crate::protocol::Channel;
 
 mod protocol;
 mod game_server;
+mod channel_manager;
 
 fn main() {
     println!("Hello, world!");
     let socket = UdpSocket::bind(SocketAddr::new("127.0.0.1".parse().unwrap(), "20225".parse().unwrap())).expect("couldn't bind to socket");
 
-    let mut channel = Channel::new(200, 1000);
-    let mut game_server = GameServer::new(Path::new("config")).unwrap();
+    let channel_manager = RwLock::new(ChannelManager::new());
+
+    let game_server = GameServer::new(Path::new("config")).unwrap();
     let delta = 5u8;
     loop {
         let mut buf = [0; 512];
@@ -21,25 +26,49 @@ fn main() {
             println!("Bytes received: {}", len);
             let recv_data = &buf[0..len];
             println!("Bytes: {:x?}", recv_data);
-            let receive_result = channel.receive(&recv_data);
-            if let Err(ref err) = receive_result {
-                println!("Receive error: {:?}", err);
-            }
 
-            let received_packets = receive_result.unwrap_or(0);
-            println!("Packets received: {}", received_packets);
+            let mut read_handle = channel_manager.read().unwrap();
+
+            let receive_result = read_handle.receive(&src, recv_data);
+            if receive_result == ReceiveResult::CreateChannelFirst {
+                println!("Creating channel for {}", src);
+                drop(read_handle);
+                let previous_channel = channel_manager.write().unwrap()
+                    .insert(&src, Channel::new(200, 1000));
+                read_handle = channel_manager.read().unwrap();
+
+                if let Some(_) = previous_channel {
+                    println!("Client {} reconnected, dropping old channel", src);
+                }
+
+                read_handle.receive(&src, recv_data);
+            }
 
             println!("Processing at most {} packets", delta);
-            let packets_for_game_server = channel.process_next(delta);
-            packets_for_game_server.into_iter()
-                .flat_map(|packet| game_server.process_packet(packet).unwrap().into_iter())
-                .for_each(|packet| channel.send_data(packet));
-
-            let send_result = channel.send_next(delta);
-            if let Err(ref err) = send_result {
-                println!("Send error: {:?}", err);
+            let packets_for_game_server = read_handle.process_next(&src, delta);
+            let mut broadcasts = Vec::new();
+            for packet in packets_for_game_server {
+                if let Some(guid) = read_handle.guid(&src) {
+                    match game_server.process_packet(guid, packet) {
+                        Ok(mut new_broadcasts) => broadcasts.append(&mut new_broadcasts),
+                        Err(err) => println!("Unable to process packet: {:?}", err)
+                    }
+                } else {
+                    match game_server.login(packet) {
+                        Ok((guid, mut new_broadcasts)) => {
+                            drop(read_handle);
+                            channel_manager.write().unwrap().authenticate(&src, guid);
+                            broadcasts.append(&mut new_broadcasts);
+                            read_handle = channel_manager.read().unwrap();
+                        },
+                        Err(err) => println!("Unable to process login packet: {:?}", err)
+                    }
+                }
             }
-            let packets_to_send = send_result.unwrap_or(Vec::new());
+
+            read_handle.broadcast(broadcasts);
+
+            let packets_to_send = read_handle.send_next(&src, delta);
             println!("Sending {} packets", packets_to_send.len());
             for buffer in packets_to_send {
                 println!("Sending {} bytes: {:x?}", buffer.len(), buffer);

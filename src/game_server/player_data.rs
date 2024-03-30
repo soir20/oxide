@@ -320,11 +320,11 @@ impl GamePacket for Player {
     const HEADER: OpCode = OpCode::Player;
 }
 
-pub fn make_test_player() -> Player {
+pub fn make_test_player(guid: u64) -> Player {
     Player {
         data: PlayerData {
             account_guid: 0,
-            player_guid: 1,
+            player_guid: guid,
             body_model: 484,
             head_model: String::from("Char_CloneHead.adr"),
             hair_model: String::from("Cust_Clone_Hair_BusinessMan.adr"),

@@ -60,25 +60,25 @@ impl<'a, T: Guid> GuidTableWriteHandle<'a, T> {
 }
 
 pub struct GuidTable<T> {
-    data: RwLock<GuidTableData<T>>
+    data: Lock<GuidTableData<T>>
 }
 
 impl<T: Guid> GuidTable<T> {
     pub fn new() -> Self {
         GuidTable {
-            data: RwLock::new(BTreeMap::new()),
+            data: Lock::new(BTreeMap::new()),
         }
     }
 
     pub fn read(&self) -> GuidTableReadHandle<T> {
         GuidTableReadHandle {
-            guard: self.data.read().unwrap()
+            guard: self.data.read()
         }
     }
 
     pub fn write(&self) -> GuidTableWriteHandle<T> {
         GuidTableWriteHandle {
-            guard: self.data.write().unwrap()
+            guard: self.data.write()
         }
     }
 }
