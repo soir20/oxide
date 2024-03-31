@@ -172,6 +172,30 @@
         "destination_rot_y": 0.0,
         "destination_rot_z": 0.0,
         "destination_rot_w": 1.0
+      },
+      {
+        "comment": "Main Hall -> War Room",
+        "terrain_object_id": 1278972261,
+        "destination_pos_x": 693.7585,
+        "destination_pos_y": 10.0,
+        "destination_pos_z": -2.675201,
+        "destination_pos_w": 1.0,
+        "destination_rot_x": 1.5,
+        "destination_rot_y": 0.0,
+        "destination_rot_z": 0.0,
+        "destination_rot_w": 1.0
+      },
+      {
+        "comment": "War Room -> Main Hall",
+        "terrain_object_id": 1278976738,
+        "destination_pos_x": 1316.77,
+        "destination_pos_y": 10.0,
+        "destination_pos_z": 253.2967,
+        "destination_pos_w": 1.0,
+        "destination_rot_x": -1.5,
+        "destination_rot_y": 0.0,
+        "destination_rot_z": 0.0,
+        "destination_rot_w": 1.0
       }
     ]
   }
