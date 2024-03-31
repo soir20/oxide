@@ -18,6 +18,18 @@
         "destination_rot_w": 1.0
       },
       {
+        "comment": "Archives -> Veranda",
+        "terrain_object_id": 1278971880,
+        "destination_pos_x": 898.7137,
+        "destination_pos_y": 172.44917,
+        "destination_pos_z": 1529.221,
+        "destination_pos_w": 1.0,
+        "destination_rot_x": 0.0,
+        "destination_rot_y": 0.0,
+        "destination_rot_z": 1.5,
+        "destination_rot_w": 1.0
+      },
+      {
         "comment": "Veranda -> Workshop",
         "terrain_object_id": 1278971325,
         "destination_pos_x": -356.4902,
@@ -27,6 +39,18 @@
         "destination_rot_x": 1.5,
         "destination_rot_y": 0.0,
         "destination_rot_z": 0.0,
+        "destination_rot_w": 1.0
+      },
+      {
+        "comment": "Workshop -> Veranda",
+        "terrain_object_id": 1278971932,
+        "destination_pos_x": 898.6971,
+        "destination_pos_y": 172.44917,
+        "destination_pos_z": 1564.624,
+        "destination_pos_w": 1.0,
+        "destination_rot_x": 0.0,
+        "destination_rot_y": 0.0,
+        "destination_rot_z": -1.5,
         "destination_rot_w": 1.0
       },
       {
@@ -42,6 +66,18 @@
         "destination_rot_w": 1.0
       },
       {
+        "comment": "Main Hall (left) -> Veranda",
+        "terrain_object_id": 1278972312,
+        "destination_pos_x": 919.5864,
+        "destination_pos_y": 178.51657,
+        "destination_pos_z": 1530.958,
+        "destination_pos_w": 1.0,
+        "destination_rot_x": -1.5,
+        "destination_rot_y": 0.0,
+        "destination_rot_z": 0.0,
+        "destination_rot_w": 1.0
+      },
+      {
         "comment": "Veranda -> Main Hall (right)",
         "terrain_object_id": 1278971324,
         "destination_pos_x": 1305.649,
@@ -51,6 +87,18 @@
         "destination_rot_x": 0.0,
         "destination_rot_y": 0.0,
         "destination_rot_z": -1.0,
+        "destination_rot_w": 1.0
+      },
+      {
+        "comment": "Main Hall (right) -> Veranda",
+        "terrain_object_id": 1278972383,
+        "destination_pos_x": 919.5864,
+        "destination_pos_y": 178.51657,
+        "destination_pos_z": 1562.8,
+        "destination_pos_w": 1.0,
+        "destination_rot_x": -1.5,
+        "destination_rot_y": 0.0,
+        "destination_rot_z": 0.0,
         "destination_rot_w": 1.0
       }
     ]
