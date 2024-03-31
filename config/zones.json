@@ -148,6 +148,30 @@
         "destination_rot_y": 0.0,
         "destination_rot_z": 0.0,
         "destination_rot_w": 1.0
+      },
+      {
+        "comment": "Main Hall -> Lounge",
+        "terrain_object_id": 1278972382,
+        "destination_pos_x": -133.2943,
+        "destination_pos_y": 10.0,
+        "destination_pos_z": 1270.001,
+        "destination_pos_w": 1.0,
+        "destination_rot_x": 1.5,
+        "destination_rot_y": 0.0,
+        "destination_rot_z": 0.0,
+        "destination_rot_w": 1.0
+      },
+      {
+        "comment": "Lounge -> Main Hall",
+        "terrain_object_id": 1278976521,
+        "destination_pos_x": 1316.713,
+        "destination_pos_y": 10.0,
+        "destination_pos_z": 275.1354,
+        "destination_pos_w": 1.0,
+        "destination_rot_x": -1.5,
+        "destination_rot_y": 0.0,
+        "destination_rot_z": 0.0,
+        "destination_rot_w": 1.0
       }
     ]
   }
