@@ -196,6 +196,32 @@
         "destination_rot_y": 0.0,
         "destination_rot_z": 0.0,
         "destination_rot_w": 1.0
+      },
+      {
+        "comment": "Veranda -> Construction Chamber",
+        "terrain_object_id": 1359076121,
+        "destination_pos_x": 1487.53,
+        "destination_pos_y": 70.0,
+        "destination_pos_z": 890.248076,
+        "destination_pos_w": 1.0,
+        "destination_rot_x": 0.0,
+        "destination_rot_y": 0.0,
+        "destination_rot_z": 1.5,
+        "destination_rot_w": 1.0,
+        "destination_zone": "Members"
+      },
+      {
+        "comment": "Construction Chamber -> Veranda",
+        "terrain_object_id": 1281994173,
+        "destination_pos_x": 919.5898,
+        "destination_pos_y": 178.51657,
+        "destination_pos_z": 1546.969,
+        "destination_pos_w": 1.0,
+        "destination_rot_x": -1.5,
+        "destination_rot_y": 0.0,
+        "destination_rot_z": 0.0,
+        "destination_rot_w": 1.0,
+        "destination_zone": "JediTemple"
       }
     ]
   }

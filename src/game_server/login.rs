@@ -1,7 +1,7 @@
 use std::io::Error;
 use byteorder::{LittleEndian, WriteBytesExt};
 use packet_serialize::{DeserializePacket, NullTerminatedString, SerializePacket};
-use crate::game_server::game_packet::{GamePacket, OpCode};
+use crate::game_server::game_packet::{GamePacket, OpCode, Pos};
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct LoginReply {
@@ -80,6 +80,27 @@ pub struct ZoneDetailsDone {}
 impl GamePacket for ZoneDetailsDone {
     type Header = OpCode;
     const HEADER: OpCode = OpCode::ZoneDetailsDone;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct ClientBeginZoning {
+    pub zone_name: String,
+    pub zone_type: u32,
+    pub pos: Pos,
+    pub rot: Pos,
+    pub sky_definition_file_name: String,
+    pub unknown1: bool,
+    pub unknown2: u8,
+    pub unknown3: u32,
+    pub unknown4: u32,
+    pub unknown5: u32,
+    pub unknown6: bool,
+    pub unknown7: bool
+}
+
+impl GamePacket for ClientBeginZoning {
+    type Header = OpCode;
+    const HEADER: Self::Header = OpCode::ClientBeginZoning;
 }
 
 pub fn send_item_definitions() -> Result<Vec<u8>, Error> {

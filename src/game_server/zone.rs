@@ -10,7 +10,7 @@ use crate::game_server::client_update_packet::Position;
 use crate::game_server::command::SelectPlayer;
 use crate::game_server::game_packet::{GamePacket, Pos};
 use crate::game_server::guid::{Guid, GuidTable, GuidTableReadHandle, GuidTableWriteHandle};
-use crate::game_server::login::ZoneDetails;
+use crate::game_server::login::{ClientBeginZoning, ZoneDetails};
 use crate::game_server::player_update_packet::{AddNpc, BaseAttachmentGroup, DamageAnimation, HoverGlow, Icon, WeaponAnimation};
 use crate::game_server::tunnel::TunneledPacket;
 
@@ -24,7 +24,8 @@ pub struct Door {
     destination_rot_x: f32,
     destination_rot_y: f32,
     destination_rot_z: f32,
-    destination_rot_w: f32
+    destination_rot_w: f32,
+    destination_zone: Option<String>
 }
 
 #[derive(Deserialize)]
@@ -58,30 +59,50 @@ impl Character {
     pub fn interact(&self) -> Result<Vec<Vec<u8>>, SerializePacketError> {
         match &self.character_type {
             CharacterType::Door(door) => {
-                let pos_update = TunneledPacket {
-                    unknown1: true,
-                    inner: Position {
-                        player_pos: Pos {
-                            x: door.destination_pos_x,
-                            y: door.destination_pos_y,
-                            z: door.destination_pos_z,
-                            w: door.destination_pos_w,
-                        },
-                        rot: Pos {
-                            x: door.destination_rot_x,
-                            y: door.destination_rot_y,
-                            z: door.destination_rot_z,
-                            w: door.destination_rot_w,
-                        },
-                        is_teleport: true,
-                        unknown2: true,
-                    },
+                let destination_pos = Pos {
+                    x: door.destination_pos_x,
+                    y: door.destination_pos_y,
+                    z: door.destination_pos_z,
+                    w: door.destination_pos_w,
                 };
-                Ok(
-                    vec![
-                        pos_update.serialize()?
-                    ]
-                )
+                let destination_rot = Pos {
+                    x: door.destination_rot_x,
+                    y: door.destination_rot_y,
+                    z: door.destination_rot_z,
+                    w: door.destination_rot_w,
+                };
+
+                let teleport_packet = if let Some(destination_zone) = &door.destination_zone {
+                    GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: ClientBeginZoning {
+                            zone_name: destination_zone.clone(),
+                            zone_type: 2,
+                            pos: destination_pos,
+                            rot: destination_rot,
+                            sky_definition_file_name: "".to_string(),
+                            unknown1: false,
+                            unknown2: 0,
+                            unknown3: 0,
+                            unknown4: 0,
+                            unknown5: 0,
+                            unknown6: false,
+                            unknown7: false,
+                        }
+                    })?
+                } else {
+                    GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: Position {
+                            player_pos: destination_pos,
+                            rot: destination_rot,
+                            is_teleport: true,
+                            unknown2: true,
+                        },
+                    })?
+                };
+
+                Ok(vec![teleport_packet])
             },
             _ => Ok(Vec::new())
         }
