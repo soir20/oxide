@@ -245,7 +245,7 @@ pub struct PlayerData {
     pub unknown4: u32,
     pub unknown5: u32,
     pub pos: Pos,
-    pub camera_pos: Pos,
+    pub rot: Pos,
     pub unknown6: u32,
     pub unknown7: u32,
     pub unknown8: u32,
@@ -340,15 +340,15 @@ pub fn make_test_player(guid: u64) -> Player {
             unknown5: 0,
             pos: Pos {
                 x: 887.3,
-                y: 173.0,
+                y: 171.93376,
                 z: 1546.956,
-                rot: 0.0,
+                w: 1.0,
             },
-            camera_pos: Pos {
-                x: 0.0,
+            rot: Pos {
+                x: 1.5,
                 y: 0.0,
                 z: 0.0,
-                rot: 0.0,
+                w: 1.0,
             },
             unknown6: 0,
             unknown7: 0,
@@ -530,7 +530,7 @@ impl From<PlayerData> for Character {
         Character {
             guid: value.player_guid,
             pos: value.pos,
-            camera_pos: value.camera_pos,
+            rot: value.rot,
             character_type: CharacterType::Player,
         }
     }

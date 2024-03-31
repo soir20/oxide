@@ -1,7 +1,6 @@
 use std::fs::File;
 use std::io::Error;
 use std::path::Path;
-use std::sync::RwLockReadGuard;
 
 use serde::Deserialize;
 
@@ -21,7 +20,11 @@ pub struct Door {
     destination_pos_x: f32,
     destination_pos_y: f32,
     destination_pos_z: f32,
-    destination_rot: f32
+    destination_pos_w: f32,
+    destination_rot_x: f32,
+    destination_rot_y: f32,
+    destination_rot_z: f32,
+    destination_rot_w: f32
 }
 
 #[derive(Deserialize)]
@@ -41,7 +44,7 @@ pub enum CharacterType {
 pub struct Character {
     pub guid: u64,
     pub pos: Pos,
-    pub camera_pos: Pos,
+    pub rot: Pos,
     pub character_type: CharacterType
 }
 
@@ -52,7 +55,7 @@ impl Guid for Character {
 }
 
 impl Character {
-    pub fn interact(&self, requester: RwLockReadGuard<Character>) -> Result<Vec<Vec<u8>>, SerializePacketError> {
+    pub fn interact(&self) -> Result<Vec<Vec<u8>>, SerializePacketError> {
         match &self.character_type {
             CharacterType::Door(door) => {
                 let pos_update = TunneledPacket {
@@ -62,15 +65,15 @@ impl Character {
                             x: door.destination_pos_x,
                             y: door.destination_pos_y,
                             z: door.destination_pos_z,
-                            rot: door.destination_rot,
+                            w: door.destination_pos_w,
                         },
-                        camera_pos: Pos {
-                            x: requester.camera_pos.x,
-                            y: requester.camera_pos.y,
-                            z: requester.camera_pos.z,
-                            rot: requester.camera_pos.rot,
+                        rot: Pos {
+                            x: door.destination_rot_x,
+                            y: door.destination_rot_y,
+                            z: door.destination_rot_z,
+                            w: door.destination_rot_w,
                         },
-                        unknown1: true,
+                        is_teleport: true,
                         unknown2: true,
                     },
                 };
@@ -110,8 +113,8 @@ impl Character {
             unknown5: 0,
             unknown6: 1,
             scale: 1.0,
-            position: character.pos,
-            rotation: character.camera_pos,
+            pos: character.pos,
+            rot: character.rot,
             unknown8: 0,
             attachments: vec![],
             is_terrain_object_noninteractable: 0,
@@ -159,7 +162,7 @@ impl Character {
                 x: 0.0,
                 y: 0.0,
                 z: 0.0,
-                rot: 0.0,
+                w: 0.0,
             },
             unknown40: 0,
             unknown41: -1,
@@ -176,7 +179,7 @@ impl Character {
                 x: 0.0,
                 y: 0.0,
                 z: 0.0,
-                rot: 0.0,
+                w: 0.0,
             },
             unknown54: 0,
             unknown55: 0.0,
@@ -254,15 +257,10 @@ impl Zone {
     }
 
     pub fn interact_with_character(&self, request: SelectPlayer) -> Result<Vec<Vec<u8>>, SerializePacketError> {
-        if let Some(requester) = self.characters.read().get(request.requester) {
-            if let Some(target) = self.characters.read().get(request.target) {
-                target.read().interact(requester.read())
-            } else {
-                println!("Received request to interact with unknown NPC {} from {}", request.target, request.requester);
-                Ok(vec![])
-            }
+        if let Some(target) = self.characters.read().get(request.target) {
+            target.read().interact()
         } else {
-            println!("Received request from unknown character {}", request.requester);
+            println!("Received request to interact with unknown NPC {} from {}", request.target, request.requester);
             Ok(vec![])
         }
     }
@@ -284,13 +282,13 @@ impl From<ZoneConfig> for Zone {
                         x: 0.0,
                         y: 0.0,
                         z: 0.0,
-                        rot: 1.0,
+                        w: 1.0,
                     },
-                    camera_pos: Pos {
+                    rot: Pos {
                         x: 0.0,
                         y: 0.0,
                         z: 0.0,
-                        rot: 0.0,
+                        w: 1.0,
                     },
                     character_type: CharacterType::Door(door),
                 });

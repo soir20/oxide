@@ -22,8 +22,8 @@ impl SerializePacket for ClientUpdateOpCode {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct Position {
     pub player_pos: Pos,
-    pub camera_pos: Pos,
-    pub unknown1: bool,
+    pub rot: Pos,
+    pub is_teleport: bool,
     pub unknown2: bool
 }
 

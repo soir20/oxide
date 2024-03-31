@@ -72,7 +72,7 @@ pub struct Pos {
     pub x: f32,
     pub y: f32,
     pub z: f32,
-    pub rot: f32
+    pub w: f32
 }
 
 #[derive(SerializePacket, DeserializePacket)]
