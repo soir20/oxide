@@ -13,7 +13,7 @@ pub fn process_command(game_server: &GameServer, cursor: &mut Cursor<&[u8]>) -> 
 
                 let zones = game_server.read_zones();
                 if let Some(zone_guid) = GameServer::zone_with_player(&zones, req.requester) {
-                    Ok(zones.get(zone_guid).unwrap().read().interact_npc(req)?)
+                    Ok(zones.get(zone_guid).unwrap().read().interact_with_character(req)?)
                 } else {
                     println!("Received interaction request from invalid requester {}", req.requester);
                     Err(ProcessPacketError::CorruptedPacket)

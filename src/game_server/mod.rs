@@ -11,11 +11,11 @@ use crate::game_server::command::process_command;
 use crate::game_server::game_packet::{GamePacket, OpCode};
 use crate::game_server::guid::{Guid, GuidTable, GuidTableReadHandle, GuidTableWriteHandle};
 use crate::game_server::login::{DeploymentEnv, GameSettings, LoginReply, WelcomeScreen, ZoneDetailsDone};
-use crate::game_server::player_data::{make_test_player, PlayerState};
+use crate::game_server::player_data::make_test_player;
 use crate::game_server::player_update_packet::make_test_npc;
 use crate::game_server::time::make_game_time_sync;
 use crate::game_server::tunnel::TunneledPacket;
-use crate::game_server::zone::{load_zones, Zone};
+use crate::game_server::zone::{Character, load_zones, Zone};
 
 mod login;
 mod player_data;
@@ -126,7 +126,9 @@ impl GameServer {
                     packets.push(GamePacket::serialize(&player)?);
 
                     if let Some(zone) = self.zones.read().get(player_zone) {
-                        zone.read().write_players().insert(PlayerState::from(player.inner.data));
+                        zone.read().write_characters().insert(
+                            Character::from(player.inner.data)
+                        );
                     } else {
                         return Err(ProcessPacketError::CorruptedPacket);
                     }
@@ -166,7 +168,7 @@ impl GameServer {
                     //result_packets.push(GamePacket::serialize(&npc)?);
 
                     if let Some(zone) = GameServer::zone_with_player(&self.zones.read(), sender) {
-                        let mut preloaded_npcs = self.zones.read().get(zone).unwrap().read().send_npcs()?;
+                        let mut preloaded_npcs = self.zones.read().get(zone).unwrap().read().send_characters()?;
                         packets.append(&mut preloaded_npcs);
                     }
 
@@ -295,7 +297,7 @@ impl GameServer {
     pub fn zone_with_player(zones: &GuidTableReadHandle<Zone>, guid: u64) -> Option<u64> {
         for zone in zones.values() {
             let read_handle = zone.read();
-            if read_handle.read_players().get(guid).is_some() {
+            if read_handle.read_characters().get(guid).is_some() {
                 return Some(read_handle.guid());
             }
         }

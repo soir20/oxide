@@ -1,6 +1,7 @@
 use std::fs::File;
 use std::io::Error;
 use std::path::Path;
+use std::sync::RwLockReadGuard;
 
 use serde::Deserialize;
 
@@ -11,21 +12,16 @@ use crate::game_server::command::SelectPlayer;
 use crate::game_server::game_packet::{GamePacket, Pos};
 use crate::game_server::guid::{Guid, GuidTable, GuidTableReadHandle, GuidTableWriteHandle};
 use crate::game_server::login::ZoneDetails;
-use crate::game_server::player_data::PlayerState;
-use crate::game_server::player_update_packet::{AddNpc, DamageAnimation, HoverGlow, Icon, MoveAnimation, BaseAttachmentGroup, WeaponAnimation};
+use crate::game_server::player_update_packet::{AddNpc, BaseAttachmentGroup, DamageAnimation, HoverGlow, Icon, MoveAnimation, WeaponAnimation};
 use crate::game_server::tunnel::TunneledPacket;
 
 #[derive(Deserialize)]
-struct Door {
+pub struct Door {
     terrain_object_id: u32,
     destination_pos_x: f32,
     destination_pos_y: f32,
     destination_pos_z: f32,
-    destination_rot: f32,
-    destination_camera_x: f32,
-    destination_camera_y: f32,
-    destination_camera_z: f32,
-    destination_camera_rot: f32,
+    destination_rot: f32
 }
 
 #[derive(Deserialize)]
@@ -37,22 +33,28 @@ struct ZoneConfig {
     doors: Vec<Door>
 }
 
-enum Npc {
-    Door(u64, Door)
+pub enum CharacterType {
+    Door(Door),
+    Player
 }
 
-impl Guid for Npc {
+pub struct Character {
+    pub guid: u64,
+    pub pos: Pos,
+    pub camera_pos: Pos,
+    pub character_type: CharacterType
+}
+
+impl Guid for Character {
     fn guid(&self) -> u64 {
-        match self {
-            Npc::Door(guid, _) => *guid
-        }
+        self.guid
     }
 }
 
-impl Npc {
-    pub fn interact(&mut self) -> Result<Vec<Vec<u8>>, SerializePacketError> {
-        match self {
-            Npc::Door(_, door) => {
+impl Character {
+    pub fn interact(&self, requester: RwLockReadGuard<Character>) -> Result<Vec<Vec<u8>>, SerializePacketError> {
+        match &self.character_type {
+            CharacterType::Door(door) => {
                 let pos_update = TunneledPacket {
                     unknown1: true,
                     inner: Position {
@@ -63,10 +65,10 @@ impl Npc {
                             rot: door.destination_rot,
                         },
                         camera_pos: Pos {
-                            x: door.destination_camera_x,
-                            y: door.destination_camera_y,
-                            z: door.destination_camera_z,
-                            rot: door.destination_camera_rot,
+                            x: requester.camera_pos.x,
+                            y: requester.camera_pos.y,
+                            z: requester.camera_pos.z,
+                            rot: requester.camera_pos.rot,
                         },
                         unknown1: true,
                         unknown2: true,
@@ -77,26 +79,30 @@ impl Npc {
                         pos_update.serialize()?
                     ]
                 )
-            }
+            },
+            _ => Ok(Vec::new())
         }
     }
 
-    pub fn to_packet(&self) -> Result<Vec<u8>, SerializePacketError> {
-        Ok(
-            GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: match self {
-                    Npc::Door(guid, door) => {
-                        Self::door_packet(*guid, door)
-                    }
-                },
-            })?
-        )
+    pub fn to_packets(&self) -> Result<Vec<Vec<u8>>, SerializePacketError> {
+        let packets = match &self.character_type {
+            CharacterType::Door(door) => {
+                vec![
+                    GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: Self::door_packet(self, door),
+                    })?
+                ]
+            },
+            _ => Vec::new()
+        };
+
+        Ok(packets)
     }
 
-    fn door_packet(guid: u64, door: &Door) -> AddNpc {
+    fn door_packet(character: &Character, door: &Door) -> AddNpc {
         AddNpc {
-            guid,
+            guid: character.guid,
             name_id: 0,
             model_id: 0,
             unknown3: false,
@@ -104,18 +110,8 @@ impl Npc {
             unknown5: 0,
             unknown6: 1,
             scale: 1.0,
-            position: Pos {
-                x: 0.0,
-                y: 0.0,
-                z: 0.0,
-                rot: 1.0,
-            },
-            rotation: Pos {
-                x: 0.0,
-                y: 0.0,
-                z: 0.0,
-                rot: 1.0,
-            },
+            position: character.pos,
+            rotation: character.camera_pos,
             unknown8: 0,
             attachments: vec![],
             is_terrain_object_noninteractable: 0,
@@ -210,8 +206,7 @@ pub struct Zone {
     name: String,
     hide_ui: bool,
     direction_indicator: bool,
-    npcs: GuidTable<Npc>,
-    players: GuidTable<PlayerState>
+    characters: GuidTable<Character>
 }
 
 impl Guid for Zone {
@@ -241,28 +236,33 @@ impl Zone {
         ])
     }
 
-    pub fn send_npcs(&self) -> Result<Vec<Vec<u8>>, SerializePacketError> {
+    pub fn send_characters(&self) -> Result<Vec<Vec<u8>>, SerializePacketError> {
         let mut packets = Vec::new();
-        for npc in self.npcs.read().values() {
-            packets.push(npc.read().to_packet()?);
+        for character in self.characters.read().values() {
+            packets.append(&mut character.read().to_packets()?);
         }
 
         Ok(packets)
     }
 
-    pub fn read_players(&self) -> GuidTableReadHandle<PlayerState> {
-        self.players.read()
+    pub fn read_characters(&self) -> GuidTableReadHandle<Character> {
+        self.characters.read()
     }
 
-    pub fn write_players(&self) -> GuidTableWriteHandle<PlayerState> {
-        self.players.write()
+    pub fn write_characters(&self) -> GuidTableWriteHandle<Character> {
+        self.characters.write()
     }
 
-    pub fn interact_npc(&self, request: SelectPlayer) -> Result<Vec<Vec<u8>>, SerializePacketError> {
-        if let Some(npc) = self.npcs.read().get(request.target) {
-            npc.write().interact()
+    pub fn interact_with_character(&self, request: SelectPlayer) -> Result<Vec<Vec<u8>>, SerializePacketError> {
+        if let Some(requester) = self.characters.read().get(request.requester) {
+            if let Some(target) = self.characters.read().get(request.target) {
+                target.read().interact(requester.read())
+            } else {
+                println!("Received request to interact with unknown NPC {} from {}", request.target, request.requester);
+                Ok(vec![])
+            }
         } else {
-            println!("Received request to interact with unknown NPC {} from {}", request.target, request.requester);
+            println!("Received request from unknown character {}", request.requester);
             Ok(vec![])
         }
     }
@@ -270,15 +270,30 @@ impl Zone {
 
 impl From<ZoneConfig> for Zone {
     fn from(zone_config: ZoneConfig) -> Self {
-        let npcs = GuidTable::new();
+        let characters = GuidTable::new();
 
         // Use the upper half of the GUID for NPC guids to avoid player GUID conflicts
         let mut guid = 0xFFFFFFFF00000000u64;
 
         {
-            let mut write_handle = npcs.write();
+            let mut write_handle = characters.write();
             for door in zone_config.doors {
-                write_handle.insert(Npc::Door(guid, door));
+                write_handle.insert(Character {
+                    guid,
+                    pos: Pos {
+                        x: 0.0,
+                        y: 0.0,
+                        z: 0.0,
+                        rot: 1.0,
+                    },
+                    camera_pos: Pos {
+                        x: 0.0,
+                        y: 0.0,
+                        z: 0.0,
+                        rot: 0.0,
+                    },
+                    character_type: CharacterType::Door(door),
+                });
                 guid += 1;
             }
         }
@@ -288,8 +303,7 @@ impl From<ZoneConfig> for Zone {
             name: zone_config.name,
             hide_ui: zone_config.hide_ui,
             direction_indicator: zone_config.direction_indicator,
-            npcs,
-            players: GuidTable::new()
+            characters
         }
     }
 }
