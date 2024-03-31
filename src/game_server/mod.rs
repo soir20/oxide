@@ -165,9 +165,10 @@ impl GameServer {
                     };
                     //result_packets.push(GamePacket::serialize(&npc)?);
 
-                    // TODO: get player's zone
-                    let mut preloaded_npcs = self.zones.read().get(2).unwrap().read().send_npcs()?;
-                    packets.append(&mut preloaded_npcs);
+                    if let Some(zone) = GameServer::zone_with_player(&self.zones.read(), sender) {
+                        let mut preloaded_npcs = self.zones.read().get(zone).unwrap().read().send_npcs()?;
+                        packets.append(&mut preloaded_npcs);
+                    }
 
                     let health = TunneledPacket {
                         unknown1: true,
