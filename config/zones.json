@@ -6,6 +6,7 @@
     "direction_indicator": false,
     "doors": [
       {
+        "comment": "Veranda -> Archives",
         "terrain_object_id": 1278971264,
         "destination_pos_x": 1757.0,
         "destination_pos_y": 10.040001,
@@ -14,6 +15,42 @@
         "destination_rot_x": -1.5,
         "destination_rot_y": 0.0,
         "destination_rot_z": 0.0,
+        "destination_rot_w": 1.0
+      },
+      {
+        "comment": "Veranda -> Workshop",
+        "terrain_object_id": 1278971325,
+        "destination_pos_x": -358.0,
+        "destination_pos_y": 10.12735,
+        "destination_pos_z": 1780.33,
+        "destination_pos_w": 1.0,
+        "destination_rot_x": 1.5,
+        "destination_rot_y": 0.0,
+        "destination_rot_z": 0.0,
+        "destination_rot_w": 1.0
+      },
+      {
+        "comment": "Veranda -> Main Hall (left)",
+        "terrain_object_id": 1278971263,
+        "destination_pos_x": 1256.6626,
+        "destination_pos_y": 10.12735,
+        "destination_pos_z": 291.0,
+        "destination_pos_w": 1.0,
+        "destination_rot_x": 0.0,
+        "destination_rot_y": 0.0,
+        "destination_rot_z": -1.0,
+        "destination_rot_w": 1.0
+      },
+      {
+        "comment": "Veranda -> Main Hall (right)",
+        "terrain_object_id": 1278971324,
+        "destination_pos_x": 1305.6,
+        "destination_pos_y": 10.12735,
+        "destination_pos_z": 291.0,
+        "destination_pos_w": 1.0,
+        "destination_rot_x": 0.0,
+        "destination_rot_y": 0.0,
+        "destination_rot_z": -1.0,
         "destination_rot_w": 1.0
       }
     ]
