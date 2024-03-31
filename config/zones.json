@@ -100,6 +100,30 @@
         "destination_rot_y": 0.0,
         "destination_rot_z": 0.0,
         "destination_rot_w": 1.0
+      },
+      {
+        "comment": "Main Hall -> Training Room",
+        "terrain_object_id": 1278972313,
+        "destination_pos_x": 160.4435,
+        "destination_pos_y": 6.8242483,
+        "destination_pos_z": 415.3869,
+        "destination_pos_w": 1.0,
+        "destination_rot_x": 0.0,
+        "destination_rot_y": 0.0,
+        "destination_rot_z": -1.5,
+        "destination_rot_w": 1.0
+      },
+      {
+        "comment": "Training Room -> Main Hall",
+        "terrain_object_id": 1265074699,
+        "destination_pos_x": 1245.232,
+        "destination_pos_y": 10.0,
+        "destination_pos_z": 275.1337,
+        "destination_pos_w": 1.0,
+        "destination_rot_x": 1.5,
+        "destination_rot_y": 0.0,
+        "destination_rot_z": 0.0,
+        "destination_rot_w": 1.0
       }
     ]
   }
