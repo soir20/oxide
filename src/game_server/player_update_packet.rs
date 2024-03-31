@@ -118,20 +118,6 @@ impl SerializePacket for WeaponAnimation {
 }
 
 #[derive(Copy, Clone, Debug)]
-pub enum MoveAnimation {
-    Standing = 1,
-    Walking = 2,
-    Running = 3,
-}
-
-impl SerializePacket for MoveAnimation {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        buffer.write_u32::<LittleEndian>(*self as u32)?;
-        Ok(())
-    }
-}
-
-#[derive(Copy, Clone, Debug)]
 pub enum HoverGlow {
     Disabled = 0,
     Enabled = 1
@@ -179,11 +165,11 @@ pub struct AddNpc {
     pub interactable_size_pct: u32,
     pub unknown23: i32,
     pub unknown24: i32,
-    pub move_animation: MoveAnimation,
+    pub active_animation_slot: u32,
     pub unknown26: bool,
-    pub unknown27: bool,
+    pub hover_in_some_zones: bool,
     pub sub_title_id: StringId,
-    pub move_animation2: MoveAnimation,
+    pub active_animation_slot2: u32,
     pub head_model_id: u32,
     pub unknown31: Vec<Effect>,
     pub unknown32: bool,
@@ -280,11 +266,11 @@ pub fn make_test_npc() -> AddNpc {
         interactable_size_pct: 100,
         unknown23: -1,
         unknown24: -1,
-        move_animation: MoveAnimation::Standing,
+        active_animation_slot: 1,
         unknown26: false,
-        unknown27: false,
+        hover_in_some_zones: false,
         sub_title_id: 0,
-        move_animation2: MoveAnimation::Standing,
+        active_animation_slot2: 1,
         head_model_id: 0,
         unknown31: vec![],
         unknown32: false,

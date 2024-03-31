@@ -11,7 +11,7 @@ use crate::game_server::command::SelectPlayer;
 use crate::game_server::game_packet::{GamePacket, Pos};
 use crate::game_server::guid::{Guid, GuidTable, GuidTableReadHandle, GuidTableWriteHandle};
 use crate::game_server::login::ZoneDetails;
-use crate::game_server::player_update_packet::{AddNpc, BaseAttachmentGroup, DamageAnimation, HoverGlow, Icon, MoveAnimation, WeaponAnimation};
+use crate::game_server::player_update_packet::{AddNpc, BaseAttachmentGroup, DamageAnimation, HoverGlow, Icon, WeaponAnimation};
 use crate::game_server::tunnel::TunneledPacket;
 
 #[derive(Deserialize)]
@@ -138,11 +138,11 @@ impl Character {
             interactable_size_pct: 100,
             unknown23: -1,
             unknown24: -1,
-            move_animation: MoveAnimation::Standing,
+            active_animation_slot: 0,
             unknown26: false,
-            unknown27: false,
+            hover_in_some_zones: false,
             sub_title_id: 0,
-            move_animation2: MoveAnimation::Standing,
+            active_animation_slot2: 0,
             head_model_id: 0,
             unknown31: vec![],
             unknown32: false,
