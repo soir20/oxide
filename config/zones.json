@@ -222,6 +222,32 @@
         "destination_rot_z": 0.0,
         "destination_rot_w": 1.0,
         "destination_zone": "JediTemple"
+      },
+      {
+        "comment": "Lounge -> Club",
+        "terrain_object_id": 1359076115,
+        "destination_pos_x": 764.51,
+        "destination_pos_y": 10.0,
+        "destination_pos_z": 683.99,
+        "destination_pos_w": 1.0,
+        "destination_rot_x": 1.5,
+        "destination_rot_y": 0.0,
+        "destination_rot_z": 0.0,
+        "destination_rot_w": 1.0,
+        "destination_zone": "Members"
+      },
+      {
+        "comment": "Club -> Lounge",
+        "terrain_object_id": 1281995677,
+        "destination_pos_x": -106.5555,
+        "destination_pos_y": 10.0,
+        "destination_pos_z": 1250.071,
+        "destination_pos_w": 1.0,
+        "destination_rot_x": 0.0,
+        "destination_rot_y": 0.0,
+        "destination_rot_z": 1.5,
+        "destination_rot_w": 1.0,
+        "destination_zone": "JediTemple"
       }
     ]
   }
