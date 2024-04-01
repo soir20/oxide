@@ -248,6 +248,30 @@
         "destination_rot_z": 1.5,
         "destination_rot_w": 1.0,
         "destination_zone": "JediTemple"
+      },
+      {
+        "comment": "TEMPORARY: Training Room Main Platform",
+        "terrain_object_id": 1281494198,
+        "destination_pos_x": 160.4435,
+        "destination_pos_y": 6.8242483,
+        "destination_pos_z": 415.3869,
+        "destination_pos_w": 1.0,
+        "destination_rot_x": 0.0,
+        "destination_rot_y": 0.0,
+        "destination_rot_z": -1.5,
+        "destination_rot_w": 1.0
+      },
+      {
+        "comment": "TEMPORARY: Training Room Dueling Platform",
+        "terrain_object_id": 1272323314,
+        "destination_pos_x": 114.9904,
+        "destination_pos_y": 10.0,
+        "destination_pos_z": 380.0752,
+        "destination_pos_w": 1.0,
+        "destination_rot_x": 1.5,
+        "destination_rot_y": 0.0,
+        "destination_rot_z": 0.0,
+        "destination_rot_w": 1.0
       }
     ]
   }
