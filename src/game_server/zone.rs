@@ -291,8 +291,8 @@ impl From<ZoneConfig> for Zone {
     fn from(zone_config: ZoneConfig) -> Self {
         let characters = GuidTable::new();
 
-        // Use the upper half of the GUID for NPC guids to avoid player GUID conflicts
-        let mut guid = 0xFFFFFFFF00000000u64;
+        // Set the first bit for NPC guids to avoid player GUID conflicts
+        let mut guid = 0x8000000000000000u64;
 
         {
             let mut write_handle = characters.write();
