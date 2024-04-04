@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 use std::net::SocketAddr;
-use std::sync::Mutex;
+use parking_lot::Mutex;
 use crate::game_server::Broadcast;
 use crate::protocol::Channel;
 
@@ -51,7 +51,7 @@ impl ChannelManager {
 
     pub fn receive(&self, addr: &SocketAddr, data: &[u8]) -> ReceiveResult {
         if let Some(channel) = self.get_by_addr(addr) {
-            match channel.lock().unwrap().receive(&data[..]) {
+            match channel.lock().receive(&data[..]) {
                 Ok(packets_received) => ReceiveResult::Success(packets_received),
                 Err(err) => {
                     println!("Deserialize error on channel {}: {:?}", addr, err);
@@ -65,7 +65,7 @@ impl ChannelManager {
 
     pub fn process_next(&self, addr: &SocketAddr, count: u8) -> Vec<Vec<u8>> {
         self.get_by_addr(addr).expect("Tried to process data on non-existent channel")
-            .lock().unwrap()
+            .lock()
             .process_next(count)
     }
 
@@ -80,7 +80,7 @@ impl ChannelManager {
 
             for guid in guids {
                 if let Some(channel) = self.get_by_guid(guid) {
-                    let mut channel_handle = channel.lock().unwrap();
+                    let mut channel_handle = channel.lock();
                     packets.iter().for_each(|packet| {
                         channel_handle.prepare_to_send_data(packet.clone());
                     })
@@ -96,7 +96,7 @@ impl ChannelManager {
     pub fn send_next(&self, addr: &SocketAddr, count: u8) -> Vec<Vec<u8>> {
         let send_result = self.get_by_addr(addr)
             .expect("Tried to sent data through non-existent channel")
-            .lock().unwrap()
+            .lock()
             .send_next(count);
 
         send_result.unwrap_or_else(|err| {

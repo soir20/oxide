@@ -1,6 +1,6 @@
+use parking_lot::RwLock;
 use std::net::{SocketAddr, UdpSocket};
 use std::path::Path;
-use std::sync::RwLock;
 use std::thread;
 use std::time::Duration;
 
@@ -27,15 +27,15 @@ fn main() {
             let recv_data = &buf[0..len];
             println!("Bytes: {:x?}", recv_data);
 
-            let mut read_handle = channel_manager.read().unwrap();
+            let mut read_handle = channel_manager.read();
 
             let receive_result = read_handle.receive(&src, recv_data);
             if receive_result == ReceiveResult::CreateChannelFirst {
                 println!("Creating channel for {}", src);
                 drop(read_handle);
-                let previous_channel = channel_manager.write().unwrap()
+                let previous_channel = channel_manager.write()
                     .insert(&src, Channel::new(200, 1000));
-                read_handle = channel_manager.read().unwrap();
+                read_handle = channel_manager.read();
 
                 if let Some(_) = previous_channel {
                     println!("Client {} reconnected, dropping old channel", src);
@@ -57,9 +57,9 @@ fn main() {
                     match game_server.login(packet) {
                         Ok((guid, mut new_broadcasts)) => {
                             drop(read_handle);
-                            channel_manager.write().unwrap().authenticate(&src, guid);
+                            channel_manager.write().authenticate(&src, guid);
                             broadcasts.append(&mut new_broadcasts);
-                            read_handle = channel_manager.read().unwrap();
+                            read_handle = channel_manager.read();
                         },
                         Err(err) => println!("Unable to process login packet: {:?}", err)
                     }
@@ -75,6 +75,6 @@ fn main() {
                 socket.send_to(&buffer, &src).expect("Unable to send packet to client");
             }
         }
-        thread::sleep(Duration::from_millis(50));
+        thread::sleep(Duration::from_millis(5));
     }
 }

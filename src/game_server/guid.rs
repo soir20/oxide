@@ -1,5 +1,5 @@
 use std::collections::BTreeMap;
-use std::sync::{RwLock, RwLockReadGuard, RwLockWriteGuard};
+use parking_lot::{RwLock, RwLockReadGuard, RwLockWriteGuard};
 
 pub struct Lock<T> {
     inner: RwLock<T>
@@ -13,11 +13,11 @@ impl<T> Lock<T> {
     }
 
     pub fn read(&self) -> RwLockReadGuard<T> {
-        self.inner.read().unwrap()
+        self.inner.read()
     }
 
     pub fn write(&self) -> RwLockWriteGuard<T> {
-        self.inner.write().unwrap()
+        self.inner.write()
     }
 }
 
