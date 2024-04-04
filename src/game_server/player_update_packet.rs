@@ -190,7 +190,7 @@ pub struct AddNpc {
     pub name_offset_y: f32,
     pub name_offset_z: f32,
     pub terrain_object_id: u32,
-    pub load_attachment_groups: bool,
+    pub invisible: bool,
     pub unknown20: f32,
     pub unknown21: bool,
     pub interactable_size_pct: u32,
@@ -198,7 +198,7 @@ pub struct AddNpc {
     pub unknown24: i32,
     pub active_animation_slot: u32,
     pub unknown26: bool,
-    pub hover_in_some_zones: bool,
+    pub ignore_position: bool,
     pub sub_title_id: StringId,
     pub active_animation_slot2: u32,
     pub head_model_id: u32,
@@ -230,7 +230,7 @@ pub struct AddNpc {
     pub attachment_group_unknown: String,
     pub unknown59: String,
     pub unknown60: String,
-    pub is_not_terrain_object: bool,
+    pub force_load_actor_definition: bool,
     pub hover_glow: HoverGlow,
     pub unknown63: u32,
     pub fly_over_effect: u32,
@@ -291,7 +291,7 @@ pub fn make_test_npc() -> AddNpc {
         name_offset_y: 0.0,
         name_offset_z: 0.0,
         terrain_object_id: 1278971264,
-        load_attachment_groups: false,
+        invisible: false,
         unknown20: 0.0,
         unknown21: false,
         interactable_size_pct: 100,
@@ -299,7 +299,7 @@ pub fn make_test_npc() -> AddNpc {
         unknown24: -1,
         active_animation_slot: 1,
         unknown26: false,
-        hover_in_some_zones: false,
+        ignore_position: false,
         sub_title_id: 0,
         active_animation_slot2: 1,
         head_model_id: 0,
@@ -348,7 +348,7 @@ pub fn make_test_npc() -> AddNpc {
         attachment_group_unknown: "".to_string(),
         unknown59: "".to_string(),
         unknown60: "".to_string(),
-        is_not_terrain_object: false, // Non-terrain NPCs must have this enabled to be interactable
+        force_load_actor_definition: false, // Non-terrain NPCs must have this enabled to be interactable
         hover_glow: HoverGlow::Enabled,
         unknown63: 0, // max 7
         fly_over_effect: 0, // max 3
