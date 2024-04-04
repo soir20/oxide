@@ -196,7 +196,7 @@ pub struct AddNpc {
     pub interactable_size_pct: u32,
     pub unknown23: i32,
     pub unknown24: i32,
-    pub active_animation_slot: u32,
+    pub active_animation_slot: i32,
     pub unknown26: bool,
     pub ignore_position: bool,
     pub sub_title_id: StringId,
