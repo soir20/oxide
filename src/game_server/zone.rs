@@ -225,7 +225,7 @@ impl Character {
             hover_glow: HoverGlow::Enabled,
             unknown63: 0,
             fly_over_effect: 0,
-            unknown65: 55,
+            unknown65: 0,
             unknown66: 0,
             unknown67: 0,
             disable_move_to_interact: false,
