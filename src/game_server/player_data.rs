@@ -348,7 +348,7 @@ pub fn make_test_player(guid: u64) -> Player {
                 x: 1.5,
                 y: 0.0,
                 z: 0.0,
-                w: 1.0,
+                w: 0.0,
             },
             unknown6: 0,
             unknown7: 0,

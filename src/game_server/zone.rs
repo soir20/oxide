@@ -321,7 +321,7 @@ impl From<ZoneConfig> for Zone {
                         x: 0.0,
                         y: 0.0,
                         z: 0.0,
-                        w: 1.0,
+                        w: 0.0,
                     },
                     character_type: CharacterType::Door(door),
                 });

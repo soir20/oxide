@@ -269,7 +269,7 @@ pub fn make_test_npc() -> AddNpc {
             x: 0.0,
             y: 0.0,
             z: 0.0,
-            w: 1.0,
+            w: 0.0,
         },
         unknown8: 0,
         attachments: vec![],

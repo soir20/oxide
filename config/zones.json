@@ -15,7 +15,7 @@
         "destination_rot_x": -1.5,
         "destination_rot_y": 0.0,
         "destination_rot_z": 0.0,
-        "destination_rot_w": 1.0
+        "destination_rot_w": 0.0
       },
       {
         "comment": "Archives -> Veranda",
@@ -27,7 +27,7 @@
         "destination_rot_x": 0.0,
         "destination_rot_y": 0.0,
         "destination_rot_z": 1.5,
-        "destination_rot_w": 1.0
+        "destination_rot_w": 0.0
       },
       {
         "comment": "Veranda -> Workshop",
@@ -39,7 +39,7 @@
         "destination_rot_x": 1.5,
         "destination_rot_y": 0.0,
         "destination_rot_z": 0.0,
-        "destination_rot_w": 1.0
+        "destination_rot_w": 0.0
       },
       {
         "comment": "Workshop -> Veranda",
@@ -51,7 +51,7 @@
         "destination_rot_x": 0.0,
         "destination_rot_y": 0.0,
         "destination_rot_z": -1.5,
-        "destination_rot_w": 1.0
+        "destination_rot_w": 0.0
       },
       {
         "comment": "Veranda -> Main Hall (left)",
@@ -63,7 +63,7 @@
         "destination_rot_x": 0.0,
         "destination_rot_y": 0.0,
         "destination_rot_z": -1.0,
-        "destination_rot_w": 1.0
+        "destination_rot_w": 0.0
       },
       {
         "comment": "Main Hall (left) -> Veranda",
@@ -75,7 +75,7 @@
         "destination_rot_x": -1.5,
         "destination_rot_y": 0.0,
         "destination_rot_z": 0.0,
-        "destination_rot_w": 1.0
+        "destination_rot_w": 0.0
       },
       {
         "comment": "Veranda -> Main Hall (right)",
@@ -87,7 +87,7 @@
         "destination_rot_x": 0.0,
         "destination_rot_y": 0.0,
         "destination_rot_z": -1.0,
-        "destination_rot_w": 1.0
+        "destination_rot_w": 0.0
       },
       {
         "comment": "Main Hall (right) -> Veranda",
@@ -99,7 +99,7 @@
         "destination_rot_x": -1.5,
         "destination_rot_y": 0.0,
         "destination_rot_z": 0.0,
-        "destination_rot_w": 1.0
+        "destination_rot_w": 0.0
       },
       {
         "comment": "Main Hall -> Training Room",
@@ -111,7 +111,7 @@
         "destination_rot_x": 0.0,
         "destination_rot_y": 0.0,
         "destination_rot_z": -1.5,
-        "destination_rot_w": 1.0
+        "destination_rot_w": 0.0
       },
       {
         "comment": "Training Room -> Main Hall",
@@ -123,7 +123,7 @@
         "destination_rot_x": 1.5,
         "destination_rot_y": 0.0,
         "destination_rot_z": 0.0,
-        "destination_rot_w": 1.0
+        "destination_rot_w": 0.0
       },
       {
         "comment": "Main Hall -> Hangar",
@@ -135,7 +135,7 @@
         "destination_rot_x": -1.5,
         "destination_rot_y": 0.0,
         "destination_rot_z": 0.0,
-        "destination_rot_w": 1.0
+        "destination_rot_w": 0.0
       },
       {
         "comment": "Hangar -> Main Hall",
@@ -147,7 +147,7 @@
         "destination_rot_x": 1.5,
         "destination_rot_y": 0.0,
         "destination_rot_z": 0.0,
-        "destination_rot_w": 1.0
+        "destination_rot_w": 0.0
       },
       {
         "comment": "Main Hall -> Lounge",
@@ -159,7 +159,7 @@
         "destination_rot_x": 1.5,
         "destination_rot_y": 0.0,
         "destination_rot_z": 0.0,
-        "destination_rot_w": 1.0
+        "destination_rot_w": 0.0
       },
       {
         "comment": "Lounge -> Main Hall",
@@ -171,7 +171,7 @@
         "destination_rot_x": -1.5,
         "destination_rot_y": 0.0,
         "destination_rot_z": 0.0,
-        "destination_rot_w": 1.0
+        "destination_rot_w": 0.0
       },
       {
         "comment": "Main Hall -> War Room",
@@ -183,7 +183,7 @@
         "destination_rot_x": 1.5,
         "destination_rot_y": 0.0,
         "destination_rot_z": 0.0,
-        "destination_rot_w": 1.0
+        "destination_rot_w": 0.0
       },
       {
         "comment": "War Room -> Main Hall",
@@ -195,7 +195,7 @@
         "destination_rot_x": -1.5,
         "destination_rot_y": 0.0,
         "destination_rot_z": 0.0,
-        "destination_rot_w": 1.0
+        "destination_rot_w": 0.0
       },
       {
         "comment": "Veranda -> Construction Chamber",
@@ -207,7 +207,7 @@
         "destination_rot_x": 0.0,
         "destination_rot_y": 0.0,
         "destination_rot_z": 1.5,
-        "destination_rot_w": 1.0,
+        "destination_rot_w": 0.0,
         "destination_zone": "Members"
       },
       {
@@ -220,7 +220,7 @@
         "destination_rot_x": -1.5,
         "destination_rot_y": 0.0,
         "destination_rot_z": 0.0,
-        "destination_rot_w": 1.0,
+        "destination_rot_w": 0.0,
         "destination_zone": "JediTemple"
       },
       {
@@ -233,7 +233,7 @@
         "destination_rot_x": 1.5,
         "destination_rot_y": 0.0,
         "destination_rot_z": 0.0,
-        "destination_rot_w": 1.0,
+        "destination_rot_w": 0.0,
         "destination_zone": "Members"
       },
       {
@@ -246,7 +246,7 @@
         "destination_rot_x": 0.0,
         "destination_rot_y": 0.0,
         "destination_rot_z": 1.5,
-        "destination_rot_w": 1.0,
+        "destination_rot_w": 0.0,
         "destination_zone": "JediTemple"
       },
       {
@@ -259,7 +259,7 @@
         "destination_rot_x": 0.0,
         "destination_rot_y": 0.0,
         "destination_rot_z": -1.5,
-        "destination_rot_w": 1.0
+        "destination_rot_w": 0.0
       },
       {
         "comment": "TEMPORARY: Training Room Dueling Platform",
@@ -271,7 +271,7 @@
         "destination_rot_x": 1.5,
         "destination_rot_y": 0.0,
         "destination_rot_z": 0.0,
-        "destination_rot_w": 1.0
+        "destination_rot_w": 0.0
       }
     ]
   }
