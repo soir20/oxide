@@ -122,7 +122,7 @@ impl Character {
                             new_states: vec![
                                 SingleNpcRelevance {
                                     guid: self.guid,
-                                    new_character_state: Some(0x11),
+                                    cursor: Some(55),
                                     unknown1: false,
                                 }
                             ],

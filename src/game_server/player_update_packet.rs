@@ -44,15 +44,15 @@ impl GamePacket for SetCollision {
 
 pub struct SingleNpcRelevance {
     pub guid: u64,
-    pub new_character_state: Option<u8>,
+    pub cursor: Option<u8>,
     pub unknown1: bool
 }
 
 impl SerializePacket for SingleNpcRelevance {
     fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
         buffer.write_u64::<LittleEndian>(self.guid)?;
-        buffer.write_u8(self.new_character_state.is_some() as u8)?;
-        if let Some(new_character_state) = self.new_character_state {
+        buffer.write_u8(self.cursor.is_some() as u8)?;
+        if let Some(new_character_state) = self.cursor {
             buffer.write_u8(new_character_state)?;
         }
         buffer.write_u8(self.unknown1 as u8)?;
