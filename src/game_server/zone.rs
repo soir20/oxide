@@ -11,7 +11,7 @@ use crate::game_server::command::SelectPlayer;
 use crate::game_server::game_packet::{GamePacket, Pos};
 use crate::game_server::guid::{Guid, GuidTable, GuidTableReadHandle, GuidTableWriteHandle};
 use crate::game_server::login::{ClientBeginZoning, ZoneDetails};
-use crate::game_server::player_update_packet::{AddNpc, BaseAttachmentGroup, DamageAnimation, HoverGlow, Icon, WeaponAnimation};
+use crate::game_server::player_update_packet::{AddNpc, BaseAttachmentGroup, DamageAnimation, HoverGlow, Icon, NpcRelevance, SingleNpcRelevance, WeaponAnimation};
 use crate::game_server::tunnel::TunneledPacket;
 
 #[derive(Deserialize)]
@@ -115,6 +115,18 @@ impl Character {
                     GamePacket::serialize(&TunneledPacket {
                         unknown1: true,
                         inner: Self::door_packet(self, door),
+                    })?,
+                    GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: NpcRelevance {
+                            new_states: vec![
+                                SingleNpcRelevance {
+                                    guid: self.guid,
+                                    new_character_state: Some(0x11),
+                                    unknown1: false,
+                                }
+                            ],
+                        },
                     })?
                 ]
             },
@@ -213,7 +225,7 @@ impl Character {
             hover_glow: HoverGlow::Enabled,
             unknown63: 0,
             fly_over_effect: 0,
-            unknown65: 0,
+            unknown65: 55,
             unknown66: 0,
             unknown67: 0,
             disable_move_to_interact: false,
