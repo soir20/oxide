@@ -46,7 +46,7 @@ impl GamePacket for SetCollision {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct NotificationData {
     pub unknown1: u32,
-    pub unknown2: u32,
+    pub icon_id: u32,
     pub unknown3: u32,
     pub name_id: StringId,
     pub unknown4: u32,
