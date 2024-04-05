@@ -19,7 +19,8 @@ fn main() {
     let channel_manager = RwLock::new(ChannelManager::new());
 
     let game_server = GameServer::new(Path::new("config")).unwrap();
-    let delta = 5u8;
+    let process_delta = 5u8;
+    let send_delta = 50u8;
     loop {
         let mut buf = [0; 512];
         if let Ok((len, src)) = socket.recv_from(&mut buf) {
@@ -44,8 +45,8 @@ fn main() {
                 read_handle.receive(&src, recv_data);
             }
 
-            println!("Processing at most {} packets", delta);
-            let packets_for_game_server = read_handle.process_next(&src, delta);
+            println!("Processing at most {} packets", process_delta);
+            let packets_for_game_server = read_handle.process_next(&src, process_delta);
             let mut broadcasts = Vec::new();
             for packet in packets_for_game_server {
                 if let Some(guid) = read_handle.guid(&src) {
@@ -68,7 +69,7 @@ fn main() {
 
             read_handle.broadcast(broadcasts);
 
-            let packets_to_send = read_handle.send_next(&src, delta);
+            let packets_to_send = read_handle.send_next(&src, send_delta);
             println!("Sending {} packets", packets_to_send.len());
             for buffer in packets_to_send {
                 println!("Sending {} bytes: {:x?}", buffer.len(), buffer);
