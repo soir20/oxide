@@ -34,7 +34,7 @@ pub fn process_command(game_server: &GameServer, cursor: &mut Cursor<&[u8]>) -> 
 #[derive(Copy, Clone, Debug)]
 pub enum CommandOpCode {
     InteractionList          = 0x9,
-    SelectPlayer = 0xf
+    SelectPlayer             = 0xf
 }
 
 impl SerializePacket for CommandOpCode {
