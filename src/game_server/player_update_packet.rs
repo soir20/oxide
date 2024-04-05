@@ -7,6 +7,7 @@ use crate::game_server::game_packet::{Effect, GamePacket, OpCode, Pos, StringId}
 #[derive(Copy, Clone, Debug)]
 pub enum PlayerUpdateOpCode {
     AddNpc                   = 0x2,
+    AddNotifications         = 0xa,
     NpcRelevance             = 0xc,
     UpdateCharacterState     = 0x14,
     SetCollision             = 0x32
@@ -40,6 +41,47 @@ pub struct SetCollision {
 impl GamePacket for SetCollision {
     type Header = PlayerUpdateOpCode;
     const HEADER: Self::Header = PlayerUpdateOpCode::SetCollision;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct NotificationData {
+    pub unknown1: u32,
+    pub unknown2: u32,
+    pub unknown3: u32,
+    pub name_id: StringId,
+    pub unknown4: u32,
+    pub unknown5: bool,
+    pub unknown6: u32,
+}
+
+pub struct SingleNotification {
+    pub guid: u64,
+    pub unknown1: u32,
+    pub notification: Option<NotificationData>,
+    pub unknown2: bool
+}
+
+impl SerializePacket for SingleNotification {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        buffer.write_u64::<LittleEndian>(self.guid)?;
+        buffer.write_u8(self.notification.is_none() as u8)?;
+        buffer.write_u32::<LittleEndian>(self.unknown1)?;
+        if let Some(notification) = &self.notification {
+            notification.serialize(buffer)?;
+        }
+        buffer.write_u8(self.unknown2 as u8)?;
+        Ok(())
+    }
+}
+
+#[derive(SerializePacket)]
+pub struct AddNotifications {
+    pub notifications: Vec<SingleNotification>
+}
+
+impl GamePacket for AddNotifications {
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::AddNotifications;
 }
 
 pub struct SingleNpcRelevance {

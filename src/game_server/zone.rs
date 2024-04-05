@@ -11,7 +11,7 @@ use crate::game_server::command::SelectPlayer;
 use crate::game_server::game_packet::{GamePacket, Pos};
 use crate::game_server::guid::{Guid, GuidTable, GuidTableReadHandle, GuidTableWriteHandle};
 use crate::game_server::login::{ClientBeginZoning, ZoneDetails};
-use crate::game_server::player_update_packet::{AddNpc, BaseAttachmentGroup, DamageAnimation, HoverGlow, Icon, NpcRelevance, SingleNpcRelevance, WeaponAnimation};
+use crate::game_server::player_update_packet::{AddNotifications, AddNpc, BaseAttachmentGroup, DamageAnimation, HoverGlow, Icon, NotificationData, NpcRelevance, SingleNotification, SingleNpcRelevance, WeaponAnimation};
 use crate::game_server::tunnel::TunneledPacket;
 
 #[derive(Deserialize)]
@@ -124,6 +124,29 @@ impl Character {
                                     guid: self.guid,
                                     cursor: Some(55),
                                     unknown1: false,
+                                }
+                            ],
+                        },
+                    })?,
+                    GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: AddNotifications {
+                            notifications: vec![
+                                SingleNotification {
+                                    guid: self.guid,
+                                    unknown1: 1,
+                                    notification: Some(
+                                        NotificationData {
+                                            unknown1: 1,
+                                            unknown2: 12,
+                                            unknown3: 0,
+                                            name_id: 0,
+                                            unknown4: 0,
+                                            unknown5: false,
+                                            unknown6: 0,
+                                        }
+                                    ),
+                                    unknown2: true,
                                 }
                             ],
                         },
