@@ -50,7 +50,7 @@ pub struct NotificationData {
     pub unknown3: u32,
     pub name_id: StringId,
     pub unknown4: u32,
-    pub unknown5: bool,
+    pub hide_icon: bool,
     pub unknown6: u32,
 }
 

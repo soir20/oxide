@@ -138,11 +138,11 @@ impl Character {
                                     notification: Some(
                                         NotificationData {
                                             unknown1: 1,
-                                            icon_id: 1,
+                                            icon_id: 13,
                                             unknown3: 0,
                                             name_id: 0,
                                             unknown4: 0,
-                                            unknown5: false,
+                                            hide_icon: false,
                                             unknown6: 0,
                                         }
                                     ),
