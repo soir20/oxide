@@ -190,19 +190,6 @@ impl SerializePacket for WeaponAnimation {
     }
 }
 
-#[derive(Copy, Clone, Debug)]
-pub enum HoverGlow {
-    Disabled = 0,
-    Enabled = 1
-}
-
-impl SerializePacket for HoverGlow {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        buffer.write_u32::<LittleEndian>(*self as u32)?;
-        Ok(())
-    }
-}
-
 #[derive(SerializePacket)]
 pub struct AddNpc {
     pub guid: u64,
@@ -258,7 +245,7 @@ pub struct AddNpc {
     pub unknown42: u32,
     pub collision: bool,
     pub unknown44: u64,
-    pub unknown45: u32,
+    pub npc_type: u32,
     pub unknown46: f32,
     pub target: u32,
     pub unknown50: Vec<Variable>,
@@ -273,8 +260,8 @@ pub struct AddNpc {
     pub unknown59: String,
     pub unknown60: String,
     pub force_load_actor_definition: bool,
-    pub hover_glow: HoverGlow,
-    pub unknown63: u32,
+    pub hover_glow: u32,
+    pub hover_description: u32,
     pub fly_over_effect: u32,
     pub unknown65: u32,
     pub unknown66: u32,
@@ -371,7 +358,7 @@ pub fn make_test_npc() -> AddNpc {
         collision: true, // To be interactable, every NPC must have collision set,
                          // even if the model does not actually support collision
         unknown44: 0,
-        unknown45: 2,
+        npc_type: 2,
         unknown46: 0.0,
         target: 0,
         unknown50: vec![],
@@ -391,8 +378,8 @@ pub fn make_test_npc() -> AddNpc {
         unknown59: "".to_string(),
         unknown60: "".to_string(),
         force_load_actor_definition: false, // Non-terrain NPCs must have this enabled to be interactable
-        hover_glow: HoverGlow::Enabled,
-        unknown63: 0, // max 7
+        hover_glow: 0,
+        hover_description: 0, // max 7
         fly_over_effect: 0, // max 3
         unknown65: 0, // max 32
         unknown66: 0,
