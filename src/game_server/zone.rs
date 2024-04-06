@@ -230,8 +230,8 @@ impl Character {
             target: 0,
             unknown50: vec![],
             trick_animation_id: 0,
-            unknown52: 0.0,
-            unknown53: Pos {
+            trick_speed: 0.0,
+            trick_origin: Pos {
                 x: 0.0,
                 y: 0.0,
                 z: 0.0,
