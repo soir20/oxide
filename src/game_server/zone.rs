@@ -229,9 +229,9 @@ impl Character {
             unknown46: 0.0,
             target: 0,
             unknown50: vec![],
-            trick_animation_id: 0,
-            trick_speed: 0.0,
-            trick_origin: Pos {
+            rail_id: 0,
+            rail_speed: 0.0,
+            rail_origin: Pos {
                 x: 0.0,
                 y: 0.0,
                 z: 0.0,
