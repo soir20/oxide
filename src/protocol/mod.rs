@@ -1,4 +1,5 @@
 use std::collections::{BTreeMap, VecDeque};
+use std::time::{SystemTime, UNIX_EPOCH};
 
 use rand::random;
 
@@ -127,15 +128,31 @@ impl Packet {
 
 struct PendingPacket {
     needs_send: bool,
-    packet: Packet
+    packet: Packet,
+    last_prepare_to_send: u128
 }
 
 impl PendingPacket {
     fn new(packet: Packet) -> Self {
         PendingPacket {
             needs_send: true,
-            packet
+            packet,
+            last_prepare_to_send: 0
         }
+    }
+
+    pub fn update_last_prepare_to_send_time(&mut self) {
+        self.last_prepare_to_send = PendingPacket::now();
+    }
+
+    pub fn time_since_last_prepare_to_send(&self) -> u128 {
+        let now = PendingPacket::now();
+        now.checked_sub(self.last_prepare_to_send).unwrap_or(now)
+    }
+
+    fn now() -> u128 {
+        SystemTime::now().duration_since(UNIX_EPOCH)
+            .expect("Time before Unix epoch").as_millis()
     }
 }
 
@@ -151,6 +168,7 @@ pub struct Channel {
     session: Option<Session>,
     buffer_size: BufferSize,
     recency_limit: SequenceNumber,
+    millis_until_resend: u128,
     fragment_state: FragmentState,
     send_queue: VecDeque<PendingPacket>,
     receive_queue: VecDeque<Packet>,
@@ -163,11 +181,12 @@ pub struct Channel {
 
 impl Channel {
 
-    pub fn new(initial_buffer_size: BufferSize, recency_limit: SequenceNumber) -> Self {
+    pub fn new(initial_buffer_size: BufferSize, recency_limit: SequenceNumber, millis_until_resend: u128) -> Self {
         Channel {
             session: None,
             buffer_size: initial_buffer_size,
             recency_limit,
+            millis_until_resend,
             fragment_state: FragmentState::new(),
             send_queue: VecDeque::new(),
             receive_queue: VecDeque::new(),
@@ -284,6 +303,12 @@ impl Channel {
         while indices_to_send.len() < count as usize && index < self.send_queue.len() {
             let packet = &mut self.send_queue[index];
 
+            // All later packets are newer than this packet, so they should also be skipped
+            if packet.time_since_last_prepare_to_send() < self.millis_until_resend {
+                index += 1;
+                continue;
+            }
+
             // Packets without sequence numbers do not need to be acked, so they
             // are always sent exactly once.
             if packet.packet.sequence_number().is_none() {
@@ -291,6 +316,7 @@ impl Channel {
             }
 
             indices_to_send.push(index);
+            packet.update_last_prepare_to_send_time();
             index += 1;
         }
 

@@ -19,8 +19,8 @@ fn main() {
     let channel_manager = RwLock::new(ChannelManager::new());
 
     let game_server = GameServer::new(Path::new("config")).unwrap();
-    let process_delta = 10u8;
-    let send_delta = 10u8;
+    let process_delta = 40u8;
+    let send_delta = 20u8;
     loop {
         let mut buf = [0; 512];
         if let Ok((len, src)) = socket.recv_from(&mut buf) {
@@ -35,7 +35,7 @@ fn main() {
                 println!("Creating channel for {}", src);
                 drop(read_handle);
                 let previous_channel = channel_manager.write()
-                    .insert(&src, Channel::new(200, 1000));
+                    .insert(&src, Channel::new(200, 1000, 75));
                 read_handle = channel_manager.read();
 
                 if let Some(_) = previous_channel {
