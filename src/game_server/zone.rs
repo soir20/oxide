@@ -244,7 +244,7 @@ impl Character {
             attachment_group_unknown: "".to_string(),
             unknown59: "".to_string(),
             unknown60: "".to_string(),
-            force_load_actor_definition: false,
+            override_terrain_model: false,
             hover_glow: 0,
             hover_description: 0,
             fly_over_effect: 0,

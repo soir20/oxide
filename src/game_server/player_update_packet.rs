@@ -259,7 +259,7 @@ pub struct AddNpc {
     pub attachment_group_unknown: String,
     pub unknown59: String,
     pub unknown60: String,
-    pub force_load_actor_definition: bool,
+    pub override_terrain_model: bool,
     pub hover_glow: u32,
     pub hover_description: u32,
     pub fly_over_effect: u32,
@@ -377,7 +377,7 @@ pub fn make_test_npc() -> AddNpc {
         attachment_group_unknown: "".to_string(),
         unknown59: "".to_string(),
         unknown60: "".to_string(),
-        force_load_actor_definition: false, // Non-terrain NPCs must have this enabled to be interactable
+        override_terrain_model: false, // Non-terrain NPCs must have this enabled to be interactable
         hover_glow: 0,
         hover_description: 0, // max 7
         fly_over_effect: 0, // max 3
