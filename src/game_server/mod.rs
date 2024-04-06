@@ -278,9 +278,9 @@ impl GameServer {
                 OpCode::Command => {
                     broadcasts.push(Broadcast::Single(sender, process_command(self, &mut cursor)?));
                 },
-                _ => println!("Unimplemented: {:?}", op_code)
+                _ => println!("Unimplemented: {:?}, {:x?}", op_code, data)
             },
-            Err(_) => println!("Unknown op code: {}", raw_op_code)
+            Err(_) => println!("Unknown op code: {}, {:x?}", raw_op_code, data)
         }
 
         Ok(broadcasts)

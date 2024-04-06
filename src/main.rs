@@ -24,9 +24,9 @@ fn main() {
     loop {
         let mut buf = [0; 512];
         if let Ok((len, src)) = socket.recv_from(&mut buf) {
-            println!("Bytes received: {}", len);
+            //println!("Bytes received: {}", len);
             let recv_data = &buf[0..len];
-            println!("Bytes: {:x?}", recv_data);
+            //println!("Bytes: {:x?}", recv_data);
 
             let mut read_handle = channel_manager.read();
 
@@ -45,7 +45,7 @@ fn main() {
                 read_handle.receive(&src, recv_data);
             }
 
-            println!("Processing at most {} packets", process_delta);
+            //println!("Processing at most {} packets", process_delta);
             let packets_for_game_server = read_handle.process_next(&src, process_delta);
             let mut broadcasts = Vec::new();
             for packet in packets_for_game_server {
@@ -70,9 +70,9 @@ fn main() {
             read_handle.broadcast(broadcasts);
 
             let packets_to_send = read_handle.send_next(&src, send_delta);
-            println!("Sending {} packets", packets_to_send.len());
+            //println!("Sending {} packets", packets_to_send.len());
             for buffer in packets_to_send {
-                println!("Sending {} bytes: {:x?}", buffer.len(), buffer);
+                //println!("Sending {} bytes: {:x?}", buffer.len(), buffer);
                 socket.send_to(&buffer, &src).expect("Unable to send packet to client");
             }
         }
