@@ -19,8 +19,8 @@ fn main() {
     let channel_manager = RwLock::new(ChannelManager::new());
 
     let game_server = GameServer::new(Path::new("config")).unwrap();
-    let process_delta = 5u8;
-    let send_delta = 50u8;
+    let process_delta = 10u8;
+    let send_delta = 10u8;
     loop {
         let mut buf = [0; 512];
         if let Ok((len, src)) = socket.recv_from(&mut buf) {
@@ -76,6 +76,6 @@ fn main() {
                 socket.send_to(&buffer, &src).expect("Unable to send packet to client");
             }
         }
-        thread::sleep(Duration::from_millis(5));
+        thread::sleep(Duration::from_millis(25));
     }
 }
