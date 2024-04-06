@@ -11,7 +11,7 @@ use crate::game_server::command::SelectPlayer;
 use crate::game_server::game_packet::{GamePacket, Pos};
 use crate::game_server::guid::{Guid, GuidTable, GuidTableReadHandle, GuidTableWriteHandle};
 use crate::game_server::login::{ClientBeginZoning, ZoneDetails};
-use crate::game_server::player_update_packet::{AddNotifications, AddNpc, BaseAttachmentGroup, DamageAnimation, Icon, NotificationData, NpcRelevance, SingleNotification, SingleNpcRelevance, WeaponAnimation};
+use crate::game_server::player_update_packet::{AddNotifications, AddNpc, BaseAttachmentGroup, Icon, NotificationData, NpcRelevance, SingleNotification, SingleNpcRelevance, WeaponAnimation};
 use crate::game_server::tunnel::TunneledPacket;
 
 #[derive(Deserialize)]
@@ -180,7 +180,7 @@ impl Character {
             tint_id: 0,
             unknown11: true,
             offset_y: 0.0,
-            damage_animation: DamageAnimation::None,
+            composite_effect: 0,
             weapon_animation: WeaponAnimation::None,
             name_override: "".to_string(),
             hide_name: false,
