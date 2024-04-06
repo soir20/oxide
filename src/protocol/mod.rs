@@ -378,7 +378,7 @@ impl Channel {
             session_id,
             crc_length: 3,
             crc_seed: random::<CrcSeed>(),
-            allow_compression: false,
+            allow_compression: true,
             use_encryption: false,
         };
 
