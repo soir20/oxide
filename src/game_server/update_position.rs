@@ -1,11 +1,16 @@
 use packet_serialize::{DeserializePacket, SerializePacket};
-use crate::game_server::game_packet::{GamePacket, OpCode, Pos};
+
+use crate::game_server::game_packet::{GamePacket, OpCode};
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct UpdatePlayerPosition {
     pub guid: u64,
-    pub pos: Pos,
-    pub rot: Pos,
+    pub pos_x: f32,
+    pub pos_y: f32,
+    pub pos_z: f32,
+    pub rot_x: f32,
+    pub rot_y: f32,
+    pub rot_z: f32,
     pub character_state: u8,
     pub unknown: u8
 }
