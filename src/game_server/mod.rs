@@ -167,8 +167,9 @@ impl GameServer {
                     };
                     //result_packets.push(GamePacket::serialize(&npc)?);
 
-                    if let Some(zone) = GameServer::zone_with_player(&self.zones.read(), sender) {
-                        let mut preloaded_npcs = self.zones.read().get(zone).unwrap().read().send_characters()?;
+                    let zones = self.read_zones();
+                    if let Some(zone) = GameServer::zone_with_player(&zones, sender) {
+                        let mut preloaded_npcs = zones.get(zone).unwrap().read().send_characters()?;
                         packets.append(&mut preloaded_npcs);
                     }
 

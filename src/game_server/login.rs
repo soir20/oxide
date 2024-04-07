@@ -90,10 +90,10 @@ pub struct ClientBeginZoning {
     pub rot: Pos,
     pub sky_definition_file_name: String,
     pub unknown1: bool,
-    pub unknown2: u8,
-    pub unknown3: u32,
-    pub unknown4: u32,
-    pub unknown5: u32,
+    pub zone_id: u8,
+    pub zone_name_id: u32,
+    pub world_id: u32,
+    pub world_name_id: u32,
     pub unknown6: bool,
     pub unknown7: bool
 }

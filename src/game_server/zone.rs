@@ -2,10 +2,12 @@ use std::fs::File;
 use std::io::Error;
 use std::path::Path;
 
+use parking_lot::RwLockReadGuard;
 use serde::Deserialize;
 
 use packet_serialize::SerializePacketError;
 
+use crate::game_server::{GameServer, ProcessPacketError};
 use crate::game_server::client_update_packet::Position;
 use crate::game_server::command::SelectPlayer;
 use crate::game_server::game_packet::{GamePacket, Pos};
@@ -25,7 +27,7 @@ pub struct Door {
     destination_rot_y: f32,
     destination_rot_z: f32,
     destination_rot_w: f32,
-    destination_zone: Option<String>
+    destination_zone: Option<u64>
 }
 
 #[derive(Deserialize)]
@@ -56,57 +58,6 @@ impl Guid for Character {
 }
 
 impl Character {
-    pub fn interact(&self) -> Result<Vec<Vec<u8>>, SerializePacketError> {
-        match &self.character_type {
-            CharacterType::Door(door) => {
-                let destination_pos = Pos {
-                    x: door.destination_pos_x,
-                    y: door.destination_pos_y,
-                    z: door.destination_pos_z,
-                    w: door.destination_pos_w,
-                };
-                let destination_rot = Pos {
-                    x: door.destination_rot_x,
-                    y: door.destination_rot_y,
-                    z: door.destination_rot_z,
-                    w: door.destination_rot_w,
-                };
-
-                let teleport_packet = if let Some(destination_zone) = &door.destination_zone {
-                    GamePacket::serialize(&TunneledPacket {
-                        unknown1: true,
-                        inner: ClientBeginZoning {
-                            zone_name: destination_zone.clone(),
-                            zone_type: 2,
-                            pos: destination_pos,
-                            rot: destination_rot,
-                            sky_definition_file_name: "".to_string(),
-                            unknown1: false,
-                            unknown2: 0,
-                            unknown3: 0,
-                            unknown4: 0,
-                            unknown5: 0,
-                            unknown6: false,
-                            unknown7: false,
-                        }
-                    })?
-                } else {
-                    GamePacket::serialize(&TunneledPacket {
-                        unknown1: true,
-                        inner: Position {
-                            player_pos: destination_pos,
-                            rot: destination_rot,
-                            is_teleport: true,
-                            unknown2: true,
-                        },
-                    })?
-                };
-
-                Ok(vec![teleport_packet])
-            },
-            _ => Ok(Vec::new())
-        }
-    }
 
     pub fn to_packets(&self) -> Result<Vec<Vec<u8>>, SerializePacketError> {
         let packets = match &self.character_type {
@@ -262,7 +213,7 @@ impl Character {
 
 pub struct Zone {
     guid: u64,
-    name: String,
+    pub name: String,
     hide_ui: bool,
     direction_indicator: bool,
     characters: GuidTable<Character>
@@ -310,15 +261,6 @@ impl Zone {
 
     pub fn write_characters(&self) -> GuidTableWriteHandle<Character> {
         self.characters.write()
-    }
-
-    pub fn interact_with_character(&self, request: SelectPlayer) -> Result<Vec<Vec<u8>>, SerializePacketError> {
-        if let Some(target) = self.characters.read().get(request.target) {
-            target.read().interact()
-        } else {
-            println!("Received request to interact with unknown NPC {} from {}", request.target, request.requester);
-            Ok(vec![])
-        }
     }
 }
 
@@ -381,4 +323,135 @@ pub fn load_zones(config_dir: &Path) -> Result<GuidTable<Zone>, Error> {
     }
 
     Ok(zones)
+}
+
+pub fn interact_with_character(request: SelectPlayer, game_server: &GameServer) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+    let zones = game_server.read_zones();
+    if let Some(source_zone_guid) = GameServer::zone_with_player(&zones, request.requester) {
+
+        if let Some(source_zone) = zones.get(source_zone_guid) {
+            let source_zone_read_handle = source_zone.read();
+
+            let characters = source_zone_read_handle.characters.read();
+            if let Some(target) = characters.get(request.target) {
+                let target_read_handle = target.read();
+                match &target_read_handle.character_type {
+                    CharacterType::Door(door) => {
+                        let destination_pos = Pos {
+                            x: door.destination_pos_x,
+                            y: door.destination_pos_y,
+                            z: door.destination_pos_z,
+                            w: door.destination_pos_w,
+                        };
+                        let destination_rot = Pos {
+                            x: door.destination_rot_x,
+                            y: door.destination_rot_y,
+                            z: door.destination_rot_z,
+                            w: door.destination_rot_w,
+                        };
+
+                        let destination_zone_guid = if let &Some(destination_zone_guid) = &door.destination_zone {
+                            destination_zone_guid
+                        } else {
+                            source_zone_guid
+                        };
+                        drop(target_read_handle);
+                        drop(characters);
+
+                        if source_zone_guid != destination_zone_guid {
+                            teleport_to_zone(
+                                &zones,
+                                source_zone_read_handle,
+                                request.requester,
+                                destination_zone_guid,
+                                destination_pos,
+                                destination_rot
+                            )
+                        } else {
+                            drop(source_zone_read_handle);
+                            teleport_within_zone(destination_pos, destination_rot)
+                        }
+                    },
+                    _ => Ok(Vec::new())
+                }
+
+            } else {
+                println!("Received request to interact with unknown NPC {} from {}", request.target, request.requester);
+                Err(ProcessPacketError::CorruptedPacket)
+            }
+
+        } else {
+            println!("Zone {} was destroyed before interaction could be processed", source_zone_guid);
+            Ok(vec![])
+        }
+
+    } else {
+        println!("Requested interaction from unknown player {}", request.requester);
+        Err(ProcessPacketError::CorruptedPacket)
+    }
+}
+
+pub fn teleport_within_zone(destination_pos: Pos, destination_rot: Pos) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+    Ok(
+        vec![
+            GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: Position {
+                    player_pos: destination_pos,
+                    rot: destination_rot,
+                    is_teleport: true,
+                    unknown2: true,
+                },
+            })?
+        ]
+    )
+}
+
+pub fn teleport_to_zone(zones: &GuidTableReadHandle<Zone>, source_zone: RwLockReadGuard<Zone>,
+                        player_guid: u64, destination_zone_guid: u64, destination_pos: Pos,
+                        destination_rot: Pos) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+    let mut characters = source_zone.write_characters();
+    let character = characters.remove(player_guid);
+    drop(characters);
+    drop(source_zone);
+
+    if let Some(destination_zone) = zones.get(destination_zone_guid) {
+        let destination_read_handle = destination_zone.read();
+        if let Some(character) = character {
+            let mut characters = destination_read_handle.write_characters();
+            characters.insert_lock(player_guid, character);
+            drop(characters);
+        }
+        Ok(prepare_init_zone_packets(destination_read_handle, destination_pos, destination_rot)?)
+    } else {
+        Ok(Vec::new())
+    }
+}
+
+
+fn prepare_init_zone_packets(destination: RwLockReadGuard<Zone>, destination_pos: Pos,
+                             destination_rot: Pos) -> Result<Vec<Vec<u8>>, SerializePacketError> {
+    let zone_name = destination.name.clone();
+    let mut packets = vec![];
+    packets.push(
+        GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: ClientBeginZoning {
+                zone_name,
+                zone_type: 2,
+                pos: destination_pos,
+                rot: destination_rot,
+                sky_definition_file_name: "".to_string(),
+                unknown1: false,
+                zone_id: 0,
+                zone_name_id: 0,
+                world_id: 0,
+                world_name_id: 0,
+                unknown6: false,
+                unknown7: false,
+            }
+        })?
+    );
+
+    Ok(packets)
 }

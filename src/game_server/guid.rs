@@ -54,6 +54,10 @@ impl<'a, T: Guid> GuidTableWriteHandle<'a, T> {
         self.guard.insert(item.guid(), Lock::new(item))
     }
 
+    pub fn insert_lock(&mut self, guid: u64, lock: Lock<T>) -> Option<Lock<T>> {
+        self.guard.insert(guid, lock)
+    }
+
     pub fn remove(&mut self, guid: u64) -> Option<Lock<T>> {
         self.guard.remove(&guid)
     }

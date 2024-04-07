@@ -3,6 +3,7 @@ use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
 use crate::game_server::game_packet::{GamePacket, OpCode};
 use crate::game_server::{GameServer, ProcessPacketError};
+use crate::game_server::zone::interact_with_character;
 
 pub fn process_command(game_server: &GameServer, cursor: &mut Cursor<&[u8]>) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
     let raw_op_code = cursor.read_u16::<LittleEndian>()?;
@@ -10,14 +11,7 @@ pub fn process_command(game_server: &GameServer, cursor: &mut Cursor<&[u8]>) -> 
         Ok(op_code) => match op_code {
             CommandOpCode::SelectPlayer => {
                 let req = SelectPlayer::deserialize(cursor)?;
-
-                let zones = game_server.read_zones();
-                if let Some(zone_guid) = GameServer::zone_with_player(&zones, req.requester) {
-                    Ok(zones.get(zone_guid).unwrap().read().interact_with_character(req)?)
-                } else {
-                    println!("Received interaction request from invalid requester {}", req.requester);
-                    Err(ProcessPacketError::CorruptedPacket)
-                }
+                interact_with_character(req, game_server)
             },
             _ => {
                 println!("Unimplemented command: {:?}", op_code);
