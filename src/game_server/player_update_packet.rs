@@ -6,26 +6,26 @@ use crate::game_server::game_packet::{Effect, GamePacket, OpCode, Pos, StringId}
 
 #[derive(Copy, Clone, Debug)]
 pub enum PlayerUpdateOpCode {
-    AddNpc                           = 0x2,
-    AddNotifications                 = 0xa,
-    NpcRelevance                     = 0xc,
-    UpdateCharacterState             = 0x14,
-    SetCollision                     = 0x32,
+    AddNpc                          = 0x2,
+    AddNotifications                = 0xa,
+    NpcRelevance                    = 0xc,
+    UpdateCharacterState            = 0x14,
+    SetCollision                    = 0x32,
     Freeze                          = 0x20,
     WieldType                       = 0x3d,
-	Knockback                       = 0x4,
-	ReplaceBaseModel                = 0x31,
-	SeekTarget                      = 0x3b,
-	SeekTargetUpdate                = 0x3c,
-	MoveOnRail                      = 0x35,
-	ClearRail                       = 0x36,
-	MoveOnRelativeRail              = 0x37,
-	SetSpawnerActivationEffect      = 0x2f,
-	UpdateTemporaryAppearance       = 0xe,
-	UpdateRemoveTemporaryAppearance = 0xf,
-	SlotCompositeEffectOverride     = 0x1f,
-	HudMessage                      = 0x40,
-	LootEvent                       = 0x1d,
+    Knockback                       = 0x4,
+    ReplaceBaseModel                = 0x31,
+    SeekTarget                      = 0x3b,
+    SeekTargetUpdate                = 0x3c,
+    MoveOnRail                      = 0x35,
+    ClearRail                       = 0x36,
+    MoveOnRelativeRail              = 0x37,
+    SetSpawnerActivationEffect      = 0x2f,
+    UpdateTemporaryAppearance       = 0xe,
+    UpdateRemoveTemporaryAppearance = 0xf,
+    SlotCompositeEffectOverride     = 0x1f,
+    HudMessage                      = 0x40,
+    LootEvent                       = 0x1d,
 }
 
 impl SerializePacket for PlayerUpdateOpCode {
@@ -69,8 +69,8 @@ impl GamePacket for HudMessage {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct SlotCompositeEffectOverride {
 	guid: u64,
-	slotid: u32,
-	effectid: u32,
+	slot_id: u32,
+	composite_effect: u32,
 }
 
 impl GamePacket for SlotCompositeEffectOverride {
