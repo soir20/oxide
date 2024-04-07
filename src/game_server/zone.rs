@@ -48,6 +48,7 @@ pub struct Character {
     pub guid: u64,
     pub pos: Pos,
     pub rot: Pos,
+    pub state: u8,
     pub character_type: CharacterType
 }
 
@@ -288,6 +289,7 @@ impl From<ZoneConfig> for Zone {
                         z: 0.0,
                         w: 0.0,
                     },
+                    state: 0,
                     character_type: CharacterType::Door(door),
                 });
                 guid += 1;

@@ -17,9 +17,10 @@ pub enum OpCode {
     ZoneDetails              = 0x2b,
     GameTimeSync             = 0x34,
     WelcomeScreen            = 0x5d,
+    UpdatePlayerPosition     = 0x7d,
     ClientGameSettings       = 0x8f,
+    Portrait                 = 0x9b,
     DeploymentEnv            = 0xa5,
-    Portrait                 = 0x9b
 }
 
 pub struct UnknownOpCode;
@@ -42,9 +43,10 @@ impl TryFrom<u16> for OpCode {
             0x2b => Ok(OpCode::ZoneDetails),
             0x34 => Ok(OpCode::GameTimeSync),
             0x5d => Ok(OpCode::WelcomeScreen),
+            0x7d => Ok(OpCode::UpdatePlayerPosition),
             0x8f => Ok(OpCode::ClientGameSettings),
-            0xa5 => Ok(OpCode::DeploymentEnv),
             0x9b => Ok(OpCode::Portrait),
+            0xa5 => Ok(OpCode::DeploymentEnv),
             _ => Err(UnknownOpCode)
         }
     }
