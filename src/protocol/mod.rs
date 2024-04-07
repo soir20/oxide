@@ -208,7 +208,7 @@ impl Channel {
 
     pub fn process_next(&mut self, count: u8) -> Vec<Vec<u8>> {
         let mut needs_new_ack = false;
-        let mut packet_to_process = None;
+        let mut packets_to_process = Vec::new();
 
         for _ in 0..count {
             if let Some(packet) = self.receive_queue.pop_front() {
@@ -242,9 +242,7 @@ impl Channel {
 
                 match self.fragment_state.add(packet) {
                     Ok(possible_packet) => if let Some(packet) = possible_packet {
-                        packet_to_process = Some(packet);
-                    } else {
-                        packet_to_process = None;
+                        packets_to_process.push(packet);
                     },
                     Err(err) => println!("Unable to process packet: {:?}", err)
                 }
@@ -258,7 +256,7 @@ impl Channel {
         }
 
         let mut packets = Vec::new();
-        if let Some(packet) = packet_to_process {
+        for packet in packets_to_process {
 
             // Process the packet inside the protocol
             self.process_packet(&packet);
@@ -266,8 +264,8 @@ impl Channel {
             // Only data packets need to be handled outside the protocol. We already
             // de-fragmented the data packet, so we don't need to check for fragments here.
             if let Packet::Data(_, data) = packet {
-                if let Ok(unbundled_packets) = unbundle_reliable_data(&data) {
-                    packets = unbundled_packets;
+                if let Ok(mut unbundled_packets) = unbundle_reliable_data(&data) {
+                    packets.append(&mut unbundled_packets);
                 } else {
                     println!("Bad bundled packet");
                 }
