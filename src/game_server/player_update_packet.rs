@@ -38,10 +38,10 @@ impl SerializePacket for PlayerUpdateOpCode {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct LootEvent {
-	guid: u64,
-	pos: Pos,
-	rot: Pos,
-	model_name: String,
+    guid: u64,
+    pos: Pos,
+    rot: Pos,
+    model_name: String,
 }
 
 impl GamePacket for LootEvent {
@@ -51,14 +51,14 @@ impl GamePacket for LootEvent {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct HudMessage {
-	guid: u64,
-	unknown_guid: u64,
-	unknown1: u32,
-	unknown2: u32,
-	unknown3: u32,
-	unknown4: u32,
-	unknown5: u32,
-	unknown6: u32,
+    guid: u64,
+    unknown_guid: u64,
+    unknown1: u32,
+    unknown2: u32,
+    unknown3: u32,
+    unknown4: u32,
+    unknown5: u32,
+    unknown6: u32,
 }
 
 impl GamePacket for HudMessage {
@@ -68,9 +68,9 @@ impl GamePacket for HudMessage {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct SlotCompositeEffectOverride {
-	guid: u64,
-	slot_id: u32,
-	composite_effect: u32,
+    guid: u64,
+    slot_id: u32,
+    composite_effect: u32,
 }
 
 impl GamePacket for SlotCompositeEffectOverride {
@@ -80,8 +80,8 @@ impl GamePacket for SlotCompositeEffectOverride {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct UpdateRemoveTemporaryAppearance {
-	guid: u64,
-	model_id: u32,
+    guid: u64,
+    model_id: u32,
 }
 
 impl GamePacket for UpdateRemoveTemporaryAppearance {
@@ -91,8 +91,8 @@ impl GamePacket for UpdateRemoveTemporaryAppearance {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct UpdateTemporaryAppearance {
-	model_id: u32,
-	guid: u64,
+    model_id: u32,
+    guid: u64,
 }
 
 impl GamePacket for UpdateTemporaryAppearance {
@@ -102,8 +102,8 @@ impl GamePacket for UpdateTemporaryAppearance {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct SetSpawnerActivationEffect {
-	guid: u64,
-	composite_effect: u32,
+    guid: u64,
+    composite_effect: u32,
 }
 
 impl GamePacket for SetSpawnerActivationEffect {
@@ -113,13 +113,13 @@ impl GamePacket for SetSpawnerActivationEffect {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct MoveOnRelativeRail {
-	pub guid: u64,
-	pub unknown1: u32,
-	pub unknown2: u32,
-	pub unknown3: u32,
-	pub unknown4: u32,
-	pub unknown5: u32,
-	pub unknown6: Pos,
+    guid: u64,
+    unknown1: u32,
+    unknown2: u32,
+    unknown3: u32,
+    unknown4: u32,
+    unknown5: u32,
+    unknown6: Pos,
 }
 
 impl GamePacket for MoveOnRelativeRail {
@@ -129,7 +129,7 @@ impl GamePacket for MoveOnRelativeRail {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct ClearRail {
-	pub guid: u64,
+    guid: u64,
 	
 }
 
@@ -140,10 +140,10 @@ impl GamePacket for ClearRail {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct MoveOnRail {
-	 guid: u64,
-	 unknown1: u32,
-	 unknown2: u32,
-	 pos: Pos,
+    guid: u64,
+    unknown1: u32,
+    unknown2: u32,
+    pos: Pos,
 	
 }
 
@@ -154,8 +154,8 @@ impl GamePacket for MoveOnRail {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct SeekTargetUpdate {
-	pub guid: u64,
-	pub target_id: u64,
+    guid: u64,
+    target_id: u64,
 }
 
 impl GamePacket for SeekTargetUpdate {
@@ -165,14 +165,14 @@ impl GamePacket for SeekTargetUpdate {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct SeekTarget {
-	pub guid: u64,
-	pub target_id: u64,
-	pub init_speed: f32,
-	pub acceleration: f32,
-	pub speed: f32,
-	pub unknown1: f32,
-	pub rot_y: f32,
-	pub rot: Pos,
+    guid: u64,
+    target_id: u64,
+    init_speed: f32,
+    acceleration: f32,
+    speed: f32,
+    unknown1: f32,
+    rot_y: f32,
+    rot: Pos,
 }
 
 impl GamePacket for SeekTarget {
@@ -182,9 +182,9 @@ impl GamePacket for SeekTarget {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct ReplaceBaseModel {
-	guid: u64,
-	model: u32,
-	composite_effect: u32,
+    guid: u64,
+    model: u32,
+    composite_effect: u32,
 }
 
 impl GamePacket for ReplaceBaseModel {
@@ -194,10 +194,10 @@ impl GamePacket for ReplaceBaseModel {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct Knockback {
-	guid: u64,
-	unknown1: u32,
-	pos: Pos,
-	rot: Pos,
+    guid: u64,
+    unknown1: u32,
+    pos: Pos,
+    rot: Pos,
     unknown2: u32,	
 }
 
@@ -207,27 +207,27 @@ impl GamePacket for Knockback {
 }
 
 pub enum Wield  {
-	SingleSaber             = 1,
-	StaffSaber              = 2,
-	ReverseSingleSaber      = 3,
-	DualSaber               = 4,
-	SinglePistol            = 5,
-	Rifle                   = 6,
-	SniperRifle             = 7,
-	RocketLauncher          = 8,
-	FlameThrower            = 9,
-	DualPistol              = 10,
-	Staff                   = 11,
-	Misc                    = 12,
-	Bow                     = 13,
-	Sparklers               = 14,
-	HipBraceLauncherOneShot = 15,
+    SingleSaber             = 1,
+    StaffSaber              = 2,
+    ReverseSingleSaber      = 3,
+    DualSaber               = 4,
+    SinglePistol            = 5,
+    Rifle                   = 6,
+    SniperRifle             = 7,
+    RocketLauncher          = 8,
+    FlameThrower            = 9,
+    DualPistol              = 10,
+    Staff                   = 11,
+    Misc                    = 12,
+    Bow                     = 13,
+    Sparklers               = 14,
+    HipBraceLauncherOneShot = 15,
 }
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct WieldType {
-	guid: u64,
-	wield_type: Wield,
+    guid: u64,
+    wield_type: Wield,
 }
 
 impl GamePacket for WieldType {
@@ -237,7 +237,7 @@ impl GamePacket for WieldType {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct Freeze {
-	pub freeze: u8,
+    freeze: bool,
 }
 
 impl GamePacket for Freeze {
