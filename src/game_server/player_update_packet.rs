@@ -196,8 +196,8 @@ impl GamePacket for ReplaceBaseModel {
 pub struct Knockback {
 	guid: u64,
 	unknown1: u32,
-	position: Pos,
-	rotation: Pos,
+	pos: Pos,
+	rot: Pos,
     unknown2: u32,	
 }
 
