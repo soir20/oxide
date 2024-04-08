@@ -155,7 +155,7 @@ impl GamePacket for MoveOnRail {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct SeekTargetUpdate {
 	pub guid: u64,
-	pub targetid: u64,
+	pub target_id: u64,
 }
 
 impl GamePacket for SeekTargetUpdate {
