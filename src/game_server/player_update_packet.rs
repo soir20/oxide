@@ -111,7 +111,7 @@ impl GamePacket for SetSpawnerActivationEffect {
 	const HEADER: Self::Header = PlayerUpdateOpCode::SetSpawnerActivationEffect;
 }
 
-[derive(SerializePacket, DeserializePacket)]
+#[derive(SerializePacket, DeserializePacket)]
 pub struct MoveOnRelativeRail {
 	pub guid: u64,
 	pub unknown1: u32,
