@@ -52,7 +52,7 @@ impl GamePacket for LootEvent {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct HudMessage {
 	guid: u64,
-	unkguid: u64,
+	unknown_guid: u64,
 	unknown1: u32,
 	unknown2: u32,
 	unknown3: u32,
