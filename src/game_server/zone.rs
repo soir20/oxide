@@ -42,6 +42,7 @@ struct ZoneConfig {
     hide_ui: bool,
     direction_indicator: bool,
     doors: Vec<Door>,
+    door_interact_radius: f32,
     door_auto_interact_radius: f32
 }
 
@@ -56,6 +57,7 @@ pub struct Character {
     pub rot: Pos,
     pub state: u8,
     pub character_type: CharacterType,
+    pub interact_radius: f32,
     pub auto_interact_radius: f32
 }
 
@@ -353,6 +355,7 @@ impl From<ZoneConfig> for Zone {
                     },
                     state: 0,
                     character_type: CharacterType::Door(door),
+                    interact_radius: zone_config.door_interact_radius,
                     auto_interact_radius: zone_config.door_auto_interact_radius,
                 });
                 guid += 1;
@@ -398,8 +401,35 @@ pub fn interact_with_character(request: SelectPlayer, game_server: &GameServer) 
             let source_zone_read_handle = source_zone.read();
 
             let characters = source_zone_read_handle.characters.read();
+            let requester_x;
+            let requester_y;
+            let requester_z;
+            if let Some(requester) = characters.get(request.requester) {
+                let requester_read_handle = requester.read();
+                requester_x = requester_read_handle.pos.x;
+                requester_y = requester_read_handle.pos.y;
+                requester_z = requester_read_handle.pos.z;
+            } else {
+                return Ok(Vec::new());
+            }
+
             if let Some(target) = characters.get(request.target) {
                 let target_read_handle = target.read();
+
+                // Ensure the character is close enough to interact
+                let distance = distance3(
+                    requester_x,
+                    requester_y,
+                    requester_z,
+                    target_read_handle.pos.x,
+                    target_read_handle.pos.y,
+                    target_read_handle.pos.z
+                );
+                if distance > target_read_handle.interact_radius {
+                    return Ok(Vec::new());
+                }
+
+                // Process interaction based on character's type
                 match &target_read_handle.character_type {
                     CharacterType::Door(door) => {
                         let destination_pos = Pos {

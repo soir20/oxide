@@ -4,7 +4,8 @@
     "name": "JediTemple",
     "hide_ui": false,
     "direction_indicator": false,
-    "door_auto_interact_radius": 1.0,
+    "door_interact_radius": 4.0,
+    "door_auto_interact_radius": 1.5,
     "doors": [
       {
         "comment": "Veranda -> Archives",
@@ -335,7 +336,8 @@
     "name": "Members",
     "hide_ui": false,
     "direction_indicator": false,
-    "door_auto_interact_radius": 1.0,
+    "door_interact_radius": 4.0,
+    "door_auto_interact_radius": 1.5,
     "doors": [
       {
         "comment": "Construction Chamber -> Veranda",
