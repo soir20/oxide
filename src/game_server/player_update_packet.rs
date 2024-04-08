@@ -227,7 +227,7 @@ pub enum Wield  {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct WieldType {
 	guid: u64,
-	wieldtype: Wield,
+	wield_type: Wield,
 }
 
 impl GamePacket for WieldType {
