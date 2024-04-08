@@ -166,8 +166,8 @@ impl GamePacket for SeekTargetUpdate {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct SeekTarget {
 	pub guid: u64,
-	pub targetid: u64,
-	pub initspeed: f32,
+	pub target_id: u64,
+	pub init_speed: f32,
 	pub acceleration: f32,
 	pub speed: f32,
 	pub unknown1: f32,
