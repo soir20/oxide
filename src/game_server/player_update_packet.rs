@@ -39,8 +39,8 @@ impl SerializePacket for PlayerUpdateOpCode {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct LootEvent {
 	guid: u64,
-	position: Pos,
-	rotation: Pos,
+	pos: Pos,
+	rot: Pos,
 	model_name: String,
 }
 
