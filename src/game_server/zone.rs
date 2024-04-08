@@ -13,11 +13,16 @@ use crate::game_server::command::SelectPlayer;
 use crate::game_server::game_packet::{GamePacket, Pos};
 use crate::game_server::guid::{Guid, GuidTable, GuidTableReadHandle, GuidTableWriteHandle};
 use crate::game_server::login::{ClientBeginZoning, ZoneDetails};
-use crate::game_server::player_update_packet::{AddNotifications, AddNpc, BaseAttachmentGroup, Icon, NotificationData, NpcRelevance, SingleNotification, SingleNpcRelevance, WeaponAnimation};
+use crate::game_server::player_update_packet::{AddNpc, BaseAttachmentGroup, Icon, NpcRelevance, SingleNpcRelevance, WeaponAnimation};
 use crate::game_server::tunnel::TunneledPacket;
+use crate::game_server::update_position::UpdatePlayerPosition;
 
 #[derive(Deserialize)]
 pub struct Door {
+    x: f32,
+    y: f32,
+    z: f32,
+    w: f32,
     terrain_object_id: u32,
     destination_pos_x: f32,
     destination_pos_y: f32,
@@ -36,7 +41,9 @@ struct ZoneConfig {
     name: String,
     hide_ui: bool,
     direction_indicator: bool,
-    doors: Vec<Door>
+    doors: Vec<Door>,
+    door_interact_radius: f32,
+    door_auto_interact_radius: f32
 }
 
 pub enum CharacterType {
@@ -48,7 +55,10 @@ pub struct Character {
     pub guid: u64,
     pub pos: Pos,
     pub rot: Pos,
-    pub character_type: CharacterType
+    pub state: u8,
+    pub character_type: CharacterType,
+    pub interact_radius: f32,
+    pub auto_interact_radius: f32
 }
 
 impl Guid for Character {
@@ -75,29 +85,6 @@ impl Character {
                                     guid: self.guid,
                                     cursor: Some(55),
                                     unknown1: false,
-                                }
-                            ],
-                        },
-                    })?,
-                    GamePacket::serialize(&TunneledPacket {
-                        unknown1: true,
-                        inner: AddNotifications {
-                            notifications: vec![
-                                SingleNotification {
-                                    guid: self.guid,
-                                    unknown1: 1,
-                                    notification: Some(
-                                        NotificationData {
-                                            unknown1: 1,
-                                            icon_id: 13,
-                                            unknown3: 0,
-                                            name_id: 0,
-                                            unknown4: 0,
-                                            hide_icon: false,
-                                            unknown6: 0,
-                                        }
-                                    ),
-                                    unknown2: true,
                                 }
                             ],
                         },
@@ -152,7 +139,7 @@ impl Character {
             active_animation_slot2: 0,
             head_model_id: 0,
             unknown31: vec![],
-            disable_interact_popup: false,
+            disable_interact_popup: true,
             unknown33: 0,
             unknown34: false,
             show_health: false,
@@ -262,6 +249,61 @@ impl Zone {
     pub fn write_characters(&self) -> GuidTableWriteHandle<Character> {
         self.characters.write()
     }
+
+    pub fn move_character(&self, pos_update: UpdatePlayerPosition, game_server: &GameServer) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+        let characters = self.read_characters();
+        let possible_character = characters.get(pos_update.guid);
+        let mut characters_to_interact = Vec::new();
+
+        if let Some(character) = possible_character {
+            let mut write_handle = character.write();
+            write_handle.pos = Pos {
+                x: pos_update.pos_x,
+                y: pos_update.pos_y,
+                z: pos_update.pos_z,
+                w: write_handle.pos.z,
+            };
+            write_handle.rot = Pos {
+                x: pos_update.rot_x,
+                y: pos_update.rot_y,
+                z: pos_update.rot_z,
+                w: write_handle.rot.z,
+            };
+            write_handle.state = pos_update.character_state;
+            drop(write_handle);
+
+            let read_handle = character.read();
+            for character in characters.values() {
+                let other_read_handle = character.read();
+                if other_read_handle.auto_interact_radius > 0.0 {
+                    let distance = distance3(
+                        read_handle.pos.x,
+                        read_handle.pos.y,
+                        read_handle.pos.z,
+                        other_read_handle.pos.x,
+                        other_read_handle.pos.y,
+                        other_read_handle.pos.z,
+                    );
+                    if distance <= other_read_handle.auto_interact_radius {
+                        characters_to_interact.push(other_read_handle.guid);
+                    }
+                }
+            }
+        } else {
+            println!("Received position update from unknown character {}", pos_update.guid);
+            return Err(ProcessPacketError::CorruptedPacket);
+        }
+
+        drop(characters);
+
+        let mut packets = Vec::new();
+        for character_guid in characters_to_interact {
+            let interact_request = SelectPlayer { requester: pos_update.guid, target: character_guid };
+            packets.append(&mut interact_with_character(interact_request, game_server)?);
+        }
+
+        Ok(packets)
+    }
 }
 
 impl From<ZoneConfig> for Zone {
@@ -277,10 +319,10 @@ impl From<ZoneConfig> for Zone {
                 write_handle.insert(Character {
                     guid,
                     pos: Pos {
-                        x: 0.0,
-                        y: 0.0,
-                        z: 0.0,
-                        w: 1.0,
+                        x: door.x,
+                        y: door.y,
+                        z: door.z,
+                        w: door.w,
                     },
                     rot: Pos {
                         x: 0.0,
@@ -288,7 +330,10 @@ impl From<ZoneConfig> for Zone {
                         z: 0.0,
                         w: 0.0,
                     },
+                    state: 0,
                     character_type: CharacterType::Door(door),
+                    interact_radius: zone_config.door_interact_radius,
+                    auto_interact_radius: zone_config.door_auto_interact_radius,
                 });
                 guid += 1;
             }
@@ -333,8 +378,35 @@ pub fn interact_with_character(request: SelectPlayer, game_server: &GameServer) 
             let source_zone_read_handle = source_zone.read();
 
             let characters = source_zone_read_handle.characters.read();
+            let requester_x;
+            let requester_y;
+            let requester_z;
+            if let Some(requester) = characters.get(request.requester) {
+                let requester_read_handle = requester.read();
+                requester_x = requester_read_handle.pos.x;
+                requester_y = requester_read_handle.pos.y;
+                requester_z = requester_read_handle.pos.z;
+            } else {
+                return Ok(Vec::new());
+            }
+
             if let Some(target) = characters.get(request.target) {
                 let target_read_handle = target.read();
+
+                // Ensure the character is close enough to interact
+                let distance = distance3(
+                    requester_x,
+                    requester_y,
+                    requester_z,
+                    target_read_handle.pos.x,
+                    target_read_handle.pos.y,
+                    target_read_handle.pos.z
+                );
+                if distance > target_read_handle.interact_radius {
+                    return Ok(Vec::new());
+                }
+
+                // Process interaction based on character's type
                 match &target_read_handle.character_type {
                     CharacterType::Door(door) => {
                         let destination_pos = Pos {
@@ -454,4 +526,11 @@ fn prepare_init_zone_packets(destination: RwLockReadGuard<Zone>, destination_pos
     );
 
     Ok(packets)
+}
+
+fn distance3(x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32) -> f32 {
+    let diff_x = x2 - x1;
+    let diff_y = y2 - y1;
+    let diff_z = z2 - z1;
+    (diff_x * diff_x + diff_y * diff_y + diff_z * diff_z).sqrt()
 }

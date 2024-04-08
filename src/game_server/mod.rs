@@ -15,6 +15,7 @@ use crate::game_server::player_data::make_test_player;
 use crate::game_server::player_update_packet::make_test_npc;
 use crate::game_server::time::make_game_time_sync;
 use crate::game_server::tunnel::TunneledPacket;
+use crate::game_server::update_position::UpdatePlayerPosition;
 use crate::game_server::zone::{Character, load_zones, Zone};
 
 mod login;
@@ -27,6 +28,7 @@ mod player_update_packet;
 mod command;
 mod zone;
 mod guid;
+mod update_position;
 
 #[derive(Debug)]
 pub enum Broadcast {
@@ -278,6 +280,17 @@ impl GameServer {
                 },
                 OpCode::Command => {
                     broadcasts.push(Broadcast::Single(sender, process_command(self, &mut cursor)?));
+                },
+                OpCode::UpdatePlayerPosition => {
+                    let pos_update: UpdatePlayerPosition = DeserializePacket::deserialize(&mut cursor)?;
+                    let zones = self.read_zones();
+                    if let Some(zone_guid) = GameServer::zone_with_player(&zones, sender) {
+                        let zone = zones.get(zone_guid).unwrap().read();
+
+                        // TODO: broadcast pos update to all players
+                        broadcasts.push(Broadcast::Single(sender, zone.move_character(pos_update, self)?));
+
+                    }
                 },
                 _ => println!("Unimplemented: {:?}, {:x?}", op_code, data)
             },
