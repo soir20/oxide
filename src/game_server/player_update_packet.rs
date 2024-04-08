@@ -171,8 +171,8 @@ pub struct SeekTarget {
 	pub acceleration: f32,
 	pub speed: f32,
 	pub unknown1: f32,
-	pub yrot: f32,
-	pub rotation: Pos,
+	pub rot_y: f32,
+	pub rot: Pos,
 }
 
 impl GamePacket for SeekTarget {
