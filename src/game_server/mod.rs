@@ -8,7 +8,7 @@ use packet_serialize::{DeserializePacket, DeserializePacketError, NullTerminated
 
 use crate::game_server::client_update_packet::{Health, Power, PreloadCharactersDone, Stat, Stats};
 use crate::game_server::command::process_command;
-use crate::game_server::game_packet::{GamePacket, OpCode, Pos};
+use crate::game_server::game_packet::{GamePacket, OpCode};
 use crate::game_server::guid::{Guid, GuidTable, GuidTableReadHandle, GuidTableWriteHandle};
 use crate::game_server::login::{DeploymentEnv, GameSettings, LoginReply, WelcomeScreen, ZoneDetailsDone};
 use crate::game_server::player_data::make_test_player;
@@ -286,25 +286,10 @@ impl GameServer {
                     let zones = self.read_zones();
                     if let Some(zone_guid) = GameServer::zone_with_player(&zones, sender) {
                         let zone = zones.get(zone_guid).unwrap().read();
-                        let characters = zone.read_characters();
-                        let possible_character = characters.get(pos_update.guid);
 
-                        if let Some(character) = possible_character {
-                            let mut write_handle = character.write();
-                            write_handle.pos = Pos {
-                                x: pos_update.pos_x,
-                                y: pos_update.pos_y,
-                                z: pos_update.pos_z,
-                                w: write_handle.pos.z,
-                            };
-                            write_handle.rot = Pos {
-                                x: pos_update.rot_x,
-                                y: pos_update.rot_y,
-                                z: pos_update.rot_z,
-                                w: write_handle.rot.z,
-                            };
-                            write_handle.state = pos_update.character_state;
-                        }
+                        // TODO: broadcast pos update to all players
+                        broadcasts.push(Broadcast::Single(sender, zone.move_character(pos_update, self)?));
+
                     }
                 },
                 _ => println!("Unimplemented: {:?}, {:x?}", op_code, data)

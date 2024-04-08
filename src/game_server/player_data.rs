@@ -532,7 +532,8 @@ impl From<PlayerData> for Character {
             pos: value.pos,
             rot: value.rot,
             character_type: CharacterType::Player,
-            state: 0
+            state: 0,
+            auto_interact_radius: 0.0,
         }
     }
 }
