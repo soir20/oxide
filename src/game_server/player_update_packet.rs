@@ -143,7 +143,7 @@ pub struct MoveOnRail {
 	 guid: u64,
 	 unknown1: u32,
 	 unknown2: u32,
-	 position: Pos,
+	 pos: Pos,
 	
 }
 
