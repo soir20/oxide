@@ -13,7 +13,7 @@ use crate::game_server::command::SelectPlayer;
 use crate::game_server::game_packet::{GamePacket, Pos};
 use crate::game_server::guid::{Guid, GuidTable, GuidTableReadHandle, GuidTableWriteHandle};
 use crate::game_server::login::{ClientBeginZoning, ZoneDetails};
-use crate::game_server::player_update_packet::{AddNotifications, AddNpc, BaseAttachmentGroup, Icon, NotificationData, NpcRelevance, SingleNotification, SingleNpcRelevance, WeaponAnimation};
+use crate::game_server::player_update_packet::{AddNpc, BaseAttachmentGroup, Icon, NpcRelevance, SingleNpcRelevance, WeaponAnimation};
 use crate::game_server::tunnel::TunneledPacket;
 use crate::game_server::update_position::UpdatePlayerPosition;
 
@@ -88,29 +88,6 @@ impl Character {
                                 }
                             ],
                         },
-                    })?,
-                    GamePacket::serialize(&TunneledPacket {
-                        unknown1: true,
-                        inner: AddNotifications {
-                            notifications: vec![
-                                SingleNotification {
-                                    guid: self.guid,
-                                    unknown1: 1,
-                                    notification: Some(
-                                        NotificationData {
-                                            unknown1: 1,
-                                            icon_id: 13,
-                                            unknown3: 0,
-                                            name_id: 0,
-                                            unknown4: 0,
-                                            hide_icon: false,
-                                            unknown6: 0,
-                                        }
-                                    ),
-                                    unknown2: true,
-                                }
-                            ],
-                        },
                     })?
                 ]
             },
@@ -162,7 +139,7 @@ impl Character {
             active_animation_slot2: 0,
             head_model_id: 0,
             unknown31: vec![],
-            disable_interact_popup: false,
+            disable_interact_popup: true,
             unknown33: 0,
             unknown34: false,
             show_health: false,
