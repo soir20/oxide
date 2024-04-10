@@ -12,6 +12,7 @@ pub enum OpCode {
     ZoneDetailsDone          = 0xe,
     Command                  = 0x1a,
     ClientBeginZoning        = 0x1f,
+    Combat                   = 0x20,
     PlayerUpdate             = 0x23,
     ClientUpdate             = 0x26,
     ZoneDetails              = 0x2b,
@@ -47,6 +48,7 @@ impl TryFrom<u16> for OpCode {
             0x8f => Ok(OpCode::ClientGameSettings),
             0x9b => Ok(OpCode::Portrait),
             0xa5 => Ok(OpCode::DeploymentEnv),
+            0x20 => Ok(OpCode::Combat),
             _ => Err(UnknownOpCode)
         }
     }
