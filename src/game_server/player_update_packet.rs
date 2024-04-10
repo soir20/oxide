@@ -7,25 +7,25 @@ use crate::game_server::game_packet::{Effect, GamePacket, OpCode, Pos, StringId}
 #[derive(Copy, Clone, Debug)]
 pub enum PlayerUpdateOpCode {
     AddNpc                          = 0x2,
+    Knockback                       = 0x4,
     AddNotifications                = 0xa,
     NpcRelevance                    = 0xc,
+    UpdateTemporaryAppearance       = 0xe,
+    UpdateRemoveTemporaryAppearance = 0xf,
     UpdateCharacterState            = 0x14,
-    SetCollision                    = 0x32,
+    LootEvent                       = 0x1d,
+    SlotCompositeEffectOverride     = 0x1f,
     Freeze                          = 0x20,
-    WieldType                       = 0x3d,
-    Knockback                       = 0x4,
+    SetSpawnerActivationEffect      = 0x2f,
     ReplaceBaseModel                = 0x31,
-    SeekTarget                      = 0x3b,
-    SeekTargetUpdate                = 0x3c,
+    SetCollision                    = 0x32,
     MoveOnRail                      = 0x35,
     ClearRail                       = 0x36,
     MoveOnRelativeRail              = 0x37,
-    SetSpawnerActivationEffect      = 0x2f,
-    UpdateTemporaryAppearance       = 0xe,
-    UpdateRemoveTemporaryAppearance = 0xf,
-    SlotCompositeEffectOverride     = 0x1f,
+    SeekTarget                      = 0x3b,
+    SeekTargetUpdate                = 0x3c,
+    WieldType                       = 0x3d,
     HudMessage                      = 0x40,
-    LootEvent                       = 0x1d,
 }
 
 impl SerializePacket for PlayerUpdateOpCode {
@@ -45,8 +45,8 @@ pub struct LootEvent {
 }
 
 impl GamePacket for LootEvent {
-	type Header = PlayerUpdateOpCode;
-	const HEADER: Self::Header = PlayerUpdateOpCode::LootEvent;
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::LootEvent;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -62,8 +62,8 @@ pub struct HudMessage {
 }
 
 impl GamePacket for HudMessage {
-	type Header = PlayerUpdateOpCode;
-	const HEADER: Self::Header = PlayerUpdateOpCode::HudMessage;
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::HudMessage;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -74,8 +74,8 @@ pub struct SlotCompositeEffectOverride {
 }
 
 impl GamePacket for SlotCompositeEffectOverride {
-	type Header = PlayerUpdateOpCode;
-	const HEADER: Self::Header = PlayerUpdateOpCode::SlotCompositeEffectOverride;
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::SlotCompositeEffectOverride;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -85,8 +85,8 @@ pub struct UpdateRemoveTemporaryAppearance {
 }
 
 impl GamePacket for UpdateRemoveTemporaryAppearance {
-	type Header = PlayerUpdateOpCode;
-	const HEADER: Self::Header = PlayerUpdateOpCode::UpdateRemoveTemporaryAppearance;
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::UpdateRemoveTemporaryAppearance;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -96,8 +96,8 @@ pub struct UpdateTemporaryAppearance {
 }
 
 impl GamePacket for UpdateTemporaryAppearance {
-	type Header = PlayerUpdateOpCode;
-	const HEADER: Self::Header = PlayerUpdateOpCode::UpdateTemporaryAppearance;
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::UpdateTemporaryAppearance;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -107,8 +107,8 @@ pub struct SetSpawnerActivationEffect {
 }
 
 impl GamePacket for SetSpawnerActivationEffect {
-	type Header = PlayerUpdateOpCode;
-	const HEADER: Self::Header = PlayerUpdateOpCode::SetSpawnerActivationEffect;
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::SetSpawnerActivationEffect;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -123,19 +123,19 @@ pub struct MoveOnRelativeRail {
 }
 
 impl GamePacket for MoveOnRelativeRail {
-	type Header = PlayerUpdateOpCode;
-	const HEADER: Self::Header = PlayerUpdateOpCode::MoveOnRelativeRail;
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::MoveOnRelativeRail;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct ClearRail {
     guid: u64,
-	
+
 }
 
 impl GamePacket for ClearRail {
-	type Header = PlayerUpdateOpCode;
-	const HEADER: Self::Header = PlayerUpdateOpCode::ClearRail;
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::ClearRail;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -144,12 +144,12 @@ pub struct MoveOnRail {
     unknown1: u32,
     unknown2: u32,
     pos: Pos,
-	
+
 }
 
 impl GamePacket for MoveOnRail {
-	type Header = PlayerUpdateOpCode;
-	const HEADER: Self::Header = PlayerUpdateOpCode::MoveOnRail;
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::MoveOnRail;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -159,8 +159,8 @@ pub struct SeekTargetUpdate {
 }
 
 impl GamePacket for SeekTargetUpdate {
-	type Header = PlayerUpdateOpCode;
-	const HEADER: Self::Header = PlayerUpdateOpCode::SeekTargetUpdate;
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::SeekTargetUpdate;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -176,8 +176,8 @@ pub struct SeekTarget {
 }
 
 impl GamePacket for SeekTarget {
-	type Header = PlayerUpdateOpCode;
-	const HEADER: Self::Header = PlayerUpdateOpCode::SeekTarget;
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::SeekTarget;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -188,8 +188,8 @@ pub struct ReplaceBaseModel {
 }
 
 impl GamePacket for ReplaceBaseModel {
-	type Header = PlayerUpdateOpCode;
-	const HEADER: Self::Header = PlayerUpdateOpCode::ReplaceBaseModel;
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::ReplaceBaseModel;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -202,8 +202,8 @@ pub struct Knockback {
 }
 
 impl GamePacket for Knockback {
-	type Header = PlayerUpdateOpCode;
-	const HEADER: Self::Header = PlayerUpdateOpCode::Knockback;
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::Knockback;
 }
 
 pub enum Wield  {
@@ -231,8 +231,8 @@ pub struct WieldType {
 }
 
 impl GamePacket for WieldType {
-	type Header = PlayerUpdateOpCode;
-	const HEADER: Self::Header = PlayerUpdateOpCode::WieldType;
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::WieldType;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -241,8 +241,8 @@ pub struct Freeze {
 }
 
 impl GamePacket for Freeze {
-	type Header = PlayerUpdateOpCode;
-	const HEADER: Self::Header = PlayerUpdateOpCode::Freeze;
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::Freeze;
 }
 
 #[derive(SerializePacket, DeserializePacket)]

@@ -29,6 +29,7 @@ mod command;
 mod zone;
 mod guid;
 mod update_position;
+mod combat_update_packet;
 
 #[derive(Debug)]
 pub enum Broadcast {

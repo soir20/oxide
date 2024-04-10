@@ -12,6 +12,7 @@ pub enum OpCode {
     ZoneDetailsDone          = 0xe,
     Command                  = 0x1a,
     ClientBeginZoning        = 0x1f,
+    Combat                   = 0x20,
     PlayerUpdate             = 0x23,
     ClientUpdate             = 0x26,
     ZoneDetails              = 0x2b,
@@ -21,7 +22,6 @@ pub enum OpCode {
     ClientGameSettings       = 0x8f,
     Portrait                 = 0x9b,
     DeploymentEnv            = 0xa5,
-    Combat                   = 0x20,
 }
 
 pub struct UnknownOpCode;
