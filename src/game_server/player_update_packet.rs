@@ -206,6 +206,7 @@ impl GamePacket for Knockback {
     const HEADER: Self::Header = PlayerUpdateOpCode::Knockback;
 }
 
+#[derive(Copy, Clone, Debug)]
 pub enum Wield  {
     SingleSaber             = 1,
     StaffSaber              = 2,
@@ -224,7 +225,14 @@ pub enum Wield  {
     HipBraceLauncherOneShot = 15,
 }
 
-#[derive(SerializePacket, DeserializePacket)]
+impl SerializePacket for Wield {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        buffer.write_u32::<LittleEndian>(*self as u32)?;
+        Ok(())
+    }
+}
+
+#[derive(SerializePacket)]
 pub struct WieldType {
     guid: u64,
     wield_type: Wield,
