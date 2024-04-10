@@ -1,0 +1,22 @@
+name: 'Build and Test'
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+  pull-requests: read
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+jobs:
+  run-tests:
+    runs-on: 'ubuntu-22.04'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@cd7d8d697e10461458bc61a30d094dc601a8b017
+      - name: Setup Rust
+        uses: actions-rs/toolchain@9e120dd99b0fbad1c065f686657e914e76bd7b72
+        with:
+          toolchain: stable
+      - name: Run tests
+        run: cargo test
