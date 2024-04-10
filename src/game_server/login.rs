@@ -1,7 +1,10 @@
-use std::io::Error;
+use std::io::Write;
 use byteorder::{LittleEndian, WriteBytesExt};
-use packet_serialize::{DeserializePacket, NullTerminatedString, SerializePacket};
-use crate::game_server::game_packet::{GamePacket, OpCode, Pos};
+
+use packet_serialize::{DeserializePacket, NullTerminatedString, SerializePacket, SerializePacketError};
+
+use crate::game_server::game_packet::{GamePacket, ImageId, OpCode, Pos, StringId};
+use crate::game_server::tunnel::TunneledPacket;
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct LoginReply {
@@ -103,12 +106,74 @@ impl GamePacket for ClientBeginZoning {
     const HEADER: Self::Header = OpCode::ClientBeginZoning;
 }
 
-pub fn send_item_definitions() -> Result<Vec<u8>, Error> {
-    let mut bytes: Vec<u8> = vec![];
-    let mut buffer = Vec::new();
-    buffer.write_u16::<LittleEndian>(0x25)?;
-    buffer.write_i32::<LittleEndian>(bytes.len() as i32)?;
-    buffer.append(&mut bytes);
-    //make_tunneled_packet(0x23, &buffer)
-    Ok(buffer)
+#[derive(SerializePacket, DeserializePacket)]
+pub struct PointOfInterest {
+    pub id: u32,
+    pub name_id: StringId,
+    pub location_id: u32,
+    pub teleport_pos: Pos,
+    pub icon_id: ImageId,
+    pub notification_type: u32,
+    pub subtitle_id: StringId,
+    pub unknown: u32,
+    pub quest_id: u32,
+    pub teleport_pos_id: u32,
+}
+
+pub struct DefinePointsOfInterest {
+    points: Vec<PointOfInterest>,
+}
+
+impl SerializePacket for DefinePointsOfInterest {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        let mut inner_buffer = Vec::new();
+        let len = self.points.len();
+
+        inner_buffer.write_u8((len > 0) as u8)?;
+        for (index, point) in self.points.iter().enumerate() {
+            SerializePacket::serialize(point, &mut inner_buffer)?;
+            inner_buffer.write_u8((index < len - 1) as u8)?;
+        }
+
+        buffer.write_u32::<LittleEndian>(inner_buffer.len() as u32)?;
+        buffer.write_all(&inner_buffer)?;
+
+        Ok(())
+    }
+}
+
+impl GamePacket for DefinePointsOfInterest {
+    type Header = OpCode;
+    const HEADER: Self::Header = OpCode::DefinePointsOfInterest;
+}
+
+pub fn send_points_of_interest() -> Result<Vec<Vec<u8>>, SerializePacketError> {
+    Ok(
+        vec![
+            GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: DefinePointsOfInterest {
+                    points: vec![
+                        PointOfInterest {
+                            id: 19,
+                            name_id: 0,
+                            location_id: 19,
+                            teleport_pos: Pos {
+                                x: 0.0,
+                                y: 0.0,
+                                z: 0.0,
+                                w: 1.0,
+                            },
+                            icon_id: 0,
+                            notification_type: 0,
+                            subtitle_id: 0,
+                            unknown: 0,
+                            quest_id: 0,
+                            teleport_pos_id: 19
+                        },
+                    ],
+                },
+            })?
+        ]
+    )
 }

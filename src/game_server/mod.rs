@@ -10,7 +10,7 @@ use crate::game_server::client_update_packet::{Health, Power, PreloadCharactersD
 use crate::game_server::command::process_command;
 use crate::game_server::game_packet::{GamePacket, OpCode};
 use crate::game_server::guid::{Guid, GuidTable, GuidTableReadHandle, GuidTableWriteHandle};
-use crate::game_server::login::{DeploymentEnv, GameSettings, LoginReply, WelcomeScreen, ZoneDetailsDone};
+use crate::game_server::login::{DeploymentEnv, GameSettings, LoginReply, send_points_of_interest, WelcomeScreen, ZoneDetailsDone};
 use crate::game_server::player_data::make_test_player;
 use crate::game_server::player_update_packet::make_test_npc;
 use crate::game_server::time::make_game_time_sync;
@@ -163,6 +163,8 @@ impl GameServer {
                 },
                 OpCode::ClientIsReady => {
                     let mut packets = Vec::new();
+
+                    packets.append(&mut send_points_of_interest()?);
 
                     let npc = TunneledPacket {
                         unknown1: true,
