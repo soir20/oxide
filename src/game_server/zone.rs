@@ -5,12 +5,12 @@ use std::path::Path;
 use parking_lot::RwLockReadGuard;
 use serde::Deserialize;
 
-use packet_serialize::SerializePacketError;
+use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
 
 use crate::game_server::{GameServer, ProcessPacketError};
 use crate::game_server::client_update_packet::Position;
 use crate::game_server::command::SelectPlayer;
-use crate::game_server::game_packet::{GamePacket, Pos};
+use crate::game_server::game_packet::{GamePacket, OpCode, Pos};
 use crate::game_server::guid::{Guid, GuidTable, GuidTableReadHandle, GuidTableWriteHandle};
 use crate::game_server::login::{ClientBeginZoning, ZoneDetails};
 use crate::game_server::player_update_packet::{AddNpc, BaseAttachmentGroup, Icon, NpcRelevance, SingleNpcRelevance, WeaponAnimation};
@@ -41,6 +41,14 @@ struct ZoneConfig {
     name: String,
     hide_ui: bool,
     direction_indicator: bool,
+    spawn_pos_x: f32,
+    spawn_pos_y: f32,
+    spawn_pos_z: f32,
+    spawn_pos_w: f32,
+    spawn_rot_x: f32,
+    spawn_rot_y: f32,
+    spawn_rot_z: f32,
+    spawn_rot_w: f32,
     doors: Vec<Door>,
     door_interact_radius: f32,
     door_auto_interact_radius: f32
@@ -201,6 +209,8 @@ impl Character {
 pub struct Zone {
     guid: u64,
     pub name: String,
+    default_spawn_pos: Pos,
+    default_spawn_rot: Pos,
     hide_ui: bool,
     direction_indicator: bool,
     characters: GuidTable<Character>
@@ -342,6 +352,18 @@ impl From<ZoneConfig> for Zone {
         Zone {
             guid: zone_config.guid,
             name: zone_config.name,
+            default_spawn_pos: Pos {
+                x: zone_config.spawn_pos_x,
+                y: zone_config.spawn_pos_y,
+                z: zone_config.spawn_pos_z,
+                w: zone_config.spawn_pos_w,
+            },
+            default_spawn_rot: Pos {
+                x: zone_config.spawn_rot_x,
+                y: zone_config.spawn_rot_y,
+                z: zone_config.spawn_rot_z,
+                w: zone_config.spawn_rot_w,
+            },
             hide_ui: zone_config.hide_ui,
             direction_indicator: zone_config.direction_indicator,
             characters
@@ -436,8 +458,8 @@ pub fn interact_with_character(request: SelectPlayer, game_server: &GameServer) 
                                 source_zone_read_handle,
                                 request.requester,
                                 destination_zone_guid,
-                                destination_pos,
-                                destination_rot
+                                Some(destination_pos),
+                                Some(destination_rot)
                             )
                         } else {
                             drop(source_zone_read_handle);
@@ -479,9 +501,19 @@ pub fn teleport_within_zone(destination_pos: Pos, destination_rot: Pos) -> Resul
     )
 }
 
+#[derive(SerializePacket, DeserializePacket)]
+pub struct ZoneTeleportRequest {
+    pub destination_guid: u32
+}
+
+impl GamePacket for ZoneTeleportRequest {
+    type Header = OpCode;
+    const HEADER: Self::Header = OpCode::ZoneTeleportRequest;
+}
+
 pub fn teleport_to_zone(zones: &GuidTableReadHandle<Zone>, source_zone: RwLockReadGuard<Zone>,
-                        player_guid: u64, destination_zone_guid: u64, destination_pos: Pos,
-                        destination_rot: Pos) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+                        player_guid: u64, destination_zone_guid: u64, destination_pos: Option<Pos>,
+                        destination_rot: Option<Pos>) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
     let mut characters = source_zone.write_characters();
     let character = characters.remove(player_guid);
     drop(characters);
@@ -489,6 +521,8 @@ pub fn teleport_to_zone(zones: &GuidTableReadHandle<Zone>, source_zone: RwLockRe
 
     if let Some(destination_zone) = zones.get(destination_zone_guid) {
         let destination_read_handle = destination_zone.read();
+        let destination_pos = destination_pos.unwrap_or(destination_read_handle.default_spawn_pos);
+        let destination_rot = destination_rot.unwrap_or(destination_read_handle.default_spawn_rot);
         if let Some(character) = character {
             let mut characters = destination_read_handle.write_characters();
             characters.insert_lock(player_guid, character);

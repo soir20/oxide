@@ -155,9 +155,9 @@ pub fn send_points_of_interest() -> Result<Vec<Vec<u8>>, SerializePacketError> {
                 inner: DefinePointsOfInterest {
                     points: vec![
                         PointOfInterest {
-                            id: 19,
+                            id: 14,
                             name_id: 0,
-                            location_id: 19,
+                            location_id: 0,
                             teleport_pos: Pos {
                                 x: 0.0,
                                 y: 0.0,
@@ -169,7 +169,7 @@ pub fn send_points_of_interest() -> Result<Vec<Vec<u8>>, SerializePacketError> {
                             subtitle_id: 0,
                             unknown: 0,
                             quest_id: 0,
-                            teleport_pos_id: 19
+                            teleport_pos_id: 0
                         },
                     ],
                 },

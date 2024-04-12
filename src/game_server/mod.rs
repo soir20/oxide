@@ -16,7 +16,7 @@ use crate::game_server::player_update_packet::make_test_npc;
 use crate::game_server::time::make_game_time_sync;
 use crate::game_server::tunnel::TunneledPacket;
 use crate::game_server::update_position::UpdatePlayerPosition;
-use crate::game_server::zone::{Character, load_zones, Zone};
+use crate::game_server::zone::{Character, load_zones, teleport_to_zone, Zone, ZoneTeleportRequest};
 
 mod login;
 mod player_data;
@@ -29,6 +29,7 @@ mod command;
 mod zone;
 mod guid;
 mod update_position;
+mod ui;
 mod combat_update_packet;
 
 #[derive(Debug)]
@@ -88,7 +89,7 @@ impl GameServer {
                     let guid = 1;
 
                     // TODO: get player's zone
-                    let player_zone = 2;
+                    let player_zone = 24;
 
                     let mut packets = Vec::new();
 
@@ -107,7 +108,7 @@ impl GameServer {
                         },
                     };
                     packets.push(GamePacket::serialize(&deployment_env)?);
-                    let mut zone_details = self.zones.read().get(2).unwrap().read().send_self()?;
+                    let mut zone_details = self.zones.read().get(player_zone).unwrap().read().send_self()?;
                     packets.append(&mut zone_details);
 
                     let settings = TunneledPacket {
@@ -295,6 +296,31 @@ impl GameServer {
 
                     }
                 },
+                OpCode::ZoneTeleportRequest => {
+                    let mut packets = Vec::new();
+                    let teleport_request: ZoneTeleportRequest = DeserializePacket::deserialize(&mut cursor)?;
+
+                    let zones = self.read_zones();
+                    if let Some(zone_guid) = GameServer::zone_with_player(&zones, sender) {
+                        if let Some(zone) = zones.get(zone_guid) {
+                            let zone_read_handle = zone.read();
+                            packets.append(
+                                &mut teleport_to_zone(
+                                    &zones,
+                                    zone_read_handle,
+                                    sender,
+                                    teleport_request.destination_guid as u64,
+                                    None,
+                                    None
+                                )?
+                            );
+                        }
+                    } else {
+                        println!("Received teleport request for player not in any zone");
+                    }
+
+                    broadcasts.push(Broadcast::Single(sender, packets));
+                }
                 _ => println!("Unimplemented: {:?}, {:x?}", op_code, data)
             },
             Err(_) => println!("Unknown op code: {}, {:x?}", raw_op_code, data)
