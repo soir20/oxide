@@ -64,7 +64,7 @@ impl From<SerializePacketError> for ProcessPacketError {
 }
 
 pub struct GameServer {
-    zones: GuidTable<Zone>
+    zones: GuidTable<u32, Zone>
 }
 
 impl GameServer {
@@ -309,7 +309,7 @@ impl GameServer {
                                     &zones,
                                     zone_read_handle,
                                     sender,
-                                    teleport_request.destination_guid as u64,
+                                    teleport_request.destination_guid,
                                     None,
                                     None
                                 )?
@@ -329,15 +329,15 @@ impl GameServer {
         Ok(broadcasts)
     }
 
-    pub fn read_zones(&self) -> GuidTableReadHandle<Zone> {
+    pub fn read_zones(&self) -> GuidTableReadHandle<u32, Zone> {
         self.zones.read()
     }
 
-    pub fn write_zones(&self) -> GuidTableWriteHandle<Zone> {
+    pub fn write_zones(&self) -> GuidTableWriteHandle<u32, Zone> {
         self.zones.write()
     }
 
-    pub fn zone_with_player(zones: &GuidTableReadHandle<Zone>, guid: u64) -> Option<u64> {
+    pub fn zone_with_player(zones: &GuidTableReadHandle<u32, Zone>, guid: u64) -> Option<u32> {
         for zone in zones.values() {
             let read_handle = zone.read();
             if read_handle.read_characters().get(guid).is_some() {

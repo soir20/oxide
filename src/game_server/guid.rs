@@ -21,66 +21,66 @@ impl<T> Lock<T> {
     }
 }
 
-pub trait Guid {
-    fn guid(&self) -> u64;
+pub trait Guid<T> {
+    fn guid(&self) -> T;
 }
 
-type GuidTableData<T> = BTreeMap<u64, Lock<T>>;
+type GuidTableData<K, V> = BTreeMap<K, Lock<V>>;
 
-pub struct GuidTableReadHandle<'a, T> {
-    guard: RwLockReadGuard<'a, GuidTableData<T>>
+pub struct GuidTableReadHandle<'a, K, V> {
+    guard: RwLockReadGuard<'a, GuidTableData<K, V>>
 }
 
-impl<'a, T> GuidTableReadHandle<'a, T> {
-    pub fn get(&self, guid: u64) -> Option<&Lock<T>> {
+impl<'a, K: Copy + Ord, V> GuidTableReadHandle<'a, K, V> {
+    pub fn get(&self, guid: K) -> Option<&Lock<V>> {
         self.guard.get(&guid)
     }
 
-    pub fn iter(&self) -> impl Iterator<Item=(u64, &Lock<T>)> {
+    pub fn iter(&self) -> impl Iterator<Item=(K, &Lock<V>)> {
         self.guard.iter().map(|(guid, item)| (*guid, item))
     }
 
-    pub fn values(&self) -> impl Iterator<Item=&Lock<T>> {
+    pub fn values(&self) -> impl Iterator<Item=&Lock<V>> {
         self.guard.values()
     }
 }
 
-pub struct GuidTableWriteHandle<'a, T> {
-    guard: RwLockWriteGuard<'a, GuidTableData<T>>
+pub struct GuidTableWriteHandle<'a, K, V> {
+    guard: RwLockWriteGuard<'a, GuidTableData<K, V>>
 }
 
-impl<'a, T: Guid> GuidTableWriteHandle<'a, T> {
-    pub fn insert(&mut self, item: T) -> Option<Lock<T>> {
+impl<'a, K: Ord, V: Guid<K>> GuidTableWriteHandle<'a, K, V> {
+    pub fn insert(&mut self, item: V) -> Option<Lock<V>> {
         self.guard.insert(item.guid(), Lock::new(item))
     }
 
-    pub fn insert_lock(&mut self, guid: u64, lock: Lock<T>) -> Option<Lock<T>> {
+    pub fn insert_lock(&mut self, guid: K, lock: Lock<V>) -> Option<Lock<V>> {
         self.guard.insert(guid, lock)
     }
 
-    pub fn remove(&mut self, guid: u64) -> Option<Lock<T>> {
+    pub fn remove(&mut self, guid: K) -> Option<Lock<V>> {
         self.guard.remove(&guid)
     }
 }
 
-pub struct GuidTable<T> {
-    data: Lock<GuidTableData<T>>
+pub struct GuidTable<K, V> {
+    data: Lock<GuidTableData<K, V>>
 }
 
-impl<T: Guid> GuidTable<T> {
+impl<K, V: Guid<K>> GuidTable<K, V> {
     pub fn new() -> Self {
         GuidTable {
             data: Lock::new(BTreeMap::new()),
         }
     }
 
-    pub fn read(&self) -> GuidTableReadHandle<T> {
+    pub fn read(&self) -> GuidTableReadHandle<K, V> {
         GuidTableReadHandle {
             guard: self.data.read()
         }
     }
 
-    pub fn write(&self) -> GuidTableWriteHandle<T> {
+    pub fn write(&self) -> GuidTableWriteHandle<K, V> {
         GuidTableWriteHandle {
             guard: self.data.write()
         }

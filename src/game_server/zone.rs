@@ -32,12 +32,12 @@ pub struct Door {
     destination_rot_y: f32,
     destination_rot_z: f32,
     destination_rot_w: f32,
-    destination_zone: Option<u64>
+    destination_zone: Option<u32>
 }
 
 #[derive(Deserialize)]
 struct ZoneConfig {
-    guid: u64,
+    guid: u32,
     name: String,
     hide_ui: bool,
     direction_indicator: bool,
@@ -70,7 +70,7 @@ pub struct Character {
     pub auto_interact_radius: f32
 }
 
-impl Guid for Character {
+impl Guid<u64> for Character {
     fn guid(&self) -> u64 {
         self.guid
     }
@@ -208,18 +208,18 @@ impl Character {
 }
 
 pub struct Zone {
-    guid: u64,
+    guid: u32,
     pub name: String,
     default_spawn_pos: Pos,
     default_spawn_rot: Pos,
     default_spawn_sky: String,
     hide_ui: bool,
     direction_indicator: bool,
-    characters: GuidTable<Character>
+    characters: GuidTable<u64, Character>
 }
 
-impl Guid for Zone {
-    fn guid(&self) -> u64 {
+impl Guid<u32> for Zone {
+    fn guid(&self) -> u32 {
         self.guid
     }
 }
@@ -254,11 +254,11 @@ impl Zone {
         Ok(packets)
     }
 
-    pub fn read_characters(&self) -> GuidTableReadHandle<Character> {
+    pub fn read_characters(&self) -> GuidTableReadHandle<u64, Character> {
         self.characters.read()
     }
 
-    pub fn write_characters(&self) -> GuidTableWriteHandle<Character> {
+    pub fn write_characters(&self) -> GuidTableWriteHandle<u64, Character> {
         self.characters.write()
     }
 
@@ -374,7 +374,7 @@ impl From<ZoneConfig> for Zone {
     }
 }
 
-pub fn load_zones(config_dir: &Path) -> Result<GuidTable<Zone>, Error> {
+pub fn load_zones(config_dir: &Path) -> Result<GuidTable<u32, Zone>, Error> {
     let mut file = File::open(config_dir.join("zones.json"))?;
     let zone_configs: Vec<ZoneConfig> = serde_json::from_reader(&mut file)?;
 
@@ -514,8 +514,8 @@ impl GamePacket for ZoneTeleportRequest {
     const HEADER: Self::Header = OpCode::ZoneTeleportRequest;
 }
 
-pub fn teleport_to_zone(zones: &GuidTableReadHandle<Zone>, source_zone: RwLockReadGuard<Zone>,
-                        player_guid: u64, destination_zone_guid: u64, destination_pos: Option<Pos>,
+pub fn teleport_to_zone(zones: &GuidTableReadHandle<u32, Zone>, source_zone: RwLockReadGuard<Zone>,
+                        player_guid: u64, destination_zone_guid: u32, destination_pos: Option<Pos>,
                         destination_rot: Option<Pos>) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
     let mut characters = source_zone.write_characters();
     let character = characters.remove(player_guid);
