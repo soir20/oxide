@@ -19,6 +19,24 @@
     "doors": []
   },
   {
+    "comment": "Ryloth",
+    "guid": 15,
+    "name": "Combat_Ryloth_StartingZone_01",
+    "hide_ui": false,
+    "direction_indicator": true,
+    "spawn_pos_x": 598.0,
+    "spawn_pos_y": 9.0,
+    "spawn_pos_z": 669.0,
+    "spawn_pos_w": 1.0,
+    "spawn_rot_x": -0.75,
+    "spawn_rot_y": 0.0,
+    "spawn_rot_z": -0.67,
+    "spawn_rot_w": 0.0,
+    "door_interact_radius": 0.0,
+    "door_auto_interact_radius": 0.0,
+    "doors": []
+  },
+  {
     "guid": 24,
     "name": "JediTemple",
     "hide_ui": false,
