@@ -165,7 +165,7 @@ impl GameServer {
                 OpCode::ClientIsReady => {
                     let mut packets = Vec::new();
 
-                    packets.append(&mut send_points_of_interest()?);
+                    packets.append(&mut send_points_of_interest(self)?);
 
                     let npc = TunneledPacket {
                         unknown1: true,

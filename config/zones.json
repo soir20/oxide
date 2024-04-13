@@ -13,8 +13,9 @@
     "spawn_rot_y": 0.0,
     "spawn_rot_z": 1.5,
     "spawn_rot_w": 0.0,
+    "spawn_sky": "Sky_SF_Geonosis_Atmosphere.xml",
     "door_interact_radius": 0.0,
-    "door_auto_interact_radius": 0.5,
+    "door_auto_interact_radius": 0.0,
     "doors": []
   },
   {

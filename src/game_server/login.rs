@@ -4,6 +4,7 @@ use byteorder::{LittleEndian, WriteBytesExt};
 use packet_serialize::{DeserializePacket, NullTerminatedString, SerializePacket, SerializePacketError};
 
 use crate::game_server::game_packet::{GamePacket, ImageId, OpCode, Pos, StringId};
+use crate::game_server::GameServer;
 use crate::game_server::tunnel::TunneledPacket;
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -147,31 +148,36 @@ impl GamePacket for DefinePointsOfInterest {
     const HEADER: Self::Header = OpCode::DefinePointsOfInterest;
 }
 
-pub fn send_points_of_interest() -> Result<Vec<Vec<u8>>, SerializePacketError> {
+pub fn send_points_of_interest(game_server: &GameServer) -> Result<Vec<Vec<u8>>, SerializePacketError> {
+    let mut points = Vec::new();
+    for (guid, _) in game_server.read_zones().iter() {
+        points.push(
+            PointOfInterest {
+                id: guid as u32,
+                name_id: 0,
+                location_id: 0,
+                teleport_pos: Pos {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 0.0,
+                    w: 1.0,
+                },
+                icon_id: 0,
+                notification_type: 0,
+                subtitle_id: 0,
+                unknown: 0,
+                quest_id: 0,
+                teleport_pos_id: 0
+            }
+        );
+    }
+
     Ok(
         vec![
             GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: DefinePointsOfInterest {
-                    points: vec![
-                        PointOfInterest {
-                            id: 14,
-                            name_id: 0,
-                            location_id: 0,
-                            teleport_pos: Pos {
-                                x: 0.0,
-                                y: 0.0,
-                                z: 0.0,
-                                w: 1.0,
-                            },
-                            icon_id: 0,
-                            notification_type: 0,
-                            subtitle_id: 0,
-                            unknown: 0,
-                            quest_id: 0,
-                            teleport_pos_id: 0
-                        },
-                    ],
+                    points,
                 },
             })?
         ]

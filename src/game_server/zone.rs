@@ -49,6 +49,7 @@ struct ZoneConfig {
     spawn_rot_y: f32,
     spawn_rot_z: f32,
     spawn_rot_w: f32,
+    spawn_sky: Option<String>,
     doors: Vec<Door>,
     door_interact_radius: f32,
     door_auto_interact_radius: f32
@@ -211,6 +212,7 @@ pub struct Zone {
     pub name: String,
     default_spawn_pos: Pos,
     default_spawn_rot: Pos,
+    default_spawn_sky: String,
     hide_ui: bool,
     direction_indicator: bool,
     characters: GuidTable<Character>
@@ -233,7 +235,7 @@ impl Zone {
                         zone_type: 2,
                         hide_ui: self.hide_ui,
                         direction_indicator: self.direction_indicator,
-                        sky_definition_file_name: "".to_string(),
+                        sky_definition_file_name: self.default_spawn_sky.clone(),
                         zoom_out: false,
                         unknown7: 0,
                         unknown8: 0,
@@ -364,6 +366,7 @@ impl From<ZoneConfig> for Zone {
                 z: zone_config.spawn_rot_z,
                 w: zone_config.spawn_rot_w,
             },
+            default_spawn_sky: zone_config.spawn_sky.unwrap_or("".to_string()),
             hide_ui: zone_config.hide_ui,
             direction_indicator: zone_config.direction_indicator,
             characters
@@ -547,7 +550,7 @@ fn prepare_init_zone_packets(destination: RwLockReadGuard<Zone>, destination_pos
                 zone_type: 2,
                 pos: destination_pos,
                 rot: destination_rot,
-                sky_definition_file_name: "".to_string(),
+                sky_definition_file_name: destination.default_spawn_sky.clone(),
                 unknown1: false,
                 zone_id: 0,
                 zone_name_id: 0,
