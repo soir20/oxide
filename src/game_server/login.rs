@@ -32,7 +32,7 @@ pub struct ZoneDetails {
     pub name: String,
     pub zone_type: u32,
     pub hide_ui: bool,
-    pub direction_indicator: bool,
+    pub combat_hud: bool,
     pub sky_definition_file_name: String,
     pub zoom_out: bool,
     pub unknown7: u32,

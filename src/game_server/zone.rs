@@ -15,6 +15,7 @@ use crate::game_server::guid::{Guid, GuidTable, GuidTableReadHandle, GuidTableWr
 use crate::game_server::login::{ClientBeginZoning, ZoneDetails};
 use crate::game_server::player_update_packet::{AddNpc, BaseAttachmentGroup, Icon, NpcRelevance, SingleNpcRelevance, WeaponAnimation};
 use crate::game_server::tunnel::TunneledPacket;
+use crate::game_server::ui::ExecuteScriptWithParams;
 use crate::game_server::update_position::UpdatePlayerPosition;
 
 #[derive(Deserialize)]
@@ -40,7 +41,7 @@ struct ZoneConfig {
     guid: u32,
     name: String,
     hide_ui: bool,
-    direction_indicator: bool,
+    combat_hud: bool,
     spawn_pos_x: f32,
     spawn_pos_y: f32,
     spawn_pos_z: f32,
@@ -214,7 +215,7 @@ pub struct Zone {
     default_spawn_rot: Pos,
     default_spawn_sky: String,
     hide_ui: bool,
-    direction_indicator: bool,
+    combat_hud: bool,
     characters: GuidTable<u64, Character>
 }
 
@@ -234,7 +235,7 @@ impl Zone {
                         name: self.name.clone(),
                         zone_type: 2,
                         hide_ui: self.hide_ui,
-                        direction_indicator: self.direction_indicator,
+                        combat_hud: self.combat_hud,
                         sky_definition_file_name: self.default_spawn_sky.clone(),
                         zoom_out: false,
                         unknown7: 0,
@@ -368,7 +369,7 @@ impl From<ZoneConfig> for Zone {
             },
             default_spawn_sky: zone_config.spawn_sky.unwrap_or("".to_string()),
             hide_ui: zone_config.hide_ui,
-            direction_indicator: zone_config.direction_indicator,
+            combat_hud: zone_config.combat_hud,
             characters
         }
     }
@@ -559,6 +560,20 @@ fn prepare_init_zone_packets(destination: RwLockReadGuard<Zone>, destination_pos
                 unknown6: false,
                 unknown7: false,
             }
+        })?
+    );
+
+    packets.append(&mut destination.send_self()?);
+    packets.push(
+        GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: ExecuteScriptWithParams {
+                script_name: format!(
+                    "CombatHandler.{}",
+                    if destination.combat_hud { "show" } else { "hide "}
+                ),
+                params: vec![],
+            },
         })?
     );
 
