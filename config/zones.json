@@ -73,6 +73,24 @@
     "doors": []
   },
   {
+    "comment": "Felucia",
+    "guid": 36,
+    "name": "Combat_Felucia_01",
+    "hide_ui": false,
+    "direction_indicator": true,
+    "spawn_pos_x": 488.0,
+    "spawn_pos_y": 0.9538704,
+    "spawn_pos_z": 278.0,
+    "spawn_pos_w": 1.0,
+    "spawn_rot_x": 0.0,
+    "spawn_rot_y": 0.0,
+    "spawn_rot_z": 1.0,
+    "spawn_rot_w": 0.0,
+    "door_interact_radius": 0.0,
+    "door_auto_interact_radius": 0.0,
+    "doors": []
+  },
+  {
     "guid": 24,
     "name": "JediTemple",
     "hide_ui": false,
