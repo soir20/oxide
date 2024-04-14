@@ -43,7 +43,7 @@ fn write_variable_length_int(buffer: &mut Vec<u8>, value: BufferSize) -> Result<
 }
 
 fn variable_length_int_size(length: usize) -> usize {
-    if length < 0xFF {
+    if length <= 0xFF {
         size_of::<u8>()
     } else if length < 0xFFFF {
         size_of::<u16>() + 1
@@ -238,7 +238,6 @@ fn group_session_packets(session_packets: Vec<&Packet>, buffer_size: BufferSize,
     while !serialized_packets.is_empty() {
         let (op_code, serialized_packet) = serialized_packets.pop_front().unwrap();
 
-        // Add two bytes for the op code
         let mut total_len = serialized_packet.len();
 
         // Leave space for this packet's op code and data length if it is not the first packet.
@@ -254,7 +253,12 @@ fn group_session_packets(session_packets: Vec<&Packet>, buffer_size: BufferSize,
             total_len += variable_length_int_size(group[0].1.len() + size_of::<u16>());
         }
 
-        if total_len <= space_left as usize {
+        // For some games, the protocol seems to allow for multiple-byte sub-packet lengths,
+        // but not CWA. Adding packets whose length value would exceed 1 byte in size is
+        // simply disabled, rather than removed, in case it needs to be re-enabled later.
+        let can_be_sub_packet = serialized_packet.len() <= u8::MAX as usize - size_of::<u16>();
+
+        if total_len <= space_left as usize && can_be_sub_packet {
             space_left -= total_len as BufferSize;
             group.push((op_code, serialized_packet));
         } else if serialized_packet.len() > data_max_size as usize {
@@ -266,7 +270,12 @@ fn group_session_packets(session_packets: Vec<&Packet>, buffer_size: BufferSize,
             groups.push(group.clone());
             group.clear();
             space_left = data_max_size;
-            serialized_packets.push_front((op_code, serialized_packet));
+
+            if can_be_sub_packet {
+                serialized_packets.push_front((op_code, serialized_packet));
+            } else {
+                groups.push(vec![(op_code, serialized_packet)]);
+            }
         }
     }
 
@@ -374,10 +383,10 @@ mod tests {
             // 5 bytes for the wrapper
             // 9 bytes for disconnect packet and its 1-byte length
             // 3 bytes for the heartbeat packet and its 1-byte length
-            // 3 bytes for this data packet's length
+            // 1 byte for this data packet's length
             // 2 bytes for this data packet's op code
             // 2 bytes for this data packet's sequence number
-            Packet::Data(3, vec![4; buffer_size as usize - 5 - 9 - 3 - 3 - 2 - 2 - compression_byte]),
+            Packet::Data(3, vec![4; buffer_size as usize - 5 - 9 - 3 - 1 - 2 - 2 - compression_byte]),
 
             Packet::Disconnect(session.session_id, DisconnectReason::CorruptPacket),
             Packet::Heartbeat,
@@ -386,10 +395,10 @@ mod tests {
             // 5 bytes for the wrapper
             // 9 bytes for disconnect packet and its 1-byte length
             // 3 bytes for the heartbeat packet and its 1-byte length
-            // 3 bytes for this data packet's length
+            // 1 bytes for this data packet's length
             // 2 bytes for this data packet's op code
             // 2 bytes for this data packet's sequence number
-            Packet::Data(7, vec![8; buffer_size as usize - 5 - 9 - 3 - 3 - 2 - 2 - compression_byte + 1]),
+            Packet::Data(7, vec![8; buffer_size as usize - 5 - 9 - 3 - 1 - 2 - 2 - compression_byte + 1]),
 
             // Data packet should fit by itself exactly
             // 5 bytes for the wrapper
@@ -661,7 +670,7 @@ mod tests {
 
     #[test]
     fn test_good_session_packets_without_compression() {
-        let buffer_size = 512;
+        let buffer_size = 273;
         let session = Session {
             session_id: 12345,
             crc_length: 3,
@@ -676,7 +685,7 @@ mod tests {
                 0, 3,
                 8, 0, 5, 0, 0, 48, 57, 0, 6,
                 2, 0, 6,
-                255, 1, 236, 0, 9, 0, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+                255, 0, 9, 0, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
                 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
                 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
                 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
@@ -685,17 +694,8 @@ mod tests {
                 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
                 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
                 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-                4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-                4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-                4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-                4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-                4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-                4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-                4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-                4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-                4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-                4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-                216, 255, 39
+                4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+                172, 159, 62
             ],
             vec![
                 0, 3,
@@ -713,17 +713,8 @@ mod tests {
                 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
                 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
                 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-                8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-                8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-                8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-                8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-                8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-                8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-                8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-                8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-                8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-                8, 8, 8, 8, 8, 8, 8,
-                147, 247, 242
+                8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
+                34, 0, 62
             ],
             vec![
                 0, 9, 0, 9, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
@@ -739,20 +730,89 @@ mod tests {
                 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
                 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
                 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
-                10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
-                10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
-                10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
-                10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
-                10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
-                10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
-                10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
-                10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
-                10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
-                10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
-                10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
-                10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
-                10, 10, 10, 10, 10, 10, 10, 10,
-                22, 185, 46
+                10, 10, 10, 10, 10, 10, 10, 10, 10,
+                13, 21, 128
+            ],
+            vec![
+                0, 3,
+                4, 0, 17, 0, 11,
+                4, 0, 21, 0, 12,
+                122, 81, 177
+            ]
+        ];
+
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_good_session_packets_without_compression_with_large_data_packet() {
+        let buffer_size = 274;
+        let session = Session {
+            session_id: 12345,
+            crc_length: 3,
+            crc_seed: 67890,
+            allow_compression: false,
+            use_encryption: false,
+        };
+
+        let actual = make_test_session_packets(buffer_size, session);
+        let expected: Vec<Vec<u8>> = vec![
+            vec![
+                0, 3,
+                8, 0, 5, 0, 0, 48, 57, 0, 6,
+                2, 0, 6,
+                129, 89, 110
+            ],
+            vec![
+                0, 9,
+                0, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+                4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+                4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+                4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+                4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+                4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+                4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+                4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+                4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+                4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+                35, 249, 103
+            ],
+            vec![
+                0, 3,
+                8, 0, 5, 0, 0, 48, 57, 0, 15,
+                2, 0, 6, 137,
+                22, 228
+            ],
+            vec![
+                0, 9,
+                0, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
+                8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
+                8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
+                8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
+                8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
+                8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
+                8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
+                8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
+                8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
+                8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
+                196, 88, 20
+            ],
+            vec![
+                0, 9,
+                0, 9, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+                10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+                10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+                10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+                10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+                10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+                10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+                10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+                10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+                10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+                10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+                10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+                10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+                134, 136, 166
             ],
             vec![
                 0, 3,
@@ -767,7 +827,7 @@ mod tests {
 
     #[test]
     fn test_good_session_packets_with_compression() {
-        let buffer_size = 512;
+        let buffer_size = 274;
         let session = Session {
             session_id: 12345,
             crc_length: 3,
@@ -780,10 +840,9 @@ mod tests {
         let expected: Vec<Vec<u8>> = vec![
             vec![
                 0, 3, 1,
-                120, 94, 237, 192, 75, 21, 0, 64, 4, 64, 209, 55, 63, 103, 180, 177, 213, 63,
-                142, 16, 4, 225, 126, 30, 152, 35, 27, 201, 21, 40, 231, 142, 14, 10, 14, 7,
-                10, 24,
-                188, 38, 243
+                120, 94, 229, 192, 201, 13, 0, 0, 4, 0, 193, 141, 43, 116, 227, 171, 255, 194, 40,
+                196, 36, 14, 61, 132, 16, 75, 161, 246, 215, 1, 129, 159, 5, 124,
+                112, 115, 77
             ],
             vec![
                 0, 3, 0,
@@ -793,15 +852,15 @@ mod tests {
             ],
             vec![
                 0, 9, 1,
-                120, 94, 237, 192, 49, 1, 0, 0, 0, 130, 48, 63, 237, 159, 216, 32, 176, 116, 66,
-                56, 160, 187, 15, 72,
-                245, 91, 70
+                120, 94, 229, 192, 49, 1, 0, 0, 0, 130, 48, 63, 233, 159, 152, 32, 108, 39, 76,
+                236, 70, 7, 232,
+                187, 225, 91
             ],
             vec![
                 0, 9, 1,
-                120, 94, 237, 192, 49, 1, 0, 0, 0, 130, 48, 95, 237, 31, 216, 32, 176, 116, 66,
-                58, 127, 240, 19, 186,
-                27, 226, 100
+                120, 94, 237, 192, 33, 1, 0, 0, 0, 194, 48, 44, 244, 15, 140, 121, 140, 47, 157,
+                112, 117, 224, 10, 110,
+                239, 9, 99
             ],
             vec![
                 0, 3, 0,
@@ -815,7 +874,7 @@ mod tests {
 
     #[test]
     fn test_good_mixed_packets_with_compression() {
-        let buffer_size = 512;
+        let buffer_size = 274;
         let session = Session {
             session_id: 12345,
             crc_length: 3,
@@ -838,11 +897,11 @@ mod tests {
             // 5 bytes for the wrapper
             // 9 bytes for disconnect packet and its 1-byte length
             // 3 bytes for the heartbeat packet and its 1-byte length
-            // 3 bytes for this data packet's length
+            // 1 byte for this data packet's length
             // 2 bytes for this data packet's op code
             // 2 bytes for this data packet's sequence number
             // 1 byte for compression flag
-            Packet::Data(3, vec![4; buffer_size as usize - 5 - 9 - 3 - 3 - 2 - 2 - 1]),
+            Packet::Data(3, vec![4; buffer_size as usize - 5 - 9 - 3 - 1 - 2 - 2 - 1]),
 
             Packet::Disconnect(session.session_id, DisconnectReason::CorruptPacket),
             Packet::Heartbeat,
@@ -853,11 +912,11 @@ mod tests {
             // 5 bytes for the wrapper
             // 9 bytes for disconnect packet and its 1-byte length
             // 3 bytes for the heartbeat packet and its 1-byte length
-            // 3 bytes for this data packet's length
+            // 1 byte for this data packet's length
             // 2 bytes for this data packet's op code
             // 2 bytes for this data packet's sequence number
             // 1 byte for compression flag
-            Packet::Data(7, vec![8; buffer_size as usize - 5 - 9 - 3 - 3 - 2 - 2 - 1 + 1]),
+            Packet::Data(7, vec![8; buffer_size as usize - 5 - 9 - 3 - 1 - 2 - 2 - 1 + 1]),
 
             Packet::RemapConnection(12345, 67890),
             Packet::SessionRequest(3, 12345, buffer_size, String::from("abcdefghijklmnopqrstuvwx")),
@@ -891,7 +950,7 @@ mod tests {
                 0, 1,
                 0, 0, 0, 3,
                 0, 0, 48, 57,
-                0, 0, 2, 0,
+                0, 0, 1, 18,
                 97, 98, 99,  100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112,
                 113, 114, 115, 116, 117, 118, 119, 0
             ],
@@ -915,7 +974,7 @@ mod tests {
                 0, 1,
                 0, 0, 0, 3,
                 0, 0, 48, 57,
-                0, 0, 2, 0,
+                0, 0, 1, 18,
                 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112,
                 113, 114, 115, 116, 117, 118, 119, 120, 0
             ],
@@ -923,7 +982,7 @@ mod tests {
                 0, 1,
                 0, 0, 0, 3,
                 0, 0, 48, 57,
-                0, 0, 2, 0,
+                0, 0, 1, 18,
                 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112,
                 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 48, 49, 50, 51, 52, 53, 54,
                 55, 56, 0],
@@ -934,7 +993,7 @@ mod tests {
                 3,
                 0,
                 0,
-                0, 0, 2, 0,
+                0, 0, 1, 18,
                 0, 0, 0, 3
             ],
             vec![
@@ -963,10 +1022,9 @@ mod tests {
             // Session packets
             vec![
                 0, 3, 1,
-                120, 94, 237, 192, 75, 21, 0, 64, 4, 64, 209, 55, 63, 103, 180, 177, 213, 63,
-                142, 16, 4, 225, 126, 30, 152, 35, 27, 201, 21, 40, 231, 142, 14, 10, 14, 7,
-                10, 24,
-                188, 38, 243
+                120, 94, 229, 192, 201, 13, 0, 0, 4, 0, 193, 141, 43, 116, 227, 171, 255, 194,
+                40, 196, 36, 14, 61, 132, 16, 75, 161, 246, 215, 1, 129, 159, 5, 124,
+                112, 115, 77
             ],
             vec![
                 0, 3, 0,
@@ -976,15 +1034,15 @@ mod tests {
             ],
             vec![
                 0, 9, 1,
-                120, 94, 237, 192, 49, 1, 0, 0, 0, 130, 48, 63, 237, 159, 216, 32, 176, 116, 66,
-                56, 160, 187, 15, 72,
-                245, 91, 70
+                120, 94, 229, 192, 49, 1, 0, 0, 0, 130, 48, 63, 233, 159, 152, 32, 108, 39, 76,
+                236, 70, 7, 232,
+                187, 225, 91
             ],
             vec![
                 0, 9, 1,
-                120, 94, 237, 192, 49, 1, 0, 0, 0, 130, 48, 95, 237, 31, 216, 32, 176, 116, 66,
-                58, 127, 240, 19, 186,
-                27, 226, 100
+                120, 94, 237, 192, 33, 1, 0, 0, 0, 194, 48, 44, 244, 15, 140, 121, 140, 47, 157,
+                112, 117, 224, 10, 110,
+                239, 9, 99
             ],
             vec![
                 0, 3, 0,
