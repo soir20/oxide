@@ -570,7 +570,7 @@ fn prepare_init_zone_packets(destination: RwLockReadGuard<Zone>, destination_pos
             inner: ExecuteScriptWithParams {
                 script_name: format!(
                     "CombatHandler.{}",
-                    if destination.combat_hud { "show" } else { "hide "}
+                    if destination.combat_hud { "show" } else { "hide"}
                 ),
                 params: vec![],
             },
