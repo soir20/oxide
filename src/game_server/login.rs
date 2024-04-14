@@ -128,13 +128,12 @@ pub struct DefinePointsOfInterest {
 impl SerializePacket for DefinePointsOfInterest {
     fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
         let mut inner_buffer = Vec::new();
-        let len = self.points.len();
 
-        inner_buffer.write_u8((len > 0) as u8)?;
-        for (index, point) in self.points.iter().enumerate() {
+        for point in self.points.iter() {
+            inner_buffer.write_u8(1)?;
             SerializePacket::serialize(point, &mut inner_buffer)?;
-            inner_buffer.write_u8((index < len - 1) as u8)?;
         }
+        inner_buffer.write_u8(0)?;
 
         buffer.write_u32::<LittleEndian>(inner_buffer.len() as u32)?;
         buffer.write_all(&inner_buffer)?;
@@ -153,7 +152,7 @@ pub fn send_points_of_interest(game_server: &GameServer) -> Result<Vec<Vec<u8>>,
     for (guid, _) in game_server.read_zones().iter() {
         points.push(
             PointOfInterest {
-                id: guid as u32,
+                id: guid,
                 name_id: 0,
                 location_id: 0,
                 teleport_pos: Pos {
