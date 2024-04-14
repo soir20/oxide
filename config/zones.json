@@ -37,6 +37,24 @@
     "doors": []
   },
   {
+    "comment": "Umbara",
+    "guid": 19,
+    "name": "Combat_Umbara_South_01",
+    "hide_ui": false,
+    "direction_indicator": true,
+    "spawn_pos_x": 69.0,
+    "spawn_pos_y": 1.9294561,
+    "spawn_pos_z": 38.0,
+    "spawn_pos_w": 1.0,
+    "spawn_rot_x": 0.5,
+    "spawn_rot_y": 0.0,
+    "spawn_rot_z": 0.85,
+    "spawn_rot_w": 0.0,
+    "door_interact_radius": 0.0,
+    "door_auto_interact_radius": 0.0,
+    "doors": []
+  },
+  {
     "guid": 24,
     "name": "JediTemple",
     "hide_ui": false,
