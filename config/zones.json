@@ -55,6 +55,24 @@
     "doors": []
   },
   {
+    "comment": "Carlac",
+    "guid": 34,
+    "name": "Combat_Carlac_01",
+    "hide_ui": false,
+    "direction_indicator": true,
+    "spawn_pos_x": 37.0,
+    "spawn_pos_y": 0.954847,
+    "spawn_pos_z": 29.0,
+    "spawn_pos_w": 1.0,
+    "spawn_rot_x": 0.67,
+    "spawn_rot_y": 0.0,
+    "spawn_rot_z": 0.75,
+    "spawn_rot_w": 0.0,
+    "door_interact_radius": 0.0,
+    "door_auto_interact_radius": 0.0,
+    "doors": []
+  },
+  {
     "guid": 24,
     "name": "JediTemple",
     "hide_ui": false,
