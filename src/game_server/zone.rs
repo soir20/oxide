@@ -13,7 +13,7 @@ use crate::game_server::command::SelectPlayer;
 use crate::game_server::game_packet::{GamePacket, OpCode, Pos};
 use crate::game_server::guid::{Guid, GuidTable, GuidTableReadHandle, GuidTableWriteHandle};
 use crate::game_server::login::{ClientBeginZoning, ZoneDetails};
-use crate::game_server::player_update_packet::{AddNpc, BaseAttachmentGroup, Icon, NpcRelevance, SingleNpcRelevance, WeaponAnimation};
+use crate::game_server::player_update_packet::{AddNotifications, AddNpc, BaseAttachmentGroup, Icon, NotificationData, NpcRelevance, SingleNotification, SingleNpcRelevance, WeaponAnimation};
 use crate::game_server::tunnel::TunneledPacket;
 use crate::game_server::ui::ExecuteScriptWithParams;
 use crate::game_server::update_position::UpdatePlayerPosition;
@@ -37,6 +37,25 @@ pub struct Door {
 }
 
 #[derive(Deserialize)]
+pub struct Transport {
+    model_id: Option<u32>,
+    name_id: Option<u32>,
+    terrain_object_id: Option<u32>,
+    pos_x: f32,
+    pos_y: f32,
+    pos_z: f32,
+    pos_w: f32,
+    rot_x: f32,
+    rot_y: f32,
+    rot_z: f32,
+    rot_w: f32,
+    cursor: u8,
+    show_name: bool,
+    large_icon: bool,
+    show_hover_description: bool
+}
+
+#[derive(Deserialize)]
 struct ZoneConfig {
     guid: u32,
     name: String,
@@ -52,12 +71,14 @@ struct ZoneConfig {
     spawn_rot_w: f32,
     spawn_sky: Option<String>,
     doors: Vec<Door>,
-    door_interact_radius: f32,
-    door_auto_interact_radius: f32
+    interact_radius: f32,
+    door_auto_interact_radius: f32,
+    transports: Vec<Transport>
 }
 
 pub enum CharacterType {
     Door(Door),
+    Transport(Transport),
     Player
 }
 
@@ -82,24 +103,45 @@ impl Character {
     pub fn to_packets(&self) -> Result<Vec<Vec<u8>>, SerializePacketError> {
         let packets = match &self.character_type {
             CharacterType::Door(door) => {
-                vec![
+                let mut packets = vec![
                     GamePacket::serialize(&TunneledPacket {
                         unknown1: true,
                         inner: Self::door_packet(self, door),
+                    })?
+                ];
+                packets.append(&mut enable_interaction(self.guid, 55)?);
+                packets
+            },
+            CharacterType::Transport(transport) => {
+                let mut packets = vec![
+                    GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: Self::transport_packet(self, transport),
                     })?,
                     GamePacket::serialize(&TunneledPacket {
                         unknown1: true,
-                        inner: NpcRelevance {
-                            new_states: vec![
-                                SingleNpcRelevance {
+                        inner: AddNotifications {
+                            notifications: vec![
+                                SingleNotification {
                                     guid: self.guid,
-                                    cursor: Some(55),
-                                    unknown1: false,
+                                    unknown1: 0,
+                                    notification: Some(NotificationData {
+                                        unknown1: 0,
+                                        icon_id: if transport.large_icon { 46 } else { 37 },
+                                        unknown3: 0,
+                                        name_id: 0,
+                                        unknown4: 0,
+                                        hide_icon: false,
+                                        unknown6: 0,
+                                    }),
+                                    unknown2: false,
                                 }
                             ],
                         },
                     })?
-                ]
+                ];
+                packets.append(&mut enable_interaction(self.guid, transport.cursor)?);
+                packets
             },
             _ => Vec::new()
         };
@@ -154,7 +196,7 @@ impl Character {
             unknown34: false,
             show_health: false,
             unknown36: false,
-            enable_move_to_interact: false,
+            ignore_rotation: false,
             base_attachment_group: BaseAttachmentGroup {
                 unknown1: 0,
                 unknown2: "".to_string(),
@@ -195,6 +237,110 @@ impl Character {
             override_terrain_model: false,
             hover_glow: 0,
             hover_description: 0,
+            fly_over_effect: 0,
+            unknown65: 8,
+            unknown66: 0,
+            unknown67: 3442,
+            disable_move_to_interact: false,
+            unknown69: 0.0,
+            unknown70: 0.0,
+            unknown71: 0,
+            icon_id: Icon::None,
+        }
+    }
+
+    fn transport_packet(character: &Character, transport: &Transport) -> AddNpc {
+        AddNpc {
+            guid: character.guid,
+            name_id: transport.name_id.unwrap_or(0),
+            model_id: transport.model_id.unwrap_or(0),
+            unknown3: false,
+            unknown4: 408679,
+            unknown5: 13951728,
+            unknown6: 1,
+            scale: 1.0,
+            pos: character.pos,
+            rot: character.rot,
+            unknown8: 1,
+            attachments: vec![],
+            is_terrain_object_noninteractable: 0,
+            unknown10: 1,
+            texture_name: "".to_string(),
+            tint_name: "".to_string(),
+            tint_id: 0,
+            unknown11: true,
+            offset_y: 0.0,
+            composite_effect: 0,
+            weapon_animation: WeaponAnimation::None,
+            name_override: "".to_string(),
+            hide_name: !transport.show_name,
+            name_offset_x: 0.0,
+            name_offset_y: 0.0,
+            name_offset_z: 0.0,
+            terrain_object_id: transport.terrain_object_id.unwrap_or(0),
+            invisible: false,
+            unknown20: 0.0,
+            unknown21: false,
+            interactable_size_pct: 100,
+            unknown23: -1,
+            unknown24: -1,
+            active_animation_slot: -1,
+            unknown26: false,
+            ignore_position: false,
+            sub_title_id: 0,
+            active_animation_slot2: 0,
+            head_model_id: 0,
+            unknown31: vec![],
+            disable_interact_popup: false,
+            unknown33: 0,
+            unknown34: false,
+            show_health: false,
+            unknown36: false,
+            ignore_rotation: false,
+            base_attachment_group: BaseAttachmentGroup {
+                unknown1: 0,
+                unknown2: "".to_string(),
+                unknown3: "".to_string(),
+                unknown4: 0,
+                unknown5: "".to_string(),
+            },
+            unknown39: Pos {
+                x: 0.0,
+                y: 0.0,
+                z: 0.0,
+                w: 0.0,
+            },
+            unknown40: 0,
+            unknown41: -1,
+            unknown42: 0,
+            collision: true,
+            unknown44: 0,
+            npc_type: 2,
+            unknown46: 0.0,
+            target: 0,
+            unknown50: vec![],
+            rail_id: 0,
+            rail_speed: 0.0,
+            rail_origin: Pos {
+                x: 0.0,
+                y: 0.0,
+                z: 0.0,
+                w: 0.0,
+            },
+            unknown54: 0,
+            rail_unknown1: 0.0,
+            rail_unknown2: 0.0,
+            rail_unknown3: 0.0,
+            attachment_group_unknown: "".to_string(),
+            unknown59: "".to_string(),
+            unknown60: "".to_string(),
+            override_terrain_model: false,
+            hover_glow: 0,
+            hover_description: if transport.show_hover_description {
+                transport.name_id.unwrap_or(0)
+            } else {
+                0
+            },
             fly_over_effect: 0,
             unknown65: 8,
             unknown66: 0,
@@ -345,8 +491,31 @@ impl From<ZoneConfig> for Zone {
                     },
                     state: 0,
                     character_type: CharacterType::Door(door),
-                    interact_radius: zone_config.door_interact_radius,
+                    interact_radius: zone_config.interact_radius,
                     auto_interact_radius: zone_config.door_auto_interact_radius,
+                });
+                guid += 1;
+            }
+            
+            for transport in zone_config.transports {
+                write_handle.insert(Character {
+                    guid,
+                    pos: Pos {
+                        x: transport.pos_x,
+                        y: transport.pos_y,
+                        z: transport.pos_z,
+                        w: transport.pos_w,
+                    },
+                    rot: Pos {
+                        x: transport.rot_x,
+                        y: transport.rot_y,
+                        z: transport.rot_z,
+                        w: transport.rot_w,
+                    },
+                    state: 0,
+                    character_type: CharacterType::Transport(transport),
+                    interact_radius: zone_config.interact_radius,
+                    auto_interact_radius: 0.0,
                 });
                 guid += 1;
             }
@@ -470,6 +639,9 @@ pub fn interact_with_character(request: SelectPlayer, game_server: &GameServer) 
                             teleport_within_zone(destination_pos, destination_rot)
                         }
                     },
+                    CharacterType::Transport(_) => {
+                        Ok(show_galaxy_map()?)
+                    },
                     _ => Ok(Vec::new())
                 }
 
@@ -578,6 +750,41 @@ fn prepare_init_zone_packets(destination: RwLockReadGuard<Zone>, destination_pos
     );
 
     Ok(packets)
+}
+
+fn enable_interaction(guid: u64, cursor: u8) -> Result<Vec<Vec<u8>>, SerializePacketError> {
+    Ok(
+        vec![
+            GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: NpcRelevance {
+                    new_states: vec![
+                        SingleNpcRelevance {
+                            guid,
+                            cursor: Some(cursor),
+                            unknown1: false,
+                        }
+                    ],
+                },
+            })?
+        ]
+    )
+}
+
+fn show_galaxy_map() -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+    Ok(
+        vec![
+            GamePacket::serialize(
+                &TunneledPacket {
+                    unknown1: false,
+                    inner: ExecuteScriptWithParams {
+                        script_name: "GalaxyMapWindow.show".to_string(),
+                        params: vec![],
+                    },
+                }
+            )?
+        ]
+    )
 }
 
 fn distance3(x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32) -> f32 {

@@ -14,9 +14,10 @@
     "spawn_rot_z": 1.5,
     "spawn_rot_w": 0.0,
     "spawn_sky": "Sky_SF_Geonosis_Atmosphere.xml",
-    "door_interact_radius": 0.0,
+    "interact_radius": 0.0,
     "door_auto_interact_radius": 0.0,
-    "doors": []
+    "doors": [],
+    "transports": []
   },
   {
     "comment": "Ryloth",
@@ -32,9 +33,10 @@
     "spawn_rot_y": 0.0,
     "spawn_rot_z": -0.67,
     "spawn_rot_w": 0.0,
-    "door_interact_radius": 0.0,
+    "interact_radius": 0.0,
     "door_auto_interact_radius": 0.0,
-    "doors": []
+    "doors": [],
+    "transports": []
   },
   {
     "comment": "Umbara",
@@ -50,9 +52,10 @@
     "spawn_rot_y": 0.0,
     "spawn_rot_z": 0.85,
     "spawn_rot_w": 0.0,
-    "door_interact_radius": 0.0,
+    "interact_radius": 0.0,
     "door_auto_interact_radius": 0.0,
-    "doors": []
+    "doors": [],
+    "transports": []
   },
   {
     "comment": "Carlac",
@@ -68,9 +71,10 @@
     "spawn_rot_y": 0.0,
     "spawn_rot_z": 0.75,
     "spawn_rot_w": 0.0,
-    "door_interact_radius": 0.0,
+    "interact_radius": 0.0,
     "door_auto_interact_radius": 0.0,
-    "doors": []
+    "doors": [],
+    "transports": []
   },
   {
     "comment": "Felucia",
@@ -86,11 +90,13 @@
     "spawn_rot_y": 0.0,
     "spawn_rot_z": 1.0,
     "spawn_rot_w": 0.0,
-    "door_interact_radius": 0.0,
+    "interact_radius": 0.0,
     "door_auto_interact_radius": 0.0,
-    "doors": []
+    "doors": [],
+    "transports": []
   },
   {
+    "comment": "Coruscant",
     "guid": 24,
     "name": "JediTemple",
     "hide_ui": false,
@@ -103,7 +109,7 @@
     "spawn_rot_y": 0.0,
     "spawn_rot_z": 0.0,
     "spawn_rot_w": 0.0,
-    "door_interact_radius": 4.0,
+    "interact_radius": 4.0,
     "door_auto_interact_radius": 1.5,
     "doors": [
       {
@@ -428,6 +434,24 @@
         "destination_rot_z": 0.0,
         "destination_rot_w": 0.0
       }
+    ],
+    "transports": [
+      {
+        "model_id": 1207,
+        "name_id": 19237,
+        "pos_x": 72.97756,
+        "pos_y": 10.049025,
+        "pos_z": -181.1351,
+        "pos_w": 1.0,
+        "rot_x": 1.0,
+        "rot_y": 0.0,
+        "rot_z": 0.0,
+        "rot_w": 0.0,
+        "cursor": 53,
+        "show_name": true,
+        "large_icon": false,
+        "show_hover_description": false
+      }
     ]
   },
   {
@@ -443,7 +467,7 @@
     "spawn_rot_y": 0.0,
     "spawn_rot_z": 1.5,
     "spawn_rot_w": 0.0,
-    "door_interact_radius": 4.0,
+    "interact_radius": 4.0,
     "door_auto_interact_radius": 1.5,
     "doors": [
       {
@@ -480,6 +504,7 @@
         "destination_rot_w": 0.0,
         "destination_zone": 24
       }
-    ]
+    ],
+    "transports": []
   }
 ]
