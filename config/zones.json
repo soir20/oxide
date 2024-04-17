@@ -449,6 +449,7 @@
         "rot_w": 0.0,
         "cursor": 53,
         "show_name": true,
+        "show_icon": true,
         "large_icon": false,
         "show_hover_description": false
       }

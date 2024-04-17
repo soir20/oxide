@@ -51,6 +51,7 @@ pub struct Transport {
     rot_w: f32,
     cursor: u8,
     show_name: bool,
+    show_icon: bool,
     large_icon: bool,
     show_hover_description: bool
 }
@@ -131,7 +132,7 @@ impl Character {
                                         unknown3: 0,
                                         name_id: 0,
                                         unknown4: 0,
-                                        hide_icon: false,
+                                        hide_icon: !transport.show_icon,
                                         unknown6: 0,
                                     }),
                                     unknown2: false,
