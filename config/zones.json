@@ -14,7 +14,7 @@
     "spawn_rot_z": 1.5,
     "spawn_rot_w": 0.0,
     "spawn_sky": "Sky_SF_Geonosis_Atmosphere.xml",
-    "interact_radius": 4.0,
+    "interact_radius": 7.0,
     "door_auto_interact_radius": 0.0,
     "doors": [],
     "transports": [
@@ -52,7 +52,7 @@
     "spawn_rot_y": 0.0,
     "spawn_rot_z": -0.67,
     "spawn_rot_w": 0.0,
-    "interact_radius": 4.0,
+    "interact_radius": 7.0,
     "door_auto_interact_radius": 0.0,
     "doors": [],
     "transports": [
@@ -109,7 +109,7 @@
     "spawn_rot_y": 0.0,
     "spawn_rot_z": 0.85,
     "spawn_rot_w": 0.0,
-    "interact_radius": 4.0,
+    "interact_radius": 7.0,
     "door_auto_interact_radius": 0.0,
     "doors": [],
     "transports": [
@@ -189,7 +189,7 @@
     "spawn_rot_y": 0.0,
     "spawn_rot_z": 0.75,
     "spawn_rot_w": 0.0,
-    "interact_radius": 4.0,
+    "interact_radius": 7.0,
     "door_auto_interact_radius": 0.0,
     "doors": [],
     "transports": []
@@ -208,7 +208,7 @@
     "spawn_rot_y": 0.0,
     "spawn_rot_z": 1.0,
     "spawn_rot_w": 0.0,
-    "interact_radius": 4.0,
+    "interact_radius": 7.0,
     "door_auto_interact_radius": 0.0,
     "doors": [],
     "transports": []
@@ -227,7 +227,7 @@
     "spawn_rot_y": 0.0,
     "spawn_rot_z": 0.0,
     "spawn_rot_w": 0.0,
-    "interact_radius": 4.0,
+    "interact_radius": 7.0,
     "door_auto_interact_radius": 1.5,
     "doors": [
       {
@@ -587,7 +587,7 @@
     "spawn_rot_y": 0.0,
     "spawn_rot_z": 1.5,
     "spawn_rot_w": 0.0,
-    "interact_radius": 4.0,
+    "interact_radius": 7.0,
     "door_auto_interact_radius": 1.5,
     "doors": [
       {
