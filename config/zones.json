@@ -55,7 +55,44 @@
     "interact_radius": 4.0,
     "door_auto_interact_radius": 0.0,
     "doors": [],
-    "transports": []
+    "transports": [
+      {
+        "comment": "holo table",
+        "name_id": 32914,
+        "model_id": 352,
+        "pos_x": 593.89545,
+        "pos_y": 10.0,
+        "pos_z": 672.5175,
+        "pos_w": 1.0,
+        "rot_x": 0.0,
+        "rot_y": 0.0,
+        "rot_z": 0.0,
+        "rot_w": 0.0,
+        "cursor": 54,
+        "show_name": false,
+        "show_icon": false,
+        "large_icon": false,
+        "show_hover_description": false
+      },
+      {
+        "comment": "fighter",
+        "name_id": 32914,
+        "terrain_object_id": 1332791341,
+        "pos_x": 555.7068,
+        "pos_y": 10.99902,
+        "pos_z": 649.7574,
+        "pos_w": 1.0,
+        "rot_x": 0.0,
+        "rot_y": 0.0,
+        "rot_z": 0.0,
+        "rot_w": 0.0,
+        "cursor": 0,
+        "show_name": false,
+        "show_icon": true,
+        "large_icon": false,
+        "show_hover_description": true
+      }
+    ]
   },
   {
     "comment": "Umbara",
