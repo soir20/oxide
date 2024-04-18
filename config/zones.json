@@ -14,10 +14,29 @@
     "spawn_rot_z": 1.5,
     "spawn_rot_w": 0.0,
     "spawn_sky": "Sky_SF_Geonosis_Atmosphere.xml",
-    "interact_radius": 0.0,
+    "interact_radius": 4.0,
     "door_auto_interact_radius": 0.0,
     "doors": [],
-    "transports": []
+    "transports": [
+      {
+        "comment": "yellow terminal",
+        "name_id": 32914,
+        "terrain_object_id": 1304118581,
+        "pos_x": 180.0,
+        "pos_y": 10.0,
+        "pos_z": 147.7432,
+        "pos_w": 1.0,
+        "rot_x": 1.0,
+        "rot_y": 0.0,
+        "rot_z": 0.0,
+        "rot_w": 0.0,
+        "cursor": 54,
+        "show_name": false,
+        "show_icon": false,
+        "large_icon": false,
+        "show_hover_description": true
+      }
+    ]
   },
   {
     "comment": "Ryloth",
@@ -33,7 +52,7 @@
     "spawn_rot_y": 0.0,
     "spawn_rot_z": -0.67,
     "spawn_rot_w": 0.0,
-    "interact_radius": 0.0,
+    "interact_radius": 4.0,
     "door_auto_interact_radius": 0.0,
     "doors": [],
     "transports": []
@@ -52,7 +71,7 @@
     "spawn_rot_y": 0.0,
     "spawn_rot_z": 0.85,
     "spawn_rot_w": 0.0,
-    "interact_radius": 0.0,
+    "interact_radius": 4.0,
     "door_auto_interact_radius": 0.0,
     "doors": [],
     "transports": []
@@ -71,7 +90,7 @@
     "spawn_rot_y": 0.0,
     "spawn_rot_z": 0.75,
     "spawn_rot_w": 0.0,
-    "interact_radius": 0.0,
+    "interact_radius": 4.0,
     "door_auto_interact_radius": 0.0,
     "doors": [],
     "transports": []
@@ -90,7 +109,7 @@
     "spawn_rot_y": 0.0,
     "spawn_rot_z": 1.0,
     "spawn_rot_w": 0.0,
-    "interact_radius": 0.0,
+    "interact_radius": 4.0,
     "door_auto_interact_radius": 0.0,
     "doors": [],
     "transports": []
@@ -437,6 +456,7 @@
     ],
     "transports": [
       {
+        "comment": "Breaker",
         "model_id": 1207,
         "name_id": 19237,
         "pos_x": 72.97756,

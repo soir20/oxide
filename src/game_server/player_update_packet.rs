@@ -422,7 +422,7 @@ pub struct AddNpc {
     pub rot: Pos,
     pub unknown8: u32,
     pub attachments: Vec<Attachment>,
-    pub is_terrain_object_noninteractable: u32,
+    pub is_not_targetable: u32,
     pub unknown10: u32,
     pub texture_name: String,
     pub tint_name: String,
@@ -520,7 +520,7 @@ pub fn make_test_npc() -> AddNpc {
         },
         unknown8: 0,
         attachments: vec![],
-        is_terrain_object_noninteractable: 0, // Terrain objects only seem interactable
+        is_not_targetable: 0, // Terrain objects only seem interactable
                                               // when this == 0. Otherwise, click to move
                                               // targets a spot behind the object. Likely some
                                               // kind of index in the collision or mesh data.
