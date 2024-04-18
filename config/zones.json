@@ -248,7 +248,26 @@
     "interact_radius": 7.0,
     "door_auto_interact_radius": 0.0,
     "doors": [],
-    "transports": []
+    "transports": [
+      {
+        "comment": "holo table",
+        "name_id": 32914,
+        "model_id": 1603,
+        "pos_x": 495.00208,
+        "pos_y": 0.9538704,
+        "pos_z": 278.28928,
+        "pos_w": 1.0,
+        "rot_x": 0.0,
+        "rot_y": 0.0,
+        "rot_z": 1.0,
+        "rot_w": 0.0,
+        "cursor": 54,
+        "show_name": false,
+        "show_icon": false,
+        "large_icon": false,
+        "show_hover_description": false
+      }
+    ]
   },
   {
     "comment": "Coruscant",
