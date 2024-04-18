@@ -53,7 +53,6 @@ pub struct Transport {
     name_offset_x: Option<f32>,
     name_offset_y: Option<f32>,
     name_offset_z: Option<f32>,
-    interact_radius: Option<f32>,
     cursor: u8,
     show_name: bool,
     show_icon: bool,
@@ -519,8 +518,8 @@ impl From<ZoneConfig> for Zone {
                         w: transport.rot_w,
                     },
                     state: 0,
-                    interact_radius: transport.interact_radius.unwrap_or(zone_config.interact_radius),
                     character_type: CharacterType::Transport(transport),
+                    interact_radius: zone_config.interact_radius,
                     auto_interact_radius: 0.0,
                 });
                 guid += 1;

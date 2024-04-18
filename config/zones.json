@@ -166,7 +166,6 @@
         "name_offset_x": 3.0,
         "name_offset_y": 0.0,
         "name_offset_z": 5.0,
-        "interact_radius": 10.0,
         "cursor": 54,
         "show_name": false,
         "show_icon": true,
