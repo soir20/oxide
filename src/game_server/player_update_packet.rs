@@ -455,7 +455,7 @@ pub struct AddNpc {
     pub unknown34: bool,
     pub show_health: bool,
     pub unknown36: bool,
-    pub ignore_rotation: bool,
+    pub ignore_rotation_and_shadow: bool,
     pub base_attachment_group: BaseAttachmentGroup,
     pub unknown39: Pos,
     pub unknown40: u32,
@@ -556,7 +556,7 @@ pub fn make_test_npc() -> AddNpc {
         unknown34: false,
         show_health: false,
         unknown36: false,
-        ignore_rotation: false,
+        ignore_rotation_and_shadow: false,
         base_attachment_group: BaseAttachmentGroup {
             unknown1: 0,
             unknown2: "".to_string(),

@@ -197,7 +197,7 @@ impl Character {
             unknown34: false,
             show_health: false,
             unknown36: false,
-            ignore_rotation: false,
+            ignore_rotation_and_shadow: false,
             base_attachment_group: BaseAttachmentGroup {
                 unknown1: 0,
                 unknown2: "".to_string(),
@@ -297,7 +297,7 @@ impl Character {
             unknown34: false,
             show_health: false,
             unknown36: false,
-            ignore_rotation: false,
+            ignore_rotation_and_shadow: false,
             base_attachment_group: BaseAttachmentGroup {
                 unknown1: 0,
                 unknown2: "".to_string(),
