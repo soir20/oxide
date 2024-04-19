@@ -15,7 +15,7 @@ pub struct ItemClassData {
 }
 
 #[derive(SerializePacket)]
-pub struct ProfileUnknown8 {}
+pub struct ProfileUnknown7 {}
 
 pub enum Ability {
     Empty,
@@ -141,22 +141,55 @@ pub struct Profile {
     unknown4: u32,
     unknown5: bool,
     unknown6: u32,
-    items: Vec<Item>,
+    unknown7: Vec<ProfileUnknown7>,
     level: u32,
     xp_in_level: u32,
     total_xp: u32,
-    unknown7: u32,
-    unknown8: Vec<ProfileUnknown8>,
+    unknown8: u32,
+    items: Vec<Item>,
     unknown9: u32,
     abilities: Vec<Ability>,
     unknown10: LengthlessVec<ProfileUnknown10>
 }
 
-#[derive(SerializePacket)]
+#[derive(Copy, Clone, Debug)]
+pub enum ItemCategory {
+    Head = 1,
+    Hands = 2,
+    Body = 3,
+    Feet = 4,
+    Shoulders = 5,
+    PrimaryWeapon = 7,
+    SecondaryWeapon = 8,
+    PrimarySaberShape = 10,
+    PrimarySaberColor = 11,
+    SecondarySaberShape = 12,
+    SecondarySaberColor = 13,
+    CustomHead = 15,
+    CustomHair = 16,
+    CustomModel = 17,
+    CustomBeard = 18
+}
+
+impl SerializePacket for ItemCategory {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        buffer.write_u32::<LittleEndian>(*self as u32)?;
+        Ok(())
+    }
+}
+
 pub struct Item {
-    unknown1: u32,
+    category: ItemCategory,
     guid: u32,
-    category: u32,
+}
+
+impl SerializePacket for Item {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        self.category.serialize(buffer)?;
+        buffer.write_u32::<LittleEndian>(self.guid)?;
+        self.category.serialize(buffer)?;
+        Ok(())
+    }
 }
 
 #[derive(SerializePacket)]
@@ -390,12 +423,73 @@ pub fn make_test_player(guid: u64) -> Player {
                     unknown4: 1931819892,
                     unknown5: false,
                     unknown6: 0,
-                    items: vec![],
+                    unknown7: vec![],
                     level: 1,
                     xp_in_level: 0,
                     total_xp: 0,
-                    unknown7: 0,
-                    unknown8: vec![],
+                    unknown8: 0,
+                    items: vec![
+                        Item {
+                            category: ItemCategory::Head,
+                            guid: 0,
+                        },
+                        Item {
+                            category: ItemCategory::Hands,
+                            guid: 0,
+                        },
+                        Item {
+                            category: ItemCategory::Body,
+                            guid: 5,
+                        },
+                        Item {
+                            category: ItemCategory::Feet,
+                            guid: 0,
+                        },
+                        Item {
+                            category: ItemCategory::Shoulders,
+                            guid: 0,
+                        },
+                        Item {
+                            category: ItemCategory::PrimaryWeapon,
+                            guid: 0,
+                        },
+                        Item {
+                            category: ItemCategory::SecondaryWeapon,
+                            guid: 0,
+                        },
+                        Item {
+                            category: ItemCategory::PrimarySaberShape,
+                            guid: 0,
+                        },
+                        Item {
+                            category: ItemCategory::PrimarySaberColor,
+                            guid: 0,
+                        },
+                        Item {
+                            category: ItemCategory::SecondarySaberShape,
+                            guid: 0,
+                        },
+                        Item {
+                            category: ItemCategory::SecondarySaberColor,
+                            guid: 0,
+                        },
+                        Item {
+                            category: ItemCategory::CustomHead,
+                            guid: 0,
+                        },
+                        Item {
+                            category: ItemCategory::CustomHair,
+                            guid: 0,
+                        },
+                        Item {
+                            category: ItemCategory::CustomModel,
+                            guid: 0,
+                        },
+                        Item {
+                            category: ItemCategory::CustomBeard,
+                            guid: 0,
+                        },
+                    ],
                     unknown9: 0,
                     abilities: vec![
                         Ability::Empty,

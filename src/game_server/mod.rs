@@ -10,6 +10,7 @@ use crate::game_server::client_update_packet::{Health, Power, PreloadCharactersD
 use crate::game_server::command::process_command;
 use crate::game_server::game_packet::{GamePacket, OpCode};
 use crate::game_server::guid::{Guid, GuidTable, GuidTableReadHandle, GuidTableWriteHandle};
+use crate::game_server::item::make_item_definitions;
 use crate::game_server::login::{DeploymentEnv, GameSettings, LoginReply, send_points_of_interest, WelcomeScreen, ZoneDetailsDone};
 use crate::game_server::player_data::make_test_player;
 use crate::game_server::player_update_packet::make_test_npc;
@@ -31,6 +32,7 @@ mod guid;
 mod update_position;
 mod ui;
 mod combat_update_packet;
+mod item;
 
 #[derive(Debug)]
 pub enum Broadcast {
@@ -122,6 +124,12 @@ impl GameServer {
                         },
                     };
                     packets.push(GamePacket::serialize(&settings)?);
+
+                    let item_defs = TunneledPacket {
+                        unknown1: true,
+                        inner: make_item_definitions()
+                    };
+                    packets.push(GamePacket::serialize(&item_defs)?);
 
                     let player = TunneledPacket {
                         unknown1: true,

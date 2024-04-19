@@ -16,6 +16,8 @@ pub enum PlayerUpdateOpCode {
     LootEvent                       = 0x1d,
     SlotCompositeEffectOverride     = 0x1f,
     Freeze                          = 0x20,
+    ItemDefinitionsRequest          = 0x22,
+    ItemDefinitionsReply            = 0x25,
     SetSpawnerActivationEffect      = 0x2f,
     ReplaceBaseModel                = 0x31,
     SetCollision                    = 0x32,
@@ -182,9 +184,9 @@ impl GamePacket for SeekTarget {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct ReplaceBaseModel {
-    guid: u64,
-    model: u32,
-    composite_effect: u32,
+    pub guid: u64,
+    pub model: u32,
+    pub composite_effect: u32,
 }
 
 impl GamePacket for ReplaceBaseModel {
