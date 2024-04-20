@@ -146,7 +146,7 @@ pub struct Profile {
     xp_in_level: u32,
     total_xp: u32,
     unknown8: u32,
-    items: Vec<Item>,
+    items: Vec<EquippedItem>,
     unknown9: u32,
     abilities: Vec<Ability>,
     unknown10: LengthlessVec<ProfileUnknown10>
@@ -178,12 +178,12 @@ impl SerializePacket for ItemCategory {
     }
 }
 
-pub struct Item {
+pub struct EquippedItem {
     category: ItemCategory,
     guid: u32,
 }
 
-impl SerializePacket for Item {
+impl SerializePacket for EquippedItem {
     fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
         self.category.serialize(buffer)?;
         buffer.write_u32::<LittleEndian>(self.guid)?;
@@ -193,10 +193,45 @@ impl SerializePacket for Item {
 }
 
 #[derive(SerializePacket)]
-pub struct SocialInfo {}
+pub struct Unknown {
+    pub unknown1: u32,
+    pub unknown2: u32
+}
 
 #[derive(SerializePacket)]
-pub struct House {}
+pub struct SocialInfo {}
+
+enum MarketData {
+    None,
+    Some(u64, u32, u32)
+}
+
+impl SerializePacket for MarketData {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        if let MarketData::Some(expiration, upsells, bundle_id) = &self {
+            buffer.write_u8(true as u8)?;
+            buffer.write_u64::<LittleEndian>(*expiration)?;
+            buffer.write_u32::<LittleEndian>(*upsells)?;
+            buffer.write_u32::<LittleEndian>(*bundle_id)?;
+        } else {
+            buffer.write_u8(false as u8)?;
+        }
+        Ok(())
+    }
+}
+
+#[derive(SerializePacket)]
+pub struct InventoryItem {
+    definition_id: u32,
+    tint: u32,
+    guid: u32,
+    quantity: u32,
+    num_consumed: u32,
+    last_use_time: u32,
+    unknown: f32,
+    market_data: MarketData,
+    unknown2: bool
+}
 
 #[derive(SerializePacket)]
 pub struct Quest {}
@@ -303,9 +338,9 @@ pub struct PlayerData {
     pub equipped_vehicles: Vec<EquippedVehicle>,
     pub profiles: Vec<Profile>,
     pub active_profile: u32,
-    pub items: Vec<Item>,
+    pub unknown: Vec<Unknown>,
     pub social: Vec<SocialInfo>,
-    pub houses: Vec<House>,
+    pub inventory: Vec<InventoryItem>,
     pub gender: u32,
     pub quests: Vec<Quest>,
     pub quests_unknown1: u32,
@@ -429,63 +464,63 @@ pub fn make_test_player(guid: u64) -> Player {
                     total_xp: 0,
                     unknown8: 0,
                     items: vec![
-                        Item {
+                        EquippedItem {
                             category: ItemCategory::Head,
                             guid: 0,
                         },
-                        Item {
+                        EquippedItem {
                             category: ItemCategory::Hands,
                             guid: 0,
                         },
-                        Item {
+                        EquippedItem {
                             category: ItemCategory::Body,
                             guid: 5,
                         },
-                        Item {
+                        EquippedItem {
                             category: ItemCategory::Feet,
                             guid: 0,
                         },
-                        Item {
+                        EquippedItem {
                             category: ItemCategory::Shoulders,
                             guid: 0,
                         },
-                        Item {
+                        EquippedItem {
                             category: ItemCategory::PrimaryWeapon,
                             guid: 0,
                         },
-                        Item {
+                        EquippedItem {
                             category: ItemCategory::SecondaryWeapon,
                             guid: 0,
                         },
-                        Item {
+                        EquippedItem {
                             category: ItemCategory::PrimarySaberShape,
                             guid: 0,
                         },
-                        Item {
+                        EquippedItem {
                             category: ItemCategory::PrimarySaberColor,
                             guid: 0,
                         },
-                        Item {
+                        EquippedItem {
                             category: ItemCategory::SecondarySaberShape,
                             guid: 0,
                         },
-                        Item {
+                        EquippedItem {
                             category: ItemCategory::SecondarySaberColor,
                             guid: 0,
                         },
-                        Item {
+                        EquippedItem {
                             category: ItemCategory::CustomHead,
                             guid: 0,
                         },
-                        Item {
+                        EquippedItem {
                             category: ItemCategory::CustomHair,
                             guid: 0,
                         },
-                        Item {
+                        EquippedItem {
                             category: ItemCategory::CustomModel,
                             guid: 0,
                         },
-                        Item {
+                        EquippedItem {
                             category: ItemCategory::CustomBeard,
                             guid: 0,
                         },
@@ -507,9 +542,21 @@ pub fn make_test_player(guid: u64) -> Player {
                 }
             ],
             active_profile: 1,
-            items: vec![],
+            unknown: vec![],
             social: vec![],
-            houses: vec![],
+            inventory: vec![
+                InventoryItem {
+                    definition_id: 5,
+                    tint: 0,
+                    guid: 5,
+                    quantity: 1,
+                    num_consumed: 0,
+                    last_use_time: 0,
+                    unknown: 0.0,
+                    market_data: MarketData::None,
+                    unknown2: false,
+                }
+            ],
             gender: 1,
             quests: vec![],
             quests_unknown1: 241,
