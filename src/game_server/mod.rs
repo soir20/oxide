@@ -12,7 +12,7 @@ use crate::game_server::game_packet::{GamePacket, OpCode};
 use crate::game_server::guid::{Guid, GuidTable, GuidTableReadHandle, GuidTableWriteHandle};
 use crate::game_server::item::make_item_definitions;
 use crate::game_server::login::{DeploymentEnv, GameSettings, LoginReply, send_points_of_interest, WelcomeScreen, ZoneDetailsDone};
-use crate::game_server::player_data::make_test_player;
+use crate::game_server::player_data::{make_test_gear, make_test_player};
 use crate::game_server::player_update_packet::make_test_npc;
 use crate::game_server::time::make_game_time_sync;
 use crate::game_server::tunnel::TunneledPacket;
@@ -254,6 +254,8 @@ impl GameServer {
                         },
                     };
                     packets.push(GamePacket::serialize(&stats)?);
+
+                    packets.append(&mut make_test_gear(sender)?);
 
                     let welcome_screen = TunneledPacket {
                         unknown1: true,

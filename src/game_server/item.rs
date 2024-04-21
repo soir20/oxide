@@ -4,6 +4,32 @@ use packet_serialize::{SerializePacket, SerializePacketError};
 use crate::game_server::game_packet::GamePacket;
 use crate::game_server::player_update_packet::PlayerUpdateOpCode;
 
+#[derive(Copy, Clone, Debug)]
+pub enum EquipmentSlot {
+    Head = 1,
+    Hands = 2,
+    Body = 3,
+    Feet = 4,
+    Shoulders = 5,
+    PrimaryWeapon = 7,
+    SecondaryWeapon = 8,
+    PrimarySaberShape = 10,
+    PrimarySaberColor = 11,
+    SecondarySaberShape = 12,
+    SecondarySaberColor = 13,
+    CustomHead = 15,
+    CustomHair = 16,
+    CustomModel = 17,
+    CustomBeard = 18
+}
+
+impl SerializePacket for EquipmentSlot {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        buffer.write_u32::<LittleEndian>(*self as u32)?;
+        Ok(())
+    }
+}
+
 #[derive(SerializePacket)]
 pub struct Unknown41 {}
 

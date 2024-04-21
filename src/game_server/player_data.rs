@@ -1,7 +1,11 @@
 use std::io::Write;
 use byteorder::{LittleEndian, WriteBytesExt};
 use packet_serialize::{LengthlessVec, SerializePacket, SerializePacketError};
+use crate::game_server::client_update_packet::EquipItem;
 use crate::game_server::game_packet::{Effect, GamePacket, ImageId, OpCode, Pos, StringId};
+use crate::game_server::item::EquipmentSlot;
+use crate::game_server::player_update_packet::{Wield, WieldType};
+use crate::game_server::tunnel::TunneledPacket;
 use crate::game_server::zone::{Character, CharacterType};
 
 #[derive(SerializePacket)]
@@ -152,34 +156,8 @@ pub struct Profile {
     unknown10: LengthlessVec<ProfileUnknown10>
 }
 
-#[derive(Copy, Clone, Debug)]
-pub enum ItemCategory {
-    Head = 1,
-    Hands = 2,
-    Body = 3,
-    Feet = 4,
-    Shoulders = 5,
-    PrimaryWeapon = 7,
-    SecondaryWeapon = 8,
-    PrimarySaberShape = 10,
-    PrimarySaberColor = 11,
-    SecondarySaberShape = 12,
-    SecondarySaberColor = 13,
-    CustomHead = 15,
-    CustomHair = 16,
-    CustomModel = 17,
-    CustomBeard = 18
-}
-
-impl SerializePacket for ItemCategory {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        buffer.write_u32::<LittleEndian>(*self as u32)?;
-        Ok(())
-    }
-}
-
 pub struct EquippedItem {
-    category: ItemCategory,
+    category: EquipmentSlot,
     guid: u32,
 }
 
@@ -465,63 +443,63 @@ pub fn make_test_player(guid: u64) -> Player {
                     unknown8: 0,
                     items: vec![
                         EquippedItem {
-                            category: ItemCategory::Head,
+                            category: EquipmentSlot::Head,
                             guid: 0,
                         },
                         EquippedItem {
-                            category: ItemCategory::Hands,
+                            category: EquipmentSlot::Hands,
                             guid: 0,
                         },
                         EquippedItem {
-                            category: ItemCategory::Body,
+                            category: EquipmentSlot::Body,
                             guid: 5,
                         },
                         EquippedItem {
-                            category: ItemCategory::Feet,
+                            category: EquipmentSlot::Feet,
                             guid: 0,
                         },
                         EquippedItem {
-                            category: ItemCategory::Shoulders,
+                            category: EquipmentSlot::Shoulders,
                             guid: 0,
                         },
                         EquippedItem {
-                            category: ItemCategory::PrimaryWeapon,
+                            category: EquipmentSlot::PrimaryWeapon,
                             guid: 0,
                         },
                         EquippedItem {
-                            category: ItemCategory::SecondaryWeapon,
+                            category: EquipmentSlot::SecondaryWeapon,
                             guid: 0,
                         },
                         EquippedItem {
-                            category: ItemCategory::PrimarySaberShape,
+                            category: EquipmentSlot::PrimarySaberShape,
                             guid: 0,
                         },
                         EquippedItem {
-                            category: ItemCategory::PrimarySaberColor,
+                            category: EquipmentSlot::PrimarySaberColor,
                             guid: 0,
                         },
                         EquippedItem {
-                            category: ItemCategory::SecondarySaberShape,
+                            category: EquipmentSlot::SecondarySaberShape,
                             guid: 0,
                         },
                         EquippedItem {
-                            category: ItemCategory::SecondarySaberColor,
+                            category: EquipmentSlot::SecondarySaberColor,
                             guid: 0,
                         },
                         EquippedItem {
-                            category: ItemCategory::CustomHead,
+                            category: EquipmentSlot::CustomHead,
                             guid: 0,
                         },
                         EquippedItem {
-                            category: ItemCategory::CustomHair,
+                            category: EquipmentSlot::CustomHair,
                             guid: 0,
                         },
                         EquippedItem {
-                            category: ItemCategory::CustomModel,
+                            category: EquipmentSlot::CustomModel,
                             guid: 0,
                         },
                         EquippedItem {
-                            category: ItemCategory::CustomBeard,
+                            category: EquipmentSlot::CustomBeard,
                             guid: 0,
                         },
                     ],
@@ -678,4 +656,93 @@ impl From<PlayerData> for Character {
             auto_interact_radius: 0.0,
         }
     }
+}
+
+pub fn make_test_gear(guid: u64) -> Result<Vec<Vec<u8>>, SerializePacketError> {
+    Ok(
+        vec![
+            GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: EquipItem {
+                    item_guid: 0,
+                    model_name: "Wear_Human_Male_Head_OfficerCap.adr".to_string(),
+                    texture_alias: "OfficerWhite".to_string(),
+                    tint_alias: "".to_string(),
+                    tint: 0,
+                    composite_effect: 0,
+                    slot: EquipmentSlot::Head,
+                    profile_id: 1,
+                    item_def_class: 0,
+                    unknown: true
+                },
+            })?,
+            GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: EquipItem {
+                    item_guid: 0,
+                    model_name: "Wear_Human_Male_Hands_MandalorianSecretServiceGloves.adr".to_string(),
+                    texture_alias: "SecretService".to_string(),
+                    tint_alias: "".to_string(),
+                    tint: 0,
+                    composite_effect: 0,
+                    slot: EquipmentSlot::Hands,
+                    profile_id: 1,
+                    item_def_class: 0,
+                    unknown: true
+                },
+            })?,
+            GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: EquipItem {
+                    item_guid: 0,
+                    model_name: "Wear_Human_<gender>_Body_PulsingCrystalSuit.adr".to_string(),
+                    texture_alias: "PulsingCrystalBlue".to_string(),
+                    tint_alias: "".to_string(),
+                    tint: 0,
+                    composite_effect: 0,
+                    slot: EquipmentSlot::Body,
+                    profile_id: 1,
+                    item_def_class: 0,
+                    unknown: true
+                },
+            })?,
+            GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: EquipItem {
+                    item_guid: 0,
+                    model_name: "Wear_Human_Male_Feet_CloneBoots.adr".to_string(),
+                    texture_alias: "ARCFives".to_string(),
+                    tint_alias: "".to_string(),
+                    tint: 0,
+                    composite_effect: 0,
+                    slot: EquipmentSlot::Feet,
+                    profile_id: 1,
+                    item_def_class: 0,
+                    unknown: true
+                },
+            })?,
+            GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: EquipItem {
+                    item_guid: 0,
+                    model_name: "Wield_Pistol_DC17Chrome.adr".to_string(),
+                    texture_alias: "Vigilance".to_string(),
+                    tint_alias: "".to_string(),
+                    tint: 0,
+                    composite_effect: 0,
+                    slot: EquipmentSlot::PrimaryWeapon,
+                    profile_id: 1,
+                    item_def_class: 0,
+                    unknown: true
+                },
+            })?,
+            GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: WieldType {
+                    guid,
+                    wield_type: Wield::SinglePistol,
+                },
+            })?,
+        ]
+    )
 }

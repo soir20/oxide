@@ -236,8 +236,8 @@ impl SerializePacket for Wield {
 
 #[derive(SerializePacket)]
 pub struct WieldType {
-    guid: u64,
-    wield_type: Wield,
+    pub guid: u64,
+    pub wield_type: Wield,
 }
 
 impl GamePacket for WieldType {

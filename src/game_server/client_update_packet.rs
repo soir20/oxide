@@ -1,10 +1,14 @@
 use byteorder::{LittleEndian, WriteBytesExt};
+
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
+
 use crate::game_server::game_packet::{GamePacket, OpCode, Pos};
+use crate::game_server::item::EquipmentSlot;
 
 #[derive(Copy, Clone, Debug)]
 pub enum ClientUpdateOpCode {
     Health                   = 0x1,
+    EquipItem                = 0x5,
     Position                 = 0xc,
     Power                    = 0xd,
     Stats                    = 0x7,
@@ -30,6 +34,25 @@ pub struct Position {
 impl GamePacket for Position {
     type Header = ClientUpdateOpCode;
     const HEADER: Self::Header = ClientUpdateOpCode::Position;
+}
+
+#[derive(SerializePacket)]
+pub struct EquipItem {
+    pub item_guid: u32,
+    pub model_name: String,
+    pub texture_alias: String,
+    pub tint_alias: String,
+    pub tint: u32,
+    pub composite_effect: u32,
+    pub slot: EquipmentSlot,
+    pub profile_id: u32,
+    pub item_def_class: u32,
+    pub unknown: bool
+}
+
+impl GamePacket for EquipItem {
+    type Header = ClientUpdateOpCode;
+    const HEADER: Self::Header = ClientUpdateOpCode::EquipItem;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
