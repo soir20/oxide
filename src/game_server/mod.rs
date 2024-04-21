@@ -190,8 +190,8 @@ impl GameServer {
                     let health = TunneledPacket {
                         unknown1: true,
                         inner: Health {
-                            unknown1: 25000,
-                            unknown2: 25000,
+                            current: 25000,
+                            max: 25000,
                         },
                     };
                     packets.push(GamePacket::serialize(&health)?);
@@ -199,8 +199,8 @@ impl GameServer {
                     let power = TunneledPacket {
                         unknown1: true,
                         inner: Power {
-                            unknown1: 300,
-                            unknown2: 300,
+                            current: 300,
+                            max: 300,
                         },
                     };
                     packets.push(GamePacket::serialize(&power)?);

@@ -57,8 +57,8 @@ impl GamePacket for EquipItem {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct Health {
-    pub(crate) unknown1: u32,
-    pub(crate) unknown2: u32,
+    pub(crate) current: u32,
+    pub(crate) max: u32,
 }
 
 impl GamePacket for Health {
@@ -68,8 +68,8 @@ impl GamePacket for Health {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct Power {
-    pub(crate) unknown1: u32,
-    pub(crate) unknown2: u32,
+    pub(crate) current: u32,
+    pub(crate) max: u32,
 }
 
 impl GamePacket for Power {
