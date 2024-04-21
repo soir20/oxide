@@ -47,7 +47,7 @@ pub struct EquipItem {
     pub slot: EquipmentSlot,
     pub profile_id: u32,
     pub item_def_class: u32,
-    pub unknown: bool
+    pub update_gear: bool
 }
 
 impl GamePacket for EquipItem {

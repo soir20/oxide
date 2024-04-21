@@ -673,7 +673,7 @@ pub fn make_test_gear(guid: u64) -> Result<Vec<Vec<u8>>, SerializePacketError> {
                     slot: EquipmentSlot::Head,
                     profile_id: 1,
                     item_def_class: 0,
-                    unknown: true
+                    update_gear: true
                 },
             })?,
             GamePacket::serialize(&TunneledPacket {
@@ -688,7 +688,7 @@ pub fn make_test_gear(guid: u64) -> Result<Vec<Vec<u8>>, SerializePacketError> {
                     slot: EquipmentSlot::Hands,
                     profile_id: 1,
                     item_def_class: 0,
-                    unknown: true
+                    update_gear: true
                 },
             })?,
             GamePacket::serialize(&TunneledPacket {
@@ -703,7 +703,7 @@ pub fn make_test_gear(guid: u64) -> Result<Vec<Vec<u8>>, SerializePacketError> {
                     slot: EquipmentSlot::Body,
                     profile_id: 1,
                     item_def_class: 0,
-                    unknown: true
+                    update_gear: true
                 },
             })?,
             GamePacket::serialize(&TunneledPacket {
@@ -718,7 +718,7 @@ pub fn make_test_gear(guid: u64) -> Result<Vec<Vec<u8>>, SerializePacketError> {
                     slot: EquipmentSlot::Feet,
                     profile_id: 1,
                     item_def_class: 0,
-                    unknown: true
+                    update_gear: true
                 },
             })?,
             GamePacket::serialize(&TunneledPacket {
@@ -733,7 +733,7 @@ pub fn make_test_gear(guid: u64) -> Result<Vec<Vec<u8>>, SerializePacketError> {
                     slot: EquipmentSlot::PrimaryWeapon,
                     profile_id: 1,
                     item_def_class: 0,
-                    unknown: true
+                    update_gear: true
                 },
             })?,
             GamePacket::serialize(&TunneledPacket {
