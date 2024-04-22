@@ -17,7 +17,7 @@ use crate::game_server::player_update_packet::make_test_npc;
 use crate::game_server::time::make_game_time_sync;
 use crate::game_server::tunnel::TunneledPacket;
 use crate::game_server::update_position::UpdatePlayerPosition;
-use crate::game_server::zone::{Character, load_zones, teleport_to_zone, Zone, ZoneTeleportRequest};
+use crate::game_server::zone::{Character, load_zones, teleport_to_zone, teleport_within_zone, Zone, ZoneTeleportRequest};
 
 mod login;
 mod player_data;
@@ -331,7 +331,30 @@ impl GameServer {
                     }
 
                     broadcasts.push(Broadcast::Single(sender, packets));
-                }
+                },
+                OpCode::TeleportToSafety => {
+                    let mut packets = Vec::new();
+
+                    let zones = self.read_zones();
+                    if let Some(zone_guid) = GameServer::zone_with_player(&zones, sender) {
+                        if let Some(zone) = zones.get(zone_guid) {
+                            let zone_read_handle = zone.read();
+
+                            let spawn_pos = zone_read_handle.default_spawn_pos;
+                            let spawn_rot = zone_read_handle.default_spawn_rot;
+                            drop(zone_read_handle);
+
+                            packets.append(&mut teleport_within_zone(
+                                spawn_pos,
+                                spawn_rot
+                            )?);
+                        }
+                    } else {
+                        println!("Received teleport to safety request for player not in any zone");
+                    }
+
+                    broadcasts.push(Broadcast::Single(sender, packets));
+                },
                 _ => println!("Unimplemented: {:?}, {:x?}", op_code, data)
             },
             Err(_) => println!("Unknown op code: {}, {:x?}", raw_op_code, data)

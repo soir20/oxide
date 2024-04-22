@@ -362,8 +362,8 @@ impl Character {
 pub struct Zone {
     guid: u32,
     pub name: String,
-    default_spawn_pos: Pos,
-    default_spawn_rot: Pos,
+    pub default_spawn_pos: Pos,
+    pub default_spawn_rot: Pos,
     default_spawn_sky: String,
     hide_ui: bool,
     combat_hud: bool,
