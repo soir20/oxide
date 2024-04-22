@@ -24,6 +24,7 @@ pub enum OpCode {
     UpdatePlayerPosition     = 0x7d,
     ClientGameSettings       = 0x8f,
     Portrait                 = 0x9b,
+    Store                    = 0xa4,
     DeploymentEnv            = 0xa5,
 }
 
@@ -54,6 +55,7 @@ impl TryFrom<u16> for OpCode {
             0x7d => Ok(OpCode::UpdatePlayerPosition),
             0x8f => Ok(OpCode::ClientGameSettings),
             0x9b => Ok(OpCode::Portrait),
+            0xa4 => Ok(OpCode::Store),
             0xa5 => Ok(OpCode::DeploymentEnv),
             _ => Err(UnknownOpCode)
         }

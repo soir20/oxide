@@ -1,13 +1,16 @@
+use std::io::Write;
+
 use byteorder::{LittleEndian, WriteBytesExt};
 
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
 
 use crate::game_server::game_packet::{GamePacket, OpCode, Pos};
-use crate::game_server::item::EquipmentSlot;
+use crate::game_server::item::{EquipmentSlot, Item, ItemDefinition};
 
 #[derive(Copy, Clone, Debug)]
 pub enum ClientUpdateOpCode {
     Health                   = 0x1,
+    AddItems                 = 0x2,
     EquipItem                = 0x5,
     Position                 = 0xc,
     Power                    = 0xd,
@@ -34,6 +37,31 @@ pub struct Position {
 impl GamePacket for Position {
     type Header = ClientUpdateOpCode;
     const HEADER: Self::Header = ClientUpdateOpCode::Position;
+}
+
+#[derive(SerializePacket)]
+pub struct AddItemsData {
+    pub item: Item,
+    pub definition: ItemDefinition
+}
+
+pub struct AddItems {
+    pub data: AddItemsData
+}
+
+impl SerializePacket for AddItems {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        let mut inner_buffer = Vec::new();
+        self.data.serialize(&mut inner_buffer)?;
+        buffer.write_u32::<LittleEndian>(inner_buffer.len() as u32)?;
+        buffer.write_all(&inner_buffer)?;
+        Ok(())
+    }
+}
+
+impl GamePacket for AddItems {
+    type Header = ClientUpdateOpCode;
+    const HEADER: Self::Header = ClientUpdateOpCode::AddItems;
 }
 
 #[derive(SerializePacket)]
