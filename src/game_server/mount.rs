@@ -53,7 +53,7 @@ impl TryFrom<u8> for MountOpCode {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct DismountReply {
     rider_guid: u64,
-    unknown: u32
+    composite_effect: u32
 }
 
 impl GamePacket for DismountReply {
@@ -98,7 +98,7 @@ pub fn handle_mount_packet(cursor: &mut Cursor<&[u8]>, sender: u64) -> Result<Ve
                             unknown1: true,
                             inner: DismountReply {
                                 rider_guid: sender,
-                                unknown: 0,
+                                composite_effect: 0,
                             },
                         }
                     )?
