@@ -209,7 +209,15 @@ pub struct Recipe {}
 pub struct Pet {}
 
 #[derive(SerializePacket)]
-pub struct Mount {}
+pub struct Mount {
+    mount_id: u32,
+    name_id: u32,
+    icon_set_id: u32,
+    guid: u64,
+    unknown5: bool,
+    unknown6: u32,
+    unknown7: String,
+}
 
 #[derive(SerializePacket)]
 pub struct Slot {
@@ -599,7 +607,17 @@ pub fn make_test_player(guid: u64) -> Player {
             pets: vec![],
             pet_unknown1: -1,
             pet_unknown2: 0,
-            mounts: vec![],
+            mounts: vec![
+                Mount {
+                    mount_id: 5,
+                    name_id: 4621,
+                    icon_set_id: 2696,
+                    guid: 2,
+                    unknown5: false,
+                    unknown6: 0,
+                    unknown7: "".to_string(),
+                }
+            ],
             action_bars: vec![
                 ActionBar {
                     unknown1: 2,

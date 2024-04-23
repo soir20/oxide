@@ -502,16 +502,16 @@ pub fn make_test_npc() -> AddNpc {
     AddNpc {
         guid: 2,
         name_id: 0,
-        model_id: 0,
+        model_id: 2264,
         unknown3: false,
         unknown4: 0,
         unknown5: 0,
         unknown6: 1,
         scale: 1.0,
         pos: Pos {
-            x: 0.0,
-            y: 0.0,
-            z: 0.0,
+            x: 887.3,
+            y: 171.93376,
+            z: 1546.956,
             w: 1.0,
         },
         rot: Pos {
@@ -523,11 +523,11 @@ pub fn make_test_npc() -> AddNpc {
         unknown8: 0,
         attachments: vec![],
         is_not_targetable: 0, // Terrain objects only seem interactable
-                                              // when this == 0. Otherwise, click to move
-                                              // targets a spot behind the object. Likely some
-                                              // kind of index in the collision or mesh data.
+                              // when this == 0. Otherwise, click to move
+                              // targets a spot behind the object. Likely some
+                              // kind of index in the collision or mesh data.
         unknown10: 0,
-        texture_name: "".to_string(),
+        texture_name: "MustafarRed".to_string(),
         tint_name: "".to_string(),
         tint_id: 0,
         unknown11: true,
@@ -539,7 +539,7 @@ pub fn make_test_npc() -> AddNpc {
         name_offset_x: 0.0,
         name_offset_y: 0.0,
         name_offset_z: 0.0,
-        terrain_object_id: 1278971264,
+        terrain_object_id: 0,
         invisible: false,
         unknown20: 0.0,
         unknown21: false,

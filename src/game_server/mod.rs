@@ -12,6 +12,7 @@ use crate::game_server::game_packet::{GamePacket, OpCode};
 use crate::game_server::guid::{Guid, GuidTable, GuidTableReadHandle, GuidTableWriteHandle};
 use crate::game_server::item::make_item_definitions;
 use crate::game_server::login::{DeploymentEnv, GameSettings, LoginReply, send_points_of_interest, WelcomeScreen, ZoneDetailsDone};
+use crate::game_server::mount::handle_mount_packet;
 use crate::game_server::player_data::{make_test_wield_type, make_test_player};
 use crate::game_server::player_update_packet::make_test_npc;
 use crate::game_server::time::make_game_time_sync;
@@ -34,6 +35,7 @@ mod ui;
 mod combat_update_packet;
 mod item;
 mod store;
+mod mount;
 
 #[derive(Debug)]
 pub enum Broadcast {
@@ -180,7 +182,7 @@ impl GameServer {
                         unknown1: true,
                         inner: make_test_npc()
                     };
-                    //result_packets.push(GamePacket::serialize(&npc)?);
+                    packets.push(GamePacket::serialize(&npc)?);
 
                     let zones = self.read_zones();
                     if let Some(zone) = GameServer::zone_with_player(&zones, sender) {
@@ -354,6 +356,9 @@ impl GameServer {
                     }
 
                     broadcasts.push(Broadcast::Single(sender, packets));
+                },
+                OpCode::Mount => {
+                    broadcasts.append(&mut handle_mount_packet(&mut cursor, sender)?);
                 },
                 _ => println!("Unimplemented: {:?}, {:x?}", op_code, data)
             },
