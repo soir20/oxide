@@ -68,7 +68,7 @@ pub struct MountReply {
     unknown1: u32,
     queue_pos: u32,
     unknown3: u32,
-    unknown4: u32,
+    composite_effect: u32,
     unknown5: u32
 }
 
@@ -115,7 +115,7 @@ pub fn handle_mount_packet(cursor: &mut Cursor<&[u8]>, sender: u64) -> Result<Ve
                                 unknown1: 0,
                                 queue_pos: 1,
                                 unknown3: 1,
-                                unknown4: 0,
+                                composite_effect: 0,
                                 unknown5: 0,
                             },
                         }
