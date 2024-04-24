@@ -105,15 +105,62 @@ impl GamePacket for Power {
     const HEADER: ClientUpdateOpCode = ClientUpdateOpCode::Power;
 }
 
-#[derive(SerializePacket, DeserializePacket)]
+#[derive(Copy, Clone, Debug)]
+pub enum StatId {
+    MaxHealth                = 1,
+    Speed                    = 2,
+    Range                    = 3,
+    HealthRegen              = 4,
+    MaxPower                 = 5,
+    PowerRegen               = 6,
+    MeleeDefense             = 7,
+    MeleeDodge               = 8,
+    MeleeCritRate            = 9,
+    MeleeCritMultiplier      = 10,
+    MeleeAccuracy            = 11,
+    WeaponDamageMultiplier   = 12,
+    HandToHandDamage         = 13,
+    WeaponDamage             = 14,
+    WeaponSpeed              = 15,
+    DamageReductionFlat      = 16,
+    ExperienceBoost          = 17,
+    DamageReductionPct       = 18,
+    DamageAddition           = 19,
+    DamageMultiplier         = 20,
+    HealingAddition          = 21,
+    HealingMultiplier        = 22,
+    AbilityCritRate          = 33,
+    AbilityCritMultiplier    = 34,
+    Luck                     = 35,
+    HeadInflation            = 36,
+    CurrencyBoost            = 37,
+    Toughness                = 50,
+    AbilityCritVulnerability = 51,
+    MeleeCritVulnerability   = 52,
+    RangeMultiplier          = 53,
+    MaxShield                = 54,
+    ShieldRegen              = 55,
+    MimicMovementSpeed       = 57,
+    GravityMultiplier        = 58,
+    JumpHeightMultiplier     = 59
+}
+
+impl SerializePacket for StatId {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        buffer.write_u32::<LittleEndian>(*self as u32)?;
+        Ok(())
+    }
+}
+
+#[derive(SerializePacket)]
 pub struct Stat {
-    pub(crate) id1: u32,
-    pub(crate) id2: u32,
+    pub(crate) id: StatId,
+    pub(crate) multiplier: u32,
     pub(crate) value1: f32,
     pub(crate) value2: f32,
 }
 
-#[derive(SerializePacket, DeserializePacket)]
+#[derive(SerializePacket)]
 pub struct Stats {
     pub(crate) stats: Vec<Stat>
 }

@@ -6,7 +6,7 @@ use byteorder::{LittleEndian, ReadBytesExt};
 
 use packet_serialize::{DeserializePacket, DeserializePacketError, NullTerminatedString, SerializePacketError};
 
-use crate::game_server::client_update_packet::{Health, Power, PreloadCharactersDone, Stat, Stats};
+use crate::game_server::client_update_packet::{Health, Power, PreloadCharactersDone, Stat, StatId, Stats};
 use crate::game_server::command::process_command;
 use crate::game_server::game_packet::{GamePacket, OpCode};
 use crate::game_server::guid::{Guid, GuidTable, GuidTableReadHandle, GuidTableWriteHandle};
@@ -212,44 +212,34 @@ impl GameServer {
                         unknown1: true,
                         inner: Stats {
                             stats: vec![
-
-                                // Movement speed
                                 Stat {
-                                    id1: 2,
-                                    id2: 1,
+                                    id: StatId::Speed,
+                                    multiplier: 1,
                                     value1: 0.0,
                                     value2: 8.0,
                                 },
-
-                                // Health refill
                                 Stat {
-                                    id1: 4,
-                                    id2: 0,
+                                    id: StatId::PowerRegen,
+                                    multiplier: 1,
                                     value1: 0.0,
                                     value2: 1.0,
                                 },
-
-                                // Power refill
                                 Stat {
-                                    id1: 6,
-                                    id2: 0,
+                                    id: StatId::PowerRegen,
+                                    multiplier: 1,
                                     value1: 0.0,
                                     value2: 1.0,
                                 },
-
-                                // Extra gravity
                                 Stat {
-                                    id1: 58,
-                                    id2: 0,
-                                    value1: 0.0,
+                                    id: StatId::GravityMultiplier,
+                                    multiplier: 1,
+                                    value1: 1.0,
                                     value2: 0.0,
                                 },
-
-                                // Extra jump height
                                 Stat {
-                                    id1: 59,
-                                    id2: 0,
-                                    value1: 0.0,
+                                    id: StatId::JumpHeightMultiplier,
+                                    multiplier: 1,
+                                    value1: 1.0,
                                     value2: 0.0,
                                 },
 
