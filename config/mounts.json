@@ -403,8 +403,21 @@
     "dismount_composite_effect": 3009
   },
   {
-    "comment": "STAP",
+    "comment": "Brezak Green",
     "id": 32,
+    "speed_multiplier": 1.5625,
+    "jump_height_multiplier": 2.0,
+    "gravity_multiplier": 0.25,
+    "model_id": 2793,
+    "texture": "Teal",
+    "name_id": 60776,
+    "icon_set_id": 3860,
+    "mount_composite_effect": 3008,
+    "dismount_composite_effect": 3009
+  },
+  {
+    "comment": "STAP",
+    "id": 33,
     "speed_multiplier": 1.5625,
     "jump_height_multiplier": 1.0,
     "gravity_multiplier": 1.0,
@@ -417,7 +430,7 @@
   },
   {
     "comment": "Fambaa",
-    "id": 33,
+    "id": 34,
     "speed_multiplier": 0.5,
     "jump_height_multiplier": 1.0,
     "gravity_multiplier": 1.0,
