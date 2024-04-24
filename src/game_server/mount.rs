@@ -345,7 +345,7 @@ fn spawn_mount_npc(guid: u64, mount: &RwLockReadGuard<MountConfig>) -> Result<Ve
                     unknown4: 0,
                     unknown5: 0,
                     unknown6: 1,
-                    scale: 1.0,
+                    scale: 1.2,
                     pos: Pos {
                         x: 0.0,
                         y: 0.0,
