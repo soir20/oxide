@@ -522,10 +522,7 @@ pub fn make_test_npc() -> AddNpc {
         },
         unknown8: 0,
         attachments: vec![],
-        is_not_targetable: 0, // Terrain objects only seem interactable
-                              // when this == 0. Otherwise, click to move
-                              // targets a spot behind the object. Likely some
-                              // kind of index in the collision or mesh data.
+        is_not_targetable: 1,
         unknown10: 0,
         texture_name: "MustafarRed".to_string(),
         tint_name: "".to_string(),
@@ -553,7 +550,7 @@ pub fn make_test_npc() -> AddNpc {
         active_animation_slot2: 1,
         head_model_id: 0,
         unknown31: vec![],
-        disable_interact_popup: false,
+        disable_interact_popup: true,
         unknown33: 0, // If non-zero, crashes when NPC is clicked on
         unknown34: false,
         show_health: false,
@@ -597,7 +594,7 @@ pub fn make_test_npc() -> AddNpc {
         attachment_group_unknown: "".to_string(),
         unknown59: "".to_string(),
         unknown60: "".to_string(),
-        override_terrain_model: false, // Non-terrain NPCs must have this enabled to be interactable
+        override_terrain_model: false,
         hover_glow: 0,
         hover_description: 0, // max 7
         fly_over_effect: 0, // max 3
