@@ -7,6 +7,7 @@ use crate::game_server::game_packet::{Effect, GamePacket, OpCode, Pos, StringId}
 #[derive(Copy, Clone, Debug)]
 pub enum PlayerUpdateOpCode {
     AddNpc                          = 0x2,
+    Remove                          = 0x3,
     Knockback                       = 0x4,
     AddNotifications                = 0xa,
     NpcRelevance                    = 0xc,
@@ -36,6 +37,45 @@ impl SerializePacket for PlayerUpdateOpCode {
         buffer.write_u16::<LittleEndian>(*self as u16)?;
         Ok(())
     }
+}
+
+#[derive(Copy, Clone, Debug)]
+pub enum PlayerUpdateRemoveOpCode {
+    Standard                        = 0x1,
+    Graceful                        = 0x2,
+}
+
+impl SerializePacket for PlayerUpdateRemoveOpCode {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        PlayerUpdateOpCode::Remove.serialize(buffer)?;
+        buffer.write_u16::<LittleEndian>(*self as u16)?;
+        Ok(())
+    }
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct RemoveStandard {
+    guid: u64
+}
+
+impl GamePacket for RemoveStandard {
+    type Header = PlayerUpdateRemoveOpCode;
+    const HEADER: Self::Header = PlayerUpdateRemoveOpCode::Standard;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct RemoveGracefully {
+    guid: u64,
+    unknown1: bool,
+    unknown2: u32,
+    unknown3: u32,
+    unknown4: u32,
+    unknown5: u32,
+}
+
+impl GamePacket for RemoveGracefully {
+    type Header = PlayerUpdateRemoveOpCode;
+    const HEADER: Self::Header = PlayerUpdateRemoveOpCode::Graceful;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
