@@ -8,7 +8,7 @@
     "texture": "MustafarRed",
     "name_id": 4621,
     "icon_set_id": 2696,
-    "mount_composite_effect": 0,
-    "dismount_composite_effect": 0
+    "mount_composite_effect": 2755,
+    "dismount_composite_effect": 2756
   }
 ]
