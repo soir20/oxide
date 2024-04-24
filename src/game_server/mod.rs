@@ -12,7 +12,7 @@ use crate::game_server::game_packet::{GamePacket, OpCode};
 use crate::game_server::guid::{Guid, GuidTable, GuidTableReadHandle, GuidTableWriteHandle};
 use crate::game_server::item::make_item_definitions;
 use crate::game_server::login::{DeploymentEnv, GameSettings, LoginReply, send_points_of_interest, WelcomeScreen, ZoneDetailsDone};
-use crate::game_server::mount::handle_mount_packet;
+use crate::game_server::mount::{process_mount_packet, load_mounts, MountConfig};
 use crate::game_server::player_data::{make_test_wield_type, make_test_player};
 use crate::game_server::player_update_packet::make_test_npc;
 use crate::game_server::time::make_game_time_sync;
@@ -39,8 +39,8 @@ mod mount;
 
 #[derive(Debug)]
 pub enum Broadcast {
-    Single(u64, Vec<Vec<u8>>),
-    Multi(Vec<u64>, Vec<Vec<u8>>)
+    Single(u32, Vec<Vec<u8>>),
+    Multi(Vec<u32>, Vec<Vec<u8>>)
 }
 
 #[non_exhaustive]
@@ -69,7 +69,8 @@ impl From<SerializePacketError> for ProcessPacketError {
 }
 
 pub struct GameServer {
-    zones: GuidTable<u32, Zone>
+    mounts: GuidTable<u32, MountConfig>,
+    zones: GuidTable<u32, Zone>,
 }
 
 impl GameServer {
@@ -77,12 +78,13 @@ impl GameServer {
     pub fn new(config_dir: &Path) -> Result<Self, Error> {
         Ok(
             GameServer {
+                mounts: load_mounts(config_dir)?,
                 zones: load_zones(config_dir)?,
             }
         )
     }
 
-    pub fn login(&self, data: Vec<u8>) -> Result<(u64, Vec<Broadcast>), ProcessPacketError> {
+    pub fn login(&self, data: Vec<u8>) -> Result<(u32, Vec<Broadcast>), ProcessPacketError> {
         let mut cursor = Cursor::new(&data[..]);
         let raw_op_code = cursor.read_u16::<LittleEndian>()?;
 
@@ -136,7 +138,7 @@ impl GameServer {
 
                     let player = TunneledPacket {
                         unknown1: true,
-                        inner: make_test_player(guid)
+                        inner: make_test_player(guid, &self.mounts.read())
                     };
                     packets.push(GamePacket::serialize(&player)?);
 
@@ -162,7 +164,7 @@ impl GameServer {
         }
     }
     
-    pub fn process_packet(&self, sender: u64, data: Vec<u8>) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    pub fn process_packet(&self, sender: u32, data: Vec<u8>) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let mut broadcasts = Vec::new();
         let mut cursor = Cursor::new(&data[..]);
         let raw_op_code = cursor.read_u16::<LittleEndian>()?;
@@ -182,12 +184,53 @@ impl GameServer {
                         unknown1: true,
                         inner: make_test_npc()
                     };
-                    packets.push(GamePacket::serialize(&npc)?);
+                    //packets.push(GamePacket::serialize(&npc)?);
 
                     let zones = self.read_zones();
-                    if let Some(zone) = GameServer::zone_with_player(&zones, sender) {
-                        let mut preloaded_npcs = zones.get(zone).unwrap().read().send_characters()?;
+                    if let Some(zone) = GameServer::zone_with_character(&zones, sender as u64) {
+                        let zone_read_handle = zones.get(zone).unwrap().read();
+                        let mut preloaded_npcs = zone_read_handle.send_characters()?;
                         packets.append(&mut preloaded_npcs);
+
+                        let stats = TunneledPacket {
+                            unknown1: true,
+                            inner: Stats {
+                                stats: vec![
+                                    Stat {
+                                        id: StatId::Speed,
+                                        multiplier: 1,
+                                        value1: 0.0,
+                                        value2: zone_read_handle.speed,
+                                    },
+                                    Stat {
+                                        id: StatId::PowerRegen,
+                                        multiplier: 1,
+                                        value1: 0.0,
+                                        value2: 1.0,
+                                    },
+                                    Stat {
+                                        id: StatId::PowerRegen,
+                                        multiplier: 1,
+                                        value1: 0.0,
+                                        value2: 1.0,
+                                    },
+                                    Stat {
+                                        id: StatId::GravityMultiplier,
+                                        multiplier: 1,
+                                        value1: 0.0,
+                                        value2: zone_read_handle.gravity_multiplier,
+                                    },
+                                    Stat {
+                                        id: StatId::JumpHeightMultiplier,
+                                        multiplier: 1,
+                                        value1: 0.0,
+                                        value2: zone_read_handle.jump_height_multiplier,
+                                    },
+
+                                ],
+                            },
+                        };
+                        packets.push(GamePacket::serialize(&stats)?);
                     }
 
                     let health = TunneledPacket {
@@ -207,46 +250,6 @@ impl GameServer {
                         },
                     };
                     packets.push(GamePacket::serialize(&power)?);
-
-                    let stats = TunneledPacket {
-                        unknown1: true,
-                        inner: Stats {
-                            stats: vec![
-                                Stat {
-                                    id: StatId::Speed,
-                                    multiplier: 1,
-                                    value1: 0.0,
-                                    value2: 8.0,
-                                },
-                                Stat {
-                                    id: StatId::PowerRegen,
-                                    multiplier: 1,
-                                    value1: 0.0,
-                                    value2: 1.0,
-                                },
-                                Stat {
-                                    id: StatId::PowerRegen,
-                                    multiplier: 1,
-                                    value1: 0.0,
-                                    value2: 1.0,
-                                },
-                                Stat {
-                                    id: StatId::GravityMultiplier,
-                                    multiplier: 1,
-                                    value1: 1.0,
-                                    value2: 0.0,
-                                },
-                                Stat {
-                                    id: StatId::JumpHeightMultiplier,
-                                    multiplier: 1,
-                                    value1: 1.0,
-                                    value2: 0.0,
-                                },
-
-                            ],
-                        },
-                    };
-                    packets.push(GamePacket::serialize(&stats)?);
 
                     packets.append(&mut make_test_wield_type(sender)?);
 
@@ -291,7 +294,7 @@ impl GameServer {
                 OpCode::UpdatePlayerPosition => {
                     let pos_update: UpdatePlayerPosition = DeserializePacket::deserialize(&mut cursor)?;
                     let zones = self.read_zones();
-                    if let Some(zone_guid) = GameServer::zone_with_player(&zones, sender) {
+                    if let Some(zone_guid) = GameServer::zone_with_character(&zones, sender as u64) {
                         let zone = zones.get(zone_guid).unwrap().read();
 
                         // TODO: broadcast pos update to all players
@@ -304,14 +307,14 @@ impl GameServer {
                     let teleport_request: ZoneTeleportRequest = DeserializePacket::deserialize(&mut cursor)?;
 
                     let zones = self.read_zones();
-                    if let Some(zone_guid) = GameServer::zone_with_player(&zones, sender) {
+                    if let Some(zone_guid) = GameServer::zone_with_character(&zones, sender as u64) {
                         if let Some(zone) = zones.get(zone_guid) {
                             let zone_read_handle = zone.read();
                             packets.append(
                                 &mut teleport_to_zone(
                                     &zones,
                                     zone_read_handle,
-                                    sender,
+                                    sender as u64,
                                     teleport_request.destination_guid,
                                     None,
                                     None
@@ -328,7 +331,7 @@ impl GameServer {
                     let mut packets = Vec::new();
 
                     let zones = self.read_zones();
-                    if let Some(zone_guid) = GameServer::zone_with_player(&zones, sender) {
+                    if let Some(zone_guid) = GameServer::zone_with_character(&zones, sender as u64) {
                         if let Some(zone) = zones.get(zone_guid) {
                             let zone_read_handle = zone.read();
 
@@ -348,7 +351,7 @@ impl GameServer {
                     broadcasts.push(Broadcast::Single(sender, packets));
                 },
                 OpCode::Mount => {
-                    broadcasts.append(&mut handle_mount_packet(&mut cursor, sender)?);
+                    broadcasts.append(&mut process_mount_packet(&mut cursor, sender, &self)?);
                 },
                 _ => println!("Unimplemented: {:?}, {:x?}", op_code, data)
             },
@@ -366,7 +369,7 @@ impl GameServer {
         self.zones.write()
     }
 
-    pub fn zone_with_player(zones: &GuidTableReadHandle<u32, Zone>, guid: u64) -> Option<u32> {
+    pub fn zone_with_character(zones: &GuidTableReadHandle<u32, Zone>, guid: u64) -> Option<u32> {
         for zone in zones.values() {
             let read_handle = zone.read();
             if read_handle.read_characters().get(guid).is_some() {

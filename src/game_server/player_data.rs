@@ -5,7 +5,9 @@ use byteorder::{LittleEndian, WriteBytesExt};
 use packet_serialize::{LengthlessVec, SerializePacket, SerializePacketError};
 
 use crate::game_server::game_packet::{Effect, GamePacket, ImageId, OpCode, Pos, StringId};
+use crate::game_server::guid::{Guid, GuidTableReadHandle};
 use crate::game_server::item::{EquipmentSlot, Item, MarketData};
+use crate::game_server::mount::{mount_guid, MountConfig};
 use crate::game_server::player_update_packet::{Wield, WieldType};
 use crate::game_server::tunnel::TunneledPacket;
 use crate::game_server::zone::{Character, CharacterType};
@@ -356,11 +358,25 @@ impl GamePacket for Player {
     const HEADER: OpCode = OpCode::Player;
 }
 
-pub fn make_test_player(guid: u64) -> Player {
+pub fn make_test_player(guid: u32, mounts: &GuidTableReadHandle<u32, MountConfig>) -> Player {
+    let mut owned_mounts = Vec::new();
+    for mount in mounts.values() {
+        let mount_read_handle = mount.read();
+        owned_mounts.push(Mount {
+            mount_id: mount_read_handle.guid(),
+            name_id: mount_read_handle.name_id,
+            icon_set_id: mount_read_handle.icon_set_id,
+            guid: mount_guid(guid, mount_read_handle.guid()),
+            unknown5: false,
+            unknown6: 0,
+            unknown7: "".to_string(),
+        })
+    }
+
     Player {
         data: PlayerData {
             account_guid: 0,
-            player_guid: guid,
+            player_guid: guid as u64,
             body_model: 484,
             head_model: String::from("Char_CloneHead.adr"),
             hair_model: String::from("Cust_Clone_Hair_BusinessMan.adr"),
@@ -607,17 +623,7 @@ pub fn make_test_player(guid: u64) -> Player {
             pets: vec![],
             pet_unknown1: -1,
             pet_unknown2: 0,
-            mounts: vec![
-                Mount {
-                    mount_id: 5,
-                    name_id: 4621,
-                    icon_set_id: 2696,
-                    guid: 2,
-                    unknown5: false,
-                    unknown6: 0,
-                    unknown7: "".to_string(),
-                }
-            ],
+            mounts: owned_mounts,
             action_bars: vec![
                 ActionBar {
                     unknown1: 2,
@@ -721,19 +727,20 @@ impl From<PlayerData> for Character {
             rot: value.rot,
             character_type: CharacterType::Player,
             state: 0,
+            mount_id: None,
             interact_radius: 0.0,
             auto_interact_radius: 0.0,
         }
     }
 }
 
-pub fn make_test_wield_type(guid: u64) -> Result<Vec<Vec<u8>>, SerializePacketError> {
+pub fn make_test_wield_type(guid: u32) -> Result<Vec<Vec<u8>>, SerializePacketError> {
     Ok(
         vec![
             GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: WieldType {
-                    guid,
+                    guid: guid as u64,
                     wield_type: Wield::SinglePistol,
                 },
             })?,

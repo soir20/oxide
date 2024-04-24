@@ -75,6 +75,9 @@ struct ZoneConfig {
     spawn_rot_z: f32,
     spawn_rot_w: f32,
     spawn_sky: Option<String>,
+    speed: f32,
+    jump_height_multiplier: f32,
+    gravity_multiplier: f32,
     doors: Vec<Door>,
     interact_radius: f32,
     door_auto_interact_radius: f32,
@@ -93,6 +96,7 @@ pub struct Character {
     pub rot: Pos,
     pub state: u8,
     pub character_type: CharacterType,
+    pub mount_id: Option<u32>,
     pub interact_radius: f32,
     pub auto_interact_radius: f32
 }
@@ -365,6 +369,9 @@ pub struct Zone {
     pub default_spawn_pos: Pos,
     pub default_spawn_rot: Pos,
     default_spawn_sky: String,
+    pub speed: f32,
+    pub jump_height_multiplier: f32,
+    pub gravity_multiplier: f32,
     hide_ui: bool,
     combat_hud: bool,
     characters: GuidTable<u64, Character>
@@ -496,6 +503,7 @@ impl From<ZoneConfig> for Zone {
                     },
                     state: 0,
                     character_type: CharacterType::Door(door),
+                    mount_id: None,
                     interact_radius: zone_config.interact_radius,
                     auto_interact_radius: zone_config.door_auto_interact_radius,
                 });
@@ -519,6 +527,7 @@ impl From<ZoneConfig> for Zone {
                     },
                     state: 0,
                     character_type: CharacterType::Transport(transport),
+                    mount_id: None,
                     interact_radius: zone_config.interact_radius,
                     auto_interact_radius: 0.0,
                 });
@@ -542,6 +551,9 @@ impl From<ZoneConfig> for Zone {
                 w: zone_config.spawn_rot_w,
             },
             default_spawn_sky: zone_config.spawn_sky.unwrap_or("".to_string()),
+            speed: zone_config.speed,
+            jump_height_multiplier: zone_config.jump_height_multiplier,
+            gravity_multiplier: zone_config.gravity_multiplier,
             hide_ui: zone_config.hide_ui,
             combat_hud: zone_config.combat_hud,
             characters
@@ -572,7 +584,7 @@ pub fn load_zones(config_dir: &Path) -> Result<GuidTable<u32, Zone>, Error> {
 
 pub fn interact_with_character(request: SelectPlayer, game_server: &GameServer) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
     let zones = game_server.read_zones();
-    if let Some(source_zone_guid) = GameServer::zone_with_player(&zones, request.requester) {
+    if let Some(source_zone_guid) = GameServer::zone_with_character(&zones, request.requester) {
 
         if let Some(source_zone) = zones.get(source_zone_guid) {
             let source_zone_read_handle = source_zone.read();

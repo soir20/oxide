@@ -41,8 +41,8 @@ impl SerializePacket for PlayerUpdateOpCode {
 
 #[derive(Copy, Clone, Debug)]
 pub enum PlayerUpdateRemoveOpCode {
-    Standard                        = 0x1,
-    Graceful                        = 0x2,
+    Standard                        = 0x0,
+    Graceful                        = 0x1,
 }
 
 impl SerializePacket for PlayerUpdateRemoveOpCode {
@@ -55,7 +55,7 @@ impl SerializePacket for PlayerUpdateRemoveOpCode {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct RemoveStandard {
-    guid: u64
+    pub guid: u64
 }
 
 impl GamePacket for RemoveStandard {
@@ -65,12 +65,12 @@ impl GamePacket for RemoveStandard {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct RemoveGracefully {
-    guid: u64,
-    unknown1: bool,
-    unknown2: u32,
-    unknown3: u32,
-    unknown4: u32,
-    unknown5: u32,
+    pub guid: u64,
+    pub unknown1: bool,
+    pub unknown2: u32,
+    pub unknown3: u32,
+    pub unknown4: u32,
+    pub unknown5: u32,
 }
 
 impl GamePacket for RemoveGracefully {

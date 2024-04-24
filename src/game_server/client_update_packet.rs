@@ -85,8 +85,8 @@ impl GamePacket for EquipItem {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct Health {
-    pub(crate) current: u32,
-    pub(crate) max: u32,
+    pub current: u32,
+    pub max: u32,
 }
 
 impl GamePacket for Health {
@@ -96,8 +96,8 @@ impl GamePacket for Health {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct Power {
-    pub(crate) current: u32,
-    pub(crate) max: u32,
+    pub current: u32,
+    pub max: u32,
 }
 
 impl GamePacket for Power {
@@ -154,15 +154,15 @@ impl SerializePacket for StatId {
 
 #[derive(SerializePacket)]
 pub struct Stat {
-    pub(crate) id: StatId,
-    pub(crate) multiplier: u32,
-    pub(crate) value1: f32,
-    pub(crate) value2: f32,
+    pub id: StatId,
+    pub multiplier: u32,
+    pub value1: f32,
+    pub value2: f32,
 }
 
 #[derive(SerializePacket)]
 pub struct Stats {
-    pub(crate) stats: Vec<Stat>
+    pub stats: Vec<Stat>
 }
 
 impl GamePacket for Stats {
@@ -172,7 +172,7 @@ impl GamePacket for Stats {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct PreloadCharactersDone {
-    pub(crate) unknown1: bool
+    pub unknown1: bool
 }
 
 impl GamePacket for PreloadCharactersDone {

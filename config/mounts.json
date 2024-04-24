@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "speed_multiplier": 1.5625,
+    "jump_height_multiplier": 1.0,
+    "gravity_multiplier": 1.0,
+    "model_id": 2264,
+    "texture": "MustafarRed",
+    "name_id": 4621,
+    "icon_set_id": 2696,
+    "mount_composite_effect": 0,
+    "dismount_composite_effect": 0
+  }
+]
