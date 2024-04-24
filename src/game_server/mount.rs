@@ -203,7 +203,7 @@ fn process_dismount(sender: u32, game_server: &GameServer) -> Result<Vec<Broadca
                             ])
                         ])
                     } else {
-                        println!("Tried to dismount from non-existent mount");
+                        println!("Player {} tried to dismount from non-existent mount", sender);
                         Ok(Vec::new())
                     }
                 } else {
@@ -213,11 +213,11 @@ fn process_dismount(sender: u32, game_server: &GameServer) -> Result<Vec<Broadca
 
                 }
             } else {
-                println!("Tried to dismount non-existent player");
+                println!("Non-existent player {} tried to dismount", sender);
                 Err(ProcessPacketError::CorruptedPacket)
             }
         } else {
-            println!("Tried to dismount in zone that went missing");
+            println!("Player {} tried to dismount in zone that went missing", sender);
             Ok(Vec::new())
         }
     } else {
@@ -287,14 +287,19 @@ fn process_mount_spawn(cursor: &mut Cursor<&[u8]>, sender: u32,
                 let characters = zone_read_handle.read_characters();
                 if let Some(character) = characters.get(sender as u64) {
                     let mut character_write_handle = character.write();
+                    if let Some(mount_id) = character_write_handle.mount_id {
+                        println!("Player {} tried to mount while already mounted on mount ID {}", sender, mount_id);
+                        return Err(ProcessPacketError::CorruptedPacket);
+                    }
+                    
                     character_write_handle.mount_id = Some(mount_read_handle.guid());
                 } else {
-                    println!("Non-existent character tried to mount");
+                    println!("Non-existent player {} tried to mount", sender);
                     return Err(ProcessPacketError::CorruptedPacket);
                 }
             }
         } else {
-            println!("Tried to mount in non-existent zone");
+            println!("Player {} tried to mount in non-existent zone", sender);
             return Err(ProcessPacketError::CorruptedPacket);
         }
 
