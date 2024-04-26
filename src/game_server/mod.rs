@@ -10,6 +10,7 @@ use crate::game_server::client_update_packet::{Health, Power, PreloadCharactersD
 use crate::game_server::command::process_command;
 use crate::game_server::game_packet::{GamePacket, OpCode};
 use crate::game_server::guid::{Guid, GuidTable, GuidTableReadHandle, GuidTableWriteHandle};
+use crate::game_server::housing::make_test_fixture_packets;
 use crate::game_server::item::make_item_definitions;
 use crate::game_server::login::{DeploymentEnv, GameSettings, LoginReply, send_points_of_interest, WelcomeScreen, ZoneDetailsDone};
 use crate::game_server::mount::{process_mount_packet, load_mounts, MountConfig};
@@ -36,6 +37,7 @@ mod combat_update_packet;
 mod item;
 mod store;
 mod mount;
+mod housing;
 
 #[derive(Debug)]
 pub enum Broadcast {
@@ -278,6 +280,8 @@ impl GameServer {
                         },
                     };
                     packets.push(GamePacket::serialize(&preload_characters_done)?);
+
+                    packets.append(&mut make_test_fixture_packets()?);
 
                     broadcasts.push(Broadcast::Single(sender, packets));
                 },
