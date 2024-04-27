@@ -1,12 +1,13 @@
 use byteorder::{LittleEndian, WriteBytesExt};
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
-use crate::game_server::game_packet::{GamePacket, OpCode, Pos};
+use crate::game_server::game_packet::{GamePacket, ImageId, OpCode, Pos};
 use crate::game_server::player_update_packet::BaseAttachmentGroup;
 use crate::game_server::tunnel::TunneledPacket;
 
 #[derive(Copy, Clone, Debug)]
 pub enum HousingOpCode {
-    FixtureUpdate            = 0x27
+    FixtureUpdate            = 0x27,
+    HouseZoneData            = 0x2c,
 }
 
 impl SerializePacket for HousingOpCode {
@@ -67,6 +68,36 @@ pub struct Unknown2 {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
+pub struct HouseZoneData {
+    is_not_editable: bool,
+    unknown2: u32,
+    owner_guid: u64,
+    house_guid: u64,
+    unknown3: u32,
+    house_name: String,
+    owner_name: String,
+    icon_id: ImageId,
+    unknown5: bool,
+    unknown6: u32,
+    unknown7: u64,
+    unknown8: u32,
+    unknown9: bool,
+    unknown10: String,
+    unknown11: String,
+    unknown12: u32,
+    unknown13: u32,
+    unknown14: bool,
+    unknown15: bool,
+    unknown16: u32,
+    unknown17: u32
+}
+
+impl GamePacket for HouseZoneData {
+    type Header = HousingOpCode;
+    const HEADER: Self::Header = HousingOpCode::HouseZoneData;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
 pub struct FixtureUpdate {
     placed_fixture: PlacedFixture,
     unknown1: Unknown1,
@@ -84,6 +115,34 @@ impl GamePacket for FixtureUpdate {
 
 pub fn make_test_fixture_packets() -> Result<Vec<Vec<u8>>, SerializePacketError> {
     Ok(vec![
+        GamePacket::serialize(
+            &TunneledPacket {
+                unknown1: true,
+                inner: HouseZoneData {
+                    is_not_editable: false,
+                    unknown2: 0,
+                    owner_guid: 1,
+                    house_guid: 101,
+                    unknown3: 0,
+                    house_name: "Blaster's Amazing Lot".to_string(),
+                    owner_name: "Blaster".to_string(),
+                    icon_id: 0,
+                    unknown5: false,
+                    unknown6: 0,
+                    unknown7: 0,
+                    unknown8: 0,
+                    unknown9: false,
+                    unknown10: "".to_string(),
+                    unknown11: "".to_string(),
+                    unknown12: 0,
+                    unknown13: 0,
+                    unknown14: false,
+                    unknown15: false,
+                    unknown16: 0,
+                    unknown17: 0,
+                },
+            }
+        )?,
         GamePacket::serialize(
             &TunneledPacket {
                 unknown1: true,
