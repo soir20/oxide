@@ -31,3 +31,11 @@ Then you'll need to run the client from the command line with a few parameters:
 ```shell
 CloneWars.exe inifile=ClientConfig.ini Guid=1 Server=127.0.0.1:20225 Ticket=p7w9dGPBPbbm9ZG Internationalization:Locale=8 LoadingScreenId=-1 Country=US key=9+SU7Z1u0rO/N1xW3vvZ4w== LiveGamer=1 CasSessionId=3jo7PGRQ9P4LiQF0
 ```
+
+## License
+This server is licensed under the GNU Affero General Public License v3. In particular, please note this section of the 
+license:
+> The GNU Affero General Public License is designed specifically to ensure that, in such cases, the modified source code 
+> becomes available to the community. It requires the operator of a network server to provide the source code of the 
+> modified version running there to the users of that server. Therefore, public use of a modified version, on a publicly 
+> accessible server, gives the public access to the source code of the modified version.
