@@ -69,7 +69,7 @@ pub struct Unknown2 {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct HouseZoneData {
-    is_not_editable: bool,
+    is_published: bool,
     unknown2: u32,
     owner_guid: u64,
     house_guid: u64,
@@ -87,7 +87,7 @@ pub struct HouseZoneData {
     unknown12: u32,
     unknown13: u32,
     unknown14: bool,
-    unknown15: bool,
+    is_rateable: bool,
     unknown16: u32,
     unknown17: u32
 }
@@ -119,7 +119,7 @@ pub fn make_test_fixture_packets() -> Result<Vec<Vec<u8>>, SerializePacketError>
             &TunneledPacket {
                 unknown1: true,
                 inner: HouseZoneData {
-                    is_not_editable: false,
+                    is_published: false,
                     unknown2: 0,
                     owner_guid: 1,
                     house_guid: 101,
@@ -137,7 +137,7 @@ pub fn make_test_fixture_packets() -> Result<Vec<Vec<u8>>, SerializePacketError>
                     unknown12: 0,
                     unknown13: 0,
                     unknown14: false,
-                    unknown15: false,
+                    is_rateable: true,
                     unknown16: 0,
                     unknown17: 0,
                 },
