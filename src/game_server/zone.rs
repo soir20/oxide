@@ -795,7 +795,7 @@ fn show_galaxy_map() -> Result<Vec<Vec<u8>>, ProcessPacketError> {
                 &TunneledPacket {
                     unknown1: false,
                     inner: ExecuteScriptWithParams {
-                        script_name: "GalaxyMapWindow.show".to_string(),
+                        script_name: "UIGlobal.ShowGalaxyMap".to_string(),
                         params: vec![],
                     },
                 }
