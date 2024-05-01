@@ -609,6 +609,19 @@ pub fn make_test_player(guid: u32, mounts: &GuidTableReadHandle<u32, MountConfig
                         unknown2: false,
                     }
                 },
+                InventoryItem {
+                    unknown: 0,
+                    item: Item {
+                        definition_id: 6,
+                        tint: 0,
+                        guid: 6,
+                        quantity: 100,
+                        num_consumed: 0,
+                        last_use_time: 0,
+                        market_data: MarketData::None,
+                        unknown2: false,
+                    }
+                },
             ],
             gender: 1,
             quests: vec![],

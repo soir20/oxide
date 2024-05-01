@@ -9,6 +9,7 @@ pub enum PlayerUpdateOpCode {
     AddNpc                          = 0x2,
     Remove                          = 0x3,
     Knockback                       = 0x4,
+    UpdatePower                     = 0x9,
     AddNotifications                = 0xa,
     NpcRelevance                    = 0xc,
     UpdateTemporaryAppearance       = 0xe,
@@ -76,6 +77,19 @@ pub struct RemoveGracefully {
 impl GamePacket for RemoveGracefully {
     type Header = PlayerUpdateRemoveOpCode;
     const HEADER: Self::Header = PlayerUpdateRemoveOpCode::Graceful;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct UpdatePower {
+    pub guid: u64,
+    pub unknown1: u32,
+    pub unknown2: u32,
+    pub unknown3: u32
+}
+
+impl GamePacket for UpdatePower {
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::UpdatePower;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -540,12 +554,12 @@ impl GamePacket for AddNpc {
 
 pub fn make_test_npc() -> AddNpc {
     AddNpc {
-        guid: 2,
+        guid: 102,
         name_id: 0,
-        model_id: 2264,
+        model_id: 458,
         unknown3: false,
-        unknown4: 0,
-        unknown5: 0,
+        unknown4: 408679,
+        unknown5: 13951728,
         unknown6: 1,
         scale: 1.0,
         pos: Pos {
@@ -557,14 +571,14 @@ pub fn make_test_npc() -> AddNpc {
         rot: Pos {
             x: 0.0,
             y: 0.0,
-            z: 0.0,
+            z: 1.0,
             w: 0.0,
         },
-        unknown8: 0,
+        unknown8: 1,
         attachments: vec![],
         is_not_targetable: 1,
         unknown10: 0,
-        texture_name: "MustafarRed".to_string(),
+        texture_name: "Rose".to_string(),
         tint_name: "".to_string(),
         tint_id: 0,
         unknown11: true,
@@ -572,7 +586,7 @@ pub fn make_test_npc() -> AddNpc {
         composite_effect: 0,
         weapon_animation: WeaponAnimation::None,
         name_override: "".to_string(),
-        hide_name: false,
+        hide_name: true,
         name_offset_x: 0.0,
         name_offset_y: 0.0,
         name_offset_z: 0.0,
@@ -583,19 +597,19 @@ pub fn make_test_npc() -> AddNpc {
         interactable_size_pct: 100,
         unknown23: -1,
         unknown24: -1,
-        active_animation_slot: 1,
-        unknown26: false,
-        ignore_position: false,
+        active_animation_slot: -1,
+        unknown26: true,
+        ignore_position: true,
         sub_title_id: 0,
-        active_animation_slot2: 1,
+        active_animation_slot2: 0,
         head_model_id: 0,
         unknown31: vec![],
-        disable_interact_popup: true,
+        disable_interact_popup: false,
         unknown33: 0, // If non-zero, crashes when NPC is clicked on
         unknown34: false,
         show_health: false,
         unknown36: false,
-        ignore_rotation_and_shadow: false,
+        ignore_rotation_and_shadow: true,
         base_attachment_group: BaseAttachmentGroup {
             unknown1: 0,
             unknown2: "".to_string(),
@@ -615,7 +629,7 @@ pub fn make_test_npc() -> AddNpc {
         collision: true, // To be interactable, every NPC must have collision set,
                          // even if the model does not actually support collision
         unknown44: 0,
-        npc_type: 2,
+        npc_type: 0,
         unknown46: 0.0,
         target: 0,
         unknown50: vec![],
