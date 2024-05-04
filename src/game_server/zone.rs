@@ -18,7 +18,7 @@ use crate::game_server::tunnel::TunneledPacket;
 use crate::game_server::ui::ExecuteScriptWithParams;
 use crate::game_server::update_position::UpdatePlayerPosition;
 
-#[derive(Deserialize)]
+#[derive(Clone, Deserialize)]
 pub struct Door {
     x: f32,
     y: f32,
@@ -33,10 +33,11 @@ pub struct Door {
     destination_rot_y: f32,
     destination_rot_z: f32,
     destination_rot_w: f32,
-    destination_zone: Option<u32>
+    destination_zone_template: Option<u32>,
+    destination_zone: Option<u64>
 }
 
-#[derive(Deserialize)]
+#[derive(Clone, Deserialize)]
 pub struct Transport {
     model_id: Option<u32>,
     name_id: Option<u32>,
@@ -63,6 +64,7 @@ pub struct Transport {
 #[derive(Deserialize)]
 struct ZoneConfig {
     guid: u32,
+    instances: u32,
     name: String,
     hide_ui: bool,
     combat_hud: bool,
@@ -84,12 +86,14 @@ struct ZoneConfig {
     transports: Vec<Transport>
 }
 
+#[derive(Clone)]
 pub enum CharacterType {
     Door(Door),
     Transport(Transport),
     Player
 }
 
+#[derive(Clone)]
 pub struct Character {
     pub guid: u64,
     pub pos: Pos,
@@ -363,8 +367,47 @@ impl Character {
     }
 }
 
-pub struct Zone {
+#[derive(Clone)]
+pub struct ZoneTemplate {
     guid: u32,
+    pub name: String,
+    pub default_spawn_pos: Pos,
+    pub default_spawn_rot: Pos,
+    default_spawn_sky: String,
+    pub speed: f32,
+    pub jump_height_multiplier: f32,
+    pub gravity_multiplier: f32,
+    hide_ui: bool,
+    combat_hud: bool,
+    characters: Vec<Character>
+}
+
+impl Guid<u32> for ZoneTemplate {
+    fn guid(&self) -> u32 {
+        self.guid
+    }
+}
+
+impl From<&Vec<Character>> for GuidTable<u64, Character> {
+    fn from(value: &Vec<Character>) -> Self {
+        let table = GuidTable::new();
+
+        {
+            let mut write_handle = table.write();
+            for character in value.iter() {
+                if let Some(_) = write_handle.insert(character.clone()) {
+                    panic!("Two characters have same GUID {}", character.guid());
+                }
+            }
+        }
+
+        table
+    }
+}
+
+pub struct Zone {
+    guid: u64,
+    pub template_guid: u32,
     pub name: String,
     pub default_spawn_pos: Pos,
     pub default_spawn_rot: Pos,
@@ -377,8 +420,8 @@ pub struct Zone {
     characters: GuidTable<u64, Character>
 }
 
-impl Guid<u32> for Zone {
-    fn guid(&self) -> u32 {
+impl Guid<u64> for Zone {
+    fn guid(&self) -> u64 {
         self.guid
     }
 }
@@ -477,18 +520,21 @@ impl Zone {
     }
 }
 
-impl From<ZoneConfig> for Zone {
+fn instance_guid(index: u32, template_guid: u32) -> u64 {
+    ((index as u64) << 32) | (template_guid as u64)
+}
+
+impl From<ZoneConfig> for (ZoneTemplate, Vec<Zone>) {
     fn from(zone_config: ZoneConfig) -> Self {
-        let characters = GuidTable::new();
+        let mut characters = Vec::new();
 
         // Set the first bit for NPC guids to avoid player GUID conflicts
-        let mut guid = 0x8000000000000000u64;
+        let mut character_guid = 0x8000000000000000u64;
 
         {
-            let mut write_handle = characters.write();
             for door in zone_config.doors {
-                write_handle.insert(Character {
-                    guid,
+                characters.push(Character {
+                    guid: character_guid,
                     pos: Pos {
                         x: door.x,
                         y: door.y,
@@ -507,12 +553,12 @@ impl From<ZoneConfig> for Zone {
                     interact_radius: zone_config.interact_radius,
                     auto_interact_radius: zone_config.door_auto_interact_radius,
                 });
-                guid += 1;
+                character_guid += 1;
             }
             
             for transport in zone_config.transports {
-                write_handle.insert(Character {
-                    guid,
+                characters.push(Character {
+                    guid: character_guid,
                     pos: Pos {
                         x: transport.pos_x,
                         y: transport.pos_y,
@@ -531,11 +577,11 @@ impl From<ZoneConfig> for Zone {
                     interact_radius: zone_config.interact_radius,
                     auto_interact_radius: 0.0,
                 });
-                guid += 1;
+                character_guid += 1;
             }
         }
 
-        Zone {
+        let template = ZoneTemplate {
             guid: zone_config.guid,
             name: zone_config.name,
             default_spawn_pos: Pos {
@@ -557,29 +603,60 @@ impl From<ZoneConfig> for Zone {
             hide_ui: zone_config.hide_ui,
             combat_hud: zone_config.combat_hud,
             characters
+        };
+
+        let mut zones = Vec::new();
+        for index in 0..zone_config.instances {
+            let instance_guid = instance_guid(index, template.guid);
+            zones.push(
+                Zone {
+                    guid: instance_guid,
+                    template_guid: template.guid,
+                    name: template.name.clone(),
+                    default_spawn_pos: template.default_spawn_pos,
+                    default_spawn_rot: template.default_spawn_rot,
+                    default_spawn_sky: template.default_spawn_sky.clone(),
+                    speed: template.speed,
+                    jump_height_multiplier: template.jump_height_multiplier,
+                    gravity_multiplier: template.gravity_multiplier,
+                    hide_ui: template.hide_ui,
+                    combat_hud: template.combat_hud,
+                    characters: <GuidTable<u64, Character> as From<&Vec<Character>>>::from(&template.characters),
+                }
+            );
         }
+
+        (template, zones)
     }
 }
 
-pub fn load_zones(config_dir: &Path) -> Result<GuidTable<u32, Zone>, Error> {
+pub fn load_zones(config_dir: &Path) -> Result<(GuidTable<u32, ZoneTemplate>, GuidTable<u64, Zone>), Error> {
     let mut file = File::open(config_dir.join("zones.json"))?;
     let zone_configs: Vec<ZoneConfig> = serde_json::from_reader(&mut file)?;
 
+    let templates = GuidTable::new();
     let zones = GuidTable::new();
     {
-        let mut write_handle = zones.write();
+        let mut templates_write_handle = templates.write();
+        let mut zones_write_handle = zones.write();
         for zone_config in zone_configs {
-            let zone = Zone::from(zone_config);
-            let id = zone.guid;
-            let previous = write_handle.insert(zone);
+            let (template, zones) = <(ZoneTemplate, Vec<Zone>) as From<ZoneConfig>>::from(zone_config);
+            let template_id = template.guid();
 
-            if let Some(_) = previous {
-                panic!("Two zones have ID {}", id);
+            if let Some(_) = templates_write_handle.insert(template) {
+                panic!("Two zone templates have ID {}", template_id);
+            }
+
+            for zone in zones {
+                let zone_guid = zone.guid();
+                if let Some(_) = zones_write_handle.insert(zone) {
+                    panic!("Two zone templates have ID {}", zone_guid);
+                }
             }
         }
     }
 
-    Ok(zones)
+    Ok((templates, zones))
 }
 
 pub fn interact_with_character(request: SelectPlayer, game_server: &GameServer) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
@@ -636,6 +713,8 @@ pub fn interact_with_character(request: SelectPlayer, game_server: &GameServer) 
 
                         let destination_zone_guid = if let &Some(destination_zone_guid) = &door.destination_zone {
                             destination_zone_guid
+                        } else if let &Some(destination_zone_template) = &door.destination_zone_template {
+                            GameServer::any_instance(&zones, destination_zone_template)?
                         } else {
                             source_zone_guid
                         };
@@ -704,8 +783,8 @@ impl GamePacket for ZoneTeleportRequest {
     const HEADER: Self::Header = OpCode::ZoneTeleportRequest;
 }
 
-pub fn teleport_to_zone(zones: &GuidTableReadHandle<u32, Zone>, source_zone: RwLockReadGuard<Zone>,
-                        player_guid: u64, destination_zone_guid: u32, destination_pos: Option<Pos>,
+pub fn teleport_to_zone(zones: &GuidTableReadHandle<u64, Zone>, source_zone: RwLockReadGuard<Zone>,
+                        player_guid: u64, destination_zone_guid: u64, destination_pos: Option<Pos>,
                         destination_rot: Option<Pos>) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
     let mut characters = source_zone.write_characters();
     let character = characters.remove(player_guid);

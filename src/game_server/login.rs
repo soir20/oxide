@@ -149,10 +149,11 @@ impl GamePacket for DefinePointsOfInterest {
 
 pub fn send_points_of_interest(game_server: &GameServer) -> Result<Vec<Vec<u8>>, SerializePacketError> {
     let mut points = Vec::new();
-    for (guid, _) in game_server.read_zones().iter() {
+    for (_, zone) in game_server.read_zones().iter() {
+        let zone_read_handle = zone.read();
         points.push(
             PointOfInterest {
-                id: guid,
+                id: zone_read_handle.template_guid,
                 name_id: 0,
                 location_id: 0,
                 teleport_pos: Pos {

@@ -3,6 +3,7 @@ use std::path::Path;
 use std::vec;
 
 use byteorder::{LittleEndian, ReadBytesExt};
+use rand::Rng;
 
 use packet_serialize::{DeserializePacket, DeserializePacketError, NullTerminatedString, SerializePacketError};
 
@@ -19,7 +20,7 @@ use crate::game_server::player_update_packet::make_test_npc;
 use crate::game_server::time::make_game_time_sync;
 use crate::game_server::tunnel::{TunneledPacket, TunneledWorldPacket};
 use crate::game_server::update_position::UpdatePlayerPosition;
-use crate::game_server::zone::{Character, load_zones, teleport_to_zone, teleport_within_zone, Zone, ZoneTeleportRequest};
+use crate::game_server::zone::{Character, load_zones, teleport_to_zone, teleport_within_zone, Zone, ZoneTeleportRequest, ZoneTemplate};
 
 mod login;
 mod player_data;
@@ -72,16 +73,19 @@ impl From<SerializePacketError> for ProcessPacketError {
 
 pub struct GameServer {
     mounts: GuidTable<u32, MountConfig>,
-    zones: GuidTable<u32, Zone>,
+    zone_templates: GuidTable<u32, ZoneTemplate>,
+    zones: GuidTable<u64, Zone>,
 }
 
 impl GameServer {
 
     pub fn new(config_dir: &Path) -> Result<Self, Error> {
+        let (templates, zones) = load_zones(config_dir)?;
         Ok(
             GameServer {
                 mounts: load_mounts(config_dir)?,
-                zones: load_zones(config_dir)?,
+                zone_templates: templates,
+                zones,
             }
         )
     }
@@ -323,7 +327,7 @@ impl GameServer {
                                     &zones,
                                     zone_read_handle,
                                     sender as u64,
-                                    teleport_request.destination_guid,
+                                    GameServer::any_instance(&zones, teleport_request.destination_guid)?,
                                     None,
                                     None
                                 )?
@@ -405,15 +409,42 @@ impl GameServer {
         Ok(broadcasts)
     }
 
-    pub fn read_zones(&self) -> GuidTableReadHandle<u32, Zone> {
+    pub fn read_zone_templates(&self) -> GuidTableReadHandle<u32, ZoneTemplate> {
+        self.zone_templates.read()
+    }
+
+    pub fn read_zones(&self) -> GuidTableReadHandle<u64, Zone> {
         self.zones.read()
     }
 
-    pub fn write_zones(&self) -> GuidTableWriteHandle<u32, Zone> {
+    pub fn write_zones(&self) -> GuidTableWriteHandle<u64, Zone> {
         self.zones.write()
     }
 
-    pub fn zone_with_character(zones: &GuidTableReadHandle<u32, Zone>, guid: u64) -> Option<u32> {
+    pub fn any_instance(zones: &GuidTableReadHandle<u64, Zone>, template_guid: u32) -> Result<u64, ProcessPacketError> {
+        let instances = GameServer::zones_by_template(zones, template_guid);
+        if instances.len() > 0 {
+            let index = rand::thread_rng().gen_range(0..instances.len());
+            Ok(instances[index])
+        } else {
+            Err(ProcessPacketError::CorruptedPacket)
+        }
+    }
+
+    pub fn zones_by_template(zones: &GuidTableReadHandle<u64, Zone>, template_guid: u32) -> Vec<u64> {
+        let mut zone_guids = Vec::new();
+
+        for zone in zones.values() {
+            let read_handle = zone.read();
+            if read_handle.template_guid == template_guid {
+                zone_guids.push(read_handle.guid());
+            }
+        }
+
+        zone_guids
+    }
+
+    pub fn zone_with_character(zones: &GuidTableReadHandle<u64, Zone>, guid: u64) -> Option<u64> {
         for zone in zones.values() {
             let read_handle = zone.read();
             if read_handle.read_characters().get(guid).is_some() {

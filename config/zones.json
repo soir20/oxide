@@ -2,6 +2,7 @@
   {
     "comment": "Geonosis Campaign Cruiser",
     "guid": 14,
+    "instances": 1,
     "name": "MonCala_Venetor",
     "hide_ui": false,
     "combat_hud": false,
@@ -44,6 +45,7 @@
   {
     "comment": "Ryloth",
     "guid": 15,
+    "instances": 1,
     "name": "Combat_Ryloth_StartingZone_01",
     "hide_ui": false,
     "combat_hud": true,
@@ -104,6 +106,7 @@
   {
     "comment": "Umbara",
     "guid": 19,
+    "instances": 1,
     "name": "Combat_Umbara_South_01",
     "hide_ui": false,
     "combat_hud": true,
@@ -186,6 +189,7 @@
   {
     "comment": "Carlac",
     "guid": 34,
+    "instances": 1,
     "name": "Combat_Carlac_01",
     "hide_ui": false,
     "combat_hud": true,
@@ -246,6 +250,7 @@
   {
     "comment": "Felucia",
     "guid": 36,
+    "instances": 1,
     "name": "Combat_Felucia_01",
     "hide_ui": false,
     "combat_hud": true,
@@ -287,6 +292,7 @@
   {
     "comment": "Coruscant",
     "guid": 24,
+    "instances": 1,
     "name": "JediTemple",
     "hide_ui": false,
     "combat_hud": false,
@@ -575,7 +581,7 @@
         "destination_rot_y": 0.0,
         "destination_rot_z": 1.5,
         "destination_rot_w": 0.0,
-        "destination_zone": 25
+        "destination_zone_template": 25
       },
       {
         "comment": "Lounge -> Club",
@@ -592,7 +598,7 @@
         "destination_rot_y": 0.0,
         "destination_rot_z": 0.0,
         "destination_rot_w": 0.0,
-        "destination_zone": 25
+        "destination_zone_template": 25
       },
       {
         "comment": "TEMPORARY: Training Room Main Platform",
@@ -650,6 +656,7 @@
   },
   {
     "guid": 25,
+    "instances": 1,
     "name": "Members",
     "hide_ui": false,
     "combat_hud": false,
@@ -682,7 +689,7 @@
         "destination_rot_y": 0.0,
         "destination_rot_z": 0.0,
         "destination_rot_w": 0.0,
-        "destination_zone": 24
+        "destination_zone_template": 24
       },
       {
         "comment": "Club -> Lounge",
@@ -699,7 +706,7 @@
         "destination_rot_y": 0.0,
         "destination_rot_z": 1.5,
         "destination_rot_w": 0.0,
-        "destination_zone": 24
+        "destination_zone_template": 24
       }
     ],
     "transports": []
