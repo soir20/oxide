@@ -1,5 +1,6 @@
 use std::io::Cursor;
 use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
+use num_enum::TryFromPrimitive;
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
 use crate::game_server::game_packet::{GamePacket, OpCode};
 use crate::game_server::{GameServer, ProcessPacketError};
@@ -25,7 +26,8 @@ pub fn process_command(game_server: &GameServer, cursor: &mut Cursor<&[u8]>) -> 
     }
 }
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u16)]
 pub enum CommandOpCode {
     InteractionList          = 0x9,
     SelectPlayer             = 0xf
@@ -36,20 +38,6 @@ impl SerializePacket for CommandOpCode {
         OpCode::Command.serialize(buffer)?;
         buffer.write_u16::<LittleEndian>(*self as u16)?;
         Ok(())
-    }
-}
-
-pub struct UnknownCommandOpCode;
-
-impl TryFrom<u16> for CommandOpCode {
-    type Error = UnknownCommandOpCode;
-
-    fn try_from(value: u16) -> Result<Self, Self::Error> {
-        match value {
-            0x9 => Ok(CommandOpCode::InteractionList),
-            0xf => Ok(CommandOpCode::SelectPlayer),
-            _ => Err(UnknownCommandOpCode)
-        }
     }
 }
 

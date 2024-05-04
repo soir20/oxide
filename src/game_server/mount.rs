@@ -3,6 +3,7 @@ use std::io::{Cursor, Error};
 use std::path::Path;
 
 use byteorder::{ReadBytesExt, WriteBytesExt};
+use num_enum::TryFromPrimitive;
 use parking_lot::RwLockReadGuard;
 use serde::Deserialize;
 
@@ -55,7 +56,8 @@ pub fn load_mounts(config_dir: &Path) -> Result<GuidTable<u32, MountConfig>, Err
     Ok(mount_table)
 }
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
 pub enum MountOpCode {
     MountRequest             = 0x1,
     MountReply               = 0x2,
@@ -73,27 +75,6 @@ impl SerializePacket for MountOpCode {
         OpCode::Mount.serialize(buffer)?;
         buffer.write_u8(*self as u8)?;
         Ok(())
-    }
-}
-
-pub struct UnknownMountOpCode;
-
-impl TryFrom<u8> for MountOpCode {
-    type Error = UnknownMountOpCode;
-
-    fn try_from(value: u8) -> Result<Self, Self::Error> {
-        match value {
-            0x1 => Ok(MountOpCode::MountRequest),
-            0x2 => Ok(MountOpCode::MountReply),
-            0x3 => Ok(MountOpCode::DismountRequest),
-            0x4 => Ok(MountOpCode::DismountReply),
-            0x5 => Ok(MountOpCode::MountList),
-            0x6 => Ok(MountOpCode::MountSpawn),
-            0x8 => Ok(MountOpCode::MountSpawnByItemDef),
-            0x9 => Ok(MountOpCode::MountListShowMarket),
-            0xa => Ok(MountOpCode::SetAutoMount),
-            _ => Err(UnknownMountOpCode)
-        }
     }
 }
 

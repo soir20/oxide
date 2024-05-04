@@ -1,8 +1,10 @@
 use byteorder::{LittleEndian, WriteBytesExt};
+use num_enum::TryFromPrimitive;
 use serde::Deserialize;
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u16)]
 pub enum OpCode {
     LoginRequest             = 0x1,
     LoginReply               = 0x2,
@@ -30,44 +32,6 @@ pub enum OpCode {
     Mount                    = 0xa7,
     Store                    = 0xa4,
     DeploymentEnv            = 0xa5,
-}
-
-pub struct UnknownOpCode;
-
-impl TryFrom<u16> for OpCode {
-    type Error = UnknownOpCode;
-
-    fn try_from(value: u16) -> Result<Self, Self::Error> {
-        match value {
-            0x1 => Ok(OpCode::LoginRequest),
-            0x2 => Ok(OpCode::LoginReply) ,
-            0x5 => Ok(OpCode::TunneledClient),
-            0x6 => Ok(OpCode::TunneledWorld),
-            0xc => Ok(OpCode::Player),
-            0xd => Ok(OpCode::ClientIsReady),
-            0xe => Ok(OpCode::ZoneDetailsDone),
-            0x1a => Ok(OpCode::Command),
-            0x1f => Ok(OpCode::ClientBeginZoning),
-            0x20 => Ok(OpCode::Combat),
-            0x23 => Ok(OpCode::PlayerUpdate),
-            0x26 => Ok(OpCode::ClientUpdate),
-            0x2b => Ok(OpCode::ZoneDetails),
-            0x2f => Ok(OpCode::Ui),
-            0x34 => Ok(OpCode::GameTimeSync),
-            0x39 => Ok(OpCode::DefinePointsOfInterest),
-            0x5a => Ok(OpCode::ZoneTeleportRequest),
-            0x5d => Ok(OpCode::WelcomeScreen),
-            0x7a => Ok(OpCode::TeleportToSafety),
-            0x7d => Ok(OpCode::UpdatePlayerPosition),
-            0x7f => Ok(OpCode::Housing),
-            0x8f => Ok(OpCode::ClientGameSettings),
-            0x9b => Ok(OpCode::Portrait),
-            0xa4 => Ok(OpCode::Store),
-            0xa7 => Ok(OpCode::Mount),
-            0xa5 => Ok(OpCode::DeploymentEnv),
-            _ => Err(UnknownOpCode)
-        }
-    }
 }
 
 impl SerializePacket for OpCode {
