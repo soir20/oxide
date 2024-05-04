@@ -12,11 +12,13 @@ use crate::game_server::ui::ExecuteScriptWithParams;
 #[derive(Copy, Clone, Debug)]
 pub enum HousingOpCode {
     InstanceData             = 0x18,
+    InstanceList             = 0x26,
     FixtureUpdate            = 0x27,
     FixtureAsset             = 0x29,
     ItemList                 = 0x2a,
     HouseInfo                = 0x2b,
     HouseZoneData            = 0x2c,
+    InviteNotification       = 0x2e
 }
 
 impl SerializePacket for HousingOpCode {
@@ -93,33 +95,54 @@ impl GamePacket for HouseInfo {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
+pub struct HouseDescription {
+    pub owner_guid: u64,
+    pub house_guid: u64,
+    pub house_name: u32,
+    pub player_given_name: String,
+    pub owner_name: String,
+    pub icon_id: ImageId,
+    pub unknown5: bool,
+    pub fixture_count: u32,
+    pub unknown7: u64,
+    pub furniture_score: u32,
+    pub is_locked: bool,
+    pub unknown10: String,
+    pub unknown11: String,
+    pub rating: f32,
+    pub total_votes: u32,
+    pub is_published: bool,
+    pub is_rateable: bool,
+    pub unknown16: u32,
+    pub unknown17: u32
+}
+
+#[derive(SerializePacket, DeserializePacket)]
 pub struct HouseZoneData {
     not_editable: bool,
     unknown2: u32,
-    owner_guid: u64,
-    house_guid: u64,
-    house_name: u32,
-    player_given_name: String,
-    owner_name: String,
-    icon_id: ImageId,
-    unknown5: bool,
-    unknown6: u32,
-    unknown7: u64,
-    unknown8: u32,
-    unknown9: bool,
-    unknown10: String,
-    unknown11: String,
-    unknown12: u32,
-    unknown13: u32,
-    is_published: bool,
-    is_rateable: bool,
-    unknown16: u32,
-    unknown17: u32
+    description: HouseDescription
 }
 
 impl GamePacket for HouseZoneData {
     type Header = HousingOpCode;
     const HEADER: Self::Header = HousingOpCode::HouseZoneData;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct HouseInstanceEntry {
+    pub description: HouseDescription,
+    pub unknown1: u64
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct HouseInstanceList {
+    pub instances: Vec<HouseInstanceEntry>
+}
+
+impl GamePacket for HouseInstanceList {
+    type Header = HousingOpCode;
+    const HEADER: Self::Header = HousingOpCode::InstanceList;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -244,6 +267,26 @@ impl GamePacket for FixtureUpdate {
     const HEADER: Self::Header = HousingOpCode::FixtureUpdate;
 }
 
+#[derive(SerializePacket, DeserializePacket)]
+pub struct HouseInvite {
+    pub unknown1: u64,
+    pub owner_name: String,
+    pub unknown3: u64,
+    pub house_guid: u64,
+    pub unknown5: u64
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct HouseInviteNotification {
+    pub invite: HouseInvite,
+    pub unknown1: u64
+}
+
+impl GamePacket for HouseInviteNotification {
+    type Header = HousingOpCode;
+    const HEADER: Self::Header = HousingOpCode::InviteNotification;
+}
+
 pub fn make_test_fixture_packets() -> Result<Vec<Vec<u8>>, SerializePacketError> {
     Ok(vec![
         GamePacket::serialize(
@@ -252,25 +295,27 @@ pub fn make_test_fixture_packets() -> Result<Vec<Vec<u8>>, SerializePacketError>
                 inner: HouseZoneData {
                     not_editable: false,
                     unknown2: 0,
-                    owner_guid: 1,
-                    house_guid: 101,
-                    house_name: 0,
-                    player_given_name: "Blaster's Amazing Lot".to_string(),
-                    owner_name: "Blaster".to_string(),
-                    icon_id: 0,
-                    unknown5: false,
-                    unknown6: 0,
-                    unknown7: 0,
-                    unknown8: 0,
-                    unknown9: false,
-                    unknown10: "".to_string(),
-                    unknown11: "".to_string(),
-                    unknown12: 0,
-                    unknown13: 0,
-                    is_published: false,
-                    is_rateable: true,
-                    unknown16: 0,
-                    unknown17: 0,
+                    description: HouseDescription {
+                        owner_guid: 1,
+                        house_guid: 101,
+                        house_name: 0,
+                        player_given_name: "Blaster's Amazing Lot".to_string(),
+                        owner_name: "Blaster".to_string(),
+                        icon_id: 0,
+                        unknown5: false,
+                        fixture_count: 0,
+                        unknown7: 0,
+                        furniture_score: 0,
+                        is_locked: false,
+                        unknown10: "".to_string(),
+                        unknown11: "".to_string(),
+                        rating: 0.0,
+                        total_votes: 0,
+                        is_published: false,
+                        is_rateable: true,
+                        unknown16: 0,
+                        unknown17: 0,
+                    }
                 },
             }
         )?,

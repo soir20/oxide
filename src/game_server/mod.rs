@@ -10,14 +10,14 @@ use crate::game_server::client_update_packet::{Health, Power, PreloadCharactersD
 use crate::game_server::command::process_command;
 use crate::game_server::game_packet::{GamePacket, OpCode};
 use crate::game_server::guid::{Guid, GuidTable, GuidTableReadHandle, GuidTableWriteHandle};
-use crate::game_server::housing::make_test_fixture_packets;
+use crate::game_server::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList, make_test_fixture_packets};
 use crate::game_server::item::make_item_definitions;
 use crate::game_server::login::{DeploymentEnv, GameSettings, LoginReply, send_points_of_interest, WelcomeScreen, ZoneDetailsDone};
-use crate::game_server::mount::{process_mount_packet, load_mounts, MountConfig};
-use crate::game_server::player_data::{make_test_wield_type, make_test_player};
+use crate::game_server::mount::{load_mounts, MountConfig, process_mount_packet};
+use crate::game_server::player_data::{make_test_player, make_test_wield_type};
 use crate::game_server::player_update_packet::make_test_npc;
 use crate::game_server::time::make_game_time_sync;
-use crate::game_server::tunnel::TunneledPacket;
+use crate::game_server::tunnel::{TunneledPacket, TunneledWorldPacket};
 use crate::game_server::update_position::UpdatePlayerPosition;
 use crate::game_server::zone::{Character, load_zones, teleport_to_zone, teleport_within_zone, Zone, ZoneTeleportRequest};
 
@@ -175,6 +175,10 @@ impl GameServer {
             Ok(op_code) => match op_code {
                 OpCode::TunneledClient => {
                     let packet: TunneledPacket<Vec<u8>> = DeserializePacket::deserialize(&mut cursor)?;
+                    broadcasts.append(&mut self.process_packet(sender, packet.inner)?);
+                },
+                OpCode::TunneledWorld => {
+                    let packet: TunneledWorldPacket<Vec<u8>> = DeserializePacket::deserialize(&mut cursor)?;
                     broadcasts.append(&mut self.process_packet(sender, packet.inner)?);
                 },
                 OpCode::ClientIsReady => {
@@ -356,6 +360,42 @@ impl GameServer {
                 },
                 OpCode::Mount => {
                     broadcasts.append(&mut process_mount_packet(&mut cursor, sender, &self)?);
+                },
+                OpCode::Housing => {
+                    println!("HOUSING PACKET: {:x?}", data);
+                    broadcasts.push(Broadcast::Single(sender, vec![
+                        GamePacket::serialize(&TunneledPacket {
+                            unknown1: true,
+                            inner: HouseInstanceList {
+                                instances: vec![
+                                    HouseInstanceEntry {
+                                        description: HouseDescription {
+                                            owner_guid: 1,
+                                            house_guid: 1000,
+                                            house_name: 1987,
+                                            player_given_name: "Blaster's Mustafar Lot".to_string(),
+                                            owner_name: "BLASTER NICESHOT".to_string(),
+                                            icon_id: 4209,
+                                            unknown5: true,
+                                            fixture_count: 1,
+                                            unknown7: 0,
+                                            furniture_score: 3,
+                                            is_locked: false,
+                                            unknown10: "".to_string(),
+                                            unknown11: "".to_string(),
+                                            rating: 4.5,
+                                            total_votes: 5,
+                                            is_published: false,
+                                            is_rateable: false,
+                                            unknown16: 0,
+                                            unknown17: 0,
+                                        },
+                                        unknown1: 1
+                                    }
+                                ],
+                            },
+                        })?
+                    ]));
                 },
                 _ => println!("Unimplemented: {:?}, {:x?}", op_code, data)
             },
