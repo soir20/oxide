@@ -1,6 +1,7 @@
 use std::io::Write;
 
 use byteorder::{LittleEndian, WriteBytesExt};
+use num_enum::TryFromPrimitive;
 
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
 
@@ -9,7 +10,8 @@ use crate::game_server::player_update_packet::{BaseAttachmentGroup, make_test_np
 use crate::game_server::tunnel::TunneledPacket;
 use crate::game_server::ui::ExecuteScriptWithParams;
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u16)]
 pub enum HousingOpCode {
     InstanceData             = 0x18,
     InstanceList             = 0x26,
