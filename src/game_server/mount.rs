@@ -10,6 +10,7 @@ use serde::Deserialize;
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
 
 use crate::game_server::{Broadcast, GameServer, ProcessPacketError};
+use crate::game_server::character_guid::{mount_guid, player_guid};
 use crate::game_server::client_update_packet::{Stat, StatId, Stats};
 use crate::game_server::game_packet::{GamePacket, OpCode, Pos};
 use crate::game_server::guid::{Guid, GuidTable};
@@ -117,12 +118,12 @@ impl GamePacket for MountSpawn {
 
 fn process_dismount(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let zones = game_server.read_zones();
-    if let Some(zone_guid) = GameServer::zone_with_character(&zones, sender as u64) {
+    if let Some(zone_guid) = GameServer::zone_with_character(&zones, player_guid(sender)) {
         if let Some(zone) = zones.get(zone_guid) {
             let zone_read_handle = zone.read();
 
             let characters = zone_read_handle.read_characters();
-            if let Some(character) = characters.get(sender as u64) {
+            if let Some(character) = characters.get(player_guid(sender)) {
                 let mut character_write_handle = character.write();
                 if let Some(mount_id) = character_write_handle.mount_id {
                     character_write_handle.mount_id = None;
@@ -136,7 +137,7 @@ fn process_dismount(sender: u32, game_server: &GameServer) -> Result<Vec<Broadca
                                     &TunneledPacket {
                                         unknown1: true,
                                         inner: DismountReply {
-                                            rider_guid: sender as u64,
+                                            rider_guid: player_guid(sender),
                                             composite_effect: mount_read_handle.dismount_composite_effect,
                                         },
                                     }
@@ -219,7 +220,7 @@ fn process_mount_spawn(cursor: &mut Cursor<&[u8]>, sender: u32,
                 &TunneledPacket {
                     unknown1: true,
                     inner: MountReply {
-                        rider_guid: sender as u64,
+                        rider_guid: player_guid(sender),
                         mount_guid,
                         unknown1: 0,
                         queue_pos: 1,
@@ -232,7 +233,7 @@ fn process_mount_spawn(cursor: &mut Cursor<&[u8]>, sender: u32,
         );
 
         let zones = game_server.read_zones();
-        if let Some(zone_guid) = GameServer::zone_with_character(&zones, sender as u64) {
+        if let Some(zone_guid) = GameServer::zone_with_character(&zones, player_guid(sender)) {
             if let Some(zone) = zones.get(zone_guid) {
                 let zone_read_handle = zone.read();
                 packets.push(
@@ -266,7 +267,7 @@ fn process_mount_spawn(cursor: &mut Cursor<&[u8]>, sender: u32,
                 );
 
                 let characters = zone_read_handle.read_characters();
-                if let Some(character) = characters.get(sender as u64) {
+                if let Some(character) = characters.get(player_guid(sender)) {
                     let mut character_write_handle = character.write();
                     if let Some(mount_id) = character_write_handle.mount_id {
                         println!("Player {} tried to mount while already mounted on mount ID {}", sender, mount_id);
@@ -307,10 +308,6 @@ pub fn process_mount_packet(cursor: &mut Cursor<&[u8]>, sender: u32,
             Err(ProcessPacketError::CorruptedPacket)
         }
     }
-}
-
-pub fn mount_guid(character_guid: u32, mount_id: u32) -> u64 {
-    (mount_id as u64) << 32 | (character_guid as u64)
 }
 
 fn spawn_mount_npc(guid: u64, mount: &RwLockReadGuard<MountConfig>) -> Result<Vec<Vec<u8>>, ProcessPacketError> {

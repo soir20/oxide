@@ -8,10 +8,12 @@ use serde::Deserialize;
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
 
 use crate::game_server::{GameServer, ProcessPacketError};
+use crate::game_server::character_guid::{npc_guid, player_guid, shorten_player_guid};
 use crate::game_server::client_update_packet::Position;
 use crate::game_server::command::SelectPlayer;
 use crate::game_server::game_packet::{GamePacket, OpCode, Pos};
 use crate::game_server::guid::{Guid, GuidTable, GuidTableReadHandle, GuidTableWriteHandle};
+use crate::game_server::housing::{BuildArea, prepare_init_house_packets};
 use crate::game_server::login::{ClientBeginZoning, ZoneDetails};
 use crate::game_server::player_update_packet::{AddNotifications, AddNpc, BaseAttachmentGroup, Icon, NotificationData, NpcRelevance, SingleNotification, SingleNpcRelevance, WeaponAnimation};
 use crate::game_server::tunnel::TunneledPacket;
@@ -65,7 +67,9 @@ pub struct Transport {
 struct ZoneConfig {
     guid: u32,
     instances: u32,
-    name: String,
+    template_name: u32,
+    template_icon: Option<u32>,
+    asset_name: String,
     hide_ui: bool,
     combat_hud: bool,
     spawn_pos_x: f32,
@@ -370,7 +374,9 @@ impl Character {
 #[derive(Clone)]
 pub struct ZoneTemplate {
     guid: u32,
-    pub name: String,
+    pub template_name: u32,
+    pub template_icon: u32,
+    pub asset_name: String,
     pub default_spawn_pos: Pos,
     pub default_spawn_rot: Pos,
     default_spawn_sky: String,
@@ -405,10 +411,35 @@ impl From<&Vec<Character>> for GuidTable<u64, Character> {
     }
 }
 
+pub struct Fixture {
+    pub pos: Pos,
+    pub rot: Pos,
+    pub scale: f32,
+    pub item_def_id: u32,
+    pub model_id: u32,
+    pub texture_name: String,
+}
+
+pub struct House {
+    pub owner: u32,
+    pub owner_name: String,
+    pub name: String,
+    pub rating: f32,
+    pub total_votes: u32,
+    pub fixtures: Vec<Fixture>,
+    pub build_areas: Vec<BuildArea>,
+    pub is_locked: bool,
+    pub is_published: bool,
+    pub is_rateable: bool
+}
+
 pub struct Zone {
     guid: u64,
     pub template_guid: u32,
-    pub name: String,
+    pub template_name: u32,
+    pub icon: u32,
+    pub display_name: String,
+    pub asset_name: String,
     pub default_spawn_pos: Pos,
     pub default_spawn_rot: Pos,
     default_spawn_sky: String,
@@ -417,7 +448,8 @@ pub struct Zone {
     pub gravity_multiplier: f32,
     hide_ui: bool,
     combat_hud: bool,
-    characters: GuidTable<u64, Character>
+    characters: GuidTable<u64, Character>,
+    house_data: Option<House>
 }
 
 impl Guid<u64> for Zone {
@@ -433,7 +465,7 @@ impl Zone {
                 &TunneledPacket {
                     unknown1: true,
                     inner: ZoneDetails {
-                        name: self.name.clone(),
+                        name: self.asset_name.clone(),
                         zone_type: 2,
                         hide_ui: self.hide_ui,
                         combat_hud: self.combat_hud,
@@ -529,12 +561,12 @@ impl From<ZoneConfig> for (ZoneTemplate, Vec<Zone>) {
         let mut characters = Vec::new();
 
         // Set the first bit for NPC guids to avoid player GUID conflicts
-        let mut character_guid = 0x8000000000000000u64;
+        let mut index = 0;
 
         {
             for door in zone_config.doors {
                 characters.push(Character {
-                    guid: character_guid,
+                    guid: npc_guid(index),
                     pos: Pos {
                         x: door.x,
                         y: door.y,
@@ -553,12 +585,12 @@ impl From<ZoneConfig> for (ZoneTemplate, Vec<Zone>) {
                     interact_radius: zone_config.interact_radius,
                     auto_interact_radius: zone_config.door_auto_interact_radius,
                 });
-                character_guid += 1;
+                index += 1;
             }
             
             for transport in zone_config.transports {
                 characters.push(Character {
-                    guid: character_guid,
+                    guid: npc_guid(index),
                     pos: Pos {
                         x: transport.pos_x,
                         y: transport.pos_y,
@@ -577,13 +609,15 @@ impl From<ZoneConfig> for (ZoneTemplate, Vec<Zone>) {
                     interact_radius: zone_config.interact_radius,
                     auto_interact_radius: 0.0,
                 });
-                character_guid += 1;
+                index += 1;
             }
         }
 
         let template = ZoneTemplate {
             guid: zone_config.guid,
-            name: zone_config.name,
+            template_name: zone_config.template_name,
+            template_icon: zone_config.template_icon.unwrap_or(0),
+            asset_name: zone_config.asset_name,
             default_spawn_pos: Pos {
                 x: zone_config.spawn_pos_x,
                 y: zone_config.spawn_pos_y,
@@ -607,12 +641,53 @@ impl From<ZoneConfig> for (ZoneTemplate, Vec<Zone>) {
 
         let mut zones = Vec::new();
         for index in 0..zone_config.instances {
-            let instance_guid = instance_guid(index, template.guid);
+            let instance_guid = instance_guid(index, template.guid());
+
+            // TODO: remove
+            let house_data = if template.guid() == 100 {
+                Some(House {
+                    owner: 1,
+                    owner_name: "BLASTER NICESHOt".to_string(),
+                    name: "Blaster's Test Lot".to_string(),
+                    rating: 3.5,
+                    total_votes: 100,
+                    fixtures: vec![
+                        Fixture {
+                            pos: Pos {
+                                x: 495.0,
+                                y: 0.03999996,
+                                z: 481.5,
+                                w: 1.0,
+                            },
+                            rot: Pos {
+                                x: 0.0,
+                                y: 0.0,
+                                z: 0.0,
+                                w: 0.0,
+                            },
+                            scale: 1.0,
+                            item_def_id: 6,
+                            model_id: 458,
+                            texture_name: "Rose".to_string(),
+                        }
+                    ],
+                    build_areas: vec![],
+                    is_locked: false,
+                    is_published: false,
+                    is_rateable: false,
+                })
+            } else {
+                None
+            };
+
             zones.push(
                 Zone {
                     guid: instance_guid,
-                    template_guid: template.guid,
-                    name: template.name.clone(),
+                    template_guid: template.guid(),
+                    template_name: template.template_name,
+                    icon: template.template_icon,
+                    display_name: "".to_string(),
+                    asset_name: template.asset_name.clone(),
                     default_spawn_pos: template.default_spawn_pos,
                     default_spawn_rot: template.default_spawn_rot,
                     default_spawn_sky: template.default_spawn_sky.clone(),
@@ -622,6 +697,7 @@ impl From<ZoneConfig> for (ZoneTemplate, Vec<Zone>) {
                     hide_ui: template.hide_ui,
                     combat_hud: template.combat_hud,
                     characters: <GuidTable<u64, Character> as From<&Vec<Character>>>::from(&template.characters),
+                    house_data,
                 }
             );
         }
@@ -725,7 +801,7 @@ pub fn interact_with_character(request: SelectPlayer, game_server: &GameServer) 
                             teleport_to_zone(
                                 &zones,
                                 source_zone_read_handle,
-                                request.requester,
+                                shorten_player_guid(request.requester)?,
                                 destination_zone_guid,
                                 Some(destination_pos),
                                 Some(destination_rot)
@@ -784,10 +860,10 @@ impl GamePacket for ZoneTeleportRequest {
 }
 
 pub fn teleport_to_zone(zones: &GuidTableReadHandle<u64, Zone>, source_zone: RwLockReadGuard<Zone>,
-                        player_guid: u64, destination_zone_guid: u64, destination_pos: Option<Pos>,
+                        player: u32, destination_zone_guid: u64, destination_pos: Option<Pos>,
                         destination_rot: Option<Pos>) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
     let mut characters = source_zone.write_characters();
-    let character = characters.remove(player_guid);
+    let character = characters.remove(player_guid(player));
     drop(characters);
     drop(source_zone);
 
@@ -797,19 +873,18 @@ pub fn teleport_to_zone(zones: &GuidTableReadHandle<u64, Zone>, source_zone: RwL
         let destination_rot = destination_rot.unwrap_or(destination_read_handle.default_spawn_rot);
         if let Some(character) = character {
             let mut characters = destination_read_handle.write_characters();
-            characters.insert_lock(player_guid, character);
+            characters.insert_lock(player_guid(player), character);
             drop(characters);
         }
-        Ok(prepare_init_zone_packets(destination_read_handle, destination_pos, destination_rot)?)
+        Ok(prepare_init_zone_packets(player, destination_read_handle, destination_pos, destination_rot)?)
     } else {
         Ok(Vec::new())
     }
 }
 
-
-fn prepare_init_zone_packets(destination: RwLockReadGuard<Zone>, destination_pos: Pos,
-                             destination_rot: Pos) -> Result<Vec<Vec<u8>>, SerializePacketError> {
-    let zone_name = destination.name.clone();
+fn prepare_init_zone_packets(player: u32, destination: RwLockReadGuard<Zone>, destination_pos: Pos,
+                             destination_rot: Pos) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+    let zone_name = destination.asset_name.clone();
     let mut packets = vec![];
     packets.push(
         GamePacket::serialize(&TunneledPacket {
@@ -844,6 +919,10 @@ fn prepare_init_zone_packets(destination: RwLockReadGuard<Zone>, destination_pos
             },
         })?
     );
+
+    if let Some(house) = &destination.house_data {
+        packets.append(&mut prepare_init_house_packets(player, &destination, house)?);
+    }
 
     Ok(packets)
 }

@@ -1,18 +1,24 @@
-use std::io::Write;
+use std::io::{Cursor, Write};
 
-use byteorder::{LittleEndian, WriteBytesExt};
+use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
 use num_enum::TryFromPrimitive;
+use parking_lot::RwLockReadGuard;
 
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
 
+use crate::game_server::{GameServer, ProcessPacketError};
+use crate::game_server::character_guid::{fixture_guid, player_guid};
 use crate::game_server::game_packet::{GamePacket, ImageId, OpCode, Pos};
-use crate::game_server::player_update_packet::{BaseAttachmentGroup, make_test_npc};
+use crate::game_server::guid::Guid;
+use crate::game_server::player_update_packet::{AddNpc, BaseAttachmentGroup, Icon, make_test_npc, WeaponAnimation};
 use crate::game_server::tunnel::TunneledPacket;
 use crate::game_server::ui::ExecuteScriptWithParams;
+use crate::game_server::zone::{Fixture, House, teleport_to_zone, Zone};
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u16)]
 pub enum HousingOpCode {
+    EnterRequest             = 0x10,
     InstanceData             = 0x18,
     InstanceList             = 0x26,
     FixtureUpdate            = 0x27,
@@ -29,6 +35,18 @@ impl SerializePacket for HousingOpCode {
         buffer.write_u16::<LittleEndian>(*self as u16)?;
         Ok(())
     }
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct EnterRequest {
+    house_guid: u64,
+    unknown1: u32,
+    unknown2: u32
+}
+
+impl GamePacket for EnterRequest {
+    type Header = HousingOpCode;
+    const HEADER: Self::Header = HousingOpCode::EnterRequest;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -162,7 +180,7 @@ pub struct InstanceUnknown2 {
     unknown4: u64
 }
 
-#[derive(SerializePacket, DeserializePacket)]
+#[derive(Clone, SerializePacket, DeserializePacket)]
 pub struct BuildArea {
     min: Pos,
     max: Pos
@@ -287,6 +305,330 @@ pub struct HouseInviteNotification {
 impl GamePacket for HouseInviteNotification {
     type Header = HousingOpCode;
     const HEADER: Self::Header = HousingOpCode::InviteNotification;
+}
+
+fn placed_fixture(index: u32, house_guid: u64, fixture: &Fixture) -> PlacedFixture {
+    let fixture_guid = fixture_guid(index);
+    PlacedFixture {
+        fixture_guid,
+        house_guid,
+        unknown_id: 0,
+        unknown2: 0.0,
+        pos: fixture.pos,
+        rot: fixture.rot,
+        scale: Pos {
+            x: 0.0,
+            y: 0.0,
+            z: fixture.scale,
+            w: 0.0,
+        },
+        npc_guid: fixture_guid,
+        item_def_id: fixture.item_def_id,
+        unknown3: 0,
+        base_attachment_group: BaseAttachmentGroup {
+            unknown1: 0,
+            unknown2: "".to_string(),
+            unknown3: "".to_string(),
+            unknown4: 0,
+            unknown5: "".to_string(),
+        },
+        unknown4: "".to_string(),
+        unknown5: "".to_string(),
+        unknown6: 0,
+        unknown7: "".to_string(),
+        unknown8: false,
+        unknown9: 0,
+        unknown10: 1.0,
+    }
+}
+
+fn fixture_item_list(fixtures: &Vec<Fixture>) -> Result<Vec<u8>, SerializePacketError> {
+    let mut unknown1 = Vec::new();
+    let mut unknown2 = Vec::new();
+
+    for (index, fixture) in fixtures.iter().enumerate() {
+        unknown1.push(Unknown1 {
+            fixture_guid: fixture_guid(index as u32),
+            item_def_id: fixture.item_def_id,
+            unknown1: 0,
+            unknown2: vec![],
+            unknown3: 0,
+            unknown4: 0,
+        });
+        unknown2.push(Unknown2 {
+            unknown_id: 0,
+            item_def_id: fixture.item_def_id,
+            unknown2: 0,
+            model_id: fixture.model_id,
+            unknown3: false,
+            unknown4: false,
+            unknown5: false,
+            unknown6: false,
+            unknown7: false,
+            unknown8: "".to_string(),
+            min_scale: 0.5,
+            max_scale: 2.0,
+            unknown11: 0,
+        });
+    }
+
+    GamePacket::serialize(
+        &TunneledPacket {
+            unknown1: true,
+            inner: HouseItemList {
+                unknown1,
+                unknown2
+            },
+        }
+    )
+}
+
+fn fixture_npc(index: u32, fixture: &Fixture) -> Result<Vec<Vec<u8>>, SerializePacketError> {
+    Ok(
+        vec![
+            GamePacket::serialize(
+                &TunneledPacket {
+                    unknown1: true,
+                    inner: AddNpc {
+                        guid: fixture_guid(index),
+                        name_id: 0,
+                        model_id: fixture.model_id,
+                        unknown3: false,
+                        unknown4: 408679,
+                        unknown5: 13951728,
+                        unknown6: 1,
+                        scale: fixture.scale,
+                        pos: fixture.pos,
+                        rot: fixture.rot,
+                        unknown8: 1,
+                        attachments: vec![],
+                        is_not_targetable: 1,
+                        unknown10: 0,
+                        texture_name: fixture.texture_name.clone(),
+                        tint_name: "".to_string(),
+                        tint_id: 0,
+                        unknown11: true,
+                        offset_y: 0.0,
+                        composite_effect: 0,
+                        weapon_animation: WeaponAnimation::None,
+                        name_override: "".to_string(),
+                        hide_name: true,
+                        name_offset_x: 0.0,
+                        name_offset_y: 0.0,
+                        name_offset_z: 0.0,
+                        terrain_object_id: 0,
+                        invisible: false,
+                        unknown20: 0.0,
+                        unknown21: false,
+                        interactable_size_pct: 100,
+                        unknown23: -1,
+                        unknown24: -1,
+                        active_animation_slot: -1,
+                        unknown26: true,
+                        ignore_position: true,
+                        sub_title_id: 0,
+                        active_animation_slot2: 0,
+                        head_model_id: 0,
+                        unknown31: vec![],
+                        disable_interact_popup: false,
+                        unknown33: 0,
+                        unknown34: false,
+                        show_health: false,
+                        unknown36: false,
+                        ignore_rotation_and_shadow: true,
+                        base_attachment_group: BaseAttachmentGroup {
+                            unknown1: 0,
+                            unknown2: "".to_string(),
+                            unknown3: "".to_string(),
+                            unknown4: 0,
+                            unknown5: "".to_string(),
+                        },
+                        unknown39: Pos {
+                            x: 0.0,
+                            y: 0.0,
+                            z: 0.0,
+                            w: 0.0,
+                        },
+                        unknown40: 0,
+                        unknown41: -1,
+                        unknown42: 0,
+                        collision: true,
+                        unknown44: 0,
+                        npc_type: 0,
+                        unknown46: 0.0,
+                        target: 0,
+                        unknown50: vec![],
+                        rail_id: 0,
+                        rail_speed: 0.0,
+                        rail_origin: Pos {
+                            x: 0.0,
+                            y: 0.0,
+                            z: 0.0,
+                            w: 0.0,
+                        },
+                        unknown54: 0,
+                        rail_unknown1: 0.0,
+                        rail_unknown2: 0.0,
+                        rail_unknown3: 0.0,
+                        attachment_group_unknown: "".to_string(),
+                        unknown59: "".to_string(),
+                        unknown60: "".to_string(),
+                        override_terrain_model: false,
+                        hover_glow: 0,
+                        hover_description: 0,
+                        fly_over_effect: 0,
+                        unknown65: 0,
+                        unknown66: 0,
+                        unknown67: 0,
+                        disable_move_to_interact: false,
+                        unknown69: 0.0,
+                        unknown70: 0.0,
+                        unknown71: 0,
+                        icon_id: Icon::None,
+                    }
+                }
+            )?
+        ]
+    )
+}
+
+pub fn prepare_init_house_packets(sender: u32, zone: &RwLockReadGuard<Zone>,
+                                  house: &House) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+    if house.is_locked && sender != house.owner {
+        return Err(ProcessPacketError::CorruptedPacket);
+    }
+
+    let mut packets = vec![
+        GamePacket::serialize(
+            &TunneledPacket {
+                unknown1: true,
+                inner: HouseZoneData {
+                    not_editable: sender != house.owner,
+                    unknown2: 0,
+                    description: HouseDescription {
+                        owner_guid: player_guid(house.owner),
+                        house_guid: zone.guid(),
+                        house_name: zone.template_name,
+                        player_given_name: house.name.clone(),
+                        owner_name: house.owner_name.clone(),
+                        icon_id: zone.icon,
+                        unknown5: false,
+                        fixture_count: house.fixtures.len() as u32,
+                        unknown7: 0,
+                        furniture_score: 0,
+                        is_locked: house.is_locked,
+                        unknown10: "".to_string(),
+                        unknown11: "".to_string(),
+                        rating: house.rating,
+                        total_votes: house.total_votes,
+                        is_published: house.is_published,
+                        is_rateable: house.is_rateable,
+                        unknown16: 0,
+                        unknown17: 0,
+                    }
+                },
+            }
+        )?,
+        GamePacket::serialize(
+            &TunneledPacket {
+                unknown1: true,
+                inner: HouseInstanceData {
+                    inner: InnerInstanceData {
+                        house_guid: zone.guid(),
+                        owner_guid: player_guid(house.owner),
+                        owner_name: house.owner_name.clone(),
+                        unknown3: 0,
+                        house_name: zone.template_name,
+                        player_given_name: house.name.clone(),
+                        unknown4: 0,
+                        unknown5: 0,
+                        unknown6: 0,
+                        placed_fixture: house.fixtures.iter().enumerate()
+                            .map(|(index, fixture)| placed_fixture(index as u32, zone.guid(), fixture))
+                            .collect(),
+                        unknown7: false,
+                        unknown8: 0,
+                        unknown9: 0,
+                        unknown10: false,
+                        unknown11: 0,
+                        unknown12: false,
+                        build_areas: house.build_areas.clone(),
+                        house_icon: 0,
+                        unknown14: false,
+                        unknown15: false,
+                        unknown16: false,
+                        unknown17: 0,
+                        unknown18: 0,
+                    },
+                    rooms: RoomInstances {
+                        unknown1: vec![],
+                        unknown2: vec![],
+                    }
+                }
+            }
+        )?,
+        fixture_item_list(&house.fixtures)?,
+        GamePacket::serialize(
+            &TunneledPacket {
+                unknown1: true,
+                inner: HouseInfo {
+                    edit_mode_enabled: false,
+                    unknown2: 0,
+                    unknown3: true,
+                    fixtures: house.fixtures.len() as u32,
+                    unknown5: 0,
+                    unknown6: 0,
+                    unknown7: 0,
+                },
+            }
+        )?
+    ];
+
+    for (index, fixture) in house.fixtures.iter().enumerate() {
+        packets.append(&mut fixture_npc(index as u32, fixture)?);
+    }
+
+    Ok(packets)
+}
+
+pub fn process_housing_packet(sender: u32, game_server: &GameServer, cursor: &mut Cursor<&[u8]>) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+    let raw_op_code = cursor.read_u16::<LittleEndian>()?;
+    match HousingOpCode::try_from(raw_op_code) {
+        Ok(op_code) => match op_code {
+            HousingOpCode::EnterRequest => {
+                let enter_request: EnterRequest = DeserializePacket::deserialize(cursor)?;
+
+                let zones = game_server.read_zones();
+                if let Some(zone_guid) = GameServer::zone_with_character(&zones, player_guid(sender)) {
+                    if let Some(zone) = zones.get(zone_guid) {
+                        let zone_read_handle = zone.read();
+                        Ok(teleport_to_zone(
+                            &zones,
+                            zone_read_handle,
+                            sender,
+                            enter_request.house_guid,
+                            None,
+                            None
+                        )?)
+                    } else {
+                        println!("Received enter request for unknown house {}", enter_request.house_guid);
+                        Err(ProcessPacketError::CorruptedPacket)
+                    }
+                } else {
+                    println!("Received teleport request for player not in any zone");
+                    Err(ProcessPacketError::CorruptedPacket)
+                }
+            },
+            _ => {
+                println!("Unimplemented housing packet: {:?}", op_code);
+                Ok(Vec::new())
+            }
+        },
+        Err(_) => {
+            println!("Unknown housing packet: {}", raw_op_code);
+            Ok(Vec::new())
+        }
+    }
 }
 
 pub fn make_test_fixture_packets() -> Result<Vec<Vec<u8>>, SerializePacketError> {

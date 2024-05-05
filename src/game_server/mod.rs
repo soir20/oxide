@@ -6,12 +6,13 @@ use byteorder::{LittleEndian, ReadBytesExt};
 use rand::Rng;
 
 use packet_serialize::{DeserializePacket, DeserializePacketError, NullTerminatedString, SerializePacketError};
+use crate::game_server::character_guid::player_guid;
 
 use crate::game_server::client_update_packet::{Health, Power, PreloadCharactersDone, Stat, StatId, Stats};
 use crate::game_server::command::process_command;
 use crate::game_server::game_packet::{GamePacket, OpCode};
 use crate::game_server::guid::{Guid, GuidTable, GuidTableReadHandle, GuidTableWriteHandle};
-use crate::game_server::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList, make_test_fixture_packets};
+use crate::game_server::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList, make_test_fixture_packets, process_housing_packet};
 use crate::game_server::item::make_item_definitions;
 use crate::game_server::login::{DeploymentEnv, GameSettings, LoginReply, send_points_of_interest, WelcomeScreen, ZoneDetailsDone};
 use crate::game_server::mount::{load_mounts, MountConfig, process_mount_packet};
@@ -39,6 +40,7 @@ mod item;
 mod store;
 mod mount;
 mod housing;
+mod character_guid;
 
 #[derive(Debug)]
 pub enum Broadcast {
@@ -197,7 +199,7 @@ impl GameServer {
                     //packets.push(GamePacket::serialize(&npc)?);
 
                     let zones = self.read_zones();
-                    if let Some(zone) = GameServer::zone_with_character(&zones, sender as u64) {
+                    if let Some(zone) = GameServer::zone_with_character(&zones, player_guid(sender)) {
                         let zone_read_handle = zones.get(zone).unwrap().read();
                         let mut preloaded_npcs = zone_read_handle.send_characters()?;
                         packets.append(&mut preloaded_npcs);
@@ -289,7 +291,7 @@ impl GameServer {
                     };
                     packets.push(GamePacket::serialize(&preload_characters_done)?);
 
-                    packets.append(&mut make_test_fixture_packets()?);
+                    //packets.append(&mut make_test_fixture_packets()?);
 
                     broadcasts.push(Broadcast::Single(sender, packets));
                 },
@@ -306,7 +308,7 @@ impl GameServer {
                 OpCode::UpdatePlayerPosition => {
                     let pos_update: UpdatePlayerPosition = DeserializePacket::deserialize(&mut cursor)?;
                     let zones = self.read_zones();
-                    if let Some(zone_guid) = GameServer::zone_with_character(&zones, sender as u64) {
+                    if let Some(zone_guid) = GameServer::zone_with_character(&zones, player_guid(sender)) {
                         let zone = zones.get(zone_guid).unwrap().read();
 
                         // TODO: broadcast pos update to all players
@@ -319,14 +321,14 @@ impl GameServer {
                     let teleport_request: ZoneTeleportRequest = DeserializePacket::deserialize(&mut cursor)?;
 
                     let zones = self.read_zones();
-                    if let Some(zone_guid) = GameServer::zone_with_character(&zones, sender as u64) {
+                    if let Some(zone_guid) = GameServer::zone_with_character(&zones, player_guid(sender)) {
                         if let Some(zone) = zones.get(zone_guid) {
                             let zone_read_handle = zone.read();
                             packets.append(
                                 &mut teleport_to_zone(
                                     &zones,
                                     zone_read_handle,
-                                    sender as u64,
+                                    sender,
                                     GameServer::any_instance(&zones, teleport_request.destination_guid)?,
                                     None,
                                     None
@@ -343,7 +345,7 @@ impl GameServer {
                     let mut packets = Vec::new();
 
                     let zones = self.read_zones();
-                    if let Some(zone_guid) = GameServer::zone_with_character(&zones, sender as u64) {
+                    if let Some(zone_guid) = GameServer::zone_with_character(&zones, player_guid(sender)) {
                         if let Some(zone) = zones.get(zone_guid) {
                             let zone_read_handle = zone.read();
 
@@ -366,7 +368,7 @@ impl GameServer {
                     broadcasts.append(&mut process_mount_packet(&mut cursor, sender, &self)?);
                 },
                 OpCode::Housing => {
-                    println!("HOUSING PACKET: {:x?}", data);
+                    broadcasts.push(Broadcast::Single(sender, process_housing_packet(sender, &self, &mut cursor)?));
                     broadcasts.push(Broadcast::Single(sender, vec![
                         GamePacket::serialize(&TunneledPacket {
                             unknown1: true,
@@ -375,7 +377,7 @@ impl GameServer {
                                     HouseInstanceEntry {
                                         description: HouseDescription {
                                             owner_guid: 1,
-                                            house_guid: 1000,
+                                            house_guid: 100,
                                             house_name: 1987,
                                             player_given_name: "Blaster's Mustafar Lot".to_string(),
                                             owner_name: "BLASTER NICESHOT".to_string(),

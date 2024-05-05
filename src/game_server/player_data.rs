@@ -3,11 +3,12 @@ use std::io::Write;
 use byteorder::{LittleEndian, WriteBytesExt};
 
 use packet_serialize::{LengthlessVec, SerializePacket, SerializePacketError};
+use crate::game_server::character_guid::{mount_guid, player_guid};
 
 use crate::game_server::game_packet::{Effect, GamePacket, ImageId, OpCode, Pos, StringId};
 use crate::game_server::guid::{Guid, GuidTableReadHandle};
 use crate::game_server::item::{EquipmentSlot, Item, MarketData};
-use crate::game_server::mount::{mount_guid, MountConfig};
+use crate::game_server::mount::MountConfig;
 use crate::game_server::player_update_packet::{Wield, WieldType};
 use crate::game_server::tunnel::TunneledPacket;
 use crate::game_server::zone::{Character, CharacterType};
@@ -376,7 +377,7 @@ pub fn make_test_player(guid: u32, mounts: &GuidTableReadHandle<u32, MountConfig
     Player {
         data: PlayerData {
             account_guid: 0,
-            player_guid: guid as u64,
+            player_guid: player_guid(guid),
             body_model: 484,
             head_model: String::from("Char_CloneHead.adr"),
             hair_model: String::from("Cust_Clone_Hair_BusinessMan.adr"),
@@ -753,7 +754,7 @@ pub fn make_test_wield_type(guid: u32) -> Result<Vec<Vec<u8>>, SerializePacketEr
             GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: WieldType {
-                    guid: guid as u64,
+                    guid: player_guid(guid),
                     wield_type: Wield::SinglePistol,
                 },
             })?,
