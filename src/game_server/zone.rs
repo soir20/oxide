@@ -647,7 +647,7 @@ impl From<ZoneConfig> for (ZoneTemplate, Vec<Zone>) {
             let house_data = if template.guid() == 100 {
                 Some(House {
                     owner: 1,
-                    owner_name: "BLASTER NICESHOt".to_string(),
+                    owner_name: "BLASTER NICESHOT".to_string(),
                     name: "Blaster's Test Lot".to_string(),
                     rating: 3.5,
                     total_votes: 100,
