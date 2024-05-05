@@ -1,4 +1,4 @@
-use std::io::{Cursor, Write};
+use std::io::{Cursor, Read, Write};
 
 use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
 use num_enum::TryFromPrimitive;
@@ -620,12 +620,16 @@ pub fn process_housing_packet(sender: u32, game_server: &GameServer, cursor: &mu
                 }
             },
             _ => {
-                println!("Unimplemented housing packet: {:?}", op_code);
+                let mut buffer = Vec::new();
+                cursor.read_to_end(&mut buffer)?;
+                println!("Unimplemented housing packet: {:?}, {:x?}", op_code, buffer);
                 Ok(Vec::new())
             }
         },
         Err(_) => {
-            println!("Unknown housing packet: {}", raw_op_code);
+            let mut buffer = Vec::new();
+            cursor.read_to_end(&mut buffer)?;
+            println!("Unknown housing packet: {}, {:x?}", raw_op_code, buffer);
             Ok(Vec::new())
         }
     }
