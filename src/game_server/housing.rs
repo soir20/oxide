@@ -376,7 +376,7 @@ fn fixture_item_list(fixtures: &Vec<Fixture>) -> Result<Vec<u8>, SerializePacket
         unknown2.push(Unknown2 {
             unknown_id: 0,
             item_def_id: fixture.item_def_id,
-            unknown2: 0,
+            unknown2: 1,
             model_id: fixture.model_id,
             unknown3: false,
             unknown4: false,
