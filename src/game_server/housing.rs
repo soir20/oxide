@@ -199,6 +199,12 @@ pub struct BuildArea {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
+pub struct InstancePlacedFixture {
+    unknown1: u32,
+    placed_fixture: PlacedFixture
+}
+
+#[derive(SerializePacket, DeserializePacket)]
 pub struct InnerInstanceData {
     house_guid: u64,
     owner_guid: u64,
@@ -209,7 +215,7 @@ pub struct InnerInstanceData {
     unknown4: u32,
     unknown5: u32,
     unknown6: u32,
-    placed_fixture: Vec<PlacedFixture>,
+    placed_fixture: Vec<InstancePlacedFixture>,
     unknown7: bool,
     unknown8: u32,
     unknown9: u32,
@@ -556,7 +562,10 @@ pub fn prepare_init_house_packets(sender: u32, zone: &RwLockReadGuard<Zone>,
                         unknown5: 0,
                         unknown6: 0,
                         placed_fixture: house.fixtures.iter().enumerate()
-                            .map(|(index, fixture)| placed_fixture(index as u32, zone.guid(), fixture))
+                            .map(|(index, fixture)| InstancePlacedFixture {
+                                unknown1: fixture.item_def_id,
+                                placed_fixture: placed_fixture(index as u32, zone.guid(), fixture),
+                            })
                             .collect(),
                         unknown7: false,
                         unknown8: 0,
