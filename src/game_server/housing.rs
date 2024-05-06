@@ -14,11 +14,12 @@ use crate::game_server::player_update_packet::{AddNpc, BaseAttachmentGroup, Icon
 use crate::game_server::tunnel::TunneledPacket;
 use crate::game_server::ui::ExecuteScriptWithParams;
 use crate::game_server::zone::{Fixture, House, template_guid, Zone};
-use crate::{teleport_to_zone, zone_with_character_write};
+use crate::{teleport_to_zone, zone_with_character_read, zone_with_character_write};
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u16)]
 pub enum HousingOpCode {
+    SetEditMode              = 0x6,
     EnterRequest             = 0x10,
     InstanceData             = 0x18,
     InstanceList             = 0x26,
@@ -36,6 +37,16 @@ impl SerializePacket for HousingOpCode {
         buffer.write_u16::<LittleEndian>(*self as u16)?;
         Ok(())
     }
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct SetEditMode {
+    enabled: bool
+}
+
+impl GamePacket for SetEditMode {
+    type Header = HousingOpCode;
+    const HEADER: Self::Header = HousingOpCode::SetEditMode;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -596,6 +607,35 @@ pub fn process_housing_packet(sender: u32, game_server: &GameServer, cursor: &mu
     let raw_op_code = cursor.read_u16::<LittleEndian>()?;
     match HousingOpCode::try_from(raw_op_code) {
         Ok(op_code) => match op_code {
+            HousingOpCode::SetEditMode => {
+                let set_edit_mode: SetEditMode = DeserializePacket::deserialize(cursor)?;
+                zone_with_character_read!(game_server.read_zones().values(), player_guid(sender), |zone_read_handle, characters| {
+                    if let Some(house) = &zone_read_handle.house_data {
+                        if house.owner == sender {
+                            Ok(vec![
+                                GamePacket::serialize(&TunneledPacket {
+                                    unknown1: true,
+                                    inner: HouseInfo {
+                                        edit_mode_enabled: set_edit_mode.enabled,
+                                        unknown2: 0,
+                                        unknown3: true,
+                                        fixtures: house.fixtures.len() as u32,
+                                        unknown5: 0,
+                                        unknown6: 0,
+                                        unknown7: 0,
+                                    }
+                                })?
+                            ])
+                        } else {
+                            println!("Player {} tried to set edit mode in a house they don't own", sender);
+                            Err(ProcessPacketError::CorruptedPacket)
+                        }
+                    } else {
+                        println!("Player {} tried to set edit mode outside of a house", sender);
+                        Err(ProcessPacketError::CorruptedPacket)
+                    }
+                })?
+            },
             HousingOpCode::EnterRequest => {
                 let enter_request: EnterRequest = DeserializePacket::deserialize(cursor)?;
 
@@ -673,7 +713,22 @@ pub fn lookup_house(house_guid: u64) -> Result<House, ProcessPacketError> {
                     texture_name: "Rose".to_string(),
                 }
             ],
-            build_areas: vec![],
+            build_areas: vec![
+                BuildArea {
+                    min: Pos {
+                        x: 384.0,
+                        y: 0.04,
+                        z: 448.0,
+                        w: 0.0,
+                    },
+                    max: Pos {
+                        x: 512.0,
+                        y: 100.04,
+                        z: 512.0,
+                        w: 0.0,
+                    },
+                }
+            ],
             is_locked: false,
             is_published: false,
             is_rateable: false,

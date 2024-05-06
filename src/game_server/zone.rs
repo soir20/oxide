@@ -450,7 +450,7 @@ pub struct Zone {
     hide_ui: bool,
     combat_hud: bool,
     characters: GuidTable<u64, Character>,
-    house_data: Option<House>
+    pub house_data: Option<House>
 }
 
 impl Guid<u64> for Zone {
