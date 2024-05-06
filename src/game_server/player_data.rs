@@ -6,7 +6,7 @@ use packet_serialize::{LengthlessVec, SerializePacket, SerializePacketError};
 use crate::game_server::character_guid::{mount_guid, player_guid};
 
 use crate::game_server::game_packet::{Effect, GamePacket, ImageId, OpCode, Pos, StringId};
-use crate::game_server::guid::{Guid, GuidTableReadHandle};
+use crate::game_server::guid::{Guid, GuidTableHandle, GuidTableReadHandle};
 use crate::game_server::item::{EquipmentSlot, Item, MarketData};
 use crate::game_server::mount::MountConfig;
 use crate::game_server::player_update_packet::{Wield, WieldType};

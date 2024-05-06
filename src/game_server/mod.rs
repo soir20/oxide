@@ -6,13 +6,13 @@ use byteorder::{LittleEndian, ReadBytesExt};
 use rand::Rng;
 
 use packet_serialize::{DeserializePacket, DeserializePacketError, NullTerminatedString, SerializePacketError};
-use crate::game_server::character_guid::player_guid;
 
+use crate::game_server::character_guid::player_guid;
 use crate::game_server::client_update_packet::{Health, Power, PreloadCharactersDone, Stat, StatId, Stats};
 use crate::game_server::command::process_command;
 use crate::game_server::game_packet::{GamePacket, OpCode};
-use crate::game_server::guid::{Guid, GuidTable, GuidTableReadHandle, GuidTableWriteHandle};
-use crate::game_server::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList, make_test_fixture_packets, process_housing_packet};
+use crate::game_server::guid::{Guid, GuidTable, GuidTableHandle, GuidTableReadHandle, GuidTableWriteHandle};
+use crate::game_server::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList, process_housing_packet};
 use crate::game_server::item::make_item_definitions;
 use crate::game_server::login::{DeploymentEnv, GameSettings, LoginReply, send_points_of_interest, WelcomeScreen, ZoneDetailsDone};
 use crate::game_server::mount::{load_mounts, MountConfig, process_mount_packet};
@@ -21,7 +21,8 @@ use crate::game_server::player_update_packet::make_test_npc;
 use crate::game_server::time::make_game_time_sync;
 use crate::game_server::tunnel::{TunneledPacket, TunneledWorldPacket};
 use crate::game_server::update_position::UpdatePlayerPosition;
-use crate::game_server::zone::{Character, load_zones, teleport_to_zone, teleport_within_zone, Zone, ZoneTeleportRequest, ZoneTemplate};
+use crate::game_server::zone::{Character, load_zones, teleport_within_zone, Zone, ZoneTeleportRequest, ZoneTemplate};
+use crate::teleport_to_zone;
 
 mod login;
 mod player_data;
@@ -71,6 +72,46 @@ impl From<SerializePacketError> for ProcessPacketError {
     fn from(value: SerializePacketError) -> Self {
         ProcessPacketError::SerializeError(value)
     }
+}
+
+#[macro_export]
+macro_rules! zone_with_character_read {
+    ($zones:expr, $guid:expr, |$zone_read_handle:ident, $characters:ident| $action:expr) => {
+        {
+            let mut result = Err(ProcessPacketError::CorruptedPacket);
+
+            for zone in $zones {
+                let $zone_read_handle = zone.read();
+                let $characters = $zone_read_handle.read_characters();
+                if $characters.get($guid).is_some() {
+                    result = Ok($action);
+                    break;
+                }
+            }
+
+            result
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! zone_with_character_write {
+    ($zones:expr, $guid:expr, |$zone_read_handle:ident, mut $characters:ident| $action:expr) => {
+        {
+            let mut result = Err(ProcessPacketError::CorruptedPacket);
+
+            for zone in $zones {
+                let $zone_read_handle = zone.read();
+                let mut $characters = $zone_read_handle.write_characters();
+                if $characters.get($guid).is_some() {
+                    result = Ok($action);
+                    break;
+                }
+            }
+
+            result
+        }
+    };
 }
 
 pub struct GameServer {
@@ -199,8 +240,7 @@ impl GameServer {
                     //packets.push(GamePacket::serialize(&npc)?);
 
                     let zones = self.read_zones();
-                    if let Some(zone) = GameServer::zone_with_character(&zones, player_guid(sender)) {
-                        let zone_read_handle = zones.get(zone).unwrap().read();
+                    zone_with_character_read!(zones.values(), player_guid(sender), |zone_read_handle, characters| {
                         let mut preloaded_npcs = zone_read_handle.send_characters()?;
                         packets.append(&mut preloaded_npcs);
 
@@ -243,7 +283,7 @@ impl GameServer {
                             },
                         };
                         packets.push(GamePacket::serialize(&stats)?);
-                    }
+                    })?;
 
                     let health = TunneledPacket {
                         unknown1: true,
@@ -291,8 +331,6 @@ impl GameServer {
                     };
                     packets.push(GamePacket::serialize(&preload_characters_done)?);
 
-                    //packets.append(&mut make_test_fixture_packets()?);
-
                     broadcasts.push(Broadcast::Single(sender, packets));
                 },
                 OpCode::GameTimeSync => {
@@ -308,36 +346,31 @@ impl GameServer {
                 OpCode::UpdatePlayerPosition => {
                     let pos_update: UpdatePlayerPosition = DeserializePacket::deserialize(&mut cursor)?;
                     let zones = self.read_zones();
-                    if let Some(zone_guid) = GameServer::zone_with_character(&zones, player_guid(sender)) {
-                        let zone = zones.get(zone_guid).unwrap().read();
+                    zone_with_character_read!(zones.values(), player_guid(sender), |zone, characters| {
 
                         // TODO: broadcast pos update to all players
-                        broadcasts.push(Broadcast::Single(sender, zone.move_character(pos_update, self)?));
+                        broadcasts.push(Broadcast::Single(sender, Zone::move_character(characters, pos_update, self)?));
 
-                    }
+                    })?;
                 },
                 OpCode::ZoneTeleportRequest => {
                     let mut packets = Vec::new();
                     let teleport_request: ZoneTeleportRequest = DeserializePacket::deserialize(&mut cursor)?;
 
                     let zones = self.read_zones();
-                    if let Some(zone_guid) = GameServer::zone_with_character(&zones, player_guid(sender)) {
-                        if let Some(zone) = zones.get(zone_guid) {
-                            let zone_read_handle = zone.read();
-                            packets.append(
-                                &mut teleport_to_zone(
-                                    &zones,
-                                    zone_read_handle,
-                                    sender,
-                                    GameServer::any_instance(&zones, teleport_request.destination_guid)?,
-                                    None,
-                                    None
-                                )?
-                            );
-                        }
-                    } else {
-                        println!("Received teleport request for player not in any zone");
-                    }
+                    zone_with_character_write!(zones.values(), player_guid(sender), |zone_read_handle, mut characters| {
+                        packets.append(
+                            &mut teleport_to_zone!(
+                                &zones,
+                                zone_read_handle,
+                                characters,
+                                sender,
+                                GameServer::any_instance(&zones, teleport_request.destination_guid)?,
+                                None,
+                                None
+                            )?
+                        );
+                    })?;
 
                     broadcasts.push(Broadcast::Single(sender, packets));
                 },
@@ -345,22 +378,15 @@ impl GameServer {
                     let mut packets = Vec::new();
 
                     let zones = self.read_zones();
-                    if let Some(zone_guid) = GameServer::zone_with_character(&zones, player_guid(sender)) {
-                        if let Some(zone) = zones.get(zone_guid) {
-                            let zone_read_handle = zone.read();
+                    zone_with_character_read!(zones.values(), player_guid(sender), |zone, characters| {
+                        let spawn_pos = zone.default_spawn_pos;
+                        let spawn_rot = zone.default_spawn_rot;
 
-                            let spawn_pos = zone_read_handle.default_spawn_pos;
-                            let spawn_rot = zone_read_handle.default_spawn_rot;
-                            drop(zone_read_handle);
-
-                            packets.append(&mut teleport_within_zone(
-                                spawn_pos,
-                                spawn_rot
-                            )?);
-                        }
-                    } else {
-                        println!("Received teleport to safety request for player not in any zone");
-                    }
+                        packets.append(&mut teleport_within_zone(
+                            spawn_pos,
+                            spawn_rot
+                        )?);
+                    })?;
 
                     broadcasts.push(Broadcast::Single(sender, packets));
                 },
@@ -444,17 +470,6 @@ impl GameServer {
         }
 
         zone_guids
-    }
-
-    pub fn zone_with_character(zones: &GuidTableReadHandle<u64, Zone>, guid: u64) -> Option<u64> {
-        for zone in zones.values() {
-            let read_handle = zone.read();
-            if read_handle.read_characters().get(guid).is_some() {
-                return Some(read_handle.guid());
-            }
-        }
-
-        None
     }
     
 }

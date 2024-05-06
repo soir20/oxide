@@ -5,6 +5,7 @@ use packet_serialize::{DeserializePacket, NullTerminatedString, SerializePacket,
 
 use crate::game_server::game_packet::{GamePacket, ImageId, OpCode, Pos, StringId};
 use crate::game_server::GameServer;
+use crate::game_server::guid::GuidTableHandle;
 use crate::game_server::tunnel::TunneledPacket;
 
 #[derive(SerializePacket, DeserializePacket)]

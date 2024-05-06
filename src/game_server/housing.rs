@@ -9,11 +9,12 @@ use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError}
 use crate::game_server::{GameServer, ProcessPacketError};
 use crate::game_server::character_guid::{fixture_guid, player_guid};
 use crate::game_server::game_packet::{GamePacket, ImageId, OpCode, Pos};
-use crate::game_server::guid::Guid;
+use crate::game_server::guid::{Guid, GuidTableHandle};
 use crate::game_server::player_update_packet::{AddNpc, BaseAttachmentGroup, Icon, make_test_npc, WeaponAnimation};
 use crate::game_server::tunnel::TunneledPacket;
 use crate::game_server::ui::ExecuteScriptWithParams;
-use crate::game_server::zone::{Fixture, House, teleport_to_zone, Zone};
+use crate::game_server::zone::{Fixture, House, Zone};
+use crate::{teleport_to_zone, zone_with_character_write};
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u16)]
@@ -598,26 +599,19 @@ pub fn process_housing_packet(sender: u32, game_server: &GameServer, cursor: &mu
             HousingOpCode::EnterRequest => {
                 let enter_request: EnterRequest = DeserializePacket::deserialize(cursor)?;
 
-                let zones = game_server.read_zones();
-                if let Some(zone_guid) = GameServer::zone_with_character(&zones, player_guid(sender)) {
-                    if let Some(zone) = zones.get(zone_guid) {
-                        let zone_read_handle = zone.read();
-                        Ok(teleport_to_zone(
-                            &zones,
-                            zone_read_handle,
-                            sender,
-                            enter_request.house_guid,
-                            None,
-                            None
-                        )?)
-                    } else {
-                        println!("Received enter request for unknown house {}", enter_request.house_guid);
-                        Err(ProcessPacketError::CorruptedPacket)
-                    }
-                } else {
-                    println!("Received teleport request for player not in any zone");
-                    Err(ProcessPacketError::CorruptedPacket)
-                }
+                let zones = game_server.write_zones();
+                zone_with_character_write!(zones.values(), player_guid(sender), |zone, mut characters| {
+                    Ok(teleport_to_zone!(
+                        &zones,
+                        zone,
+                        characters,
+                        sender,
+                        enter_request.house_guid,
+                        None,
+                        None
+                    )?)
+                })?
+
             },
             _ => {
                 let mut buffer = Vec::new();

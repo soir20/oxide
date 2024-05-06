@@ -27,20 +27,29 @@ pub trait Guid<T> {
 
 type GuidTableData<K, V> = BTreeMap<K, Lock<V>>;
 
+pub trait GuidTableHandle<'a, K, V: 'a> {
+    fn get(&self, guid: K) -> Option<&Lock<V>>;
+
+    fn iter(&'a self) -> impl Iterator<Item=(K, &'a Lock<V>)>;
+
+    fn values(&'a self) -> impl Iterator<Item=&'a Lock<V>>;
+}
+
 pub struct GuidTableReadHandle<'a, K, V> {
     guard: RwLockReadGuard<'a, GuidTableData<K, V>>
 }
 
-impl<'a, K: Copy + Ord, V> GuidTableReadHandle<'a, K, V> {
-    pub fn get(&self, guid: K) -> Option<&Lock<V>> {
+impl<'a, K: Copy + Ord, V> GuidTableHandle<'a, K, V> for GuidTableReadHandle<'a, K, V> {
+    fn get(&self, guid: K) -> Option<&Lock<V>> {
         self.guard.get(&guid)
     }
 
-    pub fn iter(&self) -> impl Iterator<Item=(K, &Lock<V>)> {
-        self.guard.iter().map(|(guid, item)| (*guid, item))
+    //noinspection DuplicatedCode
+    fn iter(&'a self) -> impl Iterator<Item=(K, &'a Lock<V>)> {
+        self.guard.iter().map(move |(guid, item)| (*guid, item))
     }
 
-    pub fn values(&self) -> impl Iterator<Item=&Lock<V>> {
+    fn values(&'a self) -> impl Iterator<Item=&'a Lock<V>> {
         self.guard.values()
     }
 }
@@ -60,6 +69,21 @@ impl<'a, K: Ord, V: Guid<K>> GuidTableWriteHandle<'a, K, V> {
 
     pub fn remove(&mut self, guid: K) -> Option<Lock<V>> {
         self.guard.remove(&guid)
+    }
+}
+
+impl<'a, K: Copy + Ord, V: Guid<K>> GuidTableHandle<'a, K, V> for GuidTableWriteHandle<'a, K, V> {
+    fn get(&self, guid: K) -> Option<&Lock<V>> {
+        self.guard.get(&guid)
+    }
+
+    //noinspection DuplicatedCode
+    fn iter(&'a self) -> impl Iterator<Item=(K, &'a Lock<V>)> {
+        self.guard.iter().map(|(guid, item)| (*guid, item))
+    }
+
+    fn values(&'a self) -> impl Iterator<Item=&'a Lock<V>> {
+        self.guard.values()
     }
 }
 

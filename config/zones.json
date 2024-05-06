@@ -721,7 +721,7 @@
   {
     "comment": "Mustafar Lot",
     "guid": 100,
-    "instances": 1,
+    "instances": 0,
     "template_name": 1987,
     "template_icon": 4209,
     "asset_name": "Housing_EmptyLot_Mustafar",
