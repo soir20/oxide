@@ -1,12 +1,13 @@
+use std::collections::BTreeMap;
 use std::io::Write;
 
 use byteorder::{LittleEndian, WriteBytesExt};
 
 use packet_serialize::{LengthlessVec, SerializePacket, SerializePacketError};
-use crate::game_server::character_guid::{mount_guid, player_guid};
 
+use crate::game_server::character_guid::{mount_guid, player_guid};
 use crate::game_server::game_packet::{Effect, GamePacket, ImageId, OpCode, Pos, StringId};
-use crate::game_server::guid::{Guid, GuidTableHandle, GuidTableReadHandle};
+use crate::game_server::guid::Guid;
 use crate::game_server::item::{EquipmentSlot, Item, MarketData};
 use crate::game_server::mount::MountConfig;
 use crate::game_server::player_update_packet::{Wield, WieldType};
@@ -359,15 +360,14 @@ impl GamePacket for Player {
     const HEADER: OpCode = OpCode::Player;
 }
 
-pub fn make_test_player(guid: u32, mounts: &GuidTableReadHandle<u32, MountConfig>) -> Player {
+pub fn make_test_player(guid: u32, mounts: &BTreeMap<u32, MountConfig>) -> Player {
     let mut owned_mounts = Vec::new();
     for mount in mounts.values() {
-        let mount_read_handle = mount.read();
         owned_mounts.push(Mount {
-            mount_id: mount_read_handle.guid(),
-            name_id: mount_read_handle.name_id,
-            icon_set_id: mount_read_handle.icon_set_id,
-            guid: mount_guid(guid, mount_read_handle.guid()),
+            mount_id: mount.guid(),
+            name_id: mount.name_id,
+            icon_set_id: mount.icon_set_id,
+            guid: mount_guid(guid, mount.guid()),
             unknown5: false,
             unknown6: 0,
             unknown7: "".to_string(),

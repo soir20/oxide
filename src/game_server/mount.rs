@@ -1,10 +1,10 @@
+use std::collections::BTreeMap;
 use std::fs::File;
 use std::io::{Cursor, Error};
 use std::path::Path;
 
 use byteorder::{ReadBytesExt, WriteBytesExt};
 use num_enum::TryFromPrimitive;
-use parking_lot::RwLockReadGuard;
 use serde::Deserialize;
 
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
@@ -13,7 +13,7 @@ use crate::game_server::{Broadcast, GameServer, ProcessPacketError};
 use crate::game_server::character_guid::{mount_guid, player_guid};
 use crate::game_server::client_update_packet::{Stat, StatId, Stats};
 use crate::game_server::game_packet::{GamePacket, OpCode, Pos};
-use crate::game_server::guid::{Guid, GuidTable, GuidTableHandle};
+use crate::game_server::guid::{Guid, GuidTableHandle};
 use crate::game_server::player_update_packet::{AddNpc, BaseAttachmentGroup, Icon, RemoveGracefully, WeaponAnimation};
 use crate::game_server::tunnel::TunneledPacket;
 use crate::zone_with_character_read;
@@ -38,20 +38,17 @@ impl Guid<u32> for MountConfig {
     }
 }
 
-pub fn load_mounts(config_dir: &Path) -> Result<GuidTable<u32, MountConfig>, Error> {
+pub fn load_mounts(config_dir: &Path) -> Result<BTreeMap<u32, MountConfig>, Error> {
     let mut file = File::open(config_dir.join("mounts.json"))?;
     let mounts: Vec<MountConfig> = serde_json::from_reader(&mut file)?;
 
-    let mount_table = GuidTable::new();
-    {
-        let mut write_handle = mount_table.write();
-        for mount in mounts {
-            let id = mount.guid();
-            let previous = write_handle.insert(mount);
+    let mut mount_table = BTreeMap::new();
+    for mount in mounts {
+        let guid = mount.guid();
+        let previous = mount_table.insert(guid, mount);
 
-            if let Some(_) = previous {
-                panic!("Two mounts have ID {}", id);
-            }
+        if let Some(_) = previous {
+            panic!("Two mounts have ID {}", guid);
         }
     }
 
@@ -125,9 +122,7 @@ fn process_dismount(sender: u32, game_server: &GameServer) -> Result<Vec<Broadca
             if let Some(mount_id) = character_write_handle.mount_id {
                 character_write_handle.mount_id = None;
 
-                if let Some(mount) = game_server.mounts.read().get(mount_id) {
-                    let mount_read_handle = mount.read();
-
+                if let Some(mount) = game_server.mounts.get(&mount_id) {
                     Ok(vec![
                         Broadcast::Single(sender, vec![
                             GamePacket::serialize(
@@ -135,7 +130,7 @@ fn process_dismount(sender: u32, game_server: &GameServer) -> Result<Vec<Broadca
                                     unknown1: true,
                                     inner: DismountReply {
                                         rider_guid: player_guid(sender),
-                                        composite_effect: mount_read_handle.dismount_composite_effect,
+                                        composite_effect: mount.dismount_composite_effect,
                                     },
                                 }
                             )?,
@@ -203,9 +198,8 @@ fn process_mount_spawn(cursor: &mut Cursor<&[u8]>, sender: u32,
     let mount_spawn = MountSpawn::deserialize(cursor)?;
     let mount_guid = mount_guid(sender, mount_spawn.mount_id);
 
-    if let Some(mount) = game_server.mounts.read().get(mount_spawn.mount_id) {
-        let mount_read_handle = mount.read();
-        let mut packets = spawn_mount_npc(mount_guid, &mount_read_handle)?;
+    if let Some(mount) = game_server.mounts.get(&mount_spawn.mount_id) {
+        let mut packets = spawn_mount_npc(mount_guid, mount)?;
         packets.push(
             GamePacket::serialize(
                 &TunneledPacket {
@@ -216,7 +210,7 @@ fn process_mount_spawn(cursor: &mut Cursor<&[u8]>, sender: u32,
                         unknown1: 0,
                         queue_pos: 1,
                         unknown3: 1,
-                        composite_effect: mount_read_handle.mount_composite_effect,
+                        composite_effect: mount.mount_composite_effect,
                         unknown5: 0,
                     },
                 }
@@ -235,19 +229,19 @@ fn process_mount_spawn(cursor: &mut Cursor<&[u8]>, sender: u32,
                                     id: StatId::Speed,
                                     multiplier: 1,
                                     value1: 0.0,
-                                    value2: zone_read_handle.speed * mount_read_handle.speed_multiplier,
+                                    value2: zone_read_handle.speed * mount.speed_multiplier,
                                 },
                                 Stat {
                                     id: StatId::JumpHeightMultiplier,
                                     multiplier: 1,
                                     value1: 0.0,
-                                    value2: zone_read_handle.jump_height_multiplier * mount_read_handle.jump_height_multiplier,
+                                    value2: zone_read_handle.jump_height_multiplier * mount.jump_height_multiplier,
                                 },
                                 Stat {
                                     id: StatId::GravityMultiplier,
                                     multiplier: 1,
                                     value1: 0.0,
-                                    value2: zone_read_handle.gravity_multiplier * mount_read_handle.gravity_multiplier,
+                                    value2: zone_read_handle.gravity_multiplier * mount.gravity_multiplier,
                                 }
                             ],
                         },
@@ -262,7 +256,7 @@ fn process_mount_spawn(cursor: &mut Cursor<&[u8]>, sender: u32,
                     return Err(ProcessPacketError::CorruptedPacket);
                 }
 
-                character_write_handle.mount_id = Some(mount_read_handle.guid());
+                character_write_handle.mount_id = Some(mount.guid());
             } else {
                 println!("Non-existent player {} tried to mount", sender);
                 return Err(ProcessPacketError::CorruptedPacket);
@@ -294,7 +288,7 @@ pub fn process_mount_packet(cursor: &mut Cursor<&[u8]>, sender: u32,
     }
 }
 
-fn spawn_mount_npc(guid: u64, mount: &RwLockReadGuard<MountConfig>) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+fn spawn_mount_npc(guid: u64, mount: &MountConfig) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
     Ok(
         vec![
             GamePacket::serialize(&TunneledPacket {

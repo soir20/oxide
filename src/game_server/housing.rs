@@ -13,7 +13,7 @@ use crate::game_server::guid::{Guid, GuidTableHandle};
 use crate::game_server::player_update_packet::{AddNpc, BaseAttachmentGroup, Icon, make_test_npc, WeaponAnimation};
 use crate::game_server::tunnel::TunneledPacket;
 use crate::game_server::ui::ExecuteScriptWithParams;
-use crate::game_server::zone::{Fixture, House, Zone};
+use crate::game_server::zone::{Fixture, House, template_guid, Zone};
 use crate::{teleport_to_zone, zone_with_character_write};
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
@@ -510,7 +510,7 @@ pub fn prepare_init_house_packets(sender: u32, zone: &RwLockReadGuard<Zone>,
                         owner_guid: player_guid(house.owner),
                         house_guid: zone.guid(),
                         house_name: zone.template_name,
-                        player_given_name: house.name.clone(),
+                        player_given_name: house.custom_name.clone(),
                         owner_name: house.owner_name.clone(),
                         icon_id: zone.icon,
                         unknown5: false,
@@ -540,7 +540,7 @@ pub fn prepare_init_house_packets(sender: u32, zone: &RwLockReadGuard<Zone>,
                         owner_name: house.owner_name.clone(),
                         unknown3: 0,
                         house_name: zone.template_name,
-                        player_given_name: house.name.clone(),
+                        player_given_name: house.custom_name.clone(),
                         unknown4: 0,
                         unknown5: 0,
                         unknown6: 0,
@@ -599,7 +599,22 @@ pub fn process_housing_packet(sender: u32, game_server: &GameServer, cursor: &mu
             HousingOpCode::EnterRequest => {
                 let enter_request: EnterRequest = DeserializePacket::deserialize(cursor)?;
 
-                let zones = game_server.write_zones();
+                // Create the house instance if it does not already exist
+                let mut zones = game_server.write_zones();
+                if let None = zones.get(enter_request.house_guid) {
+                    let template_guid = template_guid(enter_request.house_guid)?;
+                    if let Some(template) = game_server.read_zone_templates().get(&template_guid) {
+                        zones.insert(Zone::new_house(
+                            enter_request.house_guid,
+                            template,
+                            lookup_house(enter_request.house_guid)?
+                        ));
+                    } else {
+                        println!("Tried to enter house with unknown template {}", template_guid);
+                        return Err(ProcessPacketError::CorruptedPacket);
+                    }
+                }
+
                 zone_with_character_write!(zones.values(), player_guid(sender), |zone, mut characters| {
                     Ok(teleport_to_zone!(
                         &zones,
@@ -627,6 +642,43 @@ pub fn process_housing_packet(sender: u32, game_server: &GameServer, cursor: &mu
             Ok(Vec::new())
         }
     }
+}
+
+pub fn lookup_house(house_guid: u64) -> Result<House, ProcessPacketError> {
+    println!("Found test house {}", house_guid);
+    Ok(
+        House {
+            owner: 1,
+            owner_name: "BLASTER NICESHOt".to_string(),
+            custom_name: "Blaster's Test Lot".to_string(),
+            rating: 3.5,
+            total_votes: 100,
+            fixtures: vec![
+                Fixture {
+                    pos: Pos {
+                        x: 495.0,
+                        y: 0.03999996,
+                        z: 481.5,
+                        w: 1.0,
+                    },
+                    rot: Pos {
+                        x: 0.0,
+                        y: 0.0,
+                        z: 0.0,
+                        w: 0.0,
+                    },
+                    scale: 1.0,
+                    item_def_id: 6,
+                    model_id: 458,
+                    texture_name: "Rose".to_string(),
+                }
+            ],
+            build_areas: vec![],
+            is_locked: false,
+            is_published: false,
+            is_rateable: false,
+        }
+    )
 }
 
 pub fn make_test_fixture_packets() -> Result<Vec<Vec<u8>>, SerializePacketError> {

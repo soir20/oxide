@@ -1,3 +1,4 @@
+use std::collections::BTreeMap;
 use std::io::{Cursor, Error};
 use std::path::Path;
 use std::vec;
@@ -115,8 +116,8 @@ macro_rules! zone_with_character_write {
 }
 
 pub struct GameServer {
-    mounts: GuidTable<u32, MountConfig>,
-    zone_templates: GuidTable<u32, ZoneTemplate>,
+    mounts: BTreeMap<u32, MountConfig>,
+    zone_templates: BTreeMap<u32, ZoneTemplate>,
     zones: GuidTable<u64, Zone>,
 }
 
@@ -187,7 +188,7 @@ impl GameServer {
 
                     let player = TunneledPacket {
                         unknown1: true,
-                        inner: make_test_player(guid, &self.mounts.read())
+                        inner: make_test_player(guid, &self.mounts)
                     };
                     packets.push(GamePacket::serialize(&player)?);
 
@@ -437,8 +438,8 @@ impl GameServer {
         Ok(broadcasts)
     }
 
-    pub fn read_zone_templates(&self) -> GuidTableReadHandle<u32, ZoneTemplate> {
-        self.zone_templates.read()
+    pub fn read_zone_templates(&self) -> &BTreeMap<u32, ZoneTemplate> {
+        &self.zone_templates
     }
 
     pub fn read_zones(&self) -> GuidTableReadHandle<u64, Zone> {

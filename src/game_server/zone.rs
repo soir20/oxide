@@ -1,3 +1,4 @@
+use std::collections::BTreeMap;
 use std::fs::File;
 use std::io::Error;
 use std::path::Path;
@@ -424,7 +425,7 @@ pub struct Fixture {
 pub struct House {
     pub owner: u32,
     pub owner_name: String,
-    pub name: String,
+    pub custom_name: String,
     pub rating: f32,
     pub total_votes: u32,
     pub fixtures: Vec<Fixture>,
@@ -439,7 +440,6 @@ pub struct Zone {
     pub template_guid: u32,
     pub template_name: u32,
     pub icon: u32,
-    pub display_name: String,
     pub asset_name: String,
     pub default_spawn_pos: Pos,
     pub default_spawn_rot: Pos,
@@ -460,13 +460,12 @@ impl Guid<u64> for Zone {
 }
 
 impl Zone {
-    pub fn new_house(index: u32, template: &ZoneTemplate, display_name: &String, house: House) -> Self {
+    pub fn new_house(guid: u64, template: &ZoneTemplate, house: House) -> Self {
         Zone {
-            guid: instance_guid(index, template.guid()),
+            guid,
             template_guid: template.guid(),
             template_name: template.template_name,
             icon: template.template_icon,
-            display_name: display_name.clone(),
             asset_name: template.asset_name.clone(),
             default_spawn_pos: template.default_spawn_pos,
             default_spawn_rot: template.default_spawn_rot,
@@ -575,8 +574,16 @@ impl Zone {
     }
 }
 
-fn instance_guid(index: u32, template_guid: u32) -> u64 {
+pub fn instance_guid(index: u32, template_guid: u32) -> u64 {
     ((index as u64) << 32) | (template_guid as u64)
+}
+
+pub fn template_guid(instance_guid: u64) -> Result<u32, ProcessPacketError> {
+    if instance_guid > u32::MAX as u64 {
+        Err(ProcessPacketError::CorruptedPacket)
+    } else {
+        Ok(instance_guid as u32)
+    }
 }
 
 impl From<ZoneConfig> for (ZoneTemplate, Vec<Zone>) {
@@ -672,7 +679,6 @@ impl From<ZoneConfig> for (ZoneTemplate, Vec<Zone>) {
                     template_guid: template.guid(),
                     template_name: template.template_name,
                     icon: template.template_icon,
-                    display_name: "".to_string(),
                     asset_name: template.asset_name.clone(),
                     default_spawn_pos: template.default_spawn_pos,
                     default_spawn_rot: template.default_spawn_rot,
@@ -692,21 +698,20 @@ impl From<ZoneConfig> for (ZoneTemplate, Vec<Zone>) {
     }
 }
 
-pub fn load_zones(config_dir: &Path) -> Result<(GuidTable<u32, ZoneTemplate>, GuidTable<u64, Zone>), Error> {
+pub fn load_zones(config_dir: &Path) -> Result<(BTreeMap<u32, ZoneTemplate>, GuidTable<u64, Zone>), Error> {
     let mut file = File::open(config_dir.join("zones.json"))?;
     let zone_configs: Vec<ZoneConfig> = serde_json::from_reader(&mut file)?;
 
-    let templates = GuidTable::new();
+    let mut templates = BTreeMap::new();
     let zones = GuidTable::new();
     {
-        let mut templates_write_handle = templates.write();
         let mut zones_write_handle = zones.write();
         for zone_config in zone_configs {
             let (template, zones) = <(ZoneTemplate, Vec<Zone>) as From<ZoneConfig>>::from(zone_config);
-            let template_id = template.guid();
+            let template_guid = template.guid();
 
-            if let Some(_) = templates_write_handle.insert(template) {
-                panic!("Two zone templates have ID {}", template_id);
+            if let Some(_) = templates.insert(template_guid, template) {
+                panic!("Two zone templates have ID {}", template_guid);
             }
 
             for zone in zones {
