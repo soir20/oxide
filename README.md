@@ -13,7 +13,7 @@ port 20225.
 For testing, we use Clone Wars Adventures client version 0.180.1.530619 (2014, executable SHA-256: 
 `c02f3c8a1be8dc28e517a29158c956c16393eb1def4870b0813775c69a62d2dd`). 
 
-Clone Wars Adventures is property of Daybreak Games, formerly Sony Online Entertainment. Hence, we do not distribute the 
+Clone Wars Adventures is property of Daybreak Game Company, formerly Sony Online Entertainment. Hence, we do not distribute the 
 original game client. You will have to obtain it yourself in order to play.
 
 Once you have a client from the original game, you'll need to modify your `ClientConfig.ini` to point to your client 
