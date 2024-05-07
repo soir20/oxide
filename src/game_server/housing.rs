@@ -94,7 +94,7 @@ pub struct Unknown1 {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct Unknown2 {
+pub struct FixtureAssetData {
     unknown_id: u32,
     item_def_id: u32,
     unknown2: u32,
@@ -188,8 +188,7 @@ pub struct InstanceUnknown1 {
 pub struct InstanceUnknown2 {
     unknown1: u32,
     unknown2: u32,
-    unknown3: u32,
-    unknown4: u64
+    unknown3: u64
 }
 
 #[derive(Clone, SerializePacket, DeserializePacket)]
@@ -262,7 +261,7 @@ impl GamePacket for HouseInstanceData {
 pub struct FixtureAsset {
     model_id: u32,
     item_guid: u32,
-    unknown3: Unknown2,
+    unknown3: FixtureAssetData,
     texture_alias: String,
     tint_alias: String,
     unknown6: u32,
@@ -281,7 +280,7 @@ impl GamePacket for FixtureAsset {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct HouseItemList {
     unknown1: Vec<Unknown1>,
-    unknown2: Vec<Unknown2>
+    unknown2: Vec<FixtureAssetData>
 }
 
 impl GamePacket for HouseItemList {
@@ -293,7 +292,7 @@ impl GamePacket for HouseItemList {
 pub struct FixtureUpdate {
     placed_fixture: PlacedFixture,
     unknown1: Unknown1,
-    unknown2: Unknown2,
+    unknown2: FixtureAssetData,
     unknown3: Vec<u64>,
     unknown4: u32,
     unknown5: u32,
@@ -373,7 +372,7 @@ fn fixture_item_list(fixtures: &Vec<Fixture>) -> Result<Vec<u8>, SerializePacket
             unknown3: 0,
             unknown4: 0,
         });
-        unknown2.push(Unknown2 {
+        unknown2.push(FixtureAssetData {
             unknown_id: 0,
             item_def_id: fixture.item_def_id,
             unknown2: 1,
@@ -866,8 +865,8 @@ pub fn make_test_fixture_packets() -> Result<Vec<Vec<u8>>, SerializePacketError>
                         }
                     ],
                     unknown2: vec![
-                        Unknown2 {
-                            unknown_id: 0x22,
+                        FixtureAssetData {
+                            unknown_id: 6,
                             item_def_id: 6,
                             unknown2: 1,
                             model_id: 458,
@@ -890,8 +889,8 @@ pub fn make_test_fixture_packets() -> Result<Vec<Vec<u8>>, SerializePacketError>
             inner: FixtureAsset {
                 model_id: 458,
                 item_guid: 6,
-                unknown3: Unknown2 {
-                    unknown_id: 0x22,
+                unknown3: FixtureAssetData {
+                    unknown_id: 6,
                     item_def_id: 6,
                     unknown2: 1,
                     model_id: 458,
@@ -921,7 +920,7 @@ pub fn make_test_fixture_packets() -> Result<Vec<Vec<u8>>, SerializePacketError>
                 placed_fixture: PlacedFixture {
                     fixture_guid: 100,
                     house_guid: 101,
-                    unknown_id: 0x22,
+                    unknown_id: 6,
                     unknown2: 0.0,
                     pos: Pos {
                         x: 887.3,
@@ -967,8 +966,8 @@ pub fn make_test_fixture_packets() -> Result<Vec<Vec<u8>>, SerializePacketError>
                     unknown3: 0,
                     unknown4: 0,
                 },
-                unknown2: Unknown2 {
-                    unknown_id: 0x22,
+                unknown2: FixtureAssetData {
+                    unknown_id: 6,
                     item_def_id: 6,
                     unknown2: 1,
                     model_id: 458,
