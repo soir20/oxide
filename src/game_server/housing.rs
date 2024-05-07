@@ -233,8 +233,8 @@ pub struct InnerInstanceData {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct RoomInstances {
-    unknown1: Vec<Unknown1>,
-    unknown2: Vec<Unknown2>,
+    unknown1: Vec<InstanceUnknown1>,
+    unknown2: Vec<InstanceUnknown2>,
 }
 
 pub struct HouseInstanceData {
