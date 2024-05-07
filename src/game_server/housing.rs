@@ -6,15 +6,14 @@ use parking_lot::RwLockReadGuard;
 
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
 
+use crate::{teleport_to_zone, zone_with_character_read, zone_with_character_write};
 use crate::game_server::{GameServer, ProcessPacketError};
 use crate::game_server::character_guid::{fixture_guid, player_guid};
 use crate::game_server::game_packet::{GamePacket, ImageId, OpCode, Pos};
 use crate::game_server::guid::{Guid, GuidTableHandle};
-use crate::game_server::player_update_packet::{AddNpc, BaseAttachmentGroup, Icon, make_test_npc, WeaponAnimation};
+use crate::game_server::player_update_packet::{AddNpc, BaseAttachmentGroup, Icon, WeaponAnimation};
 use crate::game_server::tunnel::TunneledPacket;
-use crate::game_server::ui::ExecuteScriptWithParams;
 use crate::game_server::zone::{Fixture, House, template_guid, Zone};
-use crate::{teleport_to_zone, zone_with_character_read, zone_with_character_write};
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u16)]
@@ -65,7 +64,7 @@ impl GamePacket for EnterRequest {
 pub struct PlacedFixture {
     fixture_guid: u64,
     house_guid: u64,
-    unknown_id: u32,
+    fixture_asset_id: u32,
     unknown2: f32,
     pos: Pos,
     rot: Pos,
@@ -95,7 +94,7 @@ pub struct Unknown1 {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct FixtureAssetData {
-    unknown_id: u32,
+    fixture_asset_id: u32,
     item_def_id: u32,
     unknown2: u32,
     model_id: u32,
@@ -329,7 +328,7 @@ fn placed_fixture(index: u32, house_guid: u64, fixture: &Fixture) -> PlacedFixtu
     PlacedFixture {
         fixture_guid,
         house_guid,
-        unknown_id: 0,
+        fixture_asset_id: fixture.item_def_id,
         unknown2: 0.0,
         pos: fixture.pos,
         rot: fixture.rot,
@@ -373,7 +372,7 @@ fn fixture_item_list(fixtures: &Vec<Fixture>) -> Result<Vec<u8>, SerializePacket
             unknown4: 0,
         });
         unknown2.push(FixtureAssetData {
-            unknown_id: 0,
+            fixture_asset_id: fixture.item_def_id,
             item_def_id: fixture.item_def_id,
             unknown2: 1,
             model_id: fixture.model_id,
@@ -400,14 +399,48 @@ fn fixture_item_list(fixtures: &Vec<Fixture>) -> Result<Vec<u8>, SerializePacket
     )
 }
 
-fn fixture_npc(index: u32, fixture: &Fixture) -> Result<Vec<Vec<u8>>, SerializePacketError> {
+fn fixture_packets(house_guid: u64, index: u32, fixture: &Fixture) -> Result<Vec<Vec<u8>>, SerializePacketError> {
+    let fixture_guid = fixture_guid(index);
     Ok(
         vec![
+            GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: FixtureUpdate {
+                    placed_fixture: placed_fixture(index, house_guid, fixture),
+                    unknown1: Unknown1 {
+                        fixture_guid,
+                        item_def_id: fixture.item_def_id,
+                        unknown1: 0,
+                        unknown2: vec![],
+                        unknown3: 0,
+                        unknown4: 0,
+                    },
+                    unknown2: FixtureAssetData {
+                        fixture_asset_id: fixture.item_def_id,
+                        item_def_id: fixture.item_def_id,
+                        unknown2: 1,
+                        model_id: fixture.model_id,
+                        unknown3: false,
+                        unknown4: false,
+                        unknown5: false,
+                        unknown6: true,
+                        unknown7: false,
+                        unknown8: "".to_string(),
+                        min_scale: 0.5,
+                        max_scale: 2.0,
+                        unknown11: 0,
+                    },
+                    unknown3: vec![],
+                    unknown4: 0,
+                    unknown5: 0,
+                    unknown6: 0,
+                }
+            })?,
             GamePacket::serialize(
                 &TunneledPacket {
                     unknown1: true,
                     inner: AddNpc {
-                        guid: fixture_guid(index),
+                        guid: fixture_guid,
                         name_id: 0,
                         model_id: fixture.model_id,
                         unknown3: false,
@@ -560,12 +593,7 @@ pub fn prepare_init_house_packets(sender: u32, zone: &RwLockReadGuard<Zone>,
                         unknown4: 0,
                         unknown5: 0,
                         unknown6: 0,
-                        placed_fixture: house.fixtures.iter().enumerate()
-                            .map(|(index, fixture)| InstancePlacedFixture {
-                                unknown1: fixture.item_def_id,
-                                placed_fixture: placed_fixture(index as u32, zone.guid(), fixture),
-                            })
-                            .collect(),
+                        placed_fixture: vec![],
                         unknown7: false,
                         unknown8: 0,
                         unknown9: 0,
@@ -573,7 +601,7 @@ pub fn prepare_init_house_packets(sender: u32, zone: &RwLockReadGuard<Zone>,
                         unknown11: 0,
                         unknown12: false,
                         build_areas: house.build_areas.clone(),
-                        house_icon: 0,
+                        house_icon: zone.icon,
                         unknown14: false,
                         unknown15: false,
                         unknown16: false,
@@ -587,7 +615,6 @@ pub fn prepare_init_house_packets(sender: u32, zone: &RwLockReadGuard<Zone>,
                 }
             }
         )?,
-        fixture_item_list(&house.fixtures)?,
         GamePacket::serialize(
             &TunneledPacket {
                 unknown1: true,
@@ -605,7 +632,7 @@ pub fn prepare_init_house_packets(sender: u32, zone: &RwLockReadGuard<Zone>,
     ];
 
     for (index, fixture) in house.fixtures.iter().enumerate() {
-        packets.append(&mut fixture_npc(index as u32, fixture)?);
+        packets.append(&mut fixture_packets(zone.guid(), index as u32, fixture)?);
     }
 
     Ok(packets)
@@ -725,7 +752,7 @@ pub fn lookup_house(house_guid: u64) -> Result<House, ProcessPacketError> {
                 BuildArea {
                     min: Pos {
                         x: 384.0,
-                        y: 0.04,
+                        y: 0.03,
                         z: 448.0,
                         w: 0.0,
                     },
@@ -742,268 +769,4 @@ pub fn lookup_house(house_guid: u64) -> Result<House, ProcessPacketError> {
             is_rateable: false,
         }
     )
-}
-
-pub fn make_test_fixture_packets() -> Result<Vec<Vec<u8>>, SerializePacketError> {
-    Ok(vec![
-        GamePacket::serialize(
-            &TunneledPacket {
-                unknown1: true,
-                inner: HouseZoneData {
-                    not_editable: false,
-                    unknown2: 0,
-                    description: HouseDescription {
-                        owner_guid: 1,
-                        house_guid: 101,
-                        house_name: 0,
-                        player_given_name: "Blaster's Amazing Lot".to_string(),
-                        owner_name: "Blaster".to_string(),
-                        icon_id: 0,
-                        unknown5: false,
-                        fixture_count: 0,
-                        unknown7: 0,
-                        furniture_score: 0,
-                        is_locked: false,
-                        unknown10: "".to_string(),
-                        unknown11: "".to_string(),
-                        rating: 0.0,
-                        total_votes: 0,
-                        is_published: false,
-                        is_rateable: true,
-                        unknown16: 0,
-                        unknown17: 0,
-                    }
-                },
-            }
-        )?,
-        GamePacket::serialize(
-            &TunneledPacket {
-                unknown1: true,
-                inner: HouseInstanceData {
-                    inner: InnerInstanceData {
-                        house_guid: 101,
-                        owner_guid: 1,
-                        owner_name: "Blaster".to_string(),
-                        unknown3: 0,
-                        house_name: 0,
-                        player_given_name: "Blaster's Amazing Lot".to_string(),
-                        unknown4: 0,
-                        unknown5: 0,
-                        unknown6: 0,
-                        placed_fixture: vec![],
-                        unknown7: false,
-                        unknown8: 0,
-                        unknown9: 0,
-                        unknown10: false,
-                        unknown11: 0,
-                        unknown12: false,
-                        build_areas: vec![
-                            BuildArea {
-                                min: Pos {
-                                    x: 787.3,
-                                    y: 71.93376,
-                                    z: 1446.956,
-                                    w: 0.0,
-                                },
-                                max: Pos {
-                                    x: 987.3,
-                                    y: 271.93376,
-                                    z: 1646.956,
-                                    w: 0.0,
-                                },
-                            }
-                        ],
-                        house_icon: 0,
-                        unknown14: false,
-                        unknown15: false,
-                        unknown16: false,
-                        unknown17: 0,
-                        unknown18: 0,
-                    },
-                    rooms: RoomInstances {
-                        unknown1: vec![],
-                        unknown2: vec![],
-                    }
-                }
-            }
-        )?,
-        GamePacket::serialize(
-            &TunneledPacket {
-                unknown1: true,
-                inner: ExecuteScriptWithParams {
-                    script_name: "HouseHandler.setEditMode".to_string(),
-                    params: vec!["1".to_string()],
-                }
-            }
-        )?,
-        GamePacket::serialize(
-            &TunneledPacket {
-                unknown1: true,
-                inner: HouseInfo {
-                    edit_mode_enabled: true,
-                    unknown2: 0,
-                    unknown3: true,
-                    fixtures: 0,
-                    unknown5: 0,
-                    unknown6: 0,
-                    unknown7: 0,
-                },
-            }
-        )?,
-        GamePacket::serialize(
-            &TunneledPacket {
-                unknown1: true,
-                inner: HouseItemList {
-                    unknown1: vec![
-                        Unknown1 {
-                            fixture_guid: 100,
-                            item_def_id: 6,
-                            unknown1: 0,
-                            unknown2: vec![],
-                            unknown3: 0,
-                            unknown4: 0,
-                        }
-                    ],
-                    unknown2: vec![
-                        FixtureAssetData {
-                            unknown_id: 6,
-                            item_def_id: 6,
-                            unknown2: 1,
-                            model_id: 458,
-                            unknown3: false,
-                            unknown4: false,
-                            unknown5: false,
-                            unknown6: true,
-                            unknown7: false,
-                            unknown8: "".to_string(),
-                            min_scale: 0.5,
-                            max_scale: 2.0,
-                            unknown11: 0,
-                        }
-                    ],
-                },
-            }
-        )?,
-        GamePacket::serialize(&TunneledPacket {
-            unknown1: true,
-            inner: FixtureAsset {
-                model_id: 458,
-                item_guid: 6,
-                unknown3: FixtureAssetData {
-                    unknown_id: 6,
-                    item_def_id: 6,
-                    unknown2: 1,
-                    model_id: 458,
-                    unknown3: false,
-                    unknown4: false,
-                    unknown5: false,
-                    unknown6: true,
-                    unknown7: false,
-                    unknown8: "".to_string(),
-                    min_scale: 0.5,
-                    max_scale: 2.0,
-                    unknown11: 0,
-                },
-                texture_alias: "".to_string(),
-                tint_alias: "".to_string(),
-                unknown6: 0,
-                unknown7: 0,
-                unknown8: "".to_string(),
-                unknown9: vec![],
-                unknown10: 0,
-                unknown11: 0,
-            },
-        })?,
-        GamePacket::serialize(&TunneledPacket {
-            unknown1: true,
-            inner: FixtureUpdate {
-                placed_fixture: PlacedFixture {
-                    fixture_guid: 100,
-                    house_guid: 101,
-                    unknown_id: 6,
-                    unknown2: 0.0,
-                    pos: Pos {
-                        x: 887.3,
-                        y: 171.93376,
-                        z: 1546.956,
-                        w: 1.0,
-                    },
-                    rot: Pos {
-                        x: 0.0,
-                        y: 0.0,
-                        z: 0.0,
-                        w: 0.0,
-                    },
-                    scale: Pos {
-                        x: 0.0,
-                        y: 0.0,
-                        z: 1.0,
-                        w: 0.0,
-                    },
-                    npc_guid: 102,
-                    item_def_id: 6,
-                    unknown3: 0,
-                    base_attachment_group: BaseAttachmentGroup {
-                        unknown1: 0,
-                        unknown2: "".to_string(),
-                        unknown3: "".to_string(),
-                        unknown4: 0,
-                        unknown5: "".to_string(),
-                    },
-                    unknown4: "".to_string(),
-                    unknown5: "".to_string(),
-                    unknown6: 0,
-                    unknown7: "".to_string(),
-                    unknown8: false,
-                    unknown9: 0,
-                    unknown10: 1.0,
-                },
-                unknown1: Unknown1 {
-                    fixture_guid: 100,
-                    item_def_id: 6,
-                    unknown1: 0,
-                    unknown2: vec![],
-                    unknown3: 0,
-                    unknown4: 0,
-                },
-                unknown2: FixtureAssetData {
-                    unknown_id: 6,
-                    item_def_id: 6,
-                    unknown2: 1,
-                    model_id: 458,
-                    unknown3: false,
-                    unknown4: false,
-                    unknown5: false,
-                    unknown6: true,
-                    unknown7: false,
-                    unknown8: "".to_string(),
-                    min_scale: 0.5,
-                    max_scale: 2.0,
-                    unknown11: 0,
-                },
-                unknown3: vec![],
-                unknown4: 0,
-                unknown5: 0,
-                unknown6: 0,
-            }
-        })?,
-        GamePacket::serialize(
-            &TunneledPacket {
-                unknown1: true,
-                inner: HouseInfo {
-                    edit_mode_enabled: true,
-                    unknown2: 0,
-                    unknown3: true,
-                    fixtures: 1,
-                    unknown5: 0,
-                    unknown6: 0,
-                    unknown7: 0,
-                },
-            }
-        )?,
-        GamePacket::serialize(&TunneledPacket {
-            unknown1: true,
-            inner: make_test_npc()
-        })?,
-    ])
 }
