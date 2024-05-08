@@ -188,7 +188,7 @@ impl GameServer {
 
                     let player = TunneledPacket {
                         unknown1: true,
-                        inner: make_test_player(guid, &self.mounts)
+                        inner: make_test_player(guid, &self.mounts())
                     };
                     packets.push(GamePacket::serialize(&player)?);
 
@@ -367,7 +367,8 @@ impl GameServer {
                                 sender,
                                 GameServer::any_instance(&zones, teleport_request.destination_guid)?,
                                 None,
-                                None
+                                None,
+                                self.mounts()
                             )?
                         );
                     })?;
@@ -434,6 +435,10 @@ impl GameServer {
 
     pub fn read_zone_templates(&self) -> &BTreeMap<u32, ZoneTemplate> {
         &self.zone_templates
+    }
+
+    pub fn mounts(&self) -> &BTreeMap<u32, MountConfig> {
+        &self.mounts
     }
 
     pub fn read_zones(&self) -> GuidTableReadHandle<u64, Zone> {

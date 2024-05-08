@@ -700,7 +700,8 @@ pub fn process_housing_packet(sender: u32, game_server: &GameServer, cursor: &mu
                         sender,
                         enter_request.house_guid,
                         None,
-                        None
+                        None,
+                        game_server.mounts()
                     )?)
                 })?
 

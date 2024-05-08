@@ -5,6 +5,7 @@ use std::path::Path;
 
 use byteorder::{ReadBytesExt, WriteBytesExt};
 use num_enum::TryFromPrimitive;
+use parking_lot::{RwLockReadGuard, RwLockWriteGuard};
 use serde::Deserialize;
 
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
@@ -16,6 +17,7 @@ use crate::game_server::game_packet::{GamePacket, OpCode, Pos};
 use crate::game_server::guid::{Guid, GuidTableHandle};
 use crate::game_server::player_update_packet::{AddNpc, BaseAttachmentGroup, Icon, RemoveGracefully, WeaponAnimation};
 use crate::game_server::tunnel::TunneledPacket;
+use crate::game_server::zone::{Character, Zone};
 use crate::zone_with_character_read;
 
 #[derive(Deserialize)]
@@ -114,78 +116,82 @@ impl GamePacket for MountSpawn {
     const HEADER: Self::Header = MountOpCode::MountSpawn;
 }
 
+pub fn reply_dismount(sender: u32, zone: &RwLockReadGuard<Zone>,
+                      character: &mut RwLockWriteGuard<Character>, mounts: &BTreeMap<u32, MountConfig>) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    if let Some(mount_id) = character.mount_id {
+        character.mount_id = None;
+        if let Some(mount) = mounts.get(&mount_id) {
+            Ok(vec![
+                Broadcast::Single(sender, vec![
+                    GamePacket::serialize(
+                        &TunneledPacket {
+                            unknown1: true,
+                            inner: DismountReply {
+                                rider_guid: player_guid(sender),
+                                composite_effect: mount.dismount_composite_effect,
+                            },
+                        }
+                    )?,
+                    GamePacket::serialize(
+                        &TunneledPacket {
+                            unknown1: true,
+                            inner: RemoveGracefully {
+                                guid: mount_guid(sender, mount_id),
+                                unknown1: false,
+                                unknown2: 0,
+                                unknown3: 0,
+                                unknown4: 0,
+                                timer: 1000,
+                            },
+                        }
+                    )?,
+                    GamePacket::serialize(
+                        &TunneledPacket {
+                            unknown1: true,
+                            inner: Stats {
+                                stats: vec![
+                                    Stat {
+                                        id: StatId::Speed,
+                                        multiplier: 1,
+                                        value1: 0.0,
+                                        value2: zone.speed,
+                                    },
+                                    Stat {
+                                        id: StatId::JumpHeightMultiplier,
+                                        multiplier: 1,
+                                        value1: 0.0,
+                                        value2: zone.jump_height_multiplier,
+                                    },
+                                    Stat {
+                                        id: StatId::GravityMultiplier,
+                                        multiplier: 1,
+                                        value1: 0.0,
+                                        value2: zone.gravity_multiplier,
+                                    }
+                                ],
+                            },
+                        }
+                    )?
+                ])
+            ])
+        } else {
+            println!("Player {} tried to dismount from non-existent mount", sender);
+            Err(ProcessPacketError::CorruptedPacket)
+        }
+    } else {
+
+        // Character is already dismounted
+        Ok(Vec::new())
+
+    }
+}
+
 fn process_dismount(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let zones = game_server.read_zones();
     zone_with_character_read!(zones.values(), player_guid(sender), |zone_read_handle, characters| {
         if let Some(character) = characters.get(player_guid(sender)) {
             let mut character_write_handle = character.write();
-            if let Some(mount_id) = character_write_handle.mount_id {
-                character_write_handle.mount_id = None;
-
-                if let Some(mount) = game_server.mounts.get(&mount_id) {
-                    Ok(vec![
-                        Broadcast::Single(sender, vec![
-                            GamePacket::serialize(
-                                &TunneledPacket {
-                                    unknown1: true,
-                                    inner: DismountReply {
-                                        rider_guid: player_guid(sender),
-                                        composite_effect: mount.dismount_composite_effect,
-                                    },
-                                }
-                            )?,
-                            GamePacket::serialize(
-                                &TunneledPacket {
-                                    unknown1: true,
-                                    inner: RemoveGracefully {
-                                        guid: mount_guid(sender, mount_id),
-                                        unknown1: false,
-                                        unknown2: 0,
-                                        unknown3: 0,
-                                        unknown4: 0,
-                                        timer: 1000,
-                                    },
-                                }
-                            )?,
-                            GamePacket::serialize(
-                                &TunneledPacket {
-                                    unknown1: true,
-                                    inner: Stats {
-                                        stats: vec![
-                                            Stat {
-                                                id: StatId::Speed,
-                                                multiplier: 1,
-                                                value1: 0.0,
-                                                value2: zone_read_handle.speed,
-                                            },
-                                            Stat {
-                                                id: StatId::JumpHeightMultiplier,
-                                                multiplier: 1,
-                                                value1: 0.0,
-                                                value2: zone_read_handle.jump_height_multiplier,
-                                            },
-                                            Stat {
-                                                id: StatId::GravityMultiplier,
-                                                multiplier: 1,
-                                                value1: 0.0,
-                                                value2: zone_read_handle.gravity_multiplier,
-                                            }
-                                        ],
-                                    },
-                                }
-                            )?
-                        ])
-                    ])
-                } else {
-                    println!("Player {} tried to dismount from non-existent mount", sender);
-                    Ok(Vec::new())
-                }
-            } else {
-
-                // Character is already dismounted
-                Ok(Vec::new())
-
-            }
+            reply_dismount(sender, &zone_read_handle, &mut character_write_handle, &game_server.mounts())
         } else {
             println!("Non-existent player {} tried to dismount", sender);
             Err(ProcessPacketError::CorruptedPacket)
@@ -198,7 +204,7 @@ fn process_mount_spawn(cursor: &mut Cursor<&[u8]>, sender: u32,
     let mount_spawn = MountSpawn::deserialize(cursor)?;
     let mount_guid = mount_guid(sender, mount_spawn.mount_id);
 
-    if let Some(mount) = game_server.mounts.get(&mount_spawn.mount_id) {
+    if let Some(mount) = game_server.mounts().get(&mount_spawn.mount_id) {
         let mut packets = spawn_mount_npc(mount_guid, mount)?;
         packets.push(
             GamePacket::serialize(

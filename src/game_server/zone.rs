@@ -726,25 +726,17 @@ pub fn load_zones(config_dir: &Path) -> Result<(BTreeMap<u32, ZoneTemplate>, Gui
     Ok((templates, zones))
 }
 
-pub fn enter_zone<'a, T: GuidTableHandle<'a, u64, Zone>>(zones: &T,
-                                                         character: Option<Lock<Character>>,
-                                                         player: u32,
-                                                         destination_zone_guid: u64,
-                                                         destination_pos: Option<Pos>,
-                                                         destination_rot: Option<Pos>) -> Result<Vec<Broadcast>, ProcessPacketError> {
-    if let Some(destination_zone) = zones.get(destination_zone_guid) {
-        let destination_read_handle = destination_zone.read();
-        let destination_pos = destination_pos.unwrap_or(destination_read_handle.default_spawn_pos);
-        let destination_rot = destination_rot.unwrap_or(destination_read_handle.default_spawn_rot);
-        if let Some(character) = character {
-            let mut characters = destination_read_handle.write_characters();
-            characters.insert_lock(player_guid(player), character);
-            drop(characters);
-        }
-        Ok(prepare_init_zone_packets(player, destination_read_handle, destination_pos, destination_rot)?)
-    } else {
-        Ok(Vec::new())
+pub fn enter_zone(character: Option<Lock<Character>>, player: u32,
+                  destination_read_handle: RwLockReadGuard<Zone>, destination_pos: Option<Pos>,
+                  destination_rot: Option<Pos>) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    let destination_pos = destination_pos.unwrap_or(destination_read_handle.default_spawn_pos);
+    let destination_rot = destination_rot.unwrap_or(destination_read_handle.default_spawn_rot);
+    if let Some(character) = character {
+        let mut characters = destination_read_handle.write_characters();
+        characters.insert_lock(player_guid(player), character);
+        drop(characters);
     }
+    Ok(prepare_init_zone_packets(player, destination_read_handle, destination_pos, destination_rot)?)
 }
 
 fn prepare_init_zone_packets(player: u32, destination: RwLockReadGuard<Zone>, destination_pos: Pos,
@@ -795,13 +787,36 @@ fn prepare_init_zone_packets(player: u32, destination: RwLockReadGuard<Zone>, de
 #[macro_export]
 macro_rules! teleport_to_zone {
     ($zones:expr, $source_zone:expr, $source_zone_characters:expr, $player:expr,
-     $destination_zone_guid:expr, $destination_pos:expr, $destination_rot:expr) => {
+     $destination_zone_guid:expr, $destination_pos:expr, $destination_rot:expr, $mounts:expr) => {
         {
             let character = $source_zone_characters.remove(player_guid($player));
             drop($source_zone_characters);
             drop($source_zone);
 
-            crate::game_server::zone::enter_zone($zones, character, $player, $destination_zone_guid, $destination_pos, $destination_rot)
+            if let Some(destination_zone) = $zones.get($destination_zone_guid) {
+                let destination_read_handle = destination_zone.read();
+                let mut broadcasts = Vec::new();
+                if let Some(character) = &character {
+                    broadcasts.append(&mut crate::game_server::mount::reply_dismount(
+                        $player,
+                        &destination_read_handle,
+                        &mut character.write(),
+                        $mounts
+                    )?);
+                }
+
+                broadcasts.append(&mut crate::game_server::zone::enter_zone(
+                    character,
+                    $player,
+                    destination_read_handle,
+                    $destination_pos,
+                    $destination_rot
+                )?);
+
+                Ok(broadcasts)
+            } else {
+                Err(ProcessPacketError::CorruptedPacket)
+            }
         }
     };
 }
@@ -874,7 +889,8 @@ pub fn interact_with_character(request: SelectPlayer, game_server: &GameServer) 
                             requester,
                             destination_zone_guid,
                             Some(destination_pos),
-                            Some(destination_rot)
+                            Some(destination_rot),
+                            game_server.mounts()
                         )
                     } else {
                         teleport_within_zone(requester, destination_pos, destination_rot)
