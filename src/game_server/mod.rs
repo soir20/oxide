@@ -342,7 +342,7 @@ impl GameServer {
                     broadcasts.push(Broadcast::Single(sender, vec![GamePacket::serialize(&game_time_sync)?]));
                 },
                 OpCode::Command => {
-                    broadcasts.push(Broadcast::Single(sender, process_command(self, &mut cursor)?));
+                    broadcasts.append(&mut process_command(self, &mut cursor)?);
                 },
                 OpCode::UpdatePlayerPosition => {
                     let pos_update: UpdatePlayerPosition = DeserializePacket::deserialize(&mut cursor)?;
@@ -350,17 +350,16 @@ impl GameServer {
                     zone_with_character_read!(zones.values(), player_guid(sender), |zone, characters| {
 
                         // TODO: broadcast pos update to all players
-                        broadcasts.push(Broadcast::Single(sender, Zone::move_character(characters, pos_update, self)?));
+                        broadcasts.append(&mut Zone::move_character(characters, pos_update, self)?);
 
                     })?;
                 },
                 OpCode::ZoneTeleportRequest => {
-                    let mut packets = Vec::new();
                     let teleport_request: ZoneTeleportRequest = DeserializePacket::deserialize(&mut cursor)?;
 
                     let zones = self.read_zones();
                     zone_with_character_write!(zones.values(), player_guid(sender), |zone_read_handle, mut characters| {
-                        packets.append(
+                        broadcasts.append(
                             &mut teleport_to_zone!(
                                 &zones,
                                 zone_read_handle,
@@ -372,30 +371,25 @@ impl GameServer {
                             )?
                         );
                     })?;
-
-                    broadcasts.push(Broadcast::Single(sender, packets));
                 },
                 OpCode::TeleportToSafety => {
-                    let mut packets = Vec::new();
-
                     let zones = self.read_zones();
                     zone_with_character_read!(zones.values(), player_guid(sender), |zone, characters| {
                         let spawn_pos = zone.default_spawn_pos;
                         let spawn_rot = zone.default_spawn_rot;
 
-                        packets.append(&mut teleport_within_zone(
+                        broadcasts.append(&mut teleport_within_zone(
+                            sender,
                             spawn_pos,
                             spawn_rot
                         )?);
                     })?;
-
-                    broadcasts.push(Broadcast::Single(sender, packets));
                 },
                 OpCode::Mount => {
                     broadcasts.append(&mut process_mount_packet(&mut cursor, sender, &self)?);
                 },
                 OpCode::Housing => {
-                    broadcasts.push(Broadcast::Single(sender, process_housing_packet(sender, &self, &mut cursor)?));
+                    broadcasts.append(&mut process_housing_packet(sender, &self, &mut cursor)?);
                     broadcasts.push(Broadcast::Single(sender, vec![
                         GamePacket::serialize(&TunneledPacket {
                             unknown1: true,

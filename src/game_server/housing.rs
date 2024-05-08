@@ -7,7 +7,7 @@ use parking_lot::RwLockReadGuard;
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
 
 use crate::{teleport_to_zone, zone_with_character_read, zone_with_character_write};
-use crate::game_server::{GameServer, ProcessPacketError};
+use crate::game_server::{Broadcast, GameServer, ProcessPacketError};
 use crate::game_server::character_guid::{fixture_guid, player_guid};
 use crate::game_server::game_packet::{GamePacket, ImageId, OpCode, Pos};
 use crate::game_server::guid::{Guid, GuidTableHandle};
@@ -638,13 +638,13 @@ pub fn prepare_init_house_packets(sender: u32, zone: &RwLockReadGuard<Zone>,
     Ok(packets)
 }
 
-pub fn process_housing_packet(sender: u32, game_server: &GameServer, cursor: &mut Cursor<&[u8]>) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+pub fn process_housing_packet(sender: u32, game_server: &GameServer, cursor: &mut Cursor<&[u8]>) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let raw_op_code = cursor.read_u16::<LittleEndian>()?;
     match HousingOpCode::try_from(raw_op_code) {
         Ok(op_code) => match op_code {
             HousingOpCode::SetEditMode => {
                 let set_edit_mode: SetEditMode = DeserializePacket::deserialize(cursor)?;
-                zone_with_character_read!(game_server.read_zones().values(), player_guid(sender), |zone_read_handle, characters| {
+                let packets = zone_with_character_read!(game_server.read_zones().values(), player_guid(sender), |zone_read_handle, characters| {
                     if let Some(house) = &zone_read_handle.house_data {
                         if house.owner == sender {
                             Ok(vec![
@@ -669,7 +669,9 @@ pub fn process_housing_packet(sender: u32, game_server: &GameServer, cursor: &mu
                         println!("Player {} tried to set edit mode outside of a house", sender);
                         Err(ProcessPacketError::CorruptedPacket)
                     }
-                })?
+                })??;
+
+                Ok(vec![Broadcast::Single(sender, packets)])
             },
             HousingOpCode::EnterRequest => {
                 let enter_request: EnterRequest = DeserializePacket::deserialize(cursor)?;

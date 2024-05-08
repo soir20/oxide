@@ -2,13 +2,13 @@ use std::collections::BTreeMap;
 use std::fs::File;
 use std::io::Error;
 use std::path::Path;
-use parking_lot::RwLockReadGuard;
 
+use parking_lot::RwLockReadGuard;
 use serde::Deserialize;
 
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
 
-use crate::game_server::{GameServer, ProcessPacketError};
+use crate::game_server::{Broadcast, GameServer, ProcessPacketError};
 use crate::game_server::character_guid::{npc_guid, player_guid, shorten_player_guid};
 use crate::game_server::client_update_packet::Position;
 use crate::game_server::command::SelectPlayer;
@@ -519,7 +519,7 @@ impl Zone {
 
     pub fn move_character(characters: GuidTableReadHandle<u64, Character>,
                           pos_update: UpdatePlayerPosition,
-                          game_server: &GameServer) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+                          game_server: &GameServer) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let possible_character = characters.get(pos_update.guid);
         let mut characters_to_interact = Vec::new();
 
@@ -564,13 +564,13 @@ impl Zone {
 
         drop(characters);
 
-        let mut packets = Vec::new();
+        let mut broadcasts = Vec::new();
         for character_guid in characters_to_interact {
             let interact_request = SelectPlayer { requester: pos_update.guid, target: character_guid };
-            packets.append(&mut interact_with_character(interact_request, game_server)?);
+            broadcasts.append(&mut interact_with_character(interact_request, game_server)?);
         }
 
-        Ok(packets)
+        Ok(broadcasts)
     }
 }
 
@@ -731,7 +731,7 @@ pub fn enter_zone<'a, T: GuidTableHandle<'a, u64, Zone>>(zones: &T,
                                                          player: u32,
                                                          destination_zone_guid: u64,
                                                          destination_pos: Option<Pos>,
-                                                         destination_rot: Option<Pos>) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+                                                         destination_rot: Option<Pos>) -> Result<Vec<Broadcast>, ProcessPacketError> {
     if let Some(destination_zone) = zones.get(destination_zone_guid) {
         let destination_read_handle = destination_zone.read();
         let destination_pos = destination_pos.unwrap_or(destination_read_handle.default_spawn_pos);
@@ -748,7 +748,7 @@ pub fn enter_zone<'a, T: GuidTableHandle<'a, u64, Zone>>(zones: &T,
 }
 
 fn prepare_init_zone_packets(player: u32, destination: RwLockReadGuard<Zone>, destination_pos: Pos,
-                             destination_rot: Pos) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+                             destination_rot: Pos) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let zone_name = destination.asset_name.clone();
     let mut packets = vec![];
     packets.push(
@@ -789,7 +789,7 @@ fn prepare_init_zone_packets(player: u32, destination: RwLockReadGuard<Zone>, de
         packets.append(&mut prepare_init_house_packets(player, &destination, house)?);
     }
 
-    Ok(packets)
+    Ok(vec![Broadcast::Single(player, packets)])
 }
 
 #[macro_export]
@@ -806,10 +806,11 @@ macro_rules! teleport_to_zone {
     };
 }
 
-pub fn interact_with_character(request: SelectPlayer, game_server: &GameServer) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+pub fn interact_with_character(request: SelectPlayer, game_server: &GameServer) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let zones = game_server.read_zones();
     zone_with_character_read!(zones.values(), request.requester, |source_zone_read_handle, characters| {
         let source_zone_guid = source_zone_read_handle.guid();
+        let requester = shorten_player_guid(request.requester)?;
         let requester_x;
         let requester_y;
         let requester_z;
@@ -870,17 +871,17 @@ pub fn interact_with_character(request: SelectPlayer, game_server: &GameServer) 
                             &zones,
                             source_zone_read_handle,
                             characters,
-                            shorten_player_guid(request.requester)?,
+                            requester,
                             destination_zone_guid,
                             Some(destination_pos),
                             Some(destination_rot)
                         )
                     } else {
-                        teleport_within_zone(destination_pos, destination_rot)
+                        teleport_within_zone(requester, destination_pos, destination_rot)
                     }
                 },
                 CharacterType::Transport(_) => {
-                    Ok(show_galaxy_map()?)
+                    Ok(vec![Broadcast::Single(requester, show_galaxy_map()?)])
                 },
                 _ => Ok(Vec::new())
             }
@@ -892,18 +893,20 @@ pub fn interact_with_character(request: SelectPlayer, game_server: &GameServer) 
     })?
 }
 
-pub fn teleport_within_zone(destination_pos: Pos, destination_rot: Pos) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+pub fn teleport_within_zone(sender: u32, destination_pos: Pos, destination_rot: Pos) -> Result<Vec<Broadcast>, ProcessPacketError> {
     Ok(
         vec![
-            GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: Position {
-                    player_pos: destination_pos,
-                    rot: destination_rot,
-                    is_teleport: true,
-                    unknown2: true,
-                },
-            })?
+            Broadcast::Single(sender, vec![
+                GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: Position {
+                        player_pos: destination_pos,
+                        rot: destination_rot,
+                        is_teleport: true,
+                        unknown2: true,
+                    },
+                })?
+            ])
         ]
     )
 }

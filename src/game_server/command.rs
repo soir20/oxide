@@ -3,10 +3,10 @@ use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
 use num_enum::TryFromPrimitive;
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
 use crate::game_server::game_packet::{GamePacket, OpCode};
-use crate::game_server::{GameServer, ProcessPacketError};
+use crate::game_server::{Broadcast, GameServer, ProcessPacketError};
 use crate::game_server::zone::interact_with_character;
 
-pub fn process_command(game_server: &GameServer, cursor: &mut Cursor<&[u8]>) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+pub fn process_command(game_server: &GameServer, cursor: &mut Cursor<&[u8]>) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let raw_op_code = cursor.read_u16::<LittleEndian>()?;
     match CommandOpCode::try_from(raw_op_code) {
         Ok(op_code) => match op_code {

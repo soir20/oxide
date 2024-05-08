@@ -79,8 +79,8 @@ impl SerializePacket for MountOpCode {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct DismountReply {
-    rider_guid: u64,
-    composite_effect: u32
+    pub rider_guid: u64,
+    pub composite_effect: u32
 }
 
 impl GamePacket for DismountReply {
