@@ -143,7 +143,7 @@ fn process_dismount(sender: u32, game_server: &GameServer) -> Result<Vec<Broadca
                                         unknown2: 0,
                                         unknown3: 0,
                                         unknown4: 0,
-                                        unknown5: 0,
+                                        timer: 1000,
                                     },
                                 }
                             )?,
