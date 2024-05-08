@@ -22,7 +22,7 @@ use crate::game_server::player_update_packet::make_test_npc;
 use crate::game_server::time::make_game_time_sync;
 use crate::game_server::tunnel::{TunneledPacket, TunneledWorldPacket};
 use crate::game_server::update_position::UpdatePlayerPosition;
-use crate::game_server::zone::{Character, load_zones, teleport_within_zone, Zone, ZoneTeleportRequest, ZoneTemplate};
+use crate::game_server::zone::{Character, instance_guid, load_zones, teleport_within_zone, Zone, ZoneTeleportRequest, ZoneTemplate};
 use crate::teleport_to_zone;
 
 mod login;
@@ -403,8 +403,8 @@ impl GameServer {
                                 instances: vec![
                                     HouseInstanceEntry {
                                         description: HouseDescription {
-                                            owner_guid: 1,
-                                            house_guid: 100,
+                                            owner_guid: player_guid(sender),
+                                            house_guid: instance_guid(0, 100),
                                             house_name: 1987,
                                             player_given_name: "Blaster's Mustafar Lot".to_string(),
                                             owner_name: "BLASTER NICESHOT".to_string(),
@@ -423,7 +423,7 @@ impl GameServer {
                                             unknown16: 0,
                                             unknown17: 0,
                                         },
-                                        unknown1: 1
+                                        unknown1: player_guid(sender)
                                     }
                                 ],
                             },
