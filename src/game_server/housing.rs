@@ -682,7 +682,7 @@ pub fn process_housing_packet(sender: u32, game_server: &GameServer, cursor: &mu
                         zones.insert(Zone::new_house(
                             enter_request.house_guid,
                             template,
-                            lookup_house(enter_request.house_guid)?
+                            lookup_house(sender, enter_request.house_guid)?
                         ));
                     } else {
                         println!("Tried to enter house with unknown template {}", template_guid);
@@ -719,11 +719,11 @@ pub fn process_housing_packet(sender: u32, game_server: &GameServer, cursor: &mu
     }
 }
 
-pub fn lookup_house(house_guid: u64) -> Result<House, ProcessPacketError> {
+pub fn lookup_house(sender: u32, house_guid: u64) -> Result<House, ProcessPacketError> {
     println!("Found test house {}", house_guid);
     Ok(
         House {
-            owner: 1,
+            owner: sender,
             owner_name: "BLASTER NICESHOt".to_string(),
             custom_name: "Blaster's Test Lot".to_string(),
             rating: 3.5,
