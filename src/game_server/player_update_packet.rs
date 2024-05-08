@@ -71,7 +71,7 @@ pub struct RemoveGracefully {
     pub unknown2: u32,
     pub unknown3: u32,
     pub unknown4: u32,
-    pub unknown5: u32,
+    pub timer: u32,
 }
 
 impl GamePacket for RemoveGracefully {
