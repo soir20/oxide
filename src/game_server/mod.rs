@@ -9,6 +9,7 @@ use rand::Rng;
 use packet_serialize::{DeserializePacket, DeserializePacketError, NullTerminatedString, SerializePacketError};
 
 use crate::game_server::character_guid::player_guid;
+use crate::game_server::chat::process_chat_packet;
 use crate::game_server::client_update_packet::{Health, Power, PreloadCharactersDone, Stat, StatId, Stats};
 use crate::game_server::command::process_command;
 use crate::game_server::game_packet::{GamePacket, OpCode};
@@ -43,6 +44,7 @@ mod store;
 mod mount;
 mod housing;
 mod character_guid;
+mod chat;
 
 #[derive(Debug)]
 pub enum Broadcast {
@@ -424,6 +426,9 @@ impl GameServer {
                             },
                         })?
                     ]));
+                },
+                OpCode::Chat => {
+                    broadcasts.append(&mut process_chat_packet(&mut cursor, sender)?);
                 },
                 _ => println!("Unimplemented: {:?}, {:x?}", op_code, data)
             },

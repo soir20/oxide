@@ -9,6 +9,7 @@ pub enum DeserializePacketError {
     IoError(Error),
     InvalidString(FromUtf8Error),
     MissingNullTerminator,
+    UnknownDiscriminator
 }
 
 impl From<Error> for DeserializePacketError {
