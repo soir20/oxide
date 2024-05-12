@@ -30,6 +30,7 @@ pub enum PlayerUpdateOpCode {
     SeekTargetUpdate                = 0x3c,
     WieldType                       = 0x3d,
     HudMessage                      = 0x40,
+    NameplateImage                  = 0x44,
 }
 
 impl SerializePacket for PlayerUpdateOpCode {
@@ -77,6 +78,17 @@ pub struct RemoveGracefully {
 impl GamePacket for RemoveGracefully {
     type Header = PlayerUpdateRemoveOpCode;
     const HEADER: Self::Header = PlayerUpdateRemoveOpCode::Graceful;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct NameplateImage {
+    pub image_id: u32,
+    pub guid: u64,
+}
+
+impl GamePacket for NameplateImage {
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::NameplateImage;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
