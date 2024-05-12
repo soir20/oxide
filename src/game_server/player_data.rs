@@ -10,7 +10,7 @@ use crate::game_server::game_packet::{Effect, GamePacket, ImageId, OpCode, Pos, 
 use crate::game_server::guid::Guid;
 use crate::game_server::item::{EquipmentSlot, Item, MarketData};
 use crate::game_server::mount::MountConfig;
-use crate::game_server::player_update_packet::{Wield, WieldType};
+use crate::game_server::player_update_packet::{Wield, WieldType, NameplateImageId, NameplateImage};
 use crate::game_server::tunnel::TunneledPacket;
 use crate::game_server::zone::{Character, CharacterType};
 
@@ -756,6 +756,19 @@ pub fn make_test_wield_type(guid: u32) -> Result<Vec<Vec<u8>>, SerializePacketEr
                 inner: WieldType {
                     guid: player_guid(guid),
                     wield_type: Wield::SinglePistol,
+                },
+            })?,
+        ]
+    )
+}
+pub fn make_test_nameplate_image(guid: u32) -> Result<Vec<Vec<u8>>, SerializePacketError> {
+    Ok(
+        vec![
+            GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: NameplateImageId {
+                    image_id: NameplateImage::Trooper,
+                    guid: player_guid(guid),
                 },
             })?,
         ]
