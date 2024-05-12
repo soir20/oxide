@@ -80,6 +80,16 @@ impl GamePacket for RemoveGracefully {
     const HEADER: Self::Header = PlayerUpdateRemoveOpCode::Graceful;
 }
 
+#[derive(Copy, Clone, Debug)]
+pub enum NameplateImage {
+    Darkside    = 6162,
+    Lightside   = 6163,
+    Trooper     = 6164,
+    Mercenary   = 6165,
+    Exile       = 7021,
+    Enforcer    = 2087,
+}
+
 #[derive(SerializePacket, DeserializePacket)]
 pub struct NameplateImage {
     pub image_id: u32,
