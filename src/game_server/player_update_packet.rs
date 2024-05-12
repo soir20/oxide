@@ -90,7 +90,14 @@ pub enum NameplateImage {
     Enforcer    = 2087,
 }
 
-#[derive(SerializePacket, DeserializePacket)]
+impl SerializePacket for NameplateImage {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        buffer.write_u32::<LittleEndian>(*self as u32)?;
+        Ok(())
+    }
+}
+
+#[derive(SerializePacket)]
 pub struct NameplateImageId {
     pub image_id: NameplateImage,
     pub guid: u64,
