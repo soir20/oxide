@@ -43,6 +43,25 @@ impl SerializePacket for CommandOpCode {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
+pub struct BGRA {
+    b: u8,
+    g: u8,
+    r: u8,
+    a: u8,
+}
+
+impl BGRA {
+
+    pub fn new(b: u8, g: u8, r: u8, a: u8) -> Self {
+        BGRA { b, g, r, a }
+    }
+
+    pub fn pack(&self) -> u32 {
+        ((self.a as u32) << 24) | ((self.r as u32) << 16) | ((self.g as u32) << 8) | (self.b as u32)
+    }
+}
+
+#[derive(SerializePacket, DeserializePacket)]
 pub struct ChatBubbleColor {
     text_color: u32,
     bubble_color: u32,
