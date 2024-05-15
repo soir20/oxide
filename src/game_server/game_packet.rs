@@ -20,6 +20,7 @@ pub enum OpCode {
     PlayerUpdate             = 0x23,
     ClientUpdate             = 0x26,
     ZoneDetails              = 0x2b,
+    ReferenceData            = 0x2c,
     Ui                       = 0x2f,
     GameTimeSync             = 0x34,
     DefinePointsOfInterest   = 0x39,
