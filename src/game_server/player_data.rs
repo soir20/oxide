@@ -193,7 +193,7 @@ impl SerializePacket for MarketData {
 
 #[derive(SerializePacket)]
 pub struct InventoryItem {
-    pub unknown: u32,
+    pub definition_id: u32,
     pub item: Item
 }
 
@@ -546,7 +546,7 @@ pub fn make_test_player(guid: u32, mounts: &BTreeMap<u32, MountConfig>) -> Playe
             social: vec![],
             inventory: vec![
                 InventoryItem {
-                    unknown: 0,
+                    definition_id: 1,
                     item: Item {
                         definition_id: 1,
                         tint: 0,
@@ -559,7 +559,7 @@ pub fn make_test_player(guid: u32, mounts: &BTreeMap<u32, MountConfig>) -> Playe
                     }
                 },
                 InventoryItem {
-                    unknown: 0,
+                    definition_id: 2,
                     item: Item {
                         definition_id: 2,
                         tint: 0,
@@ -572,7 +572,7 @@ pub fn make_test_player(guid: u32, mounts: &BTreeMap<u32, MountConfig>) -> Playe
                     }
                 },
                 InventoryItem {
-                    unknown: 0,
+                    definition_id: 3,
                     item: Item {
                         definition_id: 3,
                         tint: 0,
@@ -585,7 +585,7 @@ pub fn make_test_player(guid: u32, mounts: &BTreeMap<u32, MountConfig>) -> Playe
                     }
                 },
                 InventoryItem {
-                    unknown: 0,
+                    definition_id: 4,
                     item: Item {
                         definition_id: 4,
                         tint: 0,
@@ -598,7 +598,7 @@ pub fn make_test_player(guid: u32, mounts: &BTreeMap<u32, MountConfig>) -> Playe
                     }
                 },
                 InventoryItem {
-                    unknown: 0,
+                    definition_id: 5,
                     item: Item {
                         definition_id: 5,
                         tint: 0,
@@ -611,13 +611,13 @@ pub fn make_test_player(guid: u32, mounts: &BTreeMap<u32, MountConfig>) -> Playe
                     }
                 },
                 InventoryItem {
-                    unknown: 0,
+                    definition_id: 6,
                     item: Item {
                         definition_id: 6,
                         tint: 0,
                         guid: 6,
                         quantity: 100,
-                        num_consumed: 0,
+                        num_consumed: 50,
                         last_use_time: 0,
                         market_data: MarketData::None,
                         unknown2: false,
