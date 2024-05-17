@@ -45,5 +45,5 @@ license:
 ## Why "Oxide"?
 
 * The server is written in Rust (ferric oxide).
-* Chemically, bonding one or more oxygen atoms with another group of atoms creates an oxide. Similarly, connecting the original client and this server makes the game playable.
+* Chemically, bonding one or more oxygen atoms with another group of atoms creates an oxide. Similarly, connecting the original client with this server makes the game playable.
 * It doesn't include trademarked words or phrases.
