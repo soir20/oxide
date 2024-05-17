@@ -534,7 +534,7 @@ pub struct AddNpc {
     pub sub_title_id: StringId,
     pub active_animation_slot2: u32,
     pub head_model_id: u32,
-    pub effect: Vec<Effect>,
+    pub effects: Vec<Effect>,
     pub disable_interact_popup: bool,
     pub unknown33: u32,
     pub unknown34: bool,
