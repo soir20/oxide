@@ -209,7 +209,7 @@ impl Character {
             sub_title_id: 0,
             active_animation_slot2: 0,
             head_model_id: 0,
-            unknown31: vec![],
+            effect: vec![],
             disable_interact_popup: true,
             unknown33: 0,
             unknown34: false,
