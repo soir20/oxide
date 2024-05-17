@@ -349,7 +349,7 @@ fn spawn_mount_npc(guid: u64, mount: &MountConfig) -> Result<Vec<Vec<u8>>, Proce
                     sub_title_id: 0,
                     active_animation_slot2: 1,
                     head_model_id: 0,
-                    unknown31: vec![
+                    effects: vec![
                         Effect {
                             unknown1: 0,
                             unknown2: 0,
