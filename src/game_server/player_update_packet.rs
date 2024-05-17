@@ -534,7 +534,7 @@ pub struct AddNpc {
     pub sub_title_id: StringId,
     pub active_animation_slot2: u32,
     pub head_model_id: u32,
-    pub unknown31: Vec<Effect>,
+    pub effects: Vec<Effect>,
     pub disable_interact_popup: bool,
     pub unknown33: u32,
     pub unknown34: bool,
@@ -632,7 +632,7 @@ pub fn make_test_npc() -> AddNpc {
         sub_title_id: 0,
         active_animation_slot2: 0,
         head_model_id: 0,
-        unknown31: vec![],
+        effects: vec![],
         disable_interact_popup: false,
         unknown33: 0, // If non-zero, crashes when NPC is clicked on
         unknown34: false,

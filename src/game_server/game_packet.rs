@@ -78,7 +78,7 @@ pub struct Effect {
     pub unknown10: u32,
     pub unknown11: u32,
     pub unknown12: u32,
-    pub unknown13: u32,
+    pub composite_effect: u32,
     pub unknown14: u64,
     pub unknown15: u32,
     pub unknown16: u32,

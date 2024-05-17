@@ -13,7 +13,7 @@ use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError}
 use crate::game_server::{Broadcast, GameServer, ProcessPacketError};
 use crate::game_server::character_guid::{mount_guid, player_guid};
 use crate::game_server::client_update_packet::{Stat, StatId, Stats};
-use crate::game_server::game_packet::{GamePacket, OpCode, Pos};
+use crate::game_server::game_packet::{GamePacket, OpCode, Pos, Effect};
 use crate::game_server::guid::{Guid, GuidTableHandle};
 use crate::game_server::player_update_packet::{AddNpc, BaseAttachmentGroup, Icon, RemoveGracefully, WeaponAnimation};
 use crate::game_server::tunnel::TunneledPacket;
@@ -216,7 +216,7 @@ fn process_mount_spawn(cursor: &mut Cursor<&[u8]>, sender: u32,
                         unknown1: 0,
                         queue_pos: 1,
                         unknown3: 1,
-                        composite_effect: mount.mount_composite_effect,
+                        composite_effect: 0,
                         unknown5: 0,
                     },
                 }
@@ -349,7 +349,29 @@ fn spawn_mount_npc(guid: u64, mount: &MountConfig) -> Result<Vec<Vec<u8>>, Proce
                     sub_title_id: 0,
                     active_animation_slot2: 1,
                     head_model_id: 0,
-                    unknown31: vec![],
+                    effects: vec![
+                        Effect {
+                            unknown1: 0,
+                            unknown2: 0,
+                            unknown3: 0,
+                            unknown4: 0,
+                            unknown5: 0,
+                            unknown6: 0,
+                            unknown7: 0,
+                            unknown8: false,
+                            unknown9: 0,
+                            unknown10: 0,
+                            unknown11: 0,
+                            unknown12: 0,
+                            composite_effect: mount.mount_composite_effect,
+                            unknown14: 0,
+                            unknown15: 0,
+                            unknown16: 0,
+                            unknown17: false,
+                            unknown18: false,
+                            unknown19: false,
+                      }
+                    ],
                     disable_interact_popup: true,
                     unknown33: 0,
                     unknown34: false,
