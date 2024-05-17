@@ -42,17 +42,17 @@ impl SerializePacket for CommandOpCode {
     }
 }
 
-#[derive(SerializePacket, DeserializePacket)]
+[derive(SerializePacket, DeserializePacket)]
 pub struct Rgba {
-    r: u8,
-    g: u8,
     b: u8,
+    g: u8,
+    r: u8,
     a: u8,
 }
 
 impl Rgba {
-    pub fn new(b: u8, g: u8, r: u8, a: u8) -> Self {
-        Rgba { r, g, b, a }
+    pub fn new(r: u8, g: u8, b: u8, a: u8) -> Self {
+        Rgba { b, g, r, a }
     }
 }
 
