@@ -94,7 +94,7 @@ impl GamePacket for DismountReply {
 pub struct MountReply {
     rider_guid: u64,
     mount_guid: u64,
-    unknown1: u32,
+    seat: u32,
     queue_pos: u32,
     unknown3: u32,
     composite_effect: u32,
@@ -224,7 +224,7 @@ fn process_mount_spawn(cursor: &mut Cursor<&[u8]>, sender: u32,
                             inner: MountReply {
                                 rider_guid: player_guid(sender),
                                 mount_guid,
-                                unknown1: 0,
+                                seat: 0,
                                 queue_pos: 1,
                                 unknown3: 1,
                                 composite_effect: 0,
