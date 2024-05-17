@@ -479,7 +479,7 @@ fn fixture_packets(house_guid: u64, index: u32, fixture: &Fixture) -> Result<Vec
                         sub_title_id: 0,
                         active_animation_slot2: 0,
                         head_model_id: 0,
-                        unknown31: vec![],
+                        effects: vec![],
                         disable_interact_popup: false,
                         unknown33: 0,
                         unknown34: false,
