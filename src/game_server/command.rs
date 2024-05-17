@@ -30,7 +30,8 @@ pub fn process_command(game_server: &GameServer, cursor: &mut Cursor<&[u8]>) -> 
 #[repr(u16)]
 pub enum CommandOpCode {
     InteractionList          = 0x9,
-    SelectPlayer             = 0xf
+    SelectPlayer             = 0xf,
+    ChatBubbleColor          = 0xe
 }
 
 impl SerializePacket for CommandOpCode {
@@ -39,6 +40,39 @@ impl SerializePacket for CommandOpCode {
         buffer.write_u16::<LittleEndian>(*self as u16)?;
         Ok(())
     }
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct Rgba {
+    b: u8,
+    g: u8,
+    r: u8,
+    a: u8,
+}
+
+impl Rgba {
+    pub fn new(r: u8, g: u8, b: u8, a: u8) -> Self {
+        Rgba { b, g, r, a }
+    }
+}
+
+impl Into<u32> for Rgba {
+    fn into(self) -> u32 {
+        ((self.a as u32) << 24) | ((self.r as u32) << 16) | ((self.g as u32) << 8) | (self.b as u32)
+    }
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct ChatBubbleColor {
+    text_color: Rgba,
+    bubble_color: Rgba,
+    size: u32,
+    guid: u64,
+}
+
+impl GamePacket for ChatBubbleColor {
+    type Header = CommandOpCode;
+    const HEADER: Self::Header = CommandOpCode::ChatBubbleColor;
 }
 
 #[derive(SerializePacket, DeserializePacket)]

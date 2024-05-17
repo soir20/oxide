@@ -18,7 +18,7 @@ use crate::game_server::housing::{HouseDescription, HouseInstanceEntry, HouseIns
 use crate::game_server::item::make_item_definitions;
 use crate::game_server::login::{DeploymentEnv, GameSettings, LoginReply, send_points_of_interest, WelcomeScreen, ZoneDetailsDone};
 use crate::game_server::mount::{load_mounts, MountConfig, process_mount_packet};
-use crate::game_server::player_data::{make_test_player, make_test_wield_type};
+use crate::game_server::player_data::{make_test_player, make_test_wield_type, make_test_nameplate_image};
 use crate::game_server::player_update_packet::make_test_npc;
 use crate::game_server::reference_data::{CategoryDefinition, CategoryDefinitions, CategoryRelation};
 use crate::game_server::time::make_game_time_sync;
@@ -338,6 +338,8 @@ impl GameServer {
                     packets.push(GamePacket::serialize(&power)?);
 
                     packets.append(&mut make_test_wield_type(sender)?);
+
+                    packets.append(&mut make_test_nameplate_image(sender)?);
 
                     let welcome_screen = TunneledPacket {
                         unknown1: true,
