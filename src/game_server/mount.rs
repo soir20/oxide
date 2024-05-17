@@ -216,7 +216,7 @@ fn process_mount_spawn(cursor: &mut Cursor<&[u8]>, sender: u32,
                         unknown1: 0,
                         queue_pos: 1,
                         unknown3: 1,
-                        composite_effect: mount.mount_composite_effect,
+                        composite_effect: 0,
                         unknown5: 0,
                     },
                 }
