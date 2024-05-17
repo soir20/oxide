@@ -205,58 +205,65 @@ fn process_mount_spawn(cursor: &mut Cursor<&[u8]>, sender: u32,
     let mount_guid = mount_guid(sender, mount_spawn.mount_id);
 
     if let Some(mount) = game_server.mounts().get(&mount_spawn.mount_id) {
-        let mut packets = spawn_mount_npc(mount_guid, mount)?;
-        packets.push(
-            GamePacket::serialize(
-                &TunneledPacket {
-                    unknown1: true,
-                    inner: MountReply {
-                        rider_guid: player_guid(sender),
-                        mount_guid,
-                        unknown1: 0,
-                        queue_pos: 1,
-                        unknown3: 1,
-                        composite_effect: 0,
-                        unknown5: 0,
-                    },
-                }
-            )?
-        );
+        let mut packets = Vec::new();
 
         let zones = game_server.read_zones();
         zone_with_character_read!(zones.values(), player_guid(sender), |zone_read_handle, characters| {
-            packets.push(
-                GamePacket::serialize(
-                    &TunneledPacket {
-                        unknown1: true,
-                        inner: Stats {
-                            stats: vec![
-                                Stat {
-                                    id: StatId::Speed,
-                                    multiplier: 1,
-                                    value1: 0.0,
-                                    value2: zone_read_handle.speed * mount.speed_multiplier,
-                                },
-                                Stat {
-                                    id: StatId::JumpHeightMultiplier,
-                                    multiplier: 1,
-                                    value1: 0.0,
-                                    value2: zone_read_handle.jump_height_multiplier * mount.jump_height_multiplier,
-                                },
-                                Stat {
-                                    id: StatId::GravityMultiplier,
-                                    multiplier: 1,
-                                    value1: 0.0,
-                                    value2: zone_read_handle.gravity_multiplier * mount.gravity_multiplier,
-                                }
-                            ],
-                        },
-                    }
-                )?
-            );
-
             if let Some(character) = characters.get(player_guid(sender)) {
                 let mut character_write_handle = character.write();
+                packets.append(&mut spawn_mount_npc(
+                    mount_guid,
+                    mount,
+                    character_write_handle.pos,
+                    character_write_handle.rot
+                )?);
+                packets.push(
+                    GamePacket::serialize(
+                        &TunneledPacket {
+                            unknown1: true,
+                            inner: MountReply {
+                                rider_guid: player_guid(sender),
+                                mount_guid,
+                                unknown1: 0,
+                                queue_pos: 1,
+                                unknown3: 1,
+                                composite_effect: 0,
+                                unknown5: 0,
+                            },
+                        }
+                    )?
+                );
+
+                packets.push(
+                    GamePacket::serialize(
+                        &TunneledPacket {
+                            unknown1: true,
+                            inner: Stats {
+                                stats: vec![
+                                    Stat {
+                                        id: StatId::Speed,
+                                        multiplier: 1,
+                                        value1: 0.0,
+                                        value2: zone_read_handle.speed * mount.speed_multiplier,
+                                    },
+                                    Stat {
+                                        id: StatId::JumpHeightMultiplier,
+                                        multiplier: 1,
+                                        value1: 0.0,
+                                        value2: zone_read_handle.jump_height_multiplier * mount.jump_height_multiplier,
+                                    },
+                                    Stat {
+                                        id: StatId::GravityMultiplier,
+                                        multiplier: 1,
+                                        value1: 0.0,
+                                        value2: zone_read_handle.gravity_multiplier * mount.gravity_multiplier,
+                                    }
+                                ],
+                            },
+                        }
+                    )?
+                );
+
                 if let Some(mount_id) = character_write_handle.mount_id {
                     println!("Player {} tried to mount while already mounted on mount ID {}", sender, mount_id);
                     return Err(ProcessPacketError::CorruptedPacket);
@@ -294,7 +301,7 @@ pub fn process_mount_packet(cursor: &mut Cursor<&[u8]>, sender: u32,
     }
 }
 
-fn spawn_mount_npc(guid: u64, mount: &MountConfig) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+fn spawn_mount_npc(guid: u64, mount: &MountConfig, spawn_pos: Pos, spawn_rot: Pos) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
     Ok(
         vec![
             GamePacket::serialize(&TunneledPacket {
@@ -308,18 +315,8 @@ fn spawn_mount_npc(guid: u64, mount: &MountConfig) -> Result<Vec<Vec<u8>>, Proce
                     unknown5: 0,
                     unknown6: 1,
                     scale: 1.2,
-                    pos: Pos {
-                        x: 0.0,
-                        y: 0.0,
-                        z: 0.0,
-                        w: 1.0,
-                    },
-                    rot: Pos {
-                        x: 0.0,
-                        y: 0.0,
-                        z: 0.0,
-                        w: 0.0,
-                    },
+                    pos: spawn_pos,
+                    rot: spawn_rot,
                     unknown8: 0,
                     attachments: vec![],
                     is_not_targetable: 1,
