@@ -42,7 +42,7 @@ impl SerializePacket for CommandOpCode {
     }
 }
 
-[derive(SerializePacket, DeserializePacket)]
+#[derive(SerializePacket, DeserializePacket)]
 pub struct Rgba {
     b: u8,
     g: u8,
