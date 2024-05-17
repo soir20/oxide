@@ -632,7 +632,7 @@ pub fn make_test_npc() -> AddNpc {
         sub_title_id: 0,
         active_animation_slot2: 0,
         head_model_id: 0,
-        effect: vec![],
+        effects: vec![],
         disable_interact_popup: false,
         unknown33: 0, // If non-zero, crashes when NPC is clicked on
         unknown34: false,
