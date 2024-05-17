@@ -1,5 +1,5 @@
-# cwa-server
-An open source, yet-to-be-named game server compatible with the Clone Wars Adventures client from 2014.
+# Oxide
+**Oxide** is an open source game server compatible with the Clone Wars Adventures client from 2014.
 
 **This project is neither affiliated with nor supported by The Walt Disney Company or Daybreak Game Company, formerly 
 Sony Online Entertainment.**
@@ -7,7 +7,7 @@ Sony Online Entertainment.**
 ## How Do I Play?
 At this time, we are prioritizing technical users until we can create a more user-friendly setup.
 
-You'll need to install [Rust](https://www.rust-lang.org/) to build and run the server. By default, the server runs on 
+You'll need to install [Rust](https://www.rust-lang.org/) to build (`cargo build`) and run (`cargo run`) the server. By default, the server runs on 
 port 20225.
 
 For testing, we use Clone Wars Adventures client version 0.180.1.530619 (2014, executable SHA-256: 
