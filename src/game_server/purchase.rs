@@ -20,12 +20,14 @@ pub struct StoreCategory {
     pub guid: u32,
     pub unknown1: u32,
     pub unknown2: u32,
-    pub unknown3: u32
+    pub unknown3: u32,
+    pub unknown4: u32,
+    pub unknown5: u32,
 }
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct StoreCategories {
-    categories: Vec<StoreCategory>
+    pub categories: Vec<StoreCategory>
 }
 
 impl GamePacket for StoreCategories {
