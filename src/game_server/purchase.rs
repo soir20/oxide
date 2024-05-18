@@ -4,7 +4,8 @@ use crate::game_server::game_packet::{GamePacket, OpCode};
 
 #[derive(Copy, Clone, Debug)]
 pub enum PurchaseOpCode {
-    StoreCategories          = 0xe
+    StoreCategories          = 0xe,
+    StoreCategoryGroups      = 0x2a
 }
 
 impl SerializePacket for PurchaseOpCode {
@@ -33,4 +34,21 @@ pub struct StoreCategories {
 impl GamePacket for StoreCategories {
     type Header = PurchaseOpCode;
     const HEADER: Self::Header = PurchaseOpCode::StoreCategories;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct StoreCategoryGroup {
+    pub guid: u32,
+    pub unknown1: u32,
+    pub unknown2: Vec<u32>
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct StoreCategoryGroups {
+    pub groups: Vec<StoreCategoryGroup>
+}
+
+impl GamePacket for StoreCategoryGroups {
+    type Header = PurchaseOpCode;
+    const HEADER: Self::Header = PurchaseOpCode::StoreCategoryGroups;
 }
