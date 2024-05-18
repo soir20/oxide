@@ -47,6 +47,7 @@ mod housing;
 mod character_guid;
 mod chat;
 mod reference_data;
+mod purchase;
 
 #[derive(Debug)]
 pub enum Broadcast {
