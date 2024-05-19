@@ -20,7 +20,7 @@ impl SerializePacket for ReferenceDataOpCode {
 pub struct CategoryDefinition {
     pub guid: u32,
     pub name: StringId,
-    pub icon_id: ImageId,
+    pub icon_set_id: ImageId,
     pub unknown1: u32,
     pub unknown2: bool
 }
@@ -30,7 +30,7 @@ impl SerializePacket for CategoryDefinition {
         buffer.write_u32::<LittleEndian>(self.guid)?;
         buffer.write_u32::<LittleEndian>(self.guid)?;
         buffer.write_u32::<LittleEndian>(self.name)?;
-        buffer.write_u32::<LittleEndian>(self.icon_id)?;
+        buffer.write_u32::<LittleEndian>(self.icon_set_id)?;
         buffer.write_u32::<LittleEndian>(self.unknown1)?;
         buffer.write_u8(self.unknown2 as u8)?;
         Ok(())
