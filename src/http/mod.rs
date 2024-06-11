@@ -191,7 +191,6 @@ async fn asset_handler(Path(asset_name): Path<PathBuf>, State(assets_cache_path)
     });
     if is_invalid_path {
         return Err(StatusCode::BAD_REQUEST);
-
     }
 
     let file_data = read(assets_cache_path.join(asset_name)).map_err(|_| StatusCode::NOT_FOUND)?;
