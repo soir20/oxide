@@ -1,7 +1,7 @@
 use std::ffi::{OsStr, OsString};
 use std::fs::{create_dir_all, File, OpenOptions, read, read_dir, remove_dir_all, write};
 use std::io::{Read, Write};
-use std::path::PathBuf;
+use std::path::{Component, PathBuf};
 
 use axum::extract::{Path, Request, State};
 use axum::http::StatusCode;
@@ -178,6 +178,22 @@ fn prepare_asset_cache(assets_path: &std::path::Path, assets_cache_path: &std::p
 }
 
 async fn asset_handler(Path(asset_name): Path<PathBuf>, State(assets_cache_path): State<PathBuf>, request: Request) -> Result<Vec<u8>, StatusCode> {
+
+    // SECURITY: Ensure that the path is within the assets cache before returning any data.
+    // Reject all paths containing anything other than normal folder names (e.g. paths containing
+    // the parent directory or the root directory).
+    let is_invalid_path = asset_name.components().any(|component| {
+        if let Component::Normal(_) = component {
+            false
+        } else {
+            true
+        }
+    });
+    if is_invalid_path {
+        return Err(StatusCode::BAD_REQUEST);
+
+    }
+
     let file_data = read(assets_cache_path.join(asset_name)).map_err(|_| StatusCode::NOT_FOUND)?;
     let crc = crc32fast::hash(&file_data);
     let queried_crc: u32 = if let Some(query) = request.uri().query() {
