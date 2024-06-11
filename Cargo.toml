@@ -4,7 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+axum = "0.7.5"
 byteorder = "1.5.0"
+crc32fast = "1.4.2"
 packet_serialize = { path = "src/packet_serialize" }
 miniz_oxide = "0.7.2"
 num_enum = "0.7.2"
@@ -12,3 +14,4 @@ parking_lot = "0.12.1"
 rand = "0.8.5"
 serde_json = "1.0.1"
 serde = { version = "1.0.196", features = ["derive"] }
+tokio = { version = "1.38.0", features = ["rt", "rt-multi-thread", "macros"] }

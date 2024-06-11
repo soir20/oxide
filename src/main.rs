@@ -1,8 +1,9 @@
 use parking_lot::RwLock;
 use std::net::{SocketAddr, UdpSocket};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::thread;
 use std::time::Duration;
+use tokio::spawn;
 
 use crate::channel_manager::{ChannelManager, ReceiveResult};
 use crate::game_server::GameServer;
@@ -11,14 +12,20 @@ use crate::protocol::Channel;
 mod protocol;
 mod game_server;
 mod channel_manager;
+mod http;
 
-fn main() {
+#[tokio::main]
+async fn main() {
+    let config_dir = Path::new("config");
+    spawn(
+        http::start(4000, config_dir, Path::new("config/custom_assets"), PathBuf::from(".asset_cache"))
+    );
     println!("Hello, world!");
     let socket = UdpSocket::bind(SocketAddr::new("127.0.0.1".parse().unwrap(), "20225".parse().unwrap())).expect("couldn't bind to socket");
 
     let channel_manager = RwLock::new(ChannelManager::new());
 
-    let game_server = GameServer::new(Path::new("config")).unwrap();
+    let game_server = GameServer::new(config_dir).unwrap();
     let process_delta = 40u8;
     let send_delta = 20u8;
     loop {
