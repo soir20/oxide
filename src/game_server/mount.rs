@@ -373,7 +373,7 @@ fn spawn_mount_npc(guid: u64, mount: &MountConfig, spawn_pos: Pos, spawn_rot: Po
                     unknown33: 0,
                     unknown34: false,
                     show_health: false,
-                    unknown36: false,
+                    hide_despawn_effect: false,
                     ignore_rotation_and_shadow: false,
                     base_attachment_group: BaseAttachmentGroup {
                         unknown1: 0,

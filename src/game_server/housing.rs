@@ -484,7 +484,7 @@ fn fixture_packets(house_guid: u64, index: u32, fixture: &Fixture) -> Result<Vec
                         unknown33: 0,
                         unknown34: false,
                         show_health: false,
-                        unknown36: false,
+                        hide_despawn_effect: false,
                         ignore_rotation_and_shadow: true,
                         base_attachment_group: BaseAttachmentGroup {
                             unknown1: 0,

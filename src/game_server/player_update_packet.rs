@@ -539,7 +539,7 @@ pub struct AddNpc {
     pub unknown33: u32,
     pub unknown34: bool,
     pub show_health: bool,
-    pub unknown36: bool,
+    pub hide_despawn_effect: bool,
     pub ignore_rotation_and_shadow: bool,
     pub base_attachment_group: BaseAttachmentGroup,
     pub unknown39: Pos,
@@ -637,7 +637,7 @@ pub fn make_test_npc() -> AddNpc {
         unknown33: 0, // If non-zero, crashes when NPC is clicked on
         unknown34: false,
         show_health: false,
-        unknown36: false,
+        hide_despawn_effect: false,
         ignore_rotation_and_shadow: true,
         base_attachment_group: BaseAttachmentGroup {
             unknown1: 0,
