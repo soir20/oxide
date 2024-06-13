@@ -214,7 +214,7 @@ impl Character {
             unknown33: 0,
             unknown34: false,
             show_health: false,
-            hide_despawn_effect: false,
+            hide_despawn_fade: false,
             ignore_rotation_and_shadow: false,
             base_attachment_group: BaseAttachmentGroup {
                 unknown1: 0,
@@ -314,7 +314,7 @@ impl Character {
             unknown33: 0,
             unknown34: false,
             show_health: false,
-            hide_despawn_effect: false,
+            hide_despawn_fade: false,
             ignore_rotation_and_shadow: false,
             base_attachment_group: BaseAttachmentGroup {
                 unknown1: 0,
