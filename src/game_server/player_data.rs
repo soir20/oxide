@@ -201,13 +201,13 @@ pub struct InventoryItem {
 struct Unknown2 {
     unknown1: u32,
     unknown2: u32,
-	unknown3: u32,
-	unknown4: u32,
-	unknown5: u32,
-	unknown6: u32,
-	unknown7: u32,
-	unknown8: u32,
-	unknown9: bool,
+    unknown3: u32,
+    unknown4: u32,
+    unknown5: u32,
+    unknown6: u32,
+    unknown7: u32,
+    unknown8: u32,
+    unknown9: bool,
 }
 
 #[derive(SerializePacket)]
