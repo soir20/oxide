@@ -51,7 +51,7 @@ impl ChannelManager {
 
     pub fn receive(&self, addr: &SocketAddr, data: &[u8]) -> ReceiveResult {
         if let Some(channel) = self.get_by_addr(addr) {
-            match channel.lock().receive(&data[..]) {
+            match channel.lock().receive(data) {
                 Ok(packets_received) => ReceiveResult::Success(packets_received),
                 Err(err) => {
                     println!("Deserialize error on channel {}: {:?}", addr, err);
@@ -124,7 +124,7 @@ impl AuthenticatedChannelManager {
     }
 
     pub fn guid(&self, addr: &SocketAddr) -> Option<u32> {
-        self.socket_to_guid.get(addr).map(|guid| *guid)
+        self.socket_to_guid.get(addr).copied()
     }
 
     pub fn insert(&mut self, addr: &SocketAddr, guid: u32, channel: Mutex<Channel>) -> Option<Mutex<Channel>> {

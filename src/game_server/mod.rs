@@ -193,7 +193,7 @@ impl GameServer {
 
                     let player = TunneledPacket {
                         unknown1: true,
-                        inner: make_test_player(guid, &self.mounts())
+                        inner: make_test_player(guid, self.mounts())
                     };
                     packets.push(GamePacket::serialize(&player)?);
 
@@ -444,10 +444,10 @@ impl GameServer {
                     })?;
                 },
                 OpCode::Mount => {
-                    broadcasts.append(&mut process_mount_packet(&mut cursor, sender, &self)?);
+                    broadcasts.append(&mut process_mount_packet(&mut cursor, sender, self)?);
                 },
                 OpCode::Housing => {
-                    broadcasts.append(&mut process_housing_packet(sender, &self, &mut cursor)?);
+                    broadcasts.append(&mut process_housing_packet(sender, self, &mut cursor)?);
                     broadcasts.push(Broadcast::Single(sender, vec![
                         GamePacket::serialize(&TunneledPacket {
                             unknown1: true,
@@ -511,7 +511,7 @@ impl GameServer {
 
     pub fn any_instance(zones: &GuidTableReadHandle<u64, Zone>, template_guid: u32) -> Result<u64, ProcessPacketError> {
         let instances = GameServer::zones_by_template(zones, template_guid);
-        if instances.len() > 0 {
+        if !instances.is_empty() {
             let index = rand::thread_rng().gen_range(0..instances.len());
             Ok(instances[index])
         } else {

@@ -45,7 +45,7 @@ async fn main() {
                     .insert(&src, Channel::new(200, 1000, 5));
                 read_handle = channel_manager.read();
 
-                if let Some(_) = previous_channel {
+                if previous_channel.is_some() {
                     println!("Client {} reconnected, dropping old channel", src);
                 }
 
@@ -80,7 +80,7 @@ async fn main() {
             //println!("Sending {} packets", packets_to_send.len());
             for buffer in packets_to_send {
                 //println!("Sending {} bytes: {:x?}", buffer.len(), buffer);
-                socket.send_to(&buffer, &src).expect("Unable to send packet to client");
+                socket.send_to(&buffer, src).expect("Unable to send packet to client");
             }
         }
         thread::sleep(Duration::from_millis(5));
