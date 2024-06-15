@@ -17,7 +17,7 @@ use crate::game_server::guid::{Guid, GuidTable, GuidTableHandle, GuidTableReadHa
 use crate::game_server::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList, process_housing_packet};
 use crate::game_server::item::make_item_definitions;
 use crate::game_server::login::{DeploymentEnv, GameSettings, LoginReply, send_points_of_interest, WelcomeScreen, ZoneDetailsDone};
-use crate::game_server::mount::{load_mounts, MountConfig, process_mount_packet, reply_dismount};
+use crate::game_server::mount::{load_mounts, MountConfig, process_mount_packet};
 use crate::game_server::player_data::{make_test_nameplate_image, make_test_player, make_test_wield_type};
 use crate::game_server::player_update_packet::make_test_npc;
 use crate::game_server::reference_data::{CategoryDefinition, CategoryDefinitions, CategoryRelation, ItemGroupDefinitions, ItemGroupDefinitionsData};
