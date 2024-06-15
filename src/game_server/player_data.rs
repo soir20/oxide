@@ -237,20 +237,20 @@ struct ProfileItem {
 struct Unknown12 {
     unknown1: u32,
     unknown2: u32,
-	unknown3: u32,
-	unknown4: u32,
+    unknown3: u32,
+    unknown4: u32,
 }
 
 #[derive(SerializePacket)]
 struct Unknown13 {
     unknown1: u32,
     unknown2: u32,
-	unknown3: u32,
-	unknown4: u32,
-	unknown5: u32,
-	unknown6: u32,
-	unknown7: u32,
-	unknown8: u32,
+    unknown3: u32,
+    unknown4: u32,
+    unknown5: u32,
+    unknown6: u32,
+    unknown7: u32,
+    unknown8: u32,
 }
 
 #[derive(SerializePacket)]
@@ -711,69 +711,69 @@ pub fn make_test_player(guid: u32, mounts: &BTreeMap<u32, MountConfig>) -> Playe
             acquaintances: vec![],
             recipes: vec![],
             pets: vec![
-            Pet {
-                unknown1: 0,
-                unknown2: false,
-                unknown3: 0,
-                food: 0.0,
-                groom: 0.0,
-                exercise: 0.0,
-                happiness: 0.0,
-                unknown8: false,
-                pet_trick: vec![
-                    PetTrick {
+                Pet {
+                    unknown1: 0,
+                    unknown2: false,
+                    unknown3: 0,
+                    food: 0.0,
+                    groom: 0.0,
+                    exercise: 0.0,
+                    happiness: 0.0,
+                    unknown8: false,
+                    pet_trick: vec![
+                        PetTrick {
+                            unknown1: 0,
+                            unknown2: Unknown2 {
+                                unknown1: 0,
+                                unknown2: 0,
+                                unknown3: 0,
+                                unknown4: 0,
+                                unknown5: 0,
+                                unknown6: 0,
+                                unknown7: 0,
+                                unknown8: 0,
+                                unknown9: false,
+                            },
+                        },
+                    ],
+                    item_guid: vec![
+                        ItemGuid {
+                            guid: 0,
+                    },
+                ],
+                    profile_item: vec![
+                        ProfileItem {
+                            item1: 0,
+                            item2: Item2 {
+                                unknown1: 0,
+                                unknown2: 0,
+                            },
+                        },
+                    ],
+                    pet_name: "Test".to_string(),
+                    unknown9: 0,
+                    texture_alias: "".to_string(),
+                    icon_id: 0,
+                    unknown10: false,
+                    unknown11: 0,
+                    unknown12: Unknown12 {
                         unknown1: 0,
-                        unknown2: Unknown2 {
-                            unknown1: 0,
-                            unknown2: 0,
-                            unknown3: 0,
-                            unknown4: 0,
-                            unknown5: 0,
-                            unknown6: 0,
-                            unknown7: 0,
-                            unknown8: 0,
-                            unknown9: false,
-                        },
+                        unknown2: 0,
+                        unknown3: 0,
+                        unknown4: 0,
                     },
-                ],
-                item_guid: vec![
-                    ItemGuid {
-                        guid: 0,
+                    unknown13: Unknown13 {
+                        unknown1: 0,
+                        unknown2: 0,
+                        unknown3: 0,
+                        unknown4: 0,
+                        unknown5: 0,
+                        unknown6: 0,
+                        unknown7: 0,
+                        unknown8: 0,
                     },
-                ],
-                profile_item: vec![
-                    ProfileItem {
-                        item1: 0,
-                        item2: Item2 {
-                            unknown1: 0,
-                            unknown2: 0,
-                        },
-                    },
-                ],
-                pet_name: "Test".to_string(),
-                unknown9: 0,
-                texture_alias: "".to_string(),
-                icon_id: 0,
-                unknown10: false,
-                unknown11: 0,
-                unknown12: Unknown12 {
-                    unknown1: 0,
-                    unknown2: 0,
-                    unknown3: 0,
-                    unknown4: 0,
                 },
-                unknown13: Unknown13 {
-                    unknown1: 0,
-                    unknown2: 0,
-                    unknown3: 0,
-                    unknown4: 0,
-                    unknown5: 0,
-                    unknown6: 0,
-                    unknown7: 0,
-                    unknown8: 0,
-                },
-            },
-        ],
+            ],
             pet_unknown1: -1,
             pet_unknown2: 0,
             mounts: owned_mounts,
