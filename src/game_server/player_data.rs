@@ -198,6 +198,62 @@ pub struct InventoryItem {
 }
 
 #[derive(SerializePacket)]
+struct Unknown2 {
+    unknown1: u32,
+    unknown2: u32,
+    unknown3: u32,
+    unknown4: u32,
+    unknown5: u32,
+    unknown6: u32,
+    unknown7: u32,
+    unknown8: u32,
+    unknown9: bool,
+}
+
+#[derive(SerializePacket)]
+struct PetTrick {
+    unknown1: u32,
+    unknown2: Unknown2,
+}
+
+#[derive(SerializePacket)]
+struct ItemGuid {
+    guid: u32,
+}
+
+#[derive(SerializePacket)]
+struct Item2 {
+    unknown1: u32,
+    unknown2: u32,
+}
+
+#[derive(SerializePacket)]
+struct ProfileItem {
+    item1: u32,
+    item2: Item2,
+}
+
+#[derive(SerializePacket)]
+struct Unknown12 {
+    unknown1: u32,
+    unknown2: u32,
+    unknown3: u32,
+    unknown4: u32,
+}
+
+#[derive(SerializePacket)]
+struct Unknown13 {
+    unknown1: u32,
+    unknown2: u32,
+    unknown3: u32,
+    unknown4: u32,
+    unknown5: u32,
+    unknown6: u32,
+    unknown7: u32,
+    unknown8: u32,
+}
+
+#[derive(SerializePacket)]
 pub struct Quest {}
 
 #[derive(SerializePacket)]
@@ -210,7 +266,27 @@ pub struct Acquaintance {}
 pub struct Recipe {}
 
 #[derive(SerializePacket)]
-pub struct Pet {}
+pub struct Pet {
+    unknown1: u32,
+    unknown2: bool,
+    unknown3: u32,
+    food: f32,
+    groom: f32,
+    happiness: f32,
+    exercise: f32,
+    unknown8: bool,
+    pet_trick: Vec<PetTrick>,
+    item_guid: Vec<ItemGuid>,
+    profile_item: Vec<ProfileItem>,
+    pet_name: String,
+    unknown9: u32,
+    texture_alias: String,
+    icon_id: u32,
+    unknown10: bool,
+    unknown11: u32,
+    unknown12: Unknown12,
+    unknown13: Unknown13,
+}
 
 #[derive(SerializePacket)]
 pub struct Mount {
@@ -634,7 +710,70 @@ pub fn make_test_player(guid: u32, mounts: &BTreeMap<u32, MountConfig>) -> Playe
             achievements: vec![],
             acquaintances: vec![],
             recipes: vec![],
-            pets: vec![],
+            pets: vec![
+                Pet {
+                    unknown1: 0,
+                    unknown2: false,
+                    unknown3: 0,
+                    food: 0.0,
+                    groom: 0.0,
+                    exercise: 0.0,
+                    happiness: 0.0,
+                    unknown8: false,
+                    pet_trick: vec![
+                        PetTrick {
+                            unknown1: 0,
+                            unknown2: Unknown2 {
+                                unknown1: 0,
+                                unknown2: 0,
+                                unknown3: 0,
+                                unknown4: 0,
+                                unknown5: 0,
+                                unknown6: 0,
+                                unknown7: 0,
+                                unknown8: 0,
+                                unknown9: false,
+                            },
+                        },
+                    ],
+                    item_guid: vec![
+                        ItemGuid {
+                            guid: 0,
+                    },
+                ],
+                    profile_item: vec![
+                        ProfileItem {
+                            item1: 0,
+                            item2: Item2 {
+                                unknown1: 0,
+                                unknown2: 0,
+                            },
+                        },
+                    ],
+                    pet_name: "Test".to_string(),
+                    unknown9: 0,
+                    texture_alias: "".to_string(),
+                    icon_id: 0,
+                    unknown10: false,
+                    unknown11: 0,
+                    unknown12: Unknown12 {
+                        unknown1: 0,
+                        unknown2: 0,
+                        unknown3: 0,
+                        unknown4: 0,
+                    },
+                    unknown13: Unknown13 {
+                        unknown1: 0,
+                        unknown2: 0,
+                        unknown3: 0,
+                        unknown4: 0,
+                        unknown5: 0,
+                        unknown6: 0,
+                        unknown7: 0,
+                        unknown8: 0,
+                    },
+                },
+            ],
             pet_unknown1: -1,
             pet_unknown2: 0,
             mounts: owned_mounts,
