@@ -3,17 +3,19 @@ use std::io::Cursor;
 use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
 use num_enum::TryFromPrimitive;
 
-use packet_serialize::{DeserializePacket, DeserializePacketError, SerializePacket, SerializePacketError};
+use packet_serialize::{
+    DeserializePacket, DeserializePacketError, SerializePacket, SerializePacketError,
+};
 
-use crate::game_server::{Broadcast, ProcessPacketError};
 use crate::game_server::character_guid::player_guid;
 use crate::game_server::game_packet::{GamePacket, OpCode, Pos};
 use crate::game_server::tunnel::TunneledPacket;
+use crate::game_server::{Broadcast, ProcessPacketError};
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u16)]
 pub enum ChatOpCode {
-    SendMessage              = 0x1
+    SendMessage = 0x1,
 }
 
 impl SerializePacket for ChatOpCode {
@@ -27,17 +29,17 @@ impl SerializePacket for ChatOpCode {
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u16)]
 pub enum MessageType {
-    World                    = 0x0,
-    Whisper                  = 0x1,
-    System                   = 0x2,
-    ReceivedItems            = 0x3,
-    Group                    = 0x4,
-    Yell                     = 0x5,
-    Trade                    = 0x6,
-    LookingForGroup          = 0x7,
-    Area                     = 0x8,
-    Guild                    = 0x9,
-    MembersOnly              = 0xb
+    World = 0x0,
+    Whisper = 0x1,
+    System = 0x2,
+    ReceivedItems = 0x3,
+    Group = 0x4,
+    Yell = 0x5,
+    Trade = 0x6,
+    LookingForGroup = 0x7,
+    Area = 0x8,
+    Guild = 0x9,
+    MembersOnly = 0xb,
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -71,7 +73,7 @@ pub enum SendMessage {
     LookingForGroup(MessagePayload),
     Area(MessagePayload, u32),
     Guild(MessagePayload),
-    MembersOnly(MessagePayload)
+    MembersOnly(MessagePayload),
 }
 
 impl SerializePacket for SendMessage {
@@ -80,45 +82,45 @@ impl SerializePacket for SendMessage {
             SendMessage::World(payload) => {
                 buffer.write_u16::<LittleEndian>(MessageType::World as u16)?;
                 payload.serialize(buffer)
-            },
+            }
             SendMessage::Whisper(payload) => {
                 buffer.write_u16::<LittleEndian>(MessageType::Whisper as u16)?;
                 payload.serialize(buffer)
-            },
+            }
             SendMessage::System(payload) => {
                 buffer.write_u16::<LittleEndian>(MessageType::System as u16)?;
                 payload.serialize(buffer)
-            },
+            }
             SendMessage::ReceivedItems(payload) => {
                 buffer.write_u16::<LittleEndian>(MessageType::ReceivedItems as u16)?;
                 payload.serialize(buffer)
-            },
+            }
             SendMessage::Group(payload) => {
                 buffer.write_u16::<LittleEndian>(MessageType::Group as u16)?;
                 payload.serialize(buffer)
-            },
+            }
             SendMessage::Yell(payload) => {
                 buffer.write_u16::<LittleEndian>(MessageType::Yell as u16)?;
                 payload.serialize(buffer)
-            },
+            }
             SendMessage::Trade(payload) => {
                 buffer.write_u16::<LittleEndian>(MessageType::Trade as u16)?;
                 payload.serialize(buffer)
-            },
+            }
             SendMessage::LookingForGroup(payload) => {
                 buffer.write_u16::<LittleEndian>(MessageType::LookingForGroup as u16)?;
                 payload.serialize(buffer)
-            },
+            }
             SendMessage::Area(payload, unknown) => {
                 buffer.write_u16::<LittleEndian>(MessageType::Area as u16)?;
                 payload.serialize(buffer)?;
                 buffer.write_u32::<LittleEndian>(*unknown)?;
                 Ok(())
-            },
+            }
             SendMessage::Guild(payload) => {
                 buffer.write_u16::<LittleEndian>(MessageType::Guild as u16)?;
                 payload.serialize(buffer)
-            },
+            }
             SendMessage::MembersOnly(payload) => {
                 buffer.write_u16::<LittleEndian>(MessageType::MembersOnly as u16)?;
                 payload.serialize(buffer)
@@ -128,9 +130,12 @@ impl SerializePacket for SendMessage {
 }
 
 impl DeserializePacket for SendMessage {
-    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<Self, DeserializePacketError> where Self: Sized {
-        let raw_message_type =cursor.read_u16::<LittleEndian>()?;
-        if let Ok(message_type) =  MessageType::try_from(raw_message_type) {
+    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<Self, DeserializePacketError>
+    where
+        Self: Sized,
+    {
+        let raw_message_type = cursor.read_u16::<LittleEndian>()?;
+        if let Ok(message_type) = MessageType::try_from(raw_message_type) {
             let payload = MessagePayload::deserialize(cursor)?;
             match message_type {
                 MessageType::World => Ok(SendMessage::World(payload)),
@@ -144,9 +149,9 @@ impl DeserializePacket for SendMessage {
                 MessageType::Area => {
                     let unknown = u32::deserialize(cursor)?;
                     Ok(SendMessage::Area(payload, unknown))
-                },
+                }
                 MessageType::Guild => Ok(SendMessage::Guild(payload)),
-                MessageType::MembersOnly => Ok(SendMessage::MembersOnly(payload))
+                MessageType::MembersOnly => Ok(SendMessage::MembersOnly(payload)),
             }
         } else {
             Err(DeserializePacketError::UnknownDiscriminator)
@@ -159,70 +164,67 @@ impl GamePacket for SendMessage {
     const HEADER: Self::Header = ChatOpCode::SendMessage;
 }
 
-pub fn process_chat_packet(cursor: &mut Cursor<&[u8]>, sender: u32) -> Result<Vec<Broadcast>, ProcessPacketError> {
+pub fn process_chat_packet(
+    cursor: &mut Cursor<&[u8]>,
+    sender: u32,
+) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let raw_op_code = cursor.read_u16::<LittleEndian>()?;
     match ChatOpCode::try_from(raw_op_code) {
         Ok(op_code) => match op_code {
             ChatOpCode::SendMessage => {
                 let message = SendMessage::deserialize(cursor)?;
-                Ok(vec![
-                    Broadcast::Single(
-                        sender,
-                        vec![
-                            GamePacket::serialize(
-                                &TunneledPacket {
-                                    unknown1: true,
-                                    inner: match message {
-                                        SendMessage::World(mut payload) => {
-                                            payload.sender_guid = player_guid(sender);
-                                            SendMessage::World(payload)
-                                        },
-                                        SendMessage::Whisper(mut payload) => {
-                                            payload.sender_guid = player_guid(sender);
-                                            SendMessage::Whisper(payload)
-                                        },
-                                        SendMessage::System(mut payload) => {
-                                            payload.sender_guid = player_guid(sender);
-                                            SendMessage::System(payload)
-                                        },
-                                        SendMessage::ReceivedItems(mut payload) => {
-                                            payload.sender_guid = player_guid(sender);
-                                            SendMessage::ReceivedItems(payload)
-                                        },
-                                        SendMessage::Group(mut payload) => {
-                                            payload.sender_guid = player_guid(sender);
-                                            SendMessage::Group(payload)
-                                        },
-                                        SendMessage::Yell(mut payload) => {
-                                            payload.sender_guid = player_guid(sender);
-                                            SendMessage::Yell(payload)
-                                        },
-                                        SendMessage::Trade(mut payload) => {
-                                            payload.sender_guid = player_guid(sender);
-                                            SendMessage::Trade(payload)
-                                        },
-                                        SendMessage::LookingForGroup(mut payload) => {
-                                            payload.sender_guid = player_guid(sender);
-                                            SendMessage::LookingForGroup(payload)
-                                        },
-                                        SendMessage::Area(mut payload, unknown) => {
-                                            payload.sender_guid = player_guid(sender);
-                                            SendMessage::Area(payload, unknown)
-                                        },
-                                        SendMessage::Guild(mut payload) => {
-                                            payload.sender_guid = player_guid(sender);
-                                            SendMessage::Guild(payload)
-                                        },
-                                        SendMessage::MembersOnly(mut payload) => {
-                                            payload.sender_guid = player_guid(sender);
-                                            SendMessage::MembersOnly(payload)
-                                        },
-                                    },
-                                }
-                            )?
-                        ]
-                    )
-                ])
+                Ok(vec![Broadcast::Single(
+                    sender,
+                    vec![GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: match message {
+                            SendMessage::World(mut payload) => {
+                                payload.sender_guid = player_guid(sender);
+                                SendMessage::World(payload)
+                            }
+                            SendMessage::Whisper(mut payload) => {
+                                payload.sender_guid = player_guid(sender);
+                                SendMessage::Whisper(payload)
+                            }
+                            SendMessage::System(mut payload) => {
+                                payload.sender_guid = player_guid(sender);
+                                SendMessage::System(payload)
+                            }
+                            SendMessage::ReceivedItems(mut payload) => {
+                                payload.sender_guid = player_guid(sender);
+                                SendMessage::ReceivedItems(payload)
+                            }
+                            SendMessage::Group(mut payload) => {
+                                payload.sender_guid = player_guid(sender);
+                                SendMessage::Group(payload)
+                            }
+                            SendMessage::Yell(mut payload) => {
+                                payload.sender_guid = player_guid(sender);
+                                SendMessage::Yell(payload)
+                            }
+                            SendMessage::Trade(mut payload) => {
+                                payload.sender_guid = player_guid(sender);
+                                SendMessage::Trade(payload)
+                            }
+                            SendMessage::LookingForGroup(mut payload) => {
+                                payload.sender_guid = player_guid(sender);
+                                SendMessage::LookingForGroup(payload)
+                            }
+                            SendMessage::Area(mut payload, unknown) => {
+                                payload.sender_guid = player_guid(sender);
+                                SendMessage::Area(payload, unknown)
+                            }
+                            SendMessage::Guild(mut payload) => {
+                                payload.sender_guid = player_guid(sender);
+                                SendMessage::Guild(payload)
+                            }
+                            SendMessage::MembersOnly(mut payload) => {
+                                payload.sender_guid = player_guid(sender);
+                                SendMessage::MembersOnly(payload)
+                            }
+                        },
+                    })?],
+                )])
             }
         },
         Err(_) => {

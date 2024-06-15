@@ -6,28 +6,30 @@ use parking_lot::RwLockReadGuard;
 
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
 
-use crate::{teleport_to_zone, zone_with_character_read, zone_with_character_write};
-use crate::game_server::{Broadcast, GameServer, ProcessPacketError};
 use crate::game_server::character_guid::{fixture_guid, player_guid};
 use crate::game_server::game_packet::{GamePacket, ImageId, OpCode, Pos};
 use crate::game_server::guid::{Guid, GuidTableHandle};
-use crate::game_server::player_update_packet::{AddNpc, BaseAttachmentGroup, Icon, WeaponAnimation};
+use crate::game_server::player_update_packet::{
+    AddNpc, BaseAttachmentGroup, Icon, WeaponAnimation,
+};
 use crate::game_server::tunnel::TunneledPacket;
-use crate::game_server::zone::{Fixture, House, template_guid, Zone};
+use crate::game_server::zone::{template_guid, Fixture, House, Zone};
+use crate::game_server::{Broadcast, GameServer, ProcessPacketError};
+use crate::{teleport_to_zone, zone_with_character_read, zone_with_character_write};
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u16)]
 pub enum HousingOpCode {
-    SetEditMode              = 0x6,
-    EnterRequest             = 0x10,
-    InstanceData             = 0x18,
-    InstanceList             = 0x26,
-    FixtureUpdate            = 0x27,
-    FixtureAsset             = 0x29,
-    ItemList                 = 0x2a,
-    HouseInfo                = 0x2b,
-    HouseZoneData            = 0x2c,
-    InviteNotification       = 0x2e
+    SetEditMode = 0x6,
+    EnterRequest = 0x10,
+    InstanceData = 0x18,
+    InstanceList = 0x26,
+    FixtureUpdate = 0x27,
+    FixtureAsset = 0x29,
+    ItemList = 0x2a,
+    HouseInfo = 0x2b,
+    HouseZoneData = 0x2c,
+    InviteNotification = 0x2e,
 }
 
 impl SerializePacket for HousingOpCode {
@@ -40,7 +42,7 @@ impl SerializePacket for HousingOpCode {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct SetEditMode {
-    enabled: bool
+    enabled: bool,
 }
 
 impl GamePacket for SetEditMode {
@@ -52,7 +54,7 @@ impl GamePacket for SetEditMode {
 pub struct EnterRequest {
     house_guid: u64,
     unknown1: u32,
-    unknown2: u32
+    unknown2: u32,
 }
 
 impl GamePacket for EnterRequest {
@@ -89,7 +91,7 @@ pub struct Unknown1 {
     unknown1: u32,
     unknown2: Vec<u64>,
     unknown3: u32,
-    unknown4: u32
+    unknown4: u32,
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -145,14 +147,14 @@ pub struct HouseDescription {
     pub is_published: bool,
     pub is_rateable: bool,
     pub unknown16: u32,
-    pub unknown17: u32
+    pub unknown17: u32,
 }
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct HouseZoneData {
     not_editable: bool,
     unknown2: u32,
-    description: HouseDescription
+    description: HouseDescription,
 }
 
 impl GamePacket for HouseZoneData {
@@ -163,12 +165,12 @@ impl GamePacket for HouseZoneData {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct HouseInstanceEntry {
     pub description: HouseDescription,
-    pub unknown1: u64
+    pub unknown1: u64,
 }
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct HouseInstanceList {
-    pub instances: Vec<HouseInstanceEntry>
+    pub instances: Vec<HouseInstanceEntry>,
 }
 
 impl GamePacket for HouseInstanceList {
@@ -180,26 +182,26 @@ impl GamePacket for HouseInstanceList {
 pub struct InstanceUnknown1 {
     unknown1: u32,
     unknown2: u32,
-    unknown3: u64
+    unknown3: u64,
 }
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct InstanceUnknown2 {
     unknown1: u32,
     unknown2: u32,
-    unknown3: u64
+    unknown3: u64,
 }
 
 #[derive(Clone, SerializePacket, DeserializePacket)]
 pub struct BuildArea {
     min: Pos,
-    max: Pos
+    max: Pos,
 }
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct InstancePlacedFixture {
     unknown1: u32,
-    placed_fixture: PlacedFixture
+    placed_fixture: PlacedFixture,
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -268,7 +270,7 @@ pub struct FixtureAsset {
     unknown8: String,
     unknown9: Vec<u64>,
     unknown10: u32,
-    unknown11: u32
+    unknown11: u32,
 }
 
 impl GamePacket for FixtureAsset {
@@ -279,7 +281,7 @@ impl GamePacket for FixtureAsset {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct HouseItemList {
     unknown1: Vec<Unknown1>,
-    unknown2: Vec<FixtureAssetData>
+    unknown2: Vec<FixtureAssetData>,
 }
 
 impl GamePacket for HouseItemList {
@@ -309,13 +311,13 @@ pub struct HouseInvite {
     pub owner_name: String,
     pub unknown3: u64,
     pub house_guid: u64,
-    pub unknown5: u64
+    pub unknown5: u64,
 }
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct HouseInviteNotification {
     pub invite: HouseInvite,
-    pub unknown1: u64
+    pub unknown1: u64,
 }
 
 impl GamePacket for HouseInviteNotification {
@@ -388,247 +390,239 @@ fn fixture_item_list(fixtures: &[Fixture]) -> Result<Vec<u8>, SerializePacketErr
         });
     }
 
-    GamePacket::serialize(
-        &TunneledPacket {
-            unknown1: true,
-            inner: HouseItemList {
-                unknown1,
-                unknown2
-            },
-        }
-    )
+    GamePacket::serialize(&TunneledPacket {
+        unknown1: true,
+        inner: HouseItemList { unknown1, unknown2 },
+    })
 }
 
-fn fixture_packets(house_guid: u64, index: u32, fixture: &Fixture) -> Result<Vec<Vec<u8>>, SerializePacketError> {
+fn fixture_packets(
+    house_guid: u64,
+    index: u32,
+    fixture: &Fixture,
+) -> Result<Vec<Vec<u8>>, SerializePacketError> {
     let fixture_guid = fixture_guid(index);
-    Ok(
-        vec![
-            GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: FixtureUpdate {
-                    placed_fixture: placed_fixture(index, house_guid, fixture),
-                    unknown1: Unknown1 {
-                        fixture_guid,
-                        item_def_id: fixture.item_def_id,
-                        unknown1: 0,
-                        unknown2: vec![],
-                        unknown3: 0,
-                        unknown4: 0,
-                    },
-                    unknown2: FixtureAssetData {
-                        fixture_asset_id: fixture.item_def_id,
-                        item_def_id: fixture.item_def_id,
-                        unknown2: 1,
-                        model_id: fixture.model_id,
-                        unknown3: false,
-                        unknown4: false,
-                        unknown5: false,
-                        unknown6: true,
-                        unknown7: false,
-                        unknown8: "".to_string(),
-                        min_scale: 0.5,
-                        max_scale: 2.0,
-                        unknown11: 0,
-                    },
-                    unknown3: vec![],
+    Ok(vec![
+        GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: FixtureUpdate {
+                placed_fixture: placed_fixture(index, house_guid, fixture),
+                unknown1: Unknown1 {
+                    fixture_guid,
+                    item_def_id: fixture.item_def_id,
+                    unknown1: 0,
+                    unknown2: vec![],
+                    unknown3: 0,
                     unknown4: 0,
-                    unknown5: 0,
-                    unknown6: 0,
-                }
-            })?,
-            GamePacket::serialize(
-                &TunneledPacket {
-                    unknown1: true,
-                    inner: AddNpc {
-                        guid: fixture_guid,
-                        name_id: 0,
-                        model_id: fixture.model_id,
-                        unknown3: false,
-                        unknown4: 408679,
-                        unknown5: 13951728,
-                        unknown6: 1,
-                        scale: fixture.scale,
-                        pos: fixture.pos,
-                        rot: fixture.rot,
-                        unknown8: 1,
-                        attachments: vec![],
-                        is_not_targetable: 1,
-                        unknown10: 0,
-                        texture_name: fixture.texture_name.clone(),
-                        tint_name: "".to_string(),
-                        tint_id: 0,
-                        unknown11: true,
-                        offset_y: 0.0,
-                        composite_effect: 0,
-                        weapon_animation: WeaponAnimation::None,
-                        name_override: "".to_string(),
-                        hide_name: true,
-                        name_offset_x: 0.0,
-                        name_offset_y: 0.0,
-                        name_offset_z: 0.0,
-                        terrain_object_id: 0,
-                        invisible: false,
-                        unknown20: 0.0,
-                        unknown21: false,
-                        interactable_size_pct: 100,
-                        unknown23: -1,
-                        unknown24: -1,
-                        active_animation_slot: -1,
-                        unknown26: true,
-                        ignore_position: true,
-                        sub_title_id: 0,
-                        active_animation_slot2: 0,
-                        head_model_id: 0,
-                        effects: vec![],
-                        disable_interact_popup: false,
-                        unknown33: 0,
-                        unknown34: false,
-                        show_health: false,
-                        hide_despawn_fade: false,
-                        ignore_rotation_and_shadow: true,
-                        base_attachment_group: BaseAttachmentGroup {
-                            unknown1: 0,
-                            unknown2: "".to_string(),
-                            unknown3: "".to_string(),
-                            unknown4: 0,
-                            unknown5: "".to_string(),
-                        },
-                        unknown39: Pos {
-                            x: 0.0,
-                            y: 0.0,
-                            z: 0.0,
-                            w: 0.0,
-                        },
-                        unknown40: 0,
-                        unknown41: -1,
-                        unknown42: 0,
-                        collision: true,
-                        unknown44: 0,
-                        npc_type: 0,
-                        unknown46: 0.0,
-                        target: 0,
-                        unknown50: vec![],
-                        rail_id: 0,
-                        rail_speed: 0.0,
-                        rail_origin: Pos {
-                            x: 0.0,
-                            y: 0.0,
-                            z: 0.0,
-                            w: 0.0,
-                        },
-                        unknown54: 0,
-                        rail_unknown1: 0.0,
-                        rail_unknown2: 0.0,
-                        rail_unknown3: 0.0,
-                        attachment_group_unknown: "".to_string(),
-                        unknown59: "".to_string(),
-                        unknown60: "".to_string(),
-                        override_terrain_model: false,
-                        hover_glow: 0,
-                        hover_description: 0,
-                        fly_over_effect: 0,
-                        unknown65: 0,
-                        unknown66: 0,
-                        unknown67: 0,
-                        disable_move_to_interact: false,
-                        unknown69: 0.0,
-                        unknown70: 0.0,
-                        unknown71: 0,
-                        icon_id: Icon::None,
-                    }
-                }
-            )?
-        ]
-    )
+                },
+                unknown2: FixtureAssetData {
+                    fixture_asset_id: fixture.item_def_id,
+                    item_def_id: fixture.item_def_id,
+                    unknown2: 1,
+                    model_id: fixture.model_id,
+                    unknown3: false,
+                    unknown4: false,
+                    unknown5: false,
+                    unknown6: true,
+                    unknown7: false,
+                    unknown8: "".to_string(),
+                    min_scale: 0.5,
+                    max_scale: 2.0,
+                    unknown11: 0,
+                },
+                unknown3: vec![],
+                unknown4: 0,
+                unknown5: 0,
+                unknown6: 0,
+            },
+        })?,
+        GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: AddNpc {
+                guid: fixture_guid,
+                name_id: 0,
+                model_id: fixture.model_id,
+                unknown3: false,
+                unknown4: 408679,
+                unknown5: 13951728,
+                unknown6: 1,
+                scale: fixture.scale,
+                pos: fixture.pos,
+                rot: fixture.rot,
+                unknown8: 1,
+                attachments: vec![],
+                is_not_targetable: 1,
+                unknown10: 0,
+                texture_name: fixture.texture_name.clone(),
+                tint_name: "".to_string(),
+                tint_id: 0,
+                unknown11: true,
+                offset_y: 0.0,
+                composite_effect: 0,
+                weapon_animation: WeaponAnimation::None,
+                name_override: "".to_string(),
+                hide_name: true,
+                name_offset_x: 0.0,
+                name_offset_y: 0.0,
+                name_offset_z: 0.0,
+                terrain_object_id: 0,
+                invisible: false,
+                unknown20: 0.0,
+                unknown21: false,
+                interactable_size_pct: 100,
+                unknown23: -1,
+                unknown24: -1,
+                active_animation_slot: -1,
+                unknown26: true,
+                ignore_position: true,
+                sub_title_id: 0,
+                active_animation_slot2: 0,
+                head_model_id: 0,
+                effects: vec![],
+                disable_interact_popup: false,
+                unknown33: 0,
+                unknown34: false,
+                show_health: false,
+                hide_despawn_fade: false,
+                ignore_rotation_and_shadow: true,
+                base_attachment_group: BaseAttachmentGroup {
+                    unknown1: 0,
+                    unknown2: "".to_string(),
+                    unknown3: "".to_string(),
+                    unknown4: 0,
+                    unknown5: "".to_string(),
+                },
+                unknown39: Pos {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 0.0,
+                    w: 0.0,
+                },
+                unknown40: 0,
+                unknown41: -1,
+                unknown42: 0,
+                collision: true,
+                unknown44: 0,
+                npc_type: 0,
+                unknown46: 0.0,
+                target: 0,
+                unknown50: vec![],
+                rail_id: 0,
+                rail_speed: 0.0,
+                rail_origin: Pos {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 0.0,
+                    w: 0.0,
+                },
+                unknown54: 0,
+                rail_unknown1: 0.0,
+                rail_unknown2: 0.0,
+                rail_unknown3: 0.0,
+                attachment_group_unknown: "".to_string(),
+                unknown59: "".to_string(),
+                unknown60: "".to_string(),
+                override_terrain_model: false,
+                hover_glow: 0,
+                hover_description: 0,
+                fly_over_effect: 0,
+                unknown65: 0,
+                unknown66: 0,
+                unknown67: 0,
+                disable_move_to_interact: false,
+                unknown69: 0.0,
+                unknown70: 0.0,
+                unknown71: 0,
+                icon_id: Icon::None,
+            },
+        })?,
+    ])
 }
 
-pub fn prepare_init_house_packets(sender: u32, zone: &RwLockReadGuard<Zone>,
-                                  house: &House) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+pub fn prepare_init_house_packets(
+    sender: u32,
+    zone: &RwLockReadGuard<Zone>,
+    house: &House,
+) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
     if house.is_locked && sender != house.owner {
         return Err(ProcessPacketError::CorruptedPacket);
     }
 
     let mut packets = vec![
-        GamePacket::serialize(
-            &TunneledPacket {
-                unknown1: true,
-                inner: HouseZoneData {
-                    not_editable: sender != house.owner,
-                    unknown2: 0,
-                    description: HouseDescription {
-                        owner_guid: player_guid(house.owner),
-                        house_guid: zone.guid(),
-                        house_name: zone.template_name,
-                        player_given_name: house.custom_name.clone(),
-                        owner_name: house.owner_name.clone(),
-                        icon_id: zone.icon,
-                        unknown5: false,
-                        fixture_count: house.fixtures.len() as u32,
-                        unknown7: 0,
-                        furniture_score: 0,
-                        is_locked: house.is_locked,
-                        unknown10: "".to_string(),
-                        unknown11: "".to_string(),
-                        rating: house.rating,
-                        total_votes: house.total_votes,
-                        is_published: house.is_published,
-                        is_rateable: house.is_rateable,
-                        unknown16: 0,
-                        unknown17: 0,
-                    }
-                },
-            }
-        )?,
-        GamePacket::serialize(
-            &TunneledPacket {
-                unknown1: true,
-                inner: HouseInstanceData {
-                    inner: InnerInstanceData {
-                        house_guid: zone.guid(),
-                        owner_guid: player_guid(house.owner),
-                        owner_name: house.owner_name.clone(),
-                        unknown3: 0,
-                        house_name: zone.template_name,
-                        player_given_name: house.custom_name.clone(),
-                        unknown4: 0,
-                        max_fixtures: 10000,
-                        unknown6: 0,
-                        placed_fixture: vec![],
-                        unknown7: false,
-                        unknown8: 0,
-                        unknown9: 0,
-                        unknown10: false,
-                        unknown11: 0,
-                        unknown12: false,
-                        build_areas: house.build_areas.clone(),
-                        house_icon: zone.icon,
-                        unknown14: false,
-                        unknown15: false,
-                        unknown16: false,
-                        unknown17: 0,
-                        unknown18: 0,
-                    },
-                    rooms: RoomInstances {
-                        unknown1: vec![],
-                        unknown2: vec![],
-                    }
-                }
-            }
-        )?,
-        GamePacket::serialize(
-            &TunneledPacket {
-                unknown1: true,
-                inner: HouseInfo {
-                    edit_mode_enabled: false,
-                    unknown2: 0,
-                    unknown3: true,
-                    fixtures: house.fixtures.len() as u32,
-                    unknown5: 0,
-                    unknown6: 0,
+        GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: HouseZoneData {
+                not_editable: sender != house.owner,
+                unknown2: 0,
+                description: HouseDescription {
+                    owner_guid: player_guid(house.owner),
+                    house_guid: zone.guid(),
+                    house_name: zone.template_name,
+                    player_given_name: house.custom_name.clone(),
+                    owner_name: house.owner_name.clone(),
+                    icon_id: zone.icon,
+                    unknown5: false,
+                    fixture_count: house.fixtures.len() as u32,
                     unknown7: 0,
+                    furniture_score: 0,
+                    is_locked: house.is_locked,
+                    unknown10: "".to_string(),
+                    unknown11: "".to_string(),
+                    rating: house.rating,
+                    total_votes: house.total_votes,
+                    is_published: house.is_published,
+                    is_rateable: house.is_rateable,
+                    unknown16: 0,
+                    unknown17: 0,
                 },
-            }
-        )?
+            },
+        })?,
+        GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: HouseInstanceData {
+                inner: InnerInstanceData {
+                    house_guid: zone.guid(),
+                    owner_guid: player_guid(house.owner),
+                    owner_name: house.owner_name.clone(),
+                    unknown3: 0,
+                    house_name: zone.template_name,
+                    player_given_name: house.custom_name.clone(),
+                    unknown4: 0,
+                    max_fixtures: 10000,
+                    unknown6: 0,
+                    placed_fixture: vec![],
+                    unknown7: false,
+                    unknown8: 0,
+                    unknown9: 0,
+                    unknown10: false,
+                    unknown11: 0,
+                    unknown12: false,
+                    build_areas: house.build_areas.clone(),
+                    house_icon: zone.icon,
+                    unknown14: false,
+                    unknown15: false,
+                    unknown16: false,
+                    unknown17: 0,
+                    unknown18: 0,
+                },
+                rooms: RoomInstances {
+                    unknown1: vec![],
+                    unknown2: vec![],
+                },
+            },
+        })?,
+        GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: HouseInfo {
+                edit_mode_enabled: false,
+                unknown2: 0,
+                unknown3: true,
+                fixtures: house.fixtures.len() as u32,
+                unknown5: 0,
+                unknown6: 0,
+                unknown7: 0,
+            },
+        })?,
     ];
 
     for (index, fixture) in house.fixtures.iter().enumerate() {
@@ -638,17 +632,23 @@ pub fn prepare_init_house_packets(sender: u32, zone: &RwLockReadGuard<Zone>,
     Ok(packets)
 }
 
-pub fn process_housing_packet(sender: u32, game_server: &GameServer, cursor: &mut Cursor<&[u8]>) -> Result<Vec<Broadcast>, ProcessPacketError> {
+pub fn process_housing_packet(
+    sender: u32,
+    game_server: &GameServer,
+    cursor: &mut Cursor<&[u8]>,
+) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let raw_op_code = cursor.read_u16::<LittleEndian>()?;
     match HousingOpCode::try_from(raw_op_code) {
         Ok(op_code) => match op_code {
             HousingOpCode::SetEditMode => {
                 let set_edit_mode: SetEditMode = DeserializePacket::deserialize(cursor)?;
-                let packets = zone_with_character_read!(game_server.read_zones().values(), player_guid(sender), |zone_read_handle, characters| {
-                    if let Some(house) = &zone_read_handle.house_data {
-                        if house.owner == sender {
-                            Ok(vec![
-                                GamePacket::serialize(&TunneledPacket {
+                let packets = zone_with_character_read!(
+                    game_server.read_zones().values(),
+                    player_guid(sender),
+                    |zone_read_handle, characters| {
+                        if let Some(house) = &zone_read_handle.house_data {
+                            if house.owner == sender {
+                                Ok(vec![GamePacket::serialize(&TunneledPacket {
                                     unknown1: true,
                                     inner: HouseInfo {
                                         edit_mode_enabled: set_edit_mode.enabled,
@@ -658,21 +658,27 @@ pub fn process_housing_packet(sender: u32, game_server: &GameServer, cursor: &mu
                                         unknown5: 0,
                                         unknown6: 0,
                                         unknown7: 0,
-                                    }
-                                })?
-                            ])
+                                    },
+                                })?])
+                            } else {
+                                println!(
+                                    "Player {} tried to set edit mode in a house they don't own",
+                                    sender
+                                );
+                                Err(ProcessPacketError::CorruptedPacket)
+                            }
                         } else {
-                            println!("Player {} tried to set edit mode in a house they don't own", sender);
+                            println!(
+                                "Player {} tried to set edit mode outside of a house",
+                                sender
+                            );
                             Err(ProcessPacketError::CorruptedPacket)
                         }
-                    } else {
-                        println!("Player {} tried to set edit mode outside of a house", sender);
-                        Err(ProcessPacketError::CorruptedPacket)
                     }
-                })??;
+                )??;
 
                 Ok(vec![Broadcast::Single(sender, packets)])
-            },
+            }
             HousingOpCode::EnterRequest => {
                 let enter_request: EnterRequest = DeserializePacket::deserialize(cursor)?;
 
@@ -684,28 +690,34 @@ pub fn process_housing_packet(sender: u32, game_server: &GameServer, cursor: &mu
                         zones.insert(Zone::new_house(
                             enter_request.house_guid,
                             template,
-                            lookup_house(sender, enter_request.house_guid)?
+                            lookup_house(sender, enter_request.house_guid)?,
                         ));
                     } else {
-                        println!("Tried to enter house with unknown template {}", template_guid);
+                        println!(
+                            "Tried to enter house with unknown template {}",
+                            template_guid
+                        );
                         return Err(ProcessPacketError::CorruptedPacket);
                     }
                 }
 
-                zone_with_character_write!(zones.values(), player_guid(sender), |zone, mut characters| {
-                    Ok(teleport_to_zone!(
-                        &zones,
-                        zone,
-                        characters,
-                        sender,
-                        enter_request.house_guid,
-                        None,
-                        None,
-                        game_server.mounts()
-                    )?)
-                })?
-
-            },
+                zone_with_character_write!(
+                    zones.values(),
+                    player_guid(sender),
+                    |zone, mut characters| {
+                        Ok(teleport_to_zone!(
+                            &zones,
+                            zone,
+                            characters,
+                            sender,
+                            enter_request.house_guid,
+                            None,
+                            None,
+                            game_server.mounts()
+                        )?)
+                    }
+                )?
+            }
             _ => {
                 let mut buffer = Vec::new();
                 cursor.read_to_end(&mut buffer)?;
@@ -724,250 +736,246 @@ pub fn process_housing_packet(sender: u32, game_server: &GameServer, cursor: &mu
 
 pub fn lookup_house(sender: u32, house_guid: u64) -> Result<House, ProcessPacketError> {
     println!("Found test house {}", house_guid);
-    Ok(
-        House {
-            owner: sender,
-            owner_name: "BLASTER NICESHOt".to_string(),
-            custom_name: "Blaster's Test Lot".to_string(),
-            rating: 3.5,
-            total_votes: 100,
-            fixtures: vec![
-                Fixture {
-                    pos: Pos {
-                        x: 495.0,
-                        y: 0.0,
-                        z: 481.5,
-                        w: 1.0,
-                    },
-                    rot: Pos {
-                        x: 0.0,
-                        y: 0.0,
-                        z: 0.0,
-                        w: 0.0,
-                    },
-                    scale: 1.0,
-                    item_def_id: 6,
-                    model_id: 1417,
-                    texture_name: "".to_string(),
+    Ok(House {
+        owner: sender,
+        owner_name: "BLASTER NICESHOt".to_string(),
+        custom_name: "Blaster's Test Lot".to_string(),
+        rating: 3.5,
+        total_votes: 100,
+        fixtures: vec![
+            Fixture {
+                pos: Pos {
+                    x: 495.0,
+                    y: 0.0,
+                    z: 481.5,
+                    w: 1.0,
                 },
-                Fixture {
-                    pos: Pos {
-                        x: 495.0,
-                        y: 0.0,
-                        z: 483.5,
-                        w: 1.0,
-                    },
-                    rot: Pos {
-                        x: 0.0,
-                        y: 0.0,
-                        z: 0.0,
-                        w: 0.0,
-                    },
-                    scale: 1.0,
-                    item_def_id: 7,
-                    model_id: 1419,
-                    texture_name: "".to_string(),
+                rot: Pos {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 0.0,
+                    w: 0.0,
                 },
-                Fixture {
-                    pos: Pos {
-                        x: 495.0,
-                        y: 0.0,
-                        z: 485.5,
-                        w: 1.0,
-                    },
-                    rot: Pos {
-                        x: 0.0,
-                        y: 0.0,
-                        z: 0.0,
-                        w: 0.0,
-                    },
-                    scale: 1.0,
-                    item_def_id: 7,
-                    model_id: 1419,
-                    texture_name: "".to_string(),
+                scale: 1.0,
+                item_def_id: 6,
+                model_id: 1417,
+                texture_name: "".to_string(),
+            },
+            Fixture {
+                pos: Pos {
+                    x: 495.0,
+                    y: 0.0,
+                    z: 483.5,
+                    w: 1.0,
                 },
-                Fixture {
-                    pos: Pos {
-                        x: 495.0,
-                        y: 0.0,
-                        z: 487.5,
-                        w: 1.0,
-                    },
-                    rot: Pos {
-                        x: 0.0,
-                        y: 0.0,
-                        z: 0.0,
-                        w: 0.0,
-                    },
-                    scale: 1.0,
-                    item_def_id: 8,
-                    model_id: 1420,
-                    texture_name: "".to_string(),
+                rot: Pos {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 0.0,
+                    w: 0.0,
                 },
-                Fixture {
-                    pos: Pos {
-                        x: 495.0,
-                        y: 0.0,
-                        z: 475.5,
-                        w: 1.0,
-                    },
-                    rot: Pos {
-                        x: 0.0,
-                        y: 0.0,
-                        z: 0.0,
-                        w: 0.0,
-                    },
-                    scale: 1.0,
-                    item_def_id: 9,
-                    model_id: 1418,
-                    texture_name: "".to_string(),
+                scale: 1.0,
+                item_def_id: 7,
+                model_id: 1419,
+                texture_name: "".to_string(),
+            },
+            Fixture {
+                pos: Pos {
+                    x: 495.0,
+                    y: 0.0,
+                    z: 485.5,
+                    w: 1.0,
                 },
-                Fixture {
-                    pos: Pos {
-                        x: 495.0,
-                        y: 0.5,
-                        z: 475.5,
-                        w: 1.0,
-                    },
-                    rot: Pos {
-                        x: 0.0,
-                        y: 0.0,
-                        z: 0.0,
-                        w: 0.0,
-                    },
-                    scale: 1.0,
-                    item_def_id: 9,
-                    model_id: 1418,
-                    texture_name: "".to_string(),
+                rot: Pos {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 0.0,
+                    w: 0.0,
                 },
-                Fixture {
-                    pos: Pos {
-                        x: 495.0,
-                        y: 1.0,
-                        z: 475.5,
-                        w: 1.0,
-                    },
-                    rot: Pos {
-                        x: 0.0,
-                        y: 0.0,
-                        z: 0.0,
-                        w: 0.0,
-                    },
-                    scale: 1.0,
-                    item_def_id: 9,
-                    model_id: 1418,
-                    texture_name: "".to_string(),
+                scale: 1.0,
+                item_def_id: 7,
+                model_id: 1419,
+                texture_name: "".to_string(),
+            },
+            Fixture {
+                pos: Pos {
+                    x: 495.0,
+                    y: 0.0,
+                    z: 487.5,
+                    w: 1.0,
                 },
-                Fixture {
-                    pos: Pos {
-                        x: 495.0,
-                        y: 1.5,
-                        z: 475.5,
-                        w: 1.0,
-                    },
-                    rot: Pos {
-                        x: 0.0,
-                        y: 0.0,
-                        z: 0.0,
-                        w: 0.0,
-                    },
-                    scale: 1.0,
-                    item_def_id: 9,
-                    model_id: 1418,
-                    texture_name: "".to_string(),
+                rot: Pos {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 0.0,
+                    w: 0.0,
                 },
-                Fixture {
-                    pos: Pos {
-                        x: 490.0,
-                        y: 0.0,
-                        z: 475.5,
-                        w: 1.0,
-                    },
-                    rot: Pos {
-                        x: 0.0,
-                        y: 0.0,
-                        z: 0.0,
-                        w: 0.0,
-                    },
-                    scale: 1.0,
-                    item_def_id: 10,
-                    model_id: 1416,
-                    texture_name: "".to_string(),
+                scale: 1.0,
+                item_def_id: 8,
+                model_id: 1420,
+                texture_name: "".to_string(),
+            },
+            Fixture {
+                pos: Pos {
+                    x: 495.0,
+                    y: 0.0,
+                    z: 475.5,
+                    w: 1.0,
                 },
-                Fixture {
-                    pos: Pos {
-                        x: 490.0,
-                        y: 0.5,
-                        z: 475.5,
-                        w: 1.0,
-                    },
-                    rot: Pos {
-                        x: 0.0,
-                        y: 0.0,
-                        z: 0.0,
-                        w: 0.0,
-                    },
-                    scale: 1.0,
-                    item_def_id: 10,
-                    model_id: 1416,
-                    texture_name: "".to_string(),
+                rot: Pos {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 0.0,
+                    w: 0.0,
                 },
-                Fixture {
-                    pos: Pos {
-                        x: 490.0,
-                        y: 1.0,
-                        z: 475.5,
-                        w: 1.0,
-                    },
-                    rot: Pos {
-                        x: 0.0,
-                        y: 0.0,
-                        z: 0.0,
-                        w: 0.0,
-                    },
-                    scale: 1.0,
-                    item_def_id: 10,
-                    model_id: 1416,
-                    texture_name: "".to_string(),
+                scale: 1.0,
+                item_def_id: 9,
+                model_id: 1418,
+                texture_name: "".to_string(),
+            },
+            Fixture {
+                pos: Pos {
+                    x: 495.0,
+                    y: 0.5,
+                    z: 475.5,
+                    w: 1.0,
                 },
-                Fixture {
-                    pos: Pos {
-                        x: 490.0,
-                        y: 1.5,
-                        z: 475.5,
-                        w: 1.0,
-                    },
-                    rot: Pos {
-                        x: 0.0,
-                        y: 0.0,
-                        z: 0.0,
-                        w: 0.0,
-                    },
-                    scale: 1.0,
-                    item_def_id: 10,
-                    model_id: 1416,
-                    texture_name: "".to_string(),
-                }
-            ],
-            build_areas: vec![
-                BuildArea {
-                    min: Pos {
-                        x: 384.0,
-                        y: -1.0,
-                        z: 448.0,
-                        w: 0.0,
-                    },
-                    max: Pos {
-                        x: 512.0,
-                        y: 100.0,
-                        z: 512.0,
-                        w: 0.0,
-                    },
-                }
-            ],
-            is_locked: false,
-            is_published: false,
-            is_rateable: false,
-        }
-    )
+                rot: Pos {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 0.0,
+                    w: 0.0,
+                },
+                scale: 1.0,
+                item_def_id: 9,
+                model_id: 1418,
+                texture_name: "".to_string(),
+            },
+            Fixture {
+                pos: Pos {
+                    x: 495.0,
+                    y: 1.0,
+                    z: 475.5,
+                    w: 1.0,
+                },
+                rot: Pos {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 0.0,
+                    w: 0.0,
+                },
+                scale: 1.0,
+                item_def_id: 9,
+                model_id: 1418,
+                texture_name: "".to_string(),
+            },
+            Fixture {
+                pos: Pos {
+                    x: 495.0,
+                    y: 1.5,
+                    z: 475.5,
+                    w: 1.0,
+                },
+                rot: Pos {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 0.0,
+                    w: 0.0,
+                },
+                scale: 1.0,
+                item_def_id: 9,
+                model_id: 1418,
+                texture_name: "".to_string(),
+            },
+            Fixture {
+                pos: Pos {
+                    x: 490.0,
+                    y: 0.0,
+                    z: 475.5,
+                    w: 1.0,
+                },
+                rot: Pos {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 0.0,
+                    w: 0.0,
+                },
+                scale: 1.0,
+                item_def_id: 10,
+                model_id: 1416,
+                texture_name: "".to_string(),
+            },
+            Fixture {
+                pos: Pos {
+                    x: 490.0,
+                    y: 0.5,
+                    z: 475.5,
+                    w: 1.0,
+                },
+                rot: Pos {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 0.0,
+                    w: 0.0,
+                },
+                scale: 1.0,
+                item_def_id: 10,
+                model_id: 1416,
+                texture_name: "".to_string(),
+            },
+            Fixture {
+                pos: Pos {
+                    x: 490.0,
+                    y: 1.0,
+                    z: 475.5,
+                    w: 1.0,
+                },
+                rot: Pos {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 0.0,
+                    w: 0.0,
+                },
+                scale: 1.0,
+                item_def_id: 10,
+                model_id: 1416,
+                texture_name: "".to_string(),
+            },
+            Fixture {
+                pos: Pos {
+                    x: 490.0,
+                    y: 1.5,
+                    z: 475.5,
+                    w: 1.0,
+                },
+                rot: Pos {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 0.0,
+                    w: 0.0,
+                },
+                scale: 1.0,
+                item_def_id: 10,
+                model_id: 1416,
+                texture_name: "".to_string(),
+            },
+        ],
+        build_areas: vec![BuildArea {
+            min: Pos {
+                x: 384.0,
+                y: -1.0,
+                z: 448.0,
+                w: 0.0,
+            },
+            max: Pos {
+                x: 512.0,
+                y: 100.0,
+                z: 512.0,
+                w: 0.0,
+            },
+        }],
+        is_locked: false,
+        is_published: false,
+        is_rateable: false,
+    })
 }

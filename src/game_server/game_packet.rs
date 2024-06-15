@@ -1,41 +1,41 @@
 use byteorder::{LittleEndian, WriteBytesExt};
 use num_enum::TryFromPrimitive;
-use serde::Deserialize;
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
+use serde::Deserialize;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u16)]
 pub enum OpCode {
-    LoginRequest             = 0x1,
-    LoginReply               = 0x2,
-    TunneledClient           = 0x5,
-    TunneledWorld            = 0x6,
-    Player                   = 0xc,
-    ClientIsReady            = 0xd,
-    ZoneDetailsDone          = 0xe,
-    Chat                     = 0xf,
-    Command                  = 0x1a,
-    ClientBeginZoning        = 0x1f,
-    Combat                   = 0x20,
-    PlayerUpdate             = 0x23,
-    ClientUpdate             = 0x26,
-    ZoneDetails              = 0x2b,
-    ReferenceData            = 0x2c,
-    Ui                       = 0x2f,
-    GameTimeSync             = 0x34,
-    DefinePointsOfInterest   = 0x39,
-    Purchase                 = 0x42,
-    QuickChat                = 0x43,
-    ZoneTeleportRequest      = 0x5a,
-    WelcomeScreen            = 0x5d,
-    TeleportToSafety         = 0x7a,
-    UpdatePlayerPosition     = 0x7d,
-    Housing                  = 0x7f,
-    ClientGameSettings       = 0x8f,
-    Portrait                 = 0x9b,
-    Mount                    = 0xa7,
-    Store                    = 0xa4,
-    DeploymentEnv            = 0xa5,
+    LoginRequest = 0x1,
+    LoginReply = 0x2,
+    TunneledClient = 0x5,
+    TunneledWorld = 0x6,
+    Player = 0xc,
+    ClientIsReady = 0xd,
+    ZoneDetailsDone = 0xe,
+    Chat = 0xf,
+    Command = 0x1a,
+    ClientBeginZoning = 0x1f,
+    Combat = 0x20,
+    PlayerUpdate = 0x23,
+    ClientUpdate = 0x26,
+    ZoneDetails = 0x2b,
+    ReferenceData = 0x2c,
+    Ui = 0x2f,
+    GameTimeSync = 0x34,
+    DefinePointsOfInterest = 0x39,
+    Purchase = 0x42,
+    QuickChat = 0x43,
+    ZoneTeleportRequest = 0x5a,
+    WelcomeScreen = 0x5d,
+    TeleportToSafety = 0x7a,
+    UpdatePlayerPosition = 0x7d,
+    Housing = 0x7f,
+    ClientGameSettings = 0x8f,
+    Portrait = 0x9b,
+    Mount = 0xa7,
+    Store = 0xa4,
+    DeploymentEnv = 0xa5,
 }
 
 impl SerializePacket for OpCode {
@@ -62,7 +62,7 @@ pub struct Pos {
     pub x: f32,
     pub y: f32,
     pub z: f32,
-    pub w: f32
+    pub w: f32,
 }
 
 #[derive(SerializePacket, DeserializePacket)]

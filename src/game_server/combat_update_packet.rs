@@ -1,10 +1,10 @@
+use crate::game_server::game_packet::{GamePacket, OpCode};
 use byteorder::{LittleEndian, WriteBytesExt};
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
-use crate::game_server::game_packet::{GamePacket, OpCode};
 
 #[derive(Copy, Clone, Debug)]
 pub enum CombatUpdateOpCode {
-    ProcessedAttack        = 0x7
+    ProcessedAttack = 0x7,
 }
 
 impl SerializePacket for CombatUpdateOpCode {

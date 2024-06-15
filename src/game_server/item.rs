@@ -1,8 +1,8 @@
-use std::io::Write;
-use byteorder::{LittleEndian, WriteBytesExt};
-use packet_serialize::{SerializePacket, SerializePacketError};
 use crate::game_server::game_packet::GamePacket;
 use crate::game_server::player_update_packet::PlayerUpdateOpCode;
+use byteorder::{LittleEndian, WriteBytesExt};
+use packet_serialize::{SerializePacket, SerializePacketError};
+use std::io::Write;
 
 #[derive(SerializePacket)]
 pub struct Item {
@@ -13,13 +13,13 @@ pub struct Item {
     pub num_consumed: u32,
     pub last_use_time: u32,
     pub market_data: MarketData,
-    pub unknown2: bool
+    pub unknown2: bool,
 }
 
 #[derive(Clone)]
 pub enum MarketData {
     None,
-    Some(u64, u32, u32)
+    Some(u64, u32, u32),
 }
 
 #[derive(Copy, Clone, Debug)]
@@ -39,7 +39,7 @@ pub enum EquipmentSlot {
     CustomHead = 15,
     CustomHair = 16,
     CustomModel = 17,
-    CustomBeard = 18
+    CustomBeard = 18,
 }
 
 impl SerializePacket for EquipmentSlot {
@@ -106,16 +106,16 @@ pub struct ItemDefinition {
     unknown39: u32,
     unknown40: u32,
     unknown41: Vec<Unknown41>,
-    unknown42: Vec<Unknown42>
+    unknown42: Vec<Unknown42>,
 }
 
 #[derive(SerializePacket)]
 pub struct ItemDefinitionsData {
-    pub definitions: Vec<ItemDefinition>
+    pub definitions: Vec<ItemDefinition>,
 }
 
 pub struct ItemDefinitionsReply {
-    pub data: ItemDefinitionsData
+    pub data: ItemDefinitionsData,
 }
 
 impl SerializePacket for ItemDefinitionsReply {
@@ -195,7 +195,8 @@ pub fn make_item_definitions() -> ItemDefinitionsReply {
                     slot: EquipmentSlot::Hands,
                     disable_trade: false,
                     disable_sale: false,
-                    model_name: "Wear_Human_<gender>_Hands_MandalorianSecretServiceGloves.adr".to_string(),
+                    model_name: "Wear_Human_<gender>_Hands_MandalorianSecretServiceGloves.adr"
+                        .to_string(),
                     texture_alias: "SecretService".to_string(),
                     gender: 0,
                     item_type: 1,
@@ -576,7 +577,7 @@ pub fn make_item_definitions() -> ItemDefinitionsReply {
                     unknown40: 0,
                     unknown41: vec![],
                     unknown42: vec![],
-                }
+                },
             ],
         },
     }

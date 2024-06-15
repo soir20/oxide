@@ -10,7 +10,9 @@ use crate::game_server::game_packet::{Effect, GamePacket, ImageId, OpCode, Pos, 
 use crate::game_server::guid::Guid;
 use crate::game_server::item::{EquipmentSlot, Item, MarketData};
 use crate::game_server::mount::MountConfig;
-use crate::game_server::player_update_packet::{Wield, WieldType, NameplateImageId, NameplateImage};
+use crate::game_server::player_update_packet::{
+    NameplateImage, NameplateImageId, Wield, WieldType,
+};
 use crate::game_server::tunnel::TunneledPacket;
 use crate::game_server::zone::{Character, CharacterType};
 
@@ -32,68 +34,107 @@ pub enum Ability {
     Type1(u32, u32, u32, u32, u32, u32, u32, u32, u32, bool),
     Type2(u32, u32, u32, u32, u32, u32, u32, u32, bool),
     Type3(u32, u32, u32, u32, u32, u32, u32, u32, u32, bool),
-    OtherType(u32, u32, u32, u32, u32, u32, u32, u32, bool)
+    OtherType(u32, u32, u32, u32, u32, u32, u32, u32, bool),
 }
 
 impl SerializePacket for Ability {
     fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
         match self {
             Ability::Empty => Ok(buffer.write_u32::<LittleEndian>(0)?),
-            Ability::Type1(unknown2, unknown3, unknown5, unknown6,
-                           unknown7, unknown8, unknown9, unknown10,
-                           unknown11, unknown12) => {
+            Ability::Type1(
+                unknown2,
+                unknown3,
+                unknown5,
+                unknown6,
+                unknown7,
+                unknown8,
+                unknown9,
+                unknown10,
+                unknown11,
+                unknown12,
+            ) => {
                 buffer.write_u32::<LittleEndian>(1)?;
                 buffer.write_u32::<LittleEndian>(*unknown2)?;
                 buffer.write_u32::<LittleEndian>(*unknown3)?;
                 write_ability_end(
-                    *unknown5, *unknown6, *unknown7, *unknown8,
-                    *unknown9, *unknown10, *unknown11, *unknown12,
-                    buffer
+                    *unknown5, *unknown6, *unknown7, *unknown8, *unknown9, *unknown10, *unknown11,
+                    *unknown12, buffer,
                 )?;
                 Ok(())
-            },
-            Ability::Type2(unknown4, unknown5, unknown6, unknown7,
-                           unknown8, unknown9, unknown10, unknown11,
-                           unknown12) => {
+            }
+            Ability::Type2(
+                unknown4,
+                unknown5,
+                unknown6,
+                unknown7,
+                unknown8,
+                unknown9,
+                unknown10,
+                unknown11,
+                unknown12,
+            ) => {
                 buffer.write_u32::<LittleEndian>(2)?;
                 buffer.write_u32::<LittleEndian>(*unknown4)?;
                 write_ability_end(
-                    *unknown5, *unknown6, *unknown7, *unknown8,
-                    *unknown9, *unknown10, *unknown11, *unknown12,
-                    buffer
+                    *unknown5, *unknown6, *unknown7, *unknown8, *unknown9, *unknown10, *unknown11,
+                    *unknown12, buffer,
                 )?;
                 Ok(())
-            },
-            Ability::Type3(unknown2, unknown3, unknown5, unknown6,
-                           unknown7, unknown8, unknown9, unknown10,
-                           unknown11, unknown12) => {
+            }
+            Ability::Type3(
+                unknown2,
+                unknown3,
+                unknown5,
+                unknown6,
+                unknown7,
+                unknown8,
+                unknown9,
+                unknown10,
+                unknown11,
+                unknown12,
+            ) => {
                 buffer.write_u32::<LittleEndian>(3)?;
                 buffer.write_u32::<LittleEndian>(*unknown2)?;
                 buffer.write_u32::<LittleEndian>(*unknown3)?;
                 write_ability_end(
-                    *unknown5, *unknown6, *unknown7, *unknown8,
-                    *unknown9, *unknown10, *unknown11, *unknown12,
-                    buffer
+                    *unknown5, *unknown6, *unknown7, *unknown8, *unknown9, *unknown10, *unknown11,
+                    *unknown12, buffer,
                 )?;
                 Ok(())
-            },
-            Ability::OtherType(unknown1, unknown5, unknown6, unknown7,
-                               unknown8, unknown9, unknown10, unknown11,
-                               unknown12) => {
+            }
+            Ability::OtherType(
+                unknown1,
+                unknown5,
+                unknown6,
+                unknown7,
+                unknown8,
+                unknown9,
+                unknown10,
+                unknown11,
+                unknown12,
+            ) => {
                 buffer.write_u32::<LittleEndian>(*unknown1)?;
                 write_ability_end(
-                    *unknown5, *unknown6, *unknown7, *unknown8,
-                    *unknown9, *unknown10, *unknown11, *unknown12,
-                    buffer
+                    *unknown5, *unknown6, *unknown7, *unknown8, *unknown9, *unknown10, *unknown11,
+                    *unknown12, buffer,
                 )?;
                 Ok(())
-            },
+            }
         }
     }
 }
 
-fn write_ability_end(unknown5: u32, unknown6: u32, unknown7: u32, unknown8: u32, unknown9: u32,
-                     unknown10: u32, unknown11: u32, unknown12: bool, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+fn write_ability_end(
+    unknown5: u32,
+    unknown6: u32,
+    unknown7: u32,
+    unknown8: u32,
+    unknown9: u32,
+    unknown10: u32,
+    unknown11: u32,
+    unknown12: bool,
+    buffer: &mut Vec<u8>,
+) -> Result<(), SerializePacketError> {
     buffer.write_u32::<LittleEndian>(unknown5)?;
     buffer.write_u32::<LittleEndian>(unknown6)?;
     buffer.write_u32::<LittleEndian>(unknown7)?;
@@ -107,16 +148,25 @@ fn write_ability_end(unknown5: u32, unknown6: u32, unknown7: u32, unknown8: u32,
 
 pub enum ProfileUnknown10 {
     None,
-    Some(u32, bool, u32, u32, u32, u32, u32, u32, u32, u32)
+    Some(u32, bool, u32, u32, u32, u32, u32, u32, u32, u32),
 }
 
 impl SerializePacket for ProfileUnknown10 {
     fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
         match self {
             ProfileUnknown10::None => Ok(buffer.write_u32::<LittleEndian>(0)?),
-            ProfileUnknown10::Some(unknown1, unknown2, unknown3, unknown4,
-                                   unknown5, unknown6, unknown7, unknown8,
-                                   unknown9, unknown10) => {
+            ProfileUnknown10::Some(
+                unknown1,
+                unknown2,
+                unknown3,
+                unknown4,
+                unknown5,
+                unknown6,
+                unknown7,
+                unknown8,
+                unknown9,
+                unknown10,
+            ) => {
                 buffer.write_u32::<LittleEndian>(*unknown1)?;
                 buffer.write_u8(*unknown2 as u8)?;
                 buffer.write_u32::<LittleEndian>(*unknown3)?;
@@ -159,19 +209,19 @@ pub struct Profile {
     items: Vec<EquippedItem>,
     unknown9: u32,
     abilities: Vec<Ability>,
-    unknown10: LengthlessVec<ProfileUnknown10>
+    unknown10: LengthlessVec<ProfileUnknown10>,
 }
 
 #[derive(SerializePacket)]
 pub struct EquippedItem {
     slot: EquipmentSlot,
     guid: u32,
-    category: u32
+    category: u32,
 }
 #[derive(SerializePacket)]
 pub struct Unknown {
     pub unknown1: u32,
-    pub unknown2: u32
+    pub unknown2: u32,
 }
 
 #[derive(SerializePacket)]
@@ -194,7 +244,7 @@ impl SerializePacket for MarketData {
 #[derive(SerializePacket)]
 pub struct InventoryItem {
     pub definition_id: u32,
-    pub item: Item
+    pub item: Item,
 }
 
 #[derive(SerializePacket)]
@@ -316,7 +366,7 @@ pub struct Slot {
     unknown8: u32,
     quantity: u32,
     unknown9: bool,
-    unknown10: u32
+    unknown10: u32,
 }
 
 #[derive(SerializePacket)]
@@ -418,7 +468,7 @@ pub struct PlayerData {
 }
 
 pub struct Player {
-    pub data: PlayerData
+    pub data: PlayerData,
 }
 
 impl SerializePacket for Player {
@@ -501,122 +551,118 @@ pub fn make_test_player(guid: u32, mounts: &BTreeMap<u32, MountConfig>) -> Playe
             unknown15: 3,
             unknown16: 5,
             equipped_vehicles: vec![],
-            profiles: vec![
-                Profile {
-                    guid: 1,
-                    name_id: 52577,
-                    description_id: 2837,
-                    selected_ability: 0,
-                    icon_id: 6442,
-                    unknown1: 0,
-                    badge_background_id: 0,
-                    badge_id: 0,
-                    members_only: false,
-                    is_combat: 1,
-                    item_class_data: vec![],
-                    unknown2: false,
-                    unknown3: 0,
-                    unknown4: 1931819892,
-                    unknown5: false,
-                    unknown6: 0,
-                    unknown7: vec![],
-                    level: 1,
-                    xp_in_level: 0,
-                    total_xp: 0,
-                    unknown8: 0,
-                    items: vec![
-                        EquippedItem {
-                            slot: EquipmentSlot::Head,
-                            guid: 1,
-                            category: 0,
-                        },
-                        EquippedItem {
-                            slot: EquipmentSlot::Hands,
-                            guid: 2,
-                            category: 0,
-                        },
-                        EquippedItem {
-                            slot: EquipmentSlot::Body,
-                            guid: 3,
-                            category: 0,
-                        },
-                        EquippedItem {
-                            slot: EquipmentSlot::Feet,
-                            guid: 4,
-                            category: 0,
-                        },
-                        EquippedItem {
-                            slot: EquipmentSlot::Shoulders,
-                            guid: 0,
-                            category: 0,
-                        },
-                        EquippedItem {
-                            slot: EquipmentSlot::PrimaryWeapon,
-                            guid: 5,
-                            category: 0,
-                        },
-                        EquippedItem {
-                            slot: EquipmentSlot::SecondaryWeapon,
-                            guid: 0,
-                            category: 0,
-                        },
-                        EquippedItem {
-                            slot: EquipmentSlot::PrimarySaberShape,
-                            guid: 0,
-                            category: 0,
-                        },
-                        EquippedItem {
-                            slot: EquipmentSlot::PrimarySaberColor,
-                            guid: 0,
-                            category: 0,
-                        },
-                        EquippedItem {
-                            slot: EquipmentSlot::SecondarySaberShape,
-                            guid: 0,
-                            category: 0,
-                        },
-                        EquippedItem {
-                            slot: EquipmentSlot::SecondarySaberColor,
-                            guid: 0,
-                            category: 0,
-                        },
-                        EquippedItem {
-                            slot: EquipmentSlot::CustomHead,
-                            guid: 0,
-                            category: 0,
-                        },
-                        EquippedItem {
-                            slot: EquipmentSlot::CustomHair,
-                            guid: 0,
-                            category: 0,
-                        },
-                        EquippedItem {
-                            slot: EquipmentSlot::CustomModel,
-                            guid: 0,
-                            category: 0,
-                        },
-                        EquippedItem {
-                            slot: EquipmentSlot::CustomBeard,
-                            guid: 0,
-                            category: 0,
-                        },
-                    ],
-                    unknown9: 0,
-                    abilities: vec![
-                        Ability::Empty,
-                        Ability::Empty,
-                        Ability::Empty,
-                        Ability::Empty,
-                        Ability::Empty,
-                        Ability::Empty,
-                        Ability::Empty,
-                        Ability::Empty,
-                    ],
-                    unknown10: LengthlessVec(vec![
-                        ProfileUnknown10::None
-                    ]),
-                }
-            ],
+            profiles: vec![Profile {
+                guid: 1,
+                name_id: 52577,
+                description_id: 2837,
+                selected_ability: 0,
+                icon_id: 6442,
+                unknown1: 0,
+                badge_background_id: 0,
+                badge_id: 0,
+                members_only: false,
+                is_combat: 1,
+                item_class_data: vec![],
+                unknown2: false,
+                unknown3: 0,
+                unknown4: 1931819892,
+                unknown5: false,
+                unknown6: 0,
+                unknown7: vec![],
+                level: 1,
+                xp_in_level: 0,
+                total_xp: 0,
+                unknown8: 0,
+                items: vec![
+                    EquippedItem {
+                        slot: EquipmentSlot::Head,
+                        guid: 1,
+                        category: 0,
+                    },
+                    EquippedItem {
+                        slot: EquipmentSlot::Hands,
+                        guid: 2,
+                        category: 0,
+                    },
+                    EquippedItem {
+                        slot: EquipmentSlot::Body,
+                        guid: 3,
+                        category: 0,
+                    },
+                    EquippedItem {
+                        slot: EquipmentSlot::Feet,
+                        guid: 4,
+                        category: 0,
+                    },
+                    EquippedItem {
+                        slot: EquipmentSlot::Shoulders,
+                        guid: 0,
+                        category: 0,
+                    },
+                    EquippedItem {
+                        slot: EquipmentSlot::PrimaryWeapon,
+                        guid: 5,
+                        category: 0,
+                    },
+                    EquippedItem {
+                        slot: EquipmentSlot::SecondaryWeapon,
+                        guid: 0,
+                        category: 0,
+                    },
+                    EquippedItem {
+                        slot: EquipmentSlot::PrimarySaberShape,
+                        guid: 0,
+                        category: 0,
+                    },
+                    EquippedItem {
+                        slot: EquipmentSlot::PrimarySaberColor,
+                        guid: 0,
+                        category: 0,
+                    },
+                    EquippedItem {
+                        slot: EquipmentSlot::SecondarySaberShape,
+                        guid: 0,
+                        category: 0,
+                    },
+                    EquippedItem {
+                        slot: EquipmentSlot::SecondarySaberColor,
+                        guid: 0,
+                        category: 0,
+                    },
+                    EquippedItem {
+                        slot: EquipmentSlot::CustomHead,
+                        guid: 0,
+                        category: 0,
+                    },
+                    EquippedItem {
+                        slot: EquipmentSlot::CustomHair,
+                        guid: 0,
+                        category: 0,
+                    },
+                    EquippedItem {
+                        slot: EquipmentSlot::CustomModel,
+                        guid: 0,
+                        category: 0,
+                    },
+                    EquippedItem {
+                        slot: EquipmentSlot::CustomBeard,
+                        guid: 0,
+                        category: 0,
+                    },
+                ],
+                unknown9: 0,
+                abilities: vec![
+                    Ability::Empty,
+                    Ability::Empty,
+                    Ability::Empty,
+                    Ability::Empty,
+                    Ability::Empty,
+                    Ability::Empty,
+                    Ability::Empty,
+                    Ability::Empty,
+                ],
+                unknown10: LengthlessVec(vec![ProfileUnknown10::None]),
+            }],
             active_profile: 1,
             unknown: vec![],
             social: vec![],
@@ -632,7 +678,7 @@ pub fn make_test_player(guid: u32, mounts: &BTreeMap<u32, MountConfig>) -> Playe
                         last_use_time: 0,
                         market_data: MarketData::None,
                         unknown2: false,
-                    }
+                    },
                 },
                 InventoryItem {
                     definition_id: 2,
@@ -645,7 +691,7 @@ pub fn make_test_player(guid: u32, mounts: &BTreeMap<u32, MountConfig>) -> Playe
                         last_use_time: 0,
                         market_data: MarketData::None,
                         unknown2: false,
-                    }
+                    },
                 },
                 InventoryItem {
                     definition_id: 3,
@@ -658,7 +704,7 @@ pub fn make_test_player(guid: u32, mounts: &BTreeMap<u32, MountConfig>) -> Playe
                         last_use_time: 0,
                         market_data: MarketData::None,
                         unknown2: false,
-                    }
+                    },
                 },
                 InventoryItem {
                     definition_id: 4,
@@ -671,7 +717,7 @@ pub fn make_test_player(guid: u32, mounts: &BTreeMap<u32, MountConfig>) -> Playe
                         last_use_time: 0,
                         market_data: MarketData::None,
                         unknown2: false,
-                    }
+                    },
                 },
                 InventoryItem {
                     definition_id: 5,
@@ -684,7 +730,7 @@ pub fn make_test_player(guid: u32, mounts: &BTreeMap<u32, MountConfig>) -> Playe
                         last_use_time: 0,
                         market_data: MarketData::None,
                         unknown2: false,
-                    }
+                    },
                 },
                 InventoryItem {
                     definition_id: 6,
@@ -697,7 +743,7 @@ pub fn make_test_player(guid: u32, mounts: &BTreeMap<u32, MountConfig>) -> Playe
                         last_use_time: 0,
                         market_data: MarketData::None,
                         unknown2: false,
-                    }
+                    },
                 },
             ],
             gender: 1,
@@ -710,59 +756,18 @@ pub fn make_test_player(guid: u32, mounts: &BTreeMap<u32, MountConfig>) -> Playe
             achievements: vec![],
             acquaintances: vec![],
             recipes: vec![],
-            pets: vec![
-                Pet {
+            pets: vec![Pet {
+                unknown1: 0,
+                unknown2: false,
+                unknown3: 0,
+                food: 0.0,
+                groom: 0.0,
+                exercise: 0.0,
+                happiness: 0.0,
+                unknown8: false,
+                pet_trick: vec![PetTrick {
                     unknown1: 0,
-                    unknown2: false,
-                    unknown3: 0,
-                    food: 0.0,
-                    groom: 0.0,
-                    exercise: 0.0,
-                    happiness: 0.0,
-                    unknown8: false,
-                    pet_trick: vec![
-                        PetTrick {
-                            unknown1: 0,
-                            unknown2: Unknown2 {
-                                unknown1: 0,
-                                unknown2: 0,
-                                unknown3: 0,
-                                unknown4: 0,
-                                unknown5: 0,
-                                unknown6: 0,
-                                unknown7: 0,
-                                unknown8: 0,
-                                unknown9: false,
-                            },
-                        },
-                    ],
-                    item_guid: vec![
-                        ItemGuid {
-                            guid: 0,
-                    },
-                ],
-                    profile_item: vec![
-                        ProfileItem {
-                            item1: 0,
-                            item2: Item2 {
-                                unknown1: 0,
-                                unknown2: 0,
-                            },
-                        },
-                    ],
-                    pet_name: "Test".to_string(),
-                    unknown9: 0,
-                    texture_alias: "".to_string(),
-                    icon_id: 0,
-                    unknown10: false,
-                    unknown11: 0,
-                    unknown12: Unknown12 {
-                        unknown1: 0,
-                        unknown2: 0,
-                        unknown3: 0,
-                        unknown4: 0,
-                    },
-                    unknown13: Unknown13 {
+                    unknown2: Unknown2 {
                         unknown1: 0,
                         unknown2: 0,
                         unknown3: 0,
@@ -771,92 +776,121 @@ pub fn make_test_player(guid: u32, mounts: &BTreeMap<u32, MountConfig>) -> Playe
                         unknown6: 0,
                         unknown7: 0,
                         unknown8: 0,
+                        unknown9: false,
                     },
+                }],
+                item_guid: vec![ItemGuid { guid: 0 }],
+                profile_item: vec![ProfileItem {
+                    item1: 0,
+                    item2: Item2 {
+                        unknown1: 0,
+                        unknown2: 0,
+                    },
+                }],
+                pet_name: "Test".to_string(),
+                unknown9: 0,
+                texture_alias: "".to_string(),
+                icon_id: 0,
+                unknown10: false,
+                unknown11: 0,
+                unknown12: Unknown12 {
+                    unknown1: 0,
+                    unknown2: 0,
+                    unknown3: 0,
+                    unknown4: 0,
                 },
-            ],
+                unknown13: Unknown13 {
+                    unknown1: 0,
+                    unknown2: 0,
+                    unknown3: 0,
+                    unknown4: 0,
+                    unknown5: 0,
+                    unknown6: 0,
+                    unknown7: 0,
+                    unknown8: 0,
+                },
+            }],
             pet_unknown1: -1,
             pet_unknown2: 0,
             mounts: owned_mounts,
-            action_bars: vec![
-                ActionBar {
-                    unknown1: 2,
-                    unknown2: 2,
-                    slots: vec![
-                        Slot {
-                            slot_id: 0,
-                            empty: true,
-                            icon_id: 0,
-                            unknown1: 0,
-                            name_id: 0,
-                            unknown2: 0,
-                            unknown3: 0,
-                            unknown4: 0,
-                            unknown5: 0,
-                            usable: false,
-                            unknown6: 0,
-                            unknown7: 0,
-                            unknown8: 0,
-                            quantity: 0,
-                            unknown9: false,
-                            unknown10: 0,
-                        },
-                        Slot {
-                            slot_id: 1,
-                            empty: true,
-                            icon_id: 0,
-                            unknown1: 0,
-                            name_id: 0,
-                            unknown2: 0,
-                            unknown3: 0,
-                            unknown4: 0,
-                            unknown5: 0,
-                            usable: false,
-                            unknown6: 0,
-                            unknown7: 0,
-                            unknown8: 0,
-                            quantity: 0,
-                            unknown9: false,
-                            unknown10: 0,
-                        },
-                        Slot {
-                            slot_id: 2,
-                            empty: true,
-                            icon_id: 0,
-                            unknown1: 0,
-                            name_id: 0,
-                            unknown2: 0,
-                            unknown3: 0,
-                            unknown4: 0,
-                            unknown5: 0,
-                            usable: false,
-                            unknown6: 0,
-                            unknown7: 0,
-                            unknown8: 0,
-                            quantity: 0,
-                            unknown9: false,
-                            unknown10: 0,
-                        },
-                        Slot {
-                            slot_id: 3,
-                            empty: true,
-                            icon_id: 0,
-                            unknown1: 0,
-                            name_id: 0,
-                            unknown2: 0,
-                            unknown3: 0,
-                            unknown4: 0,
-                            unknown5: 0,
-                            usable: false,
-                            unknown6: 0,
-                            unknown7: 0,
-                            unknown8: 0,
-                            quantity: 0,
-                            unknown9: false,
-                            unknown10: 0,
-                        },
-                    ],
-                }
-            ],
+            action_bars: vec![ActionBar {
+                unknown1: 2,
+                unknown2: 2,
+                slots: vec![
+                    Slot {
+                        slot_id: 0,
+                        empty: true,
+                        icon_id: 0,
+                        unknown1: 0,
+                        name_id: 0,
+                        unknown2: 0,
+                        unknown3: 0,
+                        unknown4: 0,
+                        unknown5: 0,
+                        usable: false,
+                        unknown6: 0,
+                        unknown7: 0,
+                        unknown8: 0,
+                        quantity: 0,
+                        unknown9: false,
+                        unknown10: 0,
+                    },
+                    Slot {
+                        slot_id: 1,
+                        empty: true,
+                        icon_id: 0,
+                        unknown1: 0,
+                        name_id: 0,
+                        unknown2: 0,
+                        unknown3: 0,
+                        unknown4: 0,
+                        unknown5: 0,
+                        usable: false,
+                        unknown6: 0,
+                        unknown7: 0,
+                        unknown8: 0,
+                        quantity: 0,
+                        unknown9: false,
+                        unknown10: 0,
+                    },
+                    Slot {
+                        slot_id: 2,
+                        empty: true,
+                        icon_id: 0,
+                        unknown1: 0,
+                        name_id: 0,
+                        unknown2: 0,
+                        unknown3: 0,
+                        unknown4: 0,
+                        unknown5: 0,
+                        usable: false,
+                        unknown6: 0,
+                        unknown7: 0,
+                        unknown8: 0,
+                        quantity: 0,
+                        unknown9: false,
+                        unknown10: 0,
+                    },
+                    Slot {
+                        slot_id: 3,
+                        empty: true,
+                        icon_id: 0,
+                        unknown1: 0,
+                        name_id: 0,
+                        unknown2: 0,
+                        unknown3: 0,
+                        unknown4: 0,
+                        unknown5: 0,
+                        usable: false,
+                        unknown6: 0,
+                        unknown7: 0,
+                        unknown8: 0,
+                        quantity: 0,
+                        unknown9: false,
+                        unknown10: 0,
+                    },
+                ],
+            }],
             unknown17: false,
             matchmaking_queues: vec![],
             minigame_tutorials: vec![],
@@ -868,7 +902,7 @@ pub fn make_test_player(guid: u32, mounts: &BTreeMap<u32, MountConfig>) -> Playe
             equipped_title: 0,
             unknown18: vec![],
             effects: vec![],
-        }
+        },
     }
 }
 
@@ -888,28 +922,20 @@ impl From<PlayerData> for Character {
 }
 
 pub fn make_test_wield_type(guid: u32) -> Result<Vec<Vec<u8>>, SerializePacketError> {
-    Ok(
-        vec![
-            GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: WieldType {
-                    guid: player_guid(guid),
-                    wield_type: Wield::SinglePistol,
-                },
-            })?,
-        ]
-    )
+    Ok(vec![GamePacket::serialize(&TunneledPacket {
+        unknown1: true,
+        inner: WieldType {
+            guid: player_guid(guid),
+            wield_type: Wield::SinglePistol,
+        },
+    })?])
 }
 pub fn make_test_nameplate_image(guid: u32) -> Result<Vec<Vec<u8>>, SerializePacketError> {
-    Ok(
-        vec![
-            GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: NameplateImageId {
-                    image_id: NameplateImage::Trooper,
-                    guid: player_guid(guid),
-                },
-            })?,
-        ]
-    )
+    Ok(vec![GamePacket::serialize(&TunneledPacket {
+        unknown1: true,
+        inner: NameplateImageId {
+            image_id: NameplateImage::Trooper,
+            guid: player_guid(guid),
+        },
+    })?])
 }

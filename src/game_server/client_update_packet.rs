@@ -9,13 +9,13 @@ use crate::game_server::item::{EquipmentSlot, Item, ItemDefinition};
 
 #[derive(Copy, Clone, Debug)]
 pub enum ClientUpdateOpCode {
-    Health                   = 0x1,
-    AddItems                 = 0x2,
-    EquipItem                = 0x5,
-    Position                 = 0xc,
-    Power                    = 0xd,
-    Stats                    = 0x7,
-    PreloadCharactersDone    = 0x1a
+    Health = 0x1,
+    AddItems = 0x2,
+    EquipItem = 0x5,
+    Position = 0xc,
+    Power = 0xd,
+    Stats = 0x7,
+    PreloadCharactersDone = 0x1a,
 }
 
 impl SerializePacket for ClientUpdateOpCode {
@@ -31,7 +31,7 @@ pub struct Position {
     pub player_pos: Pos,
     pub rot: Pos,
     pub is_teleport: bool,
-    pub unknown2: bool
+    pub unknown2: bool,
 }
 
 impl GamePacket for Position {
@@ -42,11 +42,11 @@ impl GamePacket for Position {
 #[derive(SerializePacket)]
 pub struct AddItemsData {
     pub item: Item,
-    pub definition: ItemDefinition
+    pub definition: ItemDefinition,
 }
 
 pub struct AddItems {
-    pub data: AddItemsData
+    pub data: AddItemsData,
 }
 
 impl SerializePacket for AddItems {
@@ -75,7 +75,7 @@ pub struct EquipItem {
     pub slot: EquipmentSlot,
     pub profile_id: u32,
     pub item_def_class: u32,
-    pub update_gear: bool
+    pub update_gear: bool,
 }
 
 impl GamePacket for EquipItem {
@@ -107,42 +107,42 @@ impl GamePacket for Power {
 
 #[derive(Copy, Clone, Debug)]
 pub enum StatId {
-    MaxHealth                = 1,
-    Speed                    = 2,
-    Range                    = 3,
-    HealthRegen              = 4,
-    MaxPower                 = 5,
-    PowerRegen               = 6,
-    MeleeDefense             = 7,
-    MeleeDodge               = 8,
-    MeleeCritRate            = 9,
-    MeleeCritMultiplier      = 10,
-    MeleeAccuracy            = 11,
-    WeaponDamageMultiplier   = 12,
-    HandToHandDamage         = 13,
-    WeaponDamage             = 14,
-    WeaponSpeed              = 15,
-    DamageReductionFlat      = 16,
-    ExperienceBoost          = 17,
-    DamageReductionPct       = 18,
-    DamageAddition           = 19,
-    DamageMultiplier         = 20,
-    HealingAddition          = 21,
-    HealingMultiplier        = 22,
-    AbilityCritRate          = 33,
-    AbilityCritMultiplier    = 34,
-    Luck                     = 35,
-    HeadInflation            = 36,
-    CurrencyBoost            = 37,
-    Toughness                = 50,
+    MaxHealth = 1,
+    Speed = 2,
+    Range = 3,
+    HealthRegen = 4,
+    MaxPower = 5,
+    PowerRegen = 6,
+    MeleeDefense = 7,
+    MeleeDodge = 8,
+    MeleeCritRate = 9,
+    MeleeCritMultiplier = 10,
+    MeleeAccuracy = 11,
+    WeaponDamageMultiplier = 12,
+    HandToHandDamage = 13,
+    WeaponDamage = 14,
+    WeaponSpeed = 15,
+    DamageReductionFlat = 16,
+    ExperienceBoost = 17,
+    DamageReductionPct = 18,
+    DamageAddition = 19,
+    DamageMultiplier = 20,
+    HealingAddition = 21,
+    HealingMultiplier = 22,
+    AbilityCritRate = 33,
+    AbilityCritMultiplier = 34,
+    Luck = 35,
+    HeadInflation = 36,
+    CurrencyBoost = 37,
+    Toughness = 50,
     AbilityCritVulnerability = 51,
-    MeleeCritVulnerability   = 52,
-    RangeMultiplier          = 53,
-    MaxShield                = 54,
-    ShieldRegen              = 55,
-    MimicMovementSpeed       = 57,
-    GravityMultiplier        = 58,
-    JumpHeightMultiplier     = 59
+    MeleeCritVulnerability = 52,
+    RangeMultiplier = 53,
+    MaxShield = 54,
+    ShieldRegen = 55,
+    MimicMovementSpeed = 57,
+    GravityMultiplier = 58,
+    JumpHeightMultiplier = 59,
 }
 
 impl SerializePacket for StatId {
@@ -162,7 +162,7 @@ pub struct Stat {
 
 #[derive(SerializePacket)]
 pub struct Stats {
-    pub stats: Vec<Stat>
+    pub stats: Vec<Stat>,
 }
 
 impl GamePacket for Stats {
@@ -172,7 +172,7 @@ impl GamePacket for Stats {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct PreloadCharactersDone {
-    pub unknown1: bool
+    pub unknown1: bool,
 }
 
 impl GamePacket for PreloadCharactersDone {

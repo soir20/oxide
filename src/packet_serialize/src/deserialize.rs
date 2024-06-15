@@ -1,7 +1,7 @@
+use crate::NullTerminatedString;
+use byteorder::{LittleEndian, ReadBytesExt};
 use std::io::{BufRead, Cursor, Error, Read};
 use std::string::FromUtf8Error;
-use byteorder::{LittleEndian, ReadBytesExt};
-use crate::NullTerminatedString;
 
 #[non_exhaustive]
 #[derive(Debug)]
@@ -9,7 +9,7 @@ pub enum DeserializePacketError {
     IoError(Error),
     InvalidString(FromUtf8Error),
     MissingNullTerminator,
-    UnknownDiscriminator
+    UnknownDiscriminator,
 }
 
 impl From<Error> for DeserializePacketError {
@@ -25,7 +25,9 @@ impl From<FromUtf8Error> for DeserializePacketError {
 }
 
 pub trait DeserializePacket {
-    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<Self, DeserializePacketError> where Self: Sized;
+    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<Self, DeserializePacketError>
+    where
+        Self: Sized;
 }
 
 // Unsigned integers
@@ -34,7 +36,6 @@ impl DeserializePacket for u8 {
         Ok(cursor.read_u8()?)
     }
 }
-
 
 impl DeserializePacket for u16 {
     fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<u16, DeserializePacketError> {
@@ -66,7 +67,6 @@ impl DeserializePacket for i8 {
         Ok(cursor.read_i8()?)
     }
 }
-
 
 impl DeserializePacket for i16 {
     fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<i16, DeserializePacketError> {
@@ -122,7 +122,9 @@ impl DeserializePacket for String {
 }
 
 impl DeserializePacket for NullTerminatedString {
-    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<NullTerminatedString, DeserializePacketError> {
+    fn deserialize(
+        cursor: &mut Cursor<&[u8]>,
+    ) -> Result<NullTerminatedString, DeserializePacketError> {
         let mut str_bytes = Vec::new();
         cursor.read_until(0, &mut str_bytes)?;
         if let Some(last_byte) = str_bytes.pop() {

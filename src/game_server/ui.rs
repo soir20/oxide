@@ -6,7 +6,7 @@ use crate::game_server::game_packet::{GamePacket, OpCode};
 
 #[derive(Copy, Clone, Debug)]
 pub enum UiOpCode {
-    ExecuteScriptWithParams  = 0x8
+    ExecuteScriptWithParams = 0x8,
 }
 
 impl SerializePacket for UiOpCode {
@@ -20,7 +20,7 @@ impl SerializePacket for UiOpCode {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct ExecuteScriptWithParams {
     pub script_name: String,
-    pub params: Vec<String>
+    pub params: Vec<String>,
 }
 
 impl GamePacket for ExecuteScriptWithParams {
