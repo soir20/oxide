@@ -1,12 +1,14 @@
-use std::io::Write;
 use byteorder::{LittleEndian, WriteBytesExt};
+use std::io::Write;
 
-use packet_serialize::{DeserializePacket, NullTerminatedString, SerializePacket, SerializePacketError};
+use packet_serialize::{
+    DeserializePacket, NullTerminatedString, SerializePacket, SerializePacketError,
+};
 
 use crate::game_server::game_packet::{GamePacket, ImageId, OpCode, Pos, StringId};
-use crate::game_server::GameServer;
 use crate::game_server::guid::GuidTableHandle;
 use crate::game_server::tunnel::TunneledPacket;
+use crate::game_server::GameServer;
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct LoginReply {
@@ -20,7 +22,7 @@ impl GamePacket for LoginReply {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct DeploymentEnv {
-    pub environment: NullTerminatedString
+    pub environment: NullTerminatedString,
 }
 
 impl GamePacket for DeploymentEnv {
@@ -37,7 +39,7 @@ pub struct ZoneDetails {
     pub sky_definition_file_name: String,
     pub zoom_out: bool,
     pub unknown7: u32,
-    pub unknown8: u32
+    pub unknown8: u32,
 }
 
 impl GamePacket for ZoneDetails {
@@ -51,7 +53,7 @@ pub struct GameSettings {
     pub unknown2: u32,
     pub unknown3: u32,
     pub unknown4: bool,
-    pub time_scale: f32
+    pub time_scale: f32,
 }
 
 impl GamePacket for GameSettings {
@@ -100,7 +102,7 @@ pub struct ClientBeginZoning {
     pub world_id: u32,
     pub world_name_id: u32,
     pub unknown6: bool,
-    pub unknown7: bool
+    pub unknown7: bool,
 }
 
 impl GamePacket for ClientBeginZoning {
@@ -148,39 +150,33 @@ impl GamePacket for DefinePointsOfInterest {
     const HEADER: Self::Header = OpCode::DefinePointsOfInterest;
 }
 
-pub fn send_points_of_interest(game_server: &GameServer) -> Result<Vec<Vec<u8>>, SerializePacketError> {
+pub fn send_points_of_interest(
+    game_server: &GameServer,
+) -> Result<Vec<Vec<u8>>, SerializePacketError> {
     let mut points = Vec::new();
     for (_, zone) in game_server.read_zones().iter() {
         let zone_read_handle = zone.read();
-        points.push(
-            PointOfInterest {
-                id: zone_read_handle.template_guid,
-                name_id: 0,
-                location_id: 0,
-                teleport_pos: Pos {
-                    x: 0.0,
-                    y: 0.0,
-                    z: 0.0,
-                    w: 1.0,
-                },
-                icon_id: 0,
-                notification_type: 0,
-                subtitle_id: 0,
-                unknown: 0,
-                quest_id: 0,
-                teleport_pos_id: 0
-            }
-        );
+        points.push(PointOfInterest {
+            id: zone_read_handle.template_guid,
+            name_id: 0,
+            location_id: 0,
+            teleport_pos: Pos {
+                x: 0.0,
+                y: 0.0,
+                z: 0.0,
+                w: 1.0,
+            },
+            icon_id: 0,
+            notification_type: 0,
+            subtitle_id: 0,
+            unknown: 0,
+            quest_id: 0,
+            teleport_pos_id: 0,
+        });
     }
 
-    Ok(
-        vec![
-            GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: DefinePointsOfInterest {
-                    points,
-                },
-            })?
-        ]
-    )
+    Ok(vec![GamePacket::serialize(&TunneledPacket {
+        unknown1: true,
+        inner: DefinePointsOfInterest { points },
+    })?])
 }

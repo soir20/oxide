@@ -1,19 +1,22 @@
-use std::io::Cursor;
+use crate::game_server::game_packet::{GamePacket, OpCode};
+use crate::game_server::zone::interact_with_character;
+use crate::game_server::{Broadcast, GameServer, ProcessPacketError};
 use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
 use num_enum::TryFromPrimitive;
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
-use crate::game_server::game_packet::{GamePacket, OpCode};
-use crate::game_server::{Broadcast, GameServer, ProcessPacketError};
-use crate::game_server::zone::interact_with_character;
+use std::io::Cursor;
 
-pub fn process_command(game_server: &GameServer, cursor: &mut Cursor<&[u8]>) -> Result<Vec<Broadcast>, ProcessPacketError> {
+pub fn process_command(
+    game_server: &GameServer,
+    cursor: &mut Cursor<&[u8]>,
+) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let raw_op_code = cursor.read_u16::<LittleEndian>()?;
     match CommandOpCode::try_from(raw_op_code) {
         Ok(op_code) => match op_code {
             CommandOpCode::SelectPlayer => {
                 let req = SelectPlayer::deserialize(cursor)?;
                 interact_with_character(req, game_server)
-            },
+            }
             _ => {
                 println!("Unimplemented command: {:?}", op_code);
                 Ok(Vec::new())
@@ -29,9 +32,9 @@ pub fn process_command(game_server: &GameServer, cursor: &mut Cursor<&[u8]>) -> 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u16)]
 pub enum CommandOpCode {
-    InteractionList          = 0x9,
-    SelectPlayer             = 0xf,
-    ChatBubbleColor          = 0xe
+    InteractionList = 0x9,
+    SelectPlayer = 0xf,
+    ChatBubbleColor = 0xe,
 }
 
 impl SerializePacket for CommandOpCode {
@@ -106,7 +109,7 @@ impl GamePacket for InteractionList {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct SelectPlayer {
     pub requester: u64,
-    pub target: u64
+    pub target: u64,
 }
 
 impl GamePacket for SelectPlayer {

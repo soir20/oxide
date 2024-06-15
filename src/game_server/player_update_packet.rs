@@ -6,31 +6,31 @@ use crate::game_server::game_packet::{Effect, GamePacket, OpCode, Pos, StringId}
 
 #[derive(Copy, Clone, Debug)]
 pub enum PlayerUpdateOpCode {
-    AddNpc                          = 0x2,
-    Remove                          = 0x3,
-    Knockback                       = 0x4,
-    UpdatePower                     = 0x9,
-    AddNotifications                = 0xa,
-    NpcRelevance                    = 0xc,
-    UpdateTemporaryAppearance       = 0xe,
+    AddNpc = 0x2,
+    Remove = 0x3,
+    Knockback = 0x4,
+    UpdatePower = 0x9,
+    AddNotifications = 0xa,
+    NpcRelevance = 0xc,
+    UpdateTemporaryAppearance = 0xe,
     UpdateRemoveTemporaryAppearance = 0xf,
-    UpdateCharacterState            = 0x14,
-    LootEvent                       = 0x1d,
-    SlotCompositeEffectOverride     = 0x1f,
-    Freeze                          = 0x20,
-    ItemDefinitionsRequest          = 0x22,
-    ItemDefinitionsReply            = 0x25,
-    SetSpawnerActivationEffect      = 0x2f,
-    ReplaceBaseModel                = 0x31,
-    SetCollision                    = 0x32,
-    MoveOnRail                      = 0x35,
-    ClearRail                       = 0x36,
-    MoveOnRelativeRail              = 0x37,
-    SeekTarget                      = 0x3b,
-    SeekTargetUpdate                = 0x3c,
-    WieldType                       = 0x3d,
-    HudMessage                      = 0x40,
-    NameplateImageId                = 0x44,
+    UpdateCharacterState = 0x14,
+    LootEvent = 0x1d,
+    SlotCompositeEffectOverride = 0x1f,
+    Freeze = 0x20,
+    ItemDefinitionsRequest = 0x22,
+    ItemDefinitionsReply = 0x25,
+    SetSpawnerActivationEffect = 0x2f,
+    ReplaceBaseModel = 0x31,
+    SetCollision = 0x32,
+    MoveOnRail = 0x35,
+    ClearRail = 0x36,
+    MoveOnRelativeRail = 0x37,
+    SeekTarget = 0x3b,
+    SeekTargetUpdate = 0x3c,
+    WieldType = 0x3d,
+    HudMessage = 0x40,
+    NameplateImageId = 0x44,
 }
 
 impl SerializePacket for PlayerUpdateOpCode {
@@ -43,8 +43,8 @@ impl SerializePacket for PlayerUpdateOpCode {
 
 #[derive(Copy, Clone, Debug)]
 pub enum PlayerUpdateRemoveOpCode {
-    Standard                        = 0x0,
-    Graceful                        = 0x1,
+    Standard = 0x0,
+    Graceful = 0x1,
 }
 
 impl SerializePacket for PlayerUpdateRemoveOpCode {
@@ -57,7 +57,7 @@ impl SerializePacket for PlayerUpdateRemoveOpCode {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct RemoveStandard {
-    pub guid: u64
+    pub guid: u64,
 }
 
 impl GamePacket for RemoveStandard {
@@ -82,12 +82,12 @@ impl GamePacket for RemoveGracefully {
 
 #[derive(Copy, Clone, Debug)]
 pub enum NameplateImage {
-    Darkside    = 6162,
-    Lightside   = 6163,
-    Trooper     = 6164,
-    Mercenary   = 6165,
-    Exile       = 7021,
-    Enforcer    = 2087,
+    Darkside = 6162,
+    Lightside = 6163,
+    Trooper = 6164,
+    Mercenary = 6165,
+    Exile = 7021,
+    Enforcer = 2087,
 }
 
 impl SerializePacket for NameplateImage {
@@ -113,7 +113,7 @@ pub struct UpdatePower {
     pub guid: u64,
     pub unknown1: u32,
     pub unknown2: u32,
-    pub unknown3: u32
+    pub unknown3: u32,
 }
 
 impl GamePacket for UpdatePower {
@@ -215,7 +215,6 @@ impl GamePacket for MoveOnRelativeRail {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct ClearRail {
     guid: u64,
-
 }
 
 impl GamePacket for ClearRail {
@@ -229,7 +228,6 @@ pub struct MoveOnRail {
     unknown1: u32,
     unknown2: u32,
     pos: Pos,
-
 }
 
 impl GamePacket for MoveOnRail {
@@ -283,7 +281,7 @@ pub struct Knockback {
     unknown1: u32,
     pos: Pos,
     rot: Pos,
-    unknown2: u32,	
+    unknown2: u32,
 }
 
 impl GamePacket for Knockback {
@@ -292,21 +290,21 @@ impl GamePacket for Knockback {
 }
 
 #[derive(Copy, Clone, Debug)]
-pub enum Wield  {
-    SingleSaber             = 1,
-    StaffSaber              = 2,
-    ReverseSingleSaber      = 3,
-    DualSaber               = 4,
-    SinglePistol            = 5,
-    Rifle                   = 6,
-    SniperRifle             = 7,
-    RocketLauncher          = 8,
-    FlameThrower            = 9,
-    DualPistol              = 10,
-    Staff                   = 11,
-    Misc                    = 12,
-    Bow                     = 13,
-    Sparklers               = 14,
+pub enum Wield {
+    SingleSaber = 1,
+    StaffSaber = 2,
+    ReverseSingleSaber = 3,
+    DualSaber = 4,
+    SinglePistol = 5,
+    Rifle = 6,
+    SniperRifle = 7,
+    RocketLauncher = 8,
+    FlameThrower = 9,
+    DualPistol = 10,
+    Staff = 11,
+    Misc = 12,
+    Bow = 13,
+    Sparklers = 14,
     HipBraceLauncherOneShot = 15,
 }
 
@@ -352,7 +350,7 @@ impl GamePacket for UpdateCharacterState {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct SetCollision {
     pub guid: u64,
-    pub collide: bool
+    pub collide: bool,
 }
 
 impl GamePacket for SetCollision {
@@ -375,7 +373,7 @@ pub struct SingleNotification {
     pub guid: u64,
     pub unknown1: u32,
     pub notification: Option<NotificationData>,
-    pub unknown2: bool
+    pub unknown2: bool,
 }
 
 impl SerializePacket for SingleNotification {
@@ -393,7 +391,7 @@ impl SerializePacket for SingleNotification {
 
 #[derive(SerializePacket)]
 pub struct AddNotifications {
-    pub notifications: Vec<SingleNotification>
+    pub notifications: Vec<SingleNotification>,
 }
 
 impl GamePacket for AddNotifications {
@@ -404,7 +402,7 @@ impl GamePacket for AddNotifications {
 pub struct SingleNpcRelevance {
     pub guid: u64,
     pub cursor: Option<u8>,
-    pub unknown1: bool
+    pub unknown1: bool,
 }
 
 impl SerializePacket for SingleNpcRelevance {
@@ -421,7 +419,7 @@ impl SerializePacket for SingleNpcRelevance {
 
 #[derive(SerializePacket)]
 pub struct NpcRelevance {
-    pub new_states: Vec<SingleNpcRelevance>
+    pub new_states: Vec<SingleNpcRelevance>,
 }
 
 impl GamePacket for NpcRelevance {
@@ -656,7 +654,7 @@ pub fn make_test_npc() -> AddNpc {
         unknown41: -1,
         unknown42: 0,
         collision: true, // To be interactable, every NPC must have collision set,
-                         // even if the model does not actually support collision
+        // even if the model does not actually support collision
         unknown44: 0,
         npc_type: 0,
         unknown46: 0.0,
@@ -680,8 +678,8 @@ pub fn make_test_npc() -> AddNpc {
         override_terrain_model: false,
         hover_glow: 0,
         hover_description: 0, // max 7
-        fly_over_effect: 0, // max 3
-        unknown65: 0, // max 32
+        fly_over_effect: 0,   // max 3
+        unknown65: 0,         // max 32
         unknown66: 0,
         unknown67: 0,
         disable_move_to_interact: false,

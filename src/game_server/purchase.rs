@@ -1,11 +1,11 @@
+use crate::game_server::game_packet::{GamePacket, OpCode};
 use byteorder::{LittleEndian, WriteBytesExt};
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
-use crate::game_server::game_packet::{GamePacket, OpCode};
 
 #[derive(Copy, Clone, Debug)]
 pub enum PurchaseOpCode {
-    StoreCategories          = 0xe,
-    StoreCategoryGroups      = 0x2a
+    StoreCategories = 0xe,
+    StoreCategoryGroups = 0x2a,
 }
 
 impl SerializePacket for PurchaseOpCode {
@@ -28,7 +28,7 @@ pub struct StoreCategory {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct StoreCategories {
-    pub categories: Vec<StoreCategory>
+    pub categories: Vec<StoreCategory>,
 }
 
 impl GamePacket for StoreCategories {
@@ -40,12 +40,12 @@ impl GamePacket for StoreCategories {
 pub struct StoreCategoryGroup {
     pub guid: u32,
     pub unknown1: u32,
-    pub unknown2: Vec<u32>
+    pub unknown2: Vec<u32>,
 }
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct StoreCategoryGroups {
-    pub groups: Vec<StoreCategoryGroup>
+    pub groups: Vec<StoreCategoryGroup>,
 }
 
 impl GamePacket for StoreCategoryGroups {

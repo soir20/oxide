@@ -1,8 +1,8 @@
+use crate::protocol::serialize::max_fragment_data_size;
+use crate::protocol::{BufferSize, Packet, ProtocolOpCode, Session};
+use byteorder::{BigEndian, ReadBytesExt, WriteBytesExt};
 use std::io::{Cursor, Error, Write};
 use std::mem::size_of;
-use byteorder::{BigEndian, ReadBytesExt, WriteBytesExt};
-use crate::protocol::{BufferSize, Packet, ProtocolOpCode, Session};
-use crate::protocol::serialize::max_fragment_data_size;
 
 #[non_exhaustive]
 #[derive(Debug)]
@@ -22,19 +22,22 @@ impl From<Error> for DataError {
 
 pub enum DataPacket {
     Fragment(Vec<u8>),
-    Single(Vec<u8>)
+    Single(Vec<u8>),
 }
 
 pub struct FragmentState {
     buffer: Vec<u8>,
-    remaining_bytes: u32
+    remaining_bytes: u32,
 }
 
 impl FragmentState {
     pub fn new() -> Self {
-        FragmentState { buffer: Vec::new(), remaining_bytes: 0 }
+        FragmentState {
+            buffer: Vec::new(),
+            remaining_bytes: 0,
+        }
     }
-    
+
     pub fn add(&mut self, packet: Packet) -> Result<Option<Packet>, DataError> {
         if let Packet::DataFragment(sequence_number, data) = packet {
             let packet_data;
@@ -49,7 +52,9 @@ impl FragmentState {
                 packet_data = &data;
             }
 
-            self.remaining_bytes = self.remaining_bytes.saturating_sub(packet_data.len() as u32);
+            self.remaining_bytes = self
+                .remaining_bytes
+                .saturating_sub(packet_data.len() as u32);
             self.buffer.extend(packet_data);
 
             if self.remaining_bytes > 0 {
@@ -58,7 +63,7 @@ impl FragmentState {
 
             let old_buffer = self.buffer.clone();
             self.buffer.clear();
-            return Ok(Some(Packet::Data(sequence_number, old_buffer)))
+            return Ok(Some(Packet::Data(sequence_number, old_buffer)));
         }
 
         if self.remaining_bytes > 0 {
@@ -82,11 +87,9 @@ fn read_data_bundle_variable_length_int(data: &[u8]) -> Result<(u32, usize), Dat
         cursor.set_position(1);
         Ok((cursor.read_u16::<BigEndian>()? as u32, 1 + size_of::<u16>()))
     }
-
 }
 
 pub fn unbundle_reliable_data(data: &[u8]) -> Result<Vec<Vec<u8>>, DataError> {
-
     // Check for the magic bytes 0x00, 0x19 that indicate data packets
     if data.len() < 2 || data[0] != 0x00 || data[1] != 0x19 {
         return Ok(vec![data.to_vec()]);
@@ -113,8 +116,11 @@ pub fn unbundle_reliable_data(data: &[u8]) -> Result<Vec<Vec<u8>>, DataError> {
     Ok(packets)
 }
 
-pub fn fragment_data(buffer_size: BufferSize, possible_session: &Option<Session>,
-                     data: Vec<u8>) -> Result<Vec<DataPacket>, DataError> {
+pub fn fragment_data(
+    buffer_size: BufferSize,
+    possible_session: &Option<Session>,
+    data: Vec<u8>,
+) -> Result<Vec<DataPacket>, DataError> {
     let mut remaining_data = &data[..];
     let mut is_first = true;
     let mut packets = Vec::new();

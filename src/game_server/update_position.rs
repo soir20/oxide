@@ -12,7 +12,7 @@ pub struct UpdatePlayerPosition {
     pub rot_y: f32,
     pub rot_z: f32,
     pub character_state: u8,
-    pub unknown: u8
+    pub unknown: u8,
 }
 
 impl GamePacket for UpdatePlayerPosition {

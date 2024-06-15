@@ -1,9 +1,15 @@
-use std::io::{Cursor, Read, Write};
-use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
-use packet_serialize::{DeserializePacket, DeserializePacketError, SerializePacket, SerializePacketError};
 use crate::game_server::game_packet::{GamePacket, OpCode};
+use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
+use packet_serialize::{
+    DeserializePacket, DeserializePacketError, SerializePacket, SerializePacketError,
+};
+use std::io::{Cursor, Read, Write};
 
-fn serialize_tunneled_packet<T: GamePacket>(buffer: &mut Vec<u8>, unknown1: bool, inner: &T) -> Result<(), SerializePacketError> {
+fn serialize_tunneled_packet<T: GamePacket>(
+    buffer: &mut Vec<u8>,
+    unknown1: bool,
+    inner: &T,
+) -> Result<(), SerializePacketError> {
     buffer.write_u8(unknown1 as u8)?;
 
     let inner_buffer = GamePacket::serialize(inner)?;
@@ -12,7 +18,9 @@ fn serialize_tunneled_packet<T: GamePacket>(buffer: &mut Vec<u8>, unknown1: bool
     Ok(())
 }
 
-fn deserialize_tunneled_packet(cursor: &mut Cursor<&[u8]>) -> Result<(bool, Vec<u8>), DeserializePacketError> {
+fn deserialize_tunneled_packet(
+    cursor: &mut Cursor<&[u8]>,
+) -> Result<(bool, Vec<u8>), DeserializePacketError> {
     let unknown1 = cursor.read_u8()? != 0;
 
     let inner_size = cursor.read_u32::<LittleEndian>()?;
@@ -24,7 +32,7 @@ fn deserialize_tunneled_packet(cursor: &mut Cursor<&[u8]>) -> Result<(bool, Vec<
 
 pub struct TunneledPacket<T> {
     pub unknown1: bool,
-    pub inner: T
+    pub inner: T,
 }
 
 impl<T: GamePacket> GamePacket for TunneledPacket<T> {
@@ -39,18 +47,18 @@ impl<T: GamePacket> SerializePacket for TunneledPacket<T> {
 }
 
 impl DeserializePacket for TunneledPacket<Vec<u8>> {
-    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<Self, DeserializePacketError> where Self: Sized {
+    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<Self, DeserializePacketError>
+    where
+        Self: Sized,
+    {
         let (unknown1, inner) = deserialize_tunneled_packet(cursor)?;
-        Ok(TunneledPacket {
-            unknown1,
-            inner
-        })
+        Ok(TunneledPacket { unknown1, inner })
     }
 }
 
 pub struct TunneledWorldPacket<T> {
     pub unknown1: bool,
-    pub inner: T
+    pub inner: T,
 }
 
 impl<T: GamePacket> GamePacket for TunneledWorldPacket<T> {
@@ -65,11 +73,11 @@ impl<T: GamePacket> SerializePacket for TunneledWorldPacket<T> {
 }
 
 impl DeserializePacket for TunneledWorldPacket<Vec<u8>> {
-    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<Self, DeserializePacketError> where Self: Sized {
+    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<Self, DeserializePacketError>
+    where
+        Self: Sized,
+    {
         let (unknown1, inner) = deserialize_tunneled_packet(cursor)?;
-        Ok(TunneledWorldPacket {
-            unknown1,
-            inner
-        })
+        Ok(TunneledWorldPacket { unknown1, inner })
     }
 }

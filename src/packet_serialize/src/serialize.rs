@@ -1,11 +1,11 @@
-use std::io::{Error, Write};
-use byteorder::{LittleEndian, WriteBytesExt};
 use crate::{LengthlessVec, NullTerminatedString};
+use byteorder::{LittleEndian, WriteBytesExt};
+use std::io::{Error, Write};
 
 #[non_exhaustive]
 #[derive(Debug)]
 pub enum SerializePacketError {
-    IoError(Error)
+    IoError(Error),
 }
 
 impl From<Error> for SerializePacketError {
@@ -25,7 +25,6 @@ impl SerializePacket for u8 {
         Ok(())
     }
 }
-
 
 impl SerializePacket for u16 {
     fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
@@ -62,7 +61,6 @@ impl SerializePacket for i8 {
         Ok(())
     }
 }
-
 
 impl SerializePacket for i16 {
     fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {

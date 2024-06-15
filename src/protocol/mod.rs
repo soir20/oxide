@@ -5,29 +5,31 @@ use rand::random;
 
 use crate::protocol::deserialize::{deserialize_packet, DeserializeError};
 use crate::protocol::hash::{CrcSeed, CrcSize};
-use crate::protocol::reliable_data_ops::{DataPacket, fragment_data, FragmentState, unbundle_reliable_data};
+use crate::protocol::reliable_data_ops::{
+    fragment_data, unbundle_reliable_data, DataPacket, FragmentState,
+};
 use crate::protocol::serialize::{serialize_packets, SerializeError};
 
-mod hash;
 mod deserialize;
-mod serialize;
+mod hash;
 mod reliable_data_ops;
+mod serialize;
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub enum ProtocolOpCode {
-    SessionRequest   = 0x01,
-    SessionReply     = 0x02,
-    MultiPacket      = 0x03,
-    Disconnect       = 0x05,
-    Heartbeat        = 0x06,
+    SessionRequest = 0x01,
+    SessionReply = 0x02,
+    MultiPacket = 0x03,
+    Disconnect = 0x05,
+    Heartbeat = 0x06,
     NetStatusRequest = 0x07,
-    NetStatusReply   = 0x08,
-    Data             = 0x09,
-    DataFragment     = 0x0D,
-    Ack              = 0x11,
-    AckAll           = 0x15,
-    UnknownSender    = 0x1D,
-    RemapConnection  = 0x1E
+    NetStatusReply = 0x08,
+    Data = 0x09,
+    DataFragment = 0x0D,
+    Ack = 0x11,
+    AckAll = 0x15,
+    UnknownSender = 0x1D,
+    RemapConnection = 0x1E,
 }
 
 impl ProtocolOpCode {
@@ -45,7 +47,7 @@ impl ProtocolOpCode {
             ProtocolOpCode::Ack => true,
             ProtocolOpCode::AckAll => true,
             ProtocolOpCode::UnknownSender => false,
-            ProtocolOpCode::RemapConnection => false
+            ProtocolOpCode::RemapConnection => false,
         }
     }
 }
@@ -58,23 +60,23 @@ pub type ApplicationProtocol = String;
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub enum DisconnectReason {
-    Unknown               = 0,
-    IcmpError             = 1,
-    Timeout               = 2,
-    OtherSideTerminated   = 3,
-    ManagerDeleted        = 4,
-    ConnectFail           = 5,
-    Application           = 6,
+    Unknown = 0,
+    IcmpError = 1,
+    Timeout = 2,
+    OtherSideTerminated = 3,
+    ManagerDeleted = 4,
+    ConnectFail = 5,
+    Application = 6,
     UnreachableConnection = 7,
     UnacknowledgedTimeout = 8,
-    NewConnectionAttempt  = 9,
-    ConnectionRefused     = 10,
-    ConnectError          = 11,
-    ConnectingToSelf      = 12,
-    ReliableOverflow      = 13,
-    ApplicationReleased   = 14,
-    CorruptPacket         = 15,
-    ProtocolMismatch      = 16
+    NewConnectionAttempt = 9,
+    ConnectionRefused = 10,
+    ConnectError = 11,
+    ConnectingToSelf = 12,
+    ReliableOverflow = 13,
+    ApplicationReleased = 14,
+    CorruptPacket = 15,
+    ProtocolMismatch = 16,
 }
 
 pub type ClientTick = u16;
@@ -83,20 +85,49 @@ pub type Timestamp = u32;
 pub type PacketCount = u64;
 
 pub enum Packet {
-    SessionRequest(SoeProtocolVersion, SessionId, BufferSize, ApplicationProtocol),
-    SessionReply(SessionId, CrcSeed, CrcSize, bool, bool, BufferSize, SoeProtocolVersion),
+    SessionRequest(
+        SoeProtocolVersion,
+        SessionId,
+        BufferSize,
+        ApplicationProtocol,
+    ),
+    SessionReply(
+        SessionId,
+        CrcSeed,
+        CrcSize,
+        bool,
+        bool,
+        BufferSize,
+        SoeProtocolVersion,
+    ),
     Disconnect(SessionId, DisconnectReason),
     Heartbeat,
-    NetStatusRequest(ClientTick, Timestamp, Timestamp, Timestamp, Timestamp,
-                     Timestamp, PacketCount, PacketCount, u16),
-    NetStatusReply(ClientTick, ServerTick, PacketCount, PacketCount,
-                   PacketCount, PacketCount, u16),
+    NetStatusRequest(
+        ClientTick,
+        Timestamp,
+        Timestamp,
+        Timestamp,
+        Timestamp,
+        Timestamp,
+        PacketCount,
+        PacketCount,
+        u16,
+    ),
+    NetStatusReply(
+        ClientTick,
+        ServerTick,
+        PacketCount,
+        PacketCount,
+        PacketCount,
+        PacketCount,
+        u16,
+    ),
     Data(SequenceNumber, Vec<u8>),
     DataFragment(SequenceNumber, Vec<u8>),
     Ack(SequenceNumber),
     AckAll(SequenceNumber),
     UnknownSender,
-    RemapConnection(SessionId, CrcSeed)
+    RemapConnection(SessionId, CrcSeed),
 }
 
 impl Packet {
@@ -104,7 +135,7 @@ impl Packet {
         match self {
             Packet::Data(n, _) => Some(*n),
             Packet::DataFragment(n, _) => Some(*n),
-            _ => None
+            _ => None,
         }
     }
 
@@ -121,7 +152,7 @@ impl Packet {
             Packet::Ack(..) => ProtocolOpCode::Ack,
             Packet::AckAll(..) => ProtocolOpCode::AckAll,
             Packet::UnknownSender => ProtocolOpCode::UnknownSender,
-            Packet::RemapConnection(..) => ProtocolOpCode::RemapConnection
+            Packet::RemapConnection(..) => ProtocolOpCode::RemapConnection,
         }
     }
 }
@@ -129,7 +160,7 @@ impl Packet {
 struct PendingPacket {
     needs_send: bool,
     packet: Packet,
-    last_prepare_to_send: u128
+    last_prepare_to_send: u128,
 }
 
 impl PendingPacket {
@@ -137,7 +168,7 @@ impl PendingPacket {
         PendingPacket {
             needs_send: true,
             packet,
-            last_prepare_to_send: 0
+            last_prepare_to_send: 0,
         }
     }
 
@@ -151,8 +182,10 @@ impl PendingPacket {
     }
 
     fn now() -> u128 {
-        SystemTime::now().duration_since(UNIX_EPOCH)
-            .expect("Time before Unix epoch").as_millis()
+        SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("Time before Unix epoch")
+            .as_millis()
     }
 }
 
@@ -161,7 +194,7 @@ pub struct Session {
     pub crc_length: CrcSize,
     pub crc_seed: CrcSeed,
     pub allow_compression: bool,
-    pub use_encryption: bool
+    pub use_encryption: bool,
 }
 
 pub struct Channel {
@@ -176,12 +209,15 @@ pub struct Channel {
     next_client_sequence: SequenceNumber,
     next_server_sequence: SequenceNumber,
     last_client_ack: SequenceNumber,
-    last_server_ack: SequenceNumber
+    last_server_ack: SequenceNumber,
 }
 
 impl Channel {
-
-    pub fn new(initial_buffer_size: BufferSize, recency_limit: SequenceNumber, millis_until_resend: u128) -> Self {
+    pub fn new(
+        initial_buffer_size: BufferSize,
+        recency_limit: SequenceNumber,
+        millis_until_resend: u128,
+    ) -> Self {
         Channel {
             session: None,
             buffer_size: initial_buffer_size,
@@ -194,7 +230,7 @@ impl Channel {
             next_client_sequence: 0,
             next_server_sequence: 0,
             last_client_ack: 0,
-            last_server_ack: 0
+            last_server_ack: 0,
         }
     }
 
@@ -202,7 +238,9 @@ impl Channel {
         let mut packets = deserialize_packet(data, &self.session)?;
 
         let packet_count = packets.len() as u32;
-        packets.drain(..).for_each(|packet| self.receive_queue.push_back(packet));
+        packets
+            .drain(..)
+            .for_each(|packet| self.receive_queue.push_back(packet));
         Ok(packet_count)
     }
 
@@ -212,10 +250,8 @@ impl Channel {
 
         for _ in 0..count {
             if let Some(packet) = self.receive_queue.pop_front() {
-
                 // Special processing for reliable packets
                 if let Some(sequence_number) = packet.sequence_number() {
-
                     // Add out-of-order packets to a separate queue until the expected
                     // packets arrive.
                     if sequence_number != self.next_client_sequence {
@@ -234,17 +270,20 @@ impl Channel {
                     needs_new_ack = true;
 
                     // Add a previously-received data packet if it is next in sequence
-                    if let Some(next_packet) = self.reordered_packets.remove(&self.next_client_sequence) {
+                    if let Some(next_packet) =
+                        self.reordered_packets.remove(&self.next_client_sequence)
+                    {
                         self.receive_queue.push_front(next_packet);
                     }
-
                 }
 
                 match self.fragment_state.add(packet) {
-                    Ok(possible_packet) => if let Some(packet) = possible_packet {
-                        packets_to_process.push(packet);
-                    },
-                    Err(err) => println!("Unable to process packet: {:?}", err)
+                    Ok(possible_packet) => {
+                        if let Some(packet) = possible_packet {
+                            packets_to_process.push(packet);
+                        }
+                    }
+                    Err(err) => println!("Unable to process packet: {:?}", err),
                 }
             } else {
                 break;
@@ -257,7 +296,6 @@ impl Channel {
 
         let mut packets = Vec::new();
         for packet in packets_to_process {
-
             // Process the packet inside the protocol
             self.process_packet(&packet);
 
@@ -270,24 +308,24 @@ impl Channel {
                     println!("Bad bundled packet");
                 }
             }
-
         }
 
         packets
     }
 
     pub fn prepare_to_send_data(&mut self, data: Vec<u8>) {
-        let packets = fragment_data(self.buffer_size, &self.session, data)
-            .expect("Unable to fragment data");
+        let packets =
+            fragment_data(self.buffer_size, &self.session, data).expect("Unable to fragment data");
 
         for packet in packets {
             let sequence = self.next_server_sequence();
             let sequenced_packet = match packet {
                 DataPacket::Fragment(data) => Packet::DataFragment(sequence, data),
-                DataPacket::Single(data) => Packet::Data(sequence, data)
+                DataPacket::Single(data) => Packet::Data(sequence, data),
             };
 
-            self.send_queue.push_back(PendingPacket::new(sequenced_packet));
+            self.send_queue
+                .push_back(PendingPacket::new(sequenced_packet));
         }
     }
 
@@ -318,7 +356,8 @@ impl Channel {
             index += 1;
         }
 
-        let packets_to_send: Vec<&Packet> = indices_to_send.into_iter()
+        let packets_to_send: Vec<&Packet> = indices_to_send
+            .into_iter()
             .map(|index| &self.send_queue[index].packet)
             .collect();
 
@@ -340,11 +379,14 @@ impl Channel {
         } else {
             sequence_number > self.next_client_sequence || sequence_number < max_sequence_number
         }
-
     }
 
-    fn should_client_ack(recency_limit: SequenceNumber, next_server_sequence: SequenceNumber,
-                         max: SequenceNumber, pending: SequenceNumber) -> bool {
+    fn should_client_ack(
+        recency_limit: SequenceNumber,
+        next_server_sequence: SequenceNumber,
+        max: SequenceNumber,
+        pending: SequenceNumber,
+    ) -> bool {
         let min_sequence_number = next_server_sequence.wrapping_sub(recency_limit);
 
         // If the max is smaller, the sequence numbers wrapped around
@@ -358,9 +400,13 @@ impl Channel {
     fn process_packet(&mut self, packet: &Packet) {
         println!("Received packet op code {:?}", packet.op_code());
         match packet {
-            Packet::SessionRequest(protocol_version, session_id,
-                                   buffer_size, app_protocol) =>
-                self.process_session_request(*protocol_version, *session_id, *buffer_size, app_protocol),
+            Packet::SessionRequest(protocol_version, session_id, buffer_size, app_protocol) => self
+                .process_session_request(
+                    *protocol_version,
+                    *session_id,
+                    *buffer_size,
+                    app_protocol,
+                ),
             Packet::Heartbeat => self.process_heartbeat(),
             Packet::Ack(acked_sequence) => self.process_ack(*acked_sequence),
             Packet::AckAll(acked_sequence) => self.process_ack_all(*acked_sequence),
@@ -368,9 +414,13 @@ impl Channel {
         }
     }
 
-    fn process_session_request(&mut self, protocol_version: SoeProtocolVersion, session_id: SessionId,
-                               buffer_size: BufferSize, app_protocol: &ApplicationProtocol) {
-
+    fn process_session_request(
+        &mut self,
+        protocol_version: SoeProtocolVersion,
+        session_id: SessionId,
+        buffer_size: BufferSize,
+        app_protocol: &ApplicationProtocol,
+    ) {
         // TODO: disallow session overwrite
         let session = Session {
             session_id,
@@ -381,25 +431,31 @@ impl Channel {
         };
 
         self.buffer_size = buffer_size;
-        self.send_queue.push_back(PendingPacket::new(Packet::SessionReply(
-            session_id,
-            session.crc_seed,
-            session.crc_length,
-            session.allow_compression,
-            session.use_encryption,
-            512,
-            3
-        )));
+        self.send_queue
+            .push_back(PendingPacket::new(Packet::SessionReply(
+                session_id,
+                session.crc_seed,
+                session.crc_length,
+                session.allow_compression,
+                session.use_encryption,
+                512,
+                3,
+            )));
         self.session = Some(session);
     }
 
     fn process_heartbeat(&mut self) {
-        self.send_queue.push_back(PendingPacket::new(Packet::Heartbeat));
+        self.send_queue
+            .push_back(PendingPacket::new(Packet::Heartbeat));
     }
 
     fn process_ack(&mut self, acked_sequence: SequenceNumber) {
-        if Channel::should_client_ack(self.recency_limit, self.next_server_sequence,
-                                      self.next_server_sequence.wrapping_sub(1), acked_sequence) {
+        if Channel::should_client_ack(
+            self.recency_limit,
+            self.next_server_sequence,
+            self.next_server_sequence.wrapping_sub(1),
+            acked_sequence,
+        ) {
             for pending_packet in self.send_queue.iter_mut() {
                 if let Some(pending_sequence) = pending_packet.packet.sequence_number() {
                     if acked_sequence == pending_sequence {
@@ -413,8 +469,12 @@ impl Channel {
     fn process_ack_all(&mut self, acked_sequence: SequenceNumber) {
         for pending_packet in self.send_queue.iter_mut() {
             if let Some(pending_sequence) = pending_packet.packet.sequence_number() {
-                if Channel::should_client_ack(self.recency_limit, self.next_server_sequence,
-                                              acked_sequence, pending_sequence) {
+                if Channel::should_client_ack(
+                    self.recency_limit,
+                    self.next_server_sequence,
+                    acked_sequence,
+                    pending_sequence,
+                ) {
                     pending_packet.needs_send = false;
                 }
             }
@@ -422,10 +482,12 @@ impl Channel {
     }
 
     fn acknowledge_one(&mut self, sequence_number: SequenceNumber) {
-        self.send_queue.push_back(PendingPacket::new(Packet::Ack(sequence_number)));
+        self.send_queue
+            .push_back(PendingPacket::new(Packet::Ack(sequence_number)));
     }
 
     fn acknowledge_all(&mut self, sequence_number: SequenceNumber) {
-        self.send_queue.push_back(PendingPacket::new(Packet::AckAll(sequence_number)));
+        self.send_queue
+            .push_back(PendingPacket::new(Packet::AckAll(sequence_number)));
     }
 }

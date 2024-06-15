@@ -1,22 +1,21 @@
-use std::collections::BTreeMap;
-use std::net::SocketAddr;
-use parking_lot::Mutex;
 use crate::game_server::Broadcast;
 use crate::protocol::Channel;
+use parking_lot::Mutex;
+use std::collections::BTreeMap;
+use std::net::SocketAddr;
 
 #[derive(Eq, PartialEq)]
 pub enum ReceiveResult {
     Success(u32),
-    CreateChannelFirst
+    CreateChannelFirst,
 }
 
 pub struct ChannelManager {
-    unauthenticated: BTreeMap<SocketAddr,Mutex<Channel>>,
-    authenticated: AuthenticatedChannelManager
+    unauthenticated: BTreeMap<SocketAddr, Mutex<Channel>>,
+    authenticated: AuthenticatedChannelManager,
 }
 
 impl ChannelManager {
-
     pub fn new() -> Self {
         ChannelManager {
             unauthenticated: Default::default(),
@@ -25,7 +24,8 @@ impl ChannelManager {
     }
 
     pub fn get_by_addr(&self, addr: &SocketAddr) -> Option<&Mutex<Channel>> {
-        self.unauthenticated.get(addr)
+        self.unauthenticated
+            .get(addr)
             .or(self.authenticated.get_by_addr(addr))
     }
 
@@ -38,13 +38,18 @@ impl ChannelManager {
     }
 
     pub fn insert(&mut self, addr: &SocketAddr, channel: Channel) -> Option<Mutex<Channel>> {
-        let previous = self.unauthenticated.remove(addr).or(self.authenticated.remove(addr));
+        let previous = self
+            .unauthenticated
+            .remove(addr)
+            .or(self.authenticated.remove(addr));
         self.unauthenticated.insert(*addr, Mutex::new(channel));
         previous
     }
 
     pub fn authenticate(&mut self, addr: &SocketAddr, guid: u32) {
-        let channel = self.unauthenticated.remove(addr)
+        let channel = self
+            .unauthenticated
+            .remove(addr)
             .expect("Tried to authenticate non-existent or already-authenticated channel");
         self.authenticated.insert(addr, guid, channel);
     }
@@ -64,7 +69,8 @@ impl ChannelManager {
     }
 
     pub fn process_next(&self, addr: &SocketAddr, count: u8) -> Vec<Vec<u8>> {
-        self.get_by_addr(addr).expect("Tried to process data on non-existent channel")
+        self.get_by_addr(addr)
+            .expect("Tried to process data on non-existent channel")
             .lock()
             .process_next(count)
     }
@@ -75,7 +81,7 @@ impl ChannelManager {
         for broadcast in broadcasts {
             let (guids, packets) = match broadcast {
                 Broadcast::Single(guid, packets) => (vec![guid], packets),
-                Broadcast::Multi(guids, packets) => (guids, packets)
+                Broadcast::Multi(guids, packets) => (guids, packets),
             };
 
             for guid in guids {
@@ -94,7 +100,8 @@ impl ChannelManager {
     }
 
     pub fn send_next(&self, addr: &SocketAddr, count: u8) -> Vec<Vec<u8>> {
-        let send_result = self.get_by_addr(addr)
+        let send_result = self
+            .get_by_addr(addr)
             .expect("Tried to sent data through non-existent channel")
             .lock()
             .send_next(count);
@@ -109,15 +116,16 @@ impl ChannelManager {
 #[derive(Default)]
 struct AuthenticatedChannelManager {
     socket_to_guid: BTreeMap<SocketAddr, u32>,
-    channels: BTreeMap<u32, Mutex<Channel>>
+    channels: BTreeMap<u32, Mutex<Channel>>,
 }
 
 impl AuthenticatedChannelManager {
     pub fn get_by_addr(&self, addr: &SocketAddr) -> Option<&Mutex<Channel>> {
-        self.socket_to_guid.get(addr).map(
-            |guid| self.channels.get(guid)
+        self.socket_to_guid.get(addr).map(|guid| {
+            self.channels
+                .get(guid)
                 .expect("Entry in socket to GUID mapping has no corresponding channel")
-        )
+        })
     }
     pub fn get_by_guid(&self, guid: u32) -> Option<&Mutex<Channel>> {
         self.channels.get(&guid)
@@ -127,16 +135,21 @@ impl AuthenticatedChannelManager {
         self.socket_to_guid.get(addr).copied()
     }
 
-    pub fn insert(&mut self, addr: &SocketAddr, guid: u32, channel: Mutex<Channel>) -> Option<Mutex<Channel>> {
+    pub fn insert(
+        &mut self,
+        addr: &SocketAddr,
+        guid: u32,
+        channel: Mutex<Channel>,
+    ) -> Option<Mutex<Channel>> {
         self.socket_to_guid.insert(*addr, guid);
         self.channels.insert(guid, channel)
     }
 
     pub fn remove(&mut self, addr: &SocketAddr) -> Option<Mutex<Channel>> {
-        self.socket_to_guid.remove(addr)
-            .map(
-                |guid| self.channels.remove(&guid)
-                    .expect("Entry in socket to GUID mapping has no corresponding channel")
-            )
+        self.socket_to_guid.remove(addr).map(|guid| {
+            self.channels
+                .remove(&guid)
+                .expect("Entry in socket to GUID mapping has no corresponding channel")
+        })
     }
 }

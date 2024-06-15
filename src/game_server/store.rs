@@ -1,11 +1,11 @@
+use crate::game_server::game_packet::{GamePacket, OpCode};
 use byteorder::{LittleEndian, WriteBytesExt};
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
-use crate::game_server::game_packet::{GamePacket, OpCode};
 
 #[derive(Copy, Clone, Debug)]
 pub enum StoreOpCode {
-    ItemList                 = 0x1,
-    ItemDefinitionsReply     = 0x3,
+    ItemList = 0x1,
+    ItemDefinitionsReply = 0x3,
 }
 
 impl SerializePacket for StoreOpCode {
@@ -37,7 +37,7 @@ pub struct StoreItem {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct StoreItemList {
     pub static_items: Vec<StoreItem>,
-    pub dynamic_items: Vec<StoreItem>
+    pub dynamic_items: Vec<StoreItem>,
 }
 
 impl GamePacket for StoreItemList {
@@ -48,7 +48,7 @@ impl GamePacket for StoreItemList {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct StoreItemDefinitionsReply {
     pub unknown: bool,
-    pub defs: Vec<u32>
+    pub defs: Vec<u32>,
 }
 
 impl GamePacket for StoreItemDefinitionsReply {

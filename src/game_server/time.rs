@@ -1,12 +1,12 @@
-use std::time::{SystemTime, UNIX_EPOCH};
-use packet_serialize::{DeserializePacket, SerializePacket};
 use crate::game_server::game_packet::{GamePacket, OpCode};
+use packet_serialize::{DeserializePacket, SerializePacket};
+use std::time::{SystemTime, UNIX_EPOCH};
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct GameTimeSync {
     pub time: u64,
     pub unknown1: u32,
-    pub unknown2: bool
+    pub unknown2: bool,
 }
 
 impl GamePacket for GameTimeSync {
@@ -15,8 +15,10 @@ impl GamePacket for GameTimeSync {
 }
 
 pub fn make_game_time_sync() -> GameTimeSync {
-    let time = SystemTime::now().duration_since(UNIX_EPOCH)
-        .expect("Time before Unix epoch").as_secs();
+    let time = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("Time before Unix epoch")
+        .as_secs();
     GameTimeSync {
         time,
         unknown1: 0,

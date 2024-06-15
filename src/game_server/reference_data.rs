@@ -1,12 +1,12 @@
-use std::io::Write;
+use crate::game_server::game_packet::{GamePacket, ImageId, OpCode, StringId};
 use byteorder::{LittleEndian, WriteBytesExt};
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
-use crate::game_server::game_packet::{GamePacket, ImageId, OpCode, StringId};
+use std::io::Write;
 
 #[derive(Copy, Clone, Debug)]
 pub enum ReferenceDataOpCode {
-    CategoryDefinitions             = 0x2,
-    ItemGroupDefinitions            = 0x4
+    CategoryDefinitions = 0x2,
+    ItemGroupDefinitions = 0x4,
 }
 
 impl SerializePacket for ReferenceDataOpCode {
@@ -22,7 +22,7 @@ pub struct CategoryDefinition {
     pub name: StringId,
     pub icon_set_id: ImageId,
     pub unknown1: u32,
-    pub unknown2: bool
+    pub unknown2: bool,
 }
 
 impl SerializePacket for CategoryDefinition {
@@ -39,7 +39,7 @@ impl SerializePacket for CategoryDefinition {
 
 pub struct CategoryRelation {
     pub parent_guid: u32,
-    pub child_guid: u32
+    pub child_guid: u32,
 }
 
 impl SerializePacket for CategoryRelation {
@@ -54,7 +54,7 @@ impl SerializePacket for CategoryRelation {
 #[derive(SerializePacket)]
 pub struct CategoryDefinitions {
     pub definitions: Vec<CategoryDefinition>,
-    pub relations: Vec<CategoryRelation>
+    pub relations: Vec<CategoryRelation>,
 }
 
 impl GamePacket for CategoryDefinitions {
@@ -79,16 +79,16 @@ pub struct ItemGroupDefinition {
     pub unknown13: u32,
     pub unknown14: u32,
     pub unknown16: String,
-    pub unknown17: bool
+    pub unknown17: bool,
 }
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct ItemGroupDefinitionsData {
-    pub definitions: Vec<ItemGroupDefinition>
+    pub definitions: Vec<ItemGroupDefinition>,
 }
 
 pub struct ItemGroupDefinitions {
-    pub data: ItemGroupDefinitionsData
+    pub data: ItemGroupDefinitionsData,
 }
 
 impl SerializePacket for ItemGroupDefinitions {

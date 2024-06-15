@@ -1,9 +1,9 @@
-use std::io::{Cursor, Error, Read};
-use std::mem::size_of;
-use byteorder::{BigEndian, ReadBytesExt};
-use miniz_oxide::inflate::{decompress_to_vec_zlib, DecompressError};
 use crate::protocol::hash::{compute_crc, CrcHash};
 use crate::protocol::{DisconnectReason, Packet, ProtocolOpCode, Session};
+use byteorder::{BigEndian, ReadBytesExt};
+use miniz_oxide::inflate::{decompress_to_vec_zlib, DecompressError};
+use std::io::{Cursor, Error, Read};
+use std::mem::size_of;
 
 #[non_exhaustive]
 #[derive(Debug)]
@@ -14,7 +14,7 @@ pub enum DeserializeError {
     MismatchedHash(CrcHash, CrcHash),
     UnknownDisconnectReason(u16),
     MissingSession(ProtocolOpCode),
-    BadSubPacketLength
+    BadSubPacketLength,
 }
 
 impl From<Error> for DeserializeError {
@@ -44,7 +44,7 @@ fn check_op_code(op_code: u16) -> Result<ProtocolOpCode, DeserializeError> {
         0x15 => Ok(ProtocolOpCode::AckAll),
         0x1D => Ok(ProtocolOpCode::UnknownSender),
         0x1E => Ok(ProtocolOpCode::RemapConnection),
-        _ => Err(DeserializeError::UnknownOpCode(op_code))
+        _ => Err(DeserializeError::UnknownOpCode(op_code)),
     }
 }
 
@@ -71,14 +71,12 @@ fn deserialize_session_request(data: &[u8]) -> Result<Vec<Packet>, DeserializeEr
     let mut application_protocol = String::new();
     cursor.read_to_string(&mut application_protocol)?;
 
-    Ok(vec![
-        Packet::SessionRequest(
-            protocol_version,
-            session_id,
-            buffer_size,
-            application_protocol
-        )
-    ])
+    Ok(vec![Packet::SessionRequest(
+        protocol_version,
+        session_id,
+        buffer_size,
+        application_protocol,
+    )])
 }
 
 fn deserialize_session_reply(data: &[u8]) -> Result<Vec<Packet>, DeserializeError> {
@@ -91,17 +89,15 @@ fn deserialize_session_reply(data: &[u8]) -> Result<Vec<Packet>, DeserializeErro
     let buffer_size = cursor.read_u32::<BigEndian>()?;
     let protocol_version = cursor.read_u32::<BigEndian>()?;
 
-    Ok(vec![
-        Packet::SessionReply(
-            session_id,
-            crc_seed,
-            crc_size,
-            allow_compression,
-            encrypt,
-            buffer_size,
-            protocol_version
-        )
-    ])
+    Ok(vec![Packet::SessionReply(
+        session_id,
+        crc_seed,
+        crc_size,
+        allow_compression,
+        encrypt,
+        buffer_size,
+        protocol_version,
+    )])
 }
 
 fn deserialize_multi_packet(data: &[u8]) -> Result<Vec<Packet>, DeserializeError> {
@@ -122,10 +118,8 @@ fn deserialize_multi_packet(data: &[u8]) -> Result<Vec<Packet>, DeserializeError
         offset += size_of::<u16>();
         let remaining_length = packet_length as usize - size_of::<u16>();
 
-        let mut new_packets = deserialize_packet_data(
-            &data[offset..(offset + remaining_length)],
-            op_code
-        )?;
+        let mut new_packets =
+            deserialize_packet_data(&data[offset..(offset + remaining_length)], op_code)?;
         packets.append(&mut new_packets);
         offset += remaining_length;
     }
@@ -152,7 +146,7 @@ fn check_disconnect_reason(reason: u16) -> Result<DisconnectReason, DeserializeE
         14 => Ok(DisconnectReason::ApplicationReleased),
         15 => Ok(DisconnectReason::CorruptPacket),
         16 => Ok(DisconnectReason::ProtocolMismatch),
-        _ => Err(DeserializeError::UnknownDisconnectReason(reason))
+        _ => Err(DeserializeError::UnknownDisconnectReason(reason)),
     }
 }
 
@@ -160,9 +154,7 @@ fn deserialize_disconnect_reason(data: &[u8]) -> Result<Vec<Packet>, Deserialize
     let mut cursor = Cursor::new(data);
     let session_id = cursor.read_u32::<BigEndian>()?;
     let disconnect_reason = check_disconnect_reason(cursor.read_u16::<BigEndian>()?)?;
-    Ok(vec![
-        Packet::Disconnect(session_id, disconnect_reason)
-    ])
+    Ok(vec![Packet::Disconnect(session_id, disconnect_reason)])
 }
 
 fn deserialize_net_status_request(data: &[u8]) -> Result<Vec<Packet>, DeserializeError> {
@@ -176,19 +168,17 @@ fn deserialize_net_status_request(data: &[u8]) -> Result<Vec<Packet>, Deserializ
     let packets_sent = cursor.read_u64::<BigEndian>()?;
     let packets_received = cursor.read_u64::<BigEndian>()?;
     let unknown = cursor.read_u16::<BigEndian>()?;
-    Ok(vec![
-        Packet::NetStatusRequest(
-            client_tick_count,
-            client_last_update,
-            average_update,
-            shortest_update,
-            longest_update,
-            last_server_update,
-            packets_sent,
-            packets_received,
-            unknown
-        )
-    ])
+    Ok(vec![Packet::NetStatusRequest(
+        client_tick_count,
+        client_last_update,
+        average_update,
+        shortest_update,
+        longest_update,
+        last_server_update,
+        packets_sent,
+        packets_received,
+        unknown,
+    )])
 }
 
 fn deserialize_net_status_reply(data: &[u8]) -> Result<Vec<Packet>, DeserializeError> {
@@ -200,26 +190,22 @@ fn deserialize_net_status_reply(data: &[u8]) -> Result<Vec<Packet>, DeserializeE
     let server_packets_sent = cursor.read_u64::<BigEndian>()?;
     let server_packets_received = cursor.read_u64::<BigEndian>()?;
     let unknown = cursor.read_u16::<BigEndian>()?;
-    Ok(vec![
-        Packet::NetStatusReply(
-            client_tick_count,
-            server_tick_count,
-            client_packets_sent,
-            client_packets_received,
-            server_packets_sent,
-            server_packets_received,
-            unknown
-        )
-    ])
+    Ok(vec![Packet::NetStatusReply(
+        client_tick_count,
+        server_tick_count,
+        client_packets_sent,
+        client_packets_received,
+        server_packets_sent,
+        server_packets_received,
+        unknown,
+    )])
 }
 
 fn deserialize_reliable_data(data: &[u8]) -> Result<Vec<Packet>, DeserializeError> {
     let mut cursor = Cursor::new(data);
     let sequence_number = cursor.read_u16::<BigEndian>()?;
     let remaining_data = data[size_of::<u16>()..].to_vec();
-    Ok(vec![
-        Packet::Data(sequence_number, remaining_data)
-    ])
+    Ok(vec![Packet::Data(sequence_number, remaining_data)])
 }
 
 fn deserialize_reliable_data_fragment(data: &[u8]) -> Result<Vec<Packet>, DeserializeError> {
@@ -230,37 +216,32 @@ fn deserialize_reliable_data_fragment(data: &[u8]) -> Result<Vec<Packet>, Deseri
     let sequence_number = cursor.read_u16::<BigEndian>()?;
     let remaining_data = data[size_of::<u16>()..].to_vec();
 
-    Ok(vec![
-        Packet::DataFragment(sequence_number, remaining_data)
-    ])
+    Ok(vec![Packet::DataFragment(sequence_number, remaining_data)])
 }
 
 fn deserialize_ack(data: &[u8]) -> Result<Vec<Packet>, DeserializeError> {
     let mut cursor = Cursor::new(data);
     let sequence_number = cursor.read_u16::<BigEndian>()?;
-    Ok(vec![
-        Packet::Ack(sequence_number)
-    ])
+    Ok(vec![Packet::Ack(sequence_number)])
 }
 
 fn deserialize_ack_all(data: &[u8]) -> Result<Vec<Packet>, DeserializeError> {
     let mut cursor = Cursor::new(data);
     let sequence_number = cursor.read_u16::<BigEndian>()?;
-    Ok(vec![
-        Packet::AckAll(sequence_number)
-    ])
+    Ok(vec![Packet::AckAll(sequence_number)])
 }
 
 fn deserialize_remap_connection(data: &[u8]) -> Result<Vec<Packet>, DeserializeError> {
     let mut cursor = Cursor::new(data);
     let session_id = cursor.read_u32::<BigEndian>()?;
     let crc_seed = cursor.read_u32::<BigEndian>()?;
-    Ok(vec![
-        Packet::RemapConnection(session_id, crc_seed)
-    ])
+    Ok(vec![Packet::RemapConnection(session_id, crc_seed)])
 }
 
-fn deserialize_packet_data(data: &[u8], op_code: ProtocolOpCode) -> Result<Vec<Packet>, DeserializeError> {
+fn deserialize_packet_data(
+    data: &[u8],
+    op_code: ProtocolOpCode,
+) -> Result<Vec<Packet>, DeserializeError> {
     match op_code {
         ProtocolOpCode::SessionRequest => deserialize_session_request(data),
         ProtocolOpCode::SessionReply => deserialize_session_reply(data),
@@ -274,24 +255,33 @@ fn deserialize_packet_data(data: &[u8], op_code: ProtocolOpCode) -> Result<Vec<P
         ProtocolOpCode::Ack => deserialize_ack(data),
         ProtocolOpCode::AckAll => deserialize_ack_all(data),
         ProtocolOpCode::UnknownSender => Ok(vec![Packet::UnknownSender]),
-        ProtocolOpCode::RemapConnection => deserialize_remap_connection(data)
+        ProtocolOpCode::RemapConnection => deserialize_remap_connection(data),
     }
 }
 
-pub fn deserialize_packet(data: &[u8], possible_session: &Option<Session>) -> Result<Vec<Packet>, DeserializeError> {
+pub fn deserialize_packet(
+    data: &[u8],
+    possible_session: &Option<Session>,
+) -> Result<Vec<Packet>, DeserializeError> {
     let mut cursor = Cursor::new(data);
     let op_code = check_op_code(cursor.read_u16::<BigEndian>()?)?;
 
     let mut packet_data;
     if op_code.requires_session() {
-
         if let Some(session) = possible_session {
             let compressed = session.allow_compression && cursor.read_u8()? != 0;
 
             // Two bytes for the op code and, optionally, one byte for the compression flag
-            let data_offset = if session.allow_compression { size_of::<u8>() } else { 0 } + size_of::<u16>();
+            let data_offset = if session.allow_compression {
+                size_of::<u8>()
+            } else {
+                0
+            } + size_of::<u16>();
 
-            let crc_offset = data.len().checked_sub(session.crc_length as usize).unwrap_or(data_offset);
+            let crc_offset = data
+                .len()
+                .checked_sub(session.crc_length as usize)
+                .unwrap_or(data_offset);
             cursor.set_position(crc_offset as u64);
             let expected_hash = cursor.read_uint::<BigEndian>(session.crc_length as usize)? as u32;
 
@@ -299,7 +289,8 @@ pub fn deserialize_packet(data: &[u8], possible_session: &Option<Session>) -> Re
             if compressed {
                 packet_data = decompress_to_vec_zlib(&packet_data)?;
             }
-            let actual_hash = compute_crc(&data[0..crc_offset], session.crc_seed, session.crc_length);
+            let actual_hash =
+                compute_crc(&data[0..crc_offset], session.crc_seed, session.crc_length);
 
             if actual_hash != expected_hash {
                 return Err(DeserializeError::MismatchedHash(actual_hash, expected_hash));
@@ -307,7 +298,6 @@ pub fn deserialize_packet(data: &[u8], possible_session: &Option<Session>) -> Re
         } else {
             return Err(DeserializeError::MissingSession(op_code));
         }
-
     } else {
         packet_data = data[2..].to_vec();
     }
