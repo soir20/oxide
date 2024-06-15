@@ -56,9 +56,9 @@ impl Rgba {
     }
 }
 
-impl Into<u32> for Rgba {
-    fn into(self) -> u32 {
-        ((self.a as u32) << 24) | ((self.r as u32) << 16) | ((self.g as u32) << 8) | (self.b as u32)
+impl From<Rgba> for u32 {
+    fn from(val: Rgba) -> Self {
+        ((val.a as u32) << 24) | ((val.r as u32) << 16) | ((val.g as u32) << 8) | (val.b as u32)
     }
 }
 

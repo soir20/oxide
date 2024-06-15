@@ -49,8 +49,7 @@ impl FragmentState {
                 packet_data = &data;
             }
 
-            self.remaining_bytes = self.remaining_bytes.checked_sub(packet_data.len() as u32)
-                .unwrap_or(0);
+            self.remaining_bytes = self.remaining_bytes.saturating_sub(packet_data.len() as u32);
             self.buffer.extend(packet_data);
 
             if self.remaining_bytes > 0 {
@@ -74,7 +73,7 @@ impl FragmentState {
 fn read_data_bundle_variable_length_int(data: &[u8]) -> Result<(u32, usize), DataError> {
     let mut cursor = Cursor::new(data);
 
-    if data.len() >= 1 && data[0] < 0xFF {
+    if !data.is_empty() && data[0] < 0xFF {
         Ok((data[0] as u32, size_of::<u8>()))
     } else if data.len() >= 3 && data[1] == 0xFF && data[2] == 0xFF {
         cursor.set_position(3);
@@ -128,7 +127,7 @@ pub fn fragment_data(buffer_size: BufferSize, possible_session: &Option<Session>
             return Ok(packets);
         }
 
-        while remaining_data.len() > 0 {
+        while !remaining_data.is_empty() {
             let mut end = max_size.min(remaining_data.len());
             let mut buffer = Vec::new();
             if is_first {

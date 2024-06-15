@@ -358,7 +358,7 @@ fn placed_fixture(index: u32, house_guid: u64, fixture: &Fixture) -> PlacedFixtu
     }
 }
 
-fn fixture_item_list(fixtures: &Vec<Fixture>) -> Result<Vec<u8>, SerializePacketError> {
+fn fixture_item_list(fixtures: &[Fixture]) -> Result<Vec<u8>, SerializePacketError> {
     let mut unknown1 = Vec::new();
     let mut unknown2 = Vec::new();
 
@@ -678,7 +678,7 @@ pub fn process_housing_packet(sender: u32, game_server: &GameServer, cursor: &mu
 
                 // Create the house instance if it does not already exist
                 let mut zones = game_server.write_zones();
-                if let None = zones.get(enter_request.house_guid) {
+                if zones.get(enter_request.house_guid).is_none() {
                     let template_guid = template_guid(enter_request.house_guid)?;
                     if let Some(template) = game_server.read_zone_templates().get(&template_guid) {
                         zones.insert(Zone::new_house(

@@ -220,10 +220,11 @@ fn footer_size(session: &Session) -> u32 {
     session.crc_length as u32
 }
 
-fn group_session_packets(session_packets: Vec<&Packet>, buffer_size: BufferSize, session: &Session) -> Result<Vec<Vec<(ProtocolOpCode, Vec<u8>)>>, SerializeError> {
+type PacketGroup = Vec<(ProtocolOpCode, Vec<u8>)>;
+fn group_session_packets(session_packets: Vec<&Packet>, buffer_size: BufferSize, session: &Session) -> Result<Vec<PacketGroup>, SerializeError> {
     let mut groups = Vec::new();
     let wrapper_size = header_size(session) + footer_size(session);
-    let data_max_size = buffer_size.checked_sub(wrapper_size).unwrap_or(0);
+    let data_max_size = buffer_size.saturating_sub(wrapper_size);
 
     let mut serialized_packets = VecDeque::new();
     for packet in session_packets.into_iter() {
@@ -242,7 +243,7 @@ fn group_session_packets(session_packets: Vec<&Packet>, buffer_size: BufferSize,
 
         // Leave space for this packet's op code and data length if it is not the first packet.
         // If it is the first packet, then the op code is included in the header size.
-        if group.len() > 0 {
+        if !group.is_empty() {
             total_len += size_of::<u16>();
             total_len += variable_length_int_size(total_len);
         }
@@ -296,7 +297,7 @@ fn write_header(buffer: &mut Vec<u8>, op_code: ProtocolOpCode, session: &Session
 
 fn try_compress(data: &mut Vec<u8>, session: &Session) -> bool {
     if session.allow_compression && data.len() > ZLIB_COMPRESSION_LENGTH_THRESHOLD {
-        let compressed_data = compress_to_vec_zlib(&data, ZLIB_COMPRESSION_LEVEL);
+        let compressed_data = compress_to_vec_zlib(data, ZLIB_COMPRESSION_LEVEL);
         if data.len() > compressed_data.len() {
             *data = compressed_data;
             return true;
@@ -311,7 +312,7 @@ fn add_session_packets(buffers: &mut Vec<Vec<u8>>, session_packets: Vec<&Packet>
     let groups = group_session_packets(session_packets, buffer_size, session)?;
 
     for mut group in groups.into_iter() {
-        if group.len() == 0 {
+        if group.is_empty() {
             continue;
         }
 
@@ -361,7 +362,7 @@ pub fn serialize_packets(packets: &[&Packet], buffer_size: BufferSize,
 
     if let Some(session) = possible_session {
         add_session_packets(&mut buffers, require_session, buffer_size, session)?;
-    } else if require_session.len() > 0 {
+    } else if !require_session.is_empty() {
         return Err(SerializeError::MissingSession);
     }
 

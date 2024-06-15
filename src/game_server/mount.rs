@@ -49,7 +49,7 @@ pub fn load_mounts(config_dir: &Path) -> Result<BTreeMap<u32, MountConfig>, Erro
         let guid = mount.guid();
         let previous = mount_table.insert(guid, mount);
 
-        if let Some(_) = previous {
+        if previous.is_some() {
             panic!("Two mounts have ID {}", guid);
         }
     }
@@ -191,7 +191,7 @@ fn process_dismount(sender: u32, game_server: &GameServer) -> Result<Vec<Broadca
     zone_with_character_read!(zones.values(), player_guid(sender), |zone_read_handle, characters| {
         if let Some(character) = characters.get(player_guid(sender)) {
             let mut character_write_handle = character.write();
-            reply_dismount(sender, &zone_read_handle, &mut character_write_handle, &game_server.mounts())
+            reply_dismount(sender, &zone_read_handle, &mut character_write_handle, game_server.mounts())
         } else {
             println!("Non-existent player {} tried to dismount", sender);
             Err(ProcessPacketError::CorruptedPacket)

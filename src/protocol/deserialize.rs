@@ -312,5 +312,5 @@ pub fn deserialize_packet(data: &[u8], possible_session: &Option<Session>) -> Re
         packet_data = data[2..].to_vec();
     }
 
-    Ok(deserialize_packet_data(&packet_data, op_code)?)
+    deserialize_packet_data(&packet_data, op_code)
 }

@@ -60,7 +60,6 @@ async fn list_files(root_dir: &std::path::Path) -> io::Result<Vec<PathBuf>> {
         if dir.is_dir() {
             let mut entries = read_dir(dir).await?;
             while let Some(entry) = entries.next_entry().await? {
-                let entry = entry;
                 let path = entry.path();
                 if path.is_dir() {
                     directories.push_back(path);
@@ -90,7 +89,7 @@ fn forward_slash_path(path: &std::path::Path) -> OsString {
 fn compressed_asset_name(asset_path: &std::path::Path, assets_path: &std::path::Path) -> PathBuf {
     append_extension(
         COMPRESSED_EXTENSION,
-        asset_path.strip_prefix(&assets_path).expect("Asset entry path was not in the assets folder")
+        asset_path.strip_prefix(assets_path).expect("Asset entry path was not in the assets folder")
     )
 }
 
@@ -99,9 +98,9 @@ async fn write_to_cache(uncompressed_contents: &[u8], compressed_asset_name: &st
     let mut compressed_contents = Vec::new();
     compressed_contents.write_u32(MAGIC).await?;
     compressed_contents.write_u32(uncompressed_contents.len() as u32).await?;
-    compressed_contents.append(&mut compress_to_vec_zlib(&uncompressed_contents, ZLIB_COMPRESSION_LEVEL));
+    compressed_contents.append(&mut compress_to_vec_zlib(uncompressed_contents, ZLIB_COMPRESSION_LEVEL));
 
-    let cached_asset_path = assets_cache_path.join(&compressed_asset_name);
+    let cached_asset_path = assets_cache_path.join(compressed_asset_name);
     if let Some(parent) = cached_asset_path.parent() {
         create_dir_all(parent).await?;
     }
@@ -167,19 +166,19 @@ async fn prepare_asset_cache(assets_path: &std::path::Path, assets_cache_path: &
             .create(true)
             .read(true)
             .write(true)
-            .open(assets_cache_path.join(&manifest_asset_name)).await?;
+            .open(assets_cache_path.join(manifest_asset_name)).await?;
         let mut manifest_contents = Vec::new();
         manifest_file.read_to_end(&mut manifest_contents).await?;
 
         let manifest_compressed_asset_name = append_extension(
             COMPRESSED_EXTENSION,
-            &manifest_asset_name
+            manifest_asset_name
         );
         write_to_cache(&manifest_contents, &manifest_compressed_asset_name, assets_cache_path).await?;
 
         let manifest_crc = crc32fast::hash(&manifest_contents).to_string();
         let manifest_crc_contents = manifest_crc.as_bytes();
-        write_to_cache(manifest_crc_contents, &&manifest.prefix.join("manifest.crc.z"), assets_cache_path).await?;
+        write_to_cache(manifest_crc_contents, &manifest.prefix.join("manifest.crc.z"), assets_cache_path).await?;
     }
 
     Ok(())
@@ -190,13 +189,7 @@ async fn asset_handler(Path(asset_name): Path<PathBuf>, State(assets_cache_path)
     // SECURITY: Ensure that the path is within the assets cache before returning any data.
     // Reject all paths containing anything other than normal folder names (e.g. paths containing
     // the parent directory or the root directory).
-    let is_invalid_path = asset_name.components().any(|component| {
-        if let Component::Normal(_) = component {
-            false
-        } else {
-            true
-        }
-    });
+    let is_invalid_path = asset_name.components().any(|component| !matches!(component, Component::Normal(_)));
     if is_invalid_path {
         return Err(StatusCode::BAD_REQUEST);
     }

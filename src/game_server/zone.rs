@@ -403,7 +403,7 @@ impl From<&Vec<Character>> for GuidTable<u64, Character> {
         {
             let mut write_handle = table.write();
             for character in value.iter() {
-                if let Some(_) = write_handle.insert(character.clone()) {
+                if write_handle.insert(character.clone()).is_some() {
                     panic!("Two characters have same GUID {}", character.guid());
                 }
             }
@@ -698,7 +698,8 @@ impl From<ZoneConfig> for (ZoneTemplate, Vec<Zone>) {
     }
 }
 
-pub fn load_zones(config_dir: &Path) -> Result<(BTreeMap<u32, ZoneTemplate>, GuidTable<u64, Zone>), Error> {
+type ZoneTemplateMap = BTreeMap<u32, ZoneTemplate>;
+pub fn load_zones(config_dir: &Path) -> Result<(ZoneTemplateMap, GuidTable<u64, Zone>), Error> {
     let mut file = File::open(config_dir.join("zones.json"))?;
     let zone_configs: Vec<ZoneConfig> = serde_json::from_reader(&mut file)?;
 
@@ -710,13 +711,13 @@ pub fn load_zones(config_dir: &Path) -> Result<(BTreeMap<u32, ZoneTemplate>, Gui
             let (template, zones) = <(ZoneTemplate, Vec<Zone>) as From<ZoneConfig>>::from(zone_config);
             let template_guid = template.guid();
 
-            if let Some(_) = templates.insert(template_guid, template) {
+            if templates.insert(template_guid, template).is_some() {
                 panic!("Two zone templates have ID {}", template_guid);
             }
 
             for zone in zones {
                 let zone_guid = zone.guid();
-                if let Some(_) = zones_write_handle.insert(zone) {
+                if zones_write_handle.insert(zone).is_some() {
                     panic!("Two zone templates have ID {}", zone_guid);
                 }
             }
@@ -736,7 +737,7 @@ pub fn enter_zone(character: Option<Lock<Character>>, player: u32,
         characters.insert_lock(player_guid(player), character);
         drop(characters);
     }
-    Ok(prepare_init_zone_packets(player, destination_read_handle, destination_pos, destination_rot)?)
+    prepare_init_zone_packets(player, destination_read_handle, destination_pos, destination_rot)
 }
 
 fn prepare_init_zone_packets(player: u32, destination: RwLockReadGuard<Zone>, destination_pos: Pos,
@@ -797,7 +798,7 @@ macro_rules! teleport_to_zone {
                 let destination_read_handle = destination_zone.read();
                 let mut broadcasts = Vec::new();
                 if let Some(character) = &character {
-                    broadcasts.append(&mut crate::game_server::mount::reply_dismount(
+                    broadcasts.append(&mut $crate::game_server::mount::reply_dismount(
                         $player,
                         &destination_read_handle,
                         &mut character.write(),
@@ -805,7 +806,7 @@ macro_rules! teleport_to_zone {
                     )?);
                 }
 
-                broadcasts.append(&mut crate::game_server::zone::enter_zone(
+                broadcasts.append(&mut $crate::game_server::zone::enter_zone(
                     character,
                     $player,
                     destination_read_handle,
