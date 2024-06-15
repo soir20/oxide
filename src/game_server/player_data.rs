@@ -773,7 +773,7 @@ pub fn make_test_player(guid: u32, mounts: &BTreeMap<u32, MountConfig>) -> Playe
                     unknown8: 0,
                 },
             },
-        ]
+        ],
             pet_unknown1: -1,
             pet_unknown2: 0,
             mounts: owned_mounts,
