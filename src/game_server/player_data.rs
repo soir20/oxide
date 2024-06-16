@@ -317,7 +317,7 @@ pub struct Recipe {}
 
 #[derive(SerializePacket)]
 pub struct Pet {
-    unknown1: u32,
+    pet_id: u32,
     unknown2: bool,
     unknown3: u32,
     food: f32,
@@ -329,7 +329,7 @@ pub struct Pet {
     item_guid: Vec<ItemGuid>,
     profile_item: Vec<ProfileItem>,
     pet_name: String,
-    unknown9: u32,
+    tint_id: u32,
     texture_alias: String,
     icon_id: u32,
     unknown10: bool,
@@ -757,7 +757,7 @@ pub fn make_test_player(guid: u32, mounts: &BTreeMap<u32, MountConfig>) -> Playe
             acquaintances: vec![],
             recipes: vec![],
             pets: vec![Pet {
-                unknown1: 0,
+                pet_id: 0,
                 unknown2: false,
                 unknown3: 0,
                 food: 0.0,
@@ -788,7 +788,7 @@ pub fn make_test_player(guid: u32, mounts: &BTreeMap<u32, MountConfig>) -> Playe
                     },
                 }],
                 pet_name: "Test".to_string(),
-                unknown9: 0,
+                tint_id: 0,
                 texture_alias: "".to_string(),
                 icon_id: 0,
                 unknown10: false,
