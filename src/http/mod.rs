@@ -170,6 +170,7 @@ async fn prepare_asset_cache(
 
             let mut manifest_file = OpenOptions::new()
                 .create(true)
+                .truncate(false)
                 .append(true)
                 .open(manifest_path)
                 .await?;
@@ -183,6 +184,7 @@ async fn prepare_asset_cache(
         let manifest_asset_name = &manifest.prefix.join(&manifest.name);
         let mut manifest_file = OpenOptions::new()
             .create(true)
+            .truncate(false)
             .read(true)
             .write(true)
             .open(assets_cache_path.join(manifest_asset_name))
