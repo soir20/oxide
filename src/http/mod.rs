@@ -170,6 +170,7 @@ async fn prepare_asset_cache(
 
             let mut manifest_file = OpenOptions::new()
                 .create(true)
+                .truncate(false)
                 .append(true)
                 .open(manifest_path)
                 .await?;
