@@ -249,10 +249,10 @@ async fn asset_handler(
         return Err(StatusCode::BAD_REQUEST);
     }
 
+    let crc = *crc_map.get(&asset_name).ok_or(StatusCode::NOT_FOUND)?;
     let file_data = read(assets_cache_path.join(&asset_name))
         .await
         .map_err(|_| StatusCode::NOT_FOUND)?;
-    let crc = *crc_map.get(&asset_name).ok_or(StatusCode::NOT_FOUND)?;
     let queried_crc: u32 = if let Some(query) = request.uri().query() {
         str::parse(query).map_err(|_| StatusCode::BAD_REQUEST)?
     } else {
