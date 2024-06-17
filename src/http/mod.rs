@@ -1,6 +1,7 @@
-use std::collections::VecDeque;
+use std::collections::{BTreeMap, VecDeque};
 use std::ffi::{OsStr, OsString};
 use std::path::{Component, PathBuf};
+use std::sync::Arc;
 
 use axum::extract::{Path, Request, State};
 use axum::http::StatusCode;
@@ -16,6 +17,7 @@ use tokio::net::TcpListener;
 const MAGIC: u32 = 0xa1b2c3d4;
 const ZLIB_COMPRESSION_LEVEL: u8 = 6;
 const COMPRESSED_EXTENSION: &str = "z";
+const CRC_EXTENSION: &str = "crc";
 
 #[derive(Deserialize)]
 struct ManifestConfig {
@@ -100,7 +102,13 @@ async fn write_to_cache(
     uncompressed_contents: &[u8],
     compressed_asset_name: &std::path::Path,
     assets_cache_path: &std::path::Path,
+    crc_map: &mut CrcMap,
 ) -> io::Result<usize> {
+    crc_map.insert(
+        compressed_asset_name.to_path_buf(),
+        crc32fast::hash(uncompressed_contents),
+    );
+
     let mut compressed_contents = Vec::new();
     compressed_contents.write_u32(MAGIC).await?;
     compressed_contents
@@ -119,21 +127,29 @@ async fn write_to_cache(
     Ok(compressed_contents.len())
 }
 
+type CrcMap = BTreeMap<PathBuf, u32>;
 async fn prepare_asset_cache(
     assets_path: &std::path::Path,
     assets_cache_path: &std::path::Path,
     manifests: &[Manifest],
-) -> io::Result<()> {
+) -> io::Result<CrcMap> {
     remove_dir_all(assets_cache_path).await?;
     create_dir_all(assets_cache_path).await?;
     let mut asset_paths = list_files(assets_path).await?;
     asset_paths.sort();
 
+    let mut crc_map = CrcMap::new();
+
     for asset_path in asset_paths {
         let contents = read(&asset_path).await?;
         let compressed_asset_name = compressed_asset_name(&asset_path, assets_path);
-        let bytes_written =
-            write_to_cache(&contents, &compressed_asset_name, assets_cache_path).await?;
+        let bytes_written = write_to_cache(
+            &contents,
+            &compressed_asset_name,
+            assets_cache_path,
+            &mut crc_map,
+        )
+        .await?;
 
         // Determine which manifest this file belongs to, if any
         let manifest =
@@ -191,6 +207,8 @@ async fn prepare_asset_cache(
             .await?;
         let mut manifest_contents = Vec::new();
         manifest_file.read_to_end(&mut manifest_contents).await?;
+        let manifest_crc = crc32fast::hash(&manifest_contents);
+        crc_map.insert(manifest_asset_name.clone(), manifest_crc);
 
         let manifest_compressed_asset_name =
             append_extension(COMPRESSED_EXTENSION, manifest_asset_name);
@@ -198,25 +216,27 @@ async fn prepare_asset_cache(
             &manifest_contents,
             &manifest_compressed_asset_name,
             assets_cache_path,
+            &mut crc_map,
         )
         .await?;
 
-        let manifest_crc = crc32fast::hash(&manifest_contents).to_string();
-        let manifest_crc_contents = manifest_crc.as_bytes();
+        let manifest_crc_string = manifest_crc.to_string();
+        let manifest_crc_contents = manifest_crc_string.as_bytes();
         write_to_cache(
             manifest_crc_contents,
             &manifest.prefix.join("manifest.crc.z"),
             assets_cache_path,
+            &mut crc_map,
         )
         .await?;
     }
 
-    Ok(())
+    Ok(crc_map)
 }
 
 async fn asset_handler(
     Path(asset_name): Path<PathBuf>,
-    State(assets_cache_path): State<PathBuf>,
+    State((assets_cache_path, crc_map)): State<(Arc<PathBuf>, Arc<CrcMap>)>,
     request: Request,
 ) -> Result<Vec<u8>, StatusCode> {
     // SECURITY: Ensure that the path is within the assets cache before returning any data.
@@ -229,10 +249,10 @@ async fn asset_handler(
         return Err(StatusCode::BAD_REQUEST);
     }
 
-    let file_data = read(assets_cache_path.join(asset_name))
+    let file_data = read(assets_cache_path.join(&asset_name))
         .await
         .map_err(|_| StatusCode::NOT_FOUND)?;
-    let crc = crc32fast::hash(&file_data);
+    let crc = *crc_map.get(&asset_name).ok_or(StatusCode::NOT_FOUND)?;
     let queried_crc: u32 = if let Some(query) = request.uri().query() {
         str::parse(query).map_err(|_| StatusCode::BAD_REQUEST)?
     } else {
@@ -253,12 +273,12 @@ async fn try_start(
     assets_cache_path: PathBuf,
 ) -> io::Result<()> {
     let manifests = read_manifests_config(config_dir).await?;
-    prepare_asset_cache(assets_path, &assets_cache_path, &manifests).await?;
+    let crc_map = prepare_asset_cache(assets_path, &assets_cache_path, &manifests).await?;
 
     let listener = TcpListener::bind(format!("127.0.0.1:{}", port)).await?;
     let app: Router<()> = Router::new()
         .route("/assets/*asset", get(asset_handler))
-        .with_state(assets_cache_path);
+        .with_state((Arc::new(assets_cache_path), Arc::new(crc_map)));
 
     serve(listener, app).await
 }
