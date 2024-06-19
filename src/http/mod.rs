@@ -8,13 +8,14 @@ use axum::http::StatusCode;
 use axum::routing::get;
 use axum::{serve, Router};
 use miniz_oxide::deflate::compress_to_vec_zlib;
+use miniz_oxide::inflate::decompress_to_vec_zlib;
 use serde::Deserialize;
 use tokio::fs::{create_dir_all, read, read_dir, remove_dir_all, write, OpenOptions};
 use tokio::io;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpListener;
 
-const MAGIC: u32 = 0xa1b2c3d4;
+const COMPRESSED_MAGIC: u32 = 0xa1b2c3d4;
 const ZLIB_COMPRESSION_LEVEL: u8 = 6;
 const COMPRESSED_EXTENSION: &str = "z";
 const CRC_EXTENSION: &str = "crc";
@@ -110,7 +111,7 @@ async fn write_to_cache(
     );
 
     let mut compressed_contents = Vec::new();
-    compressed_contents.write_u32(MAGIC).await?;
+    compressed_contents.write_u32(COMPRESSED_MAGIC).await?;
     compressed_contents
         .write_u32(uncompressed_contents.len() as u32)
         .await?;
@@ -249,10 +250,34 @@ async fn asset_handler(
         return Err(StatusCode::BAD_REQUEST);
     }
 
-    let crc = *crc_map.get(&asset_name).ok_or(StatusCode::NOT_FOUND)?;
-    let file_data = read(assets_cache_path.join(&asset_name))
-        .await
-        .map_err(|_| StatusCode::NOT_FOUND)?;
+    let (file_data, crc) = {
+        let compressed_extension = Some(OsStr::new(COMPRESSED_EXTENSION));
+        let asset_path = assets_cache_path.join(&asset_name);
+
+        // Do CRC checks first since that is faster than checking the file system
+        if asset_name.extension() == compressed_extension {
+            let crc = *crc_map.get(&asset_name).ok_or(StatusCode::NOT_FOUND)?;
+            (
+                read(asset_path).await.map_err(|_| StatusCode::NOT_FOUND)?,
+                crc,
+            )
+        } else {
+            let crc = *crc_map
+                .get(&append_extension(COMPRESSED_EXTENSION, &asset_name))
+                .ok_or(StatusCode::NOT_FOUND)?;
+            let compressed_data = read(append_extension(COMPRESSED_EXTENSION, &asset_path))
+                .await
+                .map_err(|_| StatusCode::NOT_FOUND)?;
+
+            // Skip the 4-byte magic number and 4-byte length comprising the compressed header
+            (
+                decompress_to_vec_zlib(&compressed_data[8..])
+                    .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?,
+                crc,
+            )
+        }
+    };
+
     let queried_crc: u32 = if let Some(query) = request.uri().query() {
         str::parse(query).map_err(|_| StatusCode::BAD_REQUEST)?
     } else {
