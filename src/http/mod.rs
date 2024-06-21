@@ -288,6 +288,7 @@ async fn retrieve_asset(
     if compress {
         Ok(compressed_data)
     } else {
+        // Skip the 4-byte magic number and 4-byte length comprising the compressed header
         decompress_to_vec_zlib(&compressed_data[8..]).map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)
     }
 }
