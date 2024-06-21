@@ -208,7 +208,6 @@ pub struct Channel {
     reordered_packets: BTreeMap<SequenceNumber, Packet>,
     next_client_sequence: SequenceNumber,
     next_server_sequence: SequenceNumber,
-    last_client_ack: SequenceNumber,
     last_server_ack: SequenceNumber,
 }
 
@@ -229,7 +228,6 @@ impl Channel {
             reordered_packets: BTreeMap::new(),
             next_client_sequence: 0,
             next_server_sequence: 0,
-            last_client_ack: 0,
             last_server_ack: 0,
         }
     }
