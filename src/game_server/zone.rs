@@ -735,7 +735,7 @@ pub fn load_zones(config_dir: &Path) -> Result<(ZoneTemplateMap, GuidTable<u64, 
 }
 
 pub fn enter_zone(
-    character: Option<Lock<Character>>,
+    character: Option<(Lock<Character>, ())>,
     player: u32,
     destination_read_handle: RwLockReadGuard<Zone>,
     destination_pos: Option<Pos>,
@@ -743,9 +743,9 @@ pub fn enter_zone(
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let destination_pos = destination_pos.unwrap_or(destination_read_handle.default_spawn_pos);
     let destination_rot = destination_rot.unwrap_or(destination_read_handle.default_spawn_rot);
-    if let Some(character) = character {
+    if let Some((character, index)) = character {
         let mut characters = destination_read_handle.write_characters();
-        characters.insert_lock(player_guid(player), character);
+        characters.insert_lock(player_guid(player), index, character);
         drop(characters);
     }
     prepare_init_zone_packets(
@@ -820,7 +820,7 @@ macro_rules! teleport_to_zone {
         if let Some(destination_zone) = $zones.get($destination_zone_guid) {
             let destination_read_handle = destination_zone.read();
             let mut broadcasts = Vec::new();
-            if let Some(character) = &character {
+            if let Some((character, _)) = &character {
                 broadcasts.append(&mut $crate::game_server::mount::reply_dismount(
                     $player,
                     &destination_read_handle,
