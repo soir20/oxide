@@ -3,13 +3,12 @@ use std::ffi::{OsStr, OsString};
 use std::path::{Component, PathBuf};
 use std::sync::Arc;
 
-use axum::extract::{Path, Request, State};
+use axum::extract::{Path, State};
 use axum::http::StatusCode;
 use axum::routing::get;
 use axum::{serve, Router};
 use miniz_oxide::deflate::compress_to_vec_zlib;
 use miniz_oxide::inflate::decompress_to_vec_zlib;
-use serde::Deserialize;
 use tokio::fs::{create_dir_all, read, read_dir, remove_dir_all, write, OpenOptions};
 use tokio::io;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
@@ -18,13 +17,8 @@ use tokio::net::TcpListener;
 const COMPRESSED_MAGIC: u32 = 0xa1b2c3d4;
 const ZLIB_COMPRESSION_LEVEL: u8 = 6;
 const COMPRESSED_EXTENSION: &str = "z";
-const CRC_EXTENSION: &str = "crc";
-
-#[derive(Deserialize)]
-struct ManifestConfig {
-    name: String,
-    path: PathBuf,
-}
+const CRC_EXTENSION_SEPARATOR: &str = "_";
+const MANIFEST_NAME: &str = "manifest.txt";
 
 struct Manifest {
     name: OsString,
@@ -33,16 +27,12 @@ struct Manifest {
 
 async fn read_manifests_config(config_dir: &std::path::Path) -> io::Result<Vec<Manifest>> {
     let manifests_data = read(config_dir.join("manifests.json")).await?;
-    let manifests: Vec<ManifestConfig> = serde_json::from_slice(&manifests_data)?;
+    let manifests: Vec<PathBuf> = serde_json::from_slice(&manifests_data)?;
     Ok(manifests
         .into_iter()
-        .map(|manifest_config| {
-            let mut full_name = manifest_config.name;
-            full_name.push_str("_manifest.txt");
-            Manifest {
-                name: OsString::from(full_name),
-                prefix: manifest_config.path,
-            }
+        .map(|manifest_path| Manifest {
+            name: OsString::from(MANIFEST_NAME),
+            prefix: manifest_path,
         })
         .collect())
 }
@@ -235,10 +225,43 @@ async fn prepare_asset_cache(
     Ok(crc_map)
 }
 
-async fn asset_handler(
-    Path(asset_name): Path<PathBuf>,
-    State((assets_cache_path, crc_map)): State<(Arc<PathBuf>, Arc<CrcMap>)>,
-    request: Request,
+fn decompose_extension(asset_name: &std::path::Path) -> (PathBuf, bool, Option<u32>) {
+    let possible_extension_str = asset_name
+        .extension()
+        .map(|extension| extension.to_os_string().into_string().ok())
+        .unwrap_or(None);
+    let (non_crc_asset_name, crc) = if let Some(extension_str) = possible_extension_str {
+        let extension_split = extension_str.rsplit_once(CRC_EXTENSION_SEPARATOR);
+
+        if let Some((real_extension, crc_str)) = extension_split {
+            (
+                asset_name.with_extension(real_extension),
+                crc_str.parse::<u32>().ok(),
+            )
+        } else {
+            (asset_name.to_path_buf(), None)
+        }
+    } else {
+        (asset_name.to_path_buf(), None)
+    };
+
+    let compressed = non_crc_asset_name
+        .extension()
+        .map(|extension| extension == COMPRESSED_EXTENSION)
+        .unwrap_or(false);
+    let compressed_asset_name = if compressed {
+        non_crc_asset_name.to_path_buf()
+    } else {
+        append_extension(COMPRESSED_EXTENSION, &non_crc_asset_name)
+    };
+
+    (compressed_asset_name, compressed, crc)
+}
+
+async fn retrieve_asset(
+    asset_name: PathBuf,
+    assets_cache_path: Arc<PathBuf>,
+    crc_map: Arc<CrcMap>,
 ) -> Result<Vec<u8>, StatusCode> {
     // SECURITY: Ensure that the path is within the assets cache before returning any data.
     // Reject all paths containing anything other than normal folder names (e.g. paths containing
@@ -250,45 +273,52 @@ async fn asset_handler(
         return Err(StatusCode::BAD_REQUEST);
     }
 
-    let (file_data, crc) = {
-        let compressed_extension = Some(OsStr::new(COMPRESSED_EXTENSION));
-        let asset_path = assets_cache_path.join(&asset_name);
+    let (compressed_asset_name, compress, queried_crc) = decompose_extension(&asset_name);
 
-        // Do CRC checks first since that is faster than checking the file system
-        if asset_name.extension() == compressed_extension {
-            let crc = *crc_map.get(&asset_name).ok_or(StatusCode::NOT_FOUND)?;
-            (
-                read(asset_path).await.map_err(|_| StatusCode::NOT_FOUND)?,
-                crc,
-            )
-        } else {
-            let crc = *crc_map
-                .get(&append_extension(COMPRESSED_EXTENSION, &asset_name))
-                .ok_or(StatusCode::NOT_FOUND)?;
-            let compressed_data = read(append_extension(COMPRESSED_EXTENSION, &asset_path))
-                .await
-                .map_err(|_| StatusCode::NOT_FOUND)?;
-
-            // Skip the 4-byte magic number and 4-byte length comprising the compressed header
-            (
-                decompress_to_vec_zlib(&compressed_data[8..])
-                    .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?,
-                crc,
-            )
-        }
-    };
-
-    let queried_crc: u32 = if let Some(query) = request.uri().query() {
-        str::parse(query).map_err(|_| StatusCode::BAD_REQUEST)?
-    } else {
-        crc
-    };
-
-    if crc == queried_crc {
-        Ok(file_data)
-    } else {
-        Err(StatusCode::NOT_FOUND)
+    // Do CRC checks first since that is faster than checking the file system
+    let crc = *crc_map
+        .get(&compressed_asset_name)
+        .ok_or(StatusCode::NOT_FOUND)?;
+    if crc != queried_crc.unwrap_or(crc) {
+        return Err(StatusCode::NOT_FOUND);
     }
+
+    let asset_path = assets_cache_path.join(&compressed_asset_name);
+    let compressed_data = read(asset_path).await.map_err(|_| StatusCode::NOT_FOUND)?;
+    if compress {
+        Ok(compressed_data)
+    } else {
+        // Skip the 4-byte magic number and 4-byte length comprising the compressed header
+        decompress_to_vec_zlib(&compressed_data[8..]).map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)
+    }
+}
+
+fn is_name_hash(component: &OsStr) -> bool {
+    let is_hash_length = component.len() == 3;
+    is_hash_length
+        && if let Ok(comp_str) = component.to_os_string().into_string() {
+            comp_str.parse::<u16>().is_ok()
+        } else {
+            false
+        }
+}
+
+async fn asset_handler(
+    Path(asset): Path<PathBuf>,
+    State((assets_cache_path, crc_map)): State<(Arc<PathBuf>, Arc<CrcMap>)>,
+) -> Result<Vec<u8>, StatusCode> {
+    let is_first_component_name_hash = asset.iter().next().map(is_name_hash).unwrap_or(false);
+
+    // Ignore the name hash if it is included
+    let asset_name = if is_first_component_name_hash {
+        let mut components = asset.components();
+        components.next();
+        components.as_path().to_path_buf()
+    } else {
+        asset
+    };
+
+    retrieve_asset(asset_name, assets_cache_path, crc_map).await
 }
 
 async fn try_start(
