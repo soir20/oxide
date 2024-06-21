@@ -13,7 +13,7 @@ use crate::game_server::client_update_packet::Position;
 use crate::game_server::command::SelectPlayer;
 use crate::game_server::game_packet::{GamePacket, OpCode, Pos};
 use crate::game_server::guid::{
-    Guid, GuidTable, GuidTableHandle, GuidTableReadHandle, GuidTableWriteHandle, Lock,
+    Guid, GuidTable, GuidTableHandle, GuidTableReadHandle, GuidTableWriteHandle, IndexedGuid, Lock,
 };
 use crate::game_server::housing::{prepare_init_house_packets, BuildArea};
 use crate::game_server::login::{ClientBeginZoning, ZoneDetails};
@@ -104,6 +104,13 @@ pub enum CharacterType {
     Player,
 }
 
+#[derive(Copy, Clone, Eq, PartialOrd, PartialEq, Ord)]
+pub enum CharacterCategory {
+    Player,
+    NpcAutoInteractEnabled,
+    NpcAutoInteractDisabled,
+}
+
 #[derive(Clone)]
 pub struct Character {
     pub guid: u64,
@@ -116,9 +123,19 @@ pub struct Character {
     pub auto_interact_radius: f32,
 }
 
-impl Guid<u64> for Character {
+impl IndexedGuid<u64, CharacterCategory> for Character {
     fn guid(&self) -> u64 {
         self.guid
+    }
+
+    fn index(&self) -> CharacterCategory {
+        match self.character_type {
+            CharacterType::Player => CharacterCategory::Player,
+            _ => match self.auto_interact_radius > 0.0 {
+                true => CharacterCategory::NpcAutoInteractEnabled,
+                false => CharacterCategory::NpcAutoInteractDisabled,
+            },
+        }
     }
 }
 
@@ -396,7 +413,7 @@ impl Guid<u32> for ZoneTemplate {
     }
 }
 
-impl From<&Vec<Character>> for GuidTable<u64, Character> {
+impl From<&Vec<Character>> for GuidTable<u64, Character, CharacterCategory> {
     fn from(value: &Vec<Character>) -> Self {
         let table = GuidTable::new();
 
@@ -449,7 +466,7 @@ pub struct Zone {
     pub gravity_multiplier: f32,
     hide_ui: bool,
     combat_hud: bool,
-    characters: GuidTable<u64, Character>,
+    characters: GuidTable<u64, Character, CharacterCategory>,
     pub house_data: Option<House>,
 }
 
@@ -463,7 +480,7 @@ impl Zone {
     pub fn new_house(guid: u64, template: &ZoneTemplate, house: House) -> Self {
         Zone {
             guid,
-            template_guid: template.guid(),
+            template_guid: Guid::guid(template),
             template_name: template.template_name,
             icon: template.template_icon,
             asset_name: template.asset_name.clone(),
@@ -475,9 +492,10 @@ impl Zone {
             gravity_multiplier: template.gravity_multiplier,
             hide_ui: template.hide_ui,
             combat_hud: template.combat_hud,
-            characters: <GuidTable<u64, Character> as From<&Vec<Character>>>::from(
-                &template.characters,
-            ),
+            characters:
+                <GuidTable<u64, Character, CharacterCategory> as From<&Vec<Character>>>::from(
+                    &template.characters,
+                ),
             house_data: Some(house),
         }
     }
@@ -507,16 +525,16 @@ impl Zone {
         Ok(packets)
     }
 
-    pub fn read_characters(&self) -> GuidTableReadHandle<u64, Character> {
+    pub fn read_characters(&self) -> GuidTableReadHandle<u64, Character, CharacterCategory> {
         self.characters.read()
     }
 
-    pub fn write_characters(&self) -> GuidTableWriteHandle<u64, Character> {
+    pub fn write_characters(&self) -> GuidTableWriteHandle<u64, Character, CharacterCategory> {
         self.characters.write()
     }
 
     pub fn move_character(
-        characters: GuidTableReadHandle<u64, Character>,
+        characters: GuidTableReadHandle<u64, Character, CharacterCategory>,
         pos_update: UpdatePlayerPosition,
         game_server: &GameServer,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
@@ -541,7 +559,7 @@ impl Zone {
             drop(write_handle);
 
             let read_handle = character.read();
-            for character in characters.values() {
+            for character in characters.values_by_index(CharacterCategory::NpcAutoInteractEnabled) {
                 let other_read_handle = character.read();
                 if other_read_handle.auto_interact_radius > 0.0 {
                     let distance = distance3(
@@ -677,11 +695,11 @@ impl From<ZoneConfig> for (ZoneTemplate, Vec<Zone>) {
 
         let mut zones = Vec::new();
         for index in 0..zone_config.instances {
-            let instance_guid = instance_guid(index, template.guid());
+            let instance_guid = instance_guid(index, Guid::guid(&template));
 
             zones.push(Zone {
                 guid: instance_guid,
-                template_guid: template.guid(),
+                template_guid: Guid::guid(&template),
                 template_name: template.template_name,
                 icon: template.template_icon,
                 asset_name: template.asset_name.clone(),
@@ -693,9 +711,9 @@ impl From<ZoneConfig> for (ZoneTemplate, Vec<Zone>) {
                 gravity_multiplier: template.gravity_multiplier,
                 hide_ui: template.hide_ui,
                 combat_hud: template.combat_hud,
-                characters: <GuidTable<u64, Character> as From<&Vec<Character>>>::from(
-                    &template.characters,
-                ),
+                characters: <GuidTable<u64, Character, CharacterCategory> as From<
+                    &Vec<Character>,
+                >>::from(&template.characters),
                 house_data: None,
             });
         }
@@ -716,14 +734,14 @@ pub fn load_zones(config_dir: &Path) -> Result<(ZoneTemplateMap, GuidTable<u64, 
         for zone_config in zone_configs {
             let (template, zones) =
                 <(ZoneTemplate, Vec<Zone>) as From<ZoneConfig>>::from(zone_config);
-            let template_guid = template.guid();
+            let template_guid = Guid::guid(&template);
 
             if templates.insert(template_guid, template).is_some() {
                 panic!("Two zone templates have ID {}", template_guid);
             }
 
             for zone in zones {
-                let zone_guid = zone.guid();
+                let zone_guid = Guid::guid(&zone);
                 if zones_write_handle.insert(zone).is_some() {
                     panic!("Two zone templates have ID {}", zone_guid);
                 }
@@ -735,7 +753,7 @@ pub fn load_zones(config_dir: &Path) -> Result<(ZoneTemplateMap, GuidTable<u64, 
 }
 
 pub fn enter_zone(
-    character: Option<(Lock<Character>, ())>,
+    character: Option<(Lock<Character>, CharacterCategory)>,
     player: u32,
     destination_read_handle: RwLockReadGuard<Zone>,
     destination_pos: Option<Pos>,
@@ -853,7 +871,7 @@ pub fn interact_with_character(
         zones.values(),
         request.requester,
         |source_zone_read_handle, characters| {
-            let source_zone_guid = source_zone_read_handle.guid();
+            let source_zone_guid = <Zone as Guid<u64>>::guid(&source_zone_read_handle);
             let requester = shorten_player_guid(request.requester)?;
             let requester_x;
             let requester_y;

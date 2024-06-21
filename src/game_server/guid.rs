@@ -1,6 +1,5 @@
 use parking_lot::{RwLock, RwLockReadGuard, RwLockWriteGuard};
 use std::collections::{BTreeMap, BTreeSet};
-use std::collections::btree_set::Iter;
 
 pub struct Lock<T> {
     inner: RwLock<T>,
@@ -42,7 +41,7 @@ impl<T, G: Guid<T>> IndexedGuid<T, ()> for G {
 
 struct GuidTableData<K, V, I> {
     data: BTreeMap<K, (Lock<V>, I)>,
-    index: BTreeMap<I, BTreeSet<K>>
+    index: BTreeMap<I, BTreeSet<K>>,
 }
 
 impl<K, V, I> GuidTableData<K, V, I> {
@@ -95,12 +94,12 @@ impl<'a, K: Copy + Ord, V, I: Copy + Ord> GuidTableHandle<'a, K, V, I>
             .index
             .get(&index)
             .map(|index_list| index_list.iter())
-            .unwrap_or(Iter::default())
+            .unwrap_or_default()
             .map(|key| {
                 &self
                     .guard
                     .data
-                    .get(&key)
+                    .get(key)
                     .expect("GUID table has value for key in index")
                     .0
             })
@@ -171,12 +170,12 @@ impl<'a, K: Copy + Ord, I: Copy + Ord, V: IndexedGuid<K, I>> GuidTableHandle<'a,
             .index
             .get(&index)
             .map(|index_list| index_list.iter())
-            .unwrap_or(Iter::default())
+            .unwrap_or_default()
             .map(|key| {
                 &self
                     .guard
                     .data
-                    .get(&key)
+                    .get(key)
                     .expect("GUID table has value for key in index")
                     .0
             })
