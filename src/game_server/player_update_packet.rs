@@ -6,6 +6,7 @@ use crate::game_server::game_packet::{Effect, GamePacket, OpCode, Pos, StringId}
 
 #[derive(Copy, Clone, Debug)]
 pub enum PlayerUpdateOpCode {
+    AddPc = 0x1,
     AddNpc = 0x2,
     Remove = 0x3,
     Knockback = 0x4,
@@ -80,6 +81,55 @@ impl GamePacket for RemoveGracefully {
     const HEADER: Self::Header = PlayerUpdateRemoveOpCode::Graceful;
 }
 
+#[derive(SerializePacket, DeserializePacket)]
+pub struct Unknown13Array {
+    unknown1: u32,
+    unknown2: u32,
+    unknown3: u32,
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct AddPc {
+    guid: u64,
+    unknown1: u32,
+    unknown2: u32,
+    unknown3: u32,
+    first_name: String,
+    last_name: String,
+    body_model: u32,
+    unknown4: u32,
+    unknown5: u32,
+    unknown6: u32,
+    pos: Pos,
+    rot: Pos,
+    attachments: Vec<Attachment>,
+    head_model: String,
+    hair_model: String,
+    hair_color: u32,
+    eye_color: u32,
+    unknown7: u32,
+    skin_tone: String,
+    face_paint: String,
+    facial_hair: String,
+    unknown8: f32,
+    unknown9: bool,
+    unknown10: bool,
+    unknown11: bool,
+    unknown12: u32,
+    unknown13: Vec<Unknown13Array>,
+    unknown14: u32,
+    unknown15: u32,
+    unknown16: u32,
+    unknown17: u32,
+    effects: Vec<Effect>,
+    unknown18: u64,
+    unknown19: u32,
+    unknown20: u32,
+    unknown21: u32,
+    unknown22: f32,
+    unknown23: u32,
+    unknown24: u32,
+}
 #[derive(Copy, Clone, Debug)]
 pub enum NameplateImage {
     Darkside = 6162,
