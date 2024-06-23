@@ -123,7 +123,16 @@ impl<'a, K: Copy + Ord, V: IndexedGuid<K, I>, I: Copy + Ord> GuidTableWriteHandl
     }
 
     pub fn remove(&mut self, guid: K) -> Option<(Lock<V>, I)> {
-        self.guard.data.remove(&guid)
+        let previous = self.guard.data.remove(&guid);
+        if let Some((_, previous_index)) = &previous {
+            self.guard
+                .index
+                .get_mut(previous_index)
+                .expect("GUID table key was never added to index")
+                .remove(&guid);
+        }
+
+        previous
     }
 
     fn insert_with_index(&mut self, key: K, index: I, item: Lock<V>) -> Option<Lock<V>> {
