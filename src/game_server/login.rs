@@ -157,7 +157,7 @@ pub fn send_points_of_interest(
     for (_, zone) in game_server.read_zones().iter() {
         let zone_read_handle = zone.read();
         points.push(PointOfInterest {
-            id: zone_read_handle.template_guid,
+            id: zone_read_handle.template_guid as u32,
             name_id: 0,
             location_id: 0,
             teleport_pos: Pos {

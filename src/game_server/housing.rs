@@ -6,16 +6,18 @@ use parking_lot::RwLockReadGuard;
 
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
 
-use crate::game_server::character_guid::{fixture_guid, player_guid};
 use crate::game_server::game_packet::{GamePacket, ImageId, OpCode, Pos};
 use crate::game_server::guid::{Guid, GuidTableHandle};
 use crate::game_server::player_update_packet::{
     AddNpc, BaseAttachmentGroup, Icon, WeaponAnimation,
 };
 use crate::game_server::tunnel::TunneledPacket;
-use crate::game_server::zone::{template_guid, Fixture, House, Zone};
+use crate::game_server::unique_guid::player_guid;
+use crate::game_server::zone::{Fixture, House, Zone};
 use crate::game_server::{Broadcast, GameServer, ProcessPacketError};
-use crate::{teleport_to_zone, zone_with_character_read, zone_with_character_write};
+use crate::teleport_to_zone;
+
+use super::unique_guid::{npc_guid, zone_template_guid, FIXTURE_DISCRIMINANT};
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u16)]
@@ -325,8 +327,8 @@ impl GamePacket for HouseInviteNotification {
     const HEADER: Self::Header = HousingOpCode::InviteNotification;
 }
 
-fn placed_fixture(index: u32, house_guid: u64, fixture: &Fixture) -> PlacedFixture {
-    let fixture_guid = fixture_guid(index);
+fn placed_fixture(index: u16, house_guid: u64, fixture: &Fixture) -> PlacedFixture {
+    let fixture_guid = npc_guid(FIXTURE_DISCRIMINANT, house_guid, index);
     PlacedFixture {
         fixture_guid,
         house_guid,
@@ -360,13 +362,16 @@ fn placed_fixture(index: u32, house_guid: u64, fixture: &Fixture) -> PlacedFixtu
     }
 }
 
-fn fixture_item_list(fixtures: &[Fixture]) -> Result<Vec<u8>, SerializePacketError> {
+fn fixture_item_list(
+    fixtures: &[Fixture],
+    house_guid: u64,
+) -> Result<Vec<u8>, SerializePacketError> {
     let mut unknown1 = Vec::new();
     let mut unknown2 = Vec::new();
 
     for (index, fixture) in fixtures.iter().enumerate() {
         unknown1.push(Unknown1 {
-            fixture_guid: fixture_guid(index as u32),
+            fixture_guid: npc_guid(FIXTURE_DISCRIMINANT, house_guid, index as u16),
             item_def_id: fixture.item_def_id,
             unknown1: 0,
             unknown2: vec![],
@@ -398,10 +403,10 @@ fn fixture_item_list(fixtures: &[Fixture]) -> Result<Vec<u8>, SerializePacketErr
 
 fn fixture_packets(
     house_guid: u64,
-    index: u32,
+    index: u16,
     fixture: &Fixture,
 ) -> Result<Vec<Vec<u8>>, SerializePacketError> {
-    let fixture_guid = fixture_guid(index);
+    let fixture_guid = npc_guid(FIXTURE_DISCRIMINANT, house_guid, index);
     Ok(vec![
         GamePacket::serialize(&TunneledPacket {
             unknown1: true,
@@ -626,7 +631,7 @@ pub fn prepare_init_house_packets(
     ];
 
     for (index, fixture) in house.fixtures.iter().enumerate() {
-        packets.append(&mut fixture_packets(zone.guid(), index as u32, fixture)?);
+        packets.append(&mut fixture_packets(zone.guid(), index as u16, fixture)?);
     }
 
     Ok(packets)
@@ -642,10 +647,14 @@ pub fn process_housing_packet(
         Ok(op_code) => match op_code {
             HousingOpCode::SetEditMode => {
                 let set_edit_mode: SetEditMode = DeserializePacket::deserialize(cursor)?;
-                let packets = zone_with_character_read!(
-                    game_server.read_zones().values(),
-                    player_guid(sender),
-                    |zone_read_handle, characters| {
+                let characters = game_server.characters.read();
+                let packets = if let Some(character) = characters.get(player_guid(sender)) {
+                    let character_read_handle = character.read();
+                    if let Some(zone) = game_server
+                        .read_zones()
+                        .get(character_read_handle.instance_guid)
+                    {
+                        let zone_read_handle = zone.read();
                         if let Some(house) = &zone_read_handle.house_data {
                             if house.owner == sender {
                                 Ok(vec![GamePacket::serialize(&TunneledPacket {
@@ -674,23 +683,35 @@ pub fn process_housing_packet(
                             );
                             Err(ProcessPacketError::CorruptedPacket)
                         }
+                    } else {
+                        println!(
+                            "Player {} tried to set edit mode but is not in any zone",
+                            sender
+                        );
+                        Err(ProcessPacketError::CorruptedPacket)
                     }
-                )??;
+                } else {
+                    println!("Non-existent player {} tried to set edit mode", sender);
+                    Err(ProcessPacketError::CorruptedPacket)
+                }?;
 
                 Ok(vec![Broadcast::Single(sender, packets)])
             }
             HousingOpCode::EnterRequest => {
                 let enter_request: EnterRequest = DeserializePacket::deserialize(cursor)?;
 
+                let mut characters = game_server.characters.write();
+
                 // Create the house instance if it does not already exist
                 let mut zones = game_server.write_zones();
                 if zones.get(enter_request.house_guid).is_none() {
-                    let template_guid = template_guid(enter_request.house_guid)?;
+                    let template_guid = zone_template_guid(enter_request.house_guid);
                     if let Some(template) = game_server.read_zone_templates().get(&template_guid) {
                         zones.insert(Zone::new_house(
                             enter_request.house_guid,
                             template,
                             lookup_house(sender, enter_request.house_guid)?,
+                            &mut characters,
                         ));
                     } else {
                         println!(
@@ -701,22 +722,15 @@ pub fn process_housing_packet(
                     }
                 }
 
-                zone_with_character_write!(
-                    zones.values(),
-                    player_guid(sender),
-                    |zone, mut characters| {
-                        Ok(teleport_to_zone!(
-                            &zones,
-                            zone,
-                            characters,
-                            sender,
-                            enter_request.house_guid,
-                            None,
-                            None,
-                            game_server.mounts()
-                        )?)
-                    }
-                )?
+                Ok(teleport_to_zone!(
+                    &zones,
+                    characters,
+                    sender,
+                    enter_request.house_guid,
+                    None,
+                    None,
+                    game_server.mounts()
+                )?)
             }
             _ => {
                 let mut buffer = Vec::new();

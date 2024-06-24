@@ -5,7 +5,6 @@ use byteorder::{LittleEndian, WriteBytesExt};
 
 use packet_serialize::{LengthlessVec, SerializePacket, SerializePacketError};
 
-use crate::game_server::character_guid::{mount_guid, player_guid};
 use crate::game_server::game_packet::{Effect, GamePacket, ImageId, OpCode, Pos, StringId};
 use crate::game_server::guid::Guid;
 use crate::game_server::item::{EquipmentSlot, Item, MarketData};
@@ -14,7 +13,10 @@ use crate::game_server::player_update_packet::{
     NameplateImage, NameplateImageId, Wield, WieldType,
 };
 use crate::game_server::tunnel::TunneledPacket;
-use crate::game_server::zone::{Character, CharacterType};
+use crate::game_server::unique_guid::{mount_guid, player_guid};
+use crate::game_server::zone::CharacterType;
+
+use super::zone::Character;
 
 #[derive(SerializePacket)]
 pub struct EquippedVehicle {}
@@ -906,17 +908,18 @@ pub fn make_test_player(guid: u32, mounts: &BTreeMap<u32, MountConfig>) -> Playe
     }
 }
 
-impl From<PlayerData> for Character {
-    fn from(value: PlayerData) -> Self {
+impl PlayerData {
+    pub fn to_character(&self, instance_guid: u64) -> Character {
         Character {
-            guid: value.player_guid,
-            pos: value.pos,
-            rot: value.rot,
+            guid: self.player_guid,
+            pos: self.pos,
+            rot: self.rot,
             character_type: CharacterType::Player,
             state: 0,
             mount_id: None,
             interact_radius: 0.0,
             auto_interact_radius: 0.0,
+            instance_guid,
         }
     }
 }

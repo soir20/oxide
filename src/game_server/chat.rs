@@ -7,9 +7,9 @@ use packet_serialize::{
     DeserializePacket, DeserializePacketError, SerializePacket, SerializePacketError,
 };
 
-use crate::game_server::character_guid::player_guid;
 use crate::game_server::game_packet::{GamePacket, OpCode, Pos};
 use crate::game_server::tunnel::TunneledPacket;
+use crate::game_server::unique_guid::player_guid;
 use crate::game_server::{Broadcast, ProcessPacketError};
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
