@@ -195,7 +195,7 @@ fn process_dismount(
         u64,
         Character,
         (u64, super::zone::CharacterCategory),
-    > = game_server.characters.read();
+    > = game_server.read_characters();
     if let Some(character) = characters.get(player_guid(sender)) {
         let mut character_write_handle = character.write();
         let zones = game_server.read_zones();
@@ -227,7 +227,7 @@ fn process_mount_spawn(
     if let Some(mount) = game_server.mounts().get(&mount_spawn.mount_id) {
         let mut packets = Vec::new();
 
-        let characters = game_server.characters.read();
+        let characters = game_server.read_characters();
         if let Some(character) = characters.get(player_guid(sender)) {
             let mut character_write_handle = character.write();
 

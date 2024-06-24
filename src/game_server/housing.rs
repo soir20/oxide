@@ -647,7 +647,7 @@ pub fn process_housing_packet(
         Ok(op_code) => match op_code {
             HousingOpCode::SetEditMode => {
                 let set_edit_mode: SetEditMode = DeserializePacket::deserialize(cursor)?;
-                let characters = game_server.characters.read();
+                let characters = game_server.read_characters();
                 let packets = if let Some(character) = characters.get(player_guid(sender)) {
                     let character_read_handle = character.read();
                     if let Some(zone) = game_server
@@ -700,7 +700,7 @@ pub fn process_housing_packet(
             HousingOpCode::EnterRequest => {
                 let enter_request: EnterRequest = DeserializePacket::deserialize(cursor)?;
 
-                let mut characters = game_server.characters.write();
+                let mut characters = game_server.write_characters();
 
                 // Create the house instance if it does not already exist
                 let mut zones = game_server.write_zones();

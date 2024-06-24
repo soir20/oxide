@@ -916,7 +916,7 @@ pub fn interact_with_character(
     let requester_x;
     let requester_y;
     let requester_z;
-    let characters = game_server.characters.read();
+    let characters = game_server.read_characters();
     if let Some(requester) = characters.get(request.requester) {
         let requester_read_handle = requester.read();
         source_zone_guid = requester_read_handle.instance_guid;
@@ -972,7 +972,7 @@ pub fn interact_with_character(
                 drop(target_read_handle);
                 drop(characters);
 
-                let mut characters = game_server.characters.write();
+                let mut characters = game_server.write_characters();
                 if source_zone_guid != destination_zone_guid {
                     teleport_to_zone!(
                         &zones,

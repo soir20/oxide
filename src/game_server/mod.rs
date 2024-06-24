@@ -180,7 +180,7 @@ impl GameServer {
                     };
                     packets.push(GamePacket::serialize(&player)?);
 
-                    let mut characters_write_handle = self.characters.write();
+                    let mut characters_write_handle = self.write_characters();
                     characters_write_handle.insert(player.inner.data.to_character(player_zone));
 
                     Ok((guid, vec![Broadcast::Single(guid, packets)]))
@@ -279,7 +279,7 @@ impl GameServer {
                     };
                     //packets.push(GamePacket::serialize(&npc)?);
 
-                    let characters = self.characters.read();
+                    let characters = self.read_characters();
                     if let Some(character) = characters.get(player_guid(sender)) {
                         let character_read_handle = character.read();
                         if let Some(zone) =
@@ -407,7 +407,7 @@ impl GameServer {
                 OpCode::UpdatePlayerPosition => {
                     let pos_update: UpdatePlayerPosition =
                         DeserializePacket::deserialize(&mut cursor)?;
-                    let characters = self.characters.read();
+                    let characters = self.read_characters();
                     // TODO: broadcast pos update to all players
                     broadcasts.append(&mut Zone::move_character(characters, pos_update, self)?);
                 }
@@ -416,7 +416,7 @@ impl GameServer {
                         DeserializePacket::deserialize(&mut cursor)?;
 
                     let zones = self.read_zones();
-                    let mut characters = self.characters.write();
+                    let mut characters = self.write_characters();
                     broadcasts.append(&mut teleport_to_zone!(
                         &zones,
                         characters,
@@ -431,7 +431,7 @@ impl GameServer {
                     )?);
                 }
                 OpCode::TeleportToSafety => {
-                    let characters = self.characters.read();
+                    let characters = self.read_characters();
                     if let Some(character) = characters.get(player_guid(sender)) {
                         let character_read_handle = character.read();
                         let zones = self.read_zones();
@@ -506,6 +506,16 @@ impl GameServer {
 
     pub fn mounts(&self) -> &BTreeMap<u32, MountConfig> {
         &self.mounts
+    }
+
+    pub fn read_characters(&self) -> GuidTableReadHandle<u64, Character, (u64, CharacterCategory)> {
+        self.characters.read()
+    }
+
+    pub fn write_characters(
+        &self,
+    ) -> GuidTableWriteHandle<u64, Character, (u64, CharacterCategory)> {
+        self.characters.write()
     }
 
     pub fn read_zones(&self) -> GuidTableReadHandle<u64, Zone> {
