@@ -94,6 +94,10 @@ impl ZoneLockEnforcer<'_> {
         (zone_lock_request.zone_consumer)(&zones_table_read_handle, zones_read_map, zones_write_map)
     }
 
+    // This thread can access individual zones if and only if it holds the table read or write lock.
+    // If this thread holds the table write lock, then no other threads may hold a table lock.
+    // Therefore, if this thread holds the table write lock, it is the only thread that can hold any
+    // zone locks, and we can provide full access to the table without fear of deadlock.
     pub fn write_zones<R, T: FnOnce(&ZoneTableWriteHandle) -> R>(&self, table_consumer: T) -> R {
         let zones_table_write_handle = self.zones.write();
         table_consumer(&zones_table_write_handle)
@@ -162,6 +166,10 @@ impl LockEnforcer<'_> {
         )
     }
 
+    // This thread can access individual characters if and only if it holds the table read or write lock.
+    // If this thread holds the table write lock, then no other threads may hold a table lock.
+    // Therefore, if this thread holds the table write lock, it is the only thread that can hold any
+    // character locks, and we can provide full access to the table without fear of deadlock.
     pub fn write_characters<R, T: FnOnce(&CharacterTableWriteHandle, &ZoneLockEnforcer) -> R>(
         &self,
         table_consumer: T,
