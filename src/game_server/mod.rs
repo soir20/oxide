@@ -55,6 +55,7 @@ mod game_packet;
 mod guid;
 mod housing;
 mod item;
+mod lock_enforcer;
 mod login;
 mod mount;
 mod player_data;

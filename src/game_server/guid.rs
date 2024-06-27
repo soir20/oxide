@@ -58,7 +58,11 @@ pub trait GuidTableHandle<'a, K, V: 'a, I> {
 
     fn iter(&'a self) -> impl Iterator<Item = (K, &'a Lock<V>)>;
 
+    fn keys(&'a self) -> impl Iterator<Item = K>;
+
     fn values(&'a self) -> impl Iterator<Item = &'a Lock<V>>;
+
+    fn keys_by_index(&'a self, index: I) -> impl Iterator<Item = K>;
 
     fn values_by_index(&'a self, index: I) -> impl Iterator<Item = &'a Lock<V>>;
 }
@@ -70,12 +74,10 @@ pub struct GuidTableReadHandle<'a, K, V, I = ()> {
 impl<'a, K: Copy + Ord, V, I: Copy + Ord> GuidTableHandle<'a, K, V, I>
     for GuidTableReadHandle<'a, K, V, I>
 {
-    //noinspection DuplicatedCode
     fn get(&self, guid: K) -> Option<&Lock<V>> {
         self.guard.data.get(&guid).map(|(item, _)| item)
     }
 
-    //noinspection DuplicatedCode
     fn iter(&'a self) -> impl Iterator<Item = (K, &'a Lock<V>)> {
         self.guard
             .data
@@ -83,12 +85,23 @@ impl<'a, K: Copy + Ord, V, I: Copy + Ord> GuidTableHandle<'a, K, V, I>
             .map(move |(guid, (item, _))| (*guid, item))
     }
 
-    //noinspection DuplicatedCode
+    fn keys(&'a self) -> impl Iterator<Item = K> {
+        self.guard.data.keys().cloned()
+    }
+
     fn values(&'a self) -> impl Iterator<Item = &'a Lock<V>> {
         self.guard.data.values().map(|(item, _)| item)
     }
 
-    //noinspection DuplicatedCode
+    fn keys_by_index(&'a self, index: I) -> impl Iterator<Item = K> {
+        self.guard
+            .index
+            .get(&index)
+            .map(|index_list| index_list.iter())
+            .unwrap_or_default()
+            .cloned()
+    }
+
     fn values_by_index(&'a self, index: I) -> impl Iterator<Item = &'a Lock<V>> {
         self.guard
             .index
@@ -155,12 +168,10 @@ impl<'a, K: Copy + Ord, V: IndexedGuid<K, I>, I: Copy + Ord> GuidTableWriteHandl
 impl<'a, K: Copy + Ord, I: Copy + Ord, V: IndexedGuid<K, I>> GuidTableHandle<'a, K, V, I>
     for GuidTableWriteHandle<'a, K, V, I>
 {
-    //noinspection DuplicatedCode
     fn get(&self, guid: K) -> Option<&Lock<V>> {
         self.guard.data.get(&guid).map(|(item, _)| item)
     }
 
-    //noinspection DuplicatedCode
     fn iter(&'a self) -> impl Iterator<Item = (K, &'a Lock<V>)> {
         self.guard
             .data
@@ -168,12 +179,23 @@ impl<'a, K: Copy + Ord, I: Copy + Ord, V: IndexedGuid<K, I>> GuidTableHandle<'a,
             .map(|(guid, (item, _))| (*guid, item))
     }
 
-    //noinspection DuplicatedCode
+    fn keys(&'a self) -> impl Iterator<Item = K> {
+        self.guard.data.keys().cloned()
+    }
+
     fn values(&'a self) -> impl Iterator<Item = &'a Lock<V>> {
         self.guard.data.values().map(|(item, _)| item)
     }
 
-    //noinspection DuplicatedCode
+    fn keys_by_index(&'a self, index: I) -> impl Iterator<Item = K> {
+        self.guard
+            .index
+            .get(&index)
+            .map(|index_list| index_list.iter())
+            .unwrap_or_default()
+            .cloned()
+    }
+
     fn values_by_index(&'a self, index: I) -> impl Iterator<Item = &'a Lock<V>> {
         self.guard
             .index
