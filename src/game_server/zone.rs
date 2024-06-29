@@ -896,14 +896,17 @@ fn prepare_init_zone_packets(
 macro_rules! teleport_to_zone {
     ($characters_table_write_handle:expr, $player:expr,
      $destination_read_handle:expr, $destination_pos:expr, $destination_rot:expr, $mounts:expr) => {{
-        let character = $characters_table_write_handle.remove(player_guid($player));
+        let character = $crate::game_server::guid::GuidTableHandle::get(
+            $characters_table_write_handle,
+            player_guid($player),
+        );
 
         let mut broadcasts = Vec::new();
-        if let Some((character, _)) = &character {
+        if let Some(character_lock) = character {
             broadcasts.append(&mut $crate::game_server::mount::reply_dismount(
                 $player,
                 $destination_read_handle,
-                &mut character.write(),
+                &mut character_lock.write(),
                 $mounts,
             )?);
         }
@@ -1013,7 +1016,7 @@ pub fn interact_with_character(
                                                         zones_read.get(&destination_zone_guid)
                                                     {
                                                         teleport_to_zone!(
-                                                            &mut characters_table_write_handle,
+                                                            characters_table_write_handle,
                                                             requester,
                                                             destination_read_handle,
                                                             Some(destination_pos),

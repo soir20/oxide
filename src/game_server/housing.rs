@@ -739,7 +739,7 @@ pub fn process_housing_packet(
                                 zones_table_write_handle.get(enter_request.house_guid)
                             {
                                 teleport_to_zone!(
-                                    &mut characters_table_write_handle,
+                                    characters_table_write_handle,
                                     sender,
                                     &zone_read_handle.read(),
                                     None,

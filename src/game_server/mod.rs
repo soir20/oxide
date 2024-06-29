@@ -472,7 +472,7 @@ impl GameServer {
                                     zone_consumer: move |_, zones_read, _| {
                                         if let Ok(instance_guid) = possible_instance_guid {
                                             teleport_to_zone!(
-                                                &mut characters_table_write_handle,
+                                                characters_table_write_handle,
                                                 sender,
                                                 zones_read.get(&instance_guid).expect(
                                                     "any_instance returned invalid zone GUID"
