@@ -1007,7 +1007,7 @@ pub fn interact_with_character(
                             if source_zone_guid != destination_zone_guid {
                                 coerce_to_packet_supplier(move |game_server| {
                                     game_server.lock_enforcer().write_characters(
-                                        |mut characters_table_write_handle, zones_lock_enforcer| {
+                                        |characters_table_write_handle, zones_lock_enforcer| {
                                             zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
                                                 read_guids: vec![destination_zone_guid],
                                                 write_guids: Vec::new(),

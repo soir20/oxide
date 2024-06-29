@@ -199,8 +199,7 @@ fn process_dismount(
             read_guids: Vec::new(),
             write_guids: vec![player_guid(sender)],
             character_consumer: |_, _, mut characters_write, zones_lock_enforcer| {
-                if let Some(mut character_write_handle) =
-                    characters_write.get_mut(&player_guid(sender))
+                if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender))
                 {
                     zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
                         read_guids: vec![character_write_handle.instance_guid],

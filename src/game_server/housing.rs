@@ -709,7 +709,7 @@ pub fn process_housing_packet(
                 let enter_request: EnterRequest = DeserializePacket::deserialize(cursor)?;
 
                 game_server.lock_enforcer().write_characters(
-                    |mut characters_table_write_handle, zones_lock_enforcer| {
+                    |characters_table_write_handle, zones_lock_enforcer| {
                         zones_lock_enforcer.write_zones(|zones_table_write_handle| {
                             // Create the house instance if it does not already exist
                             if zones_table_write_handle

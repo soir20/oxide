@@ -445,7 +445,7 @@ impl GameServer {
                         DeserializePacket::deserialize(&mut cursor)?;
 
                     broadcasts.append(&mut self.lock_enforcer().write_characters(
-                        |mut characters_table_write_handle: &mut GuidTableWriteHandle<
+                        |characters_table_write_handle: &mut GuidTableWriteHandle<
                             u64,
                             Character,
                             (u64, CharacterCategory),
