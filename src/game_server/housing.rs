@@ -7,7 +7,7 @@ use parking_lot::RwLockReadGuard;
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
 
 use crate::game_server::game_packet::{GamePacket, ImageId, OpCode, Pos};
-use crate::game_server::guid::{Guid, GuidTableHandle};
+use crate::game_server::guid::GuidTableHandle;
 use crate::game_server::player_update_packet::{
     AddNpc, BaseAttachmentGroup, Icon, WeaponAnimation,
 };
@@ -17,6 +17,8 @@ use crate::game_server::zone::{Fixture, House, Zone};
 use crate::game_server::{Broadcast, GameServer, ProcessPacketError};
 use crate::teleport_to_zone;
 
+use super::guid::IndexedGuid;
+use super::lock_enforcer::{CharacterLockRequest, ZoneLockRequest};
 use super::unique_guid::{npc_guid, zone_template_guid, FIXTURE_DISCRIMINANT};
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
@@ -647,90 +649,110 @@ pub fn process_housing_packet(
         Ok(op_code) => match op_code {
             HousingOpCode::SetEditMode => {
                 let set_edit_mode: SetEditMode = DeserializePacket::deserialize(cursor)?;
-                let characters = game_server.read_characters();
-                let packets = if let Some(character) = characters.get(player_guid(sender)) {
-                    let character_read_handle = character.read();
-                    if let Some(zone) = game_server
-                        .read_zones()
-                        .get(character_read_handle.instance_guid)
-                    {
-                        let zone_read_handle = zone.read();
-                        if let Some(house) = &zone_read_handle.house_data {
-                            if house.owner == sender {
-                                Ok(vec![GamePacket::serialize(&TunneledPacket {
-                                    unknown1: true,
-                                    inner: HouseInfo {
-                                        edit_mode_enabled: set_edit_mode.enabled,
-                                        unknown2: 0,
-                                        unknown3: true,
-                                        fixtures: house.fixtures.len() as u32,
-                                        unknown5: 0,
-                                        unknown6: 0,
-                                        unknown7: 0,
-                                    },
-                                })?])
-                            } else {
-                                println!(
-                                    "Player {} tried to set edit mode in a house they don't own",
-                                    sender
-                                );
-                                Err(ProcessPacketError::CorruptedPacket)
-                            }
+                game_server.lock_enforcer().read_characters(|_| CharacterLockRequest {
+                    read_guids: Vec::new(),
+                    write_guids: Vec::new(),
+                    character_consumer: |characters_table_read_handle, _, _, zones_lock_enforcer| {
+                        let packets = if let Some((instance_guid, _)) = characters_table_read_handle.index(player_guid(sender)) {
+                            zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
+                                read_guids: vec![instance_guid],
+                                write_guids: Vec::new(),
+                                zone_consumer: |_, zones_read, _| {
+                                    if let Some(zone_read_handle) = zones_read.get(&instance_guid){
+                                        if let Some(house) = &zone_read_handle.house_data {
+                                            if house.owner == sender {
+                                                Ok(vec![GamePacket::serialize(&TunneledPacket {
+                                                    unknown1: true,
+                                                    inner: HouseInfo {
+                                                        edit_mode_enabled: set_edit_mode.enabled,
+                                                        unknown2: 0,
+                                                        unknown3: true,
+                                                        fixtures: house.fixtures.len() as u32,
+                                                        unknown5: 0,
+                                                        unknown6: 0,
+                                                        unknown7: 0,
+                                                    },
+                                                })?])
+                                            } else {
+                                                println!(
+                                                    "Player {} tried to set edit mode in a house they don't own",
+                                                    sender
+                                                );
+                                                Err(ProcessPacketError::CorruptedPacket)
+                                            }
+                                        } else {
+                                            println!(
+                                                "Player {} tried to set edit mode outside of a house",
+                                                sender
+                                            );
+                                            Err(ProcessPacketError::CorruptedPacket)
+                                        }
+                                    } else {
+                                        println!(
+                                            "Player {} tried to set edit mode but is not in any zone",
+                                            sender
+                                        );
+                                        Err(ProcessPacketError::CorruptedPacket)
+                                    }
+                                },
+                            })
                         } else {
-                            println!(
-                                "Player {} tried to set edit mode outside of a house",
-                                sender
-                            );
+                            println!("Non-existent player {} tried to set edit mode", sender);
                             Err(ProcessPacketError::CorruptedPacket)
-                        }
-                    } else {
-                        println!(
-                            "Player {} tried to set edit mode but is not in any zone",
-                            sender
-                        );
-                        Err(ProcessPacketError::CorruptedPacket)
-                    }
-                } else {
-                    println!("Non-existent player {} tried to set edit mode", sender);
-                    Err(ProcessPacketError::CorruptedPacket)
-                }?;
+                        }?;
 
-                Ok(vec![Broadcast::Single(sender, packets)])
+                        Ok(vec![Broadcast::Single(sender, packets)])
+                    },
+                })
             }
             HousingOpCode::EnterRequest => {
                 let enter_request: EnterRequest = DeserializePacket::deserialize(cursor)?;
 
-                let mut characters = game_server.write_characters();
+                game_server.lock_enforcer().write_characters(
+                    |mut characters_table_write_handle, zones_lock_enforcer| {
+                        zones_lock_enforcer.write_zones(|zones_table_write_handle| {
+                            // Create the house instance if it does not already exist
+                            if zones_table_write_handle
+                                .get(enter_request.house_guid)
+                                .is_none()
+                            {
+                                let template_guid = zone_template_guid(enter_request.house_guid);
+                                if let Some(template) =
+                                    game_server.read_zone_templates().get(&template_guid)
+                                {
+                                    zones_table_write_handle.insert(Zone::new_house(
+                                        enter_request.house_guid,
+                                        template,
+                                        lookup_house(sender, enter_request.house_guid)?,
+                                        characters_table_write_handle,
+                                    ));
+                                } else {
+                                    println!(
+                                        "Tried to enter house with unknown template {}",
+                                        template_guid
+                                    );
+                                    return Err(ProcessPacketError::CorruptedPacket);
+                                }
+                            }
 
-                // Create the house instance if it does not already exist
-                let mut zones = game_server.write_zones();
-                if zones.get(enter_request.house_guid).is_none() {
-                    let template_guid = zone_template_guid(enter_request.house_guid);
-                    if let Some(template) = game_server.read_zone_templates().get(&template_guid) {
-                        zones.insert(Zone::new_house(
-                            enter_request.house_guid,
-                            template,
-                            lookup_house(sender, enter_request.house_guid)?,
-                            &mut characters,
-                        ));
-                    } else {
-                        println!(
-                            "Tried to enter house with unknown template {}",
-                            template_guid
-                        );
-                        return Err(ProcessPacketError::CorruptedPacket);
-                    }
-                }
-
-                Ok(teleport_to_zone!(
-                    &zones,
-                    characters,
-                    sender,
-                    enter_request.house_guid,
-                    None,
-                    None,
-                    game_server.mounts()
-                )?)
+                            if let Some(zone_read_handle) =
+                                zones_table_write_handle.get(enter_request.house_guid)
+                            {
+                                teleport_to_zone!(
+                                    &mut characters_table_write_handle,
+                                    sender,
+                                    &zone_read_handle.read(),
+                                    None,
+                                    None,
+                                    game_server.mounts()
+                                )
+                            } else {
+                                println!("Unable to create house {}", enter_request.house_guid);
+                                Err(ProcessPacketError::CorruptedPacket)
+                            }
+                        })
+                    },
+                )
             }
             _ => {
                 let mut buffer = Vec::new();

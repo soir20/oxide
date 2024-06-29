@@ -13,9 +13,7 @@ use strum::{EnumIter, IntoEnumIterator};
 use crate::game_server::client_update_packet::Position;
 use crate::game_server::command::SelectPlayer;
 use crate::game_server::game_packet::{GamePacket, OpCode, Pos};
-use crate::game_server::guid::{
-    Guid, GuidTable, GuidTableHandle, GuidTableReadHandle, GuidTableWriteHandle, IndexedGuid, Lock,
-};
+use crate::game_server::guid::{Guid, GuidTable, GuidTableWriteHandle, IndexedGuid};
 use crate::game_server::housing::{prepare_init_house_packets, BuildArea};
 use crate::game_server::login::{ClientBeginZoning, ZoneDetails};
 use crate::game_server::player_update_packet::{
@@ -28,6 +26,9 @@ use crate::game_server::unique_guid::{npc_guid, player_guid, shorten_player_guid
 use crate::game_server::update_position::UpdatePlayerPosition;
 use crate::game_server::{Broadcast, GameServer, ProcessPacketError};
 
+use super::lock_enforcer::{
+    CharacterLockRequest, CharacterTableReadHandle, CharacterTableWriteHandle, ZoneLockRequest,
+};
 use super::unique_guid::{zone_instance_guid, AMBIENT_NPC_DISCRIMINANT};
 
 #[derive(Clone, Deserialize)]
@@ -539,9 +540,13 @@ pub struct Zone {
     pub house_data: Option<House>,
 }
 
-impl Guid<u64> for Zone {
+impl IndexedGuid<u64, u8> for Zone {
     fn guid(&self) -> u64 {
         self.guid
+    }
+
+    fn index(&self) -> u8 {
+        self.template_guid
     }
 }
 
@@ -575,74 +580,92 @@ impl Zone {
         })?])
     }
 
-    pub fn send_characters(
-        &self,
-        global_characters_table: &GuidTableReadHandle<u64, Character, (u64, CharacterCategory)>,
-    ) -> Result<Vec<Vec<u8>>, SerializePacketError> {
-        let mut packets = Vec::new();
+    pub fn character_guids(
+        guid: u64,
+        characters_table_read_handle: &CharacterTableReadHandle,
+    ) -> Vec<u64> {
+        let mut guids = Vec::new();
         for category in CharacterCategory::iter() {
-            for character in global_characters_table.values_by_index((self.guid, category)) {
-                packets.append(&mut character.read().to_packets()?);
+            for guid in characters_table_read_handle.keys_by_index((guid, category)) {
+                guids.push(guid);
             }
         }
 
-        Ok(packets)
+        guids
     }
 
     pub fn move_character(
-        characters: GuidTableReadHandle<u64, Character, (u64, CharacterCategory)>,
         pos_update: UpdatePlayerPosition,
         game_server: &GameServer,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        let possible_character = characters.get(pos_update.guid);
-        let mut characters_to_interact = Vec::new();
+        let characters_to_interact =
+            game_server
+                .lock_enforcer()
+                .read_characters(|characters_table_read_handle| {
+                    let auto_interact_npcs = if let Some((instance_guid, _)) =
+                        characters_table_read_handle.index(pos_update.guid)
+                    {
+                        characters_table_read_handle
+                            .keys_by_index((
+                                instance_guid,
+                                CharacterCategory::NpcAutoInteractEnabled,
+                            ))
+                            .collect()
+                    } else {
+                        Vec::new()
+                    };
 
-        if let Some(character) = possible_character {
-            let mut write_handle = character.write();
-            write_handle.pos = Pos {
-                x: pos_update.pos_x,
-                y: pos_update.pos_y,
-                z: pos_update.pos_z,
-                w: write_handle.pos.z,
-            };
-            write_handle.rot = Pos {
-                x: pos_update.rot_x,
-                y: pos_update.rot_y,
-                z: pos_update.rot_z,
-                w: write_handle.rot.z,
-            };
-            write_handle.state = pos_update.character_state;
-            drop(write_handle);
+                    CharacterLockRequest {
+                        read_guids: auto_interact_npcs.clone(),
+                        write_guids: vec![pos_update.guid],
+                        character_consumer: move |_, characters_read, mut characters_write, _| {
+                            if let Some(character_write_handle) =
+                                characters_write.get_mut(&pos_update.guid)
+                            {
+                                character_write_handle.pos = Pos {
+                                    x: pos_update.pos_x,
+                                    y: pos_update.pos_y,
+                                    z: pos_update.pos_z,
+                                    w: character_write_handle.pos.z,
+                                };
+                                character_write_handle.rot = Pos {
+                                    x: pos_update.rot_x,
+                                    y: pos_update.rot_y,
+                                    z: pos_update.rot_z,
+                                    w: character_write_handle.rot.z,
+                                };
+                                character_write_handle.state = pos_update.character_state;
 
-            let read_handle = character.read();
-            for character in characters.values_by_index((
-                read_handle.instance_guid,
-                CharacterCategory::NpcAutoInteractEnabled,
-            )) {
-                let other_read_handle = character.read();
-                if other_read_handle.auto_interact_radius > 0.0 {
-                    let distance = distance3(
-                        read_handle.pos.x,
-                        read_handle.pos.y,
-                        read_handle.pos.z,
-                        other_read_handle.pos.x,
-                        other_read_handle.pos.y,
-                        other_read_handle.pos.z,
-                    );
-                    if distance <= other_read_handle.auto_interact_radius {
-                        characters_to_interact.push(other_read_handle.guid);
+                                let mut characters_to_interact = Vec::new();
+                                for npc_guid in auto_interact_npcs {
+                                    if let Some(npc_read_handle) = characters_read.get(&npc_guid) {
+                                        if npc_read_handle.auto_interact_radius > 0.0 {
+                                            let distance = distance3(
+                                                character_write_handle.pos.x,
+                                                character_write_handle.pos.y,
+                                                character_write_handle.pos.z,
+                                                npc_read_handle.pos.x,
+                                                npc_read_handle.pos.y,
+                                                npc_read_handle.pos.z,
+                                            );
+                                            if distance <= npc_read_handle.auto_interact_radius {
+                                                characters_to_interact.push(npc_read_handle.guid);
+                                            }
+                                        }
+                                    }
+                                }
+
+                                Ok(characters_to_interact)
+                            } else {
+                                println!(
+                                    "Received position update from unknown character {}",
+                                    pos_update.guid
+                                );
+                                Err(ProcessPacketError::CorruptedPacket)
+                            }
+                        },
                     }
-                }
-            }
-        } else {
-            println!(
-                "Received position update from unknown character {}",
-                pos_update.guid
-            );
-            return Err(ProcessPacketError::CorruptedPacket);
-        }
-
-        drop(characters);
+                })?;
 
         let mut broadcasts = Vec::new();
         for character_guid in characters_to_interact {
@@ -763,7 +786,7 @@ type ZoneTemplateMap = BTreeMap<u8, ZoneTemplate>;
 pub fn load_zones(
     config_dir: &Path,
     mut global_characters_table: GuidTableWriteHandle<u64, Character, (u64, CharacterCategory)>,
-) -> Result<(ZoneTemplateMap, GuidTable<u64, Zone>), Error> {
+) -> Result<(ZoneTemplateMap, GuidTable<u64, Zone, u8>), Error> {
     let mut file = File::open(config_dir.join("zones.json"))?;
     let zone_configs: Vec<ZoneConfig> = serde_json::from_reader(&mut file)?;
 
@@ -780,7 +803,7 @@ pub fn load_zones(
             }
 
             for zone in zones {
-                let zone_guid = Guid::guid(&zone);
+                let zone_guid = zone.guid();
                 if zones_write_handle.insert(zone).is_some() {
                     panic!("Two zone templates have ID {}", zone_guid);
                 }
@@ -792,25 +815,25 @@ pub fn load_zones(
 }
 
 pub fn enter_zone(
-    mut global_characters_table: GuidTableWriteHandle<u64, Character, (u64, CharacterCategory)>,
-    character: Option<(Lock<Character>, (u64, CharacterCategory))>,
+    characters_table_write_handle: &mut CharacterTableWriteHandle,
     player: u32,
-    destination_read_handle: RwLockReadGuard<Zone>,
+    destination_read_handle: &RwLockReadGuard<Zone>,
     destination_pos: Option<Pos>,
     destination_rot: Option<Pos>,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let destination_pos = destination_pos.unwrap_or(destination_read_handle.default_spawn_pos);
     let destination_rot = destination_rot.unwrap_or(destination_read_handle.default_spawn_rot);
+
+    let character = characters_table_write_handle.remove(player_guid(player));
     if let Some((character, (_, character_category))) = character {
         let mut character_write_handle = character.write();
         character_write_handle.instance_guid = destination_read_handle.guid;
         drop(character_write_handle);
-        global_characters_table.insert_lock(
+        characters_table_write_handle.insert_lock(
             player_guid(player),
             (destination_read_handle.guid, character_category),
             character,
         );
-        drop(global_characters_table);
     }
     prepare_init_zone_packets(
         player,
@@ -822,7 +845,7 @@ pub fn enter_zone(
 
 fn prepare_init_zone_packets(
     player: u32,
-    destination: RwLockReadGuard<Zone>,
+    destination: &RwLockReadGuard<Zone>,
     destination_pos: Pos,
     destination_rot: Pos,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
@@ -863,11 +886,7 @@ fn prepare_init_zone_packets(
     })?);
 
     if let Some(house) = &destination.house_data {
-        packets.append(&mut prepare_init_house_packets(
-            player,
-            &destination,
-            house,
-        )?);
+        packets.append(&mut prepare_init_house_packets(player, destination, house)?);
     }
 
     Ok(vec![Broadcast::Single(player, packets)])
@@ -875,130 +894,167 @@ fn prepare_init_zone_packets(
 
 #[macro_export]
 macro_rules! teleport_to_zone {
-    ($zones:expr, $global_characters_table:expr, $player:expr,
-     $destination_zone_guid:expr, $destination_pos:expr, $destination_rot:expr, $mounts:expr) => {{
-        let character = $global_characters_table.remove(player_guid($player));
+    ($characters_table_write_handle:expr, $player:expr,
+     $destination_read_handle:expr, $destination_pos:expr, $destination_rot:expr, $mounts:expr) => {{
+        let character = $characters_table_write_handle.remove(player_guid($player));
 
-        if let Some(destination_zone) = $zones.get($destination_zone_guid) {
-            let destination_read_handle = destination_zone.read();
-            let mut broadcasts = Vec::new();
-            if let Some((character, _)) = &character {
-                broadcasts.append(&mut $crate::game_server::mount::reply_dismount(
-                    $player,
-                    &destination_read_handle,
-                    &mut character.write(),
-                    $mounts,
-                )?);
-            }
-
-            broadcasts.append(&mut $crate::game_server::zone::enter_zone(
-                $global_characters_table,
-                character,
+        let mut broadcasts = Vec::new();
+        if let Some((character, _)) = &character {
+            broadcasts.append(&mut $crate::game_server::mount::reply_dismount(
                 $player,
-                destination_read_handle,
-                $destination_pos,
-                $destination_rot,
+                $destination_read_handle,
+                &mut character.write(),
+                $mounts,
             )?);
-
-            Ok(broadcasts)
-        } else {
-            Err(ProcessPacketError::CorruptedPacket)
         }
+
+        broadcasts.append(&mut $crate::game_server::zone::enter_zone(
+            $characters_table_write_handle,
+            $player,
+            $destination_read_handle,
+            $destination_pos,
+            $destination_rot,
+        )?);
+
+        Ok(broadcasts)
     }};
 }
 
+type PacketSupplier = Result<
+    Box<dyn FnOnce(&GameServer) -> Result<Vec<Broadcast>, ProcessPacketError>>,
+    ProcessPacketError,
+>;
+fn coerce_to_packet_supplier(
+    f: impl FnOnce(&GameServer) -> Result<Vec<Broadcast>, ProcessPacketError> + 'static,
+) -> PacketSupplier {
+    Ok(Box::new(f))
+}
 pub fn interact_with_character(
     request: SelectPlayer,
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let requester = shorten_player_guid(request.requester)?;
-    let source_zone_guid;
-    let requester_x;
-    let requester_y;
-    let requester_z;
-    let characters = game_server.read_characters();
-    if let Some(requester) = characters.get(request.requester) {
-        let requester_read_handle = requester.read();
-        source_zone_guid = requester_read_handle.instance_guid;
-        requester_x = requester_read_handle.pos.x;
-        requester_y = requester_read_handle.pos.y;
-        requester_z = requester_read_handle.pos.z;
-    } else {
-        return Ok(Vec::new());
-    }
-
-    if let Some(target) = characters.get(request.target) {
-        let target_read_handle = target.read();
-
-        // Ensure the character is close enough to interact
-        let distance = distance3(
-            requester_x,
-            requester_y,
-            requester_z,
-            target_read_handle.pos.x,
-            target_read_handle.pos.y,
-            target_read_handle.pos.z,
-        );
-        if distance > target_read_handle.interact_radius {
-            return Ok(Vec::new());
-        }
-
-        // Process interaction based on character's type
-        match &target_read_handle.character_type {
-            CharacterType::Door(door) => {
-                let destination_pos = Pos {
-                    x: door.destination_pos_x,
-                    y: door.destination_pos_y,
-                    z: door.destination_pos_z,
-                    w: door.destination_pos_w,
-                };
-                let destination_rot = Pos {
-                    x: door.destination_rot_x,
-                    y: door.destination_rot_y,
-                    z: door.destination_rot_z,
-                    w: door.destination_rot_w,
-                };
-
-                let zones = game_server.read_zones();
-                let destination_zone_guid = if let &Some(destination_zone_guid) =
-                    &door.destination_zone
-                {
-                    destination_zone_guid
-                } else if let &Some(destination_zone_template) = &door.destination_zone_template {
-                    GameServer::any_instance(&zones, destination_zone_template)?
+    let packet_supplier: PacketSupplier = game_server.lock_enforcer().read_characters(|_| {
+        CharacterLockRequest {
+            read_guids: vec![request.requester, request.target],
+            write_guids: Vec::new(),
+            character_consumer: move |_, characters_read, _, zones_lock_enforcer| {
+                let source_zone_guid;
+                let requester_x;
+                let requester_y;
+                let requester_z;
+                if let Some(requester_read_handle) = characters_read.get(&request.requester) {
+                    source_zone_guid = requester_read_handle.instance_guid;
+                    requester_x = requester_read_handle.pos.x;
+                    requester_y = requester_read_handle.pos.y;
+                    requester_z = requester_read_handle.pos.z;
                 } else {
-                    source_zone_guid
-                };
-                drop(target_read_handle);
-                drop(characters);
-
-                let mut characters = game_server.write_characters();
-                if source_zone_guid != destination_zone_guid {
-                    teleport_to_zone!(
-                        &zones,
-                        characters,
-                        requester,
-                        destination_zone_guid,
-                        Some(destination_pos),
-                        Some(destination_rot),
-                        game_server.mounts()
-                    )
-                } else {
-                    teleport_within_zone(requester, destination_pos, destination_rot)
+                    return coerce_to_packet_supplier(|_| Ok(Vec::new()));
                 }
-            }
-            CharacterType::Transport(_) => {
-                Ok(vec![Broadcast::Single(requester, show_galaxy_map()?)])
-            }
-            _ => Ok(Vec::new()),
+
+                if let Some(target_read_handle) = characters_read.get(&request.target) {
+                    // Ensure the character is close enough to interact
+                    let distance = distance3(
+                        requester_x,
+                        requester_y,
+                        requester_z,
+                        target_read_handle.pos.x,
+                        target_read_handle.pos.y,
+                        target_read_handle.pos.z,
+                    );
+                    if distance > target_read_handle.interact_radius {
+                        return coerce_to_packet_supplier(|_| Ok(Vec::new()));
+                    }
+
+                    // Process interaction based on character's type
+                    match &target_read_handle.character_type {
+                        CharacterType::Door(door) => {
+                            let destination_pos = Pos {
+                                x: door.destination_pos_x,
+                                y: door.destination_pos_y,
+                                z: door.destination_pos_z,
+                                w: door.destination_pos_w,
+                            };
+                            let destination_rot = Pos {
+                                x: door.destination_rot_x,
+                                y: door.destination_rot_y,
+                                z: door.destination_rot_z,
+                                w: door.destination_rot_w,
+                            };
+
+                            let destination_zone_guid =
+                                if let &Some(destination_zone_guid) = &door.destination_zone {
+                                    destination_zone_guid
+                                } else if let &Some(destination_zone_template) =
+                                    &door.destination_zone_template
+                                {
+                                    zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
+                                        read_guids: Vec::new(),
+                                        write_guids: Vec::new(),
+                                        zone_consumer: |zones_table_read_handle, _, _| {
+                                            GameServer::any_instance(
+                                                zones_table_read_handle,
+                                                destination_zone_template,
+                                            )
+                                        },
+                                    })?
+                                } else {
+                                    source_zone_guid
+                                };
+                            if source_zone_guid != destination_zone_guid {
+                                coerce_to_packet_supplier(move |game_server| {
+                                    game_server.lock_enforcer().write_characters(
+                                        |mut characters_table_write_handle, zones_lock_enforcer| {
+                                            zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
+                                                read_guids: vec![destination_zone_guid],
+                                                write_guids: Vec::new(),
+                                                zone_consumer: |_, zones_read, _| {
+                                                    if let Some(destination_read_handle) =
+                                                        zones_read.get(&destination_zone_guid)
+                                                    {
+                                                        teleport_to_zone!(
+                                                            &mut characters_table_write_handle,
+                                                            requester,
+                                                            destination_read_handle,
+                                                            Some(destination_pos),
+                                                            Some(destination_rot),
+                                                            game_server.mounts()
+                                                        )
+                                                    } else {
+                                                        Ok(Vec::new())
+                                                    }
+                                                },
+                                            })
+                                        },
+                                    )
+                                })
+                            } else {
+                                coerce_to_packet_supplier(move |_| {
+                                    teleport_within_zone(
+                                        requester,
+                                        destination_pos,
+                                        destination_rot,
+                                    )
+                                })
+                            }
+                        }
+                        CharacterType::Transport(_) => coerce_to_packet_supplier(move |_| {
+                            Ok(vec![Broadcast::Single(requester, show_galaxy_map()?)])
+                        }),
+                        _ => coerce_to_packet_supplier(|_| Ok(Vec::new())),
+                    }
+                } else {
+                    println!(
+                        "Received request to interact with unknown NPC {} from {}",
+                        request.target, request.requester
+                    );
+                    Err(ProcessPacketError::CorruptedPacket)
+                }
+            },
         }
-    } else {
-        println!(
-            "Received request to interact with unknown NPC {} from {}",
-            request.target, request.requester
-        );
-        Err(ProcessPacketError::CorruptedPacket)
-    }
+    });
+
+    packet_supplier?(game_server)
 }
 
 pub fn teleport_within_zone(
