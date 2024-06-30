@@ -4,6 +4,9 @@ use std::path::Path;
 use std::vec;
 
 use byteorder::{LittleEndian, ReadBytesExt};
+use lock_enforcer::{
+    CharacterLockRequest, LockEnforcer, LockEnforcerSource, ZoneLockRequest, ZoneTableReadHandle,
+};
 use rand::Rng;
 
 use packet_serialize::{
@@ -18,9 +21,7 @@ use crate::game_server::client_update_packet::{
 };
 use crate::game_server::command::process_command;
 use crate::game_server::game_packet::{GamePacket, OpCode};
-use crate::game_server::guid::{
-    Guid, GuidTable, GuidTableHandle, GuidTableReadHandle, GuidTableWriteHandle,
-};
+use crate::game_server::guid::{GuidTable, GuidTableWriteHandle};
 use crate::game_server::housing::{
     process_housing_packet, HouseDescription, HouseInstanceEntry, HouseInstanceList,
 };
@@ -102,10 +103,9 @@ impl From<SerializePacketError> for ProcessPacketError {
 }
 
 pub struct GameServer {
-    characters: GuidTable<u64, Character, (u64, CharacterCategory)>,
+    lock_enforcer_source: LockEnforcerSource,
     mounts: BTreeMap<u32, MountConfig>,
     zone_templates: BTreeMap<u8, ZoneTemplate>,
-    zones: GuidTable<u64, Zone>,
 }
 
 impl GameServer {
@@ -113,10 +113,9 @@ impl GameServer {
         let characters = GuidTable::new();
         let (templates, zones) = load_zones(config_dir, characters.write())?;
         Ok(GameServer {
-            characters,
+            lock_enforcer_source: LockEnforcerSource::from(characters, zones),
             mounts: load_mounts(config_dir)?,
             zone_templates: templates,
-            zones,
         })
     }
 
@@ -127,64 +126,70 @@ impl GameServer {
         match OpCode::try_from(raw_op_code) {
             Ok(op_code) => match op_code {
                 OpCode::LoginRequest => {
-                    // TODO: validate and get GUID from login request
-                    let guid = 1;
+                    self.lock_enforcer().write_characters(
+                        |characters_write_handle, zone_lock_enforcer| {
+                            // TODO: validate and get GUID from login request
+                            let guid = 1;
 
-                    // TODO: get player's zone
-                    let player_zone = 24;
+                            // TODO: get player's zone
+                            let player_zone = 24;
 
-                    let mut packets = Vec::new();
+                            let mut packets = Vec::new();
 
-                    let login_reply = TunneledPacket {
-                        unknown1: true,
-                        inner: LoginReply { logged_in: true },
-                    };
-                    packets.push(GamePacket::serialize(&login_reply)?);
+                            let login_reply = TunneledPacket {
+                                unknown1: true,
+                                inner: LoginReply { logged_in: true },
+                            };
+                            packets.push(GamePacket::serialize(&login_reply)?);
 
-                    let deployment_env = TunneledPacket {
-                        unknown1: true,
-                        inner: DeploymentEnv {
-                            environment: NullTerminatedString("prod".to_string()),
+                            let deployment_env = TunneledPacket {
+                                unknown1: true,
+                                inner: DeploymentEnv {
+                                    environment: NullTerminatedString("prod".to_string()),
+                                },
+                            };
+                            packets.push(GamePacket::serialize(&deployment_env)?);
+
+                            packets.append(&mut zone_lock_enforcer.read_zones(|_| {
+                                ZoneLockRequest {
+                                    read_guids: vec![player_zone],
+                                    write_guids: Vec::new(),
+                                    zone_consumer: |_, zones_read, _| {
+                                        zones_read.get(&player_zone).unwrap().send_self()
+                                    },
+                                }
+                            })?);
+
+                            let settings = TunneledPacket {
+                                unknown1: true,
+                                inner: GameSettings {
+                                    unknown1: 4,
+                                    unknown2: 7,
+                                    unknown3: 268,
+                                    unknown4: true,
+                                    time_scale: 1.0,
+                                },
+                            };
+                            packets.push(GamePacket::serialize(&settings)?);
+
+                            let item_defs = TunneledPacket {
+                                unknown1: true,
+                                inner: make_item_definitions(),
+                            };
+                            packets.push(GamePacket::serialize(&item_defs)?);
+
+                            let player = TunneledPacket {
+                                unknown1: true,
+                                inner: make_test_player(guid, self.mounts()),
+                            };
+                            packets.push(GamePacket::serialize(&player)?);
+
+                            characters_write_handle
+                                .insert(player.inner.data.to_character(player_zone));
+
+                            Ok((guid, vec![Broadcast::Single(guid, packets)]))
                         },
-                    };
-                    packets.push(GamePacket::serialize(&deployment_env)?);
-                    let mut zone_details = self
-                        .zones
-                        .read()
-                        .get(player_zone)
-                        .unwrap()
-                        .read()
-                        .send_self()?;
-                    packets.append(&mut zone_details);
-
-                    let settings = TunneledPacket {
-                        unknown1: true,
-                        inner: GameSettings {
-                            unknown1: 4,
-                            unknown2: 7,
-                            unknown3: 268,
-                            unknown4: true,
-                            time_scale: 1.0,
-                        },
-                    };
-                    packets.push(GamePacket::serialize(&settings)?);
-
-                    let item_defs = TunneledPacket {
-                        unknown1: true,
-                        inner: make_item_definitions(),
-                    };
-                    packets.push(GamePacket::serialize(&item_defs)?);
-
-                    let player = TunneledPacket {
-                        unknown1: true,
-                        inner: make_test_player(guid, self.mounts()),
-                    };
-                    packets.push(GamePacket::serialize(&player)?);
-
-                    let mut characters_write_handle = self.write_characters();
-                    characters_write_handle.insert(player.inner.data.to_character(player_zone));
-
-                    Ok((guid, vec![Broadcast::Single(guid, packets)]))
+                    )
                 }
                 _ => {
                     println!("Client tried to log in without a login request");
@@ -280,69 +285,93 @@ impl GameServer {
                     };
                     //packets.push(GamePacket::serialize(&npc)?);
 
-                    let characters = self.read_characters();
-                    if let Some(character) = characters.get(player_guid(sender)) {
-                        let character_read_handle = character.read();
-                        if let Some(zone) =
-                            self.read_zones().get(character_read_handle.instance_guid)
-                        {
-                            let zone_read_handle = zone.read();
-                            let mut preloaded_npcs =
-                                zone_read_handle.send_characters(&characters)?;
-                            packets.append(&mut preloaded_npcs);
+                    let (stat_packet, character_guids) = self.lock_enforcer().read_characters(|_| CharacterLockRequest {
+                        read_guids: Vec::new(),
+                        write_guids: Vec::new(),
+                        character_consumer: |characters_table_read_handle, _, _, zones_lock_enforcer| {
+                            if let Some((instance_guid, _)) = characters_table_read_handle.index(player_guid(sender)) {
+                                zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
+                                    read_guids: vec![instance_guid],
+                                    write_guids: Vec::new(),
+                                    zone_consumer: |_, zones_read, _| {
+                                        if let Some(zone) = zones_read.get(&instance_guid) {
+                                            let stats = TunneledPacket {
+                                                unknown1: true,
+                                                inner: Stats {
+                                                    stats: vec![
+                                                        Stat {
+                                                            id: StatId::Speed,
+                                                            multiplier: 1,
+                                                            value1: 0.0,
+                                                            value2: zone.speed,
+                                                        },
+                                                        Stat {
+                                                            id: StatId::PowerRegen,
+                                                            multiplier: 1,
+                                                            value1: 0.0,
+                                                            value2: 1.0,
+                                                        },
+                                                        Stat {
+                                                            id: StatId::PowerRegen,
+                                                            multiplier: 1,
+                                                            value1: 0.0,
+                                                            value2: 1.0,
+                                                        },
+                                                        Stat {
+                                                            id: StatId::GravityMultiplier,
+                                                            multiplier: 1,
+                                                            value1: 0.0,
+                                                            value2: zone.gravity_multiplier,
+                                                        },
+                                                        Stat {
+                                                            id: StatId::JumpHeightMultiplier,
+                                                            multiplier: 1,
+                                                            value1: 0.0,
+                                                            value2: zone.jump_height_multiplier,
+                                                        },
+                                                    ],
+                                                },
+                                            };
 
-                            let stats = TunneledPacket {
-                                unknown1: true,
-                                inner: Stats {
-                                    stats: vec![
-                                        Stat {
-                                            id: StatId::Speed,
-                                            multiplier: 1,
-                                            value1: 0.0,
-                                            value2: zone_read_handle.speed,
-                                        },
-                                        Stat {
-                                            id: StatId::PowerRegen,
-                                            multiplier: 1,
-                                            value1: 0.0,
-                                            value2: 1.0,
-                                        },
-                                        Stat {
-                                            id: StatId::PowerRegen,
-                                            multiplier: 1,
-                                            value1: 0.0,
-                                            value2: 1.0,
-                                        },
-                                        Stat {
-                                            id: StatId::GravityMultiplier,
-                                            multiplier: 1,
-                                            value1: 0.0,
-                                            value2: zone_read_handle.gravity_multiplier,
-                                        },
-                                        Stat {
-                                            id: StatId::JumpHeightMultiplier,
-                                            multiplier: 1,
-                                            value1: 0.0,
-                                            value2: zone_read_handle.jump_height_multiplier,
-                                        },
-                                    ],
+                                            Ok((GamePacket::serialize(&stats)?, Zone::character_guids(instance_guid, characters_table_read_handle)))
+                                        } else {
+                                            println!(
+                                                "Player {} sent a ready packet from unknown zone {}",
+                                                sender, instance_guid
+                                            );
+                                            Err(ProcessPacketError::CorruptedPacket)
+                                        }
+                                    },
+                                })
+                            } else {
+                                println!(
+                                    "Player {} sent a ready packet but is not in any zone",
+                                    sender
+                                );
+                                Err(ProcessPacketError::CorruptedPacket)
+                            }
+                        },
+                    })?;
+                    packets.push(stat_packet);
+
+                    let mut character_packets =
+                        self.lock_enforcer()
+                            .read_characters(|_| CharacterLockRequest {
+                                read_guids: character_guids.clone(),
+                                write_guids: Vec::new(),
+                                character_consumer: |_, characters_read, _, _| {
+                                    let mut packets = Vec::new();
+
+                                    for guid in character_guids {
+                                        if let Some(character) = characters_read.get(&guid) {
+                                            packets.append(&mut character.to_packets()?);
+                                        }
+                                    }
+
+                                    Ok::<Vec<Vec<u8>>, ProcessPacketError>(packets)
                                 },
-                            };
-                            packets.push(GamePacket::serialize(&stats)?);
-                        } else {
-                            println!(
-                                "Player {} sent a ready packet from unknown zone {}",
-                                sender, character_read_handle.instance_guid
-                            );
-                            return Err(ProcessPacketError::CorruptedPacket);
-                        }
-                    } else {
-                        println!(
-                            "Player {} sent a ready packet but is not in any zone",
-                            sender
-                        );
-                        return Err(ProcessPacketError::CorruptedPacket);
-                    }
+                            })?;
+                    packets.append(&mut character_packets);
 
                     let health = TunneledPacket {
                         unknown1: true,
@@ -408,49 +437,87 @@ impl GameServer {
                 OpCode::UpdatePlayerPosition => {
                     let pos_update: UpdatePlayerPosition =
                         DeserializePacket::deserialize(&mut cursor)?;
-                    let characters = self.read_characters();
                     // TODO: broadcast pos update to all players
-                    broadcasts.append(&mut Zone::move_character(characters, pos_update, self)?);
+                    broadcasts.append(&mut Zone::move_character(pos_update, self)?);
                 }
                 OpCode::ZoneTeleportRequest => {
                     let teleport_request: ZoneTeleportRequest =
                         DeserializePacket::deserialize(&mut cursor)?;
 
-                    let zones = self.read_zones();
-                    let mut characters = self.write_characters();
-                    broadcasts.append(&mut teleport_to_zone!(
-                        &zones,
-                        characters,
-                        sender,
-                        GameServer::any_instance(
-                            &zones,
-                            shorten_zone_template_guid(teleport_request.destination_guid)?
-                        )?,
-                        None,
-                        None,
-                        self.mounts()
+                    broadcasts.append(&mut self.lock_enforcer().write_characters(
+                        |characters_table_write_handle: &mut GuidTableWriteHandle<
+                            u64,
+                            Character,
+                            (u64, CharacterCategory),
+                        >,
+                         zones_lock_enforcer| {
+                            zones_lock_enforcer.read_zones(|zones_table_read_handle| {
+                                let possible_instance_guid =
+                                    shorten_zone_template_guid(teleport_request.destination_guid)
+                                        .and_then(|template_guid| {
+                                            GameServer::any_instance(
+                                                zones_table_read_handle,
+                                                template_guid,
+                                            )
+                                        });
+                                let read_guids = if let Ok(instance_guid) = possible_instance_guid {
+                                    vec![instance_guid]
+                                } else {
+                                    Vec::new()
+                                };
+
+                                ZoneLockRequest {
+                                    read_guids,
+                                    write_guids: Vec::new(),
+                                    zone_consumer: move |_, zones_read, _| {
+                                        if let Ok(instance_guid) = possible_instance_guid {
+                                            teleport_to_zone!(
+                                                characters_table_write_handle,
+                                                sender,
+                                                zones_read.get(&instance_guid).expect(
+                                                    "any_instance returned invalid zone GUID"
+                                                ),
+                                                None,
+                                                None,
+                                                self.mounts()
+                                            )
+                                        } else {
+                                            Err(ProcessPacketError::CorruptedPacket)
+                                        }
+                                    },
+                                }
+                            })
+                        },
                     )?);
                 }
                 OpCode::TeleportToSafety => {
-                    let characters = self.read_characters();
-                    if let Some(character) = characters.get(player_guid(sender)) {
-                        let character_read_handle = character.read();
-                        let zones = self.read_zones();
-                        if let Some(zone) = zones.get(character_read_handle.instance_guid) {
-                            let zone_read_handle = zone.read();
-                            let spawn_pos = zone_read_handle.default_spawn_pos;
-                            let spawn_rot = zone_read_handle.default_spawn_rot;
+                    let mut packets = self.lock_enforcer().read_characters(|_| CharacterLockRequest {
+                        read_guids: Vec::new(),
+                        write_guids: Vec::new(),
+                        character_consumer: |characters_table_read_handle, _, _, zones_lock_enforcer| {
+                            if let Some((instance_guid, _)) = characters_table_read_handle.index(player_guid(sender)) {
+                                zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
+                                    read_guids: vec![instance_guid],
+                                    write_guids: Vec::new(),
+                                    zone_consumer: |_, zones_read, _| {
+                                        if let Some(zone) = zones_read.get(&instance_guid) {
+                                            let spawn_pos = zone.default_spawn_pos;
+                                            let spawn_rot = zone.default_spawn_rot;
 
-                            broadcasts
-                                .append(&mut teleport_within_zone(sender, spawn_pos, spawn_rot)?);
-                        } else {
-                            println!("Player {} outside zone tried to teleport to safety", sender);
-                            return Err(ProcessPacketError::CorruptedPacket);
+                                            teleport_within_zone(sender, spawn_pos, spawn_rot)
+                                        } else {
+                                            println!("Player {} outside zone tried to teleport to safety", sender);
+                                            Err(ProcessPacketError::CorruptedPacket)
+                                        }
+                                    },
+                                })
+                            } else {
+                                println!("Unknown player {} tried to teleport to safety", sender);
+                                Err(ProcessPacketError::CorruptedPacket)
+                            }
                         }
-                    } else {
-                        println!("Unknown player {} tried to teleport to safety", sender);
-                        return Err(ProcessPacketError::CorruptedPacket);
-                    }
+                    })?;
+                    broadcasts.append(&mut packets);
                 }
                 OpCode::Mount => {
                     broadcasts.append(&mut process_mount_packet(&mut cursor, sender, self)?);
@@ -509,26 +576,12 @@ impl GameServer {
         &self.mounts
     }
 
-    pub fn read_characters(&self) -> GuidTableReadHandle<u64, Character, (u64, CharacterCategory)> {
-        self.characters.read()
-    }
-
-    pub fn write_characters(
-        &self,
-    ) -> GuidTableWriteHandle<u64, Character, (u64, CharacterCategory)> {
-        self.characters.write()
-    }
-
-    pub fn read_zones(&self) -> GuidTableReadHandle<u64, Zone> {
-        self.zones.read()
-    }
-
-    pub fn write_zones(&self) -> GuidTableWriteHandle<u64, Zone> {
-        self.zones.write()
+    pub fn lock_enforcer(&self) -> LockEnforcer {
+        self.lock_enforcer_source.lock_enforcer()
     }
 
     pub fn any_instance(
-        zones: &GuidTableReadHandle<u64, Zone>,
+        zones: &ZoneTableReadHandle<'_>,
         template_guid: u8,
     ) -> Result<u64, ProcessPacketError> {
         let instances = GameServer::zones_by_template(zones, template_guid);
@@ -540,19 +593,7 @@ impl GameServer {
         }
     }
 
-    pub fn zones_by_template(
-        zones: &GuidTableReadHandle<u64, Zone>,
-        template_guid: u8,
-    ) -> Vec<u64> {
-        let mut zone_guids = Vec::new();
-
-        for zone in zones.values() {
-            let read_handle = zone.read();
-            if read_handle.template_guid == template_guid {
-                zone_guids.push(read_handle.guid());
-            }
-        }
-
-        zone_guids
+    pub fn zones_by_template(zones: &ZoneTableReadHandle<'_>, template_guid: u8) -> Vec<u64> {
+        zones.keys_by_index(template_guid).collect()
     }
 }

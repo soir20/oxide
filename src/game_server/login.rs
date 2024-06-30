@@ -6,7 +6,6 @@ use packet_serialize::{
 };
 
 use crate::game_server::game_packet::{GamePacket, ImageId, OpCode, Pos, StringId};
-use crate::game_server::guid::GuidTableHandle;
 use crate::game_server::tunnel::TunneledPacket;
 use crate::game_server::GameServer;
 
@@ -154,10 +153,9 @@ pub fn send_points_of_interest(
     game_server: &GameServer,
 ) -> Result<Vec<Vec<u8>>, SerializePacketError> {
     let mut points = Vec::new();
-    for (_, zone) in game_server.read_zones().iter() {
-        let zone_read_handle = zone.read();
+    for (guid, _) in game_server.zone_templates.iter() {
         points.push(PointOfInterest {
-            id: zone_read_handle.template_guid as u32,
+            id: *guid as u32,
             name_id: 0,
             location_id: 0,
             teleport_pos: Pos {

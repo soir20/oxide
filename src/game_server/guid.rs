@@ -56,6 +56,8 @@ impl<K, V, I> GuidTableData<K, V, I> {
 pub trait GuidTableHandle<'a, K, V: 'a, I> {
     fn get(&self, guid: K) -> Option<&Lock<V>>;
 
+    fn index(&self, guid: K) -> Option<I>;
+
     fn iter(&'a self) -> impl Iterator<Item = (K, &'a Lock<V>)>;
 
     fn keys(&'a self) -> impl Iterator<Item = K>;
@@ -76,6 +78,10 @@ impl<'a, K: Copy + Ord, V, I: Copy + Ord> GuidTableHandle<'a, K, V, I>
 {
     fn get(&self, guid: K) -> Option<&Lock<V>> {
         self.guard.data.get(&guid).map(|(item, _)| item)
+    }
+
+    fn index(&self, guid: K) -> Option<I> {
+        self.guard.data.get(&guid).map(|(_, index)| *index)
     }
 
     fn iter(&'a self) -> impl Iterator<Item = (K, &'a Lock<V>)> {
@@ -170,6 +176,10 @@ impl<'a, K: Copy + Ord, I: Copy + Ord, V: IndexedGuid<K, I>> GuidTableHandle<'a,
 {
     fn get(&self, guid: K) -> Option<&Lock<V>> {
         self.guard.data.get(&guid).map(|(item, _)| item)
+    }
+
+    fn index(&self, guid: K) -> Option<I> {
+        self.guard.data.get(&guid).map(|(_, index)| *index)
     }
 
     fn iter(&'a self) -> impl Iterator<Item = (K, &'a Lock<V>)> {
