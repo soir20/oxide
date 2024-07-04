@@ -1076,7 +1076,6 @@ pub fn enter_zone(
     }
     prepare_init_zone_packets(
         player,
-        characters_table_write_handle,
         destination_read_handle,
         destination_pos,
         destination_rot,
@@ -1085,7 +1084,6 @@ pub fn enter_zone(
 
 fn prepare_init_zone_packets(
     player: u32,
-    characters_table_write_handle: &mut CharacterTableWriteHandle,
     destination: &RwLockReadGuard<Zone>,
     destination_pos: Pos,
     destination_rot: Pos,
@@ -1127,12 +1125,7 @@ fn prepare_init_zone_packets(
     })?);
 
     if let Some(house) = &destination.house_data {
-        packets.append(&mut prepare_init_house_packets(
-            player,
-            characters_table_write_handle,
-            destination,
-            house,
-        )?);
+        packets.append(&mut prepare_init_house_packets(player, destination, house)?);
     }
 
     Ok(vec![Broadcast::Single(player, packets)])

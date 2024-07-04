@@ -18,7 +18,7 @@ use crate::game_server::{Broadcast, GameServer, ProcessPacketError};
 use crate::teleport_to_zone;
 
 use super::guid::IndexedGuid;
-use super::lock_enforcer::{CharacterLockRequest, CharacterTableWriteHandle, ZoneLockRequest};
+use super::lock_enforcer::{CharacterLockRequest, ZoneLockRequest};
 use super::unique_guid::{npc_guid, zone_template_guid, FIXTURE_DISCRIMINANT};
 use super::zone::CurrentFixture;
 
@@ -557,7 +557,6 @@ pub fn fixture_packets(
 
 pub fn prepare_init_house_packets(
     sender: u32,
-    characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
     zone: &RwLockReadGuard<Zone>,
     house: &House,
 ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
@@ -565,7 +564,7 @@ pub fn prepare_init_house_packets(
         return Err(ProcessPacketError::CorruptedPacket);
     }
 
-    let mut packets = vec![
+    Ok(vec![
         GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: HouseZoneData {
@@ -640,9 +639,7 @@ pub fn prepare_init_house_packets(
                 unknown7: 0,
             },
         })?,
-    ];
-
-    Ok(packets)
+    ])
 }
 
 pub fn process_housing_packet(
