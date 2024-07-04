@@ -914,6 +914,7 @@ impl PlayerData {
             guid: self.player_guid,
             pos: self.pos,
             rot: self.rot,
+            scale: 1.0,
             character_type: CharacterType::Player,
             state: 0,
             mount_id: None,

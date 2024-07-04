@@ -13,13 +13,14 @@ use crate::game_server::player_update_packet::{
 };
 use crate::game_server::tunnel::TunneledPacket;
 use crate::game_server::unique_guid::player_guid;
-use crate::game_server::zone::{Fixture, House, Zone};
+use crate::game_server::zone::{House, PreviousFixture, Zone};
 use crate::game_server::{Broadcast, GameServer, ProcessPacketError};
 use crate::teleport_to_zone;
 
 use super::guid::IndexedGuid;
-use super::lock_enforcer::{CharacterLockRequest, ZoneLockRequest};
+use super::lock_enforcer::{CharacterLockRequest, CharacterTableWriteHandle, ZoneLockRequest};
 use super::unique_guid::{npc_guid, zone_template_guid, FIXTURE_DISCRIMINANT};
+use super::zone::CurrentFixture;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u16)]
@@ -329,19 +330,25 @@ impl GamePacket for HouseInviteNotification {
     const HEADER: Self::Header = HousingOpCode::InviteNotification;
 }
 
-fn placed_fixture(index: u16, house_guid: u64, fixture: &Fixture) -> PlacedFixture {
-    let fixture_guid = npc_guid(FIXTURE_DISCRIMINANT, house_guid, index);
+fn placed_fixture(
+    fixture_guid: u64,
+    house_guid: u64,
+    fixture: &CurrentFixture,
+    pos: Pos,
+    rot: Pos,
+    scale: f32,
+) -> PlacedFixture {
     PlacedFixture {
         fixture_guid,
         house_guid,
         fixture_asset_id: fixture.item_def_id,
         unknown2: 0.0,
-        pos: fixture.pos,
-        rot: fixture.rot,
+        pos,
+        rot,
         scale: Pos {
             x: 0.0,
             y: 0.0,
-            z: fixture.scale,
+            z: scale,
             w: 0.0,
         },
         npc_guid: fixture_guid,
@@ -365,7 +372,7 @@ fn placed_fixture(index: u16, house_guid: u64, fixture: &Fixture) -> PlacedFixtu
 }
 
 fn fixture_item_list(
-    fixtures: &[Fixture],
+    fixtures: &[PreviousFixture],
     house_guid: u64,
 ) -> Result<Vec<u8>, SerializePacketError> {
     let mut unknown1 = Vec::new();
@@ -403,17 +410,19 @@ fn fixture_item_list(
     })
 }
 
-fn fixture_packets(
+pub fn fixture_packets(
     house_guid: u64,
-    index: u16,
-    fixture: &Fixture,
+    fixture_guid: u64,
+    fixture: &CurrentFixture,
+    pos: Pos,
+    rot: Pos,
+    scale: f32,
 ) -> Result<Vec<Vec<u8>>, SerializePacketError> {
-    let fixture_guid = npc_guid(FIXTURE_DISCRIMINANT, house_guid, index);
     Ok(vec![
         GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: FixtureUpdate {
-                placed_fixture: placed_fixture(index, house_guid, fixture),
+                placed_fixture: placed_fixture(fixture_guid, house_guid, fixture, pos, rot, scale),
                 unknown1: Unknown1 {
                     fixture_guid,
                     item_def_id: fixture.item_def_id,
@@ -453,9 +462,9 @@ fn fixture_packets(
                 unknown4: 408679,
                 unknown5: 13951728,
                 unknown6: 1,
-                scale: fixture.scale,
-                pos: fixture.pos,
-                rot: fixture.rot,
+                scale,
+                pos,
+                rot,
                 unknown8: 1,
                 attachments: vec![],
                 is_not_targetable: 1,
@@ -548,6 +557,7 @@ fn fixture_packets(
 
 pub fn prepare_init_house_packets(
     sender: u32,
+    characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
     zone: &RwLockReadGuard<Zone>,
     house: &House,
 ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
@@ -631,10 +641,6 @@ pub fn prepare_init_house_packets(
             },
         })?,
     ];
-
-    for (index, fixture) in house.fixtures.iter().enumerate() {
-        packets.append(&mut fixture_packets(zone.guid(), index as u16, fixture)?);
-    }
 
     Ok(packets)
 }
@@ -779,7 +785,7 @@ pub fn lookup_house(sender: u32, house_guid: u64) -> Result<House, ProcessPacket
         rating: 3.5,
         total_votes: 100,
         fixtures: vec![
-            Fixture {
+            PreviousFixture {
                 pos: Pos {
                     x: 495.0,
                     y: 0.0,
@@ -797,7 +803,7 @@ pub fn lookup_house(sender: u32, house_guid: u64) -> Result<House, ProcessPacket
                 model_id: 1417,
                 texture_name: "".to_string(),
             },
-            Fixture {
+            PreviousFixture {
                 pos: Pos {
                     x: 495.0,
                     y: 0.0,
@@ -815,7 +821,7 @@ pub fn lookup_house(sender: u32, house_guid: u64) -> Result<House, ProcessPacket
                 model_id: 1419,
                 texture_name: "".to_string(),
             },
-            Fixture {
+            PreviousFixture {
                 pos: Pos {
                     x: 495.0,
                     y: 0.0,
@@ -833,7 +839,7 @@ pub fn lookup_house(sender: u32, house_guid: u64) -> Result<House, ProcessPacket
                 model_id: 1419,
                 texture_name: "".to_string(),
             },
-            Fixture {
+            PreviousFixture {
                 pos: Pos {
                     x: 495.0,
                     y: 0.0,
@@ -851,7 +857,7 @@ pub fn lookup_house(sender: u32, house_guid: u64) -> Result<House, ProcessPacket
                 model_id: 1420,
                 texture_name: "".to_string(),
             },
-            Fixture {
+            PreviousFixture {
                 pos: Pos {
                     x: 495.0,
                     y: 0.0,
@@ -869,7 +875,7 @@ pub fn lookup_house(sender: u32, house_guid: u64) -> Result<House, ProcessPacket
                 model_id: 1418,
                 texture_name: "".to_string(),
             },
-            Fixture {
+            PreviousFixture {
                 pos: Pos {
                     x: 495.0,
                     y: 0.5,
@@ -887,7 +893,7 @@ pub fn lookup_house(sender: u32, house_guid: u64) -> Result<House, ProcessPacket
                 model_id: 1418,
                 texture_name: "".to_string(),
             },
-            Fixture {
+            PreviousFixture {
                 pos: Pos {
                     x: 495.0,
                     y: 1.0,
@@ -905,7 +911,7 @@ pub fn lookup_house(sender: u32, house_guid: u64) -> Result<House, ProcessPacket
                 model_id: 1418,
                 texture_name: "".to_string(),
             },
-            Fixture {
+            PreviousFixture {
                 pos: Pos {
                     x: 495.0,
                     y: 1.5,
@@ -923,7 +929,7 @@ pub fn lookup_house(sender: u32, house_guid: u64) -> Result<House, ProcessPacket
                 model_id: 1418,
                 texture_name: "".to_string(),
             },
-            Fixture {
+            PreviousFixture {
                 pos: Pos {
                     x: 490.0,
                     y: 0.0,
@@ -941,7 +947,7 @@ pub fn lookup_house(sender: u32, house_guid: u64) -> Result<House, ProcessPacket
                 model_id: 1416,
                 texture_name: "".to_string(),
             },
-            Fixture {
+            PreviousFixture {
                 pos: Pos {
                     x: 490.0,
                     y: 0.5,
@@ -959,7 +965,7 @@ pub fn lookup_house(sender: u32, house_guid: u64) -> Result<House, ProcessPacket
                 model_id: 1416,
                 texture_name: "".to_string(),
             },
-            Fixture {
+            PreviousFixture {
                 pos: Pos {
                     x: 490.0,
                     y: 1.0,
@@ -977,7 +983,7 @@ pub fn lookup_house(sender: u32, house_guid: u64) -> Result<House, ProcessPacket
                 model_id: 1416,
                 texture_name: "".to_string(),
             },
-            Fixture {
+            PreviousFixture {
                 pos: Pos {
                     x: 490.0,
                     y: 1.5,

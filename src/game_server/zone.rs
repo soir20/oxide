@@ -27,12 +27,13 @@ use crate::game_server::update_position::UpdatePlayerPosition;
 use crate::game_server::{Broadcast, GameServer, ProcessPacketError};
 
 use super::guid::GuidTableHandle;
+use super::housing::fixture_packets;
 use super::lock_enforcer::{
     CharacterLockRequest, CharacterReadGuard, CharacterTableReadHandle, CharacterTableWriteHandle,
     CharacterWriteGuard, ZoneLockRequest,
 };
 use super::player_update_packet::RemoveStandard;
-use super::unique_guid::{zone_instance_guid, AMBIENT_NPC_DISCRIMINANT};
+use super::unique_guid::{zone_instance_guid, AMBIENT_NPC_DISCRIMINANT, FIXTURE_DISCRIMINANT};
 
 #[derive(Clone, Deserialize)]
 pub struct Door {
@@ -109,6 +110,7 @@ pub enum CharacterType {
     Door(Door),
     Transport(Transport),
     Player,
+    Fixture(u64, CurrentFixture),
 }
 
 #[derive(Copy, Clone, Eq, EnumIter, PartialOrd, PartialEq, Ord)]
@@ -124,6 +126,7 @@ pub struct NpcTemplate {
     pub index: u16,
     pub pos: Pos,
     pub rot: Pos,
+    pub scale: f32,
     pub state: u8,
     pub character_type: CharacterType,
     pub mount_id: Option<u32>,
@@ -137,6 +140,7 @@ impl NpcTemplate {
             guid: npc_guid(self.discriminant, instance_guid, self.index),
             pos: self.pos,
             rot: self.rot,
+            scale: self.scale,
             state: self.state,
             character_type: self.character_type.clone(),
             mount_id: self.mount_id,
@@ -155,6 +159,7 @@ pub struct Character {
     pub guid: u64,
     pub pos: Pos,
     pub rot: Pos,
+    pub scale: f32,
     pub state: u8,
     pub character_type: CharacterType,
     pub mount_id: Option<u32>,
@@ -240,6 +245,14 @@ impl Character {
                 packets.append(&mut enable_interaction(self.guid, transport.cursor)?);
                 packets
             }
+            CharacterType::Fixture(house_guid, fixture) => fixture_packets(
+                *house_guid,
+                self.guid,
+                fixture,
+                self.pos,
+                self.rot,
+                self.scale,
+            )?,
             _ => Vec::new(),
         };
 
@@ -355,7 +368,7 @@ impl Character {
             unknown4: 408679,
             unknown5: 13951728,
             unknown6: 1,
-            scale: transport.scale.unwrap_or(1.0),
+            scale: character.scale,
             pos: character.pos,
             rot: character.rot,
             unknown8: 1,
@@ -521,10 +534,27 @@ impl ZoneTemplate {
     }
 }
 
-pub struct Fixture {
+pub struct PreviousFixture {
     pub pos: Pos,
     pub rot: Pos,
     pub scale: f32,
+    pub item_def_id: u32,
+    pub model_id: u32,
+    pub texture_name: String,
+}
+
+impl PreviousFixture {
+    pub fn as_current_fixture(&self) -> CurrentFixture {
+        CurrentFixture {
+            item_def_id: self.item_def_id,
+            model_id: self.model_id,
+            texture_name: self.texture_name.clone(),
+        }
+    }
+}
+
+#[derive(Clone)]
+pub struct CurrentFixture {
     pub item_def_id: u32,
     pub model_id: u32,
     pub texture_name: String,
@@ -536,7 +566,7 @@ pub struct House {
     pub custom_name: String,
     pub rating: f32,
     pub total_votes: u32,
-    pub fixtures: Vec<Fixture>,
+    pub fixtures: Vec<PreviousFixture>,
     pub build_areas: Vec<BuildArea>,
     pub is_locked: bool,
     pub is_published: bool,
@@ -621,6 +651,20 @@ impl Zone {
         house: House,
         global_characters_table: &mut GuidTableWriteHandle<u64, Character, CharacterIndex>,
     ) -> Self {
+        for (index, fixture) in house.fixtures.iter().enumerate() {
+            global_characters_table.insert(Character {
+                guid: npc_guid(FIXTURE_DISCRIMINANT, guid, index as u16),
+                pos: fixture.pos,
+                rot: fixture.rot,
+                scale: fixture.scale,
+                state: 0,
+                character_type: CharacterType::Fixture(guid, fixture.as_current_fixture()),
+                mount_id: None,
+                interact_radius: 0.0,
+                auto_interact_radius: 0.0,
+                instance_guid: guid,
+            });
+        }
         template.to_zone(guid, Some(house), global_characters_table)
     }
 
@@ -894,6 +938,7 @@ impl ZoneConfig {
                         z: 0.0,
                         w: 0.0,
                     },
+                    scale: 1.0,
                     state: 0,
                     character_type: CharacterType::Door(door),
                     mount_id: None,
@@ -919,6 +964,7 @@ impl ZoneConfig {
                         z: transport.rot_z,
                         w: transport.rot_w,
                     },
+                    scale: transport.scale.unwrap_or(1.0),
                     state: 0,
                     character_type: CharacterType::Transport(transport),
                     mount_id: None,
@@ -1030,6 +1076,7 @@ pub fn enter_zone(
     }
     prepare_init_zone_packets(
         player,
+        characters_table_write_handle,
         destination_read_handle,
         destination_pos,
         destination_rot,
@@ -1038,6 +1085,7 @@ pub fn enter_zone(
 
 fn prepare_init_zone_packets(
     player: u32,
+    characters_table_write_handle: &mut CharacterTableWriteHandle,
     destination: &RwLockReadGuard<Zone>,
     destination_pos: Pos,
     destination_rot: Pos,
@@ -1079,7 +1127,12 @@ fn prepare_init_zone_packets(
     })?);
 
     if let Some(house) = &destination.house_data {
-        packets.append(&mut prepare_init_house_packets(player, destination, house)?);
+        packets.append(&mut prepare_init_house_packets(
+            player,
+            characters_table_write_handle,
+            destination,
+            house,
+        )?);
     }
 
     Ok(vec![Broadcast::Single(player, packets)])
