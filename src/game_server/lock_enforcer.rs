@@ -36,10 +36,8 @@ impl<'a, K, V, I> From<GuidTableReadHandle<'a, K, V, I>> for TableReadHandleWrap
     }
 }
 
-pub type CharacterTableReadHandle<'a> =
-    TableReadHandleWrapper<'a, u64, Character, CharacterIndex>;
-pub type CharacterTableWriteHandle<'a> =
-    GuidTableWriteHandle<'a, u64, Character, CharacterIndex>;
+pub type CharacterTableReadHandle<'a> = TableReadHandleWrapper<'a, u64, Character, CharacterIndex>;
+pub type CharacterTableWriteHandle<'a> = GuidTableWriteHandle<'a, u64, Character, CharacterIndex>;
 pub type CharacterReadGuard<'a> = RwLockReadGuard<'a, Character>;
 pub type CharacterWriteGuard<'a> = RwLockWriteGuard<'a, Character>;
 pub type ZoneTableReadHandle<'a> = TableReadHandleWrapper<'a, u64, Zone, u8>;
