@@ -284,7 +284,7 @@ impl GameServer {
                         unknown1: true,
                         inner: make_test_npc(),
                     };
-                    packets.push(GamePacket::serialize(&npc)?);
+                    //packets.push(GamePacket::serialize(&npc)?);
 
                     let mut character_packets = self.lock_enforcer().read_characters(|characters_table_read_handle| {
                         let possible_index = characters_table_read_handle.index(player_guid(sender));
