@@ -640,7 +640,7 @@ pub fn make_test_npc() -> AddNpc {
         unknown6: 1,
         scale: 1.0,
         pos: Pos {
-            x: 387.3,
+            x: 887.3,
             y: 171.93376,
             z: 1546.956,
             w: 1.0,
