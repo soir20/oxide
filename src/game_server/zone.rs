@@ -642,19 +642,17 @@ impl Zone {
 
     fn nearby_chunks(center: Chunk) -> BTreeSet<Chunk> {
         let (center_x, center_z) = center;
-        BTreeSet::from_iter(
-            vec![
-                (center_x.saturating_sub(1), center_z.saturating_sub(1)),
-                (center_x.saturating_sub(1), center_z),
-                (center_x.saturating_sub(1), center_z.saturating_add(1)),
-                (center_x, center_z.saturating_sub(1)),
-                (center_x, center_z),
-                (center_x, center_z.saturating_add(1)),
-                (center_x.saturating_add(1), center_z.saturating_sub(1)),
-                (center_x.saturating_add(1), center_z),
-                (center_x.saturating_add(1), center_z.saturating_add(1)),
-            ],
-        )
+        BTreeSet::from_iter(vec![
+            (center_x.saturating_sub(1), center_z.saturating_sub(1)),
+            (center_x.saturating_sub(1), center_z),
+            (center_x.saturating_sub(1), center_z.saturating_add(1)),
+            (center_x, center_z.saturating_sub(1)),
+            (center_x, center_z),
+            (center_x, center_z.saturating_add(1)),
+            (center_x.saturating_add(1), center_z.saturating_sub(1)),
+            (center_x.saturating_add(1), center_z),
+            (center_x.saturating_add(1), center_z.saturating_add(1)),
+        ])
     }
 
     pub fn diff_character_guids(
