@@ -3,9 +3,10 @@ use std::collections::{BTreeMap, BTreeSet};
 use parking_lot::{RwLockReadGuard, RwLockWriteGuard};
 
 use crate::game_server::guid::GuidTable;
-use crate::game_server::zone::{Character, CharacterCategory, Zone};
+use crate::game_server::zone::{Character, Zone};
 
 use super::guid::{GuidTableHandle, GuidTableReadHandle, GuidTableWriteHandle};
+use super::zone::CharacterIndex;
 
 pub struct TableReadHandleWrapper<'a, K, V, I = ()> {
     handle: GuidTableReadHandle<'a, K, V, I>,
@@ -35,10 +36,8 @@ impl<'a, K, V, I> From<GuidTableReadHandle<'a, K, V, I>> for TableReadHandleWrap
     }
 }
 
-pub type CharacterTableReadHandle<'a> =
-    TableReadHandleWrapper<'a, u64, Character, (u64, CharacterCategory)>;
-pub type CharacterTableWriteHandle<'a> =
-    GuidTableWriteHandle<'a, u64, Character, (u64, CharacterCategory)>;
+pub type CharacterTableReadHandle<'a> = TableReadHandleWrapper<'a, u64, Character, CharacterIndex>;
+pub type CharacterTableWriteHandle<'a> = GuidTableWriteHandle<'a, u64, Character, CharacterIndex>;
 pub type CharacterReadGuard<'a> = RwLockReadGuard<'a, Character>;
 pub type CharacterWriteGuard<'a> = RwLockWriteGuard<'a, Character>;
 pub type ZoneTableReadHandle<'a> = TableReadHandleWrapper<'a, u64, Zone, u8>;
@@ -127,7 +126,7 @@ pub struct CharacterLockRequest<
 }
 
 pub struct LockEnforcer<'a> {
-    characters: &'a GuidTable<u64, Character, (u64, CharacterCategory)>,
+    characters: &'a GuidTable<u64, Character, CharacterIndex>,
     zones: &'a GuidTable<u64, Zone, u8>,
 }
 
@@ -199,13 +198,13 @@ impl<'a> From<LockEnforcer<'a>> for ZoneLockEnforcer<'a> {
 }
 
 pub struct LockEnforcerSource {
-    characters: GuidTable<u64, Character, (u64, CharacterCategory)>,
+    characters: GuidTable<u64, Character, CharacterIndex>,
     zones: GuidTable<u64, Zone, u8>,
 }
 
 impl LockEnforcerSource {
     pub fn from(
-        characters: GuidTable<u64, Character, (u64, CharacterCategory)>,
+        characters: GuidTable<u64, Character, CharacterIndex>,
         zones: GuidTable<u64, Zone, u8>,
     ) -> LockEnforcerSource {
         LockEnforcerSource { characters, zones }

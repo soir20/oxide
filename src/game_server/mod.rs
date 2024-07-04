@@ -4,6 +4,7 @@ use std::path::Path;
 use std::vec;
 
 use byteorder::{LittleEndian, ReadBytesExt};
+use guid::GuidTableHandle;
 use lock_enforcer::{
     CharacterLockRequest, LockEnforcer, LockEnforcerSource, ZoneLockRequest, ZoneTableReadHandle,
 };
@@ -13,7 +14,7 @@ use packet_serialize::{
     DeserializePacket, DeserializePacketError, NullTerminatedString, SerializePacketError,
 };
 use unique_guid::{shorten_zone_template_guid, zone_instance_guid};
-use zone::CharacterCategory;
+use zone::CharacterIndex;
 
 use crate::game_server::chat::process_chat_packet;
 use crate::game_server::client_update_packet::{
@@ -285,92 +286,87 @@ impl GameServer {
                     };
                     //packets.push(GamePacket::serialize(&npc)?);
 
-                    let (stat_packet, character_guids) = self.lock_enforcer().read_characters(|_| CharacterLockRequest {
-                        read_guids: Vec::new(),
-                        write_guids: Vec::new(),
-                        character_consumer: |characters_table_read_handle, _, _, zones_lock_enforcer| {
-                            if let Some((instance_guid, _)) = characters_table_read_handle.index(player_guid(sender)) {
-                                zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
-                                    read_guids: vec![instance_guid],
-                                    write_guids: Vec::new(),
-                                    zone_consumer: |_, zones_read, _| {
-                                        if let Some(zone) = zones_read.get(&instance_guid) {
-                                            let stats = TunneledPacket {
-                                                unknown1: true,
-                                                inner: Stats {
-                                                    stats: vec![
-                                                        Stat {
-                                                            id: StatId::Speed,
-                                                            multiplier: 1,
-                                                            value1: 0.0,
-                                                            value2: zone.speed,
-                                                        },
-                                                        Stat {
-                                                            id: StatId::PowerRegen,
-                                                            multiplier: 1,
-                                                            value1: 0.0,
-                                                            value2: 1.0,
-                                                        },
-                                                        Stat {
-                                                            id: StatId::PowerRegen,
-                                                            multiplier: 1,
-                                                            value1: 0.0,
-                                                            value2: 1.0,
-                                                        },
-                                                        Stat {
-                                                            id: StatId::GravityMultiplier,
-                                                            multiplier: 1,
-                                                            value1: 0.0,
-                                                            value2: zone.gravity_multiplier,
-                                                        },
-                                                        Stat {
-                                                            id: StatId::JumpHeightMultiplier,
-                                                            multiplier: 1,
-                                                            value1: 0.0,
-                                                            value2: zone.jump_height_multiplier,
-                                                        },
-                                                    ],
-                                                },
-                                            };
+                    let mut character_packets = self.lock_enforcer().read_characters(|characters_table_read_handle| {
+                        let possible_index = characters_table_read_handle.index(player_guid(sender));
+                        let character_guids = possible_index.map(|(instance_guid, chunk, _)| Zone::diff_character_guids(
+                            instance_guid,
+                            Character::MIN_CHUNK,
+                            chunk,
+                            characters_table_read_handle
+                        ))
+                            .unwrap_or_default();
+                        CharacterLockRequest {
+                            read_guids: character_guids.keys().copied().collect(),
+                            write_guids: Vec::new(),
+                            character_consumer: move |_, characters_read, _, zones_lock_enforcer| {
+                                if let Some((instance_guid, _, _)) = possible_index {
+                                    zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
+                                        read_guids: vec![instance_guid],
+                                        write_guids: Vec::new(),
+                                        zone_consumer: |_, zones_read, _| {
+                                            if let Some(zone) = zones_read.get(&instance_guid) {
+                                                let stats = TunneledPacket {
+                                                    unknown1: true,
+                                                    inner: Stats {
+                                                        stats: vec![
+                                                            Stat {
+                                                                id: StatId::Speed,
+                                                                multiplier: 1,
+                                                                value1: 0.0,
+                                                                value2: zone.speed,
+                                                            },
+                                                            Stat {
+                                                                id: StatId::PowerRegen,
+                                                                multiplier: 1,
+                                                                value1: 0.0,
+                                                                value2: 1.0,
+                                                            },
+                                                            Stat {
+                                                                id: StatId::PowerRegen,
+                                                                multiplier: 1,
+                                                                value1: 0.0,
+                                                                value2: 1.0,
+                                                            },
+                                                            Stat {
+                                                                id: StatId::GravityMultiplier,
+                                                                multiplier: 1,
+                                                                value1: 0.0,
+                                                                value2: zone.gravity_multiplier,
+                                                            },
+                                                            Stat {
+                                                                id: StatId::JumpHeightMultiplier,
+                                                                multiplier: 1,
+                                                                value1: 0.0,
+                                                                value2: zone.jump_height_multiplier,
+                                                            },
+                                                        ],
+                                                    },
+                                                };
 
-                                            Ok((GamePacket::serialize(&stats)?, Zone::character_guids(instance_guid, characters_table_read_handle)))
-                                        } else {
-                                            println!(
-                                                "Player {} sent a ready packet from unknown zone {}",
-                                                sender, instance_guid
-                                            );
-                                            Err(ProcessPacketError::CorruptedPacket)
-                                        }
-                                    },
-                                })
-                            } else {
-                                println!(
-                                    "Player {} sent a ready packet but is not in any zone",
-                                    sender
-                                );
-                                Err(ProcessPacketError::CorruptedPacket)
-                            }
-                        },
+                                                let mut packets = vec![GamePacket::serialize(&stats)?];
+
+                                                packets.append(&mut Zone::diff_character_packets(&character_guids, &characters_read)?);
+
+                                                Ok(packets)
+                                            } else {
+                                                println!(
+                                                    "Player {} sent a ready packet from unknown zone {}",
+                                                    sender, instance_guid
+                                                );
+                                                Err(ProcessPacketError::CorruptedPacket)
+                                            }
+                                        },
+                                    })
+                                } else {
+                                    println!(
+                                        "Player {} sent a ready packet but is not in any zone",
+                                        sender
+                                    );
+                                    Err(ProcessPacketError::CorruptedPacket)
+                                }
+                            },
+                        }
                     })?;
-                    packets.push(stat_packet);
-
-                    let mut character_packets =
-                        self.lock_enforcer()
-                            .read_characters(|_| CharacterLockRequest {
-                                read_guids: character_guids.clone(),
-                                write_guids: Vec::new(),
-                                character_consumer: |_, characters_read, _, _| {
-                                    let mut packets = Vec::new();
-
-                                    for guid in character_guids {
-                                        if let Some(character) = characters_read.get(&guid) {
-                                            packets.append(&mut character.to_packets()?);
-                                        }
-                                    }
-
-                                    Ok::<Vec<Vec<u8>>, ProcessPacketError>(packets)
-                                },
-                            })?;
                     packets.append(&mut character_packets);
 
                     let health = TunneledPacket {
@@ -438,7 +434,7 @@ impl GameServer {
                     let pos_update: UpdatePlayerPosition =
                         DeserializePacket::deserialize(&mut cursor)?;
                     // TODO: broadcast pos update to all players
-                    broadcasts.append(&mut Zone::move_character(pos_update, self)?);
+                    broadcasts.append(&mut Zone::move_character(sender, pos_update, self)?);
                 }
                 OpCode::ZoneTeleportRequest => {
                     let teleport_request: ZoneTeleportRequest =
@@ -448,7 +444,7 @@ impl GameServer {
                         |characters_table_write_handle: &mut GuidTableWriteHandle<
                             u64,
                             Character,
-                            (u64, CharacterCategory),
+                            CharacterIndex,
                         >,
                          zones_lock_enforcer| {
                             zones_lock_enforcer.read_zones(|zones_table_read_handle| {
@@ -491,30 +487,26 @@ impl GameServer {
                     )?);
                 }
                 OpCode::TeleportToSafety => {
-                    let mut packets = self.lock_enforcer().read_characters(|_| CharacterLockRequest {
-                        read_guids: Vec::new(),
-                        write_guids: Vec::new(),
-                        character_consumer: |characters_table_read_handle, _, _, zones_lock_enforcer| {
-                            if let Some((instance_guid, _)) = characters_table_read_handle.index(player_guid(sender)) {
-                                zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
-                                    read_guids: vec![instance_guid],
-                                    write_guids: Vec::new(),
-                                    zone_consumer: |_, zones_read, _| {
-                                        if let Some(zone) = zones_read.get(&instance_guid) {
-                                            let spawn_pos = zone.default_spawn_pos;
-                                            let spawn_rot = zone.default_spawn_rot;
+                    let mut packets = self.lock_enforcer().write_characters(|characters_table_write_handle, zones_lock_enforcer| {
+                        if let Some((instance_guid, _, _)) = characters_table_write_handle.index(player_guid(sender)) {
+                            zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
+                                read_guids: vec![instance_guid],
+                                write_guids: Vec::new(),
+                                zone_consumer: |_, zones_read, _| {
+                                    if let Some(zone) = zones_read.get(&instance_guid) {
+                                        let spawn_pos = zone.default_spawn_pos;
+                                        let spawn_rot = zone.default_spawn_rot;
 
-                                            teleport_within_zone(sender, spawn_pos, spawn_rot)
-                                        } else {
-                                            println!("Player {} outside zone tried to teleport to safety", sender);
-                                            Err(ProcessPacketError::CorruptedPacket)
-                                        }
-                                    },
-                                })
-                            } else {
-                                println!("Unknown player {} tried to teleport to safety", sender);
-                                Err(ProcessPacketError::CorruptedPacket)
-                            }
+                                        teleport_within_zone(sender, spawn_pos, spawn_rot, characters_table_write_handle)
+                                    } else {
+                                        println!("Player {} outside zone tried to teleport to safety", sender);
+                                        Err(ProcessPacketError::CorruptedPacket)
+                                    }
+                                },
+                            })
+                        } else {
+                            println!("Unknown player {} tried to teleport to safety", sender);
+                            Err(ProcessPacketError::CorruptedPacket)
                         }
                     })?;
                     broadcasts.append(&mut packets);
