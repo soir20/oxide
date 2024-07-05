@@ -4,6 +4,8 @@ use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError}
 
 use crate::game_server::game_packet::{Effect, GamePacket, OpCode, Pos, StringId};
 
+use super::item::EquipmentSlot;
+
 #[derive(Copy, Clone, Debug)]
 pub enum PlayerUpdateOpCode {
     AddPc = 0x1,
@@ -88,18 +90,18 @@ pub struct Unknown13Array {
     unknown3: u32,
 }
 
-#[derive(SerializePacket, DeserializePacket)]
+#[derive(SerializePacket)]
 pub struct AddPc {
     guid: u64,
-    unknown1: u32,
-    unknown2: u32,
-    unknown3: u32,
-    first_name: String,
-    last_name: String,
+    first_name: u32,
+    last_name_prefix: u32,
+    last_name_suffix: u32,
+    first_name_override: String,
+    last_name_override: String,
     body_model: u32,
-    unknown4: u32,
-    unknown5: u32,
-    unknown6: u32,
+    chat_foreground: u32,
+    chat_background: u32,
+    chat_scale: u32,
     pos: Pos,
     rot: Pos,
     attachments: Vec<Attachment>,
@@ -111,25 +113,32 @@ pub struct AddPc {
     skin_tone: String,
     face_paint: String,
     facial_hair: String,
-    unknown8: f32,
-    unknown9: bool,
-    unknown10: bool,
-    unknown11: bool,
-    unknown12: u32,
-    unknown13: Vec<Unknown13Array>,
-    unknown14: u32,
-    unknown15: u32,
+    speed: f32,
+    underage: bool,
+    membership: bool,
+    moderator: bool,
+    temporary_appearance: u32,
+    guilds: Vec<Unknown13Array>,
+    profile: u32,
+    title: u32,
     unknown16: u32,
     unknown17: u32,
     effects: Vec<Effect>,
-    unknown18: u64,
+    mount_guid: u64,
     unknown19: u32,
     unknown20: u32,
-    unknown21: u32,
+    wield_type: Wield,
     unknown22: f32,
     unknown23: u32,
-    unknown24: u32,
+    nameplate_image_id: u32,
 }
+
+impl GamePacket for AddPc {
+    type Header = PlayerUpdateOpCode;
+
+    const HEADER: Self::Header = PlayerUpdateOpCode::AddPc;
+}
+
 #[derive(Copy, Clone, Debug)]
 pub enum NameplateImage {
     Darkside = 6162,
@@ -341,6 +350,7 @@ impl GamePacket for Knockback {
 
 #[derive(Copy, Clone, Debug)]
 pub enum Wield {
+    None = 0,
     SingleSaber = 1,
     StaffSaber = 2,
     ReverseSingleSaber = 3,
@@ -477,14 +487,14 @@ impl GamePacket for NpcRelevance {
     const HEADER: Self::Header = PlayerUpdateOpCode::NpcRelevance;
 }
 
-#[derive(SerializePacket, DeserializePacket)]
+#[derive(SerializePacket)]
 pub struct Attachment {
-    pub unknown1: String,
-    pub unknown2: String,
-    pub unknown3: String,
-    pub unknown4: u32,
-    pub unknown5: u32,
-    pub unknown6: u32,
+    pub model_name: String,
+    pub texture_alias: String,
+    pub tint_alias: String,
+    pub tint_id: u32,
+    pub composite_effect: u32,
+    pub slot: EquipmentSlot,
 }
 
 #[derive(SerializePacket, DeserializePacket)]
