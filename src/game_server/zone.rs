@@ -32,8 +32,12 @@ use super::lock_enforcer::{
     CharacterLockRequest, CharacterReadGuard, CharacterTableReadHandle, CharacterTableWriteHandle,
     CharacterWriteGuard, ZoneLockRequest,
 };
+use super::mount::{spawn_mount_npc, MountConfig};
+use super::player_data::PlayerData;
 use super::player_update_packet::RemoveStandard;
-use super::unique_guid::{zone_instance_guid, AMBIENT_NPC_DISCRIMINANT, FIXTURE_DISCRIMINANT};
+use super::unique_guid::{
+    mount_guid, zone_instance_guid, AMBIENT_NPC_DISCRIMINANT, FIXTURE_DISCRIMINANT,
+};
 
 #[derive(Clone, Deserialize)]
 pub struct Door {
@@ -109,7 +113,7 @@ struct ZoneConfig {
 pub enum CharacterType {
     Door(Door),
     Transport(Transport),
-    Player,
+    Player(Box<PlayerData>),
     Fixture(u64, CurrentFixture),
 }
 
@@ -178,7 +182,7 @@ impl IndexedGuid<u64, CharacterIndex> for Character {
             self.instance_guid,
             Character::chunk(self.pos.x, self.pos.z),
             match self.character_type {
-                CharacterType::Player => CharacterCategory::Player,
+                CharacterType::Player(_) => CharacterCategory::Player,
                 _ => match self.auto_interact_radius > 0.0 {
                     true => CharacterCategory::NpcAutoInteractEnabled,
                     false => CharacterCategory::NpcAutoInteractDisabled,
@@ -199,14 +203,28 @@ impl Character {
         )
     }
 
-    pub fn remove_packets(guid: u64) -> Result<Vec<Vec<u8>>, SerializePacketError> {
-        Ok(vec![GamePacket::serialize(&TunneledPacket {
+    pub fn remove_packets(&self, guid: u64) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+        let mut packets = vec![GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: RemoveStandard { guid },
-        })?])
+        })?];
+
+        if let Some(mount_id) = self.mount_id {
+            packets.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: RemoveStandard {
+                    guid: mount_guid(shorten_player_guid(self.guid)?, mount_id),
+                },
+            })?);
+        }
+
+        Ok(packets)
     }
 
-    pub fn add_packets(&self) -> Result<Vec<Vec<u8>>, SerializePacketError> {
+    pub fn add_packets(
+        &self,
+        mount_configs: &BTreeMap<u32, MountConfig>,
+    ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
         let packets = match &self.character_type {
             CharacterType::Door(door) => {
                 let mut packets = vec![GamePacket::serialize(&TunneledPacket {
@@ -245,6 +263,30 @@ impl Character {
                 packets.append(&mut enable_interaction(self.guid, transport.cursor)?);
                 packets
             }
+            CharacterType::Player(_) => {
+                let mut packets = Vec::new();
+                if let Some(mount_id) = self.mount_id {
+                    let short_rider_guid = shorten_player_guid(self.guid)?;
+                    let mount_guid = mount_guid(short_rider_guid, mount_id);
+                    if let Some(mount_config) = mount_configs.get(&mount_id) {
+                        packets.append(&mut spawn_mount_npc(
+                            mount_guid,
+                            self.guid,
+                            mount_config,
+                            self.pos,
+                            self.rot,
+                        )?);
+                    } else {
+                        println!(
+                            "Character {} is mounted on unknown mount ID {}",
+                            self.guid, mount_id
+                        );
+                        return Err(ProcessPacketError::CorruptedPacket);
+                    }
+                }
+
+                packets
+            }
             CharacterType::Fixture(house_guid, fixture) => fixture_packets(
                 *house_guid,
                 self.guid,
@@ -253,7 +295,6 @@ impl Character {
                 self.rot,
                 self.scale,
             )?,
-            _ => Vec::new(),
         };
 
         Ok(packets)
@@ -733,15 +774,16 @@ impl Zone {
     pub fn diff_character_packets(
         character_diffs: &BTreeMap<u64, bool>,
         characters_read: &BTreeMap<u64, CharacterReadGuard<'_>>,
+        mount_configs: &BTreeMap<u32, MountConfig>,
     ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
         let mut packets: Vec<Vec<u8>> = Vec::new();
 
         for (guid, add) in character_diffs {
             if let Some(character) = characters_read.get(guid) {
                 if *add {
-                    packets.append(&mut character.add_packets()?);
+                    packets.append(&mut character.add_packets(mount_configs)?);
                 } else {
-                    packets.append(&mut Character::remove_packets(*guid)?);
+                    packets.append(&mut character.remove_packets(*guid)?);
                 }
             }
         }
@@ -877,8 +919,11 @@ impl Zone {
                             }
                         }
 
-                        let diff_packets =
-                            Zone::diff_character_packets(&diff_character_guids, &characters_read)?;
+                        let diff_packets = Zone::diff_character_packets(
+                            &diff_character_guids,
+                            &characters_read,
+                            &game_server.mounts,
+                        )?;
 
                         let characters_to_interact = Zone::move_character_with_locks(
                             characters_in_radius_or_all,
@@ -1274,6 +1319,7 @@ pub fn interact_with_character(
                                                 destination_pos,
                                                 destination_rot,
                                                 characters_table_write_handle,
+                                                &game_server.mounts,
                                             )
                                         }
                                     },
@@ -1304,6 +1350,7 @@ pub fn teleport_within_zone(
     destination_pos: Pos,
     destination_rot: Pos,
     characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
+    mount_configs: &BTreeMap<u32, MountConfig>,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let mut packets = if let Some((character, (instance_guid, old_chunk, _))) =
         characters_table_write_handle.remove(player_guid(sender))
@@ -1319,8 +1366,11 @@ pub fn teleport_within_zone(
             new_chunk,
             characters_table_write_handle
         );
-        let diff_packets =
-            Zone::diff_character_packets(&diff_character_guids, &diff_character_handles);
+        let diff_packets = Zone::diff_character_packets(
+            &diff_character_guids,
+            &diff_character_handles,
+            mount_configs,
+        );
         drop(diff_character_guids);
         drop(diff_character_handles);
 
