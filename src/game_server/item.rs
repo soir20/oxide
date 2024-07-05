@@ -4,7 +4,7 @@ use byteorder::{LittleEndian, WriteBytesExt};
 use packet_serialize::{SerializePacket, SerializePacketError};
 use std::io::Write;
 
-#[derive(SerializePacket)]
+#[derive(Clone, SerializePacket)]
 pub struct Item {
     pub definition_id: u32,
     pub tint: u32,

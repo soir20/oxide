@@ -65,7 +65,7 @@ pub struct Pos {
     pub w: f32,
 }
 
-#[derive(SerializePacket, DeserializePacket)]
+#[derive(Clone, SerializePacket, DeserializePacket)]
 pub struct Effect {
     pub unknown1: u32,
     pub unknown2: u32,

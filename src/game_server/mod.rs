@@ -186,7 +186,7 @@ impl GameServer {
                             packets.push(GamePacket::serialize(&player)?);
 
                             characters_write_handle
-                                .insert(player.inner.data.to_character(player_zone));
+                                .insert(player.inner.data.into_character(player_zone));
 
                             Ok((guid, vec![Broadcast::Single(guid, packets)]))
                         },
@@ -345,7 +345,7 @@ impl GameServer {
 
                                                 let mut packets = vec![GamePacket::serialize(&stats)?];
 
-                                                packets.append(&mut Zone::diff_character_packets(&character_guids, &characters_read)?);
+                                                packets.append(&mut Zone::diff_character_packets(&character_guids, &characters_read, &self.mounts)?);
 
                                                 Ok(packets)
                                             } else {
@@ -497,7 +497,7 @@ impl GameServer {
                                         let spawn_pos = zone.default_spawn_pos;
                                         let spawn_rot = zone.default_spawn_rot;
 
-                                        teleport_within_zone(sender, spawn_pos, spawn_rot, characters_table_write_handle)
+                                        teleport_within_zone(sender, spawn_pos, spawn_rot, characters_table_write_handle, &self.mounts)
                                     } else {
                                         println!("Player {} outside zone tried to teleport to safety", sender);
                                         Err(ProcessPacketError::CorruptedPacket)

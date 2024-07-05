@@ -18,19 +18,20 @@ use crate::game_server::zone::CharacterType;
 
 use super::zone::Character;
 
-#[derive(SerializePacket)]
+#[derive(Clone, SerializePacket)]
 pub struct EquippedVehicle {}
 
-#[derive(SerializePacket)]
+#[derive(Clone, SerializePacket)]
 pub struct ItemClassData {
     unknown1: u32,
     unknown2: u32,
     unknown3: u32,
 }
 
-#[derive(SerializePacket)]
+#[derive(Clone, SerializePacket)]
 pub struct ProfileUnknown7 {}
 
+#[derive(Clone)]
 pub enum Ability {
     Empty,
     Type1(u32, u32, u32, u32, u32, u32, u32, u32, u32, bool),
@@ -148,6 +149,7 @@ fn write_ability_end(
     Ok(())
 }
 
+#[derive(Clone)]
 pub enum ProfileUnknown10 {
     None,
     Some(u32, bool, u32, u32, u32, u32, u32, u32, u32, u32),
@@ -185,7 +187,7 @@ impl SerializePacket for ProfileUnknown10 {
     }
 }
 
-#[derive(SerializePacket)]
+#[derive(Clone, SerializePacket)]
 pub struct Profile {
     guid: u32,
     name_id: StringId,
@@ -214,19 +216,19 @@ pub struct Profile {
     unknown10: LengthlessVec<ProfileUnknown10>,
 }
 
-#[derive(SerializePacket)]
+#[derive(Clone, SerializePacket)]
 pub struct EquippedItem {
     slot: EquipmentSlot,
     guid: u32,
     category: u32,
 }
-#[derive(SerializePacket)]
+#[derive(Clone, SerializePacket)]
 pub struct Unknown {
     pub unknown1: u32,
     pub unknown2: u32,
 }
 
-#[derive(SerializePacket)]
+#[derive(Clone, SerializePacket)]
 pub struct SocialInfo {}
 
 impl SerializePacket for MarketData {
@@ -243,13 +245,13 @@ impl SerializePacket for MarketData {
     }
 }
 
-#[derive(SerializePacket)]
+#[derive(Clone, SerializePacket)]
 pub struct InventoryItem {
     pub definition_id: u32,
     pub item: Item,
 }
 
-#[derive(SerializePacket)]
+#[derive(Clone, SerializePacket)]
 struct Unknown2 {
     unknown1: u32,
     unknown2: u32,
@@ -262,30 +264,30 @@ struct Unknown2 {
     unknown9: bool,
 }
 
-#[derive(SerializePacket)]
+#[derive(Clone, SerializePacket)]
 struct PetTrick {
     unknown1: u32,
     unknown2: Unknown2,
 }
 
-#[derive(SerializePacket)]
+#[derive(Clone, SerializePacket)]
 struct ItemGuid {
     guid: u32,
 }
 
-#[derive(SerializePacket)]
+#[derive(Clone, SerializePacket)]
 struct Item2 {
     unknown1: u32,
     unknown2: u32,
 }
 
-#[derive(SerializePacket)]
+#[derive(Clone, SerializePacket)]
 struct ProfileItem {
     item1: u32,
     item2: Item2,
 }
 
-#[derive(SerializePacket)]
+#[derive(Clone, SerializePacket)]
 struct Unknown12 {
     unknown1: u32,
     unknown2: u32,
@@ -293,7 +295,7 @@ struct Unknown12 {
     unknown4: u32,
 }
 
-#[derive(SerializePacket)]
+#[derive(Clone, SerializePacket)]
 struct Unknown13 {
     unknown1: u32,
     unknown2: u32,
@@ -305,19 +307,19 @@ struct Unknown13 {
     unknown8: u32,
 }
 
-#[derive(SerializePacket)]
+#[derive(Clone, SerializePacket)]
 pub struct Quest {}
 
-#[derive(SerializePacket)]
+#[derive(Clone, SerializePacket)]
 pub struct Achievement {}
 
-#[derive(SerializePacket)]
+#[derive(Clone, SerializePacket)]
 pub struct Acquaintance {}
 
-#[derive(SerializePacket)]
+#[derive(Clone, SerializePacket)]
 pub struct Recipe {}
 
-#[derive(SerializePacket)]
+#[derive(Clone, SerializePacket)]
 pub struct Pet {
     pet_id: u32,
     unknown2: bool,
@@ -340,7 +342,7 @@ pub struct Pet {
     unknown13: Unknown13,
 }
 
-#[derive(SerializePacket)]
+#[derive(Clone, SerializePacket)]
 pub struct Mount {
     mount_id: u32,
     name_id: u32,
@@ -351,7 +353,7 @@ pub struct Mount {
     unknown7: String,
 }
 
-#[derive(SerializePacket)]
+#[derive(Clone, SerializePacket)]
 pub struct Slot {
     slot_id: u32,
     empty: bool,
@@ -371,7 +373,7 @@ pub struct Slot {
     unknown10: u32,
 }
 
-#[derive(SerializePacket)]
+#[derive(Clone, SerializePacket)]
 pub struct ActionBar {
     unknown1: u32,
     unknown2: u32,
@@ -380,22 +382,22 @@ pub struct ActionBar {
 
 pub type MatchmakingQueue = u32;
 
-#[derive(SerializePacket)]
+#[derive(Clone, SerializePacket)]
 pub struct MinigameTutorial {}
 
-#[derive(SerializePacket)]
+#[derive(Clone, SerializePacket)]
 pub struct PowerHour {}
 
-#[derive(SerializePacket)]
+#[derive(Clone, SerializePacket)]
 pub struct Stat {}
 
-#[derive(SerializePacket)]
+#[derive(Clone, SerializePacket)]
 pub struct Vehicle {}
 
-#[derive(SerializePacket)]
+#[derive(Clone, SerializePacket)]
 pub struct Title {}
 
-#[derive(SerializePacket)]
+#[derive(Clone, SerializePacket)]
 pub struct PlayerData {
     pub account_guid: u64,
     pub player_guid: u64,
@@ -909,13 +911,13 @@ pub fn make_test_player(guid: u32, mounts: &BTreeMap<u32, MountConfig>) -> Playe
 }
 
 impl PlayerData {
-    pub fn to_character(&self, instance_guid: u64) -> Character {
+    pub fn into_character(self, instance_guid: u64) -> Character {
         Character {
             guid: self.player_guid,
             pos: self.pos,
             rot: self.rot,
             scale: 1.0,
-            character_type: CharacterType::Player,
+            character_type: CharacterType::Player(Box::new(self)),
             state: 0,
             mount_id: None,
             interact_radius: 0.0,
