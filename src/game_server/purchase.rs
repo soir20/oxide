@@ -49,23 +49,23 @@ pub struct BillboardPanel {
     pub unknown5: u32,
     pub unknown6: u32,
     pub unknown7: u32,
-    pub swf_name: String
+    pub swf_name: String,
 }
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct Billboard {
     pub unknown1: u32,
     pub unknown2: u32,
-    pub panels: Vec<BillboardPanel>
+    pub panels: Vec<BillboardPanel>,
 }
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct BillboardsData {
-    pub billboards: Vec<Billboard>
+    pub billboards: Vec<Billboard>,
 }
 
 pub struct Billboards {
-    pub data: BillboardsData
+    pub data: BillboardsData,
 }
 
 impl SerializePacket for Billboards {
