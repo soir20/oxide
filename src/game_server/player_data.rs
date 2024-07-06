@@ -220,7 +220,7 @@ pub struct Profile {
 pub struct EquippedItem {
     slot: EquipmentSlot,
     guid: u32,
-    category: u32,
+    category: i32,
 }
 #[derive(Clone, SerializePacket)]
 pub struct Unknown {
