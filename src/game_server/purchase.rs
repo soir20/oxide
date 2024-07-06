@@ -1,3 +1,5 @@
+use std::io::Write;
+
 use crate::game_server::game_packet::{GamePacket, OpCode};
 use byteorder::{LittleEndian, WriteBytesExt};
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
@@ -5,6 +7,7 @@ use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError}
 #[derive(Copy, Clone, Debug)]
 pub enum PurchaseOpCode {
     StoreCategories = 0xe,
+    Billboards = 0x28,
     StoreCategoryGroups = 0x2a,
 }
 
@@ -34,6 +37,52 @@ pub struct StoreCategories {
 impl GamePacket for StoreCategories {
     type Header = PurchaseOpCode;
     const HEADER: Self::Header = PurchaseOpCode::StoreCategories;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct BillboardPanel {
+    pub unknown1: u32,
+    pub unknown2: u32,
+    pub unknown3: u32,
+    pub members_only: bool,
+    pub unknown4: u32,
+    pub unknown5: u32,
+    pub unknown6: u32,
+    pub unknown7: u32,
+    pub swf_name: String,
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct Billboard {
+    pub unknown1: u32,
+    pub unknown2: u32,
+    pub panels: Vec<BillboardPanel>,
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct BillboardsData {
+    pub billboards: Vec<Billboard>,
+}
+
+pub struct Billboards {
+    pub data: BillboardsData,
+}
+
+impl SerializePacket for Billboards {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        let mut inner_buffer = Vec::new();
+        self.data.serialize(&mut inner_buffer)?;
+        buffer.write_u32::<LittleEndian>(self.data.billboards.len() as u32)?;
+        buffer.write_u32::<LittleEndian>(inner_buffer.len() as u32 - 4)?;
+        buffer.write_all(&inner_buffer[4..])?;
+        Ok(())
+    }
+}
+
+impl GamePacket for Billboards {
+    type Header = PurchaseOpCode;
+
+    const HEADER: Self::Header = PurchaseOpCode::Billboards;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
