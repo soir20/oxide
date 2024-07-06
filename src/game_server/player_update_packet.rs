@@ -12,6 +12,7 @@ pub enum PlayerUpdateOpCode {
     AddNpc = 0x2,
     Remove = 0x3,
     Knockback = 0x4,
+    UpdateEquippedItems = 0x7,
     UpdatePower = 0x9,
     AddNotifications = 0xa,
     NpcRelevance = 0xc,
@@ -346,6 +347,19 @@ pub struct Knockback {
 impl GamePacket for Knockback {
     type Header = PlayerUpdateOpCode;
     const HEADER: Self::Header = PlayerUpdateOpCode::Knockback;
+}
+
+#[derive(SerializePacket)]
+pub struct UpdateEquippedItems {
+    pub guid: u64,
+    pub attachments: Vec<Attachment>,
+    pub unknown: u32,
+}
+
+impl GamePacket for UpdateEquippedItems {
+    type Header = PlayerUpdateOpCode;
+
+    const HEADER: Self::Header = PlayerUpdateOpCode::UpdateEquippedItems;
 }
 
 #[derive(Copy, Clone, Debug)]
