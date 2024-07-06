@@ -13,6 +13,7 @@ use rand::Rng;
 use packet_serialize::{
     DeserializePacket, DeserializePacketError, NullTerminatedString, SerializePacketError,
 };
+use ui::ExecuteScriptWithParams;
 use unique_guid::{shorten_zone_template_guid, zone_instance_guid};
 use zone::CharacterIndex;
 
@@ -255,6 +256,90 @@ impl GameServer {
                                     unknown1: 1,
                                     unknown2: true,
                                 },
+                                CategoryDefinition {
+                                    guid: -2,
+                                    name: 317,
+                                    icon_set_id: 787,
+                                    unknown1: 1,
+                                    unknown2: true,
+                                },
+                                CategoryDefinition {
+                                    guid: 10,
+                                    name: 317,
+                                    icon_set_id: 787,
+                                    unknown1: 1,
+                                    unknown2: true,
+                                },
+                                CategoryDefinition {
+                                    guid: 11,
+                                    name: 317,
+                                    icon_set_id: 787,
+                                    unknown1: 1,
+                                    unknown2: true,
+                                },
+                                CategoryDefinition {
+                                    guid: 12,
+                                    name: 317,
+                                    icon_set_id: 787,
+                                    unknown1: 1,
+                                    unknown2: true,
+                                },
+                                CategoryDefinition {
+                                    guid: 14,
+                                    name: 317,
+                                    icon_set_id: 787,
+                                    unknown1: 1,
+                                    unknown2: true,
+                                },
+                                CategoryDefinition {
+                                    guid: 15,
+                                    name: 317,
+                                    icon_set_id: 787,
+                                    unknown1: 1,
+                                    unknown2: true,
+                                },
+                                CategoryDefinition {
+                                    guid: 16,
+                                    name: 317,
+                                    icon_set_id: 787,
+                                    unknown1: 1,
+                                    unknown2: true,
+                                },
+                                CategoryDefinition {
+                                    guid: 17,
+                                    name: 317,
+                                    icon_set_id: 787,
+                                    unknown1: 1,
+                                    unknown2: true,
+                                },
+                                CategoryDefinition {
+                                    guid: 18,
+                                    name: 317,
+                                    icon_set_id: 787,
+                                    unknown1: 1,
+                                    unknown2: true,
+                                },
+                                CategoryDefinition {
+                                    guid: 19,
+                                    name: 317,
+                                    icon_set_id: 787,
+                                    unknown1: 1,
+                                    unknown2: true,
+                                },
+                                CategoryDefinition {
+                                    guid: 70,
+                                    name: 317,
+                                    icon_set_id: 787,
+                                    unknown1: 1,
+                                    unknown2: true,
+                                },
+                                CategoryDefinition {
+                                    guid: 200,
+                                    name: 317,
+                                    icon_set_id: 787,
+                                    unknown1: 1,
+                                    unknown2: true,
+                                },
                             ],
                             relations: vec![
                                 CategoryRelation {
@@ -285,6 +370,30 @@ impl GameServer {
                         inner: make_test_npc(),
                     };
                     //packets.push(GamePacket::serialize(&npc)?);
+
+                    packets.push(GamePacket::serialize(&TunneledPacket {
+                        unknown1: false,
+                        inner: ExecuteScriptWithParams {
+                            script_name: "Console.show".to_string(),
+                            params: vec![],
+                        },
+                    })?);
+
+                    packets.push(GamePacket::serialize(&TunneledPacket {
+                        unknown1: false,
+                        inner: ExecuteScriptWithParams {
+                            script_name: "ItemsHandler.SetDatasourcesConnected".to_string(),
+                            params: vec!["true".to_string()],
+                        },
+                    })?);
+
+                    packets.push(GamePacket::serialize(&TunneledPacket {
+                        unknown1: false,
+                        inner: ExecuteScriptWithParams {
+                            script_name: "CharacterWindowHandler.createDynamicDataSources".to_string(),
+                            params: vec![],
+                        },
+                    })?);
 
                     let mut character_packets = self.lock_enforcer().read_characters(|characters_table_read_handle| {
                         let possible_index = characters_table_read_handle.index(player_guid(sender));

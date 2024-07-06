@@ -288,7 +288,7 @@ pub fn make_item_definitions() -> ItemDefinitionsReply {
                     texture_alias: "ARCFives".to_string(),
                     gender: 0,
                     item_type: 1,
-                    category: 67,
+                    category: 10,
                     members: false,
                     non_minigame: false,
                     unknown21: 0,
