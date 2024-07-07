@@ -1,11 +1,18 @@
+use std::io::Cursor;
+
 use crate::game_server::game_packet::{GamePacket, OpCode};
-use byteorder::{LittleEndian, WriteBytesExt};
+use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
+use num_enum::TryFromPrimitive;
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
 
-#[derive(Copy, Clone, Debug)]
+use super::{tunnel::TunneledPacket, Broadcast, GameServer, ProcessPacketError};
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u16)]
 pub enum StoreOpCode {
     ItemList = 0x1,
     ItemDefinitionsReply = 0x3,
+    ItemDefinitionsRequest = 0x8
 }
 
 impl SerializePacket for StoreOpCode {
@@ -13,6 +20,36 @@ impl SerializePacket for StoreOpCode {
         OpCode::Store.serialize(buffer)?;
         buffer.write_u16::<LittleEndian>(*self as u16)?;
         Ok(())
+    }
+}
+
+pub fn process_store_packet(
+    cursor: &mut Cursor<&[u8]>,
+    sender: u32,
+) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    let raw_op_code = cursor.read_u16::<LittleEndian>()?;
+    match StoreOpCode::try_from(raw_op_code) {
+        Ok(op_code) => match op_code {
+            StoreOpCode::ItemDefinitionsRequest => {
+                Ok(vec![Broadcast::Single(sender, vec![
+                    GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: StoreItemDefinitionsReply {
+                            unknown: true,
+                            defs: vec![],
+                        }
+                    })?
+                ])])
+            }
+            _ => {
+                println!("Unimplemented store packet: {:?}", op_code);
+                Ok(Vec::new())
+            }
+        },
+        Err(_) => {
+            println!("Unknown store packet: {}", raw_op_code);
+            Ok(Vec::new())
+        }
     }
 }
 

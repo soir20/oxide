@@ -64,7 +64,7 @@ impl GamePacket for CategoryDefinitions {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct ItemGroupDefinition {
-    pub unknown1: u32,
+    pub unknown1: i32,
     pub unknown2: u32,
     pub unknown3: u32,
     pub unknown4: u32,

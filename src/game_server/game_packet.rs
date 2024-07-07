@@ -33,9 +33,9 @@ pub enum OpCode {
     Housing = 0x7f,
     ClientGameSettings = 0x8f,
     Portrait = 0x9b,
-    Mount = 0xa7,
     Store = 0xa4,
     DeploymentEnv = 0xa5,
+    Mount = 0xa7,
 }
 
 impl SerializePacket for OpCode {
