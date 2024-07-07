@@ -263,7 +263,7 @@ impl GameServer {
                                 },
                                 CategoryDefinition {
                                     guid: 11,
-                                    name: 1238,
+                                    name: 1219,
                                     icon_set_id: 787,
                                     unknown1: 1,
                                     unknown2: true,
@@ -326,7 +326,7 @@ impl GameServer {
                                 },
                                 CategoryDefinition {
                                     guid: 21,
-                                    name: 329,
+                                    name: 1238,
                                     icon_set_id: 787,
                                     unknown1: 1,
                                     unknown2: true,
@@ -515,7 +515,7 @@ impl GameServer {
                                 },
                                 CategoryDefinition {
                                     guid: 70,
-                                    name: 355,
+                                    name: 1238,
                                     icon_set_id: 787,
                                     unknown1: 1,
                                     unknown2: true,
@@ -683,36 +683,36 @@ impl GameServer {
                                     child_guid: 37,
                                 },
                                 CategoryRelation {
-                                    parent_guid: 21,
-                                    child_guid: 54,
-                                },
-                                CategoryRelation {
                                     parent_guid: 78,
                                     child_guid: 99,
                                 },
                                 CategoryRelation {
                                     parent_guid: -1,
-                                    child_guid: 70,
+                                    child_guid: 10,
                                 },
                                 CategoryRelation {
-                                    parent_guid: 70,
+                                    parent_guid: 10,
                                     child_guid: -2,
                                 },
                                 CategoryRelation {
-                                    parent_guid: 70,
+                                    parent_guid: 10,
                                     child_guid: 12,
                                 },
                                 CategoryRelation {
-                                    parent_guid: 70,
+                                    parent_guid: 10,
                                     child_guid: 13,
                                 },
                                 CategoryRelation {
-                                    parent_guid: 70,
+                                    parent_guid: 10,
                                     child_guid: 90,
                                 },
                                 CategoryRelation {
-                                    parent_guid: 70,
+                                    parent_guid: 10,
                                     child_guid: 96,
+                                },
+                                CategoryRelation {
+                                    parent_guid: 10,
+                                    child_guid: 70,
                                 },
                                 CategoryRelation {
                                     parent_guid: 70,
@@ -823,7 +823,7 @@ impl GameServer {
                         },
                     })?);
 
-                    packets.push(GamePacket::serialize(&TunneledPacket {
+                    /*packets.push(GamePacket::serialize(&TunneledPacket {
                         unknown1: false,
                         inner: ExecuteScriptWithParams {
                             script_name: "CharacterWindowHandler.show".to_string(),
@@ -835,9 +835,9 @@ impl GameServer {
                         unknown1: false,
                         inner: ExecuteScriptWithParams {
                             script_name: "CharacterWindowHandler.gotoCategory".to_string(),
-                            params: vec!["-2".to_string()],
+                            params: vec!["54".to_string()],
                         },
-                    })?);
+                    })?);*/
 
                     packets.push(GamePacket::serialize(&TunneledPacket {
                         unknown1: true,
