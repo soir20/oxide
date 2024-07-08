@@ -18,7 +18,7 @@ impl SerializePacket for ReferenceDataOpCode {
 }
 
 pub struct CategoryDefinition {
-    pub guid: u32,
+    pub guid: i32,
     pub name: StringId,
     pub icon_set_id: ImageId,
     pub unknown1: u32,
@@ -27,8 +27,8 @@ pub struct CategoryDefinition {
 
 impl SerializePacket for CategoryDefinition {
     fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        buffer.write_u32::<LittleEndian>(self.guid)?;
-        buffer.write_u32::<LittleEndian>(self.guid)?;
+        buffer.write_i32::<LittleEndian>(self.guid)?;
+        buffer.write_i32::<LittleEndian>(self.guid)?;
         buffer.write_u32::<LittleEndian>(self.name)?;
         buffer.write_u32::<LittleEndian>(self.icon_set_id)?;
         buffer.write_u32::<LittleEndian>(self.unknown1)?;
@@ -38,15 +38,15 @@ impl SerializePacket for CategoryDefinition {
 }
 
 pub struct CategoryRelation {
-    pub parent_guid: u32,
-    pub child_guid: u32,
+    pub parent_guid: i32,
+    pub child_guid: i32,
 }
 
 impl SerializePacket for CategoryRelation {
     fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        buffer.write_u32::<LittleEndian>(self.parent_guid)?;
-        buffer.write_u32::<LittleEndian>(self.parent_guid)?;
-        buffer.write_u32::<LittleEndian>(self.child_guid)?;
+        buffer.write_i32::<LittleEndian>(self.parent_guid)?;
+        buffer.write_i32::<LittleEndian>(self.parent_guid)?;
+        buffer.write_i32::<LittleEndian>(self.child_guid)?;
         Ok(())
     }
 }

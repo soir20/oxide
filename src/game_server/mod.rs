@@ -235,6 +235,41 @@ impl GameServer {
                         inner: CategoryDefinitions {
                             definitions: vec![
                                 CategoryDefinition {
+                                    guid: -2,
+                                    name: 132,
+                                    icon_set_id: 787,
+                                    unknown1: 1,
+                                    unknown2: true,
+                                },
+                                CategoryDefinition {
+                                    guid: 10,
+                                    name: 0,
+                                    icon_set_id: 0,
+                                    unknown1: 1,
+                                    unknown2: true,
+                                },
+                                CategoryDefinition {
+                                    guid: 11,
+                                    name: 1219,
+                                    icon_set_id: 787,
+                                    unknown1: 1,
+                                    unknown2: true,
+                                },
+                                CategoryDefinition {
+                                    guid: 12,
+                                    name: 1220,
+                                    icon_set_id: 787,
+                                    unknown1: 1,
+                                    unknown2: true,
+                                },
+                                CategoryDefinition {
+                                    guid: 13,
+                                    name: 1221,
+                                    icon_set_id: 787,
+                                    unknown1: 1,
+                                    unknown2: true,
+                                },
+                                CategoryDefinition {
                                     guid: 65,
                                     name: 1222,
                                     icon_set_id: 0,
@@ -255,8 +290,61 @@ impl GameServer {
                                     unknown1: 1,
                                     unknown2: true,
                                 },
+                                CategoryDefinition {
+                                    guid: 70,
+                                    name: 1238,
+                                    icon_set_id: 787,
+                                    unknown1: 1,
+                                    unknown2: true,
+                                },
+                                CategoryDefinition {
+                                    guid: 90,
+                                    name: 4321,
+                                    icon_set_id: 787,
+                                    unknown1: 1,
+                                    unknown2: true,
+                                },
+                                CategoryDefinition {
+                                    guid: 96,
+                                    name: 4485,
+                                    icon_set_id: 787,
+                                    unknown1: 1,
+                                    unknown2: true,
+                                },
                             ],
                             relations: vec![
+                                CategoryRelation {
+                                    parent_guid: -1,
+                                    child_guid: 10,
+                                },
+                                CategoryRelation {
+                                    parent_guid: 10,
+                                    child_guid: -2,
+                                },
+                                CategoryRelation {
+                                    parent_guid: 10,
+                                    child_guid: 12,
+                                },
+                                CategoryRelation {
+                                    parent_guid: 10,
+                                    child_guid: 13,
+                                },
+                                CategoryRelation {
+                                    parent_guid: 10,
+                                    child_guid: 70,
+                                },
+                                CategoryRelation {
+                                    parent_guid: 70,
+                                    child_guid: 11,
+                                },
+                                CategoryRelation {
+                                    parent_guid: 10,
+                                    child_guid: 90,
+                                },
+                                CategoryRelation {
+                                    parent_guid: 10,
+                                    child_guid: 96,
+                                },
                                 CategoryRelation {
                                     parent_guid: 65,
                                     child_guid: 66,
