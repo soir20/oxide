@@ -1,7 +1,12 @@
 use crate::game_server::game_packet::{GamePacket, ImageId, OpCode, StringId};
 use byteorder::{LittleEndian, WriteBytesExt};
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
-use std::io::Write;
+use serde::Deserialize;
+use std::{
+    fs::File,
+    io::{Error, Write},
+    path::Path,
+};
 
 #[derive(Copy, Clone, Debug)]
 pub enum ReferenceDataOpCode {
@@ -17,6 +22,7 @@ impl SerializePacket for ReferenceDataOpCode {
     }
 }
 
+#[derive(Clone, Deserialize)]
 pub struct CategoryDefinition {
     pub guid: i32,
     pub name: StringId,
@@ -37,6 +43,7 @@ impl SerializePacket for CategoryDefinition {
     }
 }
 
+#[derive(Clone, Deserialize)]
 pub struct CategoryRelation {
     pub parent_guid: i32,
     pub child_guid: i32,
@@ -51,7 +58,7 @@ impl SerializePacket for CategoryRelation {
     }
 }
 
-#[derive(SerializePacket)]
+#[derive(Clone, Deserialize, SerializePacket)]
 pub struct CategoryDefinitions {
     pub definitions: Vec<CategoryDefinition>,
     pub relations: Vec<CategoryRelation>,
@@ -104,4 +111,9 @@ impl SerializePacket for ItemGroupDefinitions {
 impl GamePacket for ItemGroupDefinitions {
     type Header = ReferenceDataOpCode;
     const HEADER: Self::Header = ReferenceDataOpCode::ItemGroupDefinitions;
+}
+
+pub fn load_categories(config_dir: &Path) -> Result<CategoryDefinitions, Error> {
+    let mut file = File::open(config_dir.join("item_categories.json"))?;
+    Ok(serde_json::from_reader(&mut file)?)
 }

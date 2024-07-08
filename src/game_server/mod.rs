@@ -13,6 +13,7 @@ use rand::Rng;
 use packet_serialize::{
     DeserializePacket, DeserializePacketError, NullTerminatedString, SerializePacketError,
 };
+use reference_data::load_categories;
 use unique_guid::{shorten_zone_template_guid, zone_instance_guid};
 use zone::CharacterIndex;
 
@@ -104,6 +105,7 @@ impl From<SerializePacketError> for ProcessPacketError {
 }
 
 pub struct GameServer {
+    categories: CategoryDefinitions,
     lock_enforcer_source: LockEnforcerSource,
     mounts: BTreeMap<u32, MountConfig>,
     zone_templates: BTreeMap<u8, ZoneTemplate>,
@@ -114,6 +116,7 @@ impl GameServer {
         let characters = GuidTable::new();
         let (templates, zones) = load_zones(config_dir, characters.write())?;
         Ok(GameServer {
+            categories: load_categories(config_dir)?,
             lock_enforcer_source: LockEnforcerSource::from(characters, zones),
             mounts: load_mounts(config_dir)?,
             zone_templates: templates,
@@ -232,136 +235,7 @@ impl GameServer {
 
                     let categories = TunneledPacket {
                         unknown1: true,
-                        inner: CategoryDefinitions {
-                            definitions: vec![
-                                CategoryDefinition {
-                                    guid: -2,
-                                    name: 132,
-                                    icon_set_id: 0,
-                                    sort_order: -2,
-                                    visible: true,
-                                },
-                                CategoryDefinition {
-                                    guid: -1,
-                                    name: 0,
-                                    icon_set_id: 0,
-                                    sort_order: -1,
-                                    visible: true,
-                                },
-                                CategoryDefinition {
-                                    guid: 10,
-                                    name: 0,
-                                    icon_set_id: 0,
-                                    sort_order: 10,
-                                    visible: true,
-                                },
-                                CategoryDefinition {
-                                    guid: 11,
-                                    name: 1219,
-                                    icon_set_id: 424,
-                                    sort_order: 11,
-                                    visible: true,
-                                },
-                                CategoryDefinition {
-                                    guid: 12,
-                                    name: 1220,
-                                    icon_set_id: 1150,
-                                    sort_order: 12,
-                                    visible: true,
-                                },
-                                CategoryDefinition {
-                                    guid: 13,
-                                    name: 1221,
-                                    icon_set_id: 1151,
-                                    sort_order: 13,
-                                    visible: true,
-                                },
-                                CategoryDefinition {
-                                    guid: 65,
-                                    name: 1222,
-                                    icon_set_id: 0,
-                                    sort_order: 65,
-                                    visible: true,
-                                },
-                                CategoryDefinition {
-                                    guid: 66,
-                                    name: 316,
-                                    icon_set_id: 786,
-                                    sort_order: 66,
-                                    visible: true,
-                                },
-                                CategoryDefinition {
-                                    guid: 67,
-                                    name: 317,
-                                    icon_set_id: 787,
-                                    sort_order: 67,
-                                    visible: true,
-                                },
-                                CategoryDefinition {
-                                    guid: 70,
-                                    name: 1238,
-                                    icon_set_id: 675,
-                                    sort_order: 70,
-                                    visible: true,
-                                },
-                                CategoryDefinition {
-                                    guid: 90,
-                                    name: 4321,
-                                    icon_set_id: 2597,
-                                    sort_order: 90,
-                                    visible: true,
-                                },
-                                CategoryDefinition {
-                                    guid: 96,
-                                    name: 4485,
-                                    icon_set_id: 2582,
-                                    sort_order: 96,
-                                    visible: true,
-                                },
-                            ],
-                            relations: vec![
-                                CategoryRelation {
-                                    parent_guid: -1,
-                                    child_guid: 10,
-                                },
-                                CategoryRelation {
-                                    parent_guid: 10,
-                                    child_guid: -2,
-                                },
-                                CategoryRelation {
-                                    parent_guid: 10,
-                                    child_guid: 12,
-                                },
-                                CategoryRelation {
-                                    parent_guid: 10,
-                                    child_guid: 13,
-                                },
-                                CategoryRelation {
-                                    parent_guid: 10,
-                                    child_guid: 70,
-                                },
-                                CategoryRelation {
-                                    parent_guid: 70,
-                                    child_guid: 11,
-                                },
-                                CategoryRelation {
-                                    parent_guid: 10,
-                                    child_guid: 90,
-                                },
-                                CategoryRelation {
-                                    parent_guid: 10,
-                                    child_guid: 96,
-                                },
-                                CategoryRelation {
-                                    parent_guid: 65,
-                                    child_guid: 66,
-                                },
-                                CategoryRelation {
-                                    parent_guid: 65,
-                                    child_guid: 67,
-                                },
-                            ],
-                        },
+                        inner: self.categories.clone(),
                     };
                     packets.push(GamePacket::serialize(&categories)?);
 
