@@ -242,6 +242,13 @@ impl GameServer {
                                     unknown2: true,
                                 },
                                 CategoryDefinition {
+                                    guid: -1,
+                                    name: 0,
+                                    icon_set_id: 0,
+                                    unknown1: 1,
+                                    unknown2: true,
+                                },
+                                CategoryDefinition {
                                     guid: 10,
                                     name: 0,
                                     icon_set_id: 0,
