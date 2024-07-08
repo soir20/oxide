@@ -9,7 +9,7 @@ use axum::routing::get;
 use axum::{serve, Router};
 use miniz_oxide::deflate::compress_to_vec_zlib;
 use miniz_oxide::inflate::decompress_to_vec_zlib;
-use tokio::fs::{create_dir_all, read, read_dir, remove_dir_all, write, OpenOptions};
+use tokio::fs::{create_dir_all, read, read_dir, remove_dir_all, try_exists, write, OpenOptions};
 use tokio::io;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpListener;
@@ -124,7 +124,9 @@ async fn prepare_asset_cache(
     assets_cache_path: &std::path::Path,
     manifests: &[Manifest],
 ) -> io::Result<CrcMap> {
-    remove_dir_all(assets_cache_path).await?;
+    if try_exists(assets_cache_path).await? {
+        remove_dir_all(assets_cache_path).await?;
+    }
     create_dir_all(assets_cache_path).await?;
     let mut asset_paths = list_files(assets_path).await?;
     asset_paths.sort();
