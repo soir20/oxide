@@ -21,7 +21,7 @@ pub struct CategoryDefinition {
     pub guid: i32,
     pub name: StringId,
     pub icon_set_id: ImageId,
-    pub unknown1: u32,
+    pub sort_order: i32,
     pub unknown2: bool,
 }
 
@@ -31,7 +31,7 @@ impl SerializePacket for CategoryDefinition {
         buffer.write_i32::<LittleEndian>(self.guid)?;
         buffer.write_u32::<LittleEndian>(self.name)?;
         buffer.write_u32::<LittleEndian>(self.icon_set_id)?;
-        buffer.write_u32::<LittleEndian>(self.unknown1)?;
+        buffer.write_i32::<LittleEndian>(self.sort_order)?;
         buffer.write_u8(self.unknown2 as u8)?;
         Ok(())
     }
