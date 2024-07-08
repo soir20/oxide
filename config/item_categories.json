@@ -57,6 +57,46 @@
       "visible": true
     },
     {
+      "comment": "My Headgear",
+      "guid": 60,
+      "name": 1228,
+      "icon_set_id": 677,
+      "sort_order": 60,
+      "visible": true
+    },
+    {
+      "comment": "My Clothes",
+      "guid": 61,
+      "name": 1229,
+      "icon_set_id": 673,
+      "sort_order": 61,
+      "visible": true
+    },
+    {
+      "comment": "My Gloves",
+      "guid": 62,
+      "name": 1230,
+      "icon_set_id": 676,
+      "sort_order": 62,
+      "visible": true
+    },
+    {
+      "comment": "My Shoes",
+      "guid": 63,
+      "name": 1231,
+      "icon_set_id": 680,
+      "sort_order": 63,
+      "visible": true
+    },
+    {
+      "comment": "My Weapons",
+      "guid": 64,
+      "name": 1232,
+      "icon_set_id": 681,
+      "sort_order": 59,
+      "visible": true
+    },
+    {
       "comment": "My Gear",
       "guid": 70,
       "name": 1238,
@@ -129,6 +169,26 @@
     {
       "parent_guid": 10,
       "child_guid": 96
+    },
+    {
+      "parent_guid": 11,
+      "child_guid": 60
+    },
+    {
+      "parent_guid": 11,
+      "child_guid": 61
+    },
+    {
+      "parent_guid": 11,
+      "child_guid": 62
+    },
+    {
+      "parent_guid": 11,
+      "child_guid": 63
+    },
+    {
+      "parent_guid": 11,
+      "child_guid": 64
     },
     {
       "parent_guid": 65,
