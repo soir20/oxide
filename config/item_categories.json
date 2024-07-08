@@ -57,22 +57,6 @@
       "visible": true
     },
     {
-      "comment": "Chairs",
-      "guid": 66,
-      "name": 316,
-      "icon_set_id": 786,
-      "sort_order": 66,
-      "visible": true
-    },
-    {
-      "comment": "Tables",
-      "guid": 67,
-      "name": 317,
-      "icon_set_id": 787,
-      "sort_order": 67,
-      "visible": true
-    },
-    {
       "comment": "My Gear",
       "guid": 70,
       "name": 1238,
@@ -94,6 +78,22 @@
       "name": 4485,
       "icon_set_id": 2582,
       "sort_order": 96,
+      "visible": true
+    },
+    {
+      "comment": "Chairs",
+      "guid": 1000,
+      "name": 316,
+      "icon_set_id": 786,
+      "sort_order": 1000,
+      "visible": true
+    },
+    {
+      "comment": "Tables",
+      "guid": 1001,
+      "name": 317,
+      "icon_set_id": 787,
+      "sort_order": 1001,
       "visible": true
     }
   ],
@@ -132,11 +132,11 @@
     },
     {
       "parent_guid": 65,
-      "child_guid": 66
+      "child_guid": 1000
     },
     {
       "parent_guid": 65,
-      "child_guid": 67
+      "child_guid": 1001
     }
   ]
 }
