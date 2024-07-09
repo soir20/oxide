@@ -1,7 +1,12 @@
 use crate::game_server::game_packet::{GamePacket, ImageId, OpCode, StringId};
 use byteorder::{LittleEndian, WriteBytesExt};
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
-use std::io::Write;
+use serde::Deserialize;
+use std::{
+    fs::File,
+    io::{Error, Write},
+    path::Path,
+};
 
 #[derive(Copy, Clone, Debug)]
 pub enum ReferenceDataOpCode {
@@ -17,41 +22,43 @@ impl SerializePacket for ReferenceDataOpCode {
     }
 }
 
+#[derive(Clone, Deserialize)]
 pub struct CategoryDefinition {
-    pub guid: u32,
+    pub guid: i32,
     pub name: StringId,
     pub icon_set_id: ImageId,
-    pub unknown1: u32,
-    pub unknown2: bool,
+    pub sort_order: i32,
+    pub visible: bool,
 }
 
 impl SerializePacket for CategoryDefinition {
     fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        buffer.write_u32::<LittleEndian>(self.guid)?;
-        buffer.write_u32::<LittleEndian>(self.guid)?;
+        buffer.write_i32::<LittleEndian>(self.guid)?;
+        buffer.write_i32::<LittleEndian>(self.guid)?;
         buffer.write_u32::<LittleEndian>(self.name)?;
         buffer.write_u32::<LittleEndian>(self.icon_set_id)?;
-        buffer.write_u32::<LittleEndian>(self.unknown1)?;
-        buffer.write_u8(self.unknown2 as u8)?;
+        buffer.write_i32::<LittleEndian>(self.sort_order)?;
+        buffer.write_u8(self.visible as u8)?;
         Ok(())
     }
 }
 
+#[derive(Clone, Deserialize)]
 pub struct CategoryRelation {
-    pub parent_guid: u32,
-    pub child_guid: u32,
+    pub parent_guid: i32,
+    pub child_guid: i32,
 }
 
 impl SerializePacket for CategoryRelation {
     fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        buffer.write_u32::<LittleEndian>(self.parent_guid)?;
-        buffer.write_u32::<LittleEndian>(self.parent_guid)?;
-        buffer.write_u32::<LittleEndian>(self.child_guid)?;
+        buffer.write_i32::<LittleEndian>(self.parent_guid)?;
+        buffer.write_i32::<LittleEndian>(self.parent_guid)?;
+        buffer.write_i32::<LittleEndian>(self.child_guid)?;
         Ok(())
     }
 }
 
-#[derive(SerializePacket)]
+#[derive(Clone, Deserialize, SerializePacket)]
 pub struct CategoryDefinitions {
     pub definitions: Vec<CategoryDefinition>,
     pub relations: Vec<CategoryRelation>,
@@ -104,4 +111,9 @@ impl SerializePacket for ItemGroupDefinitions {
 impl GamePacket for ItemGroupDefinitions {
     type Header = ReferenceDataOpCode;
     const HEADER: Self::Header = ReferenceDataOpCode::ItemGroupDefinitions;
+}
+
+pub fn load_categories(config_dir: &Path) -> Result<CategoryDefinitions, Error> {
+    let mut file = File::open(config_dir.join("item_categories.json"))?;
+    Ok(serde_json::from_reader(&mut file)?)
 }

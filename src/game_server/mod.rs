@@ -13,6 +13,7 @@ use rand::Rng;
 use packet_serialize::{
     DeserializePacket, DeserializePacketError, NullTerminatedString, SerializePacketError,
 };
+use reference_data::load_categories;
 use unique_guid::{shorten_zone_template_guid, zone_instance_guid};
 use zone::CharacterIndex;
 
@@ -104,6 +105,7 @@ impl From<SerializePacketError> for ProcessPacketError {
 }
 
 pub struct GameServer {
+    categories: CategoryDefinitions,
     lock_enforcer_source: LockEnforcerSource,
     mounts: BTreeMap<u32, MountConfig>,
     zone_templates: BTreeMap<u8, ZoneTemplate>,
@@ -114,6 +116,7 @@ impl GameServer {
         let characters = GuidTable::new();
         let (templates, zones) = load_zones(config_dir, characters.write())?;
         Ok(GameServer {
+            categories: load_categories(config_dir)?,
             lock_enforcer_source: LockEnforcerSource::from(characters, zones),
             mounts: load_mounts(config_dir)?,
             zone_templates: templates,
@@ -232,41 +235,7 @@ impl GameServer {
 
                     let categories = TunneledPacket {
                         unknown1: true,
-                        inner: CategoryDefinitions {
-                            definitions: vec![
-                                CategoryDefinition {
-                                    guid: 65,
-                                    name: 1222,
-                                    icon_set_id: 0,
-                                    unknown1: 1,
-                                    unknown2: true,
-                                },
-                                CategoryDefinition {
-                                    guid: 66,
-                                    name: 316,
-                                    icon_set_id: 786,
-                                    unknown1: 1,
-                                    unknown2: true,
-                                },
-                                CategoryDefinition {
-                                    guid: 67,
-                                    name: 317,
-                                    icon_set_id: 787,
-                                    unknown1: 1,
-                                    unknown2: true,
-                                },
-                            ],
-                            relations: vec![
-                                CategoryRelation {
-                                    parent_guid: 65,
-                                    child_guid: 66,
-                                },
-                                CategoryRelation {
-                                    parent_guid: 65,
-                                    child_guid: 67,
-                                },
-                            ],
-                        },
+                        inner: self.categories.clone(),
                     };
                     packets.push(GamePacket::serialize(&categories)?);
 
