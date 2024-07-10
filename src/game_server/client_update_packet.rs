@@ -74,8 +74,8 @@ pub struct EquipItem {
     pub composite_effect: u32,
     pub slot: EquipmentSlot,
     pub profile_id: u32,
-    pub item_def_class: u32,
-    pub update_gear: bool,
+    pub item_class: u32,
+    pub equip: bool,
 }
 
 impl GamePacket for EquipItem {
