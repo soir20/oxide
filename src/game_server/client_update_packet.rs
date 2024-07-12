@@ -12,6 +12,7 @@ pub enum ClientUpdateOpCode {
     Health = 0x1,
     AddItems = 0x2,
     EquipItem = 0x5,
+    UnequipItem = 0x6,
     Position = 0xc,
     Power = 0xd,
     Stats = 0x7,
@@ -73,7 +74,7 @@ pub struct EquipItem {
     pub tint: u32,
     pub composite_effect: u32,
     pub slot: EquipmentSlot,
-    pub profile_id: u32,
+    pub battle_class_id: u32,
     pub item_class: u32,
     pub equip: bool,
 }
@@ -81,6 +82,17 @@ pub struct EquipItem {
 impl GamePacket for EquipItem {
     type Header = ClientUpdateOpCode;
     const HEADER: Self::Header = ClientUpdateOpCode::EquipItem;
+}
+
+#[derive(SerializePacket)]
+pub struct UnequipItem {
+    pub slot: EquipmentSlot,
+    pub battle_class_id: u32,
+}
+
+impl GamePacket for UnequipItem {
+    type Header = ClientUpdateOpCode;
+    const HEADER: Self::Header = ClientUpdateOpCode::UnequipItem;
 }
 
 #[derive(SerializePacket, DeserializePacket)]

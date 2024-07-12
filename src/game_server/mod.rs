@@ -4,6 +4,7 @@ use std::path::Path;
 use std::vec;
 
 use byteorder::{LittleEndian, ReadBytesExt};
+use client_update_packet::UnequipItem;
 use guid::GuidTableHandle;
 use lock_enforcer::{
     CharacterLockRequest, LockEnforcer, LockEnforcerSource, ZoneLockRequest, ZoneTableReadHandle,
@@ -57,6 +58,7 @@ mod command;
 mod game_packet;
 mod guid;
 mod housing;
+mod inventory;
 mod item;
 mod lock_enforcer;
 mod login;

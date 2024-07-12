@@ -29,7 +29,7 @@ pub struct ItemClassData {
 }
 
 #[derive(Clone, SerializePacket)]
-pub struct ProfileUnknown7 {}
+pub struct BattleClassUnknown7 {}
 
 #[derive(Clone)]
 pub enum Ability {
@@ -150,16 +150,16 @@ fn write_ability_end(
 }
 
 #[derive(Clone)]
-pub enum ProfileUnknown10 {
+pub enum BattleClassUnknown10 {
     None,
     Some(u32, bool, u32, u32, u32, u32, u32, u32, u32, u32),
 }
 
-impl SerializePacket for ProfileUnknown10 {
+impl SerializePacket for BattleClassUnknown10 {
     fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
         match self {
-            ProfileUnknown10::None => Ok(buffer.write_u32::<LittleEndian>(0)?),
-            ProfileUnknown10::Some(
+            BattleClassUnknown10::None => Ok(buffer.write_u32::<LittleEndian>(0)?),
+            BattleClassUnknown10::Some(
                 unknown1,
                 unknown2,
                 unknown3,
@@ -188,7 +188,7 @@ impl SerializePacket for ProfileUnknown10 {
 }
 
 #[derive(Clone, SerializePacket)]
-pub struct Profile {
+pub struct BattleClass {
     guid: u32,
     name_id: StringId,
     description_id: StringId,
@@ -205,7 +205,7 @@ pub struct Profile {
     unknown4: u32,
     unknown5: bool,
     unknown6: u32,
-    unknown7: Vec<ProfileUnknown7>,
+    unknown7: Vec<BattleClassUnknown7>,
     level: u32,
     xp_in_level: u32,
     total_xp: u32,
@@ -213,7 +213,7 @@ pub struct Profile {
     items: Vec<EquippedItem>,
     unknown9: u32,
     abilities: Vec<Ability>,
-    unknown10: LengthlessVec<ProfileUnknown10>,
+    unknown10: LengthlessVec<BattleClassUnknown10>,
 }
 
 #[derive(Clone, SerializePacket)]
@@ -282,7 +282,7 @@ struct Item2 {
 }
 
 #[derive(Clone, SerializePacket)]
-struct ProfileItem {
+struct BattleClassItem {
     item1: u32,
     item2: Item2,
 }
@@ -331,7 +331,7 @@ pub struct Pet {
     unknown8: bool,
     pet_trick: Vec<PetTrick>,
     item_guid: Vec<ItemGuid>,
-    profile_item: Vec<ProfileItem>,
+    battle_class_items: Vec<BattleClassItem>,
     pet_name: String,
     tint_id: u32,
     texture_alias: String,
@@ -438,8 +438,8 @@ pub struct PlayerData {
     pub unknown15: u32,
     pub unknown16: u32,
     pub equipped_vehicles: Vec<EquippedVehicle>,
-    pub profiles: Vec<Profile>,
-    pub active_profile: u32,
+    pub battle_classes: Vec<BattleClass>,
+    pub active_battle_class: u32,
     pub unknown: Vec<Unknown>,
     pub social: Vec<SocialInfo>,
     pub inventory: Vec<InventoryItem>,
@@ -555,7 +555,7 @@ pub fn make_test_player(guid: u32, mounts: &BTreeMap<u32, MountConfig>) -> Playe
             unknown15: 3,
             unknown16: 5,
             equipped_vehicles: vec![],
-            profiles: vec![Profile {
+            battle_classes: vec![BattleClass {
                 guid: 1,
                 name_id: 52577,
                 description_id: 2837,
@@ -665,9 +665,9 @@ pub fn make_test_player(guid: u32, mounts: &BTreeMap<u32, MountConfig>) -> Playe
                     Ability::Empty,
                     Ability::Empty,
                 ],
-                unknown10: LengthlessVec(vec![ProfileUnknown10::None]),
+                unknown10: LengthlessVec(vec![BattleClassUnknown10::None]),
             }],
-            active_profile: 1,
+            active_battle_class: 1,
             unknown: vec![],
             social: vec![],
             inventory: vec![
@@ -784,7 +784,7 @@ pub fn make_test_player(guid: u32, mounts: &BTreeMap<u32, MountConfig>) -> Playe
                     },
                 }],
                 item_guid: vec![ItemGuid { guid: 0 }],
-                profile_item: vec![ProfileItem {
+                battle_class_items: vec![BattleClassItem {
                     item1: 0,
                     item2: Item2 {
                         unknown1: 0,
