@@ -1,7 +1,10 @@
 use crate::game_server::game_packet::GamePacket;
 use crate::game_server::player_update_packet::PlayerUpdateOpCode;
-use byteorder::{LittleEndian, WriteBytesExt};
-use packet_serialize::{SerializePacket, SerializePacketError};
+use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
+use num_enum::TryFromPrimitive;
+use packet_serialize::{
+    DeserializePacket, DeserializePacketError, SerializePacket, SerializePacketError,
+};
 use std::io::Write;
 
 #[derive(Clone, SerializePacket)]
@@ -22,7 +25,8 @@ pub enum MarketData {
     Some(u64, u32, u32),
 }
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, TryFromPrimitive)]
+#[repr(u32)]
 pub enum EquipmentSlot {
     None = 0,
     Head = 1,
@@ -46,6 +50,22 @@ impl SerializePacket for EquipmentSlot {
     fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
         buffer.write_u32::<LittleEndian>(*self as u32)?;
         Ok(())
+    }
+}
+
+impl DeserializePacket for EquipmentSlot {
+    fn deserialize(
+        cursor: &mut std::io::Cursor<&[u8]>,
+    ) -> Result<Self, packet_serialize::DeserializePacketError>
+    where
+        Self: Sized,
+    {
+        EquipmentSlot::try_from(
+            cursor
+                .read_u32::<LittleEndian>()
+                .map_err(DeserializePacketError::IoError)?,
+        )
+        .map_err(|_| DeserializePacketError::UnknownDiscriminator)
     }
 }
 

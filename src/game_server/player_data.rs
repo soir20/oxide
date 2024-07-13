@@ -189,7 +189,7 @@ impl SerializePacket for BattleClassUnknown10 {
 
 #[derive(Clone, SerializePacket)]
 pub struct BattleClass {
-    guid: u32,
+    pub guid: u32,
     name_id: StringId,
     description_id: StringId,
     selected_ability: u32,
@@ -210,7 +210,7 @@ pub struct BattleClass {
     xp_in_level: u32,
     total_xp: u32,
     unknown8: u32,
-    items: Vec<EquippedItem>,
+    pub items: Vec<EquippedItem>,
     unknown9: u32,
     abilities: Vec<Ability>,
     unknown10: LengthlessVec<BattleClassUnknown10>,
@@ -218,8 +218,8 @@ pub struct BattleClass {
 
 #[derive(Clone, SerializePacket)]
 pub struct EquippedItem {
-    slot: EquipmentSlot,
-    guid: u32,
+    pub slot: EquipmentSlot,
+    pub guid: u32,
     category: u32,
 }
 #[derive(Clone, SerializePacket)]

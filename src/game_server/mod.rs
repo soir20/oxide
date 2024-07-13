@@ -6,6 +6,7 @@ use std::vec;
 use byteorder::{LittleEndian, ReadBytesExt};
 use client_update_packet::UnequipItem;
 use guid::GuidTableHandle;
+use inventory::process_inventory_packet;
 use lock_enforcer::{
     CharacterLockRequest, LockEnforcer, LockEnforcerSource, ZoneLockRequest, ZoneTableReadHandle,
 };
@@ -522,6 +523,9 @@ impl GameServer {
                 }
                 OpCode::Chat => {
                     broadcasts.append(&mut process_chat_packet(&mut cursor, sender)?);
+                }
+                OpCode::Inventory => {
+                    broadcasts.append(&mut process_inventory_packet(self, &mut cursor, sender)?);
                 }
                 _ => println!("Unimplemented: {:?}, {:x?}", op_code, data),
             },
