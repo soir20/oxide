@@ -31,10 +31,9 @@ pub fn process_inventory_packet(
                     character_consumer: |_, _, mut characters_write, _| {
                         if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) {
                             if let CharacterType::Player(ref mut player_data) = character_write_handle.character_type {
-                                let possible_battle_class = player_data.battle_classes.iter_mut()
-                                    .find(|battle_class| battle_class.guid == unequip_slot.battle_class);
+                                let possible_battle_class = player_data.battle_classes.get_mut(&unequip_slot.battle_class);
                                 if let Some(battle_class) = possible_battle_class {
-                                    battle_class.items.retain(|equipped_item| equipped_item.slot != unequip_slot.slot);
+                                    battle_class.items.remove(&unequip_slot.slot);
                                     Ok(vec![Broadcast::Single(sender, vec![
                                         GamePacket::serialize(&TunneledPacket {
                                             unknown1: true,

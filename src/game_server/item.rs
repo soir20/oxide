@@ -25,7 +25,7 @@ pub enum MarketData {
     Some(u64, u32, u32),
 }
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, TryFromPrimitive)]
 #[repr(u32)]
 pub enum EquipmentSlot {
     None = 0,
