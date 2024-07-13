@@ -4,7 +4,6 @@ use std::path::Path;
 use std::vec;
 
 use byteorder::{LittleEndian, ReadBytesExt};
-use client_update_packet::UnequipItem;
 use guid::GuidTableHandle;
 use inventory::process_inventory_packet;
 use lock_enforcer::{
@@ -40,8 +39,7 @@ use crate::game_server::player_data::{
 };
 use crate::game_server::player_update_packet::make_test_npc;
 use crate::game_server::reference_data::{
-    CategoryDefinition, CategoryDefinitions, CategoryRelation, ItemGroupDefinitions,
-    ItemGroupDefinitionsData,
+    CategoryDefinitions, ItemGroupDefinitions, ItemGroupDefinitionsData,
 };
 use crate::game_server::time::make_game_time_sync;
 use crate::game_server::tunnel::{TunneledPacket, TunneledWorldPacket};
