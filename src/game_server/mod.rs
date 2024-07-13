@@ -236,7 +236,7 @@ impl GameServer {
 
                     let categories = TunneledPacket {
                         unknown1: true,
-                        inner: self.categories.clone(),
+                        inner: GamePacket::serialize(&self.categories)?,
                     };
                     packets.push(GamePacket::serialize(&categories)?);
 
