@@ -6,6 +6,7 @@ use std::vec;
 use byteorder::{LittleEndian, ReadBytesExt};
 use guid::GuidTableHandle;
 use inventory::process_inventory_packet;
+use item::{load_item_definitions, ItemDefinition, ItemDefinitionsReply};
 use lock_enforcer::{
     CharacterLockRequest, LockEnforcer, LockEnforcerSource, ZoneLockRequest, ZoneTableReadHandle,
 };
@@ -28,7 +29,6 @@ use crate::game_server::guid::{GuidTable, GuidTableWriteHandle};
 use crate::game_server::housing::{
     process_housing_packet, HouseDescription, HouseInstanceEntry, HouseInstanceList,
 };
-use crate::game_server::item::make_item_definitions;
 use crate::game_server::login::{
     send_points_of_interest, DeploymentEnv, GameSettings, LoginReply, WelcomeScreen,
     ZoneDetailsDone,
@@ -108,6 +108,7 @@ impl From<SerializePacketError> for ProcessPacketError {
 pub struct GameServer {
     categories: CategoryDefinitions,
     lock_enforcer_source: LockEnforcerSource,
+    items: BTreeMap<u32, ItemDefinition>,
     mounts: BTreeMap<u32, MountConfig>,
     zone_templates: BTreeMap<u8, ZoneTemplate>,
 }
@@ -119,6 +120,7 @@ impl GameServer {
         Ok(GameServer {
             categories: load_categories(config_dir)?,
             lock_enforcer_source: LockEnforcerSource::from(characters, zones),
+            items: load_item_definitions(config_dir)?,
             mounts: load_mounts(config_dir)?,
             zone_templates: templates,
         })
@@ -179,7 +181,9 @@ impl GameServer {
 
                             let item_defs = TunneledPacket {
                                 unknown1: true,
-                                inner: make_item_definitions(),
+                                inner: ItemDefinitionsReply {
+                                    definitions: &self.items,
+                                },
                             };
                             packets.push(GamePacket::serialize(&item_defs)?);
 
