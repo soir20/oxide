@@ -1,20 +1,22 @@
 use std::io::Cursor;
 
-use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
-use num_enum::TryFromPrimitive;
-use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
+use byteorder::{LittleEndian, ReadBytesExt};
+use packet_serialize::DeserializePacket;
+
+use crate::game_server::{
+    packets::{
+        client_update::{EquipItem, UnequipItem},
+        inventory::{EquipGuid, InventoryOpCode, UnequipSlot},
+        item::Attachment,
+        player_data::EquippedItem,
+        tunnel::TunneledPacket,
+        GamePacket,
+    },
+    Broadcast, GameServer, ProcessPacketError,
+};
 
 use super::{
-    client_update_packet::{EquipItem, UnequipItem},
-    game_packet::{GamePacket, OpCode},
-    item::EquipmentSlot,
-    lock_enforcer::CharacterLockRequest,
-    player_data::EquippedItem,
-    player_update_packet::Attachment,
-    tunnel::TunneledPacket,
-    unique_guid::player_guid,
-    zone::CharacterType,
-    Broadcast, GameServer, ProcessPacketError,
+    character::CharacterType, lock_enforcer::CharacterLockRequest, unique_guid::player_guid,
 };
 
 pub fn process_inventory_packet(
@@ -131,32 +133,4 @@ pub fn process_inventory_packet(
             Ok(Vec::new())
         }
     }
-}
-
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
-#[repr(u16)]
-pub enum InventoryOpCode {
-    UnequipSlot = 0x2,
-    EquipGuid = 0x3,
-}
-
-impl SerializePacket for InventoryOpCode {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        OpCode::Inventory.serialize(buffer)?;
-        buffer.write_u16::<LittleEndian>(*self as u16)?;
-        Ok(())
-    }
-}
-
-#[derive(DeserializePacket)]
-pub struct UnequipSlot {
-    slot: EquipmentSlot,
-    battle_class: u32,
-}
-
-#[derive(DeserializePacket)]
-pub struct EquipGuid {
-    item_guid: u32,
-    battle_class: u32,
-    slot: EquipmentSlot,
 }

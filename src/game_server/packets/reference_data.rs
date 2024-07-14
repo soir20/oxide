@@ -1,12 +1,10 @@
-use crate::game_server::game_packet::{GamePacket, ImageId, OpCode, StringId};
+use std::io::Write;
+
 use byteorder::{LittleEndian, WriteBytesExt};
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
 use serde::Deserialize;
-use std::{
-    fs::File,
-    io::{Error, Write},
-    path::Path,
-};
+
+use super::{GamePacket, ImageId, OpCode, StringId};
 
 #[derive(Copy, Clone, Debug)]
 pub enum ReferenceDataOpCode {
@@ -111,9 +109,4 @@ impl SerializePacket for ItemGroupDefinitions {
 impl GamePacket for ItemGroupDefinitions {
     type Header = ReferenceDataOpCode;
     const HEADER: Self::Header = ReferenceDataOpCode::ItemGroupDefinitions;
-}
-
-pub fn load_categories(config_dir: &Path) -> Result<CategoryDefinitions, Error> {
-    let mut file = File::open(config_dir.join("item_categories.json"))?;
-    Ok(serde_json::from_reader(&mut file)?)
 }

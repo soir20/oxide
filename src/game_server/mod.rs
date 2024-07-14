@@ -4,77 +4,46 @@ use std::path::Path;
 use std::vec;
 
 use byteorder::{LittleEndian, ReadBytesExt};
-use guid::GuidTableHandle;
-use inventory::process_inventory_packet;
-use item::{
-    load_item_definitions, load_required_slots, EquipmentSlot, ItemDefinition, ItemDefinitionsReply,
-};
-use lock_enforcer::{
+use handlers::character::{Character, CharacterIndex};
+use handlers::chat::process_chat_packet;
+use handlers::command::process_command;
+use handlers::guid::{GuidTable, GuidTableHandle, GuidTableWriteHandle};
+use handlers::housing::process_housing_packet;
+use handlers::inventory::process_inventory_packet;
+use handlers::item::{load_item_definitions, load_required_slots};
+use handlers::lock_enforcer::{
     CharacterLockRequest, LockEnforcer, LockEnforcerSource, ZoneLockRequest, ZoneTableReadHandle,
 };
+use handlers::login::send_points_of_interest;
+use handlers::mount::{load_mounts, process_mount_packet, MountConfig};
+use handlers::reference_data::load_categories;
+use handlers::test_data::{
+    make_test_nameplate_image, make_test_npc, make_test_player, make_test_wield_type,
+};
+use handlers::time::make_game_time_sync;
+use handlers::unique_guid::{player_guid, shorten_zone_template_guid, zone_instance_guid};
+use handlers::zone::{load_zones, teleport_within_zone, Zone, ZoneTemplate};
+use packets::client_update::{Health, Power, PreloadCharactersDone, Stat, StatId, Stats};
+use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
+use packets::item::{EquipmentSlot, ItemDefinition};
+use packets::login::{DeploymentEnv, GameSettings, LoginReply, WelcomeScreen, ZoneDetailsDone};
+use packets::player_update::ItemDefinitionsReply;
+use packets::reference_data::{
+    CategoryDefinitions, ItemGroupDefinitions, ItemGroupDefinitionsData,
+};
+use packets::tunnel::{TunneledPacket, TunneledWorldPacket};
+use packets::update_position::UpdatePlayerPosition;
+use packets::zone::ZoneTeleportRequest;
+use packets::{GamePacket, OpCode};
 use rand::Rng;
 
+use crate::teleport_to_zone;
 use packet_serialize::{
     DeserializePacket, DeserializePacketError, NullTerminatedString, SerializePacketError,
 };
-use reference_data::load_categories;
-use unique_guid::{shorten_zone_template_guid, zone_instance_guid};
-use zone::CharacterIndex;
 
-use crate::game_server::chat::process_chat_packet;
-use crate::game_server::client_update_packet::{
-    Health, Power, PreloadCharactersDone, Stat, StatId, Stats,
-};
-use crate::game_server::command::process_command;
-use crate::game_server::game_packet::{GamePacket, OpCode};
-use crate::game_server::guid::{GuidTable, GuidTableWriteHandle};
-use crate::game_server::housing::{
-    process_housing_packet, HouseDescription, HouseInstanceEntry, HouseInstanceList,
-};
-use crate::game_server::login::{
-    send_points_of_interest, DeploymentEnv, GameSettings, LoginReply, WelcomeScreen,
-    ZoneDetailsDone,
-};
-use crate::game_server::mount::{load_mounts, process_mount_packet, MountConfig};
-use crate::game_server::player_data::{
-    make_test_nameplate_image, make_test_player, make_test_wield_type,
-};
-use crate::game_server::player_update_packet::make_test_npc;
-use crate::game_server::reference_data::{
-    CategoryDefinitions, ItemGroupDefinitions, ItemGroupDefinitionsData,
-};
-use crate::game_server::time::make_game_time_sync;
-use crate::game_server::tunnel::{TunneledPacket, TunneledWorldPacket};
-use crate::game_server::unique_guid::player_guid;
-use crate::game_server::update_position::UpdatePlayerPosition;
-use crate::game_server::zone::{
-    load_zones, teleport_within_zone, Character, Zone, ZoneTeleportRequest, ZoneTemplate,
-};
-use crate::teleport_to_zone;
-
-mod chat;
-mod client_update_packet;
-mod combat_update_packet;
-mod command;
-mod game_packet;
-mod guid;
-mod housing;
-mod inventory;
-mod item;
-mod lock_enforcer;
-mod login;
-mod mount;
-mod player_data;
-mod player_update_packet;
-mod purchase;
-mod reference_data;
-mod store;
-mod time;
-mod tunnel;
-mod ui;
-mod unique_guid;
-mod update_position;
-mod zone;
+mod handlers;
+mod packets;
 
 #[derive(Debug)]
 pub enum Broadcast {
@@ -198,7 +167,7 @@ impl GameServer {
                             packets.push(GamePacket::serialize(&player)?);
 
                             characters_write_handle
-                                .insert(player.inner.data.into_character(player_zone));
+                                .insert(Character::from_character(player.inner.data, player_zone));
 
                             Ok((guid, vec![Broadcast::Single(guid, packets)]))
                         },

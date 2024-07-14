@@ -1,6 +1,6 @@
 use packet_serialize::{DeserializePacket, SerializePacket};
 
-use crate::game_server::game_packet::{GamePacket, OpCode};
+use super::{GamePacket, OpCode};
 
 #[derive(Clone, SerializePacket, DeserializePacket)]
 pub struct UpdatePlayerPosition {

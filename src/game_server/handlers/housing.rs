@@ -1,334 +1,34 @@
-use std::io::{Cursor, Read, Write};
+use std::io::{Cursor, Read};
 
-use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
-use num_enum::TryFromPrimitive;
+use byteorder::{LittleEndian, ReadBytesExt};
+use packet_serialize::{DeserializePacket, SerializePacketError};
 use parking_lot::RwLockReadGuard;
 
-use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
-
-use crate::game_server::game_packet::{GamePacket, ImageId, OpCode, Pos};
-use crate::game_server::guid::GuidTableHandle;
-use crate::game_server::player_update_packet::{
-    AddNpc, BaseAttachmentGroup, Icon, WeaponAnimation,
+use crate::{
+    game_server::{
+        packets::{
+            housing::{
+                BuildArea, EnterRequest, FixtureAssetData, FixtureUpdate, HouseDescription,
+                HouseInfo, HouseInstanceData, HouseItemList, HouseZoneData, HousingOpCode,
+                InnerInstanceData, PlacedFixture, RoomInstances, SetEditMode, Unknown1,
+            },
+            item::{BaseAttachmentGroup, WieldType},
+            player_update::{AddNpc, Icon},
+            tunnel::TunneledPacket,
+            GamePacket, Pos,
+        },
+        Broadcast, GameServer, ProcessPacketError,
+    },
+    teleport_to_zone,
 };
-use crate::game_server::tunnel::TunneledPacket;
-use crate::game_server::unique_guid::player_guid;
-use crate::game_server::zone::{House, PreviousFixture, Zone};
-use crate::game_server::{Broadcast, GameServer, ProcessPacketError};
-use crate::teleport_to_zone;
 
-use super::guid::IndexedGuid;
-use super::lock_enforcer::{CharacterLockRequest, ZoneLockRequest};
-use super::unique_guid::{npc_guid, zone_template_guid, FIXTURE_DISCRIMINANT};
-use super::zone::CurrentFixture;
-
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
-#[repr(u16)]
-pub enum HousingOpCode {
-    SetEditMode = 0x6,
-    EnterRequest = 0x10,
-    InstanceData = 0x18,
-    InstanceList = 0x26,
-    FixtureUpdate = 0x27,
-    FixtureAsset = 0x29,
-    ItemList = 0x2a,
-    HouseInfo = 0x2b,
-    HouseZoneData = 0x2c,
-    InviteNotification = 0x2e,
-}
-
-impl SerializePacket for HousingOpCode {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        OpCode::Housing.serialize(buffer)?;
-        buffer.write_u16::<LittleEndian>(*self as u16)?;
-        Ok(())
-    }
-}
-
-#[derive(SerializePacket, DeserializePacket)]
-pub struct SetEditMode {
-    enabled: bool,
-}
-
-impl GamePacket for SetEditMode {
-    type Header = HousingOpCode;
-    const HEADER: Self::Header = HousingOpCode::SetEditMode;
-}
-
-#[derive(SerializePacket, DeserializePacket)]
-pub struct EnterRequest {
-    house_guid: u64,
-    unknown1: u32,
-    unknown2: u32,
-}
-
-impl GamePacket for EnterRequest {
-    type Header = HousingOpCode;
-    const HEADER: Self::Header = HousingOpCode::EnterRequest;
-}
-
-#[derive(SerializePacket, DeserializePacket)]
-pub struct PlacedFixture {
-    fixture_guid: u64,
-    house_guid: u64,
-    fixture_asset_id: u32,
-    unknown2: f32,
-    pos: Pos,
-    rot: Pos,
-    scale: Pos,
-    npc_guid: u64,
-    item_def_id: u32,
-    unknown3: u32,
-    base_attachment_group: BaseAttachmentGroup,
-    unknown4: String,
-    unknown5: String,
-    unknown6: u32,
-    unknown7: String,
-    unknown8: bool,
-    unknown9: u32,
-    unknown10: f32,
-}
-
-#[derive(SerializePacket, DeserializePacket)]
-pub struct Unknown1 {
-    fixture_guid: u64,
-    item_def_id: u32,
-    unknown1: u32,
-    unknown2: Vec<u64>,
-    unknown3: u32,
-    unknown4: u32,
-}
-
-#[derive(SerializePacket, DeserializePacket)]
-pub struct FixtureAssetData {
-    fixture_asset_id: u32,
-    item_def_id: u32,
-    unknown2: u32,
-    model_id: u32,
-    unknown3: bool,
-    unknown4: bool,
-    unknown5: bool,
-    unknown6: bool,
-    unknown7: bool,
-    unknown8: String,
-    min_scale: f32,
-    max_scale: f32,
-    unknown11: u32,
-}
-
-#[derive(SerializePacket, DeserializePacket)]
-pub struct HouseInfo {
-    edit_mode_enabled: bool,
-    unknown2: u32,
-    unknown3: bool,
-    fixtures: u32,
-    unknown5: u32,
-    unknown6: u32,
-    unknown7: u32,
-}
-
-impl GamePacket for HouseInfo {
-    type Header = HousingOpCode;
-    const HEADER: Self::Header = HousingOpCode::HouseInfo;
-}
-
-#[derive(SerializePacket, DeserializePacket)]
-pub struct HouseDescription {
-    pub owner_guid: u64,
-    pub house_guid: u64,
-    pub house_name: u32,
-    pub player_given_name: String,
-    pub owner_name: String,
-    pub icon_id: ImageId,
-    pub unknown5: bool,
-    pub fixture_count: u32,
-    pub unknown7: u64,
-    pub furniture_score: u32,
-    pub is_locked: bool,
-    pub unknown10: String,
-    pub unknown11: String,
-    pub rating: f32,
-    pub total_votes: u32,
-    pub is_published: bool,
-    pub is_rateable: bool,
-    pub unknown16: u32,
-    pub unknown17: u32,
-}
-
-#[derive(SerializePacket, DeserializePacket)]
-pub struct HouseZoneData {
-    not_editable: bool,
-    unknown2: u32,
-    description: HouseDescription,
-}
-
-impl GamePacket for HouseZoneData {
-    type Header = HousingOpCode;
-    const HEADER: Self::Header = HousingOpCode::HouseZoneData;
-}
-
-#[derive(SerializePacket, DeserializePacket)]
-pub struct HouseInstanceEntry {
-    pub description: HouseDescription,
-    pub unknown1: u64,
-}
-
-#[derive(SerializePacket, DeserializePacket)]
-pub struct HouseInstanceList {
-    pub instances: Vec<HouseInstanceEntry>,
-}
-
-impl GamePacket for HouseInstanceList {
-    type Header = HousingOpCode;
-    const HEADER: Self::Header = HousingOpCode::InstanceList;
-}
-
-#[derive(SerializePacket, DeserializePacket)]
-pub struct InstanceUnknown1 {
-    unknown1: u32,
-    unknown2: u32,
-    unknown3: u64,
-}
-
-#[derive(SerializePacket, DeserializePacket)]
-pub struct InstanceUnknown2 {
-    unknown1: u32,
-    unknown2: u32,
-    unknown3: u64,
-}
-
-#[derive(Clone, SerializePacket, DeserializePacket)]
-pub struct BuildArea {
-    min: Pos,
-    max: Pos,
-}
-
-#[derive(SerializePacket, DeserializePacket)]
-pub struct InstancePlacedFixture {
-    unknown1: u32,
-    placed_fixture: PlacedFixture,
-}
-
-#[derive(SerializePacket, DeserializePacket)]
-pub struct InnerInstanceData {
-    house_guid: u64,
-    owner_guid: u64,
-    owner_name: String,
-    unknown3: u64,
-    house_name: u32,
-    player_given_name: String,
-    unknown4: u32,
-    max_fixtures: u32,
-    unknown6: u32,
-    placed_fixture: Vec<InstancePlacedFixture>,
-    unknown7: bool,
-    unknown8: u32,
-    unknown9: u32,
-    unknown10: bool,
-    unknown11: u32,
-    unknown12: bool,
-    build_areas: Vec<BuildArea>,
-    house_icon: ImageId,
-    unknown14: bool,
-    unknown15: bool,
-    unknown16: bool,
-    unknown17: u32,
-    unknown18: u64,
-}
-
-#[derive(SerializePacket, DeserializePacket)]
-pub struct RoomInstances {
-    unknown1: Vec<InstanceUnknown1>,
-    unknown2: Vec<InstanceUnknown2>,
-}
-
-pub struct HouseInstanceData {
-    inner: InnerInstanceData,
-    rooms: RoomInstances,
-}
-
-impl SerializePacket for HouseInstanceData {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        let mut inner = Vec::new();
-        self.inner.serialize(&mut inner)?;
-        buffer.write_u32::<LittleEndian>(inner.len() as u32)?;
-        buffer.write_all(&inner)?;
-        self.rooms.serialize(buffer)?;
-        Ok(())
-    }
-}
-
-impl GamePacket for HouseInstanceData {
-    type Header = HousingOpCode;
-    const HEADER: Self::Header = HousingOpCode::InstanceData;
-}
-
-#[derive(SerializePacket, DeserializePacket)]
-pub struct FixtureAsset {
-    model_id: u32,
-    item_guid: u32,
-    unknown3: FixtureAssetData,
-    texture_alias: String,
-    tint_alias: String,
-    unknown6: u32,
-    unknown7: u32,
-    unknown8: String,
-    unknown9: Vec<u64>,
-    unknown10: u32,
-    unknown11: u32,
-}
-
-impl GamePacket for FixtureAsset {
-    type Header = HousingOpCode;
-    const HEADER: Self::Header = HousingOpCode::FixtureAsset;
-}
-
-#[derive(SerializePacket, DeserializePacket)]
-pub struct HouseItemList {
-    unknown1: Vec<Unknown1>,
-    unknown2: Vec<FixtureAssetData>,
-}
-
-impl GamePacket for HouseItemList {
-    type Header = HousingOpCode;
-    const HEADER: Self::Header = HousingOpCode::ItemList;
-}
-
-#[derive(SerializePacket, DeserializePacket)]
-pub struct FixtureUpdate {
-    placed_fixture: PlacedFixture,
-    unknown1: Unknown1,
-    unknown2: FixtureAssetData,
-    unknown3: Vec<u64>,
-    unknown4: u32,
-    unknown5: u32,
-    unknown6: u32,
-}
-
-impl GamePacket for FixtureUpdate {
-    type Header = HousingOpCode;
-    const HEADER: Self::Header = HousingOpCode::FixtureUpdate;
-}
-
-#[derive(SerializePacket, DeserializePacket)]
-pub struct HouseInvite {
-    pub unknown1: u64,
-    pub owner_name: String,
-    pub unknown3: u64,
-    pub house_guid: u64,
-    pub unknown5: u64,
-}
-
-#[derive(SerializePacket, DeserializePacket)]
-pub struct HouseInviteNotification {
-    pub invite: HouseInvite,
-    pub unknown1: u64,
-}
-
-impl GamePacket for HouseInviteNotification {
-    type Header = HousingOpCode;
-    const HEADER: Self::Header = HousingOpCode::InviteNotification;
-}
+use super::{
+    character::{CurrentFixture, PreviousFixture},
+    guid::{GuidTableHandle, IndexedGuid},
+    lock_enforcer::{CharacterLockRequest, ZoneLockRequest},
+    unique_guid::{npc_guid, player_guid, zone_template_guid, FIXTURE_DISCRIMINANT},
+    zone::{House, Zone},
+};
 
 fn placed_fixture(
     fixture_guid: u64,
@@ -475,7 +175,7 @@ pub fn fixture_packets(
                 unknown11: true,
                 offset_y: 0.0,
                 composite_effect: 0,
-                weapon_animation: WeaponAnimation::None,
+                wield_type: WieldType::None,
                 name_override: "".to_string(),
                 hide_name: true,
                 name_offset_x: 0.0,

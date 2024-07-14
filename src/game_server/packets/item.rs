@@ -1,35 +1,9 @@
-use crate::game_server::game_packet::GamePacket;
-use crate::game_server::player_update_packet::PlayerUpdateOpCode;
 use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
 use num_enum::TryFromPrimitive;
 use packet_serialize::{
     DeserializePacket, DeserializePacketError, SerializePacket, SerializePacketError,
 };
 use serde::Deserialize;
-use std::{
-    collections::{BTreeMap, BTreeSet},
-    fs::File,
-    io::{Error, Write},
-    path::Path,
-};
-
-#[derive(Clone, SerializePacket)]
-pub struct Item {
-    pub definition_id: u32,
-    pub tint: u32,
-    pub guid: u32,
-    pub quantity: u32,
-    pub num_consumed: u32,
-    pub last_use_time: u32,
-    pub market_data: MarketData,
-    pub unknown2: bool,
-}
-
-#[derive(Clone)]
-pub enum MarketData {
-    None,
-    Some(u64, u32, u32),
-}
 
 #[derive(Copy, Clone, Debug, Deserialize, PartialEq, Eq, PartialOrd, Ord, TryFromPrimitive)]
 #[repr(u32)]
@@ -73,6 +47,70 @@ impl DeserializePacket for EquipmentSlot {
         )
         .map_err(|_| DeserializePacketError::UnknownDiscriminator)
     }
+}
+
+#[derive(Copy, Clone, Debug)]
+pub enum WieldType {
+    None = 0,
+    SingleSaber = 1,
+    StaffSaber = 2,
+    ReverseSingleSaber = 3,
+    DualSaber = 4,
+    SinglePistol = 5,
+    Rifle = 6,
+    SniperRifle = 7,
+    RocketLauncher = 8,
+    FlameThrower = 9,
+    DualPistol = 10,
+    Staff = 11,
+    Misc = 12,
+    Bow = 13,
+    Sparklers = 14,
+    HipBraceLauncherOneShot = 15,
+}
+
+impl SerializePacket for WieldType {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        buffer.write_u32::<LittleEndian>(*self as u32)?;
+        Ok(())
+    }
+}
+
+#[derive(SerializePacket)]
+pub struct Attachment {
+    pub model_name: String,
+    pub texture_alias: String,
+    pub tint_alias: String,
+    pub tint: u32,
+    pub composite_effect: u32,
+    pub slot: EquipmentSlot,
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct BaseAttachmentGroup {
+    pub unknown1: u32,
+    pub unknown2: String,
+    pub unknown3: String,
+    pub unknown4: u32,
+    pub unknown5: String,
+}
+
+#[derive(Clone, SerializePacket)]
+pub struct Item {
+    pub definition_id: u32,
+    pub tint: u32,
+    pub guid: u32,
+    pub quantity: u32,
+    pub num_consumed: u32,
+    pub last_use_time: u32,
+    pub market_data: MarketData,
+    pub unknown2: bool,
+}
+
+#[derive(Clone)]
+pub enum MarketData {
+    None,
+    Some(u64, u32, u32),
 }
 
 #[derive(Clone, Deserialize, SerializePacket)]
@@ -133,42 +171,4 @@ pub struct ItemDefinition {
     pub unknown40: u32,
     pub stats: Vec<ItemStat>,
     pub abilities: Vec<ItemAbility>,
-}
-
-pub struct ItemDefinitionsReply<'a> {
-    pub definitions: &'a BTreeMap<u32, ItemDefinition>,
-}
-
-impl SerializePacket for ItemDefinitionsReply<'_> {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        let mut inner_buffer = Vec::new();
-        self.definitions.serialize(&mut inner_buffer)?;
-        buffer.write_u32::<LittleEndian>(inner_buffer.len() as u32)?;
-        buffer.write_all(&inner_buffer)?;
-        Ok(())
-    }
-}
-
-impl GamePacket for ItemDefinitionsReply<'_> {
-    type Header = PlayerUpdateOpCode;
-    const HEADER: Self::Header = PlayerUpdateOpCode::ItemDefinitionsReply;
-}
-
-pub fn load_item_definitions(config_dir: &Path) -> Result<BTreeMap<u32, ItemDefinition>, Error> {
-    let mut file = File::open(config_dir.join("items.json"))?;
-    let item_defs: Vec<ItemDefinition> = serde_json::from_reader(&mut file)?;
-
-    let mut item_def_map = BTreeMap::new();
-    for item_def in item_defs {
-        if let Some(previous_item_def) = item_def_map.insert(item_def.guid, item_def) {
-            panic!("Two item definitions have ID {}", previous_item_def.guid);
-        }
-    }
-    Ok(item_def_map)
-}
-
-pub fn load_required_slots(config_dir: &Path) -> Result<BTreeSet<EquipmentSlot>, Error> {
-    let mut file = File::open(config_dir.join("required_slots.json"))?;
-    let slots: Vec<EquipmentSlot> = serde_json::from_reader(&mut file)?;
-    Ok(BTreeSet::from_iter(slots))
 }

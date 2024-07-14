@@ -4,10 +4,10 @@ use byteorder::{LittleEndian, WriteBytesExt};
 
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
 
-use crate::game_server::game_packet::{GamePacket, OpCode, Pos};
-use crate::game_server::item::{EquipmentSlot, Item, ItemDefinition};
-
-use super::player_update_packet::Attachment;
+use super::{
+    item::{Attachment, EquipmentSlot, Item, ItemDefinition},
+    GamePacket, OpCode, Pos,
+};
 
 #[derive(Copy, Clone, Debug)]
 pub enum ClientUpdateOpCode {

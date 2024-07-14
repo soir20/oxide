@@ -2,7 +2,7 @@ use byteorder::WriteBytesExt;
 
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
 
-use crate::game_server::game_packet::{GamePacket, OpCode};
+use super::{GamePacket, OpCode};
 
 #[derive(Copy, Clone, Debug)]
 pub enum UiOpCode {
