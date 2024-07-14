@@ -57,8 +57,7 @@
         "slot": "Hands",
         "disable_trade": false,
         "disable_sale": false,
-        "model_name": "Wear_Human_<gender>_Hands_MandalorianSecretServiceGloves.adr"
-            ,
+        "model_name": "Wear_Human_<gender>_Hands_MandalorianSecretServiceGloves.adr",
         "texture_alias": "SecretService",
         "required_gender": 0,
         "item_type": 1,
