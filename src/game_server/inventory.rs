@@ -9,7 +9,7 @@ use super::{
     game_packet::{GamePacket, OpCode},
     item::EquipmentSlot,
     lock_enforcer::CharacterLockRequest,
-    player_data::{EquippedItem, InventoryItem},
+    player_data::EquippedItem,
     player_update_packet::Attachment,
     tunnel::TunneledPacket,
     unique_guid::player_guid,
