@@ -7,6 +7,8 @@ use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError}
 use crate::game_server::game_packet::{GamePacket, OpCode, Pos};
 use crate::game_server::item::{EquipmentSlot, Item, ItemDefinition};
 
+use super::player_update_packet::Attachment;
+
 #[derive(Copy, Clone, Debug)]
 pub enum ClientUpdateOpCode {
     Health = 0x1,
@@ -68,13 +70,8 @@ impl GamePacket for AddItems {
 #[derive(SerializePacket)]
 pub struct EquipItem {
     pub item_guid: u32,
-    pub model_name: String,
-    pub texture_alias: String,
-    pub tint_alias: String,
-    pub tint: u32,
-    pub composite_effect: u32,
-    pub slot: EquipmentSlot,
-    pub battle_class_id: u32,
+    pub attachment: Attachment,
+    pub battle_class: u32,
     pub item_class: u32,
     pub equip: bool,
 }
@@ -87,7 +84,7 @@ impl GamePacket for EquipItem {
 #[derive(SerializePacket)]
 pub struct UnequipItem {
     pub slot: EquipmentSlot,
-    pub battle_class_id: u32,
+    pub battle_class: u32,
 }
 
 impl GamePacket for UnequipItem {

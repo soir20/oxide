@@ -508,7 +508,7 @@ pub struct Attachment {
     pub model_name: String,
     pub texture_alias: String,
     pub tint_alias: String,
-    pub tint_id: u32,
+    pub tint: u32,
     pub composite_effect: u32,
     pub slot: EquipmentSlot,
 }

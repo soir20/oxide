@@ -220,7 +220,7 @@ pub struct BattleClass {
 pub struct EquippedItem {
     pub slot: EquipmentSlot,
     pub guid: u32,
-    category: u32,
+    pub category: u32,
 }
 #[derive(Clone, SerializePacket)]
 pub struct Unknown {
