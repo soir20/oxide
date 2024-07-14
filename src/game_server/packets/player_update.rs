@@ -6,7 +6,7 @@ use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError}
 
 use super::{
     item::{Attachment, BaseAttachmentGroup, ItemDefinition, WieldType},
-    Effect, GamePacket, OpCode, Pos, StringId,
+    Effect, GamePacket, OpCode, Pos,
 };
 
 #[derive(Copy, Clone, Debug)]
@@ -434,7 +434,7 @@ pub struct NotificationData {
     pub unknown1: u32,
     pub icon_id: u32,
     pub unknown3: u32,
-    pub name_id: StringId,
+    pub name_id: u32,
     pub unknown4: u32,
     pub hide_icon: bool,
     pub unknown6: u32,
@@ -558,7 +558,7 @@ pub struct AddNpc {
     pub active_animation_slot: i32,
     pub unknown26: bool,
     pub ignore_position: bool,
-    pub sub_title_id: StringId,
+    pub sub_title_id: u32,
     pub active_animation_slot2: u32,
     pub head_model_id: u32,
     pub effects: Vec<Effect>,

@@ -78,9 +78,6 @@ pub trait GamePacket: SerializePacket {
     }
 }
 
-pub type StringId = u32;
-pub type ImageId = u32;
-
 #[derive(Copy, Clone, SerializePacket, DeserializePacket, Deserialize)]
 pub struct Pos {
     pub x: f32,

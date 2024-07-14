@@ -4,7 +4,7 @@ use byteorder::{LittleEndian, WriteBytesExt};
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
 use serde::Deserialize;
 
-use super::{GamePacket, ImageId, OpCode, StringId};
+use super::{GamePacket, OpCode};
 
 #[derive(Copy, Clone, Debug)]
 pub enum ReferenceDataOpCode {
@@ -23,8 +23,8 @@ impl SerializePacket for ReferenceDataOpCode {
 #[derive(Clone, Deserialize)]
 pub struct CategoryDefinition {
     pub guid: i32,
-    pub name: StringId,
-    pub icon_set_id: ImageId,
+    pub name: u32,
+    pub icon_set_id: u32,
     pub sort_order: i32,
     pub visible: bool,
 }

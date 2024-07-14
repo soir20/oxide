@@ -5,7 +5,7 @@ use packet_serialize::{
     DeserializePacket, NullTerminatedString, SerializePacket, SerializePacketError,
 };
 
-use super::{GamePacket, ImageId, OpCode, Pos, StringId};
+use super::{GamePacket, OpCode, Pos};
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct LoginReply {
@@ -110,12 +110,12 @@ impl GamePacket for ClientBeginZoning {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct PointOfInterest {
     pub id: u32,
-    pub name_id: StringId,
+    pub name_id: u32,
     pub location_id: u32,
     pub teleport_pos: Pos,
-    pub icon_id: ImageId,
+    pub icon_id: u32,
     pub notification_type: u32,
-    pub subtitle_id: StringId,
+    pub subtitle_id: u32,
     pub unknown: u32,
     pub quest_id: u32,
     pub teleport_pos_id: u32,

@@ -5,7 +5,7 @@ use packet_serialize::{LengthlessVec, SerializePacket, SerializePacketError};
 
 use super::{
     item::{EquipmentSlot, Item, MarketData},
-    Effect, GamePacket, ImageId, OpCode, Pos, StringId,
+    Effect, GamePacket, OpCode, Pos,
 };
 
 #[derive(Clone, SerializePacket)]
@@ -187,13 +187,13 @@ impl SerializePacket for BattleClassUnknown10 {
 #[derive(Clone, SerializePacket)]
 pub struct BattleClass {
     pub guid: u32,
-    pub name_id: StringId,
-    pub description_id: StringId,
+    pub name_id: u32,
+    pub description_id: u32,
     pub selected_ability: u32,
-    pub icon_id: ImageId,
+    pub icon_id: u32,
     pub unknown1: u32,
-    pub badge_background_id: ImageId,
-    pub badge_id: ImageId,
+    pub badge_background_id: u32,
+    pub badge_id: u32,
     pub members_only: bool,
     pub is_combat: u32,
     pub item_class_data: Vec<ItemClassData>,
@@ -348,9 +348,9 @@ pub struct Mount {
 pub struct Slot {
     pub slot_id: u32,
     pub empty: bool,
-    pub icon_id: ImageId,
+    pub icon_id: u32,
     pub unknown1: u32,
-    pub name_id: StringId,
+    pub name_id: u32,
     pub unknown2: u32,
     pub unknown3: u32,
     pub unknown4: u32,

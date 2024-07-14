@@ -4,7 +4,7 @@ use byteorder::{LittleEndian, WriteBytesExt};
 use num_enum::TryFromPrimitive;
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
 
-use super::{item::BaseAttachmentGroup, GamePacket, ImageId, OpCode, Pos};
+use super::{item::BaseAttachmentGroup, GamePacket, OpCode, Pos};
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u16)]
@@ -123,7 +123,7 @@ pub struct HouseDescription {
     pub house_name: u32,
     pub player_given_name: String,
     pub owner_name: String,
-    pub icon_id: ImageId,
+    pub icon_id: u32,
     pub unknown5: bool,
     pub fixture_count: u32,
     pub unknown7: u64,
@@ -212,7 +212,7 @@ pub struct InnerInstanceData {
     pub unknown11: u32,
     pub unknown12: bool,
     pub build_areas: Vec<BuildArea>,
-    pub house_icon: ImageId,
+    pub house_icon: u32,
     pub unknown14: bool,
     pub unknown15: bool,
     pub unknown16: bool,
