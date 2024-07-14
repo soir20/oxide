@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::io::{Cursor, Error};
 use std::path::Path;
 use std::vec;
@@ -6,7 +6,9 @@ use std::vec;
 use byteorder::{LittleEndian, ReadBytesExt};
 use guid::GuidTableHandle;
 use inventory::process_inventory_packet;
-use item::{load_item_definitions, ItemDefinition, ItemDefinitionsReply};
+use item::{
+    load_item_definitions, load_required_slots, EquipmentSlot, ItemDefinition, ItemDefinitionsReply,
+};
 use lock_enforcer::{
     CharacterLockRequest, LockEnforcer, LockEnforcerSource, ZoneLockRequest, ZoneTableReadHandle,
 };
@@ -110,6 +112,7 @@ pub struct GameServer {
     lock_enforcer_source: LockEnforcerSource,
     items: BTreeMap<u32, ItemDefinition>,
     mounts: BTreeMap<u32, MountConfig>,
+    required_slots: BTreeSet<EquipmentSlot>,
     zone_templates: BTreeMap<u8, ZoneTemplate>,
 }
 
@@ -122,6 +125,7 @@ impl GameServer {
             lock_enforcer_source: LockEnforcerSource::from(characters, zones),
             items: load_item_definitions(config_dir)?,
             mounts: load_mounts(config_dir)?,
+            required_slots: load_required_slots(config_dir)?,
             zone_templates: templates,
         })
     }

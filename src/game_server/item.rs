@@ -7,7 +7,7 @@ use packet_serialize::{
 };
 use serde::Deserialize;
 use std::{
-    collections::BTreeMap,
+    collections::{BTreeMap, BTreeSet},
     fs::File,
     io::{Error, Write},
     path::Path,
@@ -165,4 +165,10 @@ pub fn load_item_definitions(config_dir: &Path) -> Result<BTreeMap<u32, ItemDefi
         }
     }
     Ok(item_def_map)
+}
+
+pub fn load_required_slots(config_dir: &Path) -> Result<BTreeSet<EquipmentSlot>, Error> {
+    let mut file = File::open(config_dir.join("required_slots.json"))?;
+    let slots: Vec<EquipmentSlot> = serde_json::from_reader(&mut file)?;
+    Ok(BTreeSet::from_iter(slots))
 }
