@@ -1,10 +1,14 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::io::{Cursor, Error};
 use std::path::Path;
 use std::vec;
 
 use byteorder::{LittleEndian, ReadBytesExt};
 use guid::GuidTableHandle;
+use inventory::process_inventory_packet;
+use item::{
+    load_item_definitions, load_required_slots, EquipmentSlot, ItemDefinition, ItemDefinitionsReply,
+};
 use lock_enforcer::{
     CharacterLockRequest, LockEnforcer, LockEnforcerSource, ZoneLockRequest, ZoneTableReadHandle,
 };
@@ -27,7 +31,6 @@ use crate::game_server::guid::{GuidTable, GuidTableWriteHandle};
 use crate::game_server::housing::{
     process_housing_packet, HouseDescription, HouseInstanceEntry, HouseInstanceList,
 };
-use crate::game_server::item::make_item_definitions;
 use crate::game_server::login::{
     send_points_of_interest, DeploymentEnv, GameSettings, LoginReply, WelcomeScreen,
     ZoneDetailsDone,
@@ -38,8 +41,7 @@ use crate::game_server::player_data::{
 };
 use crate::game_server::player_update_packet::make_test_npc;
 use crate::game_server::reference_data::{
-    CategoryDefinition, CategoryDefinitions, CategoryRelation, ItemGroupDefinitions,
-    ItemGroupDefinitionsData,
+    CategoryDefinitions, ItemGroupDefinitions, ItemGroupDefinitionsData,
 };
 use crate::game_server::time::make_game_time_sync;
 use crate::game_server::tunnel::{TunneledPacket, TunneledWorldPacket};
@@ -57,6 +59,7 @@ mod command;
 mod game_packet;
 mod guid;
 mod housing;
+mod inventory;
 mod item;
 mod lock_enforcer;
 mod login;
@@ -107,7 +110,9 @@ impl From<SerializePacketError> for ProcessPacketError {
 pub struct GameServer {
     categories: CategoryDefinitions,
     lock_enforcer_source: LockEnforcerSource,
+    items: BTreeMap<u32, ItemDefinition>,
     mounts: BTreeMap<u32, MountConfig>,
+    required_slots: BTreeSet<EquipmentSlot>,
     zone_templates: BTreeMap<u8, ZoneTemplate>,
 }
 
@@ -118,7 +123,9 @@ impl GameServer {
         Ok(GameServer {
             categories: load_categories(config_dir)?,
             lock_enforcer_source: LockEnforcerSource::from(characters, zones),
+            items: load_item_definitions(config_dir)?,
             mounts: load_mounts(config_dir)?,
+            required_slots: load_required_slots(config_dir)?,
             zone_templates: templates,
         })
     }
@@ -178,7 +185,9 @@ impl GameServer {
 
                             let item_defs = TunneledPacket {
                                 unknown1: true,
-                                inner: make_item_definitions(),
+                                inner: ItemDefinitionsReply {
+                                    definitions: &self.items,
+                                },
                             };
                             packets.push(GamePacket::serialize(&item_defs)?);
 
@@ -235,7 +244,7 @@ impl GameServer {
 
                     let categories = TunneledPacket {
                         unknown1: true,
-                        inner: self.categories.clone(),
+                        inner: GamePacket::serialize(&self.categories)?,
                     };
                     packets.push(GamePacket::serialize(&categories)?);
 
@@ -520,6 +529,9 @@ impl GameServer {
                 }
                 OpCode::Chat => {
                     broadcasts.append(&mut process_chat_packet(&mut cursor, sender)?);
+                }
+                OpCode::Inventory => {
+                    broadcasts.append(&mut process_inventory_packet(self, &mut cursor, sender)?);
                 }
                 _ => println!("Unimplemented: {:?}, {:x?}", op_code, data),
             },

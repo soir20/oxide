@@ -12,6 +12,7 @@ pub enum PlayerUpdateOpCode {
     AddNpc = 0x2,
     Remove = 0x3,
     Knockback = 0x4,
+    UpdateEquippedItem = 0x6,
     UpdatePower = 0x9,
     AddNotifications = 0xa,
     NpcRelevance = 0xc,
@@ -119,7 +120,7 @@ pub struct AddPc {
     moderator: bool,
     temporary_appearance: u32,
     guilds: Vec<Unknown13Array>,
-    profile: u32,
+    battle_class: u32,
     title: u32,
     unknown16: u32,
     unknown17: u32,
@@ -348,6 +349,21 @@ impl GamePacket for Knockback {
     const HEADER: Self::Header = PlayerUpdateOpCode::Knockback;
 }
 
+#[derive(SerializePacket)]
+pub struct UpdateEquippedItem {
+    pub guid: u64,
+    pub unknown: u32,
+    pub item: Attachment,
+    pub battle_class: u32,
+    pub wield_type: u32,
+}
+
+impl GamePacket for UpdateEquippedItem {
+    type Header = PlayerUpdateOpCode;
+
+    const HEADER: Self::Header = PlayerUpdateOpCode::UpdateEquippedItem;
+}
+
 #[derive(Copy, Clone, Debug)]
 pub enum Wield {
     None = 0,
@@ -492,7 +508,7 @@ pub struct Attachment {
     pub model_name: String,
     pub texture_alias: String,
     pub tint_alias: String,
-    pub tint_id: u32,
+    pub tint: u32,
     pub composite_effect: u32,
     pub slot: EquipmentSlot,
 }

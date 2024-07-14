@@ -1,6 +1,9 @@
 use crate::{LengthlessVec, NullTerminatedString};
 use byteorder::{LittleEndian, WriteBytesExt};
-use std::io::{Error, Write};
+use std::{
+    collections::BTreeMap,
+    io::{Error, Write},
+};
 
 #[non_exhaustive]
 #[derive(Debug)]
@@ -145,6 +148,17 @@ impl<T: SerializePacket> SerializePacket for LengthlessVec<T> {
         let inner_vec = &self.0;
         for index in 0..inner_vec.len() {
             SerializePacket::serialize(&inner_vec[index], buffer)?;
+        }
+
+        Ok(())
+    }
+}
+
+impl<K, V: SerializePacket> SerializePacket for BTreeMap<K, V> {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        SerializePacket::serialize(&(self.len() as u32), buffer)?;
+        for value in self.values() {
+            SerializePacket::serialize(value, buffer)?;
         }
 
         Ok(())

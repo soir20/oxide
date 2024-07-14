@@ -19,6 +19,7 @@ pub enum OpCode {
     Combat = 0x20,
     PlayerUpdate = 0x23,
     ClientUpdate = 0x26,
+    Inventory = 0x2a,
     ZoneDetails = 0x2b,
     ReferenceData = 0x2c,
     Ui = 0x2f,

@@ -5,7 +5,7 @@ use packet_serialize::{
 };
 use std::io::{Cursor, Read, Write};
 
-fn serialize_tunneled_packet<T: GamePacket>(
+fn serialize_tunneled_packet_from_game_packet<T: GamePacket>(
     buffer: &mut Vec<u8>,
     unknown1: bool,
     inner: &T,
@@ -15,6 +15,18 @@ fn serialize_tunneled_packet<T: GamePacket>(
     let inner_buffer = GamePacket::serialize(inner)?;
     buffer.write_u32::<LittleEndian>(inner_buffer.len() as u32)?;
     buffer.write_all(&inner_buffer)?;
+    Ok(())
+}
+
+fn serialize_tunneled_packet_from_bytes(
+    buffer: &mut Vec<u8>,
+    unknown1: bool,
+    inner: &[u8],
+) -> Result<(), SerializePacketError> {
+    buffer.write_u8(unknown1 as u8)?;
+
+    buffer.write_u32::<LittleEndian>(inner.len() as u32)?;
+    buffer.write_all(inner)?;
     Ok(())
 }
 
@@ -40,9 +52,20 @@ impl<T: GamePacket> GamePacket for TunneledPacket<T> {
     const HEADER: OpCode = OpCode::TunneledClient;
 }
 
+impl GamePacket for TunneledPacket<Vec<u8>> {
+    type Header = OpCode;
+    const HEADER: OpCode = OpCode::TunneledClient;
+}
+
 impl<T: GamePacket> SerializePacket for TunneledPacket<T> {
     fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        serialize_tunneled_packet(buffer, self.unknown1, &self.inner)
+        serialize_tunneled_packet_from_game_packet(buffer, self.unknown1, &self.inner)
+    }
+}
+
+impl SerializePacket for TunneledPacket<Vec<u8>> {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        serialize_tunneled_packet_from_bytes(buffer, self.unknown1, &self.inner)
     }
 }
 
@@ -66,9 +89,20 @@ impl<T: GamePacket> GamePacket for TunneledWorldPacket<T> {
     const HEADER: OpCode = OpCode::TunneledWorld;
 }
 
+impl GamePacket for TunneledWorldPacket<Vec<u8>> {
+    type Header = OpCode;
+    const HEADER: OpCode = OpCode::TunneledWorld;
+}
+
 impl<T: GamePacket> SerializePacket for TunneledWorldPacket<T> {
     fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        serialize_tunneled_packet(buffer, self.unknown1, &self.inner)
+        serialize_tunneled_packet_from_game_packet(buffer, self.unknown1, &self.inner)
+    }
+}
+
+impl SerializePacket for TunneledWorldPacket<Vec<u8>> {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        serialize_tunneled_packet_from_bytes(buffer, self.unknown1, &self.inner)
     }
 }
 
