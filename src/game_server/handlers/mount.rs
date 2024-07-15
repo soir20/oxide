@@ -1,27 +1,34 @@
-use std::collections::BTreeMap;
-use std::fs::File;
-use std::io::{Cursor, Error};
-use std::path::Path;
+use std::{
+    collections::BTreeMap,
+    fs::File,
+    io::{Cursor, Error},
+    path::Path,
+};
 
-use byteorder::{ReadBytesExt, WriteBytesExt};
-use num_enum::TryFromPrimitive;
+use byteorder::ReadBytesExt;
+use packet_serialize::DeserializePacket;
 use parking_lot::{RwLockReadGuard, RwLockWriteGuard};
 use serde::Deserialize;
 
-use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
-
-use crate::game_server::client_update_packet::{Stat, StatId, Stats};
-use crate::game_server::game_packet::{Effect, GamePacket, OpCode, Pos};
-use crate::game_server::guid::Guid;
-use crate::game_server::player_update_packet::{
-    AddNpc, BaseAttachmentGroup, Icon, RemoveGracefully, WeaponAnimation,
+use crate::game_server::{
+    packets::{
+        client_update::{Stat, StatId, Stats},
+        item::{BaseAttachmentGroup, WieldType},
+        mount::{DismountReply, MountOpCode, MountReply, MountSpawn},
+        player_update::{AddNpc, Icon, RemoveGracefully},
+        tunnel::TunneledPacket,
+        Effect, GamePacket, Pos,
+    },
+    Broadcast, GameServer, ProcessPacketError,
 };
-use crate::game_server::tunnel::TunneledPacket;
-use crate::game_server::unique_guid::{mount_guid, player_guid};
-use crate::game_server::zone::{Character, Zone};
-use crate::game_server::{Broadcast, GameServer, ProcessPacketError};
 
-use super::lock_enforcer::{CharacterLockRequest, ZoneLockRequest};
+use super::{
+    character::Character,
+    guid::Guid,
+    lock_enforcer::{CharacterLockRequest, ZoneLockRequest},
+    unique_guid::{mount_guid, player_guid},
+    zone::Zone,
+};
 
 #[derive(Deserialize)]
 pub struct MountConfig {
@@ -58,65 +65,6 @@ pub fn load_mounts(config_dir: &Path) -> Result<BTreeMap<u32, MountConfig>, Erro
     }
 
     Ok(mount_table)
-}
-
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
-#[repr(u8)]
-pub enum MountOpCode {
-    MountRequest = 0x1,
-    MountReply = 0x2,
-    DismountRequest = 0x3,
-    DismountReply = 0x4,
-    MountList = 0x5,
-    MountSpawn = 0x6,
-    MountSpawnByItemDef = 0x8,
-    MountListShowMarket = 0x9,
-    SetAutoMount = 0xa,
-}
-
-impl SerializePacket for MountOpCode {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        OpCode::Mount.serialize(buffer)?;
-        buffer.write_u8(*self as u8)?;
-        Ok(())
-    }
-}
-
-#[derive(SerializePacket, DeserializePacket)]
-pub struct DismountReply {
-    pub rider_guid: u64,
-    pub composite_effect: u32,
-}
-
-impl GamePacket for DismountReply {
-    type Header = MountOpCode;
-    const HEADER: Self::Header = MountOpCode::DismountReply;
-}
-
-#[derive(SerializePacket, DeserializePacket)]
-pub struct MountReply {
-    rider_guid: u64,
-    mount_guid: u64,
-    seat: u32,
-    queue_pos: u32,
-    unknown3: u32,
-    composite_effect: u32,
-    unknown5: u32,
-}
-
-impl GamePacket for MountReply {
-    type Header = MountOpCode;
-    const HEADER: Self::Header = MountOpCode::MountReply;
-}
-
-#[derive(SerializePacket, DeserializePacket)]
-pub struct MountSpawn {
-    mount_id: u32,
-}
-
-impl GamePacket for MountSpawn {
-    type Header = MountOpCode;
-    const HEADER: Self::Header = MountOpCode::MountSpawn;
 }
 
 pub fn reply_dismount(
@@ -368,7 +316,7 @@ pub fn spawn_mount_npc(
                 unknown11: true,
                 offset_y: 0.0,
                 composite_effect: 0,
-                weapon_animation: WeaponAnimation::None,
+                wield_type: WieldType::None,
                 name_override: "".to_string(),
                 hide_name: true,
                 name_offset_x: 0.0,

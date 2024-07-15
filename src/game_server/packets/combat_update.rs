@@ -1,6 +1,7 @@
-use crate::game_server::game_packet::{GamePacket, OpCode};
 use byteorder::{LittleEndian, WriteBytesExt};
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
+
+use super::{GamePacket, OpCode};
 
 #[derive(Copy, Clone, Debug)]
 pub enum CombatUpdateOpCode {

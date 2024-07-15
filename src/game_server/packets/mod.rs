@@ -1,3 +1,23 @@
+pub mod chat;
+pub mod client_update;
+pub mod combat_update;
+pub mod command;
+pub mod housing;
+pub mod inventory;
+pub mod item;
+pub mod login;
+pub mod mount;
+pub mod player_data;
+pub mod player_update;
+pub mod purchase;
+pub mod reference_data;
+pub mod store;
+pub mod time;
+pub mod tunnel;
+pub mod ui;
+pub mod update_position;
+pub mod zone;
+
 use byteorder::{LittleEndian, WriteBytesExt};
 use num_enum::TryFromPrimitive;
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
@@ -66,6 +86,26 @@ pub struct Pos {
     pub w: f32,
 }
 
+#[derive(SerializePacket, DeserializePacket)]
+pub struct Rgba {
+    b: u8,
+    g: u8,
+    r: u8,
+    a: u8,
+}
+
+impl Rgba {
+    pub fn new(r: u8, g: u8, b: u8, a: u8) -> Self {
+        Rgba { b, g, r, a }
+    }
+}
+
+impl From<Rgba> for u32 {
+    fn from(val: Rgba) -> Self {
+        ((val.a as u32) << 24) | ((val.r as u32) << 16) | ((val.g as u32) << 8) | (val.b as u32)
+    }
+}
+
 #[derive(Clone, SerializePacket, DeserializePacket)]
 pub struct Effect {
     pub unknown1: u32,
@@ -88,6 +128,3 @@ pub struct Effect {
     pub unknown18: bool,
     pub unknown19: bool,
 }
-
-pub type StringId = u32;
-pub type ImageId = u32;

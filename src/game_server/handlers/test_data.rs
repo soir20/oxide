@@ -1,493 +1,134 @@
 use std::collections::BTreeMap;
-use std::io::Write;
 
-use byteorder::{LittleEndian, WriteBytesExt};
+use packet_serialize::{LengthlessVec, SerializePacketError};
 
-use packet_serialize::{LengthlessVec, SerializePacket, SerializePacketError};
-
-use crate::game_server::game_packet::{Effect, GamePacket, ImageId, OpCode, Pos, StringId};
-use crate::game_server::guid::Guid;
-use crate::game_server::item::{EquipmentSlot, Item, MarketData};
-use crate::game_server::mount::MountConfig;
-use crate::game_server::player_update_packet::{
-    NameplateImage, NameplateImageId, Wield, WieldType,
+use crate::game_server::packets::{
+    item::{BaseAttachmentGroup, EquipmentSlot, Item, MarketData, WieldType},
+    player_data::{
+        Ability, ActionBar, BattleClass, BattleClassItem, BattleClassUnknown10, EquippedItem,
+        InventoryItem, Item2, ItemGuid, Mount, Pet, PetTrick, Player, PlayerData, Slot, Unknown12,
+        Unknown13, Unknown2,
+    },
+    player_update::{AddNpc, Icon, NameplateImage, NameplateImageId, UpdateWieldType},
+    tunnel::TunneledPacket,
+    GamePacket, Pos,
 };
-use crate::game_server::tunnel::TunneledPacket;
-use crate::game_server::unique_guid::{mount_guid, player_guid};
-use crate::game_server::zone::CharacterType;
 
-use super::zone::Character;
+use super::{
+    guid::Guid,
+    mount::MountConfig,
+    unique_guid::{mount_guid, player_guid},
+};
 
-#[derive(Clone, SerializePacket)]
-pub struct EquippedVehicle {}
-
-#[derive(Clone, SerializePacket)]
-pub struct ItemClassData {
-    unknown1: u32,
-    unknown2: u32,
-    unknown3: u32,
-}
-
-#[derive(Clone, SerializePacket)]
-pub struct BattleClassUnknown7 {}
-
-#[derive(Clone)]
-pub enum Ability {
-    Empty,
-    Type1(u32, u32, u32, u32, u32, u32, u32, u32, u32, bool),
-    Type2(u32, u32, u32, u32, u32, u32, u32, u32, bool),
-    Type3(u32, u32, u32, u32, u32, u32, u32, u32, u32, bool),
-    OtherType(u32, u32, u32, u32, u32, u32, u32, u32, bool),
-}
-
-impl SerializePacket for Ability {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        match self {
-            Ability::Empty => Ok(buffer.write_u32::<LittleEndian>(0)?),
-            Ability::Type1(
-                unknown2,
-                unknown3,
-                unknown5,
-                unknown6,
-                unknown7,
-                unknown8,
-                unknown9,
-                unknown10,
-                unknown11,
-                unknown12,
-            ) => {
-                buffer.write_u32::<LittleEndian>(1)?;
-                buffer.write_u32::<LittleEndian>(*unknown2)?;
-                buffer.write_u32::<LittleEndian>(*unknown3)?;
-                write_ability_end(
-                    *unknown5, *unknown6, *unknown7, *unknown8, *unknown9, *unknown10, *unknown11,
-                    *unknown12, buffer,
-                )?;
-                Ok(())
-            }
-            Ability::Type2(
-                unknown4,
-                unknown5,
-                unknown6,
-                unknown7,
-                unknown8,
-                unknown9,
-                unknown10,
-                unknown11,
-                unknown12,
-            ) => {
-                buffer.write_u32::<LittleEndian>(2)?;
-                buffer.write_u32::<LittleEndian>(*unknown4)?;
-                write_ability_end(
-                    *unknown5, *unknown6, *unknown7, *unknown8, *unknown9, *unknown10, *unknown11,
-                    *unknown12, buffer,
-                )?;
-                Ok(())
-            }
-            Ability::Type3(
-                unknown2,
-                unknown3,
-                unknown5,
-                unknown6,
-                unknown7,
-                unknown8,
-                unknown9,
-                unknown10,
-                unknown11,
-                unknown12,
-            ) => {
-                buffer.write_u32::<LittleEndian>(3)?;
-                buffer.write_u32::<LittleEndian>(*unknown2)?;
-                buffer.write_u32::<LittleEndian>(*unknown3)?;
-                write_ability_end(
-                    *unknown5, *unknown6, *unknown7, *unknown8, *unknown9, *unknown10, *unknown11,
-                    *unknown12, buffer,
-                )?;
-                Ok(())
-            }
-            Ability::OtherType(
-                unknown1,
-                unknown5,
-                unknown6,
-                unknown7,
-                unknown8,
-                unknown9,
-                unknown10,
-                unknown11,
-                unknown12,
-            ) => {
-                buffer.write_u32::<LittleEndian>(*unknown1)?;
-                write_ability_end(
-                    *unknown5, *unknown6, *unknown7, *unknown8, *unknown9, *unknown10, *unknown11,
-                    *unknown12, buffer,
-                )?;
-                Ok(())
-            }
-        }
+pub fn make_test_npc() -> AddNpc {
+    AddNpc {
+        guid: 102,
+        name_id: 0,
+        model_id: 458,
+        unknown3: false,
+        unknown4: 408679,
+        unknown5: 13951728,
+        unknown6: 1,
+        scale: 1.0,
+        pos: Pos {
+            x: 887.3,
+            y: 171.93376,
+            z: 1546.956,
+            w: 1.0,
+        },
+        rot: Pos {
+            x: 0.0,
+            y: 0.0,
+            z: 1.0,
+            w: 0.0,
+        },
+        unknown8: 1,
+        attachments: vec![],
+        is_not_targetable: 1,
+        unknown10: 0,
+        texture_name: "Rose".to_string(),
+        tint_name: "".to_string(),
+        tint_id: 0,
+        unknown11: true,
+        offset_y: 0.0, // Only enabled when unknown45 == 2
+        composite_effect: 0,
+        wield_type: WieldType::None,
+        name_override: "".to_string(),
+        hide_name: true,
+        name_offset_x: 0.0,
+        name_offset_y: 0.0,
+        name_offset_z: 0.0,
+        terrain_object_id: 0,
+        invisible: false,
+        unknown20: 0.0,
+        unknown21: false,
+        interactable_size_pct: 100,
+        unknown23: -1,
+        unknown24: -1,
+        active_animation_slot: -1,
+        unknown26: true,
+        ignore_position: true,
+        sub_title_id: 0,
+        active_animation_slot2: 0,
+        head_model_id: 0,
+        effects: vec![],
+        disable_interact_popup: false,
+        unknown33: 0, // If non-zero, crashes when NPC is clicked on
+        unknown34: false,
+        show_health: false,
+        hide_despawn_fade: false,
+        ignore_rotation_and_shadow: true,
+        base_attachment_group: BaseAttachmentGroup {
+            unknown1: 0,
+            unknown2: "".to_string(),
+            unknown3: "".to_string(),
+            unknown4: 0,
+            unknown5: "".to_string(),
+        },
+        unknown39: Pos {
+            x: 0.0,
+            y: 0.0,
+            z: 0.0,
+            w: 0.0,
+        },
+        unknown40: 0,
+        unknown41: -1,
+        unknown42: 0,
+        collision: true, // To be interactable, every NPC must have collision set,
+        // even if the model does not actually support collision
+        unknown44: 0,
+        npc_type: 0,
+        unknown46: 0.0,
+        target: 0,
+        unknown50: vec![],
+        rail_id: 0,
+        rail_speed: 0.0,
+        rail_origin: Pos {
+            x: 0.0,
+            y: 0.0,
+            z: 0.0,
+            w: 0.0,
+        },
+        unknown54: 0,
+        rail_unknown1: 0.0,
+        rail_unknown2: 0.0,
+        rail_unknown3: 0.0,
+        attachment_group_unknown: "".to_string(),
+        unknown59: "".to_string(),
+        unknown60: "".to_string(),
+        override_terrain_model: false,
+        hover_glow: 0,
+        hover_description: 0, // max 7
+        fly_over_effect: 0,   // max 3
+        unknown65: 0,         // max 32
+        unknown66: 0,
+        unknown67: 0,
+        disable_move_to_interact: false,
+        unknown69: 0.0,
+        unknown70: 0.0,
+        unknown71: 0,
+        icon_id: Icon::None,
     }
-}
-
-fn write_ability_end(
-    unknown5: u32,
-    unknown6: u32,
-    unknown7: u32,
-    unknown8: u32,
-    unknown9: u32,
-    unknown10: u32,
-    unknown11: u32,
-    unknown12: bool,
-    buffer: &mut Vec<u8>,
-) -> Result<(), SerializePacketError> {
-    buffer.write_u32::<LittleEndian>(unknown5)?;
-    buffer.write_u32::<LittleEndian>(unknown6)?;
-    buffer.write_u32::<LittleEndian>(unknown7)?;
-    buffer.write_u32::<LittleEndian>(unknown8)?;
-    buffer.write_u32::<LittleEndian>(unknown9)?;
-    buffer.write_u32::<LittleEndian>(unknown10)?;
-    buffer.write_u32::<LittleEndian>(unknown11)?;
-    buffer.write_u8(unknown12 as u8)?;
-    Ok(())
-}
-
-#[derive(Clone)]
-pub enum BattleClassUnknown10 {
-    None,
-    Some(u32, bool, u32, u32, u32, u32, u32, u32, u32, u32),
-}
-
-impl SerializePacket for BattleClassUnknown10 {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        match self {
-            BattleClassUnknown10::None => Ok(buffer.write_u32::<LittleEndian>(0)?),
-            BattleClassUnknown10::Some(
-                unknown1,
-                unknown2,
-                unknown3,
-                unknown4,
-                unknown5,
-                unknown6,
-                unknown7,
-                unknown8,
-                unknown9,
-                unknown10,
-            ) => {
-                buffer.write_u32::<LittleEndian>(*unknown1)?;
-                buffer.write_u8(*unknown2 as u8)?;
-                buffer.write_u32::<LittleEndian>(*unknown3)?;
-                buffer.write_u32::<LittleEndian>(*unknown4)?;
-                buffer.write_u32::<LittleEndian>(*unknown5)?;
-                buffer.write_u32::<LittleEndian>(*unknown6)?;
-                buffer.write_u32::<LittleEndian>(*unknown7)?;
-                buffer.write_u32::<LittleEndian>(*unknown8)?;
-                buffer.write_u32::<LittleEndian>(*unknown9)?;
-                buffer.write_u32::<LittleEndian>(*unknown10)?;
-                Ok(())
-            }
-        }
-    }
-}
-
-#[derive(Clone, SerializePacket)]
-pub struct BattleClass {
-    pub guid: u32,
-    name_id: StringId,
-    description_id: StringId,
-    selected_ability: u32,
-    icon_id: ImageId,
-    unknown1: u32,
-    badge_background_id: ImageId,
-    badge_id: ImageId,
-    members_only: bool,
-    is_combat: u32,
-    item_class_data: Vec<ItemClassData>,
-    unknown2: bool,
-    unknown3: u32,
-    unknown4: u32,
-    unknown5: bool,
-    unknown6: u32,
-    unknown7: Vec<BattleClassUnknown7>,
-    level: u32,
-    xp_in_level: u32,
-    total_xp: u32,
-    unknown8: u32,
-    pub items: BTreeMap<EquipmentSlot, EquippedItem>,
-    unknown9: u32,
-    abilities: Vec<Ability>,
-    unknown10: LengthlessVec<BattleClassUnknown10>,
-}
-
-#[derive(Clone, SerializePacket)]
-pub struct EquippedItem {
-    pub slot: EquipmentSlot,
-    pub guid: u32,
-    pub category: u32,
-}
-#[derive(Clone, SerializePacket)]
-pub struct Unknown {
-    pub unknown1: u32,
-    pub unknown2: u32,
-}
-
-#[derive(Clone, SerializePacket)]
-pub struct SocialInfo {}
-
-impl SerializePacket for MarketData {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        if let MarketData::Some(expiration, upsells, bundle_id) = &self {
-            buffer.write_u8(true as u8)?;
-            buffer.write_u64::<LittleEndian>(*expiration)?;
-            buffer.write_u32::<LittleEndian>(*upsells)?;
-            buffer.write_u32::<LittleEndian>(*bundle_id)?;
-        } else {
-            buffer.write_u8(false as u8)?;
-        }
-        Ok(())
-    }
-}
-
-#[derive(Clone, SerializePacket)]
-pub struct InventoryItem {
-    pub definition_id: u32,
-    pub item: Item,
-}
-
-#[derive(Clone, SerializePacket)]
-struct Unknown2 {
-    unknown1: u32,
-    unknown2: u32,
-    unknown3: u32,
-    unknown4: u32,
-    unknown5: u32,
-    unknown6: u32,
-    unknown7: u32,
-    unknown8: u32,
-    unknown9: bool,
-}
-
-#[derive(Clone, SerializePacket)]
-struct PetTrick {
-    unknown1: u32,
-    unknown2: Unknown2,
-}
-
-#[derive(Clone, SerializePacket)]
-struct ItemGuid {
-    guid: u32,
-}
-
-#[derive(Clone, SerializePacket)]
-struct Item2 {
-    unknown1: u32,
-    unknown2: u32,
-}
-
-#[derive(Clone, SerializePacket)]
-struct BattleClassItem {
-    item1: u32,
-    item2: Item2,
-}
-
-#[derive(Clone, SerializePacket)]
-struct Unknown12 {
-    unknown1: u32,
-    unknown2: u32,
-    unknown3: u32,
-    unknown4: u32,
-}
-
-#[derive(Clone, SerializePacket)]
-struct Unknown13 {
-    unknown1: u32,
-    unknown2: u32,
-    unknown3: u32,
-    unknown4: u32,
-    unknown5: u32,
-    unknown6: u32,
-    unknown7: u32,
-    unknown8: u32,
-}
-
-#[derive(Clone, SerializePacket)]
-pub struct Quest {}
-
-#[derive(Clone, SerializePacket)]
-pub struct Achievement {}
-
-#[derive(Clone, SerializePacket)]
-pub struct Acquaintance {}
-
-#[derive(Clone, SerializePacket)]
-pub struct Recipe {}
-
-#[derive(Clone, SerializePacket)]
-pub struct Pet {
-    pet_id: u32,
-    unknown2: bool,
-    unknown3: u32,
-    food: f32,
-    groom: f32,
-    happiness: f32,
-    exercise: f32,
-    unknown8: bool,
-    pet_trick: Vec<PetTrick>,
-    item_guid: Vec<ItemGuid>,
-    battle_class_items: Vec<BattleClassItem>,
-    pet_name: String,
-    tint_id: u32,
-    texture_alias: String,
-    icon_id: u32,
-    unknown10: bool,
-    unknown11: u32,
-    unknown12: Unknown12,
-    unknown13: Unknown13,
-}
-
-#[derive(Clone, SerializePacket)]
-pub struct Mount {
-    mount_id: u32,
-    name_id: u32,
-    icon_set_id: u32,
-    guid: u64,
-    unknown5: bool,
-    unknown6: u32,
-    unknown7: String,
-}
-
-#[derive(Clone, SerializePacket)]
-pub struct Slot {
-    slot_id: u32,
-    empty: bool,
-    icon_id: ImageId,
-    unknown1: u32,
-    name_id: StringId,
-    unknown2: u32,
-    unknown3: u32,
-    unknown4: u32,
-    unknown5: u32,
-    usable: bool,
-    unknown6: u32,
-    unknown7: u32,
-    unknown8: u32,
-    quantity: u32,
-    unknown9: bool,
-    unknown10: u32,
-}
-
-#[derive(Clone, SerializePacket)]
-pub struct ActionBar {
-    unknown1: u32,
-    unknown2: u32,
-    slots: Vec<Slot>,
-}
-
-pub type MatchmakingQueue = u32;
-
-#[derive(Clone, SerializePacket)]
-pub struct MinigameTutorial {}
-
-#[derive(Clone, SerializePacket)]
-pub struct PowerHour {}
-
-#[derive(Clone, SerializePacket)]
-pub struct Stat {}
-
-#[derive(Clone, SerializePacket)]
-pub struct Vehicle {}
-
-#[derive(Clone, SerializePacket)]
-pub struct Title {}
-
-#[derive(Clone, SerializePacket)]
-pub struct PlayerData {
-    pub account_guid: u64,
-    pub player_guid: u64,
-    pub body_model: u32,
-    pub head_model: String,
-    pub hair_model: String,
-    pub hair_color: u32,
-    pub eye_color: u32,
-    pub skin_tone: String,
-    pub face_paint: String,
-    pub facial_hair: String,
-    pub unknown1: u32,
-    pub unknown2: u32,
-    pub unknown3: u32,
-    pub unknown4: u32,
-    pub unknown5: u32,
-    pub pos: Pos,
-    pub rot: Pos,
-    pub unknown6: u32,
-    pub unknown7: u32,
-    pub unknown8: u32,
-    pub first_name: String,
-    pub last_name: String,
-    pub currency: u32,
-    pub account_creation_date: u64,
-    pub account_age: u32,
-    pub account_play_time: u32,
-    pub membership_unknown1: bool,
-    pub membership_unknown2: bool,
-    pub membership_unknown3: bool,
-    pub membership_unknown4: bool,
-    pub unknown9: u32,
-    pub unknown10: u32,
-    pub unknown11: u32,
-    pub unknown12: u32,
-    pub unknown13: u32,
-    pub unknown14: bool,
-    pub unknown15: u32,
-    pub unknown16: u32,
-    pub equipped_vehicles: Vec<EquippedVehicle>,
-    pub battle_classes: BTreeMap<u32, BattleClass>,
-    pub active_battle_class: u32,
-    pub unknown: Vec<Unknown>,
-    pub social: Vec<SocialInfo>,
-    pub inventory: Vec<InventoryItem>,
-    pub gender: u32,
-    pub quests: Vec<Quest>,
-    pub quests_unknown1: u32,
-    pub quests_unknown2: u32,
-    pub quests_unknown3: bool,
-    pub quests_unknown4: u32,
-    pub quests_unknown5: u32,
-    pub achievements: Vec<Achievement>,
-    pub acquaintances: Vec<Acquaintance>,
-    pub recipes: Vec<Recipe>,
-    pub pets: Vec<Pet>,
-    pub pet_unknown1: i32,
-    pub pet_unknown2: u64,
-    pub mounts: Vec<Mount>,
-    pub action_bars: Vec<ActionBar>,
-    pub unknown17: bool,
-    pub matchmaking_queues: Vec<MatchmakingQueue>,
-    pub minigame_tutorials: Vec<MinigameTutorial>,
-    pub power_hours: Vec<PowerHour>,
-    pub stats: Vec<Stat>,
-    pub vehicle_unknown1: u32,
-    pub vehicles: Vec<Vehicle>,
-    pub titles: Vec<Title>,
-    pub equipped_title: u32,
-    pub unknown18: Vec<u32>,
-    pub effects: Vec<Effect>,
-}
-
-pub struct Player {
-    pub data: PlayerData,
-}
-
-impl SerializePacket for Player {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        let mut data_buffer = Vec::new();
-        SerializePacket::serialize(&self.data, &mut data_buffer)?;
-        buffer.write_u32::<LittleEndian>(data_buffer.len() as u32)?;
-        buffer.write_all(&data_buffer)?;
-        Ok(())
-    }
-}
-
-impl GamePacket for Player {
-    type Header = OpCode;
-    const HEADER: OpCode = OpCode::Player;
 }
 
 pub fn make_test_player(guid: u32, mounts: &BTreeMap<u32, MountConfig>) -> Player {
@@ -958,29 +599,12 @@ pub fn make_test_player(guid: u32, mounts: &BTreeMap<u32, MountConfig>) -> Playe
     }
 }
 
-impl PlayerData {
-    pub fn into_character(self, instance_guid: u64) -> Character {
-        Character {
-            guid: self.player_guid,
-            pos: self.pos,
-            rot: self.rot,
-            scale: 1.0,
-            character_type: CharacterType::Player(Box::new(self)),
-            state: 0,
-            mount_id: None,
-            interact_radius: 0.0,
-            auto_interact_radius: 0.0,
-            instance_guid,
-        }
-    }
-}
-
 pub fn make_test_wield_type(guid: u32) -> Result<Vec<Vec<u8>>, SerializePacketError> {
     Ok(vec![GamePacket::serialize(&TunneledPacket {
         unknown1: true,
-        inner: WieldType {
+        inner: UpdateWieldType {
             guid: player_guid(guid),
-            wield_type: Wield::SinglePistol,
+            wield_type: WieldType::SinglePistol,
         },
     })?])
 }

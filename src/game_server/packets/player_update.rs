@@ -1,10 +1,13 @@
+use std::{collections::BTreeMap, io::Write};
+
 use byteorder::{LittleEndian, WriteBytesExt};
 
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
 
-use crate::game_server::game_packet::{Effect, GamePacket, OpCode, Pos, StringId};
-
-use super::item::EquipmentSlot;
+use super::{
+    item::{Attachment, BaseAttachmentGroup, ItemDefinition, WieldType},
+    Effect, GamePacket, OpCode, Pos,
+};
 
 #[derive(Copy, Clone, Debug)]
 pub enum PlayerUpdateOpCode {
@@ -32,7 +35,7 @@ pub enum PlayerUpdateOpCode {
     MoveOnRelativeRail = 0x37,
     SeekTarget = 0x3b,
     SeekTargetUpdate = 0x3c,
-    WieldType = 0x3d,
+    UpdateWieldType = 0x3d,
     HudMessage = 0x40,
     NameplateImageId = 0x44,
 }
@@ -128,7 +131,7 @@ pub struct AddPc {
     mount_guid: u64,
     unknown19: u32,
     unknown20: u32,
-    wield_type: Wield,
+    wield_type: WieldType,
     unknown22: f32,
     unknown23: u32,
     nameplate_image_id: u32,
@@ -243,6 +246,25 @@ pub struct UpdateTemporaryAppearance {
 impl GamePacket for UpdateTemporaryAppearance {
     type Header = PlayerUpdateOpCode;
     const HEADER: Self::Header = PlayerUpdateOpCode::UpdateTemporaryAppearance;
+}
+
+pub struct ItemDefinitionsReply<'a> {
+    pub definitions: &'a BTreeMap<u32, ItemDefinition>,
+}
+
+impl SerializePacket for ItemDefinitionsReply<'_> {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        let mut inner_buffer = Vec::new();
+        self.definitions.serialize(&mut inner_buffer)?;
+        buffer.write_u32::<LittleEndian>(inner_buffer.len() as u32)?;
+        buffer.write_all(&inner_buffer)?;
+        Ok(())
+    }
+}
+
+impl GamePacket for ItemDefinitionsReply<'_> {
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::ItemDefinitionsReply;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -364,42 +386,15 @@ impl GamePacket for UpdateEquippedItem {
     const HEADER: Self::Header = PlayerUpdateOpCode::UpdateEquippedItem;
 }
 
-#[derive(Copy, Clone, Debug)]
-pub enum Wield {
-    None = 0,
-    SingleSaber = 1,
-    StaffSaber = 2,
-    ReverseSingleSaber = 3,
-    DualSaber = 4,
-    SinglePistol = 5,
-    Rifle = 6,
-    SniperRifle = 7,
-    RocketLauncher = 8,
-    FlameThrower = 9,
-    DualPistol = 10,
-    Staff = 11,
-    Misc = 12,
-    Bow = 13,
-    Sparklers = 14,
-    HipBraceLauncherOneShot = 15,
-}
-
-impl SerializePacket for Wield {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        buffer.write_u32::<LittleEndian>(*self as u32)?;
-        Ok(())
-    }
-}
-
 #[derive(SerializePacket)]
-pub struct WieldType {
+pub struct UpdateWieldType {
     pub guid: u64,
-    pub wield_type: Wield,
+    pub wield_type: WieldType,
 }
 
-impl GamePacket for WieldType {
+impl GamePacket for UpdateWieldType {
     type Header = PlayerUpdateOpCode;
-    const HEADER: Self::Header = PlayerUpdateOpCode::WieldType;
+    const HEADER: Self::Header = PlayerUpdateOpCode::UpdateWieldType;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -439,7 +434,7 @@ pub struct NotificationData {
     pub unknown1: u32,
     pub icon_id: u32,
     pub unknown3: u32,
-    pub name_id: StringId,
+    pub name_id: u32,
     pub unknown4: u32,
     pub hide_icon: bool,
     pub unknown6: u32,
@@ -503,25 +498,6 @@ impl GamePacket for NpcRelevance {
     const HEADER: Self::Header = PlayerUpdateOpCode::NpcRelevance;
 }
 
-#[derive(SerializePacket)]
-pub struct Attachment {
-    pub model_name: String,
-    pub texture_alias: String,
-    pub tint_alias: String,
-    pub tint: u32,
-    pub composite_effect: u32,
-    pub slot: EquipmentSlot,
-}
-
-#[derive(SerializePacket, DeserializePacket)]
-pub struct BaseAttachmentGroup {
-    pub unknown1: u32,
-    pub unknown2: String,
-    pub unknown3: String,
-    pub unknown4: u32,
-    pub unknown5: String,
-}
-
 #[derive(SerializePacket, DeserializePacket)]
 pub struct Variable {
     pub unknown1: u32,
@@ -538,29 +514,6 @@ pub enum Icon {
 }
 
 impl SerializePacket for Icon {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        buffer.write_u32::<LittleEndian>(*self as u32)?;
-        Ok(())
-    }
-}
-
-#[derive(Copy, Clone, Debug)]
-pub enum WeaponAnimation {
-    None = 0,
-    SingleSaber = 1,
-    StaffSaber = 2,
-    ReverseSingleSaber = 3,
-    DoubleSaber = 4,
-    SinglePistol = 5,
-    Rifle = 6,
-    SniperRifle = 7,
-    RocketLauncher = 8,
-    Flamethrower = 9,
-    DoublePistol = 10,
-    Staff = 11,
-}
-
-impl SerializePacket for WeaponAnimation {
     fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
         buffer.write_u32::<LittleEndian>(*self as u32)?;
         Ok(())
@@ -589,7 +542,7 @@ pub struct AddNpc {
     pub unknown11: bool,
     pub offset_y: f32,
     pub composite_effect: u32,
-    pub weapon_animation: WeaponAnimation,
+    pub wield_type: WieldType,
     pub name_override: String,
     pub hide_name: bool,
     pub name_offset_x: f32,
@@ -605,7 +558,7 @@ pub struct AddNpc {
     pub active_animation_slot: i32,
     pub unknown26: bool,
     pub ignore_position: bool,
-    pub sub_title_id: StringId,
+    pub sub_title_id: u32,
     pub active_animation_slot2: u32,
     pub head_model_id: u32,
     pub effects: Vec<Effect>,
@@ -653,115 +606,4 @@ pub struct AddNpc {
 impl GamePacket for AddNpc {
     type Header = PlayerUpdateOpCode;
     const HEADER: PlayerUpdateOpCode = PlayerUpdateOpCode::AddNpc;
-}
-
-pub fn make_test_npc() -> AddNpc {
-    AddNpc {
-        guid: 102,
-        name_id: 0,
-        model_id: 458,
-        unknown3: false,
-        unknown4: 408679,
-        unknown5: 13951728,
-        unknown6: 1,
-        scale: 1.0,
-        pos: Pos {
-            x: 887.3,
-            y: 171.93376,
-            z: 1546.956,
-            w: 1.0,
-        },
-        rot: Pos {
-            x: 0.0,
-            y: 0.0,
-            z: 1.0,
-            w: 0.0,
-        },
-        unknown8: 1,
-        attachments: vec![],
-        is_not_targetable: 1,
-        unknown10: 0,
-        texture_name: "Rose".to_string(),
-        tint_name: "".to_string(),
-        tint_id: 0,
-        unknown11: true,
-        offset_y: 0.0, // Only enabled when unknown45 == 2
-        composite_effect: 0,
-        weapon_animation: WeaponAnimation::None,
-        name_override: "".to_string(),
-        hide_name: true,
-        name_offset_x: 0.0,
-        name_offset_y: 0.0,
-        name_offset_z: 0.0,
-        terrain_object_id: 0,
-        invisible: false,
-        unknown20: 0.0,
-        unknown21: false,
-        interactable_size_pct: 100,
-        unknown23: -1,
-        unknown24: -1,
-        active_animation_slot: -1,
-        unknown26: true,
-        ignore_position: true,
-        sub_title_id: 0,
-        active_animation_slot2: 0,
-        head_model_id: 0,
-        effects: vec![],
-        disable_interact_popup: false,
-        unknown33: 0, // If non-zero, crashes when NPC is clicked on
-        unknown34: false,
-        show_health: false,
-        hide_despawn_fade: false,
-        ignore_rotation_and_shadow: true,
-        base_attachment_group: BaseAttachmentGroup {
-            unknown1: 0,
-            unknown2: "".to_string(),
-            unknown3: "".to_string(),
-            unknown4: 0,
-            unknown5: "".to_string(),
-        },
-        unknown39: Pos {
-            x: 0.0,
-            y: 0.0,
-            z: 0.0,
-            w: 0.0,
-        },
-        unknown40: 0,
-        unknown41: -1,
-        unknown42: 0,
-        collision: true, // To be interactable, every NPC must have collision set,
-        // even if the model does not actually support collision
-        unknown44: 0,
-        npc_type: 0,
-        unknown46: 0.0,
-        target: 0,
-        unknown50: vec![],
-        rail_id: 0,
-        rail_speed: 0.0,
-        rail_origin: Pos {
-            x: 0.0,
-            y: 0.0,
-            z: 0.0,
-            w: 0.0,
-        },
-        unknown54: 0,
-        rail_unknown1: 0.0,
-        rail_unknown2: 0.0,
-        rail_unknown3: 0.0,
-        attachment_group_unknown: "".to_string(),
-        unknown59: "".to_string(),
-        unknown60: "".to_string(),
-        override_terrain_model: false,
-        hover_glow: 0,
-        hover_description: 0, // max 7
-        fly_over_effect: 0,   // max 3
-        unknown65: 0,         // max 32
-        unknown66: 0,
-        unknown67: 0,
-        disable_move_to_interact: false,
-        unknown69: 0.0,
-        unknown70: 0.0,
-        unknown71: 0,
-        icon_id: Icon::None,
-    }
 }

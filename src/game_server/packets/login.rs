@@ -1,13 +1,11 @@
-use byteorder::{LittleEndian, WriteBytesExt};
 use std::io::Write;
 
+use byteorder::{LittleEndian, WriteBytesExt};
 use packet_serialize::{
     DeserializePacket, NullTerminatedString, SerializePacket, SerializePacketError,
 };
 
-use crate::game_server::game_packet::{GamePacket, ImageId, OpCode, Pos, StringId};
-use crate::game_server::tunnel::TunneledPacket;
-use crate::game_server::GameServer;
+use super::{GamePacket, OpCode, Pos};
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct LoginReply {
@@ -112,19 +110,19 @@ impl GamePacket for ClientBeginZoning {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct PointOfInterest {
     pub id: u32,
-    pub name_id: StringId,
+    pub name_id: u32,
     pub location_id: u32,
     pub teleport_pos: Pos,
-    pub icon_id: ImageId,
+    pub icon_id: u32,
     pub notification_type: u32,
-    pub subtitle_id: StringId,
+    pub subtitle_id: u32,
     pub unknown: u32,
     pub quest_id: u32,
     pub teleport_pos_id: u32,
 }
 
 pub struct DefinePointsOfInterest {
-    points: Vec<PointOfInterest>,
+    pub points: Vec<PointOfInterest>,
 }
 
 impl SerializePacket for DefinePointsOfInterest {
@@ -147,34 +145,4 @@ impl SerializePacket for DefinePointsOfInterest {
 impl GamePacket for DefinePointsOfInterest {
     type Header = OpCode;
     const HEADER: Self::Header = OpCode::DefinePointsOfInterest;
-}
-
-pub fn send_points_of_interest(
-    game_server: &GameServer,
-) -> Result<Vec<Vec<u8>>, SerializePacketError> {
-    let mut points = Vec::new();
-    for (guid, _) in game_server.zone_templates.iter() {
-        points.push(PointOfInterest {
-            id: *guid as u32,
-            name_id: 0,
-            location_id: 0,
-            teleport_pos: Pos {
-                x: 0.0,
-                y: 0.0,
-                z: 0.0,
-                w: 1.0,
-            },
-            icon_id: 0,
-            notification_type: 0,
-            subtitle_id: 0,
-            unknown: 0,
-            quest_id: 0,
-            teleport_pos_id: 0,
-        });
-    }
-
-    Ok(vec![GamePacket::serialize(&TunneledPacket {
-        unknown1: true,
-        inner: DefinePointsOfInterest { points },
-    })?])
 }

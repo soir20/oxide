@@ -2,11 +2,11 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use parking_lot::{RwLockReadGuard, RwLockWriteGuard};
 
-use crate::game_server::guid::GuidTable;
-use crate::game_server::zone::{Character, Zone};
-
-use super::guid::{GuidTableHandle, GuidTableReadHandle, GuidTableWriteHandle};
-use super::zone::CharacterIndex;
+use super::{
+    character::{Character, CharacterIndex},
+    guid::{GuidTable, GuidTableHandle, GuidTableReadHandle, GuidTableWriteHandle},
+    zone::Zone,
+};
 
 pub struct TableReadHandleWrapper<'a, K, V, I = ()> {
     handle: GuidTableReadHandle<'a, K, V, I>,

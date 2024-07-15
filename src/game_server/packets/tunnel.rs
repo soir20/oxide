@@ -1,9 +1,10 @@
-use crate::game_server::game_packet::{GamePacket, OpCode};
 use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
 use packet_serialize::{
     DeserializePacket, DeserializePacketError, SerializePacket, SerializePacketError,
 };
 use std::io::{Cursor, Read, Write};
+
+use super::{GamePacket, OpCode};
 
 fn serialize_tunneled_packet_from_game_packet<T: GamePacket>(
     buffer: &mut Vec<u8>,

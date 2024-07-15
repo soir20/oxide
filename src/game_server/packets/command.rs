@@ -1,33 +1,8 @@
-use crate::game_server::game_packet::{GamePacket, OpCode};
-use crate::game_server::zone::interact_with_character;
-use crate::game_server::{Broadcast, GameServer, ProcessPacketError};
-use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
+use byteorder::{LittleEndian, WriteBytesExt};
 use num_enum::TryFromPrimitive;
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
-use std::io::Cursor;
 
-pub fn process_command(
-    game_server: &GameServer,
-    cursor: &mut Cursor<&[u8]>,
-) -> Result<Vec<Broadcast>, ProcessPacketError> {
-    let raw_op_code = cursor.read_u16::<LittleEndian>()?;
-    match CommandOpCode::try_from(raw_op_code) {
-        Ok(op_code) => match op_code {
-            CommandOpCode::SelectPlayer => {
-                let req = SelectPlayer::deserialize(cursor)?;
-                interact_with_character(req, game_server)
-            }
-            _ => {
-                println!("Unimplemented command: {:?}", op_code);
-                Ok(Vec::new())
-            }
-        },
-        Err(_) => {
-            println!("Unknown command: {}", raw_op_code);
-            Ok(Vec::new())
-        }
-    }
-}
+use super::{GamePacket, OpCode, Rgba};
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u16)]
@@ -42,26 +17,6 @@ impl SerializePacket for CommandOpCode {
         OpCode::Command.serialize(buffer)?;
         buffer.write_u16::<LittleEndian>(*self as u16)?;
         Ok(())
-    }
-}
-
-#[derive(SerializePacket, DeserializePacket)]
-pub struct Rgba {
-    b: u8,
-    g: u8,
-    r: u8,
-    a: u8,
-}
-
-impl Rgba {
-    pub fn new(r: u8, g: u8, b: u8, a: u8) -> Self {
-        Rgba { b, g, r, a }
-    }
-}
-
-impl From<Rgba> for u32 {
-    fn from(val: Rgba) -> Self {
-        ((val.a as u32) << 24) | ((val.r as u32) << 16) | ((val.g as u32) << 8) | (val.b as u32)
     }
 }
 
