@@ -1,11 +1,6 @@
-use std::{
-    collections::{BTreeMap, BTreeSet},
-    fs::File,
-    io::Error,
-    path::Path,
-};
+use std::{collections::BTreeMap, fs::File, io::Error, path::Path};
 
-use crate::game_server::packets::item::{EquipmentSlot, ItemDefinition};
+use crate::game_server::packets::item::ItemDefinition;
 
 pub fn load_item_definitions(config_dir: &Path) -> Result<BTreeMap<u32, ItemDefinition>, Error> {
     let mut file = File::open(config_dir.join("items.json"))?;
@@ -18,10 +13,4 @@ pub fn load_item_definitions(config_dir: &Path) -> Result<BTreeMap<u32, ItemDefi
         }
     }
     Ok(item_def_map)
-}
-
-pub fn load_required_slots(config_dir: &Path) -> Result<BTreeSet<EquipmentSlot>, Error> {
-    let mut file = File::open(config_dir.join("required_slots.json"))?;
-    let slots: Vec<EquipmentSlot> = serde_json::from_reader(&mut file)?;
-    Ok(BTreeSet::from_iter(slots))
 }

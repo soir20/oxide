@@ -1,4 +1,4 @@
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeMap;
 use std::io::{Cursor, Error};
 use std::path::Path;
 use std::vec;
@@ -10,7 +10,7 @@ use handlers::command::process_command;
 use handlers::guid::{GuidTable, GuidTableHandle, GuidTableWriteHandle};
 use handlers::housing::process_housing_packet;
 use handlers::inventory::process_inventory_packet;
-use handlers::item::{load_item_definitions, load_required_slots};
+use handlers::item::load_item_definitions;
 use handlers::lock_enforcer::{
     CharacterLockRequest, LockEnforcer, LockEnforcerSource, ZoneLockRequest, ZoneTableReadHandle,
 };
@@ -25,7 +25,7 @@ use handlers::unique_guid::{player_guid, shorten_zone_template_guid, zone_instan
 use handlers::zone::{load_zones, teleport_within_zone, Zone, ZoneTemplate};
 use packets::client_update::{Health, Power, PreloadCharactersDone, Stat, StatId, Stats};
 use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
-use packets::item::{EquipmentSlot, ItemDefinition};
+use packets::item::ItemDefinition;
 use packets::login::{DeploymentEnv, GameSettings, LoginReply, WelcomeScreen, ZoneDetailsDone};
 use packets::player_update::ItemDefinitionsReply;
 use packets::reference_data::{
@@ -81,7 +81,6 @@ pub struct GameServer {
     lock_enforcer_source: LockEnforcerSource,
     items: BTreeMap<u32, ItemDefinition>,
     mounts: BTreeMap<u32, MountConfig>,
-    required_slots: BTreeSet<EquipmentSlot>,
     zone_templates: BTreeMap<u8, ZoneTemplate>,
 }
 
@@ -94,7 +93,6 @@ impl GameServer {
             lock_enforcer_source: LockEnforcerSource::from(characters, zones),
             items: load_item_definitions(config_dir)?,
             mounts: load_mounts(config_dir)?,
-            required_slots: load_required_slots(config_dir)?,
             zone_templates: templates,
         })
     }
