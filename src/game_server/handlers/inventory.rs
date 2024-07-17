@@ -29,42 +29,38 @@ pub fn process_inventory_packet(
         Ok(op_code) => match op_code {
             InventoryOpCode::UnequipSlot => {
                 let unequip_slot: UnequipSlot = DeserializePacket::deserialize(cursor)?;
-                if game_server.required_slots.contains(&unequip_slot.slot) {
-                    Ok(vec![])
-                } else {
-                    game_server.lock_enforcer().read_characters(|_| CharacterLockRequest {
-                        read_guids: vec![],
-                        write_guids: vec![player_guid(sender)],
-                        character_consumer: |_, _, mut characters_write, _| {
-                            if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) {
-                                if let CharacterType::Player(ref mut player_data) = character_write_handle.character_type {
-                                    let possible_battle_class = player_data.battle_classes.get_mut(&unequip_slot.battle_class);
-                                    if let Some(battle_class) = possible_battle_class {
-                                        battle_class.items.remove(&unequip_slot.slot);
-                                        Ok(vec![Broadcast::Single(sender, vec![
-                                            GamePacket::serialize(&TunneledPacket {
-                                                unknown1: true,
-                                                inner: UnequipItem {
-                                                    slot: unequip_slot.slot,
-                                                    battle_class: unequip_slot.battle_class
-                                                }
-                                            })?
-                                        ])])
-                                    } else {
-                                        println!("Player {} tried to unequip slot in battle class {} that they don't own", sender, unequip_slot.battle_class);
-                                        Err(ProcessPacketError::CorruptedPacket)
-                                    }
+                game_server.lock_enforcer().read_characters(|_| CharacterLockRequest {
+                    read_guids: vec![],
+                    write_guids: vec![player_guid(sender)],
+                    character_consumer: |_, _, mut characters_write, _| {
+                        if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) {
+                            if let CharacterType::Player(ref mut player_data) = character_write_handle.character_type {
+                                let possible_battle_class = player_data.battle_classes.get_mut(&unequip_slot.battle_class);
+                                if let Some(battle_class) = possible_battle_class {
+                                    battle_class.items.remove(&unequip_slot.slot);
+                                    Ok(vec![Broadcast::Single(sender, vec![
+                                        GamePacket::serialize(&TunneledPacket {
+                                            unknown1: true,
+                                            inner: UnequipItem {
+                                                slot: unequip_slot.slot,
+                                                battle_class: unequip_slot.battle_class
+                                            }
+                                        })?
+                                    ])])
                                 } else {
-                                    println!("Non-player character {} tried to unequip slot", sender);
+                                    println!("Player {} tried to unequip slot in battle class {} that they don't own", sender, unequip_slot.battle_class);
                                     Err(ProcessPacketError::CorruptedPacket)
                                 }
                             } else {
-                                println!("Unknown player {} tried to unequip slot", sender);
+                                println!("Non-player character {} tried to unequip slot", sender);
                                 Err(ProcessPacketError::CorruptedPacket)
                             }
+                        } else {
+                            println!("Unknown player {} tried to unequip slot", sender);
+                            Err(ProcessPacketError::CorruptedPacket)
                         }
-                    })
-                }
+                    }
+                })
             }
             InventoryOpCode::EquipGuid => {
                 let equip_guid: EquipGuid = DeserializePacket::deserialize(cursor)?;
