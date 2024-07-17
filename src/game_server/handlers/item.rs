@@ -1,9 +1,4 @@
-use std::{
-    collections::BTreeMap,
-    fs::File,
-    io::Error,
-    path::Path,
-};
+use std::{collections::BTreeMap, fs::File, io::Error, path::Path};
 
 use crate::game_server::packets::item::ItemDefinition;
 
