@@ -131,7 +131,11 @@ pub fn make_test_npc() -> AddNpc {
     }
 }
 
-pub fn make_test_player(guid: u32, mounts: &BTreeMap<u32, MountConfig>, items: &BTreeMap<u32, ItemDefinition>) -> Player {
+pub fn make_test_player(
+    guid: u32,
+    mounts: &BTreeMap<u32, MountConfig>,
+    items: &BTreeMap<u32, ItemDefinition>,
+) -> Player {
     let mut owned_mounts = Vec::new();
     for mount in mounts.values() {
         owned_mounts.push(Mount {
@@ -159,7 +163,7 @@ pub fn make_test_player(guid: u32, mounts: &BTreeMap<u32, MountConfig>, items: &
                 market_data: MarketData::None,
                 unknown2: false,
             },
-        },);
+        });
     }
 
     Player {
