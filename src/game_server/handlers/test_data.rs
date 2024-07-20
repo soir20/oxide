@@ -3,7 +3,7 @@ use std::collections::BTreeMap;
 use packet_serialize::{LengthlessVec, SerializePacketError};
 
 use crate::game_server::packets::{
-    item::{BaseAttachmentGroup, EquipmentSlot, Item, MarketData, WieldType},
+    item::{BaseAttachmentGroup, EquipmentSlot, Item, ItemDefinition, MarketData, WieldType},
     player_data::{
         Ability, ActionBar, BattleClass, BattleClassItem, BattleClassUnknown10, EquippedItem,
         InventoryItem, Item2, ItemGuid, Mount, Pet, PetTrick, Player, PlayerData, Slot, Unknown12,
@@ -131,7 +131,7 @@ pub fn make_test_npc() -> AddNpc {
     }
 }
 
-pub fn make_test_player(guid: u32, mounts: &BTreeMap<u32, MountConfig>) -> Player {
+pub fn make_test_player(guid: u32, mounts: &BTreeMap<u32, MountConfig>, items: &BTreeMap<u32, ItemDefinition>) -> Player {
     let mut owned_mounts = Vec::new();
     for mount in mounts.values() {
         owned_mounts.push(Mount {
@@ -143,6 +143,23 @@ pub fn make_test_player(guid: u32, mounts: &BTreeMap<u32, MountConfig>) -> Playe
             unknown6: 0,
             unknown7: "".to_string(),
         })
+    }
+
+    let mut inventory = vec![];
+    for item in items.values() {
+        inventory.push(InventoryItem {
+            definition_id: item.guid,
+            item: Item {
+                definition_id: item.guid,
+                tint: 0,
+                guid: item.guid,
+                quantity: 1,
+                num_consumed: 0,
+                last_use_time: 0,
+                market_data: MarketData::None,
+                unknown2: false,
+            },
+        },);
     }
 
     Player {
@@ -241,7 +258,7 @@ pub fn make_test_player(guid: u32, mounts: &BTreeMap<u32, MountConfig>) -> Playe
                             EquipmentSlot::Body,
                             EquippedItem {
                                 slot: EquipmentSlot::Body,
-                                guid: 3,
+                                guid: 10237,
                                 category: 0,
                             },
                         ),
@@ -359,86 +376,7 @@ pub fn make_test_player(guid: u32, mounts: &BTreeMap<u32, MountConfig>) -> Playe
             active_battle_class: 1,
             unknown: vec![],
             social: vec![],
-            inventory: vec![
-                InventoryItem {
-                    definition_id: 1,
-                    item: Item {
-                        definition_id: 1,
-                        tint: 0,
-                        guid: 1,
-                        quantity: 1,
-                        num_consumed: 0,
-                        last_use_time: 0,
-                        market_data: MarketData::None,
-                        unknown2: false,
-                    },
-                },
-                InventoryItem {
-                    definition_id: 2,
-                    item: Item {
-                        definition_id: 2,
-                        tint: 0,
-                        guid: 2,
-                        quantity: 1,
-                        num_consumed: 0,
-                        last_use_time: 0,
-                        market_data: MarketData::None,
-                        unknown2: false,
-                    },
-                },
-                InventoryItem {
-                    definition_id: 3,
-                    item: Item {
-                        definition_id: 3,
-                        tint: 0,
-                        guid: 3,
-                        quantity: 1,
-                        num_consumed: 0,
-                        last_use_time: 0,
-                        market_data: MarketData::None,
-                        unknown2: false,
-                    },
-                },
-                InventoryItem {
-                    definition_id: 4,
-                    item: Item {
-                        definition_id: 4,
-                        tint: 0,
-                        guid: 4,
-                        quantity: 1,
-                        num_consumed: 0,
-                        last_use_time: 0,
-                        market_data: MarketData::None,
-                        unknown2: false,
-                    },
-                },
-                InventoryItem {
-                    definition_id: 5,
-                    item: Item {
-                        definition_id: 5,
-                        tint: 0,
-                        guid: 5,
-                        quantity: 1,
-                        num_consumed: 0,
-                        last_use_time: 0,
-                        market_data: MarketData::None,
-                        unknown2: false,
-                    },
-                },
-                InventoryItem {
-                    definition_id: 6,
-                    item: Item {
-                        definition_id: 6,
-                        tint: 0,
-                        guid: 6,
-                        quantity: 100,
-                        num_consumed: 50,
-                        last_use_time: 0,
-                        market_data: MarketData::None,
-                        unknown2: false,
-                    },
-                },
-            ],
+            inventory,
             gender: 1,
             quests: vec![],
             quests_unknown1: 241,

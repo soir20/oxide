@@ -160,7 +160,7 @@ impl GameServer {
 
                             let player = TunneledPacket {
                                 unknown1: true,
-                                inner: make_test_player(guid, self.mounts()),
+                                inner: make_test_player(guid, self.mounts(), &self.items),
                             };
                             packets.push(GamePacket::serialize(&player)?);
 
