@@ -5,13 +5,15 @@ use miniz_oxide::inflate::{decompress_to_vec_zlib, DecompressError};
 use std::io::{Cursor, Error, Read};
 use std::mem::size_of;
 
+use super::hash::{CrcSeed, CrcSize};
+
 #[non_exhaustive]
 #[derive(Debug)]
 pub enum DeserializeError {
     IoError(Error),
     DecompressError(DecompressError),
     UnknownOpCode(u16),
-    MismatchedHash(CrcHash, CrcHash),
+    MismatchedHash(CrcHash, CrcHash, CrcSeed, CrcSize),
     UnknownDisconnectReason(u16),
     MissingSession(ProtocolOpCode),
     BadSubPacketLength,
@@ -293,7 +295,12 @@ pub fn deserialize_packet(
                 compute_crc(&data[0..crc_offset], session.crc_seed, session.crc_length);
 
             if actual_hash != expected_hash {
-                return Err(DeserializeError::MismatchedHash(actual_hash, expected_hash));
+                return Err(DeserializeError::MismatchedHash(
+                    actual_hash,
+                    expected_hash,
+                    session.crc_seed,
+                    session.crc_length,
+                ));
             }
         } else {
             return Err(DeserializeError::MissingSession(op_code));

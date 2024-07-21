@@ -56,10 +56,14 @@ impl ChannelManager {
 
     pub fn receive(&self, addr: &SocketAddr, data: &[u8]) -> ReceiveResult {
         if let Some(channel) = self.get_by_addr(addr) {
-            match channel.lock().receive(data) {
+            let mut channel_handle = channel.lock();
+            match channel_handle.receive(data) {
                 Ok(packets_received) => ReceiveResult::Success(packets_received),
                 Err(err) => {
-                    println!("Deserialize error on channel {}: {:?}", addr, err);
+                    println!(
+                        "Deserialize error on channel {}: {:?}, data={:x?}",
+                        addr, err, data
+                    );
                     ReceiveResult::Success(0)
                 }
             }
