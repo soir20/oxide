@@ -419,13 +419,14 @@ impl Channel {
         buffer_size: BufferSize,
         app_protocol: &ApplicationProtocol,
     ) {
-        let session = self.session.get_or_insert_with(|| Session {
+        // TODO: disallow session overwrite
+        let session = Session {
             session_id,
             crc_length: 3,
             crc_seed: random::<CrcSeed>(),
             allow_compression: true,
             use_encryption: false,
-        });
+        };
 
         self.buffer_size = buffer_size;
         self.send_queue
@@ -438,6 +439,7 @@ impl Channel {
                 512,
                 3,
             )));
+        self.session = Some(session);
     }
 
     fn process_heartbeat(&mut self) {
