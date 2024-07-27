@@ -2817,7 +2817,7 @@
     },
     {
         "guid": 10056,
-        "name_id": 0,
+        "name_id": 2709,
         "description_id": 0,
         "icon_set_id": 0,
         "icon_tint": 0,
@@ -2861,7 +2861,7 @@
     },
     {
         "guid": 10057,
-        "name_id": 0,
+        "name_id": 2705,
         "description_id": 0,
         "icon_set_id": 0,
         "icon_tint": 0,
@@ -16105,7 +16105,7 @@
     },
     {
         "guid": 20063,
-        "name_id": 0,
+        "name_id": 2707,
         "description_id": 0,
         "icon_set_id": 0,
         "icon_tint": 0,
@@ -16149,7 +16149,7 @@
     },
     {
         "guid": 20064,
-        "name_id": 0,
+        "name_id": 2703,
         "description_id": 0,
         "icon_set_id": 0,
         "icon_tint": 0,
