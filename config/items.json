@@ -10178,7 +10178,7 @@
         "disable_trade": false,
         "disable_sale": false,
         "model_name": "Wear_Human_<gender>_Body_OfficerUniform.adr",
-        "texture_alias": "SlateBlue",
+        "texture_alias": "OfficerGrey",
         "required_gender": 0,
         "item_type": 1,
         "category": 61,
