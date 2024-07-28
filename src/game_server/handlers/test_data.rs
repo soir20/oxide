@@ -254,7 +254,7 @@ pub fn make_test_player(
                             EquipmentSlot::Hands,
                             EquippedItem {
                                 slot: EquipmentSlot::Hands,
-                                guid: 2,
+                                guid: 30167,
                                 category: 0,
                             },
                         ),
@@ -270,7 +270,7 @@ pub fn make_test_player(
                             EquipmentSlot::Feet,
                             EquippedItem {
                                 slot: EquipmentSlot::Feet,
-                                guid: 4,
+                                guid: 40065,
                                 category: 0,
                             },
                         ),
