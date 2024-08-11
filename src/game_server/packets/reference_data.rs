@@ -27,7 +27,7 @@ pub struct ItemClassDefinition {
     pub icon_set_id: u32,
     pub wield_type: WieldType,
     pub stat_id: u32,
-    pub battle_class_name_id: u32
+    pub battle_class_name_id: u32,
 }
 
 impl SerializePacket for ItemClassDefinition {
@@ -45,7 +45,7 @@ impl SerializePacket for ItemClassDefinition {
 
 #[derive(SerializePacket)]
 pub struct ItemClassDefinitions {
-    pub definitions: Vec<ItemClassDefinition>
+    pub definitions: Vec<ItemClassDefinition>,
 }
 
 impl GamePacket for ItemClassDefinitions {
@@ -126,7 +126,7 @@ pub struct ItemGroupDefinition {
     pub unknown14: u32,
     pub unknown16: String,
     pub unknown17: bool,
-    pub items: Vec<ItemGroupItem>
+    pub items: Vec<ItemGroupItem>,
 }
 
 #[derive(SerializePacket, DeserializePacket)]

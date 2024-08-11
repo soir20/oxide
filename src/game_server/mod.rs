@@ -29,7 +29,8 @@ use packets::item::{ItemDefinition, WieldType};
 use packets::login::{DeploymentEnv, GameSettings, LoginReply, WelcomeScreen, ZoneDetailsDone};
 use packets::player_update::ItemDefinitionsReply;
 use packets::reference_data::{
-    CategoryDefinitions, ItemClassDefinition, ItemClassDefinitions, ItemGroupDefinition, ItemGroupDefinitions, ItemGroupDefinitionsData, ItemGroupItem
+    CategoryDefinitions, ItemClassDefinition, ItemClassDefinitions, ItemGroupDefinition,
+    ItemGroupDefinitions, ItemGroupDefinitionsData, ItemGroupItem,
 };
 use packets::tunnel::{TunneledPacket, TunneledWorldPacket};
 use packets::ui::{ExecuteScript, ExecuteScriptWithParams};
@@ -226,7 +227,7 @@ impl GameServer {
                                     icon_set_id: 0,
                                     wield_type: WieldType::SingleSaber,
                                     stat_id: 0,
-                                    battle_class_name_id: 0
+                                    battle_class_name_id: 0,
                                 },
                                 ItemClassDefinition {
                                     guid: 1,
@@ -234,7 +235,7 @@ impl GameServer {
                                     icon_set_id: 0,
                                     wield_type: WieldType::SingleSaber,
                                     stat_id: 0,
-                                    battle_class_name_id: 0
+                                    battle_class_name_id: 0,
                                 },
                                 ItemClassDefinition {
                                     guid: 7,
@@ -242,8 +243,8 @@ impl GameServer {
                                     icon_set_id: 0,
                                     wield_type: WieldType::SingleSaber,
                                     stat_id: 0,
-                                    battle_class_name_id: 0
-                                }
+                                    battle_class_name_id: 0,
+                                },
                             ],
                         })?,
                     };
@@ -253,38 +254,36 @@ impl GameServer {
                         unknown1: true,
                         inner: ItemGroupDefinitions {
                             data: ItemGroupDefinitionsData {
-                                definitions: vec![
-                                    ItemGroupDefinition {
-                                        unknown1: 3,
-                                        unknown2: 3,
-                                        unknown3: 30,
-                                        unknown4: 30,
-                                        unknown5: 30,
-                                        unknown6: 30,
-                                        unknown7: 30,
-                                        unknown8: 30,
-                                        unknown9: 30,
-                                        unknown10: 30,
-                                        unknown11: true,
-                                        unknown12: 30,
-                                        unknown13: 30,
-                                        unknown14: 30,
-                                        unknown16: "ItemGroup.LightsaberHilts".to_string(),
-                                        unknown17: true,
-                                        items: vec![
-                                            ItemGroupItem {
-                                                unknown1: 300,
-                                                unknown2: 300,
-                                                unknown3: 1
-                                            },
-                                            ItemGroupItem {
-                                                unknown1: 5,
-                                                unknown2: 5,
-                                                unknown3: 1
-                                            }
-                                        ]
-                                    }
-                                ],
+                                definitions: vec![ItemGroupDefinition {
+                                    unknown1: 3,
+                                    unknown2: 3,
+                                    unknown3: 30,
+                                    unknown4: 30,
+                                    unknown5: 30,
+                                    unknown6: 30,
+                                    unknown7: 30,
+                                    unknown8: 30,
+                                    unknown9: 30,
+                                    unknown10: 30,
+                                    unknown11: true,
+                                    unknown12: 30,
+                                    unknown13: 30,
+                                    unknown14: 30,
+                                    unknown16: "ItemGroup.LightsaberHilts".to_string(),
+                                    unknown17: true,
+                                    items: vec![
+                                        ItemGroupItem {
+                                            unknown1: 300,
+                                            unknown2: 300,
+                                            unknown3: 1,
+                                        },
+                                        ItemGroupItem {
+                                            unknown1: 5,
+                                            unknown2: 5,
+                                            unknown3: 1,
+                                        },
+                                    ],
+                                }],
                             },
                         },
                     };

@@ -5,7 +5,13 @@ use packet_serialize::DeserializePacket;
 
 use crate::game_server::{
     packets::{
-        client_update::{EquipItem, UnequipItem}, inventory::{EquipGuid, InventoryOpCode, UnequipSlot}, item::Attachment, player_data::EquippedItem, tunnel::TunneledPacket, ui::{ExecuteScript, ExecuteScriptWithParams}, GamePacket
+        client_update::{EquipItem, UnequipItem},
+        inventory::{EquipGuid, InventoryOpCode, UnequipSlot},
+        item::Attachment,
+        player_data::EquippedItem,
+        tunnel::TunneledPacket,
+        ui::{ExecuteScript, ExecuteScriptWithParams},
+        GamePacket,
     },
     Broadcast, GameServer, ProcessPacketError,
 };
