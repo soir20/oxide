@@ -33,7 +33,6 @@ use packets::reference_data::{
     ItemGroupDefinitions, ItemGroupDefinitionsData, ItemGroupItem,
 };
 use packets::tunnel::{TunneledPacket, TunneledWorldPacket};
-use packets::ui::{ExecuteScript, ExecuteScriptWithParams};
 use packets::update_position::UpdatePlayerPosition;
 use packets::zone::ZoneTeleportRequest;
 use packets::{GamePacket, OpCode};
@@ -257,20 +256,20 @@ impl GameServer {
                                 definitions: vec![ItemGroupDefinition {
                                     unknown1: 3,
                                     unknown2: 3,
-                                    unknown3: 30,
-                                    unknown4: 30,
-                                    unknown5: 30,
-                                    unknown6: 30,
-                                    unknown7: 30,
-                                    unknown8: 30,
-                                    unknown9: 30,
-                                    unknown10: 30,
-                                    unknown11: true,
-                                    unknown12: 30,
-                                    unknown13: 30,
-                                    unknown14: 30,
-                                    unknown16: "ItemGroup.LightsaberHilts".to_string(),
-                                    unknown17: true,
+                                    unknown3: 0,
+                                    unknown4: 0,
+                                    unknown5: 0,
+                                    unknown6: 0,
+                                    unknown7: 0,
+                                    unknown8: 0,
+                                    unknown9: 0,
+                                    unknown10: 0,
+                                    unknown11: false,
+                                    unknown12: 0,
+                                    unknown13: 0,
+                                    unknown14: 0,
+                                    unknown16: "".to_string(),
+                                    unknown17: false,
                                     items: vec![
                                         ItemGroupItem {
                                             unknown1: 300,
@@ -288,76 +287,6 @@ impl GameServer {
                         },
                     };
                     packets.push(GamePacket::serialize(&item_groups)?);
-                    packets.push(GamePacket::serialize(&TunneledPacket {
-                        unknown1: true,
-                        inner: ExecuteScript {
-                            script_name: "Console.show".to_string(),
-                            unknown: vec![],
-                        },
-                    })?);
-                    packets.push(GamePacket::serialize(&TunneledPacket {
-                        unknown1: true,
-                        inner: ExecuteScript {
-                            script_name: "InventoryScreen.SelectItemGroup".to_string(),
-                            unknown: vec![3],
-                        },
-                    })?);
-                    packets.push(GamePacket::serialize(&TunneledPacket {
-                        unknown1: true,
-                        inner: ExecuteScriptWithParams {
-                            script_name: "InventoryScreen.CreateItemGroup".to_string(),
-                            params: vec!["ItemGroup.LightsaberHilts".to_string()],
-                        },
-                    })?);
-                    /*packets.push(GamePacket::serialize(&TunneledPacket {
-                        unknown1: true,
-                        inner: ExecuteScriptWithParams {
-                            script_name: "CharacterWindowHandler.createDynamicDataSources".to_string(),
-                            params: vec![],
-                        },
-                    })?);
-                    packets.push(GamePacket::serialize(&TunneledPacket {
-                        unknown1: true,
-                        inner: ExecuteScript {
-                            script_name: "CharacterWindowHandler.SetDatasourcesConnected".to_string(),
-                            unknown: vec![1],
-                        },
-                    })?);
-                    packets.push(GamePacket::serialize(&TunneledPacket {
-                        unknown1: true,
-                        inner: ExecuteScriptWithParams {
-                            script_name: "CharacterWindowHandler.ASInvoke".to_string(),
-                            params: vec!["setDataSourceData".to_string(), "ItemGroup.LightsaberHilts".to_string(), "GroupId|ItemId|ItemCount|IsEquipped|IsMarketPlaceItem|IsReady#endheader#0|5|1|0|0|1".to_string(), "1".to_string()],
-                        },
-                    })?);
-                    packets.push(GamePacket::serialize(&TunneledPacket {
-                        unknown1: true,
-                        inner: ExecuteScript {
-                            script_name: "DsTable.Find(\"ItemGroup.LightsaberHilts\"):EnableScriptEvents()".to_string(),
-                            unknown: vec![],
-                        },
-                    })?);
-                    packets.push(GamePacket::serialize(&TunneledPacket {
-                        unknown1: true,
-                        inner: ExecuteScriptWithParams {
-                            script_name: "DataSourceMethods.BroadcastDsUpdate".to_string(),
-                            params: vec!["CharacterWindowHandler".to_string(), "ItemGroup.LightsaberHilts".to_string()],
-                        },
-                    })?);
-                    packets.push(GamePacket::serialize(&TunneledPacket {
-                        unknown1: true,
-                        inner: ExecuteScriptWithParams {
-                            script_name: "LuaEventDispatcher:dispatchEvent".to_string(),
-                            params: vec!["ItemGroup.LightsaberHilts.OnDataUpdate".to_string()],
-                        },
-                    })?);
-                    packets.push(GamePacket::serialize(&TunneledPacket {
-                        unknown1: true,
-                        inner: ExecuteScriptWithParams {
-                            script_name: "LuaEventDispatcher:dispatchEvent".to_string(),
-                            params: vec!["ItemGroup.LightsaberHilts.OnDataChanged".to_string()],
-                        },
-                    })?);*/
 
                     let npc = TunneledPacket {
                         unknown1: true,
