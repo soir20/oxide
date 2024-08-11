@@ -6,6 +6,7 @@ use super::{GamePacket, OpCode};
 
 #[derive(Copy, Clone, Debug)]
 pub enum UiOpCode {
+    ExecuteScript = 0x7,
     ExecuteScriptWithParams = 0x8,
 }
 
@@ -15,6 +16,17 @@ impl SerializePacket for UiOpCode {
         buffer.write_u8(*self as u8)?;
         Ok(())
     }
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct ExecuteScript {
+    pub script_name: String,
+    pub unknown: Vec<u32>,
+}
+
+impl GamePacket for ExecuteScript {
+    type Header = UiOpCode;
+    const HEADER: Self::Header = UiOpCode::ExecuteScript;
 }
 
 #[derive(SerializePacket, DeserializePacket)]

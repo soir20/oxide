@@ -5,12 +5,7 @@ use packet_serialize::DeserializePacket;
 
 use crate::game_server::{
     packets::{
-        client_update::{EquipItem, UnequipItem},
-        inventory::{EquipGuid, InventoryOpCode, UnequipSlot},
-        item::Attachment,
-        player_data::EquippedItem,
-        tunnel::TunneledPacket,
-        GamePacket,
+        client_update::{EquipItem, UnequipItem}, inventory::{EquipGuid, InventoryOpCode, UnequipSlot}, item::Attachment, player_data::EquippedItem, tunnel::TunneledPacket, ui::{ExecuteScript, ExecuteScriptWithParams}, GamePacket
     },
     Broadcast, GameServer, ProcessPacketError,
 };
@@ -95,6 +90,20 @@ pub fn process_inventory_packet(
                                                     item_class: item_def.item_class,
                                                     equip: true,
                                                 }
+                                            })?,
+                                            GamePacket::serialize(&TunneledPacket {
+                                                unknown1: true,
+                                                inner: ExecuteScript {
+                                                    script_name: "InventoryScreen.FilterCategory".to_string(),
+                                                    unknown: vec![64],
+                                                },
+                                            })?,
+                                            GamePacket::serialize(&TunneledPacket {
+                                                unknown1: true,
+                                                inner: ExecuteScriptWithParams {
+                                                    script_name: "InventoryScreen.CreateItemGroup".to_string(),
+                                                    params: vec!["ItemGroup.LightsaberHilts".to_string()],
+                                                },
                                             })?
                                         ])])
                                     } else {

@@ -287,7 +287,7 @@ pub fn make_test_player(
                             EquippedItem {
                                 slot: EquipmentSlot::PrimaryWeapon,
                                 guid: 5,
-                                category: 0,
+                                category: 10,
                             },
                         ),
                         (
@@ -302,7 +302,7 @@ pub fn make_test_player(
                             EquipmentSlot::PrimarySaberShape,
                             EquippedItem {
                                 slot: EquipmentSlot::PrimarySaberShape,
-                                guid: 0,
+                                guid: 100,
                                 category: 0,
                             },
                         ),
@@ -310,7 +310,7 @@ pub fn make_test_player(
                             EquipmentSlot::PrimarySaberColor,
                             EquippedItem {
                                 slot: EquipmentSlot::PrimarySaberColor,
-                                guid: 0,
+                                guid: 101,
                                 category: 0,
                             },
                         ),
@@ -546,7 +546,7 @@ pub fn make_test_wield_type(guid: u32) -> Result<Vec<Vec<u8>>, SerializePacketEr
         unknown1: true,
         inner: UpdateWieldType {
             guid: player_guid(guid),
-            wield_type: WieldType::SinglePistol,
+            wield_type: WieldType::SingleSaber,
         },
     })?])
 }

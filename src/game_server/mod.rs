@@ -25,13 +25,14 @@ use handlers::unique_guid::{player_guid, shorten_zone_template_guid, zone_instan
 use handlers::zone::{load_zones, teleport_within_zone, Zone, ZoneTemplate};
 use packets::client_update::{Health, Power, PreloadCharactersDone, Stat, StatId, Stats};
 use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
-use packets::item::ItemDefinition;
+use packets::item::{ItemDefinition, WieldType};
 use packets::login::{DeploymentEnv, GameSettings, LoginReply, WelcomeScreen, ZoneDetailsDone};
 use packets::player_update::ItemDefinitionsReply;
 use packets::reference_data::{
-    CategoryDefinitions, ItemGroupDefinitions, ItemGroupDefinitionsData,
+    CategoryDefinitions, ItemClassDefinition, ItemClassDefinitions, ItemGroupDefinition, ItemGroupDefinitions, ItemGroupDefinitionsData, ItemGroupItem
 };
 use packets::tunnel::{TunneledPacket, TunneledWorldPacket};
+use packets::ui::{ExecuteScript, ExecuteScriptWithParams};
 use packets::update_position::UpdatePlayerPosition;
 use packets::zone::ZoneTeleportRequest;
 use packets::{GamePacket, OpCode};
@@ -215,15 +216,149 @@ impl GameServer {
                     };
                     packets.push(GamePacket::serialize(&categories)?);
 
+                    let classes = TunneledPacket {
+                        unknown1: true,
+                        inner: GamePacket::serialize(&ItemClassDefinitions {
+                            definitions: vec![
+                                ItemClassDefinition {
+                                    guid: 0,
+                                    name: 1,
+                                    icon_set_id: 0,
+                                    wield_type: WieldType::SingleSaber,
+                                    stat_id: 0,
+                                    battle_class_name_id: 0
+                                },
+                                ItemClassDefinition {
+                                    guid: 1,
+                                    name: 1,
+                                    icon_set_id: 0,
+                                    wield_type: WieldType::SingleSaber,
+                                    stat_id: 0,
+                                    battle_class_name_id: 0
+                                },
+                                ItemClassDefinition {
+                                    guid: 7,
+                                    name: 1,
+                                    icon_set_id: 0,
+                                    wield_type: WieldType::SingleSaber,
+                                    stat_id: 0,
+                                    battle_class_name_id: 0
+                                }
+                            ],
+                        })?,
+                    };
+                    packets.push(GamePacket::serialize(&classes)?);
+
                     let item_groups = TunneledPacket {
                         unknown1: true,
                         inner: ItemGroupDefinitions {
                             data: ItemGroupDefinitionsData {
-                                definitions: vec![],
+                                definitions: vec![
+                                    ItemGroupDefinition {
+                                        unknown1: 3,
+                                        unknown2: 3,
+                                        unknown3: 30,
+                                        unknown4: 30,
+                                        unknown5: 30,
+                                        unknown6: 30,
+                                        unknown7: 30,
+                                        unknown8: 30,
+                                        unknown9: 30,
+                                        unknown10: 30,
+                                        unknown11: true,
+                                        unknown12: 30,
+                                        unknown13: 30,
+                                        unknown14: 30,
+                                        unknown16: "ItemGroup.LightsaberHilts".to_string(),
+                                        unknown17: true,
+                                        items: vec![
+                                            ItemGroupItem {
+                                                unknown1: 300,
+                                                unknown2: 300,
+                                                unknown3: 1
+                                            },
+                                            ItemGroupItem {
+                                                unknown1: 5,
+                                                unknown2: 5,
+                                                unknown3: 1
+                                            }
+                                        ]
+                                    }
+                                ],
                             },
                         },
                     };
                     packets.push(GamePacket::serialize(&item_groups)?);
+                    packets.push(GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: ExecuteScript {
+                            script_name: "Console.show".to_string(),
+                            unknown: vec![],
+                        },
+                    })?);
+                    packets.push(GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: ExecuteScript {
+                            script_name: "InventoryScreen.SelectItemGroup".to_string(),
+                            unknown: vec![3],
+                        },
+                    })?);
+                    packets.push(GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: ExecuteScriptWithParams {
+                            script_name: "InventoryScreen.CreateItemGroup".to_string(),
+                            params: vec!["ItemGroup.LightsaberHilts".to_string()],
+                        },
+                    })?);
+                    /*packets.push(GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: ExecuteScriptWithParams {
+                            script_name: "CharacterWindowHandler.createDynamicDataSources".to_string(),
+                            params: vec![],
+                        },
+                    })?);
+                    packets.push(GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: ExecuteScript {
+                            script_name: "CharacterWindowHandler.SetDatasourcesConnected".to_string(),
+                            unknown: vec![1],
+                        },
+                    })?);
+                    packets.push(GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: ExecuteScriptWithParams {
+                            script_name: "CharacterWindowHandler.ASInvoke".to_string(),
+                            params: vec!["setDataSourceData".to_string(), "ItemGroup.LightsaberHilts".to_string(), "GroupId|ItemId|ItemCount|IsEquipped|IsMarketPlaceItem|IsReady#endheader#0|5|1|0|0|1".to_string(), "1".to_string()],
+                        },
+                    })?);
+                    packets.push(GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: ExecuteScript {
+                            script_name: "DsTable.Find(\"ItemGroup.LightsaberHilts\"):EnableScriptEvents()".to_string(),
+                            unknown: vec![],
+                        },
+                    })?);
+                    packets.push(GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: ExecuteScriptWithParams {
+                            script_name: "DataSourceMethods.BroadcastDsUpdate".to_string(),
+                            params: vec!["CharacterWindowHandler".to_string(), "ItemGroup.LightsaberHilts".to_string()],
+                        },
+                    })?);
+                    packets.push(GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: ExecuteScriptWithParams {
+                            script_name: "LuaEventDispatcher:dispatchEvent".to_string(),
+                            params: vec!["ItemGroup.LightsaberHilts.OnDataUpdate".to_string()],
+                        },
+                    })?);
+                    packets.push(GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: ExecuteScriptWithParams {
+                            script_name: "LuaEventDispatcher:dispatchEvent".to_string(),
+                            params: vec!["ItemGroup.LightsaberHilts.OnDataChanged".to_string()],
+                        },
+                    })?);*/
 
                     let npc = TunneledPacket {
                         unknown1: true,

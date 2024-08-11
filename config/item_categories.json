@@ -49,6 +49,14 @@
             "visible": true
         },
         {
+            "comment": "Housing Sets",
+            "guid": 30,
+            "name": 1221,
+            "icon_set_id": 1151,
+            "sort_order": 13,
+            "visible": true
+        },
+        {
             "comment": "Housing",
             "guid": 65,
             "name": 1222,
