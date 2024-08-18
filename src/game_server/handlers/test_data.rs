@@ -149,21 +149,24 @@ pub fn make_test_player(
         })
     }
 
-    let mut inventory = vec![];
+    let mut inventory = BTreeMap::new();
     for item in items.values() {
-        inventory.push(InventoryItem {
-            definition_id: item.guid,
-            item: Item {
+        inventory.insert(
+            item.guid,
+            InventoryItem {
                 definition_id: item.guid,
-                tint: 0,
-                guid: item.guid,
-                quantity: 1,
-                num_consumed: 0,
-                last_use_time: 0,
-                market_data: MarketData::None,
-                unknown2: false,
+                item: Item {
+                    definition_id: item.guid,
+                    tint: 0,
+                    guid: item.guid,
+                    quantity: 1,
+                    num_consumed: 0,
+                    last_use_time: 0,
+                    market_data: MarketData::None,
+                    unknown2: false,
+                },
             },
-        });
+        );
     }
 
     Player {
