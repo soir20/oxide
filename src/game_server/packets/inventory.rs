@@ -9,6 +9,7 @@ use super::{item::EquipmentSlot, OpCode};
 pub enum InventoryOpCode {
     UnequipSlot = 0x2,
     EquipGuid = 0x3,
+    EquipSaber = 0xd,
 }
 
 impl SerializePacket for InventoryOpCode {
