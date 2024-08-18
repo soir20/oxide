@@ -433,7 +433,7 @@ pub struct PlayerData {
     pub active_battle_class: u32,
     pub unknown: Vec<Unknown>,
     pub social: Vec<SocialInfo>,
-    pub inventory: Vec<InventoryItem>,
+    pub inventory: BTreeMap<u32, InventoryItem>,
     pub gender: u32,
     pub quests: Vec<Quest>,
     pub quests_unknown1: u32,
