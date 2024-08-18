@@ -35,11 +35,13 @@ pub fn process_inventory_packet(
                     write_guids: vec![player_guid(sender)],
                     character_consumer: |_, _, mut characters_write, _| {
                         if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) {
+
                             if let CharacterType::Player(ref mut player_data) = character_write_handle.character_type {
                                 let possible_battle_class = player_data.battle_classes.get_mut(&unequip_slot.battle_class);
+
                                 if let Some(battle_class) = possible_battle_class {
-                                    battle_class.items.remove(&unequip_slot.slot);
-                                    Ok(vec![Broadcast::Single(sender, vec![
+
+                                    let mut packets = vec![
                                         GamePacket::serialize(&TunneledPacket {
                                             unknown1: true,
                                             inner: UnequipItem {
@@ -47,15 +49,41 @@ pub fn process_inventory_packet(
                                                 battle_class: unequip_slot.battle_class
                                             }
                                         })?
-                                    ])])
+                                    ];
+
+                                    if unequip_slot.slot.is_weapon() {
+                                        let wield_type = battle_class.items.get(&unequip_slot.slot)
+                                            .and_then(|item| game_server.items().get(&item.guid))
+                                            .and_then(|item_def| game_server.item_classes().definitions.get(&item_def.item_class))
+                                            .and_then(|item_class| match (unequip_slot.slot, item_class.wield_type) {
+                                                (EquipmentSlot::SecondaryWeapon, WieldType::SingleSaber) => Some(WieldType::SingleSaber),
+                                                (EquipmentSlot::SecondaryWeapon, WieldType::SinglePistol) => Some(WieldType::SinglePistol),
+                                                _ => None,
+                                            })
+                                            .unwrap_or(WieldType::None);
+
+                                        packets.push(GamePacket::serialize(&TunneledPacket {
+                                            unknown1: true,
+                                            inner: UpdateWieldType {
+                                                guid: player_guid(sender),
+                                                wield_type,
+                                            }
+                                        })?);
+                                    }
+
+                                    battle_class.items.remove(&unequip_slot.slot);
+
+                                    Ok(vec![Broadcast::Single(sender, packets)])
                                 } else {
                                     println!("Player {} tried to unequip slot in battle class {} that they don't own", sender, unequip_slot.battle_class);
                                     Err(ProcessPacketError::CorruptedPacket)
                                 }
+
                             } else {
                                 println!("Non-player character {} tried to unequip slot", sender);
                                 Err(ProcessPacketError::CorruptedPacket)
                             }
+
                         } else {
                             println!("Unknown player {} tried to unequip slot", sender);
                             Err(ProcessPacketError::CorruptedPacket)
@@ -78,7 +106,7 @@ pub fn process_inventory_packet(
 
                                     if let Some(battle_class) = possible_battle_class {
 
-                                        if let Some(item_def) = game_server.items.get(&equip_guid.item_guid) {
+                                        if let Some(item_def) = game_server.items().get(&equip_guid.item_guid) {
                                             battle_class.items.insert(equip_guid.slot, EquippedItem {
                                                 slot: equip_guid.slot,
                                                 guid: equip_guid.item_guid,

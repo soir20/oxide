@@ -510,6 +510,10 @@ impl GameServer {
         Ok(broadcasts)
     }
 
+    pub fn items(&self) -> &BTreeMap<u32, ItemDefinition> {
+        &self.items
+    }
+
     pub fn item_classes(&self) -> &ItemClassDefinitions {
         &self.item_classes
     }
