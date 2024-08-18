@@ -6,6 +6,7 @@ use serde::Deserialize;
 
 use super::{item::WieldType, GamePacket, OpCode};
 
+#[allow(clippy::enum_variant_names)]
 #[derive(Copy, Clone, Debug)]
 pub enum ReferenceDataOpCode {
     ItemClassDefinitions = 0x1,
