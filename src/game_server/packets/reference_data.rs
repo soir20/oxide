@@ -1,7 +1,7 @@
 use std::io::Write;
 
 use byteorder::{LittleEndian, WriteBytesExt};
-use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
+use packet_serialize::{SerializePacket, SerializePacketError};
 use serde::Deserialize;
 
 use super::{item::WieldType, GamePacket, OpCode};
