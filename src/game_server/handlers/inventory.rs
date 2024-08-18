@@ -62,7 +62,7 @@ pub fn process_inventory_packet(
                     }
                 })
             }
-            InventoryOpCode::EquipGuid => {
+            InventoryOpCode::EquipGuid | InventoryOpCode::EquipSaber => {
                 let equip_guid: EquipGuid = DeserializePacket::deserialize(cursor)?;
                 game_server.lock_enforcer().read_characters(|_| CharacterLockRequest {
                     read_guids: vec![],
