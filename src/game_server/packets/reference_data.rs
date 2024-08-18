@@ -1,4 +1,4 @@
-use std::io::Write;
+use std::{collections::BTreeMap, io::Write};
 
 use byteorder::{LittleEndian, WriteBytesExt};
 use packet_serialize::{SerializePacket, SerializePacketError};
@@ -22,9 +22,10 @@ impl SerializePacket for ReferenceDataOpCode {
     }
 }
 
+#[derive(Deserialize)]
 pub struct ItemClassDefinition {
     pub guid: i32,
-    pub name: u32,
+    pub name_id: u32,
     pub icon_set_id: u32,
     pub wield_type: WieldType,
     pub stat_id: u32,
@@ -35,7 +36,7 @@ impl SerializePacket for ItemClassDefinition {
     fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
         buffer.write_i32::<LittleEndian>(self.guid)?;
         buffer.write_i32::<LittleEndian>(self.guid)?;
-        buffer.write_u32::<LittleEndian>(self.name)?;
+        buffer.write_u32::<LittleEndian>(self.name_id)?;
         buffer.write_u32::<LittleEndian>(self.icon_set_id)?;
         self.wield_type.serialize(buffer)?;
         buffer.write_u32::<LittleEndian>(self.stat_id)?;
@@ -44,9 +45,9 @@ impl SerializePacket for ItemClassDefinition {
     }
 }
 
-#[derive(SerializePacket)]
+#[derive(SerializePacket, Deserialize)]
 pub struct ItemClassDefinitions {
-    pub definitions: Vec<ItemClassDefinition>,
+    pub definitions: BTreeMap<i32, ItemClassDefinition>,
 }
 
 impl GamePacket for ItemClassDefinitions {
@@ -58,7 +59,7 @@ impl GamePacket for ItemClassDefinitions {
 #[derive(Clone, Deserialize)]
 pub struct CategoryDefinition {
     pub guid: i32,
-    pub name: u32,
+    pub name_id: u32,
     pub icon_set_id: u32,
     pub sort_order: i32,
     pub visible: bool,
@@ -68,7 +69,7 @@ impl SerializePacket for CategoryDefinition {
     fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
         buffer.write_i32::<LittleEndian>(self.guid)?;
         buffer.write_i32::<LittleEndian>(self.guid)?;
-        buffer.write_u32::<LittleEndian>(self.name)?;
+        buffer.write_u32::<LittleEndian>(self.name_id)?;
         buffer.write_u32::<LittleEndian>(self.icon_set_id)?;
         buffer.write_i32::<LittleEndian>(self.sort_order)?;
         buffer.write_u8(self.visible as u8)?;

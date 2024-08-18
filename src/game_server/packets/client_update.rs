@@ -72,7 +72,7 @@ pub struct EquipItem {
     pub item_guid: u32,
     pub attachment: Attachment,
     pub battle_class: u32,
-    pub item_class: u32,
+    pub item_class: i32,
     pub equip: bool,
 }
 

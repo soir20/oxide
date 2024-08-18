@@ -7,8 +7,9 @@ use crate::game_server::{
     packets::{
         client_update::{EquipItem, UnequipItem},
         inventory::{EquipGuid, InventoryOpCode, UnequipSlot},
-        item::Attachment,
+        item::{Attachment, EquipmentSlot, WieldType},
         player_data::EquippedItem,
+        player_update::UpdateWieldType,
         tunnel::TunneledPacket,
         GamePacket,
     },
@@ -83,7 +84,8 @@ pub fn process_inventory_packet(
                                                 guid: equip_guid.item_guid,
                                                 category: item_def.category,
                                             });
-                                            Ok(vec![Broadcast::Single(sender, vec![
+
+                                            let mut packets = vec![
                                                 GamePacket::serialize(&TunneledPacket {
                                                     unknown1: true,
                                                     inner: EquipItem {
@@ -101,7 +103,27 @@ pub fn process_inventory_packet(
                                                         equip: true,
                                                     }
                                                 })?
-                                            ])])
+                                            ];
+
+                                            if let Some(item_class) = game_server.item_classes().definitions.get(&item_def.item_class) {
+                                                if equip_guid.slot.is_weapon() {
+                                                    let wield_type = match (equip_guid.slot, item_class.wield_type) {
+                                                        (EquipmentSlot::SecondaryWeapon, WieldType::SingleSaber) => WieldType::DualSaber,
+                                                        (EquipmentSlot::SecondaryWeapon, WieldType::SinglePistol) => WieldType::DualPistol,
+                                                        _ => item_class.wield_type,
+                                                    };
+
+                                                    packets.push(GamePacket::serialize(&TunneledPacket {
+                                                        unknown1: true,
+                                                        inner: UpdateWieldType {
+                                                            guid: player_guid(sender),
+                                                            wield_type,
+                                                        }
+                                                    })?);
+                                                }
+                                            }
+
+                                            Ok(vec![Broadcast::Single(sender, packets)])
                                         } else {
                                             println!("Player {} tried to equip unknown item {}", sender, equip_guid.item_guid);
                                             Err(ProcessPacketError::CorruptedPacket)

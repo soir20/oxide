@@ -16,7 +16,7 @@ use handlers::lock_enforcer::{
 };
 use handlers::login::send_points_of_interest;
 use handlers::mount::{load_mounts, process_mount_packet, MountConfig};
-use handlers::reference_data::load_categories;
+use handlers::reference_data::{load_categories, load_item_classes};
 use handlers::test_data::{
     make_test_nameplate_image, make_test_npc, make_test_player, make_test_wield_type,
 };
@@ -29,7 +29,7 @@ use packets::item::ItemDefinition;
 use packets::login::{DeploymentEnv, GameSettings, LoginReply, WelcomeScreen, ZoneDetailsDone};
 use packets::player_update::ItemDefinitionsReply;
 use packets::reference_data::{
-    CategoryDefinitions, ItemGroupDefinitions, ItemGroupDefinitionsData,
+    CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions, ItemGroupDefinitionsData,
 };
 use packets::tunnel::{TunneledPacket, TunneledWorldPacket};
 use packets::update_position::UpdatePlayerPosition;
@@ -80,6 +80,7 @@ pub struct GameServer {
     categories: CategoryDefinitions,
     lock_enforcer_source: LockEnforcerSource,
     items: BTreeMap<u32, ItemDefinition>,
+    item_classes: ItemClassDefinitions,
     mounts: BTreeMap<u32, MountConfig>,
     zone_templates: BTreeMap<u8, ZoneTemplate>,
 }
@@ -92,6 +93,7 @@ impl GameServer {
             categories: load_categories(config_dir)?,
             lock_enforcer_source: LockEnforcerSource::from(characters, zones),
             items: load_item_definitions(config_dir)?,
+            item_classes: load_item_classes(config_dir)?,
             mounts: load_mounts(config_dir)?,
             zone_templates: templates,
         })
@@ -508,10 +510,13 @@ impl GameServer {
         Ok(broadcasts)
     }
 
+    pub fn item_classes(&self) -> &ItemClassDefinitions {
+        &self.item_classes
+    }
+
     pub fn read_zone_templates(&self) -> &BTreeMap<u8, ZoneTemplate> {
         &self.zone_templates
     }
-
     pub fn mounts(&self) -> &BTreeMap<u32, MountConfig> {
         &self.mounts
     }

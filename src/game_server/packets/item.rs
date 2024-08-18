@@ -26,6 +26,12 @@ pub enum EquipmentSlot {
     CustomBeard = 18,
 }
 
+impl EquipmentSlot {
+    pub fn is_weapon(self) -> bool {
+        self == EquipmentSlot::PrimaryWeapon || self == EquipmentSlot::SecondaryWeapon
+    }
+}
+
 impl SerializePacket for EquipmentSlot {
     fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
         buffer.write_u32::<LittleEndian>(*self as u32)?;
@@ -49,7 +55,7 @@ impl DeserializePacket for EquipmentSlot {
     }
 }
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, Deserialize)]
 pub enum WieldType {
     None = 0,
     SingleSaber = 1,
@@ -137,7 +143,7 @@ pub struct ItemDefinition {
     pub tint: u32,
     pub unknown7: u32,
     pub cost: u32,
-    pub item_class: u32,
+    pub item_class: i32,
     pub required_battle_class: u32,
     pub slot: EquipmentSlot,
     pub disable_trade: bool,

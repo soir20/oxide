@@ -1,0 +1,11 @@
+[
+    {
+        "comment": "Single Saber",
+        "guid": 10,
+        "name_id": 0,
+        "icon_set_id": 0,
+        "wield_type": "SingleSaber",
+        "stat_id": 0,
+        "battle_class_name_id": 0
+    }
+]
