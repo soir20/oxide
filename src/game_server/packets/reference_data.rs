@@ -4,10 +4,11 @@ use byteorder::{LittleEndian, WriteBytesExt};
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
 use serde::Deserialize;
 
-use super::{GamePacket, OpCode};
+use super::{item::WieldType, GamePacket, OpCode};
 
 #[derive(Copy, Clone, Debug)]
 pub enum ReferenceDataOpCode {
+    ItemClassDefinitions = 0x1,
     CategoryDefinitions = 0x2,
     ItemGroupDefinitions = 0x4,
 }
@@ -18,6 +19,39 @@ impl SerializePacket for ReferenceDataOpCode {
         buffer.write_u16::<LittleEndian>(*self as u16)?;
         Ok(())
     }
+}
+
+pub struct ItemClassDefinition {
+    pub guid: i32,
+    pub name: u32,
+    pub icon_set_id: u32,
+    pub wield_type: WieldType,
+    pub stat_id: u32,
+    pub battle_class_name_id: u32,
+}
+
+impl SerializePacket for ItemClassDefinition {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        buffer.write_i32::<LittleEndian>(self.guid)?;
+        buffer.write_i32::<LittleEndian>(self.guid)?;
+        buffer.write_u32::<LittleEndian>(self.name)?;
+        buffer.write_u32::<LittleEndian>(self.icon_set_id)?;
+        self.wield_type.serialize(buffer)?;
+        buffer.write_u32::<LittleEndian>(self.stat_id)?;
+        buffer.write_u32::<LittleEndian>(self.battle_class_name_id)?;
+        Ok(())
+    }
+}
+
+#[derive(SerializePacket)]
+pub struct ItemClassDefinitions {
+    pub definitions: Vec<ItemClassDefinition>,
+}
+
+impl GamePacket for ItemClassDefinitions {
+    type Header = ReferenceDataOpCode;
+
+    const HEADER: Self::Header = ReferenceDataOpCode::ItemClassDefinitions;
 }
 
 #[derive(Clone, Deserialize)]
@@ -67,15 +101,29 @@ impl GamePacket for CategoryDefinitions {
     const HEADER: Self::Header = ReferenceDataOpCode::CategoryDefinitions;
 }
 
-#[derive(SerializePacket, DeserializePacket)]
+pub struct ItemGroupItem {
+    pub guid: u32,
+    pub unknown: u32,
+}
+
+impl SerializePacket for ItemGroupItem {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        buffer.write_u32::<LittleEndian>(self.guid)?;
+        buffer.write_u32::<LittleEndian>(self.guid)?;
+        buffer.write_u32::<LittleEndian>(self.unknown)?;
+        Ok(())
+    }
+}
+
+#[derive(SerializePacket)]
 pub struct ItemGroupDefinition {
-    pub unknown1: u32,
-    pub unknown2: u32,
-    pub unknown3: u32,
-    pub unknown4: u32,
-    pub unknown5: u32,
-    pub unknown6: u32,
-    pub unknown7: u32,
+    pub guid: i32,
+    pub unknown2: i32,
+    pub name_id: u32,
+    pub description_id: u32,
+    pub sort_order: u32,
+    pub icon_set_id: u32,
+    pub category: u32,
     pub unknown8: u32,
     pub unknown9: u32,
     pub unknown10: u32,
@@ -85,9 +133,10 @@ pub struct ItemGroupDefinition {
     pub unknown14: u32,
     pub unknown16: String,
     pub unknown17: bool,
+    pub items: Vec<ItemGroupItem>,
 }
 
-#[derive(SerializePacket, DeserializePacket)]
+#[derive(SerializePacket)]
 pub struct ItemGroupDefinitionsData {
     pub definitions: Vec<ItemGroupDefinition>,
 }
