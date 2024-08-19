@@ -55,7 +55,7 @@ impl DeserializePacket for EquipmentSlot {
     }
 }
 
-#[derive(Copy, Clone, Debug, Deserialize)]
+#[derive(Copy, Clone, Debug, Deserialize, PartialEq, Eq)]
 pub enum WieldType {
     None = 0,
     SingleSaber = 1,

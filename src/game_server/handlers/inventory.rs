@@ -1,7 +1,7 @@
-use std::io::Cursor;
+use std::{collections::BTreeMap, io::Cursor};
 
 use byteorder::{LittleEndian, ReadBytesExt};
-use packet_serialize::DeserializePacket;
+use packet_serialize::{DeserializePacket, SerializePacket};
 
 use crate::game_server::{
     packets::{
@@ -52,15 +52,12 @@ pub fn process_inventory_packet(
                                     ];
 
                                     if unequip_slot.slot.is_weapon() {
-                                        let wield_type = battle_class.items.get(&unequip_slot.slot)
-                                            .and_then(|item| game_server.items().get(&item.guid))
-                                            .and_then(|item_def| game_server.item_classes().definitions.get(&item_def.item_class))
-                                            .and_then(|item_class| match (unequip_slot.slot, item_class.wield_type) {
-                                                (EquipmentSlot::SecondaryWeapon, WieldType::SingleSaber) => Some(WieldType::SingleSaber),
-                                                (EquipmentSlot::SecondaryWeapon, WieldType::SinglePistol) => Some(WieldType::SinglePistol),
-                                                _ => None,
-                                            })
-                                            .unwrap_or(WieldType::None);
+                                        let is_primary_equipped = battle_class.items.contains_key(&EquipmentSlot::PrimaryWeapon);
+                                        let wield_type =  match (unequip_slot.slot, wield_type_from_slot(&battle_class.items, unequip_slot.slot, game_server), is_primary_equipped) {
+                                            (EquipmentSlot::SecondaryWeapon, WieldType::SingleSaber, true) => WieldType::SingleSaber,
+                                            (EquipmentSlot::SecondaryWeapon, WieldType::SinglePistol, true) => WieldType::SinglePistol,
+                                            _ => WieldType::None,
+                                        };
 
                                         packets.push(GamePacket::serialize(&TunneledPacket {
                                             unknown1: true,
@@ -107,12 +104,6 @@ pub fn process_inventory_packet(
                                     if let Some(battle_class) = possible_battle_class {
 
                                         if let Some(item_def) = game_server.items().get(&equip_guid.item_guid) {
-                                            battle_class.items.insert(equip_guid.slot, EquippedItem {
-                                                slot: equip_guid.slot,
-                                                guid: equip_guid.item_guid,
-                                                category: item_def.category,
-                                            });
-
                                             let mut packets = vec![
                                                 GamePacket::serialize(&TunneledPacket {
                                                     unknown1: true,
@@ -135,9 +126,29 @@ pub fn process_inventory_packet(
 
                                             if let Some(item_class) = game_server.item_classes().definitions.get(&item_def.item_class) {
                                                 if equip_guid.slot.is_weapon() {
-                                                    let wield_type = match (equip_guid.slot, item_class.wield_type) {
-                                                        (EquipmentSlot::SecondaryWeapon, WieldType::SingleSaber) => WieldType::DualSaber,
-                                                        (EquipmentSlot::SecondaryWeapon, WieldType::SinglePistol) => WieldType::DualPistol,
+
+                                                    if equip_guid.slot == EquipmentSlot::PrimaryWeapon {
+                                                        let secondary_wield_type = wield_type_from_slot(&battle_class.items, EquipmentSlot::SecondaryWeapon, game_server);
+                                                        if item_class.wield_type != secondary_wield_type {
+                                                            packets.push(GamePacket::serialize(&TunneledPacket {
+                                                                unknown1: true,
+                                                                inner: UnequipItem {
+                                                                    slot: EquipmentSlot::SecondaryWeapon,
+                                                                    battle_class: equip_guid.battle_class
+                                                                }
+                                                            })?);
+                                                            battle_class.items.remove(&EquipmentSlot::SecondaryWeapon);
+                                                        }
+                                                    }
+
+                                                    let is_secondary_equipped = battle_class.items.contains_key(&EquipmentSlot::SecondaryWeapon);
+                                                    let wield_type = match (equip_guid.slot, item_class.wield_type, is_secondary_equipped) {
+                                                        (EquipmentSlot::PrimaryWeapon, WieldType::SingleSaber, false) => WieldType::SingleSaber,
+                                                        (EquipmentSlot::PrimaryWeapon, WieldType::SinglePistol, false) => WieldType::SinglePistol,
+                                                        (EquipmentSlot::PrimaryWeapon, WieldType::SingleSaber, true) => WieldType::DualSaber,
+                                                        (EquipmentSlot::PrimaryWeapon, WieldType::SinglePistol, true) => WieldType::DualPistol,
+                                                        (EquipmentSlot::SecondaryWeapon, WieldType::SingleSaber, _) => WieldType::DualSaber,
+                                                        (EquipmentSlot::SecondaryWeapon, WieldType::SinglePistol, _) => WieldType::DualPistol,
                                                         _ => item_class.wield_type,
                                                     };
 
@@ -150,6 +161,12 @@ pub fn process_inventory_packet(
                                                     })?);
                                                 }
                                             }
+
+                                            battle_class.items.insert(equip_guid.slot, EquippedItem {
+                                                slot: equip_guid.slot,
+                                                guid: equip_guid.item_guid,
+                                                category: item_def.category,
+                                            });
 
                                             Ok(vec![Broadcast::Single(sender, packets)])
                                         } else {
@@ -192,4 +209,22 @@ pub fn process_inventory_packet(
             Ok(Vec::new())
         }
     }
+}
+
+fn wield_type_from_slot(
+    items: &BTreeMap<EquipmentSlot, EquippedItem>,
+    slot: EquipmentSlot,
+    game_server: &GameServer,
+) -> WieldType {
+    items
+        .get(&slot)
+        .and_then(|item| game_server.items().get(&item.guid))
+        .and_then(|item_def| {
+            game_server
+                .item_classes()
+                .definitions
+                .get(&item_def.item_class)
+        })
+        .map(|item_class| item_class.wield_type)
+        .unwrap_or(WieldType::None)
 }

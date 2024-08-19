@@ -20,7 +20,7 @@ impl SerializePacket for InventoryOpCode {
     }
 }
 
-#[derive(DeserializePacket)]
+#[derive(SerializePacket, DeserializePacket)]
 pub struct UnequipSlot {
     pub slot: EquipmentSlot,
     pub battle_class: u32,
