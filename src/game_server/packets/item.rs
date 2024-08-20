@@ -72,7 +72,7 @@ pub enum WieldType {
     Misc = 12,
     Bow = 13,
     Sparklers = 14,
-    HipBraceLauncherOneShot = 15,
+    HeavyCannon = 15,
 }
 
 impl SerializePacket for WieldType {
