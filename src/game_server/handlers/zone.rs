@@ -52,7 +52,7 @@ struct ZoneConfig {
     template_icon: Option<u32>,
     asset_name: String,
     hide_ui: bool,
-    combat_hud: bool,
+    is_combat: bool,
     spawn_pos_x: f32,
     spawn_pos_y: f32,
     spawn_pos_z: f32,
@@ -84,7 +84,7 @@ pub struct ZoneTemplate {
     pub jump_height_multiplier: f32,
     pub gravity_multiplier: f32,
     hide_ui: bool,
-    combat_hud: bool,
+    is_combat: bool,
     characters: Vec<NpcTemplate>,
 }
 
@@ -135,7 +135,7 @@ impl ZoneTemplate {
             jump_height_multiplier: self.jump_height_multiplier,
             gravity_multiplier: self.gravity_multiplier,
             hide_ui: self.hide_ui,
-            combat_hud: self.combat_hud,
+            is_combat: self.is_combat,
             house_data,
         }
     }
@@ -167,7 +167,7 @@ pub struct Zone {
     pub jump_height_multiplier: f32,
     pub gravity_multiplier: f32,
     hide_ui: bool,
-    combat_hud: bool,
+    pub is_combat: bool,
     pub house_data: Option<House>,
 }
 
@@ -256,9 +256,9 @@ impl Zone {
                 name: self.asset_name.clone(),
                 zone_type: 2,
                 hide_ui: self.hide_ui,
-                combat_hud: self.combat_hud,
+                combat_hud: self.is_combat,
                 sky_definition_file_name: self.default_spawn_sky.clone(),
-                zoom_out: false,
+                combat_camera: self.is_combat,
                 unknown7: 0,
                 unknown8: 0,
             },
@@ -582,7 +582,7 @@ impl ZoneConfig {
             jump_height_multiplier: self.jump_height_multiplier,
             gravity_multiplier: self.gravity_multiplier,
             hide_ui: self.hide_ui,
-            combat_hud: self.combat_hud,
+            is_combat: self.is_combat,
             characters,
         };
 
@@ -699,7 +699,7 @@ fn prepare_init_zone_packets(
         inner: ExecuteScriptWithParams {
             script_name: format!(
                 "CombatHandler.{}",
-                if destination.combat_hud {
+                if destination.is_combat {
                     "show"
                 } else {
                     "hide"

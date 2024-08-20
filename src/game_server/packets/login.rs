@@ -34,7 +34,7 @@ pub struct ZoneDetails {
     pub hide_ui: bool,
     pub combat_hud: bool,
     pub sky_definition_file_name: String,
-    pub zoom_out: bool,
+    pub combat_camera: bool,
     pub unknown7: u32,
     pub unknown8: u32,
 }

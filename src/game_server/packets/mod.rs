@@ -45,6 +45,7 @@ pub enum OpCode {
     Ui = 0x2f,
     GameTimeSync = 0x34,
     DefinePointsOfInterest = 0x39,
+    ZoneCombatSettings = 0x3e,
     Purchase = 0x42,
     QuickChat = 0x43,
     ZoneTeleportRequest = 0x5a,
