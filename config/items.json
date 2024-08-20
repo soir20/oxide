@@ -8,7 +8,7 @@
         "tint": 0,
         "unknown7": 0,
         "cost": 0,
-        "item_class": 1,
+        "item_class": 9,
         "required_battle_class": 0,
         "slot": "PrimaryWeapon",
         "disable_trade": false,
