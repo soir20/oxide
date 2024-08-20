@@ -1,7 +1,7 @@
 use std::{collections::BTreeMap, io::Cursor};
 
 use byteorder::{LittleEndian, ReadBytesExt};
-use packet_serialize::{DeserializePacket, SerializePacket};
+use packet_serialize::DeserializePacket;
 
 use crate::game_server::{
     packets::{

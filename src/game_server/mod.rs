@@ -33,7 +33,7 @@ use packets::reference_data::{
 };
 use packets::tunnel::{TunneledPacket, TunneledWorldPacket};
 use packets::update_position::UpdatePlayerPosition;
-use packets::zone::ZoneTeleportRequest;
+use packets::zone::{ZoneCombatSettings, ZoneTeleportRequest};
 use packets::{GamePacket, OpCode};
 use rand::Rng;
 
@@ -293,6 +293,20 @@ impl GameServer {
                                                 let mut packets = vec![GamePacket::serialize(&stats)?];
 
                                                 packets.append(&mut Zone::diff_character_packets(&character_guids, &characters_read, &self.mounts)?);
+
+                                                packets.push(
+                                                    GamePacket::serialize(&TunneledPacket {
+                                                        unknown1: true,
+                                                        inner: ZoneCombatSettings {
+                                                            zone_guid: zone.template_guid as u32,
+                                                            combat_pose: zone.is_combat,
+                                                            combat_camera: zone.is_combat,
+                                                            unknown3: false,
+                                                            unknown4: false,
+                                                            unknown5: 0,
+                                                        },
+                                                    })?,
+                                                );
 
                                                 Ok(packets)
                                             } else {
