@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 use packet_serialize::SerializePacketError;
 use serde::Deserialize;
@@ -6,8 +6,8 @@ use strum::EnumIter;
 
 use crate::game_server::{
     packets::{
-        item::{BaseAttachmentGroup, WieldType},
-        player_data::PlayerData,
+        item::{BaseAttachmentGroup, EquipmentSlot, WieldType},
+        player_data::EquippedItem,
         player_update::{
             AddNotifications, AddNpc, Icon, NotificationData, NpcRelevance, RemoveStandard,
             SingleNotification, SingleNpcRelevance,
@@ -15,14 +15,15 @@ use crate::game_server::{
         tunnel::TunneledPacket,
         GamePacket, Pos,
     },
-    ProcessPacketError,
+    GameServer, ProcessPacketError,
 };
 
 use super::{
     guid::IndexedGuid,
     housing::fixture_packets,
+    inventory::wield_type_from_slot,
     mount::{spawn_mount_npc, MountConfig},
-    unique_guid::{mount_guid, npc_guid, shorten_player_guid},
+    unique_guid::{mount_guid, npc_guid, player_guid, shorten_player_guid},
 };
 
 #[derive(Clone, Deserialize)]
@@ -68,6 +69,18 @@ pub struct Transport {
     pub show_hover_description: bool,
 }
 
+#[derive(Clone)]
+pub struct BattleClass {
+    pub items: BTreeMap<EquipmentSlot, EquippedItem>,
+}
+
+#[derive(Clone)]
+pub struct Player {
+    pub battle_classes: BTreeMap<u32, BattleClass>,
+    pub active_battle_class: u32,
+    pub inventory: BTreeSet<u32>,
+}
+
 pub struct PreviousFixture {
     pub pos: Pos,
     pub rot: Pos,
@@ -98,7 +111,7 @@ pub struct CurrentFixture {
 pub enum CharacterType {
     Door(Door),
     Transport(Transport),
-    Player(Box<PlayerData>),
+    Player(Box<Player>),
     Fixture(u64, CurrentFixture),
 }
 
@@ -121,6 +134,7 @@ pub struct NpcTemplate {
     pub mount_id: Option<u32>,
     pub interact_radius: f32,
     pub auto_interact_radius: f32,
+    pub wield_type: WieldType,
 }
 
 impl NpcTemplate {
@@ -136,6 +150,7 @@ impl NpcTemplate {
             interact_radius: self.interact_radius,
             auto_interact_radius: self.auto_interact_radius,
             instance_guid,
+            wield_type: self.wield_type,
         }
     }
 }
@@ -155,6 +170,7 @@ pub struct Character {
     pub interact_radius: f32,
     pub auto_interact_radius: f32,
     pub instance_guid: u64,
+    pub wield_type: WieldType,
 }
 
 impl IndexedGuid<u64, CharacterIndex> for Character {
@@ -181,18 +197,49 @@ impl Character {
     pub const MIN_CHUNK: (i32, i32) = (i32::MIN, i32::MIN);
     const CHUNK_SIZE: f32 = 200.0;
 
-    pub fn from_character(player: PlayerData, instance_guid: u64) -> Self {
+    pub fn from_player(
+        guid: u32,
+        pos: Pos,
+        rot: Pos,
+        instance_guid: u64,
+        data: Player,
+        game_server: &GameServer,
+    ) -> Self {
+        let wield_type = data
+            .battle_classes
+            .get(&data.active_battle_class)
+            .map(|battle_class| {
+                let primary_wield_type = wield_type_from_slot(
+                    &battle_class.items,
+                    EquipmentSlot::PrimaryWeapon,
+                    game_server,
+                );
+                match (
+                    primary_wield_type,
+                    battle_class
+                        .items
+                        .contains_key(&EquipmentSlot::SecondaryWeapon),
+                ) {
+                    (WieldType::SingleSaber, false) => WieldType::SingleSaber,
+                    (WieldType::SingleSaber, true) => WieldType::DualSaber,
+                    (WieldType::SinglePistol, false) => WieldType::SinglePistol,
+                    (WieldType::SinglePistol, true) => WieldType::DualPistol,
+                    _ => primary_wield_type,
+                }
+            })
+            .unwrap_or(WieldType::None);
         Character {
-            guid: player.player_guid,
-            pos: player.pos,
-            rot: player.rot,
+            guid: player_guid(guid),
+            pos,
+            rot,
             scale: 1.0,
-            character_type: CharacterType::Player(Box::new(player)),
+            character_type: CharacterType::Player(Box::new(data)),
             state: 0,
             mount_id: None,
             interact_radius: 0.0,
             auto_interact_radius: 0.0,
             instance_guid,
+            wield_type,
         }
     }
 

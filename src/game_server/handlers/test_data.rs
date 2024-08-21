@@ -9,7 +9,7 @@ use crate::game_server::packets::{
         InventoryItem, Item2, ItemGuid, Mount, Pet, PetTrick, Player, PlayerData, Slot, Unknown12,
         Unknown13, Unknown2,
     },
-    player_update::{AddNpc, Icon, NameplateImage, NameplateImageId, UpdateWieldType},
+    player_update::{AddNpc, Icon, NameplateImage, NameplateImageId},
     tunnel::TunneledPacket,
     GamePacket, Pos,
 };
@@ -278,90 +278,10 @@ pub fn make_test_player(
                             },
                         ),
                         (
-                            EquipmentSlot::Shoulders,
-                            EquippedItem {
-                                slot: EquipmentSlot::Shoulders,
-                                guid: 0,
-                                category: 0,
-                            },
-                        ),
-                        (
                             EquipmentSlot::PrimaryWeapon,
                             EquippedItem {
                                 slot: EquipmentSlot::PrimaryWeapon,
                                 guid: 5,
-                                category: 0,
-                            },
-                        ),
-                        (
-                            EquipmentSlot::SecondaryWeapon,
-                            EquippedItem {
-                                slot: EquipmentSlot::SecondaryWeapon,
-                                guid: 0,
-                                category: 0,
-                            },
-                        ),
-                        (
-                            EquipmentSlot::PrimarySaberShape,
-                            EquippedItem {
-                                slot: EquipmentSlot::PrimarySaberShape,
-                                guid: 0,
-                                category: 0,
-                            },
-                        ),
-                        (
-                            EquipmentSlot::PrimarySaberColor,
-                            EquippedItem {
-                                slot: EquipmentSlot::PrimarySaberColor,
-                                guid: 0,
-                                category: 0,
-                            },
-                        ),
-                        (
-                            EquipmentSlot::SecondarySaberShape,
-                            EquippedItem {
-                                slot: EquipmentSlot::SecondarySaberShape,
-                                guid: 0,
-                                category: 0,
-                            },
-                        ),
-                        (
-                            EquipmentSlot::SecondarySaberColor,
-                            EquippedItem {
-                                slot: EquipmentSlot::SecondarySaberColor,
-                                guid: 0,
-                                category: 0,
-                            },
-                        ),
-                        (
-                            EquipmentSlot::CustomHead,
-                            EquippedItem {
-                                slot: EquipmentSlot::CustomHead,
-                                guid: 0,
-                                category: 0,
-                            },
-                        ),
-                        (
-                            EquipmentSlot::CustomHair,
-                            EquippedItem {
-                                slot: EquipmentSlot::CustomHair,
-                                guid: 0,
-                                category: 0,
-                            },
-                        ),
-                        (
-                            EquipmentSlot::CustomModel,
-                            EquippedItem {
-                                slot: EquipmentSlot::CustomModel,
-                                guid: 0,
-                                category: 0,
-                            },
-                        ),
-                        (
-                            EquipmentSlot::CustomBeard,
-                            EquippedItem {
-                                slot: EquipmentSlot::CustomBeard,
-                                guid: 0,
                                 category: 0,
                             },
                         ),
@@ -544,15 +464,6 @@ pub fn make_test_player(
     }
 }
 
-pub fn make_test_wield_type(guid: u32) -> Result<Vec<Vec<u8>>, SerializePacketError> {
-    Ok(vec![GamePacket::serialize(&TunneledPacket {
-        unknown1: true,
-        inner: UpdateWieldType {
-            guid: player_guid(guid),
-            wield_type: WieldType::SinglePistol,
-        },
-    })?])
-}
 pub fn make_test_nameplate_image(guid: u32) -> Result<Vec<Vec<u8>>, SerializePacketError> {
     Ok(vec![GamePacket::serialize(&TunneledPacket {
         unknown1: true,

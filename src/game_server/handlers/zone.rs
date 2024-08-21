@@ -14,6 +14,7 @@ use crate::game_server::{
         client_update::Position,
         command::SelectPlayer,
         housing::BuildArea,
+        item::WieldType,
         login::{ClientBeginZoning, ZoneDetails},
         tunnel::TunneledPacket,
         ui::ExecuteScriptWithParams,
@@ -244,6 +245,7 @@ impl Zone {
                 interact_radius: 0.0,
                 auto_interact_radius: 0.0,
                 instance_guid: guid,
+                wield_type: WieldType::None,
             });
         }
         template.to_zone(guid, Some(house), global_characters_table)
@@ -281,10 +283,11 @@ impl Zone {
     }
 
     pub fn diff_character_guids(
-        guid: u64,
+        instance_guid: u64,
         old_chunk: Chunk,
         new_chunk: Chunk,
         characters_table_read_handle: &CharacterTableReadHandle,
+        requester_guid: u32,
     ) -> BTreeMap<u64, bool> {
         let old_chunks = Zone::nearby_chunks(old_chunk);
         let new_chunks = Zone::nearby_chunks(new_chunk);
@@ -294,7 +297,9 @@ impl Zone {
         let mut guids = BTreeMap::new();
         for category in CharacterCategory::iter() {
             for chunk in chunks_to_remove.iter() {
-                for guid in characters_table_read_handle.keys_by_index((guid, **chunk, category)) {
+                for guid in
+                    characters_table_read_handle.keys_by_index((instance_guid, **chunk, category))
+                {
                     guids.insert(guid, false);
                 }
             }
@@ -302,11 +307,15 @@ impl Zone {
 
         for category in CharacterCategory::iter() {
             for chunk in chunks_to_add.iter() {
-                for guid in characters_table_read_handle.keys_by_index((guid, **chunk, category)) {
+                for guid in
+                    characters_table_read_handle.keys_by_index((instance_guid, **chunk, category))
+                {
                     guids.insert(guid, true);
                 }
             }
         }
+
+        guids.remove(&player_guid(requester_guid));
 
         guids
     }
@@ -529,6 +538,7 @@ impl ZoneConfig {
                     mount_id: None,
                     interact_radius: self.interact_radius,
                     auto_interact_radius: self.door_auto_interact_radius,
+                    wield_type: WieldType::None,
                 });
                 index += 1;
             }
@@ -555,6 +565,7 @@ impl ZoneConfig {
                     mount_id: None,
                     interact_radius: self.interact_radius,
                     auto_interact_radius: 0.0,
+                    wield_type: WieldType::None,
                 });
                 index += 1;
             }
