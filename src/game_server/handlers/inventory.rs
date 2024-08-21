@@ -36,7 +36,8 @@ pub fn process_inventory_packet(
                     character_consumer: |_, _, mut characters_write, _| {
                         if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) {
 
-                            if let CharacterType::Player(ref mut player_data) = character_write_handle.character_type {
+                            let mut wield_type = character_write_handle.wield_type;
+                            let packets = if let CharacterType::Player(ref mut player_data) = character_write_handle.character_type {
                                 let possible_battle_class = player_data.battle_classes.get_mut(&unequip_slot.battle_class);
 
                                 if let Some(battle_class) = possible_battle_class {
@@ -53,7 +54,7 @@ pub fn process_inventory_packet(
 
                                     if unequip_slot.slot.is_weapon() {
                                         let is_primary_equipped = battle_class.items.contains_key(&EquipmentSlot::PrimaryWeapon);
-                                        let wield_type =  match (unequip_slot.slot, wield_type_from_slot(&battle_class.items, unequip_slot.slot, game_server), is_primary_equipped) {
+                                        wield_type =  match (unequip_slot.slot, wield_type_from_slot(&battle_class.items, unequip_slot.slot, game_server), is_primary_equipped) {
                                             (EquipmentSlot::SecondaryWeapon, WieldType::SingleSaber, true) => WieldType::SingleSaber,
                                             (EquipmentSlot::SecondaryWeapon, WieldType::SinglePistol, true) => WieldType::SinglePistol,
                                             _ => WieldType::None,
@@ -79,7 +80,10 @@ pub fn process_inventory_packet(
                             } else {
                                 println!("Non-player character {} tried to unequip slot", sender);
                                 Err(ProcessPacketError::CorruptedPacket)
-                            }
+                            };
+
+                            character_write_handle.wield_type = wield_type;
+                            packets
 
                         } else {
                             println!("Unknown player {} tried to unequip slot", sender);
@@ -96,9 +100,10 @@ pub fn process_inventory_packet(
                     character_consumer: |_, _, mut characters_write, _| {
                         if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) {
 
-                            if let CharacterType::Player(ref mut player_data) = character_write_handle.character_type {
+                            let mut wield_type = character_write_handle.wield_type;
+                            let packets = if let CharacterType::Player(ref mut player_data) = character_write_handle.character_type {
 
-                                if player_data.inventory.contains_key(&equip_guid.item_guid) {
+                                if player_data.inventory.contains(&equip_guid.item_guid) {
                                     let possible_battle_class = player_data.battle_classes.get_mut(&equip_guid.battle_class);
 
                                     if let Some(battle_class) = possible_battle_class {
@@ -142,7 +147,7 @@ pub fn process_inventory_packet(
                                                     }
 
                                                     let is_secondary_equipped = battle_class.items.contains_key(&EquipmentSlot::SecondaryWeapon);
-                                                    let wield_type = match (equip_guid.slot, item_class.wield_type, is_secondary_equipped) {
+                                                    wield_type = match (equip_guid.slot, item_class.wield_type, is_secondary_equipped) {
                                                         (EquipmentSlot::PrimaryWeapon, WieldType::SingleSaber, false) => WieldType::SingleSaber,
                                                         (EquipmentSlot::PrimaryWeapon, WieldType::SinglePistol, false) => WieldType::SinglePistol,
                                                         (EquipmentSlot::PrimaryWeapon, WieldType::SingleSaber, true) => WieldType::DualSaber,
@@ -187,7 +192,10 @@ pub fn process_inventory_packet(
                             } else {
                                 println!("Non-player character {} tried to equip item", sender);
                                 Err(ProcessPacketError::CorruptedPacket)
-                            }
+                            };
+
+                            character_write_handle.wield_type = wield_type;
+                            packets
 
                         } else {
                             println!("Unknown player {} tried to equip item", sender);
@@ -211,7 +219,7 @@ pub fn process_inventory_packet(
     }
 }
 
-fn wield_type_from_slot(
+pub fn wield_type_from_slot(
     items: &BTreeMap<EquipmentSlot, EquippedItem>,
     slot: EquipmentSlot,
     game_server: &GameServer,

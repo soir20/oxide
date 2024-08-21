@@ -4,7 +4,7 @@ use std::path::Path;
 use std::vec;
 
 use byteorder::{LittleEndian, ReadBytesExt};
-use handlers::character::{Character, CharacterIndex};
+use handlers::character::{BattleClass, Character, CharacterIndex, Player};
 use handlers::chat::process_chat_packet;
 use handlers::command::process_command;
 use handlers::guid::{GuidTable, GuidTableHandle, GuidTableWriteHandle};
@@ -17,9 +17,7 @@ use handlers::lock_enforcer::{
 use handlers::login::send_points_of_interest;
 use handlers::mount::{load_mounts, process_mount_packet, MountConfig};
 use handlers::reference_data::{load_categories, load_item_classes};
-use handlers::test_data::{
-    make_test_nameplate_image, make_test_npc, make_test_player, make_test_wield_type,
-};
+use handlers::test_data::{make_test_nameplate_image, make_test_npc, make_test_player};
 use handlers::time::make_game_time_sync;
 use handlers::unique_guid::{player_guid, shorten_zone_template_guid, zone_instance_guid};
 use handlers::zone::{load_zones, teleport_within_zone, Zone, ZoneTemplate};
@@ -27,7 +25,7 @@ use packets::client_update::{Health, Power, PreloadCharactersDone, Stat, StatId,
 use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
 use packets::item::ItemDefinition;
 use packets::login::{DeploymentEnv, GameSettings, LoginReply, WelcomeScreen, ZoneDetailsDone};
-use packets::player_update::ItemDefinitionsReply;
+use packets::player_update::{ItemDefinitionsReply, UpdateWieldType};
 use packets::reference_data::{
     CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions, ItemGroupDefinitionsData,
 };
@@ -166,8 +164,31 @@ impl GameServer {
                             };
                             packets.push(GamePacket::serialize(&player)?);
 
-                            characters_write_handle
-                                .insert(Character::from_character(player.inner.data, player_zone));
+                            characters_write_handle.insert(Character::from_player(
+                                guid,
+                                player.inner.data.pos,
+                                player.inner.data.rot,
+                                player_zone,
+                                Player {
+                                    battle_classes: player
+                                        .inner
+                                        .data
+                                        .battle_classes
+                                        .into_iter()
+                                        .map(|(battle_class_guid, battle_class)| {
+                                            (
+                                                battle_class_guid,
+                                                BattleClass {
+                                                    items: battle_class.items,
+                                                },
+                                            )
+                                        })
+                                        .collect(),
+                                    active_battle_class: player.inner.data.active_battle_class,
+                                    inventory: player.inner.data.inventory.into_keys().collect(),
+                                },
+                                self,
+                            ));
 
                             Ok((guid, vec![Broadcast::Single(guid, packets)]))
                         },
@@ -239,11 +260,15 @@ impl GameServer {
                             instance_guid,
                             Character::MIN_CHUNK,
                             chunk,
-                            characters_table_read_handle
+                            characters_table_read_handle,
+                            sender
                         ))
                             .unwrap_or_default();
+
+                        let mut read_character_guids: Vec<u64> = character_guids.keys().copied().collect();
+                        read_character_guids.push(player_guid(sender));
                         CharacterLockRequest {
-                            read_guids: character_guids.keys().copied().collect(),
+                            read_guids: read_character_guids,
                             write_guids: Vec::new(),
                             character_consumer: move |_, characters_read, _, zones_lock_enforcer| {
                                 if let Some((instance_guid, _, _)) = possible_index {
@@ -291,6 +316,20 @@ impl GameServer {
                                                 };
 
                                                 let mut packets = vec![GamePacket::serialize(&stats)?];
+
+                                                if let Some(character_read_handle) = characters_read.get(&player_guid(sender)) {
+                                                    let wield_type = TunneledPacket {
+                                                        unknown1: true,
+                                                        inner: UpdateWieldType {
+                                                            guid: player_guid(sender),
+                                                            wield_type: character_read_handle.wield_type,
+                                                        },
+                                                    };
+                                                    packets.push(GamePacket::serialize(&wield_type)?);
+                                                } else {
+                                                    println!("Unknown player {} sent a ready packet", sender);
+                                                    return Err(ProcessPacketError::CorruptedPacket);
+                                                }
 
                                                 packets.append(&mut Zone::diff_character_packets(&character_guids, &characters_read, &self.mounts)?);
 
@@ -347,8 +386,6 @@ impl GameServer {
                         },
                     };
                     packets.push(GamePacket::serialize(&power)?);
-
-                    packets.append(&mut make_test_wield_type(sender)?);
 
                     packets.append(&mut make_test_nameplate_image(sender)?);
 
