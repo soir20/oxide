@@ -5,6 +5,8 @@ use packet_serialize::{
 };
 use serde::Deserialize;
 
+use super::{GamePacket, OpCode};
+
 #[derive(Copy, Clone, Debug, Deserialize, PartialEq, Eq, PartialOrd, Ord, TryFromPrimitive)]
 #[repr(u32)]
 pub enum EquipmentSlot {
@@ -79,6 +81,18 @@ impl SerializePacket for WieldType {
     fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
         buffer.write_u32::<LittleEndian>(*self as u32)?;
         Ok(())
+    }
+}
+
+impl WieldType {
+    pub fn holster(&self) -> WieldType {
+        match *self {
+            WieldType::SingleSaber
+            | WieldType::DualSaber
+            | WieldType::StaffSaber
+            | WieldType::ReverseSingleSaber => WieldType::None,
+            _ => *self,
+        }
     }
 }
 
@@ -177,4 +191,15 @@ pub struct ItemDefinition {
     pub unknown40: u32,
     pub stats: Vec<ItemStat>,
     pub abilities: Vec<ItemAbility>,
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct BrandishHolster {
+    pub guid: u64,
+}
+
+impl GamePacket for BrandishHolster {
+    type Header = OpCode;
+
+    const HEADER: Self::Header = OpCode::BrandishHolster;
 }

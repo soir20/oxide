@@ -53,6 +53,7 @@ struct ZoneConfig {
     template_icon: Option<u32>,
     asset_name: String,
     hide_ui: bool,
+    force_combat_pose: bool,
     is_combat: bool,
     spawn_pos_x: f32,
     spawn_pos_y: f32,
@@ -85,6 +86,7 @@ pub struct ZoneTemplate {
     pub jump_height_multiplier: f32,
     pub gravity_multiplier: f32,
     hide_ui: bool,
+    force_combat_pose: bool,
     is_combat: bool,
     characters: Vec<NpcTemplate>,
 }
@@ -136,6 +138,7 @@ impl ZoneTemplate {
             jump_height_multiplier: self.jump_height_multiplier,
             gravity_multiplier: self.gravity_multiplier,
             hide_ui: self.hide_ui,
+            force_combat_pose: self.force_combat_pose,
             is_combat: self.is_combat,
             house_data,
         }
@@ -168,6 +171,7 @@ pub struct Zone {
     pub jump_height_multiplier: f32,
     pub gravity_multiplier: f32,
     hide_ui: bool,
+    pub force_combat_pose: bool,
     pub is_combat: bool,
     pub house_data: Option<House>,
 }
@@ -234,19 +238,19 @@ impl Zone {
         global_characters_table: &mut GuidTableWriteHandle<u64, Character, CharacterIndex>,
     ) -> Self {
         for (index, fixture) in house.fixtures.iter().enumerate() {
-            global_characters_table.insert(Character {
-                guid: npc_guid(FIXTURE_DISCRIMINANT, guid, index as u16),
-                pos: fixture.pos,
-                rot: fixture.rot,
-                scale: fixture.scale,
-                state: 0,
-                character_type: CharacterType::Fixture(guid, fixture.as_current_fixture()),
-                mount_id: None,
-                interact_radius: 0.0,
-                auto_interact_radius: 0.0,
-                instance_guid: guid,
-                wield_type: WieldType::None,
-            });
+            global_characters_table.insert(Character::new(
+                npc_guid(FIXTURE_DISCRIMINANT, guid, index as u16),
+                fixture.pos,
+                fixture.rot,
+                fixture.scale,
+                0,
+                CharacterType::Fixture(guid, fixture.as_current_fixture()),
+                None,
+                0.0,
+                0.0,
+                guid,
+                WieldType::None,
+            ));
         }
         template.to_zone(guid, Some(house), global_characters_table)
     }
@@ -593,6 +597,7 @@ impl ZoneConfig {
             jump_height_multiplier: self.jump_height_multiplier,
             gravity_multiplier: self.gravity_multiplier,
             hide_ui: self.hide_ui,
+            force_combat_pose: self.force_combat_pose,
             is_combat: self.is_combat,
             characters,
         };

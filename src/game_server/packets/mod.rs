@@ -58,6 +58,7 @@ pub enum OpCode {
     Mount = 0xa7,
     Store = 0xa4,
     DeploymentEnv = 0xa5,
+    BrandishHolster = 0xb4,
 }
 
 impl SerializePacket for OpCode {
