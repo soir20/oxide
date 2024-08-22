@@ -234,19 +234,19 @@ impl Zone {
         global_characters_table: &mut GuidTableWriteHandle<u64, Character, CharacterIndex>,
     ) -> Self {
         for (index, fixture) in house.fixtures.iter().enumerate() {
-            global_characters_table.insert(Character {
-                guid: npc_guid(FIXTURE_DISCRIMINANT, guid, index as u16),
-                pos: fixture.pos,
-                rot: fixture.rot,
-                scale: fixture.scale,
-                state: 0,
-                character_type: CharacterType::Fixture(guid, fixture.as_current_fixture()),
-                mount_id: None,
-                interact_radius: 0.0,
-                auto_interact_radius: 0.0,
-                instance_guid: guid,
-                wield_type: WieldType::None,
-            });
+            global_characters_table.insert(Character::new(
+                npc_guid(FIXTURE_DISCRIMINANT, guid, index as u16),
+                fixture.pos,
+                fixture.rot,
+                fixture.scale,
+                0,
+                CharacterType::Fixture(guid, fixture.as_current_fixture()),
+                None,
+                0.0,
+                0.0,
+                guid,
+                WieldType::None,
+            ));
         }
         template.to_zone(guid, Some(house), global_characters_table)
     }

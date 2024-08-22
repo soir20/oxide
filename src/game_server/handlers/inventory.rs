@@ -36,7 +36,7 @@ pub fn process_inventory_packet(
                     character_consumer: |_, _, mut characters_write, _| {
                         if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) {
 
-                            let mut wield_type = character_write_handle.wield_type;
+                            let mut wield_type = character_write_handle.wield_type();
                             let packets = if let CharacterType::Player(ref mut player_data) = character_write_handle.character_type {
                                 let possible_battle_class = player_data.battle_classes.get_mut(&unequip_slot.battle_class);
 
@@ -82,7 +82,7 @@ pub fn process_inventory_packet(
                                 Err(ProcessPacketError::CorruptedPacket)
                             };
 
-                            character_write_handle.wield_type = wield_type;
+                            character_write_handle.set_wield_type(wield_type);
                             packets
 
                         } else {
@@ -100,7 +100,7 @@ pub fn process_inventory_packet(
                     character_consumer: |_, _, mut characters_write, _| {
                         if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) {
 
-                            let mut wield_type = character_write_handle.wield_type;
+                            let mut wield_type = character_write_handle.wield_type();
                             let packets = if let CharacterType::Player(ref mut player_data) = character_write_handle.character_type {
 
                                 if player_data.inventory.contains(&equip_guid.item_guid) {
@@ -194,7 +194,7 @@ pub fn process_inventory_packet(
                                 Err(ProcessPacketError::CorruptedPacket)
                             };
 
-                            character_write_handle.wield_type = wield_type;
+                            character_write_handle.set_wield_type(wield_type);
                             packets
 
                         } else {

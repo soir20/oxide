@@ -322,7 +322,7 @@ impl GameServer {
                                                         unknown1: true,
                                                         inner: UpdateWieldType {
                                                             guid: player_guid(sender),
-                                                            wield_type: character_read_handle.wield_type,
+                                                            wield_type: character_read_handle.wield_type(),
                                                         },
                                                     };
                                                     packets.push(GamePacket::serialize(&wield_type)?);
@@ -552,6 +552,30 @@ impl GameServer {
                 }
                 OpCode::Inventory => {
                     broadcasts.append(&mut process_inventory_packet(self, &mut cursor, sender)?);
+                }
+                OpCode::BrandishHolster => {
+                    self.lock_enforcer().read_characters(|_| CharacterLockRequest {
+                        read_guids: Vec::new(),
+                        write_guids: vec![player_guid(sender)],
+                        character_consumer: |_, _, mut characters_write, _| {
+                            if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) {
+                                character_write_handle.brandish_or_holster();
+                                broadcasts.push(Broadcast::Single(sender, vec![
+                                    GamePacket::serialize(&TunneledPacket {
+                                        unknown1: true,
+                                        inner: UpdateWieldType {
+                                            guid: player_guid(sender),
+                                            wield_type: character_write_handle.wield_type()
+                                        }
+                                    })?
+                                ]));
+                                Ok(())
+                            } else {
+                                println!("Unknown player {} requested to brandish or holster their weapon", sender);
+                                Err(ProcessPacketError::CorruptedPacket)
+                            }
+                        }
+                    })?;
                 }
                 _ => println!("Unimplemented: {:?}, {:x?}", op_code, data),
             },

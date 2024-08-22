@@ -150,7 +150,7 @@ impl NpcTemplate {
             interact_radius: self.interact_radius,
             auto_interact_radius: self.auto_interact_radius,
             instance_guid,
-            wield_type: self.wield_type,
+            wield_type: (self.wield_type, self.wield_type.holster()),
         }
     }
 }
@@ -170,7 +170,7 @@ pub struct Character {
     pub interact_radius: f32,
     pub auto_interact_radius: f32,
     pub instance_guid: u64,
-    pub wield_type: WieldType,
+    wield_type: (WieldType, WieldType),
 }
 
 impl IndexedGuid<u64, CharacterIndex> for Character {
@@ -196,6 +196,34 @@ impl IndexedGuid<u64, CharacterIndex> for Character {
 impl Character {
     pub const MIN_CHUNK: (i32, i32) = (i32::MIN, i32::MIN);
     const CHUNK_SIZE: f32 = 200.0;
+
+    pub fn new(
+        guid: u64,
+        pos: Pos,
+        rot: Pos,
+        scale: f32,
+        state: u8,
+        character_type: CharacterType,
+        mount_id: Option<u32>,
+        interact_radius: f32,
+        auto_interact_radius: f32,
+        instance_guid: u64,
+        wield_type: WieldType,
+    ) -> Character {
+        Character {
+            guid,
+            pos,
+            rot,
+            scale,
+            state,
+            character_type,
+            mount_id,
+            interact_radius,
+            auto_interact_radius,
+            instance_guid,
+            wield_type: (wield_type, wield_type.holster()),
+        }
+    }
 
     pub fn from_player(
         guid: u32,
@@ -239,7 +267,7 @@ impl Character {
             interact_radius: 0.0,
             auto_interact_radius: 0.0,
             instance_guid,
-            wield_type,
+            wield_type: (wield_type, wield_type.holster()),
         }
     }
 
@@ -345,6 +373,19 @@ impl Character {
         };
 
         Ok(packets)
+    }
+
+    pub fn wield_type(&self) -> WieldType {
+        self.wield_type.0
+    }
+
+    pub fn set_wield_type(&mut self, wield_type: WieldType) {
+        self.wield_type = (wield_type, wield_type.holster())
+    }
+
+    pub fn brandish_or_holster(&mut self) {
+        let (old_wield_type, new_wield_type) = self.wield_type;
+        self.wield_type = (new_wield_type, old_wield_type);
     }
 
     fn door_packet(character: &Character, door: &Door) -> AddNpc {
