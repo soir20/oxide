@@ -15,7 +15,7 @@ impl GamePacket for ZoneTeleportRequest {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct ZoneCombatSettings {
     pub zone_guid: u32,
-    pub combat_pose: bool,
+    pub force_combat_pose: bool,
     pub combat_camera: bool,
     pub unknown3: bool,
     pub unknown4: bool,

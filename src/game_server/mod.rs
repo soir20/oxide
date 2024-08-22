@@ -338,7 +338,7 @@ impl GameServer {
                                                         unknown1: true,
                                                         inner: ZoneCombatSettings {
                                                             zone_guid: zone.template_guid as u32,
-                                                            combat_pose: zone.is_combat,
+                                                            force_combat_pose: zone.force_combat_pose,
                                                             combat_camera: zone.is_combat,
                                                             unknown3: false,
                                                             unknown4: false,
