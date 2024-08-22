@@ -25,7 +25,7 @@ use packets::client_update::{Health, Power, PreloadCharactersDone, Stat, StatId,
 use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
 use packets::item::ItemDefinition;
 use packets::login::{DeploymentEnv, GameSettings, LoginReply, WelcomeScreen, ZoneDetailsDone};
-use packets::player_update::{ItemDefinitionsReply, UpdateWieldType};
+use packets::player_update::{ItemDefinitionsReply, QueueAnimation, UpdateWieldType};
 use packets::reference_data::{
     CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions, ItemGroupDefinitionsData,
 };
@@ -563,11 +563,21 @@ impl GameServer {
                                 broadcasts.push(Broadcast::Single(sender, vec![
                                     GamePacket::serialize(&TunneledPacket {
                                         unknown1: true,
+                                        inner: QueueAnimation {
+                                            character_guid: player_guid(sender),
+                                            animation_id: 3300,
+                                            queue_pos: 0,
+                                            delay_seconds: 0.0,
+                                            duration_seconds: 2.0,
+                                        }
+                                    })?,
+                                    GamePacket::serialize(&TunneledPacket {
+                                        unknown1: true,
                                         inner: UpdateWieldType {
                                             guid: player_guid(sender),
                                             wield_type: character_write_handle.wield_type()
                                         }
-                                    })?
+                                    })?,
                                 ]));
                                 Ok(())
                             } else {
