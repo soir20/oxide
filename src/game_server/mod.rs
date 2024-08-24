@@ -9,7 +9,7 @@ use handlers::chat::process_chat_packet;
 use handlers::command::process_command;
 use handlers::guid::{GuidTable, GuidTableHandle, GuidTableWriteHandle};
 use handlers::housing::process_housing_packet;
-use handlers::inventory::process_inventory_packet;
+use handlers::inventory::{load_default_sabers, process_inventory_packet, DefaultSaber};
 use handlers::item::load_item_definitions;
 use handlers::lock_enforcer::{
     CharacterLockRequest, LockEnforcer, LockEnforcerSource, ZoneLockRequest, ZoneTableReadHandle,
@@ -76,6 +76,7 @@ impl From<SerializePacketError> for ProcessPacketError {
 
 pub struct GameServer {
     categories: CategoryDefinitions,
+    default_sabers: BTreeMap<u32, DefaultSaber>,
     lock_enforcer_source: LockEnforcerSource,
     items: BTreeMap<u32, ItemDefinition>,
     item_classes: ItemClassDefinitions,
@@ -89,6 +90,7 @@ impl GameServer {
         let (templates, zones) = load_zones(config_dir, characters.write())?;
         Ok(GameServer {
             categories: load_categories(config_dir)?,
+            default_sabers: load_default_sabers(config_dir)?,
             lock_enforcer_source: LockEnforcerSource::from(characters, zones),
             items: load_item_definitions(config_dir)?,
             item_classes: load_item_classes(config_dir)?,
