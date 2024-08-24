@@ -133,21 +133,26 @@ pub fn process_inventory_packet(
                                 None,
                             )
                             .and_then(|(mut broadcasts, _)| {
-                                if let Some(character_write_handle) =
-                                    characters_write.get(&player_guid(sender))
+                                if equip_guid.slot == EquipmentSlot::PrimarySaberColor
+                                    || equip_guid.slot == EquipmentSlot::SecondarySaberColor
                                 {
-                                    if let CharacterType::Player(player) =
-                                        &character_write_handle.character_type
+                                    if let Some(character_write_handle) =
+                                        characters_write.get(&player_guid(sender))
                                     {
-                                        if let Some(battle_class) =
-                                            player.battle_classes.get(&player.active_battle_class)
+                                        if let CharacterType::Player(player) =
+                                            &character_write_handle.character_type
                                         {
-                                            broadcasts.append(&mut update_saber_tints(
-                                                sender,
-                                                &battle_class.items,
-                                                player.active_battle_class,
-                                                game_server,
-                                            )?);
+                                            if let Some(battle_class) = player
+                                                .battle_classes
+                                                .get(&player.active_battle_class)
+                                            {
+                                                broadcasts.append(&mut update_saber_tints(
+                                                    sender,
+                                                    &battle_class.items,
+                                                    player.active_battle_class,
+                                                    game_server,
+                                                )?);
+                                            }
                                         }
                                     }
                                 }
