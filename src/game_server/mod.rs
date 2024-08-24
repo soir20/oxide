@@ -597,6 +597,10 @@ impl GameServer {
         Ok(broadcasts)
     }
 
+    pub fn default_sabers(&self) -> &BTreeMap<u32, DefaultSaber> {
+        &self.default_sabers
+    }
+
     pub fn items(&self) -> &BTreeMap<u32, ItemDefinition> {
         &self.items
     }

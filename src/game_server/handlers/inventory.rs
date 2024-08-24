@@ -117,15 +117,101 @@ pub fn process_inventory_packet(
                     }
                 })
             }
-            InventoryOpCode::EquipGuid | InventoryOpCode::EquipSaber => {
+            InventoryOpCode::EquipGuid => {
                 let equip_guid: EquipGuid = DeserializePacket::deserialize(cursor)?;
                 game_server
                     .lock_enforcer()
                     .read_characters(|_| CharacterLockRequest {
                         read_guids: vec![],
                         write_guids: vec![player_guid(sender)],
-                        character_consumer: |_, _, characters_write, _| {
-                            equip_item_in_slot(sender, equip_guid, characters_write, game_server)
+                        character_consumer: |_, _, mut characters_write, _| {
+                            equip_item_in_slot(
+                                sender,
+                                &equip_guid,
+                                &mut characters_write,
+                                game_server,
+                                None,
+                            )
+                            .map(|(broadcasts, _)| broadcasts)
+                        },
+                    })
+            }
+            InventoryOpCode::EquipSaber => {
+                let equip_guid: EquipGuid = DeserializePacket::deserialize(cursor)?;
+                let (shape_slot, color_slot) = match &equip_guid.slot {
+                    EquipmentSlot::PrimaryWeapon => (
+                        EquipmentSlot::PrimarySaberShape,
+                        EquipmentSlot::PrimarySaberColor,
+                    ),
+                    EquipmentSlot::SecondaryWeapon => (
+                        EquipmentSlot::SecondarySaberShape,
+                        EquipmentSlot::SecondarySaberColor,
+                    ),
+                    _ => {
+                        println!(
+                            "Player {} tried to equip saber in slot {:?}",
+                            sender, equip_guid.slot
+                        );
+                        return Err(ProcessPacketError::CorruptedPacket);
+                    }
+                };
+
+                game_server
+                    .lock_enforcer()
+                    .read_characters(|_| CharacterLockRequest {
+                        read_guids: vec![],
+                        write_guids: vec![player_guid(sender)],
+                        character_consumer: |_, _, mut characters_write, _| {
+                            let mut broadcasts = Vec::new();
+                            if let Some(saber) =
+                                game_server.default_sabers().get(&equip_guid.item_guid)
+                            {
+                                broadcasts.append(
+                                    &mut equip_item_in_slot(
+                                        sender,
+                                        &equip_guid,
+                                        &mut characters_write,
+                                        game_server,
+                                        None,
+                                    )?
+                                    .0,
+                                );
+
+                                let (mut color_broadcasts, tint) = equip_item_in_slot(
+                                    sender,
+                                    &EquipGuid {
+                                        item_guid: saber.color_item_guid,
+                                        battle_class: equip_guid.battle_class,
+                                        slot: color_slot,
+                                    },
+                                    &mut characters_write,
+                                    game_server,
+                                    None,
+                                )?;
+                                broadcasts.append(&mut color_broadcasts);
+
+                                broadcasts.append(
+                                    &mut equip_item_in_slot(
+                                        sender,
+                                        &EquipGuid {
+                                            item_guid: saber.shape_item_guid,
+                                            battle_class: equip_guid.battle_class,
+                                            slot: shape_slot,
+                                        },
+                                        &mut characters_write,
+                                        game_server,
+                                        Some(tint),
+                                    )?
+                                    .0,
+                                );
+                            } else {
+                                println!(
+                                    "Player {} tried to equip unknown saber {}",
+                                    sender, equip_guid.item_guid
+                                );
+                                return Err(ProcessPacketError::CorruptedPacket);
+                            }
+                            Ok(broadcasts)
                         },
                     })
             }
@@ -164,10 +250,11 @@ pub fn wield_type_from_slot(
 
 fn equip_item_in_slot(
     sender: u32,
-    equip_guid: EquipGuid,
-    mut characters_write: BTreeMap<u64, RwLockWriteGuard<Character>>,
+    equip_guid: &EquipGuid,
+    characters_write: &mut BTreeMap<u64, RwLockWriteGuard<Character>>,
     game_server: &GameServer,
-) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    tint_override: Option<u32>,
+) -> Result<(Vec<Broadcast>, u32), ProcessPacketError> {
     if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) {
         let mut wield_type = character_write_handle.wield_type();
         let broadcasts = if let CharacterType::Player(ref mut player_data) =
@@ -187,7 +274,7 @@ fn equip_item_in_slot(
                                     model_name: item_def.model_name.clone(),
                                     texture_alias: item_def.texture_alias.clone(),
                                     tint_alias: item_def.tint_alias.clone(),
-                                    tint: item_def.tint,
+                                    tint: tint_override.unwrap_or(item_def.tint),
                                     composite_effect: item_def.composite_effect,
                                     slot: equip_guid.slot,
                                 },
@@ -279,7 +366,7 @@ fn equip_item_in_slot(
                             },
                         );
 
-                        Ok(vec![Broadcast::Single(sender, packets)])
+                        Ok((vec![Broadcast::Single(sender, packets)], item_def.tint))
                     } else {
                         println!(
                             "Player {} tried to equip unknown item {}",
