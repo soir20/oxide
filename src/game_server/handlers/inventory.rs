@@ -14,7 +14,7 @@ use crate::game_server::{
     packets::{
         client_update::{EquipItem, UnequipItem},
         inventory::{EquipGuid, InventoryOpCode, UnequipSlot},
-        item::{Attachment, EquipmentSlot, WieldType},
+        item::{Attachment, EquipmentSlot, ItemDefinition, WieldType},
         player_data::EquippedItem,
         player_update::UpdateWieldType,
         tunnel::TunneledPacket,
@@ -132,7 +132,28 @@ pub fn process_inventory_packet(
                                 game_server,
                                 None,
                             )
-                            .map(|(broadcasts, _)| broadcasts)
+                            .and_then(|(mut broadcasts, _)| {
+                                if let Some(character_write_handle) =
+                                    characters_write.get(&player_guid(sender))
+                                {
+                                    if let CharacterType::Player(player) =
+                                        &character_write_handle.character_type
+                                    {
+                                        if let Some(battle_class) =
+                                            player.battle_classes.get(&player.active_battle_class)
+                                        {
+                                            broadcasts.append(&mut update_saber_tints(
+                                                sender,
+                                                &battle_class.items,
+                                                player.active_battle_class,
+                                                game_server,
+                                            )?);
+                                        }
+                                    }
+                                }
+
+                                Ok(broadcasts)
+                            })
                         },
                     })
             }
@@ -235,9 +256,7 @@ pub fn wield_type_from_slot(
     slot: EquipmentSlot,
     game_server: &GameServer,
 ) -> WieldType {
-    items
-        .get(&slot)
-        .and_then(|item| game_server.items().get(&item.guid))
+    item_def_from_slot(items, slot, game_server)
         .and_then(|item_def| {
             game_server
                 .item_classes()
@@ -246,6 +265,79 @@ pub fn wield_type_from_slot(
         })
         .map(|item_class| item_class.wield_type)
         .unwrap_or(WieldType::None)
+}
+
+fn item_def_from_slot<'a>(
+    items: &BTreeMap<EquipmentSlot, EquippedItem>,
+    slot: EquipmentSlot,
+    game_server: &'a GameServer,
+) -> Option<&'a ItemDefinition> {
+    items
+        .get(&slot)
+        .and_then(|item_guid| game_server.items().get(&item_guid.guid))
+}
+
+pub fn update_saber_tints(
+    sender: u32,
+    items: &BTreeMap<EquipmentSlot, EquippedItem>,
+    battle_class: u32,
+    game_server: &GameServer,
+) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    let mut packets = Vec::new();
+
+    if let Some(primary_shape_def) =
+        item_def_from_slot(items, EquipmentSlot::PrimarySaberShape, game_server)
+    {
+        if let Some(primary_color_def) =
+            item_def_from_slot(items, EquipmentSlot::PrimarySaberColor, game_server)
+        {
+            packets.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: EquipItem {
+                    item_guid: primary_shape_def.guid,
+                    attachment: Attachment {
+                        model_name: primary_shape_def.model_name.clone(),
+                        texture_alias: primary_shape_def.texture_alias.clone(),
+                        tint_alias: primary_shape_def.tint_alias.clone(),
+                        tint: primary_color_def.tint,
+                        composite_effect: primary_shape_def.composite_effect,
+                        slot: EquipmentSlot::PrimarySaberShape,
+                    },
+                    battle_class,
+                    item_class: primary_shape_def.item_class,
+                    equip: true,
+                },
+            })?);
+        }
+    }
+
+    if let Some(secondary_shape_def) =
+        item_def_from_slot(items, EquipmentSlot::SecondarySaberShape, game_server)
+    {
+        if let Some(secondary_color_def) =
+            item_def_from_slot(items, EquipmentSlot::SecondarySaberColor, game_server)
+        {
+            packets.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: EquipItem {
+                    item_guid: secondary_shape_def.guid,
+                    attachment: Attachment {
+                        model_name: secondary_shape_def.model_name.clone(),
+                        texture_alias: secondary_shape_def.texture_alias.clone(),
+                        tint_alias: secondary_shape_def.tint_alias.clone(),
+                        tint: secondary_color_def.tint,
+                        composite_effect: secondary_shape_def.composite_effect,
+                        slot: EquipmentSlot::SecondarySaberShape,
+                    },
+                    battle_class,
+                    item_class: secondary_shape_def.item_class,
+                    equip: true,
+                },
+            })?);
+        }
+    }
+
+    Ok(vec![Broadcast::Single(sender, packets)])
 }
 
 fn equip_item_in_slot(

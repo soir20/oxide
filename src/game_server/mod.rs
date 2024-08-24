@@ -4,12 +4,14 @@ use std::path::Path;
 use std::vec;
 
 use byteorder::{LittleEndian, ReadBytesExt};
-use handlers::character::{BattleClass, Character, CharacterIndex, Player};
+use handlers::character::{BattleClass, Character, CharacterIndex, CharacterType, Player};
 use handlers::chat::process_chat_packet;
 use handlers::command::process_command;
 use handlers::guid::{GuidTable, GuidTableHandle, GuidTableWriteHandle};
 use handlers::housing::process_housing_packet;
-use handlers::inventory::{load_default_sabers, process_inventory_packet, DefaultSaber};
+use handlers::inventory::{
+    load_default_sabers, process_inventory_packet, update_saber_tints, DefaultSaber,
+};
 use handlers::item::load_item_definitions;
 use handlers::lock_enforcer::{
     CharacterLockRequest, LockEnforcer, LockEnforcerSource, ZoneLockRequest, ZoneTableReadHandle,
@@ -17,7 +19,7 @@ use handlers::lock_enforcer::{
 use handlers::login::send_points_of_interest;
 use handlers::mount::{load_mounts, process_mount_packet, MountConfig};
 use handlers::reference_data::{load_categories, load_item_classes};
-use handlers::test_data::{make_test_nameplate_image, make_test_npc, make_test_player};
+use handlers::test_data::{make_test_nameplate_image, make_test_player};
 use handlers::time::make_game_time_sync;
 use handlers::unique_guid::{player_guid, shorten_zone_template_guid, zone_instance_guid};
 use handlers::zone::{load_zones, teleport_within_zone, Zone, ZoneTemplate};
@@ -230,15 +232,15 @@ impl GameServer {
                     broadcasts.append(&mut self.process_packet(sender, packet.inner)?);
                 }
                 OpCode::ClientIsReady => {
-                    let mut packets = Vec::new();
+                    let mut sender_only_packets = Vec::new();
 
-                    packets.append(&mut send_points_of_interest(self)?);
+                    sender_only_packets.append(&mut send_points_of_interest(self)?);
 
                     let categories = TunneledPacket {
                         unknown1: true,
                         inner: GamePacket::serialize(&self.categories)?,
                     };
-                    packets.push(GamePacket::serialize(&categories)?);
+                    sender_only_packets.push(GamePacket::serialize(&categories)?);
 
                     let item_groups = TunneledPacket {
                         unknown1: true,
@@ -248,15 +250,9 @@ impl GameServer {
                             },
                         },
                     };
-                    packets.push(GamePacket::serialize(&item_groups)?);
+                    sender_only_packets.push(GamePacket::serialize(&item_groups)?);
 
-                    let npc = TunneledPacket {
-                        unknown1: true,
-                        inner: make_test_npc(),
-                    };
-                    //packets.push(GamePacket::serialize(&npc)?);
-
-                    let mut character_packets = self.lock_enforcer().read_characters(|characters_table_read_handle| {
+                    let mut character_broadcasts = self.lock_enforcer().read_characters(|characters_table_read_handle| {
                         let possible_index = characters_table_read_handle.index(player_guid(sender));
                         let character_guids = possible_index.map(|(instance_guid, chunk, _)| Zone::diff_character_guids(
                             instance_guid,
@@ -279,6 +275,7 @@ impl GameServer {
                                         write_guids: Vec::new(),
                                         zone_consumer: |_, zones_read, _| {
                                             if let Some(zone) = zones_read.get(&instance_guid) {
+                                                let mut global_packets = Vec::new();
                                                 let stats = TunneledPacket {
                                                     unknown1: true,
                                                     inner: Stats {
@@ -316,8 +313,28 @@ impl GameServer {
                                                         ],
                                                     },
                                                 };
+                                                global_packets.push(GamePacket::serialize(&stats)?);
 
-                                                let mut packets = vec![GamePacket::serialize(&stats)?];
+                                                let health = TunneledPacket {
+                                                    unknown1: true,
+                                                    inner: Health {
+                                                        current: 25000,
+                                                        max: 25000,
+                                                    },
+                                                };
+                                                global_packets.push(GamePacket::serialize(&health)?);
+
+                                                let power = TunneledPacket {
+                                                    unknown1: true,
+                                                    inner: Power {
+                                                        current: 300,
+                                                        max: 300,
+                                                    },
+                                                };
+                                                global_packets.push(GamePacket::serialize(&power)?);
+
+                                                // TODO: broadcast to all
+                                                let mut character_broadcasts = Vec::new();
 
                                                 if let Some(character_read_handle) = characters_read.get(&player_guid(sender)) {
                                                     let wield_type = TunneledPacket {
@@ -327,15 +344,22 @@ impl GameServer {
                                                             wield_type: character_read_handle.wield_type(),
                                                         },
                                                     };
-                                                    packets.push(GamePacket::serialize(&wield_type)?);
+                                                    global_packets.push(GamePacket::serialize(&wield_type)?);
+
+                                                    if let CharacterType::Player(player) = &character_read_handle.character_type {
+                                                        if let Some(battle_class) = player.battle_classes.get(&player.active_battle_class) {
+                                                            character_broadcasts.append(&mut update_saber_tints(sender, &battle_class.items, player.active_battle_class, self)?);
+                                                        }
+                                                    }
                                                 } else {
                                                     println!("Unknown player {} sent a ready packet", sender);
                                                     return Err(ProcessPacketError::CorruptedPacket);
                                                 }
 
-                                                packets.append(&mut Zone::diff_character_packets(&character_guids, &characters_read, &self.mounts)?);
+                                                character_broadcasts.push(Broadcast::Single(sender, global_packets));
 
-                                                packets.push(
+                                                let mut sender_only_packets = Zone::diff_character_packets(&character_guids, &characters_read, &self.mounts)?;
+                                                sender_only_packets.push(
                                                     GamePacket::serialize(&TunneledPacket {
                                                         unknown1: true,
                                                         inner: ZoneCombatSettings {
@@ -348,8 +372,9 @@ impl GameServer {
                                                         },
                                                     })?,
                                                 );
+                                                character_broadcasts.push(Broadcast::Single(sender, sender_only_packets));
 
-                                                Ok(packets)
+                                                Ok(character_broadcasts)
                                             } else {
                                                 println!(
                                                     "Player {} sent a ready packet from unknown zone {}",
@@ -369,27 +394,9 @@ impl GameServer {
                             },
                         }
                     })?;
-                    packets.append(&mut character_packets);
+                    broadcasts.append(&mut character_broadcasts);
 
-                    let health = TunneledPacket {
-                        unknown1: true,
-                        inner: Health {
-                            current: 25000,
-                            max: 25000,
-                        },
-                    };
-                    packets.push(GamePacket::serialize(&health)?);
-
-                    let power = TunneledPacket {
-                        unknown1: true,
-                        inner: Power {
-                            current: 300,
-                            max: 300,
-                        },
-                    };
-                    packets.push(GamePacket::serialize(&power)?);
-
-                    packets.append(&mut make_test_nameplate_image(sender)?);
+                    sender_only_packets.append(&mut make_test_nameplate_image(sender)?);
 
                     let welcome_screen = TunneledPacket {
                         unknown1: true,
@@ -401,21 +408,21 @@ impl GameServer {
                             unknown4: 0,
                         },
                     };
-                    packets.push(GamePacket::serialize(&welcome_screen)?);
+                    sender_only_packets.push(GamePacket::serialize(&welcome_screen)?);
 
                     let zone_details_done = TunneledPacket {
                         unknown1: true,
                         inner: ZoneDetailsDone {},
                     };
-                    packets.push(GamePacket::serialize(&zone_details_done)?);
+                    sender_only_packets.push(GamePacket::serialize(&zone_details_done)?);
 
                     let preload_characters_done = TunneledPacket {
                         unknown1: true,
                         inner: PreloadCharactersDone { unknown1: false },
                     };
-                    packets.push(GamePacket::serialize(&preload_characters_done)?);
+                    sender_only_packets.push(GamePacket::serialize(&preload_characters_done)?);
 
-                    broadcasts.push(Broadcast::Single(sender, packets));
+                    broadcasts.push(Broadcast::Single(sender, sender_only_packets));
                 }
                 OpCode::GameTimeSync => {
                     let game_time_sync = TunneledPacket {
