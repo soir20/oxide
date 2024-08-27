@@ -1,1 +1,27 @@
-[]
+[
+    {
+        "hilt_item_guid": 70000,
+        "shape_item_guid": 50000,
+        "color_item_guid": 60004
+    },
+    {
+        "hilt_item_guid": 70001,
+        "shape_item_guid": 50000,
+        "color_item_guid": 60004
+    },
+    {
+        "hilt_item_guid": 70002,
+        "shape_item_guid": 50000,
+        "color_item_guid": 60009
+    },
+    {
+        "hilt_item_guid": 70003,
+        "shape_item_guid": 50000,
+        "color_item_guid": 60004
+    },
+    {
+        "hilt_item_guid": 70004,
+        "shape_item_guid": 50018,
+        "color_item_guid": 60012
+    }
+]
