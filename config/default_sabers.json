@@ -98,5 +98,30 @@
         "hilt_item_guid": 70019,
         "shape_item_guid": 50004,
         "color_item_guid": 60009
+    },
+    {
+        "hilt_item_guid": 70020,
+        "shape_item_guid": 50000,
+        "color_item_guid": 60004
+    },
+    {
+        "hilt_item_guid": 70021,
+        "shape_item_guid": 50001,
+        "color_item_guid": 60010
+    },
+    {
+        "hilt_item_guid": 70022,
+        "shape_item_guid": 50001,
+        "color_item_guid": 60010
+    },
+    {
+        "hilt_item_guid": 70023,
+        "shape_item_guid": 50002,
+        "color_item_guid": 60001
+    },
+    {
+        "hilt_item_guid": 70024,
+        "shape_item_guid": 50000,
+        "color_item_guid": 60012
     }
 ]
