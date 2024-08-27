@@ -173,5 +173,90 @@
         "hilt_item_guid": 70034,
         "shape_item_guid": 50013,
         "color_item_guid": 60006
+    },
+    {
+        "hilt_item_guid": 70035,
+        "shape_item_guid": 50000, 
+        "color_item_guid": 60000
+    },
+    {
+        "hilt_item_guid": 70036,
+        "shape_item_guid": 50000, 
+        "color_item_guid": 60000
+    },
+    {
+        "hilt_item_guid": 70037,
+        "shape_item_guid": 50000, 
+        "color_item_guid": 60001
+    },
+    {
+        "hilt_item_guid": 70038,
+        "shape_item_guid": 50015, 
+        "color_item_guid": 60002
+    },
+    {
+        "hilt_item_guid": 70039,
+        "shape_item_guid": 50015, 
+        "color_item_guid": 60000
+    },
+    {
+        "hilt_item_guid": 70040,
+        "shape_item_guid": 50000, 
+        "color_item_guid": 60001
+    },
+    {
+        "hilt_item_guid": 70041,
+        "shape_item_guid": 50000, 
+        "color_item_guid": 60001
+    },
+    {
+        "hilt_item_guid": 70042,
+        "shape_item_guid": 50000, 
+        "color_item_guid": 60003
+    },
+    {
+        "hilt_item_guid": 70043,
+        "shape_item_guid": 50000, 
+        "color_item_guid": 60005
+    },
+    {
+        "hilt_item_guid": 70044,
+        "shape_item_guid": 50000, 
+        "color_item_guid": 60004
+    },
+    {
+        "hilt_item_guid": 70045,
+        "shape_item_guid": 50000, 
+        "color_item_guid": 60000
+    },
+    {
+        "hilt_item_guid": 70046,
+        "shape_item_guid": 50000, 
+        "color_item_guid": 60000
+    },
+    {
+        "hilt_item_guid": 70047,
+        "shape_item_guid": 50005, 
+        "color_item_guid": 60002
+    },
+    {
+        "hilt_item_guid": 70048,
+        "shape_item_guid": 50005, 
+        "color_item_guid": 60000
+    },
+    {
+        "hilt_item_guid": 70049,
+        "shape_item_guid": 50000, 
+        "color_item_guid": 60001
+    },
+    {
+        "hilt_item_guid": 70050,
+        "shape_item_guid": 50000, 
+        "color_item_guid": 60001
+    },
+    {
+        "hilt_item_guid": 70051,
+        "shape_item_guid": 50000, 
+        "color_item_guid": 60000
     }
 ]
