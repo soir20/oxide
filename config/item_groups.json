@@ -300,11 +300,11 @@
                 "unknown": 0
             },
             {
-                "guid": 80013,
+                "guid": 80014,
                 "unknown": 0
             },
             {
-                "guid": 80014,
+                "guid": 80005,
                 "unknown": 0
             },
             {
@@ -312,7 +312,11 @@
                 "unknown": 0
             },
             {
-                "guid": 80016,
+                "guid": 80058,
+                "unknown": 0
+            },
+            {
+                "guid": 80061,
                 "unknown": 0
             },
             {
@@ -320,31 +324,11 @@
                 "unknown": 0
             },
             {
+                "guid": 80053,
+                "unknown": 0
+            },
+            {
                 "guid": 80018,
-                "unknown": 0
-            },
-            {
-                "guid": 80019,
-                "unknown": 0
-            },
-            {
-                "guid": 80020,
-                "unknown": 0
-            },
-            {
-                "guid": 80021,
-                "unknown": 0
-            },
-            {
-                "guid": 80022,
-                "unknown": 0
-            },
-            {
-                "guid": 80023,
-                "unknown": 0
-            },
-            {
-                "guid": 80024,
                 "unknown": 0
             },
             {
@@ -352,11 +336,35 @@
                 "unknown": 0
             },
             {
+                "guid": 80054,
+                "unknown": 0
+            },
+            {
+                "guid": 80064,
+                "unknown": 0
+            },
+            {
+                "guid": 80024,
+                "unknown": 0
+            },
+            {
+                "guid": 80052,
+                "unknown": 0
+            },
+            {
+                "guid": 80022,
+                "unknown": 0
+            },
+            {
                 "guid": 80026,
                 "unknown": 0
             },
             {
-                "guid": 80027,
+                "guid": 80055,
+                "unknown": 0
+            },
+            {
+                "guid": 80007,
                 "unknown": 0
             },
             {
@@ -368,11 +376,15 @@
                 "unknown": 0
             },
             {
-                "guid": 80030,
+                "guid": 80031,
                 "unknown": 0
             },
             {
-                "guid": 80031,
+                "guid": 80008,
+                "unknown": 0
+            },
+            {
+                "guid": 80027,
                 "unknown": 0
             },
             {
@@ -381,10 +393,6 @@
             },
             {
                 "guid": 80033,
-                "unknown": 0
-            },
-            {
-                "guid": 80034,
                 "unknown": 0
             },
             {
@@ -400,11 +408,11 @@
                 "unknown": 0
             },
             {
-                "guid": 80038,
+                "guid": 80009,
                 "unknown": 0
             },
             {
-                "guid": 80039,
+                "guid": 80038,
                 "unknown": 0
             },
             {
@@ -416,15 +424,19 @@
                 "unknown": 0
             },
             {
-                "guid": 80042,
-                "unknown": 0
-            },
-            {
                 "guid": 80043,
                 "unknown": 0
             },
             {
-                "guid": 80044,
+                "guid": 80034,
+                "unknown": 0
+            },
+            {
+                "guid": 80019,
+                "unknown": 0
+            },
+            {
+                "guid": 80002,
                 "unknown": 0
             },
             {
@@ -436,11 +448,15 @@
                 "unknown": 0
             },
             {
-                "guid": 80047,
+                "guid": 80023,
                 "unknown": 0
             },
             {
-                "guid": 80048,
+                "guid": 80042,
+                "unknown": 0
+            },
+            {
+                "guid": 80021,
                 "unknown": 0
             },
             {
@@ -452,23 +468,43 @@
                 "unknown": 0
             },
             {
+                "guid": 80003,
+                "unknown": 0
+            },
+            {
+                "guid": 80059,
+                "unknown": 0
+            },
+            {
                 "guid": 80051,
                 "unknown": 0
             },
             {
-                "guid": 80052,
+                "guid": 80047,
                 "unknown": 0
             },
             {
-                "guid": 80053,
+                "guid": 80048,
                 "unknown": 0
             },
             {
-                "guid": 80054,
+                "guid": 80020,
                 "unknown": 0
             },
             {
-                "guid": 80055,
+                "guid": 80006,
+                "unknown": 0
+            },
+            {
+                "guid": 80000,
+                "unknown": 0
+            },
+            {
+                "guid": 80004,
+                "unknown": 0
+            },
+            {
+                "guid": 80039,
                 "unknown": 0
             },
             {
@@ -480,15 +516,19 @@
                 "unknown": 0
             },
             {
-                "guid": 80058,
+                "guid": 80030,
                 "unknown": 0
             },
             {
-                "guid": 80059,
+                "guid": 80013,
                 "unknown": 0
             },
             {
-                "guid": 80061,
+                "guid": 80016,
+                "unknown": 0
+            },
+            {
+                "guid": 80044,
                 "unknown": 0
             },
             {
@@ -496,13 +536,13 @@
                 "unknown": 0
             },
             {
-                "guid": 80063,
+                "guid": 80001,
                 "unknown": 0
             },
             {
-                "guid": 80064,
+                "guid": 80063,
                 "unknown": 0
-            }
+            }            
         ]
     },
     {
