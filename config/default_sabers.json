@@ -317,11 +317,11 @@
     {
         "hilt_item_guid": 80014,
         "shape_item_guid": 90014,
-        "color_item_guid": 60001
+        "color_item_guid": 100001
     },
     {
         "hilt_item_guid": 80061,
-        "shape_item_guid": 90000, 
-        "color_item_guid": 60004
+        "shape_item_guid": 90000,
+        "color_item_guid": 100004
     }
 ]
