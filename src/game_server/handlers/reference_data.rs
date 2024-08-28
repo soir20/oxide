@@ -1,7 +1,7 @@
 use std::{fs::File, io::Error, path::Path};
 
 use crate::game_server::packets::reference_data::{
-    CategoryDefinitions, ItemClassDefinition, ItemClassDefinitions,
+    CategoryDefinitions, ItemClassDefinition, ItemClassDefinitions, ItemGroupDefinition,
 };
 
 pub fn load_item_classes(config_dir: &Path) -> Result<ItemClassDefinitions, Error> {
@@ -17,5 +17,10 @@ pub fn load_item_classes(config_dir: &Path) -> Result<ItemClassDefinitions, Erro
 
 pub fn load_categories(config_dir: &Path) -> Result<CategoryDefinitions, Error> {
     let mut file = File::open(config_dir.join("item_categories.json"))?;
+    Ok(serde_json::from_reader(&mut file)?)
+}
+
+pub fn load_item_groups(config_dir: &Path) -> Result<Vec<ItemGroupDefinition>, Error> {
+    let mut file = File::open(config_dir.join("item_groups.json"))?;
     Ok(serde_json::from_reader(&mut file)?)
 }

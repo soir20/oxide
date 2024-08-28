@@ -18,7 +18,7 @@ use handlers::lock_enforcer::{
 };
 use handlers::login::send_points_of_interest;
 use handlers::mount::{load_mounts, process_mount_packet, MountConfig};
-use handlers::reference_data::{load_categories, load_item_classes};
+use handlers::reference_data::{load_categories, load_item_classes, load_item_groups};
 use handlers::test_data::{make_test_nameplate_image, make_test_player};
 use handlers::time::make_game_time_sync;
 use handlers::unique_guid::{player_guid, shorten_zone_template_guid, zone_instance_guid};
@@ -28,9 +28,7 @@ use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
 use packets::item::ItemDefinition;
 use packets::login::{DeploymentEnv, GameSettings, LoginReply, WelcomeScreen, ZoneDetailsDone};
 use packets::player_update::{ItemDefinitionsReply, QueueAnimation, UpdateWieldType};
-use packets::reference_data::{
-    CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions, ItemGroupDefinitionsData,
-};
+use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
 use packets::tunnel::{TunneledPacket, TunneledWorldPacket};
 use packets::update_position::UpdatePlayerPosition;
 use packets::zone::{ZoneCombatSettings, ZoneTeleportRequest};
@@ -82,6 +80,7 @@ pub struct GameServer {
     lock_enforcer_source: LockEnforcerSource,
     items: BTreeMap<u32, ItemDefinition>,
     item_classes: ItemClassDefinitions,
+    item_groups: ItemGroupDefinitions,
     mounts: BTreeMap<u32, MountConfig>,
     zone_templates: BTreeMap<u8, ZoneTemplate>,
 }
@@ -96,6 +95,9 @@ impl GameServer {
             lock_enforcer_source: LockEnforcerSource::from(characters, zones),
             items: load_item_definitions(config_dir)?,
             item_classes: load_item_classes(config_dir)?,
+            item_groups: ItemGroupDefinitions {
+                definitions: load_item_groups(config_dir)?,
+            },
             mounts: load_mounts(config_dir)?,
             zone_templates: templates,
         })
@@ -244,11 +246,7 @@ impl GameServer {
 
                     let item_groups = TunneledPacket {
                         unknown1: true,
-                        inner: ItemGroupDefinitions {
-                            data: ItemGroupDefinitionsData {
-                                definitions: vec![],
-                            },
-                        },
+                        inner: GamePacket::serialize(&self.item_groups)?,
                     };
                     sender_only_packets.push(GamePacket::serialize(&item_groups)?);
 

@@ -103,6 +103,7 @@ impl GamePacket for CategoryDefinitions {
     const HEADER: Self::Header = ReferenceDataOpCode::CategoryDefinitions;
 }
 
+#[derive(Deserialize)]
 pub struct ItemGroupItem {
     pub guid: u32,
     pub unknown: u32,
@@ -117,7 +118,7 @@ impl SerializePacket for ItemGroupItem {
     }
 }
 
-#[derive(SerializePacket)]
+#[derive(Deserialize, SerializePacket)]
 pub struct ItemGroupDefinition {
     pub guid: i32,
     pub unknown2: i32,
@@ -138,19 +139,15 @@ pub struct ItemGroupDefinition {
     pub items: Vec<ItemGroupItem>,
 }
 
-#[derive(SerializePacket)]
-pub struct ItemGroupDefinitionsData {
-    pub definitions: Vec<ItemGroupDefinition>,
-}
-
+#[derive(Deserialize)]
 pub struct ItemGroupDefinitions {
-    pub data: ItemGroupDefinitionsData,
+    pub definitions: Vec<ItemGroupDefinition>,
 }
 
 impl SerializePacket for ItemGroupDefinitions {
     fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
         let mut inner_buffer = Vec::new();
-        self.data.serialize(&mut inner_buffer)?;
+        self.definitions.serialize(&mut inner_buffer)?;
         buffer.write_u32::<LittleEndian>(inner_buffer.len() as u32)?;
         buffer.write_all(&inner_buffer)?;
         Ok(())
