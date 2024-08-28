@@ -133,9 +133,7 @@ pub fn process_inventory_packet(
                                 None,
                             )
                             .and_then(|(mut broadcasts, _)| {
-                                if equip_guid.slot == EquipmentSlot::PrimarySaberColor
-                                    || equip_guid.slot == EquipmentSlot::SecondarySaberColor
-                                {
+                                if equip_guid.slot.is_saber() {
                                     if let Some(character_write_handle) =
                                         characters_write.get(&player_guid(sender))
                                     {
