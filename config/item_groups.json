@@ -650,5 +650,207 @@
                 "unknown": 0
             }
         ]
+    },
+    {
+        "comment": "Primary Shapes",
+        "guid": 5,
+        "unknown2": 0,
+        "name_id": 0,
+        "description_id": 0,
+        "sort_order": 0,
+        "icon_set_id": 0,
+        "category": 0,
+        "unknown8": 0,
+        "unknown9": 0,
+        "unknown10": 0,
+        "unknown11": false,
+        "unknown12": 0,
+        "unknown13": 0,
+        "unknown14": 0,
+        "unknown16": "",
+        "unknown17": false,
+        "items": [
+            {
+                "guid": 50000,
+                "unknown": 0
+            },
+            {
+                "guid": 50001,
+                "unknown": 0
+            },
+            {
+                "guid": 50002,
+                "unknown": 0
+            },
+            {
+                "guid": 50003,
+                "unknown": 0
+            },
+            {
+                "guid": 50004,
+                "unknown": 0
+            },
+            {
+                "guid": 50005,
+                "unknown": 0
+            },
+            {
+                "guid": 50006,
+                "unknown": 0
+            },
+            {
+                "guid": 50007,
+                "unknown": 0
+            },
+            {
+                "guid": 50008,
+                "unknown": 0
+            },
+            {
+                "guid": 50009,
+                "unknown": 0
+            },
+            {
+                "guid": 50010,
+                "unknown": 0
+            },
+            {
+                "guid": 50011,
+                "unknown": 0
+            },
+            {
+                "guid": 50012,
+                "unknown": 0
+            },
+            {
+                "guid": 50013,
+                "unknown": 0
+            },
+            {
+                "guid": 50014,
+                "unknown": 0
+            },
+            {
+                "guid": 50015,
+                "unknown": 0
+            },
+            {
+                "guid": 50016,
+                "unknown": 0
+            },
+            {
+                "guid": 50017,
+                "unknown": 0
+            },
+            {
+                "guid": 50018,
+                "unknown": 0
+            },
+            {
+                "guid": 50019,
+                "unknown": 0
+            }
+        ]
+    },
+    {
+        "comment": "Secondary Shapes",
+        "guid": 9,
+        "unknown2": 0,
+        "name_id": 0,
+        "description_id": 0,
+        "sort_order": 0,
+        "icon_set_id": 0,
+        "category": 0,
+        "unknown8": 0,
+        "unknown9": 0,
+        "unknown10": 0,
+        "unknown11": false,
+        "unknown12": 0,
+        "unknown13": 0,
+        "unknown14": 0,
+        "unknown16": "",
+        "unknown17": false,
+        "items": [
+            {
+                "guid": 50000,
+                "unknown": 0
+            },
+            {
+                "guid": 50001,
+                "unknown": 0
+            },
+            {
+                "guid": 50002,
+                "unknown": 0
+            },
+            {
+                "guid": 50003,
+                "unknown": 0
+            },
+            {
+                "guid": 50004,
+                "unknown": 0
+            },
+            {
+                "guid": 50005,
+                "unknown": 0
+            },
+            {
+                "guid": 50006,
+                "unknown": 0
+            },
+            {
+                "guid": 50007,
+                "unknown": 0
+            },
+            {
+                "guid": 50008,
+                "unknown": 0
+            },
+            {
+                "guid": 50009,
+                "unknown": 0
+            },
+            {
+                "guid": 50010,
+                "unknown": 0
+            },
+            {
+                "guid": 50011,
+                "unknown": 0
+            },
+            {
+                "guid": 50012,
+                "unknown": 0
+            },
+            {
+                "guid": 50013,
+                "unknown": 0
+            },
+            {
+                "guid": 50014,
+                "unknown": 0
+            },
+            {
+                "guid": 50015,
+                "unknown": 0
+            },
+            {
+                "guid": 50016,
+                "unknown": 0
+            },
+            {
+                "guid": 50017,
+                "unknown": 0
+            },
+            {
+                "guid": 50018,
+                "unknown": 0
+            },
+            {
+                "guid": 50019,
+                "unknown": 0
+            }
+        ]
     }
 ]
