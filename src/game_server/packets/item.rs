@@ -32,6 +32,18 @@ impl EquipmentSlot {
     pub fn is_weapon(self) -> bool {
         self == EquipmentSlot::PrimaryWeapon || self == EquipmentSlot::SecondaryWeapon
     }
+
+    pub fn is_saber(self) -> bool {
+        matches!(
+            self,
+            EquipmentSlot::PrimaryWeapon
+                | EquipmentSlot::SecondaryWeapon
+                | EquipmentSlot::PrimarySaberShape
+                | EquipmentSlot::PrimarySaberColor
+                | EquipmentSlot::SecondarySaberShape
+                | EquipmentSlot::SecondarySaberColor
+        )
+    }
 }
 
 impl SerializePacket for EquipmentSlot {
