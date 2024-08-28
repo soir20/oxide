@@ -77,13 +77,10 @@ pub fn process_inventory_packet(
                                         })?
                                     ];
 
+                                    battle_class.items.remove(&unequip_slot.slot);
+
                                     if unequip_slot.slot.is_weapon() {
-                                        let is_primary_equipped = battle_class.items.contains_key(&EquipmentSlot::PrimaryWeapon);
-                                        wield_type =  match (unequip_slot.slot, wield_type_from_slot(&battle_class.items, unequip_slot.slot, game_server), is_primary_equipped) {
-                                            (EquipmentSlot::SecondaryWeapon, WieldType::SingleSaber, true) => WieldType::SingleSaber,
-                                            (EquipmentSlot::SecondaryWeapon, WieldType::SinglePistol, true) => WieldType::SinglePistol,
-                                            _ => WieldType::None,
-                                        };
+                                        wield_type = wield_type_from_slot(&battle_class.items, EquipmentSlot::PrimaryWeapon, game_server);
 
                                         packets.push(GamePacket::serialize(&TunneledPacket {
                                             unknown1: true,
@@ -93,8 +90,6 @@ pub fn process_inventory_packet(
                                             }
                                         })?);
                                     }
-
-                                    battle_class.items.remove(&unequip_slot.slot);
 
                                     Ok(vec![Broadcast::Single(sender, packets)])
                                 } else {
