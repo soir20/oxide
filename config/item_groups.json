@@ -19,46 +19,6 @@
         "unknown17": false,
         "items": [
             {
-                "guid": 70000,
-                "unknown": 0
-            },
-            {
-                "guid": 70001,
-                "unknown": 0
-            },
-            {
-                "guid": 70002,
-                "unknown": 0
-            },
-            {
-                "guid": 70003,
-                "unknown": 0
-            },
-            {
-                "guid": 70004,
-                "unknown": 0
-            },
-            {
-                "guid": 70005,
-                "unknown": 0
-            },
-            {
-                "guid": 70006,
-                "unknown": 0
-            },
-            {
-                "guid": 70007,
-                "unknown": 0
-            },
-            {
-                "guid": 70008,
-                "unknown": 0
-            },
-            {
-                "guid": 70009,
-                "unknown": 0
-            },
-            {
                 "guid": 70010,
                 "unknown": 0
             },
@@ -71,7 +31,7 @@
                 "unknown": 0
             },
             {
-                "guid": 70013,
+                "guid": 70005,
                 "unknown": 0
             },
             {
@@ -79,7 +39,11 @@
                 "unknown": 0
             },
             {
-                "guid": 70016,
+                "guid": 70058,
+                "unknown": 0
+            },
+            {
+                "guid": 70060,
                 "unknown": 0
             },
             {
@@ -87,31 +51,11 @@
                 "unknown": 0
             },
             {
+                "guid": 70053,
+                "unknown": 0
+            },
+            {
                 "guid": 70018,
-                "unknown": 0
-            },
-            {
-                "guid": 70019,
-                "unknown": 0
-            },
-            {
-                "guid": 70020,
-                "unknown": 0
-            },
-            {
-                "guid": 70021,
-                "unknown": 0
-            },
-            {
-                "guid": 70022,
-                "unknown": 0
-            },
-            {
-                "guid": 70023,
-                "unknown": 0
-            },
-            {
-                "guid": 70024,
                 "unknown": 0
             },
             {
@@ -119,11 +63,35 @@
                 "unknown": 0
             },
             {
+                "guid": 70054,
+                "unknown": 0
+            },
+            {
+                "guid": 70064,
+                "unknown": 0
+            },
+            {
+                "guid": 70024,
+                "unknown": 0
+            },
+            {
+                "guid": 70052,
+                "unknown": 0
+            },
+            {
+                "guid": 70022,
+                "unknown": 0
+            },
+            {
                 "guid": 70026,
                 "unknown": 0
             },
             {
-                "guid": 70027,
+                "guid": 70055,
+                "unknown": 0
+            },
+            {
+                "guid": 70007,
                 "unknown": 0
             },
             {
@@ -135,11 +103,15 @@
                 "unknown": 0
             },
             {
-                "guid": 70030,
+                "guid": 70031,
                 "unknown": 0
             },
             {
-                "guid": 70031,
+                "guid": 70008,
+                "unknown": 0
+            },
+            {
+                "guid": 70027,
                 "unknown": 0
             },
             {
@@ -148,10 +120,6 @@
             },
             {
                 "guid": 70033,
-                "unknown": 0
-            },
-            {
-                "guid": 70034,
                 "unknown": 0
             },
             {
@@ -167,11 +135,11 @@
                 "unknown": 0
             },
             {
-                "guid": 70038,
+                "guid": 70009,
                 "unknown": 0
             },
             {
-                "guid": 70039,
+                "guid": 70038,
                 "unknown": 0
             },
             {
@@ -183,15 +151,19 @@
                 "unknown": 0
             },
             {
-                "guid": 70042,
-                "unknown": 0
-            },
-            {
                 "guid": 70043,
                 "unknown": 0
             },
             {
-                "guid": 70044,
+                "guid": 70034,
+                "unknown": 0
+            },
+            {
+                "guid": 70019,
+                "unknown": 0
+            },
+            {
+                "guid": 70002,
                 "unknown": 0
             },
             {
@@ -203,11 +175,15 @@
                 "unknown": 0
             },
             {
-                "guid": 70047,
+                "guid": 70023,
                 "unknown": 0
             },
             {
-                "guid": 70048,
+                "guid": 70042,
+                "unknown": 0
+            },
+            {
+                "guid": 70021,
                 "unknown": 0
             },
             {
@@ -219,23 +195,43 @@
                 "unknown": 0
             },
             {
+                "guid": 70003,
+                "unknown": 0
+            },
+            {
+                "guid": 70059,
+                "unknown": 0
+            },
+            {
                 "guid": 70051,
                 "unknown": 0
             },
             {
-                "guid": 70052,
+                "guid": 70047,
                 "unknown": 0
             },
             {
-                "guid": 70053,
+                "guid": 70048,
                 "unknown": 0
             },
             {
-                "guid": 70054,
+                "guid": 70020,
                 "unknown": 0
             },
             {
-                "guid": 70055,
+                "guid": 70006,
+                "unknown": 0
+            },
+            {
+                "guid": 70000,
+                "unknown": 0
+            },
+            {
+                "guid": 70004,
+                "unknown": 0
+            },
+            {
+                "guid": 70039,
                 "unknown": 0
             },
             {
@@ -247,15 +243,19 @@
                 "unknown": 0
             },
             {
-                "guid": 70058,
+                "guid": 70030,
                 "unknown": 0
             },
             {
-                "guid": 70059,
+                "guid": 70013,
                 "unknown": 0
             },
             {
-                "guid": 70060,
+                "guid": 70016,
+                "unknown": 0
+            },
+            {
+                "guid": 70044,
                 "unknown": 0
             },
             {
@@ -263,11 +263,11 @@
                 "unknown": 0
             },
             {
-                "guid": 70063,
+                "guid": 70001,
                 "unknown": 0
             },
             {
-                "guid": 70064,
+                "guid": 70063,
                 "unknown": 0
             }
         ]
