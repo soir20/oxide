@@ -379,7 +379,7 @@ impl Character {
         self.wield_type.0
     }
 
-    pub fn set_wield_type(&mut self, wield_type: WieldType) {
+    pub fn set_brandished_wield_type(&mut self, wield_type: WieldType) {
         self.wield_type = (wield_type, wield_type.holster())
     }
 

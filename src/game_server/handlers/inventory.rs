@@ -61,7 +61,7 @@ pub fn process_inventory_packet(
                     character_consumer: |_, _, mut characters_write, _| {
                         if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) {
 
-                            let mut wield_type = character_write_handle.wield_type();
+                            let mut updated_wield_type = None;
                             let packets = if let CharacterType::Player(ref mut player_data) = character_write_handle.character_type {
                                 let possible_battle_class = player_data.battle_classes.get_mut(&unequip_slot.battle_class);
 
@@ -80,7 +80,8 @@ pub fn process_inventory_packet(
                                     battle_class.items.remove(&unequip_slot.slot);
 
                                     if unequip_slot.slot.is_weapon() {
-                                        wield_type = wield_type_from_slot(&battle_class.items, EquipmentSlot::PrimaryWeapon, game_server);
+                                        let wield_type = wield_type_from_slot(&battle_class.items, EquipmentSlot::PrimaryWeapon, game_server);
+                                        updated_wield_type = Some(wield_type);
 
                                         packets.push(GamePacket::serialize(&TunneledPacket {
                                             unknown1: true,
@@ -102,7 +103,9 @@ pub fn process_inventory_packet(
                                 Err(ProcessPacketError::CorruptedPacket)
                             };
 
-                            character_write_handle.set_wield_type(wield_type);
+                            if let Some(wield_type) = updated_wield_type {
+                                character_write_handle.set_brandished_wield_type(wield_type);
+                            }
                             packets
 
                         } else {
@@ -346,7 +349,7 @@ fn equip_item_in_slot(
     tint_override: Option<u32>,
 ) -> Result<(Vec<Broadcast>, u32), ProcessPacketError> {
     if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) {
-        let mut wield_type = character_write_handle.wield_type();
+        let mut updated_wield_type = None;
         let broadcasts = if let CharacterType::Player(ref mut player_data) =
             character_write_handle.character_type
         {
@@ -401,7 +404,7 @@ fn equip_item_in_slot(
                                 let is_secondary_equipped = battle_class
                                     .items
                                     .contains_key(&EquipmentSlot::SecondaryWeapon);
-                                wield_type = match (
+                                let wield_type = match (
                                     equip_guid.slot,
                                     item_class.wield_type,
                                     is_secondary_equipped,
@@ -436,6 +439,7 @@ fn equip_item_in_slot(
                                     ) => WieldType::DualPistol,
                                     _ => item_class.wield_type,
                                 };
+                                updated_wield_type = Some(wield_type);
 
                                 packets.push(GamePacket::serialize(&TunneledPacket {
                                     unknown1: true,
@@ -483,7 +487,9 @@ fn equip_item_in_slot(
             Err(ProcessPacketError::CorruptedPacket)
         };
 
-        character_write_handle.set_wield_type(wield_type);
+        if let Some(wield_type) = updated_wield_type {
+            character_write_handle.set_brandished_wield_type(wield_type);
+        }
         broadcasts
     } else {
         println!("Unknown player {} tried to equip item", sender);
