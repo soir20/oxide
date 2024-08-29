@@ -151,6 +151,7 @@ impl NpcTemplate {
             auto_interact_radius: self.auto_interact_radius,
             instance_guid,
             wield_type: (self.wield_type, self.wield_type.holster()),
+            holstered: false,
         }
     }
 }
@@ -171,6 +172,7 @@ pub struct Character {
     pub auto_interact_radius: f32,
     pub instance_guid: u64,
     wield_type: (WieldType, WieldType),
+    holstered: bool,
 }
 
 impl IndexedGuid<u64, CharacterIndex> for Character {
@@ -222,6 +224,7 @@ impl Character {
             auto_interact_radius,
             instance_guid,
             wield_type: (wield_type, wield_type.holster()),
+            holstered: false,
         }
     }
 
@@ -268,6 +271,7 @@ impl Character {
             auto_interact_radius: 0.0,
             instance_guid,
             wield_type: (wield_type, wield_type.holster()),
+            holstered: false,
         }
     }
 
@@ -379,13 +383,23 @@ impl Character {
         self.wield_type.0
     }
 
+    pub fn brandished_wield_type(&self) -> WieldType {
+        if self.holstered {
+            self.wield_type.1
+        } else {
+            self.wield_type.0
+        }
+    }
+
     pub fn set_brandished_wield_type(&mut self, wield_type: WieldType) {
-        self.wield_type = (wield_type, wield_type.holster())
+        self.wield_type = (wield_type, wield_type.holster());
+        self.holstered = false;
     }
 
     pub fn brandish_or_holster(&mut self) {
         let (old_wield_type, new_wield_type) = self.wield_type;
         self.wield_type = (new_wield_type, old_wield_type);
+        self.holstered = !self.holstered;
     }
 
     fn door_packet(character: &Character, door: &Door) -> AddNpc {
