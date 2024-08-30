@@ -441,6 +441,9 @@ impl GameServer {
                     // TODO: broadcast pos update to all players
                     broadcasts.append(&mut Zone::move_character(sender, pos_update, self)?);
                 }
+                OpCode::UpdatePlayerCamera => {
+                    // Ignore this unused packet to reduce log spam for now
+                }
                 OpCode::ZoneTeleportRequest => {
                     let teleport_request: ZoneTeleportRequest =
                         DeserializePacket::deserialize(&mut cursor)?;
