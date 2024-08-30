@@ -91,7 +91,7 @@
     },
     {
         "comment": "Standard Bow",
-        "guid": 10006,
+        "guid": 21,
         "name_id": 0,
         "icon_set_id": 0,
         "wield_type": "Bow",
