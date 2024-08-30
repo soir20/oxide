@@ -52,6 +52,7 @@ pub enum OpCode {
     WelcomeScreen = 0x5d,
     TeleportToSafety = 0x7a,
     UpdatePlayerPosition = 0x7d,
+    UpdatePlayerCamera = 0x7e,
     Housing = 0x7f,
     ClientGameSettings = 0x8f,
     Portrait = 0x9b,
