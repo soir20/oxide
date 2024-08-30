@@ -245,16 +245,17 @@ impl Character {
                     EquipmentSlot::PrimaryWeapon,
                     game_server,
                 );
-                match (
-                    primary_wield_type,
-                    battle_class
-                        .items
-                        .contains_key(&EquipmentSlot::SecondaryWeapon),
-                ) {
-                    (WieldType::SingleSaber, false) => WieldType::SingleSaber,
-                    (WieldType::SingleSaber, true) => WieldType::DualSaber,
-                    (WieldType::SinglePistol, false) => WieldType::SinglePistol,
-                    (WieldType::SinglePistol, true) => WieldType::DualPistol,
+                let secondary_wield_type = wield_type_from_slot(
+                    &battle_class.items,
+                    EquipmentSlot::SecondaryWeapon,
+                    game_server,
+                );
+                match (primary_wield_type, secondary_wield_type) {
+                    (WieldType::SingleSaber, WieldType::None) => WieldType::SingleSaber,
+                    (WieldType::SingleSaber, WieldType::SingleSaber) => WieldType::DualSaber,
+                    (WieldType::SinglePistol, WieldType::None) => WieldType::SinglePistol,
+                    (WieldType::SinglePistol, WieldType::SinglePistol) => WieldType::DualPistol,
+                    (WieldType::None, _) => secondary_wield_type,
                     _ => primary_wield_type,
                 }
             })

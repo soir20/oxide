@@ -79,6 +79,9 @@ pub fn process_inventory_packet(
 
                                     battle_class.items.remove(&unequip_slot.slot);
 
+                                    // There are no weapons that allow equipping both weapon slots and then unequipping only the primary slot.
+                                    // You can only unequip the secondary slot or unequip both slots after you equip both slots. Therefore, after 
+                                    // an item is unequipped, only the primary slot can influence the wield type.
                                     if unequip_slot.slot.is_weapon() {
                                         brandished_wield_type = Some(wield_type_from_slot(&battle_class.items, EquipmentSlot::PrimaryWeapon, game_server));
                                     }
@@ -393,22 +396,23 @@ fn equip_item_in_slot(
                             .get(&item_def.item_class)
                         {
                             if equip_guid.slot.is_weapon() {
-                                if equip_guid.slot == EquipmentSlot::PrimaryWeapon {
-                                    let secondary_wield_type = wield_type_from_slot(
-                                        &battle_class.items,
-                                        EquipmentSlot::SecondaryWeapon,
-                                        game_server,
-                                    );
-                                    if item_class.wield_type != secondary_wield_type {
-                                        packets.push(GamePacket::serialize(&TunneledPacket {
-                                            unknown1: true,
-                                            inner: UnequipItem {
-                                                slot: EquipmentSlot::SecondaryWeapon,
-                                                battle_class: equip_guid.battle_class,
-                                            },
-                                        })?);
-                                        battle_class.items.remove(&EquipmentSlot::SecondaryWeapon);
-                                    }
+                                // Some weapons, like bows, can be equipped in the secondary slot without
+                                // a primary weapon, so check the opposite slot instead of the primary slot.
+                                let other_weapon_slot = other_weapon_slot(equip_guid.slot);
+                                let other_wield_type = wield_type_from_slot(
+                                    &battle_class.items,
+                                    other_weapon_slot,
+                                    game_server,
+                                );
+                                if item_class.wield_type != other_wield_type {
+                                    packets.push(GamePacket::serialize(&TunneledPacket {
+                                        unknown1: true,
+                                        inner: UnequipItem {
+                                            slot: other_weapon_slot,
+                                            battle_class: equip_guid.battle_class,
+                                        },
+                                    })?);
+                                    battle_class.items.remove(&other_weapon_slot);
                                 }
 
                                 let is_secondary_equipped = battle_class
@@ -510,5 +514,13 @@ fn equip_item_in_slot(
     } else {
         println!("Unknown player {} tried to equip item", sender);
         Err(ProcessPacketError::CorruptedPacket)
+    }
+}
+
+fn other_weapon_slot(slot: EquipmentSlot) -> EquipmentSlot {
+    match slot {
+        EquipmentSlot::PrimaryWeapon => EquipmentSlot::SecondaryWeapon,
+        EquipmentSlot::SecondaryWeapon => EquipmentSlot::PrimaryWeapon,
+        _ => EquipmentSlot::None,
     }
 }
