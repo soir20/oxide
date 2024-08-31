@@ -281,7 +281,7 @@ pub fn make_test_player(
                             EquipmentSlot::PrimaryWeapon,
                             EquippedItem {
                                 slot: EquipmentSlot::PrimaryWeapon,
-                                guid: 5,
+                                guid: 110052,
                                 category: 0,
                             },
                         ),
