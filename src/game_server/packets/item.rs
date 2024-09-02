@@ -194,7 +194,7 @@ pub struct ItemDefinition {
     pub tint_alias: String,
     pub disable_preview: bool,
     pub unknown33: bool,
-    pub unknown34: u32,
+    pub race_set_id: u32,
     pub unknown35: bool,
     pub unknown36: u32,
     pub unknown37: u32,

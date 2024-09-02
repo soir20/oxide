@@ -49,6 +49,22 @@
             "visible": true
         },
         {
+            "comment": "Face Customization",
+            "guid": 18,
+            "name_id": 1226,
+            "icon_set_id": 668,
+            "sort_order": 18,
+            "visible": true
+        },
+        {
+            "comment": "Species Customization",
+            "guid": 19,
+            "name_id": 1227,
+            "icon_set_id": 431,
+            "sort_order": 19,
+            "visible": true
+        },
+        {
             "comment": "Housing",
             "guid": 65,
             "name_id": 1222,
@@ -189,6 +205,14 @@
         {
             "parent_guid": 11,
             "child_guid": 64
+        },
+        {
+            "parent_guid": 13,
+            "child_guid": 18
+        },
+        {
+            "parent_guid": 13,
+            "child_guid": 19
         },
         {
             "parent_guid": 65,
