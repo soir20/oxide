@@ -854,6 +854,26 @@
         ]
     },
     {
+        "comment": "Hair Style",
+        "guid": 122,
+        "unknown2": 0,
+        "name_id": 0,
+        "description_id": 0,
+        "sort_order": 0,
+        "icon_set_id": 0,
+        "category": 0,
+        "page": 8,
+        "unknown9": 0,
+        "unknown10": 0,
+        "unknown11": false,
+        "unknown12": 0,
+        "unknown13": 0,
+        "unknown14": 0,
+        "unknown16": "",
+        "unknown17": false,
+        "items": []
+    },
+    {
         "comment": "Hair Color",
         "guid": 123,
         "unknown2": 0,
@@ -874,8 +894,8 @@
         "items": []
     },
     {
-        "comment": "Hair Style",
-        "guid": 122,
+        "comment": "Eye Color",
+        "guid": 124,
         "unknown2": 0,
         "name_id": 0,
         "description_id": 0,
@@ -914,26 +934,6 @@
         "items": []
     },
     {
-        "comment": "Facial Hair",
-        "guid": 139,
-        "unknown2": 0,
-        "name_id": 0,
-        "description_id": 0,
-        "sort_order": 0,
-        "icon_set_id": 0,
-        "category": 0,
-        "page": 8,
-        "unknown9": 0,
-        "unknown10": 0,
-        "unknown11": false,
-        "unknown12": 0,
-        "unknown13": 0,
-        "unknown14": 0,
-        "unknown16": "",
-        "unknown17": false,
-        "items": []
-    },
-    {
         "comment": "Face Design",
         "guid": 126,
         "unknown2": 0,
@@ -954,8 +954,8 @@
         "items": []
     },
     {
-        "comment": "Eye Color",
-        "guid": 124,
+        "comment": "Facial Hair",
+        "guid": 139,
         "unknown2": 0,
         "name_id": 0,
         "description_id": 0,
