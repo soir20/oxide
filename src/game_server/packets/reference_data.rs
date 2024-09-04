@@ -127,7 +127,7 @@ pub struct ItemGroupDefinition {
     pub sort_order: u32,
     pub icon_set_id: u32,
     pub category: u32,
-    pub unknown8: u32,
+    pub page: u32,
     pub unknown9: u32,
     pub unknown10: u32,
     pub unknown11: bool,

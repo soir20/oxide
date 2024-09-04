@@ -28,6 +28,7 @@ pub enum PlayerUpdateOpCode {
     Freeze = 0x20,
     ItemDefinitionsRequest = 0x22,
     ItemDefinitionsReply = 0x25,
+    UpdateCustomizations = 0x27,
     SetSpawnerActivationEffect = 0x2f,
     ReplaceBaseModel = 0x31,
     SetCollision = 0x32,
@@ -266,6 +267,27 @@ impl SerializePacket for ItemDefinitionsReply<'_> {
 impl GamePacket for ItemDefinitionsReply<'_> {
     type Header = PlayerUpdateOpCode;
     const HEADER: Self::Header = PlayerUpdateOpCode::ItemDefinitionsReply;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct Customization {
+    pub customization_slot: u32,
+    pub customization_param1: String,
+    pub customization_param2: u32,
+    pub customization_param3: u32,
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct UpdateCustomizations {
+    pub guid: u64,
+    pub update: bool,
+    pub customizations: Vec<Customization>,
+}
+
+impl GamePacket for UpdateCustomizations {
+    type Header = PlayerUpdateOpCode;
+
+    const HEADER: Self::Header = PlayerUpdateOpCode::UpdateCustomizations;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
