@@ -31,7 +31,7 @@ use packets::player_update::{ItemDefinitionsReply, QueueAnimation, UpdateWieldTy
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
 use packets::tunnel::{TunneledPacket, TunneledWorldPacket};
 use packets::update_position::UpdatePlayerPosition;
-use packets::zone::{ZoneCombatSettings, ZoneTeleportRequest};
+use packets::zone::ZoneTeleportRequest;
 use packets::{GamePacket, OpCode};
 use rand::Rng;
 
@@ -355,22 +355,6 @@ impl GameServer {
                                                 }
 
                                                 character_broadcasts.push(Broadcast::Single(sender, global_packets));
-
-                                                let mut sender_only_packets = Zone::diff_character_packets(&character_guids, &characters_read, &self.mounts)?;
-                                                sender_only_packets.push(
-                                                    GamePacket::serialize(&TunneledPacket {
-                                                        unknown1: true,
-                                                        inner: ZoneCombatSettings {
-                                                            zone_guid: zone.template_guid as u32,
-                                                            force_combat_pose: zone.force_combat_pose,
-                                                            combat_camera: zone.is_combat,
-                                                            unknown3: false,
-                                                            unknown4: false,
-                                                            unknown5: 0,
-                                                        },
-                                                    })?,
-                                                );
-                                                character_broadcasts.push(Broadcast::Single(sender, sender_only_packets));
 
                                                 Ok(character_broadcasts)
                                             } else {
