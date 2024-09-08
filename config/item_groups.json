@@ -1735,7 +1735,68 @@
         "unknown14": 0,
         "unknown16": "",
         "unknown17": false,
-        "items": []
+        "items": [
+            {
+                "guid": 160000,
+                "unknown": 0
+            },
+            {
+                "guid": 160001,
+                "unknown": 0
+            },
+            {
+                "guid": 160002,
+                "unknown": 0
+            },
+            {
+                "guid": 160003,
+                "unknown": 0
+            },
+            {
+                "guid": 160004,
+                "unknown": 0
+            },
+            {
+                "guid": 160005,
+                "unknown": 0
+            },
+            {
+                "guid": 160006,
+                "unknown": 0
+            },
+            {
+                "guid": 160007,
+                "unknown": 0
+            },
+            {
+                "guid": 160008,
+                "unknown": 0
+            },
+            {
+                "guid": 160009,
+                "unknown": 0
+            },
+            {
+                "guid": 160010,
+                "unknown": 0
+            },
+            {
+                "guid": 160011,
+                "unknown": 0
+            },
+            {
+                "guid": 160012,
+                "unknown": 0
+            },
+            {
+                "guid": 160013,
+                "unknown": 0
+            },
+            {
+                "guid": 160014,
+                "unknown": 0
+            }
+        ]
     },
     {
         "comment": "Species",
