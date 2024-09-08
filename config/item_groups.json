@@ -2069,6 +2069,59 @@
         "unknown14": 0,
         "unknown16": "",
         "unknown17": false,
-        "items": []
+        "items": [
+            {
+                "guid": 180000,
+                "unknown": 0
+            },
+            {
+                "guid": 180001,
+                "unknown": 0
+            },
+            {
+                "guid": 180002,
+                "unknown": 0
+            },
+            {
+                "guid": 180003,
+                "unknown": 0
+            },
+            {
+                "guid": 180004,
+                "unknown": 0
+            },
+            {
+                "guid": 180005,
+                "unknown": 0
+            },
+            {
+                "guid": 180006,
+                "unknown": 0
+            },
+            {
+                "guid": 180007,
+                "unknown": 0
+            },
+            {
+                "guid": 180008,
+                "unknown": 0
+            },
+            {
+                "guid": 180009,
+                "unknown": 0
+            },
+            {
+                "guid": 180010,
+                "unknown": 0
+            },
+            {
+                "guid": 180011,
+                "unknown": 0
+            },
+            {
+                "guid": 180012,
+                "unknown": 0
+            }
+        ]
     }
 ]
