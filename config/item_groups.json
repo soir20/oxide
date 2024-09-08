@@ -1368,7 +1368,96 @@
         "unknown14": 0,
         "unknown16": "",
         "unknown17": false,
-        "items": []
+        "items": [
+            {
+                "guid": 140000,
+                "unknown": 0
+            },
+            {
+                "guid": 140001,
+                "unknown": 0
+            },
+            {
+                "guid": 140002,
+                "unknown": 0
+            },
+            {
+                "guid": 140003,
+                "unknown": 0
+            },
+            {
+                "guid": 140004,
+                "unknown": 0
+            },
+            {
+                "guid": 140005,
+                "unknown": 0
+            },
+            {
+                "guid": 140006,
+                "unknown": 0
+            },
+            {
+                "guid": 140007,
+                "unknown": 0
+            },
+            {
+                "guid": 140008,
+                "unknown": 0
+            },
+            {
+                "guid": 140009,
+                "unknown": 0
+            },
+            {
+                "guid": 140010,
+                "unknown": 0
+            },
+            {
+                "guid": 140011,
+                "unknown": 0
+            },
+            {
+                "guid": 140012,
+                "unknown": 0
+            },
+            {
+                "guid": 140013,
+                "unknown": 0
+            },
+            {
+                "guid": 140014,
+                "unknown": 0
+            },
+            {
+                "guid": 140015,
+                "unknown": 0
+            },
+            {
+                "guid": 140016,
+                "unknown": 0
+            },
+            {
+                "guid": 140017,
+                "unknown": 0
+            },
+            {
+                "guid": 140018,
+                "unknown": 0
+            },
+            {
+                "guid": 140019,
+                "unknown": 0
+            },
+            {
+                "guid": 140020,
+                "unknown": 0
+            },
+            {
+                "guid": 140021,
+                "unknown": 0
+            }
+        ]
     },
     {
         "comment": "Eye Color",
