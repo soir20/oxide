@@ -1477,7 +1477,60 @@
         "unknown14": 0,
         "unknown16": "",
         "unknown17": false,
-        "items": []
+        "items": [
+            {
+                "guid": 150000,
+                "unknown": 0
+            },
+            {
+                "guid": 150001,
+                "unknown": 0
+            },
+            {
+                "guid": 150002,
+                "unknown": 0
+            },
+            {
+                "guid": 150003,
+                "unknown": 0
+            },
+            {
+                "guid": 150004,
+                "unknown": 0
+            },
+            {
+                "guid": 150005,
+                "unknown": 0
+            },
+            {
+                "guid": 150006,
+                "unknown": 0
+            },
+            {
+                "guid": 150007,
+                "unknown": 0
+            },
+            {
+                "guid": 150008,
+                "unknown": 0
+            },
+            {
+                "guid": 150009,
+                "unknown": 0
+            },
+            {
+                "guid": 150010,
+                "unknown": 0
+            },
+            {
+                "guid": 150011,
+                "unknown": 0
+            },
+            {
+                "guid": 150012,
+                "unknown": 0
+            }
+        ]
     },
     {
         "comment": "Skin Tone",
