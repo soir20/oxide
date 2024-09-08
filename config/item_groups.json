@@ -1715,7 +1715,260 @@
         "unknown14": 0,
         "unknown16": "",
         "unknown17": false,
-        "items": []
+        "items": [
+            {
+                "guid": 170000,
+                "unknown": 0
+            },
+            {
+                "guid": 170001,
+                "unknown": 0
+            },
+            {
+                "guid": 170002,
+                "unknown": 0
+            },
+            {
+                "guid": 170003,
+                "unknown": 0
+            },
+            {
+                "guid": 170004,
+                "unknown": 0
+            },
+            {
+                "guid": 170005,
+                "unknown": 0
+            },
+            {
+                "guid": 170006,
+                "unknown": 0
+            },
+            {
+                "guid": 170007,
+                "unknown": 0
+            },
+            {
+                "guid": 170008,
+                "unknown": 0
+            },
+            {
+                "guid": 170009,
+                "unknown": 0
+            },
+            {
+                "guid": 170010,
+                "unknown": 0
+            },
+            {
+                "guid": 170011,
+                "unknown": 0
+            },
+            {
+                "guid": 170012,
+                "unknown": 0
+            },
+            {
+                "guid": 170013,
+                "unknown": 0
+            },
+            {
+                "guid": 170014,
+                "unknown": 0
+            },
+            {
+                "guid": 170015,
+                "unknown": 0
+            },
+            {
+                "guid": 170016,
+                "unknown": 0
+            },
+            {
+                "guid": 170017,
+                "unknown": 0
+            },
+            {
+                "guid": 170018,
+                "unknown": 0
+            },
+            {
+                "guid": 170019,
+                "unknown": 0
+            },
+            {
+                "guid": 170020,
+                "unknown": 0
+            },
+            {
+                "guid": 170021,
+                "unknown": 0
+            },
+            {
+                "guid": 170022,
+                "unknown": 0
+            },
+            {
+                "guid": 170023,
+                "unknown": 0
+            },
+            {
+                "guid": 170024,
+                "unknown": 0
+            },
+            {
+                "guid": 170025,
+                "unknown": 0
+            },
+            {
+                "guid": 170026,
+                "unknown": 0
+            },
+            {
+                "guid": 170027,
+                "unknown": 0
+            },
+            {
+                "guid": 170028,
+                "unknown": 0
+            },
+            {
+                "guid": 170029,
+                "unknown": 0
+            },
+            {
+                "guid": 170030,
+                "unknown": 0
+            },
+            {
+                "guid": 170031,
+                "unknown": 0
+            },
+            {
+                "guid": 170032,
+                "unknown": 0
+            },
+            {
+                "guid": 170033,
+                "unknown": 0
+            },
+            {
+                "guid": 170034,
+                "unknown": 0
+            },
+            {
+                "guid": 170035,
+                "unknown": 0
+            },
+            {
+                "guid": 170036,
+                "unknown": 0
+            },
+            {
+                "guid": 170037,
+                "unknown": 0
+            },
+            {
+                "guid": 170038,
+                "unknown": 0
+            },
+            {
+                "guid": 170039,
+                "unknown": 0
+            },
+            {
+                "guid": 170040,
+                "unknown": 0
+            },
+            {
+                "guid": 170041,
+                "unknown": 0
+            },
+            {
+                "guid": 170042,
+                "unknown": 0
+            },
+            {
+                "guid": 170043,
+                "unknown": 0
+            },
+            {
+                "guid": 170044,
+                "unknown": 0
+            },
+            {
+                "guid": 170045,
+                "unknown": 0
+            },
+            {
+                "guid": 170046,
+                "unknown": 0
+            },
+            {
+                "guid": 170047,
+                "unknown": 0
+            },
+            {
+                "guid": 170048,
+                "unknown": 0
+            },
+            {
+                "guid": 170049,
+                "unknown": 0
+            },
+            {
+                "guid": 170050,
+                "unknown": 0
+            },
+            {
+                "guid": 170051,
+                "unknown": 0
+            },
+            {
+                "guid": 170052,
+                "unknown": 0
+            },
+            {
+                "guid": 170053,
+                "unknown": 0
+            },
+            {
+                "guid": 170054,
+                "unknown": 0
+            },
+            {
+                "guid": 170055,
+                "unknown": 0
+            },
+            {
+                "guid": 170056,
+                "unknown": 0
+            },
+            {
+                "guid": 170057,
+                "unknown": 0
+            },
+            {
+                "guid": 170058,
+                "unknown": 0
+            },
+            {
+                "guid": 170059,
+                "unknown": 0
+            },
+            {
+                "guid": 170060,
+                "unknown": 0
+            },
+            {
+                "guid": 170061,
+                "unknown": 0
+            },
+            {
+                "guid": 170062,
+                "unknown": 0
+            }
+        ]
     },
     {
         "comment": "Facial Hair",
