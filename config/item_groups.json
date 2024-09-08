@@ -502,7 +502,7 @@
             {
                 "guid": 80063,
                 "unknown": 0
-            }            
+            }
         ]
     },
     {
@@ -871,7 +871,484 @@
         "unknown14": 0,
         "unknown16": "",
         "unknown17": false,
-        "items": []
+        "items": [
+            {
+                "guid": 130000,
+                "unknown": 0
+            },
+            {
+                "guid": 130001,
+                "unknown": 0
+            },
+            {
+                "guid": 130002,
+                "unknown": 0
+            },
+            {
+                "guid": 130003,
+                "unknown": 0
+            },
+            {
+                "guid": 130004,
+                "unknown": 0
+            },
+            {
+                "guid": 130005,
+                "unknown": 0
+            },
+            {
+                "guid": 130006,
+                "unknown": 0
+            },
+            {
+                "guid": 130007,
+                "unknown": 0
+            },
+            {
+                "guid": 130008,
+                "unknown": 0
+            },
+            {
+                "guid": 130009,
+                "unknown": 0
+            },
+            {
+                "guid": 130010,
+                "unknown": 0
+            },
+            {
+                "guid": 130011,
+                "unknown": 0
+            },
+            {
+                "guid": 130012,
+                "unknown": 0
+            },
+            {
+                "guid": 130013,
+                "unknown": 0
+            },
+            {
+                "guid": 130014,
+                "unknown": 0
+            },
+            {
+                "guid": 130015,
+                "unknown": 0
+            },
+            {
+                "guid": 130016,
+                "unknown": 0
+            },
+            {
+                "guid": 130017,
+                "unknown": 0
+            },
+            {
+                "guid": 130018,
+                "unknown": 0
+            },
+            {
+                "guid": 130019,
+                "unknown": 0
+            },
+            {
+                "guid": 130020,
+                "unknown": 0
+            },
+            {
+                "guid": 130021,
+                "unknown": 0
+            },
+            {
+                "guid": 130022,
+                "unknown": 0
+            },
+            {
+                "guid": 130023,
+                "unknown": 0
+            },
+            {
+                "guid": 130024,
+                "unknown": 0
+            },
+            {
+                "guid": 130025,
+                "unknown": 0
+            },
+            {
+                "guid": 130026,
+                "unknown": 0
+            },
+            {
+                "guid": 130027,
+                "unknown": 0
+            },
+            {
+                "guid": 130028,
+                "unknown": 0
+            },
+            {
+                "guid": 130029,
+                "unknown": 0
+            },
+            {
+                "guid": 130030,
+                "unknown": 0
+            },
+            {
+                "guid": 130031,
+                "unknown": 0
+            },
+            {
+                "guid": 130032,
+                "unknown": 0
+            },
+            {
+                "guid": 130033,
+                "unknown": 0
+            },
+            {
+                "guid": 130034,
+                "unknown": 0
+            },
+            {
+                "guid": 130035,
+                "unknown": 0
+            },
+            {
+                "guid": 130036,
+                "unknown": 0
+            },
+            {
+                "guid": 130037,
+                "unknown": 0
+            },
+            {
+                "guid": 130038,
+                "unknown": 0
+            },
+            {
+                "guid": 130039,
+                "unknown": 0
+            },
+            {
+                "guid": 130040,
+                "unknown": 0
+            },
+            {
+                "guid": 130041,
+                "unknown": 0
+            },
+            {
+                "guid": 130042,
+                "unknown": 0
+            },
+            {
+                "guid": 130043,
+                "unknown": 0
+            },
+            {
+                "guid": 130044,
+                "unknown": 0
+            },
+            {
+                "guid": 130045,
+                "unknown": 0
+            },
+            {
+                "guid": 130046,
+                "unknown": 0
+            },
+            {
+                "guid": 130047,
+                "unknown": 0
+            },
+            {
+                "guid": 130048,
+                "unknown": 0
+            },
+            {
+                "guid": 130049,
+                "unknown": 0
+            },
+            {
+                "guid": 130050,
+                "unknown": 0
+            },
+            {
+                "guid": 130051,
+                "unknown": 0
+            },
+            {
+                "guid": 130052,
+                "unknown": 0
+            },
+            {
+                "guid": 130053,
+                "unknown": 0
+            },
+            {
+                "guid": 130054,
+                "unknown": 0
+            },
+            {
+                "guid": 130055,
+                "unknown": 0
+            },
+            {
+                "guid": 130056,
+                "unknown": 0
+            },
+            {
+                "guid": 130057,
+                "unknown": 0
+            },
+            {
+                "guid": 130058,
+                "unknown": 0
+            },
+            {
+                "guid": 130059,
+                "unknown": 0
+            },
+            {
+                "guid": 130060,
+                "unknown": 0
+            },
+            {
+                "guid": 130061,
+                "unknown": 0
+            },
+            {
+                "guid": 130062,
+                "unknown": 0
+            },
+            {
+                "guid": 130063,
+                "unknown": 0
+            },
+            {
+                "guid": 130064,
+                "unknown": 0
+            },
+            {
+                "guid": 130065,
+                "unknown": 0
+            },
+            {
+                "guid": 130066,
+                "unknown": 0
+            },
+            {
+                "guid": 130067,
+                "unknown": 0
+            },
+            {
+                "guid": 130068,
+                "unknown": 0
+            },
+            {
+                "guid": 130069,
+                "unknown": 0
+            },
+            {
+                "guid": 130070,
+                "unknown": 0
+            },
+            {
+                "guid": 130071,
+                "unknown": 0
+            },
+            {
+                "guid": 130072,
+                "unknown": 0
+            },
+            {
+                "guid": 130073,
+                "unknown": 0
+            },
+            {
+                "guid": 130074,
+                "unknown": 0
+            },
+            {
+                "guid": 130075,
+                "unknown": 0
+            },
+            {
+                "guid": 130076,
+                "unknown": 0
+            },
+            {
+                "guid": 130077,
+                "unknown": 0
+            },
+            {
+                "guid": 130078,
+                "unknown": 0
+            },
+            {
+                "guid": 130079,
+                "unknown": 0
+            },
+            {
+                "guid": 130080,
+                "unknown": 0
+            },
+            {
+                "guid": 130081,
+                "unknown": 0
+            },
+            {
+                "guid": 130082,
+                "unknown": 0
+            },
+            {
+                "guid": 130083,
+                "unknown": 0
+            },
+            {
+                "guid": 130084,
+                "unknown": 0
+            },
+            {
+                "guid": 130085,
+                "unknown": 0
+            },
+            {
+                "guid": 130086,
+                "unknown": 0
+            },
+            {
+                "guid": 130087,
+                "unknown": 0
+            },
+            {
+                "guid": 130088,
+                "unknown": 0
+            },
+            {
+                "guid": 130089,
+                "unknown": 0
+            },
+            {
+                "guid": 130090,
+                "unknown": 0
+            },
+            {
+                "guid": 130091,
+                "unknown": 0
+            },
+            {
+                "guid": 130092,
+                "unknown": 0
+            },
+            {
+                "guid": 130093,
+                "unknown": 0
+            },
+            {
+                "guid": 130094,
+                "unknown": 0
+            },
+            {
+                "guid": 130095,
+                "unknown": 0
+            },
+            {
+                "guid": 130096,
+                "unknown": 0
+            },
+            {
+                "guid": 130097,
+                "unknown": 0
+            },
+            {
+                "guid": 130098,
+                "unknown": 0
+            },
+            {
+                "guid": 130099,
+                "unknown": 0
+            },
+            {
+                "guid": 130100,
+                "unknown": 0
+            },
+            {
+                "guid": 130101,
+                "unknown": 0
+            },
+            {
+                "guid": 130102,
+                "unknown": 0
+            },
+            {
+                "guid": 130103,
+                "unknown": 0
+            },
+            {
+                "guid": 130104,
+                "unknown": 0
+            },
+            {
+                "guid": 130105,
+                "unknown": 0
+            },
+            {
+                "guid": 130106,
+                "unknown": 0
+            },
+            {
+                "guid": 130107,
+                "unknown": 0
+            },
+            {
+                "guid": 130108,
+                "unknown": 0
+            },
+            {
+                "guid": 130109,
+                "unknown": 0
+            },
+            {
+                "guid": 130110,
+                "unknown": 0
+            },
+            {
+                "guid": 130111,
+                "unknown": 0
+            },
+            {
+                "guid": 130112,
+                "unknown": 0
+            },
+            {
+                "guid": 130113,
+                "unknown": 0
+            },
+            {
+                "guid": 130114,
+                "unknown": 0
+            },
+            {
+                "guid": 130115,
+                "unknown": 0
+            },
+            {
+                "guid": 130116,
+                "unknown": 0
+            },
+            {
+                "guid": 130117,
+                "unknown": 0
+            },
+            {
+                "guid": 130118,
+                "unknown": 0
+            }
+        ]
     },
     {
         "comment": "Hair Color",
@@ -931,7 +1408,152 @@
         "unknown14": 0,
         "unknown16": "",
         "unknown17": false,
-        "items": []
+        "items": [
+            {
+                "guid": 120000,
+                "unknown": 0
+            },
+            {
+                "guid": 120001,
+                "unknown": 0
+            },
+            {
+                "guid": 120002,
+                "unknown": 0
+            },
+            {
+                "guid": 120003,
+                "unknown": 0
+            },
+            {
+                "guid": 120004,
+                "unknown": 0
+            },
+            {
+                "guid": 120005,
+                "unknown": 0
+            },
+            {
+                "guid": 120006,
+                "unknown": 0
+            },
+            {
+                "guid": 120007,
+                "unknown": 0
+            },
+            {
+                "guid": 120008,
+                "unknown": 0
+            },
+            {
+                "guid": 120009,
+                "unknown": 0
+            },
+            {
+                "guid": 120010,
+                "unknown": 0
+            },
+            {
+                "guid": 120011,
+                "unknown": 0
+            },
+            {
+                "guid": 120012,
+                "unknown": 0
+            },
+            {
+                "guid": 120013,
+                "unknown": 0
+            },
+            {
+                "guid": 120014,
+                "unknown": 0
+            },
+            {
+                "guid": 120015,
+                "unknown": 0
+            },
+            {
+                "guid": 120016,
+                "unknown": 0
+            },
+            {
+                "guid": 120017,
+                "unknown": 0
+            },
+            {
+                "guid": 120018,
+                "unknown": 0
+            },
+            {
+                "guid": 120019,
+                "unknown": 0
+            },
+            {
+                "guid": 120020,
+                "unknown": 0
+            },
+            {
+                "guid": 120021,
+                "unknown": 0
+            },
+            {
+                "guid": 120022,
+                "unknown": 0
+            },
+            {
+                "guid": 120023,
+                "unknown": 0
+            },
+            {
+                "guid": 120024,
+                "unknown": 0
+            },
+            {
+                "guid": 120025,
+                "unknown": 0
+            },
+            {
+                "guid": 120026,
+                "unknown": 0
+            },
+            {
+                "guid": 120027,
+                "unknown": 0
+            },
+            {
+                "guid": 120028,
+                "unknown": 0
+            },
+            {
+                "guid": 120029,
+                "unknown": 0
+            },
+            {
+                "guid": 120030,
+                "unknown": 0
+            },
+            {
+                "guid": 120031,
+                "unknown": 0
+            },
+            {
+                "guid": 120032,
+                "unknown": 0
+            },
+            {
+                "guid": 120033,
+                "unknown": 0
+            },
+            {
+                "guid": 120034,
+                "unknown": 0
+            },
+            {
+                "guid": 120035,
+                "unknown": 0
+            }
+        ]
     },
     {
         "comment": "Face Design",
