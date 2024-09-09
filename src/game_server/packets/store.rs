@@ -19,20 +19,20 @@ impl SerializePacket for StoreOpCode {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct StoreItem {
-    guid: u32,
-    unknown1: u32,
-    unknown2: u32,
-    unknown3: u32,
-    unknown4: bool,
-    unknown5: bool,
-    unknown6: u32,
-    unknown7: bool,
-    unknown8: bool,
-    unknown9: u32,
-    unknown10: u32,
-    unknown11: u32,
-    unknown12: u32,
-    unknown13: u32,
+    pub guid: u32,
+    pub unknown1: u32,
+    pub unknown2: u32,
+    pub unknown3: u32,
+    pub unknown4: bool,
+    pub unknown5: bool,
+    pub unknown6: u32,
+    pub unknown7: bool,
+    pub unknown8: bool,
+    pub base_cost: u32,
+    pub unknown10: u32,
+    pub unknown11: u32,
+    pub unknown12: u32,
+    pub member_cost: u32,
 }
 
 #[derive(SerializePacket, DeserializePacket)]

@@ -3,6 +3,7 @@ use std::{collections::BTreeMap, io::Write};
 use byteorder::{LittleEndian, WriteBytesExt};
 
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
+use serde::Deserialize;
 
 use super::{
     item::{Attachment, BaseAttachmentGroup, ItemDefinition, WieldType},
@@ -269,15 +270,34 @@ impl GamePacket for ItemDefinitionsReply<'_> {
     const HEADER: Self::Header = PlayerUpdateOpCode::ItemDefinitionsReply;
 }
 
-#[derive(SerializePacket, DeserializePacket)]
+#[derive(Clone, Copy, Deserialize)]
+pub enum CustomizationSlot {
+    HeadModel = 0,
+    SkinTone = 1,
+    HairStyle = 2,
+    HairColor = 3,
+    EyeColor = 4,
+    FacialHair = 5,
+    FacePattern = 6,
+    BodyModel = 8,
+}
+
+impl SerializePacket for CustomizationSlot {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        buffer.write_u32::<LittleEndian>(*self as u32)?;
+        Ok(())
+    }
+}
+
+#[derive(SerializePacket)]
 pub struct Customization {
-    pub customization_slot: u32,
+    pub customization_slot: CustomizationSlot,
     pub customization_param1: String,
     pub customization_param2: u32,
     pub customization_param3: u32,
 }
 
-#[derive(SerializePacket, DeserializePacket)]
+#[derive(SerializePacket)]
 pub struct UpdateCustomizations {
     pub guid: u64,
     pub update: bool,
