@@ -1,6 +1,6 @@
 [
     {
         "item_group_guid": 123,
-        "members_cost_expression": "0.9x - 1"
+        "members_cost_expression": "0.9*x - 1"
     }
 ]
