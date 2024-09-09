@@ -5,7 +5,7 @@ use packet_serialize::{
 };
 use serde::Deserialize;
 
-use super::{GamePacket, OpCode};
+use super::{player_update::CustomizationSlot, GamePacket, OpCode};
 
 #[derive(Copy, Clone, Debug, Deserialize, PartialEq, Eq, PartialOrd, Ord, TryFromPrimitive)]
 #[repr(u32)]
@@ -198,7 +198,7 @@ pub struct ItemDefinition {
     pub unknown35: bool,
     pub unknown36: u32,
     pub unknown37: u32,
-    pub customization_slot: u32,
+    pub customization_slot: CustomizationSlot,
     pub customization_id: u32,
     pub unknown40: u32,
     pub stats: Vec<ItemStat>,
