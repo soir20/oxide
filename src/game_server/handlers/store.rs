@@ -95,12 +95,14 @@ fn cost_map_from_sales(
                         .as_deref()
                         .unwrap_or(DEFAULT_COST_EXPRESSION),
                     cost_entry.base,
+                    *item_guid,
                 )?;
                 cost_entry.members = evaluate_cost_expression(
                     sale.members_cost_expression
                         .as_deref()
                         .unwrap_or(DEFAULT_COST_EXPRESSION),
                     cost_entry.members,
+                    *item_guid,
                 )?;
             }
         } else {
@@ -129,16 +131,28 @@ fn items_by_group(item_groups: &[ItemGroupDefinition]) -> BTreeMap<i32, Vec<u32>
     items_by_group
 }
 
-fn evaluate_cost_expression(cost_expression: &str, cost: u32) -> Result<u32, Error> {
+fn evaluate_cost_expression(
+    cost_expression: &str,
+    cost: u32,
+    item_guid: u32,
+) -> Result<u32, Error> {
     let context = context_map! {
         "x" => evalexpr::Value::Float(cost as f64),
     }
-    .expect("Couldn't build expression evaluation context");
+    .unwrap_or_else(|_| {
+        panic!(
+            "Couldn't build expression evaluation context for item {}",
+            item_guid
+        )
+    });
 
     let result = eval_with_context(cost_expression, &context).map_err(|err| {
         Error::new(
             ErrorKind::InvalidData,
-            format!("Unable to evaluate cost expression: {}", err),
+            format!(
+                "Unable to evaluate cost expression for item {}: {}",
+                item_guid, err
+            ),
         )
     })?;
 
@@ -147,7 +161,8 @@ fn evaluate_cost_expression(cost_expression: &str, cost: u32) -> Result<u32, Err
             Error::new(
                 ErrorKind::InvalidData,
                 format!(
-                    "Cost expression returned float that could not be converted to an integer: {}, {}",
+                    "Cost expression returned float that could not be converted to an integer for item {}: {}, {}",
+                    item_guid,
                     new_cost,
                     err
                 ),
@@ -157,8 +172,8 @@ fn evaluate_cost_expression(cost_expression: &str, cost: u32) -> Result<u32, Err
         Err(Error::new(
             ErrorKind::InvalidData,
             format!(
-                "Cost expression did not return an integer, returned: {}",
-                result
+                "Cost expression did not return an integer for item {}, returned: {}",
+                item_guid, result
             ),
         ))
     }
