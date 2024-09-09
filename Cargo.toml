@@ -7,6 +7,7 @@ edition = "2021"
 axum = "0.7.5"
 byteorder = "1.5.0"
 crc32fast = "1.4.2"
+evalexpr = "11.3.0"
 packet_serialize = { path = "src/packet_serialize" }
 miniz_oxide = "0.7.2"
 num_enum = "0.7.2"

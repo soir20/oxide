@@ -1,0 +1,7 @@
+[
+    {
+        "item_group_guid": 123,
+        "base_cost_expression": "x",
+        "members_cost_expression": "0.9x - 1"
+    }
+]
