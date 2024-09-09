@@ -272,6 +272,7 @@ impl GamePacket for ItemDefinitionsReply<'_> {
 
 #[derive(Clone, Copy, Deserialize)]
 pub enum CustomizationSlot {
+    None = -1,
     HeadModel = 0,
     SkinTone = 1,
     HairStyle = 2,
