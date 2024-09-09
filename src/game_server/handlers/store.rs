@@ -147,7 +147,8 @@ fn evaluate_cost_expression(cost_expression: &str, cost: u32) -> Result<u32, Err
             Error::new(
                 ErrorKind::InvalidData,
                 format!(
-                    "Cost expression returned float that could not be converted to an integer: {}",
+                    "Cost expression returned float that could not be converted to an integer: {}, {}",
+                    new_cost,
                     err
                 ),
             )
