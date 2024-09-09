@@ -9,6 +9,7 @@ pub mod lock_enforcer;
 pub mod login;
 pub mod mount;
 pub mod reference_data;
+pub mod store;
 pub mod test_data;
 pub mod time;
 pub mod unique_guid;

@@ -19,6 +19,7 @@ use handlers::lock_enforcer::{
 use handlers::login::send_points_of_interest;
 use handlers::mount::{load_mounts, process_mount_packet, MountConfig};
 use handlers::reference_data::{load_categories, load_item_classes, load_item_groups};
+use handlers::store::{load_cost_map, CostEntry};
 use handlers::test_data::{make_test_nameplate_image, make_test_player};
 use handlers::time::make_game_time_sync;
 use handlers::unique_guid::{player_guid, shorten_zone_template_guid, zone_instance_guid};
@@ -29,6 +30,7 @@ use packets::item::ItemDefinition;
 use packets::login::{DeploymentEnv, GameSettings, LoginReply, WelcomeScreen, ZoneDetailsDone};
 use packets::player_update::{ItemDefinitionsReply, QueueAnimation, UpdateWieldType};
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
+use packets::store::StoreItemList;
 use packets::tunnel::{TunneledPacket, TunneledWorldPacket};
 use packets::update_position::UpdatePlayerPosition;
 use packets::zone::ZoneTeleportRequest;
@@ -76,6 +78,7 @@ impl From<SerializePacketError> for ProcessPacketError {
 
 pub struct GameServer {
     categories: CategoryDefinitions,
+    costs: BTreeMap<u32, CostEntry>,
     default_sabers: BTreeMap<u32, DefaultSaber>,
     lock_enforcer_source: LockEnforcerSource,
     items: BTreeMap<u32, ItemDefinition>,
@@ -89,14 +92,17 @@ impl GameServer {
     pub fn new(config_dir: &Path) -> Result<Self, Error> {
         let characters = GuidTable::new();
         let (templates, zones) = load_zones(config_dir, characters.write())?;
+        let item_definitions = load_item_definitions(config_dir)?;
+        let item_groups = load_item_groups(config_dir)?;
         Ok(GameServer {
             categories: load_categories(config_dir)?,
+            costs: load_cost_map(config_dir, &item_definitions, &item_groups)?,
             default_sabers: load_default_sabers(config_dir)?,
             lock_enforcer_source: LockEnforcerSource::from(characters, zones),
-            items: load_item_definitions(config_dir)?,
+            items: item_definitions,
             item_classes: load_item_classes(config_dir)?,
             item_groups: ItemGroupDefinitions {
-                definitions: load_item_groups(config_dir)?,
+                definitions: item_groups,
             },
             mounts: load_mounts(config_dir)?,
             zone_templates: templates,
@@ -249,6 +255,12 @@ impl GameServer {
                         inner: GamePacket::serialize(&self.item_groups)?,
                     };
                     sender_only_packets.push(GamePacket::serialize(&item_groups)?);
+
+                    let store_items = TunneledPacket {
+                        unknown1: true,
+                        inner: GamePacket::serialize(&StoreItemList::from(&self.costs))?,
+                    };
+                    sender_only_packets.push(GamePacket::serialize(&store_items)?);
 
                     let mut character_broadcasts = self.lock_enforcer().read_characters(|characters_table_read_handle| {
                         let possible_index = characters_table_read_handle.index(player_guid(sender));
