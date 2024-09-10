@@ -465,7 +465,7 @@ pub fn make_test_player(
 }
 
 pub fn make_test_customizations() -> Vec<u32> {
-    vec![1, 2, 3]
+    vec![11, 484, 10000, 30034, 70009]
 }
 
 pub fn make_test_nameplate_image(guid: u32) -> Result<Vec<Vec<u8>>, SerializePacketError> {
