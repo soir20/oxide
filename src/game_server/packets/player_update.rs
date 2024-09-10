@@ -290,7 +290,7 @@ impl SerializePacket for CustomizationSlot {
     }
 }
 
-#[derive(SerializePacket)]
+#[derive(Deserialize, SerializePacket)]
 pub struct Customization {
     pub customization_slot: CustomizationSlot,
     pub customization_param1: String,

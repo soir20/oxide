@@ -79,6 +79,7 @@ pub struct Player {
     pub battle_classes: BTreeMap<u32, BattleClass>,
     pub active_battle_class: u32,
     pub inventory: BTreeSet<u32>,
+    pub customizations: Vec<u32>,
 }
 
 pub struct PreviousFixture {

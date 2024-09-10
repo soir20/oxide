@@ -10,7 +10,8 @@ use handlers::command::process_command;
 use handlers::guid::{GuidTable, GuidTableHandle, GuidTableWriteHandle};
 use handlers::housing::process_housing_packet;
 use handlers::inventory::{
-    load_default_sabers, process_inventory_packet, update_saber_tints, DefaultSaber,
+    load_customization_item_mappings, load_customizations, load_default_sabers,
+    process_inventory_packet, update_saber_tints, DefaultSaber,
 };
 use handlers::item::load_item_definitions;
 use handlers::lock_enforcer::{
@@ -20,7 +21,7 @@ use handlers::login::send_points_of_interest;
 use handlers::mount::{load_mounts, process_mount_packet, MountConfig};
 use handlers::reference_data::{load_categories, load_item_classes, load_item_groups};
 use handlers::store::{load_cost_map, CostEntry};
-use handlers::test_data::{make_test_nameplate_image, make_test_player};
+use handlers::test_data::{make_test_customizations, make_test_nameplate_image, make_test_player};
 use handlers::time::make_game_time_sync;
 use handlers::unique_guid::{player_guid, shorten_zone_template_guid, zone_instance_guid};
 use handlers::zone::{load_zones, teleport_within_zone, Zone, ZoneTemplate};
@@ -28,7 +29,9 @@ use packets::client_update::{Health, Power, PreloadCharactersDone, Stat, StatId,
 use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
 use packets::item::ItemDefinition;
 use packets::login::{DeploymentEnv, GameSettings, LoginReply, WelcomeScreen, ZoneDetailsDone};
-use packets::player_update::{ItemDefinitionsReply, QueueAnimation, UpdateWieldType};
+use packets::player_update::{
+    Customization, ItemDefinitionsReply, QueueAnimation, UpdateWieldType,
+};
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
 use packets::store::StoreItemList;
 use packets::tunnel::{TunneledPacket, TunneledWorldPacket};
@@ -79,6 +82,8 @@ impl From<SerializePacketError> for ProcessPacketError {
 pub struct GameServer {
     categories: CategoryDefinitions,
     costs: BTreeMap<u32, CostEntry>,
+    customizations: BTreeMap<u32, Customization>,
+    customization_item_mappings: BTreeMap<u32, Vec<u32>>,
     default_sabers: BTreeMap<u32, DefaultSaber>,
     lock_enforcer_source: LockEnforcerSource,
     items: BTreeMap<u32, ItemDefinition>,
@@ -97,6 +102,8 @@ impl GameServer {
         Ok(GameServer {
             categories: load_categories(config_dir)?,
             costs: load_cost_map(config_dir, &item_definitions, &item_groups)?,
+            customizations: load_customizations(config_dir)?,
+            customization_item_mappings: load_customization_item_mappings(config_dir)?,
             default_sabers: load_default_sabers(config_dir)?,
             lock_enforcer_source: LockEnforcerSource::from(characters, zones),
             items: item_definitions,
@@ -198,6 +205,7 @@ impl GameServer {
                                         .collect(),
                                     active_battle_class: player.inner.data.active_battle_class,
                                     inventory: player.inner.data.inventory.into_keys().collect(),
+                                    customizations: make_test_customizations(),
                                 },
                                 self,
                             ));

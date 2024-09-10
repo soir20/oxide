@@ -16,7 +16,7 @@ use crate::game_server::{
         inventory::{EquipGuid, InventoryOpCode, UnequipSlot},
         item::{Attachment, EquipmentSlot, ItemDefinition, WieldType},
         player_data::EquippedItem,
-        player_update::UpdateWieldType,
+        player_update::{Customization, UpdateWieldType},
         tunnel::TunneledPacket,
         GamePacket,
     },
@@ -43,6 +43,22 @@ pub fn load_default_sabers(config_dir: &Path) -> Result<BTreeMap<u32, DefaultSab
         .into_iter()
         .map(|saber| (saber.hilt_item_guid, saber))
         .collect())
+}
+
+pub fn load_customizations(config_dir: &Path) -> Result<BTreeMap<u32, Customization>, Error> {
+    let mut file = File::open(config_dir.join("customizations.json"))?;
+    let customizations: Vec<Customization> = serde_json::from_reader(&mut file)?;
+    Ok(customizations
+        .into_iter()
+        .map(|customization: Customization| (customization.customization_param2, customization))
+        .collect())
+}
+
+pub fn load_customization_item_mappings(
+    config_dir: &Path,
+) -> Result<BTreeMap<u32, Vec<u32>>, Error> {
+    let mut file = File::open(config_dir.join("customization_item_mappings.json"))?;
+    Ok(serde_json::from_reader(&mut file)?)
 }
 
 pub fn process_inventory_packet(

@@ -157,7 +157,7 @@ pub fn make_test_player(
                 definition_id: item.guid,
                 item: Item {
                     definition_id: item.guid,
-                    tint: 0,
+                    tint: item.tint,
                     guid: item.guid,
                     quantity: 1,
                     num_consumed: 0,
@@ -462,6 +462,10 @@ pub fn make_test_player(
             effects: vec![],
         },
     }
+}
+
+pub fn make_test_customizations() -> Vec<u32> {
+    vec![1, 2, 3]
 }
 
 pub fn make_test_nameplate_image(guid: u32) -> Result<Vec<Vec<u8>>, SerializePacketError> {
