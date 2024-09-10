@@ -368,6 +368,9 @@ impl GameServer {
 
                                                 character_broadcasts.push(Broadcast::Single(sender, global_packets));
 
+                                                let sender_only_packets = Zone::diff_character_packets(&character_guids, &characters_read, &self.mounts)?;
+                                                character_broadcasts.push(Broadcast::Single(sender, sender_only_packets));
+
                                                 Ok(character_broadcasts)
                                             } else {
                                                 println!(
