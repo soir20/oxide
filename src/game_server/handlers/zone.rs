@@ -286,11 +286,20 @@ impl Zone {
         ])
     }
 
-    pub fn other_players_nearby(sender: u32, chunk: Chunk, instance_guid: u64, characters_table_read_handle: &CharacterTableReadHandle) -> Result<Vec<u32>, ProcessPacketError> {
+    pub fn other_players_nearby(
+        sender: u32,
+        chunk: Chunk,
+        instance_guid: u64,
+        characters_table_read_handle: &CharacterTableReadHandle,
+    ) -> Result<Vec<u32>, ProcessPacketError> {
         let mut guids = Vec::new();
 
         for chunk in Zone::nearby_chunks(chunk) {
-            for guid in characters_table_read_handle.keys_by_index((instance_guid, chunk, CharacterCategory::Player)) {
+            for guid in characters_table_read_handle.keys_by_index((
+                instance_guid,
+                chunk,
+                CharacterCategory::Player,
+            )) {
                 if guid != player_guid(sender) {
                     guids.push(shorten_player_guid(guid)?);
                 }
@@ -300,8 +309,14 @@ impl Zone {
         Ok(guids)
     }
 
-    pub fn all_players_nearby(sender: u32, chunk: Chunk, instance_guid: u64, characters_table_read_handle: &CharacterTableReadHandle) -> Result<Vec<u32>, ProcessPacketError> {
-        let mut guids = Zone::other_players_nearby(sender, chunk, instance_guid, characters_table_read_handle)?;
+    pub fn all_players_nearby(
+        sender: u32,
+        chunk: Chunk,
+        instance_guid: u64,
+        characters_table_read_handle: &CharacterTableReadHandle,
+    ) -> Result<Vec<u32>, ProcessPacketError> {
+        let mut guids =
+            Zone::other_players_nearby(sender, chunk, instance_guid, characters_table_read_handle)?;
         guids.push(sender);
         Ok(guids)
     }

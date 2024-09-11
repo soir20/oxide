@@ -10,8 +10,8 @@ use handlers::command::process_command;
 use handlers::guid::{GuidTable, GuidTableHandle, GuidTableWriteHandle};
 use handlers::housing::process_housing_packet;
 use handlers::inventory::{
-    load_customization_item_mappings, load_customizations, load_default_sabers,
-    process_inventory_packet, update_saber_tints, DefaultSaber,
+    customizations_from_guids, load_customization_item_mappings, load_customizations,
+    load_default_sabers, process_inventory_packet, update_saber_tints, DefaultSaber,
 };
 use handlers::item::load_item_definitions;
 use handlers::lock_enforcer::{
@@ -30,7 +30,8 @@ use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
 use packets::item::ItemDefinition;
 use packets::login::{DeploymentEnv, GameSettings, LoginReply, WelcomeScreen, ZoneDetailsDone};
 use packets::player_update::{
-    Customization, ItemDefinitionsReply, QueueAnimation, UpdateWieldType,
+    Customization, CustomizationSlot, ItemDefinitionsReply, QueueAnimation, UpdateCustomizations,
+    UpdateWieldType,
 };
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
 use packets::store::StoreItemList;
@@ -82,8 +83,8 @@ impl From<SerializePacketError> for ProcessPacketError {
 pub struct GameServer {
     categories: CategoryDefinitions,
     costs: BTreeMap<u32, CostEntry>,
-    customizations: BTreeMap<u32, Customization>,
-    customization_item_mappings: BTreeMap<u32, Vec<u32>>,
+    customizations: BTreeMap<(CustomizationSlot, u32), Customization>,
+    customization_item_mappings: BTreeMap<u32, Vec<(CustomizationSlot, u32)>>,
     default_sabers: BTreeMap<u32, DefaultSaber>,
     lock_enforcer_source: LockEnforcerSource,
     items: BTreeMap<u32, ItemDefinition>,
@@ -365,6 +366,15 @@ impl GameServer {
                                                     global_packets.push(GamePacket::serialize(&wield_type)?);
 
                                                     if let CharacterType::Player(player) = &character_read_handle.character_type {
+                                                        global_packets.push(GamePacket::serialize(&TunneledPacket {
+                                                            unknown1: true,
+                                                            inner: UpdateCustomizations {
+                                                                guid: player_guid(sender),
+                                                                update: true,
+                                                                customizations: customizations_from_guids(&player.customizations, self.customizations()),
+                                                            },
+                                                        })?);
+
                                                         if let Some(battle_class) = player.battle_classes.get(&player.active_battle_class) {
                                                             character_broadcasts.append(&mut update_saber_tints(sender, &battle_class.items, player.active_battle_class, self)?);
                                                         }
@@ -610,6 +620,14 @@ impl GameServer {
         }
 
         Ok(broadcasts)
+    }
+
+    pub fn customizations(&self) -> &BTreeMap<(CustomizationSlot, u32), Customization> {
+        &self.customizations
+    }
+
+    pub fn customization_item_mappings(&self) -> &BTreeMap<u32, Vec<(CustomizationSlot, u32)>> {
+        &self.customization_item_mappings
     }
 
     pub fn default_sabers(&self) -> &BTreeMap<u32, DefaultSaber> {

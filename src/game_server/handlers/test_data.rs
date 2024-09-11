@@ -9,7 +9,7 @@ use crate::game_server::packets::{
         InventoryItem, Item2, ItemGuid, Mount, Pet, PetTrick, Player, PlayerData, Slot, Unknown12,
         Unknown13, Unknown2,
     },
-    player_update::{AddNpc, Icon, NameplateImage, NameplateImageId},
+    player_update::{AddNpc, CustomizationSlot, Icon, NameplateImage, NameplateImageId},
     tunnel::TunneledPacket,
     GamePacket, Pos,
 };
@@ -464,8 +464,15 @@ pub fn make_test_player(
     }
 }
 
-pub fn make_test_customizations() -> Vec<u32> {
-    vec![11, 484, 10000, 30034, 70009]
+pub fn make_test_customizations() -> BTreeMap<CustomizationSlot, u32> {
+    let mut customizations = BTreeMap::new();
+    customizations.insert(CustomizationSlot::HeadModel, 10000);
+    customizations.insert(CustomizationSlot::SkinTone, 20029);
+    customizations.insert(CustomizationSlot::HairStyle, 30034);
+    customizations.insert(CustomizationSlot::HairColor, 11);
+    customizations.insert(CustomizationSlot::FacePattern, 70009);
+    customizations.insert(CustomizationSlot::BodyModel, 484);
+    customizations
 }
 
 pub fn make_test_nameplate_image(guid: u32) -> Result<Vec<Vec<u8>>, SerializePacketError> {

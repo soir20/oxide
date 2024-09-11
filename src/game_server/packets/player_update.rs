@@ -270,7 +270,7 @@ impl GamePacket for ItemDefinitionsReply<'_> {
     const HEADER: Self::Header = PlayerUpdateOpCode::ItemDefinitionsReply;
 }
 
-#[derive(Clone, Copy, Deserialize)]
+#[derive(Clone, Copy, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 pub enum CustomizationSlot {
     None = -1,
     HeadModel = 0,
@@ -290,7 +290,7 @@ impl SerializePacket for CustomizationSlot {
     }
 }
 
-#[derive(Deserialize, SerializePacket)]
+#[derive(Clone, Deserialize, SerializePacket)]
 pub struct Customization {
     pub customization_slot: CustomizationSlot,
     pub customization_param1: String,

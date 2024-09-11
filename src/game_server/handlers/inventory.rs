@@ -16,7 +16,7 @@ use crate::game_server::{
         inventory::{EquipGuid, InventoryOpCode, UnequipSlot},
         item::{Attachment, EquipmentSlot, ItemDefinition, WieldType},
         player_data::EquippedItem,
-        player_update::{Customization, UpdateWieldType},
+        player_update::{Customization, CustomizationSlot, UpdateWieldType},
         tunnel::TunneledPacket,
         GamePacket,
     },
@@ -45,18 +45,28 @@ pub fn load_default_sabers(config_dir: &Path) -> Result<BTreeMap<u32, DefaultSab
         .collect())
 }
 
-pub fn load_customizations(config_dir: &Path) -> Result<BTreeMap<u32, Customization>, Error> {
+pub fn load_customizations(
+    config_dir: &Path,
+) -> Result<BTreeMap<(CustomizationSlot, u32), Customization>, Error> {
     let mut file = File::open(config_dir.join("customizations.json"))?;
     let customizations: Vec<Customization> = serde_json::from_reader(&mut file)?;
     Ok(customizations
         .into_iter()
-        .map(|customization: Customization| (customization.customization_param2, customization))
+        .map(|customization: Customization| {
+            (
+                (
+                    customization.customization_slot,
+                    customization.customization_param2,
+                ),
+                customization,
+            )
+        })
         .collect())
 }
 
 pub fn load_customization_item_mappings(
     config_dir: &Path,
-) -> Result<BTreeMap<u32, Vec<u32>>, Error> {
+) -> Result<BTreeMap<u32, Vec<(CustomizationSlot, u32)>>, Error> {
     let mut file = File::open(config_dir.join("customization_item_mappings.json"))?;
     Ok(serde_json::from_reader(&mut file)?)
 }
@@ -288,6 +298,56 @@ pub fn wield_type_from_slot(
         })
         .map(|item_class| item_class.wield_type)
         .unwrap_or(WieldType::None)
+}
+
+pub fn customizations_from_guids(
+    applied_customizations: &BTreeMap<CustomizationSlot, u32>,
+    customizations: &BTreeMap<(CustomizationSlot, u32), Customization>,
+) -> Vec<Customization> {
+    let mut result = Vec::new();
+
+    for (customization_slot, customization_guid) in applied_customizations {
+        if let Some(customization) = customizations.get(&(*customization_slot, *customization_guid))
+        {
+            result.push(customization.clone());
+        } else {
+            println!(
+                "Skipped adding unknown customization {}",
+                customization_guid
+            )
+        }
+    }
+
+    result
+}
+
+pub fn customizations_from_item_guids(
+    applied_customization_item_guids: &[u32],
+    customizations: &BTreeMap<(CustomizationSlot, u32), Customization>,
+    customization_item_mappings: &BTreeMap<u32, Vec<(CustomizationSlot, u32)>>,
+) -> Vec<Customization> {
+    let mut result = Vec::new();
+
+    for customization_item_guid in applied_customization_item_guids {
+        if let Some(customizations_for_item) =
+            customization_item_mappings.get(customization_item_guid)
+        {
+            for (customization_slot, customization_guid) in customizations_for_item {
+                if let Some(customization) =
+                    customizations.get(&(*customization_slot, *customization_guid))
+                {
+                    result.push(customization.clone());
+                } else {
+                    println!(
+                        "Skipped adding unknown customization {}",
+                        customization_guid
+                    )
+                }
+            }
+        }
+    }
+
+    result
 }
 
 fn item_def_from_slot<'a>(
