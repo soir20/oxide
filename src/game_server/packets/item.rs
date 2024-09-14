@@ -16,6 +16,7 @@ pub enum EquipmentSlot {
     Body = 3,
     Feet = 4,
     Shoulders = 5,
+    FacePattern = 6,
     PrimaryWeapon = 7,
     SecondaryWeapon = 8,
     PrimarySaberShape = 10,
