@@ -30,8 +30,8 @@ use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
 use packets::item::ItemDefinition;
 use packets::login::{DeploymentEnv, GameSettings, LoginReply, WelcomeScreen, ZoneDetailsDone};
 use packets::player_update::{
-    Customization, CustomizationSlot, ItemDefinitionsReply, QueueAnimation,
-    InitialCustomizationData, UpdateWieldType,
+    Customization, CustomizationSlot, InitialCustomizationData, ItemDefinitionsReply,
+    QueueAnimation, UpdateWieldType,
 };
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
 use packets::store::StoreItemList;
