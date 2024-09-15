@@ -9,6 +9,8 @@ use super::{item::EquipmentSlot, OpCode};
 pub enum InventoryOpCode {
     UnequipSlot = 0x2,
     EquipGuid = 0x3,
+    PreviewCustomization = 0xb,
+    EquipCustomization = 0xc,
     EquipSaber = 0xd,
 }
 

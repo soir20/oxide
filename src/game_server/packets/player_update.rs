@@ -302,7 +302,7 @@ pub struct Customization {
 #[derive(SerializePacket)]
 pub struct UpdateCustomizations {
     pub guid: u64,
-    pub update: bool,
+    pub is_preview: bool,
     pub customizations: Vec<Customization>,
 }
 
@@ -313,12 +313,11 @@ impl GamePacket for UpdateCustomizations {
 }
 
 #[derive(SerializePacket)]
-pub struct UpdateEquippedCustomizationItems {
-    pub guid: u64,
+pub struct InitialCustomizationData {
     pub customizations: Vec<Customization>,
 }
 
-impl GamePacket for UpdateEquippedCustomizationItems {
+impl GamePacket for InitialCustomizationData {
     type Header = PlayerUpdateOpCode;
 
     const HEADER: Self::Header = PlayerUpdateOpCode::UpdateEquippedCustomizationItems;
