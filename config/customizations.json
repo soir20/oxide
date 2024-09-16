@@ -2,979 +2,979 @@
     {
         "customization_slot": "HeadModel",
         "customization_param1": "Char_CloneHead.adr",
-        "customization_param2": 10000,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HeadModel",
         "customization_param1": "Char_HumanMaleHead.adr",
-        "customization_param2": 10001,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HeadModel",
         "customization_param1": "Char_PantoranMaleHead.adr",
-        "customization_param2": 10002,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HeadModel",
         "customization_param1": "Char_TogrutaMaleHead.adr",
-        "customization_param2": 10003,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HeadModel",
         "customization_param1": "Char_TrandoshanMaleHead.adr",
-        "customization_param2": 10004,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HeadModel",
         "customization_param1": "Char_TwilekMaleHead.adr",
-        "customization_param2": 10005,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HeadModel",
         "customization_param1": "Char_ZabrakMaleHead.adr",
-        "customization_param2": 10006,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HeadModel",
         "customization_param1": "Char_HumanFemaleHead.adr",
-        "customization_param2": 10007,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HeadModel",
         "customization_param1": "Char_PantoranFemaleHead.adr",
-        "customization_param2": 10008,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HeadModel",
         "customization_param1": "Char_TogrutaFemaleHead.adr",
-        "customization_param2": 10009,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HeadModel",
         "customization_param1": "Char_TrandoshanFemaleHead.adr",
-        "customization_param2": 10010,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HeadModel",
         "customization_param1": "Char_TwilekFemaleHead.adr",
-        "customization_param2": 10011,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HeadModel",
         "customization_param1": "Char_ZabrakFemaleHead.adr",
-        "customization_param2": 10012,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "HumanPale",
-        "customization_param2": 20000,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "HumanPeach",
-        "customization_param2": 20001,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "HumanGolden",
-        "customization_param2": 20002,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "HumanWarmTan",
-        "customization_param2": 20003,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "HumanTan",
-        "customization_param2": 20004,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "HumanLightBrown",
-        "customization_param2": 20005,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "HumanBrown",
-        "customization_param2": 20006,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "TwilekBlue",
-        "customization_param2": 20007,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "TwilekTeal",
-        "customization_param2": 20008,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "TwilekGreen",
-        "customization_param2": 20009,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "TwilekYellow",
-        "customization_param2": 20010,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "TwilekPeach",
-        "customization_param2": 20011,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "TwilekOrange",
-        "customization_param2": 20012,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "TwilekBrown",
-        "customization_param2": 20013,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "TwilekGrey",
-        "customization_param2": 20014,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "TwilekRed",
-        "customization_param2": 20015,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "TwilekPink",
-        "customization_param2": 20016,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "ZabrakKhaki",
-        "customization_param2": 20017,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "ZabrakYellow",
-        "customization_param2": 20018,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "ZabrakRed",
-        "customization_param2": 20019,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "ZabrakBrown",
-        "customization_param2": 20020,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "TogrutaAmber",
-        "customization_param2": 20021,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "TogrutaOrange",
-        "customization_param2": 20022,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "TogrutaRed",
-        "customization_param2": 20023,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "PantoranBlue",
-        "customization_param2": 20024,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "TrandoshanGrey",
-        "customization_param2": 20025,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "TrandoshanGreen",
-        "customization_param2": 20026,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "TrandoshanBrightGreen",
-        "customization_param2": 20027,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "TrandoshanYellow",
-        "customization_param2": 20028,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "CloneTan",
-        "customization_param2": 20029,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "TrandoshanBrown",
-        "customization_param2": 20029,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_HumanMale_Hair_Anakin.adr",
-        "customization_param2": 30000,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_HumanMale_Hair_Swirly.adr",
-        "customization_param2": 30001,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_HumanMale_Hair_Bald.adr",
-        "customization_param2": 30002,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_HumanMale_Hair_Curley.adr",
-        "customization_param2": 30003,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_HumanMale_Hair_FauxHawk.adr",
-        "customization_param2": 30004,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_HumanMale_Hair_FrontFlip.adr",
-        "customization_param2": 30005,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_HumanMale_Hair_Forward.adr",
-        "customization_param2": 30006,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_HumanMale_Hair_HanSolo.adr",
-        "customization_param2": 30007,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_HumanMale_Hair_Jaybo.adr",
-        "customization_param2": 30008,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_HumanMale_Hair_Kenobi.adr",
-        "customization_param2": 30009,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_HumanMale_Hair_Luke.adr",
-        "customization_param2": 30010,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_HumanMale_Hair_LuxBonteri.adr",
-        "customization_param2": 30011,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_HumanMale_Hair_Quigon.adr",
-        "customization_param2": 30012,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_HumanMale_Hair_Saw.adr",
-        "customization_param2": 30013,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_HumanMale_Hair_QuinlanVos.adr",
-        "customization_param2": 30014,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_HumanFemale_Hair_AuraSing.adr",
-        "customization_param2": 30015,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_HumanFemale_Hair_Bald.adr",
-        "customization_param2": 30016,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_HumanFemale_Hair_Braid.adr",
-        "customization_param2": 30017,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_HumanFemale_Hair_Buns.adr",
-        "customization_param2": 30018,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_HumanFemale_Hair_CassieCryar.adr",
-        "customization_param2": 30019,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_HumanFemale_Hair_LowerBuns.adr",
-        "customization_param2": 30020,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_HumanFemale_Hair_FlipUnder.adr",
-        "customization_param2": 30021,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_HumanFemale_Hair_LuxuryBob.adr",
-        "customization_param2": 30022,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_HumanFemale_Hair_MaraJade.adr",
-        "customization_param2": 30023,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_HumanFemale_Hair_PadmeHeaddress.adr",
-        "customization_param2": 30024,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_HumanFemale_Hair_Headpiece.adr",
-        "customization_param2": 30025,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_HumanFemale_Hair_PonyTailRings.adr",
-        "customization_param2": 30026,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_HumanFemale_Hair_MultiPonytail.adr",
-        "customization_param2": 30027,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_HumanFemale_Hair_Short.adr",
-        "customization_param2": 30028,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_HumanFemale_Hair_Steela.adr",
-        "customization_param2": 30029,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_HumanFemale_Hair_UpdoBun.adr",
-        "customization_param2": 30030,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_Clone_Hair_Bald.adr",
-        "customization_param2": 30031,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_Clone_Hair_Boomer.adr",
-        "customization_param2": 30032,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_Clone_Hair_Boost.adr",
-        "customization_param2": 30033,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_Clone_Hair_BusinessMan.adr",
-        "customization_param2": 30034,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_Clone_Hair_Caesar.adr",
-        "customization_param2": 30035,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_Clone_Hair_CornRows.adr",
-        "customization_param2": 30036,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_Clone_Hair_Curly.adr",
-        "customization_param2": 30037,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_Clone_Hair_Flattop.adr",
-        "customization_param2": 30038,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_Clone_Hair_IceCold.adr",
-        "customization_param2": 30039,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_Clone_Hair_Razorhawk.adr",
-        "customization_param2": 30040,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_Clone_Hair_Rex.adr",
-        "customization_param2": 30041,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_Clone_Hair_Ridges.adr",
-        "customization_param2": 30042,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_Clone_Hair_TopKnot.adr",
-        "customization_param2": 30043,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_TwilekMale_Tails_Plain.adr",
-        "customization_param2": 30044,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_TwilekMale_Tails_Curled.adr",
-        "customization_param2": 30045,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_TwilekMale_Tails_Both.adr",
-        "customization_param2": 30046,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_TwilekMale_Tails_TwistedCircle.adr",
-        "customization_param2": 30047,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_TwilekMale_Tails_Left.adr",
-        "customization_param2": 30048,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_TwilekMale_Tails_Right.adr",
-        "customization_param2": 30049,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_TwilekMale_Tails_FatTail.adr",
-        "customization_param2": 30050,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_TwilekMale_Tails_Twist.adr",
-        "customization_param2": 30051,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_TwilekFemale_Tails_Curled.adr",
-        "customization_param2": 30052,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_TwilekFemale_Tails_Both.adr",
-        "customization_param2": 30053,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_TwilekFemale_Tails_TwistedCircle.adr",
-        "customization_param2": 30054,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_TwilekFemale_Tails_Left.adr",
-        "customization_param2": 30055,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_TwilekFemale_Tails_Right.adr",
-        "customization_param2": 30056,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_TwilekFemale_Tails_Plain.adr",
-        "customization_param2": 30057,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_TwilekFemale_Tails_FatTail.adr",
-        "customization_param2": 30058,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_TwilekFemale_Tails_Twist.adr",
-        "customization_param2": 30059,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_ZabrakMale_Horns_HornCrown.adr",
-        "customization_param2": 30060,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_ZabrakMale_Horns_Dreads.adr",
-        "customization_param2": 30061,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_ZabrakMale_Horns_Emohawk.adr",
-        "customization_param2": 30062,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_ZabrakMale_Horns_4Corners.adr",
-        "customization_param2": 30063,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_ZabrakMale_Horns_HeavyBrow.adr",
-        "customization_param2": 30064,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_ZabrakMale_Horns_EethKoth.adr",
-        "customization_param2": 30065,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_ZabrakMale_Horns_Mohawk.adr",
-        "customization_param2": 30066,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_ZabrakMale_Horns_SavageOpressBroken.adr",
-        "customization_param2": 30067,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_ZabrakMale_Horns_Spiky.adr",
-        "customization_param2": 30068,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_ZabrakMale_Horns_SpikyMohawk.adr",
-        "customization_param2": 30069,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_ZabrakMale_Horns_SugiTopKnot.adr",
-        "customization_param2": 30070,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_ZabrakFemale_Horns_HornCrown.adr",
-        "customization_param2": 30071,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_ZabrakFemale_Horns_Dreads.adr",
-        "customization_param2": 30072,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_ZabrakFemale_Horns_Emohawk.adr",
-        "customization_param2": 30073,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_ZabrakFemale_Horns_4Corners.adr",
-        "customization_param2": 30074,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_ZabrakFemale_Horns_HeavyBrow.adr",
-        "customization_param2": 30075,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_ZabrakFemale_Horns_EethKoth.adr",
-        "customization_param2": 30076,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_ZabrakFemale_Horns_Mohawk.adr",
-        "customization_param2": 30077,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_ZabrakFemale_Horns_SavageOpressBroken.adr",
-        "customization_param2": 30078,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_ZabrakFemale_Horns_Spiky.adr",
-        "customization_param2": 30079,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_ZabrakFemale_Horns_SpikyMohawk.adr",
-        "customization_param2": 30080,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_ZabrakFemale_Horns_SugiTopknot.adr",
-        "customization_param2": 30081,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_TogrutaMale_HeadTails_ForkTop.adr",
-        "customization_param2": 30082,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_TogrutaMale_HeadTails_TanoTop.adr",
-        "customization_param2": 30083,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_TogrutaMale_HeadTails_SpikeTop.adr",
-        "customization_param2": 30084,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_TogrutaFemale_HeadTails_ForkTop.adr",
-        "customization_param2": 30085,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_TogrutaFemale_HeadTails_TanoTop.adr",
-        "customization_param2": 30086,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_TogrutaFemale_HeadTails_SpikeTop.adr",
-        "customization_param2": 30087,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_PantoranMale_Hair_Bald.adr",
-        "customization_param2": 30088,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_PantoranMale_Hair_Caesar.adr",
-        "customization_param2": 30089,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_PantoranMale_Hair_ChairmanChiCho.adr",
-        "customization_param2": 30090,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_PantoranMale_Hair_DuckTail.adr",
-        "customization_param2": 30091,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_PantoranMale_Hair_FauxHawk.adr",
-        "customization_param2": 30092,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_PantoranMale_Hair_Flattop.adr",
-        "customization_param2": 30093,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_PantoranMale_Hair_PonyTail.adr",
-        "customization_param2": 30094,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_PantoranMale_Hair_PuffyPart.adr",
-        "customization_param2": 30095,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_PantoranFemale_Hair_Bald.adr",
-        "customization_param2": 30096,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_PantoranFemale_Hair_GoldBob.adr",
-        "customization_param2": 30097,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_PantoranFemale_Hair_GoldBuns.adr",
-        "customization_param2": 30098,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_PantoranFemale_Hair_GoldSpiralBuns.adr",
-        "customization_param2": 30099,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_PantoranFemale_Hair_LowPigTails.adr",
-        "customization_param2": 30100,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_PantoranFemale_Hair_LowRightPigTail.adr",
-        "customization_param2": 30101,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_PantoranFemale_Hair_PigTails.adr",
-        "customization_param2": 30102,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_PantoranFemale_Hair_ShortGold.adr",
-        "customization_param2": 30103,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_PantoranFemale_Hair_Short.adr",
-        "customization_param2": 30104,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_PantoranFemale_Hair_SideSwoop.adr",
-        "customization_param2": 30105,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_PantoranFemale_Hair_TopBun.adr",
-        "customization_param2": 30106,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_TrandoshanMale_Spikes_Bald.adr",
-        "customization_param2": 30107,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_TrandoshanMale_Spikes_LobsterLumps.adr",
-        "customization_param2": 30108,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_TrandoshanMale_Spikes_ShellPlates.adr",
-        "customization_param2": 30109,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_TrandoshanMale_Spikes_ShortSpikes.adr",
-        "customization_param2": 30110,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_TrandoshanMale_Spikes_SpikeCrown.adr",
-        "customization_param2": 30111,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_TrandoshanMale_Spikes_TallSpikes.adr",
-        "customization_param2": 30112,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_TrandoshanFemale_Spikes_Bald.adr",
-        "customization_param2": 30113,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_TrandoshanFemale_Spikes_LobsterLumps.adr",
-        "customization_param2": 30114,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_TrandoshanFemale_Spikes_ShellPlates.adr",
-        "customization_param2": 30115,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_TrandoshanFemale_Spikes_ShortSpikes.adr",
-        "customization_param2": 30116,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_TrandoshanFemale_Spikes_SpikeCrown.adr",
-        "customization_param2": 30117,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_TrandoshanFemale_Spikes_TallSpikes.adr",
-        "customization_param2": 30118,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
@@ -1190,469 +1190,469 @@
     {
         "customization_slot": "FacialHair",
         "customization_param1": "Cust_HumanMale_FacialHair_Yularen.adr",
-        "customization_param2": 60000,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacialHair",
         "customization_param1": "Cust_HumanMale_FacialHair_Smitts.adr",
-        "customization_param2": 60001,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacialHair",
         "customization_param1": "Cust_HumanMale_FacialHair_CleanShaven.adr",
-        "customization_param2": 60002,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacialHair",
         "customization_param1": "Cust_HumanMale_FacialHair_Kenobi.adr",
-        "customization_param2": 60003,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacialHair",
         "customization_param1": "Cust_Clone_FacialHair_CleanShaven.adr",
-        "customization_param2": 60004,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacialHair",
         "customization_param1": "Cust_Clone_FacialHair_Goatee.adr",
-        "customization_param2": 60005,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacialHair",
         "customization_param1": "Cust_Clone_FacialHair_PiellEye.adr",
-        "customization_param2": 60006,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacialHair",
         "customization_param1": "Cust_Clone_FacialHair_SplitChin.adr",
-        "customization_param2": 60007,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacialHair",
         "customization_param1": "Cust_Clone_FacialHair_TripleChin.adr",
-        "customization_param2": 60008,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacialHair",
         "customization_param1": "Cust_PantoranMale_FacialHair_CleanShaven.adr",
-        "customization_param2": 60009,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacialHair",
         "customization_param1": "Cust_PantoranMale_FacialHair_DoublePatch.adr",
-        "customization_param2": 60010,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacialHair",
         "customization_param1": "Cust_PantoranMale_FacialHair_Magnum.adr",
-        "customization_param2": 60011,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacialHair",
         "customization_param1": "Cust_PantoranMale_FacialHair_Papanoida.adr",
-        "customization_param2": 60012,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacialHair",
         "customization_param1": "Cust_PantoranMale_FacialHair_GoateeSharp.adr",
-        "customization_param2": 60013,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacialHair",
         "customization_param1": "Cust_PantoranMale_FacialHair_Patch.adr",
-        "customization_param2": 60014,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "RexScar",
-        "customization_param2": 70000,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "CrescentScar",
-        "customization_param2": 70001,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "CodyEyeScar",
-        "customization_param2": 70002,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "CodyFullScar",
-        "customization_param2": 70003,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "HardcaseTat",
-        "customization_param2": 70004,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "LeftEyeScar",
-        "customization_param2": 70005,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "",
-        "customization_param2": 70006,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "RepublicTattoo",
-        "customization_param2": 70007,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "CodySideScar",
-        "customization_param2": 70008,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "SquarishTattoo",
-        "customization_param2": 70009,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "TrackTattoo",
-        "customization_param2": 70010,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Whiskers",
-        "customization_param2": 70011,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "PiellScar",
-        "customization_param2": 70012,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "SecuraWraps",
-        "customization_param2": 70013,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "SecuraWraps&Spots",
-        "customization_param2": 70014,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Crescents",
-        "customization_param2": 70015,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "CrissCrossWraps",
-        "customization_param2": 70016,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Spots",
-        "customization_param2": 70017,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Stripes",
-        "customization_param2": 70018,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "SunCircle",
-        "customization_param2": 70019,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Swirls",
-        "customization_param2": 70020,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "",
-        "customization_param2": 70021,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Claw",
-        "customization_param2": 70022,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Crawl",
-        "customization_param2": 70023,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Crescent",
-        "customization_param2": 70024,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Diamond",
-        "customization_param2": 70025,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Koth",
-        "customization_param2": 70026,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Fire",
-        "customization_param2": 70027,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Flame",
-        "customization_param2": 70028,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Kass",
-        "customization_param2": 70029,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Mannequin",
-        "customization_param2": 70030,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Opress",
-        "customization_param2": 70031,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Strips",
-        "customization_param2": 70032,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Sugi",
-        "customization_param2": 70033,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Swoop",
-        "customization_param2": 70034,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Triangle",
-        "customization_param2": 70035,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "DarthMaul",
-        "customization_param2": 70036,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Curl",
-        "customization_param2": 70037,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Dots",
-        "customization_param2": 70038,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Eyebrow",
-        "customization_param2": 70039,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Lightning",
-        "customization_param2": 70040,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "ShaakTi",
-        "customization_param2": 70041,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Stacks",
-        "customization_param2": 70042,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Teardrop",
-        "customization_param2": 70043,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "V",
-        "customization_param2": 70044,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "BrowArc",
-        "customization_param2": 70045,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Chicho",
-        "customization_param2": 70046,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "ChinArc",
-        "customization_param2": 70047,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Chuchi",
-        "customization_param2": 70048,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Crooked",
-        "customization_param2": 70049,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Guard",
-        "customization_param2": 70050,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Ion",
-        "customization_param2": 70051,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Lines",
-        "customization_param2": 70052,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Papanoida",
-        "customization_param2": 70053,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Slope",
-        "customization_param2": 70054,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Squares",
-        "customization_param2": 70055,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Tbone",
-        "customization_param2": 70056,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Garnac",
-        "customization_param2": 70057,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Mask",
-        "customization_param2": 70058,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Mohawk",
-        "customization_param2": 70059,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Scratch",
-        "customization_param2": 70060,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Simple",
-        "customization_param2": 70061,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Sunfire",
-        "customization_param2": 70062,
+        "customization_param2": 0,
         "customization_param3": 0
     },
     {
