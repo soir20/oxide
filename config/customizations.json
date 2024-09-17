@@ -80,187 +80,181 @@
     {
         "customization_slot": "SkinTone",
         "customization_param1": "HumanPale",
-        "customization_param2": 0,
+        "customization_param2": 120000,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "HumanPeach",
-        "customization_param2": 0,
+        "customization_param2": 120001,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "HumanGolden",
-        "customization_param2": 0,
+        "customization_param2": 120002,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "HumanWarmTan",
-        "customization_param2": 0,
+        "customization_param2": 120003,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "HumanTan",
-        "customization_param2": 0,
+        "customization_param2": 120004,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "HumanLightBrown",
-        "customization_param2": 0,
+        "customization_param2": 120005,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "HumanBrown",
-        "customization_param2": 0,
+        "customization_param2": 120006,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "TwilekBlue",
-        "customization_param2": 0,
+        "customization_param2": 120007,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "TwilekTeal",
-        "customization_param2": 0,
+        "customization_param2": 120008,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "TwilekGreen",
-        "customization_param2": 0,
+        "customization_param2": 120009,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "TwilekYellow",
-        "customization_param2": 0,
+        "customization_param2": 120010,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "TwilekPeach",
-        "customization_param2": 0,
+        "customization_param2": 120011,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "TwilekOrange",
-        "customization_param2": 0,
+        "customization_param2": 120012,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "TwilekBrown",
-        "customization_param2": 0,
+        "customization_param2": 120013,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "TwilekGrey",
-        "customization_param2": 0,
+        "customization_param2": 120014,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "TwilekRed",
-        "customization_param2": 0,
+        "customization_param2": 120015,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "TwilekPink",
-        "customization_param2": 0,
+        "customization_param2": 120016,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "ZabrakKhaki",
-        "customization_param2": 0,
+        "customization_param2": 120017,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "ZabrakYellow",
-        "customization_param2": 0,
+        "customization_param2": 120018,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "ZabrakRed",
-        "customization_param2": 0,
+        "customization_param2": 120019,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "ZabrakBrown",
-        "customization_param2": 0,
+        "customization_param2": 120020,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "TogrutaAmber",
-        "customization_param2": 0,
+        "customization_param2": 120021,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "TogrutaOrange",
-        "customization_param2": 0,
+        "customization_param2": 120022,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "TogrutaRed",
-        "customization_param2": 0,
+        "customization_param2": 120023,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "PantoranBlue",
-        "customization_param2": 0,
+        "customization_param2": 120024,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "TrandoshanGrey",
-        "customization_param2": 0,
+        "customization_param2": 120025,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "TrandoshanGreen",
-        "customization_param2": 0,
+        "customization_param2": 120026,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "TrandoshanBrightGreen",
-        "customization_param2": 0,
+        "customization_param2": 120027,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "TrandoshanYellow",
-        "customization_param2": 0,
+        "customization_param2": 120028,
         "customization_param3": 0
     },
     {
         "customization_slot": "SkinTone",
         "customization_param1": "TrandoshanBrown",
-        "customization_param2": 0,
-        "customization_param3": 0
-    },
-    {
-        "customization_slot": "SkinTone",
-        "customization_param1": "CloneTan",
-        "customization_param2": 0,
+        "customization_param2": 120029,
         "customization_param3": 0
     },
     {
@@ -1732,5 +1726,5 @@
         "customization_param1": "",
         "customization_param2": 489,
         "customization_param3": 0
-    }    
+    }
 ]
