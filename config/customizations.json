@@ -1274,379 +1274,379 @@
     {
         "customization_slot": "FacePattern",
         "customization_param1": "RexScar",
-        "customization_param2": 0,
+        "customization_param2": 170000,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "CrescentScar",
-        "customization_param2": 0,
+        "customization_param2": 170001,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "CodyEyeScar",
-        "customization_param2": 0,
+        "customization_param2": 170002,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "CodyFullScar",
-        "customization_param2": 0,
+        "customization_param2": 170003,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "HardcaseTat",
-        "customization_param2": 0,
+        "customization_param2": 170004,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "LeftEyeScar",
-        "customization_param2": 0,
+        "customization_param2": 170005,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "",
-        "customization_param2": 0,
+        "customization_param2": 170006,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "RepublicTattoo",
-        "customization_param2": 0,
+        "customization_param2": 170007,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "CodySideScar",
-        "customization_param2": 0,
+        "customization_param2": 170008,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "SquarishTattoo",
-        "customization_param2": 0,
+        "customization_param2": 170009,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "TrackTattoo",
-        "customization_param2": 0,
+        "customization_param2": 170010,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Whiskers",
-        "customization_param2": 0,
+        "customization_param2": 170011,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "PiellScar",
-        "customization_param2": 0,
+        "customization_param2": 170012,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "SecuraWraps",
-        "customization_param2": 0,
+        "customization_param2": 170013,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "SecuraWraps&Spots",
-        "customization_param2": 0,
+        "customization_param2": 170014,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Crescents",
-        "customization_param2": 0,
+        "customization_param2": 170015,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "CrissCrossWraps",
-        "customization_param2": 0,
+        "customization_param2": 170016,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Spots",
-        "customization_param2": 0,
+        "customization_param2": 170017,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Stripes",
-        "customization_param2": 0,
+        "customization_param2": 170018,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "SunCircle",
-        "customization_param2": 0,
+        "customization_param2": 170019,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Swirls",
-        "customization_param2": 0,
+        "customization_param2": 170020,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "",
-        "customization_param2": 0,
+        "customization_param2": 170021,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Claw",
-        "customization_param2": 0,
+        "customization_param2": 170022,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Crawl",
-        "customization_param2": 0,
+        "customization_param2": 170023,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Crescent",
-        "customization_param2": 0,
+        "customization_param2": 170024,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Diamond",
-        "customization_param2": 0,
+        "customization_param2": 170025,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Koth",
-        "customization_param2": 0,
+        "customization_param2": 170026,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Fire",
-        "customization_param2": 0,
+        "customization_param2": 170027,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Flame",
-        "customization_param2": 0,
+        "customization_param2": 170028,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Kass",
-        "customization_param2": 0,
+        "customization_param2": 170029,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Mannequin",
-        "customization_param2": 0,
+        "customization_param2": 170030,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Opress",
-        "customization_param2": 0,
+        "customization_param2": 170031,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Strips",
-        "customization_param2": 0,
+        "customization_param2": 170032,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Sugi",
-        "customization_param2": 0,
+        "customization_param2": 170033,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Swoop",
-        "customization_param2": 0,
+        "customization_param2": 170034,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Triangle",
-        "customization_param2": 0,
+        "customization_param2": 170035,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "DarthMaul",
-        "customization_param2": 0,
+        "customization_param2": 170036,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Curl",
-        "customization_param2": 0,
+        "customization_param2": 170037,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Dots",
-        "customization_param2": 0,
+        "customization_param2": 170038,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Eyebrow",
-        "customization_param2": 0,
+        "customization_param2": 170039,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Lightning",
-        "customization_param2": 0,
+        "customization_param2": 170040,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "ShaakTi",
-        "customization_param2": 0,
+        "customization_param2": 170041,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Stacks",
-        "customization_param2": 0,
+        "customization_param2": 170042,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Teardrop",
-        "customization_param2": 0,
+        "customization_param2": 170043,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "V",
-        "customization_param2": 0,
+        "customization_param2": 170044,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "BrowArc",
-        "customization_param2": 0,
+        "customization_param2": 170045,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Chicho",
-        "customization_param2": 0,
+        "customization_param2": 170046,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "ChinArc",
-        "customization_param2": 0,
+        "customization_param2": 170047,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Chuchi",
-        "customization_param2": 0,
+        "customization_param2": 170048,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Crooked",
-        "customization_param2": 0,
+        "customization_param2": 170049,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Guard",
-        "customization_param2": 0,
+        "customization_param2": 170050,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Ion",
-        "customization_param2": 0,
+        "customization_param2": 170051,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Lines",
-        "customization_param2": 0,
+        "customization_param2": 170052,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Papanoida",
-        "customization_param2": 0,
+        "customization_param2": 170053,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Slope",
-        "customization_param2": 0,
+        "customization_param2": 170054,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Squares",
-        "customization_param2": 0,
+        "customization_param2": 170055,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Tbone",
-        "customization_param2": 0,
+        "customization_param2": 170056,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Garnac",
-        "customization_param2": 0,
+        "customization_param2": 170057,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Mask",
-        "customization_param2": 0,
+        "customization_param2": 170058,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Mohawk",
-        "customization_param2": 0,
+        "customization_param2": 170059,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Scratch",
-        "customization_param2": 0,
+        "customization_param2": 170060,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Simple",
-        "customization_param2": 0,
+        "customization_param2": 170061,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacePattern",
         "customization_param1": "Sunfire",
-        "customization_param2": 0,
+        "customization_param2": 170062,
         "customization_param3": 0
     },
     {
