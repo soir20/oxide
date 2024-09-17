@@ -1184,91 +1184,91 @@
     {
         "customization_slot": "FacialHair",
         "customization_param1": "Cust_HumanMale_FacialHair_Yularen.adr",
-        "customization_param2": 0,
+        "customization_param2": 160000,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacialHair",
         "customization_param1": "Cust_HumanMale_FacialHair_Smitts.adr",
-        "customization_param2": 0,
+        "customization_param2": 160001,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacialHair",
         "customization_param1": "Cust_HumanMale_FacialHair_CleanShaven.adr",
-        "customization_param2": 0,
+        "customization_param2": 160002,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacialHair",
         "customization_param1": "Cust_HumanMale_FacialHair_Kenobi.adr",
-        "customization_param2": 0,
+        "customization_param2": 160003,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacialHair",
         "customization_param1": "Cust_Clone_FacialHair_CleanShaven.adr",
-        "customization_param2": 0,
+        "customization_param2": 160004,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacialHair",
         "customization_param1": "Cust_Clone_FacialHair_Goatee.adr",
-        "customization_param2": 0,
+        "customization_param2": 160005,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacialHair",
         "customization_param1": "Cust_Clone_FacialHair_PiellEye.adr",
-        "customization_param2": 0,
+        "customization_param2": 160006,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacialHair",
         "customization_param1": "Cust_Clone_FacialHair_SplitChin.adr",
-        "customization_param2": 0,
+        "customization_param2": 160007,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacialHair",
         "customization_param1": "Cust_Clone_FacialHair_TripleChin.adr",
-        "customization_param2": 0,
+        "customization_param2": 160008,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacialHair",
         "customization_param1": "Cust_PantoranMale_FacialHair_CleanShaven.adr",
-        "customization_param2": 0,
+        "customization_param2": 160009,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacialHair",
         "customization_param1": "Cust_PantoranMale_FacialHair_DoublePatch.adr",
-        "customization_param2": 0,
+        "customization_param2": 160010,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacialHair",
         "customization_param1": "Cust_PantoranMale_FacialHair_Magnum.adr",
-        "customization_param2": 0,
+        "customization_param2": 160011,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacialHair",
         "customization_param1": "Cust_PantoranMale_FacialHair_Papanoida.adr",
-        "customization_param2": 0,
+        "customization_param2": 160012,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacialHair",
         "customization_param1": "Cust_PantoranMale_FacialHair_GoateeSharp.adr",
-        "customization_param2": 0,
+        "customization_param2": 160013,
         "customization_param3": 0
     },
     {
         "customization_slot": "FacialHair",
         "customization_param1": "Cust_PantoranMale_FacialHair_Patch.adr",
-        "customization_param2": 0,
+        "customization_param2": 160014,
         "customization_param3": 0
     },
     {
