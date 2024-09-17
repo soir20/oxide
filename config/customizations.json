@@ -1653,78 +1653,78 @@
         "customization_slot": "BodyModel",
         "customization_param1": "",
         "customization_param2": 484,
-        "customization_param3": 0
+        "customization_param3": 180000
     },
     {
         "customization_slot": "BodyModel",
         "customization_param1": "",
         "customization_param2": 11,
-        "customization_param3": 0
+        "customization_param3": 180001
     },
     {
         "customization_slot": "BodyModel",
         "customization_param1": "",
         "customization_param2": 1100,
-        "customization_param3": 0
+        "customization_param3": 180002
     },
     {
         "customization_slot": "BodyModel",
         "customization_param1": "",
         "customization_param2": 487,
-        "customization_param3": 0
+        "customization_param3": 180003
     },
     {
         "customization_slot": "BodyModel",
         "customization_param1": "",
         "customization_param2": 1443,
-        "customization_param3": 0
+        "customization_param3": 180004
     },
     {
         "customization_slot": "BodyModel",
         "customization_param1": "",
         "customization_param2": 485,
-        "customization_param3": 0
+        "customization_param3": 180005
     },
     {
         "customization_slot": "BodyModel",
         "customization_param1": "",
         "customization_param2": 486,
-        "customization_param3": 0
+        "customization_param3": 180006
     },
     {
         "customization_slot": "BodyModel",
         "customization_param1": "",
         "customization_param2": 202,
-        "customization_param3": 0
+        "customization_param3": 180007
     },
     {
         "customization_slot": "BodyModel",
         "customization_param1": "",
         "customization_param2": 1101,
-        "customization_param3": 0
+        "customization_param3": 180008
     },
     {
         "customization_slot": "BodyModel",
         "customization_param1": "",
         "customization_param2": 490,
-        "customization_param3": 0
+        "customization_param3": 180009
     },
     {
         "customization_slot": "BodyModel",
         "customization_param1": "",
         "customization_param2": 1491,
-        "customization_param3": 0
+        "customization_param3": 180010
     },
     {
         "customization_slot": "BodyModel",
         "customization_param1": "",
         "customization_param2": 488,
-        "customization_param3": 0
+        "customization_param3": 180011
     },
     {
         "customization_slot": "BodyModel",
         "customization_param1": "",
         "customization_param2": 489,
-        "customization_param3": 0
+        "customization_param3": 180012
     }
 ]
