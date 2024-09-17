@@ -2,79 +2,79 @@
     {
         "customization_slot": "HeadModel",
         "customization_param1": "Char_CloneHead.adr",
-        "customization_param2": 0,
+        "customization_param2": 110000,
         "customization_param3": 0
     },
     {
         "customization_slot": "HeadModel",
         "customization_param1": "Char_HumanMaleHead.adr",
-        "customization_param2": 0,
+        "customization_param2": 110001,
         "customization_param3": 0
     },
     {
         "customization_slot": "HeadModel",
         "customization_param1": "Char_PantoranMaleHead.adr",
-        "customization_param2": 0,
+        "customization_param2": 110002,
         "customization_param3": 0
     },
     {
         "customization_slot": "HeadModel",
         "customization_param1": "Char_TogrutaMaleHead.adr",
-        "customization_param2": 0,
+        "customization_param2": 110003,
         "customization_param3": 0
     },
     {
         "customization_slot": "HeadModel",
         "customization_param1": "Char_TrandoshanMaleHead.adr",
-        "customization_param2": 0,
+        "customization_param2": 110004,
         "customization_param3": 0
     },
     {
         "customization_slot": "HeadModel",
         "customization_param1": "Char_TwilekMaleHead.adr",
-        "customization_param2": 0,
+        "customization_param2": 110005,
         "customization_param3": 0
     },
     {
         "customization_slot": "HeadModel",
         "customization_param1": "Char_ZabrakMaleHead.adr",
-        "customization_param2": 0,
+        "customization_param2": 110006,
         "customization_param3": 0
     },
     {
         "customization_slot": "HeadModel",
         "customization_param1": "Char_HumanFemaleHead.adr",
-        "customization_param2": 0,
+        "customization_param2": 110007,
         "customization_param3": 0
     },
     {
         "customization_slot": "HeadModel",
         "customization_param1": "Char_PantoranFemaleHead.adr",
-        "customization_param2": 0,
+        "customization_param2": 110008,
         "customization_param3": 0
     },
     {
         "customization_slot": "HeadModel",
         "customization_param1": "Char_TogrutaFemaleHead.adr",
-        "customization_param2": 0,
+        "customization_param2": 110009,
         "customization_param3": 0
     },
     {
         "customization_slot": "HeadModel",
         "customization_param1": "Char_TrandoshanFemaleHead.adr",
-        "customization_param2": 0,
+        "customization_param2": 110010,
         "customization_param3": 0
     },
     {
         "customization_slot": "HeadModel",
         "customization_param1": "Char_TwilekFemaleHead.adr",
-        "customization_param2": 0,
+        "customization_param2": 110011,
         "customization_param3": 0
     },
     {
         "customization_slot": "HeadModel",
         "customization_param1": "Char_ZabrakFemaleHead.adr",
-        "customization_param2": 0,
+        "customization_param2": 110012,
         "customization_param3": 0
     },
     {
