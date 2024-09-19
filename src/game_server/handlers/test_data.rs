@@ -466,12 +466,12 @@ pub fn make_test_player(
 
 pub fn make_test_customizations() -> BTreeMap<CustomizationSlot, u32> {
     let mut customizations = BTreeMap::new();
-    customizations.insert(CustomizationSlot::HeadModel, 10000);
-    customizations.insert(CustomizationSlot::SkinTone, 20029);
-    customizations.insert(CustomizationSlot::HairStyle, 30034);
-    customizations.insert(CustomizationSlot::HairColor, 11);
-    customizations.insert(CustomizationSlot::FacePattern, 70009);
-    customizations.insert(CustomizationSlot::BodyModel, 484);
+    customizations.insert(CustomizationSlot::HeadModel, 110000);
+    customizations.insert(CustomizationSlot::SkinTone, 120030);
+    customizations.insert(CustomizationSlot::HairStyle, 130034);
+    customizations.insert(CustomizationSlot::HairColor, 140004);
+    customizations.insert(CustomizationSlot::FacePattern, 170009);
+    customizations.insert(CustomizationSlot::BodyModel, 180000);
     customizations
 }
 

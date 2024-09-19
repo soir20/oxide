@@ -258,6 +258,12 @@
         "customization_param3": 0
     },
     {
+        "customization_slot": "SkinTone",
+        "customization_param1": "CloneTan",
+        "customization_param2": 120030,
+        "customization_param3": 0
+    },
+    {
         "customization_slot": "HairStyle",
         "customization_param1": "Cust_HumanMale_Hair_Anakin.adr",
         "customization_param2": 130000,
