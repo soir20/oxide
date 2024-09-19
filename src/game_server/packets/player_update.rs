@@ -40,7 +40,7 @@ pub enum PlayerUpdateOpCode {
     SeekTargetUpdate = 0x3c,
     UpdateWieldType = 0x3d,
     HudMessage = 0x40,
-    UpdateEquippedCustomizationItems = 0x41,
+    InitCustomizations = 0x41,
     NameplateImageId = 0x44,
 }
 
@@ -313,14 +313,14 @@ impl GamePacket for UpdateCustomizations {
 }
 
 #[derive(SerializePacket)]
-pub struct InitialCustomizationData {
+pub struct InitCustomizations {
     pub customizations: Vec<Customization>,
 }
 
-impl GamePacket for InitialCustomizationData {
+impl GamePacket for InitCustomizations {
     type Header = PlayerUpdateOpCode;
 
-    const HEADER: Self::Header = PlayerUpdateOpCode::UpdateEquippedCustomizationItems;
+    const HEADER: Self::Header = PlayerUpdateOpCode::InitCustomizations;
 }
 
 #[derive(SerializePacket, DeserializePacket)]

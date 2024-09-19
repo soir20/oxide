@@ -30,7 +30,7 @@ use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
 use packets::item::ItemDefinition;
 use packets::login::{DeploymentEnv, GameSettings, LoginReply, WelcomeScreen, ZoneDetailsDone};
 use packets::player_update::{
-    Customization, InitialCustomizationData, ItemDefinitionsReply, QueueAnimation, UpdateWieldType,
+    Customization, InitCustomizations, ItemDefinitionsReply, QueueAnimation, UpdateWieldType,
 };
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
 use packets::store::StoreItemList;
@@ -367,7 +367,7 @@ impl GameServer {
                                                     if let CharacterType::Player(player) = &character_read_handle.character_type {
                                                         global_packets.push(GamePacket::serialize(&TunneledPacket {
                                                             unknown1: true,
-                                                            inner: InitialCustomizationData {
+                                                            inner: InitCustomizations {
                                                                 customizations: customizations_from_guids(&player.customizations, self.customizations()),
                                                             },
                                                         })?);
