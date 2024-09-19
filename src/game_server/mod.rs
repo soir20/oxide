@@ -368,7 +368,7 @@ impl GameServer {
                                                         global_packets.push(GamePacket::serialize(&TunneledPacket {
                                                             unknown1: true,
                                                             inner: InitCustomizations {
-                                                                customizations: customizations_from_guids(&player.customizations, self.customizations()),
+                                                                customizations: customizations_from_guids(player.customizations.values().cloned(), self.customizations()),
                                                             },
                                                         })?);
 

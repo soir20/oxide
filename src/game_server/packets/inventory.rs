@@ -34,3 +34,8 @@ pub struct EquipGuid {
     pub battle_class: u32,
     pub slot: EquipmentSlot,
 }
+
+#[derive(DeserializePacket)]
+pub struct PreviewCustomization {
+    pub item_guid: u32,
+}
