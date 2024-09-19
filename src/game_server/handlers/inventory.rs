@@ -45,19 +45,18 @@ pub fn load_default_sabers(config_dir: &Path) -> Result<BTreeMap<u32, DefaultSab
         .collect())
 }
 
-pub fn load_customizations(
-    config_dir: &Path,
-) -> Result<BTreeMap<(CustomizationSlot, u32), Customization>, Error> {
+pub fn load_customizations(config_dir: &Path) -> Result<BTreeMap<u32, Customization>, Error> {
     let mut file = File::open(config_dir.join("customizations.json"))?;
     let customizations: Vec<Customization> = serde_json::from_reader(&mut file)?;
     Ok(customizations
         .into_iter()
         .map(|customization: Customization| {
             (
-                (
-                    customization.customization_slot,
-                    customization.customization_param2,
-                ),
+                if customization.customization_param3 > 0 {
+                    customization.customization_param3
+                } else {
+                    customization.customization_param2
+                },
                 customization,
             )
         })
@@ -66,7 +65,7 @@ pub fn load_customizations(
 
 pub fn load_customization_item_mappings(
     config_dir: &Path,
-) -> Result<BTreeMap<u32, Vec<(CustomizationSlot, u32)>>, Error> {
+) -> Result<BTreeMap<u32, Vec<u32>>, Error> {
     let mut file = File::open(config_dir.join("customization_item_mappings.json"))?;
     Ok(serde_json::from_reader(&mut file)?)
 }
@@ -302,13 +301,12 @@ pub fn wield_type_from_slot(
 
 pub fn customizations_from_guids(
     applied_customizations: &BTreeMap<CustomizationSlot, u32>,
-    customizations: &BTreeMap<(CustomizationSlot, u32), Customization>,
+    customizations: &BTreeMap<u32, Customization>,
 ) -> Vec<Customization> {
     let mut result = Vec::new();
 
-    for (customization_slot, customization_guid) in applied_customizations {
-        if let Some(customization) = customizations.get(&(*customization_slot, *customization_guid))
-        {
+    for customization_guid in applied_customizations.values() {
+        if let Some(customization) = customizations.get(customization_guid) {
             result.push(customization.clone());
         } else {
             println!(

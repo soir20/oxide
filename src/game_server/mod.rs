@@ -30,8 +30,7 @@ use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
 use packets::item::ItemDefinition;
 use packets::login::{DeploymentEnv, GameSettings, LoginReply, WelcomeScreen, ZoneDetailsDone};
 use packets::player_update::{
-    Customization, CustomizationSlot, InitialCustomizationData, ItemDefinitionsReply,
-    QueueAnimation, UpdateWieldType,
+    Customization, InitialCustomizationData, ItemDefinitionsReply, QueueAnimation, UpdateWieldType,
 };
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
 use packets::store::StoreItemList;
@@ -83,8 +82,8 @@ impl From<SerializePacketError> for ProcessPacketError {
 pub struct GameServer {
     categories: CategoryDefinitions,
     costs: BTreeMap<u32, CostEntry>,
-    customizations: BTreeMap<(CustomizationSlot, u32), Customization>,
-    customization_item_mappings: BTreeMap<u32, Vec<(CustomizationSlot, u32)>>,
+    customizations: BTreeMap<u32, Customization>,
+    customization_item_mappings: BTreeMap<u32, Vec<u32>>,
     default_sabers: BTreeMap<u32, DefaultSaber>,
     lock_enforcer_source: LockEnforcerSource,
     items: BTreeMap<u32, ItemDefinition>,
@@ -620,11 +619,11 @@ impl GameServer {
         Ok(broadcasts)
     }
 
-    pub fn customizations(&self) -> &BTreeMap<(CustomizationSlot, u32), Customization> {
+    pub fn customizations(&self) -> &BTreeMap<u32, Customization> {
         &self.customizations
     }
 
-    pub fn customization_item_mappings(&self) -> &BTreeMap<u32, Vec<(CustomizationSlot, u32)>> {
+    pub fn customization_item_mappings(&self) -> &BTreeMap<u32, Vec<u32>> {
         &self.customization_item_mappings
     }
 
