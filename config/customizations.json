@@ -1316,7 +1316,7 @@
     {
         "guid": 170006,
         "customization_slot": "FacePattern",
-        "customization_param1": "",
+        "customization_param1": "None",
         "customization_param2": 170006
     },
     {
@@ -1406,7 +1406,7 @@
     {
         "guid": 170021,
         "customization_slot": "FacePattern",
-        "customization_param1": "",
+        "customization_param1": "None",
         "customization_param2": 170021
     },
     {
