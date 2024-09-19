@@ -50,16 +50,7 @@ pub fn load_customizations(config_dir: &Path) -> Result<BTreeMap<u32, Customizat
     let customizations: Vec<Customization> = serde_json::from_reader(&mut file)?;
     Ok(customizations
         .into_iter()
-        .map(|customization: Customization| {
-            (
-                if customization.customization_param3 > 0 {
-                    customization.customization_param3
-                } else {
-                    customization.customization_param2
-                },
-                customization,
-            )
-        })
+        .map(|customization: Customization| (customization.guid, customization))
         .collect())
 }
 

@@ -296,7 +296,7 @@ pub struct Customization {
     pub customization_slot: CustomizationSlot,
     pub customization_param1: String,
     pub customization_param2: u32,
-    pub customization_param3: u32,
+    pub guid: u32,
 }
 
 #[derive(SerializePacket)]
