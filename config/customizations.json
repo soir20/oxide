@@ -584,7 +584,7 @@
     {
         "guid": 130053,
         "customization_slot": "HairStyle",
-        "customization_param1": "Cust_TwilekFemale_Tails_Both.adr",
+        "customization_param1": "Cust_TwilekFemale_Tails_BothSides.adr",
         "customization_param2": 130053
     },
     {
@@ -596,19 +596,19 @@
     {
         "guid": 130055,
         "customization_slot": "HairStyle",
-        "customization_param1": "Cust_TwilekFemale_Tails_Left.adr",
+        "customization_param1": "Cust_TwilekFemale_Tails_LeftSide.adr",
         "customization_param2": 130055
     },
     {
         "guid": 130056,
         "customization_slot": "HairStyle",
-        "customization_param1": "Cust_TwilekFemale_Tails_Right.adr",
+        "customization_param1": "Cust_TwilekFemale_Tails_RightSide.adr",
         "customization_param2": 130056
     },
     {
         "guid": 130057,
         "customization_slot": "HairStyle",
-        "customization_param1": "Cust_TwilekFemale_Tails_Plain.adr",
+        "customization_param1": "Cust_TwilekFemale_Tails_Thin.adr",
         "customization_param2": 130057
     },
     {
