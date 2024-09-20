@@ -22,5 +22,9 @@
     {
         "item_group_guid": 127,
         "members_cost_expression": "max(0.9*x - 1, 0.0)"
+    },
+    {
+        "item_group_guid": 139,
+        "members_cost_expression": "max(0.9*x - 1, 0.0)"
     }
 ]
