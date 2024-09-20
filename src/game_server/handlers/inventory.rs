@@ -2,6 +2,7 @@ use std::{
     collections::BTreeMap,
     fs::File,
     io::{Cursor, Error},
+    iter,
     path::Path,
 };
 
@@ -13,10 +14,10 @@ use serde::Deserialize;
 use crate::game_server::{
     packets::{
         client_update::{EquipItem, UnequipItem},
-        inventory::{EquipGuid, InventoryOpCode, UnequipSlot},
+        inventory::{EquipGuid, InventoryOpCode, PreviewCustomization, UnequipSlot},
         item::{Attachment, EquipmentSlot, ItemDefinition, WieldType},
         player_data::EquippedItem,
-        player_update::UpdateWieldType,
+        player_update::{Customization, UpdateCustomizations, UpdateWieldType},
         tunnel::TunneledPacket,
         GamePacket,
     },
@@ -43,6 +44,22 @@ pub fn load_default_sabers(config_dir: &Path) -> Result<BTreeMap<u32, DefaultSab
         .into_iter()
         .map(|saber| (saber.hilt_item_guid, saber))
         .collect())
+}
+
+pub fn load_customizations(config_dir: &Path) -> Result<BTreeMap<u32, Customization>, Error> {
+    let mut file = File::open(config_dir.join("customizations.json"))?;
+    let customizations: Vec<Customization> = serde_json::from_reader(&mut file)?;
+    Ok(customizations
+        .into_iter()
+        .map(|customization: Customization| (customization.guid, customization))
+        .collect())
+}
+
+pub fn load_customization_item_mappings(
+    config_dir: &Path,
+) -> Result<BTreeMap<u32, Vec<u32>>, Error> {
+    let mut file = File::open(config_dir.join("customization_item_mappings.json"))?;
+    Ok(serde_json::from_reader(&mut file)?)
 }
 
 pub fn process_inventory_packet(
@@ -243,6 +260,26 @@ pub fn process_inventory_packet(
                         },
                     })
             }
+            InventoryOpCode::PreviewCustomization => {
+                let preview_customization: PreviewCustomization =
+                    DeserializePacket::deserialize(cursor)?;
+                Ok(vec![Broadcast::Single(
+                    sender,
+                    vec![GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: UpdateCustomizations {
+                            guid: player_guid(sender),
+                            is_preview: true,
+                            customizations: customizations_from_item_guids(
+                                sender,
+                                iter::once(preview_customization.item_guid),
+                                game_server.customizations(),
+                                game_server.customization_item_mappings(),
+                            )?,
+                        },
+                    })?],
+                )])
+            }
             _ => {
                 println!(
                     "Unimplemented inventory packet: {:?}, {:x?}",
@@ -272,6 +309,61 @@ pub fn wield_type_from_slot(
         })
         .map(|item_class| item_class.wield_type)
         .unwrap_or(WieldType::None)
+}
+
+pub fn customizations_from_guids(
+    applied_customizations: impl Iterator<Item = u32>,
+    customizations: &BTreeMap<u32, Customization>,
+) -> Vec<Customization> {
+    let mut result = Vec::new();
+
+    for customization_guid in applied_customizations {
+        if let Some(customization) = customizations.get(&customization_guid) {
+            result.push(customization.clone());
+        } else {
+            println!(
+                "Skipped adding unknown customization {}",
+                customization_guid
+            )
+        }
+    }
+
+    result
+}
+
+pub fn customizations_from_item_guids(
+    sender: u32,
+    applied_customization_item_guids: impl Iterator<Item = u32>,
+    customizations: &BTreeMap<u32, Customization>,
+    customization_item_mappings: &BTreeMap<u32, Vec<u32>>,
+) -> Result<Vec<Customization>, ProcessPacketError> {
+    let mut result = Vec::new();
+
+    for customization_item_guid in applied_customization_item_guids {
+        if let Some(customizations_for_item) =
+            customization_item_mappings.get(&customization_item_guid)
+        {
+            for customization_guid in customizations_for_item {
+                if let Some(customization) = customizations.get(customization_guid) {
+                    result.push(customization.clone());
+                } else {
+                    println!(
+                        "Player {} tried to use unknown customization {}",
+                        sender, customization_guid
+                    );
+                    return Err(ProcessPacketError::CorruptedPacket);
+                }
+            }
+        } else {
+            println!(
+                "Player {} tried to use unknown customization item guid {}",
+                sender, customization_item_guid
+            );
+            return Err(ProcessPacketError::CorruptedPacket);
+        }
+    }
+
+    Ok(result)
 }
 
 fn item_def_from_slot<'a>(

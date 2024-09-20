@@ -9,8 +9,8 @@ use crate::game_server::{
         item::{BaseAttachmentGroup, EquipmentSlot, WieldType},
         player_data::EquippedItem,
         player_update::{
-            AddNotifications, AddNpc, Icon, NotificationData, NpcRelevance, RemoveStandard,
-            SingleNotification, SingleNpcRelevance,
+            AddNotifications, AddNpc, CustomizationSlot, Icon, NotificationData, NpcRelevance,
+            RemoveStandard, SingleNotification, SingleNpcRelevance,
         },
         tunnel::TunneledPacket,
         GamePacket, Pos,
@@ -79,6 +79,7 @@ pub struct Player {
     pub battle_classes: BTreeMap<u32, BattleClass>,
     pub active_battle_class: u32,
     pub inventory: BTreeSet<u32>,
+    pub customizations: BTreeMap<CustomizationSlot, u32>,
 }
 
 pub struct PreviousFixture {

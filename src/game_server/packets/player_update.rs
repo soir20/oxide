@@ -40,6 +40,7 @@ pub enum PlayerUpdateOpCode {
     SeekTargetUpdate = 0x3c,
     UpdateWieldType = 0x3d,
     HudMessage = 0x40,
+    InitCustomizations = 0x41,
     NameplateImageId = 0x44,
 }
 
@@ -270,7 +271,7 @@ impl GamePacket for ItemDefinitionsReply<'_> {
     const HEADER: Self::Header = PlayerUpdateOpCode::ItemDefinitionsReply;
 }
 
-#[derive(Clone, Copy, Deserialize)]
+#[derive(Clone, Copy, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 pub enum CustomizationSlot {
     None = -1,
     HeadModel = 0,
@@ -290,18 +291,18 @@ impl SerializePacket for CustomizationSlot {
     }
 }
 
-#[derive(SerializePacket)]
+#[derive(Clone, Deserialize, SerializePacket)]
 pub struct Customization {
     pub customization_slot: CustomizationSlot,
     pub customization_param1: String,
     pub customization_param2: u32,
-    pub customization_param3: u32,
+    pub guid: u32,
 }
 
 #[derive(SerializePacket)]
 pub struct UpdateCustomizations {
     pub guid: u64,
-    pub update: bool,
+    pub is_preview: bool,
     pub customizations: Vec<Customization>,
 }
 
@@ -309,6 +310,17 @@ impl GamePacket for UpdateCustomizations {
     type Header = PlayerUpdateOpCode;
 
     const HEADER: Self::Header = PlayerUpdateOpCode::UpdateCustomizations;
+}
+
+#[derive(SerializePacket)]
+pub struct InitCustomizations {
+    pub customizations: Vec<Customization>,
+}
+
+impl GamePacket for InitCustomizations {
+    type Header = PlayerUpdateOpCode;
+
+    const HEADER: Self::Header = PlayerUpdateOpCode::InitCustomizations;
 }
 
 #[derive(SerializePacket, DeserializePacket)]

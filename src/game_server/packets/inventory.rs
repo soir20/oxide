@@ -9,6 +9,8 @@ use super::{item::EquipmentSlot, OpCode};
 pub enum InventoryOpCode {
     UnequipSlot = 0x2,
     EquipGuid = 0x3,
+    PreviewCustomization = 0xb,
+    EquipCustomization = 0xc,
     EquipSaber = 0xd,
 }
 
@@ -31,4 +33,9 @@ pub struct EquipGuid {
     pub item_guid: u32,
     pub battle_class: u32,
     pub slot: EquipmentSlot,
+}
+
+#[derive(DeserializePacket)]
+pub struct PreviewCustomization {
+    pub item_guid: u32,
 }
