@@ -18,6 +18,7 @@ pub enum ClientUpdateOpCode {
     Position = 0xc,
     Power = 0xd,
     Stats = 0x7,
+    UpdateCredits = 0x13,
     PreloadCharactersDone = 0x1a,
 }
 
@@ -178,6 +179,17 @@ pub struct Stats {
 impl GamePacket for Stats {
     type Header = ClientUpdateOpCode;
     const HEADER: ClientUpdateOpCode = ClientUpdateOpCode::Stats;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct UpdateCredits {
+    pub new_credits: u32,
+}
+
+impl GamePacket for UpdateCredits {
+    type Header = ClientUpdateOpCode;
+
+    const HEADER: Self::Header = ClientUpdateOpCode::UpdateCredits;
 }
 
 #[derive(SerializePacket, DeserializePacket)]

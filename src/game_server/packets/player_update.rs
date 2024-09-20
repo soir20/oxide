@@ -22,7 +22,6 @@ pub enum PlayerUpdateOpCode {
     NpcRelevance = 0xc,
     UpdateTemporaryAppearance = 0xe,
     UpdateRemoveTemporaryAppearance = 0xf,
-    UpdateCredits = 0x13,
     UpdateCharacterState = 0x14,
     QueueAnimation = 0x16,
     LootEvent = 0x1d,
@@ -462,17 +461,6 @@ pub struct Freeze {
 impl GamePacket for Freeze {
     type Header = PlayerUpdateOpCode;
     const HEADER: Self::Header = PlayerUpdateOpCode::Freeze;
-}
-
-#[derive(SerializePacket, DeserializePacket)]
-pub struct UpdateCredits {
-    pub new_credits: u32,
-}
-
-impl GamePacket for UpdateCredits {
-    type Header = PlayerUpdateOpCode;
-
-    const HEADER: Self::Header = PlayerUpdateOpCode::UpdateCredits;
 }
 
 #[derive(SerializePacket, DeserializePacket)]

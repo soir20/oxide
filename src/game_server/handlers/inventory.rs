@@ -13,8 +13,10 @@ use serde::Deserialize;
 
 use crate::game_server::{
     packets::{
-        client_update::{EquipItem, UnequipItem},
-        inventory::{EquipGuid, InventoryOpCode, PreviewCustomization, UnequipSlot},
+        client_update::{EquipItem, UnequipItem, UpdateCredits},
+        inventory::{
+            EquipCustomization, EquipGuid, InventoryOpCode, PreviewCustomization, UnequipSlot,
+        },
         item::{Attachment, EquipmentSlot, ItemDefinition, WieldType},
         player_data::EquippedItem,
         player_update::{Customization, UpdateCustomizations, UpdateWieldType},
@@ -26,8 +28,10 @@ use crate::game_server::{
 
 use super::{
     character::{Character, CharacterType},
+    guid::IndexedGuid,
     lock_enforcer::CharacterLockRequest,
     unique_guid::player_guid,
+    zone::Zone,
 };
 
 #[derive(Deserialize)]
@@ -279,6 +283,98 @@ pub fn process_inventory_packet(
                         },
                     })?],
                 )])
+            }
+            InventoryOpCode::EquipCustomization => {
+                let equip_customization: EquipCustomization =
+                    DeserializePacket::deserialize(cursor)?;
+                game_server
+                    .lock_enforcer()
+                    .read_characters(|_| CharacterLockRequest {
+                        read_guids: vec![],
+                        write_guids: vec![player_guid(sender)],
+                        character_consumer: |characters_table_read_handle,
+                                             _,
+                                             mut characters_write,
+                                             _| {
+                            if let Some(character_write_handle) =
+                                characters_write.get_mut(&player_guid(sender))
+                            {
+                                if let CharacterType::Player(player) =
+                                    &mut character_write_handle.character_type
+                                {
+                                    let cost = if let Some(cost_entry) =
+                                        game_server.costs().get(&equip_customization.item_guid)
+                                    {
+                                        if player.member {
+                                            cost_entry.members
+                                        } else {
+                                            cost_entry.base
+                                        }
+                                    } else {
+                                        0
+                                    };
+
+                                    if cost > player.credits {
+                                        return Ok(vec![]);
+                                    }
+                                    player.credits -= cost;
+                                    let new_credits = player.credits;
+
+                                    let customizations_to_apply = customizations_from_item_guids(
+                                        sender,
+                                        iter::once(equip_customization.item_guid),
+                                        game_server.customizations(),
+                                        game_server.customization_item_mappings(),
+                                    )?;
+
+                                    for customization in &customizations_to_apply {
+                                        player.customizations.insert(
+                                            customization.customization_slot,
+                                            customization.guid,
+                                        );
+                                    }
+
+                                    let (instance_guid, chunk, _) = character_write_handle.index();
+                                    let nearby_players = Zone::all_players_nearby(
+                                        sender,
+                                        chunk,
+                                        instance_guid,
+                                        characters_table_read_handle,
+                                    )?;
+
+                                    Ok(vec![
+                                        Broadcast::Multi(
+                                            nearby_players,
+                                            vec![GamePacket::serialize(&TunneledPacket {
+                                                unknown1: true,
+                                                inner: UpdateCustomizations {
+                                                    guid: player_guid(sender),
+                                                    is_preview: false,
+                                                    customizations: customizations_to_apply,
+                                                },
+                                            })?],
+                                        ),
+                                        Broadcast::Single(
+                                            sender,
+                                            vec![GamePacket::serialize(&TunneledPacket {
+                                                unknown1: true,
+                                                inner: UpdateCredits { new_credits },
+                                            })?],
+                                        ),
+                                    ])
+                                } else {
+                                    println!(
+                                        "Non-player character {} tried to equip customization",
+                                        sender
+                                    );
+                                    Err(ProcessPacketError::CorruptedPacket)
+                                }
+                            } else {
+                                println!("Unknown player {} tried to equip customization", sender);
+                                Err(ProcessPacketError::CorruptedPacket)
+                            }
+                        },
+                    })
             }
             _ => {
                 println!(
