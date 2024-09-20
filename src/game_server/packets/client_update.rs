@@ -114,6 +114,7 @@ impl GamePacket for Power {
     const HEADER: ClientUpdateOpCode = ClientUpdateOpCode::Power;
 }
 
+#[allow(dead_code)]
 #[derive(Copy, Clone, Debug)]
 pub enum StatId {
     MaxHealth = 1,
