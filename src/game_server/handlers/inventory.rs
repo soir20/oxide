@@ -21,6 +21,7 @@ use crate::game_server::{
         player_data::EquippedItem,
         player_update::{Customization, UpdateCustomizations, UpdateWieldType},
         tunnel::TunneledPacket,
+        ui::ExecuteScriptWithParams,
         GamePacket,
     },
     Broadcast, GameServer, ProcessPacketError,
@@ -356,10 +357,17 @@ pub fn process_inventory_packet(
                                         ),
                                         Broadcast::Single(
                                             sender,
-                                            vec![GamePacket::serialize(&TunneledPacket {
-                                                unknown1: true,
-                                                inner: UpdateCredits { new_credits },
-                                            })?],
+                                            vec![
+                                                GamePacket::serialize(&TunneledPacket {
+                                                    unknown1: true,
+                                                    inner: UpdateCredits { new_credits },
+                                                })?,
+                                                // Fix UI not updating the equipped customization item ID properly
+                                                GamePacket::serialize(&TunneledPacket {
+                                                    unknown1: true,
+                                                    inner: ExecuteScriptWithParams { script_name: "CharacterWindowHandler.requestDataSourceUpdate".to_string(), params: vec!["BaseClient.CustomizationItemDataSource".to_string()] },
+                                                })?
+                                            ],
                                         ),
                                     ])
                                 } else {
