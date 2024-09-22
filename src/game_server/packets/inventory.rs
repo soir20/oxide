@@ -39,3 +39,8 @@ pub struct EquipGuid {
 pub struct PreviewCustomization {
     pub item_guid: u32,
 }
+
+#[derive(DeserializePacket)]
+pub struct EquipCustomization {
+    pub item_guid: u32,
+}

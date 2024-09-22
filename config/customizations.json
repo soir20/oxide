@@ -1110,6 +1110,13 @@
         "customization_param2": 36
     },
     {
+        "comment": "Default customization for non-applicable species",
+        "guid": 140022,
+        "customization_slot": "HairColor",
+        "customization_param1": "",
+        "customization_param2": 0
+    },
+    {
         "guid": 150000,
         "customization_slot": "EyeColor",
         "customization_param1": "",
@@ -1186,6 +1193,13 @@
         "customization_slot": "EyeColor",
         "customization_param1": "",
         "customization_param2": 46
+    },
+    {
+        "comment": "Default customization for non-applicable species",
+        "guid": 150013,
+        "customization_slot": "EyeColor",
+        "customization_param1": "",
+        "customization_param2": 0
     },
     {
         "guid": 160000,
@@ -1276,6 +1290,13 @@
         "customization_slot": "FacialHair",
         "customization_param1": "Cust_PantoranMale_FacialHair_Patch.adr",
         "customization_param2": 160014
+    },
+    {
+        "comment": "Default customization for non-applicable species",
+        "guid": 160015,
+        "customization_slot": "FacialHair",
+        "customization_param1": "Cust_HumanMale_FacialHair_CleanShaven.adr",
+        "customization_param2": 160015
     },
     {
         "guid": 170000,
@@ -1654,6 +1675,13 @@
         "customization_slot": "FacePattern",
         "customization_param1": "Sunfire",
         "customization_param2": 170062
+    },
+    {
+        "comment": "Default customization for non-applicable species",
+        "guid": 170063,
+        "customization_slot": "FacePattern",
+        "customization_param1": "None",
+        "customization_param2": 170063
     },
     {
         "guid": 180000,

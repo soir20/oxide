@@ -203,7 +203,7 @@ pub fn make_test_player(
             unknown8: 0,
             first_name: String::from("BLASTER"),
             last_name: String::from("NICESHOT"),
-            currency: 1000000,
+            credits: 1000000,
             account_creation_date: 1261854072,
             account_age: 0,
             account_play_time: 0,
@@ -470,7 +470,7 @@ pub fn make_test_customizations() -> BTreeMap<CustomizationSlot, u32> {
     customizations.insert(CustomizationSlot::SkinTone, 120030);
     customizations.insert(CustomizationSlot::HairStyle, 130034);
     customizations.insert(CustomizationSlot::HairColor, 140004);
-    customizations.insert(CustomizationSlot::EyeColor, 150001);
+    customizations.insert(CustomizationSlot::EyeColor, 150013);
     customizations.insert(CustomizationSlot::FacialHair, 160004);
     customizations.insert(CustomizationSlot::FacePattern, 170009);
     customizations.insert(CustomizationSlot::BodyModel, 180000);

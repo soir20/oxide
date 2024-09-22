@@ -412,7 +412,7 @@ pub struct PlayerData {
     pub unknown8: u32,
     pub first_name: String,
     pub last_name: String,
-    pub currency: u32,
+    pub credits: u32,
     pub account_creation_date: u64,
     pub account_age: u32,
     pub account_play_time: u32,

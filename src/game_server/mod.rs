@@ -189,6 +189,8 @@ impl GameServer {
                                 player.inner.data.rot,
                                 player_zone,
                                 Player {
+                                    member: player.inner.data.membership_unknown1,
+                                    credits: player.inner.data.credits,
                                     battle_classes: player
                                         .inner
                                         .data
@@ -617,6 +619,10 @@ impl GameServer {
         }
 
         Ok(broadcasts)
+    }
+
+    pub fn costs(&self) -> &BTreeMap<u32, CostEntry> {
+        &self.costs
     }
 
     pub fn customizations(&self) -> &BTreeMap<u32, Customization> {

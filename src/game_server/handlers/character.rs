@@ -76,6 +76,8 @@ pub struct BattleClass {
 
 #[derive(Clone)]
 pub struct Player {
+    pub member: bool,
+    pub credits: u32,
     pub battle_classes: BTreeMap<u32, BattleClass>,
     pub active_battle_class: u32,
     pub inventory: BTreeSet<u32>,
