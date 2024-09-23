@@ -92,12 +92,9 @@ impl ChannelManager {
     pub fn process_next(
         &self,
         client_enqueue: Sender<SocketAddr>,
-        client_dequeue: Receiver<SocketAddr>,
+        addr: SocketAddr,
         count: u8,
     ) -> (SocketAddr, Vec<Vec<u8>>) {
-        let addr = client_dequeue
-            .recv()
-            .expect("Tried to dequeue client after queue channel disconnected");
         let mut channel_handle = self
             .get_by_addr(&addr)
             .expect("Tried to process data on non-existent channel")
