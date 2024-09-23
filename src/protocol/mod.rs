@@ -541,8 +541,8 @@ impl Channel {
         if ready_to_update {
             self.last_round_trip_times.sort();
             self.millis_until_resend = self.last_round_trip_times[self.selected_round_trip_index]
-                .min(self.min_millis_until_resend)
-                .max(self.max_millis_until_resend);
+                .max(self.min_millis_until_resend)
+                .min(self.max_millis_until_resend);
         }
     }
 }
