@@ -209,17 +209,16 @@ pub struct Session {
     pub use_encryption: bool,
 }
 
-const MAX_ROUND_TRIP_TIMES: usize = 20;
-// Use the 90th percentile as resend time.
-const ROUND_TRIP_INDEX: usize = 18;
-
 pub struct Channel {
     session: Option<Session>,
     buffer_size: BufferSize,
     recency_limit: SequenceNumber,
     millis_until_resend: u128,
-    last_round_trip_times: [u128; MAX_ROUND_TRIP_TIMES],
+    last_round_trip_times: Vec<u128>,
     next_round_trip_index: usize,
+    selected_round_trip_index: usize,
+    min_millis_until_resend: u128,
+    max_millis_until_resend: u128,
     fragment_state: FragmentState,
     send_queue: VecDeque<PendingPacket>,
     receive_queue: VecDeque<Packet>,
@@ -234,14 +233,21 @@ impl Channel {
         initial_buffer_size: BufferSize,
         recency_limit: SequenceNumber,
         millis_until_resend: u128,
+        max_round_trip_times: usize,
+        selected_round_trip_index: usize,
+        min_millis_until_resend: u128,
+        max_millis_until_resend: u128,
     ) -> Self {
         Channel {
             session: None,
             buffer_size: initial_buffer_size,
             recency_limit,
             millis_until_resend,
-            last_round_trip_times: [0; MAX_ROUND_TRIP_TIMES],
+            last_round_trip_times: Vec::with_capacity(max_round_trip_times),
             next_round_trip_index: 0,
+            selected_round_trip_index,
+            min_millis_until_resend,
+            max_millis_until_resend,
             fragment_state: FragmentState::new(),
             send_queue: VecDeque::new(),
             receive_queue: VecDeque::new(),
@@ -534,7 +540,9 @@ impl Channel {
 
         if ready_to_update {
             self.last_round_trip_times.sort();
-            self.millis_until_resend = self.last_round_trip_times[ROUND_TRIP_INDEX];
+            self.millis_until_resend = self.last_round_trip_times[self.selected_round_trip_index]
+                .min(self.min_millis_until_resend)
+                .max(self.max_millis_until_resend);
         }
     }
 }

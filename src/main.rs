@@ -27,6 +27,10 @@ async fn main() {
         send_packets_per_cycle: 20,
         packet_recency_limit: 1000,
         default_millis_until_resend: 50,
+        max_round_trip_times: 30,
+        selected_round_trip_index: 27,
+        min_millis_until_resend: 20,
+        max_millis_until_resend: 300,
     };
     spawn(http::start(
         4000,
@@ -54,8 +58,7 @@ async fn main() {
         &socket_arc,
         client_enqueue.clone(),
         MAX_BUFFER_SIZE,
-        server_options.packet_recency_limit,
-        server_options.default_millis_until_resend,
+        server_options.clone(),
     );
     threads.append(&mut spawn_process_threads(
         server_options.process_threads,
@@ -75,6 +78,7 @@ async fn main() {
 
 const MAX_BUFFER_SIZE: BufferSize = 512;
 
+#[derive(Clone)]
 struct ServerOptions {
     pub receive_threads: u16,
     pub process_threads: u16,
@@ -83,6 +87,10 @@ struct ServerOptions {
     pub send_packets_per_cycle: u8,
     pub packet_recency_limit: u16,
     pub default_millis_until_resend: u128,
+    pub max_round_trip_times: usize,
+    pub selected_round_trip_index: usize,
+    pub min_millis_until_resend: u128,
+    pub max_millis_until_resend: u128,
 }
 
 fn spawn_receive_threads(
@@ -91,8 +99,7 @@ fn spawn_receive_threads(
     socket: &Arc<UdpSocket>,
     client_enqueue: Sender<SocketAddr>,
     initial_buffer_size: BufferSize,
-    recency_limit: u16,
-    millis_until_resend: u128,
+    server_options: ServerOptions,
 ) -> Vec<JoinHandle<()>> {
     (0..threads)
         .map(|_| {
@@ -114,7 +121,15 @@ fn spawn_receive_threads(
                         drop(read_handle);
                         let previous_channel = channel_manager.write().insert(
                             &src,
-                            Channel::new(initial_buffer_size, recency_limit, millis_until_resend),
+                            Channel::new(
+                                initial_buffer_size,
+                                server_options.packet_recency_limit,
+                                server_options.default_millis_until_resend,
+                                server_options.max_round_trip_times,
+                                server_options.selected_round_trip_index,
+                                server_options.min_millis_until_resend,
+                                server_options.max_millis_until_resend,
+                            ),
                         );
                         read_handle = channel_manager.read();
 
