@@ -243,7 +243,7 @@ impl Channel {
             buffer_size: initial_buffer_size,
             recency_limit,
             millis_until_resend,
-            last_round_trip_times: Vec::with_capacity(max_round_trip_times),
+            last_round_trip_times: vec![0; max_round_trip_times],
             next_round_trip_index: 0,
             selected_round_trip_index,
             min_millis_until_resend,
