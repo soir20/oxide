@@ -19,6 +19,14 @@ mod protocol;
 #[tokio::main]
 async fn main() {
     let config_dir = Path::new("config");
+    let server_options = ServerOptions {
+        receive_threads: 1,
+        process_threads: 4,
+        max_sessions: 100,
+        process_packets_per_cycle: 40,
+        send_packets_per_cycle: 20,
+        packet_recency_limit: 1000,
+    };
     spawn(http::start(
         4000,
         config_dir,
@@ -33,15 +41,7 @@ async fn main() {
     .expect("couldn't bind to socket");
 
     let channel_manager = RwLock::new(ChannelManager::new());
-
     let game_server = GameServer::new(config_dir).unwrap();
-    let process_delta = 40u8;
-    let send_delta = 20u8;
-    let server_options = ServerOptions {
-        receive_threads: 1,
-        process_threads: 4,
-        max_sessions: 100,
-    };
 
     let channel_manager_arc = Arc::new(channel_manager);
     let socket_arc = Arc::new(socket);
@@ -53,7 +53,7 @@ async fn main() {
         &socket_arc,
         client_enqueue.clone(),
         MAX_BUFFER_SIZE,
-        1000,
+        server_options.packet_recency_limit,
         5,
     );
     threads.append(&mut spawn_process_threads(
@@ -62,8 +62,8 @@ async fn main() {
         &socket_arc,
         client_enqueue,
         client_dequeue,
-        process_delta,
-        send_delta,
+        server_options.process_packets_per_cycle,
+        server_options.send_packets_per_cycle,
         &game_server_arc,
     ));
 
@@ -78,6 +78,9 @@ struct ServerOptions {
     pub receive_threads: u16,
     pub process_threads: u16,
     pub max_sessions: usize,
+    pub process_packets_per_cycle: u8,
+    pub send_packets_per_cycle: u8,
+    pub packet_recency_limit: u16,
 }
 
 fn spawn_receive_threads(
