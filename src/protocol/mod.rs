@@ -161,6 +161,7 @@ struct PendingPacket {
     needs_send: bool,
     packet: Packet,
     last_prepare_to_send: u128,
+    first_prepare_to_send: u128,
 }
 
 impl PendingPacket {
@@ -169,11 +170,22 @@ impl PendingPacket {
             needs_send: true,
             packet,
             last_prepare_to_send: 0,
+            first_prepare_to_send: 0,
         }
+    }
+
+    pub fn is_reliable(&self) -> bool {
+        self.packet.sequence_number().is_some()
     }
 
     pub fn update_last_prepare_to_send_time(&mut self) {
         self.last_prepare_to_send = PendingPacket::now();
+    }
+
+    pub fn initialize_first_prepare_to_send_time(&mut self) {
+        if self.first_prepare_to_send == 0 {
+            self.first_prepare_to_send = PendingPacket::now();
+        }
     }
 
     pub fn time_since_last_prepare_to_send(&self) -> u128 {
@@ -197,11 +209,17 @@ pub struct Session {
     pub use_encryption: bool,
 }
 
+const MAX_ROUND_TRIP_TIMES: usize = 20;
+// Use the 90th percentile as resend time.
+const ROUND_TRIP_INDEX: usize = 18;
+
 pub struct Channel {
     session: Option<Session>,
     buffer_size: BufferSize,
     recency_limit: SequenceNumber,
     millis_until_resend: u128,
+    last_round_trip_times: [u128; MAX_ROUND_TRIP_TIMES],
+    next_round_trip_index: usize,
     fragment_state: FragmentState,
     send_queue: VecDeque<PendingPacket>,
     receive_queue: VecDeque<Packet>,
@@ -222,6 +240,8 @@ impl Channel {
             buffer_size: initial_buffer_size,
             recency_limit,
             millis_until_resend,
+            last_round_trip_times: [0; MAX_ROUND_TRIP_TIMES],
+            next_round_trip_index: 0,
             fragment_state: FragmentState::new(),
             send_queue: VecDeque::new(),
             receive_queue: VecDeque::new(),
@@ -338,6 +358,8 @@ impl Channel {
     pub fn send_next(&mut self, count: u8) -> Result<Vec<Vec<u8>>, SerializeError> {
         let mut indices_to_send = Vec::new();
 
+        self.update_millis_until_resend();
+
         // If the packet was acked, it was already sent, so don't send it again
         self.send_queue.retain(|packet| packet.needs_send);
 
@@ -351,14 +373,14 @@ impl Channel {
                 continue;
             }
 
-            // Packets without sequence numbers do not need to be acked, so they
-            // are always sent exactly once.
-            if packet.packet.sequence_number().is_none() {
+            // Unreliable packets do not need to be acked, so they are always sent exactly once.
+            if !packet.is_reliable() {
                 packet.needs_send = false;
             }
 
             indices_to_send.push(index);
             packet.update_last_prepare_to_send_time();
+            packet.initialize_first_prepare_to_send_time();
             index += 1;
         }
 
@@ -493,5 +515,26 @@ impl Channel {
     fn acknowledge_all(&mut self, sequence_number: SequenceNumber) {
         self.send_queue
             .push_back(PendingPacket::new(Packet::AckAll(sequence_number)));
+    }
+
+    fn update_millis_until_resend(&mut self) {
+        let mut ready_to_update = false;
+        for packet in self.send_queue.iter() {
+            if !packet.needs_send && packet.is_reliable() {
+                self.last_round_trip_times[self.next_round_trip_index] =
+                    PendingPacket::now() - packet.first_prepare_to_send;
+                self.next_round_trip_index += 1;
+
+                if self.next_round_trip_index == self.last_round_trip_times.len() {
+                    self.next_round_trip_index = 0;
+                    ready_to_update = true;
+                }
+            }
+        }
+
+        if ready_to_update {
+            self.last_round_trip_times.sort();
+            self.millis_until_resend = self.last_round_trip_times[ROUND_TRIP_INDEX];
+        }
     }
 }
