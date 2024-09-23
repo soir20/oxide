@@ -1,6 +1,6 @@
 use crate::game_server::Broadcast;
 use crate::protocol::Channel;
-use crossbeam_channel::{Receiver, Sender};
+use crossbeam_channel::Sender;
 use parking_lot::Mutex;
 use std::collections::BTreeMap;
 use std::net::SocketAddr;
