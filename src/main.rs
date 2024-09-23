@@ -3,7 +3,7 @@ use parking_lot::RwLock;
 use std::net::{SocketAddr, UdpSocket};
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
-use std::thread;
+use std::thread::{self, JoinHandle};
 use tokio::spawn;
 
 use crate::channel_manager::{ChannelManager, ReceiveResult};
@@ -46,7 +46,7 @@ async fn main() {
     let socket_arc = Arc::new(socket);
     let game_server_arc = Arc::new(game_server);
     let (client_enqueue, client_dequeue) = bounded(server_options.max_sessions);
-    spawn_receive_threads(
+    let mut threads = spawn_receive_threads(
         server_options.receive_threads,
         &channel_manager_arc,
         &socket_arc,
@@ -55,7 +55,7 @@ async fn main() {
         1000,
         5,
     );
-    spawn_process_threads(
+    threads.append(&mut spawn_process_threads(
         server_options.process_threads,
         &channel_manager_arc,
         &socket_arc,
@@ -64,7 +64,11 @@ async fn main() {
         process_delta,
         send_delta,
         &game_server_arc,
-    );
+    ));
+
+    for thread in threads {
+        thread.join().expect("Thread exited with error");
+    }
 }
 
 struct ServerOptions {
@@ -81,38 +85,41 @@ fn spawn_receive_threads(
     initial_buffer_size: u32,
     recency_limit: u16,
     millis_until_resend: u128,
-) {
-    for _ in 0..threads {
-        let channel_manager = Arc::clone(channel_manager);
-        let socket = Arc::clone(socket);
-        let client_enqueue = client_enqueue.clone();
+) -> Vec<JoinHandle<()>> {
+    (0..threads)
+        .map(|_| {
+            let channel_manager = Arc::clone(channel_manager);
+            let socket = Arc::clone(socket);
+            let client_enqueue = client_enqueue.clone();
 
-        thread::spawn(move || loop {
-            let mut buf = [0; 512];
-            if let Ok((len, src)) = socket.recv_from(&mut buf) {
-                let recv_data = &buf[0..len];
+            thread::spawn(move || loop {
+                let mut buf = [0; 512];
+                if let Ok((len, src)) = socket.recv_from(&mut buf) {
+                    let recv_data = &buf[0..len];
 
-                let mut read_handle = channel_manager.read();
+                    let mut read_handle = channel_manager.read();
 
-                let receive_result = read_handle.receive(client_enqueue.clone(), &src, recv_data);
-                if receive_result == ReceiveResult::CreateChannelFirst {
-                    println!("Creating channel for {}", src);
-                    drop(read_handle);
-                    let previous_channel = channel_manager.write().insert(
-                        &src,
-                        Channel::new(initial_buffer_size, recency_limit, millis_until_resend),
-                    );
-                    read_handle = channel_manager.read();
+                    let receive_result =
+                        read_handle.receive(client_enqueue.clone(), &src, recv_data);
+                    if receive_result == ReceiveResult::CreateChannelFirst {
+                        println!("Creating channel for {}", src);
+                        drop(read_handle);
+                        let previous_channel = channel_manager.write().insert(
+                            &src,
+                            Channel::new(initial_buffer_size, recency_limit, millis_until_resend),
+                        );
+                        read_handle = channel_manager.read();
 
-                    if previous_channel.is_some() {
-                        println!("Client {} reconnected, dropping old channel", src);
+                        if previous_channel.is_some() {
+                            println!("Client {} reconnected, dropping old channel", src);
+                        }
+
+                        read_handle.receive(client_enqueue.clone(), &src, recv_data);
                     }
-
-                    read_handle.receive(client_enqueue.clone(), &src, recv_data);
                 }
-            }
-        });
-    }
+            })
+        })
+        .collect()
 }
 
 fn spawn_process_threads(
@@ -124,51 +131,53 @@ fn spawn_process_threads(
     process_delta: u8,
     send_delta: u8,
     game_server: &Arc<GameServer>,
-) {
-    for _ in 0..threads {
-        let channel_manager = Arc::clone(channel_manager);
-        let socket = Arc::clone(socket);
-        let game_server = Arc::clone(game_server);
-        let client_enqueue = client_enqueue.clone();
-        let client_dequeue = client_dequeue.clone();
+) -> Vec<JoinHandle<()>> {
+    (0..threads)
+        .map(|_| {
+            let channel_manager = Arc::clone(channel_manager);
+            let socket = Arc::clone(socket);
+            let game_server = Arc::clone(game_server);
+            let client_enqueue = client_enqueue.clone();
+            let client_dequeue = client_dequeue.clone();
 
-        thread::spawn(move || loop {
-            let mut read_handle = channel_manager.read();
+            thread::spawn(move || loop {
+                let mut read_handle = channel_manager.read();
 
-            let (src, packets_for_game_server) = read_handle.process_next(
-                client_enqueue.clone(),
-                client_dequeue.clone(),
-                process_delta,
-            );
+                let (src, packets_for_game_server) = read_handle.process_next(
+                    client_enqueue.clone(),
+                    client_dequeue.clone(),
+                    process_delta,
+                );
 
-            let mut broadcasts = Vec::new();
-            for packet in packets_for_game_server {
-                if let Some(guid) = read_handle.guid(&src) {
-                    match game_server.process_packet(guid, packet) {
-                        Ok(mut new_broadcasts) => broadcasts.append(&mut new_broadcasts),
-                        Err(err) => println!("Unable to process packet: {:?}", err),
-                    }
-                } else {
-                    match game_server.login(packet) {
-                        Ok((guid, mut new_broadcasts)) => {
-                            drop(read_handle);
-                            channel_manager.write().authenticate(&src, guid);
-                            broadcasts.append(&mut new_broadcasts);
-                            read_handle = channel_manager.read();
+                let mut broadcasts = Vec::new();
+                for packet in packets_for_game_server {
+                    if let Some(guid) = read_handle.guid(&src) {
+                        match game_server.process_packet(guid, packet) {
+                            Ok(mut new_broadcasts) => broadcasts.append(&mut new_broadcasts),
+                            Err(err) => println!("Unable to process packet: {:?}", err),
                         }
-                        Err(err) => println!("Unable to process login packet: {:?}", err),
+                    } else {
+                        match game_server.login(packet) {
+                            Ok((guid, mut new_broadcasts)) => {
+                                drop(read_handle);
+                                channel_manager.write().authenticate(&src, guid);
+                                broadcasts.append(&mut new_broadcasts);
+                                read_handle = channel_manager.read();
+                            }
+                            Err(err) => println!("Unable to process login packet: {:?}", err),
+                        }
                     }
                 }
-            }
 
-            read_handle.broadcast(broadcasts);
+                read_handle.broadcast(broadcasts);
 
-            let packets_to_send = read_handle.send_next(&src, send_delta);
-            for buffer in packets_to_send {
-                socket
-                    .send_to(&buffer, src)
-                    .expect("Unable to send packet to client");
-            }
-        });
-    }
+                let packets_to_send = read_handle.send_next(&src, send_delta);
+                for buffer in packets_to_send {
+                    socket
+                        .send_to(&buffer, src)
+                        .expect("Unable to send packet to client");
+                }
+            })
+        })
+        .collect()
 }
