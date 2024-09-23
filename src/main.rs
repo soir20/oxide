@@ -54,7 +54,7 @@ async fn main() {
         client_enqueue.clone(),
         MAX_BUFFER_SIZE,
         server_options.packet_recency_limit,
-        5,
+        50,
     );
     threads.append(&mut spawn_process_threads(
         server_options.process_threads,
