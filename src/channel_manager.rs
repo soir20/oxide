@@ -1,5 +1,6 @@
 use crate::game_server::Broadcast;
 use crate::protocol::Channel;
+use crossbeam_channel::{Receiver, Sender};
 use parking_lot::Mutex;
 use std::collections::BTreeMap;
 use std::net::SocketAddr;
@@ -54,11 +55,27 @@ impl ChannelManager {
         self.authenticated.insert(addr, guid, channel);
     }
 
-    pub fn receive(&self, addr: &SocketAddr, data: &[u8]) -> ReceiveResult {
+    pub fn receive(
+        &self,
+        client_enqueue: Sender<SocketAddr>,
+        addr: &SocketAddr,
+        data: &[u8],
+    ) -> ReceiveResult {
         if let Some(channel) = self.get_by_addr(addr) {
             let mut channel_handle = channel.lock();
+            let client_not_queued = channel_handle.queued_received_packets() == 0;
+
             match channel_handle.receive(data) {
-                Ok(packets_received) => ReceiveResult::Success(packets_received),
+                Ok(packets_received) => {
+                    // If the last processing thread did not process all packets, the client is already queued
+                    if client_not_queued && packets_received > 0 {
+                        client_enqueue
+                            .send(*addr)
+                            .expect("Tried to enqueue client after queue channel disconnected");
+                    }
+
+                    ReceiveResult::Success(packets_received)
+                }
                 Err(err) => {
                     println!(
                         "Deserialize error on channel {}: {:?}, data={:x?}",
@@ -72,11 +89,30 @@ impl ChannelManager {
         }
     }
 
-    pub fn process_next(&self, addr: &SocketAddr, count: u8) -> Vec<Vec<u8>> {
-        self.get_by_addr(addr)
+    pub fn process_next(
+        &self,
+        client_enqueue: Sender<SocketAddr>,
+        client_dequeue: Receiver<SocketAddr>,
+        count: u8,
+    ) -> (SocketAddr, Vec<Vec<u8>>) {
+        let addr = client_dequeue
+            .recv()
+            .expect("Tried to dequeue client after queue channel disconnected");
+        let mut channel_handle = self
+            .get_by_addr(&addr)
             .expect("Tried to process data on non-existent channel")
-            .lock()
-            .process_next(count)
+            .lock();
+
+        let processed_packets = channel_handle.process_next(count);
+
+        // Re-enqueue this address for another thread to pick up if there is still more processing to be done
+        if channel_handle.queued_received_packets() > 0 {
+            client_enqueue
+                .send(addr)
+                .expect("Tried to enqueue client after queue channel disconnected");
+        }
+
+        (addr, processed_packets)
     }
 
     pub fn broadcast(&self, broadcasts: Vec<Broadcast>) -> Vec<u32> {

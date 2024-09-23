@@ -242,6 +242,10 @@ impl Channel {
         Ok(packet_count)
     }
 
+    pub fn queued_received_packets(&self) -> usize {
+        self.receive_queue.len()
+    }
+
     pub fn process_next(&mut self, count: u8) -> Vec<Vec<u8>> {
         let mut needs_new_ack = false;
         let mut packets_to_process = Vec::new();
