@@ -26,6 +26,7 @@ async fn main() {
         process_packets_per_cycle: 40,
         send_packets_per_cycle: 20,
         packet_recency_limit: 1000,
+        default_millis_until_resend: 50,
     };
     spawn(http::start(
         4000,
@@ -54,7 +55,7 @@ async fn main() {
         client_enqueue.clone(),
         MAX_BUFFER_SIZE,
         server_options.packet_recency_limit,
-        50,
+        server_options.default_millis_until_resend,
     );
     threads.append(&mut spawn_process_threads(
         server_options.process_threads,
@@ -81,6 +82,7 @@ struct ServerOptions {
     pub process_packets_per_cycle: u8,
     pub send_packets_per_cycle: u8,
     pub packet_recency_limit: u16,
+    pub default_millis_until_resend: u128,
 }
 
 fn spawn_receive_threads(
