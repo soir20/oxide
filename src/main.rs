@@ -143,13 +143,13 @@ fn spawn_process_threads(
             thread::spawn(move || loop {
                 // Don't lock the channel manager until we have packets to process
                 // to avoid deadlock with channel creation
-                let addr = client_dequeue
+                let src = client_dequeue
                     .recv()
                     .expect("Tried to dequeue client after queue channel disconnected");
 
                 let mut read_handle = channel_manager.read();
-                let (src, packets_for_game_server) =
-                    read_handle.process_next(client_enqueue.clone(), addr, process_delta);
+                let packets_for_game_server =
+                    read_handle.process_next(client_enqueue.clone(), &src, process_delta);
 
                 let mut broadcasts = Vec::new();
                 for packet in packets_for_game_server {

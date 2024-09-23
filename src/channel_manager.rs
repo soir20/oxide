@@ -92,11 +92,11 @@ impl ChannelManager {
     pub fn process_next(
         &self,
         client_enqueue: Sender<SocketAddr>,
-        addr: SocketAddr,
+        addr: &SocketAddr,
         count: u8,
-    ) -> (SocketAddr, Vec<Vec<u8>>) {
+    ) -> Vec<Vec<u8>> {
         let mut channel_handle = self
-            .get_by_addr(&addr)
+            .get_by_addr(addr)
             .expect("Tried to process data on non-existent channel")
             .lock();
 
@@ -105,11 +105,11 @@ impl ChannelManager {
         // Re-enqueue this address for another thread to pick up if there is still more processing to be done
         if channel_handle.queued_received_packets() > 0 {
             client_enqueue
-                .send(addr)
+                .send(*addr)
                 .expect("Tried to enqueue client after queue channel disconnected");
         }
 
-        (addr, processed_packets)
+        processed_packets
     }
 
     pub fn broadcast(&self, broadcasts: Vec<Broadcast>) -> Vec<u32> {
