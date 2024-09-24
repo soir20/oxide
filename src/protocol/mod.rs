@@ -180,11 +180,8 @@ impl PendingPacket {
 
     pub fn update_last_prepare_to_send_time(&mut self) {
         self.last_prepare_to_send = PendingPacket::now();
-    }
-
-    pub fn initialize_first_prepare_to_send_time(&mut self) {
         if self.first_prepare_to_send == 0 {
-            self.first_prepare_to_send = PendingPacket::now();
+            self.first_prepare_to_send = self.last_prepare_to_send;
         }
     }
 
@@ -217,7 +214,6 @@ pub struct Channel {
     last_round_trip_times: Vec<u128>,
     next_round_trip_index: usize,
     selected_round_trip_index: usize,
-    min_millis_until_resend: u128,
     max_millis_until_resend: u128,
     fragment_state: FragmentState,
     send_queue: VecDeque<PendingPacket>,
@@ -233,20 +229,23 @@ impl Channel {
         initial_buffer_size: BufferSize,
         recency_limit: SequenceNumber,
         millis_until_resend: u128,
-        max_round_trip_times: usize,
-        selected_round_trip_index: usize,
-        min_millis_until_resend: u128,
+        max_round_trip_entries: usize,
+        desired_resend_pct: u8,
         max_millis_until_resend: u128,
     ) -> Self {
+        if desired_resend_pct >= 100 {
+            panic!("desired_resend_pct must be less than 100")
+        }
+
         Channel {
             session: None,
             buffer_size: initial_buffer_size,
             recency_limit,
             millis_until_resend,
-            last_round_trip_times: vec![0; max_round_trip_times],
+            last_round_trip_times: vec![0; max_round_trip_entries],
             next_round_trip_index: 0,
-            selected_round_trip_index,
-            min_millis_until_resend,
+            selected_round_trip_index: (100 - desired_resend_pct) as usize * max_round_trip_entries
+                / 100,
             max_millis_until_resend,
             fragment_state: FragmentState::new(),
             send_queue: VecDeque::new(),
@@ -386,7 +385,6 @@ impl Channel {
 
             indices_to_send.push(index);
             packet.update_last_prepare_to_send_time();
-            packet.initialize_first_prepare_to_send_time();
             index += 1;
         }
 
@@ -541,7 +539,6 @@ impl Channel {
         if ready_to_update {
             self.last_round_trip_times.sort();
             self.millis_until_resend = self.last_round_trip_times[self.selected_round_trip_index]
-                .max(self.min_millis_until_resend)
                 .min(self.max_millis_until_resend);
         }
     }

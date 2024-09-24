@@ -26,10 +26,9 @@ async fn main() {
         process_packets_per_cycle: 40,
         send_packets_per_cycle: 20,
         packet_recency_limit: 1000,
-        default_millis_until_resend: 50,
-        max_round_trip_times: 30,
-        selected_round_trip_index: 27,
-        min_millis_until_resend: 20,
+        default_millis_until_resend: 30,
+        max_round_trip_entries: 30,
+        desired_resend_pct: 5,
         max_millis_until_resend: 300,
     };
     spawn(http::start(
@@ -87,9 +86,8 @@ struct ServerOptions {
     pub send_packets_per_cycle: u8,
     pub packet_recency_limit: u16,
     pub default_millis_until_resend: u128,
-    pub max_round_trip_times: usize,
-    pub selected_round_trip_index: usize,
-    pub min_millis_until_resend: u128,
+    pub max_round_trip_entries: usize,
+    pub desired_resend_pct: u8,
     pub max_millis_until_resend: u128,
 }
 
@@ -125,9 +123,8 @@ fn spawn_receive_threads(
                                 initial_buffer_size,
                                 server_options.packet_recency_limit,
                                 server_options.default_millis_until_resend,
-                                server_options.max_round_trip_times,
-                                server_options.selected_round_trip_index,
-                                server_options.min_millis_until_resend,
+                                server_options.max_round_trip_entries,
+                                server_options.desired_resend_pct,
                                 server_options.max_millis_until_resend,
                             ),
                         );
