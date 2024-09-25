@@ -11,16 +11,20 @@ pub enum ReceiveResult {
     CreateChannelFirst,
 }
 
+pub struct TooManyChannels(pub usize);
+
 pub struct ChannelManager {
     unauthenticated: BTreeMap<SocketAddr, Mutex<Channel>>,
     authenticated: AuthenticatedChannelManager,
+    max_sessions: usize,
 }
 
 impl ChannelManager {
-    pub fn new() -> Self {
+    pub fn new(max_sessions: usize) -> Self {
         ChannelManager {
             unauthenticated: Default::default(),
             authenticated: Default::default(),
+            max_sessions,
         }
     }
 
@@ -38,13 +42,23 @@ impl ChannelManager {
         self.authenticated.guid(addr)
     }
 
-    pub fn insert(&mut self, addr: &SocketAddr, channel: Channel) -> Option<Mutex<Channel>> {
+    pub fn insert(
+        &mut self,
+        addr: &SocketAddr,
+        channel: Channel,
+    ) -> Result<Option<Mutex<Channel>>, TooManyChannels> {
+        // We don't need to send a disconnect because the sender will interpret it as a disconnect for the new sessions
         let previous = self
             .unauthenticated
             .remove(addr)
             .or(self.authenticated.remove(addr));
-        self.unauthenticated.insert(*addr, Mutex::new(channel));
-        previous
+
+        if self.len() < self.max_sessions {
+            self.unauthenticated.insert(*addr, Mutex::new(channel));
+            Ok(previous)
+        } else {
+            Err(TooManyChannels(self.max_sessions))
+        }
     }
 
     pub fn authenticate(&mut self, addr: &SocketAddr, guid: u32) {
@@ -151,6 +165,10 @@ impl ChannelManager {
             Vec::new()
         })
     }
+
+    pub fn len(&self) -> usize {
+        self.unauthenticated.len() + self.authenticated.len()
+    }
 }
 
 #[derive(Default)]
@@ -191,5 +209,9 @@ impl AuthenticatedChannelManager {
                 .remove(&guid)
                 .expect("Entry in socket to GUID mapping has no corresponding channel")
         })
+    }
+
+    pub fn len(&self) -> usize {
+        self.channels.len()
     }
 }

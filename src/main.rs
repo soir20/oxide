@@ -44,7 +44,7 @@ async fn main() {
     ))
     .expect("couldn't bind to socket");
 
-    let channel_manager = RwLock::new(ChannelManager::new());
+    let channel_manager = RwLock::new(ChannelManager::new(server_options.max_sessions));
     let game_server = GameServer::new(config_dir).unwrap();
 
     let channel_manager_arc = Arc::new(channel_manager);
@@ -117,7 +117,7 @@ fn spawn_receive_threads(
                     if receive_result == ReceiveResult::CreateChannelFirst {
                         println!("Creating channel for {}", src);
                         drop(read_handle);
-                        let previous_channel = channel_manager.write().insert(
+                        let previous_channel_result = channel_manager.write().insert(
                             &src,
                             Channel::new(
                                 initial_buffer_size,
@@ -128,13 +128,18 @@ fn spawn_receive_threads(
                                 server_options.max_millis_until_resend,
                             ),
                         );
-                        read_handle = channel_manager.read();
 
-                        if previous_channel.is_some() {
-                            println!("Client {} reconnected, dropping old channel", src);
+                        if let Ok(previous_channel) = previous_channel_result {
+                            read_handle = channel_manager.read();
+
+                            if previous_channel.is_some() {
+                                println!("Client {} reconnected, dropping old channel", src);
+                            }
+
+                            read_handle.receive(client_enqueue.clone(), &src, recv_data);
+                        } else if let Err(max_channels) = previous_channel_result {
+                            println!("Could not create channel because maximum of {} channels was reached", max_channels.0);
                         }
-
-                        read_handle.receive(client_enqueue.clone(), &src, recv_data);
                     }
                 }
             })
