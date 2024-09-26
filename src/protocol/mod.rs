@@ -267,12 +267,8 @@ impl Channel {
         Ok(packet_count)
     }
 
-    pub fn queued_received_packets(&self) -> usize {
-        self.receive_queue.len()
-    }
-
-    pub fn queued_to_send_packets(&self) -> usize {
-        self.send_queue.len()
+    pub fn needs_processing(&self) -> bool {
+        self.receive_queue.len() > 0 || self.send_queue.len() > 0
     }
 
     pub fn process_next(&mut self, count: u8) -> Vec<Vec<u8>> {
