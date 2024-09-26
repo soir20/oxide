@@ -268,7 +268,7 @@ impl Channel {
     }
 
     pub fn needs_processing(&self) -> bool {
-        self.receive_queue.len() > 0 || self.send_queue.len() > 0
+        !self.receive_queue.is_empty() || !self.send_queue.is_empty()
     }
 
     pub fn process_next(&mut self, count: u8) -> Vec<Vec<u8>> {
