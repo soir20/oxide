@@ -1,5 +1,5 @@
 use crossbeam_channel::{bounded, Receiver, Sender};
-use parking_lot::RwLock;
+use parking_lot::{MutexGuard, RwLock, RwLockReadGuard};
 use protocol::BufferSize;
 use std::net::{SocketAddr, UdpSocket};
 use std::path::{Path, PathBuf};
@@ -172,13 +172,14 @@ fn spawn_process_threads(
                     .recv()
                     .expect("Tried to dequeue client after queue channel disconnected");
 
-                let mut read_handle = channel_manager.read();
+                let mut channel_manager_read_handle = channel_manager.read();
+                let mut channel_handle = lock_channel(&channel_manager_read_handle, &src);
                 let packets_for_game_server =
-                    read_handle.process_next(client_enqueue.clone(), &src, process_delta);
+                    channel_manager_read_handle.process_next(&mut channel_handle, process_delta);
 
                 let mut broadcasts = Vec::new();
                 for packet in packets_for_game_server {
-                    if let Some(guid) = read_handle.guid(&src) {
+                    if let Some(guid) = channel_manager_read_handle.guid(&src) {
                         match game_server.process_packet(guid, packet) {
                             Ok(mut new_broadcasts) => broadcasts.append(&mut new_broadcasts),
                             Err(err) => println!("Unable to process packet: {:?}", err),
@@ -186,25 +187,45 @@ fn spawn_process_threads(
                     } else {
                         match game_server.login(packet) {
                             Ok((guid, mut new_broadcasts)) => {
-                                drop(read_handle);
+                                drop(channel_handle);
+                                drop(channel_manager_read_handle);
                                 channel_manager.write().authenticate(&src, guid);
                                 broadcasts.append(&mut new_broadcasts);
-                                read_handle = channel_manager.read();
+                                channel_manager_read_handle = channel_manager.read();
+                                channel_handle = lock_channel(&channel_manager_read_handle, &src);
                             }
                             Err(err) => println!("Unable to process login packet: {:?}", err),
                         }
                     }
                 }
 
-                read_handle.broadcast(broadcasts);
+                channel_manager_read_handle.broadcast(broadcasts);
 
-                let packets_to_send = read_handle.send_next(&src, send_delta);
+                let packets_to_send =
+                    channel_manager_read_handle.send_next(&mut channel_handle, send_delta);
                 for buffer in packets_to_send {
                     socket
                         .send_to(&buffer, src)
                         .expect("Unable to send packet to client");
                 }
+
+                // Re-enqueue this address for another thread to pick up if there is still more processing to be done
+                if channel_handle.needs_processing() {
+                    client_enqueue
+                        .send(src)
+                        .expect("Tried to enqueue client after queue channel disconnected");
+                }
             })
         })
         .collect()
+}
+
+fn lock_channel<'a>(
+    channel_manager_read_handle: &'a RwLockReadGuard<ChannelManager>,
+    addr: &'a SocketAddr,
+) -> MutexGuard<'a, Channel> {
+    channel_manager_read_handle
+        .get_by_addr(addr)
+        .expect("Tried to process data on non-existent channel")
+        .lock()
 }

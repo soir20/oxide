@@ -1,7 +1,7 @@
 use crate::game_server::Broadcast;
 use crate::protocol::Channel;
 use crossbeam_channel::Sender;
-use parking_lot::Mutex;
+use parking_lot::{Mutex, MutexGuard};
 use std::collections::BTreeMap;
 use std::net::SocketAddr;
 
@@ -105,25 +105,10 @@ impl ChannelManager {
 
     pub fn process_next(
         &self,
-        client_enqueue: Sender<SocketAddr>,
-        addr: &SocketAddr,
+        channel_handle: &mut MutexGuard<Channel>,
         count: u8,
     ) -> Vec<Vec<u8>> {
-        let mut channel_handle = self
-            .get_by_addr(addr)
-            .expect("Tried to process data on non-existent channel")
-            .lock();
-
-        let processed_packets = channel_handle.process_next(count);
-
-        // Re-enqueue this address for another thread to pick up if there is still more processing to be done
-        if channel_handle.needs_processing() {
-            client_enqueue
-                .send(*addr)
-                .expect("Tried to enqueue client after queue channel disconnected");
-        }
-
-        processed_packets
+        channel_handle.process_next(count)
     }
 
     pub fn broadcast(&self, broadcasts: Vec<Broadcast>) -> Vec<u32> {
@@ -150,12 +135,8 @@ impl ChannelManager {
         missing_guids
     }
 
-    pub fn send_next(&self, addr: &SocketAddr, count: u8) -> Vec<Vec<u8>> {
-        let send_result = self
-            .get_by_addr(addr)
-            .expect("Tried to sent data through non-existent channel")
-            .lock()
-            .send_next(count);
+    pub fn send_next(&self, channel_handle: &mut MutexGuard<Channel>, count: u8) -> Vec<Vec<u8>> {
+        let send_result = channel_handle.send_next(count);
 
         send_result.unwrap_or_else(|err| {
             println!("Send error: {:?}", err);
