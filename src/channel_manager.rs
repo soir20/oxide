@@ -77,11 +77,12 @@ impl ChannelManager {
     ) -> ReceiveResult {
         if let Some(channel) = self.get_by_addr(addr) {
             let mut channel_handle = channel.lock();
+            let client_not_queued = !channel_handle.needs_processing();
 
             match channel_handle.receive(data) {
                 Ok(packets_received) => {
                     // If the last processing thread did not process all packets, the client is already queued
-                    if !channel_handle.needs_processing() && packets_received > 0 {
+                    if client_not_queued && packets_received > 0 {
                         client_enqueue
                             .send(*addr)
                             .expect("Tried to enqueue client after queue channel disconnected");
