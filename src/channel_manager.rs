@@ -111,7 +111,11 @@ impl ChannelManager {
         channel_handle.process_next(count)
     }
 
-    pub fn broadcast(&self, broadcasts: Vec<Broadcast>) -> Vec<u32> {
+    pub fn broadcast(
+        &self,
+        client_enqueue: Sender<SocketAddr>,
+        broadcasts: Vec<Broadcast>,
+    ) -> Vec<u32> {
         let mut missing_guids = Vec::new();
 
         for broadcast in broadcasts {
@@ -123,9 +127,17 @@ impl ChannelManager {
             for guid in guids {
                 if let Some(channel) = self.get_by_guid(guid) {
                     let mut channel_handle = channel.lock();
+                    let client_not_queued = !channel_handle.needs_processing();
+
                     packets.iter().for_each(|packet| {
                         channel_handle.prepare_to_send_data(packet.clone());
-                    })
+                    });
+
+                    if client_not_queued {
+                        client_enqueue
+                            .send(channel_handle.addr)
+                            .expect("Tried to enqueue client after queue channel disconnected");
+                    }
                 } else {
                     missing_guids.push(guid);
                 }

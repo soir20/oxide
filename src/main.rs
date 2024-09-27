@@ -120,6 +120,7 @@ fn spawn_receive_threads(
                         let previous_channel_result = channel_manager.write().insert(
                             &src,
                             Channel::new(
+                                src,
                                 initial_buffer_size,
                                 server_options.packet_recency_limit,
                                 server_options.default_millis_until_resend,
@@ -174,6 +175,15 @@ fn spawn_process_threads(
 
                 let mut channel_manager_read_handle = channel_manager.read();
                 let mut channel_handle = lock_channel(&channel_manager_read_handle, &src);
+
+                let packets_to_send =
+                    channel_manager_read_handle.send_next(&mut channel_handle, send_delta);
+                for buffer in packets_to_send {
+                    socket
+                        .send_to(&buffer, src)
+                        .expect("Unable to send packet to client");
+                }
+
                 let packets_for_game_server =
                     channel_manager_read_handle.process_next(&mut channel_handle, process_delta);
 
@@ -199,22 +209,15 @@ fn spawn_process_threads(
                     }
                 }
 
-                channel_manager_read_handle.broadcast(broadcasts);
-
-                let packets_to_send =
-                    channel_manager_read_handle.send_next(&mut channel_handle, send_delta);
-                for buffer in packets_to_send {
-                    socket
-                        .send_to(&buffer, src)
-                        .expect("Unable to send packet to client");
-                }
-
                 // Re-enqueue this address for another thread to pick up if there is still more processing to be done
                 if channel_handle.needs_processing() {
                     client_enqueue
                         .send(src)
                         .expect("Tried to enqueue client after queue channel disconnected");
                 }
+
+                drop(channel_handle);
+                channel_manager_read_handle.broadcast(client_enqueue.clone(), broadcasts);
             })
         })
         .collect()

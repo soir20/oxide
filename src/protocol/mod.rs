@@ -1,4 +1,5 @@
 use std::collections::{BTreeMap, VecDeque};
+use std::net::SocketAddr;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use rand::random;
@@ -207,6 +208,7 @@ pub struct Session {
 }
 
 pub struct Channel {
+    pub addr: SocketAddr,
     session: Option<Session>,
     buffer_size: BufferSize,
     recency_limit: SequenceNumber,
@@ -226,6 +228,7 @@ pub struct Channel {
 
 impl Channel {
     pub fn new(
+        addr: SocketAddr,
         initial_buffer_size: BufferSize,
         recency_limit: SequenceNumber,
         millis_until_resend: u128,
@@ -238,6 +241,7 @@ impl Channel {
         }
 
         Channel {
+            addr,
             session: None,
             buffer_size: initial_buffer_size,
             recency_limit,
