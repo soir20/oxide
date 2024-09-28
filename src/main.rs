@@ -1,6 +1,9 @@
 use crossbeam_channel::{bounded, Receiver, Sender};
 use parking_lot::{MutexGuard, RwLock, RwLockReadGuard};
 use protocol::BufferSize;
+use serde::Deserialize;
+use std::fs::File;
+use std::io::Error;
 use std::net::{SocketAddr, UdpSocket};
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
@@ -19,18 +22,7 @@ mod protocol;
 #[tokio::main]
 async fn main() {
     let config_dir = Path::new("config");
-    let server_options = ServerOptions {
-        receive_threads: 1,
-        process_threads: 4,
-        max_sessions: 100,
-        process_packets_per_cycle: 40,
-        send_packets_per_cycle: 20,
-        packet_recency_limit: 1000,
-        default_millis_until_resend: 30,
-        max_round_trip_entries: 30,
-        desired_resend_pct: 5,
-        max_millis_until_resend: 300,
-    };
+    let server_options = load_server_options(config_dir).expect("Unable to read server options");
     spawn(http::start(
         4000,
         config_dir,
@@ -77,7 +69,7 @@ async fn main() {
 
 const MAX_BUFFER_SIZE: BufferSize = 512;
 
-#[derive(Clone)]
+#[derive(Clone, Deserialize)]
 struct ServerOptions {
     pub receive_threads: u16,
     pub process_threads: u16,
@@ -89,6 +81,11 @@ struct ServerOptions {
     pub max_round_trip_entries: usize,
     pub desired_resend_pct: u8,
     pub max_millis_until_resend: u128,
+}
+
+fn load_server_options(config_dir: &Path) -> Result<ServerOptions, Error> {
+    let mut file = File::open(config_dir.join("server.json"))?;
+    Ok(serde_json::from_reader(&mut file)?)
 }
 
 fn spawn_receive_threads(
