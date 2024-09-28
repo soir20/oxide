@@ -526,7 +526,7 @@ impl Channel {
         for packet in self.send_queue.iter() {
             if !packet.needs_send && packet.is_reliable() {
                 self.last_round_trip_times[self.next_round_trip_index] =
-                    PendingPacket::now() - packet.first_prepare_to_send;
+                    PendingPacket::now().saturating_sub(packet.first_prepare_to_send);
                 self.next_round_trip_index += 1;
 
                 if self.next_round_trip_index == self.last_round_trip_times.len() {
