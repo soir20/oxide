@@ -1,6 +1,7 @@
 use crate::game_server::Broadcast;
 use crate::protocol::Channel;
-use parking_lot::Mutex;
+use crossbeam_channel::Sender;
+use parking_lot::{Mutex, MutexGuard};
 use std::collections::BTreeMap;
 use std::net::SocketAddr;
 
@@ -10,16 +11,20 @@ pub enum ReceiveResult {
     CreateChannelFirst,
 }
 
+pub struct TooManyChannels(pub usize);
+
 pub struct ChannelManager {
     unauthenticated: BTreeMap<SocketAddr, Mutex<Channel>>,
     authenticated: AuthenticatedChannelManager,
+    max_sessions: usize,
 }
 
 impl ChannelManager {
-    pub fn new() -> Self {
+    pub fn new(max_sessions: usize) -> Self {
         ChannelManager {
             unauthenticated: Default::default(),
             authenticated: Default::default(),
+            max_sessions,
         }
     }
 
@@ -37,13 +42,23 @@ impl ChannelManager {
         self.authenticated.guid(addr)
     }
 
-    pub fn insert(&mut self, addr: &SocketAddr, channel: Channel) -> Option<Mutex<Channel>> {
+    pub fn insert(
+        &mut self,
+        addr: &SocketAddr,
+        channel: Channel,
+    ) -> Result<Option<Mutex<Channel>>, TooManyChannels> {
+        // We don't need to send a disconnect because the sender will interpret it as a disconnect for the new sessions
         let previous = self
             .unauthenticated
             .remove(addr)
             .or(self.authenticated.remove(addr));
-        self.unauthenticated.insert(*addr, Mutex::new(channel));
-        previous
+
+        if self.len() < self.max_sessions {
+            self.unauthenticated.insert(*addr, Mutex::new(channel));
+            Ok(previous)
+        } else {
+            Err(TooManyChannels(self.max_sessions))
+        }
     }
 
     pub fn authenticate(&mut self, addr: &SocketAddr, guid: u32) {
@@ -54,11 +69,27 @@ impl ChannelManager {
         self.authenticated.insert(addr, guid, channel);
     }
 
-    pub fn receive(&self, addr: &SocketAddr, data: &[u8]) -> ReceiveResult {
+    pub fn receive(
+        &self,
+        client_enqueue: Sender<SocketAddr>,
+        addr: &SocketAddr,
+        data: &[u8],
+    ) -> ReceiveResult {
         if let Some(channel) = self.get_by_addr(addr) {
             let mut channel_handle = channel.lock();
+            let client_not_queued = !channel_handle.needs_processing();
+
             match channel_handle.receive(data) {
-                Ok(packets_received) => ReceiveResult::Success(packets_received),
+                Ok(packets_received) => {
+                    // If the last processing thread did not process all packets, the client is already queued
+                    if client_not_queued && packets_received > 0 {
+                        client_enqueue
+                            .send(*addr)
+                            .expect("Tried to enqueue client after queue channel disconnected");
+                    }
+
+                    ReceiveResult::Success(packets_received)
+                }
                 Err(err) => {
                     println!(
                         "Deserialize error on channel {}: {:?}, data={:x?}",
@@ -72,14 +103,19 @@ impl ChannelManager {
         }
     }
 
-    pub fn process_next(&self, addr: &SocketAddr, count: u8) -> Vec<Vec<u8>> {
-        self.get_by_addr(addr)
-            .expect("Tried to process data on non-existent channel")
-            .lock()
-            .process_next(count)
+    pub fn process_next(
+        &self,
+        channel_handle: &mut MutexGuard<Channel>,
+        count: u8,
+    ) -> Vec<Vec<u8>> {
+        channel_handle.process_next(count)
     }
 
-    pub fn broadcast(&self, broadcasts: Vec<Broadcast>) -> Vec<u32> {
+    pub fn broadcast(
+        &self,
+        client_enqueue: Sender<SocketAddr>,
+        broadcasts: Vec<Broadcast>,
+    ) -> Vec<u32> {
         let mut missing_guids = Vec::new();
 
         for broadcast in broadcasts {
@@ -91,9 +127,17 @@ impl ChannelManager {
             for guid in guids {
                 if let Some(channel) = self.get_by_guid(guid) {
                     let mut channel_handle = channel.lock();
+                    let client_not_queued = !channel_handle.needs_processing();
+
                     packets.iter().for_each(|packet| {
                         channel_handle.prepare_to_send_data(packet.clone());
-                    })
+                    });
+
+                    if client_not_queued {
+                        client_enqueue
+                            .send(channel_handle.addr)
+                            .expect("Tried to enqueue client after queue channel disconnected");
+                    }
                 } else {
                     missing_guids.push(guid);
                 }
@@ -103,17 +147,17 @@ impl ChannelManager {
         missing_guids
     }
 
-    pub fn send_next(&self, addr: &SocketAddr, count: u8) -> Vec<Vec<u8>> {
-        let send_result = self
-            .get_by_addr(addr)
-            .expect("Tried to sent data through non-existent channel")
-            .lock()
-            .send_next(count);
+    pub fn send_next(&self, channel_handle: &mut MutexGuard<Channel>, count: u8) -> Vec<Vec<u8>> {
+        let send_result = channel_handle.send_next(count);
 
         send_result.unwrap_or_else(|err| {
             println!("Send error: {:?}", err);
             Vec::new()
         })
+    }
+
+    pub fn len(&self) -> usize {
+        self.unauthenticated.len() + self.authenticated.len()
     }
 }
 
@@ -155,5 +199,9 @@ impl AuthenticatedChannelManager {
                 .remove(&guid)
                 .expect("Entry in socket to GUID mapping has no corresponding channel")
         })
+    }
+
+    pub fn len(&self) -> usize {
+        self.channels.len()
     }
 }

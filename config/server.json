@@ -1,0 +1,12 @@
+{
+    "receive_threads": 1,
+    "process_threads": 4,
+    "max_sessions": 100,
+    "process_packets_per_cycle": 40,
+    "send_packets_per_cycle": 20,
+    "packet_recency_limit": 1000,
+    "default_millis_until_resend": 30,
+    "max_round_trip_entries": 30,
+    "desired_resend_pct": 5,
+    "max_millis_until_resend": 300
+}
