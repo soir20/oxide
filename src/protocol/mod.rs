@@ -161,6 +161,13 @@ impl Packet {
     }
 }
 
+fn now() -> u128 {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("Time before Unix epoch")
+        .as_millis()
+}
+
 struct PendingPacket {
     needs_send: bool,
     packet: Packet,
@@ -183,22 +190,15 @@ impl PendingPacket {
     }
 
     pub fn update_last_prepare_to_send_time(&mut self) {
-        self.last_prepare_to_send = PendingPacket::now();
+        self.last_prepare_to_send = now();
         if self.first_prepare_to_send == 0 {
             self.first_prepare_to_send = self.last_prepare_to_send;
         }
     }
 
     pub fn time_since_last_prepare_to_send(&self) -> u128 {
-        let now = PendingPacket::now();
+        let now = now();
         now.checked_sub(self.last_prepare_to_send).unwrap_or(now)
-    }
-
-    fn now() -> u128 {
-        SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .expect("Time before Unix epoch")
-            .as_millis()
     }
 }
 
@@ -211,6 +211,7 @@ pub struct Session {
 }
 
 pub struct Channel {
+    pub connected: bool,
     pub addr: SocketAddr,
     session: Option<Session>,
     buffer_size: BufferSize,
@@ -227,6 +228,7 @@ pub struct Channel {
     next_client_sequence: SequenceNumber,
     next_server_sequence: SequenceNumber,
     last_server_ack: SequenceNumber,
+    last_receive_time: u128,
 }
 
 impl Channel {
@@ -244,6 +246,7 @@ impl Channel {
         }
 
         Channel {
+            connected: true,
             addr,
             session: None,
             buffer_size: initial_buffer_size,
@@ -261,6 +264,7 @@ impl Channel {
             next_client_sequence: 0,
             next_server_sequence: 0,
             last_server_ack: 0,
+            last_receive_time: now(),
         }
     }
 
@@ -271,6 +275,8 @@ impl Channel {
         packets
             .drain(..)
             .for_each(|packet| self.receive_queue.push_back(packet));
+
+        self.last_receive_time = now();
         Ok(packet_count)
     }
 
@@ -531,7 +537,7 @@ impl Channel {
         for packet in self.send_queue.iter() {
             if !packet.needs_send && packet.is_reliable() {
                 self.last_round_trip_times[self.next_round_trip_index] =
-                    PendingPacket::now().saturating_sub(packet.first_prepare_to_send);
+                    now().saturating_sub(packet.first_prepare_to_send);
                 self.next_round_trip_index += 1;
 
                 if self.next_round_trip_index == self.last_round_trip_times.len() {
