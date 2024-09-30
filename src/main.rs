@@ -190,7 +190,13 @@ fn spawn_process_threads(
                     .expect("Tried to dequeue client after queue channel disconnected");
 
                 let mut channel_manager_read_handle = channel_manager.read();
-                let mut channel_handle = lock_channel(&channel_manager_read_handle, &src);
+                let mut channel_handle = if let Some(channel_handle) =
+                    lock_channel(&channel_manager_read_handle, &src)
+                {
+                    channel_handle
+                } else {
+                    return;
+                };
 
                 let packets_to_send = channel_manager_read_handle
                     .send_next(&mut channel_handle, server_options.send_packets_per_cycle);
@@ -221,7 +227,13 @@ fn spawn_process_threads(
                                 channel_manager.write().authenticate(&src, guid);
                                 broadcasts.append(&mut new_broadcasts);
                                 channel_manager_read_handle = channel_manager.read();
-                                channel_handle = lock_channel(&channel_manager_read_handle, &src);
+                                channel_handle = if let Some(channel_handle) =
+                                    lock_channel(&channel_manager_read_handle, &src)
+                                {
+                                    channel_handle
+                                } else {
+                                    return;
+                                };
                             }
                             Err(err) => println!("Unable to process login packet: {:?}", err),
                         }
@@ -245,9 +257,8 @@ fn spawn_process_threads(
 fn lock_channel<'a>(
     channel_manager_read_handle: &'a RwLockReadGuard<ChannelManager>,
     addr: &'a SocketAddr,
-) -> MutexGuard<'a, Channel> {
+) -> Option<MutexGuard<'a, Channel>> {
     channel_manager_read_handle
         .get_by_addr(addr)
-        .expect("Tried to process data on non-existent channel")
-        .lock()
+        .map(|channel| channel.lock())
 }
