@@ -1,4 +1,9 @@
 {
+    "bind_ip": "127.0.0.1",
+    "udp_port": 20225,
+    "https_port": 4000,
+    "crc_length": 3,
+    "allow_packet_compression": true,
     "receive_threads": 1,
     "process_threads": 4,
     "max_sessions": 100,

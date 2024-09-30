@@ -1,5 +1,6 @@
 use crate::game_server::Broadcast;
 use crate::protocol::Channel;
+use crate::ServerOptions;
 use crossbeam_channel::Sender;
 use parking_lot::{Mutex, MutexGuard};
 use std::collections::BTreeMap;
@@ -107,8 +108,9 @@ impl ChannelManager {
         &self,
         channel_handle: &mut MutexGuard<Channel>,
         count: u8,
+        server_options: &ServerOptions,
     ) -> Vec<Vec<u8>> {
-        channel_handle.process_next(count)
+        channel_handle.process_next(count, server_options)
     }
 
     pub fn broadcast(

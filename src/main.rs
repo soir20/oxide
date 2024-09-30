@@ -4,7 +4,7 @@ use protocol::BufferSize;
 use serde::Deserialize;
 use std::fs::File;
 use std::io::Error;
-use std::net::{SocketAddr, UdpSocket};
+use std::net::{IpAddr, SocketAddr, UdpSocket};
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 use std::thread::{self, JoinHandle};
@@ -22,17 +22,21 @@ mod protocol;
 #[tokio::main]
 async fn main() {
     let config_dir = Path::new("config");
-    let server_options = load_server_options(config_dir).expect("Unable to read server options");
+    let server_options =
+        Arc::new(load_server_options(config_dir).expect("Unable to read server options"));
+    server_options.validate();
+
     spawn(http::start(
-        4000,
+        server_options.bind_ip,
+        server_options.https_port,
         config_dir,
         Path::new("config/custom_assets"),
         PathBuf::from(".asset_cache"),
     ));
     println!("Hello, world!");
     let socket = UdpSocket::bind(SocketAddr::new(
-        "127.0.0.1".parse().unwrap(),
-        "20225".parse().unwrap(),
+        server_options.bind_ip,
+        server_options.udp_port,
     ))
     .expect("couldn't bind to socket");
 
@@ -57,8 +61,7 @@ async fn main() {
         &socket_arc,
         client_enqueue,
         client_dequeue,
-        server_options.process_packets_per_cycle,
-        server_options.send_packets_per_cycle,
+        server_options.clone(),
         &game_server_arc,
     ));
 
@@ -70,7 +73,12 @@ async fn main() {
 const MAX_BUFFER_SIZE: BufferSize = 512;
 
 #[derive(Clone, Deserialize)]
-struct ServerOptions {
+pub struct ServerOptions {
+    pub bind_ip: IpAddr,
+    pub udp_port: u16,
+    pub https_port: u16,
+    pub crc_length: u8,
+    pub allow_packet_compression: bool,
     pub receive_threads: u16,
     pub process_threads: u16,
     pub max_sessions: usize,
@@ -81,6 +89,18 @@ struct ServerOptions {
     pub max_round_trip_entries: usize,
     pub desired_resend_pct: u8,
     pub max_millis_until_resend: u128,
+}
+
+impl ServerOptions {
+    fn validate(&self) {
+        if self.crc_length > 4 || self.crc_length < 1 {
+            panic!("crc_length must be between 1 and 4 (inclusive)");
+        }
+
+        if self.desired_resend_pct >= 100 {
+            panic!("desired_resend_pct must be less than 100")
+        }
+    }
 }
 
 fn load_server_options(config_dir: &Path) -> Result<ServerOptions, Error> {
@@ -94,13 +114,14 @@ fn spawn_receive_threads(
     socket: &Arc<UdpSocket>,
     client_enqueue: Sender<SocketAddr>,
     initial_buffer_size: BufferSize,
-    server_options: ServerOptions,
+    server_options: Arc<ServerOptions>,
 ) -> Vec<JoinHandle<()>> {
     (0..threads)
         .map(|_| {
-            let channel_manager = Arc::clone(channel_manager);
-            let socket = Arc::clone(socket);
+            let channel_manager = channel_manager.clone();
+            let socket = socket.clone();
             let client_enqueue = client_enqueue.clone();
+            let server_options = server_options.clone();
 
             thread::spawn(move || loop {
                 let mut buf = [0; MAX_BUFFER_SIZE as usize];
@@ -151,15 +172,15 @@ fn spawn_process_threads(
     socket: &Arc<UdpSocket>,
     client_enqueue: Sender<SocketAddr>,
     client_dequeue: Receiver<SocketAddr>,
-    process_delta: u8,
-    send_delta: u8,
+    server_options: Arc<ServerOptions>,
     game_server: &Arc<GameServer>,
 ) -> Vec<JoinHandle<()>> {
     (0..threads)
         .map(|_| {
-            let channel_manager = Arc::clone(channel_manager);
-            let socket = Arc::clone(socket);
-            let game_server = Arc::clone(game_server);
+            let channel_manager = channel_manager.clone();
+            let socket = socket.clone();
+            let server_options = server_options.clone();
+            let game_server = game_server.clone();
             let client_enqueue = client_enqueue.clone();
             let client_dequeue = client_dequeue.clone();
 
@@ -173,16 +194,19 @@ fn spawn_process_threads(
                 let mut channel_manager_read_handle = channel_manager.read();
                 let mut channel_handle = lock_channel(&channel_manager_read_handle, &src);
 
-                let packets_to_send =
-                    channel_manager_read_handle.send_next(&mut channel_handle, send_delta);
+                let packets_to_send = channel_manager_read_handle
+                    .send_next(&mut channel_handle, server_options.send_packets_per_cycle);
                 for buffer in packets_to_send {
                     socket
                         .send_to(&buffer, src)
                         .expect("Unable to send packet to client");
                 }
 
-                let packets_for_game_server =
-                    channel_manager_read_handle.process_next(&mut channel_handle, process_delta);
+                let packets_for_game_server = channel_manager_read_handle.process_next(
+                    &mut channel_handle,
+                    server_options.process_packets_per_cycle,
+                    &server_options,
+                );
 
                 let mut broadcasts = Vec::new();
                 for packet in packets_for_game_server {

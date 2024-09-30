@@ -10,6 +10,7 @@ use crate::protocol::reliable_data_ops::{
     fragment_data, unbundle_reliable_data, DataPacket, FragmentState,
 };
 use crate::protocol::serialize::{serialize_packets, SerializeError};
+use crate::{ServerOptions, MAX_BUFFER_SIZE};
 
 mod deserialize;
 mod hash;
@@ -275,7 +276,7 @@ impl Channel {
         !self.receive_queue.is_empty() || !self.send_queue.is_empty()
     }
 
-    pub fn process_next(&mut self, count: u8) -> Vec<Vec<u8>> {
+    pub fn process_next(&mut self, count: u8, server_options: &ServerOptions) -> Vec<Vec<u8>> {
         let mut needs_new_ack = false;
         let mut packets_to_process = Vec::new();
 
@@ -328,7 +329,7 @@ impl Channel {
         let mut packets = Vec::new();
         for packet in packets_to_process {
             // Process the packet inside the protocol
-            self.process_packet(&packet);
+            self.process_packet(&packet, server_options);
 
             // Only data packets need to be handled outside the protocol. We already
             // de-fragmented the data packet, so we don't need to check for fragments here.
@@ -429,7 +430,7 @@ impl Channel {
         }
     }
 
-    fn process_packet(&mut self, packet: &Packet) {
+    fn process_packet(&mut self, packet: &Packet, server_options: &ServerOptions) {
         println!("Received packet op code {:?}", packet.op_code());
         match packet {
             Packet::SessionRequest(protocol_version, session_id, buffer_size, app_protocol) => self
@@ -438,6 +439,7 @@ impl Channel {
                     *session_id,
                     *buffer_size,
                     app_protocol,
+                    server_options,
                 ),
             Packet::Heartbeat => self.process_heartbeat(),
             Packet::Ack(acked_sequence) => self.process_ack(*acked_sequence),
@@ -452,12 +454,13 @@ impl Channel {
         session_id: SessionId,
         buffer_size: BufferSize,
         app_protocol: &ApplicationProtocol,
+        server_options: &ServerOptions,
     ) {
-        let session = self.session.get_or_insert_with(|| Session {
+        let session: &mut Session = self.session.get_or_insert_with(|| Session {
             session_id,
-            crc_length: 3,
+            crc_length: server_options.crc_length,
             crc_seed: random::<CrcSeed>(),
-            allow_compression: true,
+            allow_compression: server_options.allow_packet_compression,
             use_encryption: false,
         });
 
@@ -469,7 +472,7 @@ impl Channel {
                 session.crc_length,
                 session.allow_compression,
                 session.use_encryption,
-                512,
+                MAX_BUFFER_SIZE,
                 3,
             )));
     }
