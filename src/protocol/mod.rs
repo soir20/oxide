@@ -10,12 +10,14 @@ use crate::protocol::reliable_data_ops::{
     fragment_data, unbundle_reliable_data, DataPacket, FragmentState,
 };
 use crate::protocol::serialize::{serialize_packets, SerializeError};
-use crate::{ServerOptions, MAX_BUFFER_SIZE};
+use crate::ServerOptions;
 
 mod deserialize;
 mod hash;
 mod reliable_data_ops;
 mod serialize;
+
+pub const MAX_BUFFER_SIZE: BufferSize = 512;
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub enum ProtocolOpCode {

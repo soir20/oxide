@@ -1,6 +1,6 @@
 use crossbeam_channel::{bounded, Receiver, Sender};
 use parking_lot::{MutexGuard, RwLock, RwLockReadGuard};
-use protocol::BufferSize;
+use protocol::{BufferSize, MAX_BUFFER_SIZE};
 use serde::Deserialize;
 use std::fs::File;
 use std::io::Error;
@@ -69,8 +69,6 @@ async fn main() {
         thread.join().expect("Thread exited with error");
     }
 }
-
-const MAX_BUFFER_SIZE: BufferSize = 512;
 
 #[derive(Clone, Deserialize)]
 pub struct ServerOptions {
