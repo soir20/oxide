@@ -21,11 +21,11 @@ impl<'a, K: Copy + Ord, V, I: Copy + Ord> GuidTableIndexer<'a, K, V, I>
         self.handle.index(guid)
     }
 
-    fn keys(&'a self) -> impl Iterator<Item = K> + '_ {
+    fn keys(&'a self) -> impl Iterator<Item = K> {
         self.handle.keys()
     }
 
-    fn keys_by_index(&'a self, index: I) -> impl Iterator<Item = K> + '_ {
+    fn keys_by_index(&'a self, index: I) -> impl Iterator<Item = K> {
         self.handle.keys_by_index(index)
     }
 }
