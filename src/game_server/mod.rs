@@ -635,7 +635,9 @@ impl GameServer {
                         }
                     })?;
                 }
-                OpCode::Logout => broadcasts.append(&mut self.logout(sender)?),
+                OpCode::Logout => {
+                    // Allow the cleanup thread to log the player out on disconnect
+                }
                 _ => println!("Unimplemented: {:?}, {:x?}", op_code, data),
             },
             Err(_) => println!("Unknown op code: {}, {:x?}", raw_op_code, data),
