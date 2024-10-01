@@ -371,7 +371,7 @@ impl Zone {
                 if *add {
                     packets.append(&mut character.add_packets(mount_configs)?);
                 } else {
-                    packets.append(&mut character.remove_packets(*guid)?);
+                    packets.append(&mut character.remove_packets()?);
                 }
             }
         }

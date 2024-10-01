@@ -241,7 +241,7 @@ impl GameServer {
                         characters_table_write_handle,
                     )?;
 
-                    let remove_packets = character.read().remove_packets(player_guid(sender))?;
+                    let remove_packets = character.read().remove_packets()?;
 
                     Ok(vec![Broadcast::Multi(other_players_nearby, remove_packets)])
                 } else {
