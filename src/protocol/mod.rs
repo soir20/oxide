@@ -425,6 +425,10 @@ impl Channel {
         serialize_packets(&packets_to_send, self.buffer_size, &self.session)
     }
 
+    pub fn connected(&self) -> bool {
+        self.connected
+    }
+
     fn next_server_sequence(&mut self) -> SequenceNumber {
         let next_sequence = self.next_server_sequence;
         self.next_server_sequence = self.next_server_sequence.wrapping_add(1);

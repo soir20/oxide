@@ -34,6 +34,7 @@ pub enum OpCode {
     ClientIsReady = 0xd,
     ZoneDetailsDone = 0xe,
     Chat = 0xf,
+    Logout = 0x10,
     Command = 0x1a,
     ClientBeginZoning = 0x1f,
     Combat = 0x20,

@@ -7,7 +7,7 @@ use byteorder::{LittleEndian, ReadBytesExt};
 use handlers::character::{BattleClass, Character, CharacterIndex, CharacterType, Player};
 use handlers::chat::process_chat_packet;
 use handlers::command::process_command;
-use handlers::guid::{GuidTable, GuidTableHandle, GuidTableWriteHandle};
+use handlers::guid::{GuidTable, GuidTableIndexer, GuidTableWriteHandle};
 use handlers::housing::process_housing_packet;
 use handlers::inventory::{
     customizations_from_guids, load_customization_item_mappings, load_customizations,
@@ -226,6 +226,28 @@ impl GameServer {
                 Err(ProcessPacketError::CorruptedPacket)
             }
         }
+    }
+
+    pub fn logout(&self, sender: u32) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        self.lock_enforcer()
+            .write_characters(|characters_table_write_handle, _| {
+                if let Some((character, (instance_guid, chunk, _))) =
+                    characters_table_write_handle.remove(player_guid(sender))
+                {
+                    let other_players_nearby = Zone::other_players_nearby(
+                        sender,
+                        chunk,
+                        instance_guid,
+                        characters_table_write_handle,
+                    )?;
+
+                    let remove_packets = character.read().remove_packets(player_guid(sender))?;
+
+                    Ok(vec![Broadcast::Multi(other_players_nearby, remove_packets)])
+                } else {
+                    Ok(vec![])
+                }
+            })
     }
 
     pub fn process_packet(
@@ -613,6 +635,7 @@ impl GameServer {
                         }
                     })?;
                 }
+                OpCode::Logout => broadcasts.append(&mut self.logout(sender)?),
                 _ => println!("Unimplemented: {:?}, {:x?}", op_code, data),
             },
             Err(_) => println!("Unknown op code: {}, {:x?}", raw_op_code, data),

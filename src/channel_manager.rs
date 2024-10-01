@@ -52,7 +52,7 @@ impl ChannelManager {
         let previous = self
             .unauthenticated
             .remove(addr)
-            .or(self.authenticated.remove(addr));
+            .or(self.authenticated.remove(addr).map(|(_, channel)| channel));
 
         if self.len() < self.max_sessions {
             self.unauthenticated.insert(*addr, Mutex::new(channel));
@@ -161,6 +161,37 @@ impl ChannelManager {
     pub fn len(&self) -> usize {
         self.unauthenticated.len() + self.authenticated.len()
     }
+
+    pub fn drain_filter(
+        &mut self,
+        mut predicate: impl FnMut(&MutexGuard<Channel>) -> bool,
+    ) -> Vec<(Option<u32>, Mutex<Channel>)> {
+        let mut addrs_to_remove = Vec::new();
+        for (addr, channel) in self.unauthenticated.iter() {
+            let channel_handle = channel.lock();
+            if predicate(&channel_handle) {
+                addrs_to_remove.push(*addr);
+            }
+        }
+
+        let mut removed = Vec::new();
+        for addr in addrs_to_remove {
+            if let Some(result) = self.unauthenticated.remove(&addr) {
+                removed.push((None, result));
+            }
+        }
+
+        removed.append(
+            &mut self
+                .authenticated
+                .drain_filter(predicate)
+                .into_iter()
+                .map(|(guid, channel)| (Some(guid), channel))
+                .collect(),
+        );
+
+        removed
+    }
 }
 
 #[derive(Default)]
@@ -195,15 +226,45 @@ impl AuthenticatedChannelManager {
         self.channels.insert(guid, channel)
     }
 
-    pub fn remove(&mut self, addr: &SocketAddr) -> Option<Mutex<Channel>> {
+    pub fn remove(&mut self, addr: &SocketAddr) -> Option<(u32, Mutex<Channel>)> {
         self.socket_to_guid.remove(addr).map(|guid| {
-            self.channels
-                .remove(&guid)
-                .expect("Entry in socket to GUID mapping has no corresponding channel")
+            (
+                guid,
+                self.channels
+                    .remove(&guid)
+                    .expect("Entry in socket to GUID mapping has no corresponding channel"),
+            )
         })
     }
 
     pub fn len(&self) -> usize {
         self.channels.len()
+    }
+
+    pub fn drain_filter(
+        &mut self,
+        mut predicate: impl FnMut(&MutexGuard<Channel>) -> bool,
+    ) -> Vec<(u32, Mutex<Channel>)> {
+        let addrs_to_remove: Vec<SocketAddr> = self
+            .channels
+            .iter()
+            .filter_map(|(_, channel)| {
+                let channel_handle = channel.lock();
+                if predicate(&channel_handle) {
+                    Some(channel_handle.addr)
+                } else {
+                    None
+                }
+            })
+            .collect();
+
+        let mut removed = Vec::new();
+        for addr in addrs_to_remove {
+            if let Some(result) = self.remove(&addr) {
+                removed.push(result);
+            }
+        }
+
+        removed
     }
 }

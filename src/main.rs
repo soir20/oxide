@@ -1,4 +1,4 @@
-use crossbeam_channel::{bounded, Receiver, Sender};
+use crossbeam_channel::{bounded, tick, Receiver, Sender};
 use parking_lot::{MutexGuard, RwLock, RwLockReadGuard};
 use protocol::{BufferSize, MAX_BUFFER_SIZE};
 use serde::Deserialize;
@@ -8,6 +8,7 @@ use std::net::{IpAddr, SocketAddr, UdpSocket};
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 use std::thread::{self, JoinHandle};
+use std::time::{Duration, Instant};
 use tokio::spawn;
 
 use crate::channel_manager::{ChannelManager, ReceiveResult};
@@ -46,6 +47,7 @@ async fn main() {
     let channel_manager_arc = Arc::new(channel_manager);
     let socket_arc = Arc::new(socket);
     let game_server_arc = Arc::new(game_server);
+
     let (client_enqueue, client_dequeue) = bounded(server_options.max_sessions);
     let mut threads = spawn_receive_threads(
         server_options.receive_threads,
@@ -59,11 +61,21 @@ async fn main() {
         server_options.process_threads,
         &channel_manager_arc,
         &socket_arc,
-        client_enqueue,
+        client_enqueue.clone(),
         client_dequeue,
         server_options.clone(),
         &game_server_arc,
     ));
+
+    let cleanup_tick_dequeue = tick(Duration::from_millis(
+        server_options.channel_cleanup_period_millis,
+    ));
+    spawn_cleanup_thread(
+        &channel_manager_arc,
+        cleanup_tick_dequeue,
+        client_enqueue,
+        &game_server_arc,
+    );
 
     for thread in threads {
         thread.join().expect("Thread exited with error");
@@ -87,6 +99,7 @@ pub struct ServerOptions {
     pub max_round_trip_entries: usize,
     pub desired_resend_pct: u8,
     pub max_millis_until_resend: u128,
+    pub channel_cleanup_period_millis: u64,
 }
 
 impl ServerOptions {
@@ -252,6 +265,37 @@ fn spawn_process_threads(
             })
         })
         .collect()
+}
+
+fn spawn_cleanup_thread(
+    channel_manager: &Arc<RwLock<ChannelManager>>,
+    cleanup_tick_dequeue: Receiver<Instant>,
+    client_enqueue: Sender<SocketAddr>,
+    game_server: &Arc<GameServer>,
+) {
+    let channel_manager = channel_manager.clone();
+    let client_enqueue = client_enqueue.clone();
+    let game_server = game_server.clone();
+    thread::spawn(move || loop {
+        cleanup_tick_dequeue
+            .recv()
+            .expect("Cleanup tick channel disconnected");
+        let mut channel_manager_handle = channel_manager.write();
+        let disconnected_channels =
+            channel_manager_handle.drain_filter(|channel| !channel.connected());
+
+        let mut broadcasts = Vec::new();
+        for (possible_guid, _) in disconnected_channels {
+            if let Some(guid) = possible_guid {
+                match game_server.logout(guid) {
+                    Ok(mut logout_broadcasts) => broadcasts.append(&mut logout_broadcasts),
+                    Err(err) => println!("Unable to log out player {}: {:?}", guid, err),
+                }
+            }
+        }
+
+        channel_manager_handle.broadcast(client_enqueue.clone(), broadcasts);
+    });
 }
 
 fn lock_channel<'a>(

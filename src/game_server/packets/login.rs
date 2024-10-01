@@ -87,6 +87,15 @@ impl GamePacket for ZoneDetailsDone {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
+pub struct Logout {}
+
+impl GamePacket for Logout {
+    type Header = OpCode;
+
+    const HEADER: Self::Header = OpCode::Logout;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
 pub struct ClientBeginZoning {
     pub zone_name: String,
     pub zone_type: u32,
