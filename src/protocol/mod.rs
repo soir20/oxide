@@ -211,7 +211,7 @@ pub struct Session {
 }
 
 pub struct Channel {
-    pub connected: bool,
+    connected: bool,
     pub addr: SocketAddr,
     session: Option<Session>,
     buffer_size: BufferSize,
@@ -269,6 +269,10 @@ impl Channel {
     }
 
     pub fn receive(&mut self, data: &[u8]) -> Result<u32, DeserializeError> {
+        if !self.connected {
+            return Ok(0);
+        }
+
         let mut packets = deserialize_packet(data, &self.session)?;
 
         let packet_count = packets.len() as u32;
@@ -281,10 +285,14 @@ impl Channel {
     }
 
     pub fn needs_processing(&self) -> bool {
-        !self.receive_queue.is_empty() || !self.send_queue.is_empty()
+        (!self.receive_queue.is_empty() || !self.send_queue.is_empty()) && self.connected
     }
 
     pub fn process_next(&mut self, count: u8, server_options: &ServerOptions) -> Vec<Vec<u8>> {
+        if !self.connected {
+            return Vec::new();
+        }
+
         let mut needs_new_ack = false;
         let mut packets_to_process = Vec::new();
 
@@ -354,6 +362,10 @@ impl Channel {
     }
 
     pub fn prepare_to_send_data(&mut self, data: Vec<u8>) {
+        if !self.connected {
+            return;
+        }
+
         let packets =
             fragment_data(self.buffer_size, &self.session, data).expect("Unable to fragment data");
 
@@ -370,6 +382,10 @@ impl Channel {
     }
 
     pub fn send_next(&mut self, count: u8) -> Result<Vec<Vec<u8>>, SerializeError> {
+        if !self.connected {
+            return Ok(Vec::new());
+        }
+
         let mut indices_to_send = Vec::new();
 
         self.update_millis_until_resend();
@@ -395,6 +411,10 @@ impl Channel {
             indices_to_send.push(index);
             packet.update_last_prepare_to_send_time();
             index += 1;
+
+            if packet.packet.op_code() == ProtocolOpCode::Disconnect {
+                self.connected = false;
+            }
         }
 
         let packets_to_send: Vec<&Packet> = indices_to_send
@@ -452,6 +472,9 @@ impl Channel {
             Packet::Heartbeat => self.process_heartbeat(),
             Packet::Ack(acked_sequence) => self.process_ack(*acked_sequence),
             Packet::AckAll(acked_sequence) => self.process_ack_all(*acked_sequence),
+            Packet::Disconnect(session_id, disconnect_reason) => {
+                self.process_disconnect(*session_id, *disconnect_reason)
+            }
             _ => {}
         }
     }
@@ -530,6 +553,22 @@ impl Channel {
     fn acknowledge_all(&mut self, sequence_number: SequenceNumber) {
         self.send_queue
             .push_back(PendingPacket::new(Packet::AckAll(sequence_number)));
+    }
+
+    fn process_disconnect(&mut self, session_id: SessionId, disconnect_reason: DisconnectReason) {
+        if let Some(session) = &self.session {
+            if session.session_id == session_id {
+                println!(
+                    "Client {} disconnected with reason {:?}",
+                    self.addr, disconnect_reason
+                );
+                self.send_queue
+                    .push_back(PendingPacket::new(Packet::Disconnect(
+                        session_id,
+                        DisconnectReason::OtherSideTerminated,
+                    )));
+            }
+        }
     }
 
     fn update_millis_until_resend(&mut self) {
