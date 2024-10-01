@@ -237,8 +237,23 @@ fn spawn_process_threads(
                             Ok((guid, mut new_broadcasts)) => {
                                 drop(channel_handle);
                                 drop(channel_manager_read_handle);
-                                channel_manager.write().authenticate(&src, guid);
+
+                                if channel_manager.write().authenticate(&src, guid).is_some() {
+                                    let mut logout_broadcasts = match game_server.logout(guid) {
+                                        Ok(logout_broadcasts) => logout_broadcasts,
+                                        Err(err) => {
+                                            println!(
+                                                "Unable to log out existing player {}: {:?}",
+                                                guid, err
+                                            );
+                                            return;
+                                        }
+                                    };
+
+                                    broadcasts.append(&mut logout_broadcasts);
+                                }
                                 broadcasts.append(&mut new_broadcasts);
+
                                 channel_manager_read_handle = channel_manager.read();
                                 channel_handle = if let Some(channel_handle) =
                                     lock_channel(&channel_manager_read_handle, &src)

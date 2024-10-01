@@ -62,12 +62,12 @@ impl ChannelManager {
         }
     }
 
-    pub fn authenticate(&mut self, addr: &SocketAddr, guid: u32) {
+    pub fn authenticate(&mut self, addr: &SocketAddr, guid: u32) -> Option<Mutex<Channel>> {
         let channel = self
             .unauthenticated
             .remove(addr)
             .expect("Tried to authenticate non-existent or already-authenticated channel");
-        self.authenticated.insert(addr, guid, channel);
+        self.authenticated.insert(addr, guid, channel)
     }
 
     pub fn receive(
