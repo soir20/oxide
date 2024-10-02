@@ -1,7 +1,6 @@
 use std::collections::{BTreeMap, VecDeque};
 use std::net::SocketAddr;
 use std::time::{SystemTime, UNIX_EPOCH};
-use std::u8;
 
 use rand::random;
 

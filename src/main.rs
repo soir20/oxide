@@ -10,7 +10,6 @@ use std::path::{Path, PathBuf};
 use std::sync::Arc;
 use std::thread::{self, JoinHandle};
 use std::time::{Duration, Instant};
-use std::u8;
 use tokio::spawn;
 
 use crate::channel_manager::{ChannelManager, ReceiveResult};
