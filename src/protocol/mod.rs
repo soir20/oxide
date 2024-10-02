@@ -429,17 +429,15 @@ impl Channel {
         self.send_queue.clear();
         self.connected = false;
 
-        let session_id = self
-            .session
-            .as_ref()
-            .map(|session| session.session_id)
-            .unwrap_or(0);
-
-        serialize_packets(
-            &[&Packet::Disconnect(session_id, disconnect_reason)],
-            self.buffer_size,
-            &self.session,
-        )
+        if let Some(session) = &self.session {
+            serialize_packets(
+                &[&Packet::Disconnect(session.session_id, disconnect_reason)],
+                self.buffer_size,
+                &self.session,
+            )
+        } else {
+            Ok(Vec::new())
+        }
     }
 
     pub fn disconnect_if_same_session(

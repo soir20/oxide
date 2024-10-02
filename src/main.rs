@@ -171,6 +171,7 @@ fn spawn_receive_threads(
                                         let log_out_broadcasts = log_out_and_disconnect(
                                             DisconnectReason::NewConnectionAttempt,
                                             guid,
+                                            &[],
                                             previous_channel,
                                             &game_server,
                                             &socket,
@@ -185,7 +186,7 @@ fn spawn_receive_threads(
                             },
                             Err(err) => {
                                 println!("Could not create channel because maximum of {} channels was reached", err.0);
-                                disconnect(DisconnectReason::ConnectionRefused, err.1.into(), &socket);
+                                disconnect(DisconnectReason::ConnectionRefused, &[recv_data], err.1.into(), &socket);
                             },
                         }
                     }
@@ -260,6 +261,7 @@ fn spawn_process_threads(
                                     broadcasts.append(&mut log_out_and_disconnect(
                                         DisconnectReason::NewConnectionAttempt,
                                         guid,
+                                        &[],
                                         existing_channel,
                                         &game_server,
                                         &socket,
@@ -320,6 +322,7 @@ fn spawn_cleanup_thread(
                 broadcasts.append(&mut log_out_and_disconnect(
                     DisconnectReason::OtherSideTerminated,
                     guid,
+                    &[],
                     channel,
                     &game_server,
                     &socket,
@@ -354,10 +357,21 @@ fn send_packets(packets: &[Vec<u8>], addr: &SocketAddr, socket: &Arc<UdpSocket>)
 
 fn disconnect(
     disconnect_reason: DisconnectReason,
+    packets_to_process_first: &[&[u8]],
     channel: Mutex<Channel>,
     socket: &Arc<UdpSocket>,
 ) {
+    // Allow processing some packets first so we can add the session ID to the disconnect packet
     let mut channel_handle = channel.lock();
+    packets_to_process_first.iter().for_each(|packet| {
+        if let Err(err) = channel_handle.receive(packet) {
+            println!(
+                "Couldn't deserialize packet while processing disconnect for client {}: {:?}",
+                channel_handle.addr, err
+            );
+        }
+    });
+
     match channel_handle.disconnect(disconnect_reason) {
         Ok(disconnect_packets) => send_packets(&disconnect_packets, &channel_handle.addr, socket),
         Err(err) => println!(
@@ -370,11 +384,12 @@ fn disconnect(
 fn log_out_and_disconnect(
     disconnect_reason: DisconnectReason,
     guid: u32,
+    packets_to_process_first: &[&[u8]],
     channel: Mutex<Channel>,
     game_server: &Arc<GameServer>,
     socket: &Arc<UdpSocket>,
 ) -> Vec<Broadcast> {
-    disconnect(disconnect_reason, channel, socket);
+    disconnect(disconnect_reason, packets_to_process_first, channel, socket);
     match game_server.log_out(guid) {
         Ok(log_out_broadcasts) => log_out_broadcasts,
         Err(err) => {
