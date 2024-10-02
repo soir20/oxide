@@ -10,6 +10,7 @@ use std::path::{Path, PathBuf};
 use std::sync::Arc;
 use std::thread::{self, JoinHandle};
 use std::time::{Duration, Instant};
+use std::u8;
 use tokio::spawn;
 
 use crate::channel_manager::{ChannelManager, ReceiveResult};
@@ -56,7 +57,7 @@ async fn main() {
         &socket_arc,
         client_enqueue.clone(),
         MAX_BUFFER_SIZE,
-        server_options.clone(),
+        &server_options,
         &game_server_arc,
     );
     threads.append(&mut spawn_process_threads(
@@ -77,6 +78,7 @@ async fn main() {
         &socket_arc,
         cleanup_tick_dequeue,
         client_enqueue,
+        &server_options,
         &game_server_arc,
     );
 
@@ -128,7 +130,7 @@ fn spawn_receive_threads(
     socket: &Arc<UdpSocket>,
     client_enqueue: Sender<SocketAddr>,
     initial_buffer_size: BufferSize,
-    server_options: Arc<ServerOptions>,
+    server_options: &Arc<ServerOptions>,
     game_server: &Arc<GameServer>,
 ) -> Vec<JoinHandle<()>> {
     (0..threads)
@@ -175,6 +177,7 @@ fn spawn_receive_threads(
                                             previous_channel,
                                             &game_server,
                                             &socket,
+                                            &server_options
                                         );
                                         write_handle.broadcast(client_enqueue.clone(), log_out_broadcasts);
                                     }
@@ -186,7 +189,7 @@ fn spawn_receive_threads(
                             },
                             Err(err) => {
                                 println!("Could not create channel because maximum of {} channels was reached", err.0);
-                                disconnect(DisconnectReason::ConnectionRefused, &[recv_data], err.1.into(), &socket);
+                                disconnect(DisconnectReason::ConnectionRefused, &[recv_data], err.1.into(), &socket, &server_options);
                             },
                         }
                     }
@@ -265,6 +268,7 @@ fn spawn_process_threads(
                                         existing_channel,
                                         &game_server,
                                         &socket,
+                                        &server_options,
                                     ));
                                 }
                                 broadcasts.append(&mut new_broadcasts);
@@ -302,11 +306,13 @@ fn spawn_cleanup_thread(
     socket: &Arc<UdpSocket>,
     cleanup_tick_dequeue: Receiver<Instant>,
     client_enqueue: Sender<SocketAddr>,
+    server_options: &Arc<ServerOptions>,
     game_server: &Arc<GameServer>,
 ) {
     let channel_manager = channel_manager.clone();
     let socket = socket.clone();
     let client_enqueue = client_enqueue.clone();
+    let server_options = server_options.clone();
     let game_server = game_server.clone();
     thread::spawn(move || loop {
         cleanup_tick_dequeue
@@ -326,6 +332,7 @@ fn spawn_cleanup_thread(
                     channel,
                     &game_server,
                     &socket,
+                    &server_options,
                 ));
             }
         }
@@ -360,6 +367,7 @@ fn disconnect(
     packets_to_process_first: &[&[u8]],
     channel: Mutex<Channel>,
     socket: &Arc<UdpSocket>,
+    server_options: &Arc<ServerOptions>,
 ) {
     // Allow processing some packets first so we can add the session ID to the disconnect packet
     let mut channel_handle = channel.lock();
@@ -371,6 +379,7 @@ fn disconnect(
             );
         }
     });
+    channel_handle.process_next(u8::MAX, server_options);
 
     match channel_handle.disconnect(disconnect_reason) {
         Ok(disconnect_packets) => send_packets(&disconnect_packets, &channel_handle.addr, socket),
@@ -388,8 +397,15 @@ fn log_out_and_disconnect(
     channel: Mutex<Channel>,
     game_server: &Arc<GameServer>,
     socket: &Arc<UdpSocket>,
+    server_options: &Arc<ServerOptions>,
 ) -> Vec<Broadcast> {
-    disconnect(disconnect_reason, packets_to_process_first, channel, socket);
+    disconnect(
+        disconnect_reason,
+        packets_to_process_first,
+        channel,
+        socket,
+        server_options,
+    );
     match game_server.log_out(guid) {
         Ok(log_out_broadcasts) => log_out_broadcasts,
         Err(err) => {
