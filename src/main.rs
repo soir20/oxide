@@ -1,6 +1,7 @@
 use crossbeam_channel::{bounded, tick, Receiver, Sender};
-use parking_lot::{MutexGuard, RwLock, RwLockReadGuard};
-use protocol::{BufferSize, MAX_BUFFER_SIZE};
+use game_server::Broadcast;
+use parking_lot::{Mutex, MutexGuard, RwLock, RwLockReadGuard};
+use protocol::{BufferSize, DisconnectReason, MAX_BUFFER_SIZE};
 use serde::Deserialize;
 use std::fs::File;
 use std::io::Error;
@@ -56,6 +57,7 @@ async fn main() {
         client_enqueue.clone(),
         MAX_BUFFER_SIZE,
         server_options.clone(),
+        &game_server_arc,
     );
     threads.append(&mut spawn_process_threads(
         server_options.process_threads,
@@ -72,6 +74,7 @@ async fn main() {
     ));
     spawn_cleanup_thread(
         &channel_manager_arc,
+        &socket_arc,
         cleanup_tick_dequeue,
         client_enqueue,
         &game_server_arc,
@@ -126,6 +129,7 @@ fn spawn_receive_threads(
     client_enqueue: Sender<SocketAddr>,
     initial_buffer_size: BufferSize,
     server_options: Arc<ServerOptions>,
+    game_server: &Arc<GameServer>,
 ) -> Vec<JoinHandle<()>> {
     (0..threads)
         .map(|_| {
@@ -133,6 +137,7 @@ fn spawn_receive_threads(
             let socket = socket.clone();
             let client_enqueue = client_enqueue.clone();
             let server_options = server_options.clone();
+            let game_server = game_server.clone();
 
             thread::spawn(move || loop {
                 let mut buf = [0; MAX_BUFFER_SIZE as usize];
@@ -146,29 +151,42 @@ fn spawn_receive_threads(
                     if receive_result == ReceiveResult::CreateChannelFirst {
                         println!("Creating channel for {}", src);
                         drop(read_handle);
-                        let previous_channel_result = channel_manager.write().insert(
-                            &src,
-                            Channel::new(
-                                src,
-                                initial_buffer_size,
-                                server_options.packet_recency_limit,
-                                server_options.default_millis_until_resend,
-                                server_options.max_round_trip_entries,
-                                server_options.desired_resend_pct,
-                                server_options.max_millis_until_resend,
-                            ),
+
+                        let new_channel = Channel::new(
+                            src,
+                            initial_buffer_size,
+                            server_options.packet_recency_limit,
+                            server_options.default_millis_until_resend,
+                            server_options.max_round_trip_entries,
+                            server_options.desired_resend_pct,
+                            server_options.max_millis_until_resend,
                         );
+                        let mut write_handle = channel_manager.write();
 
-                        if let Ok(previous_channel) = previous_channel_result {
-                            read_handle = channel_manager.read();
+                        match write_handle.insert(&src, new_channel) {
+                            Ok(possible_previous_channel) => {
+                                if let Some(previous_channel) = possible_previous_channel {
+                                    println!("Client {} reconnected, dropping old channel", src);
+                                    if let Some(guid) = write_handle.guid(&src) {
+                                        let log_out_broadcasts = log_out_and_disconnect(
+                                            DisconnectReason::NewConnectionAttempt,
+                                            guid,
+                                            previous_channel,
+                                            &game_server,
+                                            &socket,
+                                        );
+                                        write_handle.broadcast(client_enqueue.clone(), log_out_broadcasts);
+                                    }
+                                }
 
-                            if previous_channel.is_some() {
-                                println!("Client {} reconnected, dropping old channel", src);
-                            }
-
-                            read_handle.receive(client_enqueue.clone(), &src, recv_data);
-                        } else if let Err(max_channels) = previous_channel_result {
-                            println!("Could not create channel because maximum of {} channels was reached", max_channels.0);
+                                drop(write_handle);
+                                read_handle = channel_manager.read();
+                                read_handle.receive(client_enqueue.clone(), &src, recv_data);
+                            },
+                            Err(err) => {
+                                println!("Could not create channel because maximum of {} channels was reached", err.0);
+                                disconnect(DisconnectReason::ConnectionRefused, err.1.into(), &socket);
+                            },
                         }
                     }
                 }
@@ -213,11 +231,9 @@ fn spawn_process_threads(
 
                 let packets_to_send = channel_manager_read_handle
                     .send_next(&mut channel_handle, server_options.send_packets_per_cycle);
-                for buffer in packets_to_send {
-                    socket
-                        .send_to(&buffer, src)
-                        .expect("Unable to send packet to client");
-                }
+                packets_to_send
+                    .into_iter()
+                    .for_each(|packet| send_packet(&packet, &src, &socket));
 
                 let packets_for_game_server = channel_manager_read_handle.process_next(
                     &mut channel_handle,
@@ -233,24 +249,21 @@ fn spawn_process_threads(
                             Err(err) => println!("Unable to process packet: {:?}", err),
                         }
                     } else {
-                        match game_server.login(packet) {
+                        match game_server.log_in(packet) {
                             Ok((guid, mut new_broadcasts)) => {
                                 drop(channel_handle);
                                 drop(channel_manager_read_handle);
 
-                                if channel_manager.write().authenticate(&src, guid).is_some() {
-                                    let mut logout_broadcasts = match game_server.logout(guid) {
-                                        Ok(logout_broadcasts) => logout_broadcasts,
-                                        Err(err) => {
-                                            println!(
-                                                "Unable to log out existing player {}: {:?}",
-                                                guid, err
-                                            );
-                                            return;
-                                        }
-                                    };
-
-                                    broadcasts.append(&mut logout_broadcasts);
+                                if let Some(existing_channel) =
+                                    channel_manager.write().authenticate(&src, guid)
+                                {
+                                    broadcasts.append(&mut log_out_and_disconnect(
+                                        DisconnectReason::NewConnectionAttempt,
+                                        guid,
+                                        existing_channel,
+                                        &game_server,
+                                        &socket,
+                                    ));
                                 }
                                 broadcasts.append(&mut new_broadcasts);
 
@@ -284,11 +297,13 @@ fn spawn_process_threads(
 
 fn spawn_cleanup_thread(
     channel_manager: &Arc<RwLock<ChannelManager>>,
+    socket: &Arc<UdpSocket>,
     cleanup_tick_dequeue: Receiver<Instant>,
     client_enqueue: Sender<SocketAddr>,
     game_server: &Arc<GameServer>,
 ) {
     let channel_manager = channel_manager.clone();
+    let socket = socket.clone();
     let client_enqueue = client_enqueue.clone();
     let game_server = game_server.clone();
     thread::spawn(move || loop {
@@ -300,12 +315,15 @@ fn spawn_cleanup_thread(
             channel_manager_handle.drain_filter(|channel| !channel.connected());
 
         let mut broadcasts = Vec::new();
-        for (possible_guid, _) in disconnected_channels {
+        for (possible_guid, channel) in disconnected_channels {
             if let Some(guid) = possible_guid {
-                match game_server.logout(guid) {
-                    Ok(mut logout_broadcasts) => broadcasts.append(&mut logout_broadcasts),
-                    Err(err) => println!("Unable to log out player {}: {:?}", guid, err),
-                }
+                broadcasts.append(&mut log_out_and_disconnect(
+                    DisconnectReason::OtherSideTerminated,
+                    guid,
+                    channel,
+                    &game_server,
+                    &socket,
+                ));
             }
         }
 
@@ -320,4 +338,48 @@ fn lock_channel<'a>(
     channel_manager_read_handle
         .get_by_addr(addr)
         .map(|channel| channel.lock())
+}
+
+fn send_packet(buffer: &[u8], addr: &SocketAddr, socket: &Arc<UdpSocket>) {
+    if let Err(err) = socket.send_to(buffer, addr) {
+        println!("Unable to send packet to client {}: {}", addr, err);
+    }
+}
+
+fn send_packets(packets: &[Vec<u8>], addr: &SocketAddr, socket: &Arc<UdpSocket>) {
+    packets
+        .iter()
+        .for_each(|packet| send_packet(packet, addr, socket))
+}
+
+fn disconnect(
+    disconnect_reason: DisconnectReason,
+    channel: Mutex<Channel>,
+    socket: &Arc<UdpSocket>,
+) {
+    let mut channel_handle = channel.lock();
+    match channel_handle.disconnect(disconnect_reason) {
+        Ok(disconnect_packets) => send_packets(&disconnect_packets, &channel_handle.addr, socket),
+        Err(err) => println!(
+            "Unable to serialize disconnect packet for client {}: {:?}",
+            channel_handle.addr, err
+        ),
+    }
+}
+
+fn log_out_and_disconnect(
+    disconnect_reason: DisconnectReason,
+    guid: u32,
+    channel: Mutex<Channel>,
+    game_server: &Arc<GameServer>,
+    socket: &Arc<UdpSocket>,
+) -> Vec<Broadcast> {
+    disconnect(disconnect_reason, channel, socket);
+    match game_server.log_out(guid) {
+        Ok(log_out_broadcasts) => log_out_broadcasts,
+        Err(err) => {
+            println!("Unable to log out existing player {}: {:?}", guid, err);
+            Vec::new()
+        }
+    }
 }

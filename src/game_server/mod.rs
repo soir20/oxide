@@ -116,7 +116,7 @@ impl GameServer {
         })
     }
 
-    pub fn login(&self, data: Vec<u8>) -> Result<(u32, Vec<Broadcast>), ProcessPacketError> {
+    pub fn log_in(&self, data: Vec<u8>) -> Result<(u32, Vec<Broadcast>), ProcessPacketError> {
         let mut cursor = Cursor::new(&data[..]);
         let raw_op_code = cursor.read_u16::<LittleEndian>()?;
 
@@ -228,7 +228,7 @@ impl GameServer {
         }
     }
 
-    pub fn logout(&self, sender: u32) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    pub fn log_out(&self, sender: u32) -> Result<Vec<Broadcast>, ProcessPacketError> {
         self.lock_enforcer()
             .write_characters(|characters_table_write_handle, _| {
                 if let Some((character, (instance_guid, chunk, _))) =

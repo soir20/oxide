@@ -12,7 +12,7 @@ pub enum ReceiveResult {
     CreateChannelFirst,
 }
 
-pub struct TooManyChannels(pub usize);
+pub struct TooManyChannels(pub usize, pub Channel);
 
 pub struct ChannelManager {
     unauthenticated: BTreeMap<SocketAddr, Mutex<Channel>>,
@@ -48,7 +48,6 @@ impl ChannelManager {
         addr: &SocketAddr,
         channel: Channel,
     ) -> Result<Option<Mutex<Channel>>, TooManyChannels> {
-        // We don't need to send a disconnect because the sender will interpret it as a disconnect for the new sessions
         let previous = self
             .unauthenticated
             .remove(addr)
@@ -58,7 +57,7 @@ impl ChannelManager {
             self.unauthenticated.insert(*addr, Mutex::new(channel));
             Ok(previous)
         } else {
-            Err(TooManyChannels(self.max_sessions))
+            Err(TooManyChannels(self.max_sessions, channel))
         }
     }
 

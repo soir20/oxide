@@ -269,7 +269,7 @@ impl Channel {
     }
 
     pub fn receive(&mut self, data: &[u8]) -> Result<u32, DeserializeError> {
-        if !self.connected {
+        if !self.connected() {
             return Ok(0);
         }
 
@@ -285,11 +285,11 @@ impl Channel {
     }
 
     pub fn needs_processing(&self) -> bool {
-        (!self.receive_queue.is_empty() || !self.send_queue.is_empty()) && self.connected
+        (!self.receive_queue.is_empty() || !self.send_queue.is_empty()) && self.connected()
     }
 
     pub fn process_next(&mut self, count: u8, server_options: &ServerOptions) -> Vec<Vec<u8>> {
-        if !self.connected {
+        if !self.connected() {
             return Vec::new();
         }
 
@@ -362,7 +362,7 @@ impl Channel {
     }
 
     pub fn prepare_to_send_data(&mut self, data: Vec<u8>) {
-        if !self.connected {
+        if !self.connected() {
             return;
         }
 
@@ -382,7 +382,7 @@ impl Channel {
     }
 
     pub fn send_next(&mut self, count: u8) -> Result<Vec<Vec<u8>>, SerializeError> {
-        if !self.connected {
+        if !self.connected() {
             return Ok(Vec::new());
         }
 
@@ -411,10 +411,6 @@ impl Channel {
             indices_to_send.push(index);
             packet.update_last_prepare_to_send_time();
             index += 1;
-
-            if packet.packet.op_code() == ProtocolOpCode::Disconnect {
-                self.connected = false;
-            }
         }
 
         let packets_to_send: Vec<&Packet> = indices_to_send
@@ -423,6 +419,43 @@ impl Channel {
             .collect();
 
         serialize_packets(&packets_to_send, self.buffer_size, &self.session)
+    }
+
+    pub fn disconnect(
+        &mut self,
+        disconnect_reason: DisconnectReason,
+    ) -> Result<Vec<Vec<u8>>, SerializeError> {
+        self.receive_queue.clear();
+        self.send_queue.clear();
+        self.connected = false;
+
+        let session_id = self
+            .session
+            .as_ref()
+            .map(|session| session.session_id)
+            .unwrap_or(0);
+
+        serialize_packets(
+            &[&Packet::Disconnect(session_id, disconnect_reason)],
+            self.buffer_size,
+            &self.session,
+        )
+    }
+
+    pub fn disconnect_if_same_session(
+        &mut self,
+        session_id: SessionId,
+        disconnect_reason: DisconnectReason,
+    ) -> Result<Vec<Vec<u8>>, SerializeError> {
+        if let Some(session) = &self.session {
+            if session.session_id == session_id {
+                self.disconnect(disconnect_reason)
+            } else {
+                Ok(Vec::new())
+            }
+        } else {
+            Ok(Vec::new())
+        }
     }
 
     pub fn connected(&self) -> bool {
@@ -477,7 +510,7 @@ impl Channel {
             Packet::Ack(acked_sequence) => self.process_ack(*acked_sequence),
             Packet::AckAll(acked_sequence) => self.process_ack_all(*acked_sequence),
             Packet::Disconnect(session_id, disconnect_reason) => {
-                self.process_disconnect(*session_id, *disconnect_reason)
+                let _ = self.process_disconnect(*session_id, *disconnect_reason);
             }
             _ => {}
         }
@@ -559,20 +592,16 @@ impl Channel {
             .push_back(PendingPacket::new(Packet::AckAll(sequence_number)));
     }
 
-    fn process_disconnect(&mut self, session_id: SessionId, disconnect_reason: DisconnectReason) {
-        if let Some(session) = &self.session {
-            if session.session_id == session_id {
-                println!(
-                    "Client {} disconnected with reason {:?}",
-                    self.addr, disconnect_reason
-                );
-                self.send_queue
-                    .push_back(PendingPacket::new(Packet::Disconnect(
-                        session_id,
-                        DisconnectReason::OtherSideTerminated,
-                    )));
-            }
-        }
+    fn process_disconnect(
+        &mut self,
+        session_id: SessionId,
+        disconnect_reason: DisconnectReason,
+    ) -> Result<Vec<Vec<u8>>, SerializeError> {
+        println!(
+            "Client {} disconnected with reason {:?}",
+            self.addr, disconnect_reason
+        );
+        self.disconnect_if_same_session(session_id, DisconnectReason::OtherSideTerminated)
     }
 
     fn update_millis_until_resend(&mut self) {
