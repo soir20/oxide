@@ -1,6 +1,7 @@
 use std::collections::{BTreeMap, VecDeque};
 use std::net::SocketAddr;
 use std::time::{SystemTime, UNIX_EPOCH};
+use std::u8;
 
 use rand::random;
 
@@ -356,6 +357,16 @@ impl Channel {
                     println!("Bad bundled packet");
                 }
             }
+        }
+
+        packets
+    }
+
+    pub fn process_all(&mut self, server_options: &ServerOptions) -> Vec<Vec<u8>> {
+        let mut packets = Vec::new();
+
+        while !self.receive_queue.is_empty() {
+            packets.append(&mut self.process_next(u8::MAX, server_options));
         }
 
         packets

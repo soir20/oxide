@@ -379,7 +379,7 @@ fn disconnect(
             );
         }
     });
-    channel_handle.process_next(u8::MAX, server_options);
+    channel_handle.process_all(server_options);
 
     match channel_handle.disconnect(disconnect_reason) {
         Ok(disconnect_packets) => send_packets(&disconnect_packets, &channel_handle.addr, socket),
