@@ -258,6 +258,7 @@ fn spawn_process_threads(
                                 if let Some(existing_channel) =
                                     channel_manager.write().authenticate(&src, guid)
                                 {
+                                    println!("Client {} logged in as an already logged-in player {}, disconnecting existing client", src, guid);
                                     broadcasts.append(&mut log_out_and_disconnect(
                                         DisconnectReason::NewConnectionAttempt,
                                         guid,
