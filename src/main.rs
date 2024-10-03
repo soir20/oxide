@@ -145,51 +145,50 @@ fn spawn_receive_threads(
                 if let Ok((len, src)) = socket.recv_from(&mut buf) {
                     let recv_data = &buf[0..len];
 
-                    let mut read_handle = channel_manager.read();
+                    loop {
+                        let read_handle = channel_manager.read();
+                        let receive_result =
+                            read_handle.receive(client_enqueue.clone(), &src, recv_data);
+                        if receive_result == ReceiveResult::CreateChannelFirst {
+                            println!("Creating channel for {}", src);
+                            drop(read_handle);
 
-                    let receive_result =
-                        read_handle.receive(client_enqueue.clone(), &src, recv_data);
-                    if receive_result == ReceiveResult::CreateChannelFirst {
-                        println!("Creating channel for {}", src);
-                        drop(read_handle);
+                            let new_channel = Channel::new(
+                                src,
+                                initial_buffer_size,
+                                server_options.packet_recency_limit,
+                                server_options.default_millis_until_resend,
+                                server_options.max_round_trip_entries,
+                                server_options.desired_resend_pct,
+                                server_options.max_millis_until_resend,
+                            );
+                            let mut write_handle = channel_manager.write();
 
-                        let new_channel = Channel::new(
-                            src,
-                            initial_buffer_size,
-                            server_options.packet_recency_limit,
-                            server_options.default_millis_until_resend,
-                            server_options.max_round_trip_entries,
-                            server_options.desired_resend_pct,
-                            server_options.max_millis_until_resend,
-                        );
-                        let mut write_handle = channel_manager.write();
-
-                        match write_handle.insert(&src, new_channel) {
-                            Ok(possible_previous_channel) => {
-                                if let Some(previous_channel) = possible_previous_channel {
-                                    println!("Client {} reconnected, dropping old channel", src);
-                                    if let Some(guid) = write_handle.guid(&src) {
-                                        let log_out_broadcasts = log_out_and_disconnect(
-                                            DisconnectReason::NewConnectionAttempt,
-                                            guid,
-                                            &[],
-                                            previous_channel,
-                                            &game_server,
-                                            &socket,
-                                            &server_options
-                                        );
-                                        write_handle.broadcast(client_enqueue.clone(), log_out_broadcasts);
+                            match write_handle.insert(&src, new_channel) {
+                                Ok(possible_previous_channel) => {
+                                    if let Some(previous_channel) = possible_previous_channel {
+                                        println!("Client {} reconnected, dropping old channel", src);
+                                        if let Some(guid) = write_handle.guid(&src) {
+                                            let log_out_broadcasts = log_out_and_disconnect(
+                                                DisconnectReason::NewConnectionAttempt,
+                                                guid,
+                                                &[],
+                                                previous_channel,
+                                                &game_server,
+                                                &socket,
+                                                &server_options
+                                            );
+                                            write_handle.broadcast(client_enqueue.clone(), log_out_broadcasts);
+                                        }
                                     }
-                                }
-
-                                drop(write_handle);
-                                read_handle = channel_manager.read();
-                                read_handle.receive(client_enqueue.clone(), &src, recv_data);
-                            },
-                            Err(err) => {
-                                println!("Could not create channel because maximum of {} channels was reached", err.0);
-                                disconnect(DisconnectReason::ConnectionRefused, &[recv_data], err.1.into(), &socket, &server_options);
-                            },
+                                },
+                                Err(err) => {
+                                    println!("Could not create channel because maximum of {} channels was reached", err.0);
+                                    disconnect(DisconnectReason::ConnectionRefused, &[recv_data], err.1.into(), &socket, &server_options);
+                                },
+                            }
+                        } else {
+                            break;
                         }
                     }
                 }
