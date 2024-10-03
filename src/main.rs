@@ -250,14 +250,13 @@ fn spawn_process_threads(
                             Err(err) => println!("Unable to process packet: {:?}", err),
                         }
                     } else {
-                        match game_server.log_in(packet) {
-                            Ok((guid, mut new_broadcasts)) => {
+                        match game_server.authenticate(packet) {
+                            Ok(guid) => {
                                 drop(channel_handle);
                                 drop(channel_manager_read_handle);
 
-                                if let Some(existing_channel) =
-                                    channel_manager.write().authenticate(&src, guid)
-                                {
+                                let mut channel_manager_write_handle = channel_manager.write();
+                                if let Some(existing_channel) = channel_manager_write_handle.authenticate(&src, guid) {
                                     println!("Client {} logged in as an already logged-in player {}, disconnecting existing client", src, guid);
                                     broadcasts.append(&mut log_out_and_disconnect(
                                         DisconnectReason::NewConnectionAttempt,
@@ -269,7 +268,12 @@ fn spawn_process_threads(
                                         &server_options,
                                     ));
                                 }
-                                broadcasts.append(&mut new_broadcasts);
+
+                                match game_server.log_in(guid) {
+                                    Ok(mut log_in_broadcasts) => broadcasts.append(&mut log_in_broadcasts),
+                                    Err(err) => println!("Unable to log in player {} on client {}: {:?}", guid, src, err),
+                                };
+                                drop(channel_manager_write_handle);
 
                                 channel_manager_read_handle = channel_manager.read();
                                 channel_handle = if let Some(channel_handle) =

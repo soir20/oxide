@@ -7,6 +7,13 @@ use packet_serialize::{
 
 use super::{GamePacket, OpCode, Pos};
 
+#[derive(DeserializePacket)]
+pub struct LoginRequest {
+    pub ticket: String,
+    pub guid: u64,
+    pub version: String,
+}
+
 #[derive(SerializePacket, DeserializePacket)]
 pub struct LoginReply {
     pub logged_in: bool,
