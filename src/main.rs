@@ -234,9 +234,7 @@ fn spawn_process_threads(
 
                 let packets_to_send = channel_manager_read_handle
                     .send_next(&mut channel_handle, server_options.send_packets_per_cycle);
-                packets_to_send
-                    .into_iter()
-                    .for_each(|packet| send_packet(&packet, &src, &socket));
+                send_packets(&packets_to_send, &src, &socket);
 
                 let packets_for_game_server = channel_manager_read_handle.process_next(
                     &mut channel_handle,
