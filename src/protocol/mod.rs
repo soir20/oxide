@@ -1,6 +1,6 @@
 use std::collections::{BTreeMap, VecDeque};
 use std::net::SocketAddr;
-use std::time::{SystemTime, UNIX_EPOCH};
+use std::time::{Duration, Instant};
 
 use rand::random;
 
@@ -161,18 +161,17 @@ impl Packet {
     }
 }
 
-fn now() -> u128 {
-    SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .expect("Time before Unix epoch")
-        .as_millis()
+#[derive(Eq, PartialEq)]
+enum SendTime {
+    Instant(Instant),
+    NeverSent,
 }
 
 struct PendingPacket {
     needs_send: bool,
     packet: Packet,
-    last_prepare_to_send: u128,
-    first_prepare_to_send: u128,
+    last_send: Instant,
+    first_send: SendTime,
 }
 
 impl PendingPacket {
@@ -180,8 +179,8 @@ impl PendingPacket {
         PendingPacket {
             needs_send: true,
             packet,
-            last_prepare_to_send: 0,
-            first_prepare_to_send: 0,
+            last_send: Instant::now(),
+            first_send: SendTime::NeverSent,
         }
     }
 
@@ -189,16 +188,16 @@ impl PendingPacket {
         self.packet.sequence_number().is_some()
     }
 
-    pub fn update_last_prepare_to_send_time(&mut self) {
-        self.last_prepare_to_send = now();
-        if self.first_prepare_to_send == 0 {
-            self.first_prepare_to_send = self.last_prepare_to_send;
+    pub fn update_last_send_time(&mut self) {
+        self.last_send = Instant::now();
+        if self.first_send == SendTime::NeverSent {
+            self.first_send = SendTime::Instant(self.last_send);
         }
     }
 
-    pub fn time_since_last_prepare_to_send(&self) -> u128 {
-        let now = now();
-        now.checked_sub(self.last_prepare_to_send).unwrap_or(now)
+    pub fn time_since_last_send(&self) -> Duration {
+        let now = Instant::now();
+        now.saturating_duration_since(self.last_send)
     }
 }
 
@@ -216,11 +215,11 @@ pub struct Channel {
     session: Option<Session>,
     buffer_size: BufferSize,
     recency_limit: SequenceNumber,
-    millis_until_resend: u128,
-    last_round_trip_times: Vec<u128>,
+    millis_until_resend: Duration,
+    last_round_trip_times: Vec<Duration>,
     next_round_trip_index: usize,
     selected_round_trip_index: usize,
-    max_millis_until_resend: u128,
+    max_millis_until_resend: Duration,
     fragment_state: FragmentState,
     send_queue: VecDeque<PendingPacket>,
     receive_queue: VecDeque<Packet>,
@@ -228,7 +227,7 @@ pub struct Channel {
     next_client_sequence: SequenceNumber,
     next_server_sequence: SequenceNumber,
     last_server_ack: SequenceNumber,
-    last_receive_time: u128,
+    last_receive_time: Instant,
 }
 
 impl Channel {
@@ -236,10 +235,10 @@ impl Channel {
         addr: SocketAddr,
         initial_buffer_size: BufferSize,
         recency_limit: SequenceNumber,
-        millis_until_resend: u128,
+        millis_until_resend: Duration,
         max_round_trip_entries: usize,
         desired_resend_pct: u8,
-        max_millis_until_resend: u128,
+        max_millis_until_resend: Duration,
     ) -> Self {
         if desired_resend_pct >= 100 {
             panic!("desired_resend_pct must be less than 100")
@@ -252,7 +251,7 @@ impl Channel {
             buffer_size: initial_buffer_size,
             recency_limit,
             millis_until_resend,
-            last_round_trip_times: vec![0; max_round_trip_entries],
+            last_round_trip_times: vec![Duration::default(); max_round_trip_entries],
             next_round_trip_index: 0,
             selected_round_trip_index: (100 - desired_resend_pct) as usize * max_round_trip_entries
                 / 100,
@@ -264,7 +263,7 @@ impl Channel {
             next_client_sequence: 0,
             next_server_sequence: 0,
             last_server_ack: 0,
-            last_receive_time: now(),
+            last_receive_time: Instant::now(),
         }
     }
 
@@ -280,7 +279,7 @@ impl Channel {
             .drain(..)
             .for_each(|packet| self.receive_queue.push_back(packet));
 
-        self.last_receive_time = now();
+        self.last_receive_time = Instant::now();
         Ok(packet_count)
     }
 
@@ -408,7 +407,7 @@ impl Channel {
             let packet = &mut self.send_queue[index];
 
             // All later packets are newer than this packet, so they should also be skipped
-            if packet.time_since_last_prepare_to_send() < self.millis_until_resend {
+            if packet.time_since_last_send() < self.millis_until_resend {
                 index += 1;
                 continue;
             }
@@ -419,7 +418,7 @@ impl Channel {
             }
 
             indices_to_send.push(index);
-            packet.update_last_prepare_to_send_time();
+            packet.update_last_send_time();
             index += 1;
         }
 
@@ -616,13 +615,17 @@ impl Channel {
         let mut ready_to_update = false;
         for packet in self.send_queue.iter() {
             if !packet.needs_send && packet.is_reliable() {
-                self.last_round_trip_times[self.next_round_trip_index] =
-                    now().saturating_sub(packet.first_prepare_to_send);
-                self.next_round_trip_index += 1;
+                if let SendTime::Instant(first_send) = packet.first_send {
+                    self.last_round_trip_times[self.next_round_trip_index] =
+                        Instant::now().saturating_duration_since(first_send);
+                    self.next_round_trip_index += 1;
 
-                if self.next_round_trip_index == self.last_round_trip_times.len() {
-                    self.next_round_trip_index = 0;
-                    ready_to_update = true;
+                    if self.next_round_trip_index == self.last_round_trip_times.len() {
+                        self.next_round_trip_index = 0;
+                        ready_to_update = true;
+                    }
+                } else {
+                    panic!("Packet was marked as sent but has no timing statistics");
                 }
             }
         }

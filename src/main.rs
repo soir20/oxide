@@ -99,11 +99,12 @@ pub struct ServerOptions {
     pub process_packets_per_cycle: u8,
     pub send_packets_per_cycle: u8,
     pub packet_recency_limit: u16,
-    pub default_millis_until_resend: u128,
+    pub default_millis_until_resend: u64,
     pub max_round_trip_entries: usize,
     pub desired_resend_pct: u8,
-    pub max_millis_until_resend: u128,
+    pub max_millis_until_resend: u64,
     pub channel_cleanup_period_millis: u64,
+    pub channel_inactive_timeout_millis: u64,
 }
 
 impl ServerOptions {
@@ -157,10 +158,10 @@ fn spawn_receive_threads(
                                 src,
                                 initial_buffer_size,
                                 server_options.packet_recency_limit,
-                                server_options.default_millis_until_resend,
+                                Duration::from_millis(server_options.default_millis_until_resend),
                                 server_options.max_round_trip_entries,
                                 server_options.desired_resend_pct,
-                                server_options.max_millis_until_resend,
+                                Duration::from_millis(server_options.max_millis_until_resend),
                             );
                             let mut write_handle = channel_manager.write();
 
