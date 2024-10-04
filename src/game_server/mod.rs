@@ -4,7 +4,7 @@ use std::path::Path;
 use std::vec;
 
 use byteorder::{LittleEndian, ReadBytesExt};
-use handlers::character::{BattleClass, Character, CharacterIndex, CharacterType, Player};
+use handlers::character::{Character, CharacterIndex, CharacterType};
 use handlers::chat::process_chat_packet;
 use handlers::command::process_command;
 use handlers::guid::{GuidTable, GuidTableIndexer, GuidTableWriteHandle};
@@ -21,7 +21,7 @@ use handlers::login::{log_in, log_out, send_points_of_interest};
 use handlers::mount::{load_mounts, process_mount_packet, MountConfig};
 use handlers::reference_data::{load_categories, load_item_classes, load_item_groups};
 use handlers::store::{load_cost_map, CostEntry};
-use handlers::test_data::{make_test_customizations, make_test_nameplate_image, make_test_player};
+use handlers::test_data::make_test_nameplate_image;
 use handlers::time::make_game_time_sync;
 use handlers::unique_guid::{
     player_guid, shorten_player_guid, shorten_zone_template_guid, zone_instance_guid,
@@ -30,12 +30,8 @@ use handlers::zone::{load_zones, teleport_within_zone, Zone, ZoneTemplate};
 use packets::client_update::{Health, Power, PreloadCharactersDone, Stat, StatId, Stats};
 use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
 use packets::item::ItemDefinition;
-use packets::login::{
-    DeploymentEnv, GameSettings, LoginReply, LoginRequest, WelcomeScreen, ZoneDetailsDone,
-};
-use packets::player_update::{
-    Customization, InitCustomizations, ItemDefinitionsReply, QueueAnimation, UpdateWieldType,
-};
+use packets::login::{LoginRequest, WelcomeScreen, ZoneDetailsDone};
+use packets::player_update::{Customization, InitCustomizations, QueueAnimation, UpdateWieldType};
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
 use packets::store::StoreItemList;
 use packets::tunnel::{TunneledPacket, TunneledWorldPacket};
@@ -45,9 +41,7 @@ use packets::{GamePacket, OpCode};
 use rand::Rng;
 
 use crate::teleport_to_zone;
-use packet_serialize::{
-    DeserializePacket, DeserializePacketError, NullTerminatedString, SerializePacketError,
-};
+use packet_serialize::{DeserializePacket, DeserializePacketError, SerializePacketError};
 
 mod handlers;
 mod packets;
