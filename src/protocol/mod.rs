@@ -215,11 +215,11 @@ pub struct Channel {
     session: Option<Session>,
     buffer_size: BufferSize,
     recency_limit: SequenceNumber,
-    millis_until_resend: Duration,
+    time_until_resend: Duration,
     last_round_trip_times: Vec<Duration>,
     next_round_trip_index: usize,
     selected_round_trip_index: usize,
-    max_millis_until_resend: Duration,
+    max_time_until_resend: Duration,
     fragment_state: FragmentState,
     send_queue: VecDeque<PendingPacket>,
     receive_queue: VecDeque<Packet>,
@@ -235,10 +235,10 @@ impl Channel {
         addr: SocketAddr,
         initial_buffer_size: BufferSize,
         recency_limit: SequenceNumber,
-        millis_until_resend: Duration,
+        time_until_resend: Duration,
         max_round_trip_entries: usize,
         desired_resend_pct: u8,
-        max_millis_until_resend: Duration,
+        max_time_until_resend: Duration,
     ) -> Self {
         if desired_resend_pct >= 100 {
             panic!("desired_resend_pct must be less than 100")
@@ -250,12 +250,12 @@ impl Channel {
             session: None,
             buffer_size: initial_buffer_size,
             recency_limit,
-            millis_until_resend,
+            time_until_resend,
             last_round_trip_times: vec![Duration::default(); max_round_trip_entries],
             next_round_trip_index: 0,
             selected_round_trip_index: (100 - desired_resend_pct) as usize * max_round_trip_entries
                 / 100,
-            max_millis_until_resend,
+            max_time_until_resend,
             fragment_state: FragmentState::new(),
             send_queue: VecDeque::new(),
             receive_queue: VecDeque::new(),
@@ -397,7 +397,7 @@ impl Channel {
 
         let mut indices_to_send = Vec::new();
 
-        self.update_millis_until_resend();
+        self.update_time_until_resend();
 
         // If the packet was acked, it was already sent, so don't send it again
         self.send_queue.retain(|packet| packet.needs_send);
@@ -407,7 +407,7 @@ impl Channel {
             let packet = &mut self.send_queue[index];
 
             // All later packets are newer than this packet, so they should also be skipped
-            if packet.time_since_last_send() < self.millis_until_resend {
+            if packet.time_since_last_send() < self.time_until_resend {
                 index += 1;
                 continue;
             }
@@ -611,7 +611,7 @@ impl Channel {
         self.disconnect_if_same_session(session_id, DisconnectReason::OtherSideTerminated)
     }
 
-    fn update_millis_until_resend(&mut self) {
+    fn update_time_until_resend(&mut self) {
         let mut ready_to_update = false;
         for packet in self.send_queue.iter() {
             if !packet.needs_send && packet.is_reliable() {
@@ -632,8 +632,8 @@ impl Channel {
 
         if ready_to_update {
             self.last_round_trip_times.sort();
-            self.millis_until_resend = self.last_round_trip_times[self.selected_round_trip_index]
-                .min(self.max_millis_until_resend);
+            self.time_until_resend = self.last_round_trip_times[self.selected_round_trip_index]
+                .min(self.max_time_until_resend);
         }
     }
 }
