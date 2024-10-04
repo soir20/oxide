@@ -161,6 +161,13 @@ impl Packet {
     }
 }
 
+fn now() -> u128 {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("Time before Unix epoch")
+        .as_millis()
+}
+
 struct PendingPacket {
     needs_send: bool,
     packet: Packet,
@@ -183,22 +190,15 @@ impl PendingPacket {
     }
 
     pub fn update_last_prepare_to_send_time(&mut self) {
-        self.last_prepare_to_send = PendingPacket::now();
+        self.last_prepare_to_send = now();
         if self.first_prepare_to_send == 0 {
             self.first_prepare_to_send = self.last_prepare_to_send;
         }
     }
 
     pub fn time_since_last_prepare_to_send(&self) -> u128 {
-        let now = PendingPacket::now();
+        let now = now();
         now.checked_sub(self.last_prepare_to_send).unwrap_or(now)
-    }
-
-    fn now() -> u128 {
-        SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .expect("Time before Unix epoch")
-            .as_millis()
     }
 }
 
@@ -211,6 +211,7 @@ pub struct Session {
 }
 
 pub struct Channel {
+    connected: bool,
     pub addr: SocketAddr,
     session: Option<Session>,
     buffer_size: BufferSize,
@@ -227,6 +228,7 @@ pub struct Channel {
     next_client_sequence: SequenceNumber,
     next_server_sequence: SequenceNumber,
     last_server_ack: SequenceNumber,
+    last_receive_time: u128,
 }
 
 impl Channel {
@@ -244,6 +246,7 @@ impl Channel {
         }
 
         Channel {
+            connected: true,
             addr,
             session: None,
             buffer_size: initial_buffer_size,
@@ -261,24 +264,35 @@ impl Channel {
             next_client_sequence: 0,
             next_server_sequence: 0,
             last_server_ack: 0,
+            last_receive_time: now(),
         }
     }
 
     pub fn receive(&mut self, data: &[u8]) -> Result<u32, DeserializeError> {
+        if !self.connected() {
+            return Ok(0);
+        }
+
         let mut packets = deserialize_packet(data, &self.session)?;
 
         let packet_count = packets.len() as u32;
         packets
             .drain(..)
             .for_each(|packet| self.receive_queue.push_back(packet));
+
+        self.last_receive_time = now();
         Ok(packet_count)
     }
 
     pub fn needs_processing(&self) -> bool {
-        !self.receive_queue.is_empty() || !self.send_queue.is_empty()
+        (!self.receive_queue.is_empty() || !self.send_queue.is_empty()) && self.connected()
     }
 
     pub fn process_next(&mut self, count: u8, server_options: &ServerOptions) -> Vec<Vec<u8>> {
+        if !self.connected() {
+            return Vec::new();
+        }
+
         let mut needs_new_ack = false;
         let mut packets_to_process = Vec::new();
 
@@ -347,7 +361,21 @@ impl Channel {
         packets
     }
 
+    pub fn process_all(&mut self, server_options: &ServerOptions) -> Vec<Vec<u8>> {
+        let mut packets = Vec::new();
+
+        while !self.receive_queue.is_empty() {
+            packets.append(&mut self.process_next(u8::MAX, server_options));
+        }
+
+        packets
+    }
+
     pub fn prepare_to_send_data(&mut self, data: Vec<u8>) {
+        if !self.connected() {
+            return;
+        }
+
         let packets =
             fragment_data(self.buffer_size, &self.session, data).expect("Unable to fragment data");
 
@@ -364,6 +392,10 @@ impl Channel {
     }
 
     pub fn send_next(&mut self, count: u8) -> Result<Vec<Vec<u8>>, SerializeError> {
+        if !self.connected() {
+            return Ok(Vec::new());
+        }
+
         let mut indices_to_send = Vec::new();
 
         self.update_millis_until_resend();
@@ -397,6 +429,45 @@ impl Channel {
             .collect();
 
         serialize_packets(&packets_to_send, self.buffer_size, &self.session)
+    }
+
+    pub fn disconnect(
+        &mut self,
+        disconnect_reason: DisconnectReason,
+    ) -> Result<Vec<Vec<u8>>, SerializeError> {
+        self.receive_queue.clear();
+        self.send_queue.clear();
+        self.connected = false;
+
+        if let Some(session) = &self.session {
+            serialize_packets(
+                &[&Packet::Disconnect(session.session_id, disconnect_reason)],
+                self.buffer_size,
+                &self.session,
+            )
+        } else {
+            Ok(Vec::new())
+        }
+    }
+
+    pub fn disconnect_if_same_session(
+        &mut self,
+        session_id: SessionId,
+        disconnect_reason: DisconnectReason,
+    ) -> Result<Vec<Vec<u8>>, SerializeError> {
+        if let Some(session) = &self.session {
+            if session.session_id == session_id {
+                self.disconnect(disconnect_reason)
+            } else {
+                Ok(Vec::new())
+            }
+        } else {
+            Ok(Vec::new())
+        }
+    }
+
+    pub fn connected(&self) -> bool {
+        self.connected
     }
 
     fn next_server_sequence(&mut self) -> SequenceNumber {
@@ -446,6 +517,9 @@ impl Channel {
             Packet::Heartbeat => self.process_heartbeat(),
             Packet::Ack(acked_sequence) => self.process_ack(*acked_sequence),
             Packet::AckAll(acked_sequence) => self.process_ack_all(*acked_sequence),
+            Packet::Disconnect(session_id, disconnect_reason) => {
+                let _ = self.process_disconnect(*session_id, *disconnect_reason);
+            }
             _ => {}
         }
     }
@@ -526,12 +600,24 @@ impl Channel {
             .push_back(PendingPacket::new(Packet::AckAll(sequence_number)));
     }
 
+    fn process_disconnect(
+        &mut self,
+        session_id: SessionId,
+        disconnect_reason: DisconnectReason,
+    ) -> Result<Vec<Vec<u8>>, SerializeError> {
+        println!(
+            "Client {} disconnected with reason {:?}",
+            self.addr, disconnect_reason
+        );
+        self.disconnect_if_same_session(session_id, DisconnectReason::OtherSideTerminated)
+    }
+
     fn update_millis_until_resend(&mut self) {
         let mut ready_to_update = false;
         for packet in self.send_queue.iter() {
             if !packet.needs_send && packet.is_reliable() {
                 self.last_round_trip_times[self.next_round_trip_index] =
-                    PendingPacket::now().saturating_sub(packet.first_prepare_to_send);
+                    now().saturating_sub(packet.first_prepare_to_send);
                 self.next_round_trip_index += 1;
 
                 if self.next_round_trip_index == self.last_round_trip_times.len() {

@@ -29,11 +29,11 @@ use super::{
         Character, CharacterCategory, CharacterIndex, CharacterType, Chunk, Door, NpcTemplate,
         PreviousFixture, Transport,
     },
-    guid::{Guid, GuidTable, GuidTableWriteHandle, IndexedGuid},
+    guid::{Guid, GuidTable, GuidTableIndexer, GuidTableWriteHandle, IndexedGuid},
     housing::prepare_init_house_packets,
     lock_enforcer::{
-        CharacterLockRequest, CharacterReadGuard, CharacterTableReadHandle,
-        CharacterTableWriteHandle, CharacterWriteGuard, ZoneLockRequest,
+        CharacterLockRequest, CharacterReadGuard, CharacterTableWriteHandle, CharacterWriteGuard,
+        ZoneLockRequest,
     },
     mount::MountConfig,
     unique_guid::{
@@ -286,16 +286,16 @@ impl Zone {
         ])
     }
 
-    pub fn other_players_nearby(
+    pub fn other_players_nearby<'a>(
         sender: u32,
         chunk: Chunk,
         instance_guid: u64,
-        characters_table_read_handle: &CharacterTableReadHandle,
+        characters_table_handle: &'a impl GuidTableIndexer<'a, u64, Character, CharacterIndex>,
     ) -> Result<Vec<u32>, ProcessPacketError> {
         let mut guids = Vec::new();
 
         for chunk in Zone::nearby_chunks(chunk) {
-            for guid in characters_table_read_handle.keys_by_index((
+            for guid in characters_table_handle.keys_by_index((
                 instance_guid,
                 chunk,
                 CharacterCategory::Player,
@@ -309,23 +309,23 @@ impl Zone {
         Ok(guids)
     }
 
-    pub fn all_players_nearby(
+    pub fn all_players_nearby<'a>(
         sender: u32,
         chunk: Chunk,
         instance_guid: u64,
-        characters_table_read_handle: &CharacterTableReadHandle,
+        characters_table_handle: &'a impl GuidTableIndexer<'a, u64, Character, CharacterIndex>,
     ) -> Result<Vec<u32>, ProcessPacketError> {
         let mut guids =
-            Zone::other_players_nearby(sender, chunk, instance_guid, characters_table_read_handle)?;
+            Zone::other_players_nearby(sender, chunk, instance_guid, characters_table_handle)?;
         guids.push(sender);
         Ok(guids)
     }
 
-    pub fn diff_character_guids(
+    pub fn diff_character_guids<'a>(
         instance_guid: u64,
         old_chunk: Chunk,
         new_chunk: Chunk,
-        characters_table_read_handle: &CharacterTableReadHandle,
+        characters_table_handle: &'a impl GuidTableIndexer<'a, u64, Character, CharacterIndex>,
         requester_guid: u32,
     ) -> BTreeMap<u64, bool> {
         let old_chunks = Zone::nearby_chunks(old_chunk);
@@ -337,7 +337,7 @@ impl Zone {
         for category in CharacterCategory::iter() {
             for chunk in chunks_to_remove.iter() {
                 for guid in
-                    characters_table_read_handle.keys_by_index((instance_guid, **chunk, category))
+                    characters_table_handle.keys_by_index((instance_guid, **chunk, category))
                 {
                     guids.insert(guid, false);
                 }
@@ -347,7 +347,7 @@ impl Zone {
         for category in CharacterCategory::iter() {
             for chunk in chunks_to_add.iter() {
                 for guid in
-                    characters_table_read_handle.keys_by_index((instance_guid, **chunk, category))
+                    characters_table_handle.keys_by_index((instance_guid, **chunk, category))
                 {
                     guids.insert(guid, true);
                 }
@@ -371,7 +371,7 @@ impl Zone {
                 if *add {
                     packets.append(&mut character.add_packets(mount_configs)?);
                 } else {
-                    packets.append(&mut character.remove_packets(*guid)?);
+                    packets.append(&mut character.remove_packets()?);
                 }
             }
         }

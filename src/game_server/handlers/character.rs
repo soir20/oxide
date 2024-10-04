@@ -286,10 +286,10 @@ impl Character {
         )
     }
 
-    pub fn remove_packets(&self, guid: u64) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+    pub fn remove_packets(&self) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
         let mut packets = vec![GamePacket::serialize(&TunneledPacket {
             unknown1: true,
-            inner: RemoveStandard { guid },
+            inner: RemoveStandard { guid: self.guid },
         })?];
 
         if let Some(mount_id) = self.mount_id {

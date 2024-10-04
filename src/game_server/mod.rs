@@ -4,10 +4,10 @@ use std::path::Path;
 use std::vec;
 
 use byteorder::{LittleEndian, ReadBytesExt};
-use handlers::character::{BattleClass, Character, CharacterIndex, CharacterType, Player};
+use handlers::character::{Character, CharacterIndex, CharacterType};
 use handlers::chat::process_chat_packet;
 use handlers::command::process_command;
-use handlers::guid::{GuidTable, GuidTableHandle, GuidTableWriteHandle};
+use handlers::guid::{GuidTable, GuidTableIndexer, GuidTableWriteHandle};
 use handlers::housing::process_housing_packet;
 use handlers::inventory::{
     customizations_from_guids, load_customization_item_mappings, load_customizations,
@@ -17,21 +17,21 @@ use handlers::item::load_item_definitions;
 use handlers::lock_enforcer::{
     CharacterLockRequest, LockEnforcer, LockEnforcerSource, ZoneLockRequest, ZoneTableReadHandle,
 };
-use handlers::login::send_points_of_interest;
+use handlers::login::{log_in, log_out, send_points_of_interest};
 use handlers::mount::{load_mounts, process_mount_packet, MountConfig};
 use handlers::reference_data::{load_categories, load_item_classes, load_item_groups};
 use handlers::store::{load_cost_map, CostEntry};
-use handlers::test_data::{make_test_customizations, make_test_nameplate_image, make_test_player};
+use handlers::test_data::make_test_nameplate_image;
 use handlers::time::make_game_time_sync;
-use handlers::unique_guid::{player_guid, shorten_zone_template_guid, zone_instance_guid};
+use handlers::unique_guid::{
+    player_guid, shorten_player_guid, shorten_zone_template_guid, zone_instance_guid,
+};
 use handlers::zone::{load_zones, teleport_within_zone, Zone, ZoneTemplate};
 use packets::client_update::{Health, Power, PreloadCharactersDone, Stat, StatId, Stats};
 use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
 use packets::item::ItemDefinition;
-use packets::login::{DeploymentEnv, GameSettings, LoginReply, WelcomeScreen, ZoneDetailsDone};
-use packets::player_update::{
-    Customization, InitCustomizations, ItemDefinitionsReply, QueueAnimation, UpdateWieldType,
-};
+use packets::login::{LoginRequest, WelcomeScreen, ZoneDetailsDone};
+use packets::player_update::{Customization, InitCustomizations, QueueAnimation, UpdateWieldType};
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
 use packets::store::StoreItemList;
 use packets::tunnel::{TunneledPacket, TunneledWorldPacket};
@@ -41,9 +41,7 @@ use packets::{GamePacket, OpCode};
 use rand::Rng;
 
 use crate::teleport_to_zone;
-use packet_serialize::{
-    DeserializePacket, DeserializePacketError, NullTerminatedString, SerializePacketError,
-};
+use packet_serialize::{DeserializePacket, DeserializePacketError, SerializePacketError};
 
 mod handlers;
 mod packets;
@@ -116,105 +114,15 @@ impl GameServer {
         })
     }
 
-    pub fn login(&self, data: Vec<u8>) -> Result<(u32, Vec<Broadcast>), ProcessPacketError> {
+    pub fn authenticate(&self, data: Vec<u8>) -> Result<u32, ProcessPacketError> {
         let mut cursor = Cursor::new(&data[..]);
         let raw_op_code = cursor.read_u16::<LittleEndian>()?;
 
         match OpCode::try_from(raw_op_code) {
             Ok(op_code) => match op_code {
                 OpCode::LoginRequest => {
-                    self.lock_enforcer().write_characters(
-                        |characters_write_handle, zone_lock_enforcer| {
-                            // TODO: validate and get GUID from login request
-                            let guid = 1;
-
-                            // TODO: get player's zone
-                            let player_zone = 24;
-
-                            let mut packets = Vec::new();
-
-                            let login_reply = TunneledPacket {
-                                unknown1: true,
-                                inner: LoginReply { logged_in: true },
-                            };
-                            packets.push(GamePacket::serialize(&login_reply)?);
-
-                            let deployment_env = TunneledPacket {
-                                unknown1: true,
-                                inner: DeploymentEnv {
-                                    environment: NullTerminatedString("prod".to_string()),
-                                },
-                            };
-                            packets.push(GamePacket::serialize(&deployment_env)?);
-
-                            packets.append(&mut zone_lock_enforcer.read_zones(|_| {
-                                ZoneLockRequest {
-                                    read_guids: vec![player_zone],
-                                    write_guids: Vec::new(),
-                                    zone_consumer: |_, zones_read, _| {
-                                        zones_read.get(&player_zone).unwrap().send_self()
-                                    },
-                                }
-                            })?);
-
-                            let settings = TunneledPacket {
-                                unknown1: true,
-                                inner: GameSettings {
-                                    unknown1: 4,
-                                    unknown2: 7,
-                                    unknown3: 268,
-                                    unknown4: true,
-                                    time_scale: 1.0,
-                                },
-                            };
-                            packets.push(GamePacket::serialize(&settings)?);
-
-                            let item_defs = TunneledPacket {
-                                unknown1: true,
-                                inner: ItemDefinitionsReply {
-                                    definitions: &self.items,
-                                },
-                            };
-                            packets.push(GamePacket::serialize(&item_defs)?);
-
-                            let player = TunneledPacket {
-                                unknown1: true,
-                                inner: make_test_player(guid, self.mounts(), &self.items),
-                            };
-                            packets.push(GamePacket::serialize(&player)?);
-
-                            characters_write_handle.insert(Character::from_player(
-                                guid,
-                                player.inner.data.pos,
-                                player.inner.data.rot,
-                                player_zone,
-                                Player {
-                                    member: player.inner.data.membership_unknown1,
-                                    credits: player.inner.data.credits,
-                                    battle_classes: player
-                                        .inner
-                                        .data
-                                        .battle_classes
-                                        .into_iter()
-                                        .map(|(battle_class_guid, battle_class)| {
-                                            (
-                                                battle_class_guid,
-                                                BattleClass {
-                                                    items: battle_class.items,
-                                                },
-                                            )
-                                        })
-                                        .collect(),
-                                    active_battle_class: player.inner.data.active_battle_class,
-                                    inventory: player.inner.data.inventory.into_keys().collect(),
-                                    customizations: make_test_customizations(),
-                                },
-                                self,
-                            ));
-
-                            Ok((guid, vec![Broadcast::Single(guid, packets)]))
-                        },
-                    )
+                    let login_packet: LoginRequest = DeserializePacket::deserialize(&mut cursor)?;
+                    shorten_player_guid(login_packet.guid)
                 }
                 _ => {
                     println!("Client tried to log in without a login request");
@@ -226,6 +134,14 @@ impl GameServer {
                 Err(ProcessPacketError::CorruptedPacket)
             }
         }
+    }
+
+    pub fn log_in(&self, sender: u32) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        log_in(sender, self)
+    }
+
+    pub fn log_out(&self, sender: u32) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        log_out(sender, self)
     }
 
     pub fn process_packet(
@@ -612,6 +528,9 @@ impl GameServer {
                             }
                         }
                     })?;
+                }
+                OpCode::Logout => {
+                    // Allow the cleanup thread to log the player out on disconnect
                 }
                 _ => println!("Unimplemented: {:?}, {:x?}", op_code, data),
             },

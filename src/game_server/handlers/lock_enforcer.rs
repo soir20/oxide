@@ -4,7 +4,9 @@ use parking_lot::{RwLockReadGuard, RwLockWriteGuard};
 
 use super::{
     character::{Character, CharacterIndex},
-    guid::{GuidTable, GuidTableHandle, GuidTableReadHandle, GuidTableWriteHandle},
+    guid::{
+        GuidTable, GuidTableHandle, GuidTableIndexer, GuidTableReadHandle, GuidTableWriteHandle,
+    },
     zone::Zone,
 };
 
@@ -12,20 +14,18 @@ pub struct TableReadHandleWrapper<'a, K, V, I = ()> {
     handle: GuidTableReadHandle<'a, K, V, I>,
 }
 
-impl<K: Copy + Ord, V, I: Copy + Ord> TableReadHandleWrapper<'_, K, V, I> {
-    pub fn contains(&self, guid: K) -> bool {
-        self.handle.get(guid).is_some()
-    }
-
-    pub fn index(&self, guid: K) -> Option<I> {
+impl<'a, K: Copy + Ord, V, I: Copy + Ord> GuidTableIndexer<'a, K, V, I>
+    for TableReadHandleWrapper<'a, K, V, I>
+{
+    fn index(&self, guid: K) -> Option<I> {
         self.handle.index(guid)
     }
 
-    pub fn keys(&self) -> impl Iterator<Item = K> + '_ {
+    fn keys(&'a self) -> impl Iterator<Item = K> {
         self.handle.keys()
     }
 
-    pub fn keys_by_index(&self, index: I) -> impl Iterator<Item = K> + '_ {
+    fn keys_by_index(&'a self, index: I) -> impl Iterator<Item = K> {
         self.handle.keys_by_index(index)
     }
 }

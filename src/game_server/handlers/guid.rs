@@ -53,18 +53,20 @@ impl<K, V, I> GuidTableData<K, V, I> {
     }
 }
 
-pub trait GuidTableHandle<'a, K, V: 'a, I> {
-    fn get(&self, guid: K) -> Option<&Lock<V>>;
-
+pub trait GuidTableIndexer<'a, K, V: 'a, I> {
     fn index(&self, guid: K) -> Option<I>;
-
-    fn iter(&'a self) -> impl Iterator<Item = (K, &'a Lock<V>)>;
 
     fn keys(&'a self) -> impl Iterator<Item = K>;
 
-    fn values(&'a self) -> impl Iterator<Item = &'a Lock<V>>;
-
     fn keys_by_index(&'a self, index: I) -> impl Iterator<Item = K>;
+}
+
+pub trait GuidTableHandle<'a, K, V: 'a, I>: GuidTableIndexer<'a, K, V, I> {
+    fn get(&self, guid: K) -> Option<&Lock<V>>;
+
+    fn iter(&'a self) -> impl Iterator<Item = (K, &'a Lock<V>)>;
+
+    fn values(&'a self) -> impl Iterator<Item = &'a Lock<V>>;
 
     fn values_by_index(&'a self, index: I) -> impl Iterator<Item = &'a Lock<V>>;
 }
@@ -73,30 +75,15 @@ pub struct GuidTableReadHandle<'a, K, V, I = ()> {
     guard: RwLockReadGuard<'a, GuidTableData<K, V, I>>,
 }
 
-impl<'a, K: Copy + Ord, V, I: Copy + Ord> GuidTableHandle<'a, K, V, I>
+impl<'a, K: Copy + Ord, V, I: Copy + Ord> GuidTableIndexer<'a, K, V, I>
     for GuidTableReadHandle<'a, K, V, I>
 {
-    fn get(&self, guid: K) -> Option<&Lock<V>> {
-        self.guard.data.get(&guid).map(|(item, _)| item)
-    }
-
     fn index(&self, guid: K) -> Option<I> {
         self.guard.data.get(&guid).map(|(_, index)| *index)
     }
 
-    fn iter(&'a self) -> impl Iterator<Item = (K, &'a Lock<V>)> {
-        self.guard
-            .data
-            .iter()
-            .map(move |(guid, (item, _))| (*guid, item))
-    }
-
     fn keys(&'a self) -> impl Iterator<Item = K> {
         self.guard.data.keys().cloned()
-    }
-
-    fn values(&'a self) -> impl Iterator<Item = &'a Lock<V>> {
-        self.guard.data.values().map(|(item, _)| item)
     }
 
     fn keys_by_index(&'a self, index: I) -> impl Iterator<Item = K> {
@@ -106,6 +93,25 @@ impl<'a, K: Copy + Ord, V, I: Copy + Ord> GuidTableHandle<'a, K, V, I>
             .map(|index_list| index_list.iter())
             .unwrap_or_default()
             .cloned()
+    }
+}
+
+impl<'a, K: Copy + Ord, V, I: Copy + Ord> GuidTableHandle<'a, K, V, I>
+    for GuidTableReadHandle<'a, K, V, I>
+{
+    fn get(&self, guid: K) -> Option<&Lock<V>> {
+        self.guard.data.get(&guid).map(|(item, _)| item)
+    }
+
+    fn iter(&'a self) -> impl Iterator<Item = (K, &'a Lock<V>)> {
+        self.guard
+            .data
+            .iter()
+            .map(move |(guid, (item, _))| (*guid, item))
+    }
+
+    fn values(&'a self) -> impl Iterator<Item = &'a Lock<V>> {
+        self.guard.data.values().map(|(item, _)| item)
     }
 
     fn values_by_index(&'a self, index: I) -> impl Iterator<Item = &'a Lock<V>> {
@@ -171,30 +177,15 @@ impl<'a, K: Copy + Ord, V: IndexedGuid<K, I>, I: Copy + Ord> GuidTableWriteHandl
     }
 }
 
-impl<'a, K: Copy + Ord, I: Copy + Ord, V: IndexedGuid<K, I>> GuidTableHandle<'a, K, V, I>
+impl<'a, K: Copy + Ord, V, I: Copy + Ord> GuidTableIndexer<'a, K, V, I>
     for GuidTableWriteHandle<'a, K, V, I>
 {
-    fn get(&self, guid: K) -> Option<&Lock<V>> {
-        self.guard.data.get(&guid).map(|(item, _)| item)
-    }
-
     fn index(&self, guid: K) -> Option<I> {
         self.guard.data.get(&guid).map(|(_, index)| *index)
     }
 
-    fn iter(&'a self) -> impl Iterator<Item = (K, &'a Lock<V>)> {
-        self.guard
-            .data
-            .iter()
-            .map(|(guid, (item, _))| (*guid, item))
-    }
-
     fn keys(&'a self) -> impl Iterator<Item = K> {
         self.guard.data.keys().cloned()
-    }
-
-    fn values(&'a self) -> impl Iterator<Item = &'a Lock<V>> {
-        self.guard.data.values().map(|(item, _)| item)
     }
 
     fn keys_by_index(&'a self, index: I) -> impl Iterator<Item = K> {
@@ -204,6 +195,25 @@ impl<'a, K: Copy + Ord, I: Copy + Ord, V: IndexedGuid<K, I>> GuidTableHandle<'a,
             .map(|index_list| index_list.iter())
             .unwrap_or_default()
             .cloned()
+    }
+}
+
+impl<'a, K: Copy + Ord, I: Copy + Ord, V: IndexedGuid<K, I>> GuidTableHandle<'a, K, V, I>
+    for GuidTableWriteHandle<'a, K, V, I>
+{
+    fn get(&self, guid: K) -> Option<&Lock<V>> {
+        self.guard.data.get(&guid).map(|(item, _)| item)
+    }
+
+    fn iter(&'a self) -> impl Iterator<Item = (K, &'a Lock<V>)> {
+        self.guard
+            .data
+            .iter()
+            .map(|(guid, (item, _))| (*guid, item))
+    }
+
+    fn values(&'a self) -> impl Iterator<Item = &'a Lock<V>> {
+        self.guard.data.values().map(|(item, _)| item)
     }
 
     fn values_by_index(&'a self, index: I) -> impl Iterator<Item = &'a Lock<V>> {
