@@ -397,34 +397,54 @@ fn spawn_cleanup_thread(
     let server_options = server_options.clone();
     let game_server = game_server.clone();
     thread::spawn(move || loop {
-        cleanup_tick_dequeue
-            .recv()
-            .expect("Cleanup tick channel disconnected");
-        let mut channel_manager_handle = channel_manager.write();
-        let channels_to_disconnect = channel_manager_handle.drain_filter(|channel| {
-            if channel.elapsed_since_last_receive() > channel_inactive_timeout {
-                let _ = channel.disconnect(DisconnectReason::Timeout);
-            }
-            !channel.connected()
-        });
-
-        let mut broadcasts = Vec::new();
-        for (possible_guid, channel) in channels_to_disconnect {
-            if let Some(guid) = possible_guid {
-                broadcasts.append(&mut log_out_and_disconnect(
-                    None,
-                    guid,
-                    &[],
-                    channel,
-                    &game_server,
-                    &socket,
-                    &server_options,
-                ));
-            }
-        }
-
-        channel_manager_handle.broadcast(client_enqueue.clone(), broadcasts);
+        cleanup_once(
+            &cleanup_tick_dequeue,
+            channel_inactive_timeout,
+            &channel_manager,
+            &socket,
+            &client_enqueue,
+            &server_options,
+            &game_server,
+        );
     });
+}
+
+fn cleanup_once(
+    cleanup_tick_dequeue: &Receiver<Instant>,
+    channel_inactive_timeout: Duration,
+    channel_manager: &Arc<RwLock<ChannelManager>>,
+    socket: &Arc<UdpSocket>,
+    client_enqueue: &Sender<SocketAddr>,
+    server_options: &Arc<ServerOptions>,
+    game_server: &Arc<GameServer>,
+) {
+    cleanup_tick_dequeue
+        .recv()
+        .expect("Cleanup tick channel disconnected");
+    let mut channel_manager_handle = channel_manager.write();
+    let channels_to_disconnect = channel_manager_handle.drain_filter(|channel| {
+        if channel.elapsed_since_last_receive() > channel_inactive_timeout {
+            let _ = channel.disconnect(DisconnectReason::Timeout);
+        }
+        !channel.connected()
+    });
+
+    let mut broadcasts = Vec::new();
+    for (possible_guid, channel) in channels_to_disconnect {
+        if let Some(guid) = possible_guid {
+            broadcasts.append(&mut log_out_and_disconnect(
+                None,
+                guid,
+                &[],
+                channel,
+                game_server,
+                socket,
+                server_options,
+            ));
+        }
+    }
+
+    channel_manager_handle.broadcast(client_enqueue.clone(), broadcasts);
 }
 
 fn lock_channel<'a>(
