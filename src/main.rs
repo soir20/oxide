@@ -105,6 +105,8 @@ pub struct ServerOptions {
     pub max_millis_until_resend: u64,
     pub channel_cleanup_period_millis: u64,
     pub channel_inactive_timeout_millis: u64,
+    pub min_client_version: Option<String>,
+    pub max_client_version: Option<String>,
 }
 
 impl ServerOptions {
@@ -116,6 +118,22 @@ impl ServerOptions {
         if self.desired_resend_pct >= 100 {
             panic!("desired_resend_pct must be less than 100")
         }
+    }
+
+    fn allows_client_version(&self, client_version: &String) -> bool {
+        if let Some(min) = &self.min_client_version {
+            if client_version < min {
+                return false;
+            }
+        }
+
+        if let Some(max) = &self.max_client_version {
+            if client_version > max {
+                return false;
+            }
+        }
+
+        true
     }
 }
 
@@ -185,7 +203,8 @@ fn spawn_receive_threads(
                                 },
                                 Err(err) => {
                                     println!("Could not create channel because maximum of {} channels was reached", err.0);
-                                    disconnect(Some(DisconnectReason::ConnectionRefused), &[recv_data], err.1.into(), &socket, &server_options);
+                                    let channel: Mutex<Channel> = err.1.into();
+                                    disconnect(Some(DisconnectReason::ConnectionRefused), &[recv_data], channel.lock(), &socket, &server_options);
                                 },
                             }
                         } else {
@@ -251,7 +270,12 @@ fn spawn_process_threads(
                         }
                     } else {
                         match game_server.authenticate(packet) {
-                            Ok(guid) => {
+                            Ok((guid, client_version)) => {
+                                if !server_options.allows_client_version(&client_version) {
+                                    disconnect(Some(DisconnectReason::Application), &[], channel_handle, &socket, &server_options);
+                                    return;
+                                }
+
                                 drop(channel_handle);
                                 drop(channel_manager_read_handle);
 
@@ -373,12 +397,11 @@ fn send_packets(packets: &[Vec<u8>], addr: &SocketAddr, socket: &Arc<UdpSocket>)
 fn disconnect(
     reason_override: Option<DisconnectReason>,
     packets_to_process_first: &[&[u8]],
-    channel: Mutex<Channel>,
+    mut channel_handle: MutexGuard<Channel>,
     socket: &Arc<UdpSocket>,
     server_options: &Arc<ServerOptions>,
 ) {
     // Allow processing some packets first so we can add the session ID to the disconnect packet
-    let mut channel_handle = channel.lock();
     packets_to_process_first.iter().for_each(|packet| {
         if let Err(err) = channel_handle.receive(packet) {
             println!(
@@ -413,7 +436,7 @@ fn log_out_and_disconnect(
     disconnect(
         reason_override,
         packets_to_process_first,
-        channel,
+        channel.lock(),
         socket,
         server_options,
     );
