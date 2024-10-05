@@ -18,6 +18,8 @@ mod reliable_data_ops;
 mod serialize;
 
 pub const MAX_BUFFER_SIZE: BufferSize = 512;
+pub const PROTOCOL: &str = "GAME_503\0";
+pub const PROTOCOL_VERSION: ProtocolVersion = 3;
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub enum ProtocolOpCode {
@@ -57,10 +59,10 @@ impl ProtocolOpCode {
 }
 
 pub type SequenceNumber = u16;
-pub type SoeProtocolVersion = u32;
+pub type ProtocolVersion = u32;
 pub type SessionId = u32;
 pub type BufferSize = u32;
-pub type ApplicationProtocol = String;
+pub type Protocol = String;
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub enum DisconnectReason {
@@ -89,12 +91,7 @@ pub type Timestamp = u32;
 pub type PacketCount = u64;
 
 pub enum Packet {
-    SessionRequest(
-        SoeProtocolVersion,
-        SessionId,
-        BufferSize,
-        ApplicationProtocol,
-    ),
+    SessionRequest(ProtocolVersion, SessionId, BufferSize, Protocol),
     SessionReply(
         SessionId,
         CrcSeed,
@@ -102,7 +99,7 @@ pub enum Packet {
         bool,
         bool,
         BufferSize,
-        SoeProtocolVersion,
+        ProtocolVersion,
     ),
     Disconnect(SessionId, DisconnectReason),
     Heartbeat,
@@ -210,7 +207,7 @@ pub struct Session {
 }
 
 pub struct Channel {
-    connected: bool,
+    pub disconnect_reason: Option<DisconnectReason>,
     pub addr: SocketAddr,
     session: Option<Session>,
     buffer_size: BufferSize,
@@ -245,7 +242,7 @@ impl Channel {
         }
 
         Channel {
-            connected: true,
+            disconnect_reason: None,
             addr,
             session: None,
             buffer_size: initial_buffer_size,
@@ -436,7 +433,7 @@ impl Channel {
     ) -> Result<Vec<Vec<u8>>, SerializeError> {
         self.receive_queue.clear();
         self.send_queue.clear();
-        self.connected = false;
+        self.disconnect_reason = Some(disconnect_reason);
 
         println!(
             "Disconnecting client {} with reason {:?}",
@@ -470,7 +467,7 @@ impl Channel {
     }
 
     pub fn connected(&self) -> bool {
-        self.connected
+        self.disconnect_reason.is_none()
     }
 
     pub fn elapsed_since_last_receive(&self) -> Duration {
@@ -513,12 +510,12 @@ impl Channel {
     fn process_packet(&mut self, packet: &Packet, server_options: &ServerOptions) {
         println!("Received packet op code {:?}", packet.op_code());
         match packet {
-            Packet::SessionRequest(protocol_version, session_id, buffer_size, app_protocol) => self
+            Packet::SessionRequest(protocol_version, session_id, buffer_size, protocol) => self
                 .process_session_request(
+                    protocol,
                     *protocol_version,
                     *session_id,
                     *buffer_size,
-                    app_protocol,
                     server_options,
                 ),
             Packet::Heartbeat => self.process_heartbeat(),
@@ -533,12 +530,17 @@ impl Channel {
 
     fn process_session_request(
         &mut self,
-        protocol_version: SoeProtocolVersion,
+        protocol: &Protocol,
+        protocol_version: ProtocolVersion,
         session_id: SessionId,
         buffer_size: BufferSize,
-        app_protocol: &ApplicationProtocol,
         server_options: &ServerOptions,
     ) {
+        if protocol != PROTOCOL || protocol_version != PROTOCOL_VERSION {
+            let _ = self.disconnect(DisconnectReason::ProtocolMismatch);
+            return;
+        }
+
         let session: &mut Session = self.session.get_or_insert_with(|| Session {
             session_id,
             crc_length: server_options.crc_length,

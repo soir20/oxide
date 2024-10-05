@@ -171,7 +171,7 @@ fn spawn_receive_threads(
                                         println!("Client {} reconnected, dropping old channel", src);
                                         if let Some(guid) = write_handle.guid(&src) {
                                             let log_out_broadcasts = log_out_and_disconnect(
-                                                DisconnectReason::NewConnectionAttempt,
+                                                Some(DisconnectReason::NewConnectionAttempt),
                                                 guid,
                                                 &[],
                                                 previous_channel,
@@ -185,7 +185,7 @@ fn spawn_receive_threads(
                                 },
                                 Err(err) => {
                                     println!("Could not create channel because maximum of {} channels was reached", err.0);
-                                    disconnect(DisconnectReason::ConnectionRefused, &[recv_data], err.1.into(), &socket, &server_options);
+                                    disconnect(Some(DisconnectReason::ConnectionRefused), &[recv_data], err.1.into(), &socket, &server_options);
                                 },
                             }
                         } else {
@@ -259,7 +259,7 @@ fn spawn_process_threads(
                                 if let Some(existing_channel) = channel_manager_write_handle.authenticate(&src, guid) {
                                     println!("Client {} logged in as an already logged-in player {}, disconnecting existing client", src, guid);
                                     broadcasts.append(&mut log_out_and_disconnect(
-                                        DisconnectReason::NewConnectionAttempt,
+                                        Some(DisconnectReason::NewConnectionAttempt),
                                         guid,
                                         &[],
                                         existing_channel,
@@ -323,34 +323,25 @@ fn spawn_cleanup_thread(
             .recv()
             .expect("Cleanup tick channel disconnected");
         let mut channel_manager_handle = channel_manager.write();
-        let already_disconnected_channels =
-            channel_manager_handle.drain_filter(|channel| !channel.connected());
-        let inactive_channels = channel_manager_handle.drain_filter(|channel| {
-            channel.elapsed_since_last_receive() > channel_inactive_timeout
+        let channels_to_disconnect = channel_manager_handle.drain_filter(|channel| {
+            if channel.elapsed_since_last_receive() > channel_inactive_timeout {
+                let _ = channel.disconnect(DisconnectReason::Timeout);
+            }
+            !channel.connected()
         });
 
-        let reasons_and_channels = [
-            (
-                DisconnectReason::OtherSideTerminated,
-                already_disconnected_channels,
-            ),
-            (DisconnectReason::Timeout, inactive_channels),
-        ];
-
         let mut broadcasts = Vec::new();
-        for (reason, channels) in reasons_and_channels {
-            for (possible_guid, channel) in channels {
-                if let Some(guid) = possible_guid {
-                    broadcasts.append(&mut log_out_and_disconnect(
-                        reason,
-                        guid,
-                        &[],
-                        channel,
-                        &game_server,
-                        &socket,
-                        &server_options,
-                    ));
-                }
+        for (possible_guid, channel) in channels_to_disconnect {
+            if let Some(guid) = possible_guid {
+                broadcasts.append(&mut log_out_and_disconnect(
+                    None,
+                    guid,
+                    &[],
+                    channel,
+                    &game_server,
+                    &socket,
+                    &server_options,
+                ));
             }
         }
 
@@ -380,7 +371,7 @@ fn send_packets(packets: &[Vec<u8>], addr: &SocketAddr, socket: &Arc<UdpSocket>)
 }
 
 fn disconnect(
-    disconnect_reason: DisconnectReason,
+    reason_override: Option<DisconnectReason>,
     packets_to_process_first: &[&[u8]],
     channel: Mutex<Channel>,
     socket: &Arc<UdpSocket>,
@@ -398,6 +389,9 @@ fn disconnect(
     });
     channel_handle.process_all(server_options);
 
+    let disconnect_reason = reason_override
+        .or(channel_handle.disconnect_reason)
+        .unwrap_or(DisconnectReason::Unknown);
     match channel_handle.disconnect(disconnect_reason) {
         Ok(disconnect_packets) => send_packets(&disconnect_packets, &channel_handle.addr, socket),
         Err(err) => println!(
@@ -408,7 +402,7 @@ fn disconnect(
 }
 
 fn log_out_and_disconnect(
-    disconnect_reason: DisconnectReason,
+    reason_override: Option<DisconnectReason>,
     guid: u32,
     packets_to_process_first: &[&[u8]],
     channel: Mutex<Channel>,
@@ -417,7 +411,7 @@ fn log_out_and_disconnect(
     server_options: &Arc<ServerOptions>,
 ) -> Vec<Broadcast> {
     disconnect(
-        disconnect_reason,
+        reason_override,
         packets_to_process_first,
         channel,
         socket,

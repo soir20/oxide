@@ -1,7 +1,7 @@
 use crate::protocol::hash::{compute_crc, CrcSeed, CrcSize};
 use crate::protocol::{
-    ApplicationProtocol, BufferSize, ClientTick, DisconnectReason, Packet, PacketCount,
-    ProtocolOpCode, SequenceNumber, ServerTick, Session, SessionId, SoeProtocolVersion, Timestamp,
+    BufferSize, ClientTick, DisconnectReason, Packet, PacketCount, Protocol, ProtocolOpCode,
+    ProtocolVersion, SequenceNumber, ServerTick, Session, SessionId, Timestamp,
 };
 use byteorder::{BigEndian, WriteBytesExt};
 use miniz_oxide::deflate::compress_to_vec_zlib;
@@ -59,10 +59,10 @@ fn variable_length_int_size(length: usize) -> usize {
 }
 
 fn serialize_session_request(
-    protocol_version: SoeProtocolVersion,
+    protocol_version: ProtocolVersion,
     session_id: SessionId,
     buffer_size: BufferSize,
-    app_protocol: &ApplicationProtocol,
+    app_protocol: &Protocol,
 ) -> Result<Vec<u8>, SerializeError> {
     let mut buffer = Vec::new();
     buffer.write_u32::<BigEndian>(protocol_version)?;
@@ -83,7 +83,7 @@ fn serialize_session_reply(
     allow_compression: bool,
     encrypt: bool,
     buffer_size: BufferSize,
-    protocol_version: SoeProtocolVersion,
+    protocol_version: ProtocolVersion,
 ) -> Result<Vec<u8>, SerializeError> {
     let mut buffer = Vec::new();
     buffer.write_u32::<BigEndian>(session_id)?;

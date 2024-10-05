@@ -163,12 +163,12 @@ impl ChannelManager {
 
     pub fn drain_filter(
         &mut self,
-        mut predicate: impl FnMut(&MutexGuard<Channel>) -> bool,
+        mut predicate: impl FnMut(&mut MutexGuard<Channel>) -> bool,
     ) -> Vec<(Option<u32>, Mutex<Channel>)> {
         let mut addrs_to_remove = Vec::new();
         for (addr, channel) in self.unauthenticated.iter() {
-            let channel_handle = channel.lock();
-            if predicate(&channel_handle) {
+            let mut channel_handle = channel.lock();
+            if predicate(&mut channel_handle) {
                 addrs_to_remove.push(*addr);
             }
         }
@@ -242,14 +242,14 @@ impl AuthenticatedChannelManager {
 
     pub fn drain_filter(
         &mut self,
-        mut predicate: impl FnMut(&MutexGuard<Channel>) -> bool,
+        mut predicate: impl FnMut(&mut MutexGuard<Channel>) -> bool,
     ) -> Vec<(u32, Mutex<Channel>)> {
         let addrs_to_remove: Vec<SocketAddr> = self
             .channels
             .iter()
             .filter_map(|(_, channel)| {
-                let channel_handle = channel.lock();
-                if predicate(&channel_handle) {
+                let mut channel_handle = channel.lock();
+                if predicate(&mut channel_handle) {
                     Some(channel_handle.addr)
                 } else {
                     None
