@@ -537,6 +537,12 @@ impl Channel {
         server_options: &ServerOptions,
     ) {
         if protocol != PROTOCOL || protocol_version != PROTOCOL_VERSION {
+            println!(
+                "Protocol mismatch on client {}: protocol={:x?}, version={}",
+                self.addr,
+                protocol.as_bytes(),
+                protocol_version
+            );
             let _ = self.disconnect(DisconnectReason::ProtocolMismatch);
             return;
         }
