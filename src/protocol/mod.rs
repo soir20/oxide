@@ -469,6 +469,10 @@ impl Channel {
         self.connected
     }
 
+    pub fn elapsed_since_last_receive(&self) -> Duration {
+        Instant::now().saturating_duration_since(self.last_receive_time)
+    }
+
     fn next_server_sequence(&mut self) -> SequenceNumber {
         let next_sequence = self.next_server_sequence;
         self.next_server_sequence = self.next_server_sequence.wrapping_add(1);

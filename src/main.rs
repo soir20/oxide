@@ -311,6 +311,8 @@ fn spawn_cleanup_thread(
     server_options: &Arc<ServerOptions>,
     game_server: &Arc<GameServer>,
 ) {
+    let channel_inactive_timeout =
+        Duration::from_millis(server_options.channel_inactive_timeout_millis);
     let channel_manager = channel_manager.clone();
     let socket = socket.clone();
     let client_enqueue = client_enqueue.clone();
@@ -321,21 +323,34 @@ fn spawn_cleanup_thread(
             .recv()
             .expect("Cleanup tick channel disconnected");
         let mut channel_manager_handle = channel_manager.write();
-        let disconnected_channels =
+        let already_disconnected_channels =
             channel_manager_handle.drain_filter(|channel| !channel.connected());
+        let inactive_channels = channel_manager_handle.drain_filter(|channel| {
+            channel.elapsed_since_last_receive() > channel_inactive_timeout
+        });
+
+        let reasons_and_channels = [
+            (
+                DisconnectReason::OtherSideTerminated,
+                already_disconnected_channels,
+            ),
+            (DisconnectReason::Timeout, inactive_channels),
+        ];
 
         let mut broadcasts = Vec::new();
-        for (possible_guid, channel) in disconnected_channels {
-            if let Some(guid) = possible_guid {
-                broadcasts.append(&mut log_out_and_disconnect(
-                    DisconnectReason::OtherSideTerminated,
-                    guid,
-                    &[],
-                    channel,
-                    &game_server,
-                    &socket,
-                    &server_options,
-                ));
+        for (reason, channels) in reasons_and_channels {
+            for (possible_guid, channel) in channels {
+                if let Some(guid) = possible_guid {
+                    broadcasts.append(&mut log_out_and_disconnect(
+                        reason,
+                        guid,
+                        &[],
+                        channel,
+                        &game_server,
+                        &socket,
+                        &server_options,
+                    ));
+                }
             }
         }
 
