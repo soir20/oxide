@@ -262,95 +262,123 @@ fn spawn_process_threads(
             let client_dequeue = client_dequeue.clone();
 
             thread::spawn(move || loop {
-                // Don't lock the channel manager until we have packets to process
-                // to avoid deadlock with channel creation
-                let src = client_dequeue
-                    .recv()
-                    .expect("Tried to dequeue client after queue channel disconnected");
-
-                let mut channel_manager_read_handle = channel_manager.read();
-                let mut channel_handle = if let Some(channel_handle) =
-                    lock_channel(&channel_manager_read_handle, &src)
-                {
-                    channel_handle
-                } else {
-                    return;
-                };
-
-                let packets_to_send = channel_manager_read_handle
-                    .send_next(&mut channel_handle, server_options.send_packets_per_cycle);
-                send_packets(&packets_to_send, &src, &socket);
-
-                let packets_for_game_server = channel_manager_read_handle.process_next(
-                    &mut channel_handle,
-                    server_options.process_packets_per_cycle,
+                process_once(
+                    &channel_manager,
+                    &socket,
                     &server_options,
+                    &game_server,
+                    &client_dequeue,
+                    &client_enqueue,
                 );
-
-                let mut broadcasts = Vec::new();
-                for packet in packets_for_game_server {
-                    if let Some(guid) = channel_manager_read_handle.guid(&src) {
-                        match game_server.process_packet(guid, packet) {
-                            Ok(mut new_broadcasts) => broadcasts.append(&mut new_broadcasts),
-                            Err(err) => println!("Unable to process packet: {:?}", err),
-                        }
-                    } else {
-                        match game_server.authenticate(packet) {
-                            Ok((guid, client_version)) => {
-                                if !server_options.allows_client_version(&client_version) {
-                                    disconnect(Some(DisconnectReason::Application), &[], channel_handle, &socket, &server_options);
-                                    return;
-                                }
-
-                                drop(channel_handle);
-                                drop(channel_manager_read_handle);
-
-                                let mut channel_manager_write_handle = channel_manager.write();
-                                if let Some(existing_channel) = channel_manager_write_handle.authenticate(&src, guid) {
-                                    println!("Client {} logged in as an already logged-in player {}, disconnecting existing client", src, guid);
-                                    broadcasts.append(&mut log_out_and_disconnect(
-                                        Some(DisconnectReason::NewConnectionAttempt),
-                                        guid,
-                                        &[],
-                                        existing_channel,
-                                        &game_server,
-                                        &socket,
-                                        &server_options,
-                                    ));
-                                }
-
-                                match game_server.log_in(guid) {
-                                    Ok(mut log_in_broadcasts) => broadcasts.append(&mut log_in_broadcasts),
-                                    Err(err) => println!("Unable to log in player {} on client {}: {:?}", guid, src, err),
-                                };
-                                drop(channel_manager_write_handle);
-
-                                channel_manager_read_handle = channel_manager.read();
-                                channel_handle = if let Some(channel_handle) =
-                                    lock_channel(&channel_manager_read_handle, &src)
-                                {
-                                    channel_handle
-                                } else {
-                                    return;
-                                };
-                            }
-                            Err(err) => println!("Unable to process login packet: {:?}", err),
-                        }
-                    }
-                }
-
-                // Re-enqueue this address for another thread to pick up if there is still more processing to be done
-                if channel_handle.needs_processing() {
-                    client_enqueue
-                        .send(src)
-                        .expect("Tried to enqueue client after queue channel disconnected");
-                }
-
-                drop(channel_handle);
-                channel_manager_read_handle.broadcast(client_enqueue.clone(), broadcasts);
             })
         })
         .collect()
+}
+
+fn process_once(
+    channel_manager: &Arc<RwLock<ChannelManager>>,
+    socket: &Arc<UdpSocket>,
+    server_options: &Arc<ServerOptions>,
+    game_server: &Arc<GameServer>,
+    client_dequeue: &Receiver<SocketAddr>,
+    client_enqueue: &Sender<SocketAddr>,
+) {
+    // Don't lock the channel manager until we have packets to process
+    // to avoid deadlock with channel creation
+    let src = client_dequeue
+        .recv()
+        .expect("Tried to dequeue client after queue channel disconnected");
+
+    let mut channel_manager_read_handle = channel_manager.read();
+    let mut channel_handle =
+        if let Some(channel_handle) = lock_channel(&channel_manager_read_handle, &src) {
+            channel_handle
+        } else {
+            return;
+        };
+
+    let packets_to_send = channel_manager_read_handle
+        .send_next(&mut channel_handle, server_options.send_packets_per_cycle);
+    send_packets(&packets_to_send, &src, socket);
+
+    let packets_for_game_server = channel_manager_read_handle.process_next(
+        &mut channel_handle,
+        server_options.process_packets_per_cycle,
+        server_options,
+    );
+
+    let mut broadcasts = Vec::new();
+    for packet in packets_for_game_server {
+        if let Some(guid) = channel_manager_read_handle.guid(&src) {
+            match game_server.process_packet(guid, packet) {
+                Ok(mut new_broadcasts) => broadcasts.append(&mut new_broadcasts),
+                Err(err) => println!("Unable to process packet: {:?}", err),
+            }
+        } else {
+            match game_server.authenticate(packet) {
+                Ok((guid, client_version)) => {
+                    if !server_options.allows_client_version(&client_version) {
+                        disconnect(
+                            Some(DisconnectReason::Application),
+                            &[],
+                            channel_handle,
+                            socket,
+                            server_options,
+                        );
+                        return;
+                    }
+
+                    drop(channel_handle);
+                    drop(channel_manager_read_handle);
+
+                    let mut channel_manager_write_handle = channel_manager.write();
+                    if let Some(existing_channel) =
+                        channel_manager_write_handle.authenticate(&src, guid)
+                    {
+                        println!("Client {} logged in as an already logged-in player {}, disconnecting existing client", src, guid);
+                        broadcasts.append(&mut log_out_and_disconnect(
+                            Some(DisconnectReason::NewConnectionAttempt),
+                            guid,
+                            &[],
+                            existing_channel,
+                            game_server,
+                            socket,
+                            server_options,
+                        ));
+                    }
+
+                    match game_server.log_in(guid) {
+                        Ok(mut log_in_broadcasts) => broadcasts.append(&mut log_in_broadcasts),
+                        Err(err) => println!(
+                            "Unable to log in player {} on client {}: {:?}",
+                            guid, src, err
+                        ),
+                    };
+                    drop(channel_manager_write_handle);
+
+                    channel_manager_read_handle = channel_manager.read();
+                    channel_handle = if let Some(channel_handle) =
+                        lock_channel(&channel_manager_read_handle, &src)
+                    {
+                        channel_handle
+                    } else {
+                        return;
+                    };
+                }
+                Err(err) => println!("Unable to process login packet: {:?}", err),
+            }
+        }
+    }
+
+    // Re-enqueue this address for another thread to pick up if there is still more processing to be done
+    if channel_handle.needs_processing() {
+        client_enqueue
+            .send(src)
+            .expect("Tried to enqueue client after queue channel disconnected");
+    }
+
+    drop(channel_handle);
+    channel_manager_read_handle.broadcast(client_enqueue.clone(), broadcasts);
 }
 
 fn spawn_cleanup_thread(
