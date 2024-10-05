@@ -438,7 +438,10 @@ impl Channel {
         self.send_queue.clear();
         self.connected = false;
 
-        println!("Disconnecting client {} with reason {:?}", self.addr, disconnect_reason);
+        println!(
+            "Disconnecting client {} with reason {:?}",
+            self.addr, disconnect_reason
+        );
         if let Some(session) = &self.session {
             serialize_packets(
                 &[&Packet::Disconnect(session.session_id, disconnect_reason)],
