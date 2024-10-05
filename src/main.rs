@@ -318,6 +318,10 @@ fn process_once(
             match game_server.authenticate(packet) {
                 Ok((guid, client_version)) => {
                     if !server_options.allows_client_version(&client_version) {
+                        println!(
+                            "Disconnecting client {} that attempted to authenticate with disallowed version {}",
+                            channel_handle.addr, client_version
+                        );
                         disconnect(
                             Some(DisconnectReason::Application),
                             &[],
