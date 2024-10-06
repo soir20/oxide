@@ -1,6 +1,6 @@
 use std::collections::{BTreeMap, VecDeque};
 use std::net::SocketAddr;
-use std::time::{SystemTime, UNIX_EPOCH};
+use std::time::{Duration, Instant};
 
 use rand::random;
 
@@ -18,6 +18,8 @@ mod reliable_data_ops;
 mod serialize;
 
 pub const MAX_BUFFER_SIZE: BufferSize = 512;
+pub const PROTOCOL: &str = "GAME_503\0";
+pub const PROTOCOL_VERSION: ProtocolVersion = 3;
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub enum ProtocolOpCode {
@@ -57,10 +59,10 @@ impl ProtocolOpCode {
 }
 
 pub type SequenceNumber = u16;
-pub type SoeProtocolVersion = u32;
+pub type ProtocolVersion = u32;
 pub type SessionId = u32;
 pub type BufferSize = u32;
-pub type ApplicationProtocol = String;
+pub type Protocol = String;
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub enum DisconnectReason {
@@ -89,12 +91,7 @@ pub type Timestamp = u32;
 pub type PacketCount = u64;
 
 pub enum Packet {
-    SessionRequest(
-        SoeProtocolVersion,
-        SessionId,
-        BufferSize,
-        ApplicationProtocol,
-    ),
+    SessionRequest(ProtocolVersion, SessionId, BufferSize, Protocol),
     SessionReply(
         SessionId,
         CrcSeed,
@@ -102,7 +99,7 @@ pub enum Packet {
         bool,
         bool,
         BufferSize,
-        SoeProtocolVersion,
+        ProtocolVersion,
     ),
     Disconnect(SessionId, DisconnectReason),
     Heartbeat,
@@ -161,18 +158,17 @@ impl Packet {
     }
 }
 
-fn now() -> u128 {
-    SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .expect("Time before Unix epoch")
-        .as_millis()
+#[derive(Eq, PartialEq)]
+enum SendTime {
+    Instant(Instant),
+    NeverSent,
 }
 
 struct PendingPacket {
     needs_send: bool,
     packet: Packet,
-    last_prepare_to_send: u128,
-    first_prepare_to_send: u128,
+    last_send: Instant,
+    first_send: SendTime,
 }
 
 impl PendingPacket {
@@ -180,8 +176,8 @@ impl PendingPacket {
         PendingPacket {
             needs_send: true,
             packet,
-            last_prepare_to_send: 0,
-            first_prepare_to_send: 0,
+            last_send: Instant::now(),
+            first_send: SendTime::NeverSent,
         }
     }
 
@@ -189,16 +185,16 @@ impl PendingPacket {
         self.packet.sequence_number().is_some()
     }
 
-    pub fn update_last_prepare_to_send_time(&mut self) {
-        self.last_prepare_to_send = now();
-        if self.first_prepare_to_send == 0 {
-            self.first_prepare_to_send = self.last_prepare_to_send;
+    pub fn update_last_send_time(&mut self) {
+        self.last_send = Instant::now();
+        if self.first_send == SendTime::NeverSent {
+            self.first_send = SendTime::Instant(self.last_send);
         }
     }
 
-    pub fn time_since_last_prepare_to_send(&self) -> u128 {
-        let now = now();
-        now.checked_sub(self.last_prepare_to_send).unwrap_or(now)
+    pub fn time_since_last_send(&self) -> Duration {
+        let now = Instant::now();
+        now.saturating_duration_since(self.last_send)
     }
 }
 
@@ -211,16 +207,16 @@ pub struct Session {
 }
 
 pub struct Channel {
-    connected: bool,
+    pub disconnect_reason: Option<DisconnectReason>,
     pub addr: SocketAddr,
     session: Option<Session>,
     buffer_size: BufferSize,
     recency_limit: SequenceNumber,
-    millis_until_resend: u128,
-    last_round_trip_times: Vec<u128>,
+    time_until_resend: Duration,
+    last_round_trip_times: Vec<Duration>,
     next_round_trip_index: usize,
     selected_round_trip_index: usize,
-    max_millis_until_resend: u128,
+    max_time_until_resend: Duration,
     fragment_state: FragmentState,
     send_queue: VecDeque<PendingPacket>,
     receive_queue: VecDeque<Packet>,
@@ -228,7 +224,7 @@ pub struct Channel {
     next_client_sequence: SequenceNumber,
     next_server_sequence: SequenceNumber,
     last_server_ack: SequenceNumber,
-    last_receive_time: u128,
+    last_receive_time: Instant,
 }
 
 impl Channel {
@@ -236,27 +232,27 @@ impl Channel {
         addr: SocketAddr,
         initial_buffer_size: BufferSize,
         recency_limit: SequenceNumber,
-        millis_until_resend: u128,
+        time_until_resend: Duration,
         max_round_trip_entries: usize,
         desired_resend_pct: u8,
-        max_millis_until_resend: u128,
+        max_time_until_resend: Duration,
     ) -> Self {
         if desired_resend_pct >= 100 {
             panic!("desired_resend_pct must be less than 100")
         }
 
         Channel {
-            connected: true,
+            disconnect_reason: None,
             addr,
             session: None,
             buffer_size: initial_buffer_size,
             recency_limit,
-            millis_until_resend,
-            last_round_trip_times: vec![0; max_round_trip_entries],
+            time_until_resend,
+            last_round_trip_times: vec![Duration::default(); max_round_trip_entries],
             next_round_trip_index: 0,
             selected_round_trip_index: (100 - desired_resend_pct) as usize * max_round_trip_entries
                 / 100,
-            max_millis_until_resend,
+            max_time_until_resend,
             fragment_state: FragmentState::new(),
             send_queue: VecDeque::new(),
             receive_queue: VecDeque::new(),
@@ -264,7 +260,7 @@ impl Channel {
             next_client_sequence: 0,
             next_server_sequence: 0,
             last_server_ack: 0,
-            last_receive_time: now(),
+            last_receive_time: Instant::now(),
         }
     }
 
@@ -280,7 +276,7 @@ impl Channel {
             .drain(..)
             .for_each(|packet| self.receive_queue.push_back(packet));
 
-        self.last_receive_time = now();
+        self.last_receive_time = Instant::now();
         Ok(packet_count)
     }
 
@@ -398,7 +394,7 @@ impl Channel {
 
         let mut indices_to_send = Vec::new();
 
-        self.update_millis_until_resend();
+        self.update_time_until_resend();
 
         // If the packet was acked, it was already sent, so don't send it again
         self.send_queue.retain(|packet| packet.needs_send);
@@ -408,7 +404,7 @@ impl Channel {
             let packet = &mut self.send_queue[index];
 
             // All later packets are newer than this packet, so they should also be skipped
-            if packet.time_since_last_prepare_to_send() < self.millis_until_resend {
+            if packet.time_since_last_send() < self.time_until_resend {
                 index += 1;
                 continue;
             }
@@ -419,7 +415,7 @@ impl Channel {
             }
 
             indices_to_send.push(index);
-            packet.update_last_prepare_to_send_time();
+            packet.update_last_send_time();
             index += 1;
         }
 
@@ -437,8 +433,12 @@ impl Channel {
     ) -> Result<Vec<Vec<u8>>, SerializeError> {
         self.receive_queue.clear();
         self.send_queue.clear();
-        self.connected = false;
+        self.disconnect_reason = Some(disconnect_reason);
 
+        println!(
+            "Disconnecting client {} with reason {:?}",
+            self.addr, disconnect_reason
+        );
         if let Some(session) = &self.session {
             serialize_packets(
                 &[&Packet::Disconnect(session.session_id, disconnect_reason)],
@@ -467,7 +467,11 @@ impl Channel {
     }
 
     pub fn connected(&self) -> bool {
-        self.connected
+        self.disconnect_reason.is_none()
+    }
+
+    pub fn elapsed_since_last_receive(&self) -> Duration {
+        Instant::now().saturating_duration_since(self.last_receive_time)
     }
 
     fn next_server_sequence(&mut self) -> SequenceNumber {
@@ -506,12 +510,12 @@ impl Channel {
     fn process_packet(&mut self, packet: &Packet, server_options: &ServerOptions) {
         println!("Received packet op code {:?}", packet.op_code());
         match packet {
-            Packet::SessionRequest(protocol_version, session_id, buffer_size, app_protocol) => self
+            Packet::SessionRequest(protocol_version, session_id, buffer_size, protocol) => self
                 .process_session_request(
+                    protocol,
                     *protocol_version,
                     *session_id,
                     *buffer_size,
-                    app_protocol,
                     server_options,
                 ),
             Packet::Heartbeat => self.process_heartbeat(),
@@ -526,12 +530,23 @@ impl Channel {
 
     fn process_session_request(
         &mut self,
-        protocol_version: SoeProtocolVersion,
+        protocol: &Protocol,
+        protocol_version: ProtocolVersion,
         session_id: SessionId,
         buffer_size: BufferSize,
-        app_protocol: &ApplicationProtocol,
         server_options: &ServerOptions,
     ) {
+        if protocol != PROTOCOL || protocol_version != PROTOCOL_VERSION {
+            println!(
+                "Protocol mismatch on client {}: protocol={:x?}, version={}",
+                self.addr,
+                protocol.as_bytes(),
+                protocol_version
+            );
+            let _ = self.disconnect(DisconnectReason::ProtocolMismatch);
+            return;
+        }
+
         let session: &mut Session = self.session.get_or_insert_with(|| Session {
             session_id,
             crc_length: server_options.crc_length,
@@ -612,25 +627,29 @@ impl Channel {
         self.disconnect_if_same_session(session_id, DisconnectReason::OtherSideTerminated)
     }
 
-    fn update_millis_until_resend(&mut self) {
+    fn update_time_until_resend(&mut self) {
         let mut ready_to_update = false;
         for packet in self.send_queue.iter() {
             if !packet.needs_send && packet.is_reliable() {
-                self.last_round_trip_times[self.next_round_trip_index] =
-                    now().saturating_sub(packet.first_prepare_to_send);
-                self.next_round_trip_index += 1;
+                if let SendTime::Instant(first_send) = packet.first_send {
+                    self.last_round_trip_times[self.next_round_trip_index] =
+                        Instant::now().saturating_duration_since(first_send);
+                    self.next_round_trip_index += 1;
 
-                if self.next_round_trip_index == self.last_round_trip_times.len() {
-                    self.next_round_trip_index = 0;
-                    ready_to_update = true;
+                    if self.next_round_trip_index == self.last_round_trip_times.len() {
+                        self.next_round_trip_index = 0;
+                        ready_to_update = true;
+                    }
+                } else {
+                    panic!("Packet was marked as sent but has no timing statistics");
                 }
             }
         }
 
         if ready_to_update {
             self.last_round_trip_times.sort();
-            self.millis_until_resend = self.last_round_trip_times[self.selected_round_trip_index]
-                .min(self.max_millis_until_resend);
+            self.time_until_resend = self.last_round_trip_times[self.selected_round_trip_index]
+                .min(self.max_time_until_resend);
         }
     }
 }

@@ -114,7 +114,7 @@ impl GameServer {
         })
     }
 
-    pub fn authenticate(&self, data: Vec<u8>) -> Result<u32, ProcessPacketError> {
+    pub fn authenticate(&self, data: Vec<u8>) -> Result<(u32, String), ProcessPacketError> {
         let mut cursor = Cursor::new(&data[..]);
         let raw_op_code = cursor.read_u16::<LittleEndian>()?;
 
@@ -122,7 +122,7 @@ impl GameServer {
             Ok(op_code) => match op_code {
                 OpCode::LoginRequest => {
                     let login_packet: LoginRequest = DeserializePacket::deserialize(&mut cursor)?;
-                    shorten_player_guid(login_packet.guid)
+                    shorten_player_guid(login_packet.guid).map(|guid| (guid, login_packet.version))
                 }
                 _ => {
                     println!("Client tried to log in without a login request");
