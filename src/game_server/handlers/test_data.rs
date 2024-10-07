@@ -113,9 +113,9 @@ pub fn make_test_npc() -> AddNpc {
         rail_unknown1: 0.0,
         rail_unknown2: 0.0,
         rail_unknown3: 0.0,
-        pet_customization_model_name: "".to_string(),
-        pet_customization_texture_alias: "".to_string(),
-        pet_customization_tint_alias: "".to_string(),
+        pet_customization_model_name1: "".to_string(),
+        pet_customization_model_name2: "".to_string(),
+        pet_customization_model_name3: "".to_string(),
         override_terrain_model: false,
         hover_glow: 0,
         hover_description: 0, // max 7
