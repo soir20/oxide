@@ -38,7 +38,7 @@ impl FragmentState {
         }
     }
 
-    pub fn add(&mut self, packet: Packet) -> Result<Option<Packet>, DataError> {
+    pub fn add(&mut self, packet: Packet) -> Result<(Option<Packet>, u32), DataError> {
         if let Packet::DataFragment(sequence_number, data) = packet {
             let packet_data;
             if self.remaining_bytes == 0 {
@@ -58,19 +58,22 @@ impl FragmentState {
             self.buffer.extend(packet_data);
 
             if self.remaining_bytes > 0 {
-                return Ok(None);
+                return Ok((None, self.remaining_bytes));
             }
 
             let old_buffer = self.buffer.clone();
             self.buffer.clear();
-            return Ok(Some(Packet::Data(sequence_number, old_buffer)));
+            return Ok((
+                Some(Packet::Data(sequence_number, old_buffer)),
+                self.remaining_bytes,
+            ));
         }
 
         if self.remaining_bytes > 0 {
             return Err(DataError::ExpectedFragment(packet.op_code()));
         }
 
-        Ok(Some(packet))
+        Ok((Some(packet), self.remaining_bytes))
     }
 }
 

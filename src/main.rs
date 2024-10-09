@@ -99,6 +99,9 @@ pub struct ServerOptions {
     pub process_packets_per_cycle: u8,
     pub send_packets_per_cycle: u8,
     pub packet_recency_limit: u16,
+    pub max_received_packets_queued: usize,
+    pub max_unacknowledged_packets_queued: usize,
+    pub max_defragmented_packet_size: u32,
     pub default_millis_until_resend: u64,
     pub max_round_trip_entries: usize,
     pub desired_resend_pct: u8,
@@ -187,7 +190,8 @@ fn receive_once(
 
         loop {
             let read_handle = channel_manager.read();
-            let receive_result = read_handle.receive(client_enqueue.clone(), &src, recv_data);
+            let receive_result =
+                read_handle.receive(client_enqueue.clone(), &src, recv_data, server_options);
             if receive_result == ReceiveResult::CreateChannelFirst {
                 println!("Creating channel for {}", src);
                 drop(read_handle);
@@ -217,7 +221,11 @@ fn receive_once(
                                     socket,
                                     server_options,
                                 );
-                                write_handle.broadcast(client_enqueue.clone(), log_out_broadcasts);
+                                write_handle.broadcast(
+                                    client_enqueue.clone(),
+                                    log_out_broadcasts,
+                                    server_options,
+                                );
                             }
                         }
                     }
@@ -382,7 +390,7 @@ fn process_once(
     }
 
     drop(channel_handle);
-    channel_manager_read_handle.broadcast(client_enqueue.clone(), broadcasts);
+    channel_manager_read_handle.broadcast(client_enqueue.clone(), broadcasts, server_options);
 }
 
 fn spawn_cleanup_thread(
@@ -448,7 +456,7 @@ fn cleanup_once(
         }
     }
 
-    channel_manager_handle.broadcast(client_enqueue.clone(), broadcasts);
+    channel_manager_handle.broadcast(client_enqueue.clone(), broadcasts, server_options);
 }
 
 fn lock_channel<'a>(
@@ -481,7 +489,7 @@ fn disconnect(
 ) {
     // Allow processing some packets first so we can add the session ID to the disconnect packet
     packets_to_process_first.iter().for_each(|packet| {
-        if let Err(err) = channel_handle.receive(packet) {
+        if let Err(err) = channel_handle.receive(packet, server_options) {
             println!(
                 "Couldn't deserialize packet while processing disconnect for client {}: {:?}",
                 channel_handle.addr, err

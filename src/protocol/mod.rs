@@ -206,6 +206,12 @@ pub struct Session {
     pub use_encryption: bool,
 }
 
+#[derive(Eq, PartialEq)]
+enum EnqueueDirection {
+    Front,
+    Back,
+}
+
 pub struct Channel {
     pub disconnect_reason: Option<DisconnectReason>,
     pub addr: SocketAddr,
@@ -264,20 +270,18 @@ impl Channel {
         }
     }
 
-    pub fn receive(&mut self, data: &[u8]) -> Result<u32, DeserializeError> {
+    pub fn receive(
+        &mut self,
+        data: &[u8],
+        server_options: &ServerOptions,
+    ) -> Result<u32, DeserializeError> {
         if !self.connected() {
             return Ok(0);
         }
 
-        let mut packets = deserialize_packet(data, &self.session)?;
-
-        let packet_count = packets.len() as u32;
-        packets
-            .drain(..)
-            .for_each(|packet| self.receive_queue.push_back(packet));
-
+        let packets = deserialize_packet(data, &self.session)?;
         self.last_receive_time = Instant::now();
-        Ok(packet_count)
+        Ok(self.enqueue_received_packets(packets, EnqueueDirection::Back, server_options))
     }
 
     pub fn needs_processing(&self) -> bool {
@@ -304,7 +308,7 @@ impl Channel {
                         }
 
                         // Ack single packet in case the client didn't receive the ack
-                        self.acknowledge_one(sequence_number);
+                        self.acknowledge_one(sequence_number, server_options);
 
                         continue;
                     }
@@ -317,12 +321,22 @@ impl Channel {
                     if let Some(next_packet) =
                         self.reordered_packets.remove(&self.next_client_sequence)
                     {
-                        self.receive_queue.push_front(next_packet);
+                        self.enqueue_received_packets(
+                            vec![next_packet],
+                            EnqueueDirection::Front,
+                            server_options,
+                        );
                     }
                 }
 
                 match self.fragment_state.add(packet) {
-                    Ok(possible_packet) => {
+                    Ok((possible_packet, remaining_bytes)) => {
+                        if remaining_bytes > server_options.max_defragmented_packet_size {
+                            println!("Disconnecting client {} that sent a fragmented packet that is too large ({} bytes > {} bytes)", self.addr, remaining_bytes, server_options.max_defragmented_packet_size);
+                            let _ = self.disconnect(DisconnectReason::CorruptPacket);
+                            return Vec::new();
+                        }
+
                         if let Some(packet) = possible_packet {
                             packets_to_process.push(packet);
                         }
@@ -335,7 +349,7 @@ impl Channel {
         }
 
         if needs_new_ack {
-            self.acknowledge_all(self.last_server_ack);
+            self.acknowledge_all(self.last_server_ack, server_options);
         }
 
         let mut packets = Vec::new();
@@ -367,7 +381,7 @@ impl Channel {
         packets
     }
 
-    pub fn prepare_to_send_data(&mut self, data: Vec<u8>) {
+    pub fn prepare_to_send_data(&mut self, data: Vec<u8>, server_options: &ServerOptions) {
         if !self.connected() {
             return;
         }
@@ -382,8 +396,7 @@ impl Channel {
                 DataPacket::Single(data) => Packet::Data(sequence, data),
             };
 
-            self.send_queue
-                .push_back(PendingPacket::new(sequenced_packet));
+            self.enqueue_packet_to_send(PendingPacket::new(sequenced_packet), server_options);
         }
     }
 
@@ -474,6 +487,47 @@ impl Channel {
         Instant::now().saturating_duration_since(self.last_receive_time)
     }
 
+    fn enqueue_received_packets(
+        &mut self,
+        mut packets: Vec<Packet>,
+        direction: EnqueueDirection,
+        server_options: &ServerOptions,
+    ) -> u32 {
+        let new_packets = packets.len();
+        let new_total_packets = self
+            .receive_queue
+            .len()
+            .saturating_add(self.reordered_packets.len())
+            .saturating_add(new_packets);
+        if new_total_packets > server_options.max_received_packets_queued {
+            println!("Disconnecting client {} that exceeded the maximum number of packets in the receive queue ({} > {})", self.addr, new_total_packets, server_options.max_received_packets_queued);
+            let _ = self.disconnect(DisconnectReason::ReliableOverflow);
+            return 0;
+        }
+
+        if direction == EnqueueDirection::Front {
+            packets
+                .drain(..)
+                .for_each(|packet| self.receive_queue.push_front(packet));
+        } else {
+            packets
+                .drain(..)
+                .for_each(|packet| self.receive_queue.push_back(packet));
+        }
+
+        new_packets as u32
+    }
+
+    fn enqueue_packet_to_send(&mut self, packet: PendingPacket, server_options: &ServerOptions) {
+        let new_total_packets = self.send_queue.len().saturating_add(1);
+        if new_total_packets > server_options.max_unacknowledged_packets_queued {
+            println!("Disconnecting client {} that exceeded the maximum number of packets in the send queue ({} > {})", self.addr, new_total_packets, server_options.max_unacknowledged_packets_queued);
+            let _ = self.disconnect(DisconnectReason::ReliableOverflow);
+        }
+
+        self.send_queue.push_back(packet);
+    }
+
     fn next_server_sequence(&mut self) -> SequenceNumber {
         let next_sequence = self.next_server_sequence;
         self.next_server_sequence = self.next_server_sequence.wrapping_add(1);
@@ -518,7 +572,7 @@ impl Channel {
                     *buffer_size,
                     server_options,
                 ),
-            Packet::Heartbeat => self.process_heartbeat(),
+            Packet::Heartbeat => self.process_heartbeat(server_options),
             Packet::Ack(acked_sequence) => self.process_ack(*acked_sequence),
             Packet::AckAll(acked_sequence) => self.process_ack_all(*acked_sequence),
             Packet::Disconnect(session_id, disconnect_reason) => {
@@ -556,21 +610,20 @@ impl Channel {
         });
 
         self.buffer_size = buffer_size;
-        self.send_queue
-            .push_back(PendingPacket::new(Packet::SessionReply(
-                session_id,
-                session.crc_seed,
-                session.crc_length,
-                session.allow_compression,
-                session.use_encryption,
-                MAX_BUFFER_SIZE,
-                3,
-            )));
+        let packet = PendingPacket::new(Packet::SessionReply(
+            session_id,
+            session.crc_seed,
+            session.crc_length,
+            session.allow_compression,
+            session.use_encryption,
+            MAX_BUFFER_SIZE,
+            3,
+        ));
+        self.enqueue_packet_to_send(packet, server_options);
     }
 
-    fn process_heartbeat(&mut self) {
-        self.send_queue
-            .push_back(PendingPacket::new(Packet::Heartbeat));
+    fn process_heartbeat(&mut self, server_options: &ServerOptions) {
+        self.enqueue_packet_to_send(PendingPacket::new(Packet::Heartbeat), server_options);
     }
 
     fn process_ack(&mut self, acked_sequence: SequenceNumber) {
@@ -605,14 +658,18 @@ impl Channel {
         }
     }
 
-    fn acknowledge_one(&mut self, sequence_number: SequenceNumber) {
-        self.send_queue
-            .push_back(PendingPacket::new(Packet::Ack(sequence_number)));
+    fn acknowledge_one(&mut self, sequence_number: SequenceNumber, server_options: &ServerOptions) {
+        self.enqueue_packet_to_send(
+            PendingPacket::new(Packet::Ack(sequence_number)),
+            server_options,
+        );
     }
 
-    fn acknowledge_all(&mut self, sequence_number: SequenceNumber) {
-        self.send_queue
-            .push_back(PendingPacket::new(Packet::AckAll(sequence_number)));
+    fn acknowledge_all(&mut self, sequence_number: SequenceNumber, server_options: &ServerOptions) {
+        self.enqueue_packet_to_send(
+            PendingPacket::new(Packet::AckAll(sequence_number)),
+            server_options,
+        );
     }
 
     fn process_disconnect(
