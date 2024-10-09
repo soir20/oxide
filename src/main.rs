@@ -320,7 +320,10 @@ fn process_once(
         if let Some(guid) = channel_manager_read_handle.guid(&src) {
             match game_server.process_packet(guid, packet) {
                 Ok(mut new_broadcasts) => broadcasts.append(&mut new_broadcasts),
-                Err(err) => println!("Unable to process packet: {:?}", err),
+                Err(err) => {
+                    println!("Unable to process packet for client {}: {:?}", src, err);
+                    let _ = channel_handle.disconnect(DisconnectReason::CorruptPacket);
+                }
             }
         } else {
             match game_server.authenticate(packet) {
