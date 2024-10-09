@@ -12,7 +12,7 @@
     "packet_recency_limit": 1000,
     "max_received_packets_queued": 200,
     "max_unacknowledged_packets_queued": 10240,
-    "max_defragmented_packet_size": 10240,
+    "max_defragmented_packet_bytes": 10240,
     "default_millis_until_resend": 30,
     "max_round_trip_entries": 30,
     "desired_resend_pct": 5,

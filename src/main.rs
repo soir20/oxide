@@ -101,7 +101,7 @@ pub struct ServerOptions {
     pub packet_recency_limit: u16,
     pub max_received_packets_queued: usize,
     pub max_unacknowledged_packets_queued: usize,
-    pub max_defragmented_packet_size: u32,
+    pub max_defragmented_packet_bytes: u32,
     pub default_millis_until_resend: u64,
     pub max_round_trip_entries: usize,
     pub desired_resend_pct: u8,
