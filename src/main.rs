@@ -364,10 +364,15 @@ fn process_once(
 
                     match game_server.log_in(guid) {
                         Ok(mut log_in_broadcasts) => broadcasts.append(&mut log_in_broadcasts),
-                        Err(err) => println!(
-                            "Unable to log in player {} on client {}: {:?}",
-                            guid, src, err
-                        ),
+                        Err(err) => {
+                            println!(
+                                "Unable to log in player {} on client {}: {:?}",
+                                guid, src, err
+                            );
+                            if let Some(channel) = channel_manager_write_handle.get_by_addr(&src) {
+                                let _ = channel.lock().disconnect(DisconnectReason::CorruptPacket);
+                            }
+                        }
                     };
                     drop(channel_manager_write_handle);
 
@@ -380,7 +385,13 @@ fn process_once(
                         return;
                     };
                 }
-                Err(err) => println!("Unable to process login packet: {:?}", err),
+                Err(err) => {
+                    println!(
+                        "Unable to process login packet for client {}: {:?}",
+                        src, err
+                    );
+                    let _ = channel_handle.disconnect(DisconnectReason::CorruptPacket);
+                }
             }
         }
     }
