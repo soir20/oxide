@@ -55,7 +55,7 @@ pub enum Broadcast {
 #[non_exhaustive]
 #[derive(Debug)]
 pub enum ProcessPacketError {
-    Application,
+    ConstraintViolated,
     CorruptPacket,
     SerializeError(SerializePacketError),
     UnknownOpCode,
@@ -128,7 +128,7 @@ impl GameServer {
                 }
                 _ => {
                     println!("Client tried to log in without a login request");
-                    Err(ProcessPacketError::Application)
+                    Err(ProcessPacketError::ConstraintViolated)
                 }
             },
             Err(_) => {
@@ -298,7 +298,7 @@ impl GameServer {
                                                     }
                                                 } else {
                                                     println!("Unknown player {} sent a ready packet", sender);
-                                                    return Err(ProcessPacketError::Application);
+                                                    return Err(ProcessPacketError::ConstraintViolated);
                                                 }
 
                                                 character_broadcasts.push(Broadcast::Single(sender, global_packets));
@@ -312,7 +312,7 @@ impl GameServer {
                                                     "Player {} sent a ready packet from unknown zone {}",
                                                     sender, instance_guid
                                                 );
-                                                Err(ProcessPacketError::Application)
+                                                Err(ProcessPacketError::ConstraintViolated)
                                             }
                                         },
                                     })
@@ -321,7 +321,7 @@ impl GameServer {
                                         "Player {} sent a ready packet but is not in any zone",
                                         sender
                                     );
-                                    Err(ProcessPacketError::Application)
+                                    Err(ProcessPacketError::ConstraintViolated)
                                 }
                             },
                         }
@@ -420,7 +420,7 @@ impl GameServer {
                                                 self.mounts()
                                             )
                                         } else {
-                                            Err(ProcessPacketError::Application)
+                                            Err(ProcessPacketError::ConstraintViolated)
                                         }
                                     },
                                 }
@@ -442,13 +442,13 @@ impl GameServer {
                                         teleport_within_zone(sender, spawn_pos, spawn_rot, characters_table_write_handle, &self.mounts)
                                     } else {
                                         println!("Player {} outside zone tried to teleport to safety", sender);
-                                        Err(ProcessPacketError::Application)
+                                        Err(ProcessPacketError::ConstraintViolated)
                                     }
                                 },
                             })
                         } else {
                             println!("Unknown player {} tried to teleport to safety", sender);
-                            Err(ProcessPacketError::Application)
+                            Err(ProcessPacketError::ConstraintViolated)
                         }
                     })?;
                     broadcasts.append(&mut packets);
@@ -526,7 +526,7 @@ impl GameServer {
                                 Ok(())
                             } else {
                                 println!("Unknown player {} requested to brandish or holster their weapon", sender);
-                                Err(ProcessPacketError::Application)
+                                Err(ProcessPacketError::ConstraintViolated)
                             }
                         }
                     })?;
@@ -587,7 +587,7 @@ impl GameServer {
             Ok(instances[index])
         } else {
             println!("No existing zones for template ID {}", template_guid);
-            Err(ProcessPacketError::Application)
+            Err(ProcessPacketError::ConstraintViolated)
         }
     }
 

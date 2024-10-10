@@ -261,7 +261,7 @@ pub fn prepare_init_house_packets(
     house: &House,
 ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
     if house.is_locked && sender != house.owner {
-        return Err(ProcessPacketError::Application);
+        return Err(ProcessPacketError::ConstraintViolated);
     }
 
     Ok(vec![
@@ -381,27 +381,27 @@ pub fn process_housing_packet(
                                                     "Player {} tried to set edit mode in a house they don't own",
                                                     sender
                                                 );
-                                                Err(ProcessPacketError::Application)
+                                                Err(ProcessPacketError::ConstraintViolated)
                                             }
                                         } else {
                                             println!(
                                                 "Player {} tried to set edit mode outside of a house",
                                                 sender
                                             );
-                                            Err(ProcessPacketError::Application)
+                                            Err(ProcessPacketError::ConstraintViolated)
                                         }
                                     } else {
                                         println!(
                                             "Player {} tried to set edit mode but is not in any zone",
                                             sender
                                         );
-                                        Err(ProcessPacketError::Application)
+                                        Err(ProcessPacketError::ConstraintViolated)
                                     }
                                 },
                             })
                         } else {
                             println!("Non-existent player {} tried to set edit mode", sender);
-                            Err(ProcessPacketError::Application)
+                            Err(ProcessPacketError::ConstraintViolated)
                         }?;
 
                         Ok(vec![Broadcast::Single(sender, packets)])
@@ -434,7 +434,7 @@ pub fn process_housing_packet(
                                         "Tried to enter house with unknown template {}",
                                         template_guid
                                     );
-                                    return Err(ProcessPacketError::Application);
+                                    return Err(ProcessPacketError::ConstraintViolated);
                                 }
                             }
 
@@ -451,7 +451,7 @@ pub fn process_housing_packet(
                                 )
                             } else {
                                 println!("Unable to create house {}", enter_request.house_guid);
-                                Err(ProcessPacketError::Application)
+                                Err(ProcessPacketError::ConstraintViolated)
                             }
                         })
                     },

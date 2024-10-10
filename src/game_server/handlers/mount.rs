@@ -129,7 +129,7 @@ pub fn reply_dismount(
                 "Player {} tried to dismount from non-existent mount",
                 sender
             );
-            Err(ProcessPacketError::Application)
+            Err(ProcessPacketError::ConstraintViolated)
         }
     } else {
         // Character is already dismounted
@@ -164,13 +164,13 @@ fn process_dismount(
                                 )
                             } else {
                                 println!("Player {} tried to enter unknown zone", sender);
-                                Err(ProcessPacketError::Application)
+                                Err(ProcessPacketError::ConstraintViolated)
                             }
                         },
                     })
                 } else {
                     println!("Non-existent player {} tried to dismount", sender);
-                    Err(ProcessPacketError::Application)
+                    Err(ProcessPacketError::ConstraintViolated)
                 }
             },
         })
@@ -238,7 +238,7 @@ fn process_mount_spawn(
                                         "Player {} tried to mount while already mounted on mount ID {}",
                                         sender, mount_id
                                     );
-                                    return Err(ProcessPacketError::Application);
+                                    return Err(ProcessPacketError::ConstraintViolated);
                                 }
 
                                 character_write_handle.mount_id = Some(mount.guid());
@@ -246,13 +246,13 @@ fn process_mount_spawn(
                                 Ok(packets)
                             } else {
                                 println!("Player {} tried to mount but is in a non-existent zone", sender);
-                                Err(ProcessPacketError::Application)
+                                Err(ProcessPacketError::ConstraintViolated)
                             }
                         },
                     })
                 } else {
                     println!("Non-existent player {} tried to mount", sender);
-                    Err(ProcessPacketError::Application)
+                    Err(ProcessPacketError::ConstraintViolated)
                 }
             },
         })?;
@@ -263,7 +263,7 @@ fn process_mount_spawn(
             "Player {} tried to mount on unknown mount ID {}",
             sender, mount_spawn.mount_id
         );
-        Err(ProcessPacketError::Application)
+        Err(ProcessPacketError::ConstraintViolated)
     }
 }
 

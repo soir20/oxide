@@ -364,7 +364,7 @@ impl Character {
                             "Character {} is mounted on unknown mount ID {}",
                             self.guid, mount_id
                         );
-                        return Err(ProcessPacketError::Application);
+                        return Err(ProcessPacketError::ConstraintViolated);
                     }
                 }
 
