@@ -129,7 +129,7 @@ pub fn reply_dismount(
                 "Player {} tried to dismount from non-existent mount",
                 sender
             );
-            Err(ProcessPacketError::CorruptedPacket)
+            Err(ProcessPacketError::Application)
         }
     } else {
         // Character is already dismounted
@@ -164,13 +164,13 @@ fn process_dismount(
                                 )
                             } else {
                                 println!("Player {} tried to enter unknown zone", sender);
-                                Err(ProcessPacketError::CorruptedPacket)
+                                Err(ProcessPacketError::Application)
                             }
                         },
                     })
                 } else {
                     println!("Non-existent player {} tried to dismount", sender);
-                    Err(ProcessPacketError::CorruptedPacket)
+                    Err(ProcessPacketError::Application)
                 }
             },
         })
@@ -238,7 +238,7 @@ fn process_mount_spawn(
                                         "Player {} tried to mount while already mounted on mount ID {}",
                                         sender, mount_id
                                     );
-                                    return Err(ProcessPacketError::CorruptedPacket);
+                                    return Err(ProcessPacketError::Application);
                                 }
 
                                 character_write_handle.mount_id = Some(mount.guid());
@@ -246,20 +246,24 @@ fn process_mount_spawn(
                                 Ok(packets)
                             } else {
                                 println!("Player {} tried to mount but is in a non-existent zone", sender);
-                                Err(ProcessPacketError::CorruptedPacket)
+                                Err(ProcessPacketError::Application)
                             }
                         },
                     })
                 } else {
                     println!("Non-existent player {} tried to mount", sender);
-                    Err(ProcessPacketError::CorruptedPacket)
+                    Err(ProcessPacketError::Application)
                 }
             },
         })?;
 
         Ok(vec![Broadcast::Single(sender, packets)])
     } else {
-        Err(ProcessPacketError::CorruptedPacket)
+        println!(
+            "Player {} tried to mount on unknown mount ID {}",
+            sender, mount_spawn.mount_id
+        );
+        Err(ProcessPacketError::Application)
     }
 }
 
@@ -280,7 +284,7 @@ pub fn process_mount_packet(
         },
         Err(_) => {
             println!("Unknown mount op code: {}", raw_op_code);
-            Err(ProcessPacketError::CorruptedPacket)
+            Err(ProcessPacketError::UnknownOpCode)
         }
     }
 }

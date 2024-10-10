@@ -55,19 +55,21 @@ pub enum Broadcast {
 #[non_exhaustive]
 #[derive(Debug)]
 pub enum ProcessPacketError {
-    CorruptedPacket,
+    Application,
+    CorruptPacket,
     SerializeError(SerializePacketError),
+    UnknownOpCode,
 }
 
 impl From<Error> for ProcessPacketError {
     fn from(_: Error) -> Self {
-        ProcessPacketError::CorruptedPacket
+        ProcessPacketError::CorruptPacket
     }
 }
 
 impl From<DeserializePacketError> for ProcessPacketError {
     fn from(_: DeserializePacketError) -> Self {
-        ProcessPacketError::CorruptedPacket
+        ProcessPacketError::CorruptPacket
     }
 }
 
@@ -126,12 +128,12 @@ impl GameServer {
                 }
                 _ => {
                     println!("Client tried to log in without a login request");
-                    Err(ProcessPacketError::CorruptedPacket)
+                    Err(ProcessPacketError::Application)
                 }
             },
             Err(_) => {
                 println!("Unknown op code at login: {}", raw_op_code);
-                Err(ProcessPacketError::CorruptedPacket)
+                Err(ProcessPacketError::UnknownOpCode)
             }
         }
     }
@@ -296,7 +298,7 @@ impl GameServer {
                                                     }
                                                 } else {
                                                     println!("Unknown player {} sent a ready packet", sender);
-                                                    return Err(ProcessPacketError::CorruptedPacket);
+                                                    return Err(ProcessPacketError::Application);
                                                 }
 
                                                 character_broadcasts.push(Broadcast::Single(sender, global_packets));
@@ -310,7 +312,7 @@ impl GameServer {
                                                     "Player {} sent a ready packet from unknown zone {}",
                                                     sender, instance_guid
                                                 );
-                                                Err(ProcessPacketError::CorruptedPacket)
+                                                Err(ProcessPacketError::Application)
                                             }
                                         },
                                     })
@@ -319,7 +321,7 @@ impl GameServer {
                                         "Player {} sent a ready packet but is not in any zone",
                                         sender
                                     );
-                                    Err(ProcessPacketError::CorruptedPacket)
+                                    Err(ProcessPacketError::Application)
                                 }
                             },
                         }
@@ -418,7 +420,7 @@ impl GameServer {
                                                 self.mounts()
                                             )
                                         } else {
-                                            Err(ProcessPacketError::CorruptedPacket)
+                                            Err(ProcessPacketError::Application)
                                         }
                                     },
                                 }
@@ -440,13 +442,13 @@ impl GameServer {
                                         teleport_within_zone(sender, spawn_pos, spawn_rot, characters_table_write_handle, &self.mounts)
                                     } else {
                                         println!("Player {} outside zone tried to teleport to safety", sender);
-                                        Err(ProcessPacketError::CorruptedPacket)
+                                        Err(ProcessPacketError::Application)
                                     }
                                 },
                             })
                         } else {
                             println!("Unknown player {} tried to teleport to safety", sender);
-                            Err(ProcessPacketError::CorruptedPacket)
+                            Err(ProcessPacketError::Application)
                         }
                     })?;
                     broadcasts.append(&mut packets);
@@ -524,7 +526,7 @@ impl GameServer {
                                 Ok(())
                             } else {
                                 println!("Unknown player {} requested to brandish or holster their weapon", sender);
-                                Err(ProcessPacketError::CorruptedPacket)
+                                Err(ProcessPacketError::Application)
                             }
                         }
                     })?;
@@ -584,7 +586,8 @@ impl GameServer {
             let index = rand::thread_rng().gen_range(0..instances.len());
             Ok(instances[index])
         } else {
-            Err(ProcessPacketError::CorruptedPacket)
+            println!("No existing zones for template ID {}", template_guid);
+            Err(ProcessPacketError::Application)
         }
     }
 

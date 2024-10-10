@@ -425,7 +425,7 @@ impl Zone {
                 "Received position update from unknown character {}",
                 pos_update.guid
             );
-            Err(ProcessPacketError::CorruptedPacket)
+            Err(ProcessPacketError::Application)
         }
     }
 
@@ -528,7 +528,8 @@ impl Zone {
                         let character_diff_broadcast = Broadcast::Single(sender, diff_packets);
                         Ok((characters_to_interact, vec![character_diff_broadcast]))
                     } else {
-                        Err(ProcessPacketError::CorruptedPacket)
+                        println!("Tried to move player {} who does not exist", requester);
+                        Err(ProcessPacketError::Application)
                     }
                 })?
         };
@@ -927,7 +928,7 @@ pub fn interact_with_character(
                         "Received request to interact with unknown NPC {} from {}",
                         request.target, request.requester
                     );
-                    Err(ProcessPacketError::CorruptedPacket)
+                    Err(ProcessPacketError::Application)
                 }
             },
         }
@@ -973,7 +974,7 @@ pub fn teleport_within_zone(
         diff_packets
     } else {
         println!("Player not in any zone tried to teleport within the zone");
-        Err(ProcessPacketError::CorruptedPacket)
+        Err(ProcessPacketError::Application)
     }?;
 
     packets.push(GamePacket::serialize(&TunneledPacket {

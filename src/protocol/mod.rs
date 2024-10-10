@@ -333,7 +333,7 @@ impl Channel {
                     Ok((possible_packet, remaining_bytes)) => {
                         if remaining_bytes > server_options.max_defragmented_packet_bytes {
                             println!("Disconnecting client {} that sent a fragmented packet that is too large ({} bytes > {} bytes)", self.addr, remaining_bytes, server_options.max_defragmented_packet_bytes);
-                            let _ = self.disconnect(DisconnectReason::CorruptPacket);
+                            let _ = self.disconnect(DisconnectReason::Application);
                             return Vec::new();
                         }
 

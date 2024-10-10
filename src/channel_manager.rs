@@ -1,5 +1,5 @@
 use crate::game_server::Broadcast;
-use crate::protocol::Channel;
+use crate::protocol::{Channel, DisconnectReason};
 use crate::ServerOptions;
 use crossbeam_channel::Sender;
 use parking_lot::{Mutex, MutexGuard};
@@ -10,6 +10,7 @@ use std::net::SocketAddr;
 pub enum ReceiveResult {
     Success(u32),
     CreateChannelFirst,
+    DeserializeError,
 }
 
 pub struct TooManyChannels(pub usize, pub Channel);
@@ -96,7 +97,8 @@ impl ChannelManager {
                         "Deserialize error on channel {}: {:?}, data={:x?}",
                         addr, err, data
                     );
-                    ReceiveResult::Success(0)
+                    let _ = channel_handle.disconnect(DisconnectReason::CorruptPacket);
+                    ReceiveResult::DeserializeError
                 }
             }
         } else {

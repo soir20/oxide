@@ -322,7 +322,7 @@ fn process_once(
                 Ok(mut new_broadcasts) => broadcasts.append(&mut new_broadcasts),
                 Err(err) => {
                     println!("Unable to process packet for client {}: {:?}", src, err);
-                    let _ = channel_handle.disconnect(DisconnectReason::CorruptPacket);
+                    let _ = channel_handle.disconnect(DisconnectReason::Application);
                 }
             }
         } else {
@@ -370,7 +370,7 @@ fn process_once(
                                 guid, src, err
                             );
                             if let Some(channel) = channel_manager_write_handle.get_by_addr(&src) {
-                                let _ = channel.lock().disconnect(DisconnectReason::CorruptPacket);
+                                let _ = channel.lock().disconnect(DisconnectReason::Application);
                             }
                         }
                     };
@@ -390,7 +390,7 @@ fn process_once(
                         "Unable to process login packet for client {}: {:?}",
                         src, err
                     );
-                    let _ = channel_handle.disconnect(DisconnectReason::CorruptPacket);
+                    let _ = channel_handle.disconnect(DisconnectReason::Application);
                 }
             }
         }

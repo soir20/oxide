@@ -79,7 +79,7 @@ pub fn process_chat_packet(
         },
         Err(_) => {
             println!("Unknown chat op code: {}", raw_op_code);
-            Err(ProcessPacketError::CorruptedPacket)
+            Err(ProcessPacketError::UnknownOpCode)
         }
     }
 }

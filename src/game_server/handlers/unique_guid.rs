@@ -20,7 +20,7 @@ pub fn zone_template_guid(instance_guid: u64) -> u8 {
 
 pub fn shorten_zone_template_guid(point_of_interest_id: u32) -> Result<u8, ProcessPacketError> {
     if point_of_interest_id > u8::MAX as u32 {
-        Err(ProcessPacketError::CorruptedPacket)
+        Err(ProcessPacketError::Application)
     } else {
         Ok(point_of_interest_id as u8)
     }
@@ -39,7 +39,7 @@ pub fn player_guid(player_guid: u32) -> u64 {
 
 pub fn shorten_player_guid(player_guid: u64) -> Result<u32, ProcessPacketError> {
     if player_guid > u32::MAX as u64 {
-        Err(ProcessPacketError::CorruptedPacket)
+        Err(ProcessPacketError::Application)
     } else {
         Ok(player_guid as u32)
     }
