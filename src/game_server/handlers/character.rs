@@ -15,7 +15,7 @@ use crate::game_server::{
         tunnel::TunneledPacket,
         GamePacket, Pos,
     },
-    GameServer, ProcessPacketError,
+    GameServer, ProcessPacketError, ProcessPacketErrorType,
 };
 
 use super::{
@@ -360,11 +360,13 @@ impl Character {
                             self.rot,
                         )?);
                     } else {
-                        println!(
-                            "Character {} is mounted on unknown mount ID {}",
-                            self.guid, mount_id
-                        );
-                        return Err(ProcessPacketError::CorruptedPacket);
+                        return Err(ProcessPacketError::new(
+                            ProcessPacketErrorType::ConstraintViolated,
+                            format!(
+                                "Character {} is mounted on unknown mount ID {}",
+                                self.guid, mount_id
+                            ),
+                        ));
                     }
                 }
 

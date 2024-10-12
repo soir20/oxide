@@ -21,7 +21,7 @@ use crate::game_server::{
         update_position::UpdatePlayerPosition,
         GamePacket, Pos,
     },
-    Broadcast, GameServer, ProcessPacketError,
+    Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
 };
 
 use super::{
@@ -421,11 +421,13 @@ impl Zone {
 
             Ok(characters_to_interact)
         } else {
-            println!(
-                "Received position update from unknown character {}",
-                pos_update.guid
-            );
-            Err(ProcessPacketError::CorruptedPacket)
+            Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!(
+                    "Received position update from unknown character {}",
+                    pos_update.guid
+                ),
+            ))
         }
     }
 
@@ -528,7 +530,10 @@ impl Zone {
                         let character_diff_broadcast = Broadcast::Single(sender, diff_packets);
                         Ok((characters_to_interact, vec![character_diff_broadcast]))
                     } else {
-                        Err(ProcessPacketError::CorruptedPacket)
+                        Err(ProcessPacketError::new(
+                            ProcessPacketErrorType::ConstraintViolated,
+                            format!("Tried to move player {} who does not exist", requester),
+                        ))
                     }
                 })?
         };
@@ -923,11 +928,13 @@ pub fn interact_with_character(
                         _ => coerce_to_packet_supplier(|_| Ok(Vec::new())),
                     }
                 } else {
-                    println!(
-                        "Received request to interact with unknown NPC {} from {}",
-                        request.target, request.requester
-                    );
-                    Err(ProcessPacketError::CorruptedPacket)
+                    Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::ConstraintViolated,
+                        format!(
+                            "Received request to interact with unknown NPC {} from {}",
+                            request.target, request.requester
+                        ),
+                    ))
                 }
             },
         }
@@ -972,8 +979,13 @@ pub fn teleport_within_zone(
         characters_table_write_handle.insert_lock(guid, index, character);
         diff_packets
     } else {
-        println!("Player not in any zone tried to teleport within the zone");
-        Err(ProcessPacketError::CorruptedPacket)
+        Err(ProcessPacketError::new(
+            ProcessPacketErrorType::ConstraintViolated,
+            format!(
+                "Player {} not in any zone tried to teleport within the zone",
+                sender
+            ),
+        ))
     }?;
 
     packets.push(GamePacket::serialize(&TunneledPacket {

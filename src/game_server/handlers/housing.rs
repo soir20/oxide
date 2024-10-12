@@ -17,7 +17,7 @@ use crate::{
             tunnel::TunneledPacket,
             GamePacket, Pos,
         },
-        Broadcast, GameServer, ProcessPacketError,
+        Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
     teleport_to_zone,
 };
@@ -261,7 +261,14 @@ pub fn prepare_init_house_packets(
     house: &House,
 ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
     if house.is_locked && sender != house.owner {
-        return Err(ProcessPacketError::CorruptedPacket);
+        return Err(ProcessPacketError::new(
+            ProcessPacketErrorType::ConstraintViolated,
+            format!(
+                "Player {} tried to enter locked house {}",
+                sender,
+                zone.guid()
+            ),
+        ));
     }
 
     Ok(vec![
@@ -377,31 +384,27 @@ pub fn process_housing_packet(
                                                     },
                                                 })?])
                                             } else {
-                                                println!(
+                                                Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!(
                                                     "Player {} tried to set edit mode in a house they don't own",
                                                     sender
-                                                );
-                                                Err(ProcessPacketError::CorruptedPacket)
+                                                )))
                                             }
                                         } else {
-                                            println!(
+                                            Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!(
                                                 "Player {} tried to set edit mode outside of a house",
                                                 sender
-                                            );
-                                            Err(ProcessPacketError::CorruptedPacket)
+                                            )))
                                         }
                                     } else {
-                                        println!(
+                                        Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!(
                                             "Player {} tried to set edit mode but is not in any zone",
                                             sender
-                                        );
-                                        Err(ProcessPacketError::CorruptedPacket)
+                                        )))
                                     }
                                 },
                             })
                         } else {
-                            println!("Non-existent player {} tried to set edit mode", sender);
-                            Err(ProcessPacketError::CorruptedPacket)
+                            Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Non-existent player {} tried to set edit mode", sender)))
                         }?;
 
                         Ok(vec![Broadcast::Single(sender, packets)])
@@ -430,11 +433,13 @@ pub fn process_housing_packet(
                                         characters_table_write_handle,
                                     ));
                                 } else {
-                                    println!(
-                                        "Tried to enter house with unknown template {}",
-                                        template_guid
-                                    );
-                                    return Err(ProcessPacketError::CorruptedPacket);
+                                    return Err(ProcessPacketError::new(
+                                        ProcessPacketErrorType::ConstraintViolated,
+                                        format!(
+                                            "Tried to enter house with unknown template {}",
+                                            template_guid
+                                        ),
+                                    ));
                                 }
                             }
 
@@ -450,8 +455,10 @@ pub fn process_housing_packet(
                                     game_server.mounts()
                                 )
                             } else {
-                                println!("Unable to create house {}", enter_request.house_guid);
-                                Err(ProcessPacketError::CorruptedPacket)
+                                Err(ProcessPacketError::new(
+                                    ProcessPacketErrorType::ConstraintViolated,
+                                    format!("Unable to create house {}", enter_request.house_guid),
+                                ))
                             }
                         })
                     },

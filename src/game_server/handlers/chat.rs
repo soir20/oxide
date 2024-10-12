@@ -9,7 +9,7 @@ use crate::game_server::{
         tunnel::TunneledPacket,
         GamePacket,
     },
-    Broadcast, ProcessPacketError,
+    Broadcast, ProcessPacketError, ProcessPacketErrorType,
 };
 
 use super::unique_guid::player_guid;
@@ -77,9 +77,9 @@ pub fn process_chat_packet(
                 )])
             }
         },
-        Err(_) => {
-            println!("Unknown chat op code: {}", raw_op_code);
-            Err(ProcessPacketError::CorruptedPacket)
-        }
+        Err(_) => Err(ProcessPacketError::new(
+            ProcessPacketErrorType::UnknownOpCode,
+            format!("Unknown chat op code: {}", raw_op_code),
+        )),
     }
 }

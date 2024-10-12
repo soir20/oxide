@@ -1,5 +1,5 @@
 use crate::game_server::Broadcast;
-use crate::protocol::Channel;
+use crate::protocol::{Channel, DisconnectReason};
 use crate::ServerOptions;
 use crossbeam_channel::Sender;
 use parking_lot::{Mutex, MutexGuard};
@@ -10,6 +10,7 @@ use std::net::SocketAddr;
 pub enum ReceiveResult {
     Success(u32),
     CreateChannelFirst,
+    DeserializeError,
 }
 
 pub struct TooManyChannels(pub usize, pub Channel);
@@ -74,12 +75,13 @@ impl ChannelManager {
         client_enqueue: Sender<SocketAddr>,
         addr: &SocketAddr,
         data: &[u8],
+        server_options: &ServerOptions,
     ) -> ReceiveResult {
         if let Some(channel) = self.get_by_addr(addr) {
             let mut channel_handle = channel.lock();
             let client_not_queued = !channel_handle.needs_processing();
 
-            match channel_handle.receive(data) {
+            match channel_handle.receive(data, server_options) {
                 Ok(packets_received) => {
                     // If the last processing thread did not process all packets, the client is already queued
                     if client_not_queued && packets_received > 0 {
@@ -95,7 +97,8 @@ impl ChannelManager {
                         "Deserialize error on channel {}: {:?}, data={:x?}",
                         addr, err, data
                     );
-                    ReceiveResult::Success(0)
+                    let _ = channel_handle.disconnect(DisconnectReason::CorruptPacket);
+                    ReceiveResult::DeserializeError
                 }
             }
         } else {
@@ -116,6 +119,7 @@ impl ChannelManager {
         &self,
         client_enqueue: Sender<SocketAddr>,
         broadcasts: Vec<Broadcast>,
+        server_options: &ServerOptions,
     ) -> Vec<u32> {
         let mut missing_guids = Vec::new();
 
@@ -131,7 +135,7 @@ impl ChannelManager {
                     let client_not_queued = !channel_handle.needs_processing();
 
                     packets.iter().for_each(|packet| {
-                        channel_handle.prepare_to_send_data(packet.clone());
+                        channel_handle.prepare_to_send_data(packet.clone(), server_options);
                     });
 
                     if client_not_queued {

@@ -99,6 +99,9 @@ pub struct ServerOptions {
     pub process_packets_per_cycle: u8,
     pub send_packets_per_cycle: u8,
     pub packet_recency_limit: u16,
+    pub max_received_packets_queued: usize,
+    pub max_unacknowledged_packets_queued: usize,
+    pub max_defragmented_packet_bytes: u32,
     pub default_millis_until_resend: u64,
     pub max_round_trip_entries: usize,
     pub desired_resend_pct: u8,
@@ -187,7 +190,8 @@ fn receive_once(
 
         loop {
             let read_handle = channel_manager.read();
-            let receive_result = read_handle.receive(client_enqueue.clone(), &src, recv_data);
+            let receive_result =
+                read_handle.receive(client_enqueue.clone(), &src, recv_data, server_options);
             if receive_result == ReceiveResult::CreateChannelFirst {
                 println!("Creating channel for {}", src);
                 drop(read_handle);
@@ -217,7 +221,11 @@ fn receive_once(
                                     socket,
                                     server_options,
                                 );
-                                write_handle.broadcast(client_enqueue.clone(), log_out_broadcasts);
+                                write_handle.broadcast(
+                                    client_enqueue.clone(),
+                                    log_out_broadcasts,
+                                    server_options,
+                                );
                             }
                         }
                     }
@@ -312,7 +320,10 @@ fn process_once(
         if let Some(guid) = channel_manager_read_handle.guid(&src) {
             match game_server.process_packet(guid, packet) {
                 Ok(mut new_broadcasts) => broadcasts.append(&mut new_broadcasts),
-                Err(err) => println!("Unable to process packet: {:?}", err),
+                Err(err) => {
+                    println!("Unable to process packet for client {}: {}", src, err);
+                    let _ = channel_handle.disconnect(DisconnectReason::Application);
+                }
             }
         } else {
             match game_server.authenticate(packet) {
@@ -353,10 +364,15 @@ fn process_once(
 
                     match game_server.log_in(guid) {
                         Ok(mut log_in_broadcasts) => broadcasts.append(&mut log_in_broadcasts),
-                        Err(err) => println!(
-                            "Unable to log in player {} on client {}: {:?}",
-                            guid, src, err
-                        ),
+                        Err(err) => {
+                            println!(
+                                "Unable to log in player {} on client {}: {}",
+                                guid, src, err
+                            );
+                            if let Some(channel) = channel_manager_write_handle.get_by_addr(&src) {
+                                let _ = channel.lock().disconnect(DisconnectReason::Application);
+                            }
+                        }
                     };
                     drop(channel_manager_write_handle);
 
@@ -369,7 +385,10 @@ fn process_once(
                         return;
                     };
                 }
-                Err(err) => println!("Unable to process login packet: {:?}", err),
+                Err(err) => {
+                    println!("Unable to process login packet for client {}: {}", src, err);
+                    let _ = channel_handle.disconnect(DisconnectReason::Application);
+                }
             }
         }
     }
@@ -382,7 +401,7 @@ fn process_once(
     }
 
     drop(channel_handle);
-    channel_manager_read_handle.broadcast(client_enqueue.clone(), broadcasts);
+    channel_manager_read_handle.broadcast(client_enqueue.clone(), broadcasts, server_options);
 }
 
 fn spawn_cleanup_thread(
@@ -448,7 +467,7 @@ fn cleanup_once(
         }
     }
 
-    channel_manager_handle.broadcast(client_enqueue.clone(), broadcasts);
+    channel_manager_handle.broadcast(client_enqueue.clone(), broadcasts, server_options);
 }
 
 fn lock_channel<'a>(
@@ -481,7 +500,7 @@ fn disconnect(
 ) {
     // Allow processing some packets first so we can add the session ID to the disconnect packet
     packets_to_process_first.iter().for_each(|packet| {
-        if let Err(err) = channel_handle.receive(packet) {
+        if let Err(err) = channel_handle.receive(packet, server_options) {
             println!(
                 "Couldn't deserialize packet while processing disconnect for client {}: {:?}",
                 channel_handle.addr, err
@@ -521,7 +540,7 @@ fn log_out_and_disconnect(
     match game_server.log_out(guid) {
         Ok(log_out_broadcasts) => log_out_broadcasts,
         Err(err) => {
-            println!("Unable to log out existing player {}: {:?}", guid, err);
+            println!("Unable to log out existing player {}: {}", guid, err);
             Vec::new()
         }
     }
