@@ -56,20 +56,20 @@ pub enum Broadcast {
 #[derive(Debug)]
 pub enum ProcessPacketError {
     ConstraintViolated,
-    CorruptPacket,
+    DeserializeError,
     SerializeError(SerializePacketError),
     UnknownOpCode,
 }
 
 impl From<Error> for ProcessPacketError {
     fn from(_: Error) -> Self {
-        ProcessPacketError::CorruptPacket
+        ProcessPacketError::DeserializeError
     }
 }
 
 impl From<DeserializePacketError> for ProcessPacketError {
     fn from(_: DeserializePacketError) -> Self {
-        ProcessPacketError::CorruptPacket
+        ProcessPacketError::DeserializeError
     }
 }
 
