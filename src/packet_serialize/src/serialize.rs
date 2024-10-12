@@ -1,7 +1,6 @@
 use crate::{LengthlessVec, NullTerminatedString};
 use byteorder::{LittleEndian, WriteBytesExt};
 use std::{
-    backtrace::Backtrace,
     collections::BTreeMap,
     io::{Error, Write},
 };
@@ -9,12 +8,12 @@ use std::{
 #[non_exhaustive]
 #[derive(Debug)]
 pub enum SerializePacketError {
-    IoError(Error, Backtrace),
+    IoError(Error),
 }
 
 impl From<Error> for SerializePacketError {
     fn from(value: Error) -> Self {
-        SerializePacketError::IoError(value, Backtrace::force_capture())
+        SerializePacketError::IoError(value)
     }
 }
 
