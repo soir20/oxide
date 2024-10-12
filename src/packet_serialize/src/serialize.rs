@@ -1,7 +1,9 @@
 use crate::{LengthlessVec, NullTerminatedString};
 use byteorder::{LittleEndian, WriteBytesExt};
 use std::{
-    backtrace::Backtrace, collections::BTreeMap, io::{Error, Write}
+    backtrace::Backtrace,
+    collections::BTreeMap,
+    io::{Error, Write},
 };
 
 #[non_exhaustive]
