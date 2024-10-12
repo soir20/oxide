@@ -24,7 +24,7 @@ use crate::game_server::{
         ui::ExecuteScriptWithParams,
         GamePacket,
     },
-    Broadcast, GameServer, ProcessPacketError,
+    Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
 };
 
 use super::{
@@ -110,13 +110,11 @@ pub fn process_inventory_packet(
 
                                     Ok(vec![Broadcast::Single(sender, packets)])
                                 } else {
-                                    println!("Player {} tried to unequip slot in battle class {} that they don't own", sender, unequip_slot.battle_class);
-                                    Err(ProcessPacketError::ConstraintViolated)
+                                    Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to unequip slot in battle class {} that they don't own", sender, unequip_slot.battle_class)))
                                 }
 
                             } else {
-                                println!("Non-player character {} tried to unequip slot", sender);
-                                Err(ProcessPacketError::ConstraintViolated)
+                                Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Non-player character {} tried to unequip slot", sender)))
                             };
 
                             if let Some(wield_type) = brandished_wield_type {
@@ -137,8 +135,7 @@ pub fn process_inventory_packet(
                             result
 
                         } else {
-                            println!("Unknown player {} tried to unequip slot", sender);
-                            Err(ProcessPacketError::ConstraintViolated)
+                            Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} tried to unequip slot", sender)))
                         }
                     }
                 })
@@ -198,11 +195,13 @@ pub fn process_inventory_packet(
                         EquipmentSlot::SecondarySaberColor,
                     ),
                     _ => {
-                        println!(
-                            "Player {} tried to equip saber in slot {:?}",
-                            sender, equip_guid.slot
-                        );
-                        return Err(ProcessPacketError::ConstraintViolated);
+                        return Err(ProcessPacketError::new(
+                            ProcessPacketErrorType::ConstraintViolated,
+                            format!(
+                                "Player {} tried to equip saber in slot {:?}",
+                                sender, equip_guid.slot
+                            ),
+                        ));
                     }
                 };
 
@@ -255,11 +254,13 @@ pub fn process_inventory_packet(
                                     .0,
                                 );
                             } else {
-                                println!(
-                                    "Player {} tried to equip unknown saber {}",
-                                    sender, equip_guid.item_guid
-                                );
-                                return Err(ProcessPacketError::ConstraintViolated);
+                                return Err(ProcessPacketError::new(
+                                    ProcessPacketErrorType::ConstraintViolated,
+                                    format!(
+                                        "Player {} tried to equip unknown saber {}",
+                                        sender, equip_guid.item_guid
+                                    ),
+                                ));
                             }
                             Ok(broadcasts)
                         },
@@ -371,15 +372,13 @@ pub fn process_inventory_packet(
                                         ),
                                     ])
                                 } else {
-                                    println!(
+                                    Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!(
                                         "Non-player character {} tried to equip customization",
                                         sender
-                                    );
-                                    Err(ProcessPacketError::ConstraintViolated)
+                                    )))
                                 }
                             } else {
-                                println!("Unknown player {} tried to equip customization", sender);
-                                Err(ProcessPacketError::ConstraintViolated)
+                                Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} tried to equip customization", sender)))
                             }
                         },
                     })
@@ -444,19 +443,23 @@ pub fn customizations_from_item_guids(
                 if let Some(customization) = customizations.get(customization_guid) {
                     result.push(customization.clone());
                 } else {
-                    println!(
-                        "Player {} tried to use unknown customization {}",
-                        sender, customization_guid
-                    );
-                    return Err(ProcessPacketError::ConstraintViolated);
+                    return Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::ConstraintViolated,
+                        format!(
+                            "Player {} tried to use unknown customization {}",
+                            sender, customization_guid
+                        ),
+                    ));
                 }
             }
         } else {
-            println!(
-                "Player {} tried to use unknown customization item guid {}",
-                sender, customization_item_guid
-            );
-            return Err(ProcessPacketError::ConstraintViolated);
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!(
+                    "Player {} tried to use unknown customization item guid {}",
+                    sender, customization_item_guid
+                ),
+            ));
         }
     }
 
@@ -657,29 +660,37 @@ fn equip_item_in_slot(
 
                         Ok((vec![Broadcast::Single(sender, packets)], item_def.tint))
                     } else {
-                        println!(
-                            "Player {} tried to equip unknown item {}",
-                            sender, equip_guid.item_guid
-                        );
-                        Err(ProcessPacketError::ConstraintViolated)
+                        Err(ProcessPacketError::new(
+                            ProcessPacketErrorType::ConstraintViolated,
+                            format!(
+                                "Player {} tried to equip unknown item {}",
+                                sender, equip_guid.item_guid
+                            ),
+                        ))
                     }
                 } else {
-                    println!(
-                        "Player {} tried to equip item in battle class {} that they don't own",
-                        sender, equip_guid.battle_class
-                    );
-                    Err(ProcessPacketError::ConstraintViolated)
+                    Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::ConstraintViolated,
+                        format!(
+                            "Player {} tried to equip item in battle class {} that they don't own",
+                            sender, equip_guid.battle_class
+                        ),
+                    ))
                 }
             } else {
-                println!(
-                    "Player {} tried to equip item {} that they don't own",
-                    sender, equip_guid.battle_class
-                );
-                Err(ProcessPacketError::ConstraintViolated)
+                Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Player {} tried to equip item {} that they don't own",
+                        sender, equip_guid.battle_class
+                    ),
+                ))
             }
         } else {
-            println!("Non-player character {} tried to equip item", sender);
-            Err(ProcessPacketError::ConstraintViolated)
+            Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!("Non-player character {} tried to equip item", sender),
+            ))
         };
 
         if let Some(wield_type) = brandished_wield_type {
@@ -701,8 +712,10 @@ fn equip_item_in_slot(
 
         result
     } else {
-        println!("Unknown player {} tried to equip item", sender);
-        Err(ProcessPacketError::ConstraintViolated)
+        Err(ProcessPacketError::new(
+            ProcessPacketErrorType::ConstraintViolated,
+            format!("Unknown player {} tried to equip item", sender),
+        ))
     }
 }
 

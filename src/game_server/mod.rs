@@ -1,4 +1,6 @@
+use std::backtrace::Backtrace;
 use std::collections::BTreeMap;
+use std::fmt::Display;
 use std::io::{Cursor, Error};
 use std::path::Path;
 use std::vec;
@@ -54,28 +56,62 @@ pub enum Broadcast {
 
 #[non_exhaustive]
 #[derive(Debug)]
-pub enum ProcessPacketError {
+pub enum ProcessPacketErrorType {
     ConstraintViolated,
     DeserializeError,
-    SerializeError(SerializePacketError),
+    SerializeError,
     UnknownOpCode,
 }
 
+pub struct ProcessPacketError {
+    backtrace: Backtrace,
+    err_type: ProcessPacketErrorType,
+    message: String,
+}
+
+impl ProcessPacketError {
+    pub fn new(err_type: ProcessPacketErrorType, message: String) -> ProcessPacketError {
+        ProcessPacketError {
+            backtrace: Backtrace::capture(),
+            err_type,
+            message,
+        }
+    }
+}
+
 impl From<Error> for ProcessPacketError {
-    fn from(_: Error) -> Self {
-        ProcessPacketError::DeserializeError
+    fn from(err: Error) -> Self {
+        ProcessPacketError::new(
+            ProcessPacketErrorType::DeserializeError,
+            format!("IO Error: {}", err),
+        )
     }
 }
 
 impl From<DeserializePacketError> for ProcessPacketError {
-    fn from(_: DeserializePacketError) -> Self {
-        ProcessPacketError::DeserializeError
+    fn from(err: DeserializePacketError) -> Self {
+        ProcessPacketError::new(
+            ProcessPacketErrorType::DeserializeError,
+            format!("Deserialize Error: {:?}", err),
+        )
     }
 }
 
 impl From<SerializePacketError> for ProcessPacketError {
-    fn from(value: SerializePacketError) -> Self {
-        ProcessPacketError::SerializeError(value)
+    fn from(err: SerializePacketError) -> Self {
+        ProcessPacketError::new(
+            ProcessPacketErrorType::SerializeError,
+            format!("Serialize Error: {:?}", err),
+        )
+    }
+}
+
+impl Display for ProcessPacketError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(&format!(
+            "{:?}: {}. Backtrace: {}",
+            self.err_type, self.message, self.backtrace
+        ))
     }
 }
 
@@ -126,15 +162,18 @@ impl GameServer {
                     let login_packet: LoginRequest = DeserializePacket::deserialize(&mut cursor)?;
                     shorten_player_guid(login_packet.guid).map(|guid| (guid, login_packet.version))
                 }
-                _ => {
-                    println!("Client tried to log in without a login request");
-                    Err(ProcessPacketError::ConstraintViolated)
-                }
+                _ => Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Client tried to log in without a login request, data: {:x?}",
+                        data
+                    ),
+                )),
             },
-            Err(_) => {
-                println!("Unknown op code at login: {}", raw_op_code);
-                Err(ProcessPacketError::UnknownOpCode)
-            }
+            Err(_) => Err(ProcessPacketError::new(
+                ProcessPacketErrorType::UnknownOpCode,
+                format!("Unknown op code at login: {}", raw_op_code),
+            )),
         }
     }
 
@@ -297,8 +336,7 @@ impl GameServer {
                                                         }
                                                     }
                                                 } else {
-                                                    println!("Unknown player {} sent a ready packet", sender);
-                                                    return Err(ProcessPacketError::ConstraintViolated);
+                                                    return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} sent a ready packet", sender)));
                                                 }
 
                                                 character_broadcasts.push(Broadcast::Single(sender, global_packets));
@@ -308,20 +346,14 @@ impl GameServer {
 
                                                 Ok(character_broadcasts)
                                             } else {
-                                                println!(
-                                                    "Player {} sent a ready packet from unknown zone {}",
-                                                    sender, instance_guid
-                                                );
-                                                Err(ProcessPacketError::ConstraintViolated)
+                                                Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} sent a ready packet from unknown zone {}",
+                                                    sender, instance_guid)))
                                             }
                                         },
                                     })
                                 } else {
-                                    println!(
-                                        "Player {} sent a ready packet but is not in any zone",
-                                        sender
-                                    );
-                                    Err(ProcessPacketError::ConstraintViolated)
+                                    Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} sent a ready packet but is not in any zone",
+                                        sender)))
                                 }
                             },
                         }
@@ -408,8 +440,8 @@ impl GameServer {
                                     read_guids,
                                     write_guids: Vec::new(),
                                     zone_consumer: move |_, zones_read, _| {
-                                        if let Ok(instance_guid) = possible_instance_guid {
-                                            teleport_to_zone!(
+                                        match possible_instance_guid {
+                                            Ok(instance_guid) => teleport_to_zone!(
                                                 characters_table_write_handle,
                                                 sender,
                                                 zones_read.get(&instance_guid).expect(
@@ -418,9 +450,8 @@ impl GameServer {
                                                 None,
                                                 None,
                                                 self.mounts()
-                                            )
-                                        } else {
-                                            Err(ProcessPacketError::ConstraintViolated)
+                                            ),
+                                            Err(err) => Err(err),
                                         }
                                     },
                                 }
@@ -441,14 +472,12 @@ impl GameServer {
 
                                         teleport_within_zone(sender, spawn_pos, spawn_rot, characters_table_write_handle, &self.mounts)
                                     } else {
-                                        println!("Player {} outside zone tried to teleport to safety", sender);
-                                        Err(ProcessPacketError::ConstraintViolated)
+                                        Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} outside zone tried to teleport to safety", sender)))
                                     }
                                 },
                             })
                         } else {
-                            println!("Unknown player {} tried to teleport to safety", sender);
-                            Err(ProcessPacketError::ConstraintViolated)
+                            Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} tried to teleport to safety", sender)))
                         }
                     })?;
                     broadcasts.append(&mut packets);
@@ -525,8 +554,7 @@ impl GameServer {
                                 ]));
                                 Ok(())
                             } else {
-                                println!("Unknown player {} requested to brandish or holster their weapon", sender);
-                                Err(ProcessPacketError::ConstraintViolated)
+                                Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} requested to brandish or holster their weapon", sender)))
                             }
                         }
                     })?;
@@ -586,8 +614,10 @@ impl GameServer {
             let index = rand::thread_rng().gen_range(0..instances.len());
             Ok(instances[index])
         } else {
-            println!("No existing zones for template ID {}", template_guid);
-            Err(ProcessPacketError::ConstraintViolated)
+            Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!("No existing zones for template ID {}", template_guid),
+            ))
         }
     }
 

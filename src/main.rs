@@ -321,7 +321,7 @@ fn process_once(
             match game_server.process_packet(guid, packet) {
                 Ok(mut new_broadcasts) => broadcasts.append(&mut new_broadcasts),
                 Err(err) => {
-                    println!("Unable to process packet for client {}: {:?}", src, err);
+                    println!("Unable to process packet for client {}: {}", src, err);
                     let _ = channel_handle.disconnect(DisconnectReason::Application);
                 }
             }
@@ -366,7 +366,7 @@ fn process_once(
                         Ok(mut log_in_broadcasts) => broadcasts.append(&mut log_in_broadcasts),
                         Err(err) => {
                             println!(
-                                "Unable to log in player {} on client {}: {:?}",
+                                "Unable to log in player {} on client {}: {}",
                                 guid, src, err
                             );
                             if let Some(channel) = channel_manager_write_handle.get_by_addr(&src) {
@@ -386,10 +386,7 @@ fn process_once(
                     };
                 }
                 Err(err) => {
-                    println!(
-                        "Unable to process login packet for client {}: {:?}",
-                        src, err
-                    );
+                    println!("Unable to process login packet for client {}: {}", src, err);
                     let _ = channel_handle.disconnect(DisconnectReason::Application);
                 }
             }
@@ -543,7 +540,7 @@ fn log_out_and_disconnect(
     match game_server.log_out(guid) {
         Ok(log_out_broadcasts) => log_out_broadcasts,
         Err(err) => {
-            println!("Unable to log out existing player {}: {:?}", guid, err);
+            println!("Unable to log out existing player {}: {}", guid, err);
             Vec::new()
         }
     }

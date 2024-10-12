@@ -1,4 +1,4 @@
-use crate::game_server::ProcessPacketError;
+use crate::game_server::{ProcessPacketError, ProcessPacketErrorType};
 
 // 8-byte character GUIDs are structured to avoid collisions, from left to right:
 // * 1-byte discriminant for character types for 256 unique character types
@@ -20,7 +20,14 @@ pub fn zone_template_guid(instance_guid: u64) -> u8 {
 
 pub fn shorten_zone_template_guid(point_of_interest_id: u32) -> Result<u8, ProcessPacketError> {
     if point_of_interest_id > u8::MAX as u32 {
-        Err(ProcessPacketError::ConstraintViolated)
+        Err(ProcessPacketError::new(
+            ProcessPacketErrorType::ConstraintViolated,
+            format!(
+                "Point of interest ID {} must be <= {}",
+                point_of_interest_id,
+                u8::MAX
+            ),
+        ))
     } else {
         Ok(point_of_interest_id as u8)
     }
@@ -39,7 +46,10 @@ pub fn player_guid(player_guid: u32) -> u64 {
 
 pub fn shorten_player_guid(player_guid: u64) -> Result<u32, ProcessPacketError> {
     if player_guid > u32::MAX as u64 {
-        Err(ProcessPacketError::ConstraintViolated)
+        Err(ProcessPacketError::new(
+            ProcessPacketErrorType::ConstraintViolated,
+            format!("Player GUID {} must be <= {}", player_guid, u32::MAX),
+        ))
     } else {
         Ok(player_guid as u32)
     }
