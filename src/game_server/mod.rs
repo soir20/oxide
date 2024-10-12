@@ -109,7 +109,7 @@ impl From<SerializePacketError> for ProcessPacketError {
 impl Display for ProcessPacketError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.write_str(&format!(
-            "{:?}: {}. Backtrace: {}",
+            "{:?}: {}. Backtrace:\n{}",
             self.err_type, self.message, self.backtrace
         ))
     }
