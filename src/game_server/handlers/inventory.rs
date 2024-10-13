@@ -78,313 +78,14 @@ pub fn process_inventory_packet(
     let raw_op_code = cursor.read_u16::<LittleEndian>()?;
     match InventoryOpCode::try_from(raw_op_code) {
         Ok(op_code) => match op_code {
-            InventoryOpCode::UnequipSlot => {
-                let unequip_slot: UnequipSlot = DeserializePacket::deserialize(cursor)?;
-                game_server.lock_enforcer().read_characters(|_| CharacterLockRequest {
-                    read_guids: vec![],
-                    write_guids: vec![player_guid(sender)],
-                    character_consumer: |_, _, mut characters_write, _| {
-                        if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) {
-
-                            let mut brandished_wield_type = None;
-                            let mut result = if let CharacterType::Player(ref mut player_data) = character_write_handle.character_type {
-                                let possible_battle_class = player_data.battle_classes.get_mut(&unequip_slot.battle_class);
-
-                                if let Some(battle_class) = possible_battle_class {
-
-                                    let packets = vec![
-                                        GamePacket::serialize(&TunneledPacket {
-                                            unknown1: true,
-                                            inner: UnequipItem {
-                                                slot: unequip_slot.slot,
-                                                battle_class: unequip_slot.battle_class
-                                            }
-                                        })?
-                                    ];
-
-                                    battle_class.items.remove(&unequip_slot.slot);
-
-                                    // There are no weapons that allow equipping both weapon slots and then unequipping only the primary slot.
-                                    // You can only unequip the secondary slot or unequip both slots after you equip both slots. Therefore, after 
-                                    // an item is unequipped, only the primary slot can influence the wield type.
-                                    if unequip_slot.slot.is_weapon() {
-                                        brandished_wield_type = Some(wield_type_from_slot(&battle_class.items, EquipmentSlot::PrimaryWeapon, game_server));
-                                    }
-
-                                    Ok(vec![Broadcast::Single(sender, packets)])
-                                } else {
-                                    Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to unequip slot in battle class {} that they don't own", sender, unequip_slot.battle_class)))
-                                }
-
-                            } else {
-                                Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Non-player character {} tried to unequip slot", sender)))
-                            };
-
-                            if let Some(wield_type) = brandished_wield_type {
-                                character_write_handle.set_brandished_wield_type(wield_type);
-
-                                if let Ok(broadcasts) = &mut result {
-                                    broadcasts.push(Broadcast::Single(sender, vec![
-                                        GamePacket::serialize(&TunneledPacket {
-                                            unknown1: true,
-                                            inner: UpdateWieldType {
-                                                guid: player_guid(sender),
-                                                wield_type,
-                                            }
-                                        })?,
-                                    ]));
-                                }
-                            }
-                            result
-
-                        } else {
-                            Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} tried to unequip slot", sender)))
-                        }
-                    }
-                })
-            }
-            InventoryOpCode::EquipGuid => {
-                let equip_guid: EquipGuid = DeserializePacket::deserialize(cursor)?;
-                game_server
-                    .lock_enforcer()
-                    .read_characters(|_| CharacterLockRequest {
-                        read_guids: vec![],
-                        write_guids: vec![player_guid(sender)],
-                        character_consumer: |_, _, mut characters_write, _| {
-                            equip_item_in_slot(
-                                sender,
-                                &equip_guid,
-                                &mut characters_write,
-                                game_server,
-                                None,
-                            )
-                            .and_then(|(mut broadcasts, _)| {
-                                if equip_guid.slot.is_saber() {
-                                    if let Some(character_write_handle) =
-                                        characters_write.get(&player_guid(sender))
-                                    {
-                                        if let CharacterType::Player(player) =
-                                            &character_write_handle.character_type
-                                        {
-                                            if let Some(battle_class) = player
-                                                .battle_classes
-                                                .get(&player.active_battle_class)
-                                            {
-                                                broadcasts.append(&mut update_saber_tints(
-                                                    sender,
-                                                    &battle_class.items,
-                                                    player.active_battle_class,
-                                                    game_server,
-                                                )?);
-                                            }
-                                        }
-                                    }
-                                }
-
-                                Ok(broadcasts)
-                            })
-                        },
-                    })
-            }
-            InventoryOpCode::EquipSaber => {
-                let equip_guid: EquipGuid = DeserializePacket::deserialize(cursor)?;
-                let (shape_slot, color_slot) = match &equip_guid.slot {
-                    EquipmentSlot::PrimaryWeapon => (
-                        EquipmentSlot::PrimarySaberShape,
-                        EquipmentSlot::PrimarySaberColor,
-                    ),
-                    EquipmentSlot::SecondaryWeapon => (
-                        EquipmentSlot::SecondarySaberShape,
-                        EquipmentSlot::SecondarySaberColor,
-                    ),
-                    _ => {
-                        return Err(ProcessPacketError::new(
-                            ProcessPacketErrorType::ConstraintViolated,
-                            format!(
-                                "Player {} tried to equip saber in slot {:?}",
-                                sender, equip_guid.slot
-                            ),
-                        ));
-                    }
-                };
-
-                game_server
-                    .lock_enforcer()
-                    .read_characters(|_| CharacterLockRequest {
-                        read_guids: vec![],
-                        write_guids: vec![player_guid(sender)],
-                        character_consumer: |_, _, mut characters_write, _| {
-                            let mut broadcasts = Vec::new();
-                            if let Some(saber) =
-                                game_server.default_sabers().get(&equip_guid.item_guid)
-                            {
-                                broadcasts.append(
-                                    &mut equip_item_in_slot(
-                                        sender,
-                                        &equip_guid,
-                                        &mut characters_write,
-                                        game_server,
-                                        None,
-                                    )?
-                                    .0,
-                                );
-
-                                let (mut color_broadcasts, tint) = equip_item_in_slot(
-                                    sender,
-                                    &EquipGuid {
-                                        item_guid: saber.color_item_guid,
-                                        battle_class: equip_guid.battle_class,
-                                        slot: color_slot,
-                                    },
-                                    &mut characters_write,
-                                    game_server,
-                                    None,
-                                )?;
-                                broadcasts.append(&mut color_broadcasts);
-
-                                broadcasts.append(
-                                    &mut equip_item_in_slot(
-                                        sender,
-                                        &EquipGuid {
-                                            item_guid: saber.shape_item_guid,
-                                            battle_class: equip_guid.battle_class,
-                                            slot: shape_slot,
-                                        },
-                                        &mut characters_write,
-                                        game_server,
-                                        Some(tint),
-                                    )?
-                                    .0,
-                                );
-                            } else {
-                                return Err(ProcessPacketError::new(
-                                    ProcessPacketErrorType::ConstraintViolated,
-                                    format!(
-                                        "Player {} tried to equip unknown saber {}",
-                                        sender, equip_guid.item_guid
-                                    ),
-                                ));
-                            }
-                            Ok(broadcasts)
-                        },
-                    })
-            }
+            InventoryOpCode::UnequipSlot => process_unequip_slot(game_server, cursor, sender),
+            InventoryOpCode::EquipGuid => process_equip_guid(game_server, cursor, sender),
+            InventoryOpCode::EquipSaber => process_equip_saber(game_server, cursor, sender),
             InventoryOpCode::PreviewCustomization => {
-                let preview_customization: PreviewCustomization =
-                    DeserializePacket::deserialize(cursor)?;
-                Ok(vec![Broadcast::Single(
-                    sender,
-                    vec![GamePacket::serialize(&TunneledPacket {
-                        unknown1: true,
-                        inner: UpdateCustomizations {
-                            guid: player_guid(sender),
-                            is_preview: true,
-                            customizations: customizations_from_item_guids(
-                                sender,
-                                iter::once(preview_customization.item_guid),
-                                game_server.customizations(),
-                                game_server.customization_item_mappings(),
-                            )?,
-                        },
-                    })?],
-                )])
+                process_preview_customization(game_server, cursor, sender)
             }
             InventoryOpCode::EquipCustomization => {
-                let equip_customization: EquipCustomization =
-                    DeserializePacket::deserialize(cursor)?;
-                game_server
-                    .lock_enforcer()
-                    .read_characters(|_| CharacterLockRequest {
-                        read_guids: vec![],
-                        write_guids: vec![player_guid(sender)],
-                        character_consumer: |characters_table_read_handle,
-                                             _,
-                                             mut characters_write,
-                                             _| {
-                            if let Some(character_write_handle) =
-                                characters_write.get_mut(&player_guid(sender))
-                            {
-                                if let CharacterType::Player(player) =
-                                    &mut character_write_handle.character_type
-                                {
-                                    let cost = if let Some(cost_entry) =
-                                        game_server.costs().get(&equip_customization.item_guid)
-                                    {
-                                        if player.member {
-                                            cost_entry.members
-                                        } else {
-                                            cost_entry.base
-                                        }
-                                    } else {
-                                        0
-                                    };
-
-                                    if cost > player.credits {
-                                        return Ok(vec![]);
-                                    }
-                                    player.credits -= cost;
-                                    let new_credits = player.credits;
-
-                                    let customizations_to_apply = customizations_from_item_guids(
-                                        sender,
-                                        iter::once(equip_customization.item_guid),
-                                        game_server.customizations(),
-                                        game_server.customization_item_mappings(),
-                                    )?;
-
-                                    for customization in &customizations_to_apply {
-                                        player.customizations.insert(
-                                            customization.customization_slot,
-                                            customization.guid,
-                                        );
-                                    }
-
-                                    let (instance_guid, chunk, _) = character_write_handle.index();
-                                    let nearby_players = Zone::all_players_nearby(
-                                        sender,
-                                        chunk,
-                                        instance_guid,
-                                        characters_table_read_handle,
-                                    )?;
-
-                                    Ok(vec![
-                                        Broadcast::Multi(
-                                            nearby_players,
-                                            vec![GamePacket::serialize(&TunneledPacket {
-                                                unknown1: true,
-                                                inner: UpdateCustomizations {
-                                                    guid: player_guid(sender),
-                                                    is_preview: false,
-                                                    customizations: customizations_to_apply,
-                                                },
-                                            })?],
-                                        ),
-                                        Broadcast::Single(
-                                            sender,
-                                            vec![
-                                                GamePacket::serialize(&TunneledPacket {
-                                                    unknown1: true,
-                                                    inner: UpdateCredits { new_credits },
-                                                })?,
-                                                // Fix UI not updating the equipped customization item ID properly
-                                                GamePacket::serialize(&TunneledPacket {
-                                                    unknown1: true,
-                                                    inner: ExecuteScriptWithParams { script_name: "CharacterWindowHandler.requestDataSourceUpdate".to_string(), params: vec!["BaseClient.CustomizationItemDataSource".to_string()] },
-                                                })?
-                                            ],
-                                        ),
-                                    ])
-                                } else {
-                                    Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!(
-                                        "Non-player character {} tried to equip customization",
-                                        sender
-                                    )))
-                                }
-                            } else {
-                                Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} tried to equip customization", sender)))
-                            }
-                        },
-                    })
+                process_equip_customization(game_server, cursor, sender)
             }
         },
         Err(_) => {
@@ -467,6 +168,341 @@ pub fn customizations_from_item_guids(
     }
 
     Ok(result)
+}
+
+fn process_unequip_slot(
+    game_server: &GameServer,
+    cursor: &mut Cursor<&[u8]>,
+    sender: u32,
+) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    let unequip_slot: UnequipSlot = DeserializePacket::deserialize(cursor)?;
+    game_server.lock_enforcer().read_characters(|_| CharacterLockRequest {
+            read_guids: vec![],
+            write_guids: vec![player_guid(sender)],
+            character_consumer: |_, _, mut characters_write, _| {
+                if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) {
+
+                    let mut brandished_wield_type = None;
+                    let mut result = if let CharacterType::Player(ref mut player_data) = character_write_handle.character_type {
+                        let possible_battle_class = player_data.battle_classes.get_mut(&unequip_slot.battle_class);
+
+                        if let Some(battle_class) = possible_battle_class {
+
+                            let packets = vec![
+                                GamePacket::serialize(&TunneledPacket {
+                                    unknown1: true,
+                                    inner: UnequipItem {
+                                        slot: unequip_slot.slot,
+                                        battle_class: unequip_slot.battle_class
+                                    }
+                                })?
+                            ];
+
+                            battle_class.items.remove(&unequip_slot.slot);
+
+                            // There are no weapons that allow equipping both weapon slots and then unequipping only the primary slot.
+                            // You can only unequip the secondary slot or unequip both slots after you equip both slots. Therefore, after 
+                            // an item is unequipped, only the primary slot can influence the wield type.
+                            if unequip_slot.slot.is_weapon() {
+                                brandished_wield_type = Some(wield_type_from_slot(&battle_class.items, EquipmentSlot::PrimaryWeapon, game_server));
+                            }
+
+                            Ok(vec![Broadcast::Single(sender, packets)])
+                        } else {
+                            Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to unequip slot in battle class {} that they don't own", sender, unequip_slot.battle_class)))
+                        }
+
+                    } else {
+                        Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Non-player character {} tried to unequip slot", sender)))
+                    };
+
+                    if let Some(wield_type) = brandished_wield_type {
+                        character_write_handle.set_brandished_wield_type(wield_type);
+
+                        if let Ok(broadcasts) = &mut result {
+                            broadcasts.push(Broadcast::Single(sender, vec![
+                                GamePacket::serialize(&TunneledPacket {
+                                    unknown1: true,
+                                    inner: UpdateWieldType {
+                                        guid: player_guid(sender),
+                                        wield_type,
+                                    }
+                                })?,
+                            ]));
+                        }
+                    }
+                    result
+
+                } else {
+                    Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} tried to unequip slot", sender)))
+                }
+            }
+        })
+}
+
+fn process_equip_guid(
+    game_server: &GameServer,
+    cursor: &mut Cursor<&[u8]>,
+    sender: u32,
+) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    let equip_guid: EquipGuid = DeserializePacket::deserialize(cursor)?;
+    game_server
+        .lock_enforcer()
+        .read_characters(|_| CharacterLockRequest {
+            read_guids: vec![],
+            write_guids: vec![player_guid(sender)],
+            character_consumer: |_, _, mut characters_write, _| {
+                equip_item_in_slot(
+                    sender,
+                    &equip_guid,
+                    &mut characters_write,
+                    game_server,
+                    None,
+                )
+                .and_then(|(mut broadcasts, _)| {
+                    if equip_guid.slot.is_saber() {
+                        if let Some(character_write_handle) =
+                            characters_write.get(&player_guid(sender))
+                        {
+                            if let CharacterType::Player(player) =
+                                &character_write_handle.character_type
+                            {
+                                if let Some(battle_class) =
+                                    player.battle_classes.get(&player.active_battle_class)
+                                {
+                                    broadcasts.append(&mut update_saber_tints(
+                                        sender,
+                                        &battle_class.items,
+                                        player.active_battle_class,
+                                        game_server,
+                                    )?);
+                                }
+                            }
+                        }
+                    }
+
+                    Ok(broadcasts)
+                })
+            },
+        })
+}
+
+fn process_equip_saber(
+    game_server: &GameServer,
+    cursor: &mut Cursor<&[u8]>,
+    sender: u32,
+) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    let equip_guid: EquipGuid = DeserializePacket::deserialize(cursor)?;
+    let (shape_slot, color_slot) = match &equip_guid.slot {
+        EquipmentSlot::PrimaryWeapon => (
+            EquipmentSlot::PrimarySaberShape,
+            EquipmentSlot::PrimarySaberColor,
+        ),
+        EquipmentSlot::SecondaryWeapon => (
+            EquipmentSlot::SecondarySaberShape,
+            EquipmentSlot::SecondarySaberColor,
+        ),
+        _ => {
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!(
+                    "Player {} tried to equip saber in slot {:?}",
+                    sender, equip_guid.slot
+                ),
+            ));
+        }
+    };
+
+    game_server
+        .lock_enforcer()
+        .read_characters(|_| CharacterLockRequest {
+            read_guids: vec![],
+            write_guids: vec![player_guid(sender)],
+            character_consumer: |_, _, mut characters_write, _| {
+                let mut broadcasts = Vec::new();
+                if let Some(saber) = game_server.default_sabers().get(&equip_guid.item_guid) {
+                    broadcasts.append(
+                        &mut equip_item_in_slot(
+                            sender,
+                            &equip_guid,
+                            &mut characters_write,
+                            game_server,
+                            None,
+                        )?
+                        .0,
+                    );
+
+                    let (mut color_broadcasts, tint) = equip_item_in_slot(
+                        sender,
+                        &EquipGuid {
+                            item_guid: saber.color_item_guid,
+                            battle_class: equip_guid.battle_class,
+                            slot: color_slot,
+                        },
+                        &mut characters_write,
+                        game_server,
+                        None,
+                    )?;
+                    broadcasts.append(&mut color_broadcasts);
+
+                    broadcasts.append(
+                        &mut equip_item_in_slot(
+                            sender,
+                            &EquipGuid {
+                                item_guid: saber.shape_item_guid,
+                                battle_class: equip_guid.battle_class,
+                                slot: shape_slot,
+                            },
+                            &mut characters_write,
+                            game_server,
+                            Some(tint),
+                        )?
+                        .0,
+                    );
+                } else {
+                    return Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::ConstraintViolated,
+                        format!(
+                            "Player {} tried to equip unknown saber {}",
+                            sender, equip_guid.item_guid
+                        ),
+                    ));
+                }
+                Ok(broadcasts)
+            },
+        })
+}
+
+fn process_preview_customization(
+    game_server: &GameServer,
+    cursor: &mut Cursor<&[u8]>,
+    sender: u32,
+) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    let preview_customization: PreviewCustomization = DeserializePacket::deserialize(cursor)?;
+    Ok(vec![Broadcast::Single(
+        sender,
+        vec![GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: UpdateCustomizations {
+                guid: player_guid(sender),
+                is_preview: true,
+                customizations: customizations_from_item_guids(
+                    sender,
+                    iter::once(preview_customization.item_guid),
+                    game_server.customizations(),
+                    game_server.customization_item_mappings(),
+                )?,
+            },
+        })?],
+    )])
+}
+
+fn process_equip_customization(
+    game_server: &GameServer,
+    cursor: &mut Cursor<&[u8]>,
+    sender: u32,
+) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    let equip_customization: EquipCustomization = DeserializePacket::deserialize(cursor)?;
+    game_server
+        .lock_enforcer()
+        .read_characters(|_| CharacterLockRequest {
+            read_guids: vec![],
+            write_guids: vec![player_guid(sender)],
+            character_consumer: |characters_table_read_handle, _, mut characters_write, _| {
+                if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender))
+                {
+                    if let CharacterType::Player(player) =
+                        &mut character_write_handle.character_type
+                    {
+                        let cost = if let Some(cost_entry) =
+                            game_server.costs().get(&equip_customization.item_guid)
+                        {
+                            if player.member {
+                                cost_entry.members
+                            } else {
+                                cost_entry.base
+                            }
+                        } else {
+                            0
+                        };
+
+                        if cost > player.credits {
+                            return Ok(vec![]);
+                        }
+                        player.credits -= cost;
+                        let new_credits = player.credits;
+
+                        let customizations_to_apply = customizations_from_item_guids(
+                            sender,
+                            iter::once(equip_customization.item_guid),
+                            game_server.customizations(),
+                            game_server.customization_item_mappings(),
+                        )?;
+
+                        for customization in &customizations_to_apply {
+                            player
+                                .customizations
+                                .insert(customization.customization_slot, customization.guid);
+                        }
+
+                        let (instance_guid, chunk, _) = character_write_handle.index();
+                        let nearby_players = Zone::all_players_nearby(
+                            sender,
+                            chunk,
+                            instance_guid,
+                            characters_table_read_handle,
+                        )?;
+
+                        Ok(vec![
+                            Broadcast::Multi(
+                                nearby_players,
+                                vec![GamePacket::serialize(&TunneledPacket {
+                                    unknown1: true,
+                                    inner: UpdateCustomizations {
+                                        guid: player_guid(sender),
+                                        is_preview: false,
+                                        customizations: customizations_to_apply,
+                                    },
+                                })?],
+                            ),
+                            Broadcast::Single(
+                                sender,
+                                vec![
+                                    GamePacket::serialize(&TunneledPacket {
+                                        unknown1: true,
+                                        inner: UpdateCredits { new_credits },
+                                    })?,
+                                    // Fix UI not updating the equipped customization item ID properly
+                                    GamePacket::serialize(&TunneledPacket {
+                                        unknown1: true,
+                                        inner: ExecuteScriptWithParams {
+                                            script_name:
+                                                "CharacterWindowHandler.requestDataSourceUpdate"
+                                                    .to_string(),
+                                            params: vec!["BaseClient.CustomizationItemDataSource"
+                                                .to_string()],
+                                        },
+                                    })?,
+                                ],
+                            ),
+                        ])
+                    } else {
+                        Err(ProcessPacketError::new(
+                            ProcessPacketErrorType::ConstraintViolated,
+                            format!(
+                                "Non-player character {} tried to equip customization",
+                                sender
+                            ),
+                        ))
+                    }
+                } else {
+                    Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::ConstraintViolated,
+                        format!("Unknown player {} tried to equip customization", sender),
+                    ))
+                }
+            },
+        })
 }
 
 fn item_def_from_slot<'a>(
