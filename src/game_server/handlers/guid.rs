@@ -61,6 +61,7 @@ pub trait GuidTableIndexer<'a, K, V: 'a, I> {
     fn keys_by_index(&'a self, index: I) -> impl Iterator<Item = K>;
 }
 
+#[allow(dead_code)]
 pub trait GuidTableHandle<'a, K, V: 'a, I>: GuidTableIndexer<'a, K, V, I> {
     fn get(&self, guid: K) -> Option<&Lock<V>>;
 

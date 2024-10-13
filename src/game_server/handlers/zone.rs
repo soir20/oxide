@@ -53,7 +53,6 @@ struct ZoneConfig {
     template_icon: Option<u32>,
     asset_name: String,
     hide_ui: bool,
-    force_combat_pose: bool,
     is_combat: bool,
     spawn_pos_x: f32,
     spawn_pos_y: f32,
@@ -86,7 +85,6 @@ pub struct ZoneTemplate {
     pub jump_height_multiplier: f32,
     pub gravity_multiplier: f32,
     hide_ui: bool,
-    force_combat_pose: bool,
     is_combat: bool,
     characters: Vec<NpcTemplate>,
 }
@@ -138,7 +136,6 @@ impl ZoneTemplate {
             jump_height_multiplier: self.jump_height_multiplier,
             gravity_multiplier: self.gravity_multiplier,
             hide_ui: self.hide_ui,
-            force_combat_pose: self.force_combat_pose,
             is_combat: self.is_combat,
             house_data,
         }
@@ -171,7 +168,6 @@ pub struct Zone {
     pub jump_height_multiplier: f32,
     pub gravity_multiplier: f32,
     hide_ui: bool,
-    pub force_combat_pose: bool,
     pub is_combat: bool,
     pub house_data: Option<House>,
 }
@@ -637,7 +633,6 @@ impl ZoneConfig {
             jump_height_multiplier: self.jump_height_multiplier,
             gravity_multiplier: self.gravity_multiplier,
             hide_ui: self.hide_ui,
-            force_combat_pose: self.force_combat_pose,
             is_combat: self.is_combat,
             characters,
         };

@@ -28,6 +28,7 @@ pub struct ItemClassData {
 #[derive(Clone, SerializePacket)]
 pub struct BattleClassUnknown7 {}
 
+#[allow(dead_code)]
 #[derive(Clone)]
 pub enum Ability {
     Empty,
