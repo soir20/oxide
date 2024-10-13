@@ -3,13 +3,13 @@ use std::collections::BTreeMap;
 use packet_serialize::{LengthlessVec, SerializePacketError};
 
 use crate::game_server::packets::{
-    item::{BaseAttachmentGroup, EquipmentSlot, Item, ItemDefinition, MarketData, WieldType},
+    item::{EquipmentSlot, Item, ItemDefinition, MarketData},
     player_data::{
         Ability, ActionBar, BattleClass, BattleClassItem, BattleClassUnknown10, EquippedItem,
         InventoryItem, Item2, ItemGuid, Mount, Pet, PetTrick, Player, PlayerData, Slot, Unknown12,
         Unknown13, Unknown2,
     },
-    player_update::{AddNpc, CustomizationSlot, Icon, NameplateImage, NameplateImageId},
+    player_update::{CustomizationSlot, NameplateImage, NameplateImageId},
     tunnel::TunneledPacket,
     GamePacket, Pos,
 };
@@ -19,117 +19,6 @@ use super::{
     mount::MountConfig,
     unique_guid::{mount_guid, player_guid},
 };
-
-pub fn make_test_npc() -> AddNpc {
-    AddNpc {
-        guid: 102,
-        name_id: 0,
-        model_id: 458,
-        unknown3: false,
-        unknown4: 408679,
-        unknown5: 13951728,
-        unknown6: 1,
-        scale: 1.0,
-        pos: Pos {
-            x: 887.3,
-            y: 171.93376,
-            z: 1546.956,
-            w: 1.0,
-        },
-        rot: Pos {
-            x: 0.0,
-            y: 0.0,
-            z: 1.0,
-            w: 0.0,
-        },
-        unknown8: 1,
-        attachments: vec![],
-        is_not_targetable: 1,
-        unknown10: 0,
-        texture_name: "Rose".to_string(),
-        tint_name: "".to_string(),
-        tint_id: 0,
-        unknown11: true,
-        offset_y: 0.0, // Only enabled when unknown45 == 2
-        composite_effect: 0,
-        wield_type: WieldType::None,
-        name_override: "".to_string(),
-        hide_name: true,
-        name_offset_x: 0.0,
-        name_offset_y: 0.0,
-        name_offset_z: 0.0,
-        terrain_object_id: 0,
-        invisible: false,
-        unknown20: 0.0,
-        unknown21: false,
-        interactable_size_pct: 100,
-        unknown23: -1,
-        unknown24: -1,
-        active_animation_slot: -1,
-        unknown26: true,
-        ignore_position: true,
-        sub_title_id: 0,
-        active_animation_slot2: 0,
-        head_model_id: 0,
-        effects: vec![],
-        disable_interact_popup: false,
-        unknown33: 0, // If non-zero, crashes when NPC is clicked on
-        unknown34: false,
-        show_health: false,
-        hide_despawn_fade: false,
-        ignore_rotation_and_shadow: true,
-        base_attachment_group: BaseAttachmentGroup {
-            unknown1: 0,
-            unknown2: "".to_string(),
-            unknown3: "".to_string(),
-            unknown4: 0,
-            unknown5: "".to_string(),
-        },
-        unknown39: Pos {
-            x: 0.0,
-            y: 0.0,
-            z: 0.0,
-            w: 0.0,
-        },
-        unknown40: 0,
-        unknown41: -1,
-        unknown42: 0,
-        collision: true, // To be interactable, every NPC must have collision set,
-        // even if the model does not actually support collision
-        unknown44: 0,
-        npc_type: 0,
-        unknown46: 0.0,
-        target: 0,
-        unknown50: vec![],
-        rail_id: 0,
-        rail_speed: 0.0,
-        rail_origin: Pos {
-            x: 0.0,
-            y: 0.0,
-            z: 0.0,
-            w: 0.0,
-        },
-        unknown54: 0,
-        rail_unknown1: 0.0,
-        rail_unknown2: 0.0,
-        rail_unknown3: 0.0,
-        pet_customization_model_name1: "".to_string(),
-        pet_customization_model_name2: "".to_string(),
-        pet_customization_model_name3: "".to_string(),
-        override_terrain_model: false,
-        hover_glow: 0,
-        hover_description: 0, // max 7
-        fly_over_effect: 0,   // max 3
-        unknown65: 0,         // max 32
-        unknown66: 0,
-        unknown67: 0,
-        disable_move_to_interact: false,
-        unknown69: 0.0,
-        unknown70: 0.0,
-        unknown71: 0,
-        icon_id: Icon::None,
-    }
-}
 
 pub fn make_test_player(
     guid: u32,
