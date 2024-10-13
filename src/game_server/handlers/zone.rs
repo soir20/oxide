@@ -382,6 +382,7 @@ impl Zone {
         pos_update: UpdatePlayerPosition,
     ) -> Result<Vec<u64>, ProcessPacketError> {
         if let Some(character_write_handle) = characters_write.get_mut(&pos_update.guid) {
+            let previous_pos = character_write_handle.pos;
             character_write_handle.pos = Pos {
                 x: pos_update.pos_x,
                 y: pos_update.pos_y,
@@ -400,7 +401,7 @@ impl Zone {
             for npc_guid in auto_interact_npcs {
                 if let Some(npc_read_handle) = characters_read.get(&npc_guid) {
                     if npc_read_handle.auto_interact_radius > 0.0 {
-                        let distance = distance3(
+                        let distance_now = distance3(
                             character_write_handle.pos.x,
                             character_write_handle.pos.y,
                             character_write_handle.pos.z,
@@ -408,7 +409,19 @@ impl Zone {
                             npc_read_handle.pos.y,
                             npc_read_handle.pos.z,
                         );
-                        if distance <= npc_read_handle.auto_interact_radius {
+                        let distance_before = distance3(
+                            previous_pos.x,
+                            previous_pos.y,
+                            previous_pos.z,
+                            npc_read_handle.pos.x,
+                            npc_read_handle.pos.y,
+                            npc_read_handle.pos.z,
+                        );
+
+                        // Only trigger the interaction when the player first enters the radius
+                        if distance_now <= npc_read_handle.auto_interact_radius
+                            && distance_before > npc_read_handle.auto_interact_radius
+                        {
                             characters_to_interact.push(npc_read_handle.guid);
                         }
                     }
