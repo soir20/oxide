@@ -9,19 +9,22 @@ use packet_serialize::SerializePacketError;
 use parking_lot::RwLockReadGuard;
 use serde::Deserialize;
 
-use crate::game_server::{
-    packets::{
-        client_update::Position,
-        command::SelectPlayer,
-        housing::BuildArea,
-        item::WieldType,
-        login::{ClientBeginZoning, ZoneDetails},
-        tunnel::TunneledPacket,
-        ui::ExecuteScriptWithParams,
-        update_position::UpdatePlayerPosition,
-        GamePacket, Pos,
+use crate::{
+    game_server::{
+        packets::{
+            client_update::Position,
+            command::SelectPlayer,
+            housing::BuildArea,
+            item::WieldType,
+            login::{ClientBeginZoning, ZoneDetails},
+            tunnel::TunneledPacket,
+            ui::ExecuteScriptWithParams,
+            update_position::UpdatePlayerPosition,
+            GamePacket, Pos,
+        },
+        Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
-    Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
+    info,
 };
 
 use super::{
@@ -936,13 +939,11 @@ pub fn interact_with_character(
                         _ => coerce_to_packet_supplier(|_| Ok(Vec::new())),
                     }
                 } else {
-                    Err(ProcessPacketError::new(
-                        ProcessPacketErrorType::ConstraintViolated,
-                        format!(
-                            "Received request to interact with unknown NPC {} from {}",
-                            request.target, request.requester
-                        ),
-                    ))
+                    info!(
+                        "Received request to interact with unknown NPC {} from {}",
+                        request.target, request.requester
+                    );
+                    coerce_to_packet_supplier(|_| Ok(Vec::new()))
                 }
             },
         }
