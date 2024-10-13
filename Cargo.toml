@@ -6,8 +6,10 @@ edition = "2021"
 [dependencies]
 axum = "0.7.5"
 byteorder = "1.5.0"
+chrono = "0.4.38"
 crc32fast = "1.4.2"
 crossbeam-channel = "0.5.13"
+defer-lite = "1.0.0"
 evalexpr = "11.3.0"
 packet_serialize = { path = "src/packet_serialize" }
 miniz_oxide = "0.7.2"

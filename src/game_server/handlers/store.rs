@@ -8,10 +8,13 @@ use std::{
 use evalexpr::{context_map, eval_with_context, Value};
 use serde::Deserialize;
 
-use crate::game_server::packets::{
-    item::ItemDefinition,
-    reference_data::ItemGroupDefinition,
-    store::{StoreItem, StoreItemList},
+use crate::{
+    game_server::packets::{
+        item::ItemDefinition,
+        reference_data::ItemGroupDefinition,
+        store::{StoreItem, StoreItemList},
+    },
+    info,
 };
 
 const DEFAULT_COST_EXPRESSION: &str = "x";
@@ -82,7 +85,7 @@ fn cost_map_from_sales(
                             members: item_definition.cost,
                         }
                     } else {
-                        println!("Defaulting to 0 cost for unknown item {}", item_guid);
+                        info!("Defaulting to 0 cost for unknown item {}", item_guid);
                         CostEntry {
                             base: 0,
                             members: 0,
@@ -106,7 +109,7 @@ fn cost_map_from_sales(
                 )?;
             }
         } else {
-            println!(
+            info!(
                 "Skipping sale for unknown item group {}",
                 sale.item_group_guid
             )
