@@ -4,6 +4,7 @@ use byteorder::{BigEndian, ReadBytesExt, WriteBytesExt};
 use std::io::{Cursor, Error, Write};
 use std::mem::size_of;
 
+#[allow(dead_code)]
 #[non_exhaustive]
 #[derive(Debug)]
 pub enum DataError {

@@ -15,6 +15,7 @@ const ZLIB_COMPRESSION_LENGTH_THRESHOLD: usize = 100;
 
 const ZLIB_COMPRESSION_LEVEL: u8 = 2;
 
+#[allow(dead_code)]
 #[non_exhaustive]
 #[derive(Debug)]
 pub enum SerializeError {

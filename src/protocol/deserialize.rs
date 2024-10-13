@@ -7,6 +7,7 @@ use std::mem::size_of;
 
 use super::hash::{CrcSeed, CrcSize};
 
+#[allow(dead_code)]
 #[non_exhaustive]
 #[derive(Debug)]
 pub enum DeserializeError {
