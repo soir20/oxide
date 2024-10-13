@@ -642,7 +642,7 @@ pub struct AddNpc {
     pub base_attachment_group: BaseAttachmentGroup,
     pub unknown39: Pos,
     pub unknown40: u32,
-    pub unknown41: i32,
+    pub bounce_area_id: i32,
     pub unknown42: u32,
     pub collision: bool,
     pub unknown44: u64,

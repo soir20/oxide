@@ -29,8 +29,9 @@ use crate::{
 
 use super::{
     character::{
-        coerce_to_broadcast_supplier, Character, CharacterCategory, CharacterIndex, CharacterType,
-        Chunk, Door, NpcTemplate, PreviousFixture, Transport, WriteLockingBroadcastSupplier,
+        coerce_to_broadcast_supplier, AmbientNpc, Character, CharacterCategory, CharacterIndex,
+        CharacterType, Chunk, Door, NpcTemplate, PreviousFixture, Transport,
+        WriteLockingBroadcastSupplier,
     },
     guid::{Guid, GuidTable, GuidTableIndexer, GuidTableWriteHandle, IndexedGuid},
     housing::prepare_init_house_packets,
@@ -72,6 +73,7 @@ struct ZoneConfig {
     interact_radius: f32,
     door_auto_interact_radius: f32,
     transports: Vec<Transport>,
+    ambient_npcs: Vec<AmbientNpc>,
 }
 
 #[derive(Clone)]
@@ -571,6 +573,33 @@ impl ZoneConfig {
         let mut index = 0;
 
         {
+            for ambient_npc in self.ambient_npcs {
+                characters.push(NpcTemplate {
+                    discriminant: AMBIENT_NPC_DISCRIMINANT,
+                    index,
+                    pos: Pos {
+                        x: ambient_npc.pos_x,
+                        y: ambient_npc.pos_y,
+                        z: ambient_npc.pos_z,
+                        w: ambient_npc.pos_w,
+                    },
+                    rot: Pos {
+                        x: ambient_npc.rot_x,
+                        y: ambient_npc.rot_y,
+                        z: ambient_npc.rot_z,
+                        w: ambient_npc.rot_w,
+                    },
+                    scale: ambient_npc.scale.unwrap_or(1.0),
+                    state: 0,
+                    character_type: CharacterType::AmbientNpc(ambient_npc),
+                    mount_id: None,
+                    interact_radius: self.interact_radius,
+                    auto_interact_radius: 0.0,
+                    wield_type: WieldType::None,
+                });
+                index += 1;
+            }
+
             for door in self.doors {
                 characters.push(NpcTemplate {
                     discriminant: AMBIENT_NPC_DISCRIMINANT,

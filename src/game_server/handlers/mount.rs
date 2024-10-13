@@ -386,7 +386,7 @@ pub fn spawn_mount_npc(
                     w: 0.0,
                 },
                 unknown40: 0,
-                unknown41: -1,
+                bounce_area_id: -1,
                 unknown42: 0,
                 collision: true,
                 unknown44: 0,

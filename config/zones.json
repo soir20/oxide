@@ -41,7 +41,8 @@
                 "large_icon": false,
                 "show_hover_description": true
             }
-        ]
+        ],
+        "ambient_npcs": []
     },
     {
         "comment": "Ryloth",
@@ -103,7 +104,8 @@
                 "large_icon": false,
                 "show_hover_description": true
             }
-        ]
+        ],
+        "ambient_npcs": []
     },
     {
         "comment": "Umbara",
@@ -187,7 +189,8 @@
                 "large_icon": true,
                 "show_hover_description": true
             }
-        ]
+        ],
+        "ambient_npcs": []
     },
     {
         "comment": "Carlac",
@@ -249,7 +252,8 @@
                 "large_icon": false,
                 "show_hover_description": true
             }
-        ]
+        ],
+        "ambient_npcs": []
     },
     {
         "comment": "Felucia",
@@ -292,7 +296,8 @@
                 "large_icon": false,
                 "show_hover_description": false
             }
-        ]
+        ],
+        "ambient_npcs": []
     },
     {
         "comment": "Coruscant",
@@ -658,7 +663,8 @@
                 "large_icon": false,
                 "show_hover_description": false
             }
-        ]
+        ],
+        "ambient_npcs": []
     },
     {
         "guid": 25,
@@ -716,7 +722,8 @@
                 "destination_zone_template": 24
             }
         ],
-        "transports": []
+        "transports": [],
+        "ambient_npcs": []
     },
     {
         "comment": "Mustafar Lot",
@@ -761,6 +768,7 @@
                 "large_icon": false,
                 "show_hover_description": true
             }
-        ]
+        ],
+        "ambient_npcs": []
     }
 ]
