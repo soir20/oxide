@@ -41,7 +41,8 @@
                 "large_icon": false,
                 "show_hover_description": true
             }
-        ]
+        ],
+        "ambient_npcs": []
     },
     {
         "comment": "Ryloth",
@@ -103,7 +104,8 @@
                 "large_icon": false,
                 "show_hover_description": true
             }
-        ]
+        ],
+        "ambient_npcs": []
     },
     {
         "comment": "Umbara",
@@ -187,7 +189,8 @@
                 "large_icon": true,
                 "show_hover_description": true
             }
-        ]
+        ],
+        "ambient_npcs": []
     },
     {
         "comment": "Carlac",
@@ -249,7 +252,8 @@
                 "large_icon": false,
                 "show_hover_description": true
             }
-        ]
+        ],
+        "ambient_npcs": []
     },
     {
         "comment": "Felucia",
@@ -291,6 +295,23 @@
                 "show_icon": false,
                 "large_icon": false,
                 "show_hover_description": false
+            }
+        ],
+        "ambient_npcs": [
+            {
+                "comment": "Sarlacc bouncer",
+                "model_id": 178,
+                "scale": 5.0,
+                "pos_x": 147.5,
+                "pos_y": -99.0,
+                "pos_z": 505.0,
+                "pos_w": 1.0,
+                "rot_x": 0.0,
+                "rot_y": 1.1,
+                "rot_z": 0.0,
+                "rot_w": 0.0,
+                "visible": false,
+                "bounce_area_id": 5003
             }
         ]
     },
@@ -658,7 +679,8 @@
                 "large_icon": false,
                 "show_hover_description": false
             }
-        ]
+        ],
+        "ambient_npcs": []
     },
     {
         "guid": 25,
@@ -716,7 +738,8 @@
                 "destination_zone_template": 24
             }
         ],
-        "transports": []
+        "transports": [],
+        "ambient_npcs": []
     },
     {
         "comment": "Mustafar Lot",
@@ -761,6 +784,7 @@
                 "large_icon": false,
                 "show_hover_description": true
             }
-        ]
+        ],
+        "ambient_npcs": []
     }
 ]

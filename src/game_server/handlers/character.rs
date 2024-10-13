@@ -44,6 +44,135 @@ pub fn coerce_to_broadcast_supplier(
 }
 
 #[derive(Clone, Deserialize)]
+pub struct AmbientNpc {
+    pub model_id: u32,
+    pub scale: Option<f32>,
+    pub pos_x: f32,
+    pub pos_y: f32,
+    pub pos_z: f32,
+    pub pos_w: f32,
+    pub rot_x: f32,
+    pub rot_y: f32,
+    pub rot_z: f32,
+    pub rot_w: f32,
+    pub visible: Option<bool>,
+    pub bounce_area_id: Option<i32>,
+}
+
+impl AmbientNpc {
+    pub fn add_packets(
+        &self,
+        guid: u64,
+        pos: Pos,
+        rot: Pos,
+        scale: f32,
+    ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+        let packets = vec![GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: AddNpc {
+                guid,
+                name_id: 0,
+                model_id: self.model_id,
+                unknown3: false,
+                unknown4: 408679,
+                unknown5: 13951728,
+                unknown6: 1,
+                scale,
+                pos,
+                rot,
+                unknown8: 1,
+                attachments: vec![],
+                is_not_targetable: 1,
+                unknown10: 1,
+                texture_name: "".to_string(),
+                tint_name: "".to_string(),
+                tint_id: 0,
+                unknown11: true,
+                offset_y: 0.0,
+                composite_effect: 0,
+                wield_type: WieldType::None,
+                name_override: "".to_string(),
+                hide_name: false,
+                name_offset_x: 0.0,
+                name_offset_y: 0.0,
+                name_offset_z: 0.0,
+                terrain_object_id: 0,
+                invisible: !self.visible.unwrap_or(true),
+                unknown20: 0.0,
+                unknown21: false,
+                interactable_size_pct: 100,
+                unknown23: -1,
+                unknown24: -1,
+                active_animation_slot: -1,
+                unknown26: false,
+                ignore_position: false,
+                sub_title_id: 0,
+                active_animation_slot2: 0,
+                head_model_id: 0,
+                effects: vec![],
+                disable_interact_popup: false,
+                unknown33: 0,
+                unknown34: false,
+                show_health: false,
+                hide_despawn_fade: false,
+                ignore_rotation_and_shadow: false,
+                base_attachment_group: BaseAttachmentGroup {
+                    unknown1: 0,
+                    unknown2: "".to_string(),
+                    unknown3: "".to_string(),
+                    unknown4: 0,
+                    unknown5: "".to_string(),
+                },
+                unknown39: Pos {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 0.0,
+                    w: 0.0,
+                },
+                unknown40: 0,
+                bounce_area_id: self.bounce_area_id.unwrap_or(-1),
+                unknown42: 0,
+                collision: true,
+                unknown44: 0,
+                npc_type: 2,
+                unknown46: 0.0,
+                target: 0,
+                unknown50: vec![],
+                rail_id: 0,
+                rail_speed: 0.0,
+                rail_origin: Pos {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 0.0,
+                    w: 0.0,
+                },
+                unknown54: 0,
+                rail_unknown1: 0.0,
+                rail_unknown2: 0.0,
+                rail_unknown3: 0.0,
+                pet_customization_model_name1: "".to_string(),
+                pet_customization_model_name2: "".to_string(),
+                pet_customization_model_name3: "".to_string(),
+                override_terrain_model: false,
+                hover_glow: 0,
+                hover_description: 0,
+                fly_over_effect: 0,
+                unknown65: 8,
+                unknown66: 0,
+                unknown67: 3442,
+                disable_move_to_interact: false,
+                unknown69: 0.0,
+                unknown70: 0.0,
+                unknown71: 0,
+                icon_id: Icon::None,
+            },
+        })?];
+
+        Ok(packets)
+    }
+}
+
+#[derive(Clone, Deserialize)]
 pub struct Door {
     pub x: f32,
     pub y: f32,
@@ -132,7 +261,7 @@ impl Door {
                     w: 0.0,
                 },
                 unknown40: 0,
-                unknown41: -1,
+                bounce_area_id: -1,
                 unknown42: 0,
                 collision: true,
                 unknown44: 0,
@@ -342,7 +471,7 @@ impl Transport {
                         w: 0.0,
                     },
                     unknown40: 0,
-                    unknown41: -1,
+                    bounce_area_id: -1,
                     unknown42: 0,
                     collision: true,
                     unknown44: 0,
@@ -503,6 +632,7 @@ pub struct CurrentFixture {
 
 #[derive(Clone)]
 pub enum CharacterType {
+    AmbientNpc(AmbientNpc),
     Door(Door),
     Transport(Transport),
     Player(Box<Player>),
@@ -700,6 +830,9 @@ impl Character {
         mount_configs: &BTreeMap<u32, MountConfig>,
     ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
         let packets = match &self.character_type {
+            CharacterType::AmbientNpc(ambient_npc) => {
+                ambient_npc.add_packets(self.guid, self.pos, self.rot, self.scale)?
+            }
             CharacterType::Door(door) => door.add_packets(self.guid, self.pos, self.rot)?,
             CharacterType::Transport(transport) => {
                 transport.add_packets(self.guid, self.pos, self.rot, self.scale)?
