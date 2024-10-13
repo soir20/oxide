@@ -63,6 +63,117 @@ pub struct Door {
 }
 
 impl Door {
+    pub fn add_packets(
+        &self,
+        guid: u64,
+        pos: Pos,
+        rot: Pos,
+    ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+        let mut packets = vec![GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: AddNpc {
+                guid,
+                name_id: 0,
+                model_id: 0,
+                unknown3: false,
+                unknown4: 408679,
+                unknown5: 13951728,
+                unknown6: 1,
+                scale: 1.0,
+                pos,
+                rot,
+                unknown8: 1,
+                attachments: vec![],
+                is_not_targetable: 1,
+                unknown10: 1,
+                texture_name: "".to_string(),
+                tint_name: "".to_string(),
+                tint_id: 0,
+                unknown11: true,
+                offset_y: 0.0,
+                composite_effect: 0,
+                wield_type: WieldType::None,
+                name_override: "".to_string(),
+                hide_name: false,
+                name_offset_x: 0.0,
+                name_offset_y: 0.0,
+                name_offset_z: 0.0,
+                terrain_object_id: self.terrain_object_id,
+                invisible: false,
+                unknown20: 0.0,
+                unknown21: false,
+                interactable_size_pct: 100,
+                unknown23: -1,
+                unknown24: -1,
+                active_animation_slot: -1,
+                unknown26: false,
+                ignore_position: false,
+                sub_title_id: 0,
+                active_animation_slot2: 0,
+                head_model_id: 0,
+                effects: vec![],
+                disable_interact_popup: true,
+                unknown33: 0,
+                unknown34: false,
+                show_health: false,
+                hide_despawn_fade: false,
+                ignore_rotation_and_shadow: false,
+                base_attachment_group: BaseAttachmentGroup {
+                    unknown1: 0,
+                    unknown2: "".to_string(),
+                    unknown3: "".to_string(),
+                    unknown4: 0,
+                    unknown5: "".to_string(),
+                },
+                unknown39: Pos {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 0.0,
+                    w: 0.0,
+                },
+                unknown40: 0,
+                unknown41: -1,
+                unknown42: 0,
+                collision: true,
+                unknown44: 0,
+                npc_type: 2,
+                unknown46: 0.0,
+                target: 0,
+                unknown50: vec![],
+                rail_id: 0,
+                rail_speed: 0.0,
+                rail_origin: Pos {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 0.0,
+                    w: 0.0,
+                },
+                unknown54: 0,
+                rail_unknown1: 0.0,
+                rail_unknown2: 0.0,
+                rail_unknown3: 0.0,
+                pet_customization_model_name1: "".to_string(),
+                pet_customization_model_name2: "".to_string(),
+                pet_customization_model_name3: "".to_string(),
+                override_terrain_model: false,
+                hover_glow: 0,
+                hover_description: 0,
+                fly_over_effect: 0,
+                unknown65: 8,
+                unknown66: 0,
+                unknown67: 3442,
+                disable_move_to_interact: false,
+                unknown69: 0.0,
+                unknown70: 0.0,
+                unknown71: 0,
+                icon_id: Icon::None,
+            },
+        })?];
+        packets.append(&mut enable_interaction(guid, 55)?);
+
+        Ok(packets)
+    }
+
     pub fn interact(
         &self,
         requester: u32,
@@ -160,6 +271,143 @@ pub struct Transport {
 }
 
 impl Transport {
+    pub fn add_packets(
+        &self,
+        guid: u64,
+        pos: Pos,
+        rot: Pos,
+        scale: f32,
+    ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+        let mut packets = vec![
+            GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: AddNpc {
+                    guid,
+                    name_id: self.name_id.unwrap_or(0),
+                    model_id: self.model_id.unwrap_or(0),
+                    unknown3: false,
+                    unknown4: 408679,
+                    unknown5: 13951728,
+                    unknown6: 1,
+                    scale,
+                    pos,
+                    rot,
+                    unknown8: 1,
+                    attachments: vec![],
+                    is_not_targetable: 1,
+                    unknown10: 1,
+                    texture_name: "".to_string(),
+                    tint_name: "".to_string(),
+                    tint_id: 0,
+                    unknown11: true,
+                    offset_y: 0.0,
+                    composite_effect: 0,
+                    wield_type: WieldType::None,
+                    name_override: "".to_string(),
+                    hide_name: !self.show_name,
+                    name_offset_x: self.name_offset_x.unwrap_or(0.0),
+                    name_offset_y: self.name_offset_y.unwrap_or(0.0),
+                    name_offset_z: self.name_offset_z.unwrap_or(0.0),
+                    terrain_object_id: self.terrain_object_id.unwrap_or(0),
+                    invisible: false,
+                    unknown20: 0.0,
+                    unknown21: false,
+                    interactable_size_pct: 100,
+                    unknown23: -1,
+                    unknown24: -1,
+                    active_animation_slot: -1,
+                    unknown26: false,
+                    ignore_position: false,
+                    sub_title_id: 0,
+                    active_animation_slot2: 0,
+                    head_model_id: 0,
+                    effects: vec![],
+                    disable_interact_popup: false,
+                    unknown33: 0,
+                    unknown34: false,
+                    show_health: false,
+                    hide_despawn_fade: false,
+                    ignore_rotation_and_shadow: false,
+                    base_attachment_group: BaseAttachmentGroup {
+                        unknown1: 0,
+                        unknown2: "".to_string(),
+                        unknown3: "".to_string(),
+                        unknown4: 0,
+                        unknown5: "".to_string(),
+                    },
+                    unknown39: Pos {
+                        x: 0.0,
+                        y: 0.0,
+                        z: 0.0,
+                        w: 0.0,
+                    },
+                    unknown40: 0,
+                    unknown41: -1,
+                    unknown42: 0,
+                    collision: true,
+                    unknown44: 0,
+                    npc_type: 2,
+                    unknown46: 0.0,
+                    target: 0,
+                    unknown50: vec![],
+                    rail_id: 0,
+                    rail_speed: 0.0,
+                    rail_origin: Pos {
+                        x: 0.0,
+                        y: 0.0,
+                        z: 0.0,
+                        w: 0.0,
+                    },
+                    unknown54: 0,
+                    rail_unknown1: 0.0,
+                    rail_unknown2: 0.0,
+                    rail_unknown3: 0.0,
+                    pet_customization_model_name1: "".to_string(),
+                    pet_customization_model_name2: "".to_string(),
+                    pet_customization_model_name3: "".to_string(),
+                    override_terrain_model: false,
+                    hover_glow: 0,
+                    hover_description: if self.show_hover_description {
+                        self.name_id.unwrap_or(0)
+                    } else {
+                        0
+                    },
+                    fly_over_effect: 0,
+                    unknown65: 8,
+                    unknown66: 0,
+                    unknown67: 3442,
+                    disable_move_to_interact: false,
+                    unknown69: 0.0,
+                    unknown70: 0.0,
+                    unknown71: 0,
+                    icon_id: Icon::None,
+                },
+            })?,
+            GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: AddNotifications {
+                    notifications: vec![SingleNotification {
+                        guid,
+                        unknown1: 0,
+                        notification: Some(NotificationData {
+                            unknown1: 0,
+                            icon_id: if self.large_icon { 46 } else { 37 },
+                            unknown3: 0,
+                            name_id: 0,
+                            unknown4: 0,
+                            hide_icon: !self.show_icon,
+                            unknown6: 0,
+                        }),
+                        unknown2: false,
+                    }],
+                },
+            })?,
+        ];
+        packets.append(&mut enable_interaction(guid, self.cursor)?);
+
+        Ok(packets)
+    }
+
     pub fn interact(&self, requester: u32) -> WriteLockingBroadcastSupplier {
         coerce_to_broadcast_supplier(move |_| {
             Ok(vec![Broadcast::Single(
@@ -189,6 +437,42 @@ pub struct Player {
     pub active_battle_class: u32,
     pub inventory: BTreeSet<u32>,
     pub customizations: BTreeMap<CustomizationSlot, u32>,
+}
+
+impl Player {
+    pub fn add_packets(
+        &self,
+        guid: u64,
+        mount_id: Option<u32>,
+        pos: Pos,
+        rot: Pos,
+        mount_configs: &BTreeMap<u32, MountConfig>,
+    ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+        let mut packets = Vec::new();
+        if let Some(mount_id) = mount_id {
+            let short_rider_guid = shorten_player_guid(guid)?;
+            let mount_guid = mount_guid(short_rider_guid, mount_id);
+            if let Some(mount_config) = mount_configs.get(&mount_id) {
+                packets.append(&mut spawn_mount_npc(
+                    mount_guid,
+                    guid,
+                    mount_config,
+                    pos,
+                    rot,
+                )?);
+            } else {
+                return Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Character {} is mounted on unknown mount ID {}",
+                        guid, mount_id
+                    ),
+                ));
+            }
+        }
+
+        Ok(packets)
+    }
 }
 
 pub struct PreviousFixture {
@@ -416,68 +700,12 @@ impl Character {
         mount_configs: &BTreeMap<u32, MountConfig>,
     ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
         let packets = match &self.character_type {
-            CharacterType::Door(door) => {
-                let mut packets = vec![GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: Self::door_packet(self, door),
-                })?];
-                packets.append(&mut enable_interaction(self.guid, 55)?);
-                packets
-            }
+            CharacterType::Door(door) => door.add_packets(self.guid, self.pos, self.rot)?,
             CharacterType::Transport(transport) => {
-                let mut packets = vec![
-                    GamePacket::serialize(&TunneledPacket {
-                        unknown1: true,
-                        inner: Self::transport_packet(self, transport),
-                    })?,
-                    GamePacket::serialize(&TunneledPacket {
-                        unknown1: true,
-                        inner: AddNotifications {
-                            notifications: vec![SingleNotification {
-                                guid: self.guid,
-                                unknown1: 0,
-                                notification: Some(NotificationData {
-                                    unknown1: 0,
-                                    icon_id: if transport.large_icon { 46 } else { 37 },
-                                    unknown3: 0,
-                                    name_id: 0,
-                                    unknown4: 0,
-                                    hide_icon: !transport.show_icon,
-                                    unknown6: 0,
-                                }),
-                                unknown2: false,
-                            }],
-                        },
-                    })?,
-                ];
-                packets.append(&mut enable_interaction(self.guid, transport.cursor)?);
-                packets
+                transport.add_packets(self.guid, self.pos, self.rot, self.scale)?
             }
-            CharacterType::Player(_) => {
-                let mut packets = Vec::new();
-                if let Some(mount_id) = self.mount_id {
-                    let short_rider_guid = shorten_player_guid(self.guid)?;
-                    let mount_guid = mount_guid(short_rider_guid, mount_id);
-                    if let Some(mount_config) = mount_configs.get(&mount_id) {
-                        packets.append(&mut spawn_mount_npc(
-                            mount_guid,
-                            self.guid,
-                            mount_config,
-                            self.pos,
-                            self.rot,
-                        )?);
-                    } else {
-                        return Err(ProcessPacketError::new(
-                            ProcessPacketErrorType::ConstraintViolated,
-                            format!(
-                                "Character {} is mounted on unknown mount ID {}",
-                                self.guid, mount_id
-                            ),
-                        ));
-                    }
-                }
-
-                packets
+            CharacterType::Player(player) => {
+                player.add_packets(self.guid, self.mount_id, self.pos, self.rot, mount_configs)?
             }
             CharacterType::Fixture(house_guid, fixture) => fixture_packets(
                 *house_guid,
@@ -527,210 +755,6 @@ impl Character {
             }
             CharacterType::Transport(transport) => transport.interact(requester),
             _ => coerce_to_broadcast_supplier(|_| Ok(Vec::new())),
-        }
-    }
-
-    fn door_packet(character: &Character, door: &Door) -> AddNpc {
-        AddNpc {
-            guid: character.guid,
-            name_id: 0,
-            model_id: 0,
-            unknown3: false,
-            unknown4: 408679,
-            unknown5: 13951728,
-            unknown6: 1,
-            scale: 1.0,
-            pos: character.pos,
-            rot: character.rot,
-            unknown8: 1,
-            attachments: vec![],
-            is_not_targetable: 1,
-            unknown10: 1,
-            texture_name: "".to_string(),
-            tint_name: "".to_string(),
-            tint_id: 0,
-            unknown11: true,
-            offset_y: 0.0,
-            composite_effect: 0,
-            wield_type: WieldType::None,
-            name_override: "".to_string(),
-            hide_name: false,
-            name_offset_x: 0.0,
-            name_offset_y: 0.0,
-            name_offset_z: 0.0,
-            terrain_object_id: door.terrain_object_id,
-            invisible: false,
-            unknown20: 0.0,
-            unknown21: false,
-            interactable_size_pct: 100,
-            unknown23: -1,
-            unknown24: -1,
-            active_animation_slot: -1,
-            unknown26: false,
-            ignore_position: false,
-            sub_title_id: 0,
-            active_animation_slot2: 0,
-            head_model_id: 0,
-            effects: vec![],
-            disable_interact_popup: true,
-            unknown33: 0,
-            unknown34: false,
-            show_health: false,
-            hide_despawn_fade: false,
-            ignore_rotation_and_shadow: false,
-            base_attachment_group: BaseAttachmentGroup {
-                unknown1: 0,
-                unknown2: "".to_string(),
-                unknown3: "".to_string(),
-                unknown4: 0,
-                unknown5: "".to_string(),
-            },
-            unknown39: Pos {
-                x: 0.0,
-                y: 0.0,
-                z: 0.0,
-                w: 0.0,
-            },
-            unknown40: 0,
-            unknown41: -1,
-            unknown42: 0,
-            collision: true,
-            unknown44: 0,
-            npc_type: 2,
-            unknown46: 0.0,
-            target: 0,
-            unknown50: vec![],
-            rail_id: 0,
-            rail_speed: 0.0,
-            rail_origin: Pos {
-                x: 0.0,
-                y: 0.0,
-                z: 0.0,
-                w: 0.0,
-            },
-            unknown54: 0,
-            rail_unknown1: 0.0,
-            rail_unknown2: 0.0,
-            rail_unknown3: 0.0,
-            pet_customization_model_name1: "".to_string(),
-            pet_customization_model_name2: "".to_string(),
-            pet_customization_model_name3: "".to_string(),
-            override_terrain_model: false,
-            hover_glow: 0,
-            hover_description: 0,
-            fly_over_effect: 0,
-            unknown65: 8,
-            unknown66: 0,
-            unknown67: 3442,
-            disable_move_to_interact: false,
-            unknown69: 0.0,
-            unknown70: 0.0,
-            unknown71: 0,
-            icon_id: Icon::None,
-        }
-    }
-
-    fn transport_packet(character: &Character, transport: &Transport) -> AddNpc {
-        AddNpc {
-            guid: character.guid,
-            name_id: transport.name_id.unwrap_or(0),
-            model_id: transport.model_id.unwrap_or(0),
-            unknown3: false,
-            unknown4: 408679,
-            unknown5: 13951728,
-            unknown6: 1,
-            scale: character.scale,
-            pos: character.pos,
-            rot: character.rot,
-            unknown8: 1,
-            attachments: vec![],
-            is_not_targetable: 1,
-            unknown10: 1,
-            texture_name: "".to_string(),
-            tint_name: "".to_string(),
-            tint_id: 0,
-            unknown11: true,
-            offset_y: 0.0,
-            composite_effect: 0,
-            wield_type: WieldType::None,
-            name_override: "".to_string(),
-            hide_name: !transport.show_name,
-            name_offset_x: transport.name_offset_x.unwrap_or(0.0),
-            name_offset_y: transport.name_offset_y.unwrap_or(0.0),
-            name_offset_z: transport.name_offset_z.unwrap_or(0.0),
-            terrain_object_id: transport.terrain_object_id.unwrap_or(0),
-            invisible: false,
-            unknown20: 0.0,
-            unknown21: false,
-            interactable_size_pct: 100,
-            unknown23: -1,
-            unknown24: -1,
-            active_animation_slot: -1,
-            unknown26: false,
-            ignore_position: false,
-            sub_title_id: 0,
-            active_animation_slot2: 0,
-            head_model_id: 0,
-            effects: vec![],
-            disable_interact_popup: false,
-            unknown33: 0,
-            unknown34: false,
-            show_health: false,
-            hide_despawn_fade: false,
-            ignore_rotation_and_shadow: false,
-            base_attachment_group: BaseAttachmentGroup {
-                unknown1: 0,
-                unknown2: "".to_string(),
-                unknown3: "".to_string(),
-                unknown4: 0,
-                unknown5: "".to_string(),
-            },
-            unknown39: Pos {
-                x: 0.0,
-                y: 0.0,
-                z: 0.0,
-                w: 0.0,
-            },
-            unknown40: 0,
-            unknown41: -1,
-            unknown42: 0,
-            collision: true,
-            unknown44: 0,
-            npc_type: 2,
-            unknown46: 0.0,
-            target: 0,
-            unknown50: vec![],
-            rail_id: 0,
-            rail_speed: 0.0,
-            rail_origin: Pos {
-                x: 0.0,
-                y: 0.0,
-                z: 0.0,
-                w: 0.0,
-            },
-            unknown54: 0,
-            rail_unknown1: 0.0,
-            rail_unknown2: 0.0,
-            rail_unknown3: 0.0,
-            pet_customization_model_name1: "".to_string(),
-            pet_customization_model_name2: "".to_string(),
-            pet_customization_model_name3: "".to_string(),
-            override_terrain_model: false,
-            hover_glow: 0,
-            hover_description: if transport.show_hover_description {
-                transport.name_id.unwrap_or(0)
-            } else {
-                0
-            },
-            fly_over_effect: 0,
-            unknown65: 8,
-            unknown66: 0,
-            unknown67: 3442,
-            disable_move_to_interact: false,
-            unknown69: 0.0,
-            unknown70: 0.0,
-            unknown71: 0,
-            icon_id: Icon::None,
         }
     }
 }
