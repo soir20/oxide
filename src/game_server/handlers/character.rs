@@ -55,6 +55,7 @@ pub struct AmbientNpc {
     pub rot_y: f32,
     pub rot_z: f32,
     pub rot_w: f32,
+    pub visible: Option<bool>,
     pub bounce_area_id: Option<i32>,
 }
 
@@ -96,7 +97,7 @@ impl AmbientNpc {
                 name_offset_y: 0.0,
                 name_offset_z: 0.0,
                 terrain_object_id: 0,
-                invisible: false,
+                invisible: !self.visible.unwrap_or(true),
                 unknown20: 0.0,
                 unknown21: false,
                 interactable_size_pct: 100,

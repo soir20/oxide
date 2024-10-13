@@ -297,7 +297,23 @@
                 "show_hover_description": false
             }
         ],
-        "ambient_npcs": []
+        "ambient_npcs": [
+            {
+                "comment": "Sarlacc bouncer",
+                "model_id": 178,
+                "scale": 5.0,
+                "pos_x": 147.5,
+                "pos_y": -99.0,
+                "pos_z": 505.0,
+                "pos_w": 1.0,
+                "rot_x": 0.0,
+                "rot_y": 1.1,
+                "rot_z": 0.0,
+                "rot_w": 0.0,
+                "visible": false,
+                "bounce_area_id": 5003
+            }
+        ]
     },
     {
         "comment": "Coruscant",
