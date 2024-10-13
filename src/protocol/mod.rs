@@ -10,7 +10,7 @@ use crate::protocol::reliable_data_ops::{
     fragment_data, unbundle_reliable_data, DataPacket, FragmentState,
 };
 use crate::protocol::serialize::{serialize_packets, SerializeError};
-use crate::ServerOptions;
+use crate::{info, ServerOptions};
 
 mod deserialize;
 mod hash;
@@ -332,7 +332,7 @@ impl Channel {
                 match self.fragment_state.add(packet) {
                     Ok((possible_packet, remaining_bytes)) => {
                         if remaining_bytes > server_options.max_defragmented_packet_bytes {
-                            println!("Disconnecting client {} that sent a fragmented packet that is too large ({} bytes > {} bytes)", self.addr, remaining_bytes, server_options.max_defragmented_packet_bytes);
+                            info!("Disconnecting client {} that sent a fragmented packet that is too large ({} bytes > {} bytes)", self.addr, remaining_bytes, server_options.max_defragmented_packet_bytes);
                             let _ = self.disconnect(DisconnectReason::Application);
                             return Vec::new();
                         }
@@ -341,7 +341,7 @@ impl Channel {
                             packets_to_process.push(packet);
                         }
                     }
-                    Err(err) => println!("Unable to process packet: {:?}", err),
+                    Err(err) => info!("Unable to process packet: {:?}", err),
                 }
             } else {
                 break;
@@ -363,7 +363,7 @@ impl Channel {
                 if let Ok(mut unbundled_packets) = unbundle_reliable_data(&data) {
                     packets.append(&mut unbundled_packets);
                 } else {
-                    println!("Bad bundled packet");
+                    info!("Bad bundled packet");
                 }
             }
         }
@@ -448,7 +448,7 @@ impl Channel {
         self.send_queue.clear();
         self.disconnect_reason = Some(disconnect_reason);
 
-        println!(
+        info!(
             "Disconnecting client {} with reason {:?}",
             self.addr, disconnect_reason
         );
@@ -500,7 +500,7 @@ impl Channel {
             .saturating_add(self.reordered_packets.len())
             .saturating_add(new_packets);
         if new_total_packets > server_options.max_received_packets_queued {
-            println!("Disconnecting client {} that exceeded the maximum number of packets in the receive queue ({} > {})", self.addr, new_total_packets, server_options.max_received_packets_queued);
+            info!("Disconnecting client {} that exceeded the maximum number of packets in the receive queue ({} > {})", self.addr, new_total_packets, server_options.max_received_packets_queued);
             let _ = self.disconnect(DisconnectReason::ReliableOverflow);
             return 0;
         }
@@ -521,7 +521,7 @@ impl Channel {
     fn enqueue_packet_to_send(&mut self, packet: PendingPacket, server_options: &ServerOptions) {
         let new_total_packets = self.send_queue.len().saturating_add(1);
         if new_total_packets > server_options.max_unacknowledged_packets_queued {
-            println!("Disconnecting client {} that exceeded the maximum number of packets in the send queue ({} > {})", self.addr, new_total_packets, server_options.max_unacknowledged_packets_queued);
+            info!("Disconnecting client {} that exceeded the maximum number of packets in the send queue ({} > {})", self.addr, new_total_packets, server_options.max_unacknowledged_packets_queued);
             let _ = self.disconnect(DisconnectReason::ReliableOverflow);
         }
 
@@ -562,7 +562,7 @@ impl Channel {
     }
 
     fn process_packet(&mut self, packet: &Packet, server_options: &ServerOptions) {
-        println!("Received packet op code {:?}", packet.op_code());
+        info!("Received packet op code {:?}", packet.op_code());
         match packet {
             Packet::SessionRequest(protocol_version, session_id, buffer_size, protocol) => self
                 .process_session_request(
@@ -591,7 +591,7 @@ impl Channel {
         server_options: &ServerOptions,
     ) {
         if protocol != PROTOCOL || protocol_version != PROTOCOL_VERSION {
-            println!(
+            info!(
                 "Protocol mismatch on client {}: protocol={:x?}, version={}",
                 self.addr,
                 protocol.as_bytes(),
@@ -677,7 +677,7 @@ impl Channel {
         session_id: SessionId,
         disconnect_reason: DisconnectReason,
     ) -> Result<Vec<Vec<u8>>, SerializeError> {
-        println!(
+        info!(
             "Client {} disconnected with reason {:?}",
             self.addr, disconnect_reason
         );

@@ -1,6 +1,6 @@
 use crate::game_server::Broadcast;
 use crate::protocol::{Channel, DisconnectReason};
-use crate::ServerOptions;
+use crate::{info, ServerOptions};
 use crossbeam_channel::Sender;
 use parking_lot::{Mutex, MutexGuard};
 use std::collections::BTreeMap;
@@ -93,7 +93,7 @@ impl ChannelManager {
                     ReceiveResult::Success(packets_received)
                 }
                 Err(err) => {
-                    println!(
+                    info!(
                         "Deserialize error on channel {}: {:?}, data={:x?}",
                         addr, err, data
                     );
@@ -156,7 +156,7 @@ impl ChannelManager {
         let send_result = channel_handle.send_next(count);
 
         send_result.unwrap_or_else(|err| {
-            println!("Send error: {:?}", err);
+            info!("Send error: {:?}", err);
             Vec::new()
         })
     }

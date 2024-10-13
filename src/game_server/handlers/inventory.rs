@@ -11,20 +11,23 @@ use packet_serialize::DeserializePacket;
 use parking_lot::RwLockWriteGuard;
 use serde::Deserialize;
 
-use crate::game_server::{
-    packets::{
-        client_update::{EquipItem, UnequipItem, UpdateCredits},
-        inventory::{
-            EquipCustomization, EquipGuid, InventoryOpCode, PreviewCustomization, UnequipSlot,
+use crate::{
+    game_server::{
+        packets::{
+            client_update::{EquipItem, UnequipItem, UpdateCredits},
+            inventory::{
+                EquipCustomization, EquipGuid, InventoryOpCode, PreviewCustomization, UnequipSlot,
+            },
+            item::{Attachment, EquipmentSlot, ItemDefinition, WieldType},
+            player_data::EquippedItem,
+            player_update::{Customization, UpdateCustomizations, UpdateWieldType},
+            tunnel::TunneledPacket,
+            ui::ExecuteScriptWithParams,
+            GamePacket,
         },
-        item::{Attachment, EquipmentSlot, ItemDefinition, WieldType},
-        player_data::EquippedItem,
-        player_update::{Customization, UpdateCustomizations, UpdateWieldType},
-        tunnel::TunneledPacket,
-        ui::ExecuteScriptWithParams,
-        GamePacket,
+        Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
-    Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
+    info,
 };
 
 use super::{
@@ -385,7 +388,7 @@ pub fn process_inventory_packet(
             }
         },
         Err(_) => {
-            println!("Unknown inventory packet: {}, {:x?}", raw_op_code, cursor);
+            info!("Unknown inventory packet: {}, {:x?}", raw_op_code, cursor);
             Ok(Vec::new())
         }
     }
@@ -417,7 +420,7 @@ pub fn customizations_from_guids(
         if let Some(customization) = customizations.get(&customization_guid) {
             result.push(customization.clone());
         } else {
-            println!(
+            info!(
                 "Skipped adding unknown customization {}",
                 customization_guid
             )

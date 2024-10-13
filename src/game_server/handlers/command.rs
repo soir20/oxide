@@ -3,9 +3,12 @@ use std::io::Cursor;
 use byteorder::{LittleEndian, ReadBytesExt};
 use packet_serialize::DeserializePacket;
 
-use crate::game_server::{
-    packets::command::{CommandOpCode, SelectPlayer},
-    Broadcast, GameServer, ProcessPacketError,
+use crate::{
+    game_server::{
+        packets::command::{CommandOpCode, SelectPlayer},
+        Broadcast, GameServer, ProcessPacketError,
+    },
+    info,
 };
 
 use super::zone::interact_with_character;
@@ -22,12 +25,12 @@ pub fn process_command(
                 interact_with_character(req, game_server)
             }
             _ => {
-                println!("Unimplemented command: {:?}", op_code);
+                info!("Unimplemented command: {:?}", op_code);
                 Ok(Vec::new())
             }
         },
         Err(_) => {
-            println!("Unknown command: {}", raw_op_code);
+            info!("Unknown command: {}", raw_op_code);
             Ok(Vec::new())
         }
     }

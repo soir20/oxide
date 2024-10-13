@@ -19,7 +19,7 @@ use crate::{
         },
         Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
-    teleport_to_zone,
+    info, teleport_to_zone,
 };
 
 use super::{
@@ -467,21 +467,21 @@ pub fn process_housing_packet(
             _ => {
                 let mut buffer = Vec::new();
                 cursor.read_to_end(&mut buffer)?;
-                println!("Unimplemented housing packet: {:?}, {:x?}", op_code, buffer);
+                info!("Unimplemented housing packet: {:?}, {:x?}", op_code, buffer);
                 Ok(Vec::new())
             }
         },
         Err(_) => {
             let mut buffer = Vec::new();
             cursor.read_to_end(&mut buffer)?;
-            println!("Unknown housing packet: {}, {:x?}", raw_op_code, buffer);
+            info!("Unknown housing packet: {}, {:x?}", raw_op_code, buffer);
             Ok(Vec::new())
         }
     }
 }
 
 pub fn lookup_house(sender: u32, house_guid: u64) -> Result<House, ProcessPacketError> {
-    println!("Found test house {}", house_guid);
+    info!("Found test house {}", house_guid);
     Ok(House {
         owner: sender,
         owner_name: "BLASTER NICESHOt".to_string(),

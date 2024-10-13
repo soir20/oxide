@@ -1,8 +1,11 @@
+use chrono::Utc;
 use crossbeam_channel::{bounded, tick, Receiver, Sender};
+use defer_lite::defer;
 use game_server::Broadcast;
 use parking_lot::{Mutex, MutexGuard, RwLock, RwLockReadGuard};
 use protocol::{BufferSize, DisconnectReason, MAX_BUFFER_SIZE};
 use serde::Deserialize;
+use std::cell::Cell;
 use std::fs::File;
 use std::io::Error;
 use std::net::{IpAddr, SocketAddr, UdpSocket};
@@ -21,6 +24,35 @@ mod game_server;
 mod http;
 mod protocol;
 
+thread_local! {
+    pub static PROCESSED_CLIENT_ADDR: Cell<Option<SocketAddr>> = const { Cell::new(None) };
+    pub static PROCESSED_CLIENT_GUID: Cell<Option<u32>> = const { Cell::new(None) };
+}
+
+pub fn log_info(message: &str) {
+    let client = if let Some(addr) = PROCESSED_CLIENT_ADDR.get() {
+        format!(" [client={}]", addr)
+    } else {
+        "".to_string()
+    };
+    let guid = if let Some(guid) = PROCESSED_CLIENT_GUID.get() {
+        format!(" [guid={}]", guid)
+    } else {
+        "".to_string()
+    };
+    println!("{}{}{}\t{}", Utc::now().to_rfc3339(), client, guid, message);
+}
+
+#[macro_export]
+macro_rules! info {
+    () => {
+        $crate::log_info("");
+    };
+    ($($arg:tt)*) => {{
+        $crate::log_info(&format!($($arg)*))
+    }};
+}
+
 #[tokio::main]
 async fn main() {
     let config_dir = Path::new("config");
@@ -35,7 +67,7 @@ async fn main() {
         Path::new("config/custom_assets"),
         PathBuf::from(".asset_cache"),
     ));
-    println!("Hello, world!");
+    info!("Hello, world!");
     let socket = UdpSocket::bind(SocketAddr::new(
         server_options.bind_ip,
         server_options.udp_port,
@@ -193,7 +225,7 @@ fn receive_once(
             let receive_result =
                 read_handle.receive(client_enqueue.clone(), &src, recv_data, server_options);
             if receive_result == ReceiveResult::CreateChannelFirst {
-                println!("Creating channel for {}", src);
+                info!("Creating channel for {}", src);
                 drop(read_handle);
 
                 let new_channel = Channel::new(
@@ -210,7 +242,7 @@ fn receive_once(
                 match write_handle.insert(&src, new_channel) {
                     Ok(possible_previous_channel) => {
                         if let Some(previous_channel) = possible_previous_channel {
-                            println!("Client {} reconnected, dropping old channel", src);
+                            info!("Client {} reconnected, dropping old channel", src);
                             if let Some(guid) = write_handle.guid(&src) {
                                 let log_out_broadcasts = log_out_and_disconnect(
                                     Some(DisconnectReason::NewConnectionAttempt),
@@ -230,7 +262,7 @@ fn receive_once(
                         }
                     }
                     Err(err) => {
-                        println!(
+                        info!(
                             "Could not create channel because maximum of {} channels was reached",
                             err.0
                         );
@@ -291,13 +323,18 @@ fn process_once(
     client_dequeue: &Receiver<SocketAddr>,
     client_enqueue: &Sender<SocketAddr>,
 ) {
+    defer! { PROCESSED_CLIENT_ADDR.set(None) }
+    defer! { PROCESSED_CLIENT_GUID.set(None) }
+
     // Don't lock the channel manager until we have packets to process
     // to avoid deadlock with channel creation
     let src = client_dequeue
         .recv()
         .expect("Tried to dequeue client after queue channel disconnected");
+    PROCESSED_CLIENT_ADDR.set(Some(src));
 
     let mut channel_manager_read_handle = channel_manager.read();
+    PROCESSED_CLIENT_GUID.set(channel_manager_read_handle.guid(&src));
     let mut channel_handle =
         if let Some(channel_handle) = lock_channel(&channel_manager_read_handle, &src) {
             channel_handle
@@ -321,7 +358,7 @@ fn process_once(
             match game_server.process_packet(guid, packet) {
                 Ok(mut new_broadcasts) => broadcasts.append(&mut new_broadcasts),
                 Err(err) => {
-                    println!("Unable to process packet for client {}: {}", src, err);
+                    info!("Unable to process packet for client {}: {}", src, err);
                     let _ = channel_handle.disconnect(DisconnectReason::Application);
                 }
             }
@@ -329,7 +366,7 @@ fn process_once(
             match game_server.authenticate(packet) {
                 Ok((guid, client_version)) => {
                     if !server_options.allows_client_version(&client_version) {
-                        println!(
+                        info!(
                             "Disconnecting client {} that attempted to authenticate with disallowed version {}",
                             channel_handle.addr, client_version
                         );
@@ -350,7 +387,7 @@ fn process_once(
                     if let Some(existing_channel) =
                         channel_manager_write_handle.authenticate(&src, guid)
                     {
-                        println!("Client {} logged in as an already logged-in player {}, disconnecting existing client", src, guid);
+                        info!("Client {} logged in as an already logged-in player {}, disconnecting existing client", src, guid);
                         broadcasts.append(&mut log_out_and_disconnect(
                             Some(DisconnectReason::NewConnectionAttempt),
                             guid,
@@ -365,7 +402,7 @@ fn process_once(
                     match game_server.log_in(guid) {
                         Ok(mut log_in_broadcasts) => broadcasts.append(&mut log_in_broadcasts),
                         Err(err) => {
-                            println!(
+                            info!(
                                 "Unable to log in player {} on client {}: {}",
                                 guid, src, err
                             );
@@ -386,7 +423,7 @@ fn process_once(
                     };
                 }
                 Err(err) => {
-                    println!("Unable to process login packet for client {}: {}", src, err);
+                    info!("Unable to process login packet for client {}: {}", src, err);
                     let _ = channel_handle.disconnect(DisconnectReason::Application);
                 }
             }
@@ -481,7 +518,7 @@ fn lock_channel<'a>(
 
 fn send_packet(buffer: &[u8], addr: &SocketAddr, socket: &Arc<UdpSocket>) {
     if let Err(err) = socket.send_to(buffer, addr) {
-        println!("Unable to send packet to client {}: {}", addr, err);
+        info!("Unable to send packet to client {}: {}", addr, err);
     }
 }
 
@@ -501,7 +538,7 @@ fn disconnect(
     // Allow processing some packets first so we can add the session ID to the disconnect packet
     packets_to_process_first.iter().for_each(|packet| {
         if let Err(err) = channel_handle.receive(packet, server_options) {
-            println!(
+            info!(
                 "Couldn't deserialize packet while processing disconnect for client {}: {:?}",
                 channel_handle.addr, err
             );
@@ -514,7 +551,7 @@ fn disconnect(
         .unwrap_or(DisconnectReason::Unknown);
     match channel_handle.disconnect(disconnect_reason) {
         Ok(disconnect_packets) => send_packets(&disconnect_packets, &channel_handle.addr, socket),
-        Err(err) => println!(
+        Err(err) => info!(
             "Unable to serialize disconnect packet for client {}: {:?}",
             channel_handle.addr, err
         ),
@@ -540,7 +577,7 @@ fn log_out_and_disconnect(
     match game_server.log_out(guid) {
         Ok(log_out_broadcasts) => log_out_broadcasts,
         Err(err) => {
-            println!("Unable to log out existing player {}: {}", guid, err);
+            info!("Unable to log out existing player {}: {}", guid, err);
             Vec::new()
         }
     }

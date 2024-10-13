@@ -42,7 +42,7 @@ use packets::zone::ZoneTeleportRequest;
 use packets::{GamePacket, OpCode};
 use rand::Rng;
 
-use crate::teleport_to_zone;
+use crate::{info, teleport_to_zone};
 use packet_serialize::{DeserializePacket, DeserializePacketError, SerializePacketError};
 
 mod handlers;
@@ -562,9 +562,9 @@ impl GameServer {
                 OpCode::Logout => {
                     // Allow the cleanup thread to log the player out on disconnect
                 }
-                _ => println!("Unimplemented: {:?}, {:x?}", op_code, data),
+                _ => info!("Unimplemented: {:?}, {:x?}", op_code, data),
             },
-            Err(_) => println!("Unknown op code: {}, {:x?}", raw_op_code, data),
+            Err(_) => info!("Unknown op code: {}, {:x?}", raw_op_code, data),
         }
 
         Ok(broadcasts)
