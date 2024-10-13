@@ -4,27 +4,44 @@ use packet_serialize::SerializePacketError;
 use serde::Deserialize;
 use strum::EnumIter;
 
-use crate::game_server::{
-    packets::{
-        item::{BaseAttachmentGroup, EquipmentSlot, WieldType},
-        player_data::EquippedItem,
-        player_update::{
-            AddNotifications, AddNpc, CustomizationSlot, Icon, NotificationData, NpcRelevance,
-            RemoveStandard, SingleNotification, SingleNpcRelevance,
+use crate::{
+    game_server::{
+        packets::{
+            item::{BaseAttachmentGroup, EquipmentSlot, WieldType},
+            player_data::EquippedItem,
+            player_update::{
+                AddNotifications, AddNpc, CustomizationSlot, Icon, NotificationData, NpcRelevance,
+                RemoveStandard, SingleNotification, SingleNpcRelevance,
+            },
+            tunnel::TunneledPacket,
+            ui::ExecuteScriptWithParams,
+            GamePacket, Pos,
         },
-        tunnel::TunneledPacket,
-        GamePacket, Pos,
+        Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
-    GameServer, ProcessPacketError, ProcessPacketErrorType,
+    teleport_to_zone,
 };
 
 use super::{
     guid::IndexedGuid,
     housing::fixture_packets,
     inventory::wield_type_from_slot,
+    lock_enforcer::{ZoneLockEnforcer, ZoneLockRequest},
     mount::{spawn_mount_npc, MountConfig},
     unique_guid::{mount_guid, npc_guid, player_guid, shorten_player_guid},
+    zone::teleport_within_zone,
 };
+
+pub type WriteLockingBroadcastSupplier = Result<
+    Box<dyn FnOnce(&GameServer) -> Result<Vec<Broadcast>, ProcessPacketError>>,
+    ProcessPacketError,
+>;
+
+pub fn coerce_to_broadcast_supplier(
+    f: impl FnOnce(&GameServer) -> Result<Vec<Broadcast>, ProcessPacketError> + 'static,
+) -> WriteLockingBroadcastSupplier {
+    Ok(Box::new(f))
+}
 
 #[derive(Clone, Deserialize)]
 pub struct Door {
@@ -43,6 +60,79 @@ pub struct Door {
     pub destination_rot_w: f32,
     pub destination_zone_template: Option<u8>,
     pub destination_zone: Option<u64>,
+}
+
+impl Door {
+    pub fn interact(
+        &self,
+        requester: u32,
+        source_zone_guid: u64,
+        zones_lock_enforcer: &ZoneLockEnforcer,
+    ) -> WriteLockingBroadcastSupplier {
+        let destination_pos = Pos {
+            x: self.destination_pos_x,
+            y: self.destination_pos_y,
+            z: self.destination_pos_z,
+            w: self.destination_pos_w,
+        };
+        let destination_rot = Pos {
+            x: self.destination_rot_x,
+            y: self.destination_rot_y,
+            z: self.destination_rot_z,
+            w: self.destination_rot_w,
+        };
+
+        let destination_zone_guid = if let &Some(destination_zone_guid) = &self.destination_zone {
+            destination_zone_guid
+        } else if let &Some(destination_zone_template) = &self.destination_zone_template {
+            zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
+                read_guids: Vec::new(),
+                write_guids: Vec::new(),
+                zone_consumer: |zones_table_read_handle, _, _| {
+                    GameServer::any_instance(zones_table_read_handle, destination_zone_template)
+                },
+            })?
+        } else {
+            source_zone_guid
+        };
+
+        coerce_to_broadcast_supplier(move |game_server| {
+            game_server.lock_enforcer().write_characters(
+                |characters_table_write_handle, zones_lock_enforcer| {
+                    if source_zone_guid != destination_zone_guid {
+                        zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
+                            read_guids: vec![destination_zone_guid],
+                            write_guids: Vec::new(),
+                            zone_consumer: |_, zones_read, _| {
+                                if let Some(destination_read_handle) =
+                                    zones_read.get(&destination_zone_guid)
+                                {
+                                    teleport_to_zone!(
+                                        characters_table_write_handle,
+                                        requester,
+                                        destination_read_handle,
+                                        Some(destination_pos),
+                                        Some(destination_rot),
+                                        game_server.mounts()
+                                    )
+                                } else {
+                                    Ok(Vec::new())
+                                }
+                            },
+                        })
+                    } else {
+                        teleport_within_zone(
+                            requester,
+                            destination_pos,
+                            destination_rot,
+                            characters_table_write_handle,
+                            &game_server.mounts,
+                        )
+                    }
+                },
+            )
+        })
+    }
 }
 
 #[derive(Clone, Deserialize)]
@@ -67,6 +157,23 @@ pub struct Transport {
     pub show_icon: bool,
     pub large_icon: bool,
     pub show_hover_description: bool,
+}
+
+impl Transport {
+    pub fn interact(&self, requester: u32) -> WriteLockingBroadcastSupplier {
+        coerce_to_broadcast_supplier(move |_| {
+            Ok(vec![Broadcast::Single(
+                requester,
+                vec![GamePacket::serialize(&TunneledPacket {
+                    unknown1: false,
+                    inner: ExecuteScriptWithParams {
+                        script_name: "UIGlobal.ShowGalaxyMap".to_string(),
+                        params: vec![],
+                    },
+                })?],
+            )])
+        })
+    }
 }
 
 #[derive(Clone)]
@@ -406,6 +513,21 @@ impl Character {
         let (old_wield_type, new_wield_type) = self.wield_type;
         self.wield_type = (new_wield_type, old_wield_type);
         self.holstered = !self.holstered;
+    }
+
+    pub fn interact(
+        &self,
+        requester: u32,
+        source_zone_guid: u64,
+        zones_lock_enforcer: &ZoneLockEnforcer,
+    ) -> WriteLockingBroadcastSupplier {
+        match &self.character_type {
+            CharacterType::Door(door) => {
+                door.interact(requester, source_zone_guid, zones_lock_enforcer)
+            }
+            CharacterType::Transport(transport) => transport.interact(requester),
+            _ => coerce_to_broadcast_supplier(|_| Ok(Vec::new())),
+        }
     }
 
     fn door_packet(character: &Character, door: &Door) -> AddNpc {

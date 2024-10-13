@@ -29,14 +29,13 @@ use crate::{
 
 use super::{
     character::{
-        Character, CharacterCategory, CharacterIndex, CharacterType, Chunk, Door, NpcTemplate,
-        PreviousFixture, Transport,
+        coerce_to_broadcast_supplier, Character, CharacterCategory, CharacterIndex, CharacterType,
+        Chunk, Door, NpcTemplate, PreviousFixture, Transport, WriteLockingBroadcastSupplier,
     },
     guid::{Guid, GuidTable, GuidTableIndexer, GuidTableWriteHandle, IndexedGuid},
     housing::prepare_init_house_packets,
     lock_enforcer::{
         CharacterLockRequest, CharacterReadGuard, CharacterTableWriteHandle, CharacterWriteGuard,
-        ZoneLockRequest,
     },
     mount::MountConfig,
     unique_guid::{
@@ -814,142 +813,61 @@ macro_rules! teleport_to_zone {
     }};
 }
 
-type PacketSupplier = Result<
-    Box<dyn FnOnce(&GameServer) -> Result<Vec<Broadcast>, ProcessPacketError>>,
-    ProcessPacketError,
->;
-fn coerce_to_packet_supplier(
-    f: impl FnOnce(&GameServer) -> Result<Vec<Broadcast>, ProcessPacketError> + 'static,
-) -> PacketSupplier {
-    Ok(Box::new(f))
-}
 pub fn interact_with_character(
     request: SelectPlayer,
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let requester = shorten_player_guid(request.requester)?;
-    let packet_supplier: PacketSupplier = game_server.lock_enforcer().read_characters(|_| {
-        CharacterLockRequest {
-            read_guids: vec![request.requester, request.target],
-            write_guids: Vec::new(),
-            character_consumer: move |_, characters_read, _, zones_lock_enforcer| {
-                let source_zone_guid;
-                let requester_x;
-                let requester_y;
-                let requester_z;
-                if let Some(requester_read_handle) = characters_read.get(&request.requester) {
-                    source_zone_guid = requester_read_handle.instance_guid;
-                    requester_x = requester_read_handle.pos.x;
-                    requester_y = requester_read_handle.pos.y;
-                    requester_z = requester_read_handle.pos.z;
-                } else {
-                    return coerce_to_packet_supplier(|_| Ok(Vec::new()));
-                }
-
-                if let Some(target_read_handle) = characters_read.get(&request.target) {
-                    // Ensure the character is close enough to interact
-                    let distance = distance3(
-                        requester_x,
-                        requester_y,
-                        requester_z,
-                        target_read_handle.pos.x,
-                        target_read_handle.pos.y,
-                        target_read_handle.pos.z,
-                    );
-                    if distance > target_read_handle.interact_radius {
-                        return coerce_to_packet_supplier(|_| Ok(Vec::new()));
+    let broadcast_supplier: WriteLockingBroadcastSupplier =
+        game_server.lock_enforcer().read_characters(|_| {
+            CharacterLockRequest {
+                read_guids: vec![request.requester, request.target],
+                write_guids: Vec::new(),
+                character_consumer: move |_, characters_read, _, zones_lock_enforcer| {
+                    let source_zone_guid;
+                    let requester_x;
+                    let requester_y;
+                    let requester_z;
+                    if let Some(requester_read_handle) = characters_read.get(&request.requester) {
+                        source_zone_guid = requester_read_handle.instance_guid;
+                        requester_x = requester_read_handle.pos.x;
+                        requester_y = requester_read_handle.pos.y;
+                        requester_z = requester_read_handle.pos.z;
+                    } else {
+                        return coerce_to_broadcast_supplier(|_| Ok(Vec::new()));
                     }
 
-                    // Process interaction based on character's type
-                    match &target_read_handle.character_type {
-                        CharacterType::Door(door) => {
-                            let destination_pos = Pos {
-                                x: door.destination_pos_x,
-                                y: door.destination_pos_y,
-                                z: door.destination_pos_z,
-                                w: door.destination_pos_w,
-                            };
-                            let destination_rot = Pos {
-                                x: door.destination_rot_x,
-                                y: door.destination_rot_y,
-                                z: door.destination_rot_z,
-                                w: door.destination_rot_w,
-                            };
-
-                            let destination_zone_guid =
-                                if let &Some(destination_zone_guid) = &door.destination_zone {
-                                    destination_zone_guid
-                                } else if let &Some(destination_zone_template) =
-                                    &door.destination_zone_template
-                                {
-                                    zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
-                                        read_guids: Vec::new(),
-                                        write_guids: Vec::new(),
-                                        zone_consumer: |zones_table_read_handle, _, _| {
-                                            GameServer::any_instance(
-                                                zones_table_read_handle,
-                                                destination_zone_template,
-                                            )
-                                        },
-                                    })?
-                                } else {
-                                    source_zone_guid
-                                };
-
-                            coerce_to_packet_supplier(move |game_server| {
-                                game_server.lock_enforcer().write_characters(
-                                    |characters_table_write_handle, zones_lock_enforcer| {
-                                        if source_zone_guid != destination_zone_guid {
-                                            zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
-                                                read_guids: vec![destination_zone_guid],
-                                                write_guids: Vec::new(),
-                                                zone_consumer: |_, zones_read, _| {
-                                                    if let Some(destination_read_handle) =
-                                                        zones_read.get(&destination_zone_guid)
-                                                    {
-                                                        teleport_to_zone!(
-                                                            characters_table_write_handle,
-                                                            requester,
-                                                            destination_read_handle,
-                                                            Some(destination_pos),
-                                                            Some(destination_rot),
-                                                            game_server.mounts()
-                                                        )
-                                                    } else {
-                                                        Ok(Vec::new())
-                                                    }
-                                                },
-                                            })
-                                        } else {
-                                            teleport_within_zone(
-                                                requester,
-                                                destination_pos,
-                                                destination_rot,
-                                                characters_table_write_handle,
-                                                &game_server.mounts,
-                                            )
-                                        }
-                                    },
-                                )
-                            })
+                    if let Some(target_read_handle) = characters_read.get(&request.target) {
+                        // Ensure the character is close enough to interact
+                        let distance = distance3(
+                            requester_x,
+                            requester_y,
+                            requester_z,
+                            target_read_handle.pos.x,
+                            target_read_handle.pos.y,
+                            target_read_handle.pos.z,
+                        );
+                        if distance > target_read_handle.interact_radius {
+                            return coerce_to_broadcast_supplier(|_| Ok(Vec::new()));
                         }
-                        CharacterType::Transport(_) => coerce_to_packet_supplier(move |_| {
-                            Ok(vec![Broadcast::Single(requester, show_galaxy_map()?)])
-                        }),
-                        _ => coerce_to_packet_supplier(|_| Ok(Vec::new())),
-                    }
-                } else {
-                    info!(
-                        "Received request to interact with unknown NPC {} from {}",
-                        request.target, request.requester
-                    );
-                    coerce_to_packet_supplier(|_| Ok(Vec::new()))
-                }
-            },
-        }
-    });
 
-    packet_supplier?(game_server)
+                        target_read_handle.interact(
+                            requester,
+                            source_zone_guid,
+                            zones_lock_enforcer,
+                        )
+                    } else {
+                        info!(
+                            "Received request to interact with unknown NPC {} from {}",
+                            request.target, request.requester
+                        );
+                        coerce_to_broadcast_supplier(|_| Ok(Vec::new()))
+                    }
+                },
+            }
+        });
+
+    broadcast_supplier?(game_server)
 }
 
 pub fn teleport_within_zone(
@@ -1008,16 +926,6 @@ pub fn teleport_within_zone(
     })?);
 
     Ok(vec![Broadcast::Single(sender, packets)])
-}
-
-fn show_galaxy_map() -> Result<Vec<Vec<u8>>, ProcessPacketError> {
-    Ok(vec![GamePacket::serialize(&TunneledPacket {
-        unknown1: false,
-        inner: ExecuteScriptWithParams {
-            script_name: "UIGlobal.ShowGalaxyMap".to_string(),
-            params: vec![],
-        },
-    })?])
 }
 
 fn distance3(x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32) -> f32 {
