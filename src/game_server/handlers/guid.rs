@@ -1,5 +1,8 @@
 use parking_lot::{RwLock, RwLockReadGuard, RwLockWriteGuard};
-use std::collections::{BTreeMap, BTreeSet};
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    ops::RangeBounds,
+};
 
 pub struct Lock<T> {
     inner: RwLock<T>,
@@ -59,17 +62,12 @@ pub trait GuidTableIndexer<'a, K, V: 'a, I> {
     fn keys(&'a self) -> impl Iterator<Item = K>;
 
     fn keys_by_index(&'a self, index: I) -> impl Iterator<Item = K>;
+
+    fn range(&'a self, range: impl RangeBounds<I>) -> impl Iterator<Item = K>;
 }
 
-#[allow(dead_code)]
 pub trait GuidTableHandle<'a, K, V: 'a, I>: GuidTableIndexer<'a, K, V, I> {
     fn get(&self, guid: K) -> Option<&Lock<V>>;
-
-    fn iter(&'a self) -> impl Iterator<Item = (K, &'a Lock<V>)>;
-
-    fn values(&'a self) -> impl Iterator<Item = &'a Lock<V>>;
-
-    fn values_by_index(&'a self, index: I) -> impl Iterator<Item = &'a Lock<V>>;
 }
 
 pub struct GuidTableReadHandle<'a, K, V, I = ()> {
@@ -95,6 +93,13 @@ impl<'a, K: Copy + Ord, V, I: Copy + Ord> GuidTableIndexer<'a, K, V, I>
             .unwrap_or_default()
             .cloned()
     }
+
+    fn range(&'a self, range: impl RangeBounds<I>) -> impl Iterator<Item = K> {
+        self.guard
+            .index
+            .range(range)
+            .flat_map(|(_, keys)| keys.iter().copied())
+    }
 }
 
 impl<'a, K: Copy + Ord, V, I: Copy + Ord> GuidTableHandle<'a, K, V, I>
@@ -102,33 +107,6 @@ impl<'a, K: Copy + Ord, V, I: Copy + Ord> GuidTableHandle<'a, K, V, I>
 {
     fn get(&self, guid: K) -> Option<&Lock<V>> {
         self.guard.data.get(&guid).map(|(item, _)| item)
-    }
-
-    fn iter(&'a self) -> impl Iterator<Item = (K, &'a Lock<V>)> {
-        self.guard
-            .data
-            .iter()
-            .map(move |(guid, (item, _))| (*guid, item))
-    }
-
-    fn values(&'a self) -> impl Iterator<Item = &'a Lock<V>> {
-        self.guard.data.values().map(|(item, _)| item)
-    }
-
-    fn values_by_index(&'a self, index: I) -> impl Iterator<Item = &'a Lock<V>> {
-        self.guard
-            .index
-            .get(&index)
-            .map(|index_list| index_list.iter())
-            .unwrap_or_default()
-            .map(|key| {
-                &self
-                    .guard
-                    .data
-                    .get(key)
-                    .expect("GUID table has value for key in index")
-                    .0
-            })
     }
 }
 
@@ -197,6 +175,13 @@ impl<'a, K: Copy + Ord, V, I: Copy + Ord> GuidTableIndexer<'a, K, V, I>
             .unwrap_or_default()
             .cloned()
     }
+
+    fn range(&'a self, range: impl RangeBounds<I>) -> impl Iterator<Item = K> {
+        self.guard
+            .index
+            .range(range)
+            .flat_map(|(_, keys)| keys.iter().copied())
+    }
 }
 
 impl<'a, K: Copy + Ord, I: Copy + Ord, V: IndexedGuid<K, I>> GuidTableHandle<'a, K, V, I>
@@ -204,33 +189,6 @@ impl<'a, K: Copy + Ord, I: Copy + Ord, V: IndexedGuid<K, I>> GuidTableHandle<'a,
 {
     fn get(&self, guid: K) -> Option<&Lock<V>> {
         self.guard.data.get(&guid).map(|(item, _)| item)
-    }
-
-    fn iter(&'a self) -> impl Iterator<Item = (K, &'a Lock<V>)> {
-        self.guard
-            .data
-            .iter()
-            .map(|(guid, (item, _))| (*guid, item))
-    }
-
-    fn values(&'a self) -> impl Iterator<Item = &'a Lock<V>> {
-        self.guard.data.values().map(|(item, _)| item)
-    }
-
-    fn values_by_index(&'a self, index: I) -> impl Iterator<Item = &'a Lock<V>> {
-        self.guard
-            .index
-            .get(&index)
-            .map(|index_list| index_list.iter())
-            .unwrap_or_default()
-            .map(|key| {
-                &self
-                    .guard
-                    .data
-                    .get(key)
-                    .expect("GUID table has value for key in index")
-                    .0
-            })
     }
 }
 
