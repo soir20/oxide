@@ -63,7 +63,7 @@ pub trait GuidTableIndexer<'a, K, V: 'a, I> {
 
     fn keys_by_index(&'a self, index: I) -> impl Iterator<Item = K>;
 
-    fn range(&'a self, range: impl RangeBounds<I>) -> impl Iterator<Item = K>;
+    fn keys_by_range(&'a self, range: impl RangeBounds<I>) -> impl Iterator<Item = K>;
 }
 
 pub trait GuidTableHandle<'a, K, V: 'a, I>: GuidTableIndexer<'a, K, V, I> {
@@ -94,7 +94,7 @@ impl<'a, K: Copy + Ord, V, I: Copy + Ord> GuidTableIndexer<'a, K, V, I>
             .cloned()
     }
 
-    fn range(&'a self, range: impl RangeBounds<I>) -> impl Iterator<Item = K> {
+    fn keys_by_range(&'a self, range: impl RangeBounds<I>) -> impl Iterator<Item = K> {
         self.guard
             .index
             .range(range)
@@ -176,7 +176,7 @@ impl<'a, K: Copy + Ord, V, I: Copy + Ord> GuidTableIndexer<'a, K, V, I>
             .cloned()
     }
 
-    fn range(&'a self, range: impl RangeBounds<I>) -> impl Iterator<Item = K> {
+    fn keys_by_range(&'a self, range: impl RangeBounds<I>) -> impl Iterator<Item = K> {
         self.guard
             .index
             .range(range)

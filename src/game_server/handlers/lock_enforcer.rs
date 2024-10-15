@@ -32,8 +32,8 @@ impl<'a, K: Copy + Ord, V, I: Copy + Ord> GuidTableIndexer<'a, K, V, I>
         self.handle.keys_by_index(index)
     }
 
-    fn range(&'a self, range: impl RangeBounds<I>) -> impl Iterator<Item = K> {
-        self.handle.range(range)
+    fn keys_by_range(&'a self, range: impl RangeBounds<I>) -> impl Iterator<Item = K> {
+        self.handle.keys_by_range(range)
     }
 }
 
