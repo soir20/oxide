@@ -198,9 +198,9 @@ macro_rules! diff_character_handles {
         for category in CharacterCategory::iter() {
             for chunk in chunks_to_remove.iter() {
                 for guid in $characters_table_write_handle.keys_by_index((
+                    category,
                     $instance_guid,
                     **chunk,
-                    category,
                 )) {
                     guids.insert(guid, false);
                 }
@@ -210,9 +210,9 @@ macro_rules! diff_character_handles {
         for category in CharacterCategory::iter() {
             for chunk in chunks_to_add.iter() {
                 for guid in $characters_table_write_handle.keys_by_index((
+                    category,
                     $instance_guid,
                     **chunk,
-                    category,
                 )) {
                     guids.insert(guid, true);
                 }
@@ -296,9 +296,9 @@ impl Zone {
 
         for chunk in Zone::nearby_chunks(chunk) {
             for guid in characters_table_handle.keys_by_index((
+                CharacterCategory::Player,
                 instance_guid,
                 chunk,
-                CharacterCategory::Player,
             )) {
                 if guid != player_guid(sender) {
                     guids.push(shorten_player_guid(guid)?);
@@ -337,7 +337,7 @@ impl Zone {
         for category in CharacterCategory::iter() {
             for chunk in chunks_to_remove.iter() {
                 for guid in
-                    characters_table_handle.keys_by_index((instance_guid, **chunk, category))
+                    characters_table_handle.keys_by_index((category, instance_guid, **chunk))
                 {
                     guids.insert(guid, false);
                 }
@@ -347,7 +347,7 @@ impl Zone {
         for category in CharacterCategory::iter() {
             for chunk in chunks_to_add.iter() {
                 for guid in
-                    characters_table_handle.keys_by_index((instance_guid, **chunk, category))
+                    characters_table_handle.keys_by_index((category, instance_guid, **chunk))
                 {
                     guids.insert(guid, true);
                 }
@@ -456,13 +456,13 @@ impl Zone {
             .read_characters(|characters_table_read_handle| {
                 let (auto_interact_npcs, same_chunk) = characters_table_read_handle
                     .index(requester)
-                    .map(|(instance_guid, old_chunk, _)| {
+                    .map(|(_, instance_guid, old_chunk)| {
                         (
                             characters_table_read_handle
                                 .keys_by_index((
+                                    CharacterCategory::NpcAutoInteractEnabled,
                                     instance_guid,
                                     old_chunk,
-                                    CharacterCategory::NpcAutoInteractEnabled,
                                 ))
                                 .collect(),
                             old_chunk == Character::chunk(pos_update.pos_x, pos_update.pos_z),
@@ -495,7 +495,7 @@ impl Zone {
             game_server
                 .lock_enforcer()
                 .write_characters(|characters_table_write_handle, _| {
-                    if let Some((character, (instance_guid, old_chunk, category))) =
+                    if let Some((character, (category, instance_guid, old_chunk))) =
                         characters_table_write_handle.remove(requester)
                     {
                         let mut characters_write: BTreeMap<
@@ -536,7 +536,7 @@ impl Zone {
                         )?;
                         characters_table_write_handle.insert_lock(
                             requester,
-                            (instance_guid, new_chunk, category),
+                            (category, instance_guid, new_chunk),
                             character,
                         );
 
@@ -735,7 +735,7 @@ pub fn enter_zone(
     let destination_rot = destination_rot.unwrap_or(destination_read_handle.default_spawn_rot);
 
     let character = characters_table_write_handle.remove(player_guid(player));
-    if let Some((character, (_, _, character_category))) = character {
+    if let Some((character, (character_category, _, _))) = character {
         let mut character_write_handle = character.write();
         character_write_handle.instance_guid = destination_read_handle.guid;
         character_write_handle.pos = destination_pos;
@@ -744,12 +744,12 @@ pub fn enter_zone(
         characters_table_write_handle.insert_lock(
             player_guid(player),
             (
+                character_category,
                 destination_read_handle.guid,
                 Character::chunk(
                     destination_read_handle.default_spawn_pos.x,
                     destination_read_handle.default_spawn_pos.z,
                 ),
-                character_category,
             ),
             character,
         );
@@ -906,13 +906,13 @@ pub fn teleport_within_zone(
     characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
     mount_configs: &BTreeMap<u32, MountConfig>,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-    let mut packets = if let Some((character, (instance_guid, old_chunk, _))) =
+    let mut packets = if let Some((character, (_, instance_guid, old_chunk))) =
         characters_table_write_handle.remove(player_guid(sender))
     {
         let mut character_write_handle = character.write();
         character_write_handle.pos = destination_pos;
         character_write_handle.rot = destination_rot;
-        let (_, new_chunk, _) = character_write_handle.index();
+        let (_, _, new_chunk) = character_write_handle.index();
 
         let (diff_character_guids, diff_character_handles) = diff_character_handles!(
             instance_guid,

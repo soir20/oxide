@@ -681,7 +681,7 @@ impl NpcTemplate {
 }
 
 pub type Chunk = (i32, i32);
-pub type CharacterIndex = (u64, Chunk, CharacterCategory);
+pub type CharacterIndex = (CharacterCategory, u64, Chunk);
 
 #[derive(Clone)]
 pub struct Character {
@@ -706,8 +706,6 @@ impl IndexedGuid<u64, CharacterIndex> for Character {
 
     fn index(&self) -> CharacterIndex {
         (
-            self.instance_guid,
-            Character::chunk(self.pos.x, self.pos.z),
             match self.character_type {
                 CharacterType::Player(_) => CharacterCategory::Player,
                 _ => match self.auto_interact_radius > 0.0 {
@@ -715,6 +713,8 @@ impl IndexedGuid<u64, CharacterIndex> for Character {
                     false => CharacterCategory::NpcAutoInteractDisabled,
                 },
             },
+            self.instance_guid,
+            Character::chunk(self.pos.x, self.pos.z),
         )
     }
 }

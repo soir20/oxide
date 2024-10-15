@@ -231,7 +231,7 @@ impl GameServer {
 
                     let mut character_broadcasts = self.lock_enforcer().read_characters(|characters_table_read_handle| {
                         let possible_index = characters_table_read_handle.index(player_guid(sender));
-                        let character_guids = possible_index.map(|(instance_guid, chunk, _)| Zone::diff_character_guids(
+                        let character_guids = possible_index.map(|(_, instance_guid, chunk)| Zone::diff_character_guids(
                             instance_guid,
                             Character::MIN_CHUNK,
                             chunk,
@@ -246,7 +246,7 @@ impl GameServer {
                             read_guids: read_character_guids,
                             write_guids: Vec::new(),
                             character_consumer: move |_, characters_read, _, zones_lock_enforcer| {
-                                if let Some((instance_guid, _, _)) = possible_index {
+                                if let Some((_, instance_guid, _)) = possible_index {
                                     zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
                                         read_guids: vec![instance_guid],
                                         write_guids: Vec::new(),
@@ -461,7 +461,7 @@ impl GameServer {
                 }
                 OpCode::TeleportToSafety => {
                     let mut packets = self.lock_enforcer().write_characters(|characters_table_write_handle, zones_lock_enforcer| {
-                        if let Some((instance_guid, _, _)) = characters_table_write_handle.index(player_guid(sender)) {
+                        if let Some((_, instance_guid, _)) = characters_table_write_handle.index(player_guid(sender)) {
                             zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
                                 read_guids: vec![instance_guid],
                                 write_guids: Vec::new(),

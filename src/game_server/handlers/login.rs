@@ -113,7 +113,7 @@ pub fn log_out(
     game_server
         .lock_enforcer()
         .write_characters(|characters_table_write_handle, _| {
-            if let Some((character, (instance_guid, chunk, _))) =
+            if let Some((character, (_, instance_guid, chunk))) =
                 characters_table_write_handle.remove(player_guid(sender))
             {
                 let other_players_nearby = Zone::other_players_nearby(
