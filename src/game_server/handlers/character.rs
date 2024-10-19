@@ -157,7 +157,7 @@ impl BaseNpc {
                 unknown34: false,
                 show_health: false,
                 hide_despawn_fade: false,
-                disable_gravity: self.enable_gravity,
+                disable_gravity: !self.enable_gravity,
                 base_attachment_group: BaseAttachmentGroup {
                     unknown1: 0,
                     unknown2: "".to_string(),
