@@ -295,7 +295,7 @@ impl Zone {
 
         for chunk in Zone::nearby_chunks(chunk) {
             for guid in characters_table_handle.keys_by_index((
-                CharacterCategory::Player,
+                CharacterCategory::PlayerReady,
                 instance_guid,
                 chunk,
             )) {
@@ -740,6 +740,11 @@ pub fn enter_zone(
         character_write_handle.instance_guid = destination_read_handle.guid;
         character_write_handle.pos = destination_pos;
         character_write_handle.rot = destination_rot;
+
+        if let CharacterType::Player(ref mut player) = &mut character_write_handle.character_type {
+            player.ready = false;
+        }
+
         drop(character_write_handle);
         characters_table_write_handle.insert_lock(
             player_guid(player),

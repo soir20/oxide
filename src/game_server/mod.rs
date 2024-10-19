@@ -10,7 +10,7 @@ use byteorder::{LittleEndian, ReadBytesExt};
 use handlers::character::{Character, CharacterCategory, CharacterIndex, CharacterType};
 use handlers::chat::process_chat_packet;
 use handlers::command::process_command;
-use handlers::guid::{GuidTable, GuidTableIndexer, GuidTableWriteHandle};
+use handlers::guid::{GuidTable, GuidTableIndexer, GuidTableWriteHandle, IndexedGuid};
 use handlers::housing::process_housing_packet;
 use handlers::inventory::{
     customizations_from_guids, load_customization_item_mappings, load_customizations,
@@ -244,6 +244,34 @@ impl GameServer {
                     broadcasts.append(&mut self.process_packet(sender, packet.inner)?);
                 }
                 OpCode::ClientIsReady => {
+                    // Set the player as ready
+                    self.lock_enforcer()
+                        .write_characters(|characters_table_write_handle, _| {
+                            match characters_table_write_handle.remove(player_guid(sender)) {
+                                Some((character, _)) => {
+                                    let mut character_write_handle = character.write();
+                                    if let CharacterType::Player(ref mut player) =
+                                        &mut character_write_handle.character_type
+                                    {
+                                        player.ready = true;
+                                    }
+                                    let guid = character_write_handle.guid();
+                                    let new_index = character_write_handle.index();
+                                    drop(character_write_handle);
+                                    characters_table_write_handle
+                                        .insert_lock(guid, new_index, character);
+                                    Ok(())
+                                }
+                                None => Err(ProcessPacketError::new(
+                                    ProcessPacketErrorType::ConstraintViolated,
+                                    format!(
+                                        "Player {} sent ready packet but is not in any zone",
+                                        sender
+                                    ),
+                                )),
+                            }
+                        })?;
+
                     let mut sender_only_packets = Vec::new();
 
                     sender_only_packets.append(&mut send_points_of_interest(self)?);

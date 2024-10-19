@@ -546,6 +546,7 @@ pub struct BattleClass {
 
 #[derive(Clone)]
 pub struct Player {
+    pub ready: bool,
     pub member: bool,
     pub credits: u32,
     pub battle_classes: BTreeMap<u32, BattleClass>,
@@ -627,7 +628,8 @@ pub enum CharacterType {
 
 #[derive(Copy, Clone, Eq, EnumIter, PartialOrd, PartialEq, Ord)]
 pub enum CharacterCategory {
-    Player,
+    PlayerReady,
+    PlayerUnready,
     NpcAutoInteractEnabled,
     NpcTickable,
     NpcBasic,
@@ -690,8 +692,11 @@ impl IndexedGuid<u64, CharacterIndex> for Character {
 
     fn index(&self) -> CharacterIndex {
         (
-            match self.character_type {
-                CharacterType::Player(_) => CharacterCategory::Player,
+            match &self.character_type {
+                CharacterType::Player(player) => match player.ready {
+                    true => CharacterCategory::PlayerReady,
+                    false => CharacterCategory::PlayerUnready,
+                },
                 _ => match self.auto_interact_radius > 0.0 {
                     true => CharacterCategory::NpcAutoInteractEnabled,
                     false => match self.tickable() {
