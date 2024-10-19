@@ -332,7 +332,7 @@ impl AmbientNpc {
         }
 
         let time_since_last_change = if let Some(last_state_change) = self.last_state_change {
-            last_state_change.saturating_duration_since(now)
+            now.saturating_duration_since(last_state_change)
         } else {
             self.last_state_change = Some(Instant::now());
             now.saturating_duration_since(now)
