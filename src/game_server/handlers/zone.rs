@@ -243,7 +243,6 @@ impl Zone {
                 fixture.pos,
                 fixture.rot,
                 fixture.scale,
-                0,
                 CharacterType::Fixture(guid, fixture.as_current_fixture()),
                 None,
                 0.0,
@@ -399,7 +398,6 @@ impl Zone {
                 z: pos_update.rot_z,
                 w: character_write_handle.rot.z,
             };
-            character_write_handle.state = pos_update.character_state;
 
             let mut characters_to_interact = Vec::new();
             for npc_guid in auto_interact_npcs {
@@ -590,7 +588,6 @@ impl ZoneConfig {
                         w: ambient_npc.base_npc.rot_w,
                     },
                     scale: ambient_npc.base_npc.scale,
-                    state: 0,
                     character_type: CharacterType::AmbientNpc(ambient_npc),
                     mount_id: None,
                     interact_radius: self.interact_radius,
@@ -617,7 +614,6 @@ impl ZoneConfig {
                         w: door.base_npc.rot_w,
                     },
                     scale: door.base_npc.scale,
-                    state: 0,
                     character_type: CharacterType::Door(door),
                     mount_id: None,
                     interact_radius: self.interact_radius,
@@ -644,7 +640,6 @@ impl ZoneConfig {
                         w: transport.base_npc.rot_w,
                     },
                     scale: transport.base_npc.scale,
-                    state: 0,
                     character_type: CharacterType::Transport(transport),
                     mount_id: None,
                     interact_radius: self.interact_radius,

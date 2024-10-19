@@ -24,6 +24,7 @@ pub enum PlayerUpdateOpCode {
     UpdateRemoveTemporaryAppearance = 0xf,
     UpdateCharacterState = 0x14,
     QueueAnimation = 0x16,
+    UpdateSpeed = 0x17,
     LootEvent = 0x1d,
     SlotCompositeEffectOverride = 0x1f,
     Freeze = 0x20,
@@ -487,6 +488,18 @@ impl GamePacket for QueueAnimation {
     type Header = PlayerUpdateOpCode;
 
     const HEADER: Self::Header = PlayerUpdateOpCode::QueueAnimation;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct UpdateSpeed {
+    pub guid: u64,
+    pub speed: f32,
+}
+
+impl GamePacket for UpdateSpeed {
+    type Header = PlayerUpdateOpCode;
+
+    const HEADER: Self::Header = PlayerUpdateOpCode::UpdateSpeed;
 }
 
 #[derive(SerializePacket, DeserializePacket)]

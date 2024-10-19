@@ -1,4 +1,7 @@
-use std::collections::{BTreeMap, BTreeSet};
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    time::{Duration, Instant},
+};
 
 use serde::Deserialize;
 use strum::EnumIter;
@@ -10,10 +13,12 @@ use crate::{
             player_data::EquippedItem,
             player_update::{
                 AddNotifications, AddNpc, CustomizationSlot, Icon, NotificationData, NpcRelevance,
-                RemoveStandard, SingleNotification, SingleNpcRelevance,
+                QueueAnimation, RemoveStandard, SingleNotification, SingleNpcRelevance,
+                UpdateSpeed,
             },
             tunnel::TunneledPacket,
             ui::ExecuteScriptWithParams,
+            update_position::UpdatePlayerPosition,
             GamePacket, Pos,
         },
         Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
@@ -22,13 +27,13 @@ use crate::{
 };
 
 use super::{
-    guid::IndexedGuid,
+    guid::{GuidTableIndexer, IndexedGuid},
     housing::fixture_packets,
     inventory::wield_type_from_slot,
     lock_enforcer::{ZoneLockEnforcer, ZoneLockRequest},
     mount::{spawn_mount_npc, MountConfig},
     unique_guid::{mount_guid, npc_guid, player_guid, shorten_player_guid},
-    zone::teleport_within_zone,
+    zone::{teleport_within_zone, Zone},
 };
 
 pub type WriteLockingBroadcastSupplier = Result<
@@ -211,9 +216,77 @@ impl BaseNpc {
 }
 
 #[derive(Clone, Deserialize)]
+pub struct TickableNpcState {
+    pub speed: f32,
+    #[serde(default)]
+    pub new_pos_x: f32,
+    #[serde(default)]
+    pub new_pos_y: f32,
+    #[serde(default)]
+    pub new_pos_z: f32,
+    #[serde(default)]
+    pub new_rot_x: f32,
+    #[serde(default)]
+    pub new_rot_y: f32,
+    #[serde(default)]
+    pub new_rot_z: f32,
+    pub animation_id: Option<u32>,
+    pub duration: Duration,
+}
+
+impl TickableNpcState {
+    pub fn to_packets(&self, guid: u64) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+        let mut packets = Vec::new();
+        packets.push(GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: UpdateSpeed {
+                guid,
+                speed: self.speed,
+            },
+        })?);
+
+        packets.push(GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: UpdatePlayerPosition {
+                guid,
+                pos_x: self.new_pos_x,
+                pos_y: self.new_pos_y,
+                pos_z: self.new_pos_z,
+                rot_x: self.new_rot_x,
+                rot_y: self.new_rot_y,
+                rot_z: self.new_rot_z,
+                stop_at_destination: true,
+                unknown: 0,
+            },
+        })?);
+
+        if let Some(animation_id) = self.animation_id {
+            packets.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: QueueAnimation {
+                    character_guid: guid,
+                    animation_id,
+                    queue_pos: 1,
+                    delay_seconds: 0.0,
+                    duration_seconds: self.duration.as_secs_f32(),
+                },
+            })?);
+        }
+
+        Ok(packets)
+    }
+}
+
+#[derive(Clone, Deserialize)]
 pub struct AmbientNpc {
     #[serde(flatten)]
     pub base_npc: BaseNpc,
+    #[serde(default)]
+    pub states: Vec<TickableNpcState>,
+    #[serde(skip_deserializing)]
+    pub current_state: usize,
+    #[serde(skip_deserializing)]
+    pub last_state_change: Option<Instant>,
 }
 
 impl AmbientNpc {
@@ -225,7 +298,7 @@ impl AmbientNpc {
         scale: f32,
     ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
         let (add_npc, enable_interaction) = self.base_npc.add_packets(guid, pos, rot, scale);
-        let packets = vec![
+        let mut packets = vec![
             GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: add_npc,
@@ -238,7 +311,33 @@ impl AmbientNpc {
             })?,
         ];
 
+        if !self.states.is_empty() {
+            packets.append(&mut self.states[self.current_state].to_packets(guid)?);
+        }
+
         Ok(packets)
+    }
+
+    pub fn tick(&mut self, guid: u64, now: Instant) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+        if self.states.is_empty() {
+            return Ok(Vec::new());
+        }
+
+        let time_since_last_change = if let Some(last_state_change) = self.last_state_change {
+            last_state_change.saturating_duration_since(now)
+        } else {
+            self.last_state_change = Some(Instant::now());
+            now.saturating_duration_since(now)
+        };
+
+        let current_state = &self.states[self.current_state];
+        if time_since_last_change > current_state.duration {
+            self.current_state = self.current_state.saturating_add(1) % self.states.len();
+            self.last_state_change = Some(Instant::now());
+            self.states[self.current_state].to_packets(guid)
+        } else {
+            Ok(Vec::new())
+        }
     }
 }
 
@@ -533,7 +632,6 @@ pub struct NpcTemplate {
     pub pos: Pos,
     pub rot: Pos,
     pub scale: f32,
-    pub state: u8,
     pub character_type: CharacterType,
     pub mount_id: Option<u32>,
     pub interact_radius: f32,
@@ -548,7 +646,6 @@ impl NpcTemplate {
             pos: self.pos,
             rot: self.rot,
             scale: self.scale,
-            state: self.state,
             character_type: self.character_type.clone(),
             mount_id: self.mount_id,
             interact_radius: self.interact_radius,
@@ -569,7 +666,6 @@ pub struct Character {
     pub pos: Pos,
     pub rot: Pos,
     pub scale: f32,
-    pub state: u8,
     pub character_type: CharacterType,
     pub mount_id: Option<u32>,
     pub interact_radius: f32,
@@ -590,7 +686,10 @@ impl IndexedGuid<u64, CharacterIndex> for Character {
                 CharacterType::Player(_) => CharacterCategory::Player,
                 _ => match self.auto_interact_radius > 0.0 {
                     true => CharacterCategory::NpcAutoInteractEnabled,
-                    false => CharacterCategory::NpcBasic,
+                    false => match self.tickable() {
+                        true => CharacterCategory::NpcTickable,
+                        false => CharacterCategory::NpcBasic,
+                    },
                 },
             },
             self.instance_guid,
@@ -608,7 +707,6 @@ impl Character {
         pos: Pos,
         rot: Pos,
         scale: f32,
-        state: u8,
         character_type: CharacterType,
         mount_id: Option<u32>,
         interact_radius: f32,
@@ -621,7 +719,6 @@ impl Character {
             pos,
             rot,
             scale,
-            state,
             character_type,
             mount_id,
             interact_radius,
@@ -670,7 +767,6 @@ impl Character {
             rot,
             scale: 1.0,
             character_type: CharacterType::Player(Box::new(data)),
-            state: 0,
             mount_id: None,
             interact_radius: 0.0,
             auto_interact_radius: 0.0,
@@ -733,6 +829,13 @@ impl Character {
         };
 
         Ok(packets)
+    }
+
+    pub fn tickable(&self) -> bool {
+        match &self.character_type {
+            CharacterType::AmbientNpc(ambient_npc) => ambient_npc.states.len() > 1,
+            _ => false,
+        }
     }
 
     pub fn wield_type(&self) -> WieldType {
