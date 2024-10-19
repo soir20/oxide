@@ -1,6 +1,5 @@
 use std::collections::{BTreeMap, BTreeSet};
 
-use packet_serialize::SerializePacketError;
 use serde::Deserialize;
 use strum::EnumIter;
 
@@ -773,17 +772,4 @@ impl Character {
             _ => coerce_to_broadcast_supplier(|_| Ok(Vec::new())),
         }
     }
-}
-
-fn enable_interaction(guid: u64, cursor: u8) -> Result<Vec<Vec<u8>>, SerializePacketError> {
-    Ok(vec![GamePacket::serialize(&TunneledPacket {
-        unknown1: true,
-        inner: NpcRelevance {
-            new_states: vec![SingleNpcRelevance {
-                guid,
-                cursor: Some(cursor),
-                unknown1: false,
-            }],
-        },
-    })?])
 }
