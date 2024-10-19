@@ -98,6 +98,8 @@ pub struct BaseNpc {
     pub bounce_area_id: i32,
     #[serde(default = "default_npc_type")]
     pub npc_type: u32,
+    #[serde(default = "default_true")]
+    pub enable_gravity: bool,
 }
 
 impl BaseNpc {
@@ -155,7 +157,7 @@ impl BaseNpc {
                 unknown34: false,
                 show_health: false,
                 hide_despawn_fade: false,
-                ignore_rotation_and_shadow: false,
+                disable_gravity: self.enable_gravity,
                 base_attachment_group: BaseAttachmentGroup {
                     unknown1: 0,
                     unknown2: "".to_string(),
