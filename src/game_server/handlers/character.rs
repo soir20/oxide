@@ -231,7 +231,7 @@ pub struct TickableNpcState {
     #[serde(default)]
     pub new_rot_z: f32,
     pub animation_id: Option<u32>,
-    pub duration: Duration,
+    pub duration_millis: u64,
 }
 
 impl TickableNpcState {
@@ -268,7 +268,7 @@ impl TickableNpcState {
                     animation_id,
                     queue_pos: 1,
                     delay_seconds: 0.0,
-                    duration_seconds: self.duration.as_secs_f32(),
+                    duration_seconds: Duration::from_millis(self.duration_millis).as_secs_f32(),
                 },
             })?);
         }
@@ -331,7 +331,7 @@ impl AmbientNpc {
         };
 
         let current_state = &self.states[self.current_state];
-        if time_since_last_change > current_state.duration {
+        if time_since_last_change > Duration::from_millis(current_state.duration_millis) {
             self.current_state = self.current_state.saturating_add(1) % self.states.len();
             self.last_state_change = Some(Instant::now());
             self.states[self.current_state].to_packets(guid)
