@@ -3,10 +3,11 @@ use std::collections::BTreeMap;
 use std::fmt::Display;
 use std::io::{Cursor, Error};
 use std::path::Path;
+use std::time::Instant;
 use std::vec;
 
 use byteorder::{LittleEndian, ReadBytesExt};
-use handlers::character::{Character, CharacterIndex, CharacterType};
+use handlers::character::{Character, CharacterCategory, CharacterIndex, CharacterType};
 use handlers::chat::process_chat_packet;
 use handlers::command::process_command;
 use handlers::guid::{GuidTable, GuidTableIndexer, GuidTableWriteHandle};
@@ -183,6 +184,42 @@ impl GameServer {
 
     pub fn log_out(&self, sender: u32) -> Result<Vec<Broadcast>, ProcessPacketError> {
         log_out(sender, self)
+    }
+
+    pub fn tick(&self) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let now = Instant::now();
+        self.lock_enforcer()
+            .read_characters(|characters_table_read_handle| {
+                let range = (
+                    CharacterCategory::NpcTickable,
+                    u64::MIN,
+                    Character::MIN_CHUNK,
+                )
+                    ..=(
+                        CharacterCategory::NpcTickable,
+                        u64::MAX,
+                        Character::MAX_CHUNK,
+                    );
+                let tickable_characters: Vec<u64> =
+                    characters_table_read_handle.keys_by_range(range).collect();
+                CharacterLockRequest {
+                    read_guids: Vec::new(),
+                    write_guids: tickable_characters,
+                    character_consumer: |characters_table_read_handle,
+                                         _,
+                                         mut characters_write,
+                                         _| {
+                        let mut broadcasts = Vec::new();
+                        for tickable_character in characters_write.values_mut() {
+                            broadcasts.append(
+                                &mut tickable_character.tick(now, characters_table_read_handle)?,
+                            );
+                        }
+
+                        Ok(broadcasts)
+                    },
+                }
+            })
     }
 
     pub fn process_packet(

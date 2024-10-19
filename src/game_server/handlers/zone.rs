@@ -286,7 +286,7 @@ impl Zone {
     }
 
     pub fn other_players_nearby<'a>(
-        sender: u32,
+        sender: Option<u32>,
         chunk: Chunk,
         instance_guid: u64,
         characters_table_handle: &'a impl GuidTableIndexer<'a, u64, Character, CharacterIndex>,
@@ -299,7 +299,10 @@ impl Zone {
                 instance_guid,
                 chunk,
             )) {
-                if guid != player_guid(sender) {
+                if sender
+                    .map(|sender_guid| guid != player_guid(sender_guid))
+                    .unwrap_or(true)
+                {
                     guids.push(shorten_player_guid(guid)?);
                 }
             }
@@ -309,14 +312,16 @@ impl Zone {
     }
 
     pub fn all_players_nearby<'a>(
-        sender: u32,
+        sender: Option<u32>,
         chunk: Chunk,
         instance_guid: u64,
         characters_table_handle: &'a impl GuidTableIndexer<'a, u64, Character, CharacterIndex>,
     ) -> Result<Vec<u32>, ProcessPacketError> {
         let mut guids =
             Zone::other_players_nearby(sender, chunk, instance_guid, characters_table_handle)?;
-        guids.push(sender);
+        if let Some(sender_guid) = sender {
+            guids.push(sender_guid);
+        }
         Ok(guids)
     }
 

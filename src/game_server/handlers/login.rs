@@ -117,7 +117,7 @@ pub fn log_out(
                 characters_table_write_handle.remove(player_guid(sender))
             {
                 let other_players_nearby = Zone::other_players_nearby(
-                    sender,
+                    Some(sender),
                     chunk,
                     instance_guid,
                     characters_table_write_handle,

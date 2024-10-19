@@ -700,6 +700,7 @@ impl IndexedGuid<u64, CharacterIndex> for Character {
 
 impl Character {
     pub const MIN_CHUNK: (i32, i32) = (i32::MIN, i32::MIN);
+    pub const MAX_CHUNK: (i32, i32) = (i32::MAX, i32::MAX);
     const CHUNK_SIZE: f32 = 200.0;
 
     pub fn new(
@@ -831,10 +832,20 @@ impl Character {
         Ok(packets)
     }
 
-    pub fn tickable(&self) -> bool {
-        match &self.character_type {
-            CharacterType::AmbientNpc(ambient_npc) => ambient_npc.states.len() > 1,
-            _ => false,
+    pub fn tick<'a>(
+        &mut self,
+        now: Instant,
+        characters_table_handle: &'a impl GuidTableIndexer<'a, u64, Character, CharacterIndex>,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let (_, _, chunk) = self.index();
+        let everyone =
+            Zone::all_players_nearby(None, chunk, self.instance_guid, characters_table_handle)?;
+        match &mut self.character_type {
+            CharacterType::AmbientNpc(ambient_npc) => Ok(vec![Broadcast::Multi(
+                everyone,
+                ambient_npc.tick(self.guid, now)?,
+            )]),
+            _ => Ok(Vec::new()),
         }
     }
 
@@ -873,6 +884,13 @@ impl Character {
             }
             CharacterType::Transport(transport) => transport.interact(requester),
             _ => coerce_to_broadcast_supplier(|_| Ok(Vec::new())),
+        }
+    }
+
+    fn tickable(&self) -> bool {
+        match &self.character_type {
+            CharacterType::AmbientNpc(ambient_npc) => ambient_npc.states.len() > 1,
+            _ => false,
         }
     }
 }
