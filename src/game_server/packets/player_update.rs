@@ -24,6 +24,7 @@ pub enum PlayerUpdateOpCode {
     UpdateRemoveTemporaryAppearance = 0xf,
     UpdateCharacterState = 0x14,
     QueueAnimation = 0x16,
+    UpdateSpeed = 0x17,
     LootEvent = 0x1d,
     SlotCompositeEffectOverride = 0x1f,
     Freeze = 0x20,
@@ -490,6 +491,18 @@ impl GamePacket for QueueAnimation {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
+pub struct UpdateSpeed {
+    pub guid: u64,
+    pub speed: f32,
+}
+
+impl GamePacket for UpdateSpeed {
+    type Header = PlayerUpdateOpCode;
+
+    const HEADER: Self::Header = PlayerUpdateOpCode::UpdateSpeed;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
 pub struct SetCollision {
     pub guid: u64,
     pub collide: bool,
@@ -638,7 +651,7 @@ pub struct AddNpc {
     pub unknown34: bool,
     pub show_health: bool,
     pub hide_despawn_fade: bool,
-    pub ignore_rotation_and_shadow: bool,
+    pub disable_gravity: bool,
     pub base_attachment_group: BaseAttachmentGroup,
     pub unknown39: Pos,
     pub unknown40: u32,

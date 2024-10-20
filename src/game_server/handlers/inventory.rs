@@ -445,9 +445,9 @@ fn process_equip_customization(
                                 .insert(customization.customization_slot, customization.guid);
                         }
 
-                        let (instance_guid, chunk, _) = character_write_handle.index();
+                        let (_, instance_guid, chunk) = character_write_handle.index();
                         let nearby_players = Zone::all_players_nearby(
-                            sender,
+                            Some(sender),
                             chunk,
                             instance_guid,
                             characters_table_read_handle,

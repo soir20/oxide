@@ -3,13 +3,14 @@ use std::collections::BTreeMap;
 use std::fmt::Display;
 use std::io::{Cursor, Error};
 use std::path::Path;
+use std::time::Instant;
 use std::vec;
 
 use byteorder::{LittleEndian, ReadBytesExt};
-use handlers::character::{Character, CharacterIndex, CharacterType};
+use handlers::character::{Character, CharacterCategory, CharacterIndex, CharacterType};
 use handlers::chat::process_chat_packet;
 use handlers::command::process_command;
-use handlers::guid::{GuidTable, GuidTableIndexer, GuidTableWriteHandle};
+use handlers::guid::{GuidTable, GuidTableIndexer, GuidTableWriteHandle, IndexedGuid};
 use handlers::housing::process_housing_packet;
 use handlers::inventory::{
     customizations_from_guids, load_customization_item_mappings, load_customizations,
@@ -185,6 +186,42 @@ impl GameServer {
         log_out(sender, self)
     }
 
+    pub fn tick(&self) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let now = Instant::now();
+        self.lock_enforcer()
+            .read_characters(|characters_table_read_handle| {
+                let range = (
+                    CharacterCategory::NpcTickable,
+                    u64::MIN,
+                    Character::MIN_CHUNK,
+                )
+                    ..=(
+                        CharacterCategory::NpcTickable,
+                        u64::MAX,
+                        Character::MAX_CHUNK,
+                    );
+                let tickable_characters: Vec<u64> =
+                    characters_table_read_handle.keys_by_range(range).collect();
+                CharacterLockRequest {
+                    read_guids: Vec::new(),
+                    write_guids: tickable_characters,
+                    character_consumer: |characters_table_read_handle,
+                                         _,
+                                         mut characters_write,
+                                         _| {
+                        let mut broadcasts = Vec::new();
+                        for tickable_character in characters_write.values_mut() {
+                            broadcasts.append(
+                                &mut tickable_character.tick(now, characters_table_read_handle)?,
+                            );
+                        }
+
+                        Ok(broadcasts)
+                    },
+                }
+            })
+    }
+
     pub fn process_packet(
         &self,
         sender: u32,
@@ -207,6 +244,34 @@ impl GameServer {
                     broadcasts.append(&mut self.process_packet(sender, packet.inner)?);
                 }
                 OpCode::ClientIsReady => {
+                    // Set the player as ready
+                    self.lock_enforcer()
+                        .write_characters(|characters_table_write_handle, _| {
+                            match characters_table_write_handle.remove(player_guid(sender)) {
+                                Some((character, _)) => {
+                                    let mut character_write_handle = character.write();
+                                    if let CharacterType::Player(ref mut player) =
+                                        &mut character_write_handle.character_type
+                                    {
+                                        player.ready = true;
+                                    }
+                                    let guid = character_write_handle.guid();
+                                    let new_index = character_write_handle.index();
+                                    drop(character_write_handle);
+                                    characters_table_write_handle
+                                        .insert_lock(guid, new_index, character);
+                                    Ok(())
+                                }
+                                None => Err(ProcessPacketError::new(
+                                    ProcessPacketErrorType::ConstraintViolated,
+                                    format!(
+                                        "Player {} sent ready packet but is not in any zone",
+                                        sender
+                                    ),
+                                )),
+                            }
+                        })?;
+
                     let mut sender_only_packets = Vec::new();
 
                     sender_only_packets.append(&mut send_points_of_interest(self)?);
@@ -231,7 +296,7 @@ impl GameServer {
 
                     let mut character_broadcasts = self.lock_enforcer().read_characters(|characters_table_read_handle| {
                         let possible_index = characters_table_read_handle.index(player_guid(sender));
-                        let character_guids = possible_index.map(|(instance_guid, chunk, _)| Zone::diff_character_guids(
+                        let character_guids = possible_index.map(|(_, instance_guid, chunk)| Zone::diff_character_guids(
                             instance_guid,
                             Character::MIN_CHUNK,
                             chunk,
@@ -246,7 +311,7 @@ impl GameServer {
                             read_guids: read_character_guids,
                             write_guids: Vec::new(),
                             character_consumer: move |_, characters_read, _, zones_lock_enforcer| {
-                                if let Some((instance_guid, _, _)) = possible_index {
+                                if let Some((_, instance_guid, _)) = possible_index {
                                     zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
                                         read_guids: vec![instance_guid],
                                         write_guids: Vec::new(),
@@ -461,7 +526,7 @@ impl GameServer {
                 }
                 OpCode::TeleportToSafety => {
                     let mut packets = self.lock_enforcer().write_characters(|characters_table_write_handle, zones_lock_enforcer| {
-                        if let Some((instance_guid, _, _)) = characters_table_write_handle.index(player_guid(sender)) {
+                        if let Some((_, instance_guid, _)) = characters_table_write_handle.index(player_guid(sender)) {
                             zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
                                 read_guids: vec![instance_guid],
                                 write_guids: Vec::new(),

@@ -198,9 +198,9 @@ macro_rules! diff_character_handles {
         for category in CharacterCategory::iter() {
             for chunk in chunks_to_remove.iter() {
                 for guid in $characters_table_write_handle.keys_by_index((
+                    category,
                     $instance_guid,
                     **chunk,
-                    category,
                 )) {
                     guids.insert(guid, false);
                 }
@@ -210,9 +210,9 @@ macro_rules! diff_character_handles {
         for category in CharacterCategory::iter() {
             for chunk in chunks_to_add.iter() {
                 for guid in $characters_table_write_handle.keys_by_index((
+                    category,
                     $instance_guid,
                     **chunk,
-                    category,
                 )) {
                     guids.insert(guid, true);
                 }
@@ -243,7 +243,6 @@ impl Zone {
                 fixture.pos,
                 fixture.rot,
                 fixture.scale,
-                0,
                 CharacterType::Fixture(guid, fixture.as_current_fixture()),
                 None,
                 0.0,
@@ -287,7 +286,7 @@ impl Zone {
     }
 
     pub fn other_players_nearby<'a>(
-        sender: u32,
+        sender: Option<u32>,
         chunk: Chunk,
         instance_guid: u64,
         characters_table_handle: &'a impl GuidTableIndexer<'a, u64, Character, CharacterIndex>,
@@ -296,11 +295,14 @@ impl Zone {
 
         for chunk in Zone::nearby_chunks(chunk) {
             for guid in characters_table_handle.keys_by_index((
+                CharacterCategory::PlayerReady,
                 instance_guid,
                 chunk,
-                CharacterCategory::Player,
             )) {
-                if guid != player_guid(sender) {
+                if sender
+                    .map(|sender_guid| guid != player_guid(sender_guid))
+                    .unwrap_or(true)
+                {
                     guids.push(shorten_player_guid(guid)?);
                 }
             }
@@ -310,14 +312,16 @@ impl Zone {
     }
 
     pub fn all_players_nearby<'a>(
-        sender: u32,
+        sender: Option<u32>,
         chunk: Chunk,
         instance_guid: u64,
         characters_table_handle: &'a impl GuidTableIndexer<'a, u64, Character, CharacterIndex>,
     ) -> Result<Vec<u32>, ProcessPacketError> {
         let mut guids =
             Zone::other_players_nearby(sender, chunk, instance_guid, characters_table_handle)?;
-        guids.push(sender);
+        if let Some(sender_guid) = sender {
+            guids.push(sender_guid);
+        }
         Ok(guids)
     }
 
@@ -337,7 +341,7 @@ impl Zone {
         for category in CharacterCategory::iter() {
             for chunk in chunks_to_remove.iter() {
                 for guid in
-                    characters_table_handle.keys_by_index((instance_guid, **chunk, category))
+                    characters_table_handle.keys_by_index((category, instance_guid, **chunk))
                 {
                     guids.insert(guid, false);
                 }
@@ -347,7 +351,7 @@ impl Zone {
         for category in CharacterCategory::iter() {
             for chunk in chunks_to_add.iter() {
                 for guid in
-                    characters_table_handle.keys_by_index((instance_guid, **chunk, category))
+                    characters_table_handle.keys_by_index((category, instance_guid, **chunk))
                 {
                     guids.insert(guid, true);
                 }
@@ -399,7 +403,6 @@ impl Zone {
                 z: pos_update.rot_z,
                 w: character_write_handle.rot.z,
             };
-            character_write_handle.state = pos_update.character_state;
 
             let mut characters_to_interact = Vec::new();
             for npc_guid in auto_interact_npcs {
@@ -456,13 +459,13 @@ impl Zone {
             .read_characters(|characters_table_read_handle| {
                 let (auto_interact_npcs, same_chunk) = characters_table_read_handle
                     .index(requester)
-                    .map(|(instance_guid, old_chunk, _)| {
+                    .map(|(_, instance_guid, old_chunk)| {
                         (
                             characters_table_read_handle
                                 .keys_by_index((
+                                    CharacterCategory::NpcAutoInteractEnabled,
                                     instance_guid,
                                     old_chunk,
-                                    CharacterCategory::NpcAutoInteractEnabled,
                                 ))
                                 .collect(),
                             old_chunk == Character::chunk(pos_update.pos_x, pos_update.pos_z),
@@ -495,7 +498,7 @@ impl Zone {
             game_server
                 .lock_enforcer()
                 .write_characters(|characters_table_write_handle, _| {
-                    if let Some((character, (instance_guid, old_chunk, category))) =
+                    if let Some((character, (category, instance_guid, old_chunk))) =
                         characters_table_write_handle.remove(requester)
                     {
                         let mut characters_write: BTreeMap<
@@ -536,7 +539,7 @@ impl Zone {
                         )?;
                         characters_table_write_handle.insert_lock(
                             requester,
-                            (instance_guid, new_chunk, category),
+                            (category, instance_guid, new_chunk),
                             character,
                         );
 
@@ -578,19 +581,18 @@ impl ZoneConfig {
                     discriminant: AMBIENT_NPC_DISCRIMINANT,
                     index,
                     pos: Pos {
-                        x: ambient_npc.pos_x,
-                        y: ambient_npc.pos_y,
-                        z: ambient_npc.pos_z,
-                        w: ambient_npc.pos_w,
+                        x: ambient_npc.base_npc.pos_x,
+                        y: ambient_npc.base_npc.pos_y,
+                        z: ambient_npc.base_npc.pos_z,
+                        w: ambient_npc.base_npc.pos_w,
                     },
                     rot: Pos {
-                        x: ambient_npc.rot_x,
-                        y: ambient_npc.rot_y,
-                        z: ambient_npc.rot_z,
-                        w: ambient_npc.rot_w,
+                        x: ambient_npc.base_npc.rot_x,
+                        y: ambient_npc.base_npc.rot_y,
+                        z: ambient_npc.base_npc.rot_z,
+                        w: ambient_npc.base_npc.rot_w,
                     },
-                    scale: ambient_npc.scale.unwrap_or(1.0),
-                    state: 0,
+                    scale: ambient_npc.base_npc.scale,
                     character_type: CharacterType::AmbientNpc(ambient_npc),
                     mount_id: None,
                     interact_radius: self.interact_radius,
@@ -605,19 +607,18 @@ impl ZoneConfig {
                     discriminant: AMBIENT_NPC_DISCRIMINANT,
                     index,
                     pos: Pos {
-                        x: door.x,
-                        y: door.y,
-                        z: door.z,
-                        w: door.w,
+                        x: door.base_npc.pos_x,
+                        y: door.base_npc.pos_y,
+                        z: door.base_npc.pos_z,
+                        w: door.base_npc.pos_w,
                     },
                     rot: Pos {
-                        x: 0.0,
-                        y: 0.0,
-                        z: 0.0,
-                        w: 0.0,
+                        x: door.base_npc.rot_x,
+                        y: door.base_npc.rot_y,
+                        z: door.base_npc.rot_z,
+                        w: door.base_npc.rot_w,
                     },
-                    scale: 1.0,
-                    state: 0,
+                    scale: door.base_npc.scale,
                     character_type: CharacterType::Door(door),
                     mount_id: None,
                     interact_radius: self.interact_radius,
@@ -632,19 +633,18 @@ impl ZoneConfig {
                     discriminant: AMBIENT_NPC_DISCRIMINANT,
                     index,
                     pos: Pos {
-                        x: transport.pos_x,
-                        y: transport.pos_y,
-                        z: transport.pos_z,
-                        w: transport.pos_w,
+                        x: transport.base_npc.pos_x,
+                        y: transport.base_npc.pos_y,
+                        z: transport.base_npc.pos_z,
+                        w: transport.base_npc.pos_w,
                     },
                     rot: Pos {
-                        x: transport.rot_x,
-                        y: transport.rot_y,
-                        z: transport.rot_z,
-                        w: transport.rot_w,
+                        x: transport.base_npc.rot_x,
+                        y: transport.base_npc.rot_y,
+                        z: transport.base_npc.rot_z,
+                        w: transport.base_npc.rot_w,
                     },
-                    scale: transport.scale.unwrap_or(1.0),
-                    state: 0,
+                    scale: transport.base_npc.scale,
                     character_type: CharacterType::Transport(transport),
                     mount_id: None,
                     interact_radius: self.interact_radius,
@@ -735,21 +735,26 @@ pub fn enter_zone(
     let destination_rot = destination_rot.unwrap_or(destination_read_handle.default_spawn_rot);
 
     let character = characters_table_write_handle.remove(player_guid(player));
-    if let Some((character, (_, _, character_category))) = character {
+    if let Some((character, (character_category, _, _))) = character {
         let mut character_write_handle = character.write();
         character_write_handle.instance_guid = destination_read_handle.guid;
         character_write_handle.pos = destination_pos;
         character_write_handle.rot = destination_rot;
+
+        if let CharacterType::Player(ref mut player) = &mut character_write_handle.character_type {
+            player.ready = false;
+        }
+
         drop(character_write_handle);
         characters_table_write_handle.insert_lock(
             player_guid(player),
             (
+                character_category,
                 destination_read_handle.guid,
                 Character::chunk(
                     destination_read_handle.default_spawn_pos.x,
                     destination_read_handle.default_spawn_pos.z,
                 ),
-                character_category,
             ),
             character,
         );
@@ -906,13 +911,13 @@ pub fn teleport_within_zone(
     characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
     mount_configs: &BTreeMap<u32, MountConfig>,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-    let mut packets = if let Some((character, (instance_guid, old_chunk, _))) =
+    let mut packets = if let Some((character, (_, instance_guid, old_chunk))) =
         characters_table_write_handle.remove(player_guid(sender))
     {
         let mut character_write_handle = character.write();
         character_write_handle.pos = destination_pos;
         character_write_handle.rot = destination_rot;
-        let (_, new_chunk, _) = character_write_handle.index();
+        let (_, _, new_chunk) = character_write_handle.index();
 
         let (diff_character_guids, diff_character_handles) = diff_character_handles!(
             instance_guid,

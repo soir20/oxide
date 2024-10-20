@@ -82,7 +82,7 @@ pub trait GamePacket: SerializePacket {
     }
 }
 
-#[derive(Copy, Clone, SerializePacket, DeserializePacket, Deserialize)]
+#[derive(Copy, Clone, SerializePacket, DeserializePacket, Deserialize, Default)]
 pub struct Pos {
     pub x: f32,
     pub y: f32,

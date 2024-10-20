@@ -17,6 +17,7 @@
     "max_round_trip_entries": 30,
     "desired_resend_pct": 5,
     "max_millis_until_resend": 300,
+    "game_tick_period_millis": 1000,
     "channel_cleanup_period_millis": 1000,
     "channel_inactive_timeout_millis": 60000
 }
