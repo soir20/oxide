@@ -298,6 +298,7 @@ impl TickableNpcState {
 
 #[derive(Clone, Deserialize)]
 pub struct TickableNpcStateTracker {
+    #[serde(default)]
     states: Vec<TickableNpcState>,
     #[serde(skip_deserializing)]
     current_state: Option<usize>,
