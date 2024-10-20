@@ -59,6 +59,10 @@ const fn default_npc_type() -> u32 {
     2
 }
 
+fn now() -> Instant {
+    Instant::now()
+}
+
 #[derive(Clone, Deserialize)]
 pub struct BaseNpc {
     #[serde(default)]
@@ -303,9 +307,9 @@ pub struct AmbientNpc {
     #[serde(default)]
     pub states: Vec<TickableNpcState>,
     #[serde(skip_deserializing)]
-    pub current_state: usize,
-    #[serde(skip_deserializing)]
-    pub last_state_change: Option<Instant>,
+    pub current_state: Option<usize>,
+    #[serde(skip_deserializing, default = "now")]
+    pub last_state_change: Instant,
 }
 
 impl AmbientNpc {
@@ -317,7 +321,7 @@ impl AmbientNpc {
         scale: f32,
     ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
         let (add_npc, enable_interaction) = self.base_npc.add_packets(guid, pos, rot, scale);
-        let mut packets = vec![
+        let packets = vec![
             GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: add_npc,
@@ -329,10 +333,6 @@ impl AmbientNpc {
                 },
             })?,
         ];
-
-        if !self.states.is_empty() {
-            packets.append(&mut self.states[self.current_state].to_packets(guid, pos)?);
-        }
 
         Ok(packets)
     }
@@ -347,19 +347,16 @@ impl AmbientNpc {
             return Ok((Vec::new(), current_pos));
         }
 
-        let time_since_last_change = if let Some(last_state_change) = self.last_state_change {
-            now.saturating_duration_since(last_state_change)
-        } else {
-            self.last_state_change = Some(Instant::now());
-            now.saturating_duration_since(now)
-        };
+        let time_since_last_change = now.saturating_duration_since(self.last_state_change);
 
-        let current_state = &self.states[self.current_state];
+        let current_state_index = self.current_state.unwrap_or(self.states.len() - 1);
+        let current_state = &self.states[current_state_index];
         if time_since_last_change > Duration::from_millis(current_state.duration_millis) {
-            self.current_state = self.current_state.saturating_add(1) % self.states.len();
-            self.last_state_change = Some(Instant::now());
+            let new_state_index = current_state_index.saturating_add(1) % self.states.len();
+            self.current_state = Some(new_state_index);
+            self.last_state_change = Instant::now();
 
-            let new_state = &self.states[self.current_state];
+            let new_state = &self.states[new_state_index];
             Ok((
                 new_state.to_packets(guid, current_pos)?,
                 new_state.new_pos(current_pos),
