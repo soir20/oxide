@@ -626,38 +626,6 @@
                 "destination_rot_z": 0.0,
                 "destination_rot_w": 0.0,
                 "destination_zone_template": 25
-            },
-            {
-                "comment": "TEMPORARY: Training Room Main Platform",
-                "pos_x": 152.1752,
-                "pos_y": -3.66102,
-                "pos_z": 393.5396,
-                "pos_w": 1.0,
-                "terrain_object_id": 1281494198,
-                "destination_pos_x": 160.4435,
-                "destination_pos_y": 6.8242483,
-                "destination_pos_z": 415.3869,
-                "destination_pos_w": 1.0,
-                "destination_rot_x": 0.0,
-                "destination_rot_y": 0.0,
-                "destination_rot_z": -1.5,
-                "destination_rot_w": 0.0
-            },
-            {
-                "comment": "TEMPORARY: Training Room Dueling Platform",
-                "pos_x": 117.8339,
-                "pos_y": -3.661024,
-                "pos_z": 376.1709,
-                "pos_w": 1.0,
-                "terrain_object_id": 1272323314,
-                "destination_pos_x": 114.9904,
-                "destination_pos_y": 10.0,
-                "destination_pos_z": 380.0752,
-                "destination_pos_w": 1.0,
-                "destination_rot_x": 1.5,
-                "destination_rot_y": 0.0,
-                "destination_rot_z": 0.0,
-                "destination_rot_w": 0.0
             }
         ],
         "transports": [
@@ -680,7 +648,54 @@
                 "show_hover_description": false
             }
         ],
-        "ambient_npcs": []
+        "ambient_npcs": [
+            {
+                "comment": "Training Room Main Platform Lift",
+                "model_id": 1438,
+                "npc_type": 1,
+                "pos_x": 148.8,
+                "pos_y": -3.6210175,
+                "pos_z": 379.9795,
+                "pos_w": 1.0,
+                "rot_x": 1.5708,
+                "states": [
+                    {
+                        "speed": 2.0,
+                        "new_pos_offset_y": 10.0,
+                        "duration_millis": 10000,
+                        "animation_id": 3101
+                    },
+                    {
+                        "speed": 2.0,
+                        "new_pos_offset_y": -10.0,
+                        "duration_millis": 10000
+                    }
+                ]
+            },
+            {
+                "comment": "Training Room Dueling Platform Lift",
+                "model_id": 1438,
+                "npc_type": 1,
+                "pos_x": 130.9,
+                "pos_y": -3.6210175,
+                "pos_z": 379.9795,
+                "pos_w": 1.0,
+                "rot_x": -1.5708,
+                "states": [
+                    {
+                        "speed": 2.0,
+                        "new_pos_offset_y": 12.0,
+                        "duration_millis": 12000,
+                        "animation_id": 3101
+                    },
+                    {
+                        "speed": 2.0,
+                        "new_pos_offset_y": -12.0,
+                        "duration_millis": 12000
+                    }
+                ]
+            }
+        ]
     },
     {
         "guid": 25,
