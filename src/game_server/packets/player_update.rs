@@ -651,7 +651,7 @@ pub struct AddNpc {
     pub unknown34: bool,
     pub show_health: bool,
     pub hide_despawn_fade: bool,
-    pub disable_gravity: bool,
+    pub disable_rotation_and_shadow: bool,
     pub base_attachment_group: BaseAttachmentGroup,
     pub unknown39: Pos,
     pub unknown40: u32,

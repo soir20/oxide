@@ -371,7 +371,7 @@ pub fn spawn_mount_npc(
                 unknown34: false,
                 show_health: false,
                 hide_despawn_fade: false,
-                disable_gravity: false,
+                disable_rotation_and_shadow: false,
                 base_attachment_group: BaseAttachmentGroup {
                     unknown1: 0,
                     unknown2: "".to_string(),

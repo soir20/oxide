@@ -99,7 +99,7 @@ pub struct BaseNpc {
     #[serde(default = "default_npc_type")]
     pub npc_type: u32,
     #[serde(default = "default_true")]
-    pub enable_gravity: bool,
+    pub enable_rotation_and_shadow: bool,
 }
 
 impl BaseNpc {
@@ -157,7 +157,7 @@ impl BaseNpc {
                 unknown34: false,
                 show_health: false,
                 hide_despawn_fade: false,
-                disable_gravity: !self.enable_gravity,
+                disable_rotation_and_shadow: !self.enable_rotation_and_shadow,
                 base_attachment_group: BaseAttachmentGroup {
                     unknown1: 0,
                     unknown2: "".to_string(),
