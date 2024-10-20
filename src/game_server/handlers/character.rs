@@ -59,10 +59,6 @@ const fn default_npc_type() -> u32 {
     2
 }
 
-fn now() -> Instant {
-    Instant::now()
-}
-
 #[derive(Clone, Deserialize)]
 pub struct BaseNpc {
     #[serde(default)]
@@ -301,15 +297,55 @@ impl TickableNpcState {
 }
 
 #[derive(Clone, Deserialize)]
+pub struct TickableNpcStateTracker {
+    states: Vec<TickableNpcState>,
+    #[serde(skip_deserializing)]
+    current_state: Option<usize>,
+    #[serde(skip_deserializing, default = "Instant::now")]
+    last_state_change: Instant,
+}
+
+impl TickableNpcStateTracker {
+    pub fn tick(
+        &mut self,
+        guid: u64,
+        current_pos: Pos,
+        now: Instant,
+    ) -> Result<(Vec<Vec<u8>>, Pos), ProcessPacketError> {
+        if self.states.is_empty() {
+            return Ok((Vec::new(), current_pos));
+        }
+
+        let time_since_last_change = now.saturating_duration_since(self.last_state_change);
+
+        let current_state_index = self.current_state.unwrap_or(self.states.len() - 1);
+        let current_state = &self.states[current_state_index];
+        if time_since_last_change > Duration::from_millis(current_state.duration_millis) {
+            let new_state_index = current_state_index.saturating_add(1) % self.states.len();
+            self.current_state = Some(new_state_index);
+            self.last_state_change = Instant::now();
+
+            let new_state = &self.states[new_state_index];
+            Ok((
+                new_state.to_packets(guid, current_pos)?,
+                new_state.new_pos(current_pos),
+            ))
+        } else {
+            Ok((Vec::new(), current_pos))
+        }
+    }
+
+    pub fn tickable(&self) -> bool {
+        !self.states.is_empty()
+    }
+}
+
+#[derive(Clone, Deserialize)]
 pub struct AmbientNpc {
     #[serde(flatten)]
     pub base_npc: BaseNpc,
-    #[serde(default)]
-    pub states: Vec<TickableNpcState>,
-    #[serde(skip_deserializing)]
-    pub current_state: Option<usize>,
-    #[serde(skip_deserializing, default = "now")]
-    pub last_state_change: Instant,
+    #[serde(flatten)]
+    pub state_tracker: TickableNpcStateTracker,
 }
 
 impl AmbientNpc {
@@ -343,27 +379,11 @@ impl AmbientNpc {
         current_pos: Pos,
         now: Instant,
     ) -> Result<(Vec<Vec<u8>>, Pos), ProcessPacketError> {
-        if self.states.is_empty() {
-            return Ok((Vec::new(), current_pos));
-        }
+        self.state_tracker.tick(guid, current_pos, now)
+    }
 
-        let time_since_last_change = now.saturating_duration_since(self.last_state_change);
-
-        let current_state_index = self.current_state.unwrap_or(self.states.len() - 1);
-        let current_state = &self.states[current_state_index];
-        if time_since_last_change > Duration::from_millis(current_state.duration_millis) {
-            let new_state_index = current_state_index.saturating_add(1) % self.states.len();
-            self.current_state = Some(new_state_index);
-            self.last_state_change = Instant::now();
-
-            let new_state = &self.states[new_state_index];
-            Ok((
-                new_state.to_packets(guid, current_pos)?,
-                new_state.new_pos(current_pos),
-            ))
-        } else {
-            Ok((Vec::new(), current_pos))
-        }
+    pub fn tickable(&self) -> bool {
+        self.state_tracker.tickable()
     }
 }
 
@@ -921,7 +941,7 @@ impl Character {
 
     fn tickable(&self) -> bool {
         match &self.character_type {
-            CharacterType::AmbientNpc(ambient_npc) => ambient_npc.states.len() > 1,
+            CharacterType::AmbientNpc(ambient_npc) => ambient_npc.tickable(),
             _ => false,
         }
     }
