@@ -229,11 +229,26 @@ pub struct TickableNpcState {
     pub new_rot_y: f32,
     #[serde(default)]
     pub new_rot_z: f32,
+    #[serde(default)]
+    pub new_pos_offset_x: f32,
+    #[serde(default)]
+    pub new_pos_offset_y: f32,
+    #[serde(default)]
+    pub new_pos_offset_z: f32,
     pub animation_id: Option<u32>,
     pub duration_millis: u64,
 }
 
 impl TickableNpcState {
+    pub fn new_pos(&self, current_pos: Pos) -> Pos {
+        Pos {
+            x: self.new_pos_x.unwrap_or(current_pos.x) + self.new_pos_offset_x,
+            y: self.new_pos_y.unwrap_or(current_pos.y) + self.new_pos_offset_y,
+            z: self.new_pos_z.unwrap_or(current_pos.z) + self.new_pos_offset_z,
+            w: current_pos.w,
+        }
+    }
+
     pub fn to_packets(
         &self,
         guid: u64,
@@ -248,13 +263,14 @@ impl TickableNpcState {
             },
         })?);
 
+        let new_pos = self.new_pos(current_pos);
         packets.push(GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: UpdatePlayerPosition {
                 guid,
-                pos_x: self.new_pos_x.unwrap_or(current_pos.x),
-                pos_y: self.new_pos_y.unwrap_or(current_pos.y),
-                pos_z: self.new_pos_z.unwrap_or(current_pos.z),
+                pos_x: new_pos.x,
+                pos_y: new_pos.y,
+                pos_z: new_pos.z,
                 rot_x: self.new_rot_x,
                 rot_y: self.new_rot_y,
                 rot_z: self.new_rot_z,
@@ -326,9 +342,9 @@ impl AmbientNpc {
         guid: u64,
         current_pos: Pos,
         now: Instant,
-    ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+    ) -> Result<(Vec<Vec<u8>>, Pos), ProcessPacketError> {
         if self.states.is_empty() {
-            return Ok(Vec::new());
+            return Ok((Vec::new(), current_pos));
         }
 
         let time_since_last_change = if let Some(last_state_change) = self.last_state_change {
@@ -342,9 +358,14 @@ impl AmbientNpc {
         if time_since_last_change > Duration::from_millis(current_state.duration_millis) {
             self.current_state = self.current_state.saturating_add(1) % self.states.len();
             self.last_state_change = Some(Instant::now());
-            self.states[self.current_state].to_packets(guid, current_pos)
+
+            let new_state = &self.states[self.current_state];
+            Ok((
+                new_state.to_packets(guid, current_pos)?,
+                new_state.new_pos(current_pos),
+            ))
         } else {
-            Ok(Vec::new())
+            Ok((Vec::new(), current_pos))
         }
     }
 }
@@ -854,10 +875,11 @@ impl Character {
         let everyone =
             Zone::all_players_nearby(None, chunk, self.instance_guid, characters_table_handle)?;
         match &mut self.character_type {
-            CharacterType::AmbientNpc(ambient_npc) => Ok(vec![Broadcast::Multi(
-                everyone,
-                ambient_npc.tick(self.guid, self.pos, now)?,
-            )]),
+            CharacterType::AmbientNpc(ambient_npc) => {
+                let (packets, new_pos) = ambient_npc.tick(self.guid, self.pos, now)?;
+                self.pos = new_pos;
+                Ok(vec![Broadcast::Multi(everyone, packets)])
+            }
             _ => Ok(Vec::new()),
         }
     }
