@@ -3,6 +3,8 @@ use std::{
     time::{Duration, Instant},
 };
 
+use rand::thread_rng;
+use rand_distr::{Distribution, WeightedAliasIndex};
 use serde::Deserialize;
 use strum::EnumIter;
 
@@ -57,6 +59,10 @@ const fn default_true() -> bool {
 
 const fn default_npc_type() -> u32 {
     2
+}
+
+const fn default_weight() -> u32 {
+    1
 }
 
 #[derive(Clone, Deserialize)]
@@ -219,6 +225,8 @@ impl BaseNpc {
 
 #[derive(Clone, Deserialize)]
 pub struct TickableNpcState {
+    #[serde(default = "default_weight")]
+    pub weight: u32,
     pub speed: f32,
     pub new_pos_x: Option<f32>,
     pub new_pos_y: Option<f32>,
@@ -296,14 +304,25 @@ impl TickableNpcState {
     }
 }
 
+#[derive(Clone, Default, Deserialize, Eq, PartialEq)]
+pub enum TickableNpcStateOrder {
+    #[default]
+    Sequential,
+    WeightedRandom,
+}
+
 #[derive(Clone, Deserialize)]
 pub struct TickableNpcStateTracker {
     #[serde(default)]
     states: Vec<TickableNpcState>,
+    #[serde(default)]
+    state_order: TickableNpcStateOrder,
     #[serde(skip_deserializing)]
     current_state: Option<usize>,
     #[serde(skip_deserializing, default = "Instant::now")]
     last_state_change: Instant,
+    #[serde(skip_deserializing)]
+    distribution: Option<WeightedAliasIndex<u32>>,
 }
 
 impl TickableNpcStateTracker {
@@ -322,7 +341,22 @@ impl TickableNpcStateTracker {
         let current_state_index = self.current_state.unwrap_or(self.states.len() - 1);
         let current_state = &self.states[current_state_index];
         if time_since_last_change > Duration::from_millis(current_state.duration_millis) {
-            let new_state_index = current_state_index.saturating_add(1) % self.states.len();
+            let new_state_index = if self.state_order == TickableNpcStateOrder::Sequential {
+                current_state_index.saturating_add(1) % self.states.len()
+            } else {
+                if self.distribution.is_none() {
+                    let weights = self.states.iter().map(|state| state.weight).collect();
+                    let new_distribution = WeightedAliasIndex::new(weights)
+                        .expect("Couldn't create weighted alias index");
+                    self.distribution = Some(new_distribution);
+                }
+
+                let weighted_alias_index = self
+                    .distribution
+                    .as_ref()
+                    .expect("Distribution should have already been created");
+                weighted_alias_index.sample(&mut thread_rng())
+            };
             self.current_state = Some(new_state_index);
             self.last_state_change = Instant::now();
 
