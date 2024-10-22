@@ -406,23 +406,23 @@ impl TickableCharacterStateTracker {
                 break packets;
             } else {
                 current_state.reset();
-                self.current_state_index = if self.state_order == TickableCharacterStateOrder::Sequential
-                {
-                    self.current_state_index.saturating_add(1) % self.states.len()
-                } else {
-                    if self.distribution.is_none() {
-                        let weights = self.states.iter().map(|state| state.weight).collect();
-                        let new_distribution = WeightedAliasIndex::new(weights)
-                            .expect("Couldn't create weighted alias index");
-                        self.distribution = Some(new_distribution);
-                    }
+                self.current_state_index =
+                    if self.state_order == TickableCharacterStateOrder::Sequential {
+                        self.current_state_index.saturating_add(1) % self.states.len()
+                    } else {
+                        if self.distribution.is_none() {
+                            let weights = self.states.iter().map(|state| state.weight).collect();
+                            let new_distribution = WeightedAliasIndex::new(weights)
+                                .expect("Couldn't create weighted alias index");
+                            self.distribution = Some(new_distribution);
+                        }
 
-                    let weighted_alias_index = self
-                        .distribution
-                        .as_ref()
-                        .expect("Distribution should have already been created");
-                    weighted_alias_index.sample(&mut thread_rng())
-                };
+                        let weighted_alias_index = self
+                            .distribution
+                            .as_ref()
+                            .expect("Distribution should have already been created");
+                        weighted_alias_index.sample(&mut thread_rng())
+                    };
                 current_state = &mut self.states[self.current_state_index];
             }
         };
