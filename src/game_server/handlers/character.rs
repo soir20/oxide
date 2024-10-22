@@ -224,7 +224,7 @@ impl BaseNpc {
 }
 
 #[derive(Clone, Deserialize)]
-pub struct TickableNpcStep {
+pub struct TickableCharacterStep {
     pub speed: f32,
     pub new_pos_x: Option<f32>,
     pub new_pos_y: Option<f32>,
@@ -245,7 +245,7 @@ pub struct TickableNpcStep {
     pub duration_millis: u64,
 }
 
-impl TickableNpcStep {
+impl TickableCharacterStep {
     pub fn new_pos(&self, current_pos: Pos) -> Pos {
         Pos {
             x: self.new_pos_x.unwrap_or(current_pos.x) + self.new_pos_offset_x,
@@ -308,15 +308,15 @@ pub enum TickResult {
 }
 
 #[derive(Clone, Deserialize)]
-pub struct TickableNpcState {
+pub struct TickableCharacterState {
     #[serde(default = "default_weight")]
     pub weight: u32,
-    steps: Vec<TickableNpcStep>,
+    steps: Vec<TickableCharacterStep>,
     #[serde(skip_deserializing)]
     current_step: Option<(usize, Instant)>,
 }
 
-impl TickableNpcState {
+impl TickableCharacterState {
     pub fn new_pos(&self, current_pos: Pos) -> Pos {
         self.panic_if_empty();
         self.steps[self
@@ -369,25 +369,25 @@ impl TickableNpcState {
 }
 
 #[derive(Clone, Default, Deserialize, Eq, PartialEq)]
-pub enum TickableNpcStateOrder {
+pub enum TickableCharacterStateOrder {
     #[default]
     Sequential,
     WeightedRandom,
 }
 
 #[derive(Clone, Deserialize)]
-pub struct TickableNpcStateTracker {
+pub struct TickableCharacterStateTracker {
     #[serde(default)]
-    states: Vec<TickableNpcState>,
+    states: Vec<TickableCharacterState>,
     #[serde(default)]
-    state_order: TickableNpcStateOrder,
+    state_order: TickableCharacterStateOrder,
     #[serde(skip_deserializing)]
     current_state_index: usize,
     #[serde(skip_deserializing)]
     distribution: Option<WeightedAliasIndex<u32>>,
 }
 
-impl TickableNpcStateTracker {
+impl TickableCharacterStateTracker {
     pub fn tick(
         &mut self,
         guid: u64,
@@ -406,7 +406,7 @@ impl TickableNpcStateTracker {
                 break packets;
             } else {
                 current_state.reset();
-                self.current_state_index = if self.state_order == TickableNpcStateOrder::Sequential
+                self.current_state_index = if self.state_order == TickableCharacterStateOrder::Sequential
                 {
                     self.current_state_index.saturating_add(1) % self.states.len()
                 } else {
@@ -440,7 +440,7 @@ pub struct AmbientNpc {
     #[serde(flatten)]
     pub base_npc: BaseNpc,
     #[serde(flatten)]
-    pub state_tracker: TickableNpcStateTracker,
+    pub state_tracker: TickableCharacterStateTracker,
 }
 
 impl AmbientNpc {
