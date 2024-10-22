@@ -664,13 +664,8 @@
                             {
                                 "speed": 2.0,
                                 "new_pos_offset_y": 10.0,
-                                "duration_millis": 10000,
-                                "animation_id": 3101
-                            }
-                        ]
-                    },
-                    {
-                        "steps": [
+                                "duration_millis": 10000
+                            },
                             {
                                 "speed": 2.0,
                                 "new_pos_offset_y": -10.0,
@@ -695,13 +690,8 @@
                             {
                                 "speed": 2.0,
                                 "new_pos_offset_y": 12.0,
-                                "duration_millis": 12000,
-                                "animation_id": 3101
-                            }
-                        ]
-                    },
-                    {
-                        "steps": [
+                                "duration_millis": 12000
+                            },
                             {
                                 "speed": 2.0,
                                 "new_pos_offset_y": -12.0,
