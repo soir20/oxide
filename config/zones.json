@@ -658,7 +658,7 @@
                 "pos_z": 379.9795,
                 "pos_w": 1.0,
                 "rot_x": 1.5708,
-                "states": [
+                "tickable_states": [
                     {
                         "steps": [
                             {
@@ -689,7 +689,7 @@
                 "pos_z": 379.9795,
                 "pos_w": 1.0,
                 "rot_x": -1.5708,
-                "states": [
+                "tickable_states": [
                     {
                         "steps": [
                             {

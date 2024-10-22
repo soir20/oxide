@@ -106,7 +106,9 @@ pub struct BaseNpc {
     pub npc_type: u32,
     #[serde(default = "default_true")]
     pub enable_rotation_and_shadow: bool,
+    #[serde(default)]
     pub tickable_states: Vec<TickableCharacterStateConfig>,
+    #[serde(default)]
     pub tickable_state_order: TickableCharacterStateOrder,
 }
 
@@ -415,7 +417,7 @@ impl TickableCharacterStateTracker {
         state_order: TickableCharacterStateOrder,
     ) -> Self {
         let distribution = if state_order == TickableCharacterStateOrder::Sequential {
-            WeightedAliasIndex::new(Vec::new())
+            WeightedAliasIndex::new(vec![1])
         } else {
             let weights = states.iter().map(|state| state.weight).collect();
             WeightedAliasIndex::new(weights)
@@ -468,6 +470,7 @@ impl TickableCharacterStateTracker {
 
 #[derive(Clone, Deserialize)]
 pub struct AmbientNpc {
+    #[serde(flatten)]
     pub base_npc: BaseNpc,
 }
 
