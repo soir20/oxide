@@ -302,6 +302,11 @@ impl TickableNpcStep {
     }
 }
 
+pub enum TickResult {
+    TickedCurrentState(Result<Vec<Vec<u8>>, ProcessPacketError>),
+    MustChangeState,
+}
+
 #[derive(Clone, Deserialize)]
 pub struct TickableNpcState {
     #[serde(default = "default_weight")]
@@ -321,12 +326,7 @@ impl TickableNpcState {
         .new_pos(current_pos)
     }
 
-    pub fn tick(
-        &mut self,
-        guid: u64,
-        current_pos: Pos,
-        now: Instant,
-    ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+    pub fn tick(&mut self, guid: u64, current_pos: Pos, now: Instant) -> TickResult {
         self.panic_if_empty();
 
         let should_change_steps =
@@ -344,17 +344,17 @@ impl TickableNpcState {
                 .current_step
                 .map(|(current_step_index, _)| current_step_index.saturating_add(1))
                 .unwrap_or_default();
-            self.current_step = Some((new_step_index, now));
-            self.steps[new_step_index].to_packets(guid, current_pos)
+            if new_step_index >= self.steps.len() {
+                TickResult::MustChangeState
+            } else {
+                self.current_step = Some((new_step_index, now));
+                TickResult::TickedCurrentState(
+                    self.steps[new_step_index].to_packets(guid, current_pos),
+                )
+            }
         } else {
-            Ok(Vec::new())
+            TickResult::TickedCurrentState(Ok(Vec::new()))
         }
-    }
-
-    pub fn complete(&self) -> bool {
-        self.current_step
-            .map(|(current_step_index, _)| current_step_index >= self.steps.len())
-            .unwrap_or(false)
     }
 
     pub fn reset(&mut self) {
@@ -398,33 +398,36 @@ impl TickableNpcStateTracker {
             return Ok((Vec::new(), current_pos));
         }
 
-        let current_state = &mut self.states[self.current_state_index];
-
-        if current_state.complete() {
-            current_state.reset();
-            self.current_state_index = if self.state_order == TickableNpcStateOrder::Sequential {
-                self.current_state_index.saturating_add(1) % self.states.len()
+        let mut current_state = &mut self.states[self.current_state_index];
+        let packets = loop {
+            if let TickResult::TickedCurrentState(packets) =
+                current_state.tick(guid, current_pos, now)
+            {
+                break packets;
             } else {
-                if self.distribution.is_none() {
-                    let weights = self.states.iter().map(|state| state.weight).collect();
-                    let new_distribution = WeightedAliasIndex::new(weights)
-                        .expect("Couldn't create weighted alias index");
-                    self.distribution = Some(new_distribution);
-                }
+                current_state.reset();
+                self.current_state_index = if self.state_order == TickableNpcStateOrder::Sequential
+                {
+                    self.current_state_index.saturating_add(1) % self.states.len()
+                } else {
+                    if self.distribution.is_none() {
+                        let weights = self.states.iter().map(|state| state.weight).collect();
+                        let new_distribution = WeightedAliasIndex::new(weights)
+                            .expect("Couldn't create weighted alias index");
+                        self.distribution = Some(new_distribution);
+                    }
 
-                let weighted_alias_index = self
-                    .distribution
-                    .as_ref()
-                    .expect("Distribution should have already been created");
-                weighted_alias_index.sample(&mut thread_rng())
-            };
-        }
+                    let weighted_alias_index = self
+                        .distribution
+                        .as_ref()
+                        .expect("Distribution should have already been created");
+                    weighted_alias_index.sample(&mut thread_rng())
+                };
+                current_state = &mut self.states[self.current_state_index];
+            }
+        };
 
-        let new_state = &mut self.states[self.current_state_index];
-        Ok((
-            new_state.tick(guid, current_pos, now)?,
-            new_state.new_pos(current_pos),
-        ))
+        Ok((packets?, current_state.new_pos(current_pos)))
     }
 
     pub fn tickable(&self) -> bool {
