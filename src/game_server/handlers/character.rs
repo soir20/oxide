@@ -224,9 +224,7 @@ impl BaseNpc {
 }
 
 #[derive(Clone, Deserialize)]
-pub struct TickableNpcState {
-    #[serde(default = "default_weight")]
-    pub weight: u32,
+pub struct TickableNpcStep {
     pub speed: f32,
     pub new_pos_x: Option<f32>,
     pub new_pos_y: Option<f32>,
@@ -247,7 +245,7 @@ pub struct TickableNpcState {
     pub duration_millis: u64,
 }
 
-impl TickableNpcState {
+impl TickableNpcStep {
     pub fn new_pos(&self, current_pos: Pos) -> Pos {
         Pos {
             x: self.new_pos_x.unwrap_or(current_pos.x) + self.new_pos_offset_x,
@@ -304,6 +302,72 @@ impl TickableNpcState {
     }
 }
 
+#[derive(Clone, Deserialize)]
+pub struct TickableNpcState {
+    #[serde(default = "default_weight")]
+    pub weight: u32,
+    steps: Vec<TickableNpcStep>,
+    #[serde(skip_deserializing)]
+    current_step: Option<(usize, Instant)>,
+}
+
+impl TickableNpcState {
+    pub fn new_pos(&self, current_pos: Pos) -> Pos {
+        self.panic_if_empty();
+        self.steps[self
+            .current_step
+            .map(|(current_step_index, _)| current_step_index)
+            .unwrap_or_default()]
+        .new_pos(current_pos)
+    }
+
+    pub fn tick(
+        &mut self,
+        guid: u64,
+        current_pos: Pos,
+        now: Instant,
+    ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+        self.panic_if_empty();
+
+        let should_change_steps =
+            if let Some((current_step_index, last_step_change)) = self.current_step {
+                let time_since_last_step_change = now.saturating_duration_since(last_step_change);
+                let current_step = &self.steps[current_step_index];
+
+                time_since_last_step_change >= Duration::from_millis(current_step.duration_millis)
+            } else {
+                true
+            };
+
+        if should_change_steps {
+            let new_step_index = self
+                .current_step
+                .map(|(current_step_index, _)| current_step_index.saturating_add(1))
+                .unwrap_or_default();
+            self.current_step = Some((new_step_index, now));
+            self.steps[new_step_index].to_packets(guid, current_pos)
+        } else {
+            Ok(Vec::new())
+        }
+    }
+
+    pub fn complete(&self) -> bool {
+        self.current_step
+            .map(|(current_step_index, _)| current_step_index >= self.steps.len())
+            .unwrap_or(false)
+    }
+
+    pub fn reset(&mut self) {
+        self.current_step = None;
+    }
+
+    fn panic_if_empty(&self) {
+        if self.steps.is_empty() {
+            panic!("Every tickable NPC state must have steps");
+        }
+    }
+}
+
 #[derive(Clone, Default, Deserialize, Eq, PartialEq)]
 pub enum TickableNpcStateOrder {
     #[default]
@@ -318,9 +382,7 @@ pub struct TickableNpcStateTracker {
     #[serde(default)]
     state_order: TickableNpcStateOrder,
     #[serde(skip_deserializing)]
-    current_state: Option<usize>,
-    #[serde(skip_deserializing, default = "Instant::now")]
-    last_state_change: Instant,
+    current_state_index: usize,
     #[serde(skip_deserializing)]
     distribution: Option<WeightedAliasIndex<u32>>,
 }
@@ -336,13 +398,12 @@ impl TickableNpcStateTracker {
             return Ok((Vec::new(), current_pos));
         }
 
-        let time_since_last_change = now.saturating_duration_since(self.last_state_change);
+        let current_state = &mut self.states[self.current_state_index];
 
-        let current_state_index = self.current_state.unwrap_or(self.states.len() - 1);
-        let current_state = &self.states[current_state_index];
-        if time_since_last_change > Duration::from_millis(current_state.duration_millis) {
-            let new_state_index = if self.state_order == TickableNpcStateOrder::Sequential {
-                current_state_index.saturating_add(1) % self.states.len()
+        if current_state.complete() {
+            current_state.reset();
+            self.current_state_index = if self.state_order == TickableNpcStateOrder::Sequential {
+                self.current_state_index.saturating_add(1) % self.states.len()
             } else {
                 if self.distribution.is_none() {
                     let weights = self.states.iter().map(|state| state.weight).collect();
@@ -357,17 +418,13 @@ impl TickableNpcStateTracker {
                     .expect("Distribution should have already been created");
                 weighted_alias_index.sample(&mut thread_rng())
             };
-            self.current_state = Some(new_state_index);
-            self.last_state_change = Instant::now();
-
-            let new_state = &self.states[new_state_index];
-            Ok((
-                new_state.to_packets(guid, current_pos)?,
-                new_state.new_pos(current_pos),
-            ))
-        } else {
-            Ok((Vec::new(), current_pos))
         }
+
+        let new_state = &mut self.states[self.current_state_index];
+        Ok((
+            new_state.tick(guid, current_pos, now)?,
+            new_state.new_pos(current_pos),
+        ))
     }
 
     pub fn tickable(&self) -> bool {
