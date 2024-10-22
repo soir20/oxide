@@ -106,6 +106,8 @@ pub struct BaseNpc {
     pub npc_type: u32,
     #[serde(default = "default_true")]
     pub enable_rotation_and_shadow: bool,
+    pub tickable_states: Vec<TickableCharacterStateConfig>,
+    pub tickable_state_order: TickableCharacterStateOrder,
 }
 
 impl BaseNpc {
@@ -302,30 +304,25 @@ impl TickableCharacterStep {
     }
 }
 
+#[derive(Clone, Deserialize)]
+pub struct TickableCharacterStateConfig {
+    #[serde(default = "default_weight")]
+    pub weight: u32,
+    pub steps: Vec<TickableCharacterStep>,
+}
+
 pub enum TickResult {
     TickedCurrentState(Result<Vec<Vec<u8>>, ProcessPacketError>),
     MustChangeState,
 }
 
-#[derive(Clone, Deserialize)]
+#[derive(Clone)]
 pub struct TickableCharacterState {
-    #[serde(default = "default_weight")]
-    pub weight: u32,
     steps: Vec<TickableCharacterStep>,
-    #[serde(skip_deserializing)]
     current_step: Option<(usize, Instant)>,
 }
 
 impl TickableCharacterState {
-    pub fn new_pos(&self, current_pos: Pos) -> Pos {
-        self.panic_if_empty();
-        self.steps[self
-            .current_step
-            .map(|(current_step_index, _)| current_step_index)
-            .unwrap_or_default()]
-        .new_pos(current_pos)
-    }
-
     pub fn tick(&mut self, guid: u64, current_pos: Pos, now: Instant) -> TickResult {
         self.panic_if_empty();
 
@@ -368,38 +365,65 @@ impl TickableCharacterState {
     }
 }
 
-#[derive(Clone, Default, Deserialize, Eq, PartialEq)]
+impl From<TickableCharacterStateConfig> for TickableCharacterState {
+    fn from(config: TickableCharacterStateConfig) -> Self {
+        TickableCharacterState {
+            steps: config.steps,
+            current_step: None,
+        }
+    }
+}
+
+#[derive(Clone, Copy, Default, Deserialize, Eq, PartialEq)]
 pub enum TickableCharacterStateOrder {
     #[default]
     Sequential,
     WeightedRandom,
 }
 
-#[derive(Clone, Deserialize)]
+#[derive(Clone)]
 pub struct TickableCharacterStateTracker {
-    #[serde(default)]
     states: Vec<TickableCharacterState>,
-    #[serde(default)]
     state_order: TickableCharacterStateOrder,
-    #[serde(skip_deserializing)]
     current_state_index: usize,
-    #[serde(skip_deserializing)]
-    distribution: Option<WeightedAliasIndex<u32>>,
+    distribution: WeightedAliasIndex<u32>,
 }
 
 impl TickableCharacterStateTracker {
+    pub fn new(
+        states: Vec<TickableCharacterStateConfig>,
+        state_order: TickableCharacterStateOrder,
+    ) -> Self {
+        let distribution = if state_order == TickableCharacterStateOrder::Sequential {
+            WeightedAliasIndex::new(Vec::new())
+        } else {
+            let weights = states.iter().map(|state| state.weight).collect();
+            WeightedAliasIndex::new(weights)
+        }
+        .expect("Couldn't create weighted alias index");
+        TickableCharacterStateTracker {
+            states: states
+                .into_iter()
+                .map(TickableCharacterState::from)
+                .collect(),
+            state_order,
+            current_state_index: 0,
+            distribution,
+        }
+    }
+
     pub fn tick(
         &mut self,
         guid: u64,
         current_pos: Pos,
         now: Instant,
-    ) -> Result<(Vec<Vec<u8>>, Pos), ProcessPacketError> {
+    ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
         if self.states.is_empty() {
-            return Ok((Vec::new(), current_pos));
+            return Ok(Vec::new());
         }
 
         let mut current_state = &mut self.states[self.current_state_index];
-        let packets = loop {
+        loop {
             if let TickResult::TickedCurrentState(packets) =
                 current_state.tick(guid, current_pos, now)
             {
@@ -410,24 +434,11 @@ impl TickableCharacterStateTracker {
                     if self.state_order == TickableCharacterStateOrder::Sequential {
                         self.current_state_index.saturating_add(1) % self.states.len()
                     } else {
-                        if self.distribution.is_none() {
-                            let weights = self.states.iter().map(|state| state.weight).collect();
-                            let new_distribution = WeightedAliasIndex::new(weights)
-                                .expect("Couldn't create weighted alias index");
-                            self.distribution = Some(new_distribution);
-                        }
-
-                        let weighted_alias_index = self
-                            .distribution
-                            .as_ref()
-                            .expect("Distribution should have already been created");
-                        weighted_alias_index.sample(&mut thread_rng())
+                        self.distribution.sample(&mut thread_rng())
                     };
                 current_state = &mut self.states[self.current_state_index];
             }
-        };
-
-        Ok((packets?, current_state.new_pos(current_pos)))
+        }
     }
 
     pub fn tickable(&self) -> bool {
@@ -437,10 +448,7 @@ impl TickableCharacterStateTracker {
 
 #[derive(Clone, Deserialize)]
 pub struct AmbientNpc {
-    #[serde(flatten)]
     pub base_npc: BaseNpc,
-    #[serde(flatten)]
-    pub state_tracker: TickableCharacterStateTracker,
 }
 
 impl AmbientNpc {
@@ -466,19 +474,6 @@ impl AmbientNpc {
         ];
 
         Ok(packets)
-    }
-
-    pub fn tick(
-        &mut self,
-        guid: u64,
-        current_pos: Pos,
-        now: Instant,
-    ) -> Result<(Vec<Vec<u8>>, Pos), ProcessPacketError> {
-        self.state_tracker.tick(guid, current_pos, now)
-    }
-
-    pub fn tickable(&self) -> bool {
-        self.state_tracker.tickable()
     }
 }
 
@@ -780,6 +775,8 @@ pub struct NpcTemplate {
     pub interact_radius: f32,
     pub auto_interact_radius: f32,
     pub wield_type: WieldType,
+    pub tickable_states: Vec<TickableCharacterStateConfig>,
+    pub tickable_state_order: TickableCharacterStateOrder,
 }
 
 impl NpcTemplate {
@@ -796,6 +793,10 @@ impl NpcTemplate {
             instance_guid,
             wield_type: (self.wield_type, self.wield_type.holster()),
             holstered: false,
+            tickable_state_tracker: TickableCharacterStateTracker::new(
+                self.tickable_states.clone(),
+                self.tickable_state_order,
+            ),
         }
     }
 }
@@ -816,6 +817,7 @@ pub struct Character {
     pub instance_guid: u64,
     wield_type: (WieldType, WieldType),
     holstered: bool,
+    tickable_state_tracker: TickableCharacterStateTracker,
 }
 
 impl IndexedGuid<u64, CharacterIndex> for Character {
@@ -860,6 +862,8 @@ impl Character {
         auto_interact_radius: f32,
         instance_guid: u64,
         wield_type: WieldType,
+        tickable_states: Vec<TickableCharacterStateConfig>,
+        tickable_state_order: TickableCharacterStateOrder,
     ) -> Character {
         Character {
             guid,
@@ -873,6 +877,10 @@ impl Character {
             instance_guid,
             wield_type: (wield_type, wield_type.holster()),
             holstered: false,
+            tickable_state_tracker: TickableCharacterStateTracker::new(
+                tickable_states,
+                tickable_state_order,
+            ),
         }
     }
 
@@ -920,6 +928,10 @@ impl Character {
             instance_guid,
             wield_type: (wield_type, wield_type.holster()),
             holstered: false,
+            tickable_state_tracker: TickableCharacterStateTracker::new(
+                Vec::new(),
+                TickableCharacterStateOrder::default(),
+            ),
         }
     }
 
@@ -986,14 +998,11 @@ impl Character {
         let (_, _, chunk) = self.index();
         let everyone =
             Zone::all_players_nearby(None, chunk, self.instance_guid, characters_table_handle)?;
-        match &mut self.character_type {
-            CharacterType::AmbientNpc(ambient_npc) => {
-                let (packets, new_pos) = ambient_npc.tick(self.guid, self.pos, now)?;
-                self.pos = new_pos;
-                Ok(vec![Broadcast::Multi(everyone, packets)])
-            }
-            _ => Ok(Vec::new()),
-        }
+        Ok(vec![Broadcast::Multi(
+            everyone,
+            self.tickable_state_tracker
+                .tick(self.guid(), self.pos, now)?,
+        )])
     }
 
     pub fn wield_type(&self) -> WieldType {
@@ -1035,9 +1044,6 @@ impl Character {
     }
 
     fn tickable(&self) -> bool {
-        match &self.character_type {
-            CharacterType::AmbientNpc(ambient_npc) => ambient_npc.tickable(),
-            _ => false,
-        }
+        self.tickable_state_tracker.tickable()
     }
 }

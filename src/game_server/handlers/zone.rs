@@ -30,8 +30,8 @@ use crate::{
 use super::{
     character::{
         coerce_to_broadcast_supplier, AmbientNpc, Character, CharacterCategory, CharacterIndex,
-        CharacterType, Chunk, Door, NpcTemplate, PreviousFixture, Transport,
-        WriteLockingBroadcastSupplier,
+        CharacterType, Chunk, Door, NpcTemplate, PreviousFixture, TickableCharacterStateOrder,
+        Transport, WriteLockingBroadcastSupplier,
     },
     guid::{Guid, GuidTable, GuidTableIndexer, GuidTableWriteHandle, IndexedGuid},
     housing::prepare_init_house_packets,
@@ -249,6 +249,8 @@ impl Zone {
                 0.0,
                 guid,
                 WieldType::None,
+                Vec::new(),
+                TickableCharacterStateOrder::default(),
             ));
         }
         template.to_zone(guid, Some(house), global_characters_table)
@@ -593,6 +595,8 @@ impl ZoneConfig {
                         w: ambient_npc.base_npc.rot_w,
                     },
                     scale: ambient_npc.base_npc.scale,
+                    tickable_states: ambient_npc.base_npc.tickable_states.clone(),
+                    tickable_state_order: ambient_npc.base_npc.tickable_state_order,
                     character_type: CharacterType::AmbientNpc(ambient_npc),
                     mount_id: None,
                     interact_radius: self.interact_radius,
@@ -619,6 +623,8 @@ impl ZoneConfig {
                         w: door.base_npc.rot_w,
                     },
                     scale: door.base_npc.scale,
+                    tickable_states: door.base_npc.tickable_states.clone(),
+                    tickable_state_order: door.base_npc.tickable_state_order,
                     character_type: CharacterType::Door(door),
                     mount_id: None,
                     interact_radius: self.interact_radius,
@@ -645,6 +651,8 @@ impl ZoneConfig {
                         w: transport.base_npc.rot_w,
                     },
                     scale: transport.base_npc.scale,
+                    tickable_states: transport.base_npc.tickable_states.clone(),
+                    tickable_state_order: transport.base_npc.tickable_state_order,
                     character_type: CharacterType::Transport(transport),
                     mount_id: None,
                     interact_radius: self.interact_radius,
