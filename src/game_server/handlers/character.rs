@@ -123,9 +123,9 @@ impl BaseNpc {
                 unknown4: 0,
                 unknown5: 0,
                 unknown6: 1,
-                scale: character.scale,
-                pos: character.pos,
-                rot: character.rot,
+                scale: character.stats.scale,
+                pos: character.stats.pos,
+                rot: character.stats.rot,
                 unknown8: 1,
                 attachments: vec![],
                 is_not_targetable: 1,
@@ -149,7 +149,7 @@ impl BaseNpc {
                 interactable_size_pct: 100,
                 unknown23: -1,
                 unknown24: -1,
-                active_animation_slot: character.animation_id,
+                active_animation_slot: character.stats.animation_id,
                 unknown26: false,
                 ignore_position: false,
                 sub_title_id: 0,
@@ -253,15 +253,8 @@ impl TickableCharacterStep {
         }
     }
 
-    pub fn apply(
-        &self,
-        guid: u64,
-        current_pos: Pos,
-    ) -> Result<(Vec<Vec<u8>>, TickChangelog), ProcessPacketError> {
-        let mut changelog = TickChangelog::default();
-
+    pub fn apply(&self, guid: u64, current_pos: Pos) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
         let mut packets = Vec::new();
-        changelog.speed = Some(self.speed);
         packets.push(GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: UpdateSpeed {
@@ -271,7 +264,6 @@ impl TickableCharacterStep {
         })?);
 
         let new_pos = self.new_pos(current_pos);
-        changelog.new_pos = Some(new_pos);
         packets.push(GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: UpdatePlayerPosition {
@@ -287,7 +279,6 @@ impl TickableCharacterStep {
             },
         })?);
 
-        changelog.animation_id = self.animation_id;
         if let Some(animation_id) = self.animation_id {
             packets.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
@@ -301,7 +292,7 @@ impl TickableCharacterStep {
             })?);
         }
 
-        Ok((packets, changelog))
+        Ok(packets)
     }
 }
 
@@ -312,31 +303,8 @@ pub struct TickableCharacterStateConfig {
     pub steps: Vec<TickableCharacterStep>,
 }
 
-#[derive(Default)]
-pub struct TickChangelog {
-    pub speed: Option<f32>,
-    pub new_pos: Option<Pos>,
-    pub animation_id: Option<i32>,
-}
-
-impl TickChangelog {
-    pub fn apply(&self, character: &mut Character) {
-        if let Some(speed) = self.speed {
-            character.speed = speed;
-        }
-
-        if let Some(new_pos) = self.new_pos {
-            character.pos = new_pos;
-        }
-
-        if let Some(animation_id) = self.animation_id {
-            character.animation_id = animation_id;
-        }
-    }
-}
-
 pub enum TickResult {
-    TickedCurrentState(Result<(Vec<Vec<u8>>, TickChangelog), ProcessPacketError>),
+    TickedCurrentState(Result<Vec<Vec<u8>>, ProcessPacketError>),
     MustChangeState,
 }
 
@@ -372,7 +340,7 @@ impl TickableCharacterState {
                 TickResult::TickedCurrentState(self.steps[new_step_index].apply(guid, current_pos))
             }
         } else {
-            TickResult::TickedCurrentState(Ok((Vec::new(), TickChangelog::default())))
+            TickResult::TickedCurrentState(Ok(Vec::new()))
         }
     }
 
@@ -439,9 +407,9 @@ impl TickableCharacterStateTracker {
         guid: u64,
         current_pos: Pos,
         now: Instant,
-    ) -> Result<(Vec<Vec<u8>>, TickChangelog), ProcessPacketError> {
+    ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
         if self.states.is_empty() {
-            return Ok((Vec::new(), TickChangelog::default()));
+            return Ok(Vec::new());
         }
 
         let mut current_state = &mut self.states[self.current_state_index];
@@ -788,22 +756,24 @@ impl NpcTemplate {
     pub fn to_character(&self, instance_guid: u64) -> Character {
         Character {
             guid: npc_guid(self.discriminant, instance_guid, self.index),
-            pos: self.pos,
-            rot: self.rot,
-            scale: self.scale,
-            character_type: self.character_type.clone(),
-            mount_id: self.mount_id,
-            interact_radius: self.interact_radius,
-            auto_interact_radius: self.auto_interact_radius,
-            instance_guid,
-            wield_type: (self.wield_type, self.wield_type.holster()),
-            holstered: false,
+            stats: CharacterStats {
+                pos: self.pos,
+                rot: self.rot,
+                scale: self.scale,
+                character_type: self.character_type.clone(),
+                mount_id: self.mount_id,
+                interact_radius: self.interact_radius,
+                auto_interact_radius: self.auto_interact_radius,
+                instance_guid,
+                wield_type: (self.wield_type, self.wield_type.holster()),
+                holstered: false,
+                animation_id: self.animation_id,
+                speed: 0.0,
+            },
             tickable_state_tracker: TickableCharacterStateTracker::new(
                 self.tickable_states.clone(),
                 self.tickable_state_order,
             ),
-            animation_id: self.animation_id,
-            speed: 0.0,
         }
     }
 }
@@ -812,8 +782,7 @@ pub type Chunk = (i32, i32);
 pub type CharacterIndex = (CharacterCategory, u64, Chunk);
 
 #[derive(Clone)]
-pub struct Character {
-    pub guid: u64,
+pub struct CharacterStats {
     pub pos: Pos,
     pub rot: Pos,
     pub scale: f32,
@@ -826,6 +795,12 @@ pub struct Character {
     pub speed: f32,
     wield_type: (WieldType, WieldType),
     holstered: bool,
+}
+
+#[derive(Clone)]
+pub struct Character {
+    guid: u64,
+    pub stats: CharacterStats,
     tickable_state_tracker: TickableCharacterStateTracker,
 }
 
@@ -836,12 +811,12 @@ impl IndexedGuid<u64, CharacterIndex> for Character {
 
     fn index(&self) -> CharacterIndex {
         (
-            match &self.character_type {
+            match &self.stats.character_type {
                 CharacterType::Player(player) => match player.ready {
                     true => CharacterCategory::PlayerReady,
                     false => CharacterCategory::PlayerUnready,
                 },
-                _ => match self.auto_interact_radius > 0.0 {
+                _ => match self.stats.auto_interact_radius > 0.0 {
                     true => CharacterCategory::NpcAutoInteractEnabled,
                     false => match self.tickable() {
                         true => CharacterCategory::NpcTickable,
@@ -849,8 +824,8 @@ impl IndexedGuid<u64, CharacterIndex> for Character {
                     },
                 },
             },
-            self.instance_guid,
-            Character::chunk(self.pos.x, self.pos.z),
+            self.stats.instance_guid,
+            Character::chunk(self.stats.pos.x, self.stats.pos.z),
         )
     }
 }
@@ -877,22 +852,24 @@ impl Character {
     ) -> Character {
         Character {
             guid,
-            pos,
-            rot,
-            scale,
-            character_type,
-            mount_id,
-            interact_radius,
-            auto_interact_radius,
-            instance_guid,
-            wield_type: (wield_type, wield_type.holster()),
-            holstered: false,
+            stats: CharacterStats {
+                pos,
+                rot,
+                scale,
+                character_type,
+                mount_id,
+                interact_radius,
+                auto_interact_radius,
+                instance_guid,
+                wield_type: (wield_type, wield_type.holster()),
+                holstered: false,
+                animation_id,
+                speed: 0.0,
+            },
             tickable_state_tracker: TickableCharacterStateTracker::new(
                 tickable_states,
                 tickable_state_order,
             ),
-            animation_id,
-            speed: 0.0,
         }
     }
 
@@ -930,22 +907,24 @@ impl Character {
             .unwrap_or(WieldType::None);
         Character {
             guid: player_guid(guid),
-            pos,
-            rot,
-            scale: 1.0,
-            character_type: CharacterType::Player(Box::new(data)),
-            mount_id: None,
-            interact_radius: 0.0,
-            auto_interact_radius: 0.0,
-            instance_guid,
-            wield_type: (wield_type, wield_type.holster()),
-            holstered: false,
+            stats: CharacterStats {
+                pos,
+                rot,
+                scale: 1.0,
+                character_type: CharacterType::Player(Box::new(data)),
+                mount_id: None,
+                interact_radius: 0.0,
+                auto_interact_radius: 0.0,
+                instance_guid,
+                wield_type: (wield_type, wield_type.holster()),
+                holstered: false,
+                animation_id: 0,
+                speed: 0.0,
+            },
             tickable_state_tracker: TickableCharacterStateTracker::new(
                 Vec::new(),
                 TickableCharacterStateOrder::default(),
             ),
-            animation_id: 0,
-            speed: 0.0,
         }
     }
 
@@ -962,7 +941,7 @@ impl Character {
             inner: RemoveStandard { guid: self.guid },
         })?];
 
-        if let Some(mount_id) = self.mount_id {
+        if let Some(mount_id) = self.stats.mount_id {
             packets.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: RemoveStandard {
@@ -978,20 +957,24 @@ impl Character {
         &self,
         mount_configs: &BTreeMap<u32, MountConfig>,
     ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
-        let packets = match &self.character_type {
+        let packets = match &self.stats.character_type {
             CharacterType::AmbientNpc(ambient_npc) => ambient_npc.add_packets(self)?,
             CharacterType::Door(door) => door.add_packets(self)?,
             CharacterType::Transport(transport) => transport.add_packets(self)?,
-            CharacterType::Player(player) => {
-                player.add_packets(self.guid, self.mount_id, self.pos, self.rot, mount_configs)?
-            }
+            CharacterType::Player(player) => player.add_packets(
+                self.guid,
+                self.stats.mount_id,
+                self.stats.pos,
+                self.stats.rot,
+                mount_configs,
+            )?,
             CharacterType::Fixture(house_guid, fixture) => fixture_packets(
                 *house_guid,
                 self.guid,
                 fixture,
-                self.pos,
-                self.rot,
-                self.scale,
+                self.stats.pos,
+                self.stats.rot,
+                self.stats.scale,
             )?,
         };
 
@@ -1004,37 +987,40 @@ impl Character {
         characters_table_handle: &'a impl GuidTableIndexer<'a, u64, Character, CharacterIndex>,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let (_, _, chunk) = self.index();
-        let everyone =
-            Zone::all_players_nearby(None, chunk, self.instance_guid, characters_table_handle)?;
+        let everyone = Zone::all_players_nearby(
+            None,
+            chunk,
+            self.stats.instance_guid,
+            characters_table_handle,
+        )?;
 
-        let (packets, changelog) = self
+        let packets = self
             .tickable_state_tracker
-            .tick(self.guid(), self.pos, now)?;
-        changelog.apply(self);
+            .tick(self.guid(), self.stats.pos, now)?;
         Ok(vec![Broadcast::Multi(everyone, packets)])
     }
 
     pub fn wield_type(&self) -> WieldType {
-        self.wield_type.0
+        self.stats.wield_type.0
     }
 
     pub fn brandished_wield_type(&self) -> WieldType {
-        if self.holstered {
-            self.wield_type.1
+        if self.stats.holstered {
+            self.stats.wield_type.1
         } else {
-            self.wield_type.0
+            self.stats.wield_type.0
         }
     }
 
     pub fn set_brandished_wield_type(&mut self, wield_type: WieldType) {
-        self.wield_type = (wield_type, wield_type.holster());
-        self.holstered = false;
+        self.stats.wield_type = (wield_type, wield_type.holster());
+        self.stats.holstered = false;
     }
 
     pub fn brandish_or_holster(&mut self) {
-        let (old_wield_type, new_wield_type) = self.wield_type;
-        self.wield_type = (new_wield_type, old_wield_type);
-        self.holstered = !self.holstered;
+        let (old_wield_type, new_wield_type) = self.stats.wield_type;
+        self.stats.wield_type = (new_wield_type, old_wield_type);
+        self.stats.holstered = !self.stats.holstered;
     }
 
     pub fn interact(
@@ -1043,7 +1029,7 @@ impl Character {
         source_zone_guid: u64,
         zones_lock_enforcer: &ZoneLockEnforcer,
     ) -> WriteLockingBroadcastSupplier {
-        match &self.character_type {
+        match &self.stats.character_type {
             CharacterType::Door(door) => {
                 door.interact(requester, source_zone_guid, zones_lock_enforcer)
             }

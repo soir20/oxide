@@ -251,7 +251,7 @@ impl GameServer {
                                 Some((character, _)) => {
                                     let mut character_write_handle = character.write();
                                     if let CharacterType::Player(ref mut player) =
-                                        &mut character_write_handle.character_type
+                                        &mut character_write_handle.stats.character_type
                                     {
                                         player.ready = true;
                                     }
@@ -378,7 +378,7 @@ impl GameServer {
                                                 let mut character_broadcasts = Vec::new();
 
                                                 if let Some(character_write_handle) = characters_writes.get_mut(&player_guid(sender)) {
-                                                    character_write_handle.speed = zone.speed;
+                                                    character_write_handle.stats.speed = zone.speed;
                                                     let wield_type = TunneledPacket {
                                                         unknown1: true,
                                                         inner: UpdateWieldType {
@@ -388,7 +388,7 @@ impl GameServer {
                                                     };
                                                     global_packets.push(GamePacket::serialize(&wield_type)?);
 
-                                                    if let CharacterType::Player(player) = &character_write_handle.character_type {
+                                                    if let CharacterType::Player(player) = &character_write_handle.stats.character_type {
                                                         global_packets.push(GamePacket::serialize(&TunneledPacket {
                                                             unknown1: true,
                                                             inner: InitCustomizations {

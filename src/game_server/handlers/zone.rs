@@ -393,46 +393,46 @@ impl Zone {
         pos_update: UpdatePlayerPosition,
     ) -> Result<Vec<u64>, ProcessPacketError> {
         if let Some(character_write_handle) = characters_write.get_mut(&pos_update.guid) {
-            let previous_pos = character_write_handle.pos;
-            character_write_handle.pos = Pos {
+            let previous_pos = character_write_handle.stats.pos;
+            character_write_handle.stats.pos = Pos {
                 x: pos_update.pos_x,
                 y: pos_update.pos_y,
                 z: pos_update.pos_z,
-                w: character_write_handle.pos.z,
+                w: character_write_handle.stats.pos.z,
             };
-            character_write_handle.rot = Pos {
+            character_write_handle.stats.rot = Pos {
                 x: pos_update.rot_x,
                 y: pos_update.rot_y,
                 z: pos_update.rot_z,
-                w: character_write_handle.rot.z,
+                w: character_write_handle.stats.rot.z,
             };
 
             let mut characters_to_interact = Vec::new();
             for npc_guid in auto_interact_npcs {
                 if let Some(npc_read_handle) = characters_read.get(&npc_guid) {
-                    if npc_read_handle.auto_interact_radius > 0.0 {
+                    if npc_read_handle.stats.auto_interact_radius > 0.0 {
                         let distance_now = distance3(
-                            character_write_handle.pos.x,
-                            character_write_handle.pos.y,
-                            character_write_handle.pos.z,
-                            npc_read_handle.pos.x,
-                            npc_read_handle.pos.y,
-                            npc_read_handle.pos.z,
+                            character_write_handle.stats.pos.x,
+                            character_write_handle.stats.pos.y,
+                            character_write_handle.stats.pos.z,
+                            npc_read_handle.stats.pos.x,
+                            npc_read_handle.stats.pos.y,
+                            npc_read_handle.stats.pos.z,
                         );
                         let distance_before = distance3(
                             previous_pos.x,
                             previous_pos.y,
                             previous_pos.z,
-                            npc_read_handle.pos.x,
-                            npc_read_handle.pos.y,
-                            npc_read_handle.pos.z,
+                            npc_read_handle.stats.pos.x,
+                            npc_read_handle.stats.pos.y,
+                            npc_read_handle.stats.pos.z,
                         );
 
                         // Only trigger the interaction when the player first enters the radius
-                        if distance_now <= npc_read_handle.auto_interact_radius
-                            && distance_before > npc_read_handle.auto_interact_radius
+                        if distance_now <= npc_read_handle.stats.auto_interact_radius
+                            && distance_before > npc_read_handle.stats.auto_interact_radius
                         {
-                            characters_to_interact.push(npc_read_handle.guid);
+                            characters_to_interact.push(npc_read_handle.guid());
                         }
                     }
                 }
@@ -749,11 +749,13 @@ pub fn enter_zone(
     let character = characters_table_write_handle.remove(player_guid(player));
     if let Some((character, (character_category, _, _))) = character {
         let mut character_write_handle = character.write();
-        character_write_handle.instance_guid = destination_read_handle.guid;
-        character_write_handle.pos = destination_pos;
-        character_write_handle.rot = destination_rot;
+        character_write_handle.stats.instance_guid = destination_read_handle.guid;
+        character_write_handle.stats.pos = destination_pos;
+        character_write_handle.stats.rot = destination_rot;
 
-        if let CharacterType::Player(ref mut player) = &mut character_write_handle.character_type {
+        if let CharacterType::Player(ref mut player) =
+            &mut character_write_handle.stats.character_type
+        {
             player.ready = false;
         }
 
@@ -875,10 +877,10 @@ pub fn interact_with_character(
                     let requester_y;
                     let requester_z;
                     if let Some(requester_read_handle) = characters_read.get(&request.requester) {
-                        source_zone_guid = requester_read_handle.instance_guid;
-                        requester_x = requester_read_handle.pos.x;
-                        requester_y = requester_read_handle.pos.y;
-                        requester_z = requester_read_handle.pos.z;
+                        source_zone_guid = requester_read_handle.stats.instance_guid;
+                        requester_x = requester_read_handle.stats.pos.x;
+                        requester_y = requester_read_handle.stats.pos.y;
+                        requester_z = requester_read_handle.stats.pos.z;
                     } else {
                         return coerce_to_broadcast_supplier(|_| Ok(Vec::new()));
                     }
@@ -889,11 +891,11 @@ pub fn interact_with_character(
                             requester_x,
                             requester_y,
                             requester_z,
-                            target_read_handle.pos.x,
-                            target_read_handle.pos.y,
-                            target_read_handle.pos.z,
+                            target_read_handle.stats.pos.x,
+                            target_read_handle.stats.pos.y,
+                            target_read_handle.stats.pos.z,
                         );
-                        if distance > target_read_handle.interact_radius {
+                        if distance > target_read_handle.stats.interact_radius {
                             return coerce_to_broadcast_supplier(|_| Ok(Vec::new()));
                         }
 
@@ -927,8 +929,8 @@ pub fn teleport_within_zone(
         characters_table_write_handle.remove(player_guid(sender))
     {
         let mut character_write_handle = character.write();
-        character_write_handle.pos = destination_pos;
-        character_write_handle.rot = destination_rot;
+        character_write_handle.stats.pos = destination_pos;
+        character_write_handle.stats.rot = destination_rot;
         let (_, _, new_chunk) = character_write_handle.index();
 
         let (diff_character_guids, diff_character_handles) = diff_character_handles!(
