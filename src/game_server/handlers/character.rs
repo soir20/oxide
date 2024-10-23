@@ -66,7 +66,7 @@ const fn default_weight() -> u32 {
 }
 
 #[derive(Clone, Deserialize)]
-pub struct BaseNpc {
+pub struct BaseNpcConfig {
     #[serde(default)]
     pub model_id: u32,
     #[serde(default)]
@@ -110,6 +110,22 @@ pub struct BaseNpc {
     pub tickable_states: Vec<TickableCharacterStateConfig>,
     #[serde(default)]
     pub tickable_state_order: TickableCharacterStateOrder,
+}
+
+#[derive(Clone)]
+pub struct BaseNpc {
+    pub model_id: u32,
+    pub name_id: u32,
+    pub terrain_object_id: u32,
+    pub name_offset_x: f32,
+    pub name_offset_y: f32,
+    pub name_offset_z: f32,
+    pub cursor: Option<u8>,
+    pub show_name: bool,
+    pub visible: bool,
+    pub bounce_area_id: i32,
+    pub npc_type: u32,
+    pub enable_rotation_and_shadow: bool,
 }
 
 impl BaseNpc {
@@ -218,6 +234,25 @@ impl BaseNpc {
                 unknown1: false,
             },
         )
+    }
+}
+
+impl From<BaseNpcConfig> for BaseNpc {
+    fn from(value: BaseNpcConfig) -> Self {
+        BaseNpc {
+            model_id: value.model_id,
+            name_id: value.name_id,
+            terrain_object_id: value.terrain_object_id,
+            name_offset_x: value.name_offset_x,
+            name_offset_y: value.name_offset_y,
+            name_offset_z: value.name_offset_z,
+            cursor: value.cursor,
+            show_name: value.show_name,
+            visible: value.visible,
+            bounce_area_id: value.bounce_area_id,
+            npc_type: value.npc_type,
+            enable_rotation_and_shadow: value.enable_rotation_and_shadow,
+        }
     }
 }
 
@@ -440,8 +475,13 @@ impl TickableCharacterStateTracker {
 }
 
 #[derive(Clone, Deserialize)]
-pub struct AmbientNpc {
+pub struct AmbientNpcConfig {
     #[serde(flatten)]
+    pub base_npc: BaseNpcConfig,
+}
+
+#[derive(Clone)]
+pub struct AmbientNpc {
     pub base_npc: BaseNpc,
 }
 
@@ -465,9 +505,32 @@ impl AmbientNpc {
     }
 }
 
+impl From<AmbientNpcConfig> for AmbientNpc {
+    fn from(value: AmbientNpcConfig) -> Self {
+        AmbientNpc {
+            base_npc: value.base_npc.into(),
+        }
+    }
+}
+
 #[derive(Clone, Deserialize)]
-pub struct Door {
+pub struct DoorConfig {
     #[serde(flatten)]
+    pub base_npc: BaseNpcConfig,
+    pub destination_pos_x: f32,
+    pub destination_pos_y: f32,
+    pub destination_pos_z: f32,
+    pub destination_pos_w: f32,
+    pub destination_rot_x: f32,
+    pub destination_rot_y: f32,
+    pub destination_rot_z: f32,
+    pub destination_rot_w: f32,
+    pub destination_zone_template: Option<u8>,
+    pub destination_zone: Option<u64>,
+}
+
+#[derive(Clone)]
+pub struct Door {
     pub base_npc: BaseNpc,
     pub destination_pos_x: f32,
     pub destination_pos_y: f32,
@@ -574,9 +637,35 @@ impl Door {
     }
 }
 
+impl From<DoorConfig> for Door {
+    fn from(value: DoorConfig) -> Self {
+        Door {
+            base_npc: value.base_npc.into(),
+            destination_pos_x: value.destination_pos_x,
+            destination_pos_y: value.destination_pos_y,
+            destination_pos_z: value.destination_pos_z,
+            destination_pos_w: value.destination_pos_w,
+            destination_rot_x: value.destination_rot_x,
+            destination_rot_y: value.destination_rot_y,
+            destination_rot_z: value.destination_rot_z,
+            destination_rot_w: value.destination_rot_w,
+            destination_zone_template: value.destination_zone_template,
+            destination_zone: value.destination_zone,
+        }
+    }
+}
+
 #[derive(Clone, Deserialize)]
-pub struct Transport {
+pub struct TransportConfig {
     #[serde(flatten)]
+    pub base_npc: BaseNpcConfig,
+    pub show_icon: bool,
+    pub large_icon: bool,
+    pub show_hover_description: bool,
+}
+
+#[derive(Clone)]
+pub struct Transport {
     pub base_npc: BaseNpc,
     pub show_icon: bool,
     pub large_icon: bool,
@@ -639,6 +728,17 @@ impl Transport {
                 })?],
             )])
         })
+    }
+}
+
+impl From<TransportConfig> for Transport {
+    fn from(value: TransportConfig) -> Self {
+        Transport {
+            base_npc: value.base_npc.into(),
+            show_icon: value.show_icon,
+            large_icon: value.large_icon,
+            show_hover_description: value.show_hover_description,
+        }
     }
 }
 

@@ -29,9 +29,9 @@ use crate::{
 
 use super::{
     character::{
-        coerce_to_broadcast_supplier, AmbientNpc, Character, CharacterCategory, CharacterIndex,
-        CharacterType, Chunk, Door, NpcTemplate, PreviousFixture, TickableCharacterStateOrder,
-        Transport, WriteLockingBroadcastSupplier,
+        coerce_to_broadcast_supplier, AmbientNpcConfig, Character, CharacterCategory,
+        CharacterIndex, CharacterType, Chunk, DoorConfig, NpcTemplate, PreviousFixture,
+        TickableCharacterStateOrder, TransportConfig, WriteLockingBroadcastSupplier,
     },
     guid::{Guid, GuidTable, GuidTableIndexer, GuidTableWriteHandle, IndexedGuid},
     housing::prepare_init_house_packets,
@@ -69,11 +69,11 @@ struct ZoneConfig {
     speed: f32,
     jump_height_multiplier: f32,
     gravity_multiplier: f32,
-    doors: Vec<Door>,
+    doors: Vec<DoorConfig>,
     interact_radius: f32,
     door_auto_interact_radius: f32,
-    transports: Vec<Transport>,
-    ambient_npcs: Vec<AmbientNpc>,
+    transports: Vec<TransportConfig>,
+    ambient_npcs: Vec<AmbientNpcConfig>,
 }
 
 #[derive(Clone)]
@@ -599,7 +599,7 @@ impl ZoneConfig {
                     tickable_states: ambient_npc.base_npc.tickable_states.clone(),
                     tickable_state_order: ambient_npc.base_npc.tickable_state_order,
                     animation_id: ambient_npc.base_npc.active_animation_slot,
-                    character_type: CharacterType::AmbientNpc(ambient_npc),
+                    character_type: CharacterType::AmbientNpc(ambient_npc.into()),
                     mount_id: None,
                     interact_radius: self.interact_radius,
                     auto_interact_radius: 0.0,
@@ -628,7 +628,7 @@ impl ZoneConfig {
                     tickable_states: door.base_npc.tickable_states.clone(),
                     tickable_state_order: door.base_npc.tickable_state_order,
                     animation_id: door.base_npc.active_animation_slot,
-                    character_type: CharacterType::Door(door),
+                    character_type: CharacterType::Door(door.into()),
                     mount_id: None,
                     interact_radius: self.interact_radius,
                     auto_interact_radius: self.door_auto_interact_radius,
@@ -657,7 +657,7 @@ impl ZoneConfig {
                     tickable_states: transport.base_npc.tickable_states.clone(),
                     tickable_state_order: transport.base_npc.tickable_state_order,
                     animation_id: transport.base_npc.active_animation_slot,
-                    character_type: CharacterType::Transport(transport),
+                    character_type: CharacterType::Transport(transport.into()),
                     mount_id: None,
                     interact_radius: self.interact_radius,
                     auto_interact_radius: 0.0,
