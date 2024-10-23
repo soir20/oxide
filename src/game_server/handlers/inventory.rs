@@ -183,7 +183,7 @@ fn process_unequip_slot(
                 if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) {
 
                     let mut brandished_wield_type = None;
-                    let mut result = if let CharacterType::Player(ref mut player_data) = character_write_handle.character_type {
+                    let mut result = if let CharacterType::Player(ref mut player_data) = character_write_handle.stats.character_type {
                         let possible_battle_class = player_data.battle_classes.get_mut(&unequip_slot.battle_class);
 
                         if let Some(battle_class) = possible_battle_class {
@@ -265,7 +265,7 @@ fn process_equip_guid(
                             characters_write.get(&player_guid(sender))
                         {
                             if let CharacterType::Player(player) =
-                                &character_write_handle.character_type
+                                &character_write_handle.stats.character_type
                             {
                                 if let Some(battle_class) =
                                     player.battle_classes.get(&player.active_battle_class)
@@ -412,7 +412,7 @@ fn process_equip_customization(
                 if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender))
                 {
                     if let CharacterType::Player(player) =
-                        &mut character_write_handle.character_type
+                        &mut character_write_handle.stats.character_type
                     {
                         let cost = if let Some(cost_entry) =
                             game_server.costs().get(&equip_customization.item_guid)
@@ -595,7 +595,7 @@ fn equip_item_in_slot(
         };
 
         let mut result = if let CharacterType::Player(ref mut player_data) =
-            character_write_handle.character_type
+            character_write_handle.stats.character_type
         {
             if player_data.inventory.contains(&equip_guid.item_guid) {
                 let possible_battle_class =
