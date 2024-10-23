@@ -305,12 +305,11 @@ impl GameServer {
                         ))
                             .unwrap_or_default();
 
-                        let mut read_character_guids: Vec<u64> = character_guids.keys().copied().collect();
-                        read_character_guids.push(player_guid(sender));
+                        let read_character_guids: Vec<u64> = character_guids.keys().copied().collect();
                         CharacterLockRequest {
                             read_guids: read_character_guids,
-                            write_guids: Vec::new(),
-                            character_consumer: move |_, characters_read, _, zones_lock_enforcer| {
+                            write_guids: vec![player_guid(sender)],
+                            character_consumer: move |_, characters_read, mut characters_writes, zones_lock_enforcer| {
                                 if let Some((_, instance_guid, _)) = possible_index {
                                     zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
                                         read_guids: vec![instance_guid],
@@ -378,17 +377,18 @@ impl GameServer {
                                                 // TODO: broadcast to all
                                                 let mut character_broadcasts = Vec::new();
 
-                                                if let Some(character_read_handle) = characters_read.get(&player_guid(sender)) {
+                                                if let Some(character_write_handle) = characters_writes.get_mut(&player_guid(sender)) {
+                                                    character_write_handle.speed = zone.speed;
                                                     let wield_type = TunneledPacket {
                                                         unknown1: true,
                                                         inner: UpdateWieldType {
                                                             guid: player_guid(sender),
-                                                            wield_type: character_read_handle.wield_type(),
+                                                            wield_type: character_write_handle.wield_type(),
                                                         },
                                                     };
                                                     global_packets.push(GamePacket::serialize(&wield_type)?);
 
-                                                    if let CharacterType::Player(player) = &character_read_handle.character_type {
+                                                    if let CharacterType::Player(player) = &character_write_handle.character_type {
                                                         global_packets.push(GamePacket::serialize(&TunneledPacket {
                                                             unknown1: true,
                                                             inner: InitCustomizations {

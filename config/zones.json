@@ -658,17 +658,20 @@
                 "pos_z": 379.9795,
                 "pos_w": 1.0,
                 "rot_x": 1.5708,
-                "states": [
+                "tickable_states": [
                     {
-                        "speed": 2.0,
-                        "new_pos_offset_y": 10.0,
-                        "duration_millis": 10000,
-                        "animation_id": 3101
-                    },
-                    {
-                        "speed": 2.0,
-                        "new_pos_offset_y": -10.0,
-                        "duration_millis": 10000
+                        "steps": [
+                            {
+                                "speed": 2.0,
+                                "new_pos_offset_y": 10.0,
+                                "duration_millis": 10000
+                            },
+                            {
+                                "speed": 2.0,
+                                "new_pos_offset_y": -10.0,
+                                "duration_millis": 10000
+                            }
+                        ]
                     }
                 ]
             },
@@ -681,17 +684,20 @@
                 "pos_z": 379.9795,
                 "pos_w": 1.0,
                 "rot_x": -1.5708,
-                "states": [
+                "tickable_states": [
                     {
-                        "speed": 2.0,
-                        "new_pos_offset_y": 12.0,
-                        "duration_millis": 12000,
-                        "animation_id": 3101
-                    },
-                    {
-                        "speed": 2.0,
-                        "new_pos_offset_y": -12.0,
-                        "duration_millis": 12000
+                        "steps": [
+                            {
+                                "speed": 2.0,
+                                "new_pos_offset_y": 12.0,
+                                "duration_millis": 12000
+                            },
+                            {
+                                "speed": 2.0,
+                                "new_pos_offset_y": -12.0,
+                                "duration_millis": 12000
+                            }
+                        ]
                     }
                 ]
             }

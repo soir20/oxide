@@ -478,7 +478,7 @@ impl GamePacket for UpdateCharacterState {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct QueueAnimation {
     pub character_guid: u64,
-    pub animation_id: u32,
+    pub animation_id: i32,
     pub queue_pos: u32,
     pub delay_seconds: f32,
     pub duration_seconds: f32,
