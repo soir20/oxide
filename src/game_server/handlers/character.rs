@@ -29,7 +29,7 @@ use crate::{
 };
 
 use super::{
-    guid::{GuidTableIndexer, IndexedGuid},
+    guid::{Guid, GuidTableIndexer, IndexedGuid},
     housing::fixture_packets,
     inventory::wield_type_from_slot,
     lock_enforcer::{ZoneLockEnforcer, ZoneLockRequest},
@@ -253,21 +253,26 @@ impl TickableCharacterStep {
         }
     }
 
-    pub fn apply(&self, guid: u64, current_pos: Pos) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+    pub fn apply(
+        &self,
+        character: &mut CharacterStats,
+    ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
         let mut packets = Vec::new();
+        character.speed = self.speed;
         packets.push(GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: UpdateSpeed {
-                guid,
+                guid: Guid::guid(character),
                 speed: self.speed,
             },
         })?);
 
-        let new_pos = self.new_pos(current_pos);
+        let new_pos = self.new_pos(character.pos);
+        character.pos = new_pos;
         packets.push(GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: UpdatePlayerPosition {
-                guid,
+                guid: Guid::guid(character),
                 pos_x: new_pos.x,
                 pos_y: new_pos.y,
                 pos_z: new_pos.z,
@@ -280,10 +285,11 @@ impl TickableCharacterStep {
         })?);
 
         if let Some(animation_id) = self.animation_id {
+            character.animation_id = animation_id;
             packets.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: QueueAnimation {
-                    character_guid: guid,
+                    character_guid: Guid::guid(character),
                     animation_id,
                     queue_pos: 1,
                     delay_seconds: 0.0,
@@ -315,7 +321,7 @@ pub struct TickableCharacterState {
 }
 
 impl TickableCharacterState {
-    pub fn tick(&mut self, guid: u64, current_pos: Pos, now: Instant) -> TickResult {
+    pub fn tick(&mut self, character: &mut CharacterStats, now: Instant) -> TickResult {
         self.panic_if_empty();
 
         let should_change_steps =
@@ -337,7 +343,7 @@ impl TickableCharacterState {
                 TickResult::MustChangeState
             } else {
                 self.current_step = Some((new_step_index, now));
-                TickResult::TickedCurrentState(self.steps[new_step_index].apply(guid, current_pos))
+                TickResult::TickedCurrentState(self.steps[new_step_index].apply(character))
             }
         } else {
             TickResult::TickedCurrentState(Ok(Vec::new()))
@@ -404,8 +410,7 @@ impl TickableCharacterStateTracker {
 
     pub fn tick(
         &mut self,
-        guid: u64,
-        current_pos: Pos,
+        character: &mut CharacterStats,
         now: Instant,
     ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
         if self.states.is_empty() {
@@ -414,9 +419,7 @@ impl TickableCharacterStateTracker {
 
         let mut current_state = &mut self.states[self.current_state_index];
         loop {
-            if let TickResult::TickedCurrentState(result) =
-                current_state.tick(guid, current_pos, now)
-            {
+            if let TickResult::TickedCurrentState(result) = current_state.tick(character, now) {
                 break result;
             } else {
                 current_state.reset();
@@ -755,8 +758,8 @@ pub struct NpcTemplate {
 impl NpcTemplate {
     pub fn to_character(&self, instance_guid: u64) -> Character {
         Character {
-            guid: npc_guid(self.discriminant, instance_guid, self.index),
             stats: CharacterStats {
+                guid: npc_guid(self.discriminant, instance_guid, self.index),
                 pos: self.pos,
                 rot: self.rot,
                 scale: self.scale,
@@ -783,6 +786,7 @@ pub type CharacterIndex = (CharacterCategory, u64, Chunk);
 
 #[derive(Clone)]
 pub struct CharacterStats {
+    guid: u64,
     pub pos: Pos,
     pub rot: Pos,
     pub scale: f32,
@@ -797,16 +801,21 @@ pub struct CharacterStats {
     holstered: bool,
 }
 
+impl Guid<u64> for CharacterStats {
+    fn guid(&self) -> u64 {
+        self.guid
+    }
+}
+
 #[derive(Clone)]
 pub struct Character {
-    guid: u64,
     pub stats: CharacterStats,
     tickable_state_tracker: TickableCharacterStateTracker,
 }
 
 impl IndexedGuid<u64, CharacterIndex> for Character {
     fn guid(&self) -> u64 {
-        self.guid
+        self.stats.guid
     }
 
     fn index(&self) -> CharacterIndex {
@@ -851,8 +860,8 @@ impl Character {
         tickable_state_order: TickableCharacterStateOrder,
     ) -> Character {
         Character {
-            guid,
             stats: CharacterStats {
+                guid,
                 pos,
                 rot,
                 scale,
@@ -906,8 +915,8 @@ impl Character {
             })
             .unwrap_or(WieldType::None);
         Character {
-            guid: player_guid(guid),
             stats: CharacterStats {
+                guid: player_guid(guid),
                 pos,
                 rot,
                 scale: 1.0,
@@ -938,14 +947,14 @@ impl Character {
     pub fn remove_packets(&self) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
         let mut packets = vec![GamePacket::serialize(&TunneledPacket {
             unknown1: true,
-            inner: RemoveStandard { guid: self.guid },
+            inner: RemoveStandard { guid: self.guid() },
         })?];
 
         if let Some(mount_id) = self.stats.mount_id {
             packets.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: RemoveStandard {
-                    guid: mount_guid(shorten_player_guid(self.guid)?, mount_id),
+                    guid: mount_guid(shorten_player_guid(self.guid())?, mount_id),
                 },
             })?);
         }
@@ -962,7 +971,7 @@ impl Character {
             CharacterType::Door(door) => door.add_packets(self)?,
             CharacterType::Transport(transport) => transport.add_packets(self)?,
             CharacterType::Player(player) => player.add_packets(
-                self.guid,
+                self.guid(),
                 self.stats.mount_id,
                 self.stats.pos,
                 self.stats.rot,
@@ -970,7 +979,7 @@ impl Character {
             )?,
             CharacterType::Fixture(house_guid, fixture) => fixture_packets(
                 *house_guid,
-                self.guid,
+                self.guid(),
                 fixture,
                 self.stats.pos,
                 self.stats.rot,
@@ -994,9 +1003,7 @@ impl Character {
             characters_table_handle,
         )?;
 
-        let packets = self
-            .tickable_state_tracker
-            .tick(self.guid(), self.stats.pos, now)?;
+        let packets = self.tickable_state_tracker.tick(&mut self.stats, now)?;
         Ok(vec![Broadcast::Multi(everyone, packets)])
     }
 
