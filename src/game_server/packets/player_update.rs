@@ -18,6 +18,7 @@ pub enum PlayerUpdateOpCode {
     Knockback = 0x4,
     UpdateEquippedItem = 0x6,
     UpdatePower = 0x9,
+    PlayCompositeEffect = 0x10,
     AddNotifications = 0xa,
     NpcRelevance = 0xc,
     UpdateTemporaryAppearance = 0xe,
@@ -31,6 +32,8 @@ pub enum PlayerUpdateOpCode {
     ItemDefinitionsRequest = 0x22,
     ItemDefinitionsReply = 0x25,
     UpdateCustomizations = 0x27,
+    AddCompositeEffectTag = 0x29,
+    RemoveCompositeEffectTag = 0x2a,
     SetSpawnerActivationEffect = 0x2f,
     ReplaceBaseModel = 0x31,
     SetCollision = 0x32,
@@ -190,6 +193,21 @@ impl GamePacket for UpdatePower {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
+pub struct PlayCompositeEffect {
+    pub guid: u64,
+    pub triggered_by_guid: u64,
+    pub composite_effect: u32,
+    pub delay_millis: u32,
+    pub duration_millis: u32,
+    pub pos: Pos,
+}
+
+impl GamePacket for PlayCompositeEffect {
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::PlayCompositeEffect;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
 pub struct LootEvent {
     guid: u64,
     pos: Pos,
@@ -322,6 +340,33 @@ impl GamePacket for InitCustomizations {
     type Header = PlayerUpdateOpCode;
 
     const HEADER: Self::Header = PlayerUpdateOpCode::InitCustomizations;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct AddCompositeEffectTag {
+    pub guid: u64,
+    pub tag_id: u32,
+    pub composite_effect: u32,
+    pub triggered_by_guid: u64,
+    pub unknown2: u64,
+}
+
+impl GamePacket for AddCompositeEffectTag {
+    type Header = PlayerUpdateOpCode;
+
+    const HEADER: Self::Header = PlayerUpdateOpCode::AddCompositeEffectTag;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct RemoveCompositeEffectTag {
+    pub guid: u64,
+    pub tag_id: u32,
+}
+
+impl GamePacket for RemoveCompositeEffectTag {
+    type Header = PlayerUpdateOpCode;
+
+    const HEADER: Self::Header = PlayerUpdateOpCode::RemoveCompositeEffectTag;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
