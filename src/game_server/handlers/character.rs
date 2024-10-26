@@ -107,9 +107,9 @@ pub struct BaseNpcConfig {
     #[serde(default = "default_true")]
     pub enable_rotation_and_shadow: bool,
     #[serde(default)]
-    pub tickable_states: Vec<TickableCharacterStateConfig>,
+    pub tickable_procedures: Vec<TickableProcedureConfig>,
     #[serde(default)]
-    pub tickable_state_order: TickableCharacterStateOrder,
+    pub tickable_procedure_order: TickableProcedureOrder,
 }
 
 #[derive(Clone)]
@@ -257,7 +257,7 @@ impl From<BaseNpcConfig> for BaseNpc {
 }
 
 #[derive(Clone, Deserialize)]
-pub struct TickableCharacterStep {
+pub struct TickableStep {
     pub speed: f32,
     pub new_pos_x: Option<f32>,
     pub new_pos_y: Option<f32>,
@@ -278,7 +278,7 @@ pub struct TickableCharacterStep {
     pub duration_millis: u64,
 }
 
-impl TickableCharacterStep {
+impl TickableStep {
     pub fn new_pos(&self, current_pos: Pos) -> Pos {
         Pos {
             x: self.new_pos_x.unwrap_or(current_pos.x) + self.new_pos_offset_x,
@@ -338,24 +338,24 @@ impl TickableCharacterStep {
 }
 
 #[derive(Clone, Deserialize)]
-pub struct TickableCharacterStateConfig {
+pub struct TickableProcedureConfig {
     #[serde(default = "default_weight")]
     pub weight: u32,
-    pub steps: Vec<TickableCharacterStep>,
+    pub steps: Vec<TickableStep>,
 }
 
 pub enum TickResult {
-    TickedCurrentState(Result<Vec<Vec<u8>>, ProcessPacketError>),
-    MustChangeState,
+    TickedCurrentProcedure(Result<Vec<Vec<u8>>, ProcessPacketError>),
+    MustChangeProcedure,
 }
 
 #[derive(Clone)]
-pub struct TickableCharacterState {
-    steps: Vec<TickableCharacterStep>,
+pub struct TickableProcedure {
+    steps: Vec<TickableStep>,
     current_step: Option<(usize, Instant)>,
 }
 
-impl TickableCharacterState {
+impl TickableProcedure {
     pub fn tick(&mut self, character: &mut CharacterStats, now: Instant) -> TickResult {
         self.panic_if_empty();
 
@@ -375,13 +375,13 @@ impl TickableCharacterState {
                 .map(|(current_step_index, _)| current_step_index.saturating_add(1))
                 .unwrap_or_default();
             if new_step_index >= self.steps.len() {
-                TickResult::MustChangeState
+                TickResult::MustChangeProcedure
             } else {
                 self.current_step = Some((new_step_index, now));
-                TickResult::TickedCurrentState(self.steps[new_step_index].apply(character))
+                TickResult::TickedCurrentProcedure(self.steps[new_step_index].apply(character))
             }
         } else {
-            TickResult::TickedCurrentState(Ok(Vec::new()))
+            TickResult::TickedCurrentProcedure(Ok(Vec::new()))
         }
     }
 
@@ -391,14 +391,14 @@ impl TickableCharacterState {
 
     fn panic_if_empty(&self) {
         if self.steps.is_empty() {
-            panic!("Every tickable NPC state must have steps");
+            panic!("Every tickable NPC procedure must have steps");
         }
     }
 }
 
-impl From<TickableCharacterStateConfig> for TickableCharacterState {
-    fn from(config: TickableCharacterStateConfig) -> Self {
-        TickableCharacterState {
+impl From<TickableProcedureConfig> for TickableProcedure {
+    fn from(config: TickableProcedureConfig) -> Self {
+        TickableProcedure {
             steps: config.steps,
             current_step: None,
         }
@@ -406,39 +406,39 @@ impl From<TickableCharacterStateConfig> for TickableCharacterState {
 }
 
 #[derive(Clone, Copy, Default, Deserialize, Eq, PartialEq)]
-pub enum TickableCharacterStateOrder {
+pub enum TickableProcedureOrder {
     #[default]
     Sequential,
     WeightedRandom,
 }
 
 #[derive(Clone)]
-pub struct TickableCharacterStateTracker {
-    states: Vec<TickableCharacterState>,
-    state_order: TickableCharacterStateOrder,
-    current_state_index: usize,
+pub struct TickableProcedureTracker {
+    procedures: Vec<TickableProcedure>,
+    order: TickableProcedureOrder,
+    current_procedure_index: usize,
     distribution: WeightedAliasIndex<u32>,
 }
 
-impl TickableCharacterStateTracker {
+impl TickableProcedureTracker {
     pub fn new(
-        states: Vec<TickableCharacterStateConfig>,
-        state_order: TickableCharacterStateOrder,
+        procedures: Vec<TickableProcedureConfig>,
+        order: TickableProcedureOrder,
     ) -> Self {
-        let distribution = if state_order == TickableCharacterStateOrder::Sequential {
+        let distribution = if order == TickableProcedureOrder::Sequential {
             WeightedAliasIndex::new(vec![1])
         } else {
-            let weights = states.iter().map(|state| state.weight).collect();
+            let weights = procedures.iter().map(|procedure| procedure.weight).collect();
             WeightedAliasIndex::new(weights)
         }
         .expect("Couldn't create weighted alias index");
-        TickableCharacterStateTracker {
-            states: states
+        TickableProcedureTracker {
+            procedures: procedures
                 .into_iter()
-                .map(TickableCharacterState::from)
+                .map(TickableProcedure::from)
                 .collect(),
-            state_order,
-            current_state_index: 0,
+            order,
+            current_procedure_index: 0,
             distribution,
         }
     }
@@ -448,29 +448,29 @@ impl TickableCharacterStateTracker {
         character: &mut CharacterStats,
         now: Instant,
     ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
-        if self.states.is_empty() {
+        if self.procedures.is_empty() {
             return Ok(Vec::new());
         }
 
-        let mut current_state = &mut self.states[self.current_state_index];
+        let mut current_procedure = &mut self.procedures[self.current_procedure_index];
         loop {
-            if let TickResult::TickedCurrentState(result) = current_state.tick(character, now) {
+            if let TickResult::TickedCurrentProcedure(result) = current_procedure.tick(character, now) {
                 break result;
             } else {
-                current_state.reset();
-                self.current_state_index =
-                    if self.state_order == TickableCharacterStateOrder::Sequential {
-                        self.current_state_index.saturating_add(1) % self.states.len()
+                current_procedure.reset();
+                self.current_procedure_index =
+                    if self.order == TickableProcedureOrder::Sequential {
+                        self.current_procedure_index.saturating_add(1) % self.procedures.len()
                     } else {
                         self.distribution.sample(&mut thread_rng())
                     };
-                current_state = &mut self.states[self.current_state_index];
+                current_procedure = &mut self.procedures[self.current_procedure_index];
             }
         }
     }
 
     pub fn tickable(&self) -> bool {
-        !self.states.is_empty()
+        !self.procedures.is_empty()
     }
 }
 
@@ -851,8 +851,8 @@ pub struct NpcTemplate {
     pub interact_radius: f32,
     pub auto_interact_radius: f32,
     pub wield_type: WieldType,
-    pub tickable_states: Vec<TickableCharacterStateConfig>,
-    pub tickable_state_order: TickableCharacterStateOrder,
+    pub tickable_procedures: Vec<TickableProcedureConfig>,
+    pub tickable_procedure_order: TickableProcedureOrder,
 }
 
 impl NpcTemplate {
@@ -873,9 +873,9 @@ impl NpcTemplate {
                 animation_id: self.animation_id,
                 speed: 0.0,
             },
-            tickable_state_tracker: TickableCharacterStateTracker::new(
-                self.tickable_states.clone(),
-                self.tickable_state_order,
+            tickable_procedure_tracker: TickableProcedureTracker::new(
+                self.tickable_procedures.clone(),
+                self.tickable_procedure_order,
             ),
         }
     }
@@ -910,7 +910,7 @@ impl Guid<u64> for CharacterStats {
 #[derive(Clone)]
 pub struct Character {
     pub stats: CharacterStats,
-    tickable_state_tracker: TickableCharacterStateTracker,
+    tickable_procedure_tracker: TickableProcedureTracker,
 }
 
 impl IndexedGuid<u64, CharacterIndex> for Character {
@@ -956,8 +956,8 @@ impl Character {
         instance_guid: u64,
         wield_type: WieldType,
         animation_id: i32,
-        tickable_states: Vec<TickableCharacterStateConfig>,
-        tickable_state_order: TickableCharacterStateOrder,
+        tickable_procedures: Vec<TickableProcedureConfig>,
+        tickable_procedure_order: TickableProcedureOrder,
     ) -> Character {
         Character {
             stats: CharacterStats {
@@ -975,9 +975,9 @@ impl Character {
                 animation_id,
                 speed: 0.0,
             },
-            tickable_state_tracker: TickableCharacterStateTracker::new(
-                tickable_states,
-                tickable_state_order,
+            tickable_procedure_tracker: TickableProcedureTracker::new(
+                tickable_procedures,
+                tickable_procedure_order,
             ),
         }
     }
@@ -1030,9 +1030,9 @@ impl Character {
                 animation_id: 0,
                 speed: 0.0,
             },
-            tickable_state_tracker: TickableCharacterStateTracker::new(
+            tickable_procedure_tracker: TickableProcedureTracker::new(
                 Vec::new(),
-                TickableCharacterStateOrder::default(),
+                TickableProcedureOrder::default(),
             ),
         }
     }
@@ -1103,7 +1103,7 @@ impl Character {
             characters_table_handle,
         )?;
 
-        let packets = self.tickable_state_tracker.tick(&mut self.stats, now)?;
+        let packets = self.tickable_procedure_tracker.tick(&mut self.stats, now)?;
         Ok(vec![Broadcast::Multi(everyone, packets)])
     }
 
@@ -1146,6 +1146,6 @@ impl Character {
     }
 
     fn tickable(&self) -> bool {
-        self.tickable_state_tracker.tickable()
+        self.tickable_procedure_tracker.tickable()
     }
 }
