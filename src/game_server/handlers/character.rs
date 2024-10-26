@@ -421,14 +421,14 @@ pub struct TickableProcedureTracker {
 }
 
 impl TickableProcedureTracker {
-    pub fn new(
-        procedures: Vec<TickableProcedureConfig>,
-        order: TickableProcedureOrder,
-    ) -> Self {
+    pub fn new(procedures: Vec<TickableProcedureConfig>, order: TickableProcedureOrder) -> Self {
         let distribution = if order == TickableProcedureOrder::Sequential {
             WeightedAliasIndex::new(vec![1])
         } else {
-            let weights = procedures.iter().map(|procedure| procedure.weight).collect();
+            let weights = procedures
+                .iter()
+                .map(|procedure| procedure.weight)
+                .collect();
             WeightedAliasIndex::new(weights)
         }
         .expect("Couldn't create weighted alias index");
@@ -454,16 +454,17 @@ impl TickableProcedureTracker {
 
         let mut current_procedure = &mut self.procedures[self.current_procedure_index];
         loop {
-            if let TickResult::TickedCurrentProcedure(result) = current_procedure.tick(character, now) {
+            if let TickResult::TickedCurrentProcedure(result) =
+                current_procedure.tick(character, now)
+            {
                 break result;
             } else {
                 current_procedure.reset();
-                self.current_procedure_index =
-                    if self.order == TickableProcedureOrder::Sequential {
-                        self.current_procedure_index.saturating_add(1) % self.procedures.len()
-                    } else {
-                        self.distribution.sample(&mut thread_rng())
-                    };
+                self.current_procedure_index = if self.order == TickableProcedureOrder::Sequential {
+                    self.current_procedure_index.saturating_add(1) % self.procedures.len()
+                } else {
+                    self.distribution.sample(&mut thread_rng())
+                };
                 current_procedure = &mut self.procedures[self.current_procedure_index];
             }
         }
