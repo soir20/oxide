@@ -17,6 +17,7 @@ pub enum PlayerUpdateOpCode {
     Remove = 0x3,
     Knockback = 0x4,
     UpdateEquippedItem = 0x6,
+    SetAnimation = 0x8,
     UpdatePower = 0x9,
     PlayCompositeEffect = 0x10,
     AddNotifications = 0xa,
@@ -471,6 +472,19 @@ pub struct Knockback {
 impl GamePacket for Knockback {
     type Header = PlayerUpdateOpCode;
     const HEADER: Self::Header = PlayerUpdateOpCode::Knockback;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct SetAnimation {
+    pub character_guid: u64,
+    pub animation_id: i32,
+    pub animation_group_id: i32,
+    pub enable_loop: bool,
+}
+
+impl GamePacket for SetAnimation {
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::SetAnimation;
 }
 
 #[derive(SerializePacket)]
