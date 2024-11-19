@@ -479,7 +479,7 @@ pub struct SetAnimation {
     pub character_guid: u64,
     pub animation_id: i32,
     pub animation_group_id: i32,
-    pub enable_loop: bool,
+    pub override_animation: bool,
 }
 
 impl GamePacket for SetAnimation {
