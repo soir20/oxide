@@ -15,8 +15,7 @@ use crate::{
             player_data::EquippedItem,
             player_update::{
                 AddNotifications, AddNpc, CustomizationSlot, Icon, NotificationData, NpcRelevance,
-                QueueAnimation, RemoveStandard, SingleNotification, SingleNpcRelevance,
-                UpdateSpeed,
+                RemoveStandard, SetAnimation, SingleNotification, SingleNpcRelevance, UpdateSpeed,
             },
             tunnel::TunneledPacket,
             ui::ExecuteScriptWithParams,
@@ -323,12 +322,11 @@ impl TickableStep {
             character.animation_id = animation_id;
             packets.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
-                inner: QueueAnimation {
+                inner: SetAnimation {
                     character_guid: Guid::guid(character),
                     animation_id,
-                    queue_pos: 1,
-                    delay_seconds: 0.0,
-                    duration_seconds: Duration::from_millis(self.duration_millis).as_secs_f32(),
+                    animation_group_id: -1,
+                    override_animation: true,
                 },
             })?);
         }
