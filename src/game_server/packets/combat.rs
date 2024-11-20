@@ -4,11 +4,11 @@ use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError}
 use super::{GamePacket, OpCode};
 
 #[derive(Copy, Clone, Debug)]
-pub enum CombatUpdateOpCode {
+pub enum CombatOpCode {
     ProcessedAttack = 0x7,
 }
 
-impl SerializePacket for CombatUpdateOpCode {
+impl SerializePacket for CombatOpCode {
     fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
         OpCode::Combat.serialize(buffer)?;
         buffer.write_u16::<LittleEndian>(*self as u16)?;
@@ -31,6 +31,6 @@ pub struct ProcessedAttack {
 }
 
 impl GamePacket for ProcessedAttack {
-    type Header = CombatUpdateOpCode;
-    const HEADER: Self::Header = CombatUpdateOpCode::ProcessedAttack;
+    type Header = CombatOpCode;
+    const HEADER: Self::Header = CombatOpCode::ProcessedAttack;
 }

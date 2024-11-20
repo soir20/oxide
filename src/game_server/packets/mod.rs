@@ -1,6 +1,6 @@
 pub mod chat;
 pub mod client_update;
-pub mod combat_update;
+pub mod combat;
 pub mod command;
 pub mod housing;
 pub mod inventory;
