@@ -1,4 +1,7 @@
-use std::collections::{BTreeMap, BTreeSet};
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    ops::RangeBounds,
+};
 
 use parking_lot::{RwLockReadGuard, RwLockWriteGuard};
 
@@ -27,6 +30,10 @@ impl<'a, K: Copy + Ord, V, I: Copy + Ord> GuidTableIndexer<'a, K, V, I>
 
     fn keys_by_index(&'a self, index: I) -> impl Iterator<Item = K> {
         self.handle.keys_by_index(index)
+    }
+
+    fn keys_by_range(&'a self, range: impl RangeBounds<I>) -> impl Iterator<Item = K> {
+        self.handle.keys_by_range(range)
     }
 }
 

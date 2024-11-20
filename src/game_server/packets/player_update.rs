@@ -17,19 +17,24 @@ pub enum PlayerUpdateOpCode {
     Remove = 0x3,
     Knockback = 0x4,
     UpdateEquippedItem = 0x6,
+    SetAnimation = 0x8,
     UpdatePower = 0x9,
+    PlayCompositeEffect = 0x10,
     AddNotifications = 0xa,
     NpcRelevance = 0xc,
     UpdateTemporaryAppearance = 0xe,
     UpdateRemoveTemporaryAppearance = 0xf,
     UpdateCharacterState = 0x14,
     QueueAnimation = 0x16,
+    UpdateSpeed = 0x17,
     LootEvent = 0x1d,
     SlotCompositeEffectOverride = 0x1f,
     Freeze = 0x20,
     ItemDefinitionsRequest = 0x22,
     ItemDefinitionsReply = 0x25,
     UpdateCustomizations = 0x27,
+    AddCompositeEffectTag = 0x29,
+    RemoveCompositeEffectTag = 0x2a,
     SetSpawnerActivationEffect = 0x2f,
     ReplaceBaseModel = 0x31,
     SetCollision = 0x32,
@@ -189,6 +194,21 @@ impl GamePacket for UpdatePower {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
+pub struct PlayCompositeEffect {
+    pub guid: u64,
+    pub triggered_by_guid: u64,
+    pub composite_effect: u32,
+    pub delay_millis: u32,
+    pub duration_millis: u32,
+    pub pos: Pos,
+}
+
+impl GamePacket for PlayCompositeEffect {
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::PlayCompositeEffect;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
 pub struct LootEvent {
     guid: u64,
     pos: Pos,
@@ -324,6 +344,33 @@ impl GamePacket for InitCustomizations {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
+pub struct AddCompositeEffectTag {
+    pub guid: u64,
+    pub tag_id: u32,
+    pub composite_effect: u32,
+    pub triggered_by_guid: u64,
+    pub unknown2: u64,
+}
+
+impl GamePacket for AddCompositeEffectTag {
+    type Header = PlayerUpdateOpCode;
+
+    const HEADER: Self::Header = PlayerUpdateOpCode::AddCompositeEffectTag;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct RemoveCompositeEffectTag {
+    pub guid: u64,
+    pub tag_id: u32,
+}
+
+impl GamePacket for RemoveCompositeEffectTag {
+    type Header = PlayerUpdateOpCode;
+
+    const HEADER: Self::Header = PlayerUpdateOpCode::RemoveCompositeEffectTag;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
 pub struct SetSpawnerActivationEffect {
     guid: u64,
     composite_effect: u32,
@@ -427,6 +474,19 @@ impl GamePacket for Knockback {
     const HEADER: Self::Header = PlayerUpdateOpCode::Knockback;
 }
 
+#[derive(SerializePacket, DeserializePacket)]
+pub struct SetAnimation {
+    pub character_guid: u64,
+    pub animation_id: i32,
+    pub animation_group_id: i32,
+    pub override_animation: bool,
+}
+
+impl GamePacket for SetAnimation {
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::SetAnimation;
+}
+
 #[derive(SerializePacket)]
 pub struct UpdateEquippedItem {
     pub guid: u64,
@@ -477,7 +537,7 @@ impl GamePacket for UpdateCharacterState {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct QueueAnimation {
     pub character_guid: u64,
-    pub animation_id: u32,
+    pub animation_id: i32,
     pub queue_pos: u32,
     pub delay_seconds: f32,
     pub duration_seconds: f32,
@@ -487,6 +547,18 @@ impl GamePacket for QueueAnimation {
     type Header = PlayerUpdateOpCode;
 
     const HEADER: Self::Header = PlayerUpdateOpCode::QueueAnimation;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct UpdateSpeed {
+    pub guid: u64,
+    pub speed: f32,
+}
+
+impl GamePacket for UpdateSpeed {
+    type Header = PlayerUpdateOpCode;
+
+    const HEADER: Self::Header = PlayerUpdateOpCode::UpdateSpeed;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -638,11 +710,11 @@ pub struct AddNpc {
     pub unknown34: bool,
     pub show_health: bool,
     pub hide_despawn_fade: bool,
-    pub ignore_rotation_and_shadow: bool,
+    pub disable_rotation_and_shadow: bool,
     pub base_attachment_group: BaseAttachmentGroup,
     pub unknown39: Pos,
     pub unknown40: u32,
-    pub unknown41: i32,
+    pub bounce_area_id: i32,
     pub unknown42: u32,
     pub collision: bool,
     pub unknown44: u64,

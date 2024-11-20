@@ -200,7 +200,7 @@ pub fn fixture_packets(
                 unknown34: false,
                 show_health: false,
                 hide_despawn_fade: false,
-                ignore_rotation_and_shadow: true,
+                disable_rotation_and_shadow: true,
                 base_attachment_group: BaseAttachmentGroup {
                     unknown1: 0,
                     unknown2: "".to_string(),
@@ -215,7 +215,7 @@ pub fn fixture_packets(
                     w: 0.0,
                 },
                 unknown40: 0,
-                unknown41: -1,
+                bounce_area_id: -1,
                 unknown42: 0,
                 collision: true,
                 unknown44: 0,
@@ -363,7 +363,7 @@ pub fn process_housing_packet(
                     read_guids: Vec::new(),
                     write_guids: Vec::new(),
                     character_consumer: |characters_table_read_handle, _, _, zones_lock_enforcer| {
-                        let packets = if let Some((instance_guid, _, _)) = characters_table_read_handle.index(player_guid(sender)) {
+                        let packets = if let Some((_, instance_guid, _)) = characters_table_read_handle.index(player_guid(sender)) {
                             zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
                                 read_guids: vec![instance_guid],
                                 write_guids: Vec::new(),

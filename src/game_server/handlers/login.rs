@@ -79,6 +79,7 @@ pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, P
                 player.inner.data.rot,
                 player_zone,
                 Player {
+                    ready: false,
                     member: player.inner.data.membership_unknown1,
                     credits: player.inner.data.credits,
                     battle_classes: player
@@ -113,11 +114,11 @@ pub fn log_out(
     game_server
         .lock_enforcer()
         .write_characters(|characters_table_write_handle, _| {
-            if let Some((character, (instance_guid, chunk, _))) =
+            if let Some((character, (_, instance_guid, chunk))) =
                 characters_table_write_handle.remove(player_guid(sender))
             {
                 let other_players_nearby = Zone::other_players_nearby(
-                    sender,
+                    Some(sender),
                     chunk,
                     instance_guid,
                     characters_table_write_handle,

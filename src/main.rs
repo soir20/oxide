@@ -101,6 +101,17 @@ async fn main() {
         &game_server_arc,
     ));
 
+    let game_tick_dequeue = tick(Duration::from_millis(
+        server_options.game_tick_period_millis,
+    ));
+    spawn_game_tick_thread(
+        &channel_manager_arc,
+        game_tick_dequeue,
+        client_enqueue.clone(),
+        &server_options,
+        &game_server_arc,
+    );
+
     let cleanup_tick_dequeue = tick(Duration::from_millis(
         server_options.channel_cleanup_period_millis,
     ));
@@ -138,6 +149,7 @@ pub struct ServerOptions {
     pub max_round_trip_entries: usize,
     pub desired_resend_pct: u8,
     pub max_millis_until_resend: u64,
+    pub game_tick_period_millis: u64,
     pub channel_cleanup_period_millis: u64,
     pub channel_inactive_timeout_millis: u64,
     pub min_client_version: Option<String>,
@@ -439,6 +451,34 @@ fn process_once(
 
     drop(channel_handle);
     channel_manager_read_handle.broadcast(client_enqueue.clone(), broadcasts, server_options);
+}
+
+fn spawn_game_tick_thread(
+    channel_manager: &Arc<RwLock<ChannelManager>>,
+    game_tick_dequeue: Receiver<Instant>,
+    client_enqueue: Sender<SocketAddr>,
+    server_options: &Arc<ServerOptions>,
+    game_server: &Arc<GameServer>,
+) {
+    let channel_manager = channel_manager.clone();
+    let client_enqueue = client_enqueue.clone();
+    let server_options = server_options.clone();
+    let game_server = game_server.clone();
+    thread::spawn(move || loop {
+        game_tick_dequeue
+            .recv()
+            .expect("Game tick channel disconnected");
+        match game_server.tick() {
+            Ok(broadcasts) => {
+                channel_manager.read().broadcast(
+                    client_enqueue.clone(),
+                    broadcasts,
+                    &server_options,
+                );
+            }
+            Err(err) => info!("Unable to process game tick: {}", err),
+        }
+    });
 }
 
 fn spawn_cleanup_thread(

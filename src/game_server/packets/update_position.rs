@@ -11,7 +11,7 @@ pub struct UpdatePlayerPosition {
     pub rot_x: f32,
     pub rot_y: f32,
     pub rot_z: f32,
-    pub character_state: u8,
+    pub stop_at_destination: bool,
     pub unknown: u8,
 }
 

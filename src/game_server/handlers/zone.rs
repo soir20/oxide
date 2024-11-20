@@ -29,14 +29,14 @@ use crate::{
 
 use super::{
     character::{
-        Character, CharacterCategory, CharacterIndex, CharacterType, Chunk, Door, NpcTemplate,
-        PreviousFixture, Transport,
+        coerce_to_broadcast_supplier, AmbientNpcConfig, Character, CharacterCategory,
+        CharacterIndex, CharacterType, Chunk, DoorConfig, NpcTemplate, PreviousFixture,
+        TickableProcedureOrder, TransportConfig, WriteLockingBroadcastSupplier,
     },
     guid::{Guid, GuidTable, GuidTableIndexer, GuidTableWriteHandle, IndexedGuid},
     housing::prepare_init_house_packets,
     lock_enforcer::{
         CharacterLockRequest, CharacterReadGuard, CharacterTableWriteHandle, CharacterWriteGuard,
-        ZoneLockRequest,
     },
     mount::MountConfig,
     unique_guid::{
@@ -69,10 +69,11 @@ struct ZoneConfig {
     speed: f32,
     jump_height_multiplier: f32,
     gravity_multiplier: f32,
-    doors: Vec<Door>,
+    doors: Vec<DoorConfig>,
     interact_radius: f32,
     door_auto_interact_radius: f32,
-    transports: Vec<Transport>,
+    transports: Vec<TransportConfig>,
+    ambient_npcs: Vec<AmbientNpcConfig>,
 }
 
 #[derive(Clone)]
@@ -197,9 +198,9 @@ macro_rules! diff_character_handles {
         for category in CharacterCategory::iter() {
             for chunk in chunks_to_remove.iter() {
                 for guid in $characters_table_write_handle.keys_by_index((
+                    category,
                     $instance_guid,
                     **chunk,
-                    category,
                 )) {
                     guids.insert(guid, false);
                 }
@@ -209,9 +210,9 @@ macro_rules! diff_character_handles {
         for category in CharacterCategory::iter() {
             for chunk in chunks_to_add.iter() {
                 for guid in $characters_table_write_handle.keys_by_index((
+                    category,
                     $instance_guid,
                     **chunk,
-                    category,
                 )) {
                     guids.insert(guid, true);
                 }
@@ -242,13 +243,15 @@ impl Zone {
                 fixture.pos,
                 fixture.rot,
                 fixture.scale,
-                0,
                 CharacterType::Fixture(guid, fixture.as_current_fixture()),
                 None,
                 0.0,
                 0.0,
                 guid,
                 WieldType::None,
+                0,
+                Vec::new(),
+                TickableProcedureOrder::default(),
             ));
         }
         template.to_zone(guid, Some(house), global_characters_table)
@@ -286,7 +289,7 @@ impl Zone {
     }
 
     pub fn other_players_nearby<'a>(
-        sender: u32,
+        sender: Option<u32>,
         chunk: Chunk,
         instance_guid: u64,
         characters_table_handle: &'a impl GuidTableIndexer<'a, u64, Character, CharacterIndex>,
@@ -295,11 +298,14 @@ impl Zone {
 
         for chunk in Zone::nearby_chunks(chunk) {
             for guid in characters_table_handle.keys_by_index((
+                CharacterCategory::PlayerReady,
                 instance_guid,
                 chunk,
-                CharacterCategory::Player,
             )) {
-                if guid != player_guid(sender) {
+                if sender
+                    .map(|sender_guid| guid != player_guid(sender_guid))
+                    .unwrap_or(true)
+                {
                     guids.push(shorten_player_guid(guid)?);
                 }
             }
@@ -309,14 +315,16 @@ impl Zone {
     }
 
     pub fn all_players_nearby<'a>(
-        sender: u32,
+        sender: Option<u32>,
         chunk: Chunk,
         instance_guid: u64,
         characters_table_handle: &'a impl GuidTableIndexer<'a, u64, Character, CharacterIndex>,
     ) -> Result<Vec<u32>, ProcessPacketError> {
         let mut guids =
             Zone::other_players_nearby(sender, chunk, instance_guid, characters_table_handle)?;
-        guids.push(sender);
+        if let Some(sender_guid) = sender {
+            guids.push(sender_guid);
+        }
         Ok(guids)
     }
 
@@ -336,7 +344,7 @@ impl Zone {
         for category in CharacterCategory::iter() {
             for chunk in chunks_to_remove.iter() {
                 for guid in
-                    characters_table_handle.keys_by_index((instance_guid, **chunk, category))
+                    characters_table_handle.keys_by_index((category, instance_guid, **chunk))
                 {
                     guids.insert(guid, false);
                 }
@@ -346,7 +354,7 @@ impl Zone {
         for category in CharacterCategory::iter() {
             for chunk in chunks_to_add.iter() {
                 for guid in
-                    characters_table_handle.keys_by_index((instance_guid, **chunk, category))
+                    characters_table_handle.keys_by_index((category, instance_guid, **chunk))
                 {
                     guids.insert(guid, true);
                 }
@@ -385,47 +393,46 @@ impl Zone {
         pos_update: UpdatePlayerPosition,
     ) -> Result<Vec<u64>, ProcessPacketError> {
         if let Some(character_write_handle) = characters_write.get_mut(&pos_update.guid) {
-            let previous_pos = character_write_handle.pos;
-            character_write_handle.pos = Pos {
+            let previous_pos = character_write_handle.stats.pos;
+            character_write_handle.stats.pos = Pos {
                 x: pos_update.pos_x,
                 y: pos_update.pos_y,
                 z: pos_update.pos_z,
-                w: character_write_handle.pos.z,
+                w: character_write_handle.stats.pos.z,
             };
-            character_write_handle.rot = Pos {
+            character_write_handle.stats.rot = Pos {
                 x: pos_update.rot_x,
                 y: pos_update.rot_y,
                 z: pos_update.rot_z,
-                w: character_write_handle.rot.z,
+                w: character_write_handle.stats.rot.z,
             };
-            character_write_handle.state = pos_update.character_state;
 
             let mut characters_to_interact = Vec::new();
             for npc_guid in auto_interact_npcs {
                 if let Some(npc_read_handle) = characters_read.get(&npc_guid) {
-                    if npc_read_handle.auto_interact_radius > 0.0 {
+                    if npc_read_handle.stats.auto_interact_radius > 0.0 {
                         let distance_now = distance3(
-                            character_write_handle.pos.x,
-                            character_write_handle.pos.y,
-                            character_write_handle.pos.z,
-                            npc_read_handle.pos.x,
-                            npc_read_handle.pos.y,
-                            npc_read_handle.pos.z,
+                            character_write_handle.stats.pos.x,
+                            character_write_handle.stats.pos.y,
+                            character_write_handle.stats.pos.z,
+                            npc_read_handle.stats.pos.x,
+                            npc_read_handle.stats.pos.y,
+                            npc_read_handle.stats.pos.z,
                         );
                         let distance_before = distance3(
                             previous_pos.x,
                             previous_pos.y,
                             previous_pos.z,
-                            npc_read_handle.pos.x,
-                            npc_read_handle.pos.y,
-                            npc_read_handle.pos.z,
+                            npc_read_handle.stats.pos.x,
+                            npc_read_handle.stats.pos.y,
+                            npc_read_handle.stats.pos.z,
                         );
 
                         // Only trigger the interaction when the player first enters the radius
-                        if distance_now <= npc_read_handle.auto_interact_radius
-                            && distance_before > npc_read_handle.auto_interact_radius
+                        if distance_now <= npc_read_handle.stats.auto_interact_radius
+                            && distance_before > npc_read_handle.stats.auto_interact_radius
                         {
-                            characters_to_interact.push(npc_read_handle.guid);
+                            characters_to_interact.push(npc_read_handle.guid());
                         }
                     }
                 }
@@ -455,13 +462,13 @@ impl Zone {
             .read_characters(|characters_table_read_handle| {
                 let (auto_interact_npcs, same_chunk) = characters_table_read_handle
                     .index(requester)
-                    .map(|(instance_guid, old_chunk, _)| {
+                    .map(|(_, instance_guid, old_chunk)| {
                         (
                             characters_table_read_handle
                                 .keys_by_index((
+                                    CharacterCategory::NpcAutoInteractEnabled,
                                     instance_guid,
                                     old_chunk,
-                                    CharacterCategory::NpcAutoInteractEnabled,
                                 ))
                                 .collect(),
                             old_chunk == Character::chunk(pos_update.pos_x, pos_update.pos_z),
@@ -494,7 +501,7 @@ impl Zone {
             game_server
                 .lock_enforcer()
                 .write_characters(|characters_table_write_handle, _| {
-                    if let Some((character, (instance_guid, old_chunk, category))) =
+                    if let Some((character, (category, instance_guid, old_chunk))) =
                         characters_table_write_handle.remove(requester)
                     {
                         let mut characters_write: BTreeMap<
@@ -535,7 +542,7 @@ impl Zone {
                         )?;
                         characters_table_write_handle.insert_lock(
                             requester,
-                            (instance_guid, new_chunk, category),
+                            (category, instance_guid, new_chunk),
                             character,
                         );
 
@@ -572,25 +579,56 @@ impl ZoneConfig {
         let mut index = 0;
 
         {
+            for ambient_npc in self.ambient_npcs {
+                characters.push(NpcTemplate {
+                    discriminant: AMBIENT_NPC_DISCRIMINANT,
+                    index,
+                    pos: Pos {
+                        x: ambient_npc.base_npc.pos_x,
+                        y: ambient_npc.base_npc.pos_y,
+                        z: ambient_npc.base_npc.pos_z,
+                        w: ambient_npc.base_npc.pos_w,
+                    },
+                    rot: Pos {
+                        x: ambient_npc.base_npc.rot_x,
+                        y: ambient_npc.base_npc.rot_y,
+                        z: ambient_npc.base_npc.rot_z,
+                        w: ambient_npc.base_npc.rot_w,
+                    },
+                    scale: ambient_npc.base_npc.scale,
+                    tickable_procedures: ambient_npc.base_npc.tickable_procedures.clone(),
+                    tickable_procedure_order: ambient_npc.base_npc.tickable_procedure_order,
+                    animation_id: ambient_npc.base_npc.active_animation_slot,
+                    character_type: CharacterType::AmbientNpc(ambient_npc.into()),
+                    mount_id: None,
+                    interact_radius: self.interact_radius,
+                    auto_interact_radius: 0.0,
+                    wield_type: WieldType::None,
+                });
+                index += 1;
+            }
+
             for door in self.doors {
                 characters.push(NpcTemplate {
                     discriminant: AMBIENT_NPC_DISCRIMINANT,
                     index,
                     pos: Pos {
-                        x: door.x,
-                        y: door.y,
-                        z: door.z,
-                        w: door.w,
+                        x: door.base_npc.pos_x,
+                        y: door.base_npc.pos_y,
+                        z: door.base_npc.pos_z,
+                        w: door.base_npc.pos_w,
                     },
                     rot: Pos {
-                        x: 0.0,
-                        y: 0.0,
-                        z: 0.0,
-                        w: 0.0,
+                        x: door.base_npc.rot_x,
+                        y: door.base_npc.rot_y,
+                        z: door.base_npc.rot_z,
+                        w: door.base_npc.rot_w,
                     },
-                    scale: 1.0,
-                    state: 0,
-                    character_type: CharacterType::Door(door),
+                    scale: door.base_npc.scale,
+                    tickable_procedures: door.base_npc.tickable_procedures.clone(),
+                    tickable_procedure_order: door.base_npc.tickable_procedure_order,
+                    animation_id: door.base_npc.active_animation_slot,
+                    character_type: CharacterType::Door(door.into()),
                     mount_id: None,
                     interact_radius: self.interact_radius,
                     auto_interact_radius: self.door_auto_interact_radius,
@@ -604,20 +642,22 @@ impl ZoneConfig {
                     discriminant: AMBIENT_NPC_DISCRIMINANT,
                     index,
                     pos: Pos {
-                        x: transport.pos_x,
-                        y: transport.pos_y,
-                        z: transport.pos_z,
-                        w: transport.pos_w,
+                        x: transport.base_npc.pos_x,
+                        y: transport.base_npc.pos_y,
+                        z: transport.base_npc.pos_z,
+                        w: transport.base_npc.pos_w,
                     },
                     rot: Pos {
-                        x: transport.rot_x,
-                        y: transport.rot_y,
-                        z: transport.rot_z,
-                        w: transport.rot_w,
+                        x: transport.base_npc.rot_x,
+                        y: transport.base_npc.rot_y,
+                        z: transport.base_npc.rot_z,
+                        w: transport.base_npc.rot_w,
                     },
-                    scale: transport.scale.unwrap_or(1.0),
-                    state: 0,
-                    character_type: CharacterType::Transport(transport),
+                    scale: transport.base_npc.scale,
+                    tickable_procedures: transport.base_npc.tickable_procedures.clone(),
+                    tickable_procedure_order: transport.base_npc.tickable_procedure_order,
+                    animation_id: transport.base_npc.active_animation_slot,
+                    character_type: CharacterType::Transport(transport.into()),
                     mount_id: None,
                     interact_radius: self.interact_radius,
                     auto_interact_radius: 0.0,
@@ -707,21 +747,28 @@ pub fn enter_zone(
     let destination_rot = destination_rot.unwrap_or(destination_read_handle.default_spawn_rot);
 
     let character = characters_table_write_handle.remove(player_guid(player));
-    if let Some((character, (_, _, character_category))) = character {
+    if let Some((character, (character_category, _, _))) = character {
         let mut character_write_handle = character.write();
-        character_write_handle.instance_guid = destination_read_handle.guid;
-        character_write_handle.pos = destination_pos;
-        character_write_handle.rot = destination_rot;
+        character_write_handle.stats.instance_guid = destination_read_handle.guid;
+        character_write_handle.stats.pos = destination_pos;
+        character_write_handle.stats.rot = destination_rot;
+
+        if let CharacterType::Player(ref mut player) =
+            &mut character_write_handle.stats.character_type
+        {
+            player.ready = false;
+        }
+
         drop(character_write_handle);
         characters_table_write_handle.insert_lock(
             player_guid(player),
             (
+                character_category,
                 destination_read_handle.guid,
                 Character::chunk(
                     destination_read_handle.default_spawn_pos.x,
                     destination_read_handle.default_spawn_pos.z,
                 ),
-                character_category,
             ),
             character,
         );
@@ -814,142 +861,61 @@ macro_rules! teleport_to_zone {
     }};
 }
 
-type PacketSupplier = Result<
-    Box<dyn FnOnce(&GameServer) -> Result<Vec<Broadcast>, ProcessPacketError>>,
-    ProcessPacketError,
->;
-fn coerce_to_packet_supplier(
-    f: impl FnOnce(&GameServer) -> Result<Vec<Broadcast>, ProcessPacketError> + 'static,
-) -> PacketSupplier {
-    Ok(Box::new(f))
-}
 pub fn interact_with_character(
     request: SelectPlayer,
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let requester = shorten_player_guid(request.requester)?;
-    let packet_supplier: PacketSupplier = game_server.lock_enforcer().read_characters(|_| {
-        CharacterLockRequest {
-            read_guids: vec![request.requester, request.target],
-            write_guids: Vec::new(),
-            character_consumer: move |_, characters_read, _, zones_lock_enforcer| {
-                let source_zone_guid;
-                let requester_x;
-                let requester_y;
-                let requester_z;
-                if let Some(requester_read_handle) = characters_read.get(&request.requester) {
-                    source_zone_guid = requester_read_handle.instance_guid;
-                    requester_x = requester_read_handle.pos.x;
-                    requester_y = requester_read_handle.pos.y;
-                    requester_z = requester_read_handle.pos.z;
-                } else {
-                    return coerce_to_packet_supplier(|_| Ok(Vec::new()));
-                }
-
-                if let Some(target_read_handle) = characters_read.get(&request.target) {
-                    // Ensure the character is close enough to interact
-                    let distance = distance3(
-                        requester_x,
-                        requester_y,
-                        requester_z,
-                        target_read_handle.pos.x,
-                        target_read_handle.pos.y,
-                        target_read_handle.pos.z,
-                    );
-                    if distance > target_read_handle.interact_radius {
-                        return coerce_to_packet_supplier(|_| Ok(Vec::new()));
+    let broadcast_supplier: WriteLockingBroadcastSupplier =
+        game_server.lock_enforcer().read_characters(|_| {
+            CharacterLockRequest {
+                read_guids: vec![request.requester, request.target],
+                write_guids: Vec::new(),
+                character_consumer: move |_, characters_read, _, zones_lock_enforcer| {
+                    let source_zone_guid;
+                    let requester_x;
+                    let requester_y;
+                    let requester_z;
+                    if let Some(requester_read_handle) = characters_read.get(&request.requester) {
+                        source_zone_guid = requester_read_handle.stats.instance_guid;
+                        requester_x = requester_read_handle.stats.pos.x;
+                        requester_y = requester_read_handle.stats.pos.y;
+                        requester_z = requester_read_handle.stats.pos.z;
+                    } else {
+                        return coerce_to_broadcast_supplier(|_| Ok(Vec::new()));
                     }
 
-                    // Process interaction based on character's type
-                    match &target_read_handle.character_type {
-                        CharacterType::Door(door) => {
-                            let destination_pos = Pos {
-                                x: door.destination_pos_x,
-                                y: door.destination_pos_y,
-                                z: door.destination_pos_z,
-                                w: door.destination_pos_w,
-                            };
-                            let destination_rot = Pos {
-                                x: door.destination_rot_x,
-                                y: door.destination_rot_y,
-                                z: door.destination_rot_z,
-                                w: door.destination_rot_w,
-                            };
-
-                            let destination_zone_guid =
-                                if let &Some(destination_zone_guid) = &door.destination_zone {
-                                    destination_zone_guid
-                                } else if let &Some(destination_zone_template) =
-                                    &door.destination_zone_template
-                                {
-                                    zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
-                                        read_guids: Vec::new(),
-                                        write_guids: Vec::new(),
-                                        zone_consumer: |zones_table_read_handle, _, _| {
-                                            GameServer::any_instance(
-                                                zones_table_read_handle,
-                                                destination_zone_template,
-                                            )
-                                        },
-                                    })?
-                                } else {
-                                    source_zone_guid
-                                };
-
-                            coerce_to_packet_supplier(move |game_server| {
-                                game_server.lock_enforcer().write_characters(
-                                    |characters_table_write_handle, zones_lock_enforcer| {
-                                        if source_zone_guid != destination_zone_guid {
-                                            zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
-                                                read_guids: vec![destination_zone_guid],
-                                                write_guids: Vec::new(),
-                                                zone_consumer: |_, zones_read, _| {
-                                                    if let Some(destination_read_handle) =
-                                                        zones_read.get(&destination_zone_guid)
-                                                    {
-                                                        teleport_to_zone!(
-                                                            characters_table_write_handle,
-                                                            requester,
-                                                            destination_read_handle,
-                                                            Some(destination_pos),
-                                                            Some(destination_rot),
-                                                            game_server.mounts()
-                                                        )
-                                                    } else {
-                                                        Ok(Vec::new())
-                                                    }
-                                                },
-                                            })
-                                        } else {
-                                            teleport_within_zone(
-                                                requester,
-                                                destination_pos,
-                                                destination_rot,
-                                                characters_table_write_handle,
-                                                &game_server.mounts,
-                                            )
-                                        }
-                                    },
-                                )
-                            })
+                    if let Some(target_read_handle) = characters_read.get(&request.target) {
+                        // Ensure the character is close enough to interact
+                        let distance = distance3(
+                            requester_x,
+                            requester_y,
+                            requester_z,
+                            target_read_handle.stats.pos.x,
+                            target_read_handle.stats.pos.y,
+                            target_read_handle.stats.pos.z,
+                        );
+                        if distance > target_read_handle.stats.interact_radius {
+                            return coerce_to_broadcast_supplier(|_| Ok(Vec::new()));
                         }
-                        CharacterType::Transport(_) => coerce_to_packet_supplier(move |_| {
-                            Ok(vec![Broadcast::Single(requester, show_galaxy_map()?)])
-                        }),
-                        _ => coerce_to_packet_supplier(|_| Ok(Vec::new())),
-                    }
-                } else {
-                    info!(
-                        "Received request to interact with unknown NPC {} from {}",
-                        request.target, request.requester
-                    );
-                    coerce_to_packet_supplier(|_| Ok(Vec::new()))
-                }
-            },
-        }
-    });
 
-    packet_supplier?(game_server)
+                        target_read_handle.interact(
+                            requester,
+                            source_zone_guid,
+                            zones_lock_enforcer,
+                        )
+                    } else {
+                        info!(
+                            "Received request to interact with unknown NPC {} from {}",
+                            request.target, request.requester
+                        );
+                        coerce_to_broadcast_supplier(|_| Ok(Vec::new()))
+                    }
+                },
+            }
+        });
+
+    broadcast_supplier?(game_server)
 }
 
 pub fn teleport_within_zone(
@@ -959,13 +925,13 @@ pub fn teleport_within_zone(
     characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
     mount_configs: &BTreeMap<u32, MountConfig>,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-    let mut packets = if let Some((character, (instance_guid, old_chunk, _))) =
+    let mut packets = if let Some((character, (_, instance_guid, old_chunk))) =
         characters_table_write_handle.remove(player_guid(sender))
     {
         let mut character_write_handle = character.write();
-        character_write_handle.pos = destination_pos;
-        character_write_handle.rot = destination_rot;
-        let (_, new_chunk, _) = character_write_handle.index();
+        character_write_handle.stats.pos = destination_pos;
+        character_write_handle.stats.rot = destination_rot;
+        let (_, _, new_chunk) = character_write_handle.index();
 
         let (diff_character_guids, diff_character_handles) = diff_character_handles!(
             instance_guid,
@@ -1008,16 +974,6 @@ pub fn teleport_within_zone(
     })?);
 
     Ok(vec![Broadcast::Single(sender, packets)])
-}
-
-fn show_galaxy_map() -> Result<Vec<Vec<u8>>, ProcessPacketError> {
-    Ok(vec![GamePacket::serialize(&TunneledPacket {
-        unknown1: false,
-        inner: ExecuteScriptWithParams {
-            script_name: "UIGlobal.ShowGalaxyMap".to_string(),
-            params: vec![],
-        },
-    })?])
 }
 
 fn distance3(x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32) -> f32 {

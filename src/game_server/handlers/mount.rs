@@ -76,8 +76,8 @@ pub fn reply_dismount(
     character: &mut RwLockWriteGuard<Character>,
     mounts: &BTreeMap<u32, MountConfig>,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-    if let Some(mount_id) = character.mount_id {
-        character.mount_id = None;
+    if let Some(mount_id) = character.stats.mount_id {
+        character.stats.mount_id = None;
         if let Some(mount) = mounts.get(&mount_id) {
             Ok(vec![Broadcast::Single(
                 sender,
@@ -155,11 +155,11 @@ fn process_dismount(
                 if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender))
                 {
                     zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
-                        read_guids: vec![character_write_handle.instance_guid],
+                        read_guids: vec![character_write_handle.stats.instance_guid],
                         write_guids: Vec::new(),
                         zone_consumer: |_, zones_read, _| {
                             if let Some(zone_read_handle) =
-                                zones_read.get(&character_write_handle.instance_guid)
+                                zones_read.get(&character_write_handle.stats.instance_guid)
                             {
                                 reply_dismount(
                                     sender,
@@ -200,18 +200,18 @@ fn process_mount_spawn(
             character_consumer: |_, _, mut characters_write, zones_lock_enforcer| {
                 if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) {
                     zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
-                        read_guids: vec![character_write_handle.instance_guid],
+                        read_guids: vec![character_write_handle.stats.instance_guid],
                         write_guids: Vec::new(),
                         zone_consumer: |_, zones_read, _| {
                             let mut packets = Vec::new();
 
-                            if let Some(zone_read_handle) = zones_read.get(&character_write_handle.instance_guid) {
+                            if let Some(zone_read_handle) = zones_read.get(&character_write_handle.stats.instance_guid) {
                                 packets.append(&mut spawn_mount_npc(
                                     mount_guid,
                                     player_guid(sender),
                                     mount,
-                                    character_write_handle.pos,
-                                    character_write_handle.rot,
+                                    character_write_handle.stats.pos,
+                                    character_write_handle.stats.rot,
                                 )?);
 
                                 packets.push(GamePacket::serialize(&TunneledPacket {
@@ -242,12 +242,12 @@ fn process_mount_spawn(
                                     },
                                 })?);
 
-                                if let Some(mount_id) = character_write_handle.mount_id {
+                                if let Some(mount_id) = character_write_handle.stats.mount_id {
                                     return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to mount while already mounted on mount ID {}",
                                         sender, mount_id)));
                                 }
 
-                                character_write_handle.mount_id = Some(mount.guid());
+                                character_write_handle.stats.mount_id = Some(mount.guid());
 
                                 Ok(packets)
                             } else {
@@ -371,7 +371,7 @@ pub fn spawn_mount_npc(
                 unknown34: false,
                 show_health: false,
                 hide_despawn_fade: false,
-                ignore_rotation_and_shadow: false,
+                disable_rotation_and_shadow: false,
                 base_attachment_group: BaseAttachmentGroup {
                     unknown1: 0,
                     unknown2: "".to_string(),
@@ -386,7 +386,7 @@ pub fn spawn_mount_npc(
                     w: 0.0,
                 },
                 unknown40: 0,
-                unknown41: -1,
+                bounce_area_id: -1,
                 unknown42: 0,
                 collision: true,
                 unknown44: 0,
