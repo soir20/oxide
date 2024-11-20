@@ -715,7 +715,7 @@ pub struct AddNpc {
     pub tilt: Pos,
     pub unknown40: u32,
     pub bounce_area_id: i32,
-    pub nameplate_image_set_id: u32,
+    pub image_set_id: u32,
     pub collision: bool,
     pub rider_guid: u64,
     pub npc_type: u32,

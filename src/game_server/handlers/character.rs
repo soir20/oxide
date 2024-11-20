@@ -192,7 +192,7 @@ impl BaseNpc {
                 },
                 unknown40: 0,
                 bounce_area_id: self.bounce_area_id,
-                nameplate_image_set_id: 0,
+                image_set_id: 0,
                 collision: true,
                 rider_guid: 0,
                 npc_type: self.npc_type,

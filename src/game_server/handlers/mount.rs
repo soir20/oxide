@@ -387,7 +387,7 @@ pub fn spawn_mount_npc(
                 },
                 unknown40: 0,
                 bounce_area_id: -1,
-                nameplate_image_set_id: 0,
+                image_set_id: 0,
                 collision: true,
                 rider_guid: 0,
                 npc_type: 2,
