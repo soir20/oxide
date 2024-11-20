@@ -334,7 +334,7 @@ pub fn spawn_mount_npc(
                 name_offset_z: 0.0,
                 terrain_object_id: 0,
                 invisible: false,
-                unknown20: 0.0,
+                speed: 0.0,
                 unknown21: false,
                 interactable_size_pct: 0,
                 unknown23: -1,
@@ -344,7 +344,7 @@ pub fn spawn_mount_npc(
                 ignore_position: false,
                 sub_title_id: 0,
                 active_animation_slot2: 1,
-                head_model_id: 0,
+                temporary_appearance: 0,
                 effects: vec![Effect {
                     unknown1: 0,
                     unknown2: 0,
@@ -371,7 +371,7 @@ pub fn spawn_mount_npc(
                 unknown34: false,
                 show_health: false,
                 hide_despawn_fade: false,
-                disable_rotation_and_shadow: false,
+                enable_tilt: false,
                 base_attachment_group: BaseAttachmentGroup {
                     unknown1: 0,
                     unknown2: "".to_string(),
@@ -379,7 +379,7 @@ pub fn spawn_mount_npc(
                     unknown4: 0,
                     unknown5: "".to_string(),
                 },
-                unknown39: Pos {
+                tilt: Pos {
                     x: 0.0,
                     y: 0.0,
                     z: 0.0,
@@ -387,9 +387,9 @@ pub fn spawn_mount_npc(
                 },
                 unknown40: 0,
                 bounce_area_id: -1,
-                unknown42: 0,
+                nameplate_image_set_id: 0,
                 collision: true,
-                unknown44: 0,
+                rider_guid: 0,
                 npc_type: 2,
                 unknown46: 0.0,
                 target: 0,
