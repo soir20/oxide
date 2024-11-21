@@ -641,6 +641,21 @@ impl GamePacket for NpcRelevance {
     const HEADER: Self::Header = PlayerUpdateOpCode::NpcRelevance;
 }
 
+#[allow(dead_code)]
+#[derive(Copy, Clone, Debug)]
+pub enum Hostility {
+    Hostile,
+    Neutral,
+    Friendly,
+}
+
+impl SerializePacket for Hostility {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        buffer.write_u32::<LittleEndian>(*self as u32)?;
+        Ok(())
+    }
+}
+
 #[derive(SerializePacket, DeserializePacket)]
 pub struct Variable {
     pub unknown1: u32,
@@ -677,7 +692,7 @@ pub struct AddNpc {
     pub rot: Pos,
     pub spawn_animation_id: i32,
     pub attachments: Vec<Attachment>,
-    pub is_not_targetable: u32,
+    pub hostility: Hostility,
     pub unknown10: u32,
     pub texture_name: String,
     pub tint_name: String,
