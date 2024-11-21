@@ -7,7 +7,7 @@ use serde::Deserialize;
 
 use super::{
     item::{Attachment, BaseAttachmentGroup, ItemDefinition, WieldType},
-    Effect, GamePacket, OpCode, Pos,
+    Effect, GamePacket, OpCode, Pos, Rgba,
 };
 
 #[derive(Copy, Clone, Debug)]
@@ -669,9 +669,9 @@ pub struct AddNpc {
     pub name_id: u32,
     pub model_id: u32,
     pub unknown3: bool,
-    pub unknown4: u32,
-    pub unknown5: u32,
-    pub unknown6: u32,
+    pub chat_foreground: Rgba,
+    pub chat_background: Rgba,
+    pub chat_scale: u32,
     pub scale: f32,
     pub pos: Pos,
     pub rot: Pos,
