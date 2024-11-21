@@ -675,7 +675,7 @@ pub struct AddNpc {
     pub scale: f32,
     pub pos: Pos,
     pub rot: Pos,
-    pub spawn_animation_id: u32,
+    pub spawn_animation_id: i32,
     pub attachments: Vec<Attachment>,
     pub is_not_targetable: u32,
     pub unknown10: u32,

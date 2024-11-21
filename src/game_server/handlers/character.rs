@@ -141,7 +141,7 @@ impl BaseNpc {
                 scale: character.stats.scale,
                 pos: character.stats.pos,
                 rot: character.stats.rot,
-                spawn_animation_id: 0,
+                spawn_animation_id: -1,
                 attachments: vec![],
                 is_not_targetable: 1,
                 unknown10: 1,
