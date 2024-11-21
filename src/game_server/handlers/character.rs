@@ -198,7 +198,7 @@ impl BaseNpc {
                 npc_type: self.npc_type,
                 unknown46: 0.0,
                 target: 0,
-                unknown50: vec![],
+                variables: vec![],
                 rail_id: 0,
                 rail_speed: 0.0,
                 rail_origin: Pos {

@@ -222,7 +222,7 @@ pub fn fixture_packets(
                 npc_type: 0,
                 unknown46: 0.0,
                 target: 0,
-                unknown50: vec![],
+                variables: vec![],
                 rail_id: 0,
                 rail_speed: 0.0,
                 rail_origin: Pos {
