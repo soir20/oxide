@@ -169,7 +169,7 @@ impl BaseNpc {
                 unknown26: false,
                 ignore_position: false,
                 sub_title_id: 0,
-                one_shot_animation_id: 0,
+                one_shot_animation_id: -1,
                 temporary_appearance: 0,
                 effects: vec![],
                 disable_interact_popup: false,

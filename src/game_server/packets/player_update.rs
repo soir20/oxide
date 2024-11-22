@@ -717,7 +717,7 @@ pub struct AddNpc {
     pub unknown26: bool,
     pub ignore_position: bool,
     pub sub_title_id: u32,
-    pub one_shot_animation_id: u32,
+    pub one_shot_animation_id: i32,
     pub temporary_appearance: u32,
     pub effects: Vec<Effect>,
     pub disable_interact_popup: bool,
