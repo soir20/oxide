@@ -339,11 +339,11 @@ pub fn spawn_mount_npc(
                 interactable_size_pct: 0,
                 unknown23: -1,
                 unknown24: -1,
-                animation_id: 1,
+                looping_animation_id: 1,
                 unknown26: false,
                 ignore_position: false,
                 sub_title_id: 0,
-                animation_id2: 1,
+                one_shot_animation_id: 1,
                 temporary_appearance: 0,
                 effects: vec![Effect {
                     unknown1: 0,
