@@ -5,8 +5,8 @@ use super::{GamePacket, OpCode};
 #[derive(SerializePacket, DeserializePacket)]
 pub struct GameTimeSync {
     pub time: u64,
-    pub unknown1: u32,
-    pub unknown2: bool,
+    pub server_rate: u32,
+    pub client_time: bool,
 }
 
 impl GamePacket for GameTimeSync {
