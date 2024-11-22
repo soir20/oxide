@@ -7,7 +7,7 @@ use serde::Deserialize;
 
 use super::{
     item::{Attachment, BaseAttachmentGroup, ItemDefinition, WieldType},
-    Effect, GamePacket, OpCode, Pos,
+    Effect, GamePacket, OpCode, Pos, Rgba,
 };
 
 #[derive(Copy, Clone, Debug)]
@@ -112,8 +112,8 @@ pub struct AddPc {
     first_name_override: String,
     last_name_override: String,
     body_model: u32,
-    chat_foreground: u32,
-    chat_background: u32,
+    chat_foreground: Rgba,
+    chat_background: Rgba,
     chat_scale: u32,
     pos: Pos,
     rot: Pos,
@@ -641,6 +641,21 @@ impl GamePacket for NpcRelevance {
     const HEADER: Self::Header = PlayerUpdateOpCode::NpcRelevance;
 }
 
+#[allow(dead_code)]
+#[derive(Copy, Clone, Debug)]
+pub enum Hostility {
+    Hostile,
+    Neutral,
+    Friendly,
+}
+
+impl SerializePacket for Hostility {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        buffer.write_u32::<LittleEndian>(*self as u32)?;
+        Ok(())
+    }
+}
+
 #[derive(SerializePacket, DeserializePacket)]
 pub struct Variable {
     pub unknown1: u32,
@@ -669,15 +684,15 @@ pub struct AddNpc {
     pub name_id: u32,
     pub model_id: u32,
     pub unknown3: bool,
-    pub unknown4: u32,
-    pub unknown5: u32,
-    pub unknown6: u32,
+    pub chat_foreground: Rgba,
+    pub chat_background: Rgba,
+    pub chat_scale: u32,
     pub scale: f32,
     pub pos: Pos,
     pub rot: Pos,
-    pub unknown8: u32,
+    pub spawn_animation_id: i32,
     pub attachments: Vec<Attachment>,
-    pub is_not_targetable: u32,
+    pub hostility: Hostility,
     pub unknown10: u32,
     pub texture_name: String,
     pub tint_name: String,
@@ -693,35 +708,35 @@ pub struct AddNpc {
     pub name_offset_z: f32,
     pub terrain_object_id: u32,
     pub invisible: bool,
-    pub unknown20: f32,
+    pub speed: f32,
     pub unknown21: bool,
     pub interactable_size_pct: u32,
     pub unknown23: i32,
     pub unknown24: i32,
-    pub active_animation_slot: i32,
+    pub looping_animation_id: i32,
     pub unknown26: bool,
     pub ignore_position: bool,
     pub sub_title_id: u32,
-    pub active_animation_slot2: u32,
-    pub head_model_id: u32,
+    pub one_shot_animation_id: i32,
+    pub temporary_appearance: u32,
     pub effects: Vec<Effect>,
     pub disable_interact_popup: bool,
     pub unknown33: u32,
     pub unknown34: bool,
     pub show_health: bool,
     pub hide_despawn_fade: bool,
-    pub disable_rotation_and_shadow: bool,
+    pub enable_tilt: bool,
     pub base_attachment_group: BaseAttachmentGroup,
-    pub unknown39: Pos,
+    pub tilt: Pos,
     pub unknown40: u32,
     pub bounce_area_id: i32,
-    pub unknown42: u32,
+    pub image_set_id: u32,
     pub collision: bool,
-    pub unknown44: u64,
+    pub rider_guid: u64,
     pub npc_type: u32,
     pub unknown46: f32,
     pub target: u32,
-    pub unknown50: Vec<Variable>,
+    pub variables: Vec<Variable>,
     pub rail_id: u32,
     pub rail_speed: f32,
     pub rail_origin: Pos,
