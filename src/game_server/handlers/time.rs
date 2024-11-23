@@ -14,6 +14,6 @@ pub fn make_game_time_sync(seconds_per_day: u32) -> GameTimeSync {
     GameTimeSync {
         time: time * cycles_per_day as u64,
         cycles_per_day,
-        client_time: false,
+        keep_client_time: false,
     }
 }
