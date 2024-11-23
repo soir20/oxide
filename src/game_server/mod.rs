@@ -454,14 +454,46 @@ impl GameServer {
                     broadcasts.push(Broadcast::Single(sender, sender_only_packets));
                 }
                 OpCode::GameTimeSync => {
-                    let game_time_sync = TunneledPacket {
-                        unknown1: true,
-                        inner: make_game_time_sync(),
-                    };
-                    broadcasts.push(Broadcast::Single(
-                        sender,
-                        vec![GamePacket::serialize(&game_time_sync)?],
-                    ));
+                    let sender_guid = player_guid(sender);
+                    self.lock_enforcer()
+                        .read_characters(|_| CharacterLockRequest {
+                            read_guids: vec![],
+                            write_guids: vec![],
+                            character_consumer:
+                                |characters_table_read_handle, _, _, zones_lock_enforcer| {
+                                    if let Some((_, instance_guid, _)) =
+                                        characters_table_read_handle.index(sender_guid)
+                                    {
+                                        zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
+                                            read_guids: vec![instance_guid],
+                                            write_guids: vec![],
+                                            zone_consumer: |_, zones_read, _| {
+                                                if let Some(zone_read_handle) =
+                                                    zones_read.get(&instance_guid)
+                                                {
+                                                    let game_time_sync = TunneledPacket {
+                                                        unknown1: true,
+                                                        inner: make_game_time_sync(
+                                                            zone_read_handle.seconds_per_day,
+                                                        ),
+                                                    };
+
+                                                    broadcasts.push(Broadcast::Single(
+                                                        sender,
+                                                        vec![GamePacket::serialize(
+                                                            &game_time_sync,
+                                                        )?],
+                                                    ));
+                                                }
+
+                                                Ok::<(), ProcessPacketError>(())
+                                            },
+                                        })
+                                    } else {
+                                        Ok(())
+                                    }
+                                },
+                        })?;
                 }
                 OpCode::Command => {
                     broadcasts.append(&mut process_command(self, &mut cursor)?);
