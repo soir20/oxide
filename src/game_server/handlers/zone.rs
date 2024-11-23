@@ -74,6 +74,7 @@ struct ZoneConfig {
     door_auto_interact_radius: f32,
     transports: Vec<TransportConfig>,
     ambient_npcs: Vec<AmbientNpcConfig>,
+    seconds_per_day: u32,
 }
 
 #[derive(Clone)]
@@ -91,6 +92,7 @@ pub struct ZoneTemplate {
     hide_ui: bool,
     is_combat: bool,
     characters: Vec<NpcTemplate>,
+    pub seconds_per_day: u32,
 }
 
 impl Guid<u8> for ZoneTemplate {
@@ -142,6 +144,7 @@ impl ZoneTemplate {
             hide_ui: self.hide_ui,
             is_combat: self.is_combat,
             house_data,
+            seconds_per_day: self.seconds_per_day,
         }
     }
 }
@@ -174,6 +177,7 @@ pub struct Zone {
     hide_ui: bool,
     pub is_combat: bool,
     pub house_data: Option<House>,
+    pub seconds_per_day: u32,
 }
 
 impl IndexedGuid<u64, u8> for Zone {
@@ -691,6 +695,7 @@ impl ZoneConfig {
             hide_ui: self.hide_ui,
             is_combat: self.is_combat,
             characters,
+            seconds_per_day: self.seconds_per_day,
         };
 
         let mut zones = Vec::new();
