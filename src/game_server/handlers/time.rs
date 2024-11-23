@@ -9,7 +9,7 @@ pub fn make_game_time_sync() -> GameTimeSync {
         .as_secs();
     GameTimeSync {
         time,
-        unknown1: 0,
-        unknown2: true,
+        server_rate: 0,
+        client_time: true,
     }
 }
