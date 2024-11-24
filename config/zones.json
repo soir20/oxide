@@ -664,8 +664,8 @@
                 "pos_z": 379.9795,
                 "pos_w": 1.0,
                 "rot_x": 1.5708,
-                "tickable_procedures": [
-                    {
+                "tickable_procedures": {
+                    "lift": {
                         "steps": [
                             {
                                 "speed": 2.0,
@@ -679,7 +679,7 @@
                             }
                         ]
                     }
-                ]
+                }
             },
             {
                 "comment": "Training Room Dueling Platform Lift",
@@ -690,8 +690,8 @@
                 "pos_z": 379.9795,
                 "pos_w": 1.0,
                 "rot_x": -1.5708,
-                "tickable_procedures": [
-                    {
+                "tickable_procedures": {
+                    "lift": {
                         "steps": [
                             {
                                 "speed": 2.0,
@@ -705,7 +705,7 @@
                             }
                         ]
                     }
-                ]
+                }
             }
         ]
     },
