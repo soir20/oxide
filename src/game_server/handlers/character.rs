@@ -1,5 +1,5 @@
 use std::{
-    collections::{BTreeMap, BTreeSet},
+    collections::{BTreeMap, BTreeSet, HashMap},
     time::{Duration, Instant},
 };
 
@@ -107,9 +107,9 @@ pub struct BaseNpcConfig {
     #[serde(default = "default_true")]
     pub enable_rotation_and_shadow: bool,
     #[serde(default)]
-    pub tickable_procedures: Vec<TickableProcedureConfig>,
+    pub tickable_procedures: HashMap<String, TickableProcedureConfig>,
     #[serde(default)]
-    pub tickable_procedure_order: TickableProcedureOrder,
+    pub first_possible_procedures: Vec<String>,
 }
 
 #[derive(Clone)]
@@ -341,20 +341,65 @@ pub struct TickableProcedureConfig {
     #[serde(default = "default_weight")]
     pub weight: u32,
     pub steps: Vec<TickableStep>,
+    #[serde(default)]
+    pub next_possible_procedures: Vec<String>,
 }
 
 pub enum TickResult {
     TickedCurrentProcedure(Result<Vec<Vec<u8>>, ProcessPacketError>),
-    MustChangeProcedure,
+    MustChangeProcedure(String),
 }
 
 #[derive(Clone)]
 pub struct TickableProcedure {
     steps: Vec<TickableStep>,
     current_step: Option<(usize, Instant)>,
+    distribution: WeightedAliasIndex<u32>,
+    next_possible_procedures: Vec<String>,
 }
 
 impl TickableProcedure {
+    pub fn from_config(
+        config: TickableProcedureConfig,
+        all_procedures: &HashMap<String, TickableProcedureConfig>,
+    ) -> Self {
+        let (distribution, next_possible_procedures) = if config.next_possible_procedures.is_empty()
+        {
+            (
+                WeightedAliasIndex::new(
+                    all_procedures
+                        .values()
+                        .map(|procedure| procedure.weight)
+                        .collect(),
+                ),
+                all_procedures.keys().cloned().collect(),
+            )
+        } else {
+            let weights = config
+                .next_possible_procedures
+                .iter()
+                .map(|procedure_key| {
+                    if let Some(procedure) = all_procedures.get(procedure_key) {
+                        procedure.weight
+                    } else {
+                        panic!("Reference to unknown procedure {}", procedure_key)
+                    }
+                })
+                .collect();
+            (
+                WeightedAliasIndex::new(weights),
+                config.next_possible_procedures,
+            )
+        };
+
+        TickableProcedure {
+            steps: config.steps,
+            current_step: None,
+            distribution: distribution.expect("Couldn't create weighted alias index"),
+            next_possible_procedures,
+        }
+    }
+
     pub fn tick(&mut self, character: &mut CharacterStats, now: Instant) -> TickResult {
         self.panic_if_empty();
 
@@ -374,7 +419,7 @@ impl TickableProcedure {
                 .map(|(current_step_index, _)| current_step_index.saturating_add(1))
                 .unwrap_or_default();
             if new_step_index >= self.steps.len() {
-                TickResult::MustChangeProcedure
+                TickResult::MustChangeProcedure(self.next_procedure())
             } else {
                 self.current_step = Some((new_step_index, now));
                 TickResult::TickedCurrentProcedure(self.steps[new_step_index].apply(character))
@@ -382,6 +427,11 @@ impl TickableProcedure {
         } else {
             TickResult::TickedCurrentProcedure(Ok(Vec::new()))
         }
+    }
+
+    fn next_procedure(&mut self) -> String {
+        let next_procedure_index = self.distribution.sample(&mut thread_rng());
+        self.next_possible_procedures[next_procedure_index].clone()
     }
 
     pub fn reset(&mut self) {
@@ -395,50 +445,59 @@ impl TickableProcedure {
     }
 }
 
-impl From<TickableProcedureConfig> for TickableProcedure {
-    fn from(config: TickableProcedureConfig) -> Self {
-        TickableProcedure {
-            steps: config.steps,
-            current_step: None,
-        }
-    }
-}
-
-#[derive(Clone, Copy, Default, Deserialize, Eq, PartialEq)]
-pub enum TickableProcedureOrder {
-    #[default]
-    Sequential,
-    WeightedRandom,
-}
-
 #[derive(Clone)]
 pub struct TickableProcedureTracker {
-    procedures: Vec<TickableProcedure>,
-    order: TickableProcedureOrder,
-    current_procedure_index: usize,
-    distribution: WeightedAliasIndex<u32>,
+    procedures: HashMap<String, TickableProcedure>,
+    current_procedure_key: String,
 }
 
 impl TickableProcedureTracker {
-    pub fn new(procedures: Vec<TickableProcedureConfig>, order: TickableProcedureOrder) -> Self {
-        let distribution = if order == TickableProcedureOrder::Sequential {
-            WeightedAliasIndex::new(vec![1])
+    pub fn new(
+        procedures: HashMap<String, TickableProcedureConfig>,
+        first_possible_procedures: Vec<String>,
+    ) -> Self {
+        let current_procedure_key = if procedures.is_empty() {
+            String::from("")
         } else {
-            let weights = procedures
-                .iter()
-                .map(|procedure| procedure.weight)
-                .collect();
-            WeightedAliasIndex::new(weights)
-        }
-        .expect("Couldn't create weighted alias index");
+            let (weights, procedure_keys): (Vec<u32>, Vec<&String>) =
+                if first_possible_procedures.is_empty() {
+                    let weights = procedures
+                        .values()
+                        .map(|procedure| procedure.weight)
+                        .collect();
+                    (weights, procedures.keys().collect())
+                } else {
+                    let weights = first_possible_procedures
+                        .iter()
+                        .map(|procedure_key| {
+                            if let Some(procedure) = procedures.get(procedure_key) {
+                                procedure.weight
+                            } else {
+                                panic!("Reference to unknown procedure {}", procedure_key);
+                            }
+                        })
+                        .collect();
+                    (weights, first_possible_procedures.iter().collect())
+                };
+
+            let distribution =
+                WeightedAliasIndex::new(weights).expect("Couldn't create weighted alias index");
+            let index = distribution.sample(&mut thread_rng());
+
+            procedure_keys[index].clone()
+        };
+
         TickableProcedureTracker {
+            current_procedure_key,
             procedures: procedures
-                .into_iter()
-                .map(TickableProcedure::from)
+                .iter()
+                .map(|(key, config)| {
+                    (
+                        key.clone(),
+                        TickableProcedure::from_config(config.clone(), &procedures),
+                    )
+                })
                 .collect(),
-            order,
-            current_procedure_index: 0,
-            distribution,
         }
     }
 
@@ -451,20 +510,21 @@ impl TickableProcedureTracker {
             return Ok(Vec::new());
         }
 
-        let mut current_procedure = &mut self.procedures[self.current_procedure_index];
+        let mut current_procedure = self
+            .procedures
+            .get_mut(&self.current_procedure_key)
+            .expect("Missing procedure");
         loop {
-            if let TickResult::TickedCurrentProcedure(result) =
-                current_procedure.tick(character, now)
-            {
+            let tick_result = current_procedure.tick(character, now);
+            if let TickResult::TickedCurrentProcedure(result) = tick_result {
                 break result;
-            } else {
+            } else if let TickResult::MustChangeProcedure(procedure_key) = tick_result {
                 current_procedure.reset();
-                self.current_procedure_index = if self.order == TickableProcedureOrder::Sequential {
-                    self.current_procedure_index.saturating_add(1) % self.procedures.len()
-                } else {
-                    self.distribution.sample(&mut thread_rng())
-                };
-                current_procedure = &mut self.procedures[self.current_procedure_index];
+                self.current_procedure_key = procedure_key;
+                current_procedure = self
+                    .procedures
+                    .get_mut(&self.current_procedure_key)
+                    .expect("Missing procedure");
             }
         }
     }
@@ -851,8 +911,8 @@ pub struct NpcTemplate {
     pub interact_radius: f32,
     pub auto_interact_radius: f32,
     pub wield_type: WieldType,
-    pub tickable_procedures: Vec<TickableProcedureConfig>,
-    pub tickable_procedure_order: TickableProcedureOrder,
+    pub tickable_procedures: HashMap<String, TickableProcedureConfig>,
+    pub first_possible_procedures: Vec<String>,
 }
 
 impl NpcTemplate {
@@ -875,7 +935,7 @@ impl NpcTemplate {
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(
                 self.tickable_procedures.clone(),
-                self.tickable_procedure_order,
+                self.first_possible_procedures.clone(),
             ),
         }
     }
@@ -956,8 +1016,8 @@ impl Character {
         instance_guid: u64,
         wield_type: WieldType,
         animation_id: i32,
-        tickable_procedures: Vec<TickableProcedureConfig>,
-        tickable_procedure_order: TickableProcedureOrder,
+        tickable_procedures: HashMap<String, TickableProcedureConfig>,
+        first_possible_procedures: Vec<String>,
     ) -> Character {
         Character {
             stats: CharacterStats {
@@ -977,7 +1037,7 @@ impl Character {
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(
                 tickable_procedures,
-                tickable_procedure_order,
+                first_possible_procedures,
             ),
         }
     }
@@ -1030,10 +1090,7 @@ impl Character {
                 animation_id: 0,
                 speed: 0.0,
             },
-            tickable_procedure_tracker: TickableProcedureTracker::new(
-                Vec::new(),
-                TickableProcedureOrder::default(),
-            ),
+            tickable_procedure_tracker: TickableProcedureTracker::new(HashMap::new(), Vec::new()),
         }
     }
 

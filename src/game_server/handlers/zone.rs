@@ -1,5 +1,5 @@
 use std::{
-    collections::{BTreeMap, BTreeSet},
+    collections::{BTreeMap, BTreeSet, HashMap},
     fs::File,
     io::Error,
     path::Path,
@@ -31,7 +31,7 @@ use super::{
     character::{
         coerce_to_broadcast_supplier, AmbientNpcConfig, Character, CharacterCategory,
         CharacterIndex, CharacterType, Chunk, DoorConfig, NpcTemplate, PreviousFixture,
-        TickableProcedureOrder, TransportConfig, WriteLockingBroadcastSupplier,
+        TransportConfig, WriteLockingBroadcastSupplier,
     },
     guid::{Guid, GuidTable, GuidTableIndexer, GuidTableWriteHandle, IndexedGuid},
     housing::prepare_init_house_packets,
@@ -254,8 +254,8 @@ impl Zone {
                 guid,
                 WieldType::None,
                 0,
+                HashMap::new(),
                 Vec::new(),
-                TickableProcedureOrder::default(),
             ));
         }
         template.to_zone(guid, Some(house), global_characters_table)
@@ -601,7 +601,10 @@ impl ZoneConfig {
                     },
                     scale: ambient_npc.base_npc.scale,
                     tickable_procedures: ambient_npc.base_npc.tickable_procedures.clone(),
-                    tickable_procedure_order: ambient_npc.base_npc.tickable_procedure_order,
+                    first_possible_procedures: ambient_npc
+                        .base_npc
+                        .first_possible_procedures
+                        .clone(),
                     animation_id: ambient_npc.base_npc.active_animation_slot,
                     character_type: CharacterType::AmbientNpc(ambient_npc.into()),
                     mount_id: None,
@@ -630,7 +633,7 @@ impl ZoneConfig {
                     },
                     scale: door.base_npc.scale,
                     tickable_procedures: door.base_npc.tickable_procedures.clone(),
-                    tickable_procedure_order: door.base_npc.tickable_procedure_order,
+                    first_possible_procedures: door.base_npc.first_possible_procedures.clone(),
                     animation_id: door.base_npc.active_animation_slot,
                     character_type: CharacterType::Door(door.into()),
                     mount_id: None,
@@ -659,7 +662,7 @@ impl ZoneConfig {
                     },
                     scale: transport.base_npc.scale,
                     tickable_procedures: transport.base_npc.tickable_procedures.clone(),
-                    tickable_procedure_order: transport.base_npc.tickable_procedure_order,
+                    first_possible_procedures: transport.base_npc.first_possible_procedures.clone(),
                     animation_id: transport.base_npc.active_animation_slot,
                     character_type: CharacterType::Transport(transport.into()),
                     mount_id: None,
