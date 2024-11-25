@@ -210,7 +210,56 @@ impl GameServer {
                                          mut characters_write,
                                          _| {
                         let mut broadcasts = Vec::new();
+
+                        // We need to tick characters who update independently first, so that their dependent
+                        // characters' previous procedures are not ticked
+                        let mut characters_not_updated = Vec::new();
                         for tickable_character in characters_write.values_mut() {
+                            if tickable_character.synchronize_with.is_none() {
+                                broadcasts.append(
+                                    &mut tickable_character.tick(now, characters_table_read_handle)?,
+                                );
+                            } else {
+                                characters_not_updated.push(tickable_character.guid());
+                            }
+                        }
+
+                        // Determine which procedures to update in the dependent characters
+                        let mut new_procedures = BTreeMap::new();
+                        for guid in characters_not_updated.iter() {
+                            let tickable_character = characters_write.get(guid).unwrap();
+                            if let Some(synchronize_with) = &tickable_character.synchronize_with {
+                                if let Some(synchronized_character) =
+                                    characters_write.get(synchronize_with)
+                                {
+                                    if let Some(synchronized_guid) = synchronized_character.synchronize_with {
+                                        panic!(
+                                            "Cannot synchronize character {} to a character {} because they are synchronized to character {}",
+                                            guid,
+                                            synchronized_character.guid(),
+                                            synchronized_guid
+                                        );
+                                    }
+
+                                    if synchronized_character.last_procedure_change() > tickable_character.last_procedure_change() {
+                                        if let Some(key) =
+                                            synchronized_character.current_tickable_procedure()
+                                        {
+                                            new_procedures
+                                                .insert(guid, key.clone());
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        // Tick all the dependent characters
+                        for guid in characters_not_updated.iter() {
+                            let tickable_character = characters_write.get_mut(guid).unwrap();
+                            if let Some(key) = new_procedures.remove(&tickable_character.guid()) {
+                                tickable_character.set_tickable_procedure_if_exists(key, now);
+                            }
+
                             broadcasts.append(
                                 &mut tickable_character.tick(now, characters_table_read_handle)?,
                             );
