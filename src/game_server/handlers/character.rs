@@ -977,10 +977,12 @@ impl NpcTemplate {
                 self.tickable_procedures.clone(),
                 self.first_possible_procedures.clone(),
             ),
-            synchronize_with: match &self.synchronize_with {
-                Some(key) => keys_to_guid.get(key).copied(),
-                None => None,
-            },
+            synchronize_with: self.synchronize_with.as_ref().map(|key| {
+                keys_to_guid
+                    .get(key)
+                    .copied()
+                    .unwrap_or_else(|| panic!("Tried to synchronize with unknown NPC {}", key))
+            }),
         }
     }
 }
