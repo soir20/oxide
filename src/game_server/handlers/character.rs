@@ -67,6 +67,7 @@ const fn default_weight() -> u32 {
 
 #[derive(Clone, Deserialize)]
 pub struct BaseNpcConfig {
+    pub key: Option<String>,
     #[serde(default)]
     pub model_id: u32,
     #[serde(default)]
@@ -110,6 +111,7 @@ pub struct BaseNpcConfig {
     pub tickable_procedures: HashMap<String, TickableProcedureConfig>,
     #[serde(default)]
     pub first_possible_procedures: Vec<String>,
+    pub synchronize_with: Option<String>,
 }
 
 #[derive(Clone)]
@@ -449,6 +451,7 @@ impl TickableProcedure {
 pub struct TickableProcedureTracker {
     procedures: HashMap<String, TickableProcedure>,
     current_procedure_key: String,
+    last_procedure_change: Instant,
 }
 
 impl TickableProcedureTracker {
@@ -498,6 +501,32 @@ impl TickableProcedureTracker {
                     )
                 })
                 .collect(),
+            last_procedure_change: Instant::now(),
+        }
+    }
+
+    pub fn current_tickable_procedure(&self) -> Option<&String> {
+        if self.procedures.is_empty() {
+            None
+        } else {
+            Some(&self.current_procedure_key)
+        }
+    }
+
+    pub fn last_procedure_change(&self) -> Instant {
+        self.last_procedure_change
+    }
+
+    pub fn set_procedure_if_exists(&mut self, new_procedure_key: String, now: Instant) {
+        if self.procedures.contains_key(&new_procedure_key) {
+            let current_procedure = self
+                .procedures
+                .get_mut(&self.current_procedure_key)
+                .expect("Missing procedure");
+            current_procedure.reset();
+
+            self.current_procedure_key = new_procedure_key;
+            self.last_procedure_change = now;
         }
     }
 
@@ -525,6 +554,7 @@ impl TickableProcedureTracker {
                     .procedures
                     .get_mut(&self.current_procedure_key)
                     .expect("Missing procedure");
+                self.last_procedure_change = now;
             }
         }
     }
@@ -900,6 +930,7 @@ pub enum CharacterCategory {
 
 #[derive(Clone)]
 pub struct NpcTemplate {
+    pub key: Option<String>,
     pub discriminant: u8,
     pub index: u16,
     pub pos: Pos,
@@ -913,13 +944,22 @@ pub struct NpcTemplate {
     pub wield_type: WieldType,
     pub tickable_procedures: HashMap<String, TickableProcedureConfig>,
     pub first_possible_procedures: Vec<String>,
+    pub synchronize_with: Option<String>,
 }
 
 impl NpcTemplate {
-    pub fn to_character(&self, instance_guid: u64) -> Character {
+    pub fn guid(&self, instance_guid: u64) -> u64 {
+        npc_guid(self.discriminant, instance_guid, self.index)
+    }
+
+    pub fn to_character(
+        &self,
+        instance_guid: u64,
+        keys_to_guid: &HashMap<&String, u64>,
+    ) -> Character {
         Character {
             stats: CharacterStats {
-                guid: npc_guid(self.discriminant, instance_guid, self.index),
+                guid: self.guid(instance_guid),
                 pos: self.pos,
                 rot: self.rot,
                 scale: self.scale,
@@ -937,6 +977,12 @@ impl NpcTemplate {
                 self.tickable_procedures.clone(),
                 self.first_possible_procedures.clone(),
             ),
+            synchronize_with: self.synchronize_with.as_ref().map(|key| {
+                keys_to_guid
+                    .get(key)
+                    .copied()
+                    .unwrap_or_else(|| panic!("Tried to synchronize with unknown NPC {}", key))
+            }),
         }
     }
 }
@@ -971,6 +1017,7 @@ impl Guid<u64> for CharacterStats {
 pub struct Character {
     pub stats: CharacterStats,
     tickable_procedure_tracker: TickableProcedureTracker,
+    pub synchronize_with: Option<u64>,
 }
 
 impl IndexedGuid<u64, CharacterIndex> for Character {
@@ -1018,6 +1065,7 @@ impl Character {
         animation_id: i32,
         tickable_procedures: HashMap<String, TickableProcedureConfig>,
         first_possible_procedures: Vec<String>,
+        synchronize_with: Option<u64>,
     ) -> Character {
         Character {
             stats: CharacterStats {
@@ -1039,6 +1087,7 @@ impl Character {
                 tickable_procedures,
                 first_possible_procedures,
             ),
+            synchronize_with,
         }
     }
 
@@ -1091,6 +1140,7 @@ impl Character {
                 speed: 0.0,
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(HashMap::new(), Vec::new()),
+            synchronize_with: None,
         }
     }
 
@@ -1147,6 +1197,15 @@ impl Character {
         Ok(packets)
     }
 
+    pub fn set_tickable_procedure_if_exists(
+        &mut self,
+        new_tickable_procedure: String,
+        now: Instant,
+    ) {
+        self.tickable_procedure_tracker
+            .set_procedure_if_exists(new_tickable_procedure, now);
+    }
+
     pub fn tick<'a>(
         &mut self,
         now: Instant,
@@ -1162,6 +1221,14 @@ impl Character {
 
         let packets = self.tickable_procedure_tracker.tick(&mut self.stats, now)?;
         Ok(vec![Broadcast::Multi(everyone, packets)])
+    }
+
+    pub fn current_tickable_procedure(&self) -> Option<&String> {
+        self.tickable_procedure_tracker.current_tickable_procedure()
+    }
+
+    pub fn last_procedure_change(&self) -> Instant {
+        self.tickable_procedure_tracker.last_procedure_change()
     }
 
     pub fn wield_type(&self) -> WieldType {

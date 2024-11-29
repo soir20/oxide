@@ -125,8 +125,20 @@ impl ZoneTemplate {
         house_data: Option<House>,
         global_characters_table: &mut GuidTableWriteHandle<u64, Character, CharacterIndex>,
     ) -> Zone {
+        let keys_to_guid: HashMap<&String, u64> = self
+            .characters
+            .iter()
+            .filter_map(|template| {
+                template
+                    .key
+                    .as_ref()
+                    .map(|key| (key, template.guid(instance_guid)))
+            })
+            .collect();
+
         for character_template in self.characters.iter() {
-            global_characters_table.insert(character_template.to_character(instance_guid));
+            let character = character_template.to_character(instance_guid, &keys_to_guid);
+            global_characters_table.insert(character);
         }
 
         Zone {
@@ -256,6 +268,7 @@ impl Zone {
                 0,
                 HashMap::new(),
                 Vec::new(),
+                None,
             ));
         }
         template.to_zone(guid, Some(house), global_characters_table)
@@ -585,6 +598,7 @@ impl ZoneConfig {
         {
             for ambient_npc in self.ambient_npcs {
                 characters.push(NpcTemplate {
+                    key: ambient_npc.base_npc.key.clone(),
                     discriminant: AMBIENT_NPC_DISCRIMINANT,
                     index,
                     pos: Pos {
@@ -605,6 +619,7 @@ impl ZoneConfig {
                         .base_npc
                         .first_possible_procedures
                         .clone(),
+                    synchronize_with: ambient_npc.base_npc.synchronize_with.clone(),
                     animation_id: ambient_npc.base_npc.active_animation_slot,
                     character_type: CharacterType::AmbientNpc(ambient_npc.into()),
                     mount_id: None,
@@ -617,6 +632,7 @@ impl ZoneConfig {
 
             for door in self.doors {
                 characters.push(NpcTemplate {
+                    key: door.base_npc.key.clone(),
                     discriminant: AMBIENT_NPC_DISCRIMINANT,
                     index,
                     pos: Pos {
@@ -634,6 +650,7 @@ impl ZoneConfig {
                     scale: door.base_npc.scale,
                     tickable_procedures: door.base_npc.tickable_procedures.clone(),
                     first_possible_procedures: door.base_npc.first_possible_procedures.clone(),
+                    synchronize_with: door.base_npc.synchronize_with.clone(),
                     animation_id: door.base_npc.active_animation_slot,
                     character_type: CharacterType::Door(door.into()),
                     mount_id: None,
@@ -646,6 +663,7 @@ impl ZoneConfig {
 
             for transport in self.transports {
                 characters.push(NpcTemplate {
+                    key: transport.base_npc.key.clone(),
                     discriminant: AMBIENT_NPC_DISCRIMINANT,
                     index,
                     pos: Pos {
@@ -663,6 +681,7 @@ impl ZoneConfig {
                     scale: transport.base_npc.scale,
                     tickable_procedures: transport.base_npc.tickable_procedures.clone(),
                     first_possible_procedures: transport.base_npc.first_possible_procedures.clone(),
+                    synchronize_with: transport.base_npc.synchronize_with.clone(),
                     animation_id: transport.base_npc.active_animation_slot,
                     character_type: CharacterType::Transport(transport.into()),
                     mount_id: None,
