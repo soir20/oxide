@@ -1,4 +1,4 @@
-use std::{default, io::Cursor};
+use std::io::Cursor;
 
 use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
 use num_enum::TryFromPrimitive;
@@ -176,12 +176,12 @@ impl SerializePacket for ActionBarTextColor {
 pub struct SendStringId {
     pub sender_guid: u64,
     pub message_id: u32,
-    pub supress_chat_message: bool,
+    pub is_anonymous: bool,
     pub unknown2: bool,
     pub is_action_bar_message: bool,
     pub action_bar_text_color: ActionBarTextColor,
-    pub unknown5: u64,
-    pub unknown6: u64,
+    pub target_guid: u64,
+    pub owner_guid: u64,
     pub unknown7: u32,
 }
 

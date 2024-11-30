@@ -342,12 +342,12 @@ impl TickableStep {
                 inner: SendStringId {
                     sender_guid: Guid::guid(character),
                     message_id: chat_message_id,
-                    supress_chat_message: false,
+                    is_anonymous: false,
                     unknown2: false,
                     is_action_bar_message: false,
                     action_bar_text_color: ActionBarTextColor::default(),
-                    unknown5: 0,
-                    unknown6: 0,
+                    target_guid: 0,
+                    owner_guid: 0,
                     unknown7: 0,
                 },
             })?);
