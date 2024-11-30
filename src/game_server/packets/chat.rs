@@ -162,7 +162,7 @@ pub enum ActionBarTextColor {
     Red = 1,
     Yellow = 2,
     Green = 3,
-    Blue = 4
+    Blue = 4,
 }
 
 impl SerializePacket for ActionBarTextColor {
