@@ -344,7 +344,7 @@ impl TickableStep {
                     message_id: chat_message_id,
                     unknown1: false,
                     unknown2: false,
-                    unknown3: false,
+                    is_action_bar_message: false,
                     unknown4: 0,
                     unknown5: 0,
                     unknown6: 0,

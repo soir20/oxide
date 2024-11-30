@@ -160,7 +160,7 @@ pub struct SendStringId {
     pub message_id: u32,
     pub unknown1: bool,
     pub unknown2: bool,
-    pub unknown3: bool,
+    pub is_action_bar_message: bool,
     pub unknown4: u32,
     pub unknown5: u64,
     pub unknown6: u64,
