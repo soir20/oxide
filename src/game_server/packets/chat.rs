@@ -1,4 +1,4 @@
-use std::io::Cursor;
+use std::{default, io::Cursor};
 
 use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
 use num_enum::TryFromPrimitive;
@@ -154,14 +154,32 @@ impl GamePacket for SendMessage {
     const HEADER: Self::Header = ChatOpCode::SendMessage;
 }
 
-#[derive(SerializePacket, DeserializePacket)]
+#[allow(dead_code)]
+#[derive(Copy, Clone, Default)]
+pub enum ActionBarTextColor {
+    #[default]
+    White = 0,
+    Red = 1,
+    Yellow = 2,
+    Green = 3,
+    Blue = 4
+}
+
+impl SerializePacket for ActionBarTextColor {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        buffer.write_u32::<LittleEndian>(*self as u32)?;
+        Ok(())
+    }
+}
+
+#[derive(SerializePacket)]
 pub struct SendStringId {
     pub sender_guid: u64,
     pub message_id: u32,
-    pub unknown1: bool,
+    pub supress_chat_message: bool,
     pub unknown2: bool,
     pub is_action_bar_message: bool,
-    pub unknown4: u32,
+    pub action_bar_text_color: ActionBarTextColor,
     pub unknown5: u64,
     pub unknown6: u64,
     pub unknown7: u32,

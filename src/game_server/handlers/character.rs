@@ -11,7 +11,7 @@ use strum::EnumIter;
 use crate::{
     game_server::{
         packets::{
-            chat::SendStringId,
+            chat::{ActionBarTextColor, SendStringId},
             item::{BaseAttachmentGroup, EquipmentSlot, WieldType},
             player_data::EquippedItem,
             player_update::{
@@ -342,10 +342,10 @@ impl TickableStep {
                 inner: SendStringId {
                     sender_guid: Guid::guid(character),
                     message_id: chat_message_id,
-                    unknown1: false,
+                    supress_chat_message: false,
                     unknown2: false,
                     is_action_bar_message: false,
-                    unknown4: 0,
+                    action_bar_text_color: ActionBarTextColor::default(),
                     unknown5: 0,
                     unknown6: 0,
                     unknown7: 0,
