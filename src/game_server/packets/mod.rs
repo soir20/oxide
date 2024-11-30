@@ -90,6 +90,15 @@ pub struct Pos {
     pub w: f32,
 }
 
+#[derive(Clone, SerializePacket, DeserializePacket)]
+pub struct Name {
+    pub first_name_id: u32,
+    pub middle_name_id: u32,
+    pub last_name_id: u32,
+    pub first_name: String,
+    pub last_name: String,
+}
+
 #[derive(SerializePacket, DeserializePacket)]
 pub struct Rgba {
     b: u8,

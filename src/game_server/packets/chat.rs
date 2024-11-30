@@ -7,7 +7,7 @@ use packet_serialize::{
     DeserializePacket, DeserializePacketError, SerializePacket, SerializePacketError,
 };
 
-use super::{GamePacket, OpCode, Pos};
+use super::{GamePacket, Name, OpCode, Pos};
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u16)]
@@ -42,21 +42,13 @@ pub enum MessageType {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct MessagePayload {
     pub sender_guid: u64,
-    pub unknown1: u64,
-    pub unknown2: u32,
-    pub unknown3: u32,
-    pub unknown4: u32,
-    pub sender_first_name: String,
-    pub sender_last_name: String,
-    pub unknown5: u32,
-    pub unknown6: u32,
-    pub unknown7: u32,
-    pub target_first_name: String,
-    pub target_last_name: String,
+    pub target_guid: u64,
+    pub sender_name: Name,
+    pub target_name: Name,
     pub message: String,
     pub pos: Pos,
-    pub unknown8: u64,
-    pub character_type: u32,
+    pub guild_guid: u64,
+    pub language_id: u32,
 }
 
 pub enum SendMessage {
@@ -108,10 +100,10 @@ impl SerializePacket for SendMessage {
                 buffer.write_u16::<LittleEndian>(MessageType::LookingForGroup as u16)?;
                 payload.serialize(buffer)
             }
-            SendMessage::Area(payload, unknown) => {
+            SendMessage::Area(payload, area_id) => {
                 buffer.write_u16::<LittleEndian>(MessageType::Area as u16)?;
                 payload.serialize(buffer)?;
-                buffer.write_u32::<LittleEndian>(*unknown)?;
+                buffer.write_u32::<LittleEndian>(*area_id)?;
                 Ok(())
             }
             SendMessage::Guild(payload) => {

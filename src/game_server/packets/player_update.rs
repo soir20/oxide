@@ -7,7 +7,7 @@ use serde::Deserialize;
 
 use super::{
     item::{Attachment, BaseAttachmentGroup, ItemDefinition, WieldType},
-    Effect, GamePacket, OpCode, Pos, Rgba,
+    Effect, GamePacket, Name, OpCode, Pos, Rgba,
 };
 
 #[derive(Copy, Clone, Debug)]
@@ -106,11 +106,7 @@ pub struct Unknown13Array {
 #[derive(SerializePacket)]
 pub struct AddPc {
     guid: u64,
-    first_name: u32,
-    last_name_prefix: u32,
-    last_name_suffix: u32,
-    first_name_override: String,
-    last_name_override: String,
+    name: Name,
     body_model: u32,
     chat_foreground: Rgba,
     chat_background: Rgba,
