@@ -1,15 +1,18 @@
-use std::io::Cursor;
+use std::io::{Cursor, Read};
 
 use byteorder::{LittleEndian, ReadBytesExt};
 use packet_serialize::DeserializePacket;
 
-use crate::game_server::{
-    packets::{
-        chat::{ChatOpCode, SendMessage},
-        tunnel::TunneledPacket,
-        GamePacket,
+use crate::{
+    game_server::{
+        packets::{
+            chat::{ChatOpCode, SendMessage},
+            tunnel::TunneledPacket,
+            GamePacket,
+        },
+        Broadcast, ProcessPacketError, ProcessPacketErrorType,
     },
-    Broadcast, ProcessPacketError, ProcessPacketErrorType,
+    info,
 };
 
 use super::unique_guid::player_guid;
@@ -75,6 +78,12 @@ pub fn process_chat_packet(
                         },
                     })?],
                 )])
+            }
+            _ => {
+                let mut buffer = Vec::new();
+                cursor.read_to_end(&mut buffer)?;
+                info!("Unimplemented: {:?}, {:x?}", op_code, buffer);
+                Ok(Vec::new())
             }
         },
         Err(_) => Err(ProcessPacketError::new(

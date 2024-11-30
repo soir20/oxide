@@ -108,8 +108,13 @@ pub struct Rgba {
 }
 
 impl Rgba {
-    pub fn new(r: u8, g: u8, b: u8, a: u8) -> Self {
-        Rgba { b, g, r, a }
+    pub const fn new(r: u8, g: u8, b: u8, a: u8) -> Self {
+        Rgba {
+            b: u8::MAX - b,
+            g: u8::MAX - g,
+            r: u8::MAX - r,
+            a: u8::MAX - a,
+        }
     }
 }
 

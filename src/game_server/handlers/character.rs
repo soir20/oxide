@@ -11,6 +11,7 @@ use strum::EnumIter;
 use crate::{
     game_server::{
         packets::{
+            chat::SendStringId,
             item::{BaseAttachmentGroup, EquipmentSlot, WieldType},
             player_data::EquippedItem,
             player_update::{
@@ -138,8 +139,8 @@ impl BaseNpc {
                 name_id: self.name_id,
                 model_id: self.model_id,
                 unknown3: true,
-                chat_foreground: Rgba::new(0, 0, 0, 0),
-                chat_background: Rgba::new(0, 0, 0, 0),
+                chat_text_color: Character::DEFAULT_CHAT_TEXT_COLOR,
+                chat_bubble_color: Character::DEFAULT_CHAT_BUBBLE_COLOR,
                 chat_scale: 1,
                 scale: character.stats.scale,
                 pos: character.stats.pos,
@@ -277,6 +278,7 @@ pub struct TickableStep {
     #[serde(default)]
     pub new_pos_offset_z: f32,
     pub animation_id: Option<i32>,
+    pub chat_message_id: Option<u32>,
     pub duration_millis: u64,
 }
 
@@ -330,6 +332,23 @@ impl TickableStep {
                     animation_id,
                     animation_group_id: -1,
                     override_animation: true,
+                },
+            })?);
+        }
+
+        if let Some(chat_message_id) = self.chat_message_id {
+            packets.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: SendStringId {
+                    sender_guid: Guid::guid(character),
+                    message_id: chat_message_id,
+                    unknown1: false,
+                    unknown2: false,
+                    unknown3: false,
+                    unknown4: 0,
+                    unknown5: 0,
+                    unknown6: 0,
+                    unknown7: 0,
                 },
             })?);
         }
@@ -1049,6 +1068,8 @@ impl IndexedGuid<u64, CharacterIndex> for Character {
 impl Character {
     pub const MIN_CHUNK: (i32, i32) = (i32::MIN, i32::MIN);
     pub const MAX_CHUNK: (i32, i32) = (i32::MAX, i32::MAX);
+    pub const DEFAULT_CHAT_TEXT_COLOR: Rgba = Rgba::new(0, 0, 0, 255);
+    pub const DEFAULT_CHAT_BUBBLE_COLOR: Rgba = Rgba::new(15, 29, 43, 255);
     const CHUNK_SIZE: f32 = 200.0;
 
     pub fn new(

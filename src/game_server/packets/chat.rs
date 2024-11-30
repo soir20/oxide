@@ -13,6 +13,7 @@ use super::{GamePacket, Name, OpCode, Pos};
 #[repr(u16)]
 pub enum ChatOpCode {
     SendMessage = 0x1,
+    SendStringId = 0x4,
 }
 
 impl SerializePacket for ChatOpCode {
@@ -151,4 +152,23 @@ impl DeserializePacket for SendMessage {
 impl GamePacket for SendMessage {
     type Header = ChatOpCode;
     const HEADER: Self::Header = ChatOpCode::SendMessage;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct SendStringId {
+    pub sender_guid: u64,
+    pub message_id: u32,
+    pub unknown1: bool,
+    pub unknown2: bool,
+    pub unknown3: bool,
+    pub unknown4: u32,
+    pub unknown5: u64,
+    pub unknown6: u64,
+    pub unknown7: u32,
+}
+
+impl GamePacket for SendStringId {
+    type Header = ChatOpCode;
+
+    const HEADER: Self::Header = ChatOpCode::SendStringId;
 }
