@@ -1068,8 +1068,8 @@ impl IndexedGuid<u64, CharacterIndex> for Character {
 impl Character {
     pub const MIN_CHUNK: (i32, i32) = (i32::MIN, i32::MIN);
     pub const MAX_CHUNK: (i32, i32) = (i32::MAX, i32::MAX);
-    pub const DEFAULT_CHAT_TEXT_COLOR: Rgba = Rgba::new(0, 0, 0, 255);
-    pub const DEFAULT_CHAT_BUBBLE_COLOR: Rgba = Rgba::new(15, 29, 43, 255);
+    pub const DEFAULT_CHAT_TEXT_COLOR: Rgba = Rgba::new(255, 255, 255, 255);
+    pub const DEFAULT_CHAT_BUBBLE_COLOR: Rgba = Rgba::new(240, 226, 212, 255);
     const CHUNK_SIZE: f32 = 200.0;
 
     pub fn new(
