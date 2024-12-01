@@ -100,6 +100,8 @@ pub struct BaseNpcConfig {
     pub name_offset_z: f32,
     pub cursor: Option<u8>,
     #[serde(default = "default_true")]
+    pub enable_interact_popup: bool,
+    #[serde(default = "default_true")]
     pub show_name: bool,
     #[serde(default = "default_true")]
     pub visible: bool,
@@ -125,6 +127,7 @@ pub struct BaseNpc {
     pub name_offset_y: f32,
     pub name_offset_z: f32,
     pub cursor: Option<u8>,
+    pub enable_interact_popup: bool,
     pub show_name: bool,
     pub visible: bool,
     pub bounce_area_id: i32,
@@ -176,7 +179,7 @@ impl BaseNpc {
                 one_shot_animation_id: -1,
                 temporary_appearance: 0,
                 effects: vec![],
-                disable_interact_popup: false,
+                disable_interact_popup: !self.enable_interact_popup,
                 unknown33: 0,
                 unknown34: false,
                 show_health: false,
@@ -251,6 +254,7 @@ impl From<BaseNpcConfig> for BaseNpc {
             name_offset_y: value.name_offset_y,
             name_offset_z: value.name_offset_z,
             cursor: value.cursor,
+            enable_interact_popup: value.enable_interact_popup,
             show_name: value.show_name,
             visible: value.visible,
             bounce_area_id: value.bounce_area_id,

@@ -719,6 +719,8 @@
                 "rot_x": 0.64425725,
                 "rot_y": 0.0,
                 "rot_z": 0.7648088,
+                "cursor": 53,
+                "enable_interact_popup": false,
                 "tickable_procedures": {
                     "joke1": {
                         "steps": [
@@ -759,6 +761,8 @@
                 "rot_x": -0.55723685,
                 "rot_y": 0.0,
                 "rot_z": -0.83035356,
+                "cursor": 53,
+                "enable_interact_popup": false,
                 "tickable_procedures": {
                     "joke1": {
                         "steps": [
