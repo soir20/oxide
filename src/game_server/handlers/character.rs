@@ -11,11 +11,19 @@ use strum::EnumIter;
 use crate::{
     game_server::{
         packets::{
-            chat::{ActionBarTextColor, SendStringId}, command::PlaySoundIdOnTarget, item::{BaseAttachmentGroup, EquipmentSlot, WieldType}, player_data::EquippedItem, player_update::{
+            chat::{ActionBarTextColor, SendStringId},
+            command::PlaySoundIdOnTarget,
+            item::{BaseAttachmentGroup, EquipmentSlot, WieldType},
+            player_data::EquippedItem,
+            player_update::{
                 AddNotifications, AddNpc, CustomizationSlot, Hostility, Icon, NotificationData,
                 NpcRelevance, RemoveStandard, SetAnimation, SingleNotification, SingleNpcRelevance,
                 UpdateSpeed,
-            }, tunnel::TunneledPacket, ui::ExecuteScriptWithParams, update_position::UpdatePlayerPosition, GamePacket, GuidTarget, Pos, Rgba, Target
+            },
+            tunnel::TunneledPacket,
+            ui::ExecuteScriptWithParams,
+            update_position::UpdatePlayerPosition,
+            GamePacket, GuidTarget, Pos, Rgba, Target,
         },
         Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
