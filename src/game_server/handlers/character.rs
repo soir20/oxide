@@ -16,7 +16,9 @@ use crate::{
             item::{BaseAttachmentGroup, EquipmentSlot, WieldType},
             player_data::EquippedItem,
             player_update::{
-                AddNotifications, AddNpc, CustomizationSlot, Hostility, Icon, NotificationData, NpcRelevance, QueueAnimation, RemoveStandard, SetAnimation, SingleNotification, SingleNpcRelevance, UpdateSpeed
+                AddNotifications, AddNpc, CustomizationSlot, Hostility, Icon, NotificationData,
+                NpcRelevance, QueueAnimation, RemoveStandard, SetAnimation, SingleNotification,
+                SingleNpcRelevance, UpdateSpeed,
             },
             tunnel::TunneledPacket,
             ui::ExecuteScriptWithParams,
