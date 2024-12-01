@@ -16,9 +16,7 @@ use crate::{
             item::{BaseAttachmentGroup, EquipmentSlot, WieldType},
             player_data::EquippedItem,
             player_update::{
-                AddNotifications, AddNpc, CustomizationSlot, Hostility, Icon, NotificationData,
-                NpcRelevance, RemoveStandard, SetAnimation, SingleNotification, SingleNpcRelevance,
-                UpdateSpeed,
+                AddNotifications, AddNpc, CustomizationSlot, Hostility, Icon, NotificationData, NpcRelevance, QueueAnimation, RemoveStandard, SetAnimation, SingleNotification, SingleNpcRelevance, UpdateSpeed
             },
             tunnel::TunneledPacket,
             ui::ExecuteScriptWithParams,
@@ -279,6 +277,7 @@ pub struct TickableStep {
     #[serde(default)]
     pub new_pos_offset_z: f32,
     pub animation_id: Option<i32>,
+    pub one_shot_animation_id: Option<i32>,
     pub chat_message_id: Option<u32>,
     pub sound_id: Option<u32>,
     pub duration_millis: u64,
@@ -337,6 +336,19 @@ impl TickableStep {
                     animation_id,
                     animation_group_id: -1,
                     override_animation: true,
+                },
+            })?);
+        }
+
+        if let Some(animation_id) = self.one_shot_animation_id {
+            packets.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: QueueAnimation {
+                    character_guid: Guid::guid(character),
+                    animation_id,
+                    queue_pos: 0,
+                    delay_seconds: 0.0,
+                    duration_seconds: 0.0,
                 },
             })?);
         }
