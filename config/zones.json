@@ -744,7 +744,7 @@
                                 "chat_message_id": 17304,
                                 "sound_id": 3584,
                                 "one_shot_animation_id": 3006,
-                                "duration_millis": 8000
+                                "duration_millis": 10000
                             }
                         ]
                     }
@@ -784,7 +784,7 @@
                             },
                             {
                                 "one_shot_animation_id": 3004,
-                                "duration_millis": 8000
+                                "duration_millis": 10000
                             }
                         ]
                     }
