@@ -7,7 +7,7 @@ use serde::Deserialize;
 
 use super::{
     item::{Attachment, BaseAttachmentGroup, ItemDefinition, WieldType},
-    Effect, GamePacket, Name, OpCode, Pos, Rgba,
+    Effect, GamePacket, Name, OpCode, Pos, Rgba, Target,
 };
 
 #[derive(Copy, Clone, Debug)]
@@ -731,7 +731,7 @@ pub struct AddNpc {
     pub rider_guid: u64,
     pub npc_type: u32,
     pub unknown46: f32,
-    pub target: u32,
+    pub target: Target,
     pub variables: Vec<Variable>,
     pub rail_id: u32,
     pub rail_speed: f32,

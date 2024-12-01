@@ -141,3 +141,93 @@ pub struct Effect {
     pub unknown18: bool,
     pub unknown19: bool,
 }
+
+#[derive(SerializePacket)]
+pub struct GuidTarget {
+    pub u64: Pos,
+    pub guid: Pos,
+}
+
+#[derive(SerializePacket)]
+pub struct BoundingBoxTarget {
+    pub fallback_pos: Pos,
+    pub min_pos: Pos,
+    pub max_pos: Pos,
+}
+
+#[derive(SerializePacket)]
+pub struct CharacterBoneNameTarget {
+    pub fallback_pos: Pos,
+    pub character_guid: u64,
+    pub bone_name: String,
+}
+
+#[derive(SerializePacket)]
+pub struct CharacterBoneIdTarget {
+    pub fallback_pos: Pos,
+    pub character_guid: u64,
+    pub bone_id: u32,
+}
+
+#[derive(SerializePacket)]
+pub struct ActorBoneNameTarget {
+    pub fallback_pos: Pos,
+    pub actor_id: u32,
+    pub bone_name: String,
+}
+
+#[derive(SerializePacket)]
+pub struct ActorBoneIdTarget {
+    pub fallback_pos: Pos,
+    pub actor_id: u32,
+    pub bone_id: u32,
+}
+
+#[allow(dead_code)]
+#[derive(Default)]
+pub enum Target {
+    #[default]
+    None,
+    Guid(GuidTarget),
+    BoundingBox(BoundingBoxTarget),
+    CharacterBone(CharacterBoneNameTarget),
+    CharacterBoneId(CharacterBoneIdTarget),
+    ActorBoneName(ActorBoneNameTarget),
+    ActorBoneId(ActorBoneIdTarget),
+}
+
+impl SerializePacket for Target {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        match self {
+            Target::None => {
+                buffer.write_u32::<LittleEndian>(0)?;
+            }
+            Target::Guid(guid_target) => {
+                buffer.write_u32::<LittleEndian>(1)?;
+                guid_target.serialize(buffer)?;
+            }
+            Target::BoundingBox(bounding_box_target) => {
+                buffer.write_u32::<LittleEndian>(2)?;
+                bounding_box_target.serialize(buffer)?;
+            }
+            Target::CharacterBone(character_bone_name_target) => {
+                buffer.write_u32::<LittleEndian>(3)?;
+                character_bone_name_target.serialize(buffer)?;
+            }
+            Target::CharacterBoneId(character_bone_id_target) => {
+                buffer.write_u32::<LittleEndian>(4)?;
+                character_bone_id_target.serialize(buffer)?;
+            }
+            Target::ActorBoneName(actor_bone_name_target) => {
+                buffer.write_u32::<LittleEndian>(5)?;
+                actor_bone_name_target.serialize(buffer)?;
+            }
+            Target::ActorBoneId(actor_bone_id_target) => {
+                buffer.write_u32::<LittleEndian>(1)?;
+                actor_bone_id_target.serialize(buffer)?;
+            }
+        }
+
+        Ok(())
+    }
+}
