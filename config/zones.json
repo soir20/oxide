@@ -709,25 +709,81 @@
             },
             {
                 "comment": "Joker",
+                "key": "joker",
                 "model_id": 1580,
+                "name_id": 3967,
                 "pos_x": 128.93307,
                 "pos_y": 10.146215,
                 "pos_z": -188.32434,
                 "pos_w": 1.0,
                 "rot_x": 0.64425725,
                 "rot_y": 0.0,
-                "rot_z": 0.7648088
+                "rot_z": 0.7648088,
+                "tickable_procedures": {
+                    "joke1": {
+                        "steps": [
+                            {
+                                "chat_message_id": 17300,
+                                "sound_id": 3580,
+                                "duration_millis": 2000
+                            },
+                            {
+                                "duration_millis": 2000
+                            },
+                            {
+                                "chat_message_id": 17302,
+                                "sound_id": 3582,
+                                "duration_millis": 1000
+                            },
+                            {
+                                "duration_millis": 1000
+                            },
+                            {
+                                "chat_message_id": 17304,
+                                "sound_id": 3584,
+                                "duration_millis": 8000
+                            }
+                        ]
+                    }
+                }
             },
             {
                 "comment": "Spanner",
                 "model_id": 708,
+                "name_id": 3968,
                 "pos_x": 129.79893,
                 "pos_y": 10.146215,
                 "pos_z": -186.46703,
                 "pos_w": 1.0,
                 "rot_x": -0.55723685,
                 "rot_y": 0.0,
-                "rot_z": -0.83035356
+                "rot_z": -0.83035356,
+                "tickable_procedures": {
+                    "joke1": {
+                        "steps": [
+                            {
+                                "duration_millis": 2000
+                            },
+                            {
+                                "chat_message_id": 17301,
+                                "sound_id": 3581,
+                                "duration_millis": 2000
+                            },
+                            {
+                                "duration_millis": 1000
+                            },
+                            {
+                                "chat_message_id": 17303,
+                                "sound_id": 3583,
+                                "duration_millis": 1000
+                            },
+                            {
+                                "duration_millis": 8000
+                            }
+                        ]
+                    }
+                },
+                "synchronize_with": "joker"
             }
         ]
     },
