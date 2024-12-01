@@ -348,7 +348,7 @@ impl TickableStep {
                     animation_id,
                     queue_pos: 0,
                     delay_seconds: 0.0,
-                    duration_seconds: 0.0,
+                    duration_seconds: self.duration_millis as f32 / 1000.0,
                 },
             })?);
         }
