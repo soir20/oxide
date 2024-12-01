@@ -722,7 +722,7 @@
                 "cursor": 53,
                 "enable_interact_popup": false,
                 "tickable_procedures": {
-                    "joke1": {
+                    "naboo": {
                         "steps": [
                             {
                                 "chat_message_id": 17300,
@@ -764,7 +764,7 @@
                 "cursor": 53,
                 "enable_interact_popup": false,
                 "tickable_procedures": {
-                    "joke1": {
+                    "naboo": {
                         "steps": [
                             {
                                 "duration_millis": 2000
