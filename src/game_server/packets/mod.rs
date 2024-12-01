@@ -144,8 +144,8 @@ pub struct Effect {
 
 #[derive(SerializePacket)]
 pub struct GuidTarget {
-    pub u64: Pos,
-    pub guid: Pos,
+    pub fallback_pos: Pos,
+    pub guid: u64,
 }
 
 #[derive(SerializePacket)]

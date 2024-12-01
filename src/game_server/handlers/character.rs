@@ -11,18 +11,11 @@ use strum::EnumIter;
 use crate::{
     game_server::{
         packets::{
-            chat::{ActionBarTextColor, SendStringId},
-            item::{BaseAttachmentGroup, EquipmentSlot, WieldType},
-            player_data::EquippedItem,
-            player_update::{
+            chat::{ActionBarTextColor, SendStringId}, command::PlaySoundIdOnTarget, item::{BaseAttachmentGroup, EquipmentSlot, WieldType}, player_data::EquippedItem, player_update::{
                 AddNotifications, AddNpc, CustomizationSlot, Hostility, Icon, NotificationData,
                 NpcRelevance, RemoveStandard, SetAnimation, SingleNotification, SingleNpcRelevance,
                 UpdateSpeed,
-            },
-            tunnel::TunneledPacket,
-            ui::ExecuteScriptWithParams,
-            update_position::UpdatePlayerPosition,
-            GamePacket, Pos, Rgba, Target,
+            }, tunnel::TunneledPacket, ui::ExecuteScriptWithParams, update_position::UpdatePlayerPosition, GamePacket, GuidTarget, Pos, Rgba, Target
         },
         Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
@@ -279,6 +272,7 @@ pub struct TickableStep {
     pub new_pos_offset_z: f32,
     pub animation_id: Option<i32>,
     pub chat_message_id: Option<u32>,
+    pub sound_id: Option<u32>,
     pub duration_millis: u64,
 }
 
@@ -349,6 +343,19 @@ impl TickableStep {
                     target_guid: 0,
                     owner_guid: 0,
                     unknown7: 0,
+                },
+            })?);
+        }
+
+        if let Some(sound_id) = self.sound_id {
+            packets.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: PlaySoundIdOnTarget {
+                    sound_id,
+                    target: Target::Guid(GuidTarget {
+                        fallback_pos: character.pos,
+                        guid: Guid::guid(character),
+                    }),
                 },
             })?);
         }
