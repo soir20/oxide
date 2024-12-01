@@ -262,7 +262,7 @@ impl From<BaseNpcConfig> for BaseNpc {
 
 #[derive(Clone, Deserialize)]
 pub struct TickableStep {
-    pub speed: f32,
+    pub speed: Option<f32>,
     pub new_pos_x: Option<f32>,
     pub new_pos_y: Option<f32>,
     pub new_pos_z: Option<f32>,
@@ -299,14 +299,17 @@ impl TickableStep {
         character: &mut CharacterStats,
     ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
         let mut packets = Vec::new();
-        character.speed = self.speed;
-        packets.push(GamePacket::serialize(&TunneledPacket {
-            unknown1: true,
-            inner: UpdateSpeed {
-                guid: Guid::guid(character),
-                speed: self.speed,
-            },
-        })?);
+
+        if let Some(speed) = self.speed {
+            character.speed = speed;
+            packets.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: UpdateSpeed {
+                    guid: Guid::guid(character),
+                    speed,
+                },
+            })?);
+        }
 
         let new_pos = self.new_pos(character.pos);
         character.pos = new_pos;
