@@ -751,7 +751,7 @@
                     "dooku": {
                         "steps": [
                             {
-                                "chat_message_id": 3961,
+                                "chat_message_id": 17300,
                                 "sound_id": 3580,
                                 "duration_millis": 2000
                             },
@@ -865,7 +865,7 @@
                                 "duration_millis": 2000
                             },
                             {
-                                "chat_message_id": 3962,
+                                "chat_message_id": 17301,
                                 "sound_id": 3581,
                                 "duration_millis": 2000
                             },
