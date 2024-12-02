@@ -803,7 +803,7 @@
                             {
                                 "chat_message_id": 17313,
                                 "sound_id": 3593,
-                                "duration_millis": 4000
+                                "duration_millis": 5000
                             },
                             {
                                 "duration_millis": 5000
@@ -812,7 +812,7 @@
                                 "chat_message_id": 17315,
                                 "sound_id": 3595,
                                 "one_shot_animation_id": 3006,
-                                "duration_millis": 9000
+                                "duration_millis": 10000
                             },
                             {
                                 "duration_millis": 5000
@@ -912,7 +912,7 @@
                     "manufacturing_droid": {
                         "steps": [
                             {
-                                "duration_millis": 4000
+                                "duration_millis": 5000
                             },
                             {
                                 "chat_message_id": 17314,
@@ -921,7 +921,7 @@
                             },
                             {
                                 "one_shot_animation_id": 3004,
-                                "duration_millis": 9000
+                                "duration_millis": 10000
                             },
                             {
                                 "chat_message_id": 17316,
