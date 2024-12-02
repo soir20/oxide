@@ -850,6 +850,27 @@
                                 "duration_millis": 7000
                             }
                         ]
+                    },
+                    "r2": {
+                        "steps": [
+                            {
+                                "chat_message_id": 17320,
+                                "sound_id": 3600,
+                                "duration_millis": 2000
+                            },
+                            {
+                                "duration_millis": 1000
+                            },
+                            {
+                                "chat_message_id": 17322,
+                                "sound_id": 3602,
+                                "one_shot_animation_id": 3006,
+                                "duration_millis": 6000
+                            },
+                            {
+                                "duration_millis": 7000
+                            }
+                        ]
                     }
                 }
             },
@@ -992,6 +1013,27 @@
                             {
                                 "chat_message_id": 17341,
                                 "sound_id": 3621,
+                                "duration_millis": 7000
+                            }
+                        ]
+                    },
+                    "r2": {
+                        "steps": [
+                            {
+                                "duration_millis": 2000
+                            },
+                            {
+                                "chat_message_id": 17321,
+                                "sound_id": 3601,
+                                "duration_millis": 1000
+                            },
+                            {
+                                "one_shot_animation_id": 3004,
+                                "duration_millis": 6000
+                            },
+                            {
+                                "chat_message_id": 17323,
+                                "sound_id": 3603,
                                 "duration_millis": 7000
                             }
                         ]
