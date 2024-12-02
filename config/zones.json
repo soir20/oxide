@@ -776,6 +776,28 @@
                                 "duration_millis": 6000
                             }
                         ]
+                    },
+                    "yoda_music": {
+                        "weight": 99,
+                        "steps": [
+                            {
+                                "chat_message_id": 17309,
+                                "sound_id": 3589,
+                                "duration_millis": 3000
+                            },
+                            {
+                                "duration_millis": 3000
+                            },
+                            {
+                                "chat_message_id": 17311,
+                                "sound_id": 3591,
+                                "one_shot_animation_id": 3006,
+                                "duration_millis": 7000
+                            },
+                            {
+                                "duration_millis": 5000
+                            }
+                        ]
                     }
                 }
             },
@@ -843,6 +865,27 @@
                                 "chat_message_id": 17308,
                                 "sound_id": 3588,
                                 "duration_millis": 6000
+                            }
+                        ]
+                    },
+                    "yoda_music": {
+                        "steps": [
+                            {
+                                "duration_millis": 3000
+                            },
+                            {
+                                "chat_message_id": 17310,
+                                "sound_id": 3590,
+                                "duration_millis": 3000
+                            },
+                            {
+                                "one_shot_animation_id": 3004,
+                                "duration_millis": 7000
+                            },
+                            {
+                                "chat_message_id": 17312,
+                                "sound_id": 3592,
+                                "duration_millis": 5000
                             }
                         ]
                     }
