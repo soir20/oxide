@@ -886,6 +886,24 @@
                                 "duration_millis": 9000
                             }
                         ]
+                    },
+                    "yoda_birthday": {
+                        "steps": [
+                            {
+                                "chat_message_id": 17327,
+                                "sound_id": 3607,
+                                "duration_millis": 5000
+                            },
+                            {
+                                "duration_millis": 3000
+                            },
+                            {
+                                "chat_message_id": 17329,
+                                "sound_id": 3609,
+                                "one_shot_animation_id": 3006,
+                                "duration_millis": 8000
+                            }
+                        ]
                     }
                 }
             },
@@ -1067,6 +1085,22 @@
                                 "chat_message_id": 17326,
                                 "sound_id": 3606,
                                 "duration_millis": 9000
+                            }
+                        ]
+                    },
+                    "yoda_birthday": {
+                        "steps": [
+                            {
+                                "duration_millis": 5000
+                            },
+                            {
+                                "chat_message_id": 17328,
+                                "sound_id": 3608,
+                                "duration_millis": 3000
+                            },
+                            {
+                                "one_shot_animation_id": 3004,
+                                "duration_millis": 8000
                             }
                         ]
                     }
