@@ -778,7 +778,6 @@
                         ]
                     },
                     "yoda_music": {
-                        "weight": 99,
                         "steps": [
                             {
                                 "chat_message_id": 17309,
