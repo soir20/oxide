@@ -925,6 +925,24 @@
                                 "duration_millis": 6000
                             }
                         ]
+                    },
+                    "medics_jedi": {
+                        "steps": [
+                            {
+                                "chat_message_id": 17335,
+                                "sound_id": 3615,
+                                "duration_millis": 3000
+                            },
+                            {
+                                "duration_millis": 3000
+                            },
+                            {
+                                "chat_message_id": 17337,
+                                "sound_id": 3617,
+                                "one_shot_animation_id": 3006,
+                                "duration_millis": 6000
+                            }
+                        ]
                     }
                 }
             },
@@ -1142,6 +1160,22 @@
                             {
                                 "chat_message_id": 17333,
                                 "sound_id": 3613,
+                                "duration_millis": 6000
+                            }
+                        ]
+                    },
+                    "medics_jedi": {
+                        "steps": [
+                            {
+                                "duration_millis": 3000
+                            },
+                            {
+                                "chat_message_id": 17336,
+                                "sound_id": 3616,
+                                "duration_millis": 3000
+                            },
+                            {
+                                "one_shot_animation_id": 3004,
                                 "duration_millis": 6000
                             }
                         ]
