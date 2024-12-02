@@ -856,7 +856,7 @@
                             {
                                 "chat_message_id": 17320,
                                 "sound_id": 3600,
-                                "duration_millis": 2000
+                                "duration_millis": 1000
                             },
                             {
                                 "duration_millis": 1000
@@ -1020,7 +1020,7 @@
                     "r2": {
                         "steps": [
                             {
-                                "duration_millis": 2000
+                                "duration_millis": 1000
                             },
                             {
                                 "chat_message_id": 17321,
