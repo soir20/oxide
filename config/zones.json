@@ -943,6 +943,24 @@
                                 "duration_millis": 6000
                             }
                         ]
+                    },
+                    "commander_trouble": {
+                        "steps": [
+                            {
+                                "chat_message_id": 17338,
+                                "sound_id": 3618,
+                                "duration_millis": 3000
+                            },
+                            {
+                                "duration_millis": 2000
+                            },
+                            {
+                                "chat_message_id": 17340,
+                                "sound_id": 3620,
+                                "one_shot_animation_id": 3006,
+                                "duration_millis": 10000
+                            }
+                        ]
                     }
                 }
             },
@@ -1177,6 +1195,22 @@
                             {
                                 "one_shot_animation_id": 3004,
                                 "duration_millis": 6000
+                            }
+                        ]
+                    },
+                    "commander_trouble": {
+                        "steps": [
+                            {
+                                "duration_millis": 3000
+                            },
+                            {
+                                "chat_message_id": 17339,
+                                "sound_id": 3619,
+                                "duration_millis": 2000
+                            },
+                            {
+                                "one_shot_animation_id": 3004,
+                                "duration_millis": 10000
                             }
                         ]
                     }
