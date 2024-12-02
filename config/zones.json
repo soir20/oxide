@@ -904,6 +904,27 @@
                                 "duration_millis": 8000
                             }
                         ]
+                    },
+                    "twilek_coin_flip": {
+                        "steps": [
+                            {
+                                "chat_message_id": 17330,
+                                "sound_id": 3610,
+                                "duration_millis": 4000
+                            },
+                            {
+                                "duration_millis": 4000
+                            },
+                            {
+                                "chat_message_id": 17332,
+                                "sound_id": 3612,
+                                "one_shot_animation_id": 3006,
+                                "duration_millis": 6000
+                            },
+                            {
+                                "duration_millis": 6000
+                            }
+                        ]
                     }
                 }
             },
@@ -1101,6 +1122,27 @@
                             {
                                 "one_shot_animation_id": 3004,
                                 "duration_millis": 8000
+                            }
+                        ]
+                    },
+                    "twilek_coin_flip": {
+                        "steps": [
+                            {
+                                "duration_millis": 4000
+                            },
+                            {
+                                "chat_message_id": 17331,
+                                "sound_id": 3611,
+                                "duration_millis": 4000
+                            },
+                            {
+                                "one_shot_animation_id": 3004,
+                                "duration_millis": 6000
+                            },
+                            {
+                                "chat_message_id": 17333,
+                                "sound_id": 3613,
+                                "duration_millis": 6000
                             }
                         ]
                     }
