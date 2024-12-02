@@ -961,6 +961,19 @@
                                 "duration_millis": 10000
                             }
                         ]
+                    },
+                    "yoda_short": {
+                        "steps": [
+                            {
+                                "chat_message_id": 17342,
+                                "sound_id": 3622,
+                                "one_shot_animation_id": 3006,
+                                "duration_millis": 10000
+                            },
+                            {
+                                "duration_millis": 7000
+                            }
+                        ]
                     }
                 }
             },
@@ -1211,6 +1224,19 @@
                             {
                                 "one_shot_animation_id": 3004,
                                 "duration_millis": 10000
+                            }
+                        ]
+                    },
+                    "yoda_short": {
+                        "steps": [
+                            {
+                                "one_shot_animation_id": 3004,
+                                "duration_millis": 10000
+                            },
+                            {
+                                "chat_message_id": 17343,
+                                "sound_id": 3623,
+                                "duration_millis": 7000
                             }
                         ]
                     }
