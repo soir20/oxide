@@ -871,6 +871,21 @@
                                 "duration_millis": 7000
                             }
                         ]
+                    },
+                    "no_more": {
+                        "steps": [
+                            {
+                                "duration_millis": 5000
+                            },
+                            {
+                                "chat_message_id": 17325,
+                                "sound_id": 3605,
+                                "duration_millis": 2000
+                            },
+                            {
+                                "duration_millis": 9000
+                            }
+                        ]
                     }
                 }
             },
@@ -1035,6 +1050,23 @@
                                 "chat_message_id": 17323,
                                 "sound_id": 3603,
                                 "duration_millis": 7000
+                            }
+                        ]
+                    },
+                    "no_more": {
+                        "steps": [
+                            {
+                                "chat_message_id": 17324,
+                                "sound_id": 3604,
+                                "duration_millis": 5000
+                            },
+                            {
+                                "duration_millis": 2000
+                            },
+                            {
+                                "chat_message_id": 17326,
+                                "sound_id": 3606,
+                                "duration_millis": 9000
                             }
                         ]
                     }
