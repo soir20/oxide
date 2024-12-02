@@ -747,6 +747,35 @@
                                 "duration_millis": 10000
                             }
                         ]
+                    },
+                    "dooku": {
+                        "steps": [
+                            {
+                                "chat_message_id": 3961,
+                                "sound_id": 3580,
+                                "duration_millis": 2000
+                            },
+                            {
+                                "duration_millis": 2000
+                            },
+                            {
+                                "chat_message_id": 17305,
+                                "sound_id": 3585,
+                                "duration_millis": 1000
+                            },
+                            {
+                                "duration_millis": 1000
+                            },
+                            {
+                                "chat_message_id": 17307,
+                                "sound_id": 3587,
+                                "one_shot_animation_id": 3006,
+                                "duration_millis": 6000
+                            },
+                            {
+                                "duration_millis": 6000
+                            }
+                        ]
                     }
                 }
             },
@@ -785,6 +814,35 @@
                             {
                                 "one_shot_animation_id": 3004,
                                 "duration_millis": 10000
+                            }
+                        ]
+                    },
+                    "dooku": {
+                        "steps": [
+                            {
+                                "duration_millis": 2000
+                            },
+                            {
+                                "chat_message_id": 3962,
+                                "sound_id": 3581,
+                                "duration_millis": 2000
+                            },
+                            {
+                                "duration_millis": 1000
+                            },
+                            {
+                                "chat_message_id": 17306,
+                                "sound_id": 3586,
+                                "duration_millis": 2000
+                            },
+                            {
+                                "one_shot_animation_id": 3004,
+                                "duration_millis": 6000
+                            },
+                            {
+                                "chat_message_id": 17308,
+                                "sound_id": 3588,
+                                "duration_millis": 6000
                             }
                         ]
                     }
