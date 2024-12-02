@@ -975,6 +975,14 @@
                                 "duration_millis": 7000
                             }
                         ]
+                    },
+                    "empty": {
+                        "weight": 1188,
+                        "steps": [
+                            {
+                                "duration_millis": 1000
+                            }
+                        ]
                     }
                 }
             },
@@ -1239,6 +1247,14 @@
                                 "chat_message_id": 17343,
                                 "sound_id": 3623,
                                 "duration_millis": 7000
+                            }
+                        ]
+                    },
+                    "empty": {
+                        "weight": 1188,
+                        "steps": [
+                            {
+                                "duration_millis": 1000
                             }
                         ]
                     }
