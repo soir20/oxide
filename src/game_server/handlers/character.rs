@@ -73,7 +73,7 @@ const fn default_weight() -> u32 {
 #[derive(Clone, Default, Deserialize, Eq, PartialEq)]
 pub enum CursorUpdate {
     #[default]
-    Existing,
+    Keep,
     Disable,
     Enable { new_cursor: u8 },
 }
@@ -385,7 +385,7 @@ impl TickableStep {
             })?);
         }
 
-        if self.cursor != CursorUpdate::Existing {
+        if self.cursor != CursorUpdate::Keep {
             let cursor = if let CursorUpdate::Enable { new_cursor } = self.cursor {
                 Some(new_cursor)
             } else {
