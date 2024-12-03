@@ -52,7 +52,7 @@ pub fn coerce_to_broadcast_supplier(
     Ok(Box::new(f))
 }
 
-pub const CHAT_MAX_DISTANCE: f32 = 32.0;
+pub const CHAT_BUBBLE_VISIBLE_RADIUS: f32 = 32.0;
 
 const fn default_scale() -> f32 {
     1.0
@@ -405,7 +405,7 @@ impl TickableStep {
                         nearby_players[&player_guid(**guid)].stats.pos,
                         character.pos,
                     );
-                    pos <= CHAT_MAX_DISTANCE
+                    pos <= CHAT_BUBBLE_VISIBLE_RADIUS
                 })
                 .cloned()
                 .collect();
