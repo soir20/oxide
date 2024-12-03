@@ -7,7 +7,7 @@ use serde::Deserialize;
 
 use super::{
     item::{Attachment, BaseAttachmentGroup, ItemDefinition, WieldType},
-    Effect, GamePacket, OpCode, Pos, Rgba,
+    Effect, GamePacket, Name, OpCode, Pos, Rgba, Target,
 };
 
 #[derive(Copy, Clone, Debug)]
@@ -106,11 +106,7 @@ pub struct Unknown13Array {
 #[derive(SerializePacket)]
 pub struct AddPc {
     guid: u64,
-    first_name: u32,
-    last_name_prefix: u32,
-    last_name_suffix: u32,
-    first_name_override: String,
-    last_name_override: String,
+    name: Name,
     body_model: u32,
     chat_foreground: Rgba,
     chat_background: Rgba,
@@ -684,8 +680,8 @@ pub struct AddNpc {
     pub name_id: u32,
     pub model_id: u32,
     pub unknown3: bool,
-    pub chat_foreground: Rgba,
-    pub chat_background: Rgba,
+    pub chat_text_color: Rgba,
+    pub chat_bubble_color: Rgba,
     pub chat_scale: u32,
     pub scale: f32,
     pub pos: Pos,
@@ -735,7 +731,7 @@ pub struct AddNpc {
     pub rider_guid: u64,
     pub npc_type: u32,
     pub unknown46: f32,
-    pub target: u32,
+    pub target: Target,
     pub variables: Vec<Variable>,
     pub rail_id: u32,
     pub rail_speed: f32,

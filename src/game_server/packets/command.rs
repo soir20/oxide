@@ -2,7 +2,7 @@ use byteorder::{LittleEndian, WriteBytesExt};
 use num_enum::TryFromPrimitive;
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
 
-use super::{GamePacket, OpCode, Rgba};
+use super::{GamePacket, OpCode, Rgba, Target};
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u16)]
@@ -10,6 +10,7 @@ pub enum CommandOpCode {
     InteractionList = 0x9,
     SelectPlayer = 0xf,
     ChatBubbleColor = 0xe,
+    PlaySoundOnTarget = 0x22,
 }
 
 impl SerializePacket for CommandOpCode {
@@ -70,4 +71,16 @@ pub struct SelectPlayer {
 impl GamePacket for SelectPlayer {
     type Header = CommandOpCode;
     const HEADER: Self::Header = CommandOpCode::SelectPlayer;
+}
+
+#[derive(SerializePacket)]
+pub struct PlaySoundIdOnTarget {
+    pub sound_id: u32,
+    pub target: Target,
+}
+
+impl GamePacket for PlaySoundIdOnTarget {
+    type Header = CommandOpCode;
+
+    const HEADER: Self::Header = CommandOpCode::PlaySoundOnTarget;
 }

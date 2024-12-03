@@ -11,17 +11,19 @@ use strum::EnumIter;
 use crate::{
     game_server::{
         packets::{
+            chat::{ActionBarTextColor, SendStringId},
+            command::PlaySoundIdOnTarget,
             item::{BaseAttachmentGroup, EquipmentSlot, WieldType},
             player_data::EquippedItem,
             player_update::{
                 AddNotifications, AddNpc, CustomizationSlot, Hostility, Icon, NotificationData,
-                NpcRelevance, RemoveStandard, SetAnimation, SingleNotification, SingleNpcRelevance,
-                UpdateSpeed,
+                NpcRelevance, QueueAnimation, RemoveStandard, SetAnimation, SingleNotification,
+                SingleNpcRelevance, UpdateSpeed,
             },
             tunnel::TunneledPacket,
             ui::ExecuteScriptWithParams,
             update_position::UpdatePlayerPosition,
-            GamePacket, Pos, Rgba,
+            GamePacket, GuidTarget, Pos, Rgba, Target,
         },
         Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
@@ -98,6 +100,8 @@ pub struct BaseNpcConfig {
     pub name_offset_z: f32,
     pub cursor: Option<u8>,
     #[serde(default = "default_true")]
+    pub enable_interact_popup: bool,
+    #[serde(default = "default_true")]
     pub show_name: bool,
     #[serde(default = "default_true")]
     pub visible: bool,
@@ -123,6 +127,7 @@ pub struct BaseNpc {
     pub name_offset_y: f32,
     pub name_offset_z: f32,
     pub cursor: Option<u8>,
+    pub enable_interact_popup: bool,
     pub show_name: bool,
     pub visible: bool,
     pub bounce_area_id: i32,
@@ -138,8 +143,8 @@ impl BaseNpc {
                 name_id: self.name_id,
                 model_id: self.model_id,
                 unknown3: true,
-                chat_foreground: Rgba::new(0, 0, 0, 0),
-                chat_background: Rgba::new(0, 0, 0, 0),
+                chat_text_color: Character::DEFAULT_CHAT_TEXT_COLOR,
+                chat_bubble_color: Character::DEFAULT_CHAT_BUBBLE_COLOR,
                 chat_scale: 1,
                 scale: character.stats.scale,
                 pos: character.stats.pos,
@@ -174,7 +179,7 @@ impl BaseNpc {
                 one_shot_animation_id: -1,
                 temporary_appearance: 0,
                 effects: vec![],
-                disable_interact_popup: false,
+                disable_interact_popup: !self.enable_interact_popup,
                 unknown33: 0,
                 unknown34: false,
                 show_health: false,
@@ -200,7 +205,7 @@ impl BaseNpc {
                 rider_guid: 0,
                 npc_type: self.npc_type,
                 unknown46: 0.0,
-                target: 0,
+                target: Target::default(),
                 variables: vec![],
                 rail_id: 0,
                 rail_speed: 0.0,
@@ -249,6 +254,7 @@ impl From<BaseNpcConfig> for BaseNpc {
             name_offset_y: value.name_offset_y,
             name_offset_z: value.name_offset_z,
             cursor: value.cursor,
+            enable_interact_popup: value.enable_interact_popup,
             show_name: value.show_name,
             visible: value.visible,
             bounce_area_id: value.bounce_area_id,
@@ -260,7 +266,7 @@ impl From<BaseNpcConfig> for BaseNpc {
 
 #[derive(Clone, Deserialize)]
 pub struct TickableStep {
-    pub speed: f32,
+    pub speed: Option<f32>,
     pub new_pos_x: Option<f32>,
     pub new_pos_y: Option<f32>,
     pub new_pos_z: Option<f32>,
@@ -277,6 +283,9 @@ pub struct TickableStep {
     #[serde(default)]
     pub new_pos_offset_z: f32,
     pub animation_id: Option<i32>,
+    pub one_shot_animation_id: Option<i32>,
+    pub chat_message_id: Option<u32>,
+    pub sound_id: Option<u32>,
     pub duration_millis: u64,
 }
 
@@ -295,14 +304,17 @@ impl TickableStep {
         character: &mut CharacterStats,
     ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
         let mut packets = Vec::new();
-        character.speed = self.speed;
-        packets.push(GamePacket::serialize(&TunneledPacket {
-            unknown1: true,
-            inner: UpdateSpeed {
-                guid: Guid::guid(character),
-                speed: self.speed,
-            },
-        })?);
+
+        if let Some(speed) = self.speed {
+            character.speed = speed;
+            packets.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: UpdateSpeed {
+                    guid: Guid::guid(character),
+                    speed,
+                },
+            })?);
+        }
 
         let new_pos = self.new_pos(character.pos);
         character.pos = new_pos;
@@ -330,6 +342,49 @@ impl TickableStep {
                     animation_id,
                     animation_group_id: -1,
                     override_animation: true,
+                },
+            })?);
+        }
+
+        if let Some(animation_id) = self.one_shot_animation_id {
+            packets.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: QueueAnimation {
+                    character_guid: Guid::guid(character),
+                    animation_id,
+                    queue_pos: 0,
+                    delay_seconds: 0.0,
+                    duration_seconds: self.duration_millis as f32 / 1000.0,
+                },
+            })?);
+        }
+
+        if let Some(chat_message_id) = self.chat_message_id {
+            packets.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: SendStringId {
+                    sender_guid: Guid::guid(character),
+                    message_id: chat_message_id,
+                    is_anonymous: false,
+                    unknown2: false,
+                    is_action_bar_message: false,
+                    action_bar_text_color: ActionBarTextColor::default(),
+                    target_guid: 0,
+                    owner_guid: 0,
+                    unknown7: 0,
+                },
+            })?);
+        }
+
+        if let Some(sound_id) = self.sound_id {
+            packets.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: PlaySoundIdOnTarget {
+                    sound_id,
+                    target: Target::Guid(GuidTarget {
+                        fallback_pos: character.pos,
+                        guid: Guid::guid(character),
+                    }),
                 },
             })?);
         }
@@ -1049,6 +1104,8 @@ impl IndexedGuid<u64, CharacterIndex> for Character {
 impl Character {
     pub const MIN_CHUNK: (i32, i32) = (i32::MIN, i32::MIN);
     pub const MAX_CHUNK: (i32, i32) = (i32::MAX, i32::MAX);
+    pub const DEFAULT_CHAT_TEXT_COLOR: Rgba = Rgba::new(255, 255, 255, 255);
+    pub const DEFAULT_CHAT_BUBBLE_COLOR: Rgba = Rgba::new(240, 226, 212, 255);
     const CHUNK_SIZE: f32 = 200.0;
 
     pub fn new(

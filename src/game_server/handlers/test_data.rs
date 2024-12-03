@@ -11,7 +11,7 @@ use crate::game_server::packets::{
     },
     player_update::{CustomizationSlot, NameplateImage, NameplateImageId},
     tunnel::TunneledPacket,
-    GamePacket, Pos,
+    GamePacket, Name, Pos,
 };
 
 use super::{
@@ -87,11 +87,13 @@ pub fn make_test_player(
                 z: 0.0,
                 w: 0.0,
             },
-            unknown6: 0,
-            unknown7: 0,
-            unknown8: 0,
-            first_name: String::from("BLASTER"),
-            last_name: String::from("NICESHOT"),
+            name: Name {
+                first_name_id: 0,
+                middle_name_id: 0,
+                last_name_id: 0,
+                first_name: String::from("BLASTER"),
+                last_name: String::from("NICESHOT"),
+            },
             credits: 1000000,
             account_creation_date: 1261854072,
             account_age: 0,

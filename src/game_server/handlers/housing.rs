@@ -15,7 +15,7 @@ use crate::{
             item::{BaseAttachmentGroup, WieldType},
             player_update::{AddNpc, Hostility, Icon},
             tunnel::TunneledPacket,
-            GamePacket, Pos, Rgba,
+            GamePacket, Pos, Target,
         },
         Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
@@ -23,7 +23,7 @@ use crate::{
 };
 
 use super::{
-    character::{CurrentFixture, PreviousFixture},
+    character::{Character, CurrentFixture, PreviousFixture},
     guid::{GuidTableHandle, GuidTableIndexer, IndexedGuid},
     lock_enforcer::{CharacterLockRequest, ZoneLockRequest},
     unique_guid::{npc_guid, player_guid, zone_template_guid, FIXTURE_DISCRIMINANT},
@@ -159,8 +159,8 @@ pub fn fixture_packets(
                 name_id: 0,
                 model_id: fixture.model_id,
                 unknown3: false,
-                chat_foreground: Rgba::new(0, 0, 0, 0),
-                chat_background: Rgba::new(0, 0, 0, 0),
+                chat_text_color: Character::DEFAULT_CHAT_TEXT_COLOR,
+                chat_bubble_color: Character::DEFAULT_CHAT_BUBBLE_COLOR,
                 chat_scale: 1,
                 scale,
                 pos,
@@ -221,7 +221,7 @@ pub fn fixture_packets(
                 rider_guid: 0,
                 npc_type: 0,
                 unknown46: 0.0,
-                target: 0,
+                target: Target::default(),
                 variables: vec![],
                 rail_id: 0,
                 rail_speed: 0.0,

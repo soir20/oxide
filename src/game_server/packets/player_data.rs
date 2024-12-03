@@ -5,7 +5,7 @@ use packet_serialize::{LengthlessVec, SerializePacket, SerializePacketError};
 
 use super::{
     item::{EquipmentSlot, Item, MarketData},
-    Effect, GamePacket, OpCode, Pos,
+    Effect, GamePacket, Name, OpCode, Pos,
 };
 
 #[derive(Clone, SerializePacket)]
@@ -408,11 +408,7 @@ pub struct PlayerData {
     pub model_customization_id: u32,
     pub pos: Pos,
     pub rot: Pos,
-    pub unknown6: u32,
-    pub unknown7: u32,
-    pub unknown8: u32,
-    pub first_name: String,
-    pub last_name: String,
+    pub name: Name,
     pub credits: u32,
     pub account_creation_date: u64,
     pub account_age: u32,

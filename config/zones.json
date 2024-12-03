@@ -706,6 +706,560 @@
                         ]
                     }
                 }
+            },
+            {
+                "comment": "Joker",
+                "key": "joker",
+                "model_id": 1580,
+                "name_id": 3967,
+                "show_name": false,
+                "pos_x": 128.93307,
+                "pos_y": 10.146215,
+                "pos_z": -188.32434,
+                "pos_w": 1.0,
+                "rot_x": 0.64425725,
+                "rot_y": 0.0,
+                "rot_z": 0.7648088,
+                "cursor": 53,
+                "enable_interact_popup": false,
+                "tickable_procedures": {
+                    "naboo": {
+                        "steps": [
+                            {
+                                "chat_message_id": 17300,
+                                "sound_id": 3580,
+                                "duration_millis": 2000
+                            },
+                            {
+                                "duration_millis": 2000
+                            },
+                            {
+                                "chat_message_id": 17302,
+                                "sound_id": 3582,
+                                "duration_millis": 1000
+                            },
+                            {
+                                "duration_millis": 1000
+                            },
+                            {
+                                "chat_message_id": 17304,
+                                "sound_id": 3584,
+                                "one_shot_animation_id": 3006,
+                                "duration_millis": 7000
+                            },
+                            {
+                                "duration_millis": 5000
+                            }
+                        ]
+                    },
+                    "dooku": {
+                        "steps": [
+                            {
+                                "chat_message_id": 17300,
+                                "sound_id": 3580,
+                                "duration_millis": 2000
+                            },
+                            {
+                                "duration_millis": 2000
+                            },
+                            {
+                                "chat_message_id": 17305,
+                                "sound_id": 3585,
+                                "duration_millis": 1000
+                            },
+                            {
+                                "duration_millis": 1000
+                            },
+                            {
+                                "chat_message_id": 17307,
+                                "sound_id": 3587,
+                                "one_shot_animation_id": 3006,
+                                "duration_millis": 6000
+                            },
+                            {
+                                "duration_millis": 6000
+                            }
+                        ]
+                    },
+                    "yoda_music": {
+                        "steps": [
+                            {
+                                "chat_message_id": 17309,
+                                "sound_id": 3589,
+                                "duration_millis": 3000
+                            },
+                            {
+                                "duration_millis": 3000
+                            },
+                            {
+                                "chat_message_id": 17311,
+                                "sound_id": 3591,
+                                "one_shot_animation_id": 3006,
+                                "duration_millis": 7000
+                            },
+                            {
+                                "duration_millis": 5000
+                            }
+                        ]
+                    },
+                    "manufacturing_droid": {
+                        "steps": [
+                            {
+                                "chat_message_id": 17313,
+                                "sound_id": 3593,
+                                "duration_millis": 5000
+                            },
+                            {
+                                "duration_millis": 5000
+                            },
+                            {
+                                "chat_message_id": 17315,
+                                "sound_id": 3595,
+                                "one_shot_animation_id": 3006,
+                                "duration_millis": 10000
+                            },
+                            {
+                                "duration_millis": 5000
+                            }
+                        ]
+                    },
+                    "windu": {
+                        "steps": [
+                            {
+                                "chat_message_id": 17300,
+                                "sound_id": 3580,
+                                "duration_millis": 2000
+                            },
+                            {
+                                "duration_millis": 2000
+                            },
+                            {
+                                "chat_message_id": 17317,
+                                "sound_id": 3597,
+                                "duration_millis": 1000
+                            },
+                            {
+                                "duration_millis": 1000
+                            },
+                            {
+                                "chat_message_id": 17319,
+                                "sound_id": 3599,
+                                "one_shot_animation_id": 3006,
+                                "duration_millis": 7000
+                            },
+                            {
+                                "duration_millis": 7000
+                            }
+                        ]
+                    },
+                    "r2": {
+                        "steps": [
+                            {
+                                "chat_message_id": 17320,
+                                "sound_id": 3600,
+                                "duration_millis": 1000
+                            },
+                            {
+                                "duration_millis": 1000
+                            },
+                            {
+                                "chat_message_id": 17322,
+                                "sound_id": 3602,
+                                "one_shot_animation_id": 3006,
+                                "duration_millis": 6000
+                            },
+                            {
+                                "duration_millis": 7000
+                            }
+                        ]
+                    },
+                    "no_more": {
+                        "steps": [
+                            {
+                                "duration_millis": 5000
+                            },
+                            {
+                                "chat_message_id": 17325,
+                                "sound_id": 3605,
+                                "duration_millis": 2000
+                            },
+                            {
+                                "duration_millis": 9000
+                            }
+                        ]
+                    },
+                    "yoda_birthday": {
+                        "steps": [
+                            {
+                                "chat_message_id": 17327,
+                                "sound_id": 3607,
+                                "duration_millis": 5000
+                            },
+                            {
+                                "duration_millis": 3000
+                            },
+                            {
+                                "chat_message_id": 17329,
+                                "sound_id": 3609,
+                                "one_shot_animation_id": 3006,
+                                "duration_millis": 8000
+                            }
+                        ]
+                    },
+                    "twilek_coin_flip": {
+                        "steps": [
+                            {
+                                "chat_message_id": 17330,
+                                "sound_id": 3610,
+                                "duration_millis": 4000
+                            },
+                            {
+                                "duration_millis": 4000
+                            },
+                            {
+                                "chat_message_id": 17332,
+                                "sound_id": 3612,
+                                "one_shot_animation_id": 3006,
+                                "duration_millis": 6000
+                            },
+                            {
+                                "duration_millis": 6000
+                            }
+                        ]
+                    },
+                    "medics_jedi": {
+                        "steps": [
+                            {
+                                "chat_message_id": 17335,
+                                "sound_id": 3615,
+                                "duration_millis": 3000
+                            },
+                            {
+                                "duration_millis": 3000
+                            },
+                            {
+                                "chat_message_id": 17337,
+                                "sound_id": 3617,
+                                "one_shot_animation_id": 3006,
+                                "duration_millis": 6000
+                            }
+                        ]
+                    },
+                    "commander_trouble": {
+                        "steps": [
+                            {
+                                "chat_message_id": 17338,
+                                "sound_id": 3618,
+                                "duration_millis": 3000
+                            },
+                            {
+                                "duration_millis": 2000
+                            },
+                            {
+                                "chat_message_id": 17340,
+                                "sound_id": 3620,
+                                "one_shot_animation_id": 3006,
+                                "duration_millis": 10000
+                            }
+                        ]
+                    },
+                    "yoda_short": {
+                        "steps": [
+                            {
+                                "chat_message_id": 17342,
+                                "sound_id": 3622,
+                                "one_shot_animation_id": 3006,
+                                "duration_millis": 10000
+                            },
+                            {
+                                "duration_millis": 7000
+                            }
+                        ]
+                    },
+                    "empty": {
+                        "weight": 588,
+                        "steps": [
+                            {
+                                "duration_millis": 1000
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "comment": "Spanner",
+                "model_id": 708,
+                "name_id": 3968,
+                "show_name": false,
+                "pos_x": 129.79893,
+                "pos_y": 10.146215,
+                "pos_z": -186.46703,
+                "pos_w": 1.0,
+                "rot_x": -0.55723685,
+                "rot_y": 0.0,
+                "rot_z": -0.83035356,
+                "cursor": 53,
+                "enable_interact_popup": false,
+                "tickable_procedures": {
+                    "naboo": {
+                        "steps": [
+                            {
+                                "duration_millis": 2000
+                            },
+                            {
+                                "chat_message_id": 17301,
+                                "sound_id": 3581,
+                                "duration_millis": 2000
+                            },
+                            {
+                                "duration_millis": 1000
+                            },
+                            {
+                                "chat_message_id": 17303,
+                                "sound_id": 3583,
+                                "duration_millis": 1000
+                            },
+                            {
+                                "one_shot_animation_id": 3004,
+                                "duration_millis": 7000
+                            },
+                            {
+                                "chat_message_id": 17334,
+                                "sound_id": 3614,
+                                "duration_millis": 5000
+                            }
+                        ]
+                    },
+                    "dooku": {
+                        "steps": [
+                            {
+                                "duration_millis": 2000
+                            },
+                            {
+                                "chat_message_id": 17301,
+                                "sound_id": 3581,
+                                "duration_millis": 2000
+                            },
+                            {
+                                "duration_millis": 1000
+                            },
+                            {
+                                "chat_message_id": 17306,
+                                "sound_id": 3586,
+                                "duration_millis": 2000
+                            },
+                            {
+                                "one_shot_animation_id": 3004,
+                                "duration_millis": 6000
+                            },
+                            {
+                                "chat_message_id": 17308,
+                                "sound_id": 3588,
+                                "duration_millis": 6000
+                            }
+                        ]
+                    },
+                    "yoda_music": {
+                        "steps": [
+                            {
+                                "duration_millis": 3000
+                            },
+                            {
+                                "chat_message_id": 17310,
+                                "sound_id": 3590,
+                                "duration_millis": 3000
+                            },
+                            {
+                                "one_shot_animation_id": 3004,
+                                "duration_millis": 7000
+                            },
+                            {
+                                "chat_message_id": 17312,
+                                "sound_id": 3592,
+                                "duration_millis": 5000
+                            }
+                        ]
+                    },
+                    "manufacturing_droid": {
+                        "steps": [
+                            {
+                                "duration_millis": 5000
+                            },
+                            {
+                                "chat_message_id": 17314,
+                                "sound_id": 3594,
+                                "duration_millis": 5000
+                            },
+                            {
+                                "one_shot_animation_id": 3004,
+                                "duration_millis": 10000
+                            },
+                            {
+                                "chat_message_id": 17316,
+                                "sound_id": 3596,
+                                "duration_millis": 5000
+                            }
+                        ]
+                    },
+                    "windu": {
+                        "steps": [
+                            {
+                                "duration_millis": 2000
+                            },
+                            {
+                                "chat_message_id": 17301,
+                                "sound_id": 3581,
+                                "duration_millis": 2000
+                            },
+                            {
+                                "duration_millis": 1000
+                            },
+                            {
+                                "chat_message_id": 17318,
+                                "sound_id": 3598,
+                                "duration_millis": 1000
+                            },
+                            {
+                                "one_shot_animation_id": 3004,
+                                "duration_millis": 7000
+                            },
+                            {
+                                "chat_message_id": 17341,
+                                "sound_id": 3621,
+                                "duration_millis": 7000
+                            }
+                        ]
+                    },
+                    "r2": {
+                        "steps": [
+                            {
+                                "duration_millis": 1000
+                            },
+                            {
+                                "chat_message_id": 17321,
+                                "sound_id": 3601,
+                                "duration_millis": 1000
+                            },
+                            {
+                                "one_shot_animation_id": 3004,
+                                "duration_millis": 6000
+                            },
+                            {
+                                "chat_message_id": 17323,
+                                "sound_id": 3603,
+                                "duration_millis": 7000
+                            }
+                        ]
+                    },
+                    "no_more": {
+                        "steps": [
+                            {
+                                "chat_message_id": 17324,
+                                "sound_id": 3604,
+                                "duration_millis": 5000
+                            },
+                            {
+                                "duration_millis": 2000
+                            },
+                            {
+                                "chat_message_id": 17326,
+                                "sound_id": 3606,
+                                "duration_millis": 9000
+                            }
+                        ]
+                    },
+                    "yoda_birthday": {
+                        "steps": [
+                            {
+                                "duration_millis": 5000
+                            },
+                            {
+                                "chat_message_id": 17328,
+                                "sound_id": 3608,
+                                "duration_millis": 3000
+                            },
+                            {
+                                "one_shot_animation_id": 3004,
+                                "duration_millis": 8000
+                            }
+                        ]
+                    },
+                    "twilek_coin_flip": {
+                        "steps": [
+                            {
+                                "duration_millis": 4000
+                            },
+                            {
+                                "chat_message_id": 17331,
+                                "sound_id": 3611,
+                                "duration_millis": 4000
+                            },
+                            {
+                                "one_shot_animation_id": 3004,
+                                "duration_millis": 6000
+                            },
+                            {
+                                "chat_message_id": 17333,
+                                "sound_id": 3613,
+                                "duration_millis": 6000
+                            }
+                        ]
+                    },
+                    "medics_jedi": {
+                        "steps": [
+                            {
+                                "duration_millis": 3000
+                            },
+                            {
+                                "chat_message_id": 17336,
+                                "sound_id": 3616,
+                                "duration_millis": 3000
+                            },
+                            {
+                                "one_shot_animation_id": 3004,
+                                "duration_millis": 6000
+                            }
+                        ]
+                    },
+                    "commander_trouble": {
+                        "steps": [
+                            {
+                                "duration_millis": 3000
+                            },
+                            {
+                                "chat_message_id": 17339,
+                                "sound_id": 3619,
+                                "duration_millis": 2000
+                            },
+                            {
+                                "one_shot_animation_id": 3004,
+                                "duration_millis": 10000
+                            }
+                        ]
+                    },
+                    "yoda_short": {
+                        "steps": [
+                            {
+                                "one_shot_animation_id": 3004,
+                                "duration_millis": 10000
+                            },
+                            {
+                                "chat_message_id": 17343,
+                                "sound_id": 3623,
+                                "duration_millis": 7000
+                            }
+                        ]
+                    },
+                    "empty": {
+                        "weight": 588,
+                        "steps": [
+                            {
+                                "duration_millis": 1000
+                            }
+                        ]
+                    }
+                },
+                "synchronize_with": "joker"
             }
         ]
     },
