@@ -660,11 +660,13 @@ impl TickableProcedureTracker {
 pub struct AmbientNpcConfig {
     #[serde(flatten)]
     pub base_npc: BaseNpcConfig,
+    pub procedure_on_interact: Option<String>,
 }
 
 #[derive(Clone)]
 pub struct AmbientNpc {
     pub base_npc: BaseNpc,
+    pub procedure_on_interact: Option<String>,
 }
 
 impl AmbientNpc {
@@ -685,12 +687,27 @@ impl AmbientNpc {
 
         Ok(packets)
     }
+
+    pub fn interact(&self, character: &Character) -> Option<String> {
+        if let Some(new_procedure) = &self.procedure_on_interact {
+            let is_different_procedure = character
+                .current_tickable_procedure()
+                .map(|current_procedure| current_procedure != new_procedure)
+                .unwrap_or(true);
+            if is_different_procedure {
+                return Some(new_procedure.clone());
+            }
+        }
+
+        None
+    }
 }
 
 impl From<AmbientNpcConfig> for AmbientNpc {
     fn from(value: AmbientNpcConfig) -> Self {
         AmbientNpc {
             base_npc: value.base_npc.into(),
+            procedure_on_interact: value.procedure_on_interact,
         }
     }
 }
@@ -1346,18 +1363,30 @@ impl Character {
     }
 
     pub fn interact(
-        &self,
+        &mut self,
         requester: u32,
         source_zone_guid: u64,
         zones_lock_enforcer: &ZoneLockEnforcer,
     ) -> WriteLockingBroadcastSupplier {
-        match &self.stats.character_type {
+        let mut new_procedure = None;
+
+        let broadcast_supplier = match &self.stats.character_type {
+            CharacterType::AmbientNpc(ambient_npc) => {
+                new_procedure = ambient_npc.interact(self);
+                coerce_to_broadcast_supplier(|_| Ok(Vec::new()))
+            }
             CharacterType::Door(door) => {
                 door.interact(requester, source_zone_guid, zones_lock_enforcer)
             }
             CharacterType::Transport(transport) => transport.interact(requester),
             _ => coerce_to_broadcast_supplier(|_| Ok(Vec::new())),
+        };
+
+        if let Some(procedure) = new_procedure {
+            self.set_tickable_procedure_if_exists(procedure, Instant::now());
         }
+
+        broadcast_supplier
     }
 
     fn tickable(&self) -> bool {

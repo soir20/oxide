@@ -897,14 +897,14 @@ pub fn interact_with_character(
     let broadcast_supplier: WriteLockingBroadcastSupplier =
         game_server.lock_enforcer().read_characters(|_| {
             CharacterLockRequest {
-                read_guids: vec![request.requester, request.target],
-                write_guids: Vec::new(),
-                character_consumer: move |_, characters_read, _, zones_lock_enforcer| {
+                read_guids: Vec::new(),
+                write_guids: vec![request.requester, request.target],
+                character_consumer: move |_, _, mut characters_write, zones_lock_enforcer| {
                     let source_zone_guid;
                     let requester_x;
                     let requester_y;
                     let requester_z;
-                    if let Some(requester_read_handle) = characters_read.get(&request.requester) {
+                    if let Some(requester_read_handle) = characters_write.get(&request.requester) {
                         source_zone_guid = requester_read_handle.stats.instance_guid;
                         requester_x = requester_read_handle.stats.pos.x;
                         requester_y = requester_read_handle.stats.pos.y;
@@ -913,7 +913,7 @@ pub fn interact_with_character(
                         return coerce_to_broadcast_supplier(|_| Ok(Vec::new()));
                     }
 
-                    if let Some(target_read_handle) = characters_read.get(&request.target) {
+                    if let Some(target_read_handle) = characters_write.get_mut(&request.target) {
                         // Ensure the character is close enough to interact
                         let distance = distance3(
                             requester_x,
