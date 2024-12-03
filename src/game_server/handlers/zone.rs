@@ -33,6 +33,7 @@ use super::{
         CharacterIndex, CharacterType, Chunk, DoorConfig, NpcTemplate, PreviousFixture,
         TransportConfig, WriteLockingBroadcastSupplier,
     },
+    distance3,
     guid::{Guid, GuidTable, GuidTableIndexer, GuidTableWriteHandle, IndexedGuid},
     housing::prepare_init_house_packets,
     lock_enforcer::{
@@ -1001,11 +1002,4 @@ pub fn teleport_within_zone(
     })?);
 
     Ok(vec![Broadcast::Single(sender, packets)])
-}
-
-fn distance3(x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32) -> f32 {
-    let diff_x = x2 - x1;
-    let diff_y = y2 - y1;
-    let diff_z = z2 - z1;
-    (diff_x * diff_x + diff_y * diff_y + diff_z * diff_z).sqrt()
 }

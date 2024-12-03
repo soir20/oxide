@@ -7,7 +7,7 @@ use std::time::Instant;
 use std::vec;
 
 use byteorder::{LittleEndian, ReadBytesExt};
-use handlers::character::{Character, CharacterCategory, CharacterIndex, CharacterType};
+use handlers::character::{Character, CharacterCategory, CharacterIndex, CharacterType, Chunk};
 use handlers::chat::process_chat_packet;
 use handlers::command::process_command;
 use handlers::guid::{GuidTable, GuidTableIndexer, GuidTableWriteHandle, IndexedGuid};
@@ -188,87 +188,25 @@ impl GameServer {
 
     pub fn tick(&self) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let now = Instant::now();
-        self.lock_enforcer()
-            .read_characters(|characters_table_read_handle| {
-                let range = (
-                    CharacterCategory::NpcTickable,
-                    u64::MIN,
-                    Character::MIN_CHUNK,
-                )
-                    ..=(
-                        CharacterCategory::NpcTickable,
-                        u64::MAX,
-                        Character::MAX_CHUNK,
-                    );
-                let tickable_characters: Vec<u64> =
-                    characters_table_read_handle.keys_by_range(range).collect();
-                CharacterLockRequest {
-                    read_guids: Vec::new(),
-                    write_guids: tickable_characters,
-                    character_consumer: |characters_table_read_handle,
-                                         _,
-                                         mut characters_write,
-                                         _| {
-                        let mut broadcasts = Vec::new();
+        let tickable_characters_by_chunk = self.tickable_characters_by_chunk();
 
-                        // We need to tick characters who update independently first, so that their dependent
-                        // characters' previous procedures are not ticked
-                        let mut characters_not_updated = Vec::new();
-                        for tickable_character in characters_write.values_mut() {
-                            if tickable_character.synchronize_with.is_none() {
-                                broadcasts.append(
-                                    &mut tickable_character.tick(now, characters_table_read_handle)?,
-                                );
-                            } else {
-                                characters_not_updated.push(tickable_character.guid());
-                            }
-                        }
+        let mut broadcasts = Vec::new();
 
-                        // Determine which procedures to update in the dependent characters
-                        let mut new_procedures = BTreeMap::new();
-                        for guid in characters_not_updated.iter() {
-                            let tickable_character = characters_write.get(guid).unwrap();
-                            if let Some(synchronize_with) = &tickable_character.synchronize_with {
-                                if let Some(synchronized_character) =
-                                    characters_write.get(synchronize_with)
-                                {
-                                    if let Some(synchronized_guid) = synchronized_character.synchronize_with {
-                                        panic!(
-                                            "Cannot synchronize character {} to a character {} because they are synchronized to character {}",
-                                            guid,
-                                            synchronized_character.guid(),
-                                            synchronized_guid
-                                        );
-                                    }
+        // Lock once for each chunk to avoid holding the lock for an extended period of time,
+        // because we are considering all characters in all worlds
+        for ((instance_guid, chunk), tickable_characters) in
+            tickable_characters_by_chunk.into_iter()
+        {
+            self.tick_single_chunk(
+                now,
+                instance_guid,
+                chunk,
+                tickable_characters,
+                &mut broadcasts,
+            )?;
+        }
 
-                                    if synchronized_character.last_procedure_change() > tickable_character.last_procedure_change() {
-                                        if let Some(key) =
-                                            synchronized_character.current_tickable_procedure()
-                                        {
-                                            new_procedures
-                                                .insert(guid, key.clone());
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        // Tick all the dependent characters
-                        for guid in characters_not_updated.iter() {
-                            let tickable_character = characters_write.get_mut(guid).unwrap();
-                            if let Some(key) = new_procedures.remove(&tickable_character.guid()) {
-                                tickable_character.set_tickable_procedure_if_exists(key, now);
-                            }
-
-                            broadcasts.append(
-                                &mut tickable_character.tick(now, characters_table_read_handle)?,
-                            );
-                        }
-
-                        Ok(broadcasts)
-                    },
-                }
-            })
+        Ok(broadcasts)
     }
 
     pub fn process_packet(
@@ -769,5 +707,125 @@ impl GameServer {
 
     pub fn zones_by_template(zones: &ZoneTableReadHandle<'_>, template_guid: u8) -> Vec<u64> {
         zones.keys_by_index(template_guid).collect()
+    }
+
+    fn tickable_characters_by_chunk(&self) -> BTreeMap<(u64, Chunk), Vec<u64>> {
+        self.lock_enforcer()
+            .read_characters(|characters_table_read_handle| {
+                let range = (
+                    CharacterCategory::NpcTickable,
+                    u64::MIN,
+                    Character::MIN_CHUNK,
+                )
+                    ..=(
+                        CharacterCategory::NpcTickable,
+                        u64::MAX,
+                        Character::MAX_CHUNK,
+                    );
+                let tickable_characters: Vec<u64> =
+                    characters_table_read_handle.keys_by_range(range).collect();
+
+                let tickable_characters_by_chunk = tickable_characters.into_iter().fold(
+                    BTreeMap::new(),
+                    |mut acc: BTreeMap<(u64, Chunk), Vec<u64>>, guid| {
+                        // The NPC could have been removed since we last acquired the table read lock
+                        if let Some((_, instance_guid, chunk)) =
+                            characters_table_read_handle.index(guid)
+                        {
+                            acc.entry((instance_guid, chunk)).or_default().push(guid);
+                        }
+                        acc
+                    },
+                );
+
+                CharacterLockRequest {
+                    read_guids: Vec::new(),
+                    write_guids: Vec::new(),
+                    character_consumer: |_, _, _, _| tickable_characters_by_chunk,
+                }
+            })
+    }
+
+    fn tick_single_chunk(
+        &self,
+        now: Instant,
+        instance_guid: u64,
+        chunk: Chunk,
+        tickable_characters: Vec<u64>,
+        broadcasts: &mut Vec<Broadcast>,
+    ) -> Result<(), ProcessPacketError> {
+        self.lock_enforcer().read_characters(|characters_table_read_handle| {
+            let nearby_player_guids = Zone::all_players_nearby(None, chunk, instance_guid, characters_table_read_handle)
+                .unwrap_or_default();
+            let nearby_players: Vec<u64> = nearby_player_guids.iter()
+                .map(|guid| *guid as u64)
+                .collect();
+
+            CharacterLockRequest {
+                read_guids: nearby_players.clone(),
+                write_guids: tickable_characters,
+                character_consumer: move |_,
+                characters_read,
+                mut characters_write,
+                _| {
+
+                    // We need to tick characters who update independently first, so that their dependent
+                    // characters' previous procedures are not ticked
+                    let mut characters_not_updated = Vec::new();
+                    for tickable_character in characters_write.values_mut() {
+                        if tickable_character.synchronize_with.is_none() {
+                            broadcasts.append(
+                                &mut tickable_character.tick(now, &nearby_player_guids, &characters_read)?,
+                            );
+                        } else {
+                            characters_not_updated.push(tickable_character.guid());
+                        }
+                    }
+
+                    // Determine which procedures to update in the dependent characters
+                    let mut new_procedures = BTreeMap::new();
+                    for guid in characters_not_updated.iter() {
+                        let tickable_character = characters_write.get(guid).unwrap();
+                        if let Some(synchronize_with) = &tickable_character.synchronize_with {
+                            if let Some(synchronized_character) =
+                                characters_write.get(synchronize_with)
+                            {
+                                if let Some(synchronized_guid) = synchronized_character.synchronize_with {
+                                    panic!(
+                                        "Cannot synchronize character {} to a character {} because they are synchronized to character {}",
+                                        guid,
+                                        synchronized_character.guid(),
+                                        synchronized_guid
+                                    );
+                                }
+
+                                if synchronized_character.last_procedure_change() > tickable_character.last_procedure_change() {
+                                    if let Some(key) =
+                                        synchronized_character.current_tickable_procedure()
+                                    {
+                                        new_procedures
+                                            .insert(guid, key.clone());
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // Tick all the dependent characters
+                    for guid in characters_not_updated.iter() {
+                        let tickable_character = characters_write.get_mut(guid).unwrap();
+                        if let Some(key) = new_procedures.remove(&tickable_character.guid()) {
+                            tickable_character.set_tickable_procedure_if_exists(key, now);
+                        }
+
+                        broadcasts.append(
+                            &mut tickable_character.tick(now, &nearby_player_guids, &characters_read)?,
+                        );
+                    }
+
+                    Ok(())
+                },
+            }
+        })
     }
 }

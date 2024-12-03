@@ -31,13 +31,14 @@ use crate::{
 };
 
 use super::{
-    guid::{Guid, GuidTableIndexer, IndexedGuid},
+    distance3_pos,
+    guid::{Guid, IndexedGuid},
     housing::fixture_packets,
     inventory::wield_type_from_slot,
-    lock_enforcer::{ZoneLockEnforcer, ZoneLockRequest},
+    lock_enforcer::{CharacterReadGuard, ZoneLockEnforcer, ZoneLockRequest},
     mount::{spawn_mount_npc, MountConfig},
     unique_guid::{mount_guid, npc_guid, player_guid, shorten_player_guid},
-    zone::{teleport_within_zone, Zone},
+    zone::teleport_within_zone,
 };
 
 pub type WriteLockingBroadcastSupplier = Result<
@@ -50,6 +51,8 @@ pub fn coerce_to_broadcast_supplier(
 ) -> WriteLockingBroadcastSupplier {
     Ok(Box::new(f))
 }
+
+pub const CHAT_BUBBLE_VISIBLE_RADIUS: f32 = 32.0;
 
 const fn default_scale() -> f32 {
     1.0
@@ -302,12 +305,14 @@ impl TickableStep {
     pub fn apply(
         &self,
         character: &mut CharacterStats,
-    ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
-        let mut packets = Vec::new();
+        nearby_player_guids: &[u32],
+        nearby_players: &BTreeMap<u64, CharacterReadGuard>,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let mut packets_for_all = Vec::new();
 
         if let Some(speed) = self.speed {
             character.speed = speed;
-            packets.push(GamePacket::serialize(&TunneledPacket {
+            packets_for_all.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: UpdateSpeed {
                     guid: Guid::guid(character),
@@ -318,7 +323,7 @@ impl TickableStep {
 
         let new_pos = self.new_pos(character.pos);
         character.pos = new_pos;
-        packets.push(GamePacket::serialize(&TunneledPacket {
+        packets_for_all.push(GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: UpdatePlayerPosition {
                 guid: Guid::guid(character),
@@ -335,7 +340,7 @@ impl TickableStep {
 
         if let Some(animation_id) = self.animation_id {
             character.animation_id = animation_id;
-            packets.push(GamePacket::serialize(&TunneledPacket {
+            packets_for_all.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: SetAnimation {
                     character_guid: Guid::guid(character),
@@ -347,7 +352,7 @@ impl TickableStep {
         }
 
         if let Some(animation_id) = self.one_shot_animation_id {
-            packets.push(GamePacket::serialize(&TunneledPacket {
+            packets_for_all.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: QueueAnimation {
                     character_guid: Guid::guid(character),
@@ -359,8 +364,26 @@ impl TickableStep {
             })?);
         }
 
+        if let Some(sound_id) = self.sound_id {
+            packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: PlaySoundIdOnTarget {
+                    sound_id,
+                    target: Target::Guid(GuidTarget {
+                        fallback_pos: character.pos,
+                        guid: Guid::guid(character),
+                    }),
+                },
+            })?);
+        }
+
+        let mut broadcasts = vec![Broadcast::Multi(
+            nearby_player_guids.to_vec(),
+            packets_for_all,
+        )];
+
         if let Some(chat_message_id) = self.chat_message_id {
-            packets.push(GamePacket::serialize(&TunneledPacket {
+            let chat_packets = vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: SendStringId {
                     sender_guid: Guid::guid(character),
@@ -373,23 +396,24 @@ impl TickableStep {
                     owner_guid: 0,
                     unknown7: 0,
                 },
-            })?);
+            })?];
+
+            let recipients = nearby_player_guids
+                .iter()
+                .filter(|guid| {
+                    let pos = distance3_pos(
+                        nearby_players[&player_guid(**guid)].stats.pos,
+                        character.pos,
+                    );
+                    pos <= CHAT_BUBBLE_VISIBLE_RADIUS
+                })
+                .cloned()
+                .collect();
+
+            broadcasts.push(Broadcast::Multi(recipients, chat_packets));
         }
 
-        if let Some(sound_id) = self.sound_id {
-            packets.push(GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: PlaySoundIdOnTarget {
-                    sound_id,
-                    target: Target::Guid(GuidTarget {
-                        fallback_pos: character.pos,
-                        guid: Guid::guid(character),
-                    }),
-                },
-            })?);
-        }
-
-        Ok(packets)
+        Ok(broadcasts)
     }
 }
 
@@ -403,7 +427,7 @@ pub struct TickableProcedureConfig {
 }
 
 pub enum TickResult {
-    TickedCurrentProcedure(Result<Vec<Vec<u8>>, ProcessPacketError>),
+    TickedCurrentProcedure(Result<Vec<Broadcast>, ProcessPacketError>),
     MustChangeProcedure(String),
 }
 
@@ -457,7 +481,13 @@ impl TickableProcedure {
         }
     }
 
-    pub fn tick(&mut self, character: &mut CharacterStats, now: Instant) -> TickResult {
+    pub fn tick(
+        &mut self,
+        character: &mut CharacterStats,
+        now: Instant,
+        nearby_player_guids: &[u32],
+        nearby_players: &BTreeMap<u64, CharacterReadGuard>,
+    ) -> TickResult {
         self.panic_if_empty();
 
         let should_change_steps =
@@ -479,7 +509,11 @@ impl TickableProcedure {
                 TickResult::MustChangeProcedure(self.next_procedure())
             } else {
                 self.current_step = Some((new_step_index, now));
-                TickResult::TickedCurrentProcedure(self.steps[new_step_index].apply(character))
+                TickResult::TickedCurrentProcedure(self.steps[new_step_index].apply(
+                    character,
+                    nearby_player_guids,
+                    nearby_players,
+                ))
             }
         } else {
             TickResult::TickedCurrentProcedure(Ok(Vec::new()))
@@ -589,7 +623,9 @@ impl TickableProcedureTracker {
         &mut self,
         character: &mut CharacterStats,
         now: Instant,
-    ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+        nearby_player_guids: &[u32],
+        nearby_players: &BTreeMap<u64, CharacterReadGuard>,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         if self.procedures.is_empty() {
             return Ok(Vec::new());
         }
@@ -599,7 +635,8 @@ impl TickableProcedureTracker {
             .get_mut(&self.current_procedure_key)
             .expect("Missing procedure");
         loop {
-            let tick_result = current_procedure.tick(character, now);
+            let tick_result =
+                current_procedure.tick(character, now, nearby_player_guids, nearby_players);
             if let TickResult::TickedCurrentProcedure(result) = tick_result {
                 break result;
             } else if let TickResult::MustChangeProcedure(procedure_key) = tick_result {
@@ -1263,21 +1300,18 @@ impl Character {
             .set_procedure_if_exists(new_tickable_procedure, now);
     }
 
-    pub fn tick<'a>(
+    pub fn tick(
         &mut self,
         now: Instant,
-        characters_table_handle: &'a impl GuidTableIndexer<'a, u64, Character, CharacterIndex>,
+        nearby_player_guids: &[u32],
+        nearby_players: &BTreeMap<u64, CharacterReadGuard>,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        let (_, _, chunk) = self.index();
-        let everyone = Zone::all_players_nearby(
-            None,
-            chunk,
-            self.stats.instance_guid,
-            characters_table_handle,
-        )?;
-
-        let packets = self.tickable_procedure_tracker.tick(&mut self.stats, now)?;
-        Ok(vec![Broadcast::Multi(everyone, packets)])
+        self.tickable_procedure_tracker.tick(
+            &mut self.stats,
+            now,
+            nearby_player_guids,
+            nearby_players,
+        )
     }
 
     pub fn current_tickable_procedure(&self) -> Option<&String> {
