@@ -977,7 +977,7 @@
                         ]
                     },
                     "empty": {
-                        "weight": 1188,
+                        "weight": 588,
                         "steps": [
                             {
                                 "duration_millis": 1000
@@ -1251,7 +1251,7 @@
                         ]
                     },
                     "empty": {
-                        "weight": 1188,
+                        "weight": 588,
                         "steps": [
                             {
                                 "duration_millis": 1000
