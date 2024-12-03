@@ -725,19 +725,16 @@ impl GameServer {
                 let tickable_characters: Vec<u64> =
                     characters_table_read_handle.keys_by_range(range).collect();
 
-                let tickable_characters_by_chunk =
-                    tickable_characters
-                        .into_iter()
-                        .fold(BTreeMap::new(), |mut acc, guid| {
-                            let (_, instance_guid, chunk) =
-                                characters_table_read_handle.index(guid).expect(
-                                    "Tickable character disappeared despite table being locked",
-                                );
-                            acc.entry((instance_guid, chunk))
-                                .or_insert_with(Vec::new)
-                                .push(guid);
-                            acc
-                        });
+                let tickable_characters_by_chunk = tickable_characters.into_iter().fold(
+                    BTreeMap::new(),
+                    |mut acc: BTreeMap<(u64, Chunk), Vec<u64>>, guid| {
+                        let (_, instance_guid, chunk) = characters_table_read_handle
+                            .index(guid)
+                            .expect("Tickable character disappeared despite table being locked");
+                        acc.entry((instance_guid, chunk)).or_default().push(guid);
+                        acc
+                    },
+                );
 
                 CharacterLockRequest {
                     read_guids: Vec::new(),
@@ -776,7 +773,7 @@ impl GameServer {
                     for tickable_character in characters_write.values_mut() {
                         if tickable_character.synchronize_with.is_none() {
                             broadcasts.append(
-                                &mut tickable_character.tick(now, nearby_player_guids.clone(), &characters_read)?,
+                                &mut tickable_character.tick(now, &nearby_player_guids, &characters_read)?,
                             );
                         } else {
                             characters_not_updated.push(tickable_character.guid());
@@ -820,7 +817,7 @@ impl GameServer {
                         }
 
                         broadcasts.append(
-                            &mut tickable_character.tick(now, nearby_player_guids.clone(), &characters_read)?,
+                            &mut tickable_character.tick(now, &nearby_player_guids, &characters_read)?,
                         );
                     }
 
