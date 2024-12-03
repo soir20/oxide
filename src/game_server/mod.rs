@@ -728,10 +728,11 @@ impl GameServer {
                 let tickable_characters_by_chunk = tickable_characters.into_iter().fold(
                     BTreeMap::new(),
                     |mut acc: BTreeMap<(u64, Chunk), Vec<u64>>, guid| {
-                        let (_, instance_guid, chunk) = characters_table_read_handle
-                            .index(guid)
-                            .expect("Tickable character disappeared despite table being locked");
-                        acc.entry((instance_guid, chunk)).or_default().push(guid);
+                        if let Some((_, instance_guid, chunk)) =
+                            characters_table_read_handle.index(guid)
+                        {
+                            acc.entry((instance_guid, chunk)).or_default().push(guid);
+                        }
                         acc
                     },
                 );
