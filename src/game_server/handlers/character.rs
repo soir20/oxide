@@ -31,13 +31,13 @@ use crate::{
 };
 
 use super::{
-    guid::{Guid, GuidTableIndexer, IndexedGuid},
+    guid::{Guid, IndexedGuid},
     housing::fixture_packets,
     inventory::wield_type_from_slot,
-    lock_enforcer::{ZoneLockEnforcer, ZoneLockRequest},
+    lock_enforcer::{CharacterReadGuard, ZoneLockEnforcer, ZoneLockRequest},
     mount::{spawn_mount_npc, MountConfig},
     unique_guid::{mount_guid, npc_guid, player_guid, shorten_player_guid},
-    zone::{teleport_within_zone, Zone},
+    zone::teleport_within_zone,
 };
 
 pub type WriteLockingBroadcastSupplier = Result<
@@ -1266,18 +1266,11 @@ impl Character {
     pub fn tick<'a>(
         &mut self,
         now: Instant,
-        characters_table_handle: &'a impl GuidTableIndexer<'a, u64, Character, CharacterIndex>,
+        nearby_player_guids: Vec<u32>,
+        nearby_players: &BTreeMap<u64, CharacterReadGuard>,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        let (_, _, chunk) = self.index();
-        let everyone = Zone::all_players_nearby(
-            None,
-            chunk,
-            self.stats.instance_guid,
-            characters_table_handle,
-        )?;
-
         let packets = self.tickable_procedure_tracker.tick(&mut self.stats, now)?;
-        Ok(vec![Broadcast::Multi(everyone, packets)])
+        Ok(vec![Broadcast::Multi(nearby_player_guids, packets)])
     }
 
     pub fn current_tickable_procedure(&self) -> Option<&String> {
