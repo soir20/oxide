@@ -75,7 +75,9 @@ pub enum CursorUpdate {
     #[default]
     Keep,
     Disable,
-    Enable { new_cursor: u8 },
+    Enable {
+        new_cursor: u8,
+    },
 }
 
 #[derive(Clone, Deserialize)]
