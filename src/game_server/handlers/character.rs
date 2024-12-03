@@ -70,6 +70,14 @@ const fn default_weight() -> u32 {
     1
 }
 
+#[derive(Clone, Default, Deserialize, Eq, PartialEq)]
+pub enum CursorUpdate {
+    #[default]
+    Existing,
+    Disable,
+    Enable { new_cursor: u8 },
+}
+
 #[derive(Clone, Deserialize)]
 pub struct BaseNpcConfig {
     pub key: Option<String>,
@@ -129,7 +137,6 @@ pub struct BaseNpc {
     pub name_offset_x: f32,
     pub name_offset_y: f32,
     pub name_offset_z: f32,
-    pub cursor: Option<u8>,
     pub enable_interact_popup: bool,
     pub show_name: bool,
     pub visible: bool,
@@ -240,7 +247,7 @@ impl BaseNpc {
             },
             SingleNpcRelevance {
                 guid: character.guid(),
-                cursor: self.cursor,
+                cursor: character.stats.cursor,
                 unknown1: false,
             },
         )
@@ -256,7 +263,6 @@ impl From<BaseNpcConfig> for BaseNpc {
             name_offset_x: value.name_offset_x,
             name_offset_y: value.name_offset_y,
             name_offset_z: value.name_offset_z,
-            cursor: value.cursor,
             enable_interact_popup: value.enable_interact_popup,
             show_name: value.show_name,
             visible: value.visible,
@@ -289,6 +295,8 @@ pub struct TickableStep {
     pub one_shot_animation_id: Option<i32>,
     pub chat_message_id: Option<u32>,
     pub sound_id: Option<u32>,
+    #[serde(default)]
+    pub cursor: CursorUpdate,
     pub duration_millis: u64,
 }
 
@@ -373,6 +381,27 @@ impl TickableStep {
                         fallback_pos: character.pos,
                         guid: Guid::guid(character),
                     }),
+                },
+            })?);
+        }
+
+        if self.cursor != CursorUpdate::Existing {
+            let cursor = if let CursorUpdate::Enable { new_cursor } = self.cursor {
+                Some(new_cursor)
+            } else {
+                None
+            };
+
+            character.cursor = cursor;
+
+            packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: NpcRelevance {
+                    new_states: vec![SingleNpcRelevance {
+                        guid: Guid::guid(character),
+                        cursor,
+                        unknown1: false,
+                    }],
                 },
             })?);
         }
@@ -1048,6 +1077,7 @@ pub struct NpcTemplate {
     pub animation_id: i32,
     pub character_type: CharacterType,
     pub mount_id: Option<u32>,
+    pub cursor: Option<u8>,
     pub interact_radius: f32,
     pub auto_interact_radius: f32,
     pub wield_type: WieldType,
@@ -1081,6 +1111,7 @@ impl NpcTemplate {
                 holstered: false,
                 animation_id: self.animation_id,
                 speed: 0.0,
+                cursor: self.cursor,
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(
                 self.tickable_procedures.clone(),
@@ -1112,6 +1143,7 @@ pub struct CharacterStats {
     pub instance_guid: u64,
     pub animation_id: i32,
     pub speed: f32,
+    pub cursor: Option<u8>,
     wield_type: (WieldType, WieldType),
     holstered: bool,
 }
@@ -1169,6 +1201,7 @@ impl Character {
         scale: f32,
         character_type: CharacterType,
         mount_id: Option<u32>,
+        cursor: Option<u8>,
         interact_radius: f32,
         auto_interact_radius: f32,
         instance_guid: u64,
@@ -1186,6 +1219,7 @@ impl Character {
                 scale,
                 character_type,
                 mount_id,
+                cursor,
                 interact_radius,
                 auto_interact_radius,
                 instance_guid,
@@ -1242,6 +1276,7 @@ impl Character {
                 scale: 1.0,
                 character_type: CharacterType::Player(Box::new(data)),
                 mount_id: None,
+                cursor: None,
                 interact_radius: 0.0,
                 auto_interact_radius: 0.0,
                 instance_guid,
