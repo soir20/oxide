@@ -70,6 +70,16 @@ const fn default_weight() -> u32 {
     1
 }
 
+#[derive(Clone, Default, Deserialize, Eq, PartialEq)]
+pub enum CursorUpdate {
+    #[default]
+    Keep,
+    Disable,
+    Enable {
+        new_cursor: u8,
+    },
+}
+
 #[derive(Clone, Deserialize)]
 pub struct BaseNpcConfig {
     pub key: Option<String>,
@@ -129,7 +139,6 @@ pub struct BaseNpc {
     pub name_offset_x: f32,
     pub name_offset_y: f32,
     pub name_offset_z: f32,
-    pub cursor: Option<u8>,
     pub enable_interact_popup: bool,
     pub show_name: bool,
     pub visible: bool,
@@ -240,7 +249,7 @@ impl BaseNpc {
             },
             SingleNpcRelevance {
                 guid: character.guid(),
-                cursor: self.cursor,
+                cursor: character.stats.cursor,
                 unknown1: false,
             },
         )
@@ -256,7 +265,6 @@ impl From<BaseNpcConfig> for BaseNpc {
             name_offset_x: value.name_offset_x,
             name_offset_y: value.name_offset_y,
             name_offset_z: value.name_offset_z,
-            cursor: value.cursor,
             enable_interact_popup: value.enable_interact_popup,
             show_name: value.show_name,
             visible: value.visible,
@@ -289,6 +297,8 @@ pub struct TickableStep {
     pub one_shot_animation_id: Option<i32>,
     pub chat_message_id: Option<u32>,
     pub sound_id: Option<u32>,
+    #[serde(default)]
+    pub cursor: CursorUpdate,
     pub duration_millis: u64,
 }
 
@@ -373,6 +383,27 @@ impl TickableStep {
                         fallback_pos: character.pos,
                         guid: Guid::guid(character),
                     }),
+                },
+            })?);
+        }
+
+        if self.cursor != CursorUpdate::Keep {
+            let cursor = if let CursorUpdate::Enable { new_cursor } = self.cursor {
+                Some(new_cursor)
+            } else {
+                None
+            };
+
+            character.cursor = cursor;
+
+            packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: NpcRelevance {
+                    new_states: vec![SingleNpcRelevance {
+                        guid: Guid::guid(character),
+                        cursor,
+                        unknown1: false,
+                    }],
                 },
             })?);
         }
@@ -660,11 +691,13 @@ impl TickableProcedureTracker {
 pub struct AmbientNpcConfig {
     #[serde(flatten)]
     pub base_npc: BaseNpcConfig,
+    pub procedure_on_interact: Option<String>,
 }
 
 #[derive(Clone)]
 pub struct AmbientNpc {
     pub base_npc: BaseNpc,
+    pub procedure_on_interact: Option<String>,
 }
 
 impl AmbientNpc {
@@ -685,12 +718,27 @@ impl AmbientNpc {
 
         Ok(packets)
     }
+
+    pub fn interact(&self, character: &Character) -> Option<String> {
+        if let Some(new_procedure) = &self.procedure_on_interact {
+            let is_different_procedure = character
+                .current_tickable_procedure()
+                .map(|current_procedure| current_procedure != new_procedure)
+                .unwrap_or(true);
+            if is_different_procedure {
+                return Some(new_procedure.clone());
+            }
+        }
+
+        None
+    }
 }
 
 impl From<AmbientNpcConfig> for AmbientNpc {
     fn from(value: AmbientNpcConfig) -> Self {
         AmbientNpc {
             base_npc: value.base_npc.into(),
+            procedure_on_interact: value.procedure_on_interact,
         }
     }
 }
@@ -1031,6 +1079,7 @@ pub struct NpcTemplate {
     pub animation_id: i32,
     pub character_type: CharacterType,
     pub mount_id: Option<u32>,
+    pub cursor: Option<u8>,
     pub interact_radius: f32,
     pub auto_interact_radius: f32,
     pub wield_type: WieldType,
@@ -1064,6 +1113,7 @@ impl NpcTemplate {
                 holstered: false,
                 animation_id: self.animation_id,
                 speed: 0.0,
+                cursor: self.cursor,
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(
                 self.tickable_procedures.clone(),
@@ -1095,6 +1145,7 @@ pub struct CharacterStats {
     pub instance_guid: u64,
     pub animation_id: i32,
     pub speed: f32,
+    pub cursor: Option<u8>,
     wield_type: (WieldType, WieldType),
     holstered: bool,
 }
@@ -1152,6 +1203,7 @@ impl Character {
         scale: f32,
         character_type: CharacterType,
         mount_id: Option<u32>,
+        cursor: Option<u8>,
         interact_radius: f32,
         auto_interact_radius: f32,
         instance_guid: u64,
@@ -1169,6 +1221,7 @@ impl Character {
                 scale,
                 character_type,
                 mount_id,
+                cursor,
                 interact_radius,
                 auto_interact_radius,
                 instance_guid,
@@ -1225,6 +1278,7 @@ impl Character {
                 scale: 1.0,
                 character_type: CharacterType::Player(Box::new(data)),
                 mount_id: None,
+                cursor: None,
                 interact_radius: 0.0,
                 auto_interact_radius: 0.0,
                 instance_guid,
@@ -1346,18 +1400,30 @@ impl Character {
     }
 
     pub fn interact(
-        &self,
+        &mut self,
         requester: u32,
         source_zone_guid: u64,
         zones_lock_enforcer: &ZoneLockEnforcer,
     ) -> WriteLockingBroadcastSupplier {
-        match &self.stats.character_type {
+        let mut new_procedure = None;
+
+        let broadcast_supplier = match &self.stats.character_type {
+            CharacterType::AmbientNpc(ambient_npc) => {
+                new_procedure = ambient_npc.interact(self);
+                coerce_to_broadcast_supplier(|_| Ok(Vec::new()))
+            }
             CharacterType::Door(door) => {
                 door.interact(requester, source_zone_guid, zones_lock_enforcer)
             }
             CharacterType::Transport(transport) => transport.interact(requester),
             _ => coerce_to_broadcast_supplier(|_| Ok(Vec::new())),
+        };
+
+        if let Some(procedure) = new_procedure {
+            self.set_tickable_procedure_if_exists(procedure, Instant::now());
         }
+
+        broadcast_supplier
     }
 
     fn tickable(&self) -> bool {
