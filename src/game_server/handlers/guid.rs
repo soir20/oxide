@@ -114,7 +114,7 @@ pub struct GuidTableWriteHandle<'a, K, V, I = ()> {
     guard: RwLockWriteGuard<'a, GuidTableData<K, V, I>>,
 }
 
-impl<'a, K: Copy + Ord, V: IndexedGuid<K, I>, I: Copy + Ord> GuidTableWriteHandle<'a, K, V, I> {
+impl<K: Copy + Ord, V: IndexedGuid<K, I>, I: Copy + Ord> GuidTableWriteHandle<'_, K, V, I> {
     pub fn insert(&mut self, item: V) -> Option<Lock<V>> {
         let key = item.guid();
         let index = item.index();
