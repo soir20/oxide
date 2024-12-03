@@ -728,6 +728,7 @@ impl GameServer {
                 let tickable_characters_by_chunk = tickable_characters.into_iter().fold(
                     BTreeMap::new(),
                     |mut acc: BTreeMap<(u64, Chunk), Vec<u64>>, guid| {
+                        // The NPC could have been removed since we last acquired the table read lock
                         if let Some((_, instance_guid, chunk)) =
                             characters_table_read_handle.index(guid)
                         {
