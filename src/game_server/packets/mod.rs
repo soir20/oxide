@@ -26,6 +26,7 @@ use serde::Deserialize;
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u16)]
 pub enum OpCode {
+    Minigame = 0x27,
     LoginRequest = 0x1,
     LoginReply = 0x2,
     TunneledClient = 0x5,
@@ -230,4 +231,82 @@ impl SerializePacket for Target {
 
         Ok(())
     }
+}
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum MinigameOpCode {
+    MinigameGroup = 0x33,
+    ShowStageSelect = 0x34,
+}
+
+impl SerializePacket for MinigameOpCode {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        OpCode::Minigame.serialize(buffer)?;
+        buffer.write_u8(*self as u8)?;
+        Ok(())
+    }
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct MinigameHeader {
+    pub unknown1: u32,
+    pub unknown2: u32,
+    pub unknown3: u32,
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct Unknown11Array {
+    pub minigame_id: u32,
+    pub minigame_type: u32,
+    pub link_name: String,
+    pub short_name: String,
+    pub unlocked: bool,
+    pub unknown6: u32,
+    pub name_id: u32,
+    pub description_id: u32,
+    pub icon_set_id: u32,
+    pub parent_minigame_id: u32,
+    pub members_only: bool,
+    pub unknown12: u32,
+    pub background_swf: String,
+    pub min_players: u32,
+    pub max_players: u32,
+    pub stage_number: u32,
+    pub required_item_id: u32,
+    pub unknown18: u32,
+    pub completed: bool,
+    pub link_group_id: u32,
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct GroupInfo {
+    pub header: MinigameHeader,
+    pub group_id: u32,
+    pub name_id: u32,
+    pub description_id: u32,
+    pub icon_id: u32,
+    pub background_swf: String,
+    pub default_game_id: u32,
+    pub unknown11: Vec<Unknown11Array>,
+    pub stage_progression: String,
+    pub show_start_screen_on_play_next: bool,
+    pub settings_icon_id: u32,
+}
+
+impl GamePacket for GroupInfo {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::MinigameGroup;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct ShowStageSelect {
+    pub header: MinigameHeader,
+}
+
+impl GamePacket for ShowStageSelect {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::ShowStageSelect;
 }

@@ -38,9 +38,10 @@ use packets::player_update::{Customization, InitCustomizations, QueueAnimation, 
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
 use packets::store::StoreItemList;
 use packets::tunnel::{TunneledPacket, TunneledWorldPacket};
+use packets::ui::ExecuteScriptWithParams;
 use packets::update_position::UpdatePlayerPosition;
 use packets::zone::ZoneTeleportRequest;
-use packets::{GamePacket, OpCode};
+use packets::{GamePacket, GroupInfo, MinigameHeader, OpCode, ShowStageSelect, Unknown11Array};
 use rand::Rng;
 
 use crate::{info, teleport_to_zone};
@@ -432,6 +433,15 @@ impl GameServer {
                     };
                     sender_only_packets.push(GamePacket::serialize(&zone_details_done)?);
 
+                    let zone_details_done = TunneledPacket {
+                        unknown1: true,
+                        inner: ExecuteScriptWithParams {
+                            script_name: "Console.show".to_string(),
+                            params: vec!["".to_string()],
+                        },
+                    };
+                    sender_only_packets.push(GamePacket::serialize(&zone_details_done)?);
+
                     let preload_characters_done = TunneledPacket {
                         unknown1: true,
                         inner: PreloadCharactersDone { unknown1: false },
@@ -626,6 +636,59 @@ impl GameServer {
                                             queue_pos: 0,
                                             delay_seconds: 0.0,
                                             duration_seconds: 2.0,
+                                        }
+                                    })?,
+                                    GamePacket::serialize(&TunneledPacket {
+                                        unknown1: true,
+                                        inner: GroupInfo {
+                                            header: MinigameHeader {
+                                                unknown1: 0,
+                                                unknown2: 0,
+                                                unknown3: 0
+                                            },
+                                            group_id: 117,
+                                            name_id: 5000,
+                                            description_id: 6000,
+                                            icon_id: 7000,
+                                            background_swf: "MiniGameReviveWindow.swf".to_string(),
+                                            default_game_id: 1,
+                                            unknown11: vec![
+                                                Unknown11Array {
+                                                    minigame_id: 1,
+                                                    minigame_type: 2,
+                                                    link_name: "hello world2".to_string(),
+                                                    short_name: "hello world3".to_string(),
+                                                    unlocked: false,
+                                                    unknown6: 3,
+                                                    name_id: 4,
+                                                    description_id: 5,
+                                                    icon_set_id: 6,
+                                                    parent_minigame_id: 7,
+                                                    members_only: false,
+                                                    unknown12: 8,
+                                                    background_swf: "hello world".to_string(),
+                                                    min_players: 9,
+                                                    max_players: 10,
+                                                    stage_number: 11,
+                                                    required_item_id: 6,
+                                                    unknown18: 13,
+                                                    completed: true,
+                                                    link_group_id: 14
+                                                }
+                                            ],
+                                            stage_progression: "MinigameIntroduction.swf".to_string(),
+                                            show_start_screen_on_play_next: false,
+                                            settings_icon_id: 9000
+                                        }
+                                    })?,
+                                    GamePacket::serialize(&TunneledPacket {
+                                        unknown1: true,
+                                        inner: ShowStageSelect {
+                                            header: MinigameHeader {
+                                                unknown1: 0,
+                                                unknown2: 0,
+                                                unknown3: 0
+                                            },
                                         }
                                     })?,
                                     GamePacket::serialize(&TunneledPacket {
