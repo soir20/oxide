@@ -108,6 +108,7 @@ pub struct UnknownMinigameArray {
 }
 
 pub struct AllMinigameData {
+    pub header: MinigameHeader,
     pub minigame_data: Vec<MinigameData>,
     pub minigame_group_data: Vec<MinigameGroupData>,
     pub minigame_type_data: Vec<MinigameTypeData>,
@@ -121,6 +122,8 @@ impl SerializePacket for AllMinigameData {
         SerializePacket::serialize(&self.minigame_group_data, &mut inner_buffer)?;
         SerializePacket::serialize(&self.minigame_type_data, &mut inner_buffer)?;
         SerializePacket::serialize(&self.unknown, &mut inner_buffer)?;
+
+        SerializePacket::serialize(&self.header, buffer)?;
         buffer.write_u32::<LittleEndian>(inner_buffer.len() as u32)?;
         buffer.write_all(&inner_buffer)?;
         Ok(())
