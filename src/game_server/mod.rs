@@ -34,6 +34,7 @@ use packets::client_update::{Health, Power, PreloadCharactersDone, Stat, StatId,
 use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
 use packets::item::ItemDefinition;
 use packets::login::{LoginRequest, WelcomeScreen, ZoneDetailsDone};
+use packets::minigame::{GroupInfo, Minigame, MinigameHeader, ShowStageSelect};
 use packets::player_update::{Customization, InitCustomizations, QueueAnimation, UpdateWieldType};
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
 use packets::store::StoreItemList;
@@ -41,7 +42,7 @@ use packets::tunnel::{TunneledPacket, TunneledWorldPacket};
 use packets::ui::ExecuteScriptWithParams;
 use packets::update_position::UpdatePlayerPosition;
 use packets::zone::ZoneTeleportRequest;
-use packets::{GamePacket, GroupInfo, MinigameHeader, OpCode, ShowStageSelect, Unknown11Array};
+use packets::{GamePacket, OpCode};
 use rand::Rng;
 
 use crate::{info, teleport_to_zone};
@@ -652,8 +653,8 @@ impl GameServer {
                                             icon_id: 7000,
                                             background_swf: "MiniGameReviveWindow.swf".to_string(),
                                             default_game_id: 1,
-                                            unknown11: vec![
-                                                Unknown11Array {
+                                            minigames: vec![
+                                                Minigame {
                                                     minigame_id: 1,
                                                     minigame_type: 2,
                                                     link_name: "hello world2".to_string(),
