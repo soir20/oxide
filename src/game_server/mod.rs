@@ -658,7 +658,7 @@ impl GameServer {
                                                     minigame_type: 2,
                                                     link_name: "hello world2".to_string(),
                                                     short_name: "hello world3".to_string(),
-                                                    unlocked: false,
+                                                    unlocked: true,
                                                     unknown6: 3,
                                                     name_id: 4,
                                                     description_id: 5,
