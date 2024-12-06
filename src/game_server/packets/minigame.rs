@@ -153,13 +153,13 @@ impl GamePacket for MinigameInfo {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct MinigameData {
-    pub stage_id: u32,
-    pub stage_type: u32,
-    pub stage_name_id: u32,
-    pub stage_description_id: u32,
-    pub stage_icon_set_id: u32,
-    pub stage_difficulty: u32,
+pub struct MinigameStageDefinition {
+    pub guid: u32,
+    pub minigame_type: u32,
+    pub start_screen_name_id: u32,
+    pub start_screen_description_id: u32,
+    pub start_screen_icon_set_id: u32,
+    pub difficulty: u32,
     pub members_only: bool,
     pub unknown8: u32,
     pub unknown9: String,
@@ -186,8 +186,8 @@ pub struct MinigameGroupLink {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct MinigameGroupData {
-    pub unknown1: u32,
+pub struct MinigameGroupDefinition {
+    pub guid: u32,
     pub unknown2: u32,
     pub unknown3: u32,
     pub unknown4: u32,
@@ -204,8 +204,8 @@ pub struct MinigameGroupData {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct MinigameTypeData {
-    pub type_id: u32,
+pub struct MinigameTypeDefinition {
+    pub guid: u32,
     pub type_name: u32,
     pub type_description: u32,
     pub members_only: bool,
@@ -217,34 +217,34 @@ pub struct MinigameTypeData {
     pub background_icon_id: u32,
     pub is_popular: bool,
     pub is_game_of_day: bool,
-    pub category_id: u32,
-    pub display_order: u32,
+    pub category_guid: u32,
+    pub sort_order: u32,
     pub tutorial_swf: String,
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct UnknownMinigameArray {
-    pub unknown1: u32,
-    pub unknown2: u32,
-    pub unknown3: u32,
-    pub unknown4: u32,
+pub struct MinigameCategory {
+    pub guid: u32,
+    pub name_id: u32,
+    pub icon_set_id: u32,
+    pub sort_order: u32,
 }
 
 pub struct AllMinigameData {
     pub header: MinigameHeader,
-    pub minigame_data: Vec<MinigameData>,
-    pub minigame_group_data: Vec<MinigameGroupData>,
-    pub minigame_type_data: Vec<MinigameTypeData>,
-    pub unknown: Vec<UnknownMinigameArray>,
+    pub stages: Vec<MinigameStageDefinition>,
+    pub groups: Vec<MinigameGroupDefinition>,
+    pub minigame_type_data: Vec<MinigameTypeDefinition>,
+    pub categories: Vec<MinigameCategory>,
 }
 
 impl SerializePacket for AllMinigameData {
     fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
         let mut inner_buffer = Vec::new();
-        SerializePacket::serialize(&self.minigame_data, &mut inner_buffer)?;
-        SerializePacket::serialize(&self.minigame_group_data, &mut inner_buffer)?;
+        SerializePacket::serialize(&self.stages, &mut inner_buffer)?;
+        SerializePacket::serialize(&self.groups, &mut inner_buffer)?;
         SerializePacket::serialize(&self.minigame_type_data, &mut inner_buffer)?;
-        SerializePacket::serialize(&self.unknown, &mut inner_buffer)?;
+        SerializePacket::serialize(&self.categories, &mut inner_buffer)?;
 
         SerializePacket::serialize(&self.header, buffer)?;
         buffer.write_u32::<LittleEndian>(inner_buffer.len() as u32)?;
