@@ -41,7 +41,7 @@ pub struct MinigameData {
     pub unknown8: u32,
     pub unknown9: String,
     pub unknown10: u32,
-    pub stage_icon_id: u32,
+    pub unknown11: u32,
     pub start_sound_id: u32,
     pub unknown13: String,
     pub unknown14: u32,
