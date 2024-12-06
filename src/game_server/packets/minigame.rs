@@ -52,7 +52,7 @@ pub struct MinigameData {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct MinigameGroupLink {
     pub unknown1: u32,
-    pub unknown2: u32,
+    pub group_id: u32,
     pub unknown3: u32,
     pub unknown4: u32,
     pub unknown5: u32,
