@@ -83,18 +83,18 @@ pub struct MinigameGroupData {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct MinigameTypeData {
     pub type_id: u32,
-    pub unknown2: u32,
-    pub unknown3: u32,
+    pub type_name: u32,
+    pub type_description: u32,
     pub unknown4: bool,
     pub unknown5: bool,
     pub is_micro: bool,
     pub unknown7: bool,
     pub unknown8: u32,
-    pub unknown9: u32,
-    pub unknown10: u32,
+    pub icon_id: u32,
+    pub background_icon_id: u32,
     pub unknown11: bool,
     pub unknown12: bool,
-    pub unknown13: u32,
+    pub category_id: u32,
     pub display_order: u32,
     pub tutorial_swf: String,
 }
