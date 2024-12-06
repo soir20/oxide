@@ -53,8 +53,8 @@ pub struct MinigameData {
 pub struct MinigameGroupLink {
     pub link_id: u32,
     pub group_id: u32,
-    pub stage_id: u32,
-    pub unknown4: u32,
+    pub parent_game_id: u32,
+    pub link_game_id: u32,
     pub unknown5: u32,
     pub unknown6: String,
     pub unknown7: String,
