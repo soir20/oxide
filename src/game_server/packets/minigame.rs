@@ -31,8 +31,8 @@ pub struct MinigameHeader {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct MinigameData {
-    pub unknown1: u32,
-    pub unknown2: u32,
+    pub minigame_name_id: u32,
+    pub stage_name_id: u32,
     pub unknown3: u32,
     pub unknown4: u32,
     pub unknown5: u32,
@@ -41,7 +41,7 @@ pub struct MinigameData {
     pub unknown8: u32,
     pub unknown9: String,
     pub unknown10: u32,
-    pub unknown11: u32,
+    pub stage_icon_id: u32,
     pub unknown12: u32,
     pub unknown13: String,
     pub unknown14: u32,
