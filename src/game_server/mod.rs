@@ -34,7 +34,9 @@ use packets::client_update::{Health, Power, PreloadCharactersDone, Stat, StatId,
 use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
 use packets::item::ItemDefinition;
 use packets::login::{LoginRequest, WelcomeScreen, ZoneDetailsDone};
-use packets::minigame::{CreateMinigameStageGroupInstance, Minigame, MinigameHeader, ShowStageSelect};
+use packets::minigame::{
+    CreateMinigameStageGroupInstance, Minigame, MinigameHeader, ShowStageSelect,
+};
 use packets::player_update::{Customization, InitCustomizations, QueueAnimation, UpdateWieldType};
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
 use packets::store::StoreItemList;
