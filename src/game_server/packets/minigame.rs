@@ -9,9 +9,9 @@ use super::{GamePacket, OpCode};
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
 pub enum MinigameOpCode {
-    AllMinigameData = 0x1,
-    MinigameInfo = 0x11,
-    MinigameGroup = 0x33,
+    MinigameDefinitions = 0x1,
+    CreateMinigameInstance = 0x11,
+    CreateMinigameStageGroupInstance = 0x33,
     ShowStageSelect = 0x34,
 }
 
@@ -149,13 +149,13 @@ pub struct MinigameInfo {
 impl GamePacket for MinigameInfo {
     type Header = MinigameOpCode;
 
-    const HEADER: Self::Header = MinigameOpCode::MinigameInfo;
+    const HEADER: Self::Header = MinigameOpCode::CreateMinigameInstance;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct MinigameStageDefinition {
     pub guid: u32,
-    pub minigame_type: u32,
+    pub portal_entry_guid: u32,
     pub start_screen_name_id: u32,
     pub start_screen_description_id: u32,
     pub start_screen_icon_set_id: u32,
@@ -173,11 +173,11 @@ pub struct MinigameStageDefinition {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct MinigameGroupLink {
+pub struct MinigameStageGroupLink {
     pub link_id: u32,
-    pub group_id: u32,
+    pub stage_group_definition_guid: u32,
     pub parent_game_id: u32,
-    pub link_game_id: u32,
+    pub link_stage_definition_guid: u32,
     pub unknown5: u32,
     pub unknown6: String,
     pub unknown7: String,
@@ -186,7 +186,7 @@ pub struct MinigameGroupLink {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct MinigameGroupDefinition {
+pub struct MinigameStageGroupDefinition {
     pub guid: u32,
     pub unknown2: u32,
     pub unknown3: u32,
@@ -200,14 +200,14 @@ pub struct MinigameGroupDefinition {
     pub unknown11: u32,
     pub unknown12: u32,
     pub unknown13: u32,
-    pub group_links: Vec<MinigameGroupLink>,
+    pub group_links: Vec<MinigameStageGroupLink>,
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct MinigameTypeDefinition {
+pub struct MinigamePortalEntry {
     pub guid: u32,
-    pub type_name: u32,
-    pub type_description: u32,
+    pub name_id: u32,
+    pub description_id: u32,
     pub members_only: bool,
     pub is_flash: bool, // unconfirmed
     pub is_micro: bool,
@@ -217,34 +217,34 @@ pub struct MinigameTypeDefinition {
     pub background_icon_id: u32,
     pub is_popular: bool,
     pub is_game_of_day: bool,
-    pub category_guid: u32,
+    pub portal_category_guid: u32,
     pub sort_order: u32,
     pub tutorial_swf: String,
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct MinigameCategory {
+pub struct MinigamePortalCategory {
     pub guid: u32,
     pub name_id: u32,
     pub icon_set_id: u32,
     pub sort_order: u32,
 }
 
-pub struct AllMinigameData {
+pub struct MinigameDefinitions {
     pub header: MinigameHeader,
     pub stages: Vec<MinigameStageDefinition>,
-    pub groups: Vec<MinigameGroupDefinition>,
-    pub minigame_type_data: Vec<MinigameTypeDefinition>,
-    pub categories: Vec<MinigameCategory>,
+    pub stage_groups: Vec<MinigameStageGroupDefinition>,
+    pub portal_entries: Vec<MinigamePortalEntry>,
+    pub portal_categories: Vec<MinigamePortalCategory>,
 }
 
-impl SerializePacket for AllMinigameData {
+impl SerializePacket for MinigameDefinitions {
     fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
         let mut inner_buffer = Vec::new();
         SerializePacket::serialize(&self.stages, &mut inner_buffer)?;
-        SerializePacket::serialize(&self.groups, &mut inner_buffer)?;
-        SerializePacket::serialize(&self.minigame_type_data, &mut inner_buffer)?;
-        SerializePacket::serialize(&self.categories, &mut inner_buffer)?;
+        SerializePacket::serialize(&self.stage_groups, &mut inner_buffer)?;
+        SerializePacket::serialize(&self.portal_entries, &mut inner_buffer)?;
+        SerializePacket::serialize(&self.portal_categories, &mut inner_buffer)?;
 
         SerializePacket::serialize(&self.header, buffer)?;
         buffer.write_u32::<LittleEndian>(inner_buffer.len() as u32)?;
@@ -253,10 +253,10 @@ impl SerializePacket for AllMinigameData {
     }
 }
 
-impl GamePacket for AllMinigameData {
+impl GamePacket for MinigameDefinitions {
     type Header = MinigameOpCode;
 
-    const HEADER: Self::Header = MinigameOpCode::AllMinigameData;
+    const HEADER: Self::Header = MinigameOpCode::MinigameDefinitions;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -284,7 +284,7 @@ pub struct Minigame {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct GroupInfo {
+pub struct CreateMinigameStageGroupInstance {
     pub header: MinigameHeader,
     pub group_id: u32,
     pub name_id: u32,
@@ -298,10 +298,10 @@ pub struct GroupInfo {
     pub settings_icon_id: u32,
 }
 
-impl GamePacket for GroupInfo {
+impl GamePacket for CreateMinigameStageGroupInstance {
     type Header = MinigameOpCode;
 
-    const HEADER: Self::Header = MinigameOpCode::MinigameGroup;
+    const HEADER: Self::Header = MinigameOpCode::CreateMinigameStageGroupInstance;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
