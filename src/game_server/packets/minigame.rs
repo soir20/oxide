@@ -188,13 +188,13 @@ pub struct MinigameStageGroupLink {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct MinigameStageGroupDefinition {
     pub guid: u32,
-    pub unknown2: u32,
+    pub portal_entry_guid: u32, // unconfirmed
     pub name_id: u32,
-    pub unknown4: u32,
+    pub description_id: u32, // unconfirmed
     pub icon_set_id: u32,
-    pub unknown6: String,
-    pub unknown7: String,
-    pub unknown8: bool,
+    pub background_swf: String,               // unconfirmed
+    pub stage_progression: String,            // unconfirmed
+    pub show_start_screen_on_play_next: bool, // unconfirmed
     pub unknown9: u32,
     pub unknown10: u32,
     pub unknown11: u32,
