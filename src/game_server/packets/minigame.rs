@@ -192,7 +192,7 @@ pub struct MinigameStageGroupDefinition {
     pub name_id: u32,
     pub description_id: u32, // unconfirmed
     pub icon_set_id: u32,
-    pub stage_select_map_name: String,               // unconfirmed
+    pub stage_select_map_name: String,        // unconfirmed
     pub stage_progression: String,            // unconfirmed
     pub show_start_screen_on_play_next: bool, // unconfirmed
     pub unknown9: u32,
