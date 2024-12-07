@@ -70,7 +70,7 @@ pub struct UnknownInfoArray2 {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct MinigameInfo {
+pub struct CreateMinigameInstance {
     pub header: MinigameHeader,
     pub unknown1: u32,
     pub unknown2: u32,
@@ -146,7 +146,7 @@ pub struct MinigameInfo {
     pub unknown72: u32,
 }
 
-impl GamePacket for MinigameInfo {
+impl GamePacket for CreateMinigameInstance {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::CreateMinigameInstance;
