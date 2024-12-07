@@ -661,11 +661,11 @@ impl GameServer {
                                                     difficulty: 6000,
                                                     members_only: false,
                                                     unknown8: 7000,
-                                                    unknown9: "TowerDefense.swf".to_string(),
+                                                    unknown9: "towerDefense".to_string(),
                                                     unknown10: 8000,
                                                     unknown11: 9000,
                                                     start_sound_id: 10000,
-                                                    unknown13: "TowerDefense.swf".to_string(),
+                                                    unknown13: "towerDefense".to_string(),
                                                     unknown14: 11000,
                                                     unknown15: 12000,
                                                     unknown16: 13000
@@ -679,11 +679,11 @@ impl GameServer {
                                                     difficulty: 6000,
                                                     members_only: false,
                                                     unknown8: 7000,
-                                                    unknown9: "TowerDefense.swf".to_string(),
+                                                    unknown9: "towerDefense".to_string(),
                                                     unknown10: 8000,
                                                     unknown11: 9000,
                                                     start_sound_id: 10000,
-                                                    unknown13: "TowerDefense.swf".to_string(),
+                                                    unknown13: "towerDefense".to_string(),
                                                     unknown14: 11000,
                                                     unknown15: 12000,
                                                     unknown16: 13000
@@ -696,8 +696,8 @@ impl GameServer {
                                                     name_id: 3,
                                                     description_id: 400,
                                                     icon_set_id: 5,
-                                                    background_swf: "TowerDefense.swf".to_string(),
-                                                    stage_progression: "TowerDefense.swf".to_string(),
+                                                    background_swf: "towerDefense".to_string(),
+                                                    stage_progression: "towerDefense".to_string(),
                                                     show_start_screen_on_play_next: false,
                                                     unknown9: 600,
                                                     unknown10: 700,
@@ -711,8 +711,8 @@ impl GameServer {
                                                             parent_game_id: 0,
                                                             link_stage_definition_guid: 1,
                                                             unknown5: 117,
-                                                            unknown6: "TowerDefense.swf".to_string(),
-                                                            unknown7: "TowerDefense.swf".to_string(),
+                                                            unknown6: "towerDefense".to_string(),
+                                                            unknown7: "towerDefense".to_string(),
                                                             unknown8: 117,
                                                             unknown9: 14
                                                         },
@@ -722,8 +722,8 @@ impl GameServer {
                                                             parent_game_id: 0,
                                                             link_stage_definition_guid: 2,
                                                             unknown5: 117,
-                                                            unknown6: "TowerDefense.swf".to_string(),
-                                                            unknown7: "TowerDefense.swf".to_string(),
+                                                            unknown6: "towerDefense".to_string(),
+                                                            unknown7: "towerDefense".to_string(),
                                                             unknown8: 117,
                                                             unknown9: 14
                                                         }
@@ -746,7 +746,7 @@ impl GameServer {
                                                     is_game_of_day: false,
                                                     portal_category_guid: 2,
                                                     sort_order: 90,
-                                                    tutorial_swf: "TowerDefense.swf".to_string()
+                                                    tutorial_swf: "towerDefense".to_string()
                                                 }
                                             ],
                                             portal_categories: vec![
@@ -795,14 +795,14 @@ impl GameServer {
                                             name_id: 5000,
                                             description_id: 6000,
                                             icon_id: 7000,
-                                            background_swf: "TowerDefense.swf".to_string(),
+                                            background_swf: "towerDefense".to_string(),
                                             default_game_id: 0,
                                             minigames: vec![
                                                 Minigame {
                                                     minigame_id: 1,
                                                     minigame_type: 2,
-                                                    link_name: "hello world2".to_string(),
-                                                    short_name: "hello world3".to_string(),
+                                                    link_name: "towerDefense".to_string(),
+                                                    short_name: "towerDefense".to_string(),
                                                     unlocked: true,
                                                     unknown6: 3,
                                                     name_id: 4,
@@ -811,7 +811,7 @@ impl GameServer {
                                                     parent_minigame_id: 7,
                                                     members_only: false,
                                                     unknown12: 8,
-                                                    background_swf: "hello world".to_string(),
+                                                    background_swf: "towerDefense".to_string(),
                                                     min_players: 9,
                                                     max_players: 10,
                                                     stage_number: 11,
@@ -823,8 +823,8 @@ impl GameServer {
                                                 Minigame {
                                                     minigame_id: 2,
                                                     minigame_type: 2,
-                                                    link_name: "hello world2".to_string(),
-                                                    short_name: "hello world3".to_string(),
+                                                    link_name: "towerDefense".to_string(),
+                                                    short_name: "towerDefense".to_string(),
                                                     unlocked: true,
                                                     unknown6: 3,
                                                     name_id: 4,
@@ -833,7 +833,7 @@ impl GameServer {
                                                     parent_minigame_id: 7,
                                                     members_only: false,
                                                     unknown12: 8,
-                                                    background_swf: "hello world".to_string(),
+                                                    background_swf: "towerDefense".to_string(),
                                                     min_players: 9,
                                                     max_players: 10,
                                                     stage_number: 12,
@@ -843,7 +843,7 @@ impl GameServer {
                                                     link_group_id: 14
                                                 }
                                             ],
-                                            stage_progression: "TowerDefense.swf".to_string(),
+                                            stage_progression: "towerDefense".to_string(),
                                             show_start_screen_on_play_next: true,
                                             settings_icon_id: 9000
                                         }
