@@ -35,7 +35,9 @@ use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
 use packets::item::ItemDefinition;
 use packets::login::{LoginRequest, WelcomeScreen, ZoneDetailsDone};
 use packets::minigame::{
-    CreateMinigameStageGroupInstance, Minigame, MinigameHeader, ShowStageSelect,
+    CreateMinigameStageGroupInstance, Minigame, MinigameDefinitions, MinigameHeader,
+    MinigamePortalCategory, MinigamePortalEntry, MinigameStageDefinition,
+    MinigameStageGroupDefinition, MinigameStageGroupLink, ShowStageSelect,
 };
 use packets::player_update::{Customization, InitCustomizations, QueueAnimation, UpdateWieldType};
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
@@ -643,6 +645,146 @@ impl GameServer {
                                     })?,
                                     GamePacket::serialize(&TunneledPacket {
                                         unknown1: true,
+                                        inner: MinigameDefinitions {
+                                            header: MinigameHeader {
+                                                unknown1: 0,
+                                                unknown2: 0,
+                                                unknown3: 0
+                                            },
+                                            stages: vec![
+                                                MinigameStageDefinition {
+                                                    guid: 1,
+                                                    portal_entry_guid: 2,
+                                                    start_screen_name_id: 3001,
+                                                    start_screen_description_id: 4000,
+                                                    start_screen_icon_set_id: 5000,
+                                                    difficulty: 6000,
+                                                    members_only: false,
+                                                    unknown8: 7000,
+                                                    unknown9: "TowerDefense.swf".to_string(),
+                                                    unknown10: 8000,
+                                                    unknown11: 9000,
+                                                    start_sound_id: 10000,
+                                                    unknown13: "TowerDefense.swf".to_string(),
+                                                    unknown14: 11000,
+                                                    unknown15: 12000,
+                                                    unknown16: 13000
+                                                },
+                                                MinigameStageDefinition {
+                                                    guid: 2,
+                                                    portal_entry_guid: 2,
+                                                    start_screen_name_id: 3001,
+                                                    start_screen_description_id: 4000,
+                                                    start_screen_icon_set_id: 5000,
+                                                    difficulty: 6000,
+                                                    members_only: false,
+                                                    unknown8: 7000,
+                                                    unknown9: "TowerDefense.swf".to_string(),
+                                                    unknown10: 8000,
+                                                    unknown11: 9000,
+                                                    start_sound_id: 10000,
+                                                    unknown13: "TowerDefense.swf".to_string(),
+                                                    unknown14: 11000,
+                                                    unknown15: 12000,
+                                                    unknown16: 13000
+                                                }
+                                            ],
+                                            stage_groups: vec![
+                                                MinigameStageGroupDefinition {
+                                                    guid: 117,
+                                                    portal_entry_guid: 200,
+                                                    name_id: 3,
+                                                    description_id: 400,
+                                                    icon_set_id: 5,
+                                                    background_swf: "TowerDefense.swf".to_string(),
+                                                    stage_progression: "TowerDefense.swf".to_string(),
+                                                    show_start_screen_on_play_next: false,
+                                                    unknown9: 600,
+                                                    unknown10: 700,
+                                                    unknown11: 800,
+                                                    unknown12: 900,
+                                                    unknown13: 1000,
+                                                    group_links: vec![
+                                                        MinigameStageGroupLink {
+                                                            link_id: 1,
+                                                            stage_group_definition_guid: 117,
+                                                            parent_game_id: 0,
+                                                            link_stage_definition_guid: 1,
+                                                            unknown5: 117,
+                                                            unknown6: "TowerDefense.swf".to_string(),
+                                                            unknown7: "TowerDefense.swf".to_string(),
+                                                            unknown8: 117,
+                                                            unknown9: 14
+                                                        },
+                                                        MinigameStageGroupLink {
+                                                            link_id: 2,
+                                                            stage_group_definition_guid: 117,
+                                                            parent_game_id: 0,
+                                                            link_stage_definition_guid: 2,
+                                                            unknown5: 117,
+                                                            unknown6: "TowerDefense.swf".to_string(),
+                                                            unknown7: "TowerDefense.swf".to_string(),
+                                                            unknown8: 117,
+                                                            unknown9: 14
+                                                        }
+                                                    ]
+                                                },
+                                            ],
+                                            portal_entries: vec![
+                                                MinigamePortalEntry {
+                                                    guid: 2,
+                                                    name_id: 30,
+                                                    description_id: 40,
+                                                    members_only: false,
+                                                    is_flash: false,
+                                                    is_micro: false,
+                                                    is_active: true,
+                                                    param1: 1,
+                                                    icon_id: 60,
+                                                    background_icon_id: 70,
+                                                    is_popular: false,
+                                                    is_game_of_day: false,
+                                                    portal_category_guid: 2,
+                                                    sort_order: 90,
+                                                    tutorial_swf: "TowerDefense.swf".to_string()
+                                                }
+                                            ],
+                                            portal_categories: vec![
+                                                MinigamePortalCategory {
+                                                    guid: 1,
+                                                    name_id: 1,
+                                                    icon_set_id: 1,
+                                                    sort_order: 1
+                                                },
+                                                MinigamePortalCategory {
+                                                    guid: 2,
+                                                    name_id: 2,
+                                                    icon_set_id: 2,
+                                                    sort_order: 2
+                                                },
+                                                MinigamePortalCategory {
+                                                    guid: 3,
+                                                    name_id: 3,
+                                                    icon_set_id: 3,
+                                                    sort_order: 3
+                                                },
+                                                MinigamePortalCategory {
+                                                    guid: 4,
+                                                    name_id: 4,
+                                                    icon_set_id: 4,
+                                                    sort_order: 4
+                                                },
+                                                MinigamePortalCategory {
+                                                    guid: 5,
+                                                    name_id: 5,
+                                                    icon_set_id: 5,
+                                                    sort_order: 5
+                                                }
+                                            ]
+                                        }
+                                    })?,
+                                    GamePacket::serialize(&TunneledPacket {
+                                        unknown1: true,
                                         inner: CreateMinigameStageGroupInstance {
                                             header: MinigameHeader {
                                                 unknown1: 0,
@@ -653,8 +795,8 @@ impl GameServer {
                                             name_id: 5000,
                                             description_id: 6000,
                                             icon_id: 7000,
-                                            background_swf: "MiniGameReviveWindow.swf".to_string(),
-                                            default_game_id: 1,
+                                            background_swf: "TowerDefense.swf".to_string(),
+                                            default_game_id: 0,
                                             minigames: vec![
                                                 Minigame {
                                                     minigame_id: 1,
@@ -677,10 +819,32 @@ impl GameServer {
                                                     unknown18: 13,
                                                     completed: true,
                                                     link_group_id: 14
+                                                },
+                                                Minigame {
+                                                    minigame_id: 2,
+                                                    minigame_type: 2,
+                                                    link_name: "hello world2".to_string(),
+                                                    short_name: "hello world3".to_string(),
+                                                    unlocked: true,
+                                                    unknown6: 3,
+                                                    name_id: 4,
+                                                    description_id: 5,
+                                                    icon_set_id: 6,
+                                                    parent_minigame_id: 7,
+                                                    members_only: false,
+                                                    unknown12: 8,
+                                                    background_swf: "hello world".to_string(),
+                                                    min_players: 9,
+                                                    max_players: 10,
+                                                    stage_number: 12,
+                                                    required_item_id: 6,
+                                                    unknown18: 13,
+                                                    completed: true,
+                                                    link_group_id: 14
                                                 }
                                             ],
-                                            stage_progression: "MinigameIntroduction.swf".to_string(),
-                                            show_start_screen_on_play_next: false,
+                                            stage_progression: "TowerDefense.swf".to_string(),
+                                            show_start_screen_on_play_next: true,
                                             settings_icon_id: 9000
                                         }
                                     })?,
