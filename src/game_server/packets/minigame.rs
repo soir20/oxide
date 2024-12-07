@@ -189,9 +189,9 @@ pub struct MinigameStageGroupLink {
 pub struct MinigameStageGroupDefinition {
     pub guid: u32,
     pub unknown2: u32,
-    pub unknown3: u32,
+    pub name_id: u32,
     pub unknown4: u32,
-    pub unknown5: u32,
+    pub icon_set_id: u32,
     pub unknown6: String,
     pub unknown7: String,
     pub unknown8: bool,
