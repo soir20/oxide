@@ -1,7 +1,7 @@
 use std::backtrace::Backtrace;
 use std::collections::BTreeMap;
 use std::fmt::Display;
-use std::io::{Cursor, Error};
+use std::io::{Cursor, Error, Read};
 use std::path::Path;
 use std::time::Instant;
 use std::vec;
@@ -1045,6 +1045,10 @@ impl GameServer {
                                 })?,
                             ],
                         )]);
+                    } else {
+                        let mut buffer = Vec::new();
+                        cursor.read_to_end(&mut buffer)?;
+                        info!("Unknown minigame op code: {:?}, {:x?}", raw_op_code, buffer);
                     }
                 }
                 _ => info!("Unimplemented: {:?}, {:x?}", op_code, data),
