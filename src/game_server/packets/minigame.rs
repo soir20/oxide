@@ -31,7 +31,7 @@ pub struct MinigameHeader {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct UnknownInfoStruct {
+pub struct RewardBundle {
     pub unknown1: bool,
     pub unknown2: u32,
     pub unknown3: u32,
@@ -55,7 +55,7 @@ pub struct MinigameRewardBundle {
     pub unknown2: u32,
     pub unknown3: u32,
     pub unknown4: bool,
-    pub unknown5: UnknownInfoStruct,
+    pub reward_bundle: RewardBundle,
     pub unknown6: u32,
     pub unknown7: u32,
     pub unknown8: u32,
@@ -76,9 +76,9 @@ pub struct CreateMinigameInstance {
     pub unknown6: u32,
     pub unknown7: bool,
     pub unknown8: bool,
-    pub unknown9: UnknownInfoStruct,
-    pub unknown10: UnknownInfoStruct,
-    pub unknown11: UnknownInfoStruct,
+    pub reward_bundle1: RewardBundle,
+    pub reward_bundle2: RewardBundle,
+    pub reward_bundle3: RewardBundle,
     pub reward_bundles: Vec<MinigameRewardBundle>,
     pub unknown13: bool,
     pub unknown14: bool,
