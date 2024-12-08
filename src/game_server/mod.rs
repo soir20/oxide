@@ -35,9 +35,9 @@ use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
 use packets::item::ItemDefinition;
 use packets::login::{LoginRequest, WelcomeScreen, ZoneDetailsDone};
 use packets::minigame::{
-    CreateMinigameStageGroupInstance, Minigame, MinigameDefinitions,
+    CreateMinigameInstance, CreateMinigameStageGroupInstance, Minigame, MinigameDefinitions,
     MinigameHeader, MinigamePortalCategory, MinigamePortalEntry, MinigameStageDefinition,
-    MinigameStageGroupDefinition, MinigameStageGroupLink, ShowStageSelect,
+    MinigameStageGroupDefinition, MinigameStageGroupLink, RewardBundle, ShowStageSelect,
 };
 use packets::player_update::{Customization, InitCustomizations, QueueAnimation, UpdateWieldType};
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
@@ -907,6 +907,97 @@ impl GameServer {
                                                 unknown2: 0,
                                                 unknown3: 0
                                             },
+                                        }
+                                    })?,
+                                    GamePacket::serialize(&TunneledPacket {
+                                        unknown1: true,
+                                        inner: CreateMinigameInstance {
+                                            header:MinigameHeader{
+                                                unknown1: 0,
+                                                unknown2: 0,
+                                                unknown3: 0
+                                            },
+                                            unknown1: 1,
+                                            unknown2: 0,
+                                            unknown3: 0,
+                                            unknown4: 0,
+                                            unknown5: 0,
+                                            unknown6: 0,
+                                            unknown7: false,
+                                            unknown8: false,
+                                            reward_bundle1: RewardBundle {
+                                                unknown1: false,
+                                                unknown2: 0,
+                                                unknown3: 0,
+                                                unknown4: 0,
+                                                unknown5: 0,
+                                                unknown6: 0,
+                                                unknown7: 0,
+                                                unknown8: 0,
+                                                unknown9: 0,
+                                                unknown10: 0,
+                                                unknown11: 0,
+                                                unknown12: 0,
+                                                unknown13: 0,
+                                                unknown14: 0,
+                                                unknown15: 0,
+                                                unknown16: vec![],
+                                                unknown17: 0
+                                            },
+                                            reward_bundle2: RewardBundle {
+                                                unknown1: false,
+                                                unknown2: 0,
+                                                unknown3: 0,
+                                                unknown4: 0,
+                                                unknown5: 0,
+                                                unknown6: 0,
+                                                unknown7: 0,
+                                                unknown8: 0,
+                                                unknown9: 0,
+                                                unknown10: 0,
+                                                unknown11: 0,
+                                                unknown12: 0,
+                                                unknown13: 0,
+                                                unknown14: 0,
+                                                unknown15: 0,
+                                                unknown16: vec![],
+                                                unknown17: 0
+                                            },
+                                            reward_bundle3: RewardBundle {
+                                                unknown1: false,
+                                                unknown2: 0,
+                                                unknown3: 0,
+                                                unknown4: 0,
+                                                unknown5: 0,
+                                                unknown6: 0,
+                                                unknown7: 0,
+                                                unknown8: 0,
+                                                unknown9: 0,
+                                                unknown10: 0,
+                                                unknown11: 0,
+                                                unknown12: 0,
+                                                unknown13: 0,
+                                                unknown14: 0,
+                                                unknown15: 0,
+                                                unknown16: vec![],
+                                                unknown17: 0
+                                            },
+                                            reward_bundles: vec![],
+                                            unknown13: false,
+                                            unknown14: false,
+                                            unknown15: false,
+                                            unknown16: false,
+                                            unknown17: false,
+                                            unknown18: "".to_string(),
+                                            unknown19: 0,
+                                            unknown20: false,
+                                            unknown21: 0,
+                                            unknown22: false,
+                                            unknown23: false,
+                                            unknown24: false,
+                                            unknown25: 0,
+                                            unknown26: 0,
+                                            unknown27: 0
                                         }
                                     })?,
                                     GamePacket::serialize(&TunneledPacket {
