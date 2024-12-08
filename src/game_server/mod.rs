@@ -35,8 +35,8 @@ use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
 use packets::item::ItemDefinition;
 use packets::login::{LoginRequest, WelcomeScreen, ZoneDetailsDone};
 use packets::minigame::{
-    CreateMinigameStageGroupInstance, Minigame, MinigameDefinitions, MinigameHeader,
-    MinigamePortalCategory, MinigamePortalEntry, MinigameStageDefinition,
+    CreateMinigameStageGroupInstance, Minigame, MinigameDefinitions,
+    MinigameHeader, MinigamePortalCategory, MinigamePortalEntry, MinigameStageDefinition,
     MinigameStageGroupDefinition, MinigameStageGroupLink, ShowStageSelect,
 };
 use packets::player_update::{Customization, InitCustomizations, QueueAnimation, UpdateWieldType};
@@ -841,8 +841,8 @@ impl GameServer {
                                                     members_only: false,
                                                     unknown12: 8,
                                                     background_swf: "towerDefense".to_string(),
-                                                    min_players: 9,
-                                                    max_players: 10,
+                                                    min_players: 1,
+                                                    max_players: 1,
                                                     stage_number: 1,
                                                     required_item_id: 0,
                                                     unknown18: 13,
@@ -863,8 +863,8 @@ impl GameServer {
                                                     members_only: false,
                                                     unknown12: 8,
                                                     background_swf: "towerDefense".to_string(),
-                                                    min_players: 9,
-                                                    max_players: 10,
+                                                    min_players: 1,
+                                                    max_players: 1,
                                                     stage_number: 2,
                                                     required_item_id: 0,
                                                     unknown18: 13,
@@ -885,8 +885,8 @@ impl GameServer {
                                                     members_only: false,
                                                     unknown12: 8,
                                                     background_swf: "towerDefense".to_string(),
-                                                    min_players: 9,
-                                                    max_players: 10,
+                                                    min_players: 1,
+                                                    max_players: 1,
                                                     stage_number: 3,
                                                     required_item_id: 0,
                                                     unknown18: 13,
