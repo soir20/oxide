@@ -31,13 +31,14 @@ use handlers::unique_guid::{
 };
 use handlers::zone::{load_zones, teleport_within_zone, Zone, ZoneTemplate};
 use packets::client_update::{Health, Power, PreloadCharactersDone, Stat, StatId, Stats};
+use packets::command::StartFlashGame;
 use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
 use packets::item::ItemDefinition;
 use packets::login::{LoginRequest, WelcomeScreen, ZoneDetailsDone};
 use packets::minigame::{
     CreateMinigameInstance, CreateMinigameStageGroupInstance, Minigame, MinigameDefinitions,
     MinigameHeader, MinigamePortalCategory, MinigamePortalEntry, MinigameStageDefinition,
-    MinigameStageGroupDefinition, MinigameStageGroupLink, RewardBundle, ShowStageSelect,
+    MinigameStageGroupDefinition, MinigameStageGroupLink, RewardBundle, ShowStageSelect, StartGame,
 };
 use packets::player_update::{Customization, InitCustomizations, QueueAnimation, UpdateWieldType};
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
@@ -765,7 +766,7 @@ impl GameServer {
                                                     name_id: 30,
                                                     description_id: 40,
                                                     members_only: false,
-                                                    is_flash: false,
+                                                    is_flash: true,
                                                     is_micro: false,
                                                     is_active: true,
                                                     param1: 1,
@@ -988,7 +989,7 @@ impl GameServer {
                                             unknown15: false,
                                             unknown16: false,
                                             unknown17: false,
-                                            unknown18: "".to_string(),
+                                            unknown18: "MinigameFlashBackground.swf".to_string(),
                                             unknown19: 0,
                                             unknown20: false,
                                             unknown21: 0,
@@ -1017,6 +1018,34 @@ impl GameServer {
                 }
                 OpCode::Logout => {
                     // Allow the cleanup thread to log the player out on disconnect
+                }
+                OpCode::Minigame => {
+                    let raw_op_code = cursor.read_u16::<LittleEndian>()?;
+                    if raw_op_code == 6 {
+                        broadcasts.append(&mut vec![Broadcast::Single(
+                            sender,
+                            vec![
+                                GamePacket::serialize(&TunneledPacket {
+                                    unknown1: true,
+                                    inner: StartGame {
+                                        header: MinigameHeader {
+                                            unknown1: 0,
+                                            unknown2: 0,
+                                            unknown3: 0,
+                                        },
+                                    },
+                                })?,
+                                GamePacket::serialize(&TunneledPacket {
+                                    unknown1: true,
+                                    inner: StartFlashGame {
+                                        loader_script_name: "MiniGameFlash".to_string(),
+                                        game_swf_name: "AquaticAssault.swf".to_string(),
+                                        is_micro: false,
+                                    },
+                                })?,
+                            ],
+                        )]);
+                    }
                 }
                 _ => info!("Unimplemented: {:?}, {:x?}", op_code, data),
             },

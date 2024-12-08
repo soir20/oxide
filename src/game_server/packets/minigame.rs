@@ -11,6 +11,7 @@ use super::{GamePacket, OpCode};
 pub enum MinigameOpCode {
     MinigameDefinitions = 0x1,
     CreateMinigameInstance = 0x11,
+    StartGame = 0x12,
     CreateMinigameStageGroupInstance = 0x33,
     ShowStageSelect = 0x34,
 }
@@ -266,4 +267,15 @@ impl GamePacket for ShowStageSelect {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::ShowStageSelect;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct StartGame {
+    pub header: MinigameHeader,
+}
+
+impl GamePacket for StartGame {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::StartGame;
 }

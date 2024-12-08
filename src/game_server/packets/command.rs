@@ -8,8 +8,9 @@ use super::{GamePacket, OpCode, Rgba, Target};
 #[repr(u16)]
 pub enum CommandOpCode {
     InteractionList = 0x9,
-    SelectPlayer = 0xf,
+    StartFlashGame = 0xc,
     ChatBubbleColor = 0xe,
+    SelectPlayer = 0xf,
     PlaySoundOnTarget = 0x22,
 }
 
@@ -19,6 +20,18 @@ impl SerializePacket for CommandOpCode {
         buffer.write_u16::<LittleEndian>(*self as u16)?;
         Ok(())
     }
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct StartFlashGame {
+    pub loader_script_name: String,
+    pub game_swf_name: String,
+    pub is_micro: bool,
+}
+
+impl GamePacket for StartFlashGame {
+    type Header = CommandOpCode;
+    const HEADER: Self::Header = CommandOpCode::StartFlashGame;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
