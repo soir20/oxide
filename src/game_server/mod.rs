@@ -1052,7 +1052,7 @@ impl GameServer {
                         info!("START GAME PACKET: {:?}, {:x?}", raw_op_code, buffer);
                     } else if raw_op_code == 0xf {
                         let payload_packet = FlashPayload::deserialize(&mut cursor)?;
-                        if payload_packet.payload == "FRServer_RequestStageId\0".to_string() {
+                        if payload_packet.payload == *"FRServer_RequestStageId\0" {
                             info!("SENDING STAGE ID");
                             broadcasts.append(&mut vec![Broadcast::Single(
                                 sender,
