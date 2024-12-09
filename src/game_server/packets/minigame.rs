@@ -10,6 +10,7 @@ use super::{GamePacket, OpCode};
 #[repr(u8)]
 pub enum MinigameOpCode {
     MinigameDefinitions = 0x1,
+    FlashPayload = 0xf,
     CreateMinigameInstance = 0x11,
     StartGame = 0x12,
     CreateMinigameStageGroupInstance = 0x33,
@@ -278,4 +279,16 @@ impl GamePacket for StartGame {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::StartGame;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct FlashPayload {
+    pub header: MinigameHeader,
+    pub payload: String,
+}
+
+impl GamePacket for FlashPayload {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::FlashPayload;
 }

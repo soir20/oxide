@@ -36,9 +36,10 @@ use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
 use packets::item::ItemDefinition;
 use packets::login::{LoginRequest, WelcomeScreen, ZoneDetailsDone};
 use packets::minigame::{
-    CreateMinigameInstance, CreateMinigameStageGroupInstance, Minigame, MinigameDefinitions,
-    MinigameHeader, MinigamePortalCategory, MinigamePortalEntry, MinigameStageDefinition,
-    MinigameStageGroupDefinition, MinigameStageGroupLink, RewardBundle, ShowStageSelect, StartGame,
+    CreateMinigameInstance, CreateMinigameStageGroupInstance, FlashPayload, Minigame,
+    MinigameDefinitions, MinigameHeader, MinigamePortalCategory, MinigamePortalEntry,
+    MinigameStageDefinition, MinigameStageGroupDefinition, MinigameStageGroupLink, RewardBundle,
+    ShowStageSelect, StartGame,
 };
 use packets::player_update::{Customization, InitCustomizations, QueueAnimation, UpdateWieldType};
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
@@ -1020,7 +1021,8 @@ impl GameServer {
                     // Allow the cleanup thread to log the player out on disconnect
                 }
                 OpCode::Minigame => {
-                    let raw_op_code = cursor.read_u16::<LittleEndian>()?;
+                    info!("MINIGAME PACKET");
+                    let raw_op_code = cursor.read_u8()?;
                     if raw_op_code == 6 {
                         broadcasts.append(&mut vec![Broadcast::Single(
                             sender,
@@ -1045,6 +1047,27 @@ impl GameServer {
                                 })?,
                             ],
                         )]);
+                        let mut buffer = Vec::new();
+                        cursor.read_to_end(&mut buffer)?;
+                        info!("START GAME PACKET: {:?}, {:x?}", raw_op_code, buffer);
+                    } else if raw_op_code == 0xf {
+                        broadcasts.append(&mut vec![Broadcast::Single(
+                            sender,
+                            vec![GamePacket::serialize(&TunneledPacket {
+                                unknown1: true,
+                                inner: FlashPayload {
+                                    header: MinigameHeader {
+                                        unknown1: 0,
+                                        unknown2: 0,
+                                        unknown3: 0,
+                                    },
+                                    payload: "VOnServerSetStageIdMsg\t1".to_string(),
+                                },
+                            })?],
+                        )]);
+                        let mut buffer = Vec::new();
+                        cursor.read_to_end(&mut buffer)?;
+                        info!("PAYLOAD PACKET: {:?}, {:x?}", raw_op_code, buffer);
                     } else {
                         let mut buffer = Vec::new();
                         cursor.read_to_end(&mut buffer)?;
