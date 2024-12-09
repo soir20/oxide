@@ -13,6 +13,8 @@ pub enum MinigameOpCode {
     FlashPayload = 0xf,
     CreateMinigameInstance = 0x11,
     StartGame = 0x12,
+    GameOver = 0x13,
+    EndScore = 0x30,
     CreateMinigameStageGroupInstance = 0x33,
     ShowStageSelect = 0x34,
 }
@@ -30,6 +32,16 @@ pub struct MinigameHeader {
     pub unknown1: i32,
     pub unknown2: i32,
     pub unknown3: i32,
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct UnknownScoreArray {
+    pub unknown1: String,
+    pub unknown2: u32,
+    pub unknown3: u32,
+    pub unknown4: u32,
+    pub unknown5: u32,
+    pub unknown6: u32,
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -291,4 +303,32 @@ impl GamePacket for FlashPayload {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::FlashPayload;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct EndScore {
+    pub header: MinigameHeader,
+    pub unknown1: Vec<UnknownScoreArray>,
+    pub unknown2: bool,
+}
+
+impl GamePacket for EndScore {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::EndScore;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct GameOver {
+    pub header: MinigameHeader,
+    pub unknown1: bool,
+    pub unknown2: u32,
+    pub unknown3: u32,
+    pub unknown4: u32,
+}
+
+impl GamePacket for GameOver {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::GameOver;
 }
