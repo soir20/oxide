@@ -1051,23 +1051,28 @@ impl GameServer {
                         cursor.read_to_end(&mut buffer)?;
                         info!("START GAME PACKET: {:?}, {:x?}", raw_op_code, buffer);
                     } else if raw_op_code == 0xf {
-                        broadcasts.append(&mut vec![Broadcast::Single(
-                            sender,
-                            vec![GamePacket::serialize(&TunneledPacket {
-                                unknown1: true,
-                                inner: FlashPayload {
-                                    header: MinigameHeader {
-                                        unknown1: 1,
-                                        unknown2: -1,
-                                        unknown3: -1,
+                        let payload_packet = FlashPayload::deserialize(&mut cursor)?;
+                        if payload_packet.payload == "FRServer_RequestStageId\0".to_string() {
+                            info!("SENDING STAGE ID");
+                            broadcasts.append(&mut vec![Broadcast::Single(
+                                sender,
+                                vec![GamePacket::serialize(&TunneledPacket {
+                                    unknown1: true,
+                                    inner: FlashPayload {
+                                        header: MinigameHeader {
+                                            unknown1: 1,
+                                            unknown2: -1,
+                                            unknown3: -1,
+                                        },
+                                        payload: "VOnServerSetStageIdMsg\t1\0".to_string(),
                                     },
-                                    payload: "VOnServerSetStageIdMsg\t1".to_string(),
-                                },
-                            })?],
-                        )]);
-                        let mut buffer = Vec::new();
-                        cursor.read_to_end(&mut buffer)?;
-                        info!("PAYLOAD PACKET: {:?}, {:x?}", raw_op_code, buffer);
+                                })?],
+                            )]);
+                        } else {
+                            let mut buffer = Vec::new();
+                            cursor.read_to_end(&mut buffer)?;
+                            info!("PAYLOAD PACKET: {:?}, {:x?}", raw_op_code, buffer);
+                        }
                     } else {
                         let mut buffer = Vec::new();
                         cursor.read_to_end(&mut buffer)?;
