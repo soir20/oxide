@@ -27,9 +27,9 @@ impl SerializePacket for MinigameOpCode {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct MinigameHeader {
-    pub unknown1: u32,
-    pub unknown2: u32,
-    pub unknown3: u32,
+    pub unknown1: i32,
+    pub unknown2: i32,
+    pub unknown3: i32,
 }
 
 #[derive(SerializePacket, DeserializePacket)]

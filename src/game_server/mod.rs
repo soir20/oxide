@@ -650,8 +650,8 @@ impl GameServer {
                                         inner: MinigameDefinitions {
                                             header: MinigameHeader {
                                                 unknown1: 0,
-                                                unknown2: 0,
-                                                unknown3: 0
+                                                unknown2: -1,
+                                                unknown3: -1
                                             },
                                             stages: vec![
                                                 MinigameStageDefinition {
@@ -819,8 +819,8 @@ impl GameServer {
                                         inner: CreateMinigameStageGroupInstance {
                                             header: MinigameHeader {
                                                 unknown1: 0,
-                                                unknown2: 0,
-                                                unknown3: 0
+                                                unknown2: -1,
+                                                unknown3: -1
                                             },
                                             group_id: 10000,
                                             name_id: 5000,
@@ -906,8 +906,8 @@ impl GameServer {
                                         inner: ShowStageSelect {
                                             header: MinigameHeader {
                                                 unknown1: 0,
-                                                unknown2: 0,
-                                                unknown3: 0
+                                                unknown2: -1,
+                                                unknown3: -1
                                             },
                                         }
                                     })?,
@@ -915,9 +915,9 @@ impl GameServer {
                                         unknown1: true,
                                         inner: CreateMinigameInstance {
                                             header:MinigameHeader{
-                                                unknown1: 0,
-                                                unknown2: 0,
-                                                unknown3: 0
+                                                unknown1: 1,
+                                                unknown2: -1,
+                                                unknown3: -1
                                             },
                                             unknown1: 1,
                                             unknown2: 0,
@@ -1031,9 +1031,9 @@ impl GameServer {
                                     unknown1: true,
                                     inner: StartGame {
                                         header: MinigameHeader {
-                                            unknown1: 0,
-                                            unknown2: 0,
-                                            unknown3: 0,
+                                            unknown1: 1,
+                                            unknown2: -1,
+                                            unknown3: -1,
                                         },
                                     },
                                 })?,
@@ -1057,9 +1057,9 @@ impl GameServer {
                                 unknown1: true,
                                 inner: FlashPayload {
                                     header: MinigameHeader {
-                                        unknown1: 0,
-                                        unknown2: 0,
-                                        unknown3: 0,
+                                        unknown1: 1,
+                                        unknown2: -1,
+                                        unknown3: -1,
                                     },
                                     payload: "VOnServerSetStageIdMsg\t1".to_string(),
                                 },
