@@ -102,7 +102,7 @@ pub struct CreateMinigameInstance {
     pub unknown14: bool,
     pub unknown15: bool,
     pub unknown16: bool,
-    pub unknown17: bool,
+    pub show_end_score_screen: bool,
     pub unknown18: String,
     pub unknown19: u32,
     pub unknown20: bool,
