@@ -36,10 +36,7 @@ use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
 use packets::item::ItemDefinition;
 use packets::login::{LoginRequest, WelcomeScreen, ZoneDetailsDone};
 use packets::minigame::{
-    CreateMinigameInstance, CreateMinigameStageGroupInstance, EndScore, FlashPayload,
-    GameCreationResult, GameOver, Minigame, MinigameDefinitions, MinigameHeader,
-    MinigamePortalCategory, MinigamePortalEntry, MinigameStageDefinition,
-    MinigameStageGroupDefinition, MinigameStageGroupLink, RewardBundle, ShowStageSelect, StartGame,
+    CreateMinigameInstance, CreateMinigameStageGroupInstance, LeaveMinigame, EndScore, FlashPayload, GameCreationResult, GameOver, Minigame, MinigameDefinitions, MinigameHeader, MinigamePortalCategory, MinigamePortalEntry, MinigameStageDefinition, MinigameStageGroupDefinition, MinigameStageGroupLink, RewardBundle, ShowStageSelect, StartGame
 };
 use packets::player_update::{Customization, InitCustomizations, QueueAnimation, UpdateWieldType};
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
@@ -1103,6 +1100,16 @@ impl GameServer {
                                             unknown2: 0,
                                             unknown3: 0,
                                             unknown4: 0,
+                                        },
+                                    })?,
+                                    GamePacket::serialize(&TunneledPacket {
+                                        unknown1: true,
+                                        inner: LeaveMinigame {
+                                            header: MinigameHeader {
+                                                unknown1: 1,
+                                                unknown2: -1,
+                                                unknown3: -1,
+                                            },
                                         },
                                     })?,
                                 ],

@@ -14,6 +14,7 @@ pub enum MinigameOpCode {
     CreateMinigameInstance = 0x11,
     StartGame = 0x12,
     GameOver = 0x13,
+    LeaveMinigame = 0x14,
     EndScore = 0x30,
     CreateMinigameStageGroupInstance = 0x33,
     ShowStageSelect = 0x34,
@@ -332,6 +333,17 @@ impl GamePacket for GameOver {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::GameOver;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct LeaveMinigame {
+    pub header: MinigameHeader,
+}
+
+impl GamePacket for LeaveMinigame {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::LeaveMinigame;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
