@@ -36,7 +36,11 @@ use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
 use packets::item::ItemDefinition;
 use packets::login::{LoginRequest, WelcomeScreen, ZoneDetailsDone};
 use packets::minigame::{
-    CreateMinigameInstance, CreateMinigameStageGroupInstance, LeaveMinigame, EndScore, FlashPayload, GameCreationResult, GameOver, Minigame, MinigameDefinitions, MinigameHeader, MinigamePortalCategory, MinigamePortalEntry, MinigameStageDefinition, MinigameStageGroupDefinition, MinigameStageGroupLink, RewardBundle, ShowStageSelect, StartGame
+    CreateMinigameInstance, CreateMinigameStageGroupInstance, EndScore, FlashPayload,
+    GameCreationResult, GameOver, LeaveMinigame, Minigame, MinigameDefinitions, MinigameHeader,
+    MinigamePortalCategory, MinigamePortalEntry, MinigameStageDefinition,
+    MinigameStageGroupDefinition, MinigameStageGroupLink, RewardBundle, ScoreEntry,
+    ShowStageSelect, StartGame,
 };
 use packets::player_update::{Customization, InitCustomizations, QueueAnimation, UpdateWieldType};
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
@@ -922,8 +926,8 @@ impl GameServer {
                                             unknown4: 0,
                                             unknown5: 0,
                                             unknown6: 0,
-                                            unknown7: false,
-                                            unknown8: false,
+                                            unknown7: true,
+                                            unknown8: true,
                                             reward_bundle1: RewardBundle {
                                                 unknown1: false,
                                                 unknown2: 0,
@@ -982,18 +986,18 @@ impl GameServer {
                                                 unknown17: 0
                                             },
                                             reward_bundles: vec![],
-                                            unknown13: false,
-                                            unknown14: false,
-                                            unknown15: false,
-                                            unknown16: false,
-                                            unknown17: false,
+                                            unknown13: true,
+                                            unknown14: true,
+                                            unknown15: true,
+                                            unknown16: true,
+                                            unknown17: true,
                                             unknown18: "MinigameFlashBackground.swf".to_string(),
                                             unknown19: 0,
-                                            unknown20: false,
+                                            unknown20: true,
                                             unknown21: 0,
-                                            unknown22: false,
-                                            unknown23: false,
-                                            unknown24: false,
+                                            unknown22: true,
+                                            unknown23: true,
+                                            unknown24: true,
                                             unknown25: 0,
                                             unknown26: 0,
                                             unknown27: 0
@@ -1084,7 +1088,14 @@ impl GameServer {
                                                 unknown2: -1,
                                                 unknown3: -1,
                                             },
-                                            unknown1: vec![],
+                                            scores: vec![ScoreEntry {
+                                                entry_text: "test entry text".to_string(),
+                                                unknown2: 0,
+                                                unknown3: 0,
+                                                unknown4: 0,
+                                                unknown5: 0,
+                                                unknown6: 0,
+                                            }],
                                             unknown2: false,
                                         },
                                     })?,
@@ -1096,7 +1107,7 @@ impl GameServer {
                                                 unknown2: -1,
                                                 unknown3: -1,
                                             },
-                                            unknown1: false,
+                                            won: true,
                                             unknown2: 0,
                                             unknown3: 0,
                                             unknown4: 0,

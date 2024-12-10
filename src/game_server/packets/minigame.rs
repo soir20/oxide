@@ -37,8 +37,8 @@ pub struct MinigameHeader {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct UnknownScoreArray {
-    pub unknown1: String,
+pub struct ScoreEntry {
+    pub entry_text: String,
     pub unknown2: u32,
     pub unknown3: u32,
     pub unknown4: u32,
@@ -310,7 +310,7 @@ impl GamePacket for FlashPayload {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct EndScore {
     pub header: MinigameHeader,
-    pub unknown1: Vec<UnknownScoreArray>,
+    pub scores: Vec<ScoreEntry>,
     pub unknown2: bool,
 }
 
@@ -323,7 +323,7 @@ impl GamePacket for EndScore {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct GameOver {
     pub header: MinigameHeader,
-    pub unknown1: bool,
+    pub won: bool,
     pub unknown2: u32,
     pub unknown3: u32,
     pub unknown4: u32,
