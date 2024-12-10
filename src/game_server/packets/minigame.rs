@@ -17,6 +17,7 @@ pub enum MinigameOpCode {
     EndScore = 0x30,
     CreateMinigameStageGroupInstance = 0x33,
     ShowStageSelect = 0x34,
+    GameCreationResult = 0x44,
 }
 
 impl SerializePacket for MinigameOpCode {
@@ -331,4 +332,16 @@ impl GamePacket for GameOver {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::GameOver;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct GameCreationResult {
+    pub header: MinigameHeader,
+    pub was_successful: bool,
+}
+
+impl GamePacket for GameCreationResult {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::GameCreationResult;
 }
