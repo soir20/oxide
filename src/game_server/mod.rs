@@ -36,7 +36,7 @@ use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
 use packets::item::ItemDefinition;
 use packets::login::{LoginRequest, WelcomeScreen, ZoneDetailsDone};
 use packets::minigame::{
-    CreateMinigameInstance, CreateMinigameStageGroupInstance, EndScore, FlashPayload,
+    CancelGame, CreateMinigameInstance, CreateMinigameStageGroupInstance, EndScore, FlashPayload,
     GameCreationResult, GameOver, LeaveMinigame, Minigame, MinigameDefinitions, MinigameHeader,
     MinigamePortalCategory, MinigamePortalEntry, MinigameStageDefinition,
     MinigameStageGroupDefinition, MinigameStageGroupLink, RewardBundle, ScoreEntry,
@@ -1062,68 +1062,76 @@ impl GameServer {
                         let mut buffer = Vec::new();
                         cursor.read_to_end(&mut buffer)?;
                         info!("START GAME PACKET: {:?}, {:x?}", raw_op_code, buffer);
+                    }
+                    if raw_op_code == 7 {
+                        broadcasts.append(&mut vec![Broadcast::Single(
+                            sender,
+                            vec![
+                                GamePacket::serialize(&TunneledPacket {
+                                    unknown1: true,
+                                    inner: CancelGame {
+                                        header: MinigameHeader {
+                                            unknown1: 1,
+                                            unknown2: -1,
+                                            unknown3: -1,
+                                        },
+                                    },
+                                })?,
+                                GamePacket::serialize(&TunneledPacket {
+                                    unknown1: true,
+                                    inner: EndScore {
+                                        header: MinigameHeader {
+                                            unknown1: 1,
+                                            unknown2: -1,
+                                            unknown3: -1,
+                                        },
+                                        scores: vec![],
+                                        unknown2: false,
+                                    },
+                                })?,
+                                GamePacket::serialize(&TunneledPacket {
+                                    unknown1: true,
+                                    inner: GameOver {
+                                        header: MinigameHeader {
+                                            unknown1: 1,
+                                            unknown2: -1,
+                                            unknown3: -1,
+                                        },
+                                        won: false,
+                                        unknown2: 0,
+                                        unknown3: 0,
+                                        unknown4: 0,
+                                    },
+                                })?,
+                                GamePacket::serialize(&TunneledPacket {
+                                    unknown1: true,
+                                    inner: LeaveMinigame {
+                                        header: MinigameHeader {
+                                            unknown1: 1,
+                                            unknown2: -1,
+                                            unknown3: -1,
+                                        },
+                                    },
+                                })?,
+                            ],
+                        )]);
                     } else if raw_op_code == 0xf {
                         let payload_packet = FlashPayload::deserialize(&mut cursor)?;
                         if payload_packet.payload == *"FRServer_RequestStageId\0" {
                             info!("SENDING STAGE ID");
                             broadcasts.append(&mut vec![Broadcast::Single(
                                 sender,
-                                vec![
-                                    GamePacket::serialize(&TunneledPacket {
-                                        unknown1: true,
-                                        inner: FlashPayload {
-                                            header: MinigameHeader {
-                                                unknown1: 1,
-                                                unknown2: -1,
-                                                unknown3: -1,
-                                            },
-                                            payload: "VOnServerSetStageIdMsg\t1\0".to_string(),
+                                vec![GamePacket::serialize(&TunneledPacket {
+                                    unknown1: true,
+                                    inner: FlashPayload {
+                                        header: MinigameHeader {
+                                            unknown1: 1,
+                                            unknown2: -1,
+                                            unknown3: -1,
                                         },
-                                    })?,
-                                    GamePacket::serialize(&TunneledPacket {
-                                        unknown1: true,
-                                        inner: EndScore {
-                                            header: MinigameHeader {
-                                                unknown1: 1,
-                                                unknown2: -1,
-                                                unknown3: -1,
-                                            },
-                                            scores: vec![ScoreEntry {
-                                                entry_text: "test entry text".to_string(),
-                                                unknown2: 0,
-                                                unknown3: 0,
-                                                unknown4: 0,
-                                                unknown5: 0,
-                                                unknown6: 0,
-                                            }],
-                                            unknown2: false,
-                                        },
-                                    })?,
-                                    GamePacket::serialize(&TunneledPacket {
-                                        unknown1: true,
-                                        inner: GameOver {
-                                            header: MinigameHeader {
-                                                unknown1: 1,
-                                                unknown2: -1,
-                                                unknown3: -1,
-                                            },
-                                            won: true,
-                                            unknown2: 0,
-                                            unknown3: 0,
-                                            unknown4: 0,
-                                        },
-                                    })?,
-                                    GamePacket::serialize(&TunneledPacket {
-                                        unknown1: true,
-                                        inner: LeaveMinigame {
-                                            header: MinigameHeader {
-                                                unknown1: 1,
-                                                unknown2: -1,
-                                                unknown3: -1,
-                                            },
-                                        },
-                                    })?,
-                                ],
+                                        payload: "VOnServerSetStageIdMsg\t1\0".to_string(),
+                                    },
+                                })?],
                             )]);
                         } else {
                             let mut buffer = Vec::new();

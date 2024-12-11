@@ -11,6 +11,7 @@ use super::{GamePacket, OpCode};
 pub enum MinigameOpCode {
     MinigameDefinitions = 0x1,
     FlashPayload = 0xf,
+    CancelGame = 0x7,
     CreateMinigameInstance = 0x11,
     StartGame = 0x12,
     GameOver = 0x13,
@@ -293,6 +294,17 @@ impl GamePacket for StartGame {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::StartGame;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct CancelGame {
+    pub header: MinigameHeader,
+}
+
+impl GamePacket for CancelGame {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::CancelGame;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
