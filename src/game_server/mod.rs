@@ -281,9 +281,9 @@ impl GameServer {
                         unknown1: true,
                         inner: CreateMinigameInstance {
                             header: MinigameHeader {
-                                unknown1: 1,
+                                game_guid: 1,
                                 unknown2: -1,
-                                unknown3: -1,
+                                stage_group_guid: -1,
                             },
                             unknown1: 1,
                             unknown2: 0,
@@ -741,9 +741,9 @@ impl GameServer {
                                         unknown1: true,
                                         inner: MinigameDefinitions {
                                             header: MinigameHeader {
-                                                unknown1: 0,
+                                                game_guid: 0,
                                                 unknown2: -1,
-                                                unknown3: -1
+                                                stage_group_guid: -1
                                             },
                                             stages: vec![
                                                 MinigameStageDefinition {
@@ -910,9 +910,9 @@ impl GameServer {
                                         unknown1: true,
                                         inner: CreateMinigameStageGroupInstance {
                                             header: MinigameHeader {
-                                                unknown1: 0,
+                                                game_guid: 0,
                                                 unknown2: -1,
-                                                unknown3: -1
+                                                stage_group_guid: -1
                                             },
                                             group_id: 10000,
                                             name_id: 5000,
@@ -997,9 +997,9 @@ impl GameServer {
                                         unknown1: true,
                                         inner: ShowStageSelect {
                                             header: MinigameHeader {
-                                                unknown1: 0,
+                                                game_guid: 0,
                                                 unknown2: -1,
-                                                unknown3: -1
+                                                stage_group_guid: -1
                                             },
                                         }
                                     })?,
@@ -1053,9 +1053,9 @@ impl GameServer {
                                     unknown1: true,
                                     inner: StartGame {
                                         header: MinigameHeader {
-                                            unknown1: 1,
+                                            game_guid: 1,
                                             unknown2: -1,
-                                            unknown3: -1,
+                                            stage_group_guid: -1,
                                         },
                                     },
                                 })?,
@@ -1071,9 +1071,9 @@ impl GameServer {
                                     unknown1: true,
                                     inner: GameCreationResult {
                                         header: MinigameHeader {
-                                            unknown1: 1,
+                                            game_guid: 1,
                                             unknown2: -1,
-                                            unknown3: -1,
+                                            stage_group_guid: -1,
                                         },
                                         was_successful: true,
                                     },
@@ -1092,9 +1092,9 @@ impl GameServer {
                                     unknown1: true,
                                     inner: CancelGame {
                                         header: MinigameHeader {
-                                            unknown1: 1,
+                                            game_guid: 1,
                                             unknown2: -1,
-                                            unknown3: -1,
+                                            stage_group_guid: -1,
                                         },
                                     },
                                 })?,
@@ -1102,9 +1102,9 @@ impl GameServer {
                                     unknown1: true,
                                     inner: EndScore {
                                         header: MinigameHeader {
-                                            unknown1: 1,
+                                            game_guid: 1,
                                             unknown2: -1,
-                                            unknown3: -1,
+                                            stage_group_guid: -1,
                                         },
                                         scores: vec![],
                                         unknown2: false,
@@ -1114,9 +1114,9 @@ impl GameServer {
                                     unknown1: true,
                                     inner: GameOver {
                                         header: MinigameHeader {
-                                            unknown1: 1,
+                                            game_guid: 1,
                                             unknown2: -1,
-                                            unknown3: -1,
+                                            stage_group_guid: -1,
                                         },
                                         won: false,
                                         unknown2: 0,
@@ -1128,9 +1128,9 @@ impl GameServer {
                                     unknown1: true,
                                     inner: LeaveMinigame {
                                         header: MinigameHeader {
-                                            unknown1: 1,
+                                            game_guid: 1,
                                             unknown2: -1,
-                                            unknown3: -1,
+                                            stage_group_guid: -1,
                                         },
                                     },
                                 })?,
@@ -1146,9 +1146,9 @@ impl GameServer {
                                     unknown1: true,
                                     inner: FlashPayload {
                                         header: MinigameHeader {
-                                            unknown1: 1,
+                                            game_guid: 1,
                                             unknown2: -1,
-                                            unknown3: -1,
+                                            stage_group_guid: -1,
                                         },
                                         payload: "VOnServerSetStageIdMsg\t1\0".to_string(),
                                     },
