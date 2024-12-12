@@ -34,13 +34,12 @@ use packets::client_update::{Health, Power, PreloadCharactersDone, Stat, StatId,
 use packets::command::StartFlashGame;
 use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
 use packets::item::ItemDefinition;
-use packets::login::{LoginRequest, WelcomeScreen, ZoneDetailsDone};
+use packets::login::{ClientBeginZoning, LoginRequest, WelcomeScreen, ZoneDetailsDone};
 use packets::minigame::{
     CancelGame, CreateMinigameInstance, CreateMinigameStageGroupInstance, EndScore, FlashPayload,
     GameCreationResult, GameOver, LeaveMinigame, Minigame, MinigameDefinitions, MinigameHeader,
     MinigamePortalCategory, MinigamePortalEntry, MinigameStageDefinition,
-    MinigameStageGroupDefinition, MinigameStageGroupLink, RewardBundle, ScoreEntry,
-    ShowStageSelect, StartGame,
+    MinigameStageGroupDefinition, MinigameStageGroupLink, RewardBundle, ShowStageSelect, StartGame,
 };
 use packets::player_update::{Customization, InitCustomizations, QueueAnimation, UpdateWieldType};
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
@@ -49,7 +48,7 @@ use packets::tunnel::{TunneledPacket, TunneledWorldPacket};
 use packets::ui::ExecuteScriptWithParams;
 use packets::update_position::UpdatePlayerPosition;
 use packets::zone::ZoneTeleportRequest;
-use packets::{GamePacket, OpCode};
+use packets::{GamePacket, OpCode, Pos};
 use rand::Rng;
 
 use crate::{info, teleport_to_zone};
@@ -277,6 +276,98 @@ impl GameServer {
                         inner: GamePacket::serialize(&self.categories)?,
                     };
                     sender_only_packets.push(GamePacket::serialize(&categories)?);
+
+                    sender_only_packets.push(GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: CreateMinigameInstance {
+                            header: MinigameHeader {
+                                unknown1: 1,
+                                unknown2: -1,
+                                unknown3: -1,
+                            },
+                            unknown1: 1,
+                            unknown2: 0,
+                            unknown3: 0,
+                            unknown4: 0,
+                            unknown5: 0,
+                            unknown6: 0,
+                            unknown7: false,
+                            unknown8: false,
+                            reward_bundle1: RewardBundle {
+                                unknown1: false,
+                                unknown2: 0,
+                                unknown3: 0,
+                                unknown4: 0,
+                                unknown5: 0,
+                                unknown6: 0,
+                                unknown7: 0,
+                                unknown8: 0,
+                                unknown9: 0,
+                                unknown10: 0,
+                                unknown11: 0,
+                                unknown12: 0,
+                                unknown13: 0,
+                                unknown14: 0,
+                                unknown15: 0,
+                                unknown16: vec![],
+                                unknown17: 0,
+                            },
+                            reward_bundle2: RewardBundle {
+                                unknown1: false,
+                                unknown2: 0,
+                                unknown3: 0,
+                                unknown4: 0,
+                                unknown5: 0,
+                                unknown6: 0,
+                                unknown7: 0,
+                                unknown8: 0,
+                                unknown9: 0,
+                                unknown10: 0,
+                                unknown11: 0,
+                                unknown12: 0,
+                                unknown13: 0,
+                                unknown14: 0,
+                                unknown15: 0,
+                                unknown16: vec![],
+                                unknown17: 0,
+                            },
+                            reward_bundle3: RewardBundle {
+                                unknown1: false,
+                                unknown2: 0,
+                                unknown3: 0,
+                                unknown4: 0,
+                                unknown5: 0,
+                                unknown6: 0,
+                                unknown7: 0,
+                                unknown8: 0,
+                                unknown9: 0,
+                                unknown10: 0,
+                                unknown11: 0,
+                                unknown12: 0,
+                                unknown13: 0,
+                                unknown14: 0,
+                                unknown15: 0,
+                                unknown16: vec![],
+                                unknown17: 0,
+                            },
+                            reward_bundles: vec![],
+                            unknown13: false,
+                            unknown14: false,
+                            unknown15: false,
+                            unknown16: false,
+                            show_end_score_screen: true,
+                            unknown18: "HowToAquaticAssault.swf".to_string(),
+                            unknown19: 0,
+                            unknown20: false,
+                            unknown21: 0,
+                            unknown22: false,
+                            unknown23: false,
+                            unknown24: false,
+                            unknown25: 0,
+                            unknown26: 0,
+                            unknown27: 0,
+                        },
+                    })?);
 
                     let item_groups = TunneledPacket {
                         unknown1: true,
@@ -668,7 +759,7 @@ impl GameServer {
                                                     unknown10: 8000,
                                                     unknown11: 9000,
                                                     start_sound_id: 10000,
-                                                    unknown13: "".to_string(),
+                                                    unknown13: "HowToAquaticAssault.swf".to_string(),
                                                     unknown14: 11000,
                                                     unknown15: 12000,
                                                     unknown16: 13000
@@ -686,7 +777,7 @@ impl GameServer {
                                                     unknown10: 8000,
                                                     unknown11: 9000,
                                                     start_sound_id: 10000,
-                                                    unknown13: "".to_string(),
+                                                    unknown13: "HowToAquaticAssault.swf".to_string(),
                                                     unknown14: 11000,
                                                     unknown15: 12000,
                                                     unknown16: 13000
@@ -704,7 +795,7 @@ impl GameServer {
                                                     unknown10: 8000,
                                                     unknown11: 9000,
                                                     start_sound_id: 10000,
-                                                    unknown13: "".to_string(),
+                                                    unknown13: "HowToAquaticAssault.swf".to_string(),
                                                     unknown14: 11000,
                                                     unknown15: 12000,
                                                     unknown16: 13000
@@ -778,7 +869,7 @@ impl GameServer {
                                                     is_game_of_day: false,
                                                     portal_category_guid: 2,
                                                     sort_order: 90,
-                                                    tutorial_swf: "".to_string()
+                                                    tutorial_swf: "HowToAquaticAssault.swf".to_string()
                                                 }
                                             ],
                                             portal_categories: vec![
@@ -914,97 +1005,6 @@ impl GameServer {
                                     })?,
                                     GamePacket::serialize(&TunneledPacket {
                                         unknown1: true,
-                                        inner: CreateMinigameInstance {
-                                            header:MinigameHeader{
-                                                unknown1: 1,
-                                                unknown2: -1,
-                                                unknown3: -1
-                                            },
-                                            unknown1: 1,
-                                            unknown2: 0,
-                                            unknown3: 0,
-                                            unknown4: 0,
-                                            unknown5: 0,
-                                            unknown6: 0,
-                                            unknown7: false,
-                                            unknown8: false,
-                                            reward_bundle1: RewardBundle {
-                                                unknown1: false,
-                                                unknown2: 0,
-                                                unknown3: 0,
-                                                unknown4: 0,
-                                                unknown5: 0,
-                                                unknown6: 0,
-                                                unknown7: 0,
-                                                unknown8: 0,
-                                                unknown9: 0,
-                                                unknown10: 0,
-                                                unknown11: 0,
-                                                unknown12: 0,
-                                                unknown13: 0,
-                                                unknown14: 0,
-                                                unknown15: 0,
-                                                unknown16: vec![],
-                                                unknown17: 0
-                                            },
-                                            reward_bundle2: RewardBundle {
-                                                unknown1: false,
-                                                unknown2: 0,
-                                                unknown3: 0,
-                                                unknown4: 0,
-                                                unknown5: 0,
-                                                unknown6: 0,
-                                                unknown7: 0,
-                                                unknown8: 0,
-                                                unknown9: 0,
-                                                unknown10: 0,
-                                                unknown11: 0,
-                                                unknown12: 0,
-                                                unknown13: 0,
-                                                unknown14: 0,
-                                                unknown15: 0,
-                                                unknown16: vec![],
-                                                unknown17: 0
-                                            },
-                                            reward_bundle3: RewardBundle {
-                                                unknown1: false,
-                                                unknown2: 0,
-                                                unknown3: 0,
-                                                unknown4: 0,
-                                                unknown5: 0,
-                                                unknown6: 0,
-                                                unknown7: 0,
-                                                unknown8: 0,
-                                                unknown9: 0,
-                                                unknown10: 0,
-                                                unknown11: 0,
-                                                unknown12: 0,
-                                                unknown13: 0,
-                                                unknown14: 0,
-                                                unknown15: 0,
-                                                unknown16: vec![],
-                                                unknown17: 0
-                                            },
-                                            reward_bundles: vec![],
-                                            unknown13: false,
-                                            unknown14: false,
-                                            unknown15: false,
-                                            unknown16: false,
-                                            show_end_score_screen: true,
-                                            unknown18: "MinigameFlashBackground.swf".to_string(),
-                                            unknown19: 0,
-                                            unknown20: false,
-                                            unknown21: 0,
-                                            unknown22: false,
-                                            unknown23: false,
-                                            unknown24: false,
-                                            unknown25: 0,
-                                            unknown26: 0,
-                                            unknown27: 0
-                                        }
-                                    })?,
-                                    GamePacket::serialize(&TunneledPacket {
-                                        unknown1: true,
                                         inner: UpdateWieldType {
                                             guid: player_guid(sender),
                                             wield_type: character_write_handle.wield_type()
@@ -1024,7 +1024,28 @@ impl GameServer {
                 OpCode::Minigame => {
                     info!("MINIGAME PACKET");
                     let raw_op_code = cursor.read_u8()?;
-                    if raw_op_code == 6 {
+                    if raw_op_code == 4 {
+                        broadcasts.append(&mut vec![Broadcast::Single(
+                            sender,
+                            vec![GamePacket::serialize(&TunneledPacket {
+                                unknown1: true,
+                                inner: ClientBeginZoning {
+                                    zone_name: "RailsTest".to_string(),
+                                    zone_type: 2,
+                                    pos: Pos::default(),
+                                    rot: Pos::default(),
+                                    sky_definition_file_name: "".to_string(),
+                                    unknown1: true,
+                                    zone_id: 0,
+                                    zone_name_id: 0,
+                                    world_id: 0,
+                                    world_name_id: 0,
+                                    unknown6: false,
+                                    unknown7: false,
+                                },
+                            })?],
+                        )])
+                    } else if raw_op_code == 6 {
                         broadcasts.append(&mut vec![Broadcast::Single(
                             sender,
                             vec![
