@@ -1035,7 +1035,7 @@ impl GameServer {
                                     pos: Pos::default(),
                                     rot: Pos::default(),
                                     sky_definition_file_name: "".to_string(),
-                                    unknown1: true,
+                                    is_minigame: true,
                                     zone_id: 0,
                                     zone_name_id: 0,
                                     world_id: 0,

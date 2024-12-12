@@ -109,7 +109,7 @@ pub struct ClientBeginZoning {
     pub pos: Pos,
     pub rot: Pos,
     pub sky_definition_file_name: String,
-    pub unknown1: bool,
+    pub is_minigame: bool,
     pub zone_id: u8,
     pub zone_name_id: u32,
     pub world_id: u32,

@@ -829,7 +829,7 @@ fn prepare_init_zone_packets(
             pos: destination_pos,
             rot: destination_rot,
             sky_definition_file_name: destination.default_spawn_sky.clone(),
-            unknown1: false,
+            is_minigame: false,
             zone_id: 0,
             zone_name_id: 0,
             world_id: 0,
