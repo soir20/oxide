@@ -283,7 +283,7 @@ impl GameServer {
                             header: MinigameHeader {
                                 game_guid: 1,
                                 unknown2: -1,
-                                stage_group_guid: -1,
+                                stage_group_guid: 10000,
                             },
                             unknown1: 1,
                             unknown2: 0,
@@ -1051,11 +1051,52 @@ impl GameServer {
                             vec![
                                 GamePacket::serialize(&TunneledPacket {
                                     unknown1: true,
+                                    inner: CreateMinigameStageGroupInstance {
+                                        header: MinigameHeader {
+                                            game_guid: 0,
+                                            unknown2: -1,
+                                            stage_group_guid: -1,
+                                        },
+                                        group_id: 10000,
+                                        name_id: 5000,
+                                        description_id: 6000,
+                                        icon_id: 7000,
+                                        stage_select_map_name: "towerDefense".to_string(),
+                                        default_game_id: 1,
+                                        minigames: vec![Minigame {
+                                            minigame_id: 1,
+                                            minigame_type: 2,
+                                            link_name: "stage".to_string(),
+                                            short_name: "td1s1".to_string(),
+                                            unlocked: true,
+                                            unknown6: 3,
+                                            name_id: 4,
+                                            description_id: 5,
+                                            icon_set_id: 6,
+                                            parent_minigame_id: 0,
+                                            members_only: false,
+                                            unknown12: 8,
+                                            background_swf: "HowToAquaticAssault.swf".to_string(),
+                                            min_players: 1,
+                                            max_players: 1,
+                                            stage_number: 1,
+                                            required_item_id: 0,
+                                            unknown18: 13,
+                                            completed: false,
+                                            link_group_id: 14,
+                                        }],
+                                        stage_progression: "HowToAquaticAssault.swf".to_string(),
+                                        show_start_screen_on_play_next: true,
+                                        settings_icon_id: 9000,
+                                    },
+                                })?,
+                                GamePacket::serialize(&TunneledPacket {
+                                    unknown1: true,
                                     inner: StartGame {
                                         header: MinigameHeader {
                                             game_guid: 1,
                                             unknown2: -1,
-                                            stage_group_guid: -1,
+                                            stage_group_guid: 10000,
                                         },
                                     },
                                 })?,
@@ -1073,7 +1114,7 @@ impl GameServer {
                                         header: MinigameHeader {
                                             game_guid: 1,
                                             unknown2: -1,
-                                            stage_group_guid: -1,
+                                            stage_group_guid: 10000,
                                         },
                                         was_successful: true,
                                     },
@@ -1094,7 +1135,7 @@ impl GameServer {
                                         header: MinigameHeader {
                                             game_guid: 1,
                                             unknown2: -1,
-                                            stage_group_guid: -1,
+                                            stage_group_guid: 10000,
                                         },
                                     },
                                 })?,
@@ -1104,7 +1145,7 @@ impl GameServer {
                                         header: MinigameHeader {
                                             game_guid: 1,
                                             unknown2: -1,
-                                            stage_group_guid: -1,
+                                            stage_group_guid: 10000,
                                         },
                                         scores: vec![],
                                         unknown2: false,
@@ -1116,7 +1157,7 @@ impl GameServer {
                                         header: MinigameHeader {
                                             game_guid: 1,
                                             unknown2: -1,
-                                            stage_group_guid: -1,
+                                            stage_group_guid: 10000,
                                         },
                                         won: false,
                                         unknown2: 0,
@@ -1130,7 +1171,7 @@ impl GameServer {
                                         header: MinigameHeader {
                                             game_guid: 1,
                                             unknown2: -1,
-                                            stage_group_guid: -1,
+                                            stage_group_guid: 10000,
                                         },
                                     },
                                 })?,
@@ -1148,7 +1189,7 @@ impl GameServer {
                                         header: MinigameHeader {
                                             game_guid: 1,
                                             unknown2: -1,
-                                            stage_group_guid: -1,
+                                            stage_group_guid: 10000,
                                         },
                                         payload: "VOnServerSetStageIdMsg\t1\0".to_string(),
                                     },
