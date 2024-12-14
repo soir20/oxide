@@ -37,12 +37,31 @@ pub struct MinigameHeader {
     pub stage_group_guid: i32,
 }
 
-#[derive(SerializePacket, DeserializePacket)]
+pub enum ScoreValue {
+    Counter(u32),
+    Time(u32),
+}
+
+impl SerializePacket for ScoreValue {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        match self {
+            ScoreValue::Counter(value) => {
+                buffer.write_u32::<LittleEndian>(1)?;
+                value.serialize(buffer)
+            }
+            ScoreValue::Time(value) => {
+                buffer.write_u32::<LittleEndian>(1)?;
+                value.serialize(buffer)
+            }
+        }
+    }
+}
+
+#[derive(SerializePacket)]
 pub struct ScoreEntry {
     pub entry_text: String,
     pub unknown2: u32,
-    pub unknown3: u32,
-    pub unknown4: u32,
+    pub value: ScoreValue,
     pub unknown5: u32,
     pub unknown6: u32,
 }
@@ -319,7 +338,7 @@ impl GamePacket for FlashPayload {
     const HEADER: Self::Header = MinigameOpCode::FlashPayload;
 }
 
-#[derive(SerializePacket, DeserializePacket)]
+#[derive(SerializePacket)]
 pub struct EndScore {
     pub header: MinigameHeader,
     pub scores: Vec<ScoreEntry>,

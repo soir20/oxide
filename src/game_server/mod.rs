@@ -39,7 +39,8 @@ use packets::minigame::{
     CancelGame, CreateMinigameInstance, CreateMinigameStageGroupInstance, EndScore, FlashPayload,
     GameCreationResult, GameOver, LeaveMinigame, Minigame, MinigameDefinitions, MinigameHeader,
     MinigamePortalCategory, MinigamePortalEntry, MinigameStageDefinition,
-    MinigameStageGroupDefinition, MinigameStageGroupLink, RewardBundle, ShowStageSelect, StartGame,
+    MinigameStageGroupDefinition, MinigameStageGroupLink, RewardBundle, ScoreEntry, ScoreValue,
+    ShowStageSelect, StartGame,
 };
 use packets::player_update::{Customization, InitCustomizations, QueueAnimation, UpdateWieldType};
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
@@ -356,7 +357,7 @@ impl GameServer {
                             unknown15: false,
                             unknown16: false,
                             show_end_score_screen: true,
-                            unknown18: "HowToAquaticAssault.swf".to_string(),
+                            unknown18: "HowToStuntGungan.swf".to_string(),
                             unknown19: 0,
                             unknown20: false,
                             unknown21: 0,
@@ -759,7 +760,7 @@ impl GameServer {
                                                     unknown10: 8000,
                                                     unknown11: 9000,
                                                     start_sound_id: 10000,
-                                                    unknown13: "HowToAquaticAssault.swf".to_string(),
+                                                    unknown13: "HowToStuntGungan.swf".to_string(),
                                                     unknown14: 11000,
                                                     unknown15: 12000,
                                                     unknown16: 13000
@@ -777,7 +778,7 @@ impl GameServer {
                                                     unknown10: 8000,
                                                     unknown11: 9000,
                                                     start_sound_id: 10000,
-                                                    unknown13: "HowToAquaticAssault.swf".to_string(),
+                                                    unknown13: "HowToStuntGungan.swf".to_string(),
                                                     unknown14: 11000,
                                                     unknown15: 12000,
                                                     unknown16: 13000
@@ -795,7 +796,7 @@ impl GameServer {
                                                     unknown10: 8000,
                                                     unknown11: 9000,
                                                     start_sound_id: 10000,
-                                                    unknown13: "HowToAquaticAssault.swf".to_string(),
+                                                    unknown13: "HowToStuntGungan.swf".to_string(),
                                                     unknown14: 11000,
                                                     unknown15: 12000,
                                                     unknown16: 13000
@@ -869,7 +870,7 @@ impl GameServer {
                                                     is_game_of_day: false,
                                                     portal_category_guid: 2,
                                                     sort_order: 90,
-                                                    tutorial_swf: "HowToAquaticAssault.swf".to_string()
+                                                    tutorial_swf: "HowToStuntGungan.swf".to_string()
                                                 }
                                             ],
                                             portal_categories: vec![
@@ -1076,7 +1077,7 @@ impl GameServer {
                                             parent_minigame_id: 0,
                                             members_only: false,
                                             unknown12: 8,
-                                            background_swf: "HowToAquaticAssault.swf".to_string(),
+                                            background_swf: "HowToStuntGungan.swf".to_string(),
                                             min_players: 1,
                                             max_players: 1,
                                             stage_number: 1,
@@ -1085,7 +1086,7 @@ impl GameServer {
                                             completed: false,
                                             link_group_id: 14,
                                         }],
-                                        stage_progression: "HowToAquaticAssault.swf".to_string(),
+                                        stage_progression: "HowToStuntGungan.swf".to_string(),
                                         show_start_screen_on_play_next: true,
                                         settings_icon_id: 9000,
                                     },
@@ -1104,7 +1105,7 @@ impl GameServer {
                                     unknown1: true,
                                     inner: StartFlashGame {
                                         loader_script_name: "MiniGameFlash".to_string(),
-                                        game_swf_name: "AquaticAssault.swf".to_string(),
+                                        game_swf_name: "StuntGungan.swf".to_string(),
                                         is_micro: false,
                                     },
                                 })?,
@@ -1147,7 +1148,13 @@ impl GameServer {
                                             unknown2: -1,
                                             stage_group_guid: 10000,
                                         },
-                                        scores: vec![],
+                                        scores: vec![ScoreEntry {
+                                            entry_text: "".to_string(),
+                                            unknown2: 0,
+                                            value: ScoreValue::Counter(3),
+                                            unknown5: 0,
+                                            unknown6: 0,
+                                        }],
                                         unknown2: false,
                                     },
                                 })?,
