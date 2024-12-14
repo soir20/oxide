@@ -106,7 +106,7 @@ pub struct MinigameRewardBundle {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct CreateMinigameInstance {
     pub header: MinigameHeader,
-    pub unknown1: u32,
+    pub name_id: u32,
     pub unknown2: u32,
     pub unknown3: u32,
     pub unknown4: u32,
@@ -126,7 +126,7 @@ pub struct CreateMinigameInstance {
     pub unknown18: String,
     pub unknown19: u32,
     pub unknown20: bool,
-    pub unknown21: u32,
+    pub stage_guid: u32,
     pub unknown22: bool,
     pub unknown23: bool,
     pub unknown24: bool,
