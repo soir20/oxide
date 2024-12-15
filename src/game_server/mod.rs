@@ -36,7 +36,7 @@ use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
 use packets::item::ItemDefinition;
 use packets::login::{ClientBeginZoning, LoginRequest, WelcomeScreen, ZoneDetailsDone};
 use packets::minigame::{
-    ActiveMinigameCreationResult, ActiveMinigameEndScore, CancelGame, CreateActiveMinigame,
+    ActiveMinigameCreationResult, ActiveMinigameEndScore, CancelActiveMinigame, CreateActiveMinigame,
     CreateMinigameStageGroupInstance, EndActiveMinigame, FlashPayload, LeaveActiveMinigame,
     MinigameDefinitions, MinigameHeader, MinigamePortalCategory, MinigamePortalEntry,
     MinigameStageDefinition, MinigameStageGroupDefinition, MinigameStageGroupLink,
@@ -1133,7 +1133,7 @@ impl GameServer {
                             vec![
                                 GamePacket::serialize(&TunneledPacket {
                                     unknown1: true,
-                                    inner: CancelGame {
+                                    inner: CancelActiveMinigame {
                                         header: MinigameHeader {
                                             active_minigame_guid: 1,
                                             unknown2: -1,
