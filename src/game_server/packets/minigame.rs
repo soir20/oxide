@@ -12,7 +12,7 @@ pub enum MinigameOpCode {
     MinigameDefinitions = 0x1,
     FlashPayload = 0xf,
     CancelGame = 0x7,
-    CreateMinigameInstance = 0x11,
+    CreateMinigameStageInstance = 0x11,
     StartGame = 0x12,
     GameOver = 0x13,
     LeaveMinigame = 0x14,
@@ -105,7 +105,7 @@ pub struct MinigameRewardBundle {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct CreateMinigameInstance {
+pub struct CreateMinigameStageInstance {
     pub header: MinigameHeader,
     pub name_id: u32,
     pub unknown2: u32,
@@ -136,10 +136,10 @@ pub struct CreateMinigameInstance {
     pub unknown27: u32,
 }
 
-impl GamePacket for CreateMinigameInstance {
+impl GamePacket for CreateMinigameStageInstance {
     type Header = MinigameOpCode;
 
-    const HEADER: Self::Header = MinigameOpCode::CreateMinigameInstance;
+    const HEADER: Self::Header = MinigameOpCode::CreateMinigameStageInstance;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
