@@ -360,7 +360,7 @@ impl GameServer {
                             unknown18: "HowToStuntGungan.swf".to_string(),
                             unknown19: 0,
                             unknown20: false,
-                            stage_guid: 1,
+                            minigame_guid: 1,
                             unknown22: false,
                             unknown23: false,
                             unknown24: false,

@@ -127,7 +127,7 @@ pub struct CreateMinigameInstance {
     pub unknown18: String,
     pub unknown19: u32,
     pub unknown20: bool,
-    pub stage_guid: u32,
+    pub minigame_guid: u32,
     pub unknown22: bool,
     pub unknown23: bool,
     pub unknown24: bool,
