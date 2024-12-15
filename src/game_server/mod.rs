@@ -36,11 +36,11 @@ use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
 use packets::item::ItemDefinition;
 use packets::login::{ClientBeginZoning, LoginRequest, WelcomeScreen, ZoneDetailsDone};
 use packets::minigame::{
-    CancelGame, CreateMinigameInstance, CreateMinigameStageGroupInstance, EndScore, FlashPayload,
-    GameCreationResult, GameOver, LeaveMinigame, Minigame, MinigameDefinitions, MinigameHeader,
+    CancelGame, CreateActiveMinigame, CreateMinigameStageGroupInstance, ActiveMinigameEndScore, FlashPayload,
+    ActiveMinigameCreationResult, EndActiveMinigame, LeaveActiveMinigame, MinigameStageInstance, MinigameDefinitions, MinigameHeader,
     MinigamePortalCategory, MinigamePortalEntry, MinigameStageDefinition,
     MinigameStageGroupDefinition, MinigameStageGroupLink, RewardBundle, ScoreEntry, ScoreValue,
-    ShowStageSelect, StartGame,
+    ShowStageInstanceSelect, StartActiveMinigame,
 };
 use packets::player_update::{Customization, InitCustomizations, QueueAnimation, UpdateWieldType};
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
@@ -280,9 +280,9 @@ impl GameServer {
 
                     sender_only_packets.push(GamePacket::serialize(&TunneledPacket {
                         unknown1: true,
-                        inner: CreateMinigameInstance {
+                        inner: CreateActiveMinigame {
                             header: MinigameHeader {
-                                game_guid: 1,
+                                active_minigame_guid: 1,
                                 unknown2: -1,
                                 stage_group_guid: 10000,
                             },
@@ -360,7 +360,7 @@ impl GameServer {
                             unknown18: "HowToStuntGungan.swf".to_string(),
                             unknown19: 0,
                             unknown20: false,
-                            minigame_guid: 1,
+                            stage_definition_guid: 1,
                             unknown22: false,
                             unknown23: false,
                             unknown24: false,
@@ -742,7 +742,7 @@ impl GameServer {
                                         unknown1: true,
                                         inner: MinigameDefinitions {
                                             header: MinigameHeader {
-                                                game_guid: 0,
+                                                active_minigame_guid: 0,
                                                 unknown2: -1,
                                                 stage_group_guid: -1
                                             },
@@ -911,7 +911,7 @@ impl GameServer {
                                         unknown1: true,
                                         inner: CreateMinigameStageGroupInstance {
                                             header: MinigameHeader {
-                                                game_guid: 0,
+                                                active_minigame_guid: 0,
                                                 unknown2: -1,
                                                 stage_group_guid: -1
                                             },
@@ -921,8 +921,8 @@ impl GameServer {
                                             icon_id: 7000,
                                             stage_select_map_name: "towerDefense".to_string(),
                                             default_game_id: 0,
-                                            minigames: vec![
-                                                Minigame {
+                                            stages_instances: vec![
+                                                MinigameStageInstance {
                                                     minigame_id: 1,
                                                     minigame_type: 2,
                                                     link_name: "stage".to_string(),
@@ -944,7 +944,7 @@ impl GameServer {
                                                     completed: false,
                                                     link_group_id: 14
                                                 },
-                                                Minigame {
+                                                MinigameStageInstance {
                                                     minigame_id: 2,
                                                     minigame_type: 2,
                                                     link_name: "stage".to_string(),
@@ -966,7 +966,7 @@ impl GameServer {
                                                     completed: false,
                                                     link_group_id: 14
                                                 },
-                                                Minigame {
+                                                MinigameStageInstance {
                                                     minigame_id: 3,
                                                     minigame_type: 2,
                                                     link_name: "stage".to_string(),
@@ -996,9 +996,9 @@ impl GameServer {
                                     })?,
                                     GamePacket::serialize(&TunneledPacket {
                                         unknown1: true,
-                                        inner: ShowStageSelect {
+                                        inner: ShowStageInstanceSelect {
                                             header: MinigameHeader {
-                                                game_guid: 0,
+                                                active_minigame_guid: 0,
                                                 unknown2: -1,
                                                 stage_group_guid: -1
                                             },
@@ -1054,7 +1054,7 @@ impl GameServer {
                                     unknown1: true,
                                     inner: CreateMinigameStageGroupInstance {
                                         header: MinigameHeader {
-                                            game_guid: 0,
+                                            active_minigame_guid: 0,
                                             unknown2: -1,
                                             stage_group_guid: -1,
                                         },
@@ -1064,7 +1064,7 @@ impl GameServer {
                                         icon_id: 7000,
                                         stage_select_map_name: "towerDefense".to_string(),
                                         default_game_id: 1,
-                                        minigames: vec![Minigame {
+                                        stages_instances: vec![MinigameStageInstance {
                                             minigame_id: 1,
                                             minigame_type: 2,
                                             link_name: "stage".to_string(),
@@ -1093,9 +1093,9 @@ impl GameServer {
                                 })?,
                                 GamePacket::serialize(&TunneledPacket {
                                     unknown1: true,
-                                    inner: StartGame {
+                                    inner: StartActiveMinigame {
                                         header: MinigameHeader {
-                                            game_guid: 1,
+                                            active_minigame_guid: 1,
                                             unknown2: -1,
                                             stage_group_guid: 10000,
                                         },
@@ -1111,9 +1111,9 @@ impl GameServer {
                                 })?,
                                 GamePacket::serialize(&TunneledPacket {
                                     unknown1: true,
-                                    inner: GameCreationResult {
+                                    inner: ActiveMinigameCreationResult {
                                         header: MinigameHeader {
-                                            game_guid: 1,
+                                            active_minigame_guid: 1,
                                             unknown2: -1,
                                             stage_group_guid: 10000,
                                         },
@@ -1134,7 +1134,7 @@ impl GameServer {
                                     unknown1: true,
                                     inner: CancelGame {
                                         header: MinigameHeader {
-                                            game_guid: 1,
+                                            active_minigame_guid: 1,
                                             unknown2: -1,
                                             stage_group_guid: 10000,
                                         },
@@ -1142,9 +1142,9 @@ impl GameServer {
                                 })?,
                                 GamePacket::serialize(&TunneledPacket {
                                     unknown1: true,
-                                    inner: EndScore {
+                                    inner: ActiveMinigameEndScore {
                                         header: MinigameHeader {
-                                            game_guid: 1,
+                                            active_minigame_guid: 1,
                                             unknown2: -1,
                                             stage_group_guid: 10000,
                                         },
@@ -1160,9 +1160,9 @@ impl GameServer {
                                 })?,
                                 GamePacket::serialize(&TunneledPacket {
                                     unknown1: true,
-                                    inner: GameOver {
+                                    inner: EndActiveMinigame {
                                         header: MinigameHeader {
-                                            game_guid: 1,
+                                            active_minigame_guid: 1,
                                             unknown2: -1,
                                             stage_group_guid: 10000,
                                         },
@@ -1174,9 +1174,9 @@ impl GameServer {
                                 })?,
                                 GamePacket::serialize(&TunneledPacket {
                                     unknown1: true,
-                                    inner: LeaveMinigame {
+                                    inner: LeaveActiveMinigame {
                                         header: MinigameHeader {
-                                            game_guid: 1,
+                                            active_minigame_guid: 1,
                                             unknown2: -1,
                                             stage_group_guid: 10000,
                                         },
@@ -1194,7 +1194,7 @@ impl GameServer {
                                     unknown1: true,
                                     inner: FlashPayload {
                                         header: MinigameHeader {
-                                            game_guid: 1,
+                                            active_minigame_guid: 1,
                                             unknown2: -1,
                                             stage_group_guid: 10000,
                                         },
