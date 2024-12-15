@@ -172,8 +172,8 @@ impl GamePacket for FlashPayload {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct RewardBundle {
     pub unknown1: bool,
-    pub unknown2: u32,
-    pub unknown3: u32,
+    pub credits: u32,
+    pub battle_class_xp: u32,
     pub unknown4: u32,
     pub unknown5: u32,
     pub unknown6: u32,

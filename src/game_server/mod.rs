@@ -297,8 +297,8 @@ impl GameServer {
                             unknown8: false,
                             reward_bundle1: RewardBundle {
                                 unknown1: false,
-                                unknown2: 0,
-                                unknown3: 0,
+                                credits: 0,
+                                battle_class_xp: 0,
                                 unknown4: 0,
                                 unknown5: 0,
                                 unknown6: 0,
@@ -316,8 +316,8 @@ impl GameServer {
                             },
                             reward_bundle2: RewardBundle {
                                 unknown1: false,
-                                unknown2: 0,
-                                unknown3: 0,
+                                credits: 0,
+                                battle_class_xp: 0,
                                 unknown4: 0,
                                 unknown5: 0,
                                 unknown6: 0,
@@ -335,8 +335,8 @@ impl GameServer {
                             },
                             reward_bundle3: RewardBundle {
                                 unknown1: false,
-                                unknown2: 0,
-                                unknown3: 0,
+                                credits: 0,
+                                battle_class_xp: 0,
                                 unknown4: 0,
                                 unknown5: 0,
                                 unknown6: 0,
