@@ -292,7 +292,7 @@ impl GameServer {
                             description_id: 0,
                             difficulty: 0,
                             battle_class_type: 0,
-                            portal_entry_guid: 1,
+                            portal_entry_guid: 2,
                             unknown7: false,
                             unknown8: false,
                             reward_bundle1: RewardBundle {
