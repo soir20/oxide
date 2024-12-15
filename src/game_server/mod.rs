@@ -36,12 +36,12 @@ use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
 use packets::item::ItemDefinition;
 use packets::login::{ClientBeginZoning, LoginRequest, WelcomeScreen, ZoneDetailsDone};
 use packets::minigame::{
-    ActiveMinigameCreationResult, ActiveMinigameEndScore, CancelActiveMinigame,
-    CreateActiveMinigame, CreateMinigameStageGroupInstance, EndActiveMinigame, FlashPayload,
-    LeaveActiveMinigame, MinigameDefinitions, MinigameHeader, MinigamePortalCategory,
+    ActiveMinigameCreationResult, ActiveMinigameEndScore, CreateActiveMinigame,
+    CreateMinigameStageGroupInstance, EndActiveMinigame, FlashPayload, LeaveActiveMinigame,
+    MinigameDefinitions, MinigameHeader, MinigameOpCode, MinigamePortalCategory,
     MinigamePortalEntry, MinigameStageDefinition, MinigameStageGroupDefinition,
-    MinigameStageGroupLink, MinigameStageInstance, RewardBundle, ScoreEntry, ScoreValue,
-    ShowStageInstanceSelect, StartActiveMinigame,
+    MinigameStageGroupLink, MinigameStageInstance, RequestCancelActiveMinigame, RewardBundle,
+    ScoreEntry, ScoreValue, ShowStageInstanceSelect, StartActiveMinigame,
 };
 use packets::player_update::{Customization, InitCustomizations, QueueAnimation, UpdateWieldType};
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
@@ -1026,7 +1026,7 @@ impl GameServer {
                 OpCode::Minigame => {
                     info!("MINIGAME PACKET");
                     let raw_op_code = cursor.read_u8()?;
-                    if raw_op_code == 4 {
+                    if raw_op_code == MinigameOpCode::RequestCreateActiveMinigame as u8 {
                         broadcasts.append(&mut vec![Broadcast::Single(
                             sender,
                             vec![GamePacket::serialize(&TunneledPacket {
@@ -1047,7 +1047,8 @@ impl GameServer {
                                 },
                             })?],
                         )])
-                    } else if raw_op_code == 6 {
+                    } else if raw_op_code == MinigameOpCode::RequestMinigameStageGroupInstance as u8
+                    {
                         broadcasts.append(&mut vec![Broadcast::Single(
                             sender,
                             vec![
@@ -1127,20 +1128,10 @@ impl GameServer {
                         cursor.read_to_end(&mut buffer)?;
                         info!("START GAME PACKET: {:?}, {:x?}", raw_op_code, buffer);
                     }
-                    if raw_op_code == 7 {
+                    if raw_op_code == MinigameOpCode::RequestCancelActiveMinigame as u8 {
                         broadcasts.append(&mut vec![Broadcast::Single(
                             sender,
                             vec![
-                                GamePacket::serialize(&TunneledPacket {
-                                    unknown1: true,
-                                    inner: CancelActiveMinigame {
-                                        header: MinigameHeader {
-                                            active_minigame_guid: 1,
-                                            unknown2: -1,
-                                            stage_group_guid: 10000,
-                                        },
-                                    },
-                                })?,
                                 GamePacket::serialize(&TunneledPacket {
                                     unknown1: true,
                                     inner: ActiveMinigameEndScore {
@@ -1185,7 +1176,7 @@ impl GameServer {
                                 })?,
                             ],
                         )]);
-                    } else if raw_op_code == 0xf {
+                    } else if raw_op_code == MinigameOpCode::FlashPayload as u8 {
                         let payload_packet = FlashPayload::deserialize(&mut cursor)?;
                         if payload_packet.payload == *"FRServer_RequestStageId\0" {
                             info!("SENDING STAGE ID");
