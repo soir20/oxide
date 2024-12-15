@@ -40,8 +40,8 @@ use packets::minigame::{
     CreateMinigameStageGroupInstance, EndActiveMinigame, FlashPayload, LeaveActiveMinigame,
     MinigameDefinitions, MinigameHeader, MinigameOpCode, MinigamePortalCategory,
     MinigamePortalEntry, MinigameStageDefinition, MinigameStageGroupDefinition,
-    MinigameStageGroupLink, MinigameStageInstance, RequestCancelActiveMinigame, RewardBundle,
-    ScoreEntry, ScoreValue, ShowStageInstanceSelect, StartActiveMinigame,
+    MinigameStageGroupLink, MinigameStageInstance, RewardBundle, ScoreEntry, ScoreValue,
+    ShowStageInstanceSelect, StartActiveMinigame,
 };
 use packets::player_update::{Customization, InitCustomizations, QueueAnimation, UpdateWieldType};
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
