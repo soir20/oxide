@@ -36,11 +36,12 @@ use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
 use packets::item::ItemDefinition;
 use packets::login::{ClientBeginZoning, LoginRequest, WelcomeScreen, ZoneDetailsDone};
 use packets::minigame::{
-    CancelGame, CreateActiveMinigame, CreateMinigameStageGroupInstance, ActiveMinigameEndScore, FlashPayload,
-    ActiveMinigameCreationResult, EndActiveMinigame, LeaveActiveMinigame, MinigameStageInstance, MinigameDefinitions, MinigameHeader,
-    MinigamePortalCategory, MinigamePortalEntry, MinigameStageDefinition,
-    MinigameStageGroupDefinition, MinigameStageGroupLink, RewardBundle, ScoreEntry, ScoreValue,
-    ShowStageInstanceSelect, StartActiveMinigame,
+    ActiveMinigameCreationResult, ActiveMinigameEndScore, CancelGame, CreateActiveMinigame,
+    CreateMinigameStageGroupInstance, EndActiveMinigame, FlashPayload, LeaveActiveMinigame,
+    MinigameDefinitions, MinigameHeader, MinigamePortalCategory, MinigamePortalEntry,
+    MinigameStageDefinition, MinigameStageGroupDefinition, MinigameStageGroupLink,
+    MinigameStageInstance, RewardBundle, ScoreEntry, ScoreValue, ShowStageInstanceSelect,
+    StartActiveMinigame,
 };
 use packets::player_update::{Customization, InitCustomizations, QueueAnimation, UpdateWieldType};
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};

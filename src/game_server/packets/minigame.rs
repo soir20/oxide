@@ -167,36 +167,6 @@ impl GamePacket for FlashPayload {
     const HEADER: Self::Header = MinigameOpCode::FlashPayload;
 }
 
-#[allow(dead_code)]
-pub enum ScoreValue {
-    Counter(u32),
-    Time(u32),
-}
-
-impl SerializePacket for ScoreValue {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        match self {
-            ScoreValue::Counter(value) => {
-                buffer.write_u32::<LittleEndian>(1)?;
-                value.serialize(buffer)
-            }
-            ScoreValue::Time(value) => {
-                buffer.write_u32::<LittleEndian>(1)?;
-                value.serialize(buffer)
-            }
-        }
-    }
-}
-
-#[derive(SerializePacket)]
-pub struct ScoreEntry {
-    pub entry_text: String,
-    pub unknown2: u32,
-    pub value: ScoreValue,
-    pub unknown5: u32,
-    pub unknown6: u32,
-}
-
 #[derive(SerializePacket, DeserializePacket)]
 pub struct RewardBundle {
     pub unknown1: bool,
@@ -273,6 +243,86 @@ impl GamePacket for CreateActiveMinigame {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
+pub struct StartActiveMinigame {
+    pub header: MinigameHeader,
+}
+
+impl GamePacket for StartActiveMinigame {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::StartActiveMinigame;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct EndActiveMinigame {
+    pub header: MinigameHeader,
+    pub won: bool,
+    pub unknown2: u32,
+    pub unknown3: u32,
+    pub unknown4: u32,
+}
+
+impl GamePacket for EndActiveMinigame {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::EndActiveMinigame;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct LeaveActiveMinigame {
+    pub header: MinigameHeader,
+}
+
+impl GamePacket for LeaveActiveMinigame {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::LeaveActiveMinigame;
+}
+
+#[allow(dead_code)]
+pub enum ScoreValue {
+    Counter(u32),
+    Time(u32),
+}
+
+impl SerializePacket for ScoreValue {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        match self {
+            ScoreValue::Counter(value) => {
+                buffer.write_u32::<LittleEndian>(1)?;
+                value.serialize(buffer)
+            }
+            ScoreValue::Time(value) => {
+                buffer.write_u32::<LittleEndian>(1)?;
+                value.serialize(buffer)
+            }
+        }
+    }
+}
+
+#[derive(SerializePacket)]
+pub struct ScoreEntry {
+    pub entry_text: String,
+    pub unknown2: u32,
+    pub value: ScoreValue,
+    pub unknown5: u32,
+    pub unknown6: u32,
+}
+
+#[derive(SerializePacket)]
+pub struct ActiveMinigameEndScore {
+    pub header: MinigameHeader,
+    pub scores: Vec<ScoreEntry>,
+    pub unknown2: bool,
+}
+
+impl GamePacket for ActiveMinigameEndScore {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::ActiveMinigameEndScore;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
 pub struct MinigameStageInstance {
     pub minigame_id: u32,
     pub minigame_type: u32,
@@ -326,56 +376,6 @@ impl GamePacket for ShowStageInstanceSelect {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::ShowStageInstanceSelect;
-}
-
-#[derive(SerializePacket, DeserializePacket)]
-pub struct StartActiveMinigame {
-    pub header: MinigameHeader,
-}
-
-impl GamePacket for StartActiveMinigame {
-    type Header = MinigameOpCode;
-
-    const HEADER: Self::Header = MinigameOpCode::StartActiveMinigame;
-}
-
-#[derive(SerializePacket)]
-pub struct ActiveMinigameEndScore {
-    pub header: MinigameHeader,
-    pub scores: Vec<ScoreEntry>,
-    pub unknown2: bool,
-}
-
-impl GamePacket for ActiveMinigameEndScore {
-    type Header = MinigameOpCode;
-
-    const HEADER: Self::Header = MinigameOpCode::ActiveMinigameEndScore;
-}
-
-#[derive(SerializePacket, DeserializePacket)]
-pub struct EndActiveMinigame {
-    pub header: MinigameHeader,
-    pub won: bool,
-    pub unknown2: u32,
-    pub unknown3: u32,
-    pub unknown4: u32,
-}
-
-impl GamePacket for EndActiveMinigame {
-    type Header = MinigameOpCode;
-
-    const HEADER: Self::Header = MinigameOpCode::EndActiveMinigame;
-}
-
-#[derive(SerializePacket, DeserializePacket)]
-pub struct LeaveActiveMinigame {
-    pub header: MinigameHeader,
-}
-
-impl GamePacket for LeaveActiveMinigame {
-    type Header = MinigameOpCode;
-
-    const HEADER: Self::Header = MinigameOpCode::LeaveActiveMinigame;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
