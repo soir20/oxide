@@ -921,10 +921,10 @@ impl GameServer {
                                             description_id: 6000,
                                             icon_id: 7000,
                                             stage_select_map_name: "towerDefense".to_string(),
-                                            default_game_id: 0,
+                                            default_stage_instance_guid: 0,
                                             stages_instances: vec![
                                                 MinigameStageInstance {
-                                                    minigame_id: 1,
+                                                    stage_instance_guid: 1,
                                                     minigame_type: 2,
                                                     link_name: "stage".to_string(),
                                                     short_name: "td1s1".to_string(),
@@ -946,7 +946,7 @@ impl GameServer {
                                                     link_group_id: 14
                                                 },
                                                 MinigameStageInstance {
-                                                    minigame_id: 2,
+                                                    stage_instance_guid: 2,
                                                     minigame_type: 2,
                                                     link_name: "stage".to_string(),
                                                     short_name: "td1s2".to_string(),
@@ -968,7 +968,7 @@ impl GameServer {
                                                     link_group_id: 14
                                                 },
                                                 MinigameStageInstance {
-                                                    minigame_id: 3,
+                                                    stage_instance_guid: 3,
                                                     minigame_type: 2,
                                                     link_name: "stage".to_string(),
                                                     short_name: "td1s3".to_string(),
@@ -1065,9 +1065,9 @@ impl GameServer {
                                         description_id: 6000,
                                         icon_id: 7000,
                                         stage_select_map_name: "towerDefense".to_string(),
-                                        default_game_id: 1,
+                                        default_stage_instance_guid: 1,
                                         stages_instances: vec![MinigameStageInstance {
-                                            minigame_id: 1,
+                                            stage_instance_guid: 1,
                                             minigame_type: 2,
                                             link_name: "stage".to_string(),
                                             short_name: "td1s1".to_string(),

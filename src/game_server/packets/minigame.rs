@@ -326,7 +326,7 @@ impl GamePacket for ActiveMinigameEndScore {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct MinigameStageInstance {
-    pub minigame_id: u32,
+    pub stage_instance_guid: u32,
     pub minigame_type: u32,
     pub link_name: String,
     pub short_name: String,
@@ -356,7 +356,7 @@ pub struct CreateMinigameStageGroupInstance {
     pub description_id: u32,
     pub icon_id: u32,
     pub stage_select_map_name: String,
-    pub default_game_id: u32,
+    pub default_stage_instance_guid: u32,
     pub stages_instances: Vec<MinigameStageInstance>,
     pub stage_progression: String,
     pub show_start_screen_on_play_next: bool,
