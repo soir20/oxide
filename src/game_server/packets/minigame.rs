@@ -37,6 +37,7 @@ pub struct MinigameHeader {
     pub stage_group_guid: i32,
 }
 
+#[allow(dead_code)]
 pub enum ScoreValue {
     Counter(u32),
     Time(u32),
