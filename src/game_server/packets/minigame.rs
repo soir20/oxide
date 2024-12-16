@@ -287,6 +287,7 @@ impl GamePacket for UpdateActiveMinigameRewards {
 pub enum ScoreValue {
     Counter(u32),
     Time(u32),
+    Total(u32),
 }
 
 impl SerializePacket for ScoreValue {
@@ -298,6 +299,10 @@ impl SerializePacket for ScoreValue {
             }
             ScoreValue::Time(value) => {
                 buffer.write_u32::<LittleEndian>(2)?;
+                value.serialize(buffer)
+            }
+            ScoreValue::Total(value) => {
+                buffer.write_u32::<LittleEndian>(4)?;
                 value.serialize(buffer)
             }
         }

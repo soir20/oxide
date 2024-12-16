@@ -1140,14 +1140,23 @@ impl GameServer {
                                             unknown2: -1,
                                             stage_group_guid: 10000,
                                         },
-                                        scores: vec![ScoreEntry {
-                                            entry_text: "".to_string(),
-                                            unknown2: 0,
-                                            value: ScoreValue::Counter(3),
-                                            unknown5: 0,
-                                            unknown6: 0,
-                                        }],
-                                        unknown2: false,
+                                        scores: vec![
+                                            ScoreEntry {
+                                                entry_text: "".to_string(),
+                                                unknown2: 0,
+                                                value: ScoreValue::Counter(3),
+                                                unknown5: 0,
+                                                unknown6: 0,
+                                            },
+                                            ScoreEntry {
+                                                entry_text: "".to_string(),
+                                                unknown2: 0,
+                                                value: ScoreValue::Total(100),
+                                                unknown5: 0,
+                                                unknown6: 0,
+                                            },
+                                        ],
+                                        unknown2: true,
                                     },
                                 })?,
                                 GamePacket::serialize(&TunneledPacket {
