@@ -262,7 +262,7 @@ impl GamePacket for LeaveActiveMinigame {
 }
 
 #[derive(SerializePacket)]
-pub struct UnknownRewardStruct {
+pub struct EarnedTrophy {
     pub unknown1: u32,
     pub unknown2: u32,
 }
@@ -274,7 +274,7 @@ pub struct UpdateActiveMinigameRewards {
     pub unknown1: u32,
     pub unknown2: u32,
     pub reward_bundle2: RewardBundle,
-    pub unknown3: Vec<UnknownRewardStruct>,
+    pub earned_trophies: Vec<EarnedTrophy>,
 }
 
 impl GamePacket for UpdateActiveMinigameRewards {

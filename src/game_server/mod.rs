@@ -37,11 +37,11 @@ use packets::item::ItemDefinition;
 use packets::login::{ClientBeginZoning, LoginRequest, WelcomeScreen, ZoneDetailsDone};
 use packets::minigame::{
     ActiveMinigameCreationResult, ActiveMinigameEndScore, CreateActiveMinigame,
-    CreateMinigameStageGroupInstance, EndActiveMinigame, FlashPayload, LeaveActiveMinigame,
-    MinigameDefinitions, MinigameHeader, MinigameOpCode, MinigamePortalCategory,
-    MinigamePortalEntry, MinigameStageDefinition, MinigameStageGroupDefinition,
-    MinigameStageGroupLink, MinigameStageInstance, ScoreEntry, ScoreValue, ShowStageInstanceSelect,
-    StartActiveMinigame, UpdateActiveMinigameRewards,
+    CreateMinigameStageGroupInstance, EarnedTrophy, EndActiveMinigame, FlashPayload,
+    LeaveActiveMinigame, MinigameDefinitions, MinigameHeader, MinigameOpCode,
+    MinigamePortalCategory, MinigamePortalEntry, MinigameStageDefinition,
+    MinigameStageGroupDefinition, MinigameStageGroupLink, MinigameStageInstance, ScoreEntry,
+    ScoreValue, ShowStageInstanceSelect, StartActiveMinigame, UpdateActiveMinigameRewards,
 };
 use packets::player_update::{Customization, InitCustomizations, QueueAnimation, UpdateWieldType};
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
@@ -1198,7 +1198,7 @@ impl GameServer {
                                             unknown16: vec![],
                                             unknown17: 0,
                                         },
-                                        unknown3: vec![],
+                                        earned_trophies: vec![],
                                     },
                                 })?,
                                 GamePacket::serialize(&TunneledPacket {
