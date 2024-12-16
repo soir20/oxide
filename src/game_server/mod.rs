@@ -50,7 +50,9 @@ use packets::tunnel::{TunneledPacket, TunneledWorldPacket};
 use packets::ui::ExecuteScriptWithParams;
 use packets::update_position::UpdatePlayerPosition;
 use packets::zone::ZoneTeleportRequest;
-use packets::{GamePacket, OpCode, Pos, RewardBundle};
+use packets::{
+    BaseRewardEntry, GamePacket, NewItemRewardEntry, OpCode, Pos, RewardBundle, RewardEntry,
+};
 use rand::Rng;
 
 use crate::{info, teleport_to_zone};
@@ -310,7 +312,7 @@ impl GameServer {
                                 unknown12: 0,
                                 unknown13: 0,
                                 icon_set_id: 0,
-                                unknown15: 0,
+                                name_id: 0,
                                 entries: vec![],
                                 unknown17: 0,
                             },
@@ -329,7 +331,7 @@ impl GameServer {
                                 unknown12: 0,
                                 unknown13: 0,
                                 icon_set_id: 0,
-                                unknown15: 0,
+                                name_id: 0,
                                 entries: vec![],
                                 unknown17: 0,
                             },
@@ -348,7 +350,7 @@ impl GameServer {
                                 unknown12: 0,
                                 unknown13: 0,
                                 icon_set_id: 0,
-                                unknown15: 0,
+                                name_id: 0,
                                 entries: vec![],
                                 unknown17: 0,
                             },
@@ -1170,7 +1172,7 @@ impl GameServer {
                                             stage_group_guid: 10000,
                                         },
                                         reward_bundle1: RewardBundle {
-                                            unknown1: false,
+                                            unknown1: true,
                                             credits: 300,
                                             battle_class_xp: 400,
                                             unknown4: 0,
@@ -1184,8 +1186,24 @@ impl GameServer {
                                             unknown12: 0,
                                             unknown13: 0,
                                             icon_set_id: 0,
-                                            unknown15: 0,
-                                            entries: vec![],
+                                            name_id: 0,
+                                            entries: vec![RewardEntry::NewItem(
+                                                NewItemRewardEntry {
+                                                    base: BaseRewardEntry {
+                                                        unknown1: true,
+                                                        icon_set_id: 0,
+                                                        icon_tint: 0,
+                                                        unknown4: 0,
+                                                        quantity: 10,
+                                                        item_guid: 6,
+                                                        unknown7: 0,
+                                                        unknown8: "".to_string(),
+                                                        unknown9: 0,
+                                                        unknown10: true,
+                                                    },
+                                                    unknown1: Some(0),
+                                                },
+                                            )],
                                             unknown17: 0,
                                         },
                                         unknown1: 0,
@@ -1205,7 +1223,7 @@ impl GameServer {
                                             unknown12: 0,
                                             unknown13: 0,
                                             icon_set_id: 0,
-                                            unknown15: 0,
+                                            name_id: 0,
                                             entries: vec![],
                                             unknown17: 0,
                                         },

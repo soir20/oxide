@@ -240,18 +240,27 @@ pub struct BaseRewardEntry {
     pub icon_set_id: u32,
     pub icon_tint: u32,
     pub unknown4: u32,
-    pub unknown5: u32,
-    pub unknown6: u32,
+    pub quantity: u32,
+    pub item_guid: u32,
     pub unknown7: u32,
     pub unknown8: String,
     pub unknown9: u32,
     pub unknown10: bool,
 }
 
-#[derive(SerializePacket)]
 pub struct NewItemRewardEntry {
     pub base: BaseRewardEntry,
-    pub item_guid: u32,
+    pub unknown1: Option<u32>,
+}
+
+impl SerializePacket for NewItemRewardEntry {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        self.base.serialize(buffer)?;
+        if let Some(value) = self.unknown1 {
+            value.serialize(buffer)?;
+        }
+        Ok(())
+    }
 }
 
 #[derive(SerializePacket)]
@@ -421,7 +430,7 @@ pub struct RewardBundle {
     pub unknown12: u32,
     pub unknown13: u32,
     pub icon_set_id: u32,
-    pub unknown15: u32,
+    pub name_id: u32,
     pub entries: Vec<RewardEntry>,
     pub unknown17: u32,
 }
