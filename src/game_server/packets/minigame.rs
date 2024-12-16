@@ -18,6 +18,7 @@ pub enum MinigameOpCode {
     StartActiveMinigame = 0x12,
     EndActiveMinigame = 0x13,
     LeaveActiveMinigame = 0x14,
+    UpdateActiveMinigameRewards = 0x17,
     ActiveMinigameEndScore = 0x30,
     CreateMinigameStageGroupInstance = 0x33,
     ShowStageInstanceSelect = 0x34,
@@ -260,6 +261,28 @@ impl GamePacket for LeaveActiveMinigame {
     const HEADER: Self::Header = MinigameOpCode::LeaveActiveMinigame;
 }
 
+#[derive(SerializePacket)]
+pub struct UnknownRewardStruct {
+    pub unknown1: u32,
+    pub unknown2: u32,
+}
+
+#[derive(SerializePacket)]
+pub struct UpdateActiveMinigameRewards {
+    pub header: MinigameHeader,
+    pub reward_bundle1: RewardBundle,
+    pub unknown1: u32,
+    pub unknown2: u32,
+    pub reward_bundle2: RewardBundle,
+    pub unknown3: Vec<UnknownRewardStruct>,
+}
+
+impl GamePacket for UpdateActiveMinigameRewards {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::UpdateActiveMinigameRewards;
+}
+
 #[allow(dead_code)]
 pub enum ScoreValue {
     Counter(u32),
@@ -274,7 +297,7 @@ impl SerializePacket for ScoreValue {
                 value.serialize(buffer)
             }
             ScoreValue::Time(value) => {
-                buffer.write_u32::<LittleEndian>(1)?;
+                buffer.write_u32::<LittleEndian>(2)?;
                 value.serialize(buffer)
             }
         }
