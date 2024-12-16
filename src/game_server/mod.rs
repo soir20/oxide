@@ -40,7 +40,7 @@ use packets::minigame::{
     CreateMinigameStageGroupInstance, EndActiveMinigame, FlashPayload, LeaveActiveMinigame,
     MinigameDefinitions, MinigameHeader, MinigameOpCode, MinigamePortalCategory,
     MinigamePortalEntry, MinigameStageDefinition, MinigameStageGroupDefinition,
-    MinigameStageGroupLink, MinigameStageInstance, ScoreEntry, ScoreValue, ShowStageInstanceSelect,
+    MinigameStageGroupLink, MinigameStageInstance, ScoreEntry, ScoreType, ShowStageInstanceSelect,
     StartActiveMinigame, UpdateActiveMinigameRewards,
 };
 use packets::player_update::{Customization, InitCustomizations, QueueAnimation, UpdateWieldType};
@@ -1143,17 +1143,19 @@ impl GameServer {
                                         scores: vec![
                                             ScoreEntry {
                                                 entry_text: "".to_string(),
-                                                unknown2: 0,
-                                                value: ScoreValue::Counter(3),
-                                                unknown5: 0,
-                                                unknown6: 0,
+                                                icon_set_id: 10,
+                                                score_type: ScoreType::Time,
+                                                score_count: 3,
+                                                score_max: 20,
+                                                score_points: 30,
                                             },
                                             ScoreEntry {
                                                 entry_text: "".to_string(),
-                                                unknown2: 0,
-                                                value: ScoreValue::Total(100),
-                                                unknown5: 0,
-                                                unknown6: 0,
+                                                icon_set_id: 0,
+                                                score_type: ScoreType::Total,
+                                                score_count: 100,
+                                                score_max: 0,
+                                                score_points: 0,
                                             },
                                         ],
                                         unknown2: true,

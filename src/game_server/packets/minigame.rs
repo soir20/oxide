@@ -284,38 +284,28 @@ impl GamePacket for UpdateActiveMinigameRewards {
 }
 
 #[allow(dead_code)]
-pub enum ScoreValue {
-    Counter(u32),
-    Time(u32),
-    Total(u32),
+#[derive(Copy, Clone)]
+pub enum ScoreType {
+    Counter = 0,
+    Time = 2,
+    Total = 4,
 }
 
-impl SerializePacket for ScoreValue {
+impl SerializePacket for ScoreType {
     fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        match self {
-            ScoreValue::Counter(value) => {
-                buffer.write_u32::<LittleEndian>(1)?;
-                value.serialize(buffer)
-            }
-            ScoreValue::Time(value) => {
-                buffer.write_u32::<LittleEndian>(2)?;
-                value.serialize(buffer)
-            }
-            ScoreValue::Total(value) => {
-                buffer.write_u32::<LittleEndian>(4)?;
-                value.serialize(buffer)
-            }
-        }
+        buffer.write_u32::<LittleEndian>(*self as u32)?;
+        Ok(())
     }
 }
 
 #[derive(SerializePacket)]
 pub struct ScoreEntry {
     pub entry_text: String,
-    pub unknown2: u32,
-    pub value: ScoreValue,
-    pub unknown5: u32,
-    pub unknown6: u32,
+    pub icon_set_id: u32,
+    pub score_type: ScoreType,
+    pub score_count: u32,
+    pub score_max: u32,
+    pub score_points: u32,
 }
 
 #[derive(SerializePacket)]
