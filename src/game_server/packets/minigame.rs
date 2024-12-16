@@ -284,8 +284,9 @@ impl GamePacket for UpdateActiveMinigameRewards {
 }
 
 #[allow(dead_code)]
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Default)]
 pub enum ScoreType {
+    #[default]
     Counter = 0,
     Time = 2,
     Total = 4,
