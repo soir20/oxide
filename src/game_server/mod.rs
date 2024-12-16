@@ -40,8 +40,8 @@ use packets::minigame::{
     CreateMinigameStageGroupInstance, EndActiveMinigame, FlashPayload, LeaveActiveMinigame,
     MinigameDefinitions, MinigameHeader, MinigameOpCode, MinigamePortalCategory,
     MinigamePortalEntry, MinigameStageDefinition, MinigameStageGroupDefinition,
-    MinigameStageGroupLink, MinigameStageInstance, RewardBundle, ScoreEntry, ScoreValue,
-    ShowStageInstanceSelect, StartActiveMinigame,
+    MinigameStageGroupLink, MinigameStageInstance, ScoreEntry, ScoreValue, ShowStageInstanceSelect,
+    StartActiveMinigame,
 };
 use packets::player_update::{Customization, InitCustomizations, QueueAnimation, UpdateWieldType};
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
@@ -50,7 +50,7 @@ use packets::tunnel::{TunneledPacket, TunneledWorldPacket};
 use packets::ui::ExecuteScriptWithParams;
 use packets::update_position::UpdatePlayerPosition;
 use packets::zone::ZoneTeleportRequest;
-use packets::{GamePacket, OpCode, Pos};
+use packets::{GamePacket, OpCode, Pos, RewardBundle};
 use rand::Rng;
 
 use crate::{info, teleport_to_zone};
@@ -297,8 +297,8 @@ impl GameServer {
                             unknown8: false,
                             reward_bundle1: RewardBundle {
                                 unknown1: false,
-                                credits: 0,
-                                battle_class_xp: 0,
+                                credits: 100,
+                                battle_class_xp: 200,
                                 unknown4: 0,
                                 unknown5: 0,
                                 unknown6: 0,

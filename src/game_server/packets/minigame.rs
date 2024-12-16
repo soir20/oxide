@@ -4,7 +4,7 @@ use byteorder::{LittleEndian, WriteBytesExt};
 use num_enum::TryFromPrimitive;
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
 
-use super::{GamePacket, OpCode};
+use super::{GamePacket, OpCode, RewardBundle};
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
@@ -169,28 +169,7 @@ impl GamePacket for FlashPayload {
     const HEADER: Self::Header = MinigameOpCode::FlashPayload;
 }
 
-#[derive(SerializePacket, DeserializePacket)]
-pub struct RewardBundle {
-    pub unknown1: bool,
-    pub credits: u32,
-    pub battle_class_xp: u32,
-    pub unknown4: u32,
-    pub unknown5: u32,
-    pub unknown6: u32,
-    pub unknown7: u32,
-    pub unknown8: u32,
-    pub unknown9: u32,
-    pub unknown10: u32,
-    pub unknown11: u32,
-    pub unknown12: u32,
-    pub unknown13: u32,
-    pub unknown14: u32,
-    pub unknown15: u32,
-    pub unknown16: Vec<u32>,
-    pub unknown17: u32,
-}
-
-#[derive(SerializePacket, DeserializePacket)]
+#[derive(SerializePacket)]
 pub struct MinigameRewardBundle {
     pub unknown1: u32,
     pub unknown2: u32,
@@ -206,7 +185,7 @@ pub struct MinigameRewardBundle {
     pub unknown12: u32,
 }
 
-#[derive(SerializePacket, DeserializePacket)]
+#[derive(SerializePacket)]
 pub struct CreateActiveMinigame {
     pub header: MinigameHeader,
     pub name_id: u32,
