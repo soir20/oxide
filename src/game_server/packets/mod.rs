@@ -422,6 +422,6 @@ pub struct RewardBundle {
     pub unknown13: u32,
     pub unknown14: u32,
     pub unknown15: u32,
-    pub unknown16: Vec<u32>,
+    pub unknown16: Vec<RewardEntry>,
     pub unknown17: u32,
 }
