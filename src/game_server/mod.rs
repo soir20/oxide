@@ -1,7 +1,7 @@
 use std::backtrace::Backtrace;
 use std::collections::BTreeMap;
 use std::fmt::Display;
-use std::io::{Cursor, Error, Read};
+use std::io::{Cursor, Error};
 use std::path::Path;
 use std::time::Instant;
 use std::vec;
@@ -21,7 +21,7 @@ use handlers::lock_enforcer::{
     CharacterLockRequest, LockEnforcer, LockEnforcerSource, ZoneLockRequest, ZoneTableReadHandle,
 };
 use handlers::login::{log_in, log_out, send_points_of_interest};
-use handlers::minigame::{load_all_minigames, AllMinigameConfigs};
+use handlers::minigame::{load_all_minigames, process_minigame_packet, AllMinigameConfigs};
 use handlers::mount::{load_mounts, process_mount_packet, MountConfig};
 use handlers::reference_data::{load_categories, load_item_classes, load_item_groups};
 use handlers::store::{load_cost_map, CostEntry};
@@ -32,17 +32,13 @@ use handlers::unique_guid::{
 };
 use handlers::zone::{load_zones, teleport_within_zone, Zone, ZoneTemplate};
 use packets::client_update::{Health, Power, PreloadCharactersDone, Stat, StatId, Stats};
-use packets::command::StartFlashGame;
 use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
 use packets::item::ItemDefinition;
-use packets::login::{ClientBeginZoning, LoginRequest, WelcomeScreen, ZoneDetailsDone};
+use packets::login::{LoginRequest, WelcomeScreen, ZoneDetailsDone};
 use packets::minigame::{
-    ActiveMinigameCreationResult, ActiveMinigameEndScore, CreateActiveMinigame,
-    CreateMinigameStageGroupInstance, EndActiveMinigame, FlashPayload, LeaveActiveMinigame,
-    MinigameDefinitions, MinigameHeader, MinigameOpCode, MinigamePortalCategory,
+    CreateMinigameStageGroupInstance, MinigameDefinitions, MinigameHeader, MinigamePortalCategory,
     MinigamePortalEntry, MinigameStageDefinition, MinigameStageGroupDefinition,
-    MinigameStageGroupLink, MinigameStageInstance, ScoreEntry, ScoreType, ShowStageInstanceSelect,
-    StartActiveMinigame, UpdateActiveMinigameRewards,
+    MinigameStageGroupLink, MinigameStageInstance, ShowStageInstanceSelect,
 };
 use packets::player_update::{Customization, InitCustomizations, QueueAnimation, UpdateWieldType};
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
@@ -51,9 +47,7 @@ use packets::tunnel::{TunneledPacket, TunneledWorldPacket};
 use packets::ui::ExecuteScriptWithParams;
 use packets::update_position::UpdatePlayerPosition;
 use packets::zone::ZoneTeleportRequest;
-use packets::{
-    BaseRewardEntry, GamePacket, NewItemRewardEntry, OpCode, Pos, RewardBundle, RewardEntry,
-};
+use packets::{GamePacket, OpCode};
 use rand::Rng;
 
 use crate::{info, teleport_to_zone};
@@ -732,11 +726,11 @@ impl GameServer {
                                                     stage_select_map_name: "".to_string(),
                                                     stage_progression: "".to_string(),
                                                     show_start_screen_on_play_next: false,
-                                                    unknown9: 600,
-                                                    unknown10: 700,
-                                                    unknown11: 800,
-                                                    unknown12: 900,
-                                                    unknown13: 1000,
+                                                    settings_icon_id: 600,
+                                                    opened_from_portal_entry_guid: 700,
+                                                    required_item_id: 800,
+                                                    required_bundle_id: 900,
+                                                    required_prereq_item_id: 1000,
                                                     group_links: vec![
                                                         MinigameStageGroupLink {
                                                             link_id: 1,
@@ -943,7 +937,8 @@ impl GameServer {
                     // Allow the cleanup thread to log the player out on disconnect
                 }
                 OpCode::Minigame => {
-                    info!("MINIGAME PACKET");
+                    broadcasts.append(&mut process_minigame_packet(&mut cursor, sender, self)?);
+                    /*info!("MINIGAME PACKET");
                     let raw_op_code = cursor.read_u8()?;
                     if raw_op_code == MinigameOpCode::RequestCreateActiveMinigame as u8 {
                         broadcasts.append(&mut vec![Broadcast::Single(
@@ -966,8 +961,7 @@ impl GameServer {
                                 },
                             })?],
                         )])
-                    } else if raw_op_code == MinigameOpCode::RequestMinigameStageGroupInstance as u8
-                    {
+                    } else if raw_op_code == MinigameOpCode::RequestStartActiveMinigame as u8 {
                         broadcasts.append(&mut vec![Broadcast::Single(
                             sender,
                             vec![
@@ -1246,7 +1240,7 @@ impl GameServer {
                         let mut buffer = Vec::new();
                         cursor.read_to_end(&mut buffer)?;
                         info!("Unknown minigame op code: {:?}, {:x?}", raw_op_code, buffer);
-                    }
+                    }*/
                 }
                 _ => info!("Unimplemented: {:?}, {:x?}", op_code, data),
             },
@@ -1283,6 +1277,11 @@ impl GameServer {
     pub fn read_zone_templates(&self) -> &BTreeMap<u8, ZoneTemplate> {
         &self.zone_templates
     }
+
+    pub fn minigames(&self) -> &AllMinigameConfigs {
+        &self.minigames
+    }
+
     pub fn mounts(&self) -> &BTreeMap<u32, MountConfig> {
         &self.mounts
     }

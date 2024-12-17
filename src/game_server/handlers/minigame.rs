@@ -1,23 +1,37 @@
 use std::{
     collections::BTreeMap,
     fs::File,
-    io::{Error, ErrorKind},
+    io::{Cursor, Error, ErrorKind, Read},
     path::Path,
 };
 
+use byteorder::ReadBytesExt;
 use evalexpr::{context_map, eval_with_context, Value};
+use packet_serialize::DeserializePacket;
 use serde::Deserialize;
 
-use crate::game_server::{
-    packets::minigame::{
-        CreateMinigameStageGroupInstance, MinigameDefinitions, MinigameHeader,
-        MinigamePortalCategory, MinigamePortalEntry, MinigameStageDefinition,
-        MinigameStageGroupDefinition, MinigameStageGroupLink, MinigameStageInstance,
+use crate::{
+    game_server::{
+        packets::{
+            minigame::{
+                CreateMinigameStageGroupInstance, MinigameDefinitions, MinigameHeader,
+                MinigameOpCode, MinigamePortalCategory, MinigamePortalEntry,
+                MinigameStageDefinition, MinigameStageGroupDefinition, MinigameStageGroupLink,
+                MinigameStageInstance, RequestMinigameStageGroupInstance, ShowStageInstanceSelect,
+            },
+            tunnel::TunneledPacket,
+            GamePacket,
+        },
+        Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
-    ProcessPacketError, ProcessPacketErrorType,
+    info,
 };
 
-use super::character::Player;
+use super::{
+    character::{CharacterType, Player},
+    lock_enforcer::CharacterLockRequest,
+    unique_guid::player_guid,
+};
 
 #[derive(Clone)]
 pub struct PlayerStageStats {
@@ -107,7 +121,7 @@ pub struct MinigameStageGroupConfig {
     pub guid: i32,
     pub name_id: u32,
     pub description_id: u32,
-    pub icon_set_id: u32,
+    pub icon_id: u32,
     pub stage_select_map_name: String,
     #[serde(default)]
     pub default_stage_instance: u32,
@@ -143,15 +157,15 @@ impl MinigameStageGroupConfig {
                 portal_entry_guid,
                 name_id: self.name_id,
                 description_id: self.description_id,
-                icon_set_id: self.icon_set_id,
+                icon_set_id: self.icon_id,
                 stage_select_map_name: self.stage_select_map_name.clone(),
                 stage_progression: "".to_string(),
                 show_start_screen_on_play_next: false,
-                unknown9: 0,
-                unknown10: 0,
-                unknown11: 0,
-                unknown12: 0,
-                unknown13: 0,
+                settings_icon_id: 0,
+                opened_from_portal_entry_guid: portal_entry_guid,
+                required_item_id: 0,
+                required_bundle_id: 0,
+                required_prereq_item_id: 0,
                 group_links,
             },
             stages,
@@ -208,7 +222,7 @@ impl MinigameStageGroupConfig {
             stage_group_guid: self.guid,
             name_id: self.name_id,
             description_id: self.description_id,
-            icon_set_id: self.icon_set_id,
+            icon_set_id: self.icon_id,
             stage_select_map_name: self.stage_select_map_name.clone(),
             default_stage_instance_guid: default_stage_guid_override
                 .unwrap_or(self.default_stage_instance),
@@ -424,6 +438,70 @@ pub fn load_all_minigames(config_dir: &Path) -> Result<AllMinigameConfigs, Error
     let mut file = File::open(config_dir.join("minigames.json"))?;
     let configs: Vec<MinigamePortalCategoryConfig> = serde_json::from_reader(&mut file)?;
     Ok(configs.into())
+}
+
+pub fn process_minigame_packet(
+    cursor: &mut Cursor<&[u8]>,
+    sender: u32,
+    game_server: &GameServer,
+) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    let raw_op_code: u8 = cursor.read_u8()?;
+    match MinigameOpCode::try_from(raw_op_code) {
+        Ok(op_code) => match op_code {
+            MinigameOpCode::RequestMinigameStageGroupInstance => {
+                let request = RequestMinigameStageGroupInstance::deserialize(cursor)?;
+
+                game_server.lock_enforcer().read_characters(|_| CharacterLockRequest {
+                    read_guids: vec![player_guid(sender)],
+                    write_guids: Vec::new(),
+                    character_consumer: |_, characters_read, _, _| {
+                        if let Some(character_read_handle) = characters_read.get(&player_guid(sender)) {
+                            if let CharacterType::Player(player) = &character_read_handle.stats.character_type {
+                                Ok(vec![Broadcast::Single(
+                                    sender,
+                                    vec![
+                                        GamePacket::serialize(&TunneledPacket {
+                                            unknown1: true,
+                                            inner: game_server.minigames().stage_group_instance(request.header.stage_group_guid, None, player)?,
+                                        })?,
+                                        GamePacket::serialize(&TunneledPacket {
+                                            unknown1: true,
+                                            inner: ShowStageInstanceSelect {
+                                                header: MinigameHeader {
+                                                    active_minigame_guid: -1,
+                                                    unknown2: -1,
+                                                    stage_group_guid: request.header.stage_group_guid
+                                                }
+                                            },
+                                        })?,
+                                    ],
+                                )])
+                            } else {
+                                Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Non-player character {} requested a stage group instance {}", sender, request.header.stage_group_guid)))
+                            }
+                        } else {
+                            Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown character {} requested a stage group instance {}", sender, request.header.stage_group_guid)))
+                        }
+                    },
+                })
+            }
+            _ => {
+                let mut buffer = Vec::new();
+                cursor.read_to_end(&mut buffer)?;
+                info!(
+                    "Unimplemented minigame op code: {:?} {:x?}",
+                    op_code, buffer
+                );
+                Ok(Vec::new())
+            }
+        },
+        Err(_) => {
+            let mut buffer = Vec::new();
+            cursor.read_to_end(&mut buffer)?;
+            info!("Unknown minigame packet: {}, {:x?}", raw_op_code, buffer);
+            Ok(Vec::new())
+        }
+    }
 }
 
 fn evaluate_score_to_credits_expression(

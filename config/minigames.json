@@ -29,7 +29,16 @@
                 "is_game_of_day": false,
                 "sort_order": 10000,
                 "tutorial_swf": "HowToAquaticAssault.swf",
-                "stage_groups": []
+                "stage_groups": [
+                    {
+                        "guid": 10000,
+                        "name_id": 45898,
+                        "description_id": 45897,
+                        "icon_id": 5128,
+                        "stage_select_map_name": "RepublicGunship",
+                        "stages": []
+                    }
+                ]
             }
         ]
     },

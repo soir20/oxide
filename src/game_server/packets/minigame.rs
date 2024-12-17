@@ -11,7 +11,7 @@ use super::{GamePacket, OpCode, RewardBundle};
 pub enum MinigameOpCode {
     MinigameDefinitions = 0x1,
     RequestCreateActiveMinigame = 0x4,
-    RequestMinigameStageGroupInstance = 0x6,
+    RequestStartActiveMinigame = 0x6,
     RequestCancelActiveMinigame = 0x7,
     FlashPayload = 0xf,
     CreateActiveMinigame = 0x11,
@@ -20,6 +20,7 @@ pub enum MinigameOpCode {
     LeaveActiveMinigame = 0x14,
     UpdateActiveMinigameRewards = 0x17,
     ActiveMinigameEndScore = 0x30,
+    RequestMinigameStageGroupInstance = 0x31,
     CreateMinigameStageGroupInstance = 0x33,
     ShowStageInstanceSelect = 0x34,
     ActiveMinigameCreationResult = 0x44,
@@ -83,11 +84,11 @@ pub struct MinigameStageGroupDefinition {
     pub stage_select_map_name: String,        // unconfirmed
     pub stage_progression: String,            // unconfirmed
     pub show_start_screen_on_play_next: bool, // unconfirmed
-    pub unknown9: u32,
-    pub unknown10: u32,
-    pub unknown11: u32,
-    pub unknown12: u32,
-    pub unknown13: u32,
+    pub settings_icon_id: u32,
+    pub opened_from_portal_entry_guid: u32,
+    pub required_item_id: u32,
+    pub required_bundle_id: u32,
+    pub required_prereq_item_id: u32,
     pub group_links: Vec<MinigameStageGroupLink>,
 }
 
@@ -368,6 +369,11 @@ pub struct MinigameStageInstance {
     pub unknown18: u32,
     pub completed: bool,
     pub link_group_id: u32,
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct RequestMinigameStageGroupInstance {
+    pub header: MinigameHeader,
 }
 
 #[derive(SerializePacket, DeserializePacket)]
