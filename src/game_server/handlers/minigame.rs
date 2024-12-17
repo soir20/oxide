@@ -6,16 +6,24 @@ use std::{
 use evalexpr::{context_map, eval_with_context, Value};
 use serde::Deserialize;
 
-use crate::game_server::packets::minigame::{
-    MinigameDefinitions, MinigameHeader, MinigamePortalCategory, MinigamePortalEntry,
-    MinigameStageDefinition, MinigameStageGroupDefinition, MinigameStageGroupLink,
+use crate::game_server::{
+    packets::minigame::{
+        CreateMinigameStageGroupInstance, MinigameDefinitions, MinigameHeader,
+        MinigamePortalCategory, MinigamePortalEntry, MinigameStageDefinition,
+        MinigameStageGroupDefinition, MinigameStageGroupLink, MinigameStageInstance,
+    },
+    ProcessPacketError, ProcessPacketErrorType,
 };
 
+use super::character::Player;
+
+#[derive(Clone)]
 pub struct PlayerStageStats {
     pub completed: bool,
     pub high_score: i32,
 }
 
+#[derive(Clone, Default)]
 pub struct PlayerMinigameStats {
     stage_guid_to_stats: BTreeMap<u32, PlayerStageStats>,
     trophy_stats: BTreeMap<i32, i32>,
@@ -33,6 +41,13 @@ impl PlayerMinigameStats {
                 completed: true,
                 high_score: score,
             });
+    }
+
+    pub fn has_completed(&self, stage_guid: u32) -> bool {
+        self.stage_guid_to_stats
+            .get(&stage_guid)
+            .map(|stats| stats.completed)
+            .unwrap_or(false)
     }
 
     pub fn update_trophy_progress(&mut self, trophy_guid: i32, delta: i32) {
@@ -55,6 +70,7 @@ pub struct MinigameStageConfig {
     pub max_players: u32,
     pub difficulty: u32,
     pub start_sound_id: u32,
+    pub required_item_guid: u32,
     pub members_only: bool,
     pub link_name: String,
     pub short_name: String,
@@ -86,7 +102,7 @@ impl MinigameStageConfig {
 
 #[derive(Deserialize)]
 pub struct MinigameStageGroupConfig {
-    pub guid: u32,
+    pub guid: i32,
     pub name_id: u32,
     pub description_id: u32,
     pub icon_set_id: u32,
@@ -137,6 +153,67 @@ impl MinigameStageGroupConfig {
             },
             stages,
         )
+    }
+
+    pub fn to_stage_group_instance(
+        &self,
+        portal_entry_guid: u32,
+        default_stage_guid_override: Option<u32>,
+        player: &Player,
+    ) -> CreateMinigameStageGroupInstance {
+        let mut stage_instances = Vec::new();
+        let mut stage_number = 1;
+        let mut previous_completed = true;
+
+        for stage in &self.stages {
+            let completed = player.minigame_stats.has_completed(stage.guid);
+            let unlocked =
+                player.inventory.contains(&stage.required_item_guid) && previous_completed;
+
+            stage_instances.push(MinigameStageInstance {
+                stage_instance_guid: stage.guid,
+                portal_entry_guid,
+                link_name: stage.link_name.clone(),
+                short_name: stage.short_name.clone(),
+                unlocked,
+                unknown6: 0,
+                name_id: stage.name_id,
+                description_id: stage.description_id,
+                icon_set_id: stage.icon_set_id,
+                parent_minigame_id: 0,
+                members_only: stage.members_only,
+                unknown12: 0,
+                background_swf: "".to_string(),
+                min_players: stage.min_players,
+                max_players: stage.max_players,
+                stage_number,
+                required_item_id: 0,
+                unknown18: 0,
+                completed,
+                link_group_id: 0,
+            });
+            stage_number += 1;
+            previous_completed = completed;
+        }
+
+        CreateMinigameStageGroupInstance {
+            header: MinigameHeader {
+                active_minigame_guid: -1,
+                unknown2: -1,
+                stage_group_guid: self.guid,
+            },
+            stage_group_guid: self.guid,
+            name_id: self.name_id,
+            description_id: self.description_id,
+            icon_set_id: self.icon_set_id,
+            stage_select_map_name: self.stage_select_map_name.clone(),
+            default_stage_instance_guid: default_stage_guid_override
+                .unwrap_or(self.default_stage_instance),
+            stage_instances,
+            stage_progression: "".to_string(),
+            show_start_screen_on_play_next: false,
+            settings_icon_id: 0,
+        }
     }
 }
 
@@ -277,6 +354,66 @@ impl From<&[MinigamePortalCategoryConfig]> for MinigameDefinitions {
             stage_groups,
             portal_entries,
             portal_categories,
+        }
+    }
+}
+
+pub struct AllMinigamesConfig {
+    categories: Vec<MinigamePortalCategoryConfig>,
+    stage_groups: BTreeMap<i32, (usize, usize, usize)>,
+}
+
+impl AllMinigamesConfig {
+    pub fn definitions(&self) -> MinigameDefinitions {
+        (&self.categories[..]).into()
+    }
+
+    pub fn stage_group_instance(
+        &self,
+        stage_group_guid: i32,
+        default_stage_guid_override: Option<u32>,
+        player: &Player,
+    ) -> Result<CreateMinigameStageGroupInstance, ProcessPacketError> {
+        if let Some((category_index, portal_entry_index, stage_group_index)) =
+            self.stage_groups.get(&stage_group_guid)
+        {
+            let category = &self.categories[*category_index];
+            let portal_entry = &category.portal_entries[*portal_entry_index];
+            let stage_group = &portal_entry.stage_groups[*stage_group_index];
+            Ok(stage_group.to_stage_group_instance(
+                portal_entry.guid,
+                default_stage_guid_override,
+                player,
+            ))
+        } else {
+            Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!(
+                    "Requested unknown stage group instance {}",
+                    stage_group_guid
+                ),
+            ))
+        }
+    }
+}
+
+impl From<Vec<MinigamePortalCategoryConfig>> for AllMinigamesConfig {
+    fn from(value: Vec<MinigamePortalCategoryConfig>) -> Self {
+        let mut stage_groups = BTreeMap::new();
+        for (category_index, category) in value.iter().enumerate() {
+            for (entry_index, entry) in category.portal_entries.iter().enumerate() {
+                for (stage_group_index, stage_group) in entry.stage_groups.iter().enumerate() {
+                    stage_groups.insert(
+                        stage_group.guid,
+                        (category_index, entry_index, stage_group_index),
+                    );
+                }
+            }
+        }
+
+        AllMinigamesConfig {
+            categories: value,
+            stage_groups,
         }
     }
 }

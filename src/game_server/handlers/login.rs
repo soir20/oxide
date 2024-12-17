@@ -13,6 +13,7 @@ use crate::game_server::{
 use super::{
     character::{BattleClass, Character, Player},
     lock_enforcer::ZoneLockRequest,
+    minigame::PlayerMinigameStats,
     test_data::{make_test_customizations, make_test_player},
     unique_guid::player_guid,
     zone::Zone,
@@ -99,6 +100,7 @@ pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, P
                     active_battle_class: player.inner.data.active_battle_class,
                     inventory: player.inner.data.inventory.into_keys().collect(),
                     customizations: make_test_customizations(),
+                    minigame_stats: PlayerMinigameStats::default(),
                 },
                 game_server,
             ));

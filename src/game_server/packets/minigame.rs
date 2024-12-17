@@ -63,7 +63,7 @@ pub struct MinigameStageDefinition {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct MinigameStageGroupLink {
     pub link_id: u32,
-    pub stage_group_definition_guid: u32,
+    pub stage_group_definition_guid: i32,
     pub parent_game_id: u32,
     pub link_stage_definition_guid: u32,
     pub unknown5: u32,
@@ -75,7 +75,7 @@ pub struct MinigameStageGroupLink {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct MinigameStageGroupDefinition {
-    pub guid: u32,
+    pub guid: i32,
     pub portal_entry_guid: u32, // unconfirmed
     pub name_id: u32,
     pub description_id: u32, // unconfirmed
@@ -373,13 +373,13 @@ pub struct MinigameStageInstance {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct CreateMinigameStageGroupInstance {
     pub header: MinigameHeader,
-    pub group_id: u32,
+    pub stage_group_guid: i32,
     pub name_id: u32,
     pub description_id: u32,
     pub icon_set_id: u32,
     pub stage_select_map_name: String,
     pub default_stage_instance_guid: u32,
-    pub stages_instances: Vec<MinigameStageInstance>,
+    pub stage_instances: Vec<MinigameStageInstance>,
     pub stage_progression: String,
     pub show_start_screen_on_play_next: bool,
     pub settings_icon_id: u32,

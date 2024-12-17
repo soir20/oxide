@@ -36,6 +36,7 @@ use super::{
     housing::fixture_packets,
     inventory::wield_type_from_slot,
     lock_enforcer::{CharacterReadGuard, ZoneLockEnforcer, ZoneLockRequest},
+    minigame::PlayerMinigameStats,
     mount::{spawn_mount_npc, MountConfig},
     unique_guid::{mount_guid, npc_guid, player_guid, shorten_player_guid},
     zone::teleport_within_zone,
@@ -986,6 +987,7 @@ pub struct Player {
     pub active_battle_class: u32,
     pub inventory: BTreeSet<u32>,
     pub customizations: BTreeMap<CustomizationSlot, u32>,
+    pub minigame_stats: PlayerMinigameStats,
 }
 
 impl Player {

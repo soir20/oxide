@@ -918,13 +918,13 @@ impl GameServer {
                                                 unknown2: -1,
                                                 stage_group_guid: -1
                                             },
-                                            group_id: 10000,
+                                            stage_group_guid: 10000,
                                             name_id: 5000,
                                             description_id: 6000,
                                             icon_set_id: 7000,
                                             stage_select_map_name: "towerDefense".to_string(),
                                             default_stage_instance_guid: 0,
-                                            stages_instances: vec![
+                                            stage_instances: vec![
                                                 MinigameStageInstance {
                                                     stage_instance_guid: 1,
                                                     portal_entry_guid: 2,
@@ -1062,13 +1062,13 @@ impl GameServer {
                                             unknown2: -1,
                                             stage_group_guid: -1,
                                         },
-                                        group_id: 10000,
+                                        stage_group_guid: 10000,
                                         name_id: 5000,
                                         description_id: 6000,
                                         icon_set_id: 7000,
                                         stage_select_map_name: "towerDefense".to_string(),
                                         default_stage_instance_guid: 1,
-                                        stages_instances: vec![
+                                        stage_instances: vec![
                                             MinigameStageInstance {
                                                 stage_instance_guid: 1,
                                                 portal_entry_guid: 2,
