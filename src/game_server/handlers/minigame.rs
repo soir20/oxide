@@ -1,4 +1,7 @@
-use std::io::{Error, ErrorKind};
+use std::{
+    collections::BTreeMap,
+    io::{Error, ErrorKind},
+};
 
 use evalexpr::{context_map, eval_with_context, Value};
 use serde::Deserialize;
@@ -7,6 +10,40 @@ use crate::game_server::packets::minigame::{
     MinigameDefinitions, MinigameHeader, MinigamePortalCategory, MinigamePortalEntry,
     MinigameStageDefinition, MinigameStageGroupDefinition, MinigameStageGroupLink,
 };
+
+pub struct PlayerStageStats {
+    pub completed: bool,
+    pub high_score: i32,
+}
+
+pub struct PlayerMinigameStats {
+    stage_guid_to_stats: BTreeMap<u32, PlayerStageStats>,
+    trophy_stats: BTreeMap<i32, i32>,
+}
+
+impl PlayerMinigameStats {
+    pub fn complete(&mut self, stage_guid: u32, score: i32) {
+        self.stage_guid_to_stats
+            .entry(stage_guid)
+            .and_modify(|entry| {
+                entry.completed = true;
+                entry.high_score = score.max(entry.high_score);
+            })
+            .or_insert_with(|| PlayerStageStats {
+                completed: true,
+                high_score: score,
+            });
+    }
+
+    pub fn update_trophy_progress(&mut self, trophy_guid: i32, delta: i32) {
+        self.trophy_stats
+            .entry(trophy_guid)
+            .and_modify(|value| {
+                *value = value.saturating_add(delta);
+            })
+            .or_insert(delta);
+    }
+}
 
 #[derive(Deserialize)]
 pub struct MinigameStageConfig {
