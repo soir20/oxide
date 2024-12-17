@@ -378,7 +378,15 @@ pub type MatchmakingQueue = u32;
 pub struct MinigameTutorial {}
 
 #[derive(Clone, SerializePacket)]
-pub struct PowerHour {}
+pub struct PowerHour {
+    pub id: u32,
+    pub effect: Effect,
+    pub icon_set_id: u32,
+    pub unknown2: bool,
+    pub name_id: u32,
+    pub unknown4: u32,
+    pub removable: bool,
+}
 
 #[derive(Clone, SerializePacket)]
 pub struct Stat {}
