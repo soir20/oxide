@@ -2,7 +2,7 @@ use std::{collections::BTreeMap, fs::File, io::Error, path::Path};
 
 use serde::Deserialize;
 
-use crate::game_server::packets::quick_chat::{Data, QuickChatDefinition};
+use crate::game_server::packets::quick_chat::{QuickChatDefinitions, QuickChatDefinition};
 
 #[derive(Deserialize)]
 pub struct QuickChatConfig {
@@ -31,24 +31,24 @@ pub fn load_quick_chats(config_dir: &Path) -> Result<BTreeMap<i32, QuickChatConf
     Ok(quick_chat_table)
 }
 
-pub fn make_test_quick_chats(quick_chats: &BTreeMap<i32, QuickChatConfig>) -> QuickChatDefinition {
+pub fn make_test_quick_chats(quick_chats: &BTreeMap<i32, QuickChatConfig>) -> QuickChatDefinitions {
     let mut owned_quick_chats = Vec::new();
-    for data in quick_chats.values() {
-        owned_quick_chats.push(Data {
-            id1: data.id,
-            id2: data.id,
-            menu_text: data.menu_text,
+    for quick_chats in quick_chats.values() {
+        owned_quick_chats.push(QuickChatDefinition {
+            id1: quick_chats.id,
+            id2: quick_chats.id,
+            menu_text: quick_chats.menu_text,
             chat_text: 0,
-            animation_id: data.animation_id,
+            animation_id: quick_chats.animation_id,
             unknown1: 0,
             admin_only: 0,
-            menu_icon_id: data.menu_icon_id,
-            item_id: data.item_id,
-            parent_id: data.parent_id,
+            menu_icon_id: quick_chats.menu_icon_id,
+            item_id: quick_chats.item_id,
+            parent_id: quick_chats.parent_id,
             unknown2: 0,
         })
     }
-    QuickChatDefinition {
-        data: owned_quick_chats,
+    QuickChatDefinitions {
+        quick_chats: owned_quick_chats,
     }
 }
