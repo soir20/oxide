@@ -2,7 +2,7 @@ use std::{collections::BTreeMap, fs::File, io::Error, path::Path};
 
 use serde::Deserialize;
 
-use crate::game_server::packets::quick_chat::{QuickChatDefinitions, QuickChatDefinition};
+use crate::game_server::packets::quick_chat::{QuickChatDefinition, QuickChatDefinitions};
 
 #[derive(Deserialize)]
 pub struct QuickChatConfig {
