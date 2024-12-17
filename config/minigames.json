@@ -1,0 +1,60 @@
+[
+    {
+        "comment": "Popular",
+        "guid": 1,
+        "name_id": 51596,
+        "icon_id": 5808,
+        "sort_order": 1,
+        "portal_entries": []
+    },
+    {
+        "comment": "Action",
+        "guid": 2,
+        "name_id": 51597,
+        "icon_id": 5805,
+        "sort_order": 2,
+        "portal_entries": [
+            {
+                "guid": 10000,
+                "name_id": 45898,
+                "description_id": 45897,
+                "members_only": true,
+                "is_flash": true,
+                "is_micro": false,
+                "is_active": true,
+                "param1": 0,
+                "icon_id": 5131,
+                "background_icon_id": 0,
+                "is_popular": false,
+                "is_game_of_day": false,
+                "sort_order": 10000,
+                "tutorial_swf": "HowToAquaticAssault.swf",
+                "stage_groups": []
+            }
+        ]
+    },
+    {
+        "comment": "Puzzle",
+        "guid": 3,
+        "name_id": 51598,
+        "icon_id": 5809,
+        "sort_order": 3,
+        "portal_entries": []
+    },
+    {
+        "comment": "Campaigns",
+        "guid": 4,
+        "name_id": 51599,
+        "icon_id": 5804,
+        "sort_order": 4,
+        "portal_entries": []
+    },
+    {
+        "comment": "Dailies",
+        "guid": 5,
+        "name_id": 51600,
+        "icon_id": 5806,
+        "sort_order": 5,
+        "portal_entries": []
+    }
+]

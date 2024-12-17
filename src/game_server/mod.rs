@@ -21,6 +21,7 @@ use handlers::lock_enforcer::{
     CharacterLockRequest, LockEnforcer, LockEnforcerSource, ZoneLockRequest, ZoneTableReadHandle,
 };
 use handlers::login::{log_in, log_out, send_points_of_interest};
+use handlers::minigame::{load_all_minigames, AllMinigameConfigs};
 use handlers::mount::{load_mounts, process_mount_packet, MountConfig};
 use handlers::reference_data::{load_categories, load_item_classes, load_item_groups};
 use handlers::store::{load_cost_map, CostEntry};
@@ -138,6 +139,7 @@ pub struct GameServer {
     items: BTreeMap<u32, ItemDefinition>,
     item_classes: ItemClassDefinitions,
     item_groups: ItemGroupDefinitions,
+    minigames: AllMinigameConfigs,
     mounts: BTreeMap<u32, MountConfig>,
     zone_templates: BTreeMap<u8, ZoneTemplate>,
 }
@@ -160,6 +162,7 @@ impl GameServer {
             item_groups: ItemGroupDefinitions {
                 definitions: item_groups,
             },
+            minigames: load_all_minigames(config_dir)?,
             mounts: load_mounts(config_dir)?,
             zone_templates: templates,
         })
@@ -281,98 +284,6 @@ impl GameServer {
                     };
                     sender_only_packets.push(GamePacket::serialize(&categories)?);
 
-                    sender_only_packets.push(GamePacket::serialize(&TunneledPacket {
-                        unknown1: true,
-                        inner: CreateActiveMinigame {
-                            header: MinigameHeader {
-                                active_minigame_guid: 1,
-                                unknown2: -1,
-                                stage_group_guid: 10000,
-                            },
-                            name_id: 1,
-                            icon_set_id: 0,
-                            description_id: 0,
-                            difficulty: 0,
-                            battle_class_type: 0,
-                            portal_entry_guid: 2,
-                            unknown7: false,
-                            unknown8: false,
-                            reward_bundle1: RewardBundle {
-                                unknown1: false,
-                                credits: 100,
-                                battle_class_xp: 200,
-                                unknown4: 0,
-                                unknown5: 0,
-                                unknown6: 0,
-                                unknown7: 0,
-                                unknown8: 0,
-                                unknown9: 0,
-                                unknown10: 0,
-                                unknown11: 0,
-                                unknown12: 0,
-                                unknown13: 0,
-                                icon_set_id: 0,
-                                name_id: 0,
-                                entries: vec![],
-                                unknown17: 0,
-                            },
-                            reward_bundle2: RewardBundle {
-                                unknown1: false,
-                                credits: 0,
-                                battle_class_xp: 0,
-                                unknown4: 0,
-                                unknown5: 0,
-                                unknown6: 0,
-                                unknown7: 0,
-                                unknown8: 0,
-                                unknown9: 0,
-                                unknown10: 0,
-                                unknown11: 0,
-                                unknown12: 0,
-                                unknown13: 0,
-                                icon_set_id: 0,
-                                name_id: 0,
-                                entries: vec![],
-                                unknown17: 0,
-                            },
-                            reward_bundle3: RewardBundle {
-                                unknown1: false,
-                                credits: 0,
-                                battle_class_xp: 0,
-                                unknown4: 0,
-                                unknown5: 0,
-                                unknown6: 0,
-                                unknown7: 0,
-                                unknown8: 0,
-                                unknown9: 0,
-                                unknown10: 0,
-                                unknown11: 0,
-                                unknown12: 0,
-                                unknown13: 0,
-                                icon_set_id: 0,
-                                name_id: 0,
-                                entries: vec![],
-                                unknown17: 0,
-                            },
-                            reward_bundles: vec![],
-                            unknown13: false,
-                            unknown14: false,
-                            unknown15: false,
-                            unknown16: false,
-                            show_end_score_screen: true,
-                            unknown18: "blah".to_string(),
-                            unknown19: 7,
-                            unknown20: false,
-                            stage_definition_guid: 1,
-                            unknown22: false,
-                            unknown23: false,
-                            unknown24: false,
-                            unknown25: 8,
-                            unknown26: 9,
-                            unknown27: 10,
-                        },
-                    })?);
-
                     let item_groups = TunneledPacket {
                         unknown1: true,
                         inner: GamePacket::serialize(&self.item_groups)?,
@@ -384,6 +295,12 @@ impl GameServer {
                         inner: GamePacket::serialize(&StoreItemList::from(&self.costs))?,
                     };
                     sender_only_packets.push(GamePacket::serialize(&store_items)?);
+
+                    let minigame_definitions = TunneledPacket {
+                        unknown1: true,
+                        inner: GamePacket::serialize(&self.minigames.definitions())?,
+                    };
+                    sender_only_packets.push(GamePacket::serialize(&minigame_definitions)?);
 
                     let mut character_broadcasts = self.lock_enforcer().read_characters(|characters_table_read_handle| {
                         let possible_index = characters_table_read_handle.index(player_guid(sender));

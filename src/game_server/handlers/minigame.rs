@@ -1,6 +1,8 @@
 use std::{
     collections::BTreeMap,
+    fs::File,
     io::{Error, ErrorKind},
+    path::Path,
 };
 
 use evalexpr::{context_map, eval_with_context, Value};
@@ -107,6 +109,7 @@ pub struct MinigameStageGroupConfig {
     pub description_id: u32,
     pub icon_set_id: u32,
     pub stage_select_map_name: String,
+    #[serde(default)]
     pub default_stage_instance: u32,
     pub stages: Vec<MinigameStageConfig>,
 }
@@ -227,11 +230,10 @@ pub struct MinigamePortalEntryConfig {
     pub is_micro: bool,
     pub is_active: bool,
     pub param1: u32,
-    pub icon_set_id: u32,
-    pub background_icon_set_id: u32,
+    pub icon_id: u32,
+    pub background_icon_id: u32,
     pub is_popular: bool,
     pub is_game_of_day: bool,
-    pub portal_category_guid: u32,
     pub sort_order: u32,
     pub tutorial_swf: String,
     pub stage_groups: Vec<MinigameStageGroupConfig>,
@@ -266,8 +268,8 @@ impl MinigamePortalEntryConfig {
                 is_micro: self.is_micro,
                 is_active: self.is_active,
                 param1: self.param1,
-                icon_set_id: self.icon_set_id,
-                background_icon_set_id: self.background_icon_set_id,
+                icon_set_id: self.icon_id,
+                background_icon_set_id: self.background_icon_id,
                 is_popular: self.is_popular,
                 is_game_of_day: self.is_game_of_day,
                 portal_category_guid,
@@ -284,7 +286,7 @@ impl MinigamePortalEntryConfig {
 pub struct MinigamePortalCategoryConfig {
     pub guid: u32,
     pub name_id: u32,
-    pub icon_set_id: u32,
+    pub icon_id: u32,
     pub sort_order: u32,
     pub portal_entries: Vec<MinigamePortalEntryConfig>,
 }
@@ -314,7 +316,7 @@ impl From<&MinigamePortalCategoryConfig>
             MinigamePortalCategory {
                 guid: value.guid,
                 name_id: value.name_id,
-                icon_set_id: value.icon_set_id,
+                icon_set_id: value.icon_id,
                 sort_order: value.sort_order,
             },
             entries,
@@ -358,12 +360,12 @@ impl From<&[MinigamePortalCategoryConfig]> for MinigameDefinitions {
     }
 }
 
-pub struct AllMinigamesConfig {
+pub struct AllMinigameConfigs {
     categories: Vec<MinigamePortalCategoryConfig>,
     stage_groups: BTreeMap<i32, (usize, usize, usize)>,
 }
 
-impl AllMinigamesConfig {
+impl AllMinigameConfigs {
     pub fn definitions(&self) -> MinigameDefinitions {
         (&self.categories[..]).into()
     }
@@ -397,7 +399,7 @@ impl AllMinigamesConfig {
     }
 }
 
-impl From<Vec<MinigamePortalCategoryConfig>> for AllMinigamesConfig {
+impl From<Vec<MinigamePortalCategoryConfig>> for AllMinigameConfigs {
     fn from(value: Vec<MinigamePortalCategoryConfig>) -> Self {
         let mut stage_groups = BTreeMap::new();
         for (category_index, category) in value.iter().enumerate() {
@@ -411,11 +413,17 @@ impl From<Vec<MinigamePortalCategoryConfig>> for AllMinigamesConfig {
             }
         }
 
-        AllMinigamesConfig {
+        AllMinigameConfigs {
             categories: value,
             stage_groups,
         }
     }
+}
+
+pub fn load_all_minigames(config_dir: &Path) -> Result<AllMinigameConfigs, Error> {
+    let mut file = File::open(config_dir.join("minigames.json"))?;
+    let configs: Vec<MinigamePortalCategoryConfig> = serde_json::from_reader(&mut file)?;
+    Ok(configs.into())
 }
 
 fn evaluate_score_to_credits_expression(
