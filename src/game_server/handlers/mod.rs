@@ -9,6 +9,7 @@ pub mod inventory;
 pub mod item;
 pub mod lock_enforcer;
 pub mod login;
+pub mod minigame;
 pub mod mount;
 pub mod reference_data;
 pub mod store;

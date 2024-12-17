@@ -294,7 +294,7 @@ pub enum ScoreType {
 
 impl SerializePacket for ScoreType {
     fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        buffer.write_u32::<LittleEndian>(*self as u32)?;
+        buffer.write_i32::<LittleEndian>(*self as i32)?;
         Ok(())
     }
 }
@@ -304,9 +304,9 @@ pub struct ScoreEntry {
     pub entry_text: String,
     pub icon_set_id: u32,
     pub score_type: ScoreType,
-    pub score_count: u32,
-    pub score_max: u32,
-    pub score_points: u32,
+    pub score_count: i32,
+    pub score_max: i32,
+    pub score_points: i32,
 }
 
 #[derive(SerializePacket)]
@@ -352,7 +352,7 @@ pub struct CreateMinigameStageGroupInstance {
     pub group_id: u32,
     pub name_id: u32,
     pub description_id: u32,
-    pub icon_id: u32,
+    pub icon_set_id: u32,
     pub stage_select_map_name: String,
     pub default_stage_instance_guid: u32,
     pub stages_instances: Vec<MinigameStageInstance>,
