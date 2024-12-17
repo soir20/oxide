@@ -1,0 +1,497 @@
+[
+    {
+        "comment": "Fireworks Mind Trick",
+        "id": 8,
+        "parent_id": 2,
+        "menu_text": 9632,
+        "menu_icon_id": 996,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Proton Torpedoes Mind Trick",
+        "id": 9,
+        "parent_id": 2,
+        "menu_text": 9634,
+        "menu_icon_id": 1012,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Republic Cruiser Mind Trick",
+        "id": 10,
+        "parent_id": 2,
+        "menu_text": 9636,
+        "menu_icon_id": 1010,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Orbiting Malevolence Mind trick",
+        "id": 11,
+        "parent_id": 2,
+        "menu_text": 9695,
+        "menu_icon_id": 1004,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Force Explosion Mind Trick",
+        "id": 12,
+        "parent_id": 2,
+        "menu_text": 546,
+        "menu_icon_id": 998,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Force Glow Mind Trick",
+        "id": 13,
+        "parent_id": 2,
+        "menu_text": 548,
+        "menu_icon_id": 1000,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Fighter Battle Mind trick",
+        "id": 14,
+        "parent_id": 2,
+        "menu_text": 550,
+        "menu_icon_id": 994,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Force Push Mind Trick",
+        "id": 15,
+        "parent_id": 2,
+        "menu_text": 17809,
+        "menu_icon_id": 1002,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Super Battle Droid Holoprojector",
+        "id": 16,
+        "parent_id": 3,
+        "menu_text": 8358,
+        "menu_icon_id": 1024,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Battle Droid Holoprojector",
+        "id": 17,
+        "parent_id": 3,
+        "menu_text": 13966,
+        "menu_icon_id": 1018,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Commando Droid Holoprojector",
+        "id": 18,
+        "parent_id": 3,
+        "menu_text": 13970,
+        "menu_icon_id": 1016,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Droideka Holoprojector",
+        "id": 19,
+        "parent_id": 3,
+        "menu_text": 13974,
+        "menu_icon_id": 1020,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Bith Holoprojector",
+        "id": 20,
+        "parent_id": 3,
+        "menu_text": 13976,
+        "menu_icon_id": 1014,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Jawa Holoprojector",
+        "id": 21,
+        "parent_id": 3,
+        "menu_text": 2292,
+        "menu_icon_id": 1961,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Gotal Holoprojector",
+        "id": 22,
+        "parent_id": 3,
+        "menu_text": 9613,
+        "menu_icon_id": 1340,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Ithorian Holoprojector",
+        "id": 23,
+        "parent_id": 3,
+        "menu_text": 18169,
+        "menu_icon_id": 1339,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Gungan Holoprojector",
+        "id": 24,
+        "parent_id": 3,
+        "menu_text": 18155,
+        "menu_icon_id": 1341,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Geonosian Holoprojector",
+        "id": 25,
+        "parent_id": 3,
+        "menu_text": 30463,
+        "menu_icon_id": 2567,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Brain Worm Holoprojector",
+        "id": 26,
+        "parent_id": 3,
+        "menu_text": 53064,
+        "menu_icon_id": 2569,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Mortis Daughter Force Form Holoprojector",
+        "id": 27,
+        "parent_id": 3,
+        "menu_text": 33883,
+        "menu_icon_id": 1736,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Mortis Son Force Form Holoprojector",
+        "id": 28,
+        "parent_id": 3,
+        "menu_text": 33882,
+        "menu_icon_id": 1738,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Chewbacca Holoprojector",
+        "id": 29,
+        "parent_id": 3,
+        "menu_text": 43507,
+        "menu_icon_id": 1851,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Underworld Ithorian Holoprojector",
+        "id": 30,
+        "parent_id": 3,
+        "menu_text": 43508,
+        "menu_icon_id": 1853,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Yoda Holoprojector",
+        "id": 31,
+        "parent_id": 3,
+        "menu_text": 44225,
+        "menu_icon_id": 1951,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "General Grievous Holoprojector",
+        "id": 32,
+        "parent_id": 3,
+        "menu_text": 44671,
+        "menu_icon_id": 1999,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Talz Holoprojector",
+        "id": 33,
+        "parent_id": 3,
+        "menu_text": 44672,
+        "menu_icon_id": 2000,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Jabba Holoprojector",
+        "id": 34,
+        "parent_id": 3,
+        "menu_text": 44754,
+        "menu_icon_id": 2035,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Cad Bane Holoprojector",
+        "id": 35,
+        "parent_id": 3,
+        "menu_text": 44762,
+        "menu_icon_id": 2036,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Gamorrean Guard Holoprojector",
+        "id": 36,
+        "parent_id": 3,
+        "menu_text": 44918,
+        "menu_icon_id": 2131,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Seripa's Holoprojector",
+        "id": 37,
+        "parent_id": 3,
+        "menu_text": 44938,
+        "menu_icon_id": 2132,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Savage Opress Holoprojector",
+        "id": 38,
+        "parent_id": 3,
+        "menu_text": 2734,
+        "menu_icon_id": 2160,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Ziro Holoprojector",
+        "id": 39,
+        "parent_id": 3,
+        "menu_text": 2830,
+        "menu_icon_id": 2300,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Kowakian Monkey Lizard Holoprojector",
+        "id": 40,
+        "parent_id": 3,
+        "menu_text": 45540,
+        "menu_icon_id": 2308,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Captain Ackbar Holoprojector",
+        "id": 41,
+        "parent_id": 3,
+        "menu_text": 45545,
+        "menu_icon_id": 2319,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Nossor Ri Holoprojector",
+        "id": 42,
+        "parent_id": 3,
+        "menu_text": 45544,
+        "menu_icon_id": 2321,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Karkarodan Warrior Holoprojector",
+        "id": 43,
+        "parent_id": 3,
+        "menu_text": 2917,
+        "menu_icon_id": 2320,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Rancor Holoprojector",
+        "id": 44,
+        "parent_id": 3,
+        "menu_text": 2658,
+        "menu_icon_id": 0,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Orphne Holoprojector",
+        "id": 45,
+        "parent_id": 3,
+        "menu_text": 4232,
+        "menu_icon_id": 2375,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "King Manchucho Holoprojector",
+        "id": 46,
+        "parent_id": 3,
+        "menu_text": 4234,
+        "menu_icon_id": 2374,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Magnaguard Holoprojector",
+        "id": 47,
+        "parent_id": 3,
+        "menu_text": 4236,
+        "menu_icon_id": 2376,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Sniper Droid Holoprojector",
+        "id": 48,
+        "parent_id": 3,
+        "menu_text": 4590,
+        "menu_icon_id": 2648,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Gundark Holoprojector",
+        "id": 49,
+        "parent_id": 3,
+        "menu_text": 4654,
+        "menu_icon_id": 2718,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Darth Maul Holoprojector",
+        "id": 50,
+        "parent_id": 3,
+        "menu_text": 4692,
+        "menu_icon_id": 2746,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "C-21 Highsinger Holoprojector",
+        "id": 51,
+        "parent_id": 3,
+        "menu_text": 4691,
+        "menu_icon_id": 2745,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Plo Koon Holoprojector",
+        "id": 52,
+        "parent_id": 3,
+        "menu_text": 4694,
+        "menu_icon_id": 2748,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Kage Warrior Holoprojector",
+        "id": 53,
+        "parent_id": 3,
+        "menu_text": 4728,
+        "menu_icon_id": 2774,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Ortolan Holoprojector",
+        "id": 54,
+        "parent_id": 3,
+        "menu_text": 4732,
+        "menu_icon_id": 2778,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Umbaran Soldier Holoprojector",
+        "id": 55,
+        "parent_id": 3,
+        "menu_text": 4753,
+        "menu_icon_id": 2801,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Narglatch Holoprojector",
+        "id": 56,
+        "parent_id": 3,
+        "menu_text": 4833,
+        "menu_icon_id": 2869,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Old Daka Holoprojector",
+        "id": 57,
+        "parent_id": 3,
+        "menu_text": 4868,
+        "menu_icon_id": 2919,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Mace Windu Handheld Holoprojector",
+        "id": 58,
+        "parent_id": 3,
+        "menu_text": 18675,
+        "menu_icon_id": 1401,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Yoda Handheld Holoprojector",
+        "id": 59,
+        "parent_id": 3,
+        "menu_text": 18677,
+        "menu_icon_id": 1400,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Commander Cody Handheld Holoprojector",
+        "id": 60,
+        "parent_id": 3,
+        "menu_text": 18679,
+        "menu_icon_id": 1402,
+        "animation_id": 0,
+        "item_id": 0
+    },
+    {
+        "comment": "Anakin Skywalker Handheld Holoprojector",
+        "id": 61,
+        "parent_id": 3,
+        "menu_text": 18681,
+        "menu_icon_id": 1403,
+        "animation_id": 0,
+        "item_id": 0
+    },
+	{
+        "comment": "Force Lightning Emote",
+        "id": 62,
+        "parent_id": 1,
+        "menu_text": 10641,
+        "menu_icon_id": 3295,
+        "animation_id": 3608,
+        "item_id": 0
+    }
+]

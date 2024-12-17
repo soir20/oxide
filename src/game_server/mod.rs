@@ -22,6 +22,7 @@ use handlers::lock_enforcer::{
 };
 use handlers::login::{log_in, log_out, send_points_of_interest};
 use handlers::mount::{load_mounts, process_mount_packet, MountConfig};
+use handlers::quick_chat::{load_quick_chats, make_test_quick_chats, QuickChatConfig};
 use handlers::reference_data::{load_categories, load_item_classes, load_item_groups};
 use handlers::store::{load_cost_map, CostEntry};
 use handlers::test_data::make_test_nameplate_image;
@@ -127,6 +128,7 @@ pub struct GameServer {
     item_classes: ItemClassDefinitions,
     item_groups: ItemGroupDefinitions,
     mounts: BTreeMap<u32, MountConfig>,
+    quick_chats: BTreeMap<i32, QuickChatConfig>,
     zone_templates: BTreeMap<u8, ZoneTemplate>,
 }
 
@@ -149,6 +151,7 @@ impl GameServer {
                 definitions: item_groups,
             },
             mounts: load_mounts(config_dir)?,
+            quick_chats: load_quick_chats(config_dir)?,
             zone_templates: templates,
         })
     }
@@ -274,6 +277,12 @@ impl GameServer {
                         inner: GamePacket::serialize(&self.item_groups)?,
                     };
                     sender_only_packets.push(GamePacket::serialize(&item_groups)?);
+
+                    let quick_chats = TunneledPacket {
+                        unknown1: true,
+                        inner: make_test_quick_chats(self.quick_chats()),
+                    };
+                    sender_only_packets.push(GamePacket::serialize(&quick_chats)?);
 
                     let store_items = TunneledPacket {
                         unknown1: true,
@@ -683,6 +692,10 @@ impl GameServer {
     }
     pub fn mounts(&self) -> &BTreeMap<u32, MountConfig> {
         &self.mounts
+    }
+
+    pub fn quick_chats(&self) -> &BTreeMap<i32, QuickChatConfig> {
+        &self.quick_chats
     }
 
     pub fn lock_enforcer(&self) -> LockEnforcer {

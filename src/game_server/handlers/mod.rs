@@ -10,6 +10,7 @@ pub mod item;
 pub mod lock_enforcer;
 pub mod login;
 pub mod mount;
+pub mod quick_chat;
 pub mod reference_data;
 pub mod store;
 pub mod test_data;
