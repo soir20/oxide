@@ -27,7 +27,7 @@ pub struct MinigameStageConfig {
     pub score_to_credits_expression: String,
 }
 
-pub fn evaluate_score_to_credits_expression(
+fn evaluate_score_to_credits_expression(
     score_to_credits_expression: &str,
     score: i32,
 ) -> Result<u32, Error> {

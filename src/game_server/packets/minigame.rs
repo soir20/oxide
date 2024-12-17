@@ -158,10 +158,34 @@ impl GamePacket for RequestCancelActiveMinigame {
     const HEADER: Self::Header = MinigameOpCode::RequestCancelActiveMinigame;
 }
 
-#[derive(SerializePacket, DeserializePacket)]
 pub struct FlashPayload {
     pub header: MinigameHeader,
     pub payload: String,
+}
+
+impl SerializePacket for FlashPayload {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        self.header.serialize(buffer)?;
+        buffer.write_u32::<LittleEndian>(self.payload.len().saturating_add(1) as u32)?;
+        buffer.write_all(self.payload.as_bytes())?;
+        buffer.write_u8(0)?;
+        Ok(())
+    }
+}
+
+impl DeserializePacket for FlashPayload {
+    fn deserialize(
+        cursor: &mut std::io::Cursor<&[u8]>,
+    ) -> Result<Self, packet_serialize::DeserializePacketError>
+    where
+        Self: Sized,
+    {
+        let header = MinigameHeader::deserialize(cursor)?;
+        let payload = String::deserialize(cursor)?
+            .trim_end_matches('\0')
+            .to_string();
+        Ok(FlashPayload { header, payload })
+    }
 }
 
 impl GamePacket for FlashPayload {

@@ -763,7 +763,7 @@ impl GameServer {
                                                     unknown10: 8000,
                                                     unknown11: 9000,
                                                     start_sound_id: 10000,
-                                                    unknown13: "HowToStuntGungan.swf".to_string(),
+                                                    unknown13: "HowToAquaticAssault.swf".to_string(),
                                                     unknown14: 11000,
                                                     unknown15: 12000,
                                                     unknown16: 13000
@@ -781,7 +781,7 @@ impl GameServer {
                                                     unknown10: 8000,
                                                     unknown11: 9000,
                                                     start_sound_id: 10000,
-                                                    unknown13: "HowToStuntGungan.swf".to_string(),
+                                                    unknown13: "HowToAquaticAssault.swf".to_string(),
                                                     unknown14: 11000,
                                                     unknown15: 12000,
                                                     unknown16: 13000
@@ -799,7 +799,7 @@ impl GameServer {
                                                     unknown10: 8000,
                                                     unknown11: 9000,
                                                     start_sound_id: 10000,
-                                                    unknown13: "HowToStuntGungan.swf".to_string(),
+                                                    unknown13: "HowToAquaticAssault.swf".to_string(),
                                                     unknown14: 11000,
                                                     unknown15: 12000,
                                                     unknown16: 13000
@@ -873,7 +873,7 @@ impl GameServer {
                                                     is_game_of_day: false,
                                                     portal_category_guid: 2,
                                                     sort_order: 90,
-                                                    tutorial_swf: "HowToStuntGungan.swf".to_string()
+                                                    tutorial_swf: "HowToAquaticAssault.swf".to_string()
                                                 }
                                             ],
                                             portal_categories: vec![
@@ -1136,7 +1136,7 @@ impl GameServer {
                                                 link_group_id: 14,
                                             },
                                         ],
-                                        stage_progression: "HowToStuntGungan.swf".to_string(),
+                                        stage_progression: "HowToAquaticAssault.swf".to_string(),
                                         show_start_screen_on_play_next: true,
                                         settings_icon_id: 9000,
                                     },
@@ -1155,7 +1155,7 @@ impl GameServer {
                                     unknown1: true,
                                     inner: StartFlashGame {
                                         loader_script_name: "MiniGameFlash".to_string(),
-                                        game_swf_name: "StuntGungan.swf".to_string(),
+                                        game_swf_name: "AquaticAssault.swf".to_string(),
                                         is_micro: false,
                                     },
                                 })?,
@@ -1304,7 +1304,7 @@ impl GameServer {
                         )]);
                     } else if raw_op_code == MinigameOpCode::FlashPayload as u8 {
                         let payload_packet = FlashPayload::deserialize(&mut cursor)?;
-                        if payload_packet.payload == *"FRServer_RequestStageId\0" {
+                        if payload_packet.payload == *"FRServer_RequestStageId" {
                             info!("SENDING STAGE ID");
                             broadcasts.append(&mut vec![Broadcast::Single(
                                 sender,
@@ -1316,7 +1316,7 @@ impl GameServer {
                                             unknown2: -1,
                                             stage_group_guid: 10000,
                                         },
-                                        payload: "VOnServerSetStageIdMsg\t1\0".to_string(),
+                                        payload: "VOnServerSetStageIdMsg\t1".to_string(),
                                     },
                                 })?],
                             )]);
