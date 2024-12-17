@@ -81,12 +81,12 @@ pub struct MinigameStageConfig {
     pub guid: u32,
     pub name_id: u32,
     pub description_id: u32,
-    pub icon_set_id: u32,
+    pub icon_id: u32,
     pub min_players: u32,
     pub max_players: u32,
     pub difficulty: u32,
     pub start_sound_id: u32,
-    pub required_item_guid: u32,
+    pub required_item_guid: Option<u32>,
     pub members_only: bool,
     pub link_name: String,
     pub short_name: String,
@@ -100,7 +100,7 @@ impl MinigameStageConfig {
             portal_entry_guid,
             start_screen_name_id: self.name_id,
             start_screen_description_id: self.description_id,
-            start_screen_icon_set_id: self.icon_set_id,
+            start_screen_icon_set_id: self.icon_id,
             difficulty: self.difficulty,
             members_only: self.members_only,
             unknown8: 0,
@@ -184,8 +184,11 @@ impl MinigameStageGroupConfig {
 
         for stage in &self.stages {
             let completed = player.minigame_stats.has_completed(stage.guid);
-            let unlocked =
-                player.inventory.contains(&stage.required_item_guid) && previous_completed;
+            let unlocked = stage
+                .required_item_guid
+                .map(|item_guid| player.inventory.contains(&item_guid))
+                .unwrap_or(true)
+                && previous_completed;
 
             stage_instances.push(MinigameStageInstance {
                 stage_instance_guid: stage.guid,
@@ -196,7 +199,7 @@ impl MinigameStageGroupConfig {
                 unknown6: 0,
                 name_id: stage.name_id,
                 description_id: stage.description_id,
-                icon_set_id: stage.icon_set_id,
+                icon_set_id: stage.icon_id,
                 parent_minigame_id: 0,
                 members_only: stage.members_only,
                 unknown12: 0,

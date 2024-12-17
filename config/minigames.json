@@ -34,9 +34,52 @@
                         "guid": 10000,
                         "name_id": 45898,
                         "description_id": 45897,
-                        "icon_id": 5128,
+                        "icon_id": 5129,
                         "stage_select_map_name": "RepublicGunship",
-                        "stages": []
+                        "stages": [
+                            {
+                                "guid": 10001,
+                                "name_id": 45892,
+                                "description_id": 45897,
+                                "icon_id": 5150,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 5643,
+                                "members_only": true,
+                                "link_name": "stage",
+                                "short_name": "stage01",
+                                "score_to_credits_expression": "x"
+                            },
+                            {
+                                "guid": 10002,
+                                "name_id": 45893,
+                                "description_id": 45897,
+                                "icon_id": 5151,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 5643,
+                                "members_only": true,
+                                "link_name": "stage",
+                                "short_name": "stage02",
+                                "score_to_credits_expression": "x"
+                            },
+                            {
+                                "guid": 10003,
+                                "name_id": 45894,
+                                "description_id": 45897,
+                                "icon_id": 5152,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 5643,
+                                "members_only": true,
+                                "link_name": "stage",
+                                "short_name": "stage03",
+                                "score_to_credits_expression": "x"
+                            }
+                        ]
                     }
                 ]
             }
