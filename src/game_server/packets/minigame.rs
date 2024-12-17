@@ -349,7 +349,7 @@ impl GamePacket for ActiveMinigameEndScore {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct MinigameStageInstance {
     pub stage_instance_guid: u32,
-    pub minigame_type: u32,
+    pub portal_entry_guid: u32,
     pub link_name: String,
     pub short_name: String,
     pub unlocked: bool,

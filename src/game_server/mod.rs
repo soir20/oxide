@@ -927,7 +927,7 @@ impl GameServer {
                                             stages_instances: vec![
                                                 MinigameStageInstance {
                                                     stage_instance_guid: 1,
-                                                    minigame_type: 2,
+                                                    portal_entry_guid: 2,
                                                     link_name: "stage".to_string(),
                                                     short_name: "td1s1".to_string(),
                                                     unlocked: true,
@@ -949,7 +949,7 @@ impl GameServer {
                                                 },
                                                 MinigameStageInstance {
                                                     stage_instance_guid: 2,
-                                                    minigame_type: 2,
+                                                    portal_entry_guid: 2,
                                                     link_name: "stage".to_string(),
                                                     short_name: "td1s2".to_string(),
                                                     unlocked: true,
@@ -971,7 +971,7 @@ impl GameServer {
                                                 },
                                                 MinigameStageInstance {
                                                     stage_instance_guid: 3,
-                                                    minigame_type: 2,
+                                                    portal_entry_guid: 2,
                                                     link_name: "stage".to_string(),
                                                     short_name: "td1s3".to_string(),
                                                     unlocked: true,
@@ -1071,7 +1071,7 @@ impl GameServer {
                                         stages_instances: vec![
                                             MinigameStageInstance {
                                                 stage_instance_guid: 1,
-                                                minigame_type: 2,
+                                                portal_entry_guid: 2,
                                                 link_name: "stage".to_string(),
                                                 short_name: "td1s1".to_string(),
                                                 unlocked: true,
@@ -1093,7 +1093,7 @@ impl GameServer {
                                             },
                                             MinigameStageInstance {
                                                 stage_instance_guid: 2,
-                                                minigame_type: 2,
+                                                portal_entry_guid: 2,
                                                 link_name: "stage".to_string(),
                                                 short_name: "td1s2".to_string(),
                                                 unlocked: true,
@@ -1115,7 +1115,7 @@ impl GameServer {
                                             },
                                             MinigameStageInstance {
                                                 stage_instance_guid: 3,
-                                                minigame_type: 2,
+                                                portal_entry_guid: 2,
                                                 link_name: "stage".to_string(),
                                                 short_name: "td1s3".to_string(),
                                                 unlocked: true,
