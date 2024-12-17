@@ -18,6 +18,8 @@ pub enum ClientUpdateOpCode {
     Position = 0xc,
     Power = 0xd,
     Stats = 0x7,
+    AddEffectTag = 0x10,
+    RemoveEffectTag = 0x11,
     UpdateCredits = 0x13,
     PreloadCharactersDone = 0x1a,
 }
@@ -28,6 +30,27 @@ impl SerializePacket for ClientUpdateOpCode {
         buffer.write_u16::<LittleEndian>(*self as u16)?;
         Ok(())
     }
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct RemoveEffectTag {
+    pub unknown1: u32,
+}
+
+impl GamePacket for RemoveEffectTag {
+    type Header = ClientUpdateOpCode;
+    const HEADER: Self::Header = ClientUpdateOpCode::RemoveEffectTag;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct AddEffectTag {
+    pub unknown1: u32,
+    pub unknown2: u32,
+}
+
+impl GamePacket for AddEffectTag {
+    type Header = ClientUpdateOpCode;
+    const HEADER: Self::Header = ClientUpdateOpCode::AddEffectTag;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
