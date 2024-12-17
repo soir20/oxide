@@ -827,8 +827,8 @@ impl GameServer {
                                                             parent_game_id: 0,
                                                             link_stage_definition_guid: 1,
                                                             unknown5: 10000,
-                                                            unknown6: "stage".to_string(),
-                                                            unknown7: "td1s1".to_string(),
+                                                            link_name: "stage".to_string(),
+                                                            short_name: "td1s1".to_string(),
                                                             unknown8: 10000,
                                                             unknown9: 14
                                                         },
@@ -838,8 +838,8 @@ impl GameServer {
                                                             parent_game_id: 0,
                                                             link_stage_definition_guid: 2,
                                                             unknown5: 10000,
-                                                            unknown6: "stage".to_string(),
-                                                            unknown7: "td1s2".to_string(),
+                                                            link_name: "stage".to_string(),
+                                                            short_name: "td1s2".to_string(),
                                                             unknown8: 10000,
                                                             unknown9: 14
                                                         },
@@ -849,8 +849,8 @@ impl GameServer {
                                                             parent_game_id: 0,
                                                             link_stage_definition_guid: 3,
                                                             unknown5: 10000,
-                                                            unknown6: "stage".to_string(),
-                                                            unknown7: "td1s3".to_string(),
+                                                            link_name: "stage".to_string(),
+                                                            short_name: "td1s3".to_string(),
                                                             unknown8: 10000,
                                                             unknown9: 14
                                                         }
@@ -867,8 +867,8 @@ impl GameServer {
                                                     is_micro: false,
                                                     is_active: true,
                                                     param1: 1,
-                                                    icon_id: 60,
-                                                    background_icon_id: 70,
+                                                    icon_set_id: 60,
+                                                    background_icon_set_id: 70,
                                                     is_popular: false,
                                                     is_game_of_day: false,
                                                     portal_category_guid: 2,

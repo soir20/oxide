@@ -67,8 +67,8 @@ pub struct MinigameStageGroupLink {
     pub parent_game_id: u32,
     pub link_stage_definition_guid: u32,
     pub unknown5: u32,
-    pub unknown6: String,
-    pub unknown7: String,
+    pub link_name: String,
+    pub short_name: String,
     pub unknown8: u32,
     pub unknown9: u32,
 }
@@ -101,8 +101,8 @@ pub struct MinigamePortalEntry {
     pub is_micro: bool,
     pub is_active: bool,
     pub param1: u32, // unconfirmed
-    pub icon_id: u32,
-    pub background_icon_id: u32,
+    pub icon_set_id: u32,
+    pub background_icon_set_id: u32,
     pub is_popular: bool,
     pub is_game_of_day: bool,
     pub portal_category_guid: u32,
