@@ -5,7 +5,7 @@ use super::{GamePacket, OpCode};
 
 #[derive(Copy, Clone, Debug)]
 pub enum QuickChatOpCode {
-    SendData = 0x1,
+    QuickChatDefinition = 0x1,
 }
 
 impl SerializePacket for QuickChatOpCode {
@@ -32,11 +32,11 @@ pub struct Data {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct SendData {
+pub struct QuickChatDefinition {
     pub data: Vec<Data>,
 }
 
-impl GamePacket for SendData {
+impl GamePacket for QuickChatDefinition {
     type Header = QuickChatOpCode;
-    const HEADER: Self::Header = QuickChatOpCode::SendData;
+    const HEADER: Self::Header = QuickChatOpCode::QuickChatDefinition;
 }

@@ -2,7 +2,7 @@ use std::{collections::BTreeMap, fs::File, io::Error, path::Path};
 
 use serde::Deserialize;
 
-use crate::game_server::packets::quick_chat::{Data, SendData};
+use crate::game_server::packets::quick_chat::{Data, QuickChatDefinition};
 
 #[derive(Deserialize)]
 pub struct QuickChatConfig {
@@ -31,7 +31,7 @@ pub fn load_quick_chats(config_dir: &Path) -> Result<BTreeMap<i32, QuickChatConf
     Ok(quick_chat_table)
 }
 
-pub fn make_test_quick_chats(quick_chats: &BTreeMap<i32, QuickChatConfig>) -> SendData {
+pub fn make_test_quick_chats(quick_chats: &BTreeMap<i32, QuickChatConfig>) -> QuickChatDefinition {
     let mut owned_quick_chats = Vec::new();
     for data in quick_chats.values() {
         owned_quick_chats.push(Data {
@@ -48,7 +48,7 @@ pub fn make_test_quick_chats(quick_chats: &BTreeMap<i32, QuickChatConfig>) -> Se
             unknown2: 0,
         })
     }
-    SendData {
+    QuickChatDefinition {
         data: owned_quick_chats,
     }
 }
