@@ -82,26 +82,39 @@ pub struct MinigameStageConfig {
     pub guid: u32,
     pub name_id: u32,
     pub description_id: u32,
-    pub icon_id: u32,
+    pub stage_icon_id: u32,
+    pub start_screen_icon_id: u32,
     pub min_players: u32,
     pub max_players: u32,
     pub difficulty: u32,
     pub start_sound_id: u32,
     pub required_item_guid: Option<u32>,
     pub members_only: bool,
+    pub require_previous_completed: bool,
     pub link_name: String,
     pub short_name: String,
     pub score_to_credits_expression: String,
 }
 
 impl MinigameStageConfig {
+    pub fn has_completed(&self, player: &Player) -> bool {
+        player.minigame_stats.has_completed(self.guid)
+    }
+
+    pub fn unlocked(&self, player: &Player, previous_completed: bool) -> bool {
+        self.required_item_guid
+            .map(|item_guid| player.inventory.contains(&item_guid))
+            .unwrap_or(true)
+            && (previous_completed || !self.require_previous_completed)
+    }
+
     pub fn to_stage_definition(&self, portal_entry_guid: u32) -> MinigameStageDefinition {
         MinigameStageDefinition {
             guid: self.guid,
             portal_entry_guid,
             start_screen_name_id: self.name_id,
             start_screen_description_id: self.description_id,
-            start_screen_icon_set_id: self.icon_id,
+            start_screen_icon_id: self.start_screen_icon_id,
             difficulty: self.difficulty,
             members_only: self.members_only,
             unknown8: 0,
@@ -118,19 +131,47 @@ impl MinigameStageConfig {
 }
 
 #[derive(Deserialize)]
+pub enum MinigameStageGroupChild {
+    StageGroup(Arc<MinigameStageGroupConfig>),
+    Stage(MinigameStageConfig),
+}
+
+#[derive(Deserialize)]
 pub struct MinigameStageGroupConfig {
     pub guid: i32,
     pub name_id: u32,
     pub description_id: u32,
     pub icon_id: u32,
+    pub stage_icon_id: u32,
     pub stage_select_map_name: String,
+    pub required_item_guid: Option<u32>,
+    pub members_only: bool,
+    pub require_previous_completed: bool,
+    pub short_name: String,
     #[serde(default)]
     pub default_stage_instance: u32,
-    pub child_stage_groups: Vec<Arc<MinigameStageGroupConfig>>,
-    pub stages: Vec<MinigameStageConfig>,
+    pub stages: Vec<MinigameStageGroupChild>,
 }
 
 impl MinigameStageGroupConfig {
+    pub fn has_completed_any(&self, player: &Player) -> bool {
+        self.stages
+            .iter()
+            .any(|child: &MinigameStageGroupChild| match child {
+                MinigameStageGroupChild::StageGroup(stage_group) => {
+                    stage_group.has_completed_any(player)
+                }
+                MinigameStageGroupChild::Stage(stage) => stage.has_completed(player),
+            })
+    }
+
+    pub fn unlocked(&self, player: &Player, previous_completed: bool) -> bool {
+        self.required_item_guid
+            .map(|item_guid| player.inventory.contains(&item_guid))
+            .unwrap_or(true)
+            && (previous_completed || !self.require_previous_completed)
+    }
+
     pub fn to_stage_group_definition(
         &self,
         portal_entry_guid: u32,
@@ -142,40 +183,42 @@ impl MinigameStageGroupConfig {
         let mut stages = Vec::new();
         let mut group_links = Vec::new();
 
-        let mut stage_number = 1;
-        for stage in &self.stages {
-            stages.push(stage.to_stage_definition(portal_entry_guid));
-            group_links.push(MinigameStageGroupLink {
-                link_id: 0,
-                parent_stage_group_definition_guid: self.guid,
-                parent_stage_definition_guid: 0,
-                child_stage_definition_guid: stage.guid,
-                icon_id: 0,
-                link_name: stage.link_name.clone(),
-                short_name: stage.short_name.clone(),
-                stage_number,
-                child_stage_group_definition_guid: 0,
-            });
-            stage_number += 1;
-        }
+        for (index, child) in self.stages.iter().enumerate() {
+            let stage_number = index as u32 + 1;
+            match child {
+                MinigameStageGroupChild::StageGroup(stage_group) => {
+                    let (mut stage_group_definitions, mut stage_definitions) =
+                        stage_group.to_stage_group_definition(portal_entry_guid);
+                    stage_groups.append(&mut stage_group_definitions);
+                    stages.append(&mut stage_definitions);
 
-        for stage_group in &self.child_stage_groups {
-            let (mut stage_group_definitions, mut stage_definitions) =
-                stage_group.to_stage_group_definition(portal_entry_guid);
-            stage_groups.append(&mut stage_group_definitions);
-            stages.append(&mut stage_definitions);
-
-            group_links.push(MinigameStageGroupLink {
-                link_id: 0,
-                parent_stage_group_definition_guid: self.guid,
-                parent_stage_definition_guid: 0,
-                child_stage_definition_guid: 0,
-                icon_id: 0,
-                link_name: "group".to_string(),
-                short_name: "".to_string(),
-                stage_number: 0,
-                child_stage_group_definition_guid: stage_group.guid,
-            });
+                    group_links.push(MinigameStageGroupLink {
+                        link_id: 0,
+                        parent_stage_group_definition_guid: self.guid,
+                        parent_stage_definition_guid: 0,
+                        child_stage_definition_guid: 0,
+                        icon_id: 0,
+                        link_name: "group".to_string(),
+                        short_name: stage_group.short_name.clone(),
+                        stage_number,
+                        child_stage_group_definition_guid: stage_group.guid,
+                    });
+                }
+                MinigameStageGroupChild::Stage(stage) => {
+                    stages.push(stage.to_stage_definition(portal_entry_guid));
+                    group_links.push(MinigameStageGroupLink {
+                        link_id: 0,
+                        parent_stage_group_definition_guid: self.guid,
+                        parent_stage_definition_guid: 0,
+                        child_stage_definition_guid: stage.guid,
+                        icon_id: 0,
+                        link_name: stage.link_name.clone(),
+                        short_name: stage.short_name.clone(),
+                        stage_number,
+                        child_stage_group_definition_guid: 0,
+                    });
+                }
+            }
         }
 
         stage_groups.push(MinigameStageGroupDefinition {
@@ -183,7 +226,7 @@ impl MinigameStageGroupConfig {
             portal_entry_guid,
             name_id: self.name_id,
             description_id: self.description_id,
-            icon_set_id: self.icon_id,
+            icon_id: self.icon_id,
             stage_select_map_name: self.stage_select_map_name.clone(),
             stage_progression: "".to_string(),
             show_start_screen_on_play_next: false,
@@ -205,41 +248,66 @@ impl MinigameStageGroupConfig {
         player: &Player,
     ) -> CreateMinigameStageGroupInstance {
         let mut stage_instances = Vec::new();
-        let mut stage_number = 1;
         let mut previous_completed = true;
 
-        for stage in &self.stages {
-            let completed = player.minigame_stats.has_completed(stage.guid);
-            let unlocked = stage
-                .required_item_guid
-                .map(|item_guid| player.inventory.contains(&item_guid))
-                .unwrap_or(true)
-                && previous_completed;
+        for (index, child) in self.stages.iter().enumerate() {
+            let stage_number = index as u32 + 1;
+            match child {
+                MinigameStageGroupChild::StageGroup(stage_group) => {
+                    let unlocked = stage_group.unlocked(player, previous_completed);
+                    previous_completed = stage_group.has_completed_any(player);
 
-            stage_instances.push(MinigameStageInstance {
-                stage_instance_guid: stage.guid,
-                portal_entry_guid,
-                link_name: stage.link_name.clone(),
-                short_name: stage.short_name.clone(),
-                unlocked,
-                unknown6: 0,
-                name_id: stage.name_id,
-                description_id: stage.description_id,
-                icon_set_id: stage.icon_id,
-                parent_minigame_id: 0,
-                members_only: stage.members_only,
-                unknown12: 0,
-                background_swf: "".to_string(),
-                min_players: stage.min_players,
-                max_players: stage.max_players,
-                stage_number,
-                required_item_id: 0,
-                unknown18: 0,
-                completed,
-                link_group_id: 0,
-            });
-            stage_number += 1;
-            previous_completed = completed;
+                    stage_instances.push(MinigameStageInstance {
+                        stage_instance_guid: 0,
+                        portal_entry_guid,
+                        link_name: "group".to_string(),
+                        short_name: stage_group.short_name.clone(),
+                        unlocked,
+                        unknown6: 0,
+                        name_id: stage_group.name_id,
+                        description_id: stage_group.description_id,
+                        icon_id: stage_group.stage_icon_id,
+                        parent_minigame_id: 0,
+                        members_only: stage_group.members_only,
+                        unknown12: 0,
+                        background_swf: "".to_string(),
+                        min_players: 0,
+                        max_players: 0,
+                        stage_number,
+                        required_item_id: 0,
+                        unknown18: 0,
+                        completed: previous_completed,
+                        link_group_id: stage_group.guid,
+                    });
+                }
+                MinigameStageGroupChild::Stage(stage) => {
+                    let unlocked = stage.unlocked(player, previous_completed);
+                    previous_completed = player.minigame_stats.has_completed(stage.guid);
+
+                    stage_instances.push(MinigameStageInstance {
+                        stage_instance_guid: stage.guid,
+                        portal_entry_guid,
+                        link_name: stage.link_name.clone(),
+                        short_name: stage.short_name.clone(),
+                        unlocked,
+                        unknown6: 0,
+                        name_id: stage.name_id,
+                        description_id: stage.description_id,
+                        icon_id: stage.stage_icon_id,
+                        parent_minigame_id: 0,
+                        members_only: stage.members_only,
+                        unknown12: 0,
+                        background_swf: "".to_string(),
+                        min_players: stage.min_players,
+                        max_players: stage.max_players,
+                        stage_number,
+                        required_item_id: 0,
+                        unknown18: 0,
+                        completed: previous_completed,
+                        link_group_id: 0,
+                    });
+                }
+            }
         }
 
         CreateMinigameStageGroupInstance {
@@ -251,7 +319,7 @@ impl MinigameStageGroupConfig {
             stage_group_guid: self.guid,
             name_id: self.name_id,
             description_id: self.description_id,
-            icon_set_id: self.icon_id,
+            icon_id: self.icon_id,
             stage_select_map_name: self.stage_select_map_name.clone(),
             default_stage_instance_guid: default_stage_guid_override
                 .unwrap_or(self.default_stage_instance),
@@ -309,8 +377,8 @@ impl MinigamePortalEntryConfig {
                 is_micro: self.is_micro,
                 is_active: self.is_active,
                 param1: self.param1,
-                icon_set_id: self.icon_id,
-                background_icon_set_id: self.background_icon_id,
+                icon_id: self.icon_id,
+                background_icon_id: self.background_icon_id,
                 is_popular: self.is_popular,
                 is_game_of_day: self.is_game_of_day,
                 portal_category_guid,
@@ -357,7 +425,7 @@ impl From<&MinigamePortalCategoryConfig>
             MinigamePortalCategory {
                 guid: value.guid,
                 name_id: value.name_id,
-                icon_set_id: value.icon_id,
+                icon_id: value.icon_id,
                 sort_order: value.sort_order,
             },
             entries,
@@ -445,8 +513,10 @@ impl From<Vec<MinigamePortalCategoryConfig>> for AllMinigameConfigs {
                     (entry.stage_group.clone(), entry.guid),
                 );
 
-                for stage_group in &entry.stage_group.child_stage_groups {
-                    stage_groups.insert(stage_group.guid, (stage_group.clone(), entry.guid));
+                for child in &entry.stage_group.stages {
+                    if let MinigameStageGroupChild::StageGroup(stage_group) = child {
+                        stage_groups.insert(stage_group.guid, (stage_group.clone(), entry.guid));
+                    }
                 }
             }
         }

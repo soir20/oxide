@@ -47,7 +47,7 @@ pub struct MinigameStageDefinition {
     pub portal_entry_guid: u32,
     pub start_screen_name_id: u32,
     pub start_screen_description_id: u32,
-    pub start_screen_icon_set_id: u32,
+    pub start_screen_icon_id: u32,
     pub difficulty: u32,
     pub members_only: bool,
     pub unknown8: u32,
@@ -80,7 +80,7 @@ pub struct MinigameStageGroupDefinition {
     pub portal_entry_guid: u32, // unconfirmed
     pub name_id: u32,
     pub description_id: u32, // unconfirmed
-    pub icon_set_id: u32,
+    pub icon_id: u32,
     pub stage_select_map_name: String,        // unconfirmed
     pub stage_progression: String,            // unconfirmed
     pub show_start_screen_on_play_next: bool, // unconfirmed
@@ -102,8 +102,8 @@ pub struct MinigamePortalEntry {
     pub is_micro: bool,
     pub is_active: bool,
     pub param1: u32, // unconfirmed
-    pub icon_set_id: u32,
-    pub background_icon_set_id: u32,
+    pub icon_id: u32,
+    pub background_icon_id: u32,
     pub is_popular: bool,
     pub is_game_of_day: bool,
     pub portal_category_guid: u32,
@@ -115,7 +115,7 @@ pub struct MinigamePortalEntry {
 pub struct MinigamePortalCategory {
     pub guid: u32,
     pub name_id: u32,
-    pub icon_set_id: u32,
+    pub icon_id: u32,
     pub sort_order: u32,
 }
 
@@ -357,7 +357,7 @@ pub struct MinigameStageInstance {
     pub unknown6: u32,
     pub name_id: u32,
     pub description_id: u32,
-    pub icon_set_id: u32,
+    pub icon_id: u32,
     pub parent_minigame_id: u32,
     pub members_only: bool,
     pub unknown12: u32,
@@ -368,7 +368,7 @@ pub struct MinigameStageInstance {
     pub required_item_id: u32,
     pub unknown18: u32,
     pub completed: bool,
-    pub link_group_id: u32,
+    pub link_group_id: i32,
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -382,7 +382,7 @@ pub struct CreateMinigameStageGroupInstance {
     pub stage_group_guid: i32,
     pub name_id: u32,
     pub description_id: u32,
-    pub icon_set_id: u32,
+    pub icon_id: u32,
     pub stage_select_map_name: String,
     pub default_stage_instance_guid: u32,
     pub stage_instances: Vec<MinigameStageInstance>,
