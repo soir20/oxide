@@ -90,6 +90,7 @@ pub struct MinigameStageConfig {
     pub start_sound_id: u32,
     pub required_item_guid: Option<u32>,
     pub members_only: bool,
+    #[serde(default = "default_true")]
     pub require_previous_completed: bool,
     pub link_name: String,
     pub short_name: String,
