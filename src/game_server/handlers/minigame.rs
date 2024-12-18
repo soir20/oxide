@@ -3,6 +3,7 @@ use std::{
     fs::File,
     io::{Cursor, Error, ErrorKind, Read},
     path::Path,
+    sync::Arc,
 };
 
 use byteorder::ReadBytesExt;
@@ -125,6 +126,7 @@ pub struct MinigameStageGroupConfig {
     pub stage_select_map_name: String,
     #[serde(default)]
     pub default_stage_instance: u32,
+    pub child_stage_groups: Vec<Arc<MinigameStageGroupConfig>>,
     pub stages: Vec<MinigameStageConfig>,
 }
 
@@ -253,7 +255,7 @@ pub struct MinigamePortalEntryConfig {
     pub is_game_of_day: bool,
     pub sort_order: u32,
     pub tutorial_swf: String,
-    pub stage_groups: Vec<MinigameStageGroupConfig>,
+    pub stage_group: Arc<MinigameStageGroupConfig>,
 }
 
 impl MinigamePortalEntryConfig {
@@ -268,12 +270,10 @@ impl MinigamePortalEntryConfig {
         let mut stage_groups = Vec::new();
         let mut stages = Vec::new();
 
-        for stage_group in &self.stage_groups {
-            let (group_definition, mut stage_definitions) =
-                stage_group.to_stage_group_definition(self.guid);
-            stage_groups.push(group_definition);
-            stages.append(&mut stage_definitions);
-        }
+        let (group_definition, mut stage_definitions) =
+            self.stage_group.to_stage_group_definition(self.guid);
+        stage_groups.push(group_definition);
+        stages.append(&mut stage_definitions);
 
         (
             MinigamePortalEntry {
@@ -379,7 +379,7 @@ impl From<&[MinigamePortalCategoryConfig]> for MinigameDefinitions {
 
 pub struct AllMinigameConfigs {
     categories: Vec<MinigamePortalCategoryConfig>,
-    stage_groups: BTreeMap<i32, (usize, usize, usize)>,
+    stage_groups: BTreeMap<i32, (Arc<MinigameStageGroupConfig>, u32)>,
 }
 
 impl AllMinigameConfigs {
@@ -393,14 +393,9 @@ impl AllMinigameConfigs {
         default_stage_guid_override: Option<u32>,
         player: &Player,
     ) -> Result<CreateMinigameStageGroupInstance, ProcessPacketError> {
-        if let Some((category_index, portal_entry_index, stage_group_index)) =
-            self.stage_groups.get(&stage_group_guid)
-        {
-            let category = &self.categories[*category_index];
-            let portal_entry = &category.portal_entries[*portal_entry_index];
-            let stage_group = &portal_entry.stage_groups[*stage_group_index];
+        if let Some((stage_group, portal_entry_guid)) = self.stage_groups.get(&stage_group_guid) {
             Ok(stage_group.to_stage_group_instance(
-                portal_entry.guid,
+                *portal_entry_guid,
                 default_stage_guid_override,
                 player,
             ))
@@ -419,13 +414,15 @@ impl AllMinigameConfigs {
 impl From<Vec<MinigamePortalCategoryConfig>> for AllMinigameConfigs {
     fn from(value: Vec<MinigamePortalCategoryConfig>) -> Self {
         let mut stage_groups = BTreeMap::new();
-        for (category_index, category) in value.iter().enumerate() {
-            for (entry_index, entry) in category.portal_entries.iter().enumerate() {
-                for (stage_group_index, stage_group) in entry.stage_groups.iter().enumerate() {
-                    stage_groups.insert(
-                        stage_group.guid,
-                        (category_index, entry_index, stage_group_index),
-                    );
+        for category in &value {
+            for entry in &category.portal_entries {
+                stage_groups.insert(
+                    entry.stage_group.guid,
+                    (entry.stage_group.clone(), entry.guid),
+                );
+
+                for stage_group in &entry.stage_group.child_stage_groups {
+                    stage_groups.insert(stage_group.guid, (stage_group.clone(), entry.guid));
                 }
             }
         }
