@@ -136,6 +136,10 @@ pub enum MinigameStageGroupChild {
     Stage(MinigameStageConfig),
 }
 
+const fn default_true() -> bool {
+    true
+}
+
 #[derive(Deserialize)]
 pub struct MinigameStageGroupConfig {
     pub guid: i32,
@@ -146,7 +150,9 @@ pub struct MinigameStageGroupConfig {
     pub stage_select_map_name: String,
     pub required_item_guid: Option<u32>,
     pub members_only: bool,
+    #[serde(default = "default_true")]
     pub require_previous_completed: bool,
+    #[serde(default)]
     pub short_name: String,
     #[serde(default)]
     pub default_stage_instance: u32,
