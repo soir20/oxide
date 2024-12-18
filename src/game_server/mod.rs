@@ -737,33 +737,33 @@ impl GameServer {
                                                             stage_group_definition_guid: 10000,
                                                             parent_game_id: 0,
                                                             link_stage_definition_guid: 1,
-                                                            unknown5: 10000,
+                                                            icon_id: 10000,
                                                             link_name: "stage".to_string(),
                                                             short_name: "td1s1".to_string(),
-                                                            unknown8: 10000,
-                                                            unknown9: 14
+                                                            stage_number: 10000,
+                                                            link_stage_group_definition_guid: 14
                                                         },
                                                         MinigameStageGroupLink {
                                                             link_id: 2,
                                                             stage_group_definition_guid: 10000,
                                                             parent_game_id: 0,
                                                             link_stage_definition_guid: 2,
-                                                            unknown5: 10000,
+                                                            icon_id: 10000,
                                                             link_name: "stage".to_string(),
                                                             short_name: "td1s2".to_string(),
-                                                            unknown8: 10000,
-                                                            unknown9: 14
+                                                            stage_number: 10000,
+                                                            link_stage_group_definition_guid: 14
                                                         },
                                                         MinigameStageGroupLink {
                                                             link_id: 3,
                                                             stage_group_definition_guid: 10000,
                                                             parent_game_id: 0,
                                                             link_stage_definition_guid: 3,
-                                                            unknown5: 10000,
+                                                            icon_id: 10000,
                                                             link_name: "stage".to_string(),
                                                             short_name: "td1s3".to_string(),
-                                                            unknown8: 10000,
-                                                            unknown9: 14
+                                                            stage_number: 10000,
+                                                            link_stage_group_definition_guid: 14
                                                         }
                                                     ]
                                                 },

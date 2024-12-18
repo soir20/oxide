@@ -67,11 +67,11 @@ pub struct MinigameStageGroupLink {
     pub stage_group_definition_guid: i32,
     pub parent_game_id: u32,
     pub link_stage_definition_guid: u32,
-    pub unknown5: u32,
+    pub icon_id: u32,
     pub link_name: String,
     pub short_name: String,
-    pub unknown8: u32,
-    pub unknown9: u32,
+    pub stage_number: u32,
+    pub link_stage_group_definition_guid: i32,
 }
 
 #[derive(SerializePacket, DeserializePacket)]

@@ -134,44 +134,68 @@ impl MinigameStageGroupConfig {
     pub fn to_stage_group_definition(
         &self,
         portal_entry_guid: u32,
-    ) -> (MinigameStageGroupDefinition, Vec<MinigameStageDefinition>) {
+    ) -> (
+        Vec<MinigameStageGroupDefinition>,
+        Vec<MinigameStageDefinition>,
+    ) {
+        let mut stage_groups = Vec::new();
         let mut stages = Vec::new();
         let mut group_links = Vec::new();
 
+        let mut stage_number = 1;
         for stage in &self.stages {
             stages.push(stage.to_stage_definition(portal_entry_guid));
             group_links.push(MinigameStageGroupLink {
-                link_id: stage.guid,
+                link_id: 0,
                 stage_group_definition_guid: self.guid,
                 parent_game_id: 0,
                 link_stage_definition_guid: stage.guid,
-                unknown5: 0,
+                icon_id: 0,
                 link_name: stage.link_name.clone(),
                 short_name: stage.short_name.clone(),
-                unknown8: 0,
-                unknown9: 0,
-            })
+                stage_number,
+                link_stage_group_definition_guid: 0,
+            });
+            stage_number += 1;
         }
 
-        (
-            MinigameStageGroupDefinition {
-                guid: self.guid,
-                portal_entry_guid,
-                name_id: self.name_id,
-                description_id: self.description_id,
-                icon_set_id: self.icon_id,
-                stage_select_map_name: self.stage_select_map_name.clone(),
-                stage_progression: "".to_string(),
-                show_start_screen_on_play_next: false,
-                settings_icon_id: 0,
-                opened_from_portal_entry_guid: portal_entry_guid,
-                required_item_id: 0,
-                required_bundle_id: 0,
-                required_prereq_item_id: 0,
-                group_links,
-            },
-            stages,
-        )
+        for stage_group in &self.child_stage_groups {
+            let (mut stage_group_definitions, mut stage_definitions) =
+                stage_group.to_stage_group_definition(portal_entry_guid);
+            stage_groups.append(&mut stage_group_definitions);
+            stages.append(&mut stage_definitions);
+
+            group_links.push(MinigameStageGroupLink {
+                link_id: 0,
+                stage_group_definition_guid: self.guid,
+                parent_game_id: 0,
+                link_stage_definition_guid: 0,
+                icon_id: 0,
+                link_name: "group".to_string(),
+                short_name: "".to_string(),
+                stage_number,
+                link_stage_group_definition_guid: stage_group.guid,
+            });
+        }
+
+        stage_groups.push(MinigameStageGroupDefinition {
+            guid: self.guid,
+            portal_entry_guid,
+            name_id: self.name_id,
+            description_id: self.description_id,
+            icon_set_id: self.icon_id,
+            stage_select_map_name: self.stage_select_map_name.clone(),
+            stage_progression: "".to_string(),
+            show_start_screen_on_play_next: false,
+            settings_icon_id: 0,
+            opened_from_portal_entry_guid: portal_entry_guid,
+            required_item_id: 0,
+            required_bundle_id: 0,
+            required_prereq_item_id: 0,
+            group_links,
+        });
+
+        (stage_groups, stages)
     }
 
     pub fn to_stage_group_instance(
@@ -270,9 +294,9 @@ impl MinigamePortalEntryConfig {
         let mut stage_groups = Vec::new();
         let mut stages = Vec::new();
 
-        let (group_definition, mut stage_definitions) =
+        let (mut stage_group_definitions, mut stage_definitions) =
             self.stage_group.to_stage_group_definition(self.guid);
-        stage_groups.push(group_definition);
+        stage_groups.append(&mut stage_group_definitions);
         stages.append(&mut stage_definitions);
 
         (
