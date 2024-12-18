@@ -173,7 +173,7 @@ impl MinigameStageGroupConfig {
                 icon_id: 0,
                 link_name: "group".to_string(),
                 short_name: "".to_string(),
-                stage_number,
+                stage_number: 0,
                 child_stage_group_definition_guid: stage_group.guid,
             });
         }
