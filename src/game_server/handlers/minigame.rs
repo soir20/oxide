@@ -277,7 +277,7 @@ impl MinigameStageGroupConfig {
                         required_item_id: 0,
                         unknown18: 0,
                         completed: previous_completed,
-                        link_group_id: stage_group.guid,
+                        stage_group_instance_guid: stage_group.guid,
                     });
                 }
                 MinigameStageGroupChild::Stage(stage) => {
@@ -304,7 +304,7 @@ impl MinigameStageGroupConfig {
                         required_item_id: 0,
                         unknown18: 0,
                         completed: previous_completed,
-                        link_group_id: 0,
+                        stage_group_instance_guid: 0,
                     });
                 }
             }

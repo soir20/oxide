@@ -368,7 +368,7 @@ pub struct MinigameStageInstance {
     pub required_item_id: u32,
     pub unknown18: u32,
     pub completed: bool,
-    pub link_group_id: i32,
+    pub stage_group_instance_guid: i32,
 }
 
 #[derive(SerializePacket, DeserializePacket)]

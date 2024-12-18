@@ -856,7 +856,7 @@ impl GameServer {
                                                     required_item_id: 0,
                                                     unknown18: 13,
                                                     completed: false,
-                                                    link_group_id: 14
+                                                    stage_group_instance_guid: 14
                                                 },
                                                 MinigameStageInstance {
                                                     stage_instance_guid: 2,
@@ -878,7 +878,7 @@ impl GameServer {
                                                     required_item_id: 0,
                                                     unknown18: 13,
                                                     completed: false,
-                                                    link_group_id: 14
+                                                    stage_group_instance_guid: 14
                                                 },
                                                 MinigameStageInstance {
                                                     stage_instance_guid: 3,
@@ -900,7 +900,7 @@ impl GameServer {
                                                     required_item_id: 0,
                                                     unknown18: 13,
                                                     completed: false,
-                                                    link_group_id: 14
+                                                    stage_group_instance_guid: 14
                                                 }
                                             ],
                                             stage_progression: "".to_string(),
