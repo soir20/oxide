@@ -64,14 +64,14 @@ pub struct MinigameStageDefinition {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct MinigameStageGroupLink {
     pub link_id: u32,
-    pub stage_group_definition_guid: i32,
-    pub parent_game_id: u32,
-    pub link_stage_definition_guid: u32,
+    pub parent_stage_group_definition_guid: i32,
+    pub parent_stage_definition_guid: u32,
+    pub child_stage_definition_guid: u32,
     pub icon_id: u32,
     pub link_name: String,
     pub short_name: String,
     pub stage_number: u32,
-    pub link_stage_group_definition_guid: i32,
+    pub child_stage_group_definition_guid: i32,
 }
 
 #[derive(SerializePacket, DeserializePacket)]

@@ -147,14 +147,14 @@ impl MinigameStageGroupConfig {
             stages.push(stage.to_stage_definition(portal_entry_guid));
             group_links.push(MinigameStageGroupLink {
                 link_id: 0,
-                stage_group_definition_guid: self.guid,
-                parent_game_id: 0,
-                link_stage_definition_guid: stage.guid,
+                parent_stage_group_definition_guid: self.guid,
+                parent_stage_definition_guid: 0,
+                child_stage_definition_guid: stage.guid,
                 icon_id: 0,
                 link_name: stage.link_name.clone(),
                 short_name: stage.short_name.clone(),
                 stage_number,
-                link_stage_group_definition_guid: 0,
+                child_stage_group_definition_guid: 0,
             });
             stage_number += 1;
         }
@@ -167,14 +167,14 @@ impl MinigameStageGroupConfig {
 
             group_links.push(MinigameStageGroupLink {
                 link_id: 0,
-                stage_group_definition_guid: self.guid,
-                parent_game_id: 0,
-                link_stage_definition_guid: 0,
+                parent_stage_group_definition_guid: self.guid,
+                parent_stage_definition_guid: 0,
+                child_stage_definition_guid: 0,
                 icon_id: 0,
                 link_name: "group".to_string(),
                 short_name: "".to_string(),
                 stage_number,
-                link_stage_group_definition_guid: stage_group.guid,
+                child_stage_group_definition_guid: stage_group.guid,
             });
         }
 

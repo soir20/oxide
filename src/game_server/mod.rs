@@ -734,36 +734,36 @@ impl GameServer {
                                                     group_links: vec![
                                                         MinigameStageGroupLink {
                                                             link_id: 1,
-                                                            stage_group_definition_guid: 10000,
-                                                            parent_game_id: 0,
-                                                            link_stage_definition_guid: 1,
+                                                            parent_stage_group_definition_guid: 10000,
+                                                            parent_stage_definition_guid: 0,
+                                                            child_stage_definition_guid: 1,
                                                             icon_id: 10000,
                                                             link_name: "stage".to_string(),
                                                             short_name: "td1s1".to_string(),
                                                             stage_number: 10000,
-                                                            link_stage_group_definition_guid: 14
+                                                            child_stage_group_definition_guid: 14
                                                         },
                                                         MinigameStageGroupLink {
                                                             link_id: 2,
-                                                            stage_group_definition_guid: 10000,
-                                                            parent_game_id: 0,
-                                                            link_stage_definition_guid: 2,
+                                                            parent_stage_group_definition_guid: 10000,
+                                                            parent_stage_definition_guid: 0,
+                                                            child_stage_definition_guid: 2,
                                                             icon_id: 10000,
                                                             link_name: "stage".to_string(),
                                                             short_name: "td1s2".to_string(),
                                                             stage_number: 10000,
-                                                            link_stage_group_definition_guid: 14
+                                                            child_stage_group_definition_guid: 14
                                                         },
                                                         MinigameStageGroupLink {
                                                             link_id: 3,
-                                                            stage_group_definition_guid: 10000,
-                                                            parent_game_id: 0,
-                                                            link_stage_definition_guid: 3,
+                                                            parent_stage_group_definition_guid: 10000,
+                                                            parent_stage_definition_guid: 0,
+                                                            child_stage_definition_guid: 3,
                                                             icon_id: 10000,
                                                             link_name: "stage".to_string(),
                                                             short_name: "td1s3".to_string(),
                                                             stage_number: 10000,
-                                                            link_stage_group_definition_guid: 14
+                                                            child_stage_group_definition_guid: 14
                                                         }
                                                     ]
                                                 },
