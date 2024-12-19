@@ -319,7 +319,7 @@ impl MinigameStageGroupConfig {
 
         CreateMinigameStageGroupInstance {
             header: MinigameHeader {
-                active_minigame_guid: -1,
+                stage_guid: -1,
                 unknown2: -1,
                 stage_group_guid: self.guid,
             },
@@ -464,7 +464,7 @@ impl From<&[MinigamePortalCategoryConfig]> for MinigameDefinitions {
 
         MinigameDefinitions {
             header: MinigameHeader {
-                active_minigame_guid: -1,
+                stage_guid: -1,
                 unknown2: -1,
                 stage_group_guid: -1,
             },
@@ -574,7 +574,7 @@ pub fn process_minigame_packet(
                                             unknown1: true,
                                             inner: ShowStageInstanceSelect {
                                                 header: MinigameHeader {
-                                                    active_minigame_guid: -1,
+                                                    stage_guid: -1,
                                                     unknown2: -1,
                                                     stage_group_guid: request.header.stage_group_guid
                                                 }

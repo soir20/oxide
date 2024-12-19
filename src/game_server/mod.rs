@@ -656,7 +656,7 @@ impl GameServer {
                                         unknown1: true,
                                         inner: MinigameDefinitions {
                                             header: MinigameHeader {
-                                                active_minigame_guid: 0,
+                                                stage_guid: 0,
                                                 unknown2: -1,
                                                 stage_group_guid: -1
                                             },
@@ -825,7 +825,7 @@ impl GameServer {
                                         unknown1: true,
                                         inner: CreateMinigameStageGroupInstance {
                                             header: MinigameHeader {
-                                                active_minigame_guid: 0,
+                                                stage_guid: 0,
                                                 unknown2: -1,
                                                 stage_group_guid: -1
                                             },
@@ -912,7 +912,7 @@ impl GameServer {
                                         unknown1: true,
                                         inner: ShowStageInstanceSelect {
                                             header: MinigameHeader {
-                                                active_minigame_guid: 0,
+                                                stage_guid: 0,
                                                 unknown2: -1,
                                                 stage_group_guid: -1
                                             },
