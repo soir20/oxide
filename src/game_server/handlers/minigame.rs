@@ -15,14 +15,15 @@ use crate::{
     game_server::{
         packets::{
             minigame::{
-                ActiveMinigameCreationResult, CreateMinigameStageGroupInstance,
-                MinigameDefinitions, MinigameHeader, MinigameOpCode, MinigamePortalCategory,
-                MinigamePortalEntry, MinigameStageDefinition, MinigameStageGroupDefinition,
-                MinigameStageGroupLink, MinigameStageInstance, RequestCreateActiveMinigame,
+                ActiveMinigameCreationResult, CreateActiveMinigame,
+                CreateMinigameStageGroupInstance, MinigameDefinitions, MinigameHeader,
+                MinigameOpCode, MinigamePortalCategory, MinigamePortalEntry,
+                MinigameStageDefinition, MinigameStageGroupDefinition, MinigameStageGroupLink,
+                MinigameStageInstance, RequestCreateActiveMinigame,
                 RequestMinigameStageGroupInstance, ShowStageInstanceSelect,
             },
             tunnel::TunneledPacket,
-            GamePacket,
+            GamePacket, RewardBundle,
         },
         Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
@@ -516,14 +517,14 @@ impl AllMinigameConfigs {
         &self,
         stage_group_guid: i32,
         stage_guid: i32,
-    ) -> Option<&MinigameStageConfig> {
+    ) -> Option<(&MinigameStageConfig, u32)> {
         self.stage_groups
             .get(&stage_group_guid)
-            .and_then(|(stage_group, _)| {
+            .and_then(|(stage_group, portal_entry_guid)| {
                 stage_group.stages.iter().find_map(|child| {
                     if let MinigameStageGroupChild::Stage(stage) = child {
                         if stage.guid == stage_guid {
-                            Some(stage)
+                            Some((stage, *portal_entry_guid))
                         } else {
                             None
                         }
@@ -618,11 +619,14 @@ pub fn process_minigame_packet(
             }
             MinigameOpCode::RequestCreateActiveMinigame => {
                 let request = RequestCreateActiveMinigame::deserialize(cursor)?;
-                let result = game_server.lock_enforcer().write_characters(|characters_table_write_handle, zones_lock_enforcer| {
-                    zones_lock_enforcer.write_zones(|zones_table_write_handle| {
-                        // TODO: Handle multiplayer minigames and wait for a full group
-                        // TODO: Check to make sure the player is allowed to play this game
-                        if let Some(stage_config) = game_server.minigames().stage_config(request.header.stage_group_guid, request.header.stage_guid) {
+                if let Some((stage_config, portal_entry_guid)) = game_server
+                    .minigames()
+                    .stage_config(request.header.stage_group_guid, request.header.stage_guid)
+                {
+                    let result: Result<Vec<Broadcast>, ProcessPacketError> = game_server.lock_enforcer().write_characters(|characters_table_write_handle, zones_lock_enforcer| {
+                        zones_lock_enforcer.write_zones(|zones_table_write_handle| {
+                            // TODO: Handle multiplayer minigames and wait for a full group
+                            // TODO: Check to make sure the player is allowed to play this game
                             let instance_guid = game_server.get_or_create_instance(characters_table_write_handle, zones_table_write_handle, stage_config.zone_template_guid, 1)?;
                             teleport_to_zone!(
                                 characters_table_write_handle,
@@ -634,34 +638,128 @@ pub fn process_minigame_packet(
                                 None,
                                 game_server.mounts()
                             )
-                        } else {
-                            Err(ProcessPacketError::new(
-                                ProcessPacketErrorType::ConstraintViolated,
-                                format!("Player {} requested to join stage {} in stage group {}, but it doesn't exist", sender, request.header.stage_guid, request.header.stage_group_guid)
-                            ))
-                        }
-                    })
-                });
+                        })
+                    });
 
-                let mut broadcasts = vec![Broadcast::Single(
-                    sender,
-                    vec![GamePacket::serialize(&TunneledPacket {
-                        unknown1: true,
-                        inner: ActiveMinigameCreationResult {
-                            header: MinigameHeader {
-                                stage_guid: request.header.stage_guid,
-                                unknown2: -1,
-                                stage_group_guid: request.header.stage_group_guid,
+                    let mut broadcasts = vec![Broadcast::Single(
+                        sender,
+                        vec![GamePacket::serialize(&TunneledPacket {
+                            unknown1: true,
+                            inner: ActiveMinigameCreationResult {
+                                header: MinigameHeader {
+                                    stage_guid: request.header.stage_guid,
+                                    unknown2: -1,
+                                    stage_group_guid: request.header.stage_group_guid,
+                                },
+                                was_successful: result.is_ok(),
                             },
-                            was_successful: result.is_ok(),
-                        },
-                    })?],
-                )];
+                        })?],
+                    )];
 
-                if let Ok(mut teleport_broadcasts) = result {
-                    broadcasts.append(&mut teleport_broadcasts)
+                    if let Ok(mut teleport_broadcasts) = result {
+                        broadcasts.append(&mut teleport_broadcasts);
+                        broadcasts.push(Broadcast::Single(
+                            sender,
+                            vec![GamePacket::serialize(&TunneledPacket {
+                                unknown1: true,
+                                inner: CreateActiveMinigame {
+                                    header: MinigameHeader {
+                                        stage_guid: request.header.stage_guid,
+                                        unknown2: -1,
+                                        stage_group_guid: request.header.stage_group_guid,
+                                    },
+                                    name_id: stage_config.name_id,
+                                    icon_set_id: stage_config.start_screen_icon_id,
+                                    description_id: stage_config.description_id,
+                                    difficulty: stage_config.difficulty,
+                                    battle_class_type: 0,
+                                    portal_entry_guid,
+                                    unknown7: false,
+                                    unknown8: false,
+                                    reward_bundle1: RewardBundle {
+                                        unknown1: false,
+                                        credits: 0,
+                                        battle_class_xp: 0,
+                                        unknown4: 0,
+                                        unknown5: 0,
+                                        unknown6: 0,
+                                        unknown7: 0,
+                                        unknown8: 0,
+                                        unknown9: 0,
+                                        unknown10: 0,
+                                        unknown11: 0,
+                                        unknown12: 0,
+                                        unknown13: 0,
+                                        icon_set_id: 0,
+                                        name_id: 0,
+                                        entries: vec![],
+                                        unknown17: 0,
+                                    },
+                                    reward_bundle2: RewardBundle {
+                                        unknown1: false,
+                                        credits: 0,
+                                        battle_class_xp: 0,
+                                        unknown4: 0,
+                                        unknown5: 0,
+                                        unknown6: 0,
+                                        unknown7: 0,
+                                        unknown8: 0,
+                                        unknown9: 0,
+                                        unknown10: 0,
+                                        unknown11: 0,
+                                        unknown12: 0,
+                                        unknown13: 0,
+                                        icon_set_id: 0,
+                                        name_id: 0,
+                                        entries: vec![],
+                                        unknown17: 0,
+                                    },
+                                    reward_bundle3: RewardBundle {
+                                        unknown1: false,
+                                        credits: 0,
+                                        battle_class_xp: 0,
+                                        unknown4: 0,
+                                        unknown5: 0,
+                                        unknown6: 0,
+                                        unknown7: 0,
+                                        unknown8: 0,
+                                        unknown9: 0,
+                                        unknown10: 0,
+                                        unknown11: 0,
+                                        unknown12: 0,
+                                        unknown13: 0,
+                                        icon_set_id: 0,
+                                        name_id: 0,
+                                        entries: vec![],
+                                        unknown17: 0,
+                                    },
+                                    reward_bundles: vec![],
+                                    unknown13: false,
+                                    unknown14: false,
+                                    unknown15: false,
+                                    unknown16: false,
+                                    show_end_score_screen: true,
+                                    unknown18: "".to_string(),
+                                    unknown19: 0,
+                                    unknown20: false,
+                                    stage_definition_guid: request.header.stage_guid,
+                                    unknown22: false,
+                                    unknown23: false,
+                                    unknown24: false,
+                                    unknown25: 0,
+                                    unknown26: 0,
+                                    unknown27: 0,
+                                },
+                            })?],
+                        ));
+                    }
+                    Ok(broadcasts)
+                } else {
+                    Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::ConstraintViolated,
+                        format!("Player {} requested to join stage {} in stage group {}, but it doesn't exist", sender, request.header.stage_guid, request.header.stage_group_guid)
+                    ))
                 }
-                Ok(broadcasts)
             }
             _ => {
                 let mut buffer = Vec::new();
