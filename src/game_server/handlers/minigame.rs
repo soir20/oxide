@@ -731,9 +731,9 @@ pub fn process_minigame_packet(
                         if let Some(character_read_handle) = characters_read.get(&player_guid(sender)) {
                             if let CharacterType::Player(player) = &character_read_handle.stats.character_type {
                                 if let Some(minigame_status) = &player.minigame_status {
-                                    if request.header.stage_group_guid == minigame_status.stage_group_guid && request.header.stage_guid == minigame_status.stage_guid {
-                                        let mut stage_group_instance = game_server.minigames.stage_group_instance(request.header.stage_group_guid, Some(request.header.stage_guid), player)?;
-                                        stage_group_instance.header.stage_guid = request.header.stage_guid;
+                                    if request.header.stage_guid == minigame_status.stage_guid {
+                                        let mut stage_group_instance = game_server.minigames.stage_group_instance(minigame_status.stage_group_guid, Some(minigame_status.stage_guid), player)?;
+                                        stage_group_instance.header.stage_guid = minigame_status.stage_guid;
 
                                         let mut packets = vec![
                                             GamePacket::serialize(&TunneledPacket {
@@ -744,15 +744,15 @@ pub fn process_minigame_packet(
                                                 unknown1: true,
                                                 inner: StartActiveMinigame {
                                                     header: MinigameHeader {
-                                                        stage_guid: request.header.stage_guid,
+                                                        stage_guid: minigame_status.stage_guid,
                                                         unknown2: -1,
-                                                        stage_group_guid: request.header.stage_group_guid,
+                                                        stage_group_guid: minigame_status.stage_group_guid,
                                                     },
                                                 },
                                             })?,
                                         ];
 
-                                        if let Some((stage_config, _)) = game_server.minigames().stage_config(request.header.stage_group_guid, request.header.stage_guid) {
+                                        if let Some((stage_config, _)) = game_server.minigames().stage_config(minigame_status.stage_group_guid, minigame_status.stage_guid) {
                                             if let Some(flash_game) = &stage_config.flash_game {
                                                 packets.push(
                                                     GamePacket::serialize(&TunneledPacket {
@@ -766,18 +766,18 @@ pub fn process_minigame_packet(
                                                 );
                                             }
                                         } else {
-                                            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} requested to start active minigame with stage config {} (stage group {}) that does not exist", sender, request.header.stage_guid, request.header.stage_group_guid)));
+                                            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} requested to start active minigame with stage config {} (stage group {}) that does not exist", sender, minigame_status.stage_guid, minigame_status.stage_group_guid)));
                                         }
 
                                         Ok(vec![
                                             Broadcast::Single(sender, packets)
                                         ])
                                     } else {
-                                        info!("Player {} requested to start an active minigame (stage group {}, stage {}), but they're in a different minigame (stage group {}, stage {})", sender, request.header.stage_group_guid, request.header.stage_guid, minigame_status.stage_group_guid, minigame_status.stage_guid);
+                                        info!("Player {} requested to start an active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", sender, request.header.stage_guid, minigame_status.stage_group_guid, minigame_status.stage_guid);
                                         Ok(vec![])
                                     }
                                 } else {
-                                    info!("Player {} requested to start an active minigame (stage group {}, stage {}), but they aren't in an active minigame", sender, request.header.stage_group_guid, request.header.stage_guid);
+                                    info!("Player {} requested to start an active minigame (stage {}), but they aren't in an active minigame", sender, request.header.stage_guid);
                                     Ok(vec![])
                                 }
                             } else {
