@@ -510,21 +510,26 @@ impl AllMinigameConfigs {
     }
 }
 
+fn insert_stage_groups(
+    portal_entry_guid: u32,
+    stage_group: &Arc<MinigameStageGroupConfig>,
+    map: &mut BTreeMap<i32, (Arc<MinigameStageGroupConfig>, u32)>,
+) {
+    map.insert(stage_group.guid, (stage_group.clone(), portal_entry_guid));
+
+    for child in &stage_group.stages {
+        if let MinigameStageGroupChild::StageGroup(stage_group) = child {
+            insert_stage_groups(portal_entry_guid, stage_group, map);
+        }
+    }
+}
+
 impl From<Vec<MinigamePortalCategoryConfig>> for AllMinigameConfigs {
     fn from(value: Vec<MinigamePortalCategoryConfig>) -> Self {
         let mut stage_groups = BTreeMap::new();
         for category in &value {
             for entry in &category.portal_entries {
-                stage_groups.insert(
-                    entry.stage_group.guid,
-                    (entry.stage_group.clone(), entry.guid),
-                );
-
-                for child in &entry.stage_group.stages {
-                    if let MinigameStageGroupChild::StageGroup(stage_group) = child {
-                        stage_groups.insert(stage_group.guid, (stage_group.clone(), entry.guid));
-                    }
-                }
+                insert_stage_groups(entry.guid, &entry.stage_group, &mut stage_groups);
             }
         }
 
