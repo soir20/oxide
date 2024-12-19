@@ -1304,7 +1304,7 @@ impl GameServer {
             GameServer::find_min_unused_zone_index(zones, template_guid)
         {
             if let Some(template) = self.zone_templates.get(&template_guid) {
-                if template.max_players < required_capacity {
+                if required_capacity <= template.max_players {
                     Err(ProcessPacketError::new(
                         ProcessPacketErrorType::ConstraintViolated,
                         format!(
