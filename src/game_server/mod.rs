@@ -1305,6 +1305,11 @@ impl GameServer {
         {
             if let Some(template) = self.zone_templates.get(&template_guid) {
                 if required_capacity <= template.max_players {
+                    let instance_guid = zone_instance_guid(new_instance_index, template_guid);
+                    let new_instance = template.to_zone_instance(instance_guid, None, characters);
+                    zones.insert(new_instance);
+                    Ok(instance_guid)
+                } else {
                     Err(ProcessPacketError::new(
                         ProcessPacketErrorType::ConstraintViolated,
                         format!(
@@ -1312,11 +1317,6 @@ impl GameServer {
                             template_guid, template.max_players, required_capacity
                         ),
                     ))
-                } else {
-                    let instance_guid = zone_instance_guid(new_instance_index, template_guid);
-                    let new_instance = template.to_zone_instance(instance_guid, None, characters);
-                    zones.insert(new_instance);
-                    Ok(instance_guid)
                 }
             } else {
                 Err(ProcessPacketError::new(
