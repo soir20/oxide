@@ -1308,8 +1308,8 @@ impl GameServer {
                     Err(ProcessPacketError::new(
                         ProcessPacketErrorType::ConstraintViolated,
                         format!(
-                            "Zone template {} does not have the required capacity {}",
-                            template_guid, required_capacity
+                            "Zone template {} (capacity {}) does not have the required capacity {}",
+                            template_guid, template.max_players, required_capacity
                         ),
                     ))
                 } else {
