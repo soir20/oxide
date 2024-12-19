@@ -33,6 +33,10 @@ pub fn shorten_zone_template_guid(point_of_interest_id: u32) -> Result<u8, Proce
     }
 }
 
+pub fn shorten_zone_index(instance_guid: u64) -> u32 {
+    ((instance_guid >> 8) & 0xffffffff) as u32
+}
+
 pub const AMBIENT_NPC_DISCRIMINANT: u8 = 0x10;
 pub const FIXTURE_DISCRIMINANT: u8 = 0x20;
 

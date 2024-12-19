@@ -46,13 +46,12 @@ use super::{
     },
 };
 
-use crate::game_server::handlers::guid::GuidTableHandle;
 use strum::IntoEnumIterator;
 
 #[derive(Deserialize)]
 struct ZoneConfig {
     guid: u8,
-    instances: u32,
+    max_players: u32,
     template_name: u32,
     template_icon: Option<u32>,
     asset_name: String,
@@ -83,6 +82,7 @@ pub struct ZoneTemplate {
     guid: u8,
     pub template_name: u32,
     pub template_icon: u32,
+    pub max_players: u32,
     pub asset_name: String,
     pub default_spawn_pos: Pos,
     pub default_spawn_rot: Pos,
@@ -120,12 +120,12 @@ impl From<&Vec<Character>> for GuidTable<u64, Character, CharacterIndex> {
 }
 
 impl ZoneTemplate {
-    pub fn to_zone(
+    pub fn to_zone_instance(
         &self,
         instance_guid: u64,
         house_data: Option<House>,
         global_characters_table: &mut GuidTableWriteHandle<u64, Character, CharacterIndex>,
-    ) -> Zone {
+    ) -> ZoneInstance {
         let keys_to_guid: HashMap<&String, u64> = self
             .characters
             .iter()
@@ -142,10 +142,11 @@ impl ZoneTemplate {
             global_characters_table.insert(character);
         }
 
-        Zone {
+        ZoneInstance {
             guid: instance_guid,
             template_guid: Guid::guid(self),
             template_name: self.template_name,
+            max_players: self.max_players,
             icon: self.template_icon,
             asset_name: self.asset_name.clone(),
             default_spawn_pos: self.default_spawn_pos,
@@ -175,10 +176,11 @@ pub struct House {
     pub is_rateable: bool,
 }
 
-pub struct Zone {
+pub struct ZoneInstance {
     guid: u64,
     pub template_guid: u8,
     pub template_name: u32,
+    pub max_players: u32,
     pub icon: u32,
     pub asset_name: String,
     pub default_spawn_pos: Pos,
@@ -193,7 +195,7 @@ pub struct Zone {
     pub seconds_per_day: u32,
 }
 
-impl IndexedGuid<u64, u8> for Zone {
+impl IndexedGuid<u64, u8> for ZoneInstance {
     fn guid(&self) -> u64 {
         self.guid
     }
@@ -206,8 +208,8 @@ impl IndexedGuid<u64, u8> for Zone {
 #[macro_export]
 macro_rules! diff_character_handles {
     ($instance_guid:expr, $old_chunk:expr, $new_chunk:expr, $characters_table_write_handle:expr) => {{
-        let old_chunks = Zone::nearby_chunks($old_chunk);
-        let new_chunks = Zone::nearby_chunks($new_chunk);
+        let old_chunks = ZoneInstance::nearby_chunks($old_chunk);
+        let new_chunks = ZoneInstance::nearby_chunks($new_chunk);
         let chunks_to_remove: Vec<&Chunk> = old_chunks.difference(&new_chunks).collect();
         let chunks_to_add: Vec<&Chunk> = new_chunks.difference(&old_chunks).collect();
 
@@ -247,7 +249,7 @@ macro_rules! diff_character_handles {
     }};
 }
 
-impl Zone {
+impl ZoneInstance {
     pub fn new_house(
         guid: u64,
         template: &ZoneTemplate,
@@ -273,7 +275,7 @@ impl Zone {
                 None,
             ));
         }
-        template.to_zone(guid, Some(house), global_characters_table)
+        template.to_zone_instance(guid, Some(house), global_characters_table)
     }
 
     pub fn send_self(&self) -> Result<Vec<Vec<u8>>, SerializePacketError> {
@@ -315,7 +317,7 @@ impl Zone {
     ) -> Result<Vec<u32>, ProcessPacketError> {
         let mut guids = Vec::new();
 
-        for chunk in Zone::nearby_chunks(chunk) {
+        for chunk in ZoneInstance::nearby_chunks(chunk) {
             for guid in characters_table_handle.keys_by_index((
                 CharacterCategory::PlayerReady,
                 instance_guid,
@@ -339,8 +341,12 @@ impl Zone {
         instance_guid: u64,
         characters_table_handle: &'a impl GuidTableIndexer<'a, u64, Character, CharacterIndex>,
     ) -> Result<Vec<u32>, ProcessPacketError> {
-        let mut guids =
-            Zone::other_players_nearby(sender, chunk, instance_guid, characters_table_handle)?;
+        let mut guids = ZoneInstance::other_players_nearby(
+            sender,
+            chunk,
+            instance_guid,
+            characters_table_handle,
+        )?;
         if let Some(sender_guid) = sender {
             guids.push(sender_guid);
         }
@@ -354,8 +360,8 @@ impl Zone {
         characters_table_handle: &'a impl GuidTableIndexer<'a, u64, Character, CharacterIndex>,
         requester_guid: u32,
     ) -> BTreeMap<u64, bool> {
-        let old_chunks = Zone::nearby_chunks(old_chunk);
-        let new_chunks = Zone::nearby_chunks(new_chunk);
+        let old_chunks = ZoneInstance::nearby_chunks(old_chunk);
+        let new_chunks = ZoneInstance::nearby_chunks(new_chunk);
         let chunks_to_remove: Vec<&Chunk> = old_chunks.difference(&new_chunks).collect();
         let chunks_to_add: Vec<&Chunk> = new_chunks.difference(&old_chunks).collect();
 
@@ -500,7 +506,7 @@ impl Zone {
                     write_guids: vec![requester],
                     character_consumer: move |_, characters_read, characters_write, _| {
                         if same_chunk {
-                            Zone::move_character_with_locks(
+                            ZoneInstance::move_character_with_locks(
                                 auto_interact_npcs,
                                 characters_read,
                                 characters_write,
@@ -547,13 +553,13 @@ impl Zone {
                             }
                         }
 
-                        let diff_packets = Zone::diff_character_packets(
+                        let diff_packets = ZoneInstance::diff_character_packets(
                             &diff_character_guids,
                             &characters_read,
                             &game_server.mounts,
                         )?;
 
-                        let characters_to_interact = Zone::move_character_with_locks(
+                        let characters_to_interact = ZoneInstance::move_character_with_locks(
                             characters_in_radius_or_all,
                             characters_read,
                             characters_write,
@@ -589,10 +595,10 @@ impl Zone {
 }
 
 impl ZoneConfig {
-    fn into_zones(
+    fn into_zone_instances(
         self,
         global_characters_table: &mut GuidTableWriteHandle<u64, Character, CharacterIndex>,
-    ) -> (ZoneTemplate, Vec<Zone>) {
+    ) -> (ZoneTemplate, Vec<ZoneInstance>) {
         let mut characters = Vec::new();
 
         let mut index = 0;
@@ -701,6 +707,7 @@ impl ZoneConfig {
         let template = ZoneTemplate {
             guid: self.guid,
             template_name: self.template_name,
+            max_players: self.max_players,
             template_icon: self.template_icon.unwrap_or(0),
             asset_name: self.asset_name.clone(),
             default_spawn_pos: Pos {
@@ -725,11 +732,12 @@ impl ZoneConfig {
             seconds_per_day: self.seconds_per_day,
         };
 
+        // TODO: remove
         let mut zones = Vec::new();
-        for index in 0..self.instances {
+        for index in 0..1 {
             let instance_guid = zone_instance_guid(index, Guid::guid(&template));
 
-            zones.push(template.to_zone(instance_guid, None, global_characters_table));
+            zones.push(template.to_zone_instance(instance_guid, None, global_characters_table));
         }
 
         (template, zones)
@@ -740,7 +748,7 @@ type ZoneTemplateMap = BTreeMap<u8, ZoneTemplate>;
 pub fn load_zones(
     config_dir: &Path,
     mut global_characters_table: GuidTableWriteHandle<u64, Character, CharacterIndex>,
-) -> Result<(ZoneTemplateMap, GuidTable<u64, Zone, u8>), Error> {
+) -> Result<(ZoneTemplateMap, GuidTable<u64, ZoneInstance, u8>), Error> {
     let mut file = File::open(config_dir.join("zones.json"))?;
     let zone_configs: Vec<ZoneConfig> = serde_json::from_reader(&mut file)?;
 
@@ -749,7 +757,7 @@ pub fn load_zones(
     {
         let mut zones_write_handle = zones.write();
         for zone_config in zone_configs {
-            let (template, zones) = zone_config.into_zones(&mut global_characters_table);
+            let (template, zones) = zone_config.into_zone_instances(&mut global_characters_table);
             let template_guid = Guid::guid(&template);
 
             if templates.insert(template_guid, template).is_some() {
@@ -771,7 +779,7 @@ pub fn load_zones(
 pub fn enter_zone(
     characters_table_write_handle: &mut CharacterTableWriteHandle,
     player: u32,
-    destination_read_handle: &RwLockReadGuard<Zone>,
+    destination_read_handle: &RwLockReadGuard<ZoneInstance>,
     destination_pos: Option<Pos>,
     destination_rot: Option<Pos>,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
@@ -815,7 +823,7 @@ pub fn enter_zone(
 
 fn prepare_init_zone_packets(
     player: u32,
-    destination: &RwLockReadGuard<Zone>,
+    destination: &RwLockReadGuard<ZoneInstance>,
     destination_pos: Pos,
     destination_rot: Pos,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
@@ -931,11 +939,7 @@ pub fn interact_with_character(
                             return coerce_to_broadcast_supplier(|_| Ok(Vec::new()));
                         }
 
-                        target_read_handle.interact(
-                            requester,
-                            source_zone_guid,
-                            zones_lock_enforcer,
-                        )
+                        target_read_handle.interact(requester, source_zone_guid)
                     } else {
                         info!(
                             "Received request to interact with unknown NPC {} from {}",
@@ -971,7 +975,7 @@ pub fn teleport_within_zone(
             new_chunk,
             characters_table_write_handle
         );
-        let diff_packets = Zone::diff_character_packets(
+        let diff_packets = ZoneInstance::diff_character_packets(
             &diff_character_guids,
             &diff_character_handles,
             mount_configs,

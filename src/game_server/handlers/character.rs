@@ -796,12 +796,7 @@ impl Door {
         Ok(packets)
     }
 
-    pub fn interact(
-        &self,
-        requester: u32,
-        source_zone_guid: u64,
-        zones_lock_enforcer: &ZoneLockEnforcer,
-    ) -> WriteLockingBroadcastSupplier {
+    pub fn interact(&self, requester: u32, source_zone_guid: u64) -> WriteLockingBroadcastSupplier {
         let destination_pos = Pos {
             x: self.destination_pos_x,
             y: self.destination_pos_y,
@@ -815,23 +810,29 @@ impl Door {
             w: self.destination_rot_w,
         };
 
-        let destination_zone_guid = if let &Some(destination_zone_guid) = &self.destination_zone {
-            destination_zone_guid
-        } else if let &Some(destination_zone_template) = &self.destination_zone_template {
-            zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
-                read_guids: Vec::new(),
-                write_guids: Vec::new(),
-                zone_consumer: |zones_table_read_handle, _, _| {
-                    GameServer::any_instance(zones_table_read_handle, destination_zone_template)
-                },
-            })?
-        } else {
-            source_zone_guid
-        };
+        let destination_zone = self.destination_zone;
+        let destination_zone_template = self.destination_zone_template;
 
         coerce_to_broadcast_supplier(move |game_server| {
             game_server.lock_enforcer().write_characters(
                 |characters_table_write_handle, zones_lock_enforcer| {
+                    let destination_zone_guid = if let &Some(destination_zone_guid) =
+                        &destination_zone
+                    {
+                        destination_zone_guid
+                    } else if let &Some(destination_zone_template) = &destination_zone_template {
+                        zones_lock_enforcer.write_zones(|zones_table_write_handle| {
+                            game_server.get_or_create_instance(
+                                characters_table_write_handle,
+                                zones_table_write_handle,
+                                destination_zone_template,
+                                1,
+                            )
+                        })?
+                    } else {
+                        source_zone_guid
+                    };
+
                     if source_zone_guid != destination_zone_guid {
                         zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
                             read_guids: vec![destination_zone_guid],
@@ -1405,7 +1406,6 @@ impl Character {
         &mut self,
         requester: u32,
         source_zone_guid: u64,
-        zones_lock_enforcer: &ZoneLockEnforcer,
     ) -> WriteLockingBroadcastSupplier {
         let mut new_procedure = None;
 
@@ -1414,9 +1414,7 @@ impl Character {
                 new_procedure = ambient_npc.interact(self);
                 coerce_to_broadcast_supplier(|_| Ok(Vec::new()))
             }
-            CharacterType::Door(door) => {
-                door.interact(requester, source_zone_guid, zones_lock_enforcer)
-            }
+            CharacterType::Door(door) => door.interact(requester, source_zone_guid),
             CharacterType::Transport(transport) => transport.interact(requester),
             _ => coerce_to_broadcast_supplier(|_| Ok(Vec::new())),
         };

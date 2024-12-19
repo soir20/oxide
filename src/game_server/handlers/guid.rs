@@ -115,6 +115,15 @@ pub struct GuidTableWriteHandle<'a, K, V, I = ()> {
 }
 
 impl<K: Copy + Ord, V: IndexedGuid<K, I>, I: Copy + Ord> GuidTableWriteHandle<'_, K, V, I> {
+    pub fn get(&self, guid: K) -> Option<&Lock<V>> {
+        self.guard.data.get(&guid).map(|(lock, _)| lock)
+    }
+
+    pub fn values_by_index(&self, index: I) -> impl Iterator<Item = &Lock<V>> {
+        self.keys_by_index(index)
+            .filter_map(|guid| self.guard.data.get(&guid).map(|(lock, _)| lock))
+    }
+
     pub fn insert(&mut self, item: V) -> Option<Lock<V>> {
         let key = item.guid();
         let index = item.index();

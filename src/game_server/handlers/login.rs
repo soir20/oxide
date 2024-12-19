@@ -16,7 +16,7 @@ use super::{
     minigame::PlayerMinigameStats,
     test_data::{make_test_customizations, make_test_player},
     unique_guid::player_guid,
-    zone::Zone,
+    zone::ZoneInstance,
 };
 
 pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, ProcessPacketError> {
@@ -119,7 +119,7 @@ pub fn log_out(
             if let Some((character, (_, instance_guid, chunk))) =
                 characters_table_write_handle.remove(player_guid(sender))
             {
-                let other_players_nearby = Zone::other_players_nearby(
+                let other_players_nearby = ZoneInstance::other_players_nearby(
                     Some(sender),
                     chunk,
                     instance_guid,
