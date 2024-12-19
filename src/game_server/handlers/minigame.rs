@@ -638,8 +638,7 @@ pub fn process_minigame_packet(
                             Err(ProcessPacketError::new(
                                 ProcessPacketErrorType::ConstraintViolated,
                                 format!("Player {} requested to join stage {} in stage group {}, but it doesn't exist", sender, request.header.stage_guid, request.header.stage_group_guid)
-                            )
-                            )
+                            ))
                         }
                     })
                 });
