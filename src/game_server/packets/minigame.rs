@@ -43,7 +43,7 @@ pub struct MinigameHeader {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct MinigameStageDefinition {
-    pub guid: u32,
+    pub guid: i32,
     pub portal_entry_guid: u32,
     pub start_screen_name_id: u32,
     pub start_screen_description_id: u32,
@@ -65,8 +65,8 @@ pub struct MinigameStageDefinition {
 pub struct MinigameStageGroupLink {
     pub link_id: u32,
     pub parent_stage_group_definition_guid: i32,
-    pub parent_stage_definition_guid: u32,
-    pub child_stage_definition_guid: u32,
+    pub parent_stage_definition_guid: i32,
+    pub child_stage_definition_guid: i32,
     pub icon_id: u32,
     pub link_name: String,
     pub short_name: String,
@@ -360,7 +360,7 @@ impl GamePacket for ActiveMinigameEndScore {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct MinigameStageInstance {
-    pub stage_instance_guid: u32,
+    pub stage_instance_guid: i32,
     pub portal_entry_guid: u32,
     pub link_name: String,
     pub short_name: String,

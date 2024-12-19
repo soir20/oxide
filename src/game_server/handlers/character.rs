@@ -980,6 +980,12 @@ pub struct BattleClass {
 }
 
 #[derive(Clone)]
+pub struct MinigameStatus {
+    pub stage_group_guid: u32,
+    pub stage_guid: u32,
+}
+
+#[derive(Clone)]
 pub struct Player {
     pub ready: bool,
     pub member: bool,
@@ -989,6 +995,7 @@ pub struct Player {
     pub inventory: BTreeSet<u32>,
     pub customizations: BTreeMap<CustomizationSlot, u32>,
     pub minigame_stats: PlayerMinigameStats,
+    pub minigame_status: Option<MinigameStatus>,
 }
 
 impl Player {

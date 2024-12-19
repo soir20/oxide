@@ -15,17 +15,18 @@ use crate::{
     game_server::{
         packets::{
             minigame::{
-                CreateMinigameStageGroupInstance, MinigameDefinitions, MinigameHeader,
-                MinigameOpCode, MinigamePortalCategory, MinigamePortalEntry,
-                MinigameStageDefinition, MinigameStageGroupDefinition, MinigameStageGroupLink,
-                MinigameStageInstance, RequestMinigameStageGroupInstance, ShowStageInstanceSelect,
+                ActiveMinigameCreationResult, CreateMinigameStageGroupInstance,
+                MinigameDefinitions, MinigameHeader, MinigameOpCode, MinigamePortalCategory,
+                MinigamePortalEntry, MinigameStageDefinition, MinigameStageGroupDefinition,
+                MinigameStageGroupLink, MinigameStageInstance, RequestCreateActiveMinigame,
+                RequestMinigameStageGroupInstance, ShowStageInstanceSelect,
             },
             tunnel::TunneledPacket,
             GamePacket,
         },
         Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
-    info,
+    info, teleport_to_zone,
 };
 
 use super::{
@@ -42,12 +43,12 @@ pub struct PlayerStageStats {
 
 #[derive(Clone, Default)]
 pub struct PlayerMinigameStats {
-    stage_guid_to_stats: BTreeMap<u32, PlayerStageStats>,
+    stage_guid_to_stats: BTreeMap<i32, PlayerStageStats>,
     trophy_stats: BTreeMap<i32, i32>,
 }
 
 impl PlayerMinigameStats {
-    pub fn complete(&mut self, stage_guid: u32, score: i32) {
+    pub fn complete(&mut self, stage_guid: i32, score: i32) {
         self.stage_guid_to_stats
             .entry(stage_guid)
             .and_modify(|entry| {
@@ -60,7 +61,7 @@ impl PlayerMinigameStats {
             });
     }
 
-    pub fn has_completed(&self, stage_guid: u32) -> bool {
+    pub fn has_completed(&self, stage_guid: i32) -> bool {
         self.stage_guid_to_stats
             .get(&stage_guid)
             .map(|stats| stats.completed)
@@ -79,7 +80,7 @@ impl PlayerMinigameStats {
 
 #[derive(Deserialize)]
 pub struct MinigameStageConfig {
-    pub guid: u32,
+    pub guid: i32,
     pub name_id: u32,
     pub description_id: u32,
     pub stage_icon_id: u32,
@@ -94,6 +95,8 @@ pub struct MinigameStageConfig {
     pub require_previous_completed: bool,
     pub link_name: String,
     pub short_name: String,
+    pub flash_game: Option<String>,
+    pub zone_template_guid: u8,
     pub score_to_credits_expression: String,
 }
 
@@ -508,6 +511,28 @@ impl AllMinigameConfigs {
             ))
         }
     }
+
+    pub fn stage_config(
+        &self,
+        stage_group_guid: i32,
+        stage_guid: i32,
+    ) -> Option<&MinigameStageConfig> {
+        self.stage_groups
+            .get(&stage_group_guid)
+            .and_then(|(stage_group, _)| {
+                stage_group.stages.iter().find_map(|child| {
+                    if let MinigameStageGroupChild::Stage(stage) = child {
+                        if stage.guid == stage_guid {
+                            Some(stage)
+                        } else {
+                            None
+                        }
+                    } else {
+                        None
+                    }
+                })
+            })
+    }
 }
 
 fn insert_stage_groups(
@@ -590,6 +615,54 @@ pub fn process_minigame_packet(
                         }
                     },
                 })
+            }
+            MinigameOpCode::RequestCreateActiveMinigame => {
+                let request = RequestCreateActiveMinigame::deserialize(cursor)?;
+                let result = game_server.lock_enforcer().write_characters(|characters_table_write_handle, zones_lock_enforcer| {
+                    zones_lock_enforcer.write_zones(|zones_table_write_handle| {
+                        // TODO: Handle multiplayer minigames and wait for a full group
+                        // TODO: Check to make sure the player is allowed to play this game
+                        if let Some(stage_config) = game_server.minigames().stage_config(request.header.stage_group_guid, request.header.stage_guid) {
+                            let instance_guid = game_server.get_or_create_instance(characters_table_write_handle, zones_table_write_handle, stage_config.zone_template_guid, 1)?;
+                            teleport_to_zone!(
+                                characters_table_write_handle,
+                                sender,
+                                &zones_table_write_handle.get(instance_guid)
+                                    .unwrap_or_else(|| panic!("Zone instance {} should have been created or already exist but is missing", instance_guid))
+                                    .read(),
+                                None,
+                                None,
+                                game_server.mounts()
+                            )
+                        } else {
+                            Err(ProcessPacketError::new(
+                                ProcessPacketErrorType::ConstraintViolated,
+                                format!("Player {} requested to join stage {} in stage group {}, but it doesn't exist", sender, request.header.stage_guid, request.header.stage_group_guid)
+                            )
+                            )
+                        }
+                    })
+                });
+
+                let mut broadcasts = vec![Broadcast::Single(
+                    sender,
+                    vec![GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: ActiveMinigameCreationResult {
+                            header: MinigameHeader {
+                                stage_guid: request.header.stage_guid,
+                                unknown2: -1,
+                                stage_group_guid: request.header.stage_group_guid,
+                            },
+                            was_successful: result.is_ok(),
+                        },
+                    })?],
+                )];
+
+                if let Ok(mut teleport_broadcasts) = result {
+                    broadcasts.append(&mut teleport_broadcasts)
+                }
+                Ok(broadcasts)
             }
             _ => {
                 let mut buffer = Vec::new();

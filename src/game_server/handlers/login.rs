@@ -111,6 +111,7 @@ pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, P
                     inventory: player.inner.data.inventory.into_keys().collect(),
                     customizations: make_test_customizations(),
                     minigame_stats: PlayerMinigameStats::default(),
+                    minigame_status: None,
                 },
                 game_server,
             ));
