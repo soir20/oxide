@@ -911,7 +911,7 @@ pub fn interact_with_character(
             CharacterLockRequest {
                 read_guids: Vec::new(),
                 write_guids: vec![request.requester, request.target],
-                character_consumer: move |_, _, mut characters_write, zones_lock_enforcer| {
+                character_consumer: move |_, _, mut characters_write, _| {
                     let source_zone_guid;
                     let requester_x;
                     let requester_y;

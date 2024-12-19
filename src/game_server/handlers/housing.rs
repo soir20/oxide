@@ -24,7 +24,7 @@ use crate::{
 
 use super::{
     character::{Character, CurrentFixture, PreviousFixture},
-    guid::{GuidTableHandle, GuidTableIndexer, IndexedGuid},
+    guid::{GuidTableIndexer, IndexedGuid},
     lock_enforcer::{CharacterLockRequest, ZoneLockRequest},
     unique_guid::{npc_guid, player_guid, zone_template_guid, FIXTURE_DISCRIMINANT},
     zone::{House, ZoneInstance},

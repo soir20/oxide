@@ -35,7 +35,7 @@ use super::{
     guid::{Guid, IndexedGuid},
     housing::fixture_packets,
     inventory::wield_type_from_slot,
-    lock_enforcer::{CharacterReadGuard, ZoneLockEnforcer, ZoneLockRequest},
+    lock_enforcer::{CharacterReadGuard, ZoneLockRequest},
     minigame::PlayerMinigameStats,
     mount::{spawn_mount_npc, MountConfig},
     unique_guid::{mount_guid, npc_guid, player_guid, shorten_player_guid},
