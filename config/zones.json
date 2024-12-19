@@ -1369,5 +1369,32 @@
             }
         ],
         "ambient_npcs": []
+    },
+    {
+        "comment": "Aquatic Assault",
+        "guid": 200,
+        "max_players": 4294967295,
+        "template_name": 45898,
+        "asset_name": "MultiplayerZone",
+        "hide_ui": false,
+        "is_combat": false,
+        "spawn_pos_x": 0.0,
+        "spawn_pos_y": 0.0,
+        "spawn_pos_z": 0.0,
+        "spawn_pos_w": 1.0,
+        "spawn_rot_x": 0.0,
+        "spawn_rot_y": 0.0,
+        "spawn_rot_z": 0.0,
+        "spawn_rot_w": 0.0,
+        "spawn_sky": "",
+        "speed": 8.0,
+        "jump_height_multiplier": 1.0,
+        "gravity_multiplier": 1.0,
+        "seconds_per_day": 10800,
+        "interact_radius": 7.0,
+        "door_auto_interact_radius": 0.0,
+        "doors": [],
+        "transports": [],
+        "ambient_npcs": []
     }
 ]

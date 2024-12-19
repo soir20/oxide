@@ -53,6 +53,8 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage01",
+                                "flash_game": "AquaticAssault.swf",
+                                "zone_template_guid": 200,
                                 "score_to_credits_expression": "x"
                             }
                         },
@@ -71,6 +73,8 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage02",
+                                "flash_game": "AquaticAssault.swf",
+                                "zone_template_guid": 200,
                                 "score_to_credits_expression": "x"
                             }
                         },
@@ -89,6 +93,8 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage03",
+                                "flash_game": "AquaticAssault.swf",
+                                "zone_template_guid": 200,
                                 "score_to_credits_expression": "x"
                             }
                         }
