@@ -149,6 +149,17 @@ impl GamePacket for MinigameDefinitions {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
+pub struct RequestCreateActiveMinigame {
+    pub header: MinigameHeader,
+}
+
+impl GamePacket for RequestCreateActiveMinigame {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::RequestCreateActiveMinigame;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
 pub struct RequestCancelActiveMinigame {
     pub header: MinigameHeader,
 }
