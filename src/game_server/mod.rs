@@ -143,7 +143,7 @@ pub struct GameServer {
 impl GameServer {
     pub fn new(config_dir: &Path) -> Result<Self, Error> {
         let characters = GuidTable::new();
-        let (templates, zones) = load_zones(config_dir, characters.write())?;
+        let (templates, zones) = load_zones(config_dir)?;
         let item_definitions = load_item_definitions(config_dir)?;
         let item_groups = load_item_groups(config_dir)?;
         Ok(GameServer {

@@ -41,8 +41,7 @@ use super::{
     },
     mount::MountConfig,
     unique_guid::{
-        npc_guid, player_guid, shorten_player_guid, zone_instance_guid, AMBIENT_NPC_DISCRIMINANT,
-        FIXTURE_DISCRIMINANT,
+        npc_guid, player_guid, shorten_player_guid, AMBIENT_NPC_DISCRIMINANT, FIXTURE_DISCRIMINANT,
     },
 };
 
@@ -595,10 +594,7 @@ impl ZoneInstance {
 }
 
 impl ZoneConfig {
-    fn into_zone_instances(
-        self,
-        global_characters_table: &mut GuidTableWriteHandle<u64, Character, CharacterIndex>,
-    ) -> (ZoneTemplate, Vec<ZoneInstance>) {
+    fn into_zone_instances(self) -> (ZoneTemplate, Vec<ZoneInstance>) {
         let mut characters = Vec::new();
 
         let mut index = 0;
@@ -732,22 +728,13 @@ impl ZoneConfig {
             seconds_per_day: self.seconds_per_day,
         };
 
-        // TODO: remove
-        let mut zones = Vec::new();
-        for index in 0..1 {
-            let instance_guid = zone_instance_guid(index, Guid::guid(&template));
-
-            zones.push(template.to_zone_instance(instance_guid, None, global_characters_table));
-        }
-
-        (template, zones)
+        (template, Vec::new())
     }
 }
 
 type ZoneTemplateMap = BTreeMap<u8, ZoneTemplate>;
 pub fn load_zones(
     config_dir: &Path,
-    mut global_characters_table: GuidTableWriteHandle<u64, Character, CharacterIndex>,
 ) -> Result<(ZoneTemplateMap, GuidTable<u64, ZoneInstance, u8>), Error> {
     let mut file = File::open(config_dir.join("zones.json"))?;
     let zone_configs: Vec<ZoneConfig> = serde_json::from_reader(&mut file)?;
@@ -757,7 +744,7 @@ pub fn load_zones(
     {
         let mut zones_write_handle = zones.write();
         for zone_config in zone_configs {
-            let (template, zones) = zone_config.into_zone_instances(&mut global_characters_table);
+            let (template, zones) = zone_config.into_zone_instances();
             let template_guid = Guid::guid(&template);
 
             if templates.insert(template_guid, template).is_some() {
