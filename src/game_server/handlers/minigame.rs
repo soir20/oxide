@@ -13,14 +13,17 @@ use serde::Deserialize;
 
 use crate::{
     game_server::{
+        handlers::character::MinigameStatus,
         packets::{
+            command::StartFlashGame,
             minigame::{
                 ActiveMinigameCreationResult, CreateActiveMinigame,
                 CreateMinigameStageGroupInstance, MinigameDefinitions, MinigameHeader,
                 MinigameOpCode, MinigamePortalCategory, MinigamePortalEntry,
                 MinigameStageDefinition, MinigameStageGroupDefinition, MinigameStageGroupLink,
                 MinigameStageInstance, RequestCreateActiveMinigame,
-                RequestMinigameStageGroupInstance, ShowStageInstanceSelect,
+                RequestMinigameStageGroupInstance, RequestStartActiveMinigame,
+                ShowStageInstanceSelect, StartActiveMinigame,
             },
             tunnel::TunneledPacket,
             GamePacket, RewardBundle,
@@ -160,7 +163,7 @@ pub struct MinigameStageGroupConfig {
     #[serde(default)]
     pub short_name: String,
     #[serde(default)]
-    pub default_stage_instance: u32,
+    pub default_stage_instance: i32,
     pub stages: Vec<MinigameStageGroupChild>,
 }
 
@@ -255,7 +258,7 @@ impl MinigameStageGroupConfig {
     pub fn to_stage_group_instance(
         &self,
         portal_entry_guid: u32,
-        default_stage_guid_override: Option<u32>,
+        default_stage_guid_override: Option<i32>,
         player: &Player,
     ) -> CreateMinigameStageGroupInstance {
         let mut stage_instances = Vec::new();
@@ -349,7 +352,6 @@ pub struct MinigamePortalEntryConfig {
     pub description_id: u32,
     pub members_only: bool,
     pub is_flash: bool,
-    pub is_micro: bool,
     pub is_active: bool,
     pub param1: u32,
     pub icon_id: u32,
@@ -385,7 +387,7 @@ impl MinigamePortalEntryConfig {
                 description_id: self.description_id,
                 members_only: self.members_only,
                 is_flash: self.is_flash,
-                is_micro: self.is_micro,
+                is_micro: false,
                 is_active: self.is_active,
                 param1: self.param1,
                 icon_id: self.icon_id,
@@ -493,7 +495,7 @@ impl AllMinigameConfigs {
     pub fn stage_group_instance(
         &self,
         stage_group_guid: i32,
-        default_stage_guid_override: Option<u32>,
+        default_stage_guid_override: Option<i32>,
         player: &Player,
     ) -> Result<CreateMinigameStageGroupInstance, ProcessPacketError> {
         if let Some((stage_group, portal_entry_guid)) = self.stage_groups.get(&stage_group_guid) {
@@ -627,17 +629,30 @@ pub fn process_minigame_packet(
                         zones_lock_enforcer.write_zones(|zones_table_write_handle| {
                             // TODO: Handle multiplayer minigames and wait for a full group
                             // TODO: Check to make sure the player is allowed to play this game
-                            let instance_guid = game_server.get_or_create_instance(characters_table_write_handle, zones_table_write_handle, stage_config.zone_template_guid, 1)?;
-                            teleport_to_zone!(
-                                characters_table_write_handle,
-                                sender,
-                                &zones_table_write_handle.get(instance_guid)
-                                    .unwrap_or_else(|| panic!("Zone instance {} should have been created or already exist but is missing", instance_guid))
-                                    .read(),
-                                None,
-                                None,
-                                game_server.mounts()
-                            )
+                            if let Some(character_lock) = characters_table_write_handle.get(player_guid(sender)) {
+                                if let CharacterType::Player(player) = &mut character_lock.write().stats.character_type {
+                                    player.minigame_status = Some(MinigameStatus {
+                                        stage_group_guid: request.header.stage_group_guid,
+                                        stage_guid: request.header.stage_guid,
+                                    });
+                                } else {
+                                    return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to create an active minigame, but their character isn't a player", sender)));
+                                }
+
+                                let instance_guid = game_server.get_or_create_instance(characters_table_write_handle, zones_table_write_handle, stage_config.zone_template_guid, 1)?;
+                                teleport_to_zone!(
+                                    characters_table_write_handle,
+                                    sender,
+                                    &zones_table_write_handle.get(instance_guid)
+                                        .unwrap_or_else(|| panic!("Zone instance {} should have been created or already exist but is missing", instance_guid))
+                                        .read(),
+                                    None,
+                                    None,
+                                    game_server.mounts()
+                                )
+                            } else {
+                                Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} tried to create an active minigame", sender)))
+                            }
                         })
                     });
 
@@ -676,63 +691,9 @@ pub fn process_minigame_packet(
                                     portal_entry_guid,
                                     unknown7: false,
                                     unknown8: false,
-                                    reward_bundle1: RewardBundle {
-                                        unknown1: false,
-                                        credits: 0,
-                                        battle_class_xp: 0,
-                                        unknown4: 0,
-                                        unknown5: 0,
-                                        unknown6: 0,
-                                        unknown7: 0,
-                                        unknown8: 0,
-                                        unknown9: 0,
-                                        unknown10: 0,
-                                        unknown11: 0,
-                                        unknown12: 0,
-                                        unknown13: 0,
-                                        icon_set_id: 0,
-                                        name_id: 0,
-                                        entries: vec![],
-                                        unknown17: 0,
-                                    },
-                                    reward_bundle2: RewardBundle {
-                                        unknown1: false,
-                                        credits: 0,
-                                        battle_class_xp: 0,
-                                        unknown4: 0,
-                                        unknown5: 0,
-                                        unknown6: 0,
-                                        unknown7: 0,
-                                        unknown8: 0,
-                                        unknown9: 0,
-                                        unknown10: 0,
-                                        unknown11: 0,
-                                        unknown12: 0,
-                                        unknown13: 0,
-                                        icon_set_id: 0,
-                                        name_id: 0,
-                                        entries: vec![],
-                                        unknown17: 0,
-                                    },
-                                    reward_bundle3: RewardBundle {
-                                        unknown1: false,
-                                        credits: 0,
-                                        battle_class_xp: 0,
-                                        unknown4: 0,
-                                        unknown5: 0,
-                                        unknown6: 0,
-                                        unknown7: 0,
-                                        unknown8: 0,
-                                        unknown9: 0,
-                                        unknown10: 0,
-                                        unknown11: 0,
-                                        unknown12: 0,
-                                        unknown13: 0,
-                                        icon_set_id: 0,
-                                        name_id: 0,
-                                        entries: vec![],
-                                        unknown17: 0,
-                                    },
+                                    reward_bundle1: RewardBundle::default(),
+                                    reward_bundle2: RewardBundle::default(),
+                                    reward_bundle3: RewardBundle::default(),
                                     reward_bundles: vec![],
                                     unknown13: false,
                                     unknown14: false,
@@ -760,6 +721,73 @@ pub fn process_minigame_packet(
                         format!("Player {} requested to join stage {} in stage group {}, but it doesn't exist", sender, request.header.stage_guid, request.header.stage_group_guid)
                     ))
                 }
+            }
+            MinigameOpCode::RequestStartActiveMinigame => {
+                let request = RequestStartActiveMinigame::deserialize(cursor)?;
+                game_server.lock_enforcer().read_characters(|_| CharacterLockRequest {
+                    read_guids: vec![player_guid(sender)],
+                    write_guids: Vec::new(),
+                    character_consumer: |_, characters_read, _, _| {
+                        if let Some(character_read_handle) = characters_read.get(&player_guid(sender)) {
+                            if let CharacterType::Player(player) = &character_read_handle.stats.character_type {
+                                if let Some(minigame_status) = &player.minigame_status {
+                                    if request.header.stage_group_guid == minigame_status.stage_group_guid && request.header.stage_guid == minigame_status.stage_guid {
+                                        let mut stage_group_instance = game_server.minigames.stage_group_instance(request.header.stage_group_guid, Some(request.header.stage_guid), player)?;
+                                        stage_group_instance.header.stage_guid = request.header.stage_guid;
+
+                                        let mut packets = vec![
+                                            GamePacket::serialize(&TunneledPacket {
+                                                unknown1: true,
+                                                inner: stage_group_instance,
+                                            })?,
+                                            GamePacket::serialize(&TunneledPacket {
+                                                unknown1: true,
+                                                inner: StartActiveMinigame {
+                                                    header: MinigameHeader {
+                                                        stage_guid: request.header.stage_guid,
+                                                        unknown2: -1,
+                                                        stage_group_guid: request.header.stage_group_guid,
+                                                    },
+                                                },
+                                            })?,
+                                        ];
+
+                                        if let Some((stage_config, _)) = game_server.minigames().stage_config(request.header.stage_group_guid, request.header.stage_guid) {
+                                            if let Some(flash_game) = &stage_config.flash_game {
+                                                packets.push(
+                                                    GamePacket::serialize(&TunneledPacket {
+                                                        unknown1: true,
+                                                        inner: StartFlashGame {
+                                                            loader_script_name: "MiniGameFlash".to_string(),
+                                                            game_swf_name: flash_game.clone(),
+                                                            is_micro: false,
+                                                        },
+                                                    })?,
+                                                );
+                                            }
+                                        } else {
+                                            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} requested to start active minigame with stage config {} (stage group {}) that does not exist", sender, request.header.stage_guid, request.header.stage_group_guid)));
+                                        }
+
+                                        Ok(vec![
+                                            Broadcast::Single(sender, packets)
+                                        ])
+                                    } else {
+                                        info!("Player {} requested to start an active minigame (stage group {}, stage {}), but they're in a different minigame (stage group {}, stage {})", sender, request.header.stage_group_guid, request.header.stage_guid, minigame_status.stage_group_guid, minigame_status.stage_guid);
+                                        Ok(vec![])
+                                    }
+                                } else {
+                                    info!("Player {} requested to start an active minigame (stage group {}, stage {}), but they aren't in an active minigame", sender, request.header.stage_group_guid, request.header.stage_guid);
+                                    Ok(vec![])
+                                }
+                            } else {
+                                Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} requested to start an active minigame, but their character isn't a player", sender)))
+                            }
+                        } else {
+                            Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} requested to start an active minigame", sender)))
+                        }
+                    }
+                })
             }
             _ => {
                 let mut buffer = Vec::new();

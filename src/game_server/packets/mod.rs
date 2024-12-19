@@ -414,7 +414,7 @@ impl SerializePacket for RewardEntry {
     }
 }
 
-#[derive(SerializePacket)]
+#[derive(Default, SerializePacket)]
 pub struct RewardBundle {
     pub unknown1: bool,
     pub credits: u32,

@@ -981,8 +981,8 @@ pub struct BattleClass {
 
 #[derive(Clone)]
 pub struct MinigameStatus {
-    pub stage_group_guid: u32,
-    pub stage_guid: u32,
+    pub stage_group_guid: i32,
+    pub stage_guid: i32,
 }
 
 #[derive(Clone)]

@@ -160,6 +160,17 @@ impl GamePacket for RequestCreateActiveMinigame {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
+pub struct RequestStartActiveMinigame {
+    pub header: MinigameHeader,
+}
+
+impl GamePacket for RequestStartActiveMinigame {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::RequestStartActiveMinigame;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
 pub struct RequestCancelActiveMinigame {
     pub header: MinigameHeader,
 }
@@ -395,7 +406,7 @@ pub struct CreateMinigameStageGroupInstance {
     pub description_id: u32,
     pub icon_id: u32,
     pub stage_select_map_name: String,
-    pub default_stage_instance_guid: u32,
+    pub default_stage_instance_guid: i32,
     pub stage_instances: Vec<MinigameStageInstance>,
     pub stage_progression: String,
     pub show_start_screen_on_play_next: bool,
