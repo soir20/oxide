@@ -475,15 +475,6 @@ impl GameServer {
                     };
                     sender_only_packets.push(GamePacket::serialize(&zone_details_done)?);
 
-                    let zone_details_done = TunneledPacket {
-                        unknown1: true,
-                        inner: ExecuteScriptWithParams {
-                            script_name: "Console.show".to_string(),
-                            params: vec!["".to_string()],
-                        },
-                    };
-                    sender_only_packets.push(GamePacket::serialize(&zone_details_done)?);
-
                     let preload_characters_done = TunneledPacket {
                         unknown1: true,
                         inner: PreloadCharactersDone { unknown1: false },
