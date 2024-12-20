@@ -44,7 +44,6 @@ use packets::player_update::{Customization, InitCustomizations, QueueAnimation, 
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
 use packets::store::StoreItemList;
 use packets::tunnel::{TunneledPacket, TunneledWorldPacket};
-use packets::ui::ExecuteScriptWithParams;
 use packets::update_position::UpdatePlayerPosition;
 use packets::zone::ZoneTeleportRequest;
 use packets::{GamePacket, OpCode};
