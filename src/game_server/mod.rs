@@ -244,6 +244,8 @@ impl GameServer {
                     broadcasts.append(&mut self.process_packet(sender, packet.inner)?);
                 }
                 OpCode::ClientIsReady => {
+                    let mut sender_only_packets = Vec::new();
+
                     // Set the player as ready
                     self.lock_enforcer()
                         .write_characters(|characters_table_write_handle, _| {
@@ -253,8 +255,6 @@ impl GameServer {
                                     if let CharacterType::Player(ref mut player) =
                                         &mut character_write_handle.stats.character_type
                                     {
-                                        player.ready = true;
-
                                         if let Some(minigame_status) = &mut player.minigame_status {
                                             if !minigame_status.game_created {
                                                 minigame_status.game_created = true;
@@ -265,6 +265,34 @@ impl GameServer {
                                                 )?);
                                             }
                                         }
+
+                                        if player.first_load {
+                                            let welcome_screen = TunneledPacket {
+                                                unknown1: true,
+                                                inner: WelcomeScreen {
+                                                    show_ui: true,
+                                                    unknown1: vec![],
+                                                    unknown2: vec![],
+                                                    unknown3: 0,
+                                                    unknown4: 0,
+                                                },
+                                            };
+                                            sender_only_packets
+                                                .push(GamePacket::serialize(&welcome_screen)?);
+
+                                            let minigame_definitions = TunneledPacket {
+                                                unknown1: true,
+                                                inner: GamePacket::serialize(
+                                                    &self.minigames.definitions(),
+                                                )?,
+                                            };
+                                            sender_only_packets.push(GamePacket::serialize(
+                                                &minigame_definitions,
+                                            )?);
+                                        }
+
+                                        player.ready = true;
+                                        player.first_load = false;
                                     }
                                     let guid = character_write_handle.guid();
                                     let new_index = character_write_handle.index();
@@ -282,8 +310,6 @@ impl GameServer {
                                 )),
                             }
                         })?;
-
-                    let mut sender_only_packets = Vec::new();
 
                     sender_only_packets.append(&mut send_points_of_interest(self)?);
 
@@ -304,12 +330,6 @@ impl GameServer {
                         inner: GamePacket::serialize(&StoreItemList::from(&self.costs))?,
                     };
                     sender_only_packets.push(GamePacket::serialize(&store_items)?);
-
-                    let minigame_definitions = TunneledPacket {
-                        unknown1: true,
-                        inner: GamePacket::serialize(&self.minigames.definitions())?,
-                    };
-                    sender_only_packets.push(GamePacket::serialize(&minigame_definitions)?);
 
                     let mut character_broadcasts = self.lock_enforcer().read_characters(|characters_table_read_handle| {
                         let possible_index = characters_table_read_handle.index(player_guid(sender));
@@ -443,18 +463,6 @@ impl GameServer {
                     broadcasts.append(&mut character_broadcasts);
 
                     sender_only_packets.append(&mut make_test_nameplate_image(sender)?);
-
-                    let welcome_screen = TunneledPacket {
-                        unknown1: true,
-                        inner: WelcomeScreen {
-                            show_ui: true,
-                            unknown1: vec![],
-                            unknown2: vec![],
-                            unknown3: 0,
-                            unknown4: 0,
-                        },
-                    };
-                    sender_only_packets.push(GamePacket::serialize(&welcome_screen)?);
 
                     let zone_details_done = TunneledPacket {
                         unknown1: true,

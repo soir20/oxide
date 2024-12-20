@@ -999,6 +999,7 @@ pub struct PreviousLocation {
 
 #[derive(Clone)]
 pub struct Player {
+    pub first_load: bool,
     pub ready: bool,
     pub member: bool,
     pub credits: u32,
