@@ -610,7 +610,7 @@ pub fn process_minigame_packet(
             }
             MinigameOpCode::RequestCancelActiveMinigame => {
                 let request = RequestCancelActiveMinigame::deserialize(cursor)?;
-                handle_request_cancel_active_minigame(request, sender, game_server)
+                handle_request_cancel_active_minigame(&request.header, true, sender, game_server)
             }
             MinigameOpCode::FlashPayload => {
                 let payload = FlashPayload::deserialize(cursor)?;
@@ -889,7 +889,8 @@ fn handle_request_start_active_minigame(
 }
 
 fn handle_request_cancel_active_minigame(
-    request: RequestCancelActiveMinigame,
+    request_header: &MinigameHeader,
+    skip_if_flash: bool,
     sender: u32,
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
@@ -900,7 +901,8 @@ fn handle_request_cancel_active_minigame(
                     sender,
                     characters_table_write_handle,
                     zones_table_write_handle,
-                    &request,
+                    request_header,
+                    skip_if_flash,
                     game_server,
                 )
             })
@@ -1144,6 +1146,9 @@ fn handle_flash_payload(
                 }
             },
         ),
+        "FRServer_GameClose" => {
+            handle_request_cancel_active_minigame(&payload.header, false, sender, game_server)
+        }
         _ => {
             info!(
                 "Received unknown Flash payload {} in stage {}, stage group {} from player {}",
@@ -1233,7 +1238,8 @@ fn end_active_minigame(
     sender: u32,
     characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
     zones_table_write_handle: &mut ZoneTableWriteHandle<'_>,
-    request: &RequestCancelActiveMinigame,
+    request_header: &MinigameHeader,
+    skip_if_flash: bool,
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let (mut broadcasts, previous_location) = if let Some(character_lock) =
@@ -1241,15 +1247,19 @@ fn end_active_minigame(
     {
         let mut character_write_handle = character_lock.write();
         if let CharacterType::Player(player) = &mut character_write_handle.stats.character_type {
-            let previous_minigame_status = player.minigame_status.take();
             let previous_location = player.previous_location.clone();
 
-            if let Some(minigame_status) = previous_minigame_status {
-                if request.header.stage_guid == minigame_status.stage_guid {
+            if let Some(minigame_status) = &player.minigame_status {
+                if request_header.stage_guid == minigame_status.stage_guid {
                     if let Some(StageConfigRef { stage_config, .. }) = game_server
                         .minigames()
                         .stage_config(minigame_status.stage_group_guid, minigame_status.stage_guid)
                     {
+                        // Wait for the end signal from the Flash payload because those games send additional score data
+                        if skip_if_flash && stage_config.flash_game.is_some() {
+                            return Ok(Vec::new());
+                        }
+
                         let added_credits = evaluate_score_to_credits_expression(
                             &stage_config.score_to_credits_expression,
                             minigame_status.total_score,
@@ -1336,16 +1346,18 @@ fn end_active_minigame(
                             ],
                         )];
 
+                        player.minigame_status = None;
+
                         Ok((broadcasts, previous_location))
                     } else {
                         Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to end player {}'s active minigame with stage config {} (stage group {}) that does not exist", sender, minigame_status.stage_guid, minigame_status.stage_group_guid)))
                     }
                 } else {
-                    info!("Tried to end player {}'s active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", sender, request.header.stage_guid, minigame_status.stage_group_guid, minigame_status.stage_guid);
+                    info!("Tried to end player {}'s active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", sender, request_header.stage_guid, minigame_status.stage_group_guid, minigame_status.stage_guid);
                     Ok((vec![], previous_location))
                 }
             } else {
-                info!("Tried to end player {}'s active minigame (stage {}), but they aren't in an active minigame", sender, request.header.stage_guid);
+                info!("Tried to end player {}'s active minigame (stage {}), but they aren't in an active minigame", sender, request_header.stage_guid);
                 Ok((vec![], previous_location))
             }
         } else {
