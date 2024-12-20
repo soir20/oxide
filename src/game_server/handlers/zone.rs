@@ -773,6 +773,14 @@ pub fn enter_zone(
     let destination_pos = destination_pos.unwrap_or(destination_read_handle.default_spawn_pos);
     let destination_rot = destination_rot.unwrap_or(destination_read_handle.default_spawn_rot);
 
+    // Perform fallible operations before we update player data to avoid an inconsistent state
+    let broadcasts = prepare_init_zone_packets(
+        player,
+        destination_read_handle,
+        destination_pos,
+        destination_rot,
+    )?;
+
     let character = characters_table_write_handle.remove(player_guid(player));
     if let Some((character, (character_category, _, _))) = character {
         let mut character_write_handle = character.write();
@@ -800,12 +808,8 @@ pub fn enter_zone(
             character,
         );
     }
-    prepare_init_zone_packets(
-        player,
-        destination_read_handle,
-        destination_pos,
-        destination_rot,
-    )
+
+    Ok(broadcasts)
 }
 
 fn prepare_init_zone_packets(
