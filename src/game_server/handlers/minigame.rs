@@ -1168,6 +1168,27 @@ fn handle_flash_payload(
         "FRServer_GameClose" => {
             handle_request_cancel_active_minigame(&payload.header, false, sender, game_server)
         }
+        "FRServer_StatUpdate" => handle_flash_payload_write(
+            sender,
+            game_server,
+            &payload.header,
+            |_, minigame_stats, _| {
+                if parts.len() == 3 {
+                    let trophy_guid = parts[1].parse()?;
+                    let delta = parts[2].parse()?;
+                    minigame_stats.update_trophy_progress(trophy_guid, delta);
+                    Ok(vec![])
+                } else {
+                    Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::ConstraintViolated,
+                        format!(
+                            "Expected 2 parameters in stat update payload, but only found {}",
+                            parts.len().saturating_sub(1)
+                        ),
+                    ))
+                }
+            },
+        ),
         _ => {
             info!(
                 "Received unknown Flash payload {} in stage {}, stage group {} from player {}",
