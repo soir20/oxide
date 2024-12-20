@@ -8,6 +8,7 @@ use std::{
 
 use byteorder::ReadBytesExt;
 use evalexpr::{context_map, eval_with_context, Value};
+use num_enum::TryFromPrimitive;
 use packet_serialize::DeserializePacket;
 use serde::Deserialize;
 
@@ -24,8 +25,9 @@ use crate::{
                 MinigamePortalCategory, MinigamePortalEntry, MinigameStageDefinition,
                 MinigameStageGroupDefinition, MinigameStageGroupLink, MinigameStageInstance,
                 RequestCancelActiveMinigame, RequestCreateActiveMinigame,
-                RequestMinigameStageGroupInstance, RequestStartActiveMinigame,
-                ShowStageInstanceSelect, StartActiveMinigame, UpdateActiveMinigameRewards,
+                RequestMinigameStageGroupInstance, RequestStartActiveMinigame, ScoreEntry,
+                ScoreType, ShowStageInstanceSelect, StartActiveMinigame,
+                UpdateActiveMinigameRewards,
             },
             tunnel::TunneledPacket,
             GamePacket, RewardBundle,
@@ -729,6 +731,7 @@ fn handle_request_create_active_minigame(
                             stage_group_guid: request.header.stage_group_guid,
                             stage_guid: request.header.stage_guid,
                             game_created: false,
+                            game_won: false,
                             score_entries: vec![],
                             total_score: 0,
                         });
@@ -898,7 +901,6 @@ fn handle_request_cancel_active_minigame(
                     characters_table_write_handle,
                     zones_table_write_handle,
                     &request,
-                    false,
                     game_server,
                 )
             })
@@ -906,11 +908,66 @@ fn handle_request_cancel_active_minigame(
     )
 }
 
+fn handle_flash_payload_write<T: Default>(
+    sender: u32,
+    game_server: &GameServer,
+    header: &MinigameHeader,
+    func: impl FnOnce(
+        &mut MinigameStatus,
+        &mut PlayerMinigameStats,
+        StageConfigRef,
+    ) -> Result<T, ProcessPacketError>,
+) -> Result<T, ProcessPacketError> {
+    game_server.lock_enforcer().read_characters(|_| CharacterLockRequest {
+        read_guids: Vec::new(),
+        write_guids: vec![player_guid(sender)],
+        character_consumer: |_, _, mut characters_write, _|  {
+            if let Some(character_write_handle) =
+                characters_write.get_mut(&player_guid(sender))
+            {
+                if let CharacterType::Player(player) = &mut character_write_handle.stats.character_type {
+                    if let Some(minigame_status) = &mut player.minigame_status {
+                        if header.stage_guid == minigame_status.stage_guid {
+                            if let Some(stage_config_ref) = game_server
+                                .minigames()
+                                .stage_config(minigame_status.stage_group_guid, minigame_status.stage_guid)
+                            {
+                                Ok(func(minigame_status, &mut player.minigame_stats, stage_config_ref)?)
+                            } else {
+                                Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process Flash payload for {}'s active minigame with stage config {} (stage group {}) that does not exist", sender, minigame_status.stage_guid, minigame_status.stage_group_guid)))
+                            }
+                        } else {
+                            info!("Tried to process Flash payload for {}'s active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", sender, header.stage_guid, minigame_status.stage_group_guid, minigame_status.stage_guid);
+                            Ok(T::default())
+                        }
+                    } else {
+                        info!("Tried to process Flash payload for {}'s active minigame (stage {}), but they aren't in an active minigame", sender, header.stage_guid);
+                        Ok(T::default())
+                    }
+                } else {
+                    Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::ConstraintViolated,
+                        format!(
+                            "Tried to process Flash payload for {}'s active minigame, but their character isn't a player",
+                            sender
+                        ),
+                    ))
+                }
+            } else {
+                Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!("Tried to process Flash payload for unknown player {}'s active minigame", sender),
+                ))
+            }
+        },
+    })
+}
+
 fn handle_flash_payload_read_only<T: Default>(
     sender: u32,
     game_server: &GameServer,
     header: &MinigameHeader,
-    func: impl FnOnce(&Player, &MinigameStatus, StageConfigRef) -> Result<T, ProcessPacketError>,
+    func: impl FnOnce(&MinigameStatus, StageConfigRef) -> Result<T, ProcessPacketError>,
 ) -> Result<T, ProcessPacketError> {
     game_server.lock_enforcer().read_characters(|_| CharacterLockRequest {
         read_guids: vec![player_guid(sender)],
@@ -926,7 +983,7 @@ fn handle_flash_payload_read_only<T: Default>(
                                 .minigames()
                                 .stage_config(minigame_status.stage_group_guid, minigame_status.stage_guid)
                             {
-                                Ok(func(player, minigame_status, stage_config_ref)?)
+                                Ok(func(minigame_status, stage_config_ref)?)
                             } else {
                                 Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process Flash payload for {}'s active minigame with stage config {} (stage group {}) that does not exist", sender, minigame_status.stage_guid, minigame_status.stage_group_guid)))
                             }
@@ -967,12 +1024,12 @@ fn handle_flash_payload(
         return Ok(vec![]);
     }
 
-    match &*payload.payload {
+    match parts[0] {
         "FRServer_RequestStageId" => handle_flash_payload_read_only(
             sender,
             game_server,
             &payload.header,
-            |_, minigame_status, stage_config_ref| {
+            |minigame_status, stage_config_ref| {
                 Ok(vec![Broadcast::Single(
                     sender,
                     vec![GamePacket::serialize(&TunneledPacket {
@@ -990,6 +1047,101 @@ fn handle_flash_payload(
                         },
                     })?],
                 )])
+            },
+        ),
+        "FRServer_ScoreInfo" => handle_flash_payload_write(
+            sender,
+            game_server,
+            &payload.header,
+            |minigame_status, _, _| {
+                if parts.len() == 7 {
+                    let icon_set_id = parts[2].parse()?;
+                    let score_type = ScoreType::try_from_primitive(parts[3].parse()?)
+                        .unwrap_or(ScoreType::Counter);
+                    let score_count = parts[4].parse()?;
+                    let score_max = parts[5].parse()?;
+                    let score_points = parts[6].parse()?;
+
+                    if score_type == ScoreType::Total {
+                        minigame_status.total_score = score_count;
+                    }
+
+                    minigame_status.score_entries.push(ScoreEntry {
+                        entry_text: parts[1].to_string(),
+                        icon_set_id,
+                        score_type,
+                        score_count,
+                        score_max,
+                        score_points,
+                    });
+                    Ok(vec![])
+                } else {
+                    Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::ConstraintViolated,
+                        format!(
+                            "Expected 6 parameters in score info payload, but only found {}",
+                            parts.len().saturating_sub(1)
+                        ),
+                    ))
+                }
+            },
+        ),
+        "FRServer_GameWon" => handle_flash_payload_write(
+            sender,
+            game_server,
+            &payload.header,
+            |minigame_status, _, _| {
+                if parts.len() < 2 {
+                    let total_score = parts[1].parse()?;
+                    minigame_status.total_score = total_score;
+                    minigame_status.score_entries.push(ScoreEntry {
+                        entry_text: "".to_string(),
+                        icon_set_id: 0,
+                        score_type: ScoreType::Total,
+                        score_count: total_score,
+                        score_max: 0,
+                        score_points: 0,
+                    });
+                    minigame_status.game_won = true;
+                    Ok(vec![])
+                } else {
+                    Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::ConstraintViolated,
+                        format!(
+                            "Expected 1 parameter in game won payload, but only found {}",
+                            parts.len().saturating_sub(1)
+                        ),
+                    ))
+                }
+            },
+        ),
+        "FRServer_GameLost" => handle_flash_payload_write(
+            sender,
+            game_server,
+            &payload.header,
+            |minigame_status, _, _| {
+                if parts.len() < 2 {
+                    let total_score = parts[1].parse()?;
+                    minigame_status.total_score = total_score;
+                    minigame_status.score_entries.push(ScoreEntry {
+                        entry_text: "".to_string(),
+                        icon_set_id: 0,
+                        score_type: ScoreType::Total,
+                        score_count: total_score,
+                        score_max: 0,
+                        score_points: 0,
+                    });
+                    minigame_status.game_won = false;
+                    Ok(vec![])
+                } else {
+                    Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::ConstraintViolated,
+                        format!(
+                            "Expected 1 parameter in game lost payload, but only found {}",
+                            parts.len().saturating_sub(1)
+                        ),
+                    ))
+                }
             },
         ),
         _ => {
@@ -1077,12 +1229,11 @@ pub fn create_active_minigame(
     }
 }
 
-pub fn end_active_minigame(
+fn end_active_minigame(
     sender: u32,
     characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
     zones_table_write_handle: &mut ZoneTableWriteHandle<'_>,
     request: &RequestCancelActiveMinigame,
-    won: bool,
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let (mut broadcasts, previous_location) = if let Some(character_lock) =
@@ -1166,7 +1317,7 @@ pub fn end_active_minigame(
                                             unknown2: -1,
                                             stage_group_guid: minigame_status.stage_group_guid,
                                         },
-                                        won,
+                                        won: minigame_status.game_won,
                                         unknown2: 0,
                                         unknown3: 0,
                                         unknown4: 0,

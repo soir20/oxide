@@ -986,6 +986,7 @@ pub struct MinigameStatus {
     pub stage_group_guid: i32,
     pub stage_guid: i32,
     pub game_created: bool,
+    pub game_won: bool,
     pub score_entries: Vec<ScoreEntry>,
     pub total_score: i32,
 }

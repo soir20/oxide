@@ -331,7 +331,8 @@ impl GamePacket for UpdateActiveMinigameRewards {
 }
 
 #[allow(dead_code)]
-#[derive(Copy, Clone, Default)]
+#[repr(i32)]
+#[derive(Copy, Clone, Default, Eq, PartialEq, TryFromPrimitive)]
 pub enum ScoreType {
     #[default]
     Counter = 0,
@@ -349,7 +350,7 @@ impl SerializePacket for ScoreType {
 #[derive(Clone, SerializePacket)]
 pub struct ScoreEntry {
     pub entry_text: String,
-    pub icon_set_id: u32,
+    pub icon_set_id: i32,
     pub score_type: ScoreType,
     pub score_count: i32,
     pub score_max: i32,

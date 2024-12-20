@@ -2,6 +2,7 @@ use std::backtrace::Backtrace;
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt::Display;
 use std::io::{Cursor, Error};
+use std::num::ParseIntError;
 use std::path::Path;
 use std::time::Instant;
 use std::vec;
@@ -96,6 +97,15 @@ impl From<Error> for ProcessPacketError {
         ProcessPacketError::new(
             ProcessPacketErrorType::DeserializeError,
             format!("IO Error: {}", err),
+        )
+    }
+}
+
+impl From<ParseIntError> for ProcessPacketError {
+    fn from(err: ParseIntError) -> Self {
+        ProcessPacketError::new(
+            ProcessPacketErrorType::DeserializeError,
+            format!("Parse int error: {}", err),
         )
     }
 }
