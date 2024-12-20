@@ -15,6 +15,52 @@
         "sort_order": 2,
         "portal_entries": [
             {
+                "guid": 10000,
+                "name_id": 8387,
+                "description_id": 9754,
+                "members_only": false,
+                "is_flash": true,
+                "is_active": true,
+                "param1": 0,
+                "icon_id": 1253,
+                "background_icon_id": 0,
+                "is_popular": false,
+                "is_game_of_day": false,
+                "sort_order": 10000,
+                "tutorial_swf": "HowToStuntGungan.swf",
+                "stage_group": {
+                    "guid": 10000,
+                    "name_id": 8387,
+                    "description_id": 9754,
+                    "icon_id": 542,
+                    "stage_icon_id": 5129,
+                    "members_only": false,
+                    "stage_select_map_name": "",
+                    "stages": [
+                        {
+                            "Stage": {
+                                "guid": 10001,
+                                "name_id": 8387,
+                                "description_id": 9754,
+                                "stage_icon_id": 1253,
+                                "start_screen_icon_id": 1333,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 2241,
+                                "members_only": false,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "",
+                                "flash_game": "StuntGungan.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 29"
+                            }
+                        }
+                    ]
+                }
+            },
+            {
                 "guid": 20000,
                 "name_id": 45898,
                 "description_id": 45897,

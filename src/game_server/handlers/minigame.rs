@@ -1016,6 +1016,43 @@ fn handle_flash_payload_read_only<T: Default>(
     })
 }
 
+fn handle_flash_payload_win(
+    parts: &[&str],
+    sender: u32,
+    payload: &FlashPayload,
+    game_server: &GameServer,
+) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    handle_flash_payload_write(
+        sender,
+        game_server,
+        &payload.header,
+        |minigame_status, _, _| {
+            if parts.len() == 2 {
+                let total_score = parts[1].parse()?;
+                minigame_status.total_score = total_score;
+                minigame_status.score_entries.push(ScoreEntry {
+                    entry_text: "".to_string(),
+                    icon_set_id: 0,
+                    score_type: ScoreType::Total,
+                    score_count: total_score,
+                    score_max: 0,
+                    score_points: 0,
+                });
+                minigame_status.game_won = true;
+                Ok(vec![])
+            } else {
+                Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Expected 1 parameter in game won payload, but only found {}",
+                        parts.len().saturating_sub(1)
+                    ),
+                ))
+            }
+        },
+    )
+}
+
 fn handle_flash_payload(
     payload: FlashPayload,
     sender: u32,
@@ -1088,35 +1125,17 @@ fn handle_flash_payload(
                 }
             },
         ),
-        "FRServer_GameWon" => handle_flash_payload_write(
-            sender,
-            game_server,
-            &payload.header,
-            |minigame_status, _, _| {
-                if parts.len() == 2 {
-                    let total_score = parts[1].parse()?;
-                    minigame_status.total_score = total_score;
-                    minigame_status.score_entries.push(ScoreEntry {
-                        entry_text: "".to_string(),
-                        icon_set_id: 0,
-                        score_type: ScoreType::Total,
-                        score_count: total_score,
-                        score_max: 0,
-                        score_points: 0,
-                    });
-                    minigame_status.game_won = true;
-                    Ok(vec![])
-                } else {
-                    Err(ProcessPacketError::new(
-                        ProcessPacketErrorType::ConstraintViolated,
-                        format!(
-                            "Expected 1 parameter in game won payload, but only found {}",
-                            parts.len().saturating_sub(1)
-                        ),
-                    ))
-                }
-            },
-        ),
+        "FRServer_EndRoundNoValidation" => {
+            let mut broadcasts = handle_flash_payload_win(&parts, sender, &payload, game_server)?;
+            broadcasts.append(&mut handle_request_cancel_active_minigame(
+                &payload.header,
+                false,
+                sender,
+                game_server,
+            )?);
+            Ok(broadcasts)
+        }
+        "FRServer_GameWon" => handle_flash_payload_win(&parts, sender, &payload, game_server),
         "FRServer_GameLost" => handle_flash_payload_write(
             sender,
             game_server,
