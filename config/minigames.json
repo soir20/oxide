@@ -74,7 +74,7 @@
                                 "short_name": "stage02",
                                 "flash_game": "AquaticAssault.swf",
                                 "zone_template_guid": 200,
-                                "score_to_credits_expression": "x"
+                                "score_to_credits_expression": "x / 108"
                             }
                         },
                         {
@@ -94,7 +94,7 @@
                                 "short_name": "stage03",
                                 "flash_game": "AquaticAssault.swf",
                                 "zone_template_guid": 200,
-                                "score_to_credits_expression": "x"
+                                "score_to_credits_expression": "x / 168"
                             }
                         }
                     ]
