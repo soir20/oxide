@@ -19,13 +19,13 @@ use crate::{
             command::StartFlashGame,
             minigame::{
                 ActiveMinigameCreationResult, ActiveMinigameEndScore, CreateActiveMinigame,
-                CreateMinigameStageGroupInstance, EndActiveMinigame, LeaveActiveMinigame,
-                MinigameDefinitions, MinigameHeader, MinigameOpCode, MinigamePortalCategory,
-                MinigamePortalEntry, MinigameStageDefinition, MinigameStageGroupDefinition,
-                MinigameStageGroupLink, MinigameStageInstance, RequestCancelActiveMinigame,
-                RequestCreateActiveMinigame, RequestMinigameStageGroupInstance,
-                RequestStartActiveMinigame, ShowStageInstanceSelect, StartActiveMinigame,
-                UpdateActiveMinigameRewards,
+                CreateMinigameStageGroupInstance, EndActiveMinigame, FlashPayload,
+                LeaveActiveMinigame, MinigameDefinitions, MinigameHeader, MinigameOpCode,
+                MinigamePortalCategory, MinigamePortalEntry, MinigameStageDefinition,
+                MinigameStageGroupDefinition, MinigameStageGroupLink, MinigameStageInstance,
+                RequestCancelActiveMinigame, RequestCreateActiveMinigame,
+                RequestMinigameStageGroupInstance, RequestStartActiveMinigame,
+                ShowStageInstanceSelect, StartActiveMinigame, UpdateActiveMinigameRewards,
             },
             tunnel::TunneledPacket,
             GamePacket, RewardBundle,
@@ -484,6 +484,12 @@ impl From<&[MinigamePortalCategoryConfig]> for MinigameDefinitions {
     }
 }
 
+pub struct StageConfigRef<'a> {
+    pub stage_config: &'a MinigameStageConfig,
+    pub stage_number: u32,
+    pub portal_entry_guid: u32,
+}
+
 pub struct AllMinigameConfigs {
     categories: Vec<MinigamePortalCategoryConfig>,
     stage_groups: BTreeMap<i32, (Arc<MinigameStageGroupConfig>, u32)>,
@@ -517,25 +523,29 @@ impl AllMinigameConfigs {
         }
     }
 
-    pub fn stage_config(
-        &self,
-        stage_group_guid: i32,
-        stage_guid: i32,
-    ) -> Option<(&MinigameStageConfig, u32)> {
+    pub fn stage_config(&self, stage_group_guid: i32, stage_guid: i32) -> Option<StageConfigRef> {
         self.stage_groups
             .get(&stage_group_guid)
             .and_then(|(stage_group, portal_entry_guid)| {
-                stage_group.stages.iter().find_map(|child| {
-                    if let MinigameStageGroupChild::Stage(stage) = child {
-                        if stage.guid == stage_guid {
-                            Some((stage, *portal_entry_guid))
+                stage_group
+                    .stages
+                    .iter()
+                    .enumerate()
+                    .find_map(|(index, child)| {
+                        if let MinigameStageGroupChild::Stage(stage) = child {
+                            if stage.guid == stage_guid {
+                                Some(StageConfigRef {
+                                    stage_config: stage,
+                                    stage_number: index as u32 + 1,
+                                    portal_entry_guid: *portal_entry_guid,
+                                })
+                            } else {
+                                None
+                            }
                         } else {
                             None
                         }
-                    } else {
-                        None
-                    }
-                })
+                    })
             })
     }
 }
@@ -599,6 +609,10 @@ pub fn process_minigame_packet(
             MinigameOpCode::RequestCancelActiveMinigame => {
                 let request = RequestCancelActiveMinigame::deserialize(cursor)?;
                 handle_request_cancel_active_minigame(request, sender, game_server)
+            }
+            MinigameOpCode::FlashPayload => {
+                let payload = FlashPayload::deserialize(cursor)?;
+                handle_flash_payload(payload, sender, game_server)
             }
             _ => {
                 let mut buffer = Vec::new();
@@ -684,7 +698,11 @@ fn handle_request_create_active_minigame(
     sender: u32,
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-    if let Some((stage_config, portal_entry_guid)) = game_server
+    if let Some(StageConfigRef {
+        stage_config,
+        portal_entry_guid,
+        ..
+    }) = game_server
         .minigames()
         .stage_config(request.header.stage_group_guid, request.header.stage_guid)
     {
@@ -829,7 +847,7 @@ fn handle_request_start_active_minigame(
                                 })?,
                             ];
 
-                            if let Some((stage_config, _)) = game_server.minigames().stage_config(minigame_status.stage_group_guid, minigame_status.stage_guid) {
+                            if let Some(StageConfigRef {stage_config, ..}) = game_server.minigames().stage_config(minigame_status.stage_group_guid, minigame_status.stage_guid) {
                                 if let Some(flash_game) = &stage_config.flash_game {
                                     packets.push(
                                         GamePacket::serialize(&TunneledPacket {
@@ -888,13 +906,112 @@ fn handle_request_cancel_active_minigame(
     )
 }
 
+fn handle_flash_payload_read_only<T: Default>(
+    sender: u32,
+    game_server: &GameServer,
+    header: &MinigameHeader,
+    func: impl FnOnce(&Player, &MinigameStatus, StageConfigRef) -> Result<T, ProcessPacketError>,
+) -> Result<T, ProcessPacketError> {
+    game_server.lock_enforcer().read_characters(|_| CharacterLockRequest {
+        read_guids: vec![player_guid(sender)],
+        write_guids: Vec::new(),
+        character_consumer: |_, characters_read, _, _|  {
+            if let Some(character_read_handle) =
+                characters_read.get(&player_guid(sender))
+            {
+                if let CharacterType::Player(player) = &character_read_handle.stats.character_type {
+                    if let Some(minigame_status) = &player.minigame_status {
+                        if header.stage_guid == minigame_status.stage_guid {
+                            if let Some(stage_config_ref) = game_server
+                                .minigames()
+                                .stage_config(minigame_status.stage_group_guid, minigame_status.stage_guid)
+                            {
+                                Ok(func(player, minigame_status, stage_config_ref)?)
+                            } else {
+                                Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process Flash payload for {}'s active minigame with stage config {} (stage group {}) that does not exist", sender, minigame_status.stage_guid, minigame_status.stage_group_guid)))
+                            }
+                        } else {
+                            info!("Tried to process Flash payload for {}'s active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", sender, header.stage_guid, minigame_status.stage_group_guid, minigame_status.stage_guid);
+                            Ok(T::default())
+                        }
+                    } else {
+                        info!("Tried to process Flash payload for {}'s active minigame (stage {}), but they aren't in an active minigame", sender, header.stage_guid);
+                        Ok(T::default())
+                    }
+                } else {
+                    Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::ConstraintViolated,
+                        format!(
+                            "Tried to process Flash payload for {}'s active minigame, but their character isn't a player",
+                            sender
+                        ),
+                    ))
+                }
+            } else {
+                Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!("Tried to process Flash payload for unknown player {}'s active minigame", sender),
+                ))
+            }
+        },
+    })
+}
+
+fn handle_flash_payload(
+    payload: FlashPayload,
+    sender: u32,
+    game_server: &GameServer,
+) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    let parts: Vec<&str> = payload.payload.split('\t').collect();
+    if parts.is_empty() {
+        return Ok(vec![]);
+    }
+
+    match &*payload.payload {
+        "FRServer_RequestStageId" => handle_flash_payload_read_only(
+            sender,
+            game_server,
+            &payload.header,
+            |_, minigame_status, stage_config_ref| {
+                Ok(vec![Broadcast::Single(
+                    sender,
+                    vec![GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: FlashPayload {
+                            header: MinigameHeader {
+                                stage_guid: minigame_status.stage_guid,
+                                unknown2: -1,
+                                stage_group_guid: minigame_status.stage_group_guid,
+                            },
+                            payload: format!(
+                                "VOnServerSetStageIdMsg\t{}",
+                                stage_config_ref.stage_number
+                            ),
+                        },
+                    })?],
+                )])
+            },
+        ),
+        _ => {
+            info!(
+                "Received unknown Flash payload {} in stage {}, stage group {} from player {}",
+                payload.payload, payload.header.stage_guid, payload.header.stage_group_guid, sender
+            );
+            Ok(vec![])
+        }
+    }
+}
+
 pub fn create_active_minigame(
     sender: u32,
     minigames: &AllMinigameConfigs,
     minigame_status: &MinigameStatus,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-    if let Some((stage_config, portal_entry_guid)) =
-        minigames.stage_config(minigame_status.stage_group_guid, minigame_status.stage_guid)
+    if let Some(StageConfigRef {
+        stage_config,
+        portal_entry_guid,
+        ..
+    }) = minigames.stage_config(minigame_status.stage_group_guid, minigame_status.stage_guid)
     {
         Ok(vec![Broadcast::Single(
             sender,
@@ -978,7 +1095,7 @@ pub fn end_active_minigame(
 
             if let Some(minigame_status) = previous_minigame_status {
                 if request.header.stage_guid == minigame_status.stage_guid {
-                    if let Some((stage_config, _)) = game_server
+                    if let Some(StageConfigRef { stage_config, .. }) = game_server
                         .minigames()
                         .stage_config(minigame_status.stage_group_guid, minigame_status.stage_guid)
                     {
