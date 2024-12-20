@@ -1091,7 +1091,7 @@ fn handle_flash_payload(
             game_server,
             &payload.header,
             |minigame_status, _, _| {
-                if parts.len() < 2 {
+                if parts.len() == 2 {
                     let total_score = parts[1].parse()?;
                     minigame_status.total_score = total_score;
                     minigame_status.score_entries.push(ScoreEntry {
@@ -1120,7 +1120,7 @@ fn handle_flash_payload(
             game_server,
             &payload.header,
             |minigame_status, _, _| {
-                if parts.len() < 2 {
+                if parts.len() == 2 {
                     let total_score = parts[1].parse()?;
                     minigame_status.total_score = total_score;
                     minigame_status.score_entries.push(ScoreEntry {
