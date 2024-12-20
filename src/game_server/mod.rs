@@ -22,7 +22,9 @@ use handlers::lock_enforcer::{
     ZoneLockRequest, ZoneTableWriteHandle,
 };
 use handlers::login::{log_in, log_out, send_points_of_interest};
-use handlers::minigame::{load_all_minigames, process_minigame_packet, AllMinigameConfigs};
+use handlers::minigame::{
+    create_active_minigame, load_all_minigames, process_minigame_packet, AllMinigameConfigs,
+};
 use handlers::mount::{load_mounts, process_mount_packet, MountConfig};
 use handlers::reference_data::{load_categories, load_item_classes, load_item_groups};
 use handlers::store::{load_cost_map, CostEntry};
@@ -252,6 +254,17 @@ impl GameServer {
                                         &mut character_write_handle.stats.character_type
                                     {
                                         player.ready = true;
+
+                                        if let Some(minigame_status) = &mut player.minigame_status {
+                                            if !minigame_status.game_created {
+                                                minigame_status.game_created = true;
+                                                broadcasts.append(&mut create_active_minigame(
+                                                    sender,
+                                                    self.minigames(),
+                                                    minigame_status,
+                                                )?);
+                                            }
+                                        }
                                     }
                                     let guid = character_write_handle.guid();
                                     let new_index = character_write_handle.index();

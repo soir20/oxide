@@ -983,6 +983,7 @@ pub struct BattleClass {
 pub struct MinigameStatus {
     pub stage_group_guid: i32,
     pub stage_guid: i32,
+    pub game_created: bool,
 }
 
 #[derive(Clone)]
