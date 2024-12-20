@@ -15,7 +15,7 @@
         "sort_order": 2,
         "portal_entries": [
             {
-                "guid": 10000,
+                "guid": 20000,
                 "name_id": 45898,
                 "description_id": 45897,
                 "members_only": true,
@@ -26,10 +26,10 @@
                 "background_icon_id": 0,
                 "is_popular": false,
                 "is_game_of_day": false,
-                "sort_order": 10000,
+                "sort_order": 20000,
                 "tutorial_swf": "HowToAquaticAssault.swf",
                 "stage_group": {
-                    "guid": 10000,
+                    "guid": 20000,
                     "name_id": 45898,
                     "description_id": 45897,
                     "icon_id": 5129,
@@ -39,7 +39,7 @@
                     "stages": [
                         {
                             "Stage": {
-                                "guid": 10001,
+                                "guid": 20001,
                                 "name_id": 45892,
                                 "description_id": 45897,
                                 "stage_icon_id": 5153,
@@ -59,7 +59,7 @@
                         },
                         {
                             "Stage": {
-                                "guid": 10002,
+                                "guid": 20002,
                                 "name_id": 45893,
                                 "description_id": 45897,
                                 "stage_icon_id": 5154,
@@ -79,7 +79,7 @@
                         },
                         {
                             "Stage": {
-                                "guid": 10003,
+                                "guid": 20003,
                                 "name_id": 45894,
                                 "description_id": 45897,
                                 "stage_icon_id": 5155,
