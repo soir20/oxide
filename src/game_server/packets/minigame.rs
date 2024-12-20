@@ -346,7 +346,7 @@ impl SerializePacket for ScoreType {
     }
 }
 
-#[derive(SerializePacket)]
+#[derive(Clone, SerializePacket)]
 pub struct ScoreEntry {
     pub entry_text: String,
     pub icon_set_id: u32,

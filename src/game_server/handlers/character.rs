@@ -14,6 +14,7 @@ use crate::{
             chat::{ActionBarTextColor, SendStringId},
             command::PlaySoundIdOnTarget,
             item::{BaseAttachmentGroup, EquipmentSlot, WieldType},
+            minigame::ScoreEntry,
             player_data::EquippedItem,
             player_update::{
                 AddNotifications, AddNpc, CustomizationSlot, Hostility, Icon, NotificationData,
@@ -847,7 +848,8 @@ impl Door {
                                         destination_read_handle,
                                         Some(destination_pos),
                                         Some(destination_rot),
-                                        game_server.mounts()
+                                        game_server.mounts(),
+                                        false,
                                     )
                                 } else {
                                     Ok(Vec::new())
@@ -984,6 +986,15 @@ pub struct MinigameStatus {
     pub stage_group_guid: i32,
     pub stage_guid: i32,
     pub game_created: bool,
+    pub score_entries: Vec<ScoreEntry>,
+    pub total_score: i32,
+}
+
+#[derive(Clone)]
+pub struct PreviousLocation {
+    pub template_guid: u8,
+    pub pos: Pos,
+    pub rot: Pos,
 }
 
 #[derive(Clone)]
@@ -997,6 +1008,7 @@ pub struct Player {
     pub customizations: BTreeMap<CustomizationSlot, u32>,
     pub minigame_stats: PlayerMinigameStats,
     pub minigame_status: Option<MinigameStatus>,
+    pub previous_location: PreviousLocation,
 }
 
 impl Player {

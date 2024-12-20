@@ -11,7 +11,7 @@ use crate::game_server::{
 };
 
 use super::{
-    character::{BattleClass, Character, Player},
+    character::{BattleClass, Character, Player, PreviousLocation},
     guid::IndexedGuid,
     minigame::PlayerMinigameStats,
     test_data::{make_test_customizations, make_test_player},
@@ -112,6 +112,11 @@ pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, P
                     customizations: make_test_customizations(),
                     minigame_stats: PlayerMinigameStats::default(),
                     minigame_status: None,
+                    previous_location: PreviousLocation {
+                        template_guid: player_zone_template,
+                        pos: player.inner.data.pos,
+                        rot: player.inner.data.rot,
+                    },
                 },
                 game_server,
             ));

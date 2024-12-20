@@ -54,7 +54,7 @@
                                 "short_name": "stage01",
                                 "flash_game": "AquaticAssault.swf",
                                 "zone_template_guid": 200,
-                                "score_to_credits_expression": "x"
+                                "score_to_credits_expression": "x / 102.5"
                             }
                         },
                         {

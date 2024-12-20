@@ -452,7 +452,8 @@ pub fn process_housing_packet(
                                     &zone_read_handle.read(),
                                     None,
                                     None,
-                                    game_server.mounts()
+                                    game_server.mounts(),
+                                    true,
                                 )
                             } else {
                                 Err(ProcessPacketError::new(

@@ -31,7 +31,7 @@ use super::{
     character::{
         coerce_to_broadcast_supplier, AmbientNpcConfig, Character, CharacterCategory,
         CharacterIndex, CharacterType, Chunk, DoorConfig, NpcTemplate, PreviousFixture,
-        TransportConfig, WriteLockingBroadcastSupplier,
+        PreviousLocation, TransportConfig, WriteLockingBroadcastSupplier,
     },
     distance3,
     guid::{Guid, GuidTable, GuidTableIndexer, GuidTableWriteHandle, IndexedGuid},
@@ -41,7 +41,8 @@ use super::{
     },
     mount::MountConfig,
     unique_guid::{
-        npc_guid, player_guid, shorten_player_guid, AMBIENT_NPC_DISCRIMINANT, FIXTURE_DISCRIMINANT,
+        npc_guid, player_guid, shorten_player_guid, zone_template_guid, AMBIENT_NPC_DISCRIMINANT,
+        FIXTURE_DISCRIMINANT,
     },
 };
 
@@ -769,6 +770,7 @@ pub fn enter_zone(
     destination_read_handle: &RwLockReadGuard<ZoneInstance>,
     destination_pos: Option<Pos>,
     destination_rot: Option<Pos>,
+    update_previous_location: bool,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let destination_pos = destination_pos.unwrap_or(destination_read_handle.default_spawn_pos);
     let destination_rot = destination_rot.unwrap_or(destination_read_handle.default_spawn_rot);
@@ -784,15 +786,27 @@ pub fn enter_zone(
     let character = characters_table_write_handle.remove(player_guid(player));
     if let Some((character, (character_category, _, _))) = character {
         let mut character_write_handle = character.write();
-        character_write_handle.stats.instance_guid = destination_read_handle.guid;
-        character_write_handle.stats.pos = destination_pos;
-        character_write_handle.stats.rot = destination_rot;
+        let previous_zone_template_guid =
+            zone_template_guid(character_write_handle.stats.instance_guid);
+        let previous_pos = character_write_handle.stats.pos;
+        let previous_rot = character_write_handle.stats.rot;
 
         if let CharacterType::Player(ref mut player) =
             &mut character_write_handle.stats.character_type
         {
             player.ready = false;
+
+            if update_previous_location {
+                player.previous_location = PreviousLocation {
+                    template_guid: previous_zone_template_guid,
+                    pos: previous_pos,
+                    rot: previous_rot,
+                }
+            }
         }
+        character_write_handle.stats.instance_guid = destination_read_handle.guid;
+        character_write_handle.stats.pos = destination_pos;
+        character_write_handle.stats.rot = destination_rot;
 
         drop(character_write_handle);
         characters_table_write_handle.insert_lock(
@@ -864,7 +878,8 @@ fn prepare_init_zone_packets(
 #[macro_export]
 macro_rules! teleport_to_zone {
     ($characters_table_write_handle:expr, $player:expr,
-     $destination_read_handle:expr, $destination_pos:expr, $destination_rot:expr, $mounts:expr) => {{
+     $destination_read_handle:expr, $destination_pos:expr, $destination_rot:expr, $mounts:expr,
+     $update_previous_location:expr$(,)?) => {{
         let character = $crate::game_server::handlers::guid::GuidTableHandle::get(
             $characters_table_write_handle,
             player_guid($player),
@@ -886,6 +901,7 @@ macro_rules! teleport_to_zone {
             $destination_read_handle,
             $destination_pos,
             $destination_rot,
+            $update_previous_location,
         )?);
 
         Ok(broadcasts)

@@ -566,7 +566,8 @@ impl GameServer {
                                             .read(),
                                         None,
                                         None,
-                                        self.mounts()
+                                        self.mounts(),
+                                        true,
                                     ),
                                     Err(err) => Err(err),
                                 }
