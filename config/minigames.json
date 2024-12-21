@@ -1125,7 +1125,94 @@
         "name_id": 51598,
         "icon_id": 5809,
         "sort_order": 3,
-        "portal_entries": []
+        "portal_entries": [
+            {
+                "guid": 16000,
+                "name_id": 5555,
+                "description_id": 9757,
+                "members_only": true,
+                "is_flash": true,
+                "is_active": true,
+                "param1": 0,
+                "icon_id": 1235,
+                "background_icon_id": 0,
+                "is_popular": false,
+                "is_game_of_day": false,
+                "sort_order": 16000,
+                "tutorial_swf": "HowtoCrystalAttunement.swf",
+                "stage_group": {
+                    "guid": 16000,
+                    "name_id": 5555,
+                    "description_id": 9757,
+                    "icon_id": 529,
+                    "stage_icon_id": 529,
+                    "members_only": true,
+                    "stage_select_map_name": "RepublicGunship",
+                    "stages": [
+                        {
+                            "Stage": {
+                                "guid": 16001,
+                                "name_id": 13953,
+                                "description_id": 9757,
+                                "stage_icon_id": 362,
+                                "start_screen_icon_id": 1953,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 2226,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage01",
+                                "flash_game": "CrystalAttunement.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 153"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 16002,
+                                "name_id": 13954,
+                                "description_id": 9757,
+                                "stage_icon_id": 364,
+                                "start_screen_icon_id": 1955,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 2226,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage02",
+                                "flash_game": "CrystalAttunement.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 153"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 16003,
+                                "name_id": 13955,
+                                "description_id": 9757,
+                                "stage_icon_id": 363,
+                                "start_screen_icon_id": 1954,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 2226,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage03",
+                                "flash_game": "CrystalAttunement.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 153"
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
     },
     {
         "comment": "Campaigns",
