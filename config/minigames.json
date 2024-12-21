@@ -102,7 +102,7 @@
             },
             {
                 "guid": 10000,
-                "name_id": 8387,
+                "name_id": 7103,
                 "description_id": 9754,
                 "members_only": false,
                 "is_flash": true,
@@ -116,7 +116,7 @@
                 "tutorial_swf": "HowToStuntGungan.swf",
                 "stage_group": {
                     "guid": 10000,
-                    "name_id": 8387,
+                    "name_id": 7103,
                     "description_id": 9754,
                     "icon_id": 542,
                     "stage_icon_id": 5129,
@@ -126,7 +126,7 @@
                         {
                             "Stage": {
                                 "guid": 10001,
-                                "name_id": 8387,
+                                "name_id": 7103,
                                 "description_id": 9754,
                                 "stage_icon_id": 1253,
                                 "start_screen_icon_id": 1333,
@@ -148,7 +148,7 @@
             },
             {
                 "guid": 11000,
-                "name_id": 14959,
+                "name_id": 19700,
                 "description_id": 14960,
                 "members_only": true,
                 "is_flash": true,
@@ -162,7 +162,7 @@
                 "tutorial_swf": "HowtoCrisisZiro.swf",
                 "stage_group": {
                     "guid": 11000,
-                    "name_id": 14959,
+                    "name_id": 19700,
                     "description_id": 14960,
                     "icon_id": 2391,
                     "stage_icon_id": 2391,
@@ -460,7 +460,7 @@
             },
             {
                 "guid": 13000,
-                "name_id": 32008,
+                "name_id": 14051,
                 "description_id": 14964,
                 "members_only": true,
                 "is_flash": true,
@@ -474,7 +474,7 @@
                 "tutorial_swf": "HowtoGunship.swf",
                 "stage_group": {
                     "guid": 13000,
-                    "name_id": 32008,
+                    "name_id": 14051,
                     "description_id": 14964,
                     "icon_id": 887,
                     "stage_icon_id": 887,
