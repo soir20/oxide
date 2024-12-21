@@ -314,6 +314,146 @@
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 14.45"
                             }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 12004,
+                                "name_id": 11926,
+                                "description_id": 11927,
+                                "stage_icon_id": 376,
+                                "start_screen_icon_id": 979,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 3028,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage04",
+                                "flash_game": "r2.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 19.4"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 12005,
+                                "name_id": 11928,
+                                "description_id": 11929,
+                                "stage_icon_id": 376,
+                                "start_screen_icon_id": 979,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 3029,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage05",
+                                "flash_game": "r2.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 13.9"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 12006,
+                                "name_id": 11930,
+                                "description_id": 11931,
+                                "stage_icon_id": 376,
+                                "start_screen_icon_id": 979,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 3030,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage06",
+                                "flash_game": "r2.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 14.7"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 12007,
+                                "name_id": 11932,
+                                "description_id": 11933,
+                                "stage_icon_id": 376,
+                                "start_screen_icon_id": 979,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 3031,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage07",
+                                "flash_game": "r2.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 19.8"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 12008,
+                                "name_id": 11934,
+                                "description_id": 11935,
+                                "stage_icon_id": 376,
+                                "start_screen_icon_id": 979,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 3032,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage08",
+                                "flash_game": "r2.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 11.55"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 12009,
+                                "name_id": 11936,
+                                "description_id": 11937,
+                                "stage_icon_id": 376,
+                                "start_screen_icon_id": 979,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 3033,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage09",
+                                "flash_game": "r2.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 12.55"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 12010,
+                                "name_id": 11938,
+                                "description_id": 11939,
+                                "stage_icon_id": 376,
+                                "start_screen_icon_id": 979,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 3034,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage10",
+                                "flash_game": "r2.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 22.7"
+                            }
                         }
                     ]
                 }
