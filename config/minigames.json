@@ -233,6 +233,92 @@
                 }
             },
             {
+                "guid": 13000,
+                "name_id": 32008,
+                "description_id": 14964,
+                "members_only": true,
+                "is_flash": true,
+                "is_active": true,
+                "param1": 0,
+                "icon_id": 1247,
+                "background_icon_id": 0,
+                "is_popular": false,
+                "is_game_of_day": false,
+                "sort_order": 13000,
+                "tutorial_swf": "HowtoGunship.swf",
+                "stage_group": {
+                    "guid": 13000,
+                    "name_id": 32008,
+                    "description_id": 14964,
+                    "icon_id": 887,
+                    "stage_icon_id": 887,
+                    "members_only": true,
+                    "stage_select_map_name": "RepublicGunship",
+                    "stages": [
+                        {
+                            "Stage": {
+                                "guid": 13001,
+                                "name_id": 14961,
+                                "description_id": 14964,
+                                "stage_icon_id": 1261,
+                                "start_screen_icon_id": 1255,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 2242,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage01",
+                                "flash_game": "RepublicGunship.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 160"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 13002,
+                                "name_id": 14962,
+                                "description_id": 14964,
+                                "stage_icon_id": 1263,
+                                "start_screen_icon_id": 1257,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 2242,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage02",
+                                "flash_game": "RepublicGunship.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 180"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 11003,
+                                "name_id": 14963,
+                                "description_id": 14964,
+                                "stage_icon_id": 1262,
+                                "start_screen_icon_id": 1256,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 2242,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage03",
+                                "flash_game": "RepublicGunship.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 180"
+                            }
+                        }
+                    ]
+                }
+            },
+            {
                 "guid": 20000,
                 "name_id": 45898,
                 "description_id": 45897,
