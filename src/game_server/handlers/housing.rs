@@ -24,10 +24,10 @@ use crate::{
 
 use super::{
     character::{Character, CurrentFixture, PreviousFixture},
-    guid::{GuidTableHandle, GuidTableIndexer, IndexedGuid},
+    guid::{GuidTableIndexer, IndexedGuid},
     lock_enforcer::{CharacterLockRequest, ZoneLockRequest},
     unique_guid::{npc_guid, player_guid, zone_template_guid, FIXTURE_DISCRIMINANT},
-    zone::{House, Zone},
+    zone::{House, ZoneInstance},
 };
 
 fn placed_fixture(
@@ -257,7 +257,7 @@ pub fn fixture_packets(
 
 pub fn prepare_init_house_packets(
     sender: u32,
-    zone: &RwLockReadGuard<Zone>,
+    zone: &RwLockReadGuard<ZoneInstance>,
     house: &House,
 ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
     if house.is_locked && sender != house.owner {
@@ -426,7 +426,7 @@ pub fn process_housing_packet(
                                 if let Some(template) =
                                     game_server.read_zone_templates().get(&template_guid)
                                 {
-                                    zones_table_write_handle.insert(Zone::new_house(
+                                    zones_table_write_handle.insert(ZoneInstance::new_house(
                                         enter_request.house_guid,
                                         template,
                                         lookup_house(sender, enter_request.house_guid)?,
@@ -452,7 +452,8 @@ pub fn process_housing_packet(
                                     &zone_read_handle.read(),
                                     None,
                                     None,
-                                    game_server.mounts()
+                                    game_server.mounts(),
+                                    true,
                                 )
                             } else {
                                 Err(ProcessPacketError::new(

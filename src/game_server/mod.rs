@@ -1,7 +1,8 @@
 use std::backtrace::Backtrace;
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::fmt::Display;
 use std::io::{Cursor, Error};
+use std::num::ParseIntError;
 use std::path::Path;
 use std::time::Instant;
 use std::vec;
@@ -18,18 +19,23 @@ use handlers::inventory::{
 };
 use handlers::item::load_item_definitions;
 use handlers::lock_enforcer::{
-    CharacterLockRequest, LockEnforcer, LockEnforcerSource, ZoneLockRequest, ZoneTableReadHandle,
+    CharacterLockRequest, CharacterTableWriteHandle, LockEnforcer, LockEnforcerSource,
+    ZoneLockRequest, ZoneTableWriteHandle,
 };
 use handlers::login::{log_in, log_out, send_points_of_interest};
+use handlers::minigame::{
+    create_active_minigame, load_all_minigames, process_minigame_packet, AllMinigameConfigs,
+};
 use handlers::mount::{load_mounts, process_mount_packet, MountConfig};
 use handlers::reference_data::{load_categories, load_item_classes, load_item_groups};
 use handlers::store::{load_cost_map, CostEntry};
 use handlers::test_data::make_test_nameplate_image;
 use handlers::time::make_game_time_sync;
 use handlers::unique_guid::{
-    player_guid, shorten_player_guid, shorten_zone_template_guid, zone_instance_guid,
+    player_guid, shorten_player_guid, shorten_zone_index, shorten_zone_template_guid,
+    zone_instance_guid,
 };
-use handlers::zone::{load_zones, teleport_within_zone, Zone, ZoneTemplate};
+use handlers::zone::{load_zones, teleport_within_zone, ZoneInstance, ZoneTemplate};
 use packets::client_update::{Health, Power, PreloadCharactersDone, Stat, StatId, Stats};
 use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
 use packets::item::ItemDefinition;
@@ -89,6 +95,15 @@ impl From<Error> for ProcessPacketError {
     }
 }
 
+impl From<ParseIntError> for ProcessPacketError {
+    fn from(err: ParseIntError) -> Self {
+        ProcessPacketError::new(
+            ProcessPacketErrorType::DeserializeError,
+            format!("Parse int error: {}", err),
+        )
+    }
+}
+
 impl From<DeserializePacketError> for ProcessPacketError {
     fn from(err: DeserializePacketError) -> Self {
         ProcessPacketError::new(
@@ -126,6 +141,7 @@ pub struct GameServer {
     items: BTreeMap<u32, ItemDefinition>,
     item_classes: ItemClassDefinitions,
     item_groups: ItemGroupDefinitions,
+    minigames: AllMinigameConfigs,
     mounts: BTreeMap<u32, MountConfig>,
     zone_templates: BTreeMap<u8, ZoneTemplate>,
 }
@@ -133,7 +149,7 @@ pub struct GameServer {
 impl GameServer {
     pub fn new(config_dir: &Path) -> Result<Self, Error> {
         let characters = GuidTable::new();
-        let (templates, zones) = load_zones(config_dir, characters.write())?;
+        let (templates, zones) = load_zones(config_dir)?;
         let item_definitions = load_item_definitions(config_dir)?;
         let item_groups = load_item_groups(config_dir)?;
         Ok(GameServer {
@@ -148,6 +164,7 @@ impl GameServer {
             item_groups: ItemGroupDefinitions {
                 definitions: item_groups,
             },
+            minigames: load_all_minigames(config_dir)?,
             mounts: load_mounts(config_dir)?,
             zone_templates: templates,
         })
@@ -231,6 +248,8 @@ impl GameServer {
                     broadcasts.append(&mut self.process_packet(sender, packet.inner)?);
                 }
                 OpCode::ClientIsReady => {
+                    let mut sender_only_packets = Vec::new();
+
                     // Set the player as ready
                     self.lock_enforcer()
                         .write_characters(|characters_table_write_handle, _| {
@@ -240,7 +259,44 @@ impl GameServer {
                                     if let CharacterType::Player(ref mut player) =
                                         &mut character_write_handle.stats.character_type
                                     {
+                                        if let Some(minigame_status) = &mut player.minigame_status {
+                                            if !minigame_status.game_created {
+                                                minigame_status.game_created = true;
+                                                broadcasts.append(&mut create_active_minigame(
+                                                    sender,
+                                                    self.minigames(),
+                                                    minigame_status,
+                                                )?);
+                                            }
+                                        }
+
+                                        if player.first_load {
+                                            let welcome_screen = TunneledPacket {
+                                                unknown1: true,
+                                                inner: WelcomeScreen {
+                                                    show_ui: true,
+                                                    unknown1: vec![],
+                                                    unknown2: vec![],
+                                                    unknown3: 0,
+                                                    unknown4: 0,
+                                                },
+                                            };
+                                            sender_only_packets
+                                                .push(GamePacket::serialize(&welcome_screen)?);
+
+                                            let minigame_definitions = TunneledPacket {
+                                                unknown1: true,
+                                                inner: GamePacket::serialize(
+                                                    &self.minigames.definitions(),
+                                                )?,
+                                            };
+                                            sender_only_packets.push(GamePacket::serialize(
+                                                &minigame_definitions,
+                                            )?);
+                                        }
+
                                         player.ready = true;
+                                        player.first_load = false;
                                     }
                                     let guid = character_write_handle.guid();
                                     let new_index = character_write_handle.index();
@@ -258,8 +314,6 @@ impl GameServer {
                                 )),
                             }
                         })?;
-
-                    let mut sender_only_packets = Vec::new();
 
                     sender_only_packets.append(&mut send_points_of_interest(self)?);
 
@@ -283,7 +337,7 @@ impl GameServer {
 
                     let mut character_broadcasts = self.lock_enforcer().read_characters(|characters_table_read_handle| {
                         let possible_index = characters_table_read_handle.index(player_guid(sender));
-                        let character_guids = possible_index.map(|(_, instance_guid, chunk)| Zone::diff_character_guids(
+                        let character_guids = possible_index.map(|(_, instance_guid, chunk)| ZoneInstance::diff_character_guids(
                             instance_guid,
                             Character::MIN_CHUNK,
                             chunk,
@@ -393,7 +447,7 @@ impl GameServer {
 
                                                 character_broadcasts.push(Broadcast::Single(sender, global_packets));
 
-                                                let sender_only_packets = Zone::diff_character_packets(&character_guids, &characters_read, &self.mounts)?;
+                                                let sender_only_packets = ZoneInstance::diff_character_packets(&character_guids, &characters_read, &self.mounts)?;
                                                 character_broadcasts.push(Broadcast::Single(sender, sender_only_packets));
 
                                                 Ok(character_broadcasts)
@@ -413,18 +467,6 @@ impl GameServer {
                     broadcasts.append(&mut character_broadcasts);
 
                     sender_only_packets.append(&mut make_test_nameplate_image(sender)?);
-
-                    let welcome_screen = TunneledPacket {
-                        unknown1: true,
-                        inner: WelcomeScreen {
-                            show_ui: true,
-                            unknown1: vec![],
-                            unknown2: vec![],
-                            unknown3: 0,
-                            unknown4: 0,
-                        },
-                    };
-                    sender_only_packets.push(GamePacket::serialize(&welcome_screen)?);
 
                     let zone_details_done = TunneledPacket {
                         unknown1: true,
@@ -489,7 +531,7 @@ impl GameServer {
                     let pos_update: UpdatePlayerPosition =
                         DeserializePacket::deserialize(&mut cursor)?;
                     // TODO: broadcast pos update to all players
-                    broadcasts.append(&mut Zone::move_character(sender, pos_update, self)?);
+                    broadcasts.append(&mut ZoneInstance::move_character(sender, pos_update, self)?);
                 }
                 OpCode::UpdatePlayerCamera => {
                     // Ignore this unused packet to reduce log spam for now
@@ -505,39 +547,32 @@ impl GameServer {
                             CharacterIndex,
                         >,
                          zones_lock_enforcer| {
-                            zones_lock_enforcer.read_zones(|zones_table_read_handle| {
+                            zones_lock_enforcer.write_zones(|zones_table_write_handle| {
                                 let possible_instance_guid =
                                     shorten_zone_template_guid(teleport_request.destination_guid)
                                         .and_then(|template_guid| {
-                                            GameServer::any_instance(
-                                                zones_table_read_handle,
+                                            self.get_or_create_instance(
+                                                characters_table_write_handle,
+                                                zones_table_write_handle,
                                                 template_guid,
+                                                1,
                                             )
                                         });
-                                let read_guids = if let Ok(instance_guid) = possible_instance_guid {
-                                    vec![instance_guid]
-                                } else {
-                                    Vec::new()
-                                };
 
-                                ZoneLockRequest {
-                                    read_guids,
-                                    write_guids: Vec::new(),
-                                    zone_consumer: move |_, zones_read, _| {
-                                        match possible_instance_guid {
-                                            Ok(instance_guid) => teleport_to_zone!(
-                                                characters_table_write_handle,
-                                                sender,
-                                                zones_read.get(&instance_guid).expect(
-                                                    "any_instance returned invalid zone GUID"
-                                                ),
-                                                None,
-                                                None,
-                                                self.mounts()
-                                            ),
-                                            Err(err) => Err(err),
-                                        }
-                                    },
+                                match possible_instance_guid {
+                                    Ok(instance_guid) => teleport_to_zone!(
+                                        characters_table_write_handle,
+                                        sender,
+                                        &zones_table_write_handle
+                                            .get(instance_guid)
+                                            .expect("any_instance returned invalid zone GUID")
+                                            .read(),
+                                        None,
+                                        None,
+                                        self.mounts(),
+                                        true,
+                                    ),
+                                    Err(err) => Err(err),
                                 }
                             })
                         },
@@ -646,6 +681,9 @@ impl GameServer {
                 OpCode::Logout => {
                     // Allow the cleanup thread to log the player out on disconnect
                 }
+                OpCode::Minigame => {
+                    broadcasts.append(&mut process_minigame_packet(&mut cursor, sender, self)?);
+                }
                 _ => info!("Unimplemented: {:?}, {:x?}", op_code, data),
             },
             Err(_) => info!("Unknown op code: {}, {:x?}", raw_op_code, data),
@@ -681,6 +719,11 @@ impl GameServer {
     pub fn read_zone_templates(&self) -> &BTreeMap<u8, ZoneTemplate> {
         &self.zone_templates
     }
+
+    pub fn minigames(&self) -> &AllMinigameConfigs {
+        &self.minigames
+    }
+
     pub fn mounts(&self) -> &BTreeMap<u32, MountConfig> {
         &self.mounts
     }
@@ -689,24 +732,118 @@ impl GameServer {
         self.lock_enforcer_source.lock_enforcer()
     }
 
-    pub fn any_instance(
-        zones: &ZoneTableReadHandle<'_>,
+    pub fn get_or_create_instance(
+        &self,
+        characters: &mut CharacterTableWriteHandle<'_>,
+        zones: &mut ZoneTableWriteHandle<'_>,
         template_guid: u8,
+        required_capacity: u32,
     ) -> Result<u64, ProcessPacketError> {
-        let instances = GameServer::zones_by_template(zones, template_guid);
+        let instances = GameServer::unfilled_zones_by_template(
+            characters,
+            zones,
+            template_guid,
+            required_capacity,
+        );
         if !instances.is_empty() {
             let index = rand::thread_rng().gen_range(0..instances.len());
             Ok(instances[index])
+        } else if let Some(new_instance_index) =
+            GameServer::find_min_unused_zone_index(zones, template_guid)
+        {
+            if let Some(template) = self.zone_templates.get(&template_guid) {
+                if required_capacity <= template.max_players {
+                    let instance_guid = zone_instance_guid(new_instance_index, template_guid);
+                    let new_instance = template.to_zone_instance(instance_guid, None, characters);
+                    zones.insert(new_instance);
+                    Ok(instance_guid)
+                } else {
+                    Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::ConstraintViolated,
+                        format!(
+                            "Zone template {} (capacity {}) does not have the required capacity {}",
+                            template_guid, template.max_players, required_capacity
+                        ),
+                    ))
+                }
+            } else {
+                Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Tried to teleport to unknown zone template {}",
+                        template_guid
+                    ),
+                ))
+            }
         } else {
             Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
-                format!("No existing zones for template ID {}", template_guid),
+                format!("At capacity for zones for template ID {}", template_guid),
             ))
         }
     }
 
-    pub fn zones_by_template(zones: &ZoneTableReadHandle<'_>, template_guid: u8) -> Vec<u64> {
-        zones.keys_by_index(template_guid).collect()
+    fn unfilled_zones_by_template(
+        characters: &CharacterTableWriteHandle<'_>,
+        zones: &ZoneTableWriteHandle<'_>,
+        template_guid: u8,
+        required_capacity: u32,
+    ) -> Vec<u64> {
+        let unfilled_zones = zones
+            .values_by_index(template_guid)
+            .filter_map(|zone_lock| {
+                let zone_read_handle = zone_lock.read();
+                let instance_guid = zone_read_handle.guid();
+
+                let range = (
+                    CharacterCategory::PlayerReady,
+                    instance_guid,
+                    Character::MIN_CHUNK,
+                )
+                    ..=(
+                        CharacterCategory::PlayerUnready,
+                        instance_guid,
+                        Character::MAX_CHUNK,
+                    );
+                let current_players = characters.keys_by_range(range).count() as u32;
+
+                let remaining_capacity =
+                    zone_read_handle.max_players.saturating_sub(current_players);
+
+                if required_capacity <= remaining_capacity {
+                    Some(instance_guid)
+                } else {
+                    None
+                }
+            })
+            .collect();
+
+        unfilled_zones
+    }
+
+    fn find_min_unused_zone_index(
+        zones: &ZoneTableWriteHandle<'_>,
+        template_guid: u8,
+    ) -> Option<u32> {
+        let used_indices: BTreeSet<u32> = zones
+            .keys_by_index(template_guid)
+            .map(shorten_zone_index)
+            .collect();
+        if let Some(max) = used_indices.last() {
+            // Only do the expensive operation if we know we can't simply increment the largest index
+            if *max == u32::MAX {
+                // 0.saturating_sub(0) == 0, so we'll never subtract from 0
+                used_indices
+                    .iter()
+                    .find(|index| !used_indices.contains(&(*index).saturating_sub(1)))
+                    .map(|used_index| *used_index - 1)
+            } else {
+                Some(max + 1)
+            }
+        } else {
+            // Otherwise, just start at the first index
+            Some(0)
+        }
     }
 
     fn tickable_characters_by_chunk(&self) -> BTreeMap<(u64, Chunk), Vec<u64>> {
@@ -755,7 +892,7 @@ impl GameServer {
         broadcasts: &mut Vec<Broadcast>,
     ) -> Result<(), ProcessPacketError> {
         self.lock_enforcer().read_characters(|characters_table_read_handle| {
-            let nearby_player_guids = Zone::all_players_nearby(None, chunk, instance_guid, characters_table_read_handle)
+            let nearby_player_guids = ZoneInstance::all_players_nearby(None, chunk, instance_guid, characters_table_read_handle)
                 .unwrap_or_default();
             let nearby_players: Vec<u64> = nearby_player_guids.iter()
                 .map(|guid| *guid as u64)

@@ -30,7 +30,7 @@ use super::{
     guid::Guid,
     lock_enforcer::{CharacterLockRequest, ZoneLockRequest},
     unique_guid::{mount_guid, player_guid},
-    zone::Zone,
+    zone::ZoneInstance,
 };
 
 #[derive(Deserialize)]
@@ -72,7 +72,7 @@ pub fn load_mounts(config_dir: &Path) -> Result<BTreeMap<u32, MountConfig>, Erro
 
 pub fn reply_dismount(
     sender: u32,
-    zone: &RwLockReadGuard<Zone>,
+    zone: &RwLockReadGuard<ZoneInstance>,
     character: &mut RwLockWriteGuard<Character>,
     mounts: &BTreeMap<u32, MountConfig>,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {

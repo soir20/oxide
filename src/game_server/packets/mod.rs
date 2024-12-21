@@ -6,6 +6,7 @@ pub mod housing;
 pub mod inventory;
 pub mod item;
 pub mod login;
+pub mod minigame;
 pub mod mount;
 pub mod player_data;
 pub mod player_update;
@@ -26,6 +27,7 @@ use serde::Deserialize;
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u16)]
 pub enum OpCode {
+    Minigame = 0x27,
     LoginRequest = 0x1,
     LoginReply = 0x2,
     TunneledClient = 0x5,
@@ -230,4 +232,205 @@ impl SerializePacket for Target {
 
         Ok(())
     }
+}
+
+#[derive(SerializePacket)]
+pub struct BaseRewardEntry {
+    pub unknown1: bool,
+    pub icon_set_id: u32,
+    pub icon_tint: u32,
+    pub unknown4: u32,
+    pub quantity: u32,
+    pub item_guid: u32,
+    pub unknown7: u32,
+    pub unknown8: String,
+    pub unknown9: u32,
+    pub unknown10: bool,
+}
+
+pub struct NewItemRewardEntry {
+    pub base: BaseRewardEntry,
+    pub unknown1: Option<u32>,
+}
+
+impl SerializePacket for NewItemRewardEntry {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        self.base.serialize(buffer)?;
+        if let Some(value) = self.unknown1 {
+            value.serialize(buffer)?;
+        }
+        Ok(())
+    }
+}
+
+#[derive(SerializePacket)]
+pub struct NewQuestRewardEntry {
+    pub base: BaseRewardEntry,
+    pub quest_guid: u32,
+}
+
+#[derive(SerializePacket)]
+pub struct NewBattleClassRewardEntry {
+    pub base: BaseRewardEntry,
+    pub battle_class_guid: u32,
+}
+
+#[derive(SerializePacket)]
+pub struct NewAbilityRewardEntry {
+    pub base: BaseRewardEntry,
+    pub ability_guid: u32,
+}
+
+#[derive(SerializePacket)]
+pub struct NewCollectionRewardEntry {
+    pub base: BaseRewardEntry,
+    pub collection_guid: u32,
+}
+
+#[derive(SerializePacket)]
+pub struct NewCollectionItemRewardEntry {
+    pub base: BaseRewardEntry,
+    pub unknown1: u32,
+    pub unknown2: u32,
+    pub unknown3: u32,
+    pub unknown4: u32,
+}
+
+#[derive(SerializePacket)]
+pub struct PetTrickXpRewardEntry {
+    pub base: BaseRewardEntry,
+    pub unknown1: u32,
+    pub unknown2: u32,
+}
+
+#[derive(SerializePacket)]
+pub struct NewRecipeRewardEntry {
+    pub base: BaseRewardEntry,
+    pub recipe_guid: u32,
+}
+
+#[derive(SerializePacket)]
+pub struct ZoneFlagRewardEntry {
+    pub base: BaseRewardEntry,
+    pub unknown1: String,
+    pub unknown2: u32,
+    pub unknown3: u32,
+}
+
+#[derive(SerializePacket)]
+pub struct CharacterFlagRewardEntry {
+    pub base: BaseRewardEntry,
+    pub unknown1: String,
+    pub unknown2: u32,
+    pub unknown3: u32,
+    pub unknown4: bool,
+    pub unknown5: u32,
+    pub unknown6: bool,
+}
+
+#[allow(dead_code)]
+pub enum RewardEntry {
+    NewItem(NewItemRewardEntry),
+    Xp(BaseRewardEntry),
+    NewQuest(NewQuestRewardEntry),
+    NewBattleClass(NewBattleClassRewardEntry),
+    NewAbility(NewAbilityRewardEntry),
+    NewCollection(NewCollectionRewardEntry),
+    NewCollectionItem(NewCollectionItemRewardEntry),
+    Token(BaseRewardEntry),
+    PetTrickXp(PetTrickXpRewardEntry),
+    NewRecipe(NewRecipeRewardEntry),
+    ZoneFlag(ZoneFlagRewardEntry),
+    CharacterFlag(CharacterFlagRewardEntry),
+    WheelSpin(BaseRewardEntry),
+    NewTrophy(BaseRewardEntry),
+    ClientExitUrl(BaseRewardEntry),
+}
+
+impl SerializePacket for RewardEntry {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        match self {
+            RewardEntry::NewItem(item_reward_entry) => {
+                buffer.write_u32::<LittleEndian>(1)?;
+                item_reward_entry.serialize(buffer)
+            }
+            RewardEntry::Xp(xp_reward_entry) => {
+                buffer.write_u32::<LittleEndian>(3)?;
+                xp_reward_entry.serialize(buffer)
+            }
+            RewardEntry::NewQuest(new_quest_reward_entry) => {
+                buffer.write_u32::<LittleEndian>(6)?;
+                new_quest_reward_entry.serialize(buffer)
+            }
+            RewardEntry::NewBattleClass(new_battle_class_reward_entry) => {
+                buffer.write_u32::<LittleEndian>(7)?;
+                new_battle_class_reward_entry.serialize(buffer)
+            }
+            RewardEntry::NewAbility(new_ability_reward_entry) => {
+                buffer.write_u32::<LittleEndian>(8)?;
+                new_ability_reward_entry.serialize(buffer)
+            }
+            RewardEntry::NewCollection(new_collection_reward_entry) => {
+                buffer.write_u32::<LittleEndian>(10)?;
+                new_collection_reward_entry.serialize(buffer)
+            }
+            RewardEntry::NewCollectionItem(new_collection_item_reward_entry) => {
+                buffer.write_u32::<LittleEndian>(11)?;
+                new_collection_item_reward_entry.serialize(buffer)
+            }
+            RewardEntry::Token(token_reward_entry) => {
+                buffer.write_u32::<LittleEndian>(12)?;
+                token_reward_entry.serialize(buffer)
+            }
+            RewardEntry::PetTrickXp(pet_trick_xp_entry) => {
+                buffer.write_u32::<LittleEndian>(13)?;
+                pet_trick_xp_entry.serialize(buffer)
+            }
+            RewardEntry::NewRecipe(new_recipe_entry) => {
+                buffer.write_u32::<LittleEndian>(14)?;
+                new_recipe_entry.serialize(buffer)
+            }
+            RewardEntry::ZoneFlag(zone_flag_entry) => {
+                buffer.write_u32::<LittleEndian>(15)?;
+                zone_flag_entry.serialize(buffer)
+            }
+            RewardEntry::CharacterFlag(character_flag_entry) => {
+                buffer.write_u32::<LittleEndian>(17)?;
+                character_flag_entry.serialize(buffer)
+            }
+            RewardEntry::WheelSpin(wheel_spin_entry) => {
+                buffer.write_u32::<LittleEndian>(18)?;
+                wheel_spin_entry.serialize(buffer)
+            }
+            RewardEntry::NewTrophy(new_trophy_entry) => {
+                buffer.write_u32::<LittleEndian>(19)?;
+                new_trophy_entry.serialize(buffer)
+            }
+            RewardEntry::ClientExitUrl(client_exit_url_entry) => {
+                buffer.write_u32::<LittleEndian>(20)?;
+                client_exit_url_entry.serialize(buffer)
+            }
+        }
+    }
+}
+
+#[derive(Default, SerializePacket)]
+pub struct RewardBundle {
+    pub unknown1: bool,
+    pub credits: u32,
+    pub battle_class_xp: u32,
+    pub unknown4: u32,
+    pub unknown5: u32,
+    pub unknown6: u32,
+    pub unknown7: u32,
+    pub unknown8: u32,
+    pub unknown9: u32,
+    pub unknown10: u32,
+    pub unknown11: u32,
+    pub unknown12: u32,
+    pub unknown13: u32,
+    pub icon_set_id: u32,
+    pub name_id: u32,
+    pub entries: Vec<RewardEntry>,
+    pub unknown17: u32,
 }

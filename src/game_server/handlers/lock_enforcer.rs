@@ -10,7 +10,7 @@ use super::{
     guid::{
         GuidTable, GuidTableHandle, GuidTableIndexer, GuidTableReadHandle, GuidTableWriteHandle,
     },
-    zone::Zone,
+    zone::ZoneInstance,
 };
 
 pub struct TableReadHandleWrapper<'a, K, V, I = ()> {
@@ -47,10 +47,10 @@ pub type CharacterTableReadHandle<'a> = TableReadHandleWrapper<'a, u64, Characte
 pub type CharacterTableWriteHandle<'a> = GuidTableWriteHandle<'a, u64, Character, CharacterIndex>;
 pub type CharacterReadGuard<'a> = RwLockReadGuard<'a, Character>;
 pub type CharacterWriteGuard<'a> = RwLockWriteGuard<'a, Character>;
-pub type ZoneTableReadHandle<'a> = TableReadHandleWrapper<'a, u64, Zone, u8>;
-pub type ZoneTableWriteHandle<'a> = GuidTableWriteHandle<'a, u64, Zone, u8>;
-pub type ZoneReadGuard<'a> = RwLockReadGuard<'a, Zone>;
-pub type ZoneWriteGuard<'a> = RwLockWriteGuard<'a, Zone>;
+pub type ZoneTableReadHandle<'a> = TableReadHandleWrapper<'a, u64, ZoneInstance, u8>;
+pub type ZoneTableWriteHandle<'a> = GuidTableWriteHandle<'a, u64, ZoneInstance, u8>;
+pub type ZoneReadGuard<'a> = RwLockReadGuard<'a, ZoneInstance>;
+pub type ZoneWriteGuard<'a> = RwLockWriteGuard<'a, ZoneInstance>;
 
 pub struct ZoneLockRequest<
     R,
@@ -66,7 +66,7 @@ pub struct ZoneLockRequest<
 }
 
 pub struct ZoneLockEnforcer<'a> {
-    zones: &'a GuidTable<u64, Zone, u8>,
+    zones: &'a GuidTable<u64, ZoneInstance, u8>,
 }
 
 impl ZoneLockEnforcer<'_> {
@@ -134,7 +134,7 @@ pub struct CharacterLockRequest<
 
 pub struct LockEnforcer<'a> {
     characters: &'a GuidTable<u64, Character, CharacterIndex>,
-    zones: &'a GuidTable<u64, Zone, u8>,
+    zones: &'a GuidTable<u64, ZoneInstance, u8>,
 }
 
 impl LockEnforcer<'_> {
@@ -206,13 +206,13 @@ impl<'a> From<LockEnforcer<'a>> for ZoneLockEnforcer<'a> {
 
 pub struct LockEnforcerSource {
     characters: GuidTable<u64, Character, CharacterIndex>,
-    zones: GuidTable<u64, Zone, u8>,
+    zones: GuidTable<u64, ZoneInstance, u8>,
 }
 
 impl LockEnforcerSource {
     pub fn from(
         characters: GuidTable<u64, Character, CharacterIndex>,
-        zones: GuidTable<u64, Zone, u8>,
+        zones: GuidTable<u64, ZoneInstance, u8>,
     ) -> LockEnforcerSource {
         LockEnforcerSource { characters, zones }
     }

@@ -35,7 +35,7 @@ use super::{
     guid::IndexedGuid,
     lock_enforcer::CharacterLockRequest,
     unique_guid::player_guid,
-    zone::Zone,
+    zone::ZoneInstance,
 };
 
 #[derive(Deserialize)]
@@ -446,7 +446,7 @@ fn process_equip_customization(
                         }
 
                         let (_, instance_guid, chunk) = character_write_handle.index();
-                        let nearby_players = Zone::all_players_nearby(
+                        let nearby_players = ZoneInstance::all_players_nearby(
                             Some(sender),
                             chunk,
                             instance_guid,

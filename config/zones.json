@@ -2,7 +2,7 @@
     {
         "comment": "Geonosis Campaign Cruiser",
         "guid": 14,
-        "instances": 1,
+        "max_players": 4294967295,
         "template_name": 7203,
         "asset_name": "MonCala_Venetor",
         "hide_ui": false,
@@ -48,7 +48,7 @@
     {
         "comment": "Ryloth",
         "guid": 15,
-        "instances": 1,
+        "max_players": 4294967295,
         "template_name": 10386,
         "asset_name": "Combat_Ryloth_StartingZone_01",
         "hide_ui": false,
@@ -112,7 +112,7 @@
     {
         "comment": "Umbara",
         "guid": 19,
-        "instances": 1,
+        "max_players": 4294967295,
         "template_name": 10635,
         "asset_name": "Combat_Umbara_South_01",
         "hide_ui": false,
@@ -198,7 +198,7 @@
     {
         "comment": "Carlac",
         "guid": 34,
-        "instances": 1,
+        "max_players": 4294967295,
         "template_name": 52057,
         "asset_name": "Combat_Carlac_01",
         "hide_ui": false,
@@ -262,7 +262,7 @@
     {
         "comment": "Felucia",
         "guid": 36,
-        "instances": 1,
+        "max_players": 4294967295,
         "template_name": 52276,
         "asset_name": "Combat_Felucia_01",
         "hide_ui": false,
@@ -323,7 +323,7 @@
     {
         "comment": "Coruscant",
         "guid": 24,
-        "instances": 1,
+        "max_players": 4294967295,
         "template_name": 52297,
         "asset_name": "JediTemple",
         "hide_ui": false,
@@ -1265,7 +1265,7 @@
     },
     {
         "guid": 25,
-        "instances": 1,
+        "max_players": 4294967295,
         "template_name": 52297,
         "asset_name": "Members",
         "hide_ui": false,
@@ -1326,7 +1326,7 @@
     {
         "comment": "Mustafar Lot",
         "guid": 100,
-        "instances": 0,
+        "max_players": 4294967295,
         "template_name": 1987,
         "template_icon": 4209,
         "asset_name": "Housing_EmptyLot_Mustafar",
@@ -1368,6 +1368,33 @@
                 "show_hover_description": true
             }
         ],
+        "ambient_npcs": []
+    },
+    {
+        "comment": "Aquatic Assault",
+        "guid": 200,
+        "max_players": 4294967295,
+        "template_name": 45898,
+        "asset_name": "MultiplayerZone",
+        "hide_ui": false,
+        "is_combat": false,
+        "spawn_pos_x": 0.0,
+        "spawn_pos_y": 0.0,
+        "spawn_pos_z": 0.0,
+        "spawn_pos_w": 1.0,
+        "spawn_rot_x": 0.0,
+        "spawn_rot_y": 0.0,
+        "spawn_rot_z": 0.0,
+        "spawn_rot_w": 0.0,
+        "spawn_sky": "",
+        "speed": 8.0,
+        "jump_height_multiplier": 1.0,
+        "gravity_multiplier": 1.0,
+        "seconds_per_day": 10800,
+        "interact_radius": 7.0,
+        "door_auto_interact_radius": 0.0,
+        "doors": [],
+        "transports": [],
         "ambient_npcs": []
     }
 ]

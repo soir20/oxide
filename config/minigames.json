@@ -1,0 +1,175 @@
+[
+    {
+        "comment": "Popular",
+        "guid": 1,
+        "name_id": 51596,
+        "icon_id": 5808,
+        "sort_order": 1,
+        "portal_entries": []
+    },
+    {
+        "comment": "Action",
+        "guid": 2,
+        "name_id": 51597,
+        "icon_id": 5805,
+        "sort_order": 2,
+        "portal_entries": [
+            {
+                "guid": 10000,
+                "name_id": 8387,
+                "description_id": 9754,
+                "members_only": false,
+                "is_flash": true,
+                "is_active": true,
+                "param1": 0,
+                "icon_id": 1253,
+                "background_icon_id": 0,
+                "is_popular": false,
+                "is_game_of_day": false,
+                "sort_order": 10000,
+                "tutorial_swf": "HowToStuntGungan.swf",
+                "stage_group": {
+                    "guid": 10000,
+                    "name_id": 8387,
+                    "description_id": 9754,
+                    "icon_id": 542,
+                    "stage_icon_id": 5129,
+                    "members_only": false,
+                    "stage_select_map_name": "",
+                    "stages": [
+                        {
+                            "Stage": {
+                                "guid": 10001,
+                                "name_id": 8387,
+                                "description_id": 9754,
+                                "stage_icon_id": 1253,
+                                "start_screen_icon_id": 1333,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 2241,
+                                "members_only": false,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "",
+                                "flash_game": "StuntGungan.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 29"
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "guid": 20000,
+                "name_id": 45898,
+                "description_id": 45897,
+                "members_only": true,
+                "is_flash": true,
+                "is_active": true,
+                "param1": 0,
+                "icon_id": 5131,
+                "background_icon_id": 0,
+                "is_popular": false,
+                "is_game_of_day": false,
+                "sort_order": 20000,
+                "tutorial_swf": "HowToAquaticAssault.swf",
+                "stage_group": {
+                    "guid": 20000,
+                    "name_id": 45898,
+                    "description_id": 45897,
+                    "icon_id": 5129,
+                    "stage_icon_id": 5129,
+                    "members_only": true,
+                    "stage_select_map_name": "RepublicGunship",
+                    "stages": [
+                        {
+                            "Stage": {
+                                "guid": 20001,
+                                "name_id": 45892,
+                                "description_id": 45897,
+                                "stage_icon_id": 5153,
+                                "start_screen_icon_id": 5150,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 5643,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage01",
+                                "flash_game": "AquaticAssault.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 102.5"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 20002,
+                                "name_id": 45893,
+                                "description_id": 45897,
+                                "stage_icon_id": 5154,
+                                "start_screen_icon_id": 5151,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 5643,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage02",
+                                "flash_game": "AquaticAssault.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 108"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 20003,
+                                "name_id": 45894,
+                                "description_id": 45897,
+                                "stage_icon_id": 5155,
+                                "start_screen_icon_id": 5152,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 5643,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage03",
+                                "flash_game": "AquaticAssault.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 168"
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "comment": "Puzzle",
+        "guid": 3,
+        "name_id": 51598,
+        "icon_id": 5809,
+        "sort_order": 3,
+        "portal_entries": []
+    },
+    {
+        "comment": "Campaigns",
+        "guid": 4,
+        "name_id": 51599,
+        "icon_id": 5804,
+        "sort_order": 4,
+        "portal_entries": []
+    },
+    {
+        "comment": "Dailies",
+        "guid": 5,
+        "name_id": 51600,
+        "icon_id": 5806,
+        "sort_order": 5,
+        "portal_entries": []
+    }
+]

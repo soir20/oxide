@@ -14,6 +14,7 @@ use crate::{
             chat::{ActionBarTextColor, SendStringId},
             command::PlaySoundIdOnTarget,
             item::{BaseAttachmentGroup, EquipmentSlot, WieldType},
+            minigame::ScoreEntry,
             player_data::EquippedItem,
             player_update::{
                 AddNotifications, AddNpc, CustomizationSlot, Hostility, Icon, NotificationData,
@@ -35,7 +36,8 @@ use super::{
     guid::{Guid, IndexedGuid},
     housing::fixture_packets,
     inventory::wield_type_from_slot,
-    lock_enforcer::{CharacterReadGuard, ZoneLockEnforcer, ZoneLockRequest},
+    lock_enforcer::{CharacterReadGuard, ZoneLockRequest},
+    minigame::PlayerMinigameStats,
     mount::{spawn_mount_npc, MountConfig},
     unique_guid::{mount_guid, npc_guid, player_guid, shorten_player_guid},
     zone::teleport_within_zone,
@@ -795,12 +797,7 @@ impl Door {
         Ok(packets)
     }
 
-    pub fn interact(
-        &self,
-        requester: u32,
-        source_zone_guid: u64,
-        zones_lock_enforcer: &ZoneLockEnforcer,
-    ) -> WriteLockingBroadcastSupplier {
+    pub fn interact(&self, requester: u32, source_zone_guid: u64) -> WriteLockingBroadcastSupplier {
         let destination_pos = Pos {
             x: self.destination_pos_x,
             y: self.destination_pos_y,
@@ -814,23 +811,29 @@ impl Door {
             w: self.destination_rot_w,
         };
 
-        let destination_zone_guid = if let &Some(destination_zone_guid) = &self.destination_zone {
-            destination_zone_guid
-        } else if let &Some(destination_zone_template) = &self.destination_zone_template {
-            zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
-                read_guids: Vec::new(),
-                write_guids: Vec::new(),
-                zone_consumer: |zones_table_read_handle, _, _| {
-                    GameServer::any_instance(zones_table_read_handle, destination_zone_template)
-                },
-            })?
-        } else {
-            source_zone_guid
-        };
+        let destination_zone = self.destination_zone;
+        let destination_zone_template = self.destination_zone_template;
 
         coerce_to_broadcast_supplier(move |game_server| {
             game_server.lock_enforcer().write_characters(
                 |characters_table_write_handle, zones_lock_enforcer| {
+                    let destination_zone_guid = if let &Some(destination_zone_guid) =
+                        &destination_zone
+                    {
+                        destination_zone_guid
+                    } else if let &Some(destination_zone_template) = &destination_zone_template {
+                        zones_lock_enforcer.write_zones(|zones_table_write_handle| {
+                            game_server.get_or_create_instance(
+                                characters_table_write_handle,
+                                zones_table_write_handle,
+                                destination_zone_template,
+                                1,
+                            )
+                        })?
+                    } else {
+                        source_zone_guid
+                    };
+
                     if source_zone_guid != destination_zone_guid {
                         zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
                             read_guids: vec![destination_zone_guid],
@@ -845,7 +848,8 @@ impl Door {
                                         destination_read_handle,
                                         Some(destination_pos),
                                         Some(destination_rot),
-                                        game_server.mounts()
+                                        game_server.mounts(),
+                                        false,
                                     )
                                 } else {
                                     Ok(Vec::new())
@@ -978,7 +982,25 @@ pub struct BattleClass {
 }
 
 #[derive(Clone)]
+pub struct MinigameStatus {
+    pub stage_group_guid: i32,
+    pub stage_guid: i32,
+    pub game_created: bool,
+    pub game_won: bool,
+    pub score_entries: Vec<ScoreEntry>,
+    pub total_score: i32,
+}
+
+#[derive(Clone)]
+pub struct PreviousLocation {
+    pub template_guid: u8,
+    pub pos: Pos,
+    pub rot: Pos,
+}
+
+#[derive(Clone)]
 pub struct Player {
+    pub first_load: bool,
     pub ready: bool,
     pub member: bool,
     pub credits: u32,
@@ -986,6 +1008,9 @@ pub struct Player {
     pub active_battle_class: u32,
     pub inventory: BTreeSet<u32>,
     pub customizations: BTreeMap<CustomizationSlot, u32>,
+    pub minigame_stats: PlayerMinigameStats,
+    pub minigame_status: Option<MinigameStatus>,
+    pub previous_location: PreviousLocation,
 }
 
 impl Player {
@@ -1403,7 +1428,6 @@ impl Character {
         &mut self,
         requester: u32,
         source_zone_guid: u64,
-        zones_lock_enforcer: &ZoneLockEnforcer,
     ) -> WriteLockingBroadcastSupplier {
         let mut new_procedure = None;
 
@@ -1412,9 +1436,7 @@ impl Character {
                 new_procedure = ambient_npc.interact(self);
                 coerce_to_broadcast_supplier(|_| Ok(Vec::new()))
             }
-            CharacterType::Door(door) => {
-                door.interact(requester, source_zone_guid, zones_lock_enforcer)
-            }
+            CharacterType::Door(door) => door.interact(requester, source_zone_guid),
             CharacterType::Transport(transport) => transport.interact(requester),
             _ => coerce_to_broadcast_supplier(|_| Ok(Vec::new())),
         };
