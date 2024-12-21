@@ -1211,6 +1211,92 @@
                         }
                     ]
                 }
+            },
+            {
+                "guid": 18000,
+                "name_id": 5559,
+                "description_id": 9756,
+                "members_only": true,
+                "is_flash": true,
+                "is_active": true,
+                "param1": 0,
+                "icon_id": 1241,
+                "background_icon_id": 0,
+                "is_popular": false,
+                "is_game_of_day": false,
+                "sort_order": 18000,
+                "tutorial_swf": "HowtoForcePerception.swf",
+                "stage_group": {
+                    "guid": 18000,
+                    "name_id": 5559,
+                    "description_id": 9756,
+                    "icon_id": 535,
+                    "stage_icon_id": 535,
+                    "members_only": true,
+                    "stage_select_map_name": "RepublicGunship",
+                    "stages": [
+                        {
+                            "Stage": {
+                                "guid": 18001,
+                                "name_id": 13959,
+                                "description_id": 9756,
+                                "stage_icon_id": 321,
+                                "start_screen_icon_id": 1338,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 2225,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage01",
+                                "flash_game": "ForcePerception.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 437"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 18002,
+                                "name_id": 13960,
+                                "description_id": 9756,
+                                "stage_icon_id": 323,
+                                "start_screen_icon_id": 1340,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 2225,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage02",
+                                "flash_game": "ForcePerception.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 439"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 18003,
+                                "name_id": 13961,
+                                "description_id": 9756,
+                                "stage_icon_id": 322,
+                                "start_screen_icon_id": 1339,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 2225,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage03",
+                                "flash_game": "ForcePerception.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 446"
+                            }
+                        }
+                    ]
+                }
             }
         ]
     },
