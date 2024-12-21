@@ -1312,6 +1312,10 @@ fn end_active_minigame(
                             vec![
                                 GamePacket::serialize(&TunneledPacket {
                                     unknown1: true,
+                                    inner: UpdateCredits { new_credits },
+                                })?,
+                                GamePacket::serialize(&TunneledPacket {
+                                    unknown1: true,
                                     inner: ActiveMinigameEndScore {
                                         header: MinigameHeader {
                                             stage_guid: minigame_status.stage_guid,
@@ -1321,10 +1325,6 @@ fn end_active_minigame(
                                         scores: minigame_status.score_entries.clone(),
                                         unknown2: true,
                                     },
-                                })?,
-                                GamePacket::serialize(&TunneledPacket {
-                                    unknown1: true,
-                                    inner: UpdateCredits { new_credits },
                                 })?,
                                 GamePacket::serialize(&TunneledPacket {
                                     unknown1: true,
