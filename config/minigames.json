@@ -649,6 +649,93 @@
                         }
                     ]
                 }
+            },
+            {
+                "comment": "Medium and Hard currently use Easy's ratio as a placeholder",
+                "guid": 15000,
+                "name_id": 6237,
+                "description_id": 9755,
+                "members_only": true,
+                "is_flash": true,
+                "is_active": true,
+                "param1": 0,
+                "icon_id": 1233,
+                "background_icon_id": 0,
+                "is_popular": false,
+                "is_game_of_day": false,
+                "sort_order": 14000,
+                "tutorial_swf": "HowtoBlasterTraining.swf",
+                "stage_group": {
+                    "guid": 15000,
+                    "name_id": 6237,
+                    "description_id": 9755,
+                    "icon_id": 1391,
+                    "stage_icon_id": 1391,
+                    "members_only": true,
+                    "stage_select_map_name": "RepublicGunship",
+                    "stages": [
+                        {
+                            "Stage": {
+                                "guid": 15001,
+                                "name_id": 13950,
+                                "description_id": 9755,
+                                "stage_icon_id": 315,
+                                "start_screen_icon_id": 1335,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 1512,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage01",
+                                "flash_game": "BlasterTraining.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 180"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 15002,
+                                "name_id": 13951,
+                                "description_id": 9755,
+                                "stage_icon_id": 317,
+                                "start_screen_icon_id": 1337,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 1512,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage02",
+                                "flash_game": "BlasterTraining.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 180"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 15003,
+                                "name_id": 13952,
+                                "description_id": 9755,
+                                "stage_icon_id": 316,
+                                "start_screen_icon_id": 1336,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 1512,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage03",
+                                "flash_game": "BlasterTraining.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 180"
+                            }
+                        }
+                    ]
+                }
             }
         ]
     },
