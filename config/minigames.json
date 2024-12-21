@@ -233,6 +233,92 @@
                 }
             },
             {
+                "guid": 22,
+                "name_id": 12200,
+                "description_id": 11921,
+                "members_only": false,
+                "is_flash": true,
+                "is_active": true,
+                "param1": 0,
+                "icon_id": 1248,
+                "background_icon_id": 0,
+                "is_popular": false,
+                "is_game_of_day": false,
+                "sort_order": 12000,
+                "tutorial_swf": "HowtoRocketRescue.swf",
+                "stage_group": {
+                    "guid": 22,
+                    "name_id": 12200,
+                    "description_id": 11921,
+                    "icon_id": 538,
+                    "stage_icon_id": 538,
+                    "members_only": false,
+                    "stage_select_map_name": "r2",
+                    "stages": [
+                        {
+                            "Stage": {
+                                "guid": 12001,
+                                "name_id": 11920,
+                                "description_id": 11921,
+                                "stage_icon_id": 376,
+                                "start_screen_icon_id": 979,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 2224,
+                                "members_only": false,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage01",
+                                "flash_game": "r2.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 15.25"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 12002,
+                                "name_id": 11922,
+                                "description_id": 11923,
+                                "stage_icon_id": 376,
+                                "start_screen_icon_id": 979,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 3026,
+                                "members_only": false,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage02",
+                                "flash_game": "r2.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 14"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 12003,
+                                "name_id": 11924,
+                                "description_id": 11925,
+                                "stage_icon_id": 376,
+                                "start_screen_icon_id": 979,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 3027,
+                                "members_only": false,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage03",
+                                "flash_game": "r2.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 14.45"
+                            }
+                        }
+                    ]
+                }
+            },
+            {
                 "guid": 20000,
                 "name_id": 45898,
                 "description_id": 45897,
