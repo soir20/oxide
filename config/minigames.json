@@ -15,6 +15,92 @@
         "sort_order": 2,
         "portal_entries": [
             {
+                "guid": 9000,
+                "name_id": 45187,
+                "description_id": 45193,
+                "members_only": true,
+                "is_flash": true,
+                "is_active": true,
+                "param1": 0,
+                "icon_id": 4911,
+                "background_icon_id": 0,
+                "is_popular": false,
+                "is_game_of_day": false,
+                "sort_order": 9000,
+                "tutorial_swf": "HowtoHasbroAttackShip.swf",
+                "stage_group": {
+                    "guid": 9000,
+                    "name_id": 45187,
+                    "description_id": 45193,
+                    "icon_id": 4905,
+                    "stage_icon_id": 4905,
+                    "members_only": true,
+                    "stage_select_map_name": "RepublicGunship",
+                    "stages": [
+                        {
+                            "Stage": {
+                                "guid": 9001,
+                                "name_id": 45254,
+                                "description_id": 45193,
+                                "stage_icon_id": 4906,
+                                "start_screen_icon_id": 4849,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 5502,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage01",
+                                "flash_game": "HasbroAttackShip.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 177"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 9002,
+                                "name_id": 45255,
+                                "description_id": 45193,
+                                "stage_icon_id": 4907,
+                                "start_screen_icon_id": 4848,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 5502,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage02",
+                                "flash_game": "HasbroAttackShip.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 208"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 9003,
+                                "name_id": 45256,
+                                "description_id": 45193,
+                                "stage_icon_id": 4908,
+                                "start_screen_icon_id": 4847,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 5502,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage03",
+                                "flash_game": "HasbroAttackShip.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 219"
+                            }
+                        }
+                    ]
+                }
+            },
+            {
                 "guid": 10000,
                 "name_id": 8387,
                 "description_id": 9754,
