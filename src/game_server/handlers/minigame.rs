@@ -1026,7 +1026,7 @@ fn handle_flash_payload_win(
         sender,
         game_server,
         &payload.header,
-        |minigame_status, _, _| {
+        |minigame_status, minigame_stats, _| {
             if parts.len() == 2 {
                 let total_score = parts[1].parse()?;
                 minigame_status.total_score = total_score;
@@ -1039,6 +1039,9 @@ fn handle_flash_payload_win(
                     score_points: 0,
                 });
                 minigame_status.game_won = true;
+
+                minigame_stats.complete(minigame_status.stage_guid, total_score);
+
                 Ok(vec![])
             } else {
                 Err(ProcessPacketError::new(
