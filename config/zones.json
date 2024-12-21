@@ -1371,10 +1371,10 @@
         "ambient_npcs": []
     },
     {
-        "comment": "Aquatic Assault",
+        "comment": "Singleplayer Flash Minigame",
         "guid": 200,
-        "max_players": 4294967295,
-        "template_name": 45898,
+        "max_players": 1,
+        "template_name": 9,
         "asset_name": "MultiplayerZone",
         "hide_ui": false,
         "is_combat": false,
