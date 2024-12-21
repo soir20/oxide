@@ -1130,7 +1130,7 @@
                 "guid": 16000,
                 "name_id": 5555,
                 "description_id": 9757,
-                "members_only": true,
+                "members_only": false,
                 "is_flash": true,
                 "is_active": true,
                 "param1": 0,
@@ -1146,7 +1146,7 @@
                     "description_id": 9757,
                     "icon_id": 529,
                     "stage_icon_id": 529,
-                    "members_only": true,
+                    "members_only": false,
                     "stage_select_map_name": "RepublicGunship",
                     "stages": [
                         {
@@ -1160,7 +1160,7 @@
                                 "max_players": 1,
                                 "difficulty": 1,
                                 "start_sound_id": 2226,
-                                "members_only": true,
+                                "members_only": false,
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage01",
