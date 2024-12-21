@@ -498,7 +498,7 @@
                                 "short_name": "stage01",
                                 "flash_game": "RepublicGunship.swf",
                                 "zone_template_guid": 200,
-                                "score_to_credits_expression": "x / 160"
+                                "score_to_credits_expression": "x / 115"
                             }
                         },
                         {
@@ -518,7 +518,7 @@
                                 "short_name": "stage02",
                                 "flash_game": "RepublicGunship.swf",
                                 "zone_template_guid": 200,
-                                "score_to_credits_expression": "x / 180"
+                                "score_to_credits_expression": "x / 167"
                             }
                         },
                         {
@@ -538,7 +538,7 @@
                                 "short_name": "stage03",
                                 "flash_game": "RepublicGunship.swf",
                                 "zone_template_guid": 200,
-                                "score_to_credits_expression": "x / 180"
+                                "score_to_credits_expression": "x / 201"
                             }
                         }
                     ]
