@@ -1032,7 +1032,7 @@
             },
             {
                 "comment": "Medium and Hard currently use Easy's ratio as a placeholder",
-                "guid": 15000,
+                "guid": 11,
                 "name_id": 6237,
                 "description_id": 9755,
                 "members_only": true,
@@ -1046,7 +1046,7 @@
                 "sort_order": 14000,
                 "tutorial_swf": "HowtoBlasterTraining.swf",
                 "stage_group": {
-                    "guid": 15000,
+                    "guid": 11,
                     "name_id": 6237,
                     "description_id": 9755,
                     "icon_id": 1391,
@@ -1213,7 +1213,73 @@
                 }
             },
             {
-                "guid": 18000,
+                "guid": 8,
+                "name_id": 5557,
+                "description_id": 14128,
+                "members_only": false,
+                "is_flash": true,
+                "is_active": true,
+                "param1": 0,
+                "icon_id": 1242,
+                "background_icon_id": 0,
+                "is_popular": false,
+                "is_game_of_day": false,
+                "sort_order": 17000,
+                "tutorial_swf": "HowtoInfiltration.swf",
+                "stage_group": {
+                    "guid": 8,
+                    "name_id": 5557,
+                    "description_id": 14128,
+                    "icon_id": 1231,
+                    "stage_icon_id": 1231,
+                    "members_only": false,
+                    "stage_select_map_name": "infiltration",
+                    "stages": [
+                        {
+                            "Stage": {
+                                "guid": 17001,
+                                "name_id": 14100,
+                                "description_id": 14128,
+                                "stage_icon_id": 1341,
+                                "start_screen_icon_id": 1341,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 1511,
+                                "members_only": false,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage01",
+                                "flash_game": "Infiltration.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 40"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 17002,
+                                "name_id": 14101,
+                                "description_id": 14129,
+                                "stage_icon_id": 1342,
+                                "start_screen_icon_id": 1342,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 3265,
+                                "members_only": false,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage02",
+                                "flash_game": "Infiltration.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 65"
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "guid": 10,
                 "name_id": 5559,
                 "description_id": 9756,
                 "members_only": true,
@@ -1227,7 +1293,7 @@
                 "sort_order": 18000,
                 "tutorial_swf": "HowtoForcePerception.swf",
                 "stage_group": {
-                    "guid": 18000,
+                    "guid": 10,
                     "name_id": 5559,
                     "description_id": 9756,
                     "icon_id": 535,
