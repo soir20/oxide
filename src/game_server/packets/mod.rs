@@ -122,7 +122,7 @@ impl From<Rgba> for u32 {
 
 #[derive(Clone, SerializePacket, DeserializePacket)]
 pub struct Effect {
-    pub unknown1: u32,
+    pub tag_id: u32,
     pub unknown2: u32,
     pub unknown3: u32,
     pub unknown4: u32,
@@ -131,7 +131,7 @@ pub struct Effect {
     pub time_remaining: u32,
     pub unknown8: bool,
     pub unknown9: u64,
-    pub unknown10: u32,
+    pub time_deducted: u32,
     pub unknown11: u32,
     pub unknown12: u32,
     pub composite_effect: u32,

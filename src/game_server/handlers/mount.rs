@@ -346,7 +346,7 @@ pub fn spawn_mount_npc(
                 one_shot_animation_id: -1,
                 temporary_appearance: 0,
                 effects: vec![Effect {
-                    unknown1: 0,
+                    tag_id: 0,
                     unknown2: 0,
                     unknown3: 0,
                     unknown4: 0,
@@ -355,7 +355,7 @@ pub fn spawn_mount_npc(
                     time_remaining: 0,
                     unknown8: false,
                     unknown9: 0,
-                    unknown10: 0,
+                    time_deducted: 0,
                     unknown11: 0,
                     unknown12: 0,
                     composite_effect: mount.mount_composite_effect,

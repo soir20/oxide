@@ -34,7 +34,7 @@ impl SerializePacket for ClientUpdateOpCode {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct RemoveEffectTag {
-    pub unknown1: u32,
+    pub tag_id: u32,
 }
 
 impl GamePacket for RemoveEffectTag {

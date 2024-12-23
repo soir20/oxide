@@ -346,7 +346,7 @@ pub fn make_test_player(
             power_hours: vec![PowerHour {
                 id: 2,
                 effect: Effect {
-                    unknown1: 2,
+                    tag_id: 2,
                     unknown2: 0,
                     unknown3: 0,
                     unknown4: 0,
@@ -355,7 +355,7 @@ pub fn make_test_player(
                     time_remaining: 3600,
                     unknown8: true,
                     unknown9: 0,
-                    unknown10: 0,
+                    time_deducted: 0,
                     unknown11: 0,
                     unknown12: 0,
                     composite_effect: 0,
