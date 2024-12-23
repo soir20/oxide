@@ -4,6 +4,7 @@ use std::{
     io::{Cursor, Error, ErrorKind, Read},
     path::Path,
     sync::Arc,
+    time::Instant,
 };
 
 use byteorder::ReadBytesExt;
@@ -734,6 +735,7 @@ fn handle_request_create_active_minigame(
                             game_won: false,
                             score_entries: vec![],
                             total_score: 0,
+                            start_time: Instant::now(),
                         });
                         teleport_broadcasts
                     } else {
@@ -1042,7 +1044,25 @@ fn handle_flash_payload_win(
 
                 minigame_stats.complete(minigame_status.stage_guid, total_score);
 
-                Ok(vec![])
+                Ok(vec![Broadcast::Single(
+                    sender,
+                    vec![GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: FlashPayload {
+                            header: MinigameHeader {
+                                stage_guid: minigame_status.stage_guid,
+                                unknown2: -1,
+                                stage_group_guid: minigame_status.stage_group_guid,
+                            },
+                            payload: format!(
+                                "OnGamePlayTimeMsg\t{}",
+                                Instant::now()
+                                    .duration_since(minigame_status.start_time)
+                                    .as_millis()
+                            ),
+                        },
+                    })?],
+                )])
             } else {
                 Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
