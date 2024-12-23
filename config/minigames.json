@@ -1227,6 +1227,7 @@
                 "sort_order": 17000,
                 "tutorial_swf": "HowtoInfiltration.swf",
                 "stage_group": {
+                    "comment": "Levels 23-28 use level 22's credit ratio as a placeholder",
                     "guid": 8,
                     "name_id": 5557,
                     "description_id": 14128,
@@ -1670,6 +1671,126 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage22",
+                                "flash_game": "Infiltration.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 91"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 17023,
+                                "name_id": 14122,
+                                "description_id": 14150,
+                                "stage_icon_id": 354,
+                                "start_screen_icon_id": 1363,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 4,
+                                "start_sound_id": 3286,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage23",
+                                "flash_game": "Infiltration.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 91"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 17024,
+                                "name_id": 14123,
+                                "description_id": 14151,
+                                "stage_icon_id": 355,
+                                "start_screen_icon_id": 1364,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 4,
+                                "start_sound_id": 3287,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage24",
+                                "flash_game": "Infiltration.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 91"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 17025,
+                                "name_id": 14124,
+                                "description_id": 14152,
+                                "stage_icon_id": 356,
+                                "start_screen_icon_id": 1365,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 4,
+                                "start_sound_id": 3288,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage25",
+                                "flash_game": "Infiltration.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 91"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 17026,
+                                "name_id": 14125,
+                                "description_id": 14153,
+                                "stage_icon_id": 357,
+                                "start_screen_icon_id": 1366,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 4,
+                                "start_sound_id": 3289,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage26",
+                                "flash_game": "Infiltration.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 91"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 17027,
+                                "name_id": 14126,
+                                "description_id": 14154,
+                                "stage_icon_id": 358,
+                                "start_screen_icon_id": 1367,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 4,
+                                "start_sound_id": 3290,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage27",
+                                "flash_game": "Infiltration.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 91"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 17028,
+                                "name_id": 14127,
+                                "description_id": 14155,
+                                "stage_icon_id": 359,
+                                "start_screen_icon_id": 1368,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 4,
+                                "start_sound_id": 3291,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage28",
                                 "flash_game": "Infiltration.swf",
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 91"
