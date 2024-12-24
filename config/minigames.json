@@ -2127,6 +2127,186 @@
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 247"
                             }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19012,
+                                "name_id": 11488,
+                                "description_id": 11489,
+                                "stage_icon_id": 320,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 3305,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage12",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 241"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19013,
+                                "name_id": 11490,
+                                "description_id": 11491,
+                                "stage_icon_id": 320,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 3306,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage13",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 278"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19014,
+                                "name_id": 11492,
+                                "description_id": 11493,
+                                "stage_icon_id": 320,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 3307,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage14",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 238"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19015,
+                                "name_id": 11494,
+                                "description_id": 11495,
+                                "stage_icon_id": 320,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 3308,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage15",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 270"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19016,
+                                "name_id": 11496,
+                                "description_id": 11497,
+                                "stage_icon_id": 320,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 3309,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage16",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 242"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19017,
+                                "name_id": 11498,
+                                "description_id": 11499,
+                                "stage_icon_id": 320,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 3310,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage17",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 234"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19018,
+                                "name_id": 11500,
+                                "description_id": 11501,
+                                "stage_icon_id": 320,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 3311,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage18",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 232"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19019,
+                                "name_id": 11502,
+                                "description_id": 11503,
+                                "stage_icon_id": 320,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 3312,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage19",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 285"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19020,
+                                "name_id": 11504,
+                                "description_id": 11505,
+                                "stage_icon_id": 320,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 3313,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage20",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 225"
+                            }
                         }
                     ]
                 }
