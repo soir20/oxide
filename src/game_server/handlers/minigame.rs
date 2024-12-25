@@ -1326,7 +1326,8 @@ fn end_active_minigame(
                         let added_credits = evaluate_score_to_credits_expression(
                             &stage_config.score_to_credits_expression,
                             minigame_status.total_score,
-                        )?;
+                        )?
+                        .max(0) as u32;
                         let new_credits = player.credits.saturating_add(added_credits);
                         player.credits = new_credits;
 
@@ -1468,7 +1469,7 @@ fn end_active_minigame(
 fn evaluate_score_to_credits_expression(
     score_to_credits_expression: &str,
     score: i32,
-) -> Result<u32, Error> {
+) -> Result<i32, Error> {
     let context = context_map! {
         "x" => evalexpr::Value::Float(score as f64),
     }
@@ -1490,7 +1491,7 @@ fn evaluate_score_to_credits_expression(
     })?;
 
     if let Value::Float(credits) = result {
-        u32::try_from(credits.round() as i64).map_err(|err| {
+        i32::try_from(credits.round() as i64).map_err(|err| {
             Error::new(
                 ErrorKind::InvalidData,
                 format!(
