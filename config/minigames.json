@@ -464,7 +464,7 @@
                                 "start_screen_icon_id": 981,
                                 "min_players": 1,
                                 "max_players": 1,
-                                "difficulty": 1,
+                                "difficulty": 2,
                                 "start_sound_id": 3035,
                                 "members_only": true,
                                 "require_previous_completed": false,
@@ -504,7 +504,7 @@
                                 "start_screen_icon_id": 981,
                                 "min_players": 1,
                                 "max_players": 1,
-                                "difficulty": 1,
+                                "difficulty": 2,
                                 "start_sound_id": 3037,
                                 "members_only": true,
                                 "require_previous_completed": false,
@@ -524,7 +524,7 @@
                                 "start_screen_icon_id": 981,
                                 "min_players": 1,
                                 "max_players": 1,
-                                "difficulty": 1,
+                                "difficulty": 2,
                                 "start_sound_id": 3038,
                                 "members_only": true,
                                 "require_previous_completed": false,
@@ -544,7 +544,7 @@
                                 "start_screen_icon_id": 981,
                                 "min_players": 1,
                                 "max_players": 1,
-                                "difficulty": 1,
+                                "difficulty": 2,
                                 "start_sound_id": 3039,
                                 "members_only": true,
                                 "require_previous_completed": false,
@@ -564,7 +564,7 @@
                                 "start_screen_icon_id": 981,
                                 "min_players": 1,
                                 "max_players": 1,
-                                "difficulty": 1,
+                                "difficulty": 2,
                                 "start_sound_id": 3040,
                                 "members_only": true,
                                 "require_previous_completed": false,
@@ -584,7 +584,7 @@
                                 "start_screen_icon_id": 981,
                                 "min_players": 1,
                                 "max_players": 1,
-                                "difficulty": 1,
+                                "difficulty": 2,
                                 "start_sound_id": 3041,
                                 "members_only": true,
                                 "require_previous_completed": false,
@@ -604,7 +604,7 @@
                                 "start_screen_icon_id": 981,
                                 "min_players": 1,
                                 "max_players": 1,
-                                "difficulty": 1,
+                                "difficulty": 2,
                                 "start_sound_id": 3042,
                                 "members_only": true,
                                 "require_previous_completed": false,
@@ -624,7 +624,7 @@
                                 "start_screen_icon_id": 981,
                                 "min_players": 1,
                                 "max_players": 1,
-                                "difficulty": 1,
+                                "difficulty": 2,
                                 "start_sound_id": 3043,
                                 "members_only": true,
                                 "require_previous_completed": false,
@@ -644,7 +644,7 @@
                                 "start_screen_icon_id": 981,
                                 "min_players": 1,
                                 "max_players": 1,
-                                "difficulty": 1,
+                                "difficulty": 2,
                                 "start_sound_id": 3044,
                                 "members_only": true,
                                 "require_previous_completed": false,
@@ -664,7 +664,7 @@
                                 "start_screen_icon_id": 980,
                                 "min_players": 1,
                                 "max_players": 1,
-                                "difficulty": 1,
+                                "difficulty": 3,
                                 "start_sound_id": 3045,
                                 "members_only": true,
                                 "require_previous_completed": false,
@@ -684,7 +684,7 @@
                                 "start_screen_icon_id": 980,
                                 "min_players": 1,
                                 "max_players": 1,
-                                "difficulty": 1,
+                                "difficulty": 3,
                                 "start_sound_id": 3046,
                                 "members_only": true,
                                 "require_previous_completed": false,
@@ -704,7 +704,7 @@
                                 "start_screen_icon_id": 980,
                                 "min_players": 1,
                                 "max_players": 1,
-                                "difficulty": 1,
+                                "difficulty": 3,
                                 "start_sound_id": 3047,
                                 "members_only": true,
                                 "require_previous_completed": false,
@@ -724,7 +724,7 @@
                                 "start_screen_icon_id": 980,
                                 "min_players": 1,
                                 "max_players": 1,
-                                "difficulty": 1,
+                                "difficulty": 3,
                                 "start_sound_id": 3048,
                                 "members_only": true,
                                 "require_previous_completed": false,
@@ -744,7 +744,7 @@
                                 "start_screen_icon_id": 980,
                                 "min_players": 1,
                                 "max_players": 1,
-                                "difficulty": 1,
+                                "difficulty": 3,
                                 "start_sound_id": 3049,
                                 "members_only": true,
                                 "require_previous_completed": false,
@@ -764,7 +764,7 @@
                                 "start_screen_icon_id": 980,
                                 "min_players": 1,
                                 "max_players": 1,
-                                "difficulty": 1,
+                                "difficulty": 3,
                                 "start_sound_id": 3050,
                                 "members_only": true,
                                 "require_previous_completed": false,
@@ -784,7 +784,7 @@
                                 "start_screen_icon_id": 980,
                                 "min_players": 1,
                                 "max_players": 1,
-                                "difficulty": 1,
+                                "difficulty": 3,
                                 "start_sound_id": 3051,
                                 "members_only": true,
                                 "require_previous_completed": false,
@@ -804,7 +804,7 @@
                                 "start_screen_icon_id": 980,
                                 "min_players": 1,
                                 "max_players": 1,
-                                "difficulty": 1,
+                                "difficulty": 3,
                                 "start_sound_id": 3052,
                                 "members_only": true,
                                 "require_previous_completed": false,
@@ -824,7 +824,7 @@
                                 "start_screen_icon_id": 980,
                                 "min_players": 1,
                                 "max_players": 1,
-                                "difficulty": 1,
+                                "difficulty": 3,
                                 "start_sound_id": 3053,
                                 "members_only": true,
                                 "require_previous_completed": false,
@@ -844,7 +844,7 @@
                                 "start_screen_icon_id": 980,
                                 "min_players": 1,
                                 "max_players": 1,
-                                "difficulty": 1,
+                                "difficulty": 3,
                                 "start_sound_id": 3054,
                                 "members_only": true,
                                 "require_previous_completed": false,
@@ -1032,7 +1032,7 @@
             },
             {
                 "comment": "Medium and Hard currently use Easy's ratio as a placeholder",
-                "guid": 15000,
+                "guid": 11,
                 "name_id": 6237,
                 "description_id": 9755,
                 "members_only": true,
@@ -1046,7 +1046,7 @@
                 "sort_order": 14000,
                 "tutorial_swf": "HowtoBlasterTraining.swf",
                 "stage_group": {
-                    "guid": 15000,
+                    "guid": 11,
                     "name_id": 6237,
                     "description_id": 9755,
                     "icon_id": 1391,
@@ -1116,6 +1116,52 @@
                         }
                     ]
                 }
+            },
+            {
+                "guid": 26000,
+                "name_id": 43960,
+                "description_id": 44217,
+                "members_only": false,
+                "is_flash": true,
+                "is_active": true,
+                "param1": 0,
+                "icon_id": 4601,
+                "background_icon_id": 0,
+                "is_popular": false,
+                "is_game_of_day": false,
+                "sort_order": 26000,
+                "tutorial_swf": "HowtoTurretTactics.swf",
+                "stage_group": {
+                    "guid": 26000,
+                    "name_id": 43960,
+                    "description_id": 44217,
+                    "icon_id": 4599,
+                    "stage_icon_id": 4599,
+                    "members_only": false,
+                    "stage_select_map_name": "",
+                    "stages": [
+                        {
+                            "Stage": {
+                                "guid": 26001,
+                                "name_id": 43960,
+                                "description_id": 44217,
+                                "stage_icon_id": 4597,
+                                "start_screen_icon_id": 4597,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 5501,
+                                "members_only": false,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "",
+                                "flash_game": "TurretTactics.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 141"
+                            }
+                        }
+                    ]
+                }
             }
         ]
     },
@@ -1125,7 +1171,1652 @@
         "name_id": 51598,
         "icon_id": 5809,
         "sort_order": 3,
-        "portal_entries": []
+        "portal_entries": [
+            {
+                "guid": 16000,
+                "name_id": 5555,
+                "description_id": 9757,
+                "members_only": false,
+                "is_flash": true,
+                "is_active": true,
+                "param1": 0,
+                "icon_id": 1235,
+                "background_icon_id": 0,
+                "is_popular": false,
+                "is_game_of_day": false,
+                "sort_order": 16000,
+                "tutorial_swf": "HowtoCrystalAttunement.swf",
+                "stage_group": {
+                    "guid": 16000,
+                    "name_id": 5555,
+                    "description_id": 9757,
+                    "icon_id": 529,
+                    "stage_icon_id": 529,
+                    "members_only": false,
+                    "stage_select_map_name": "RepublicGunship",
+                    "stages": [
+                        {
+                            "Stage": {
+                                "guid": 16001,
+                                "name_id": 13953,
+                                "description_id": 9757,
+                                "stage_icon_id": 362,
+                                "start_screen_icon_id": 1953,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 2226,
+                                "members_only": false,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage01",
+                                "flash_game": "CrystalAttunement.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 153"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 16002,
+                                "name_id": 13954,
+                                "description_id": 9757,
+                                "stage_icon_id": 364,
+                                "start_screen_icon_id": 1955,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 2226,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage02",
+                                "flash_game": "CrystalAttunement.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 153"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 16003,
+                                "name_id": 13955,
+                                "description_id": 9757,
+                                "stage_icon_id": 363,
+                                "start_screen_icon_id": 1954,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 2226,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage03",
+                                "flash_game": "CrystalAttunement.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 153"
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "guid": 8,
+                "name_id": 5557,
+                "description_id": 14128,
+                "members_only": false,
+                "is_flash": true,
+                "is_active": true,
+                "param1": 0,
+                "icon_id": 1242,
+                "background_icon_id": 0,
+                "is_popular": false,
+                "is_game_of_day": false,
+                "sort_order": 17000,
+                "tutorial_swf": "HowtoInfiltration.swf",
+                "stage_group": {
+                    "comment": "Levels 23-28 use level 22's credit ratio as a placeholder",
+                    "guid": 8,
+                    "name_id": 5557,
+                    "description_id": 14128,
+                    "icon_id": 1231,
+                    "stage_icon_id": 1231,
+                    "members_only": false,
+                    "stage_select_map_name": "infiltration",
+                    "stages": [
+                        {
+                            "Stage": {
+                                "guid": 17001,
+                                "name_id": 14100,
+                                "description_id": 14128,
+                                "stage_icon_id": 332,
+                                "start_screen_icon_id": 1341,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 1511,
+                                "members_only": false,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage01",
+                                "flash_game": "Infiltration.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 40"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 17002,
+                                "name_id": 14101,
+                                "description_id": 14129,
+                                "stage_icon_id": 333,
+                                "start_screen_icon_id": 1342,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 3265,
+                                "members_only": false,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage02",
+                                "flash_game": "Infiltration.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 65"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 17003,
+                                "name_id": 14102,
+                                "description_id": 14130,
+                                "stage_icon_id": 334,
+                                "start_screen_icon_id": 1343,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 3266,
+                                "members_only": false,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage03",
+                                "flash_game": "Infiltration.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 71"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 17004,
+                                "name_id": 14103,
+                                "description_id": 14131,
+                                "stage_icon_id": 335,
+                                "start_screen_icon_id": 1344,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 3267,
+                                "members_only": false,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage04",
+                                "flash_game": "Infiltration.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 57"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 17005,
+                                "name_id": 14104,
+                                "description_id": 14132,
+                                "stage_icon_id": 336,
+                                "start_screen_icon_id": 1345,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 3268,
+                                "members_only": false,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage05",
+                                "flash_game": "Infiltration.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 70"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 17006,
+                                "name_id": 14105,
+                                "description_id": 14133,
+                                "stage_icon_id": 337,
+                                "start_screen_icon_id": 1346,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 3269,
+                                "members_only": false,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage06",
+                                "flash_game": "Infiltration.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 76"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 17007,
+                                "name_id": 14106,
+                                "description_id": 14134,
+                                "stage_icon_id": 338,
+                                "start_screen_icon_id": 1347,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 3270,
+                                "members_only": false,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage07",
+                                "flash_game": "Infiltration.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 120"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 17008,
+                                "name_id": 14107,
+                                "description_id": 14135,
+                                "stage_icon_id": 339,
+                                "start_screen_icon_id": 1348,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 3271,
+                                "members_only": false,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage08",
+                                "flash_game": "Infiltration.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 71"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 17009,
+                                "name_id": 14108,
+                                "description_id": 14136,
+                                "stage_icon_id": 340,
+                                "start_screen_icon_id": 1349,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 3272,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage09",
+                                "flash_game": "Infiltration.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 140"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 17010,
+                                "name_id": 14109,
+                                "description_id": 14137,
+                                "stage_icon_id": 341,
+                                "start_screen_icon_id": 1350,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 3273,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage10",
+                                "flash_game": "Infiltration.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 76"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 17011,
+                                "name_id": 14110,
+                                "description_id": 14138,
+                                "stage_icon_id": 342,
+                                "start_screen_icon_id": 1351,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 3274,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage11",
+                                "flash_game": "Infiltration.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 114"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 17012,
+                                "name_id": 14111,
+                                "description_id": 14139,
+                                "stage_icon_id": 343,
+                                "start_screen_icon_id": 1352,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 3275,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage12",
+                                "flash_game": "Infiltration.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 267"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 17013,
+                                "name_id": 14112,
+                                "description_id": 14140,
+                                "stage_icon_id": 344,
+                                "start_screen_icon_id": 1353,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 3276,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage13",
+                                "flash_game": "Infiltration.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 87"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 17014,
+                                "name_id": 14113,
+                                "description_id": 14141,
+                                "stage_icon_id": 345,
+                                "start_screen_icon_id": 1354,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 3277,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage14",
+                                "flash_game": "Infiltration.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 160"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 17015,
+                                "name_id": 14114,
+                                "description_id": 14142,
+                                "stage_icon_id": 346,
+                                "start_screen_icon_id": 1355,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 3278,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage15",
+                                "flash_game": "Infiltration.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 120"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 17016,
+                                "name_id": 14115,
+                                "description_id": 14143,
+                                "stage_icon_id": 347,
+                                "start_screen_icon_id": 1356,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 3279,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage16",
+                                "flash_game": "Infiltration.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 159"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 17017,
+                                "name_id": 14116,
+                                "description_id": 14144,
+                                "stage_icon_id": 348,
+                                "start_screen_icon_id": 1357,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 3280,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage17",
+                                "flash_game": "Infiltration.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 90"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 17018,
+                                "name_id": 14117,
+                                "description_id": 14145,
+                                "stage_icon_id": 349,
+                                "start_screen_icon_id": 1358,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 3281,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage18",
+                                "flash_game": "Infiltration.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 94"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 17019,
+                                "name_id": 14118,
+                                "description_id": 14146,
+                                "stage_icon_id": 350,
+                                "start_screen_icon_id": 1359,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 3282,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage19",
+                                "flash_game": "Infiltration.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 85"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 17020,
+                                "name_id": 14119,
+                                "description_id": 14147,
+                                "stage_icon_id": 351,
+                                "start_screen_icon_id": 1360,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 3283,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage20",
+                                "flash_game": "Infiltration.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 90.5"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 17021,
+                                "name_id": 14120,
+                                "description_id": 14148,
+                                "stage_icon_id": 352,
+                                "start_screen_icon_id": 1361,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 3284,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage21",
+                                "flash_game": "Infiltration.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 125"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 17022,
+                                "name_id": 14121,
+                                "description_id": 14149,
+                                "stage_icon_id": 353,
+                                "start_screen_icon_id": 1362,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 4,
+                                "start_sound_id": 3285,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage22",
+                                "flash_game": "Infiltration.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 91"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 17023,
+                                "name_id": 14122,
+                                "description_id": 14150,
+                                "stage_icon_id": 354,
+                                "start_screen_icon_id": 1363,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 4,
+                                "start_sound_id": 3286,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage23",
+                                "flash_game": "Infiltration.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 91"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 17024,
+                                "name_id": 14123,
+                                "description_id": 14151,
+                                "stage_icon_id": 355,
+                                "start_screen_icon_id": 1364,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 4,
+                                "start_sound_id": 3287,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage24",
+                                "flash_game": "Infiltration.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 91"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 17025,
+                                "name_id": 14124,
+                                "description_id": 14152,
+                                "stage_icon_id": 356,
+                                "start_screen_icon_id": 1365,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 4,
+                                "start_sound_id": 3288,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage25",
+                                "flash_game": "Infiltration.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 91"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 17026,
+                                "name_id": 14125,
+                                "description_id": 14153,
+                                "stage_icon_id": 357,
+                                "start_screen_icon_id": 1366,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 4,
+                                "start_sound_id": 3289,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage26",
+                                "flash_game": "Infiltration.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 91"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 17027,
+                                "name_id": 14126,
+                                "description_id": 14154,
+                                "stage_icon_id": 358,
+                                "start_screen_icon_id": 1367,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 4,
+                                "start_sound_id": 3290,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage27",
+                                "flash_game": "Infiltration.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 91"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 17028,
+                                "name_id": 14127,
+                                "description_id": 14155,
+                                "stage_icon_id": 359,
+                                "start_screen_icon_id": 1368,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 4,
+                                "start_sound_id": 3291,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage28",
+                                "flash_game": "Infiltration.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 91"
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "guid": 10,
+                "name_id": 5559,
+                "description_id": 9756,
+                "members_only": true,
+                "is_flash": true,
+                "is_active": true,
+                "param1": 0,
+                "icon_id": 1241,
+                "background_icon_id": 0,
+                "is_popular": false,
+                "is_game_of_day": false,
+                "sort_order": 18000,
+                "tutorial_swf": "HowtoForcePerception.swf",
+                "stage_group": {
+                    "guid": 10,
+                    "name_id": 5559,
+                    "description_id": 9756,
+                    "icon_id": 535,
+                    "stage_icon_id": 535,
+                    "members_only": true,
+                    "stage_select_map_name": "RepublicGunship",
+                    "stages": [
+                        {
+                            "Stage": {
+                                "guid": 18001,
+                                "name_id": 13959,
+                                "description_id": 9756,
+                                "stage_icon_id": 321,
+                                "start_screen_icon_id": 1338,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 2225,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage01",
+                                "flash_game": "ForcePerception.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 437"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 18002,
+                                "name_id": 13960,
+                                "description_id": 9756,
+                                "stage_icon_id": 323,
+                                "start_screen_icon_id": 1340,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 2225,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage02",
+                                "flash_game": "ForcePerception.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 439"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 18003,
+                                "name_id": 13961,
+                                "description_id": 9756,
+                                "stage_icon_id": 322,
+                                "start_screen_icon_id": 1339,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 2225,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage03",
+                                "flash_game": "ForcePerception.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 446"
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "guid": 15,
+                "name_id": 7133,
+                "description_id": 11468,
+                "members_only": false,
+                "is_flash": true,
+                "is_active": true,
+                "param1": 0,
+                "icon_id": 1240,
+                "background_icon_id": 0,
+                "is_popular": false,
+                "is_game_of_day": false,
+                "sort_order": 19000,
+                "tutorial_swf": "HowtoDroidProgramming.swf",
+                "stage_group": {
+                    "comment": "Levels 26-30 use level 25's credit ratio as a placeholder",
+                    "guid": 15,
+                    "name_id": 7133,
+                    "description_id": 11468,
+                    "icon_id": 533,
+                    "stage_icon_id": 533,
+                    "members_only": false,
+                    "stage_select_map_name": "DroidProgramming",
+                    "stages": [
+                        {
+                            "Stage": {
+                                "guid": 19001,
+                                "name_id": 11469,
+                                "description_id": 11468,
+                                "stage_icon_id": 318,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 2227,
+                                "members_only": false,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage01",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 243"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19002,
+                                "name_id": 11470,
+                                "description_id": 11471,
+                                "stage_icon_id": 318,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 3294,
+                                "members_only": false,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage02",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 225"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19003,
+                                "name_id": 11472,
+                                "description_id": 11473,
+                                "stage_icon_id": 318,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 3296,
+                                "members_only": false,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage03",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 215"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19004,
+                                "name_id": 11474,
+                                "description_id": 11475,
+                                "stage_icon_id": 318,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 3297,
+                                "members_only": false,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage04",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 224"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19005,
+                                "name_id": 11476,
+                                "description_id": 11477,
+                                "stage_icon_id": 318,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 3298,
+                                "members_only": false,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage05",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 218"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19006,
+                                "name_id": 11182,
+                                "description_id": 11183,
+                                "stage_icon_id": 318,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 3299,
+                                "members_only": false,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage06",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 217"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19007,
+                                "name_id": 11478,
+                                "description_id": 11479,
+                                "stage_icon_id": 318,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 3300,
+                                "members_only": false,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage07",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 214"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19008,
+                                "name_id": 11480,
+                                "description_id": 11481,
+                                "stage_icon_id": 318,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 3301,
+                                "members_only": false,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage08",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 220"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19009,
+                                "name_id": 11482,
+                                "description_id": 11483,
+                                "stage_icon_id": 318,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 3302,
+                                "members_only": false,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage09",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 217"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19010,
+                                "name_id": 11484,
+                                "description_id": 11485,
+                                "stage_icon_id": 318,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 3303,
+                                "members_only": false,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage10",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 211.5"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19011,
+                                "name_id": 11486,
+                                "description_id": 11487,
+                                "stage_icon_id": 320,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 3304,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage11",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 247"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19012,
+                                "name_id": 11488,
+                                "description_id": 11489,
+                                "stage_icon_id": 320,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 3305,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage12",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 241"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19013,
+                                "name_id": 11490,
+                                "description_id": 11491,
+                                "stage_icon_id": 320,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 3306,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage13",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 278"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19014,
+                                "name_id": 11492,
+                                "description_id": 11493,
+                                "stage_icon_id": 320,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 3307,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage14",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 238"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19015,
+                                "name_id": 11494,
+                                "description_id": 11495,
+                                "stage_icon_id": 320,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 3308,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage15",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 270"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19016,
+                                "name_id": 11496,
+                                "description_id": 11497,
+                                "stage_icon_id": 320,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 3309,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage16",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 242"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19017,
+                                "name_id": 11498,
+                                "description_id": 11499,
+                                "stage_icon_id": 320,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 3310,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage17",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 234"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19018,
+                                "name_id": 11500,
+                                "description_id": 11501,
+                                "stage_icon_id": 320,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 3311,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage18",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 232"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19019,
+                                "name_id": 11502,
+                                "description_id": 11503,
+                                "stage_icon_id": 320,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 3312,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage19",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 285"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19020,
+                                "name_id": 11504,
+                                "description_id": 11505,
+                                "stage_icon_id": 320,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 3313,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage20",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 225"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19021,
+                                "name_id": 11506,
+                                "description_id": 11507,
+                                "stage_icon_id": 319,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 3314,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage21",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 235"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19022,
+                                "name_id": 11508,
+                                "description_id": 11509,
+                                "stage_icon_id": 319,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 3315,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage22",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 249"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19023,
+                                "name_id": 11510,
+                                "description_id": 11511,
+                                "stage_icon_id": 319,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 3316,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage23",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 251"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19024,
+                                "name_id": 11512,
+                                "description_id": 11513,
+                                "stage_icon_id": 319,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 3317,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage24",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 189"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19025,
+                                "name_id": 11514,
+                                "description_id": 11515,
+                                "stage_icon_id": 319,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 3318,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage25",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 229"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19026,
+                                "name_id": 11516,
+                                "description_id": 11517,
+                                "stage_icon_id": 319,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 3319,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage26",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 229"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19027,
+                                "name_id": 11518,
+                                "description_id": 11519,
+                                "stage_icon_id": 319,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 3320,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage27",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 229"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19028,
+                                "name_id": 11520,
+                                "description_id": 11521,
+                                "stage_icon_id": 319,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 3321,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage28",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 229"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19029,
+                                "name_id": 11522,
+                                "description_id": 11523,
+                                "stage_icon_id": 319,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 3322,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage29",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 229"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 19030,
+                                "name_id": 11524,
+                                "description_id": 11525,
+                                "stage_icon_id": 319,
+                                "start_screen_icon_id": 1702,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 3323,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage30",
+                                "flash_game": "DroidProgramming.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 229"
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "guid": 21000,
+                "name_id": 14050,
+                "description_id": 14955,
+                "members_only": true,
+                "is_flash": true,
+                "is_active": true,
+                "param1": 0,
+                "icon_id": 1245,
+                "background_icon_id": 0,
+                "is_popular": false,
+                "is_game_of_day": false,
+                "sort_order": 21000,
+                "tutorial_swf": "HowtoMineBuster.swf",
+                "stage_group": {
+                    "guid": 21000,
+                    "name_id": 14050,
+                    "description_id": 14955,
+                    "icon_id": 885,
+                    "stage_icon_id": 885,
+                    "members_only": true,
+                    "stage_select_map_name": "RepublicGunship",
+                    "stages": [
+                        {
+                            "Stage": {
+                                "guid": 21001,
+                                "name_id": 14956,
+                                "description_id": 14955,
+                                "stage_icon_id": 1258,
+                                "start_screen_icon_id": 1330,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 2247,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage01",
+                                "flash_game": "MineBuster.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 139"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 21002,
+                                "name_id": 14957,
+                                "description_id": 14955,
+                                "stage_icon_id": 1260,
+                                "start_screen_icon_id": 1332,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 2247,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage02",
+                                "flash_game": "MineBuster.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 169.25"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 21003,
+                                "name_id": 14958,
+                                "description_id": 14955,
+                                "stage_icon_id": 1259,
+                                "start_screen_icon_id": 1331,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 2247,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage03",
+                                "flash_game": "MineBuster.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 71.5"
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "guid": 23000,
+                "name_id": 50473,
+                "description_id": 50472,
+                "members_only": true,
+                "is_flash": true,
+                "is_active": true,
+                "param1": 0,
+                "icon_id": 5342,
+                "background_icon_id": 0,
+                "is_popular": false,
+                "is_game_of_day": false,
+                "sort_order": 23000,
+                "tutorial_swf": "HowtoHoloScramble.swf",
+                "stage_group": {
+                    "guid": 23000,
+                    "name_id": 50473,
+                    "description_id": 50472,
+                    "icon_id": 5340,
+                    "stage_icon_id": 5340,
+                    "members_only": true,
+                    "stage_select_map_name": "RepublicGunship",
+                    "stages": [
+                        {
+                            "Stage": {
+                                "guid": 23001,
+                                "name_id": 50467,
+                                "description_id": 50472,
+                                "stage_icon_id": 5346,
+                                "start_screen_icon_id": 5343,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 5499,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage01",
+                                "flash_game": "HoloScramble.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 200"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 23002,
+                                "name_id": 50468,
+                                "description_id": 50472,
+                                "stage_icon_id": 5347,
+                                "start_screen_icon_id": 5344,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 5499,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage02",
+                                "flash_game": "HoloScramble.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 200"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 23003,
+                                "name_id": 50469,
+                                "description_id": 50472,
+                                "stage_icon_id": 5348,
+                                "start_screen_icon_id": 5345,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 5499,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage03",
+                                "flash_game": "HoloScramble.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 200"
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "guid": 12,
+                "name_id": 6171,
+                "description_id": 9753,
+                "members_only": true,
+                "is_flash": true,
+                "is_active": true,
+                "param1": 0,
+                "icon_id": 1252,
+                "background_icon_id": 0,
+                "is_popular": false,
+                "is_game_of_day": false,
+                "sort_order": 25000,
+                "tutorial_swf": "HowtoStarTyper.swf",
+                "stage_group": {
+                    "guid": 12,
+                    "name_id": 6171,
+                    "description_id": 9753,
+                    "icon_id": 540,
+                    "stage_icon_id": 540,
+                    "members_only": true,
+                    "stage_select_map_name": "RepublicGunship",
+                    "stages": [
+                        {
+                            "Stage": {
+                                "guid": 25001,
+                                "name_id": 13956,
+                                "description_id": 9753,
+                                "stage_icon_id": 324,
+                                "start_screen_icon_id": 1798,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 1509,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage01",
+                                "flash_game": "startyper.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 40.9"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 25002,
+                                "name_id": 13957,
+                                "description_id": 9753,
+                                "stage_icon_id": 326,
+                                "start_screen_icon_id": 1800,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 1509,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage02",
+                                "flash_game": "startyper.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 80"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 25003,
+                                "name_id": 13958,
+                                "description_id": 9753,
+                                "stage_icon_id": 325,
+                                "start_screen_icon_id": 1799,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 1509,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage03",
+                                "flash_game": "startyper.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 81"
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
     },
     {
         "comment": "Campaigns",
