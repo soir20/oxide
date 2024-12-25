@@ -1116,6 +1116,52 @@
                         }
                     ]
                 }
+            },
+            {
+                "guid": 26000,
+                "name_id": 43960,
+                "description_id": 44217,
+                "members_only": false,
+                "is_flash": true,
+                "is_active": true,
+                "param1": 0,
+                "icon_id": 4601,
+                "background_icon_id": 0,
+                "is_popular": false,
+                "is_game_of_day": false,
+                "sort_order": 26000,
+                "tutorial_swf": "HowtoTurretTactics.swf",
+                "stage_group": {
+                    "guid": 26000,
+                    "name_id": 43960,
+                    "description_id": 44217,
+                    "icon_id": 4599,
+                    "stage_icon_id": 4599,
+                    "members_only": false,
+                    "stage_select_map_name": "",
+                    "stages": [
+                        {
+                            "Stage": {
+                                "guid": 26001,
+                                "name_id": 43960,
+                                "description_id": 44217,
+                                "stage_icon_id": 4597,
+                                "start_screen_icon_id": 4597,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 5501,
+                                "members_only": false,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "",
+                                "flash_game": "TurretTactics.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 141"
+                            }
+                        }
+                    ]
+                }
             }
         ]
     },
