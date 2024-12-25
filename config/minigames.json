@@ -2597,6 +2597,92 @@
                         }
                     ]
                 }
+            },
+            {
+                "guid": 23000,
+                "name_id": 50473,
+                "description_id": 50472,
+                "members_only": true,
+                "is_flash": true,
+                "is_active": true,
+                "param1": 0,
+                "icon_id": 5342,
+                "background_icon_id": 0,
+                "is_popular": false,
+                "is_game_of_day": false,
+                "sort_order": 23000,
+                "tutorial_swf": "HowtoHoloScramble.swf",
+                "stage_group": {
+                    "guid": 23000,
+                    "name_id": 50473,
+                    "description_id": 50472,
+                    "icon_id": 5340,
+                    "stage_icon_id": 5340,
+                    "members_only": true,
+                    "stage_select_map_name": "RepublicGunship",
+                    "stages": [
+                        {
+                            "Stage": {
+                                "guid": 23001,
+                                "name_id": 50467,
+                                "description_id": 50472,
+                                "stage_icon_id": 5346,
+                                "start_screen_icon_id": 5343,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 5499,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage01",
+                                "flash_game": "HoloScramble.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 200"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 23002,
+                                "name_id": 50468,
+                                "description_id": 50472,
+                                "stage_icon_id": 5347,
+                                "start_screen_icon_id": 5344,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 5499,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage02",
+                                "flash_game": "HoloScramble.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 200"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 23003,
+                                "name_id": 50469,
+                                "description_id": 50472,
+                                "stage_icon_id": 5348,
+                                "start_screen_icon_id": 5345,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 5499,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage03",
+                                "flash_game": "HoloScramble.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 200"
+                            }
+                        }
+                    ]
+                }
             }
         ]
     },
