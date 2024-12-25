@@ -2683,6 +2683,92 @@
                         }
                     ]
                 }
+            },
+            {
+                "guid": 25000,
+                "name_id": 6171,
+                "description_id": 9753,
+                "members_only": true,
+                "is_flash": true,
+                "is_active": true,
+                "param1": 0,
+                "icon_id": 1252,
+                "background_icon_id": 0,
+                "is_popular": false,
+                "is_game_of_day": false,
+                "sort_order": 25000,
+                "tutorial_swf": "HowtoStarTyper.swf",
+                "stage_group": {
+                    "guid": 25000,
+                    "name_id": 6171,
+                    "description_id": 9753,
+                    "icon_id": 540,
+                    "stage_icon_id": 540,
+                    "members_only": true,
+                    "stage_select_map_name": "RepublicGunship",
+                    "stages": [
+                        {
+                            "Stage": {
+                                "guid": 25001,
+                                "name_id": 13956,
+                                "description_id": 9753,
+                                "stage_icon_id": 324,
+                                "start_screen_icon_id": 1798,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 1509,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage01",
+                                "flash_game": "startyper.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 40.9"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 25002,
+                                "name_id": 13957,
+                                "description_id": 9753,
+                                "stage_icon_id": 326,
+                                "start_screen_icon_id": 1800,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 1509,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage02",
+                                "flash_game": "startyper.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 80"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 25003,
+                                "name_id": 13958,
+                                "description_id": 9753,
+                                "stage_icon_id": 325,
+                                "start_screen_icon_id": 1799,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 1509,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage03",
+                                "flash_game": "startyper.swf",
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 81"
+                            }
+                        }
+                    ]
+                }
             }
         ]
     },
