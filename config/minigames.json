@@ -2685,7 +2685,7 @@
                 }
             },
             {
-                "guid": 25000,
+                "guid": 12,
                 "name_id": 6171,
                 "description_id": 9753,
                 "members_only": true,
@@ -2699,7 +2699,7 @@
                 "sort_order": 25000,
                 "tutorial_swf": "HowtoStarTyper.swf",
                 "stage_group": {
-                    "guid": 25000,
+                    "guid": 12,
                     "name_id": 6171,
                     "description_id": 9753,
                     "icon_id": 540,
