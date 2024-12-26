@@ -1157,7 +1157,7 @@
                                 "short_name": "",
                                 "flash_game": "TurretTactics.swf",
                                 "zone_template_guid": 200,
-                                "score_to_credits_expression": "x / 141"
+                                "score_to_credits_expression": "x / 69.5"
                             }
                         }
                     ]

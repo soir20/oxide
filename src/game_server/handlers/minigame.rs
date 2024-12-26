@@ -1336,6 +1336,21 @@ fn end_active_minigame(
                             vec![
                                 GamePacket::serialize(&TunneledPacket {
                                     unknown1: true,
+                                    inner: FlashPayload {
+                                        header: MinigameHeader {
+                                            stage_guid: minigame_status.stage_guid,
+                                            unknown2: -1,
+                                            stage_group_guid: minigame_status.stage_group_guid,
+                                        },
+                                        payload: if minigame_status.game_won {
+                                            "OnGameWonMsg".to_string()
+                                        } else {
+                                            "OnGameLostMsg".to_string()
+                                        },
+                                    },
+                                })?,
+                                GamePacket::serialize(&TunneledPacket {
+                                    unknown1: true,
                                     inner: UpdateCredits { new_credits },
                                 })?,
                                 GamePacket::serialize(&TunneledPacket {
