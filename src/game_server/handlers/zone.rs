@@ -476,7 +476,6 @@ impl ZoneInstance {
     }
 
     pub fn move_character(
-        sender: u32,
         pos_update: UpdatePlayerPosition,
         game_server: &GameServer,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
@@ -553,11 +552,18 @@ impl ZoneInstance {
                             }
                         }
 
-                        let diff_packets = ZoneInstance::diff_character_packets(
-                            &diff_character_guids,
-                            &characters_read,
-                            &game_server.mounts,
-                        )?;
+                        let broadcasts = match shorten_player_guid(requester) {
+                            Ok(shortened_requester) => {
+                                let diff_packets = ZoneInstance::diff_character_packets(
+                                    &diff_character_guids,
+                                    &characters_read,
+                                    &game_server.mounts,
+                                )?;
+
+                                vec![Broadcast::Single(shortened_requester, diff_packets)]
+                            }
+                            Err(_) => Vec::new(),
+                        };
 
                         let characters_to_interact = ZoneInstance::move_character_with_locks(
                             characters_in_radius_or_all,
@@ -571,8 +577,7 @@ impl ZoneInstance {
                             character,
                         );
 
-                        let character_diff_broadcast = Broadcast::Single(sender, diff_packets);
-                        Ok((characters_to_interact, vec![character_diff_broadcast]))
+                        Ok((characters_to_interact, broadcasts))
                     } else {
                         Err(ProcessPacketError::new(
                             ProcessPacketErrorType::ConstraintViolated,

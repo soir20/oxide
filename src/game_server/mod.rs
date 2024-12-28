@@ -528,10 +528,11 @@ impl GameServer {
                     broadcasts.append(&mut process_command(self, &mut cursor)?);
                 }
                 OpCode::UpdatePlayerPosition => {
-                    let pos_update: UpdatePlayerPosition =
+                    let mut pos_update: UpdatePlayerPosition =
                         DeserializePacket::deserialize(&mut cursor)?;
-                    // TODO: broadcast pos update to all players
-                    broadcasts.append(&mut ZoneInstance::move_character(sender, pos_update, self)?);
+                    // Don't allow players to update another player's position
+                    pos_update.guid = player_guid(sender);
+                    broadcasts.append(&mut ZoneInstance::move_character(pos_update, self)?);
                 }
                 OpCode::UpdatePlayerCamera => {
                     // Ignore this unused packet to reduce log spam for now
