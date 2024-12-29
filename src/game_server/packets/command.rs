@@ -2,11 +2,14 @@ use byteorder::{LittleEndian, WriteBytesExt};
 use num_enum::TryFromPrimitive;
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
 
-use super::{GamePacket, OpCode, Rgba, Target};
+use super::{GamePacket, OpCode, Pos, Rgba, Target};
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u16)]
 pub enum CommandOpCode {
+    EnterDialog = 0x3,
+    ExitDialog = 0x4,
+    AdvanceDialog = 0x6,
     InteractionList = 0x9,
     StartFlashGame = 0xc,
     ChatBubbleColor = 0xe,
@@ -20,6 +23,58 @@ impl SerializePacket for CommandOpCode {
         buffer.write_u16::<LittleEndian>(*self as u16)?;
         Ok(())
     }
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct ExitDialog {}
+
+impl GamePacket for ExitDialog {
+    type Header = CommandOpCode;
+    const HEADER: Self::Header = CommandOpCode::ExitDialog;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct AdvanceDialog {
+    pub button_id: u32,
+}
+
+impl GamePacket for AdvanceDialog {
+    type Header = CommandOpCode;
+    const HEADER: Self::Header = CommandOpCode::AdvanceDialog;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct DialogAdvance {
+    pub button_id: u32,
+    pub unknown2: u32,
+    pub button_text_id: u32,
+    pub unknown4: u32,
+    pub unknown5: u32,
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct EnterDialog {
+    pub dialog_message_id: u32,
+    pub unknown2: u32,
+    pub guid: u64,
+    pub unknown3: bool,
+    pub unknown4: u32,
+    pub dialog_advance: Vec<DialogAdvance>,
+    pub camera_placement: Pos,
+    pub look_at: Pos,
+    pub change_player_pos: bool,
+    pub player_pos: Pos,
+    pub unknown8: u32,
+    pub hide_player: bool,
+    pub unknown10: bool,
+    pub unknown11: bool,
+    pub unknown12: u32,
+    pub unknown13: u32,
+}
+
+impl GamePacket for EnterDialog {
+    type Header = CommandOpCode;
+    const HEADER: Self::Header = CommandOpCode::EnterDialog;
 }
 
 #[derive(SerializePacket, DeserializePacket)]

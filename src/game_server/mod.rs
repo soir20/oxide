@@ -37,6 +37,7 @@ use handlers::unique_guid::{
 };
 use handlers::zone::{load_zones, teleport_within_zone, ZoneInstance, ZoneTemplate};
 use packets::client_update::{Health, Power, PreloadCharactersDone, Stat, StatId, Stats};
+use packets::command::{DialogAdvance, EnterDialog, ExitDialog};
 use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
 use packets::item::ItemDefinition;
 use packets::login::{LoginRequest, WelcomeScreen, ZoneDetailsDone};
@@ -44,9 +45,10 @@ use packets::player_update::{Customization, InitCustomizations, QueueAnimation, 
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
 use packets::store::StoreItemList;
 use packets::tunnel::{TunneledPacket, TunneledWorldPacket};
+use packets::ui::ExecuteScriptWithParams;
 use packets::update_position::UpdatePlayerPosition;
 use packets::zone::ZoneTeleportRequest;
-use packets::{GamePacket, OpCode};
+use packets::{GamePacket, OpCode, Pos};
 use rand::Rng;
 
 use crate::{info, teleport_to_zone};
@@ -669,6 +671,53 @@ impl GameServer {
                                             guid: player_guid(sender),
                                             wield_type: character_write_handle.wield_type()
                                         }
+                                    })?,
+                                    GamePacket::serialize(&TunneledPacket {
+                                        unknown1: true,
+                                        inner: EnterDialog {
+                                            dialog_message_id: 1000,
+                                            unknown2: 0,
+                                            guid: 0,
+                                            unknown3: false,
+                                            unknown4: 0,
+                                            dialog_advance: vec![DialogAdvance
+                                            {
+                                              button_id: 1,
+                                              unknown2: 0,
+                                              button_text_id: 1000,
+                                              unknown4: 0,
+                                              unknown5: 0,
+                                            }],
+                                            camera_placement: Pos {
+                                                x: 900.3,
+                                                y: 171.93376,
+                                                z: 1546.956,
+                                                w: 1.0,
+                                            },
+                                            look_at: Pos {
+                                                x: 887.3,
+                                                y: 171.93376,
+                                                z: 1546.956,
+                                                w: 1.0,
+                                            },
+                                            change_player_pos: false,
+                                            player_pos: Pos {
+                                                x: 887.3,
+                                                y: 171.93376,
+                                                z: 1546.956,
+                                                w: 1.0,
+                                            },
+                                            unknown8: 0,
+                                            hide_player: false,
+                                            unknown10: false,
+                                            unknown11: false,
+                                            unknown12: 0,
+                                            unknown13: 0,
+                                        }
+                                    })?,
+                                    GamePacket::serialize(&TunneledPacket {
+                                        unknown1: true,
+                                        inner: ExitDialog {}
                                     })?,
                                 ]));
                                 Ok(())
