@@ -615,9 +615,6 @@ impl ZoneInstance {
             broadcasts.append(&mut interact_with_character(interact_request, game_server)?);
         }
 
-        // tell everyone else the player moved (but not our player)
-        // remove or add character for other players
-
         Ok(broadcasts)
     }
 }
