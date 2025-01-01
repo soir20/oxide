@@ -37,7 +37,7 @@ use handlers::unique_guid::{
 };
 use handlers::zone::{load_zones, teleport_within_zone, ZoneInstance, ZoneTemplate};
 use packets::client_update::{Health, Power, PreloadCharactersDone, Stat, StatId, Stats};
-use packets::command::{DialogAdvance, EnterDialog, ExitDialog};
+use packets::command::{EnterDialog, ExitDialog, DialogAdvancement};
 use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
 use packets::item::ItemDefinition;
 use packets::login::{LoginRequest, WelcomeScreen, ZoneDetailsDone};
@@ -677,14 +677,14 @@ impl GameServer {
                                         inner: EnterDialog {
                                             dialog_message_id: 1000,
                                             unknown2: 0,
-                                            guid: 0,
-                                            unknown3: false,
-                                            unknown4: 0,
-                                            dialog_advance: vec![DialogAdvance
+                                            guid: 1,
+                                            enable_exit_button: true,
+                                            unknown4: 40.0,
+                                            dialog_advancements: vec![DialogAdvancement
                                             {
-                                              button_id: 1,
+                                              button_id: 0,
                                               unknown2: 0,
-                                              button_text_id: 1000,
+                                              button_text_id: 0,
                                               unknown4: 0,
                                               unknown5: 0,
                                             }],
@@ -707,18 +707,18 @@ impl GameServer {
                                                 z: 1546.956,
                                                 w: 1.0,
                                             },
-                                            unknown8: 0,
+                                            unknown8: 40.0,
                                             hide_player: false,
                                             unknown10: false,
                                             unknown11: false,
-                                            unknown12: 0,
+                                            zoom_scale: 0.0,
                                             unknown13: 0,
                                         }
-                                    })?,
+                                    })?/*,
                                     GamePacket::serialize(&TunneledPacket {
                                         unknown1: true,
                                         inner: ExitDialog {}
-                                    })?,
+                                    })?,*/
                                 ]));
                                 Ok(())
                             } else {

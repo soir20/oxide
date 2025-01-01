@@ -14,6 +14,7 @@ pub enum CommandOpCode {
     StartFlashGame = 0xc,
     ChatBubbleColor = 0xe,
     SelectPlayer = 0xf,
+    DialogEffect = 0x17,
     PlaySoundOnTarget = 0x22,
 }
 
@@ -23,6 +24,17 @@ impl SerializePacket for CommandOpCode {
         buffer.write_u16::<LittleEndian>(*self as u16)?;
         Ok(())
     }
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct DialogEffect {
+    pub guid: u64,
+    pub composite_effect: u32,
+}
+
+impl GamePacket for DialogEffect {
+    type Header = CommandOpCode;
+    const HEADER: Self::Header = CommandOpCode::DialogEffect;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -44,7 +56,7 @@ impl GamePacket for AdvanceDialog {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct DialogAdvance {
+pub struct DialogAdvancement {
     pub button_id: u32,
     pub unknown2: u32,
     pub button_text_id: u32,
@@ -57,18 +69,18 @@ pub struct EnterDialog {
     pub dialog_message_id: u32,
     pub unknown2: u32,
     pub guid: u64,
-    pub unknown3: bool,
-    pub unknown4: u32,
-    pub dialog_advance: Vec<DialogAdvance>,
+    pub enable_exit_button: bool,
+    pub unknown4: f32,
+    pub dialog_advancements: Vec<DialogAdvancement>,
     pub camera_placement: Pos,
     pub look_at: Pos,
     pub change_player_pos: bool,
     pub player_pos: Pos,
-    pub unknown8: u32,
+    pub unknown8: f32,
     pub hide_player: bool,
     pub unknown10: bool,
     pub unknown11: bool,
-    pub unknown12: u32,
+    pub zoom_scale: f32,
     pub unknown13: u32,
 }
 

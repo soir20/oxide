@@ -5,7 +5,7 @@ use packet_serialize::DeserializePacket;
 
 use crate::{
     game_server::{
-        packets::command::{AdvanceDialog, CommandOpCode, ExitDialog, SelectPlayer},
+        packets::command::{AdvanceDialog, CommandOpCode, SelectPlayer},
         Broadcast, GameServer, ProcessPacketError,
     },
     info,
