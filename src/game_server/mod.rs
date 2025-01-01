@@ -337,16 +337,16 @@ impl GameServer {
 
                     let mut character_broadcasts = self.lock_enforcer().read_characters(|characters_table_read_handle| {
                         let possible_index = characters_table_read_handle.index(player_guid(sender));
-                        let character_guids = possible_index.map(|(_, instance_guid, chunk)| ZoneInstance::diff_character_guids(
+                        let character_diffs = possible_index.map(|(_, instance_guid, chunk)| ZoneInstance::diff_character_guids(
                             instance_guid,
                             Character::MIN_CHUNK,
                             chunk,
                             characters_table_read_handle,
-                            sender
+                            player_guid(sender)
                         ))
                             .unwrap_or_default();
 
-                        let read_character_guids: Vec<u64> = character_guids.keys().copied().collect();
+                        let read_character_guids: Vec<u64> = character_diffs.character_diffs_for_moved_character.keys().copied().collect();
                         CharacterLockRequest {
                             read_guids: read_character_guids,
                             write_guids: vec![player_guid(sender)],
@@ -447,8 +447,7 @@ impl GameServer {
 
                                                 character_broadcasts.push(Broadcast::Single(sender, global_packets));
 
-                                                let sender_only_packets = ZoneInstance::diff_character_packets(&character_guids, &characters_read, &self.mounts)?;
-                                                character_broadcasts.push(Broadcast::Single(sender, sender_only_packets));
+                                                character_broadcasts.append(&mut ZoneInstance::diff_character_broadcasts(player_guid(sender), character_diffs, &characters_read, &self.mounts)?);
 
                                                 Ok(character_broadcasts)
                                             } else {
