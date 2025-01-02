@@ -671,10 +671,13 @@ impl GameServer {
                     self.lock_enforcer().read_characters(|_| CharacterLockRequest {
                         read_guids: Vec::new(),
                         write_guids: vec![player_guid(sender)],
-                        character_consumer: |_, _, mut characters_write, _| {
+                        character_consumer: |characters_table_read_handle, _, mut characters_write, _| {
                             if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) {
                                 character_write_handle.brandish_or_holster();
-                                broadcasts.push(Broadcast::Single(sender, vec![
+
+                                let (_, instance_guid, chunk) = character_write_handle.index();
+                                let all_players_nearby = ZoneInstance::all_players_nearby(Some(sender), chunk, instance_guid, characters_table_read_handle)?;
+                                broadcasts.push(Broadcast::Multi(all_players_nearby, vec![
                                     GamePacket::serialize(&TunneledPacket {
                                         unknown1: true,
                                         inner: QueueAnimation {
