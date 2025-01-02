@@ -350,14 +350,14 @@ impl GameServer {
                         CharacterLockRequest {
                             read_guids: read_character_guids,
                             write_guids: vec![player_guid(sender)],
-                            character_consumer: move |_, characters_read, mut characters_writes, zones_lock_enforcer| {
-                                if let Some((_, instance_guid, _)) = possible_index {
+                            character_consumer: move |characters_table_read_handle, characters_read, mut characters_write, zones_lock_enforcer| {
+                                if let Some((_, instance_guid, chunk)) = possible_index {
                                     zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
                                         read_guids: vec![instance_guid],
                                         write_guids: Vec::new(),
                                         zone_consumer: |_, zones_read, _| {
                                             if let Some(zone) = zones_read.get(&instance_guid) {
-                                                let mut global_packets = Vec::new();
+                                                let mut sender_only_character_packets = Vec::new();
                                                 let stats = TunneledPacket {
                                                     unknown1: true,
                                                     inner: Stats {
@@ -395,7 +395,7 @@ impl GameServer {
                                                         ],
                                                     },
                                                 };
-                                                global_packets.push(GamePacket::serialize(&stats)?);
+                                                sender_only_character_packets.push(GamePacket::serialize(&stats)?);
 
                                                 let health = TunneledPacket {
                                                     unknown1: true,
@@ -404,7 +404,7 @@ impl GameServer {
                                                         max: 25000,
                                                     },
                                                 };
-                                                global_packets.push(GamePacket::serialize(&health)?);
+                                                sender_only_character_packets.push(GamePacket::serialize(&health)?);
 
                                                 let power = TunneledPacket {
                                                     unknown1: true,
@@ -413,13 +413,14 @@ impl GameServer {
                                                         max: 300,
                                                     },
                                                 };
-                                                global_packets.push(GamePacket::serialize(&power)?);
+                                                sender_only_character_packets.push(GamePacket::serialize(&power)?);
 
-                                                // TODO: broadcast to all
-                                                let mut character_broadcasts = Vec::new();
+                                                let mut character_broadcasts = vec![Broadcast::Single(sender, sender_only_character_packets)];
 
-                                                if let Some(character_write_handle) = characters_writes.get_mut(&player_guid(sender)) {
+                                                if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) {
                                                     character_write_handle.stats.speed = zone.speed;
+
+                                                    let mut global_packets = character_write_handle.add_packets(self.mounts(), self.items(), self.customizations())?;
                                                     let wield_type = TunneledPacket {
                                                         unknown1: true,
                                                         inner: UpdateWieldType {
@@ -441,11 +442,12 @@ impl GameServer {
                                                             character_broadcasts.append(&mut update_saber_tints(sender, &battle_class.items, player.active_battle_class, self)?);
                                                         }
                                                     }
+
+                                                    let all_players_nearby = ZoneInstance::all_players_nearby(Some(sender), chunk, instance_guid, characters_table_read_handle)?;
+                                                    character_broadcasts.push(Broadcast::Multi(all_players_nearby, global_packets));
                                                 } else {
                                                     return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} sent a ready packet", sender)));
                                                 }
-
-                                                character_broadcasts.push(Broadcast::Single(sender, global_packets));
 
                                                 character_broadcasts.append(&mut ZoneInstance::diff_character_broadcasts(player_guid(sender), character_diffs, &characters_read, self.mounts(), self.items(), self.customizations())?);
 

@@ -1017,6 +1017,10 @@ impl Player {
         item_definitions: &BTreeMap<u32, ItemDefinition>,
         customizations: &BTreeMap<u32, Customization>,
     ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+        if !self.ready {
+            return Ok(Vec::new());
+        }
+
         let mut mount_packets = Vec::new();
         let mut player_mount_guid = 0;
         if let Some(mount_id) = character.stats.mount_id {
