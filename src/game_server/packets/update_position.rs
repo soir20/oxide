@@ -19,3 +19,14 @@ impl GamePacket for UpdatePlayerPosition {
     type Header = OpCode;
     const HEADER: Self::Header = OpCode::UpdatePlayerPosition;
 }
+
+#[derive(Copy, Clone, SerializePacket, DeserializePacket)]
+pub struct PlayerJump {
+    pub pos_update: UpdatePlayerPosition,
+    pub vertical_speed: f32,
+}
+
+impl GamePacket for PlayerJump {
+    type Header = OpCode;
+    const HEADER: Self::Header = OpCode::PlayerJump;
+}

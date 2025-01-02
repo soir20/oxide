@@ -494,8 +494,9 @@ impl ZoneInstance {
         }
     }
 
-    pub fn move_character(
+    pub fn move_character<T: Copy + GamePacket>(
         pos_update: UpdatePlayerPosition,
+        full_update_packet: T,
         should_teleport: bool,
         game_server: &GameServer,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
@@ -565,7 +566,7 @@ impl ZoneInstance {
                                     )?;
                                     broadcasts.push(Broadcast::Multi(other_players_nearby, vec![GamePacket::serialize(&TunneledPacket {
                                         unknown1: true,
-                                        inner: pos_update
+                                        inner: full_update_packet
                                     })?]));
                                 }
                                 Ok::<(bool, bool, Vec<Broadcast>, Vec<u64>), ProcessPacketError>((true, same_chunk, broadcasts, filtered_npcs_to_interact,))
@@ -657,7 +658,7 @@ impl ZoneInstance {
                                 other_players_nearby,
                                 vec![GamePacket::serialize(&TunneledPacket {
                                     unknown1: true,
-                                    inner: pos_update,
+                                    inner: full_update_packet,
                                 })?],
                             ));
                         }

@@ -44,7 +44,7 @@ use packets::player_update::{Customization, InitCustomizations, QueueAnimation, 
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
 use packets::store::StoreItemList;
 use packets::tunnel::{TunneledPacket, TunneledWorldPacket};
-use packets::update_position::UpdatePlayerPosition;
+use packets::update_position::{PlayerJump, UpdatePlayerPosition};
 use packets::zone::ZoneTeleportRequest;
 use packets::{GamePacket, OpCode};
 use rand::Rng;
@@ -531,7 +531,20 @@ impl GameServer {
                         DeserializePacket::deserialize(&mut cursor)?;
                     // Don't allow players to update another player's position
                     pos_update.guid = player_guid(sender);
-                    broadcasts.append(&mut ZoneInstance::move_character(pos_update, false, self)?);
+                    broadcasts.append(&mut ZoneInstance::move_character(
+                        pos_update, pos_update, false, self,
+                    )?);
+                }
+                OpCode::PlayerJump => {
+                    let mut player_jump: PlayerJump = DeserializePacket::deserialize(&mut cursor)?;
+                    // Don't allow players to update another player's position
+                    player_jump.pos_update.guid = player_guid(sender);
+                    broadcasts.append(&mut ZoneInstance::move_character(
+                        player_jump.pos_update,
+                        player_jump,
+                        false,
+                        self,
+                    )?);
                 }
                 OpCode::UpdatePlayerCamera => {
                     // Ignore this unused packet to reduce log spam for now
