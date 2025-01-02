@@ -345,7 +345,7 @@ impl TickableStep {
                 rot_x: self.new_rot_x,
                 rot_y: self.new_rot_y,
                 rot_z: self.new_rot_z,
-                stop_at_destination: true,
+                character_state: 1,
                 unknown: 0,
             },
         })?);
