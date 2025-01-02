@@ -531,7 +531,7 @@ impl GameServer {
                         DeserializePacket::deserialize(&mut cursor)?;
                     // Don't allow players to update another player's position
                     pos_update.guid = player_guid(sender);
-                    broadcasts.append(&mut ZoneInstance::move_character(pos_update, self)?);
+                    broadcasts.append(&mut ZoneInstance::move_character(pos_update, false, self)?);
                 }
                 OpCode::UpdatePlayerCamera => {
                     // Ignore this unused packet to reduce log spam for now

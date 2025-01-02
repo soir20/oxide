@@ -437,22 +437,14 @@ impl ZoneInstance {
         auto_interact_npcs: Vec<u64>,
         characters_read: BTreeMap<u64, CharacterReadGuard<'_>>,
         mut characters_write: BTreeMap<u64, CharacterWriteGuard<'_>>,
-        pos_update: UpdatePlayerPosition,
+        moved_character_guid: u64,
+        new_pos: Pos,
+        new_rot: Pos,
     ) -> Result<Vec<u64>, ProcessPacketError> {
-        if let Some(character_write_handle) = characters_write.get_mut(&pos_update.guid) {
+        if let Some(character_write_handle) = characters_write.get_mut(&moved_character_guid) {
             let previous_pos = character_write_handle.stats.pos;
-            character_write_handle.stats.pos = Pos {
-                x: pos_update.pos_x,
-                y: pos_update.pos_y,
-                z: pos_update.pos_z,
-                w: character_write_handle.stats.pos.z,
-            };
-            character_write_handle.stats.rot = Pos {
-                x: pos_update.rot_x,
-                y: pos_update.rot_y,
-                z: pos_update.rot_z,
-                w: character_write_handle.stats.rot.z,
-            };
+            character_write_handle.stats.pos = new_pos;
+            character_write_handle.stats.rot = new_rot;
 
             let mut characters_to_interact = Vec::new();
             for npc_guid in auto_interact_npcs {
@@ -491,7 +483,7 @@ impl ZoneInstance {
                 ProcessPacketErrorType::ConstraintViolated,
                 format!(
                     "Received position update from unknown character {}",
-                    pos_update.guid
+                    moved_character_guid
                 ),
             ))
         }
@@ -499,10 +491,23 @@ impl ZoneInstance {
 
     pub fn move_character(
         pos_update: UpdatePlayerPosition,
+        should_teleport: bool,
         game_server: &GameServer,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let moved_character_guid = pos_update.guid;
-        let pos_update_clone = pos_update.clone();
+        let new_pos = Pos {
+            x: pos_update.pos_x,
+            y: pos_update.pos_y,
+            z: pos_update.pos_z,
+            w: 1.0,
+        };
+        let new_rot = Pos {
+            x: pos_update.rot_x,
+            y: pos_update.rot_y,
+            z: pos_update.rot_z,
+            w: 0.0,
+        };
+
         let (characters_in_radius_or_all, same_chunk) = game_server
             .lock_enforcer()
             .read_characters(|characters_table_read_handle| {
@@ -517,7 +522,7 @@ impl ZoneInstance {
                                     old_chunk,
                                 ))
                                 .collect(),
-                            old_chunk == Character::chunk(pos_update.pos_x, pos_update.pos_z),
+                            old_chunk == Character::chunk(new_pos.x, new_pos.z),
                         )
                     })
                     .unwrap_or((Vec::new(), true));
@@ -531,7 +536,9 @@ impl ZoneInstance {
                                 auto_interact_npcs,
                                 characters_read,
                                 characters_write,
-                                pos_update,
+                                moved_character_guid,
+                                new_pos,
+                                new_rot,
                             )
                             .map(|characters_to_interact| (characters_to_interact, same_chunk))
                         } else {
@@ -559,8 +566,7 @@ impl ZoneInstance {
                         > = BTreeMap::new();
                         characters_write.insert(moved_character_guid, character.write());
 
-                        let new_chunk =
-                            Character::chunk(pos_update_clone.pos_x, pos_update_clone.pos_z);
+                        let new_chunk = Character::chunk(new_pos.x, new_pos.z);
 
                         let (character_diffs, mut characters_read) = diff_character_handles!(
                             instance_guid,
@@ -586,7 +592,9 @@ impl ZoneInstance {
                             characters_in_radius_or_all,
                             characters_read,
                             characters_write,
-                            pos_update_clone,
+                            moved_character_guid,
+                            new_pos,
+                            new_rot,
                         )?;
                         characters_table_write_handle.insert_lock(
                             moved_character_guid,
@@ -613,6 +621,23 @@ impl ZoneInstance {
                 target: character_guid,
             };
             broadcasts.append(&mut interact_with_character(interact_request, game_server)?);
+        }
+
+        if should_teleport {
+            if let Ok(moved_player_guid) = shorten_player_guid(moved_character_guid) {
+                broadcasts.push(Broadcast::Single(
+                    moved_player_guid,
+                    vec![GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: Position {
+                            player_pos: new_pos,
+                            rot: new_rot,
+                            is_teleport: true,
+                            unknown2: true,
+                        },
+                    })?],
+                ));
+            }
         }
 
         Ok(broadcasts)
@@ -1008,7 +1033,7 @@ pub fn teleport_within_zone(
             characters_table_write_handle,
             player_guid(sender)
         );
-        let diff_packets = ZoneInstance::diff_character_broadcasts(
+        let diff_broadcasts = ZoneInstance::diff_character_broadcasts(
             player_guid(sender),
             character_diffs,
             &diff_character_handles,
@@ -1021,7 +1046,7 @@ pub fn teleport_within_zone(
         drop(character_write_handle);
 
         characters_table_write_handle.insert_lock(guid, index, character);
-        diff_packets
+        diff_broadcasts
     } else {
         Err(ProcessPacketError::new(
             ProcessPacketErrorType::ConstraintViolated,
