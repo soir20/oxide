@@ -23,7 +23,7 @@ use crate::{
             update_position::UpdatePlayerPosition,
             GamePacket, Pos,
         },
-        Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
+        Broadcast, GameServer, ProcessPacketError,
     },
     info,
 };
@@ -490,13 +490,7 @@ impl ZoneInstance {
 
             Ok(characters_to_interact)
         } else {
-            Err(ProcessPacketError::new(
-                ProcessPacketErrorType::ConstraintViolated,
-                format!(
-                    "Received position update from unknown character {}",
-                    moved_character_guid
-                ),
-            ))
+            Ok(Vec::new())
         }
     }
 
@@ -518,49 +512,79 @@ impl ZoneInstance {
             z: pos_update.rot_z,
             w: 0.0,
         };
+        let new_chunk = Character::chunk(new_pos.x, new_pos.z);
 
-        let (characters_in_radius_or_all, same_chunk) = game_server
+        let (character_exists, same_chunk, mut broadcasts, npcs_to_interact_if_same_chunk) = game_server
             .lock_enforcer()
             .read_characters(|characters_table_read_handle| {
-                let (auto_interact_npcs, same_chunk) = characters_table_read_handle
-                    .index(moved_character_guid)
-                    .map(|(_, instance_guid, old_chunk)| {
-                        (
-                            characters_table_read_handle
-                                .keys_by_index((
-                                    CharacterCategory::NpcAutoInteractEnabled,
-                                    instance_guid,
-                                    old_chunk,
-                                ))
-                                .collect(),
-                            old_chunk == Character::chunk(new_pos.x, new_pos.z),
-                        )
-                    })
-                    .unwrap_or((Vec::new(), true));
+                let (instance_guid_if_exists, same_chunk, auto_interact_npcs, write_guids) = if let Some((_, instance_guid, old_chunk)) =
+                    characters_table_read_handle.index(moved_character_guid)
+                {
+                    let same_chunk = old_chunk == new_chunk;
+                    if same_chunk {
+                        let auto_interactable_npcs: Vec<u64> = characters_table_read_handle
+                            .keys_by_index((
+                                CharacterCategory::NpcAutoInteractEnabled,
+                                instance_guid,
+                                new_chunk,
+                            ))
+                            .collect();
+
+                        (Some(instance_guid), true, auto_interactable_npcs, vec![moved_character_guid])
+                    } else {
+                        (Some(instance_guid), false, Vec::new(), Vec::new())
+                    }
+                } else {
+                    (None, false, Vec::new(), Vec::new())
+                };
 
                 CharacterLockRequest {
                     read_guids: auto_interact_npcs.clone(),
-                    write_guids: vec![moved_character_guid],
-                    character_consumer: move |_, characters_read, characters_write, _| {
-                        if same_chunk {
-                            ZoneInstance::move_character_with_locks(
-                                auto_interact_npcs,
-                                characters_read,
-                                characters_write,
-                                moved_character_guid,
-                                new_pos,
-                                new_rot,
-                            )
-                            .map(|characters_to_interact| (characters_to_interact, same_chunk))
+                    write_guids,
+                    character_consumer: move |characters_table_read_handle, characters_read, characters_write, _| {
+                        if let Some(instance_guid) = instance_guid_if_exists {
+                            if same_chunk {
+                                let mut broadcasts = Vec::new();
+                                let filtered_npcs_to_interact = ZoneInstance::move_character_with_locks(
+                                    auto_interact_npcs,
+                                    characters_read,
+                                    characters_write,
+                                    moved_character_guid,
+                                    new_pos,
+                                    new_rot,
+                                )?;
+
+                                // We don't return this value when the chunks are different, as players could change between when
+                                // we release the read lock and acquire the write lock
+                                if let Ok(moved_player_guid) = shorten_player_guid(moved_character_guid) {
+                                    let other_players_nearby = ZoneInstance::other_players_nearby(
+                                        Some(moved_player_guid),
+                                        new_chunk,
+                                        instance_guid,
+                                        characters_table_read_handle,
+                                    )?;
+                                    broadcasts.push(Broadcast::Multi(other_players_nearby, vec![GamePacket::serialize(&TunneledPacket {
+                                        unknown1: true,
+                                        inner: pos_update
+                                    })?]));
+                                }
+                                Ok::<(bool, bool, Vec<Broadcast>, Vec<u64>), ProcessPacketError>((true, same_chunk, broadcasts, filtered_npcs_to_interact,))
+                            } else {
+                                Ok((true, same_chunk, Vec::new(), Vec::new()))
+                            }
                         } else {
-                            Ok((auto_interact_npcs, same_chunk))
+                            Ok((false, same_chunk, Vec::new(), Vec::new()))
                         }
                     },
                 }
             })?;
 
-        let (characters_to_interact, mut broadcasts) = if same_chunk {
-            (characters_in_radius_or_all, Vec::new())
+        if !character_exists {
+            return Ok(broadcasts);
+        }
+
+        let npcs_to_interact_with = if same_chunk {
+            npcs_to_interact_if_same_chunk
         } else {
             game_server
                 .lock_enforcer()
@@ -568,6 +592,7 @@ impl ZoneInstance {
                     if let Some((character, (category, instance_guid, old_chunk))) =
                         characters_table_write_handle.remove(moved_character_guid)
                     {
+                        // Build characters read and write maps
                         let mut characters_write: BTreeMap<
                             u64,
                             parking_lot::lock_api::RwLockWriteGuard<
@@ -577,8 +602,6 @@ impl ZoneInstance {
                         > = BTreeMap::new();
                         characters_write.insert(moved_character_guid, character.write());
 
-                        let new_chunk = Character::chunk(new_pos.x, new_pos.z);
-
                         let (character_diffs, mut characters_read) = diff_character_handles!(
                             instance_guid,
                             old_chunk,
@@ -586,23 +609,31 @@ impl ZoneInstance {
                             characters_table_write_handle,
                             moved_character_guid
                         );
-                        for npc_guid in characters_in_radius_or_all.iter() {
-                            if let Some(npc) = characters_table_write_handle.get(*npc_guid) {
-                                characters_read.insert(*npc_guid, npc.read());
+
+                        let auto_interactable_npcs: Vec<u64> = characters_table_write_handle
+                            .keys_by_index((
+                                CharacterCategory::NpcAutoInteractEnabled,
+                                instance_guid,
+                                new_chunk,
+                            ))
+                            .collect();
+                        for npc_guid in auto_interactable_npcs {
+                            if let Some(npc) = characters_table_write_handle.get(npc_guid) {
+                                characters_read.insert(npc_guid, npc.read());
                             }
                         }
 
-                        let broadcasts = ZoneInstance::diff_character_broadcasts(
+                        broadcasts.append(&mut ZoneInstance::diff_character_broadcasts(
                             moved_character_guid,
                             character_diffs,
                             &characters_read,
                             game_server.mounts(),
                             game_server.items(),
                             game_server.customizations(),
-                        )?;
+                        )?);
 
                         let characters_to_interact = ZoneInstance::move_character_with_locks(
-                            characters_in_radius_or_all,
+                            npcs_to_interact_if_same_chunk,
                             characters_read,
                             characters_write,
                             moved_character_guid,
@@ -615,20 +646,30 @@ impl ZoneInstance {
                             character,
                         );
 
-                        Ok((characters_to_interact, broadcasts))
+                        if let Ok(moved_player_guid) = shorten_player_guid(moved_character_guid) {
+                            let other_players_nearby = ZoneInstance::other_players_nearby(
+                                Some(moved_player_guid),
+                                new_chunk,
+                                instance_guid,
+                                characters_table_write_handle,
+                            )?;
+                            broadcasts.push(Broadcast::Multi(
+                                other_players_nearby,
+                                vec![GamePacket::serialize(&TunneledPacket {
+                                    unknown1: true,
+                                    inner: pos_update,
+                                })?],
+                            ));
+                        }
+
+                        Ok::<Vec<u64>, ProcessPacketError>(characters_to_interact)
                     } else {
-                        Err(ProcessPacketError::new(
-                            ProcessPacketErrorType::ConstraintViolated,
-                            format!(
-                                "Tried to move player {} who does not exist",
-                                moved_character_guid
-                            ),
-                        ))
+                        Ok(Vec::new())
                     }
                 })?
         };
 
-        for character_guid in characters_to_interact {
+        for character_guid in npcs_to_interact_with {
             let interact_request = SelectPlayer {
                 requester: moved_character_guid,
                 target: character_guid,

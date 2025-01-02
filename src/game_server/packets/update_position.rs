@@ -2,7 +2,7 @@ use packet_serialize::{DeserializePacket, SerializePacket};
 
 use super::{GamePacket, OpCode};
 
-#[derive(Clone, SerializePacket, DeserializePacket)]
+#[derive(Copy, Clone, SerializePacket, DeserializePacket)]
 pub struct UpdatePlayerPosition {
     pub guid: u64,
     pub pos_x: f32,
