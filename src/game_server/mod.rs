@@ -415,7 +415,7 @@ impl GameServer {
                                                 };
                                                 sender_only_character_packets.push(GamePacket::serialize(&power)?);
 
-                                                let mut character_broadcasts = vec![Broadcast::Single(sender, sender_only_character_packets)];
+                                                let mut character_broadcasts = Vec::new();
 
                                                 if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) {
                                                     character_write_handle.stats.speed = zone.speed;
@@ -431,7 +431,7 @@ impl GameServer {
                                                     global_packets.push(GamePacket::serialize(&wield_type)?);
 
                                                     if let CharacterType::Player(player) = &character_write_handle.stats.character_type {
-                                                        global_packets.push(GamePacket::serialize(&TunneledPacket {
+                                                        sender_only_character_packets.push(GamePacket::serialize(&TunneledPacket {
                                                             unknown1: true,
                                                             inner: InitCustomizations {
                                                                 customizations: customizations_from_guids(player.customizations.values().cloned(), self.customizations()),
@@ -449,6 +449,7 @@ impl GameServer {
                                                     return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} sent a ready packet", sender)));
                                                 }
 
+                                                character_broadcasts.push(Broadcast::Single(sender, sender_only_character_packets));
                                                 character_broadcasts.append(&mut ZoneInstance::diff_character_broadcasts(player_guid(sender), character_diffs, &characters_read, self.mounts(), self.items(), self.customizations())?);
 
                                                 Ok(character_broadcasts)
