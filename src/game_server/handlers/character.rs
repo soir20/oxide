@@ -857,13 +857,7 @@ impl Door {
                             },
                         })
                     } else {
-                        teleport_within_zone(
-                            requester,
-                            destination_pos,
-                            destination_rot,
-                            characters_table_write_handle,
-                            &game_server.mounts,
-                        )
+                        teleport_within_zone(requester, destination_pos, destination_rot)
                     }
                 },
             )

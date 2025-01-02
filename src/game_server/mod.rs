@@ -579,24 +579,30 @@ impl GameServer {
                     )?);
                 }
                 OpCode::TeleportToSafety => {
-                    let mut packets = self.lock_enforcer().write_characters(|characters_table_write_handle, zones_lock_enforcer| {
-                        if let Some((_, instance_guid, _)) = characters_table_write_handle.index(player_guid(sender)) {
-                            zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
-                                read_guids: vec![instance_guid],
-                                write_guids: Vec::new(),
-                                zone_consumer: |_, zones_read, _| {
-                                    if let Some(zone) = zones_read.get(&instance_guid) {
-                                        let spawn_pos = zone.default_spawn_pos;
-                                        let spawn_rot = zone.default_spawn_rot;
+                    let mut packets = self.lock_enforcer().read_characters(|_| {
+                        CharacterLockRequest {
+                            read_guids: Vec::new(),
+                            write_guids: Vec::new(),
+                            character_consumer: |characters_table_read_handle, _, _, zones_lock_enforcer| {
+                                if let Some((_, instance_guid, _)) = characters_table_read_handle.index(player_guid(sender)) {
+                                    zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
+                                        read_guids: vec![instance_guid],
+                                        write_guids: Vec::new(),
+                                        zone_consumer: |_, zones_read, _| {
+                                            if let Some(zone) = zones_read.get(&instance_guid) {
+                                                let spawn_pos = zone.default_spawn_pos;
+                                                let spawn_rot = zone.default_spawn_rot;
 
-                                        teleport_within_zone(sender, spawn_pos, spawn_rot, characters_table_write_handle, &self.mounts)
-                                    } else {
-                                        Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} outside zone tried to teleport to safety", sender)))
-                                    }
-                                },
-                            })
-                        } else {
-                            Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} tried to teleport to safety", sender)))
+                                                teleport_within_zone(sender, spawn_pos, spawn_rot)
+                                            } else {
+                                                Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} outside zone tried to teleport to safety", sender)))
+                                            }
+                                        },
+                                    })
+                                } else {
+                                    Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} tried to teleport to safety", sender)))
+                                }
+                            },
                         }
                     })?;
                     broadcasts.append(&mut packets);

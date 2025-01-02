@@ -1015,49 +1015,8 @@ pub fn teleport_within_zone(
     sender: u32,
     destination_pos: Pos,
     destination_rot: Pos,
-    characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
-    mount_configs: &BTreeMap<u32, MountConfig>,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-    let mut broadcasts = if let Some((character, (_, instance_guid, old_chunk))) =
-        characters_table_write_handle.remove(player_guid(sender))
-    {
-        let mut character_write_handle = character.write();
-        character_write_handle.stats.pos = destination_pos;
-        character_write_handle.stats.rot = destination_rot;
-        let (_, _, new_chunk) = character_write_handle.index();
-
-        let (character_diffs, diff_character_handles) = diff_character_handles!(
-            instance_guid,
-            old_chunk,
-            new_chunk,
-            characters_table_write_handle,
-            player_guid(sender)
-        );
-        let diff_broadcasts = ZoneInstance::diff_character_broadcasts(
-            player_guid(sender),
-            character_diffs,
-            &diff_character_handles,
-            mount_configs,
-        );
-        drop(diff_character_handles);
-
-        let guid = character_write_handle.guid();
-        let index = character_write_handle.index();
-        drop(character_write_handle);
-
-        characters_table_write_handle.insert_lock(guid, index, character);
-        diff_broadcasts
-    } else {
-        Err(ProcessPacketError::new(
-            ProcessPacketErrorType::ConstraintViolated,
-            format!(
-                "Player {} not in any zone tried to teleport within the zone",
-                sender
-            ),
-        ))
-    }?;
-
-    broadcasts.push(Broadcast::Single(
+    Ok(vec![Broadcast::Single(
         sender,
         vec![GamePacket::serialize(&TunneledPacket {
             unknown1: true,
@@ -1068,7 +1027,5 @@ pub fn teleport_within_zone(
                 unknown2: true,
             },
         })?],
-    ));
-
-    Ok(broadcasts)
+    )])
 }
