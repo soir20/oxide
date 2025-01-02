@@ -15,8 +15,9 @@ use crate::{
             client_update::Position,
             command::SelectPlayer,
             housing::BuildArea,
-            item::WieldType,
+            item::{ItemDefinition, WieldType},
             login::{ClientBeginZoning, ZoneDetails},
+            player_update::Customization,
             tunnel::TunneledPacket,
             ui::ExecuteScriptWithParams,
             update_position::UpdatePlayerPosition,
@@ -400,6 +401,8 @@ impl ZoneInstance {
         character_diffs: CharacterDiffResult,
         characters_read: &BTreeMap<u64, CharacterReadGuard<'_>>,
         mount_configs: &BTreeMap<u32, MountConfig>,
+        item_definitions: &BTreeMap<u32, ItemDefinition>,
+        customizations: &BTreeMap<u32, Customization>,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let mut broadcasts = Vec::new();
 
@@ -409,7 +412,11 @@ impl ZoneInstance {
             for (guid, add) in &character_diffs.character_diffs_for_moved_character {
                 if let Some(character) = characters_read.get(guid) {
                     if *add {
-                        diff_packets.append(&mut character.add_packets(mount_configs)?);
+                        diff_packets.append(&mut character.add_packets(
+                            mount_configs,
+                            item_definitions,
+                            customizations,
+                        )?);
                     } else {
                         diff_packets.append(&mut character.remove_packets()?);
                     }
@@ -422,7 +429,11 @@ impl ZoneInstance {
         if let Some(moved_character_read_handle) = characters_read.get(&moved_character_guid) {
             broadcasts.push(Broadcast::Multi(
                 character_diffs.new_players_close_to_moved_character,
-                moved_character_read_handle.add_packets(mount_configs)?,
+                moved_character_read_handle.add_packets(
+                    mount_configs,
+                    item_definitions,
+                    customizations,
+                )?,
             ));
             broadcasts.push(Broadcast::Multi(
                 character_diffs.players_too_far_from_moved_character,
@@ -585,7 +596,9 @@ impl ZoneInstance {
                             moved_character_guid,
                             character_diffs,
                             &characters_read,
-                            &game_server.mounts,
+                            game_server.mounts(),
+                            game_server.items(),
+                            game_server.customizations(),
                         )?;
 
                         let characters_to_interact = ZoneInstance::move_character_with_locks(

@@ -13,18 +13,18 @@ use crate::{
         packets::{
             chat::{ActionBarTextColor, SendStringId},
             command::PlaySoundIdOnTarget,
-            item::{BaseAttachmentGroup, EquipmentSlot, WieldType},
+            item::{Attachment, BaseAttachmentGroup, EquipmentSlot, ItemDefinition, WieldType},
             minigame::ScoreEntry,
             player_data::EquippedItem,
             player_update::{
-                AddNotifications, AddNpc, CustomizationSlot, Hostility, Icon, NotificationData,
-                NpcRelevance, QueueAnimation, RemoveStandard, SetAnimation, SingleNotification,
-                SingleNpcRelevance, UpdateSpeed,
+                AddNotifications, AddNpc, AddPc, Customization, CustomizationSlot, Hostility, Icon,
+                NameplateImage, NotificationData, NpcRelevance, QueueAnimation, RemoveStandard,
+                SetAnimation, SingleNotification, SingleNpcRelevance, UpdateSpeed,
             },
             tunnel::TunneledPacket,
             ui::ExecuteScriptWithParams,
             update_position::UpdatePlayerPosition,
-            GamePacket, GuidTarget, Pos, Rgba, Target,
+            GamePacket, GuidTarget, Name, Pos, Rgba, Target,
         },
         Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
@@ -997,6 +997,7 @@ pub struct PreviousLocation {
 pub struct Player {
     pub first_load: bool,
     pub ready: bool,
+    pub name: Name,
     pub member: bool,
     pub credits: u32,
     pub battle_classes: BTreeMap<u32, BattleClass>,
@@ -1011,34 +1012,143 @@ pub struct Player {
 impl Player {
     pub fn add_packets(
         &self,
-        guid: u64,
-        mount_id: Option<u32>,
-        pos: Pos,
-        rot: Pos,
+        character: &Character,
         mount_configs: &BTreeMap<u32, MountConfig>,
+        item_definitions: &BTreeMap<u32, ItemDefinition>,
+        customizations: &BTreeMap<u32, Customization>,
     ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
-        let mut packets = Vec::new();
-        if let Some(mount_id) = mount_id {
-            let short_rider_guid = shorten_player_guid(guid)?;
-            let mount_guid = mount_guid(short_rider_guid, mount_id);
+        let mut mount_packets = Vec::new();
+        let mut player_mount_guid = 0;
+        if let Some(mount_id) = character.stats.mount_id {
+            let short_rider_guid = shorten_player_guid(character.guid())?;
+            player_mount_guid = mount_guid(short_rider_guid, mount_id);
             if let Some(mount_config) = mount_configs.get(&mount_id) {
-                packets.append(&mut spawn_mount_npc(
-                    mount_guid,
-                    guid,
+                mount_packets.append(&mut spawn_mount_npc(
+                    player_mount_guid,
+                    character.guid(),
                     mount_config,
-                    pos,
-                    rot,
+                    character.stats.pos,
+                    character.stats.rot,
                 )?);
             } else {
                 return Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
                     format!(
                         "Character {} is mounted on unknown mount ID {}",
-                        guid, mount_id
+                        character.guid(),
+                        mount_id
                     ),
                 ));
             }
         }
+
+        let attachments: Vec<Attachment> = self
+            .battle_classes
+            .get(&self.active_battle_class)
+            .map(|battle_class| {
+                battle_class
+                    .items
+                    .iter()
+                    .filter_map(|(slot, item)| {
+                        item_definitions
+                            .get(&item.guid)
+                            .map(|item_definition| Attachment {
+                                model_name: item_definition.model_name.clone(),
+                                texture_alias: item_definition.texture_alias.clone(),
+                                tint_alias: item_definition.tint_alias.clone(),
+                                tint: item_definition.tint,
+                                composite_effect: item_definition.composite_effect,
+                                slot: *slot,
+                            })
+                    })
+                    .collect()
+            })
+            .unwrap_or_default();
+
+        let mut packets = vec![GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: AddPc {
+                guid: character.guid(),
+                name: self.name.clone(),
+                body_model: self
+                    .customizations
+                    .get(&CustomizationSlot::BodyModel)
+                    .and_then(|customization_guid| customizations.get(customization_guid))
+                    .map(|customization| customization.customization_param2)
+                    .unwrap_or_default(),
+                chat_text_color: Character::DEFAULT_CHAT_TEXT_COLOR,
+                chat_bubble_color: Character::DEFAULT_CHAT_BUBBLE_COLOR,
+                chat_scale: 1,
+                pos: character.stats.pos,
+                rot: character.stats.rot,
+                attachments,
+                head_model: self
+                    .customizations
+                    .get(&CustomizationSlot::HeadModel)
+                    .and_then(|customization_guid| customizations.get(customization_guid))
+                    .map(|customization| customization.customization_param1.clone())
+                    .unwrap_or_default(),
+                hair_model: self
+                    .customizations
+                    .get(&CustomizationSlot::HairStyle)
+                    .and_then(|customization_guid| customizations.get(customization_guid))
+                    .map(|customization| customization.customization_param1.clone())
+                    .unwrap_or_default(),
+                hair_color: self
+                    .customizations
+                    .get(&CustomizationSlot::HairColor)
+                    .and_then(|customization_guid| customizations.get(customization_guid))
+                    .map(|customization| customization.customization_param2)
+                    .unwrap_or_default(),
+                eye_color: self
+                    .customizations
+                    .get(&CustomizationSlot::EyeColor)
+                    .and_then(|customization_guid| customizations.get(customization_guid))
+                    .map(|customization| customization.customization_param2)
+                    .unwrap_or_default(),
+                unknown7: 0,
+                skin_tone: self
+                    .customizations
+                    .get(&CustomizationSlot::SkinTone)
+                    .and_then(|customization_guid| customizations.get(customization_guid))
+                    .map(|customization| customization.customization_param1.clone())
+                    .unwrap_or_default(),
+                face_paint: self
+                    .customizations
+                    .get(&CustomizationSlot::FacePattern)
+                    .and_then(|customization_guid| customizations.get(customization_guid))
+                    .map(|customization| customization.customization_param1.clone())
+                    .unwrap_or_default(),
+                facial_hair: self
+                    .customizations
+                    .get(&CustomizationSlot::FacialHair)
+                    .and_then(|customization_guid| customizations.get(customization_guid))
+                    .map(|customization| customization.customization_param1.clone())
+                    .unwrap_or_default(),
+                speed: character.stats.speed,
+                underage: false,
+                member: self.member,
+                moderator: false,
+                temporary_appearance: 0,
+                guilds: Vec::new(),
+                battle_class: self.active_battle_class,
+                title: 0,
+                unknown16: 0,
+                unknown17: 0,
+                effects: Vec::new(),
+                mount_guid: player_mount_guid,
+                unknown19: 0,
+                unknown20: 0,
+                wield_type: character.wield_type(),
+                unknown22: 0.0,
+                unknown23: 0,
+                nameplate_image_id: NameplateImage::from_battle_class_guid(
+                    self.active_battle_class,
+                ),
+            },
+        })?];
+
+        packets.append(&mut mount_packets);
 
         Ok(packets)
     }
@@ -1340,18 +1450,16 @@ impl Character {
     pub fn add_packets(
         &self,
         mount_configs: &BTreeMap<u32, MountConfig>,
+        item_definitions: &BTreeMap<u32, ItemDefinition>,
+        customizations: &BTreeMap<u32, Customization>,
     ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
         let packets = match &self.stats.character_type {
             CharacterType::AmbientNpc(ambient_npc) => ambient_npc.add_packets(self)?,
             CharacterType::Door(door) => door.add_packets(self)?,
             CharacterType::Transport(transport) => transport.add_packets(self)?,
-            CharacterType::Player(player) => player.add_packets(
-                self.guid(),
-                self.stats.mount_id,
-                self.stats.pos,
-                self.stats.rot,
-                mount_configs,
-            )?,
+            CharacterType::Player(player) => {
+                player.add_packets(self, mount_configs, item_definitions, customizations)?
+            }
             CharacterType::Fixture(house_guid, fixture) => fixture_packets(
                 *house_guid,
                 self.guid(),

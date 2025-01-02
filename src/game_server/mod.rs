@@ -447,7 +447,7 @@ impl GameServer {
 
                                                 character_broadcasts.push(Broadcast::Single(sender, global_packets));
 
-                                                character_broadcasts.append(&mut ZoneInstance::diff_character_broadcasts(player_guid(sender), character_diffs, &characters_read, &self.mounts)?);
+                                                character_broadcasts.append(&mut ZoneInstance::diff_character_broadcasts(player_guid(sender), character_diffs, &characters_read, self.mounts(), self.items(), self.customizations())?);
 
                                                 Ok(character_broadcasts)
                                             } else {
