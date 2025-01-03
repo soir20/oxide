@@ -92,6 +92,7 @@ pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, P
                 Player {
                     first_load: true,
                     ready: false,
+                    name: player.inner.data.name,
                     member: player.inner.data.membership_unknown1,
                     credits: player.inner.data.credits,
                     battle_classes: player

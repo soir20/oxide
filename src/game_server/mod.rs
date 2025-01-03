@@ -44,7 +44,7 @@ use packets::player_update::{Customization, InitCustomizations, QueueAnimation, 
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
 use packets::store::StoreItemList;
 use packets::tunnel::{TunneledPacket, TunneledWorldPacket};
-use packets::update_position::UpdatePlayerPosition;
+use packets::update_position::{PlayerJump, UpdatePlayerPosition};
 use packets::zone::ZoneTeleportRequest;
 use packets::{GamePacket, OpCode};
 use rand::Rng;
@@ -337,27 +337,27 @@ impl GameServer {
 
                     let mut character_broadcasts = self.lock_enforcer().read_characters(|characters_table_read_handle| {
                         let possible_index = characters_table_read_handle.index(player_guid(sender));
-                        let character_guids = possible_index.map(|(_, instance_guid, chunk)| ZoneInstance::diff_character_guids(
+                        let character_diffs = possible_index.map(|(_, instance_guid, chunk)| ZoneInstance::diff_character_guids(
                             instance_guid,
                             Character::MIN_CHUNK,
                             chunk,
                             characters_table_read_handle,
-                            sender
+                            player_guid(sender)
                         ))
                             .unwrap_or_default();
 
-                        let read_character_guids: Vec<u64> = character_guids.keys().copied().collect();
+                        let read_character_guids: Vec<u64> = character_diffs.character_diffs_for_moved_character.keys().copied().collect();
                         CharacterLockRequest {
                             read_guids: read_character_guids,
                             write_guids: vec![player_guid(sender)],
-                            character_consumer: move |_, characters_read, mut characters_writes, zones_lock_enforcer| {
-                                if let Some((_, instance_guid, _)) = possible_index {
+                            character_consumer: move |characters_table_read_handle, characters_read, mut characters_write, zones_lock_enforcer| {
+                                if let Some((_, instance_guid, chunk)) = possible_index {
                                     zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
                                         read_guids: vec![instance_guid],
                                         write_guids: Vec::new(),
                                         zone_consumer: |_, zones_read, _| {
                                             if let Some(zone) = zones_read.get(&instance_guid) {
-                                                let mut global_packets = Vec::new();
+                                                let mut sender_only_character_packets = Vec::new();
                                                 let stats = TunneledPacket {
                                                     unknown1: true,
                                                     inner: Stats {
@@ -395,7 +395,7 @@ impl GameServer {
                                                         ],
                                                     },
                                                 };
-                                                global_packets.push(GamePacket::serialize(&stats)?);
+                                                sender_only_character_packets.push(GamePacket::serialize(&stats)?);
 
                                                 let health = TunneledPacket {
                                                     unknown1: true,
@@ -404,7 +404,7 @@ impl GameServer {
                                                         max: 25000,
                                                     },
                                                 };
-                                                global_packets.push(GamePacket::serialize(&health)?);
+                                                sender_only_character_packets.push(GamePacket::serialize(&health)?);
 
                                                 let power = TunneledPacket {
                                                     unknown1: true,
@@ -413,13 +413,14 @@ impl GameServer {
                                                         max: 300,
                                                     },
                                                 };
-                                                global_packets.push(GamePacket::serialize(&power)?);
+                                                sender_only_character_packets.push(GamePacket::serialize(&power)?);
 
-                                                // TODO: broadcast to all
                                                 let mut character_broadcasts = Vec::new();
 
-                                                if let Some(character_write_handle) = characters_writes.get_mut(&player_guid(sender)) {
+                                                if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) {
                                                     character_write_handle.stats.speed = zone.speed;
+
+                                                    let mut global_packets = character_write_handle.add_packets(self.mounts(), self.items(), self.customizations())?;
                                                     let wield_type = TunneledPacket {
                                                         unknown1: true,
                                                         inner: UpdateWieldType {
@@ -430,7 +431,7 @@ impl GameServer {
                                                     global_packets.push(GamePacket::serialize(&wield_type)?);
 
                                                     if let CharacterType::Player(player) = &character_write_handle.stats.character_type {
-                                                        global_packets.push(GamePacket::serialize(&TunneledPacket {
+                                                        sender_only_character_packets.push(GamePacket::serialize(&TunneledPacket {
                                                             unknown1: true,
                                                             inner: InitCustomizations {
                                                                 customizations: customizations_from_guids(player.customizations.values().cloned(), self.customizations()),
@@ -441,14 +442,15 @@ impl GameServer {
                                                             character_broadcasts.append(&mut update_saber_tints(sender, &battle_class.items, player.active_battle_class, self)?);
                                                         }
                                                     }
+
+                                                    let all_players_nearby = ZoneInstance::all_players_nearby(Some(sender), chunk, instance_guid, characters_table_read_handle)?;
+                                                    character_broadcasts.push(Broadcast::Multi(all_players_nearby, global_packets));
                                                 } else {
                                                     return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} sent a ready packet", sender)));
                                                 }
 
-                                                character_broadcasts.push(Broadcast::Single(sender, global_packets));
-
-                                                let sender_only_packets = ZoneInstance::diff_character_packets(&character_guids, &characters_read, &self.mounts)?;
-                                                character_broadcasts.push(Broadcast::Single(sender, sender_only_packets));
+                                                character_broadcasts.push(Broadcast::Single(sender, sender_only_character_packets));
+                                                character_broadcasts.append(&mut ZoneInstance::diff_character_broadcasts(player_guid(sender), character_diffs, &characters_read, self.mounts(), self.items(), self.customizations())?);
 
                                                 Ok(character_broadcasts)
                                             } else {
@@ -528,10 +530,24 @@ impl GameServer {
                     broadcasts.append(&mut process_command(self, &mut cursor)?);
                 }
                 OpCode::UpdatePlayerPosition => {
-                    let pos_update: UpdatePlayerPosition =
+                    let mut pos_update: UpdatePlayerPosition =
                         DeserializePacket::deserialize(&mut cursor)?;
-                    // TODO: broadcast pos update to all players
-                    broadcasts.append(&mut ZoneInstance::move_character(sender, pos_update, self)?);
+                    // Don't allow players to update another player's position
+                    pos_update.guid = player_guid(sender);
+                    broadcasts.append(&mut ZoneInstance::move_character(
+                        pos_update, pos_update, false, self,
+                    )?);
+                }
+                OpCode::PlayerJump => {
+                    let mut player_jump: PlayerJump = DeserializePacket::deserialize(&mut cursor)?;
+                    // Don't allow players to update another player's position
+                    player_jump.pos_update.guid = player_guid(sender);
+                    broadcasts.append(&mut ZoneInstance::move_character(
+                        player_jump.pos_update,
+                        player_jump,
+                        false,
+                        self,
+                    )?);
                 }
                 OpCode::UpdatePlayerCamera => {
                     // Ignore this unused packet to reduce log spam for now
@@ -579,24 +595,30 @@ impl GameServer {
                     )?);
                 }
                 OpCode::TeleportToSafety => {
-                    let mut packets = self.lock_enforcer().write_characters(|characters_table_write_handle, zones_lock_enforcer| {
-                        if let Some((_, instance_guid, _)) = characters_table_write_handle.index(player_guid(sender)) {
-                            zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
-                                read_guids: vec![instance_guid],
-                                write_guids: Vec::new(),
-                                zone_consumer: |_, zones_read, _| {
-                                    if let Some(zone) = zones_read.get(&instance_guid) {
-                                        let spawn_pos = zone.default_spawn_pos;
-                                        let spawn_rot = zone.default_spawn_rot;
+                    let mut packets = self.lock_enforcer().read_characters(|_| {
+                        CharacterLockRequest {
+                            read_guids: Vec::new(),
+                            write_guids: Vec::new(),
+                            character_consumer: |characters_table_read_handle, _, _, zones_lock_enforcer| {
+                                if let Some((_, instance_guid, _)) = characters_table_read_handle.index(player_guid(sender)) {
+                                    zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
+                                        read_guids: vec![instance_guid],
+                                        write_guids: Vec::new(),
+                                        zone_consumer: |_, zones_read, _| {
+                                            if let Some(zone) = zones_read.get(&instance_guid) {
+                                                let spawn_pos = zone.default_spawn_pos;
+                                                let spawn_rot = zone.default_spawn_rot;
 
-                                        teleport_within_zone(sender, spawn_pos, spawn_rot, characters_table_write_handle, &self.mounts)
-                                    } else {
-                                        Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} outside zone tried to teleport to safety", sender)))
-                                    }
-                                },
-                            })
-                        } else {
-                            Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} tried to teleport to safety", sender)))
+                                                teleport_within_zone(sender, spawn_pos, spawn_rot)
+                                            } else {
+                                                Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} outside zone tried to teleport to safety", sender)))
+                                            }
+                                        },
+                                    })
+                                } else {
+                                    Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} tried to teleport to safety", sender)))
+                                }
+                            },
                         }
                     })?;
                     broadcasts.append(&mut packets);
@@ -649,10 +671,13 @@ impl GameServer {
                     self.lock_enforcer().read_characters(|_| CharacterLockRequest {
                         read_guids: Vec::new(),
                         write_guids: vec![player_guid(sender)],
-                        character_consumer: |_, _, mut characters_write, _| {
+                        character_consumer: |characters_table_read_handle, _, mut characters_write, _| {
                             if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) {
                                 character_write_handle.brandish_or_holster();
-                                broadcasts.push(Broadcast::Single(sender, vec![
+
+                                let (_, instance_guid, chunk) = character_write_handle.index();
+                                let all_players_nearby = ZoneInstance::all_players_nearby(Some(sender), chunk, instance_guid, characters_table_read_handle)?;
+                                broadcasts.push(Broadcast::Multi(all_players_nearby, vec![
                                     GamePacket::serialize(&TunneledPacket {
                                         unknown1: true,
                                         inner: QueueAnimation {

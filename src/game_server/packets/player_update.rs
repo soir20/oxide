@@ -105,41 +105,41 @@ pub struct Unknown13Array {
 
 #[derive(SerializePacket)]
 pub struct AddPc {
-    guid: u64,
-    name: Name,
-    body_model: u32,
-    chat_foreground: Rgba,
-    chat_background: Rgba,
-    chat_scale: u32,
-    pos: Pos,
-    rot: Pos,
-    attachments: Vec<Attachment>,
-    head_model: String,
-    hair_model: String,
-    hair_color: u32,
-    eye_color: u32,
-    unknown7: u32,
-    skin_tone: String,
-    face_paint: String,
-    facial_hair: String,
-    speed: f32,
-    underage: bool,
-    membership: bool,
-    moderator: bool,
-    temporary_appearance: u32,
-    guilds: Vec<Unknown13Array>,
-    battle_class: u32,
-    title: u32,
-    unknown16: u32,
-    unknown17: u32,
-    effects: Vec<Effect>,
-    mount_guid: u64,
-    unknown19: u32,
-    unknown20: u32,
-    wield_type: WieldType,
-    unknown22: f32,
-    unknown23: u32,
-    nameplate_image_id: u32,
+    pub guid: u64,
+    pub name: Name,
+    pub body_model: u32,
+    pub chat_text_color: Rgba,
+    pub chat_bubble_color: Rgba,
+    pub chat_scale: u32,
+    pub pos: Pos,
+    pub rot: Pos,
+    pub attachments: Vec<Attachment>,
+    pub head_model: String,
+    pub hair_model: String,
+    pub hair_color: u32,
+    pub eye_color: u32,
+    pub unknown7: u32,
+    pub skin_tone: String,
+    pub face_paint: String,
+    pub facial_hair: String,
+    pub speed: f32,
+    pub underage: bool,
+    pub member: bool,
+    pub moderator: bool,
+    pub temporary_appearance: u32,
+    pub guilds: Vec<Unknown13Array>,
+    pub battle_class: u32,
+    pub title: u32,
+    pub unknown16: u32,
+    pub unknown17: u32,
+    pub effects: Vec<Effect>,
+    pub mount_guid: u64,
+    pub unknown19: u32,
+    pub unknown20: u32,
+    pub wield_type: WieldType,
+    pub unknown22: f32,
+    pub unknown23: u32,
+    pub nameplate_image_id: NameplateImage,
 }
 
 impl GamePacket for AddPc {
@@ -150,6 +150,7 @@ impl GamePacket for AddPc {
 
 #[derive(Copy, Clone, Debug)]
 pub enum NameplateImage {
+    None = 0,
     Darkside = 6162,
     Lightside = 6163,
     Trooper = 6164,
@@ -162,6 +163,18 @@ impl SerializePacket for NameplateImage {
     fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
         buffer.write_u32::<LittleEndian>(*self as u32)?;
         Ok(())
+    }
+}
+
+impl NameplateImage {
+    pub fn from_battle_class_guid(battle_class_guid: u32) -> Self {
+        match battle_class_guid {
+            1 => NameplateImage::Trooper,
+            2 => NameplateImage::Lightside,
+            3 => NameplateImage::Mercenary,
+            4 => NameplateImage::Darkside,
+            _ => NameplateImage::None,
+        }
     }
 }
 
