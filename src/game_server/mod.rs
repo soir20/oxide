@@ -37,7 +37,7 @@ use handlers::unique_guid::{
 };
 use handlers::zone::{load_zones, teleport_within_zone, ZoneInstance, ZoneTemplate};
 use packets::client_update::{Health, Power, PreloadCharactersDone, Stat, StatId, Stats};
-use packets::command::{EnterDialog, ExitDialog, DialogAdvancement};
+use packets::command::{DialogAdvancement, EnterDialog, ExitDialog};
 use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
 use packets::item::ItemDefinition;
 use packets::login::{LoginRequest, WelcomeScreen, ZoneDetailsDone};
