@@ -323,21 +323,11 @@ impl ZoneInstance {
     }
 
     pub fn all_players_nearby<'a>(
-        sender: Option<u32>,
         chunk: Chunk,
         instance_guid: u64,
         characters_table_handle: &'a impl GuidTableIndexer<'a, u64, Character, CharacterIndex>,
     ) -> Result<Vec<u32>, ProcessPacketError> {
-        let mut guids = ZoneInstance::other_players_nearby(
-            sender,
-            chunk,
-            instance_guid,
-            characters_table_handle,
-        )?;
-        if let Some(sender_guid) = sender {
-            guids.push(sender_guid);
-        }
-        Ok(guids)
+        ZoneInstance::other_players_nearby(None, chunk, instance_guid, characters_table_handle)
     }
 
     pub fn diff_character_guids<'a>(
@@ -557,18 +547,16 @@ impl ZoneInstance {
 
                                 // We don't return this value when the chunks are different, as players could change between when
                                 // we release the read lock and acquire the write lock
-                                if let Ok(moved_player_guid) = shorten_player_guid(moved_character_guid) {
-                                    let other_players_nearby = ZoneInstance::other_players_nearby(
-                                        Some(moved_player_guid),
-                                        new_chunk,
-                                        instance_guid,
-                                        characters_table_read_handle,
-                                    )?;
-                                    broadcasts.push(Broadcast::Multi(other_players_nearby, vec![GamePacket::serialize(&TunneledPacket {
-                                        unknown1: true,
-                                        inner: full_update_packet
-                                    })?]));
-                                }
+                                let other_players_nearby = ZoneInstance::other_players_nearby(
+                                    shorten_player_guid(moved_character_guid).ok(),
+                                    new_chunk,
+                                    instance_guid,
+                                    characters_table_read_handle,
+                                )?;
+                                broadcasts.push(Broadcast::Multi(other_players_nearby, vec![GamePacket::serialize(&TunneledPacket {
+                                    unknown1: true,
+                                    inner: full_update_packet
+                                })?]));
                                 Ok::<(bool, bool, Vec<Broadcast>, Vec<u64>), ProcessPacketError>((true, same_chunk, broadcasts, filtered_npcs_to_interact,))
                             } else {
                                 Ok((true, same_chunk, Vec::new(), Vec::new()))
@@ -633,6 +621,22 @@ impl ZoneInstance {
                             game_server.customizations(),
                         )?);
 
+                        // Remove the moved character when they change chunks
+                        let moved_character_write_handle = characters_write
+                            .get(&moved_character_guid)
+                            .expect("Character was removed from write handle map before moving");
+                        let previous_other_players_nearby = ZoneInstance::other_players_nearby(
+                            shorten_player_guid(moved_character_guid).ok(),
+                            old_chunk,
+                            instance_guid,
+                            characters_table_write_handle,
+                        )?;
+                        broadcasts.push(Broadcast::Multi(
+                            previous_other_players_nearby,
+                            moved_character_write_handle.remove_packets()?,
+                        ));
+
+                        // Move the character
                         let characters_to_interact = ZoneInstance::move_character_with_locks(
                             npcs_to_interact_if_same_chunk,
                             characters_read,
@@ -647,21 +651,26 @@ impl ZoneInstance {
                             character,
                         );
 
-                        if let Ok(moved_player_guid) = shorten_player_guid(moved_character_guid) {
-                            let other_players_nearby = ZoneInstance::other_players_nearby(
-                                Some(moved_player_guid),
-                                new_chunk,
-                                instance_guid,
-                                characters_table_write_handle,
-                            )?;
-                            broadcasts.push(Broadcast::Multi(
-                                other_players_nearby,
-                                vec![GamePacket::serialize(&TunneledPacket {
-                                    unknown1: true,
-                                    inner: full_update_packet,
-                                })?],
-                            ));
-                        }
+                        let moved_character_write_handle = characters_table_write_handle
+                            .get(moved_character_guid)
+                            .expect("Character was removed from table after moving")
+                            .write();
+                        let other_players_nearby = ZoneInstance::other_players_nearby(
+                            shorten_player_guid(moved_character_guid).ok(),
+                            new_chunk,
+                            instance_guid,
+                            characters_table_write_handle,
+                        )?;
+                        let mut new_chunk_packets = moved_character_write_handle.add_packets(
+                            game_server.mounts(),
+                            game_server.items(),
+                            game_server.customizations(),
+                        )?;
+                        new_chunk_packets.push(GamePacket::serialize(&TunneledPacket {
+                            unknown1: true,
+                            inner: full_update_packet,
+                        })?);
+                        broadcasts.push(Broadcast::Multi(other_players_nearby, new_chunk_packets));
 
                         Ok::<Vec<u64>, ProcessPacketError>(characters_to_interact)
                     } else {

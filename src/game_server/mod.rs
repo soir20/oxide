@@ -443,7 +443,7 @@ impl GameServer {
                                                         }
                                                     }
 
-                                                    let all_players_nearby = ZoneInstance::all_players_nearby(Some(sender), chunk, instance_guid, characters_table_read_handle)?;
+                                                    let all_players_nearby = ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_read_handle)?;
                                                     character_broadcasts.push(Broadcast::Multi(all_players_nearby, global_packets));
                                                 } else {
                                                     return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} sent a ready packet", sender)));
@@ -676,7 +676,7 @@ impl GameServer {
                                 character_write_handle.brandish_or_holster();
 
                                 let (_, instance_guid, chunk) = character_write_handle.index();
-                                let all_players_nearby = ZoneInstance::all_players_nearby(Some(sender), chunk, instance_guid, characters_table_read_handle)?;
+                                let all_players_nearby = ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_read_handle)?;
                                 broadcasts.push(Broadcast::Multi(all_players_nearby, vec![
                                     GamePacket::serialize(&TunneledPacket {
                                         unknown1: true,
@@ -917,7 +917,7 @@ impl GameServer {
         broadcasts: &mut Vec<Broadcast>,
     ) -> Result<(), ProcessPacketError> {
         self.lock_enforcer().read_characters(|characters_table_read_handle| {
-            let nearby_player_guids = ZoneInstance::all_players_nearby(None, chunk, instance_guid, characters_table_read_handle)
+            let nearby_player_guids = ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_read_handle)
                 .unwrap_or_default();
             let nearby_players: Vec<u64> = nearby_player_guids.iter()
                 .map(|guid| *guid as u64)
