@@ -890,7 +890,7 @@ pub fn enter_zone(
     let destination_rot = destination_rot.unwrap_or(destination_read_handle.default_spawn_rot);
 
     // Perform fallible operations before we update player data to avoid an inconsistent state
-    let broadcasts = prepare_init_zone_packets(
+    let mut broadcasts = prepare_init_zone_packets(
         player,
         destination_read_handle,
         destination_pos,
@@ -900,6 +900,18 @@ pub fn enter_zone(
     let character = characters_table_write_handle.remove(player_guid(player));
     if let Some((character, (character_category, _, _))) = character {
         let mut character_write_handle = character.write();
+        let (_, instance_guid, chunk) = character_write_handle.index();
+        let other_players_nearby = ZoneInstance::other_players_nearby(
+            Some(player),
+            chunk,
+            instance_guid,
+            characters_table_write_handle,
+        )?;
+        broadcasts.push(Broadcast::Multi(
+            other_players_nearby,
+            character_write_handle.remove_packets()?,
+        ));
+
         let previous_zone_template_guid =
             zone_template_guid(character_write_handle.stats.instance_guid);
         let previous_pos = character_write_handle.stats.pos;
