@@ -1003,6 +1003,7 @@ macro_rules! teleport_to_zone {
         if let Some(character_lock) = character {
             broadcasts.append(&mut $crate::game_server::handlers::mount::reply_dismount(
                 $player,
+                $characters_table_write_handle,
                 $destination_read_handle,
                 &mut character_lock.write(),
                 $mounts,
