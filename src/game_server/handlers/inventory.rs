@@ -20,7 +20,9 @@ use crate::{
             },
             item::{Attachment, EquipmentSlot, ItemDefinition, WieldType},
             player_data::EquippedItem,
-            player_update::{Customization, UpdateCustomizations, UpdateWieldType},
+            player_update::{
+                Customization, UpdateCustomizations, UpdateEquippedItem, UpdateWieldType,
+            },
             tunnel::TunneledPacket,
             ui::ExecuteScriptWithParams,
             GamePacket,
@@ -179,25 +181,14 @@ fn process_unequip_slot(
     game_server.lock_enforcer().read_characters(|_| CharacterLockRequest {
             read_guids: vec![],
             write_guids: vec![player_guid(sender)],
-            character_consumer: |_, _, mut characters_write, _| {
+            character_consumer: |characters_table_read_handle, _, mut characters_write, _| {
                 if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) {
 
                     let mut brandished_wield_type = None;
-                    let mut result = if let CharacterType::Player(ref mut player_data) = character_write_handle.stats.character_type {
+                    let mut broadcasts = if let CharacterType::Player(ref mut player_data) = character_write_handle.stats.character_type {
                         let possible_battle_class = player_data.battle_classes.get_mut(&unequip_slot.battle_class);
 
                         if let Some(battle_class) = possible_battle_class {
-
-                            let packets = vec![
-                                GamePacket::serialize(&TunneledPacket {
-                                    unknown1: true,
-                                    inner: UnequipItem {
-                                        slot: unequip_slot.slot,
-                                        battle_class: unequip_slot.battle_class
-                                    }
-                                })?
-                            ];
-
                             battle_class.items.remove(&unequip_slot.slot);
 
                             // There are no weapons that allow equipping both weapon slots and then unequipping only the primary slot.
@@ -207,31 +198,63 @@ fn process_unequip_slot(
                                 brandished_wield_type = Some(wield_type_from_slot(&battle_class.items, EquipmentSlot::PrimaryWeapon, game_server));
                             }
 
-                            Ok(vec![Broadcast::Single(sender, packets)])
+                            Ok(vec![
+                                Broadcast::Single(sender, vec![
+                                    GamePacket::serialize(&TunneledPacket {
+                                        unknown1: true,
+                                        inner: UnequipItem {
+                                            slot: unequip_slot.slot,
+                                            battle_class: unequip_slot.battle_class
+                                        }
+                                    })?
+                                ])
+                            ])
                         } else {
                             Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to unequip slot in battle class {} that they don't own", sender, unequip_slot.battle_class)))
                         }
 
                     } else {
                         Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Non-player character {} tried to unequip slot", sender)))
-                    };
+                    }?;
 
+                    let mut all_player_packets = Vec::new();
                     if let Some(wield_type) = brandished_wield_type {
                         character_write_handle.set_brandished_wield_type(wield_type);
 
-                        if let Ok(broadcasts) = &mut result {
-                            broadcasts.push(Broadcast::Single(sender, vec![
-                                GamePacket::serialize(&TunneledPacket {
-                                    unknown1: true,
-                                    inner: UpdateWieldType {
-                                        guid: player_guid(sender),
-                                        wield_type,
-                                    }
-                                })?,
-                            ]));
-                        }
+                        all_player_packets.push(GamePacket::serialize(&TunneledPacket {
+                            unknown1: true,
+                            inner: UpdateWieldType {
+                                guid: player_guid(sender),
+                                wield_type,
+                            }
+                        })?);
                     }
-                    result
+
+                    all_player_packets.push(
+                        GamePacket::serialize(&TunneledPacket {
+                            unknown1: true,
+                            inner: UpdateEquippedItem {
+                                guid: player_guid(sender),
+                                item_guid: 0,
+                                item: Attachment {
+                                    model_name: "".to_string(),
+                                    texture_alias: "".to_string(),
+                                    tint_alias: "".to_string(),
+                                    tint: 0,
+                                    composite_effect: 0,
+                                    slot: unequip_slot.slot,
+                                },
+                                battle_class: unequip_slot.battle_class,
+                                wield_type: character_write_handle.wield_type()
+                            }
+                        })?
+                    );
+
+                    let (_, instance_guid, chunk) = character_write_handle.index();
+                    let all_players_nearby = ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_read_handle)?;
+                    broadcasts.push(Broadcast::Multi(all_players_nearby, all_player_packets));
+
+                    Ok(broadcasts)
 
                 } else {
                     Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} tried to unequip slot", sender)))
