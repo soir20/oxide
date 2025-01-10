@@ -685,6 +685,14 @@ fn equip_item_in_slot<'a>(
                         player_data.battle_classes.get_mut(&equip_guid.battle_class);
 
                     if let Some(battle_class) = possible_battle_class {
+                        if equip_guid.slot == EquipmentSlot::SecondaryWeapon
+                            && !battle_class
+                                .items
+                                .contains_key(&EquipmentSlot::PrimaryWeapon)
+                        {
+                            return Ok((Vec::new(), 0));
+                        }
+
                         if let Some(item_def) = game_server.items().get(&equip_guid.item_guid) {
                             let mut sender_only_packets =
                                 vec![GamePacket::serialize(&TunneledPacket {
