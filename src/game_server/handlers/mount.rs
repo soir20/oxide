@@ -16,7 +16,7 @@ use crate::{
             client_update::{Stat, StatId, Stats},
             item::{BaseAttachmentGroup, WieldType},
             mount::{DismountReply, MountOpCode, MountReply, MountSpawn},
-            player_update::{AddNpc, Hostility, Icon, RemoveGracefully},
+            player_update::{AddNpc, Hostility, Icon, RemoveGracefully, UpdateSpeed},
             tunnel::TunneledPacket,
             Effect, GamePacket, Pos, Target,
         },
@@ -217,13 +217,26 @@ fn process_mount_spawn(
                         write_guids: Vec::new(),
                         zone_consumer: |_, zones_read, _| {
                             if let Some(zone_read_handle) = zones_read.get(&character_write_handle.stats.instance_guid) {
-                                let packets = spawn_mount_npc(
+                                let new_speed = zone_read_handle.speed * mount.speed_multiplier;
+                                let new_jump_height = zone_read_handle.jump_height_multiplier * mount.jump_height_multiplier;
+                                let new_gravity = zone_read_handle.gravity_multiplier * mount.gravity_multiplier;
+
+                                let mut packets = spawn_mount_npc(
                                     mount_guid,
                                     player_guid(sender),
                                     mount,
                                     character_write_handle.stats.pos,
                                     character_write_handle.stats.rot,
                                 )?;
+                                packets.push(
+                                    GamePacket::serialize(&TunneledPacket {
+                                        unknown1: true,
+                                        inner: UpdateSpeed {
+                                            guid: player_guid(sender),
+                                            speed: new_speed,
+                                        },
+                                    })?,
+                                );
 
                                 if let Some(mount_id) = character_write_handle.stats.mount_id {
                                     return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to mount while already mounted on mount ID {}",
@@ -245,21 +258,19 @@ fn process_mount_spawn(
                                                         id: StatId::Speed,
                                                         multiplier: 1,
                                                         value1: 0.0,
-                                                        value2: zone_read_handle.speed * mount.speed_multiplier,
+                                                        value2: new_speed,
                                                     },
                                                     Stat {
                                                         id: StatId::JumpHeightMultiplier,
                                                         multiplier: 1,
                                                         value1: 0.0,
-                                                        value2: zone_read_handle.jump_height_multiplier
-                                                            * mount.jump_height_multiplier,
+                                                        value2: new_jump_height,
                                                     },
                                                     Stat {
                                                         id: StatId::GravityMultiplier,
                                                         multiplier: 1,
                                                         value1: 0.0,
-                                                        value2: zone_read_handle.gravity_multiplier
-                                                            * mount.gravity_multiplier,
+                                                        value2: new_gravity,
                                                     },
                                                 ],
                                             },
