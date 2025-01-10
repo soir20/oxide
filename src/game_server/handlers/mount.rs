@@ -105,6 +105,13 @@ pub fn reply_dismount<'a>(
                                 timer: 1000,
                             },
                         })?,
+                        GamePacket::serialize(&TunneledPacket {
+                            unknown1: true,
+                            inner: UpdateSpeed {
+                                guid: player_guid(sender),
+                                speed: zone.speed,
+                            },
+                        })?,
                     ],
                 ),
                 Broadcast::Single(
