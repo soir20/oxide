@@ -1054,13 +1054,27 @@ impl Player {
                     .items
                     .iter()
                     .filter_map(|(slot, item)| {
+                        let tint_override = match slot {
+                            EquipmentSlot::PrimarySaberShape => battle_class
+                                .items
+                                .get(&EquipmentSlot::PrimarySaberColor)
+                                .and_then(|item| item_definitions.get(&item.guid))
+                                .map(|item_def| item_def.tint),
+                            EquipmentSlot::SecondarySaberShape => battle_class
+                                .items
+                                .get(&EquipmentSlot::SecondarySaberColor)
+                                .and_then(|item| item_definitions.get(&item.guid))
+                                .map(|item_def| item_def.tint),
+                            _ => None,
+                        };
+
                         item_definitions
                             .get(&item.guid)
                             .map(|item_definition| Attachment {
                                 model_name: item_definition.model_name.clone(),
                                 texture_alias: item_definition.texture_alias.clone(),
                                 tint_alias: item_definition.tint_alias.clone(),
-                                tint: item_definition.tint,
+                                tint: tint_override.unwrap_or(item_definition.tint),
                                 composite_effect: item_definition.composite_effect,
                                 slot: *slot,
                             })
