@@ -499,10 +499,10 @@ impl GamePacket for SetAnimation {
 #[derive(SerializePacket)]
 pub struct UpdateEquippedItem {
     pub guid: u64,
-    pub unknown: u32,
+    pub item_guid: u32,
     pub item: Attachment,
     pub battle_class: u32,
-    pub wield_type: u32,
+    pub wield_type: WieldType,
 }
 
 impl GamePacket for UpdateEquippedItem {

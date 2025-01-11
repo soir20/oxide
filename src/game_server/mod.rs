@@ -439,7 +439,16 @@ impl GameServer {
                                                         })?);
 
                                                         if let Some(battle_class) = player.battle_classes.get(&player.active_battle_class) {
-                                                            character_broadcasts.append(&mut update_saber_tints(sender, &battle_class.items, player.active_battle_class, self)?);
+                                                            character_broadcasts.append(&mut update_saber_tints(
+                                                                sender,
+                                                                characters_table_read_handle,
+                                                                instance_guid,
+                                                                chunk,
+                                                                &battle_class.items,
+                                                                player.active_battle_class,
+                                                                character_write_handle.wield_type(),
+                                                                self
+                                                            )?);
                                                         }
                                                     }
 
