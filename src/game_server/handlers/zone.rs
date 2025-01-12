@@ -208,7 +208,7 @@ impl IndexedGuid<u64, u8> for ZoneInstance {
         self.guid
     }
 
-    fn index(&self) -> u8 {
+    fn index1(&self) -> u8 {
         self.template_guid
     }
 }
@@ -305,7 +305,7 @@ impl ZoneInstance {
         let mut guids = Vec::new();
 
         for chunk in ZoneInstance::nearby_chunks(chunk) {
-            for guid in characters_table_handle.keys_by_index((
+            for guid in characters_table_handle.keys_by_index1((
                 CharacterCategory::PlayerReady,
                 instance_guid,
                 chunk,
@@ -348,7 +348,7 @@ impl ZoneInstance {
         for category in CharacterCategory::iter() {
             for chunk in chunks_to_remove.iter() {
                 for guid in
-                    characters_table_handle.keys_by_index((category, instance_guid, **chunk))
+                    characters_table_handle.keys_by_index1((category, instance_guid, **chunk))
                 {
                     character_diffs_for_moved_character.insert(guid, false);
 
@@ -364,7 +364,7 @@ impl ZoneInstance {
         for category in CharacterCategory::iter() {
             for chunk in chunks_to_add.iter() {
                 for guid in
-                    characters_table_handle.keys_by_index((category, instance_guid, **chunk))
+                    characters_table_handle.keys_by_index1((category, instance_guid, **chunk))
                 {
                     character_diffs_for_moved_character.insert(guid, true);
 
@@ -509,12 +509,12 @@ impl ZoneInstance {
             .lock_enforcer()
             .read_characters(|characters_table_read_handle| {
                 let (instance_guid_if_exists, same_chunk, auto_interact_npcs, write_guids) = if let Some((_, instance_guid, old_chunk)) =
-                    characters_table_read_handle.index(moved_character_guid)
+                    characters_table_read_handle.index1(moved_character_guid)
                 {
                     let same_chunk = old_chunk == new_chunk;
                     if same_chunk {
                         let auto_interactable_npcs: Vec<u64> = characters_table_read_handle
-                            .keys_by_index((
+                            .keys_by_index1((
                                 CharacterCategory::NpcAutoInteractEnabled,
                                 instance_guid,
                                 new_chunk,
@@ -578,7 +578,7 @@ impl ZoneInstance {
             game_server
                 .lock_enforcer()
                 .write_characters(|characters_table_write_handle, _| {
-                    if let Some((character, (category, instance_guid, old_chunk))) =
+                    if let Some((character, (category, instance_guid, old_chunk), index2, index3)) =
                         characters_table_write_handle.remove(moved_character_guid)
                     {
                         // Build characters read and write maps
@@ -600,7 +600,7 @@ impl ZoneInstance {
                         );
 
                         let auto_interactable_npcs: Vec<u64> = characters_table_write_handle
-                            .keys_by_index((
+                            .keys_by_index1((
                                 CharacterCategory::NpcAutoInteractEnabled,
                                 instance_guid,
                                 new_chunk,
@@ -648,6 +648,8 @@ impl ZoneInstance {
                         characters_table_write_handle.insert_lock(
                             moved_character_guid,
                             (category, instance_guid, new_chunk),
+                            index2,
+                            index3,
                             character,
                         );
 
@@ -898,9 +900,9 @@ pub fn enter_zone(
     )?;
 
     let character = characters_table_write_handle.remove(player_guid(player));
-    if let Some((character, (character_category, _, _))) = character {
+    if let Some((character, (character_category, _, _), index2, index3)) = character {
         let mut character_write_handle = character.write();
-        let (_, instance_guid, chunk) = character_write_handle.index();
+        let (_, instance_guid, chunk) = character_write_handle.index1();
         let other_players_nearby = ZoneInstance::other_players_nearby(
             Some(player),
             chunk,
@@ -945,6 +947,8 @@ pub fn enter_zone(
                     destination_read_handle.default_spawn_pos.z,
                 ),
             ),
+            index2,
+            index3,
             character,
         );
     }

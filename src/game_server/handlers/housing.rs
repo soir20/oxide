@@ -363,7 +363,7 @@ pub fn process_housing_packet(
                     read_guids: Vec::new(),
                     write_guids: Vec::new(),
                     character_consumer: |characters_table_read_handle, _, _, zones_lock_enforcer| {
-                        let packets = if let Some((_, instance_guid, _)) = characters_table_read_handle.index(player_guid(sender)) {
+                        let packets = if let Some((_, instance_guid, _)) = characters_table_read_handle.index1(player_guid(sender)) {
                             zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
                                 read_guids: vec![instance_guid],
                                 write_guids: Vec::new(),

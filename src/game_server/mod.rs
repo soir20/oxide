@@ -254,7 +254,7 @@ impl GameServer {
                     self.lock_enforcer()
                         .write_characters(|characters_table_write_handle, _| {
                             match characters_table_write_handle.remove(player_guid(sender)) {
-                                Some((character, _)) => {
+                                Some((character, _, _, _)) => {
                                     let mut character_write_handle = character.write();
                                     if let CharacterType::Player(ref mut player) =
                                         &mut character_write_handle.stats.character_type
@@ -299,10 +299,13 @@ impl GameServer {
                                         player.first_load = false;
                                     }
                                     let guid = character_write_handle.guid();
-                                    let new_index = character_write_handle.index();
+                                    let new_index1 = character_write_handle.index1();
+                                    let new_index2 = character_write_handle.index2();
+                                    let new_index3 = character_write_handle.index3();
                                     drop(character_write_handle);
-                                    characters_table_write_handle
-                                        .insert_lock(guid, new_index, character);
+                                    characters_table_write_handle.insert_lock(
+                                        guid, new_index1, new_index2, new_index3, character,
+                                    );
                                     Ok(())
                                 }
                                 None => Err(ProcessPacketError::new(
@@ -336,7 +339,7 @@ impl GameServer {
                     sender_only_packets.push(GamePacket::serialize(&store_items)?);
 
                     let mut character_broadcasts = self.lock_enforcer().read_characters(|characters_table_read_handle| {
-                        let possible_index = characters_table_read_handle.index(player_guid(sender));
+                        let possible_index = characters_table_read_handle.index1(player_guid(sender));
                         let character_diffs = possible_index.map(|(_, instance_guid, chunk)| ZoneInstance::diff_character_guids(
                             instance_guid,
                             Character::MIN_CHUNK,
@@ -502,7 +505,7 @@ impl GameServer {
                             character_consumer:
                                 |characters_table_read_handle, _, _, zones_lock_enforcer| {
                                     if let Some((_, instance_guid, _)) =
-                                        characters_table_read_handle.index(sender_guid)
+                                        characters_table_read_handle.index1(sender_guid)
                                     {
                                         zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
                                             read_guids: vec![instance_guid],
@@ -609,7 +612,7 @@ impl GameServer {
                             read_guids: Vec::new(),
                             write_guids: Vec::new(),
                             character_consumer: |characters_table_read_handle, _, _, zones_lock_enforcer| {
-                                if let Some((_, instance_guid, _)) = characters_table_read_handle.index(player_guid(sender)) {
+                                if let Some((_, instance_guid, _)) = characters_table_read_handle.index1(player_guid(sender)) {
                                     zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
                                         read_guids: vec![instance_guid],
                                         write_guids: Vec::new(),
@@ -684,7 +687,7 @@ impl GameServer {
                             if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) {
                                 character_write_handle.brandish_or_holster();
 
-                                let (_, instance_guid, chunk) = character_write_handle.index();
+                                let (_, instance_guid, chunk) = character_write_handle.index1();
                                 let all_players_nearby = ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_read_handle)?;
                                 broadcasts.push(Broadcast::Multi(all_players_nearby, vec![
                                     GamePacket::serialize(&TunneledPacket {
@@ -839,7 +842,7 @@ impl GameServer {
                         instance_guid,
                         Character::MAX_CHUNK,
                     );
-                let current_players = characters.keys_by_range(range).count() as u32;
+                let current_players = characters.keys_by_index1_range(range).count() as u32;
 
                 let remaining_capacity =
                     zone_read_handle.max_players.saturating_sub(current_players);
@@ -860,7 +863,7 @@ impl GameServer {
         template_guid: u8,
     ) -> Option<u32> {
         let used_indices: BTreeSet<u32> = zones
-            .keys_by_index(template_guid)
+            .keys_by_index1(template_guid)
             .map(shorten_zone_index)
             .collect();
         if let Some(max) = used_indices.last() {
@@ -893,15 +896,16 @@ impl GameServer {
                         u64::MAX,
                         Character::MAX_CHUNK,
                     );
-                let tickable_characters: Vec<u64> =
-                    characters_table_read_handle.keys_by_range(range).collect();
+                let tickable_characters: Vec<u64> = characters_table_read_handle
+                    .keys_by_index1_range(range)
+                    .collect();
 
                 let tickable_characters_by_chunk = tickable_characters.into_iter().fold(
                     BTreeMap::new(),
                     |mut acc: BTreeMap<(u64, Chunk), Vec<u64>>, guid| {
                         // The NPC could have been removed since we last acquired the table read lock
                         if let Some((_, instance_guid, chunk)) =
-                            characters_table_read_handle.index(guid)
+                            characters_table_read_handle.index1(guid)
                         {
                             acc.entry((instance_guid, chunk)).or_default().push(guid);
                         }

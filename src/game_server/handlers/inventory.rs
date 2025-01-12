@@ -250,7 +250,7 @@ fn process_unequip_slot(
                         })?
                     );
 
-                    let (_, instance_guid, chunk) = character_write_handle.index();
+                    let (_, instance_guid, chunk) = character_write_handle.index1();
                     let all_players_nearby = ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_read_handle)?;
                     broadcasts.push(Broadcast::Multi(all_players_nearby, all_player_packets));
 
@@ -294,7 +294,7 @@ fn process_equip_guid(
                                 if let Some(battle_class) =
                                     player.battle_classes.get(&player.active_battle_class)
                                 {
-                                    let (_, instance_guid, chunk) = character_write_handle.index();
+                                    let (_, instance_guid, chunk) = character_write_handle.index1();
                                     broadcasts.append(&mut update_saber_tints(
                                         sender,
                                         characters_table_read_handle,
@@ -477,7 +477,7 @@ fn process_equip_customization(
                                 .insert(customization.customization_slot, customization.guid);
                         }
 
-                        let (_, instance_guid, chunk) = character_write_handle.index();
+                        let (_, instance_guid, chunk) = character_write_handle.index1();
                         let nearby_players = ZoneInstance::all_players_nearby(
                             chunk,
                             instance_guid,
@@ -865,7 +865,7 @@ fn equip_item_in_slot<'a>(
                 ))
             }?;
 
-        let (_, instance_guid, chunk) = character_write_handle.index();
+        let (_, instance_guid, chunk) = character_write_handle.index1();
         let mut nearby_players = ZoneInstance::other_players_nearby(
             Some(sender),
             chunk,
