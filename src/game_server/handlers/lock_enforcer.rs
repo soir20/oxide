@@ -13,27 +13,51 @@ use super::{
     zone::ZoneInstance,
 };
 
-pub struct TableReadHandleWrapper<'a, K, V, I = ()> {
-    handle: GuidTableReadHandle<'a, K, V, I>,
+pub struct TableReadHandleWrapper<'a, K, V, I1 = (), I2 = (), I3 = ()> {
+    handle: GuidTableReadHandle<'a, K, V, I1, I2, I3>,
 }
 
-impl<'a, K: Copy + Ord, V, I: Copy + Ord> GuidTableIndexer<'a, K, V, I>
-    for TableReadHandleWrapper<'a, K, V, I>
+impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Copy + Ord, I3: Copy + Ord>
+    GuidTableIndexer<'a, K, V, I1, I2, I3> for TableReadHandleWrapper<'a, K, V, I1, I2, I3>
 {
-    fn index(&self, guid: K) -> Option<I> {
-        self.handle.index(guid)
+    fn index1(&self, guid: K) -> Option<I1> {
+        self.handle.index1(guid)
+    }
+
+    fn index2(&self, guid: K) -> Option<I2> {
+        self.handle.index2(guid)
+    }
+
+    fn index3(&self, guid: K) -> Option<I3> {
+        self.handle.index3(guid)
     }
 
     fn keys(&'a self) -> impl Iterator<Item = K> {
         self.handle.keys()
     }
 
-    fn keys_by_index(&'a self, index: I) -> impl Iterator<Item = K> {
-        self.handle.keys_by_index(index)
+    fn keys_by_index1(&'a self, index: I1) -> impl Iterator<Item = K> {
+        self.handle.keys_by_index1(index)
     }
 
-    fn keys_by_range(&'a self, range: impl RangeBounds<I>) -> impl Iterator<Item = K> {
-        self.handle.keys_by_range(range)
+    fn keys_by_index2(&'a self, index: I2) -> impl Iterator<Item = K> {
+        self.handle.keys_by_index2(index)
+    }
+
+    fn keys_by_index3(&'a self, index: I3) -> impl Iterator<Item = K> {
+        self.handle.keys_by_index3(index)
+    }
+
+    fn keys_by_index1_range(&'a self, range: impl RangeBounds<I1>) -> impl Iterator<Item = K> {
+        self.handle.keys_by_index1_range(range)
+    }
+
+    fn keys_by_index2_range(&'a self, range: impl RangeBounds<I2>) -> impl Iterator<Item = K> {
+        self.handle.keys_by_index2_range(range)
+    }
+
+    fn keys_by_index3_range(&'a self, range: impl RangeBounds<I3>) -> impl Iterator<Item = K> {
+        self.handle.keys_by_index3_range(range)
     }
 }
 

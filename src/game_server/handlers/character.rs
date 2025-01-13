@@ -1316,7 +1316,7 @@ impl IndexedGuid<u64, CharacterIndex> for Character {
         self.stats.guid
     }
 
-    fn index(&self) -> CharacterIndex {
+    fn index1(&self) -> CharacterIndex {
         (
             match &self.stats.character_type {
                 CharacterType::Player(player) => match player.ready {

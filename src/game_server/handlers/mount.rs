@@ -80,7 +80,7 @@ pub fn reply_dismount<'a>(
     if let Some(mount_id) = character.stats.mount_id {
         character.stats.mount_id = None;
         if let Some(mount) = mounts.get(&mount_id) {
-            let (_, instance_guid, chunk) = character.index();
+            let (_, instance_guid, chunk) = character.index1();
             let all_players_nearby =
                 ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_handle)?;
             Ok(vec![
@@ -252,7 +252,7 @@ fn process_mount_spawn(
 
                                 character_write_handle.stats.mount_id = Some(Guid::guid(mount));
 
-                                let (_, instance_guid, chunk) = character_write_handle.index();
+                                let (_, instance_guid, chunk) = character_write_handle.index1();
                                 let all_players_nearby = ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_read_handle)?;
                                 Ok(vec![
                                     Broadcast::Multi(all_players_nearby, packets),
