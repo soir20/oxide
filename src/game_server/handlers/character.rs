@@ -1261,6 +1261,7 @@ impl NpcTemplate {
                 holstered: false,
                 animation_id: self.animation_id,
                 speed: 0.0,
+                jump_height_multiplier: 1.0,
                 cursor: self.cursor,
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(
@@ -1293,6 +1294,7 @@ pub struct CharacterStats {
     pub instance_guid: u64,
     pub animation_id: i32,
     pub speed: f32,
+    pub jump_height_multiplier: f32,
     pub cursor: Option<u8>,
     wield_type: (WieldType, WieldType),
     holstered: bool,
@@ -1377,6 +1379,7 @@ impl Character {
                 holstered: false,
                 animation_id,
                 speed: 0.0,
+                jump_height_multiplier: 1.0,
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(
                 tickable_procedures,
@@ -1434,6 +1437,7 @@ impl Character {
                 holstered: false,
                 animation_id: 0,
                 speed: 0.0,
+                jump_height_multiplier: 1.0,
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(HashMap::new(), Vec::new()),
             synchronize_with: None,

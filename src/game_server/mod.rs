@@ -422,6 +422,7 @@ impl GameServer {
 
                                                 if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) {
                                                     character_write_handle.stats.speed = zone.speed;
+                                                    character_write_handle.stats.jump_height_multiplier = zone.jump_height_multiplier;
 
                                                     let mut global_packets = character_write_handle.add_packets(self.mounts(), self.items(), self.customizations())?;
                                                     let wield_type = TunneledPacket {
@@ -546,20 +547,13 @@ impl GameServer {
                         DeserializePacket::deserialize(&mut cursor)?;
                     // Don't allow players to update another player's position
                     pos_update.guid = player_guid(sender);
-                    broadcasts.append(&mut ZoneInstance::move_character(
-                        pos_update, pos_update, false, self,
-                    )?);
+                    broadcasts.append(&mut ZoneInstance::move_character(pos_update, false, self)?);
                 }
                 OpCode::PlayerJump => {
                     let mut player_jump: PlayerJump = DeserializePacket::deserialize(&mut cursor)?;
                     // Don't allow players to update another player's position
                     player_jump.pos_update.guid = player_guid(sender);
-                    broadcasts.append(&mut ZoneInstance::move_character(
-                        player_jump.pos_update,
-                        player_jump,
-                        false,
-                        self,
-                    )?);
+                    broadcasts.append(&mut ZoneInstance::move_character(player_jump, false, self)?);
                 }
                 OpCode::UpdatePlayerCamera => {
                     // Ignore this unused packet to reduce log spam for now
