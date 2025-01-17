@@ -16,6 +16,7 @@ pub mod store;
 pub mod test_data;
 pub mod time;
 pub mod unique_guid;
+pub mod update_position;
 pub mod zone;
 
 pub fn distance3_pos(pos1: Pos, pos2: Pos) -> f32 {

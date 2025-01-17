@@ -20,7 +20,6 @@ use crate::{
             player_update::Customization,
             tunnel::TunneledPacket,
             ui::ExecuteScriptWithParams,
-            update_position::UpdatePlayerPosition,
             GamePacket, Pos,
         },
         Broadcast, GameServer, ProcessPacketError,
@@ -45,6 +44,7 @@ use super::{
         npc_guid, player_guid, shorten_player_guid, zone_template_guid, AMBIENT_NPC_DISCRIMINANT,
         FIXTURE_DISCRIMINANT,
     },
+    update_position::UpdatePositionPacket,
 };
 
 use strum::IntoEnumIterator;
@@ -484,25 +484,14 @@ impl ZoneInstance {
         }
     }
 
-    pub fn move_character<T: Copy + GamePacket>(
-        pos_update: UpdatePlayerPosition,
-        full_update_packet: T,
+    pub fn move_character<T: UpdatePositionPacket>(
+        mut full_update_packet: T,
         should_teleport: bool,
         game_server: &GameServer,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        let moved_character_guid = pos_update.guid;
-        let new_pos = Pos {
-            x: pos_update.pos_x,
-            y: pos_update.pos_y,
-            z: pos_update.pos_z,
-            w: 1.0,
-        };
-        let new_rot = Pos {
-            x: pos_update.rot_x,
-            y: pos_update.rot_y,
-            z: pos_update.rot_z,
-            w: 0.0,
-        };
+        let moved_character_guid = full_update_packet.guid();
+        let new_pos = full_update_packet.pos();
+        let new_rot = full_update_packet.rot();
         let new_chunk = Character::chunk(new_pos.x, new_pos.z);
 
         let (character_exists, same_chunk, mut broadcasts, npcs_to_interact_if_same_chunk) = game_server
@@ -536,6 +525,11 @@ impl ZoneInstance {
                         if let Some(instance_guid) = instance_guid_if_exists {
                             if same_chunk {
                                 let mut broadcasts = Vec::new();
+                                let jump_multiplier = characters_write.get(&moved_character_guid)
+                                    .map(|character_handle| character_handle.stats.jump_height_multiplier.total())
+                                    .unwrap_or(1.0);
+                                full_update_packet.apply_jump_height_multiplier(jump_multiplier);
+
                                 let filtered_npcs_to_interact = ZoneInstance::move_character_with_locks(
                                     auto_interact_npcs,
                                     characters_read,
@@ -555,7 +549,7 @@ impl ZoneInstance {
                                 )?;
                                 broadcasts.push(Broadcast::Multi(other_players_nearby, vec![GamePacket::serialize(&TunneledPacket {
                                     unknown1: true,
-                                    inner: full_update_packet
+                                    inner: full_update_packet,
                                 })?]));
                                 Ok::<(bool, bool, Vec<Broadcast>, Vec<u64>), ProcessPacketError>((true, same_chunk, broadcasts, filtered_npcs_to_interact,))
                             } else {
@@ -657,6 +651,12 @@ impl ZoneInstance {
                             .get(moved_character_guid)
                             .expect("Character was removed from table after moving")
                             .write();
+                        let jump_multiplier = moved_character_write_handle
+                            .stats
+                            .jump_height_multiplier
+                            .total();
+                        full_update_packet.apply_jump_height_multiplier(jump_multiplier);
+
                         let other_players_nearby = ZoneInstance::other_players_nearby(
                             shorten_player_guid(moved_character_guid).ok(),
                             new_chunk,
