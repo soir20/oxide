@@ -80,7 +80,8 @@ pub fn reply_dismount<'a>(
     if let Some(mount_id) = character.stats.mount_id {
         character.stats.mount_id = None;
         if let Some(mount) = mounts.get(&mount_id) {
-            character.stats.jump_height_multiplier.mount_multiplier = mount.jump_height_multiplier;
+            character.stats.speed.mount_multiplier = 1.0;
+            character.stats.jump_height_multiplier.mount_multiplier = 1.0;
             let (_, instance_guid, chunk) = character.index1();
             let all_players_nearby =
                 ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_handle)?;
@@ -110,7 +111,7 @@ pub fn reply_dismount<'a>(
                             unknown1: true,
                             inner: UpdateSpeed {
                                 guid: player_guid(sender),
-                                speed: zone.speed,
+                                speed: character.stats.speed.total(),
                             },
                         })?,
                     ],
@@ -225,8 +226,8 @@ fn process_mount_spawn(
                         write_guids: Vec::new(),
                         zone_consumer: |_, zones_read, _| {
                             if let Some(zone_read_handle) = zones_read.get(&character_write_handle.stats.instance_guid) {
-                                let new_speed = zone_read_handle.speed * mount.speed_multiplier;
-                                let new_jump_height = zone_read_handle.jump_height_multiplier * mount.jump_height_multiplier;
+                                character_write_handle.stats.speed.mount_multiplier = mount.speed_multiplier;
+                                character_write_handle.stats.jump_height_multiplier.mount_multiplier = mount.jump_height_multiplier;
                                 let new_gravity = zone_read_handle.gravity_multiplier * mount.gravity_multiplier;
 
                                 let mut packets = spawn_mount_npc(
@@ -241,7 +242,7 @@ fn process_mount_spawn(
                                         unknown1: true,
                                         inner: UpdateSpeed {
                                             guid: player_guid(sender),
-                                            speed: new_speed,
+                                            speed: character_write_handle.stats.speed.total(),
                                         },
                                     })?,
                                 );
@@ -252,7 +253,6 @@ fn process_mount_spawn(
                                 }
 
                                 character_write_handle.stats.mount_id = Some(Guid::guid(mount));
-                                character_write_handle.stats.jump_height_multiplier.mount_multiplier = mount.jump_height_multiplier;
 
                                 let (_, instance_guid, chunk) = character_write_handle.index1();
                                 let all_players_nearby = ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_read_handle)?;
@@ -267,13 +267,13 @@ fn process_mount_spawn(
                                                         id: StatId::Speed,
                                                         multiplier: 1,
                                                         value1: 0.0,
-                                                        value2: new_speed,
+                                                        value2: character_write_handle.stats.speed.total(),
                                                     },
                                                     Stat {
                                                         id: StatId::JumpHeightMultiplier,
                                                         multiplier: 1,
                                                         value1: 0.0,
-                                                        value2: new_jump_height,
+                                                        value2: character_write_handle.stats.jump_height_multiplier.total(),
                                                     },
                                                     Stat {
                                                         id: StatId::GravityMultiplier,
