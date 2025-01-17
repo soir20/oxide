@@ -18,7 +18,7 @@ use crate::{
             player_data::EquippedItem,
             player_update::{
                 AddNotifications, AddNpc, AddPc, Customization, CustomizationSlot, Hostility, Icon,
-                NameplateImage, NotificationData, NpcRelevance, QueueAnimation, RemoveStandard,
+                NameplateImage, NotificationData, NpcRelevance, QueueAnimation, RemoveGracefully,
                 SetAnimation, SingleNotification, SingleNpcRelevance, UpdateSpeed,
             },
             tunnel::TunneledPacket,
@@ -1482,16 +1482,29 @@ impl Character {
     }
 
     pub fn remove_packets(&self) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+        println!("REMOVE {}", self.guid());
         let mut packets = vec![GamePacket::serialize(&TunneledPacket {
             unknown1: true,
-            inner: RemoveStandard { guid: self.guid() },
+            inner: RemoveGracefully {
+                guid: self.guid(),
+                unknown1: false,
+                unknown2: 0,
+                unknown3: 0,
+                unknown4: 0,
+                timer: 0,
+            },
         })?];
 
         if let Some(mount_id) = self.stats.mount_id {
             packets.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
-                inner: RemoveStandard {
+                inner: RemoveGracefully {
                     guid: mount_guid(shorten_player_guid(self.guid())?, mount_id),
+                    unknown1: false,
+                    unknown2: 0,
+                    unknown3: 0,
+                    unknown4: 0,
+                    timer: 0,
                 },
             })?);
         }
@@ -1505,6 +1518,7 @@ impl Character {
         item_definitions: &BTreeMap<u32, ItemDefinition>,
         customizations: &BTreeMap<u32, Customization>,
     ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+        println!("ADD {}", self.guid());
         let packets = match &self.stats.character_type {
             CharacterType::AmbientNpc(ambient_npc) => ambient_npc.add_packets(self)?,
             CharacterType::Door(door) => door.add_packets(self)?,
