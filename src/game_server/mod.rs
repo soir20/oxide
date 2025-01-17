@@ -421,8 +421,8 @@ impl GameServer {
                                                 let mut character_broadcasts = Vec::new();
 
                                                 if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) {
-                                                    character_write_handle.stats.speed = zone.speed;
-                                                    character_write_handle.stats.jump_height_multiplier = zone.jump_height_multiplier;
+                                                    character_write_handle.stats.speed.base = zone.speed;
+                                                    character_write_handle.stats.jump_height_multiplier.base = zone.jump_height_multiplier;
 
                                                     let mut global_packets = character_write_handle.add_packets(self.mounts(), self.items(), self.customizations())?;
                                                     let wield_type = TunneledPacket {

@@ -526,7 +526,7 @@ impl ZoneInstance {
                             if same_chunk {
                                 let mut broadcasts = Vec::new();
                                 let jump_multiplier = characters_write.get(&moved_character_guid)
-                                    .map(|character_handle| character_handle.stats.jump_height_multiplier)
+                                    .map(|character_handle| character_handle.stats.jump_height_multiplier.total())
                                     .unwrap_or(1.0);
                                 full_update_packet.apply_jump_height_multiplier(jump_multiplier);
 
@@ -651,8 +651,10 @@ impl ZoneInstance {
                             .get(moved_character_guid)
                             .expect("Character was removed from table after moving")
                             .write();
-                        let jump_multiplier =
-                            moved_character_write_handle.stats.jump_height_multiplier;
+                        let jump_multiplier = moved_character_write_handle
+                            .stats
+                            .jump_height_multiplier
+                            .total();
                         full_update_packet.apply_jump_height_multiplier(jump_multiplier);
 
                         let other_players_nearby = ZoneInstance::other_players_nearby(

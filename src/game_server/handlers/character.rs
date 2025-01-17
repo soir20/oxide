@@ -181,7 +181,7 @@ impl BaseNpc {
                 name_offset_z: self.name_offset_z,
                 terrain_object_id: self.terrain_object_id,
                 invisible: !self.visible,
-                speed: character.stats.speed,
+                speed: character.stats.speed.total(),
                 unknown21: false,
                 interactable_size_pct: 100,
                 unknown23: -1,
@@ -323,7 +323,7 @@ impl TickableStep {
         let mut packets_for_all = Vec::new();
 
         if let Some(speed) = self.speed {
-            character.speed = speed;
+            character.speed.base = speed;
             packets_for_all.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: UpdateSpeed {
@@ -1143,7 +1143,7 @@ impl Player {
                     .and_then(|customization_guid| customizations.get(customization_guid))
                     .map(|customization| customization.customization_param1.clone())
                     .unwrap_or_default(),
-                speed: character.stats.speed,
+                speed: character.stats.speed.total(),
                 underage: false,
                 member: self.member,
                 moderator: false,
@@ -1260,8 +1260,14 @@ impl NpcTemplate {
                 wield_type: (self.wield_type, self.wield_type.holster()),
                 holstered: false,
                 animation_id: self.animation_id,
-                speed: 0.0,
-                jump_height_multiplier: 1.0,
+                speed: CharacterStat {
+                    base: 0.0,
+                    mount_multiplier: 1.0,
+                },
+                jump_height_multiplier: CharacterStat {
+                    base: 1.0,
+                    mount_multiplier: 1.0,
+                },
                 cursor: self.cursor,
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(
@@ -1282,6 +1288,18 @@ pub type Chunk = (i32, i32);
 pub type CharacterIndex = (CharacterCategory, u64, Chunk);
 
 #[derive(Clone)]
+pub struct CharacterStat {
+    pub base: f32,
+    pub mount_multiplier: f32,
+}
+
+impl CharacterStat {
+    pub fn total(&self) -> f32 {
+        self.base * self.mount_multiplier
+    }
+}
+
+#[derive(Clone)]
 pub struct CharacterStats {
     guid: u64,
     pub pos: Pos,
@@ -1293,8 +1311,8 @@ pub struct CharacterStats {
     pub auto_interact_radius: f32,
     pub instance_guid: u64,
     pub animation_id: i32,
-    pub speed: f32,
-    pub jump_height_multiplier: f32,
+    pub speed: CharacterStat,
+    pub jump_height_multiplier: CharacterStat,
     pub cursor: Option<u8>,
     wield_type: (WieldType, WieldType),
     holstered: bool,
@@ -1378,8 +1396,14 @@ impl Character {
                 wield_type: (wield_type, wield_type.holster()),
                 holstered: false,
                 animation_id,
-                speed: 0.0,
-                jump_height_multiplier: 1.0,
+                speed: CharacterStat {
+                    base: 0.0,
+                    mount_multiplier: 1.0,
+                },
+                jump_height_multiplier: CharacterStat {
+                    base: 1.0,
+                    mount_multiplier: 1.0,
+                },
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(
                 tickable_procedures,
@@ -1436,8 +1460,14 @@ impl Character {
                 wield_type: (wield_type, wield_type.holster()),
                 holstered: false,
                 animation_id: 0,
-                speed: 0.0,
-                jump_height_multiplier: 1.0,
+                speed: CharacterStat {
+                    base: 0.0,
+                    mount_multiplier: 1.0,
+                },
+                jump_height_multiplier: CharacterStat {
+                    base: 1.0,
+                    mount_multiplier: 1.0,
+                },
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(HashMap::new(), Vec::new()),
             synchronize_with: None,
