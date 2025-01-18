@@ -668,7 +668,7 @@ impl GameServer {
                     ));
                 }
                 OpCode::Chat => {
-                    broadcasts.append(&mut process_chat_packet(&mut cursor, sender)?);
+                    broadcasts.append(&mut process_chat_packet(&mut cursor, sender, self)?);
                 }
                 OpCode::Inventory => {
                     broadcasts.append(&mut process_inventory_packet(self, &mut cursor, sender)?);
