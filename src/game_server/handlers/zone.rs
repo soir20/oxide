@@ -337,6 +337,7 @@ impl ZoneInstance {
         characters_table_handle: &'a impl GuidTableIndexer<'a, u64, Character, CharacterIndex>,
         moved_character_guid: u64,
     ) -> CharacterDiffResult {
+        println!("DIFF CHARACTER GUIDS");
         let old_chunks = ZoneInstance::nearby_chunks(old_chunk);
         let new_chunks = ZoneInstance::nearby_chunks(new_chunk);
         let chunks_to_remove: Vec<&Chunk> = old_chunks.difference(&new_chunks).collect();
@@ -616,6 +617,7 @@ impl ZoneInstance {
                         )?);
 
                         // Remove the moved character when they change chunks
+                        println!("REMOVE ON MOVE");
                         let moved_character_write_handle = characters_write
                             .get(&moved_character_guid)
                             .expect("Character was removed from write handle map before moving");
@@ -657,6 +659,7 @@ impl ZoneInstance {
                             .total();
                         full_update_packet.apply_jump_height_multiplier(jump_multiplier);
 
+                        println!("ADD ON MOVE");
                         let other_players_nearby = ZoneInstance::other_players_nearby(
                             shorten_player_guid(moved_character_guid).ok(),
                             new_chunk,
