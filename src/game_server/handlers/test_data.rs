@@ -92,7 +92,11 @@ pub fn make_test_player(
                 middle_name_id: 0,
                 last_name_id: 0,
                 first_name: String::from("BLASTER"),
-                last_name: String::from("NICESHOT"),
+                last_name: if guid == 1 {
+                    String::from("NICESHOT")
+                } else {
+                    format!("NICESHOT {}", guid)
+                },
             },
             credits: 1000000,
             account_creation_date: 1261854072,
