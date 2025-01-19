@@ -551,6 +551,25 @@ impl GameServer {
                 }
                 OpCode::PlayerJump => {
                     let mut player_jump: PlayerJump = DeserializePacket::deserialize(&mut cursor)?;
+                    self.lock_enforcer()
+                        .read_characters(|_| CharacterLockRequest {
+                            read_guids: vec![1152925902653358104],
+                            write_guids: vec![],
+                            character_consumer:
+                                |characters_table_read_handle,
+                                 characters_read,
+                                 mut characters_write,
+                                 _| {
+                                    broadcasts.push(Broadcast::Single(
+                                        sender,
+                                        characters_read
+                                            .get(&1152925902653358104)
+                                            .unwrap()
+                                            .remove_packets()?,
+                                    ));
+                                    Ok::<(), ProcessPacketError>(())
+                                },
+                        })?;
                     // Don't allow players to update another player's position
                     player_jump.pos_update.guid = player_guid(sender);
                     broadcasts.append(&mut ZoneInstance::move_character(player_jump, false, self)?);
@@ -675,14 +694,16 @@ impl GameServer {
                 }
                 OpCode::BrandishHolster => {
                     self.lock_enforcer().read_characters(|_| CharacterLockRequest {
-                        read_guids: Vec::new(),
+                        read_guids: vec![1152925902653358104],
                         write_guids: vec![player_guid(sender)],
-                        character_consumer: |characters_table_read_handle, _, mut characters_write, _| {
+                        character_consumer: |characters_table_read_handle, characters_read, mut characters_write, _| {
                             if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) {
                                 character_write_handle.brandish_or_holster();
 
                                 let (_, instance_guid, chunk) = character_write_handle.index1();
                                 let all_players_nearby = ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_read_handle)?;
+
+                                broadcasts.push(Broadcast::Multi(all_players_nearby.clone(), characters_read.get(&1152925902653358104).unwrap().add_packets(self.mounts(), self.items(), self.customizations())?));
                                 broadcasts.push(Broadcast::Multi(all_players_nearby, vec![
                                     GamePacket::serialize(&TunneledPacket {
                                         unknown1: true,

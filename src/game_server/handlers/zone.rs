@@ -617,7 +617,6 @@ impl ZoneInstance {
                         )?);
 
                         // Remove the moved character when they change chunks
-                        println!("REMOVE ON MOVE");
                         let moved_character_write_handle = characters_write
                             .get(&moved_character_guid)
                             .expect("Character was removed from write handle map before moving");
@@ -627,6 +626,7 @@ impl ZoneInstance {
                             instance_guid,
                             characters_table_write_handle,
                         )?;
+                        println!("REMOVE ON MOVE {:?}", previous_other_players_nearby);
                         broadcasts.push(Broadcast::Multi(
                             previous_other_players_nearby,
                             moved_character_write_handle.remove_packets()?,
