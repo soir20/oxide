@@ -19,7 +19,7 @@ pub mod ui;
 pub mod update_position;
 pub mod zone;
 
-use std::fmt::{Display, Write};
+use std::fmt::Display;
 
 use byteorder::{LittleEndian, WriteBytesExt};
 use num_enum::TryFromPrimitive;
