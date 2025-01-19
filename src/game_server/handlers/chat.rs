@@ -37,6 +37,16 @@ pub fn process_chat_packet(
                         character_consumer: |characters_table_read_handle, _, _, _| {
                             let mut message = SendMessage::deserialize(cursor)?;
                             message.payload.sender_guid = player_guid(sender);
+                            message.payload.sender_name.first_name = characters_table_read_handle
+                                .index2(player_guid(sender))
+                                .cloned()
+                                .ok_or_else(|| {
+                                    ProcessPacketError::new(
+                                        ProcessPacketErrorType::ConstraintViolated,
+                                        format!("Unknown player {} sent chat message", sender),
+                                    )
+                                })?;
+                            message.payload.sender_name.last_name = String::default();
 
                             match message.message_type_data {
                                 MessageTypeData::World => {
