@@ -106,9 +106,8 @@ pub struct Name {
 
 impl Display for Name {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(&self.first_name)?;
-        f.write_char(' ')?;
-        f.write_str(&self.last_name)
+        let full_name = format!("{} {}", self.first_name, self.last_name);
+        f.write_str(full_name.trim())
     }
 }
 

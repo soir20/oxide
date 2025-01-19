@@ -16,7 +16,9 @@ use crate::{
 };
 
 use super::{
-    guid::GuidTableIndexer, lock_enforcer::CharacterLockRequest, unique_guid::player_guid,
+    guid::GuidTableIndexer,
+    lock_enforcer::CharacterLockRequest,
+    unique_guid::{player_guid, shorten_player_guid},
     zone::ZoneInstance,
 };
 
@@ -37,7 +39,7 @@ pub fn process_chat_packet(
                         character_consumer: |characters_table_read_handle, _, _, _| {
                             let mut message = SendMessage::deserialize(cursor)?;
                             message.payload.sender_guid = player_guid(sender);
-                            message.payload.sender_name.first_name = characters_table_read_handle
+                            message.payload.channel_name.first_name = characters_table_read_handle
                                 .index2(player_guid(sender))
                                 .cloned()
                                 .ok_or_else(|| {
@@ -46,7 +48,7 @@ pub fn process_chat_packet(
                                         format!("Unknown player {} sent chat message", sender),
                                     )
                                 })?;
-                            message.payload.sender_name.last_name = String::default();
+                            message.payload.channel_name.last_name = String::default();
 
                             match message.message_type_data {
                                 MessageTypeData::World => {
@@ -74,13 +76,52 @@ pub fn process_chat_packet(
                                         })?],
                                     )])
                                 }
-                                MessageTypeData::Whisper => Ok(vec![Broadcast::Single(
-                                    sender,
-                                    vec![GamePacket::serialize(&TunneledPacket {
-                                        unknown1: true,
-                                        inner: message,
-                                    })?],
-                                )]),
+                                MessageTypeData::Whisper => {
+                                    if message.payload.channel_name.first_name
+                                        == message.payload.target_name.first_name
+                                    {
+                                        return Ok(Vec::new());
+                                    }
+
+                                    let message_packet_for_target =
+                                        GamePacket::serialize(&TunneledPacket {
+                                            unknown1: true,
+                                            inner: message.clone(),
+                                        })?;
+                                    let mut broadcasts: Vec<Broadcast> =
+                                        characters_table_read_handle
+                                            .keys_by_index2(&message.payload.target_name.first_name)
+                                            .filter_map(|guid| shorten_player_guid(guid).ok())
+                                            .map(|target_guid| {
+                                                Broadcast::Single(
+                                                    target_guid,
+                                                    vec![message_packet_for_target.clone()],
+                                                )
+                                            })
+                                            .collect();
+
+                                    // We also need to send the chat to the sender so they see their own messages
+                                    message.payload.channel_name =
+                                        message.payload.target_name.clone();
+
+                                    // Required for the UI to properly display our own messages
+                                    message.payload.message = format!(
+                                        "You whisper to [{}]:{}",
+                                        message.payload.target_name, message.payload.message
+                                    );
+
+                                    let message_packet_for_sender =
+                                        GamePacket::serialize(&TunneledPacket {
+                                            unknown1: true,
+                                            inner: message,
+                                        })?;
+                                    broadcasts.push(Broadcast::Single(
+                                        sender,
+                                        vec![message_packet_for_sender],
+                                    ));
+
+                                    Ok(broadcasts)
+                                }
                                 MessageTypeData::Guild => Ok(vec![Broadcast::Single(
                                     sender,
                                     vec![GamePacket::serialize(&TunneledPacket {

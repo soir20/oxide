@@ -73,11 +73,11 @@ impl MessageTypeData {
     }
 }
 
-#[derive(SerializePacket, DeserializePacket)]
+#[derive(Clone, SerializePacket, DeserializePacket)]
 pub struct MessagePayload {
     pub sender_guid: u64,
     pub target_guid: u64,
-    pub sender_name: Name,
+    pub channel_name: Name,
     pub target_name: Name,
     pub message: String,
     pub pos: Pos,
@@ -85,6 +85,7 @@ pub struct MessagePayload {
     pub language_id: u32,
 }
 
+#[derive(Clone)]
 pub struct SendMessage {
     pub message_type_data: MessageTypeData,
     pub payload: MessagePayload,

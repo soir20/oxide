@@ -81,9 +81,9 @@ pub trait GuidTableIndexer<'a, K, V: 'a, I1, I2 = (), I3 = ()> {
 
     fn keys_by_index1(&'a self, index: I1) -> impl Iterator<Item = K>;
 
-    fn keys_by_index2(&'a self, index: I2) -> impl Iterator<Item = K>;
+    fn keys_by_index2<'b>(&'a self, index: &'b I2) -> impl Iterator<Item = K>;
 
-    fn keys_by_index3(&'a self, index: I3) -> impl Iterator<Item = K>;
+    fn keys_by_index3<'b>(&'a self, index: &'b I3) -> impl Iterator<Item = K>;
 
     fn keys_by_index1_range(&'a self, range: impl RangeBounds<I1>) -> impl Iterator<Item = K>;
 
@@ -136,19 +136,19 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord>
             .cloned()
     }
 
-    fn keys_by_index2(&'a self, index: I2) -> impl Iterator<Item = K> {
+    fn keys_by_index2(&'a self, index: &I2) -> impl Iterator<Item = K> {
         self.guard
             .index2
-            .get(&index)
+            .get(index)
             .map(|index_list| index_list.iter())
             .unwrap_or_default()
             .cloned()
     }
 
-    fn keys_by_index3(&'a self, index: I3) -> impl Iterator<Item = K> {
+    fn keys_by_index3(&'a self, index: &I3) -> impl Iterator<Item = K> {
         self.guard
             .index3
-            .get(&index)
+            .get(index)
             .map(|index_list| index_list.iter())
             .unwrap_or_default()
             .cloned()
@@ -320,19 +320,19 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord>
             .cloned()
     }
 
-    fn keys_by_index2(&'a self, index: I2) -> impl Iterator<Item = K> {
+    fn keys_by_index2(&'a self, index: &I2) -> impl Iterator<Item = K> {
         self.guard
             .index2
-            .get(&index)
+            .get(index)
             .map(|index_list| index_list.iter())
             .unwrap_or_default()
             .cloned()
     }
 
-    fn keys_by_index3(&'a self, index: I3) -> impl Iterator<Item = K> {
+    fn keys_by_index3(&'a self, index: &I3) -> impl Iterator<Item = K> {
         self.guard
             .index3
-            .get(&index)
+            .get(index)
             .map(|index_list| index_list.iter())
             .unwrap_or_default()
             .cloned()

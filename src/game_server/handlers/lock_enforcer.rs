@@ -40,11 +40,11 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord>
         self.handle.keys_by_index1(index)
     }
 
-    fn keys_by_index2(&'a self, index: I2) -> impl Iterator<Item = K> {
+    fn keys_by_index2(&'a self, index: &I2) -> impl Iterator<Item = K> {
         self.handle.keys_by_index2(index)
     }
 
-    fn keys_by_index3(&'a self, index: I3) -> impl Iterator<Item = K> {
+    fn keys_by_index3(&'a self, index: &I3) -> impl Iterator<Item = K> {
         self.handle.keys_by_index3(index)
     }
 
