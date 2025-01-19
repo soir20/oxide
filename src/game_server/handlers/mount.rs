@@ -26,7 +26,7 @@ use crate::{
 };
 
 use super::{
-    character::{Character, CharacterIndex},
+    character::{Character, CharacterLocationIndex, CharacterNameIndex},
     guid::{Guid, GuidTableIndexer, IndexedGuid},
     lock_enforcer::{CharacterLockRequest, ZoneLockRequest},
     unique_guid::{mount_guid, player_guid},
@@ -72,7 +72,13 @@ pub fn load_mounts(config_dir: &Path) -> Result<BTreeMap<u32, MountConfig>, Erro
 
 pub fn reply_dismount<'a>(
     sender: u32,
-    characters_table_handle: &'a impl GuidTableIndexer<'a, u64, Character, CharacterIndex>,
+    characters_table_handle: &'a impl GuidTableIndexer<
+        'a,
+        u64,
+        Character,
+        CharacterLocationIndex,
+        CharacterNameIndex,
+    >,
     zone: &RwLockReadGuard<ZoneInstance>,
     character: &mut RwLockWriteGuard<Character>,
     mounts: &BTreeMap<u32, MountConfig>,

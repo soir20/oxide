@@ -8,7 +8,9 @@ use std::time::Instant;
 use std::vec;
 
 use byteorder::{LittleEndian, ReadBytesExt};
-use handlers::character::{Character, CharacterCategory, CharacterIndex, CharacterType, Chunk};
+use handlers::character::{
+    Character, CharacterCategory, CharacterLocationIndex, CharacterNameIndex, CharacterType, Chunk,
+};
 use handlers::chat::process_chat_packet;
 use handlers::command::process_command;
 use handlers::guid::{GuidTable, GuidTableIndexer, GuidTableWriteHandle, IndexedGuid};
@@ -566,7 +568,8 @@ impl GameServer {
                         |characters_table_write_handle: &mut GuidTableWriteHandle<
                             u64,
                             Character,
-                            CharacterIndex,
+                            CharacterLocationIndex,
+                            CharacterNameIndex,
                         >,
                          zones_lock_enforcer| {
                             zones_lock_enforcer.write_zones(|zones_table_write_handle| {

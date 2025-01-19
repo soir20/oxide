@@ -73,9 +73,9 @@ impl<K, V, I1, I2, I3> GuidTableData<K, V, I1, I2, I3> {
 pub trait GuidTableIndexer<'a, K, V: 'a, I1, I2 = (), I3 = ()> {
     fn index1(&self, guid: K) -> Option<I1>;
 
-    fn index2(&self, guid: K) -> Option<I2>;
+    fn index2(&self, guid: K) -> Option<&I2>;
 
-    fn index3(&self, guid: K) -> Option<I3>;
+    fn index3(&self, guid: K) -> Option<&I3>;
 
     fn keys(&'a self) -> impl Iterator<Item = K>;
 
@@ -102,25 +102,25 @@ pub struct GuidTableReadHandle<'a, K, V, I1 = (), I2 = (), I3 = ()> {
     guard: RwLockReadGuard<'a, GuidTableData<K, V, I1, I2, I3>>,
 }
 
-impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Copy + Ord, I3: Copy + Ord>
+impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord>
     GuidTableIndexer<'a, K, V, I1, I2, I3> for GuidTableReadHandle<'a, K, V, I1, I2, I3>
 {
     fn index1(&self, guid: K) -> Option<I1> {
         self.guard.data.get(&guid).map(|(_, index1, _, _)| *index1)
     }
 
-    fn index2(&self, guid: K) -> Option<I2> {
+    fn index2(&self, guid: K) -> Option<&I2> {
         self.guard
             .data
             .get(&guid)
-            .and_then(|(_, _, index2, _)| *index2)
+            .and_then(|(_, _, index2, _)| index2.as_ref())
     }
 
-    fn index3(&self, guid: K) -> Option<I3> {
+    fn index3(&self, guid: K) -> Option<&I3> {
         self.guard
             .data
             .get(&guid)
-            .and_then(|(_, _, _, index3)| *index3)
+            .and_then(|(_, _, _, index3)| index3.as_ref())
     }
 
     fn keys(&'a self) -> impl Iterator<Item = K> {
@@ -176,7 +176,7 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Copy + Ord, I3: Copy + Ord>
     }
 }
 
-impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Copy + Ord, I3: Copy + Ord>
+impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord>
     GuidTableHandle<'a, K, V, I1, I2, I3> for GuidTableReadHandle<'a, K, V, I1, I2, I3>
 {
     fn get(&self, guid: K) -> Option<&Lock<V>> {
@@ -192,8 +192,8 @@ impl<
         K: Copy + Ord,
         V: IndexedGuid<K, I1, I2, I3>,
         I1: Copy + Ord,
-        I2: Copy + Ord,
-        I3: Copy + Ord,
+        I2: Clone + Ord,
+        I3: Clone + Ord,
     > GuidTableWriteHandle<'_, K, V, I1, I2, I3>
 {
     pub fn get(&self, guid: K) -> Option<&Lock<V>> {
@@ -265,38 +265,46 @@ impl<
         // Remove from the index before inserting the new key in case the item has the same key
         let previous = self.remove(key);
 
+        if let Some(value) = &index2 {
+            self.guard
+                .index2
+                .entry(value.clone())
+                .or_default()
+                .insert(key);
+        }
+        if let Some(value) = &index3 {
+            self.guard
+                .index3
+                .entry(value.clone())
+                .or_default()
+                .insert(key);
+        }
         self.guard.data.insert(key, (item, index1, index2, index3));
         self.guard.index1.entry(index1).or_default().insert(key);
-        if let Some(value) = index2 {
-            self.guard.index2.entry(value).or_default().insert(key);
-        }
-        if let Some(value) = index3 {
-            self.guard.index3.entry(value).or_default().insert(key);
-        }
 
         previous.map(|(item, _, _, _)| item)
     }
 }
 
-impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Copy + Ord, I3: Copy + Ord>
+impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord>
     GuidTableIndexer<'a, K, V, I1, I2, I3> for GuidTableWriteHandle<'a, K, V, I1, I2, I3>
 {
     fn index1(&self, guid: K) -> Option<I1> {
         self.guard.data.get(&guid).map(|(_, index, _, _)| *index)
     }
 
-    fn index2(&self, guid: K) -> Option<I2> {
+    fn index2(&self, guid: K) -> Option<&I2> {
         self.guard
             .data
             .get(&guid)
-            .and_then(|(_, _, index, _)| *index)
+            .and_then(|(_, _, index, _)| index.as_ref())
     }
 
-    fn index3(&self, guid: K) -> Option<I3> {
+    fn index3(&self, guid: K) -> Option<&I3> {
         self.guard
             .data
             .get(&guid)
-            .and_then(|(_, _, _, index)| *index)
+            .and_then(|(_, _, _, index)| index.as_ref())
     }
 
     fn keys(&'a self) -> impl Iterator<Item = K> {
@@ -356,8 +364,8 @@ impl<
         'a,
         K: Copy + Ord,
         I1: Copy + Ord,
-        I2: Copy + Ord,
-        I3: Copy + Ord,
+        I2: Clone + Ord,
+        I3: Clone + Ord,
         V: IndexedGuid<K, I1, I2, I3>,
     > GuidTableHandle<'a, K, V, I1, I2, I3> for GuidTableWriteHandle<'a, K, V, I1, I2, I3>
 {

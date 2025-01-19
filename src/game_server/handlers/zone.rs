@@ -30,8 +30,8 @@ use crate::{
 use super::{
     character::{
         coerce_to_broadcast_supplier, AmbientNpcConfig, Character, CharacterCategory,
-        CharacterIndex, CharacterType, Chunk, DoorConfig, NpcTemplate, PreviousFixture,
-        PreviousLocation, TransportConfig, WriteLockingBroadcastSupplier,
+        CharacterLocationIndex, CharacterNameIndex, CharacterType, Chunk, DoorConfig, NpcTemplate,
+        PreviousFixture, PreviousLocation, TransportConfig, WriteLockingBroadcastSupplier,
     },
     distance3,
     guid::{Guid, GuidTable, GuidTableIndexer, GuidTableWriteHandle, IndexedGuid},
@@ -103,7 +103,9 @@ impl Guid<u8> for ZoneTemplate {
     }
 }
 
-impl From<&Vec<Character>> for GuidTable<u64, Character, CharacterIndex> {
+impl From<&Vec<Character>>
+    for GuidTable<u64, Character, CharacterLocationIndex, CharacterNameIndex>
+{
     fn from(value: &Vec<Character>) -> Self {
         let table = GuidTable::new();
 
@@ -125,7 +127,12 @@ impl ZoneTemplate {
         &self,
         instance_guid: u64,
         house_data: Option<House>,
-        global_characters_table: &mut GuidTableWriteHandle<u64, Character, CharacterIndex>,
+        global_characters_table: &mut GuidTableWriteHandle<
+            u64,
+            Character,
+            CharacterLocationIndex,
+            CharacterNameIndex,
+        >,
     ) -> ZoneInstance {
         let keys_to_guid: HashMap<&String, u64> = self
             .characters
@@ -241,7 +248,12 @@ impl ZoneInstance {
         guid: u64,
         template: &ZoneTemplate,
         house: House,
-        global_characters_table: &mut GuidTableWriteHandle<u64, Character, CharacterIndex>,
+        global_characters_table: &mut GuidTableWriteHandle<
+            u64,
+            Character,
+            CharacterLocationIndex,
+            CharacterNameIndex,
+        >,
     ) -> Self {
         for (index, fixture) in house.fixtures.iter().enumerate() {
             global_characters_table.insert(Character::new(
@@ -300,7 +312,13 @@ impl ZoneInstance {
         sender: Option<u32>,
         chunk: Chunk,
         instance_guid: u64,
-        characters_table_handle: &'a impl GuidTableIndexer<'a, u64, Character, CharacterIndex>,
+        characters_table_handle: &'a impl GuidTableIndexer<
+            'a,
+            u64,
+            Character,
+            CharacterLocationIndex,
+            CharacterNameIndex,
+        >,
     ) -> Result<Vec<u32>, ProcessPacketError> {
         let mut guids = Vec::new();
 
@@ -325,7 +343,13 @@ impl ZoneInstance {
     pub fn all_players_nearby<'a>(
         chunk: Chunk,
         instance_guid: u64,
-        characters_table_handle: &'a impl GuidTableIndexer<'a, u64, Character, CharacterIndex>,
+        characters_table_handle: &'a impl GuidTableIndexer<
+            'a,
+            u64,
+            Character,
+            CharacterLocationIndex,
+            CharacterNameIndex,
+        >,
     ) -> Result<Vec<u32>, ProcessPacketError> {
         ZoneInstance::other_players_nearby(None, chunk, instance_guid, characters_table_handle)
     }
@@ -334,7 +358,13 @@ impl ZoneInstance {
         instance_guid: u64,
         old_chunk: Chunk,
         new_chunk: Chunk,
-        characters_table_handle: &'a impl GuidTableIndexer<'a, u64, Character, CharacterIndex>,
+        characters_table_handle: &'a impl GuidTableIndexer<
+            'a,
+            u64,
+            Character,
+            CharacterLocationIndex,
+            CharacterNameIndex,
+        >,
         moved_character_guid: u64,
     ) -> CharacterDiffResult {
         let old_chunks = ZoneInstance::nearby_chunks(old_chunk);

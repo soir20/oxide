@@ -19,6 +19,8 @@ pub mod ui;
 pub mod update_position;
 pub mod zone;
 
+use std::fmt::{Display, Write};
+
 use byteorder::{LittleEndian, WriteBytesExt};
 use num_enum::TryFromPrimitive;
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
@@ -100,6 +102,14 @@ pub struct Name {
     pub last_name_id: u32,
     pub first_name: String,
     pub last_name: String,
+}
+
+impl Display for Name {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(&self.first_name)?;
+        f.write_char(' ')?;
+        f.write_str(&self.last_name)
+    }
 }
 
 #[derive(SerializePacket, DeserializePacket)]
