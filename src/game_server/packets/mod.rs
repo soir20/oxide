@@ -29,7 +29,6 @@ use serde::Deserialize;
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u16)]
 pub enum OpCode {
-    Minigame = 0x27,
     LoginRequest = 0x1,
     LoginReply = 0x2,
     TunneledClient = 0x5,
@@ -44,6 +43,7 @@ pub enum OpCode {
     Combat = 0x20,
     PlayerUpdate = 0x23,
     ClientUpdate = 0x26,
+    Minigame = 0x27,
     Inventory = 0x2a,
     ZoneDetails = 0x2b,
     ReferenceData = 0x2c,

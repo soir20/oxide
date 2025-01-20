@@ -46,7 +46,6 @@ use packets::player_update::{Customization, InitCustomizations, QueueAnimation, 
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
 use packets::store::StoreItemList;
 use packets::tunnel::{TunneledPacket, TunneledWorldPacket};
-use packets::ui::ExecuteScriptWithParams;
 use packets::update_position::{PlayerJump, UpdatePlayerPosition};
 use packets::zone::ZoneTeleportRequest;
 use packets::{GamePacket, OpCode};
@@ -332,15 +331,6 @@ impl GameServer {
                     let item_groups = TunneledPacket {
                         unknown1: true,
                         inner: GamePacket::serialize(&self.item_groups)?,
-                    };
-                    sender_only_packets.push(GamePacket::serialize(&item_groups)?);
-
-                    let item_groups = TunneledPacket {
-                        unknown1: true,
-                        inner: ExecuteScriptWithParams {
-                            script_name: "Console.show".to_string(),
-                            params: vec![],
-                        },
                     };
                     sender_only_packets.push(GamePacket::serialize(&item_groups)?);
 
