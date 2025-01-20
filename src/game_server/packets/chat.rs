@@ -36,7 +36,7 @@ pub enum MessageType {
     Trade = 0x6,
     LookingForGroup = 0x7,
     Area = 0x8,
-    Guild = 0x9,
+    Squad = 0x9,
     MembersOnly = 0xb,
 }
 
@@ -51,7 +51,7 @@ pub enum MessageTypeData {
     Trade,
     LookingForGroup,
     Area(u32),
-    Guild,
+    Squad,
     MembersOnly,
 }
 
@@ -67,7 +67,7 @@ impl MessageTypeData {
             MessageTypeData::Trade => MessageType::Trade,
             MessageTypeData::LookingForGroup => MessageType::LookingForGroup,
             MessageTypeData::Area(_) => MessageType::Area,
-            MessageTypeData::Guild => MessageType::Guild,
+            MessageTypeData::Squad => MessageType::Squad,
             MessageTypeData::MembersOnly => MessageType::MembersOnly,
         }
     }
@@ -81,7 +81,7 @@ pub struct MessagePayload {
     pub target_name: Name,
     pub message: String,
     pub pos: Pos,
-    pub guild_guid: u64,
+    pub squad_guid: u64,
     pub language_id: u32,
 }
 
@@ -127,7 +127,7 @@ impl DeserializePacket for SendMessage {
                 let area_id = u32::deserialize(cursor)?;
                 MessageTypeData::Area(area_id)
             }
-            MessageType::Guild => MessageTypeData::Guild,
+            MessageType::Squad => MessageTypeData::Squad,
             MessageType::MembersOnly => MessageTypeData::MembersOnly,
         };
 

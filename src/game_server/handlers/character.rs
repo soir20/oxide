@@ -1148,7 +1148,7 @@ impl Player {
                 member: self.member,
                 moderator: false,
                 temporary_appearance: 0,
-                guilds: Vec::new(),
+                squads: Vec::new(),
                 battle_class: self.active_battle_class,
                 title: 0,
                 unknown16: 0,

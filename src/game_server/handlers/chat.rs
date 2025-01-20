@@ -122,7 +122,7 @@ pub fn process_chat_packet(
 
                                     Ok(broadcasts)
                                 }
-                                MessageTypeData::Guild => Ok(vec![Broadcast::Single(
+                                MessageTypeData::Squad => Ok(vec![Broadcast::Single(
                                     sender,
                                     vec![GamePacket::serialize(&TunneledPacket {
                                         unknown1: true,
