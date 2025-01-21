@@ -40,19 +40,6 @@ impl GamePacket for SquadMemberStatus {
     const HEADER: Self::Header = SquadOpCode::MemberStatus;
 }
 
-#[derive(SerializePacket, DeserializePacket)]
-pub struct SquadPlayerStatus {
-    pub unknown1: u64,
-    pub unknown2: u64,
-    pub unknown3: bool,
-}
-
-impl GamePacket for SquadPlayerStatus {
-    type Header = SquadOpCode;
-
-    const HEADER: Self::Header = SquadOpCode::PlayerStatus;
-}
-
 pub struct SquadMember {
     pub player_guid: u32,
     pub name: String,
@@ -115,4 +102,17 @@ impl GamePacket for SquadFullData {
     type Header = SquadOpCode;
 
     const HEADER: Self::Header = SquadOpCode::FullData;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct SquadPlayerStatus {
+    pub unknown1: u64,
+    pub unknown2: u64,
+    pub unknown3: bool,
+}
+
+impl GamePacket for SquadPlayerStatus {
+    type Header = SquadOpCode;
+
+    const HEADER: Self::Header = SquadOpCode::PlayerStatus;
 }
