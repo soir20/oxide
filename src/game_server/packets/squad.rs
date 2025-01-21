@@ -40,6 +40,20 @@ impl GamePacket for SquadMemberStatus {
     const HEADER: Self::Header = SquadOpCode::MemberStatus;
 }
 
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u32)]
+pub enum SquadNameStatus {
+    NoRename = 1,
+    CanRename = 2,
+}
+
+impl SerializePacket for SquadNameStatus {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        buffer.write_u32::<LittleEndian>(*self as u32)?;
+        Ok(())
+    }
+}
+
 pub struct SquadMember {
     pub player_guid: u32,
     pub name: String,
@@ -86,16 +100,27 @@ pub struct SquadRankDefinition {
     pub rank: SquadRank,
 }
 
-#[derive(SerializePacket)]
 pub struct SquadFullData {
-    pub unknown1: u64,
-    pub unknown2: u64,
+    pub squad_guid: u64,
     pub squad_name: String,
     pub unknown4: String,
-    pub unknown5: u32,
+    pub name_status: SquadNameStatus,
     pub members: Vec<SquadMember>,
     pub rank_definitions: Vec<SquadRankDefinition>,
-    pub unknown8: u32,
+    pub max_members: u32,
+}
+
+impl SerializePacket for SquadFullData {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        self.squad_guid.serialize(buffer)?;
+        self.squad_guid.serialize(buffer)?;
+        self.squad_name.serialize(buffer)?;
+        self.unknown4.serialize(buffer)?;
+        self.name_status.serialize(buffer)?;
+        self.members.serialize(buffer)?;
+        self.rank_definitions.serialize(buffer)?;
+        self.max_members.serialize(buffer)
+    }
 }
 
 impl GamePacket for SquadFullData {
