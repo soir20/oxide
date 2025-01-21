@@ -11,7 +11,7 @@ use super::{GamePacket, OpCode};
 pub enum SquadOpCode {
     MemberStatus = 0xf,
     FullData = 0x12,
-    PlayerStatus = 0x17,
+    SquadNameplateStatus = 0x17,
 }
 
 impl SerializePacket for SquadOpCode {
@@ -131,14 +131,14 @@ impl GamePacket for SquadFullData {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct SquadPlayerStatus {
-    pub unknown1: u64,
-    pub unknown2: u64,
-    pub unknown3: bool,
+pub struct SquadNameplateStatus {
+    pub player_guid: u64,
+    pub squad_guid: u64,
+    pub show_squad_name: bool,
 }
 
-impl GamePacket for SquadPlayerStatus {
+impl GamePacket for SquadNameplateStatus {
     type Header = SquadOpCode;
 
-    const HEADER: Self::Header = SquadOpCode::PlayerStatus;
+    const HEADER: Self::Header = SquadOpCode::SquadNameplateStatus;
 }
