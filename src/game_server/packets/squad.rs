@@ -11,7 +11,7 @@ use super::{GamePacket, OpCode};
 pub enum SquadOpCode {
     MemberStatus = 0xf,
     FullData = 0x12,
-    SquadNameplateStatus = 0x17,
+    NameplateStatus = 0x17,
 }
 
 impl SerializePacket for SquadOpCode {
@@ -22,15 +22,34 @@ impl SerializePacket for SquadOpCode {
     }
 }
 
-#[derive(SerializePacket, DeserializePacket)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u32)]
+pub enum SquadEvent {
+    Joined = 1,
+    Removed = 2,
+    Quit = 3,
+    Promoted = 4,
+    Demoted = 5,
+    NoMessage = 6,
+    NoMessageDuplicate = 7,
+}
+
+impl SerializePacket for SquadEvent {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        buffer.write_u32::<LittleEndian>(*self as u32)?;
+        Ok(())
+    }
+}
+
+#[derive(SerializePacket)]
 pub struct SquadMemberStatus {
-    pub unknown1: u64,
-    pub unknown2: u64,
-    pub unknown3: String,
-    pub unknown4: u32,
-    pub unknown5: bool,
-    pub unknown6: bool,
-    pub unknown7: u32,
+    pub squad_guid: u64,
+    pub player_guid: u64,
+    pub new_player_name: String,
+    pub new_rank: SquadRank,
+    pub online: bool,
+    pub member: bool,
+    pub event: SquadEvent,
     pub unknown8: String,
 }
 
@@ -58,7 +77,7 @@ impl SerializePacket for SquadNameStatus {
 pub struct SquadMember {
     pub player_guid: u32,
     pub name: String,
-    pub rank_definition_id: u32,
+    pub rank: SquadRank,
     pub online: bool,
     pub member: bool,
     pub unknown7: String,
@@ -69,7 +88,7 @@ impl SerializePacket for SquadMember {
         self.player_guid.serialize(buffer)?;
         player_guid(self.player_guid).serialize(buffer)?;
         self.name.serialize(buffer)?;
-        self.rank_definition_id.serialize(buffer)?;
+        self.rank.serialize(buffer)?;
         self.online.serialize(buffer)?;
         self.member.serialize(buffer)?;
         self.unknown7.serialize(buffer)
@@ -92,13 +111,21 @@ impl SerializePacket for SquadRank {
     }
 }
 
-#[derive(SerializePacket)]
 pub struct SquadRankDefinition {
-    pub id: u32,
     pub unknown2: u64,
-    pub unknown3: u32,
-    pub unknown4: u32,
+    pub name_override_id: u32,
     pub rank: SquadRank,
+}
+
+impl SerializePacket for SquadRankDefinition {
+    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+        // Use the rank as the ID because the client only allows IDs up to 4
+        self.rank.serialize(buffer)?;
+        self.unknown2.serialize(buffer)?;
+        self.rank.serialize(buffer)?;
+        self.name_override_id.serialize(buffer)?;
+        self.rank.serialize(buffer)
+    }
 }
 
 pub struct SquadFullData {
@@ -140,5 +167,5 @@ pub struct SquadNameplateStatus {
 impl GamePacket for SquadNameplateStatus {
     type Header = SquadOpCode;
 
-    const HEADER: Self::Header = SquadOpCode::SquadNameplateStatus;
+    const HEADER: Self::Header = SquadOpCode::NameplateStatus;
 }
