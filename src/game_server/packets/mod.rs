@@ -12,6 +12,7 @@ pub mod player_data;
 pub mod player_update;
 pub mod purchase;
 pub mod reference_data;
+pub mod squad;
 pub mod store;
 pub mod time;
 pub mod tunnel;
@@ -59,6 +60,7 @@ pub enum OpCode {
     UpdatePlayerPosition = 0x7d,
     UpdatePlayerCamera = 0x7e,
     Housing = 0x7f,
+    Squad = 0x81,
     ClientGameSettings = 0x8f,
     Portrait = 0x9b,
     PlayerJump = 0xa3,
