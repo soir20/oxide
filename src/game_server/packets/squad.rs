@@ -43,8 +43,9 @@ impl GamePacket for SquadMemberStatus {
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u32)]
 pub enum SquadNameStatus {
-    NoRename = 1,
-    CanRename = 2,
+    Accepted = 1,
+    Rejected = 2,
+    Pending = 4,
 }
 
 impl SerializePacket for SquadNameStatus {
