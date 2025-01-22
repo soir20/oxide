@@ -667,9 +667,10 @@
 				"rot_y": 0.0,
 				"rot_z": 0.9994564,
                 "tickable_procedures": {
-                    "lift": {
+                    "green_starfighter": {
                         "steps": [
                             {
+                                "spawn_npc": true,
 								"rail_id": 36,
 								"composite_effect_id": 1021,
 								"effect_delay_millis": 0,
@@ -677,7 +678,7 @@
                                 "duration_millis": 16000
                             },
                             {
-								"timer": 1000,
+								"remove_fade_millis": 1000,
                                 "duration_millis": 6000
                             }
                         ]
@@ -696,9 +697,10 @@
 				"rot_y": 0.0,
 				"rot_z": -0.99913853,
                 "tickable_procedures": {
-                    "lift": {
+                    "purple_starfighter": {
                         "steps": [
                             {
+                                "spawn_npc": true,
 								"rail_id": 37,
 								"composite_effect_id": 1021,
 								"effect_delay_millis": 0,
@@ -706,7 +708,7 @@
                                 "duration_millis": 16000
                             },
                             {
-								"timer": 1000,
+                                "remove_fade_millis": 1000,
                                 "duration_millis": 6000
                             }
                         ]
