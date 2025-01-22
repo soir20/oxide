@@ -17,8 +17,8 @@ use crate::{
             minigame::ScoreEntry,
             player_data::EquippedItem,
             player_update::{
-                AddNotifications, AddNpc, AddPc, Customization, CustomizationSlot, PlayCompositeEffect,
-                Hostility, Icon, MoveOnRail, NameplateImage, NotificationData, NpcRelevance,
+                AddNotifications, AddNpc, AddPc, Customization, CustomizationSlot, Hostility, Icon,
+                MoveOnRail, NameplateImage, NotificationData, NpcRelevance, PlayCompositeEffect,
                 QueueAnimation, RemoveGracefully, RemoveStandard, SetAnimation, SingleNotification,
                 SingleNpcRelevance, UpdateSpeed,
             },
@@ -257,6 +257,115 @@ impl BaseNpc {
             },
         )
     }
+    pub fn conditional_add_packets(
+        &self,
+        character: &CharacterStats,
+    ) -> (AddNpc, SingleNpcRelevance) {
+        (
+            AddNpc {
+                guid: Guid::guid(character),
+                name_id: self.name_id,
+                model_id: self.model_id,
+                unknown3: true,
+                chat_text_color: Character::DEFAULT_CHAT_TEXT_COLOR,
+                chat_bubble_color: Character::DEFAULT_CHAT_BUBBLE_COLOR,
+                chat_scale: 1,
+                scale: character.scale,
+                pos: character.pos,
+                rot: character.rot,
+                spawn_animation_id: -1,
+                attachments: vec![],
+                hostility: Hostility::Neutral,
+                unknown10: 1,
+                texture_name: "".to_string(),
+                tint_name: "".to_string(),
+                tint_id: 0,
+                unknown11: true,
+                offset_y: 0.0,
+                composite_effect: 0,
+                wield_type: WieldType::None,
+                name_override: "".to_string(),
+                hide_name: !self.show_name,
+                name_offset_x: self.name_offset_x,
+                name_offset_y: self.name_offset_y,
+                name_offset_z: self.name_offset_z,
+                terrain_object_id: self.terrain_object_id,
+                invisible: !self.visible,
+                speed: character.speed,
+                unknown21: false,
+                interactable_size_pct: 100,
+                unknown23: -1,
+                unknown24: -1,
+                looping_animation_id: character.animation_id,
+                unknown26: false,
+                ignore_position: false,
+                sub_title_id: 0,
+                one_shot_animation_id: -1,
+                temporary_appearance: 0,
+                effects: vec![],
+                disable_interact_popup: !self.enable_interact_popup,
+                unknown33: 0,
+                unknown34: false,
+                show_health: false,
+                hide_despawn_fade: false,
+                enable_tilt: !self.enable_rotation_and_shadow,
+                base_attachment_group: BaseAttachmentGroup {
+                    unknown1: 0,
+                    unknown2: "".to_string(),
+                    unknown3: "".to_string(),
+                    unknown4: 0,
+                    unknown5: "".to_string(),
+                },
+                tilt: Pos {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 0.0,
+                    w: 0.0,
+                },
+                unknown40: 0,
+                bounce_area_id: self.bounce_area_id,
+                image_set_id: 0,
+                collision: true,
+                rider_guid: 0,
+                npc_type: self.npc_type,
+                unknown46: 0.0,
+                target: Target::default(),
+                variables: vec![],
+                rail_id: 0,
+                rail_speed: 0.0,
+                rail_origin: Pos {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 0.0,
+                    w: 0.0,
+                },
+                unknown54: 0,
+                rail_unknown1: 0.0,
+                rail_unknown2: 0.0,
+                rail_unknown3: 0.0,
+                pet_customization_model_name1: "".to_string(),
+                pet_customization_model_name2: "".to_string(),
+                pet_customization_model_name3: "".to_string(),
+                override_terrain_model: false,
+                hover_glow: 0,
+                hover_description: 0,
+                fly_over_effect: 0,
+                unknown65: 0,
+                unknown66: 0,
+                unknown67: 0,
+                disable_move_to_interact: false,
+                unknown69: 0.0,
+                unknown70: 0.0,
+                unknown71: 0,
+                icon_id: Icon::None,
+            },
+            SingleNpcRelevance {
+                guid: Guid::guid(character),
+                cursor: character.cursor,
+                unknown1: false,
+            },
+        )
+    }
 }
 
 impl From<BaseNpcConfig> for BaseNpc {
@@ -308,6 +417,7 @@ pub struct TickableStep {
     #[serde(default)]
     pub cursor: CursorUpdate,
     pub duration_millis: u64,
+    pub spawn_npc: Option<bool>,
 }
 
 impl TickableStep {
@@ -326,7 +436,13 @@ impl TickableStep {
         nearby_player_guids: &[u32],
         nearby_players: &BTreeMap<u64, CharacterReadGuard>,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        let mut packets_for_all = Vec::new();             
+        let mut packets_for_all = Vec::new();
+
+        if let Some(true) = self.spawn_npc {
+            if let CharacterType::AmbientNpc(ref ambient_npc) = character.character_type {
+                packets_for_all.extend(ambient_npc.conditional_add_packets(character)?);
+            }
+        }
 
         if let Some(composite_effect_id) = self.composite_effect_id {
             let delay_millis = self.effect_delay_millis.unwrap_or(0);
@@ -763,6 +879,27 @@ pub struct AmbientNpc {
 impl AmbientNpc {
     pub fn add_packets(&self, character: &Character) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
         let (add_npc, enable_interaction) = self.base_npc.add_packets(character);
+        let packets = vec![
+            GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: add_npc,
+            })?,
+            GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: NpcRelevance {
+                    new_states: vec![enable_interaction],
+                },
+            })?,
+        ];
+
+        Ok(packets)
+    }
+
+    pub fn conditional_add_packets(
+        &self,
+        character: &CharacterStats,
+    ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+        let (add_npc, enable_interaction) = self.base_npc.conditional_add_packets(character);
         let packets = vec![
             GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
