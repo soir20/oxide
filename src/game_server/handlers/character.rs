@@ -1288,6 +1288,7 @@ impl NpcTemplate {
 pub type Chunk = (i32, i32);
 pub type CharacterLocationIndex = (CharacterCategory, u64, Chunk);
 pub type CharacterNameIndex = String;
+pub type CharacterSquadIndex = u64;
 
 #[derive(Clone)]
 pub struct CharacterStat {
@@ -1334,7 +1335,9 @@ pub struct Character {
     pub synchronize_with: Option<u64>,
 }
 
-impl IndexedGuid<u64, CharacterLocationIndex, CharacterNameIndex> for Character {
+impl IndexedGuid<u64, CharacterLocationIndex, CharacterNameIndex, CharacterSquadIndex>
+    for Character
+{
     fn guid(&self) -> u64 {
         self.stats.guid
     }

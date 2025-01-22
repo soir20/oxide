@@ -30,8 +30,9 @@ use crate::{
 use super::{
     character::{
         coerce_to_broadcast_supplier, AmbientNpcConfig, Character, CharacterCategory,
-        CharacterLocationIndex, CharacterNameIndex, CharacterType, Chunk, DoorConfig, NpcTemplate,
-        PreviousFixture, PreviousLocation, TransportConfig, WriteLockingBroadcastSupplier,
+        CharacterLocationIndex, CharacterNameIndex, CharacterSquadIndex, CharacterType, Chunk,
+        DoorConfig, NpcTemplate, PreviousFixture, PreviousLocation, TransportConfig,
+        WriteLockingBroadcastSupplier,
     },
     distance3,
     guid::{Guid, GuidTable, GuidTableIndexer, GuidTableWriteHandle, IndexedGuid},
@@ -104,7 +105,7 @@ impl Guid<u8> for ZoneTemplate {
 }
 
 impl From<&Vec<Character>>
-    for GuidTable<u64, Character, CharacterLocationIndex, CharacterNameIndex>
+    for GuidTable<u64, Character, CharacterLocationIndex, CharacterNameIndex, CharacterSquadIndex>
 {
     fn from(value: &Vec<Character>) -> Self {
         let table = GuidTable::new();
@@ -132,6 +133,7 @@ impl ZoneTemplate {
             Character,
             CharacterLocationIndex,
             CharacterNameIndex,
+            CharacterSquadIndex,
         >,
     ) -> ZoneInstance {
         let keys_to_guid: HashMap<&String, u64> = self
@@ -253,6 +255,7 @@ impl ZoneInstance {
             Character,
             CharacterLocationIndex,
             CharacterNameIndex,
+            CharacterSquadIndex,
         >,
     ) -> Self {
         for (index, fixture) in house.fixtures.iter().enumerate() {
@@ -318,6 +321,7 @@ impl ZoneInstance {
             Character,
             CharacterLocationIndex,
             CharacterNameIndex,
+            CharacterSquadIndex,
         >,
     ) -> Result<Vec<u32>, ProcessPacketError> {
         let mut guids = Vec::new();
@@ -349,6 +353,7 @@ impl ZoneInstance {
             Character,
             CharacterLocationIndex,
             CharacterNameIndex,
+            CharacterSquadIndex,
         >,
     ) -> Result<Vec<u32>, ProcessPacketError> {
         ZoneInstance::other_players_nearby(None, chunk, instance_guid, characters_table_handle)
@@ -364,6 +369,7 @@ impl ZoneInstance {
             Character,
             CharacterLocationIndex,
             CharacterNameIndex,
+            CharacterSquadIndex,
         >,
         moved_character_guid: u64,
     ) -> CharacterDiffResult {
