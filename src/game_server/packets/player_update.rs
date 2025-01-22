@@ -418,10 +418,10 @@ impl GamePacket for ClearRail {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct MoveOnRail {
-    guid: u64,
-    unknown1: u32,
-    unknown2: u32,
-    pos: Pos,
+    pub guid: u64,
+    pub rail_id: u32,
+    pub unknown2: u32,
+    pub unknown3: Pos,
 }
 
 impl GamePacket for MoveOnRail {

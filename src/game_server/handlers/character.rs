@@ -17,9 +17,10 @@ use crate::{
             minigame::ScoreEntry,
             player_data::EquippedItem,
             player_update::{
-                AddNotifications, AddNpc, AddPc, Customization, CustomizationSlot, Hostility, Icon,
-                NameplateImage, NotificationData, NpcRelevance, QueueAnimation, RemoveStandard,
-                SetAnimation, SingleNotification, SingleNpcRelevance, UpdateSpeed,
+                AddNotifications, AddNpc, AddPc, Customization, CustomizationSlot, PlayCompositeEffect,
+                Hostility, Icon, MoveOnRail, NameplateImage, NotificationData, NpcRelevance,
+                QueueAnimation, RemoveGracefully, RemoveStandard, SetAnimation, SingleNotification,
+                SingleNpcRelevance, UpdateSpeed,
             },
             tunnel::TunneledPacket,
             ui::ExecuteScriptWithParams,
@@ -299,6 +300,11 @@ pub struct TickableStep {
     pub one_shot_animation_id: Option<i32>,
     pub chat_message_id: Option<u32>,
     pub sound_id: Option<u32>,
+    pub composite_effect_id: Option<u32>,
+    pub effect_delay_millis: Option<u32>,
+    pub effect_duration_millis: Option<u32>,
+    pub rail_id: Option<u32>,
+    pub remove_fade_millis: Option<u32>,
     #[serde(default)]
     pub cursor: CursorUpdate,
     pub duration_millis: u64,
@@ -320,7 +326,45 @@ impl TickableStep {
         nearby_player_guids: &[u32],
         nearby_players: &BTreeMap<u64, CharacterReadGuard>,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        let mut packets_for_all = Vec::new();
+        let mut packets_for_all = Vec::new();             
+
+        if let Some(composite_effect_id) = self.composite_effect_id {
+            let delay_millis = self.effect_delay_millis.unwrap_or(0);
+            let duration_millis = self.effect_duration_millis.unwrap_or(0);
+            packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: PlayCompositeEffect {
+                    guid: Guid::guid(character),
+                    triggered_by_guid: 0,
+                    composite_effect: composite_effect_id,
+                    delay_millis,
+                    duration_millis,
+                    pos: Pos {
+                        x: 0.0,
+                        y: 0.0,
+                        z: 0.0,
+                        w: 0.0,
+                    },
+                },
+            })?);
+        }
+
+        if let Some(rail_id) = self.rail_id {
+            packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: MoveOnRail {
+                    guid: Guid::guid(character),
+                    rail_id,
+                    unknown2: 0,
+                    unknown3: Pos {
+                        x: 0.0,
+                        y: 0.0,
+                        z: 0.0,
+                        w: 0.0,
+                    },
+                },
+            })?);
+        }
 
         if let Some(speed) = self.speed {
             character.speed = speed;
@@ -372,6 +416,20 @@ impl TickableStep {
                     queue_pos: 0,
                     delay_seconds: 0.0,
                     duration_seconds: self.duration_millis as f32 / 1000.0,
+                },
+            })?);
+        }
+
+        if let Some(remove_fade_millis) = self.remove_fade_millis {
+            packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: RemoveGracefully {
+                    guid: Guid::guid(character),
+                    unknown1: false,
+                    unknown2: 0,
+                    unknown3: 0,
+                    unknown4: 0,
+                    timer: remove_fade_millis,
                 },
             })?);
         }
