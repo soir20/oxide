@@ -100,6 +100,11 @@ pub fn process_chat_packet(
                                             })
                                             .collect();
 
+                                    // Don't send any response if the character being messaged doesn't exist
+                                    if broadcasts.is_empty() {
+                                        return Ok(broadcasts);
+                                    }
+
                                     // We also need to send the chat to the sender so they see their own messages
                                     message.payload.channel_name =
                                         message.payload.target_name.clone();
