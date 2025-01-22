@@ -998,6 +998,7 @@ pub struct Player {
     pub first_load: bool,
     pub ready: bool,
     pub name: Name,
+    pub squad_guid: Option<u64>,
     pub member: bool,
     pub credits: u32,
     pub battle_classes: BTreeMap<u32, BattleClass>,
@@ -1270,6 +1271,7 @@ impl NpcTemplate {
                 },
                 cursor: self.cursor,
                 name: None,
+                squad_guid: None,
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(
                 self.tickable_procedures.clone(),
@@ -1318,6 +1320,7 @@ pub struct CharacterStats {
     pub jump_height_multiplier: CharacterStat,
     pub cursor: Option<u8>,
     pub name: Option<String>,
+    pub squad_guid: Option<u64>,
     wield_type: (WieldType, WieldType),
     holstered: bool,
 }
@@ -1365,6 +1368,10 @@ impl IndexedGuid<u64, CharacterLocationIndex, CharacterNameIndex, CharacterSquad
     fn index2(&self) -> Option<String> {
         self.stats.name.clone()
     }
+
+    fn index3(&self) -> Option<u64> {
+        self.stats.squad_guid
+    }
 }
 
 impl Character {
@@ -1401,6 +1408,7 @@ impl Character {
                 mount_id,
                 cursor,
                 name: None,
+                squad_guid: None,
                 interact_radius,
                 auto_interact_radius,
                 instance_guid,
@@ -1463,6 +1471,7 @@ impl Character {
                 rot,
                 scale: 1.0,
                 name: Some(format!("{}", data.name)),
+                squad_guid: data.squad_guid,
                 character_type: CharacterType::Player(Box::new(data)),
                 mount_id: None,
                 cursor: None,
