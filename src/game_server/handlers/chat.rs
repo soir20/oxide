@@ -127,13 +127,26 @@ pub fn process_chat_packet(
 
                                     Ok(broadcasts)
                                 }
-                                MessageTypeData::Squad => Ok(vec![Broadcast::Single(
-                                    sender,
-                                    vec![GamePacket::serialize(&TunneledPacket {
-                                        unknown1: true,
-                                        inner: message,
-                                    })?],
-                                )]),
+                                MessageTypeData::Squad => {
+                                    if let Some(squad_guid) = characters_table_read_handle.index3(player_guid(sender)) {
+                                        message.payload.squad_guid = *squad_guid;
+
+                                        let players_in_squad = characters_table_read_handle
+                                            .keys_by_index3(squad_guid)
+                                            .filter_map(|guid| shorten_player_guid(guid).ok())
+                                            .collect();
+
+                                        Ok(vec![Broadcast::Multi(
+                                            players_in_squad,
+                                            vec![GamePacket::serialize(&TunneledPacket {
+                                                unknown1: true,
+                                                inner: message,
+                                            })?],
+                                        )])
+                                    } else {
+                                        Ok(Vec::new())
+                                    }
+                                },
                                 _ => Ok(Vec::new()),
                             }
                         },
