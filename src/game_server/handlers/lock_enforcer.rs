@@ -6,7 +6,7 @@ use std::{
 use parking_lot::{RwLockReadGuard, RwLockWriteGuard};
 
 use super::{
-    character::{Character, CharacterIndex},
+    character::{Character, CharacterLocationIndex, CharacterNameIndex, CharacterSquadIndex},
     guid::{
         GuidTable, GuidTableHandle, GuidTableIndexer, GuidTableReadHandle, GuidTableWriteHandle,
     },
@@ -17,18 +17,18 @@ pub struct TableReadHandleWrapper<'a, K, V, I1 = (), I2 = (), I3 = ()> {
     handle: GuidTableReadHandle<'a, K, V, I1, I2, I3>,
 }
 
-impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Copy + Ord, I3: Copy + Ord>
+impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord>
     GuidTableIndexer<'a, K, V, I1, I2, I3> for TableReadHandleWrapper<'a, K, V, I1, I2, I3>
 {
     fn index1(&self, guid: K) -> Option<I1> {
         self.handle.index1(guid)
     }
 
-    fn index2(&self, guid: K) -> Option<I2> {
+    fn index2(&self, guid: K) -> Option<&I2> {
         self.handle.index2(guid)
     }
 
-    fn index3(&self, guid: K) -> Option<I3> {
+    fn index3(&self, guid: K) -> Option<&I3> {
         self.handle.index3(guid)
     }
 
@@ -40,11 +40,11 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Copy + Ord, I3: Copy + Ord>
         self.handle.keys_by_index1(index)
     }
 
-    fn keys_by_index2(&'a self, index: I2) -> impl Iterator<Item = K> {
+    fn keys_by_index2(&'a self, index: &I2) -> impl Iterator<Item = K> {
         self.handle.keys_by_index2(index)
     }
 
-    fn keys_by_index3(&'a self, index: I3) -> impl Iterator<Item = K> {
+    fn keys_by_index3(&'a self, index: &I3) -> impl Iterator<Item = K> {
         self.handle.keys_by_index3(index)
     }
 
@@ -61,14 +61,30 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Copy + Ord, I3: Copy + Ord>
     }
 }
 
-impl<'a, K, V, I> From<GuidTableReadHandle<'a, K, V, I>> for TableReadHandleWrapper<'a, K, V, I> {
-    fn from(value: GuidTableReadHandle<'a, K, V, I>) -> Self {
+impl<'a, K, V, I1, I2, I3> From<GuidTableReadHandle<'a, K, V, I1, I2, I3>>
+    for TableReadHandleWrapper<'a, K, V, I1, I2, I3>
+{
+    fn from(value: GuidTableReadHandle<'a, K, V, I1, I2, I3>) -> Self {
         TableReadHandleWrapper { handle: value }
     }
 }
 
-pub type CharacterTableReadHandle<'a> = TableReadHandleWrapper<'a, u64, Character, CharacterIndex>;
-pub type CharacterTableWriteHandle<'a> = GuidTableWriteHandle<'a, u64, Character, CharacterIndex>;
+pub type CharacterTableReadHandle<'a> = TableReadHandleWrapper<
+    'a,
+    u64,
+    Character,
+    CharacterLocationIndex,
+    CharacterNameIndex,
+    CharacterSquadIndex,
+>;
+pub type CharacterTableWriteHandle<'a> = GuidTableWriteHandle<
+    'a,
+    u64,
+    Character,
+    CharacterLocationIndex,
+    CharacterNameIndex,
+    CharacterSquadIndex,
+>;
 pub type CharacterReadGuard<'a> = RwLockReadGuard<'a, Character>;
 pub type CharacterWriteGuard<'a> = RwLockWriteGuard<'a, Character>;
 pub type ZoneTableReadHandle<'a> = TableReadHandleWrapper<'a, u64, ZoneInstance, u8>;
@@ -157,7 +173,13 @@ pub struct CharacterLockRequest<
 }
 
 pub struct LockEnforcer<'a> {
-    characters: &'a GuidTable<u64, Character, CharacterIndex>,
+    characters: &'a GuidTable<
+        u64,
+        Character,
+        CharacterLocationIndex,
+        CharacterNameIndex,
+        CharacterSquadIndex,
+    >,
     zones: &'a GuidTable<u64, ZoneInstance, u8>,
 }
 
@@ -229,13 +251,20 @@ impl<'a> From<LockEnforcer<'a>> for ZoneLockEnforcer<'a> {
 }
 
 pub struct LockEnforcerSource {
-    characters: GuidTable<u64, Character, CharacterIndex>,
+    characters:
+        GuidTable<u64, Character, CharacterLocationIndex, CharacterNameIndex, CharacterSquadIndex>,
     zones: GuidTable<u64, ZoneInstance, u8>,
 }
 
 impl LockEnforcerSource {
     pub fn from(
-        characters: GuidTable<u64, Character, CharacterIndex>,
+        characters: GuidTable<
+            u64,
+            Character,
+            CharacterLocationIndex,
+            CharacterNameIndex,
+            CharacterSquadIndex,
+        >,
         zones: GuidTable<u64, ZoneInstance, u8>,
     ) -> LockEnforcerSource {
         LockEnforcerSource { characters, zones }

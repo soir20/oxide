@@ -33,7 +33,10 @@ use crate::{
 };
 
 use super::{
-    character::{Character, CharacterIndex, CharacterType, Chunk},
+    character::{
+        Character, CharacterLocationIndex, CharacterNameIndex, CharacterSquadIndex, CharacterType,
+        Chunk,
+    },
     guid::{GuidTableIndexer, IndexedGuid},
     lock_enforcer::CharacterLockRequest,
     unique_guid::player_guid,
@@ -548,7 +551,14 @@ fn item_def_from_slot<'a>(
 
 pub fn update_saber_tints<'a>(
     sender: u32,
-    characters_table_handle: &'a impl GuidTableIndexer<'a, u64, Character, CharacterIndex>,
+    characters_table_handle: &'a impl GuidTableIndexer<
+        'a,
+        u64,
+        Character,
+        CharacterLocationIndex,
+        CharacterNameIndex,
+        CharacterSquadIndex,
+    >,
     instance_guid: u64,
     chunk: Chunk,
     items: &BTreeMap<EquipmentSlot, EquippedItem>,
@@ -660,7 +670,14 @@ pub fn update_saber_tints<'a>(
 fn equip_item_in_slot<'a>(
     sender: u32,
     equip_guid: &EquipGuid,
-    characters_table_handle: &'a impl GuidTableIndexer<'a, u64, Character, CharacterIndex>,
+    characters_table_handle: &'a impl GuidTableIndexer<
+        'a,
+        u64,
+        Character,
+        CharacterLocationIndex,
+        CharacterNameIndex,
+        CharacterSquadIndex,
+    >,
     characters_write: &mut BTreeMap<u64, RwLockWriteGuard<Character>>,
     game_server: &GameServer,
     tint_override: Option<u32>,

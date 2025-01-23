@@ -998,6 +998,7 @@ pub struct Player {
     pub first_load: bool,
     pub ready: bool,
     pub name: Name,
+    pub squad_guid: Option<u64>,
     pub member: bool,
     pub credits: u32,
     pub battle_classes: BTreeMap<u32, BattleClass>,
@@ -1148,7 +1149,7 @@ impl Player {
                 member: self.member,
                 moderator: false,
                 temporary_appearance: 0,
-                guilds: Vec::new(),
+                squads: Vec::new(),
                 battle_class: self.active_battle_class,
                 title: 0,
                 unknown16: 0,
@@ -1269,6 +1270,8 @@ impl NpcTemplate {
                     mount_multiplier: 1.0,
                 },
                 cursor: self.cursor,
+                name: None,
+                squad_guid: None,
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(
                 self.tickable_procedures.clone(),
@@ -1285,7 +1288,9 @@ impl NpcTemplate {
 }
 
 pub type Chunk = (i32, i32);
-pub type CharacterIndex = (CharacterCategory, u64, Chunk);
+pub type CharacterLocationIndex = (CharacterCategory, u64, Chunk);
+pub type CharacterNameIndex = String;
+pub type CharacterSquadIndex = u64;
 
 #[derive(Clone)]
 pub struct CharacterStat {
@@ -1314,6 +1319,8 @@ pub struct CharacterStats {
     pub speed: CharacterStat,
     pub jump_height_multiplier: CharacterStat,
     pub cursor: Option<u8>,
+    pub name: Option<String>,
+    pub squad_guid: Option<u64>,
     wield_type: (WieldType, WieldType),
     holstered: bool,
 }
@@ -1331,12 +1338,14 @@ pub struct Character {
     pub synchronize_with: Option<u64>,
 }
 
-impl IndexedGuid<u64, CharacterIndex> for Character {
+impl IndexedGuid<u64, CharacterLocationIndex, CharacterNameIndex, CharacterSquadIndex>
+    for Character
+{
     fn guid(&self) -> u64 {
         self.stats.guid
     }
 
-    fn index1(&self) -> CharacterIndex {
+    fn index1(&self) -> CharacterLocationIndex {
         (
             match &self.stats.character_type {
                 CharacterType::Player(player) => match player.ready {
@@ -1354,6 +1363,14 @@ impl IndexedGuid<u64, CharacterIndex> for Character {
             self.stats.instance_guid,
             Character::chunk(self.stats.pos.x, self.stats.pos.z),
         )
+    }
+
+    fn index2(&self) -> Option<String> {
+        self.stats.name.clone()
+    }
+
+    fn index3(&self) -> Option<u64> {
+        self.stats.squad_guid
     }
 }
 
@@ -1390,6 +1407,8 @@ impl Character {
                 character_type,
                 mount_id,
                 cursor,
+                name: None,
+                squad_guid: None,
                 interact_radius,
                 auto_interact_radius,
                 instance_guid,
@@ -1451,6 +1470,8 @@ impl Character {
                 pos,
                 rot,
                 scale: 1.0,
+                name: Some(format!("{}", data.name)),
+                squad_guid: data.squad_guid,
                 character_type: CharacterType::Player(Box::new(data)),
                 mount_id: None,
                 cursor: None,

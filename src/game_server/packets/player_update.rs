@@ -127,7 +127,7 @@ pub struct AddPc {
     pub member: bool,
     pub moderator: bool,
     pub temporary_appearance: u32,
-    pub guilds: Vec<Unknown13Array>,
+    pub squads: Vec<Unknown13Array>,
     pub battle_class: u32,
     pub title: u32,
     pub unknown16: u32,

@@ -12,12 +12,15 @@ pub mod player_data;
 pub mod player_update;
 pub mod purchase;
 pub mod reference_data;
+pub mod squad;
 pub mod store;
 pub mod time;
 pub mod tunnel;
 pub mod ui;
 pub mod update_position;
 pub mod zone;
+
+use std::fmt::Display;
 
 use byteorder::{LittleEndian, WriteBytesExt};
 use num_enum::TryFromPrimitive;
@@ -27,7 +30,6 @@ use serde::Deserialize;
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u16)]
 pub enum OpCode {
-    Minigame = 0x27,
     LoginRequest = 0x1,
     LoginReply = 0x2,
     TunneledClient = 0x5,
@@ -42,6 +44,7 @@ pub enum OpCode {
     Combat = 0x20,
     PlayerUpdate = 0x23,
     ClientUpdate = 0x26,
+    Minigame = 0x27,
     Inventory = 0x2a,
     ZoneDetails = 0x2b,
     ReferenceData = 0x2c,
@@ -57,6 +60,7 @@ pub enum OpCode {
     UpdatePlayerPosition = 0x7d,
     UpdatePlayerCamera = 0x7e,
     Housing = 0x7f,
+    Squad = 0x81,
     ClientGameSettings = 0x8f,
     Portrait = 0x9b,
     PlayerJump = 0xa3,
@@ -100,6 +104,13 @@ pub struct Name {
     pub last_name_id: u32,
     pub first_name: String,
     pub last_name: String,
+}
+
+impl Display for Name {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let full_name = format!("{} {}", self.first_name, self.last_name);
+        f.write_str(full_name.trim())
+    }
 }
 
 #[derive(SerializePacket, DeserializePacket)]
