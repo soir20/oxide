@@ -128,7 +128,9 @@ pub fn process_chat_packet(
                                     Ok(broadcasts)
                                 }
                                 MessageTypeData::Squad => {
-                                    if let Some(squad_guid) = characters_table_read_handle.index3(player_guid(sender)) {
+                                    if let Some(squad_guid) =
+                                        characters_table_read_handle.index3(player_guid(sender))
+                                    {
                                         message.payload.squad_guid = *squad_guid;
 
                                         let players_in_squad = characters_table_read_handle
@@ -146,7 +148,7 @@ pub fn process_chat_packet(
                                     } else {
                                         Ok(Vec::new())
                                     }
-                                },
+                                }
                                 _ => Ok(Vec::new()),
                             }
                         },
