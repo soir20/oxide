@@ -444,15 +444,6 @@ impl TickableStep {
             }
         }
 
-        /*if let Some(true) = self.spawn_npc {
-            match &character.character_type {
-                if let CharacterType::AmbientNpc(ambient_npc) => {
-                    packets_for_all.extend(ambient_npc.conditional_add_packets(&character)?);
-                }
-                _ => {} // Ignore other character types
-            }
-        }*/
-
         if let Some(composite_effect_id) = self.composite_effect_id {
             let delay_millis = self.effect_delay_millis.unwrap_or(0);
             let duration_millis = self.effect_duration_millis.unwrap_or(0);
@@ -877,16 +868,21 @@ pub struct AmbientNpcConfig {
     #[serde(flatten)]
     pub base_npc: BaseNpcConfig,
     pub procedure_on_interact: Option<String>,
+    pub wait_to_spawn_on_steps: Option<bool>,
 }
 
 #[derive(Clone)]
 pub struct AmbientNpc {
     pub base_npc: BaseNpc,
     pub procedure_on_interact: Option<String>,
+    pub wait_to_spawn_on_steps: Option<bool>,
 }
 
 impl AmbientNpc {
     pub fn add_packets(&self, character: &Character) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+        if let Some(true) = self.wait_to_spawn_on_steps {
+            return Ok(Vec::new());
+        }
         let (add_npc, enable_interaction) = self.base_npc.add_packets(character);
         let packets = vec![
             GamePacket::serialize(&TunneledPacket {
@@ -945,6 +941,7 @@ impl From<AmbientNpcConfig> for AmbientNpc {
         AmbientNpc {
             base_npc: value.base_npc.into(),
             procedure_on_interact: value.procedure_on_interact,
+            wait_to_spawn_on_steps: value.wait_to_spawn_on_steps,
         }
     }
 }
