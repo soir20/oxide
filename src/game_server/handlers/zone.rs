@@ -39,6 +39,7 @@ use super::{
     housing::prepare_init_house_packets,
     lock_enforcer::{
         CharacterLockRequest, CharacterReadGuard, CharacterTableWriteHandle, CharacterWriteGuard,
+        ZoneTableWriteHandle,
     },
     mount::MountConfig,
     unique_guid::{
@@ -1041,9 +1042,66 @@ fn prepare_init_zone_packets(
     Ok(vec![Broadcast::Single(player, packets)])
 }
 
+pub fn clean_up_zone_if_no_players(
+    instance_guid: u64,
+    characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
+    zones_table_write_handle: &mut ZoneTableWriteHandle<'_>,
+) {
+    let ready_range = (
+        CharacterCategory::PlayerReady,
+        instance_guid,
+        Character::MIN_CHUNK,
+    )
+        ..(
+            CharacterCategory::PlayerReady,
+            instance_guid,
+            Character::MAX_CHUNK,
+        );
+    let unready_range = (
+        CharacterCategory::PlayerUnready,
+        instance_guid,
+        Character::MIN_CHUNK,
+    )
+        ..(
+            CharacterCategory::PlayerUnready,
+            instance_guid,
+            Character::MAX_CHUNK,
+        );
+
+    let has_ready_players = characters_table_write_handle.any_by_index1_range(ready_range);
+    let has_unready_players = characters_table_write_handle.any_by_index1_range(unready_range);
+
+    if !has_ready_players && !has_unready_players {
+        clean_up_zone(
+            instance_guid,
+            characters_table_write_handle,
+            zones_table_write_handle,
+        );
+    }
+}
+
+fn clean_up_zone(
+    instance_guid: u64,
+    characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
+    zones_table_write_handle: &mut ZoneTableWriteHandle<'_>,
+) {
+    for category in CharacterCategory::iter() {
+        let range = (category, instance_guid, Character::MIN_CHUNK)
+            ..(category, instance_guid, Character::MAX_CHUNK);
+        let characters_to_remove: Vec<u64> = characters_table_write_handle
+            .keys_by_index1_range(range)
+            .collect();
+        for character_guid in characters_to_remove {
+            characters_table_write_handle.remove(character_guid);
+        }
+    }
+
+    zones_table_write_handle.remove(instance_guid);
+}
+
 #[macro_export]
 macro_rules! teleport_to_zone {
-    ($characters_table_write_handle:expr, $player:expr,
+    ($characters_table_write_handle:expr, $player:expr, $zones_table_write_handle:expr,
      $destination_read_handle:expr, $destination_pos:expr, $destination_rot:expr, $mounts:expr,
      $update_previous_location:expr$(,)?) => {{
         let character = $crate::game_server::handlers::guid::GuidTableHandle::get(
@@ -1052,6 +1110,7 @@ macro_rules! teleport_to_zone {
         );
 
         let mut broadcasts = Vec::new();
+        let mut possible_previous_instance_guid = None;
         if let Some(character_lock) = character {
             broadcasts.append(&mut $crate::game_server::handlers::mount::reply_dismount(
                 $player,
@@ -1060,6 +1119,7 @@ macro_rules! teleport_to_zone {
                 &mut character_lock.write(),
                 $mounts,
             )?);
+            possible_previous_instance_guid = Some(character_lock.read().stats.instance_guid);
         }
 
         broadcasts.append(&mut $crate::game_server::handlers::zone::enter_zone(
@@ -1070,6 +1130,14 @@ macro_rules! teleport_to_zone {
             $destination_rot,
             $update_previous_location,
         )?);
+
+        if let Some(previous_instance_guid) = possible_previous_instance_guid {
+            $crate::game_server::handlers::zone::clean_up_zone_if_no_players(
+                previous_instance_guid,
+                $characters_table_write_handle,
+                $zones_table_write_handle,
+            );
+        }
 
         Ok(broadcasts)
     }};

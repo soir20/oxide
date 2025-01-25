@@ -841,6 +841,7 @@ impl Door {
                                 teleport_to_zone!(
                                     characters_table_write_handle,
                                     requester,
+                                    zones_table_write_handle,
                                     &destination_lock.read(),
                                     Some(destination_pos),
                                     Some(destination_rot),
