@@ -717,6 +717,7 @@ fn handle_request_create_active_minigame(
                 let teleport_broadcasts = teleport_to_zone!(
                     characters_table_write_handle,
                     sender,
+                    zones_table_write_handle,
                     &zones_table_write_handle.get(new_instance_guid)
                         .unwrap_or_else(|| panic!("Zone instance {} should have been created or already exist but is missing", new_instance_guid))
                         .read(),
@@ -1464,6 +1465,7 @@ fn end_active_minigame(
     let teleport_broadcasts: Result<Vec<Broadcast>, ProcessPacketError> = teleport_to_zone!(
         characters_table_write_handle,
         sender,
+        zones_table_write_handle,
         &zones_table_write_handle
             .get(instance_guid)
             .unwrap_or_else(|| panic!(

@@ -90,6 +90,18 @@ pub trait GuidTableIndexer<'a, K, V: 'a, I1, I2 = (), I3 = ()> {
     fn keys_by_index2_range(&'a self, range: impl RangeBounds<I2>) -> impl Iterator<Item = K>;
 
     fn keys_by_index3_range(&'a self, range: impl RangeBounds<I3>) -> impl Iterator<Item = K>;
+
+    fn any_by_index1_range(&'a self, range: impl RangeBounds<I1>) -> bool {
+        self.keys_by_index1_range(range).next().is_some()
+    }
+
+    fn any_by_index2_range(&'a self, range: impl RangeBounds<I2>) -> bool {
+        self.keys_by_index2_range(range).next().is_some()
+    }
+
+    fn any_by_index3_range(&'a self, range: impl RangeBounds<I3>) -> bool {
+        self.keys_by_index3_range(range).next().is_some()
+    }
 }
 
 pub trait GuidTableHandle<'a, K, V: 'a, I1, I2, I3>:

@@ -449,6 +449,7 @@ pub fn process_housing_packet(
                                 teleport_to_zone!(
                                     characters_table_write_handle,
                                     sender,
+                                    zones_table_write_handle,
                                     &zone_read_handle.read(),
                                     None,
                                     None,

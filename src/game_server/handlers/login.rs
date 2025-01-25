@@ -16,7 +16,7 @@ use super::{
     minigame::PlayerMinigameStats,
     test_data::{make_test_customizations, make_test_player},
     unique_guid::player_guid,
-    zone::ZoneInstance,
+    zone::{clean_up_zone_if_no_players, ZoneInstance},
 };
 
 pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, ProcessPacketError> {
@@ -133,9 +133,8 @@ pub fn log_out(
     sender: u32,
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-    game_server
-        .lock_enforcer()
-        .write_characters(|characters_table_write_handle, _| {
+    game_server.lock_enforcer().write_characters(
+        |characters_table_write_handle, zones_lock_enforcer| {
             if let Some((character, (_, instance_guid, chunk), _, _)) =
                 characters_table_write_handle.remove(player_guid(sender))
             {
@@ -148,11 +147,20 @@ pub fn log_out(
 
                 let remove_packets = character.read().remove_packets()?;
 
+                zones_lock_enforcer.write_zones(|zones_table_write_handle| {
+                    clean_up_zone_if_no_players(
+                        instance_guid,
+                        characters_table_write_handle,
+                        zones_table_write_handle,
+                    );
+                });
+
                 Ok(vec![Broadcast::Multi(other_players_nearby, remove_packets)])
             } else {
                 Ok(vec![])
             }
-        })
+        },
+    )
 }
 
 pub fn send_points_of_interest(
