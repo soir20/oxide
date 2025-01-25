@@ -658,28 +658,28 @@
             {
                 "comment": "Green Starfighter",
                 "model_id": 721,
-				"npc_type": 1,
+                "npc_type": 1,
                 "pos_x": 102.07826,
                 "pos_y": 23.625809,
                 "pos_z": -202.4084,
                 "pos_w": 1.0,
                 "rot_x": 0.032968648,
-				"rot_y": 0.0,
-				"rot_z": 0.9994564,
+                "rot_y": 0.0,
+                "rot_z": 0.9994564,
                 "wait_to_spawn_on_steps": true,
                 "tickable_procedures": {
                     "green_starfighter": {
                         "steps": [
                             {
                                 "spawn_npc": true,
-								"rail_id": 36,
-								"composite_effect_id": 1021,
-								"effect_delay_millis": 0,
-								"effect_duration_millis": 12000,
+                                "rail_id": 36,
+                                "composite_effect_id": 1021,
+                                "effect_delay_millis": 0,
+                                "effect_duration_millis": 12000,
                                 "duration_millis": 12000
                             },
                             {
-								"remove_fade_millis": 1000,
+                                "remove_fade_millis": 1000,
                                 "duration_millis": 1000
                             }
                         ]
@@ -697,24 +697,24 @@
 			{
                 "comment": "Purple Starfighter",
                 "model_id": 723,
-				"npc_type": 1,
+                "npc_type": 1,
                 "pos_x": 120.92088,
                 "pos_y": 23.625809,
                 "pos_z": -161.41364,
                 "pos_w": 1.0,
                 "rot_x": -0.019411897,
-				"rot_y": 0.0,
-				"rot_z": -0.99913853,
+                "rot_y": 0.0,
+                "rot_z": -0.99913853,
                 "wait_to_spawn_on_steps": true,
                 "tickable_procedures": {
                     "purple_starfighter": {
                         "steps": [
                             {
                                 "spawn_npc": true,
-								"rail_id": 37,
-								"composite_effect_id": 1021,
-								"effect_delay_millis": 0,
-								"effect_duration_millis": 12500,
+                                "rail_id": 37,
+                                "composite_effect_id": 1021,
+                                "effect_delay_millis": 0,
+                                "effect_duration_millis": 12500,
                                 "duration_millis": 12500
                             },
                             {
