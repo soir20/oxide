@@ -51,6 +51,7 @@ use packets::update_position::{PlayerJump, UpdatePlayerPosition};
 use packets::zone::ZoneTeleportRequest;
 use packets::{GamePacket, OpCode};
 use rand::Rng;
+use strum::IntoEnumIterator;
 
 use crate::{info, teleport_to_zone};
 use packet_serialize::{DeserializePacket, DeserializePacketError, SerializePacketError};
@@ -227,6 +228,65 @@ impl GameServer {
         }
 
         Ok(broadcasts)
+    }
+
+    pub fn clean_up_zone_if_no_players(
+        &self,
+        instance_guid: u64,
+        characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
+        zones_table_write_handle: &mut ZoneTableWriteHandle<'_>,
+    ) {
+        let ready_range = (
+            CharacterCategory::PlayerReady,
+            instance_guid,
+            Character::MIN_CHUNK,
+        )
+            ..(
+                CharacterCategory::PlayerReady,
+                instance_guid,
+                Character::MAX_CHUNK,
+            );
+        let unready_range = (
+            CharacterCategory::PlayerUnready,
+            instance_guid,
+            Character::MIN_CHUNK,
+        )
+            ..(
+                CharacterCategory::PlayerUnready,
+                instance_guid,
+                Character::MAX_CHUNK,
+            );
+
+        let has_ready_players = characters_table_write_handle.any_by_index1_range(ready_range);
+        let has_unready_players = characters_table_write_handle.any_by_index1_range(unready_range);
+
+        if !has_ready_players && !has_unready_players {
+            self.clean_up_zone(
+                instance_guid,
+                characters_table_write_handle,
+                zones_table_write_handle,
+            );
+        }
+    }
+
+    fn clean_up_zone(
+        &self,
+        instance_guid: u64,
+        characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
+        zones_table_write_handle: &mut ZoneTableWriteHandle<'_>,
+    ) {
+        for category in CharacterCategory::iter() {
+            let range = (category, instance_guid, Character::MIN_CHUNK)
+                ..(category, instance_guid, Character::MAX_CHUNK);
+            let characters_to_remove: Vec<u64> = characters_table_write_handle
+                .keys_by_index1_range(range)
+                .collect();
+            for character_guid in characters_to_remove {
+                characters_table_write_handle.remove(character_guid);
+            }
+        }
+
+        zones_table_write_handle.remove(instance_guid);
     }
 
     pub fn process_packet(
