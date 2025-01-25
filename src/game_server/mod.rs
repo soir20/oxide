@@ -593,7 +593,9 @@ impl GameServer {
                                         zones_table_write_handle,
                                         &zones_table_write_handle
                                             .get(instance_guid)
-                                            .expect("any_instance returned invalid zone GUID")
+                                            .expect(
+                                                "get_or_create_instance returned invalid zone GUID"
+                                            )
                                             .read(),
                                         None,
                                         None,
