@@ -444,6 +444,15 @@ impl TickableStep {
             }
         }
 
+        /*if let Some(true) = self.spawn_npc {
+            match &character.character_type {
+                if let CharacterType::AmbientNpc(ambient_npc) => {
+                    packets_for_all.extend(ambient_npc.conditional_add_packets(&character)?);
+                }
+                _ => {} // Ignore other character types
+            }
+        }*/
+
         if let Some(composite_effect_id) = self.composite_effect_id {
             let delay_millis = self.effect_delay_millis.unwrap_or(0);
             let duration_millis = self.effect_duration_millis.unwrap_or(0);
@@ -541,11 +550,11 @@ impl TickableStep {
                 unknown1: true,
                 inner: RemoveGracefully {
                     guid: Guid::guid(character),
-                    unknown1: false,
-                    unknown2: 0,
-                    unknown3: 0,
-                    unknown4: 0,
-                    timer: remove_fade_millis,
+                    use_death_animation: false,
+                    removal_delay_millis: 0,
+                    composite_effect_delay_millis: 0,
+                    composite_effect_id: 0,
+                    fade_duration_millis: remove_fade_millis,
                 },
             })?);
         }

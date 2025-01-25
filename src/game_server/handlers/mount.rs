@@ -93,11 +93,11 @@ pub fn reply_dismount(
                         unknown1: true,
                         inner: RemoveGracefully {
                             guid: mount_guid(sender, mount_id),
-                            unknown1: false,
-                            unknown2: 0,
-                            unknown3: 0,
-                            unknown4: 0,
-                            timer: 1000,
+                            use_death_animation: false,
+                            removal_delay_millis: 0,
+                            composite_effect_delay_millis: 0,
+                            composite_effect_id: 0,
+                            fade_duration_millis: 1000,
                         },
                     })?,
                     GamePacket::serialize(&TunneledPacket {

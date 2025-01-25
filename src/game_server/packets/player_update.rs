@@ -84,11 +84,11 @@ impl GamePacket for RemoveStandard {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct RemoveGracefully {
     pub guid: u64,
-    pub unknown1: bool,
-    pub unknown2: u32,
-    pub unknown3: u32,
-    pub unknown4: u32,
-    pub timer: u32,
+    pub use_death_animation: bool,
+    pub removal_delay_millis: u32,
+    pub composite_effect_delay_millis: u32,
+    pub composite_effect_id: u32,
+    pub fade_duration_millis: u32,
 }
 
 impl GamePacket for RemoveGracefully {
