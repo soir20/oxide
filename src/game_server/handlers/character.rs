@@ -36,7 +36,7 @@ use super::{
     guid::{Guid, IndexedGuid},
     housing::fixture_packets,
     inventory::wield_type_from_slot,
-    lock_enforcer::{CharacterReadGuard, ZoneLockRequest},
+    lock_enforcer::CharacterReadGuard,
     minigame::PlayerMinigameStats,
     mount::{spawn_mount_npc, MountConfig},
     unique_guid::{mount_guid, npc_guid, player_guid, shorten_player_guid},
@@ -817,48 +817,43 @@ impl Door {
         coerce_to_broadcast_supplier(move |game_server| {
             game_server.lock_enforcer().write_characters(
                 |characters_table_write_handle, zones_lock_enforcer| {
-                    let destination_zone_guid = if let &Some(destination_zone_guid) =
-                        &destination_zone
-                    {
-                        destination_zone_guid
-                    } else if let &Some(destination_zone_template) = &destination_zone_template {
-                        zones_lock_enforcer.write_zones(|zones_table_write_handle| {
+                    zones_lock_enforcer.write_zones(|zones_table_write_handle| {
+                        let destination_zone_guid = if let &Some(destination_zone_guid) =
+                            &destination_zone
+                        {
+                            destination_zone_guid
+                        } else if let &Some(destination_zone_template) = &destination_zone_template
+                        {
                             game_server.get_or_create_instance(
                                 characters_table_write_handle,
                                 zones_table_write_handle,
                                 destination_zone_template,
                                 1,
-                            )
-                        })?
-                    } else {
-                        source_zone_guid
-                    };
+                            )?
+                        } else {
+                            source_zone_guid
+                        };
 
-                    if source_zone_guid != destination_zone_guid {
-                        zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
-                            read_guids: vec![destination_zone_guid],
-                            write_guids: Vec::new(),
-                            zone_consumer: |_, zones_read, _| {
-                                if let Some(destination_read_handle) =
-                                    zones_read.get(&destination_zone_guid)
-                                {
-                                    teleport_to_zone!(
-                                        characters_table_write_handle,
-                                        requester,
-                                        destination_read_handle,
-                                        Some(destination_pos),
-                                        Some(destination_rot),
-                                        game_server.mounts(),
-                                        false,
-                                    )
-                                } else {
-                                    Ok(Vec::new())
-                                }
-                            },
-                        })
-                    } else {
-                        teleport_within_zone(requester, destination_pos, destination_rot)
-                    }
+                        if source_zone_guid != destination_zone_guid {
+                            if let Some(destination_lock) =
+                                zones_table_write_handle.get(destination_zone_guid)
+                            {
+                                teleport_to_zone!(
+                                    characters_table_write_handle,
+                                    requester,
+                                    &destination_lock.read(),
+                                    Some(destination_pos),
+                                    Some(destination_rot),
+                                    game_server.mounts(),
+                                    false,
+                                )
+                            } else {
+                                Ok(Vec::new())
+                            }
+                        } else {
+                            teleport_within_zone(requester, destination_pos, destination_rot)
+                        }
+                    })
                 },
             )
         })
