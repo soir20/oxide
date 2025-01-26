@@ -1,5 +1,5 @@
 use crate::game_server::packets::{
-    update_position::{PlayerJump, UpdatePlayerPosition},
+    update_position::{PlayerJump, UpdatePlayerPlatformPosition, UpdatePlayerPosition},
     GamePacket, Pos,
 };
 
@@ -42,6 +42,24 @@ impl UpdatePositionPacket for UpdatePlayerPosition {
 impl UpdatePositionPacket for PlayerJump {
     fn apply_jump_height_multiplier(&mut self, multiplier: f32) {
         self.vertical_speed *= multiplier;
+    }
+
+    fn guid(&self) -> u64 {
+        self.pos_update.guid()
+    }
+
+    fn pos(&self) -> Pos {
+        self.pos_update.pos()
+    }
+
+    fn rot(&self) -> Pos {
+        self.pos_update.rot()
+    }
+}
+
+impl UpdatePositionPacket for UpdatePlayerPlatformPosition {
+    fn apply_jump_height_multiplier(&mut self, multiplier: f32) {
+        self.pos_update.apply_jump_height_multiplier(multiplier);
     }
 
     fn guid(&self) -> u64 {
