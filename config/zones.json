@@ -658,7 +658,7 @@
             {
                 "comment": "Green Starfighter",
                 "model_id": 721,
-                "npc_type": 1,
+                "npc_type": 2,
                 "pos_x": 102.07826,
                 "pos_y": 23.625809,
                 "pos_z": -202.4084,
@@ -697,7 +697,7 @@
 			{
                 "comment": "Purple Starfighter",
                 "model_id": 723,
-                "npc_type": 1,
+                "npc_type": 2,
                 "pos_x": 120.92088,
                 "pos_y": 23.625809,
                 "pos_z": -161.41364,
