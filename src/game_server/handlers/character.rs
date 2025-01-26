@@ -124,8 +124,8 @@ pub struct BaseNpcConfig {
     pub bounce_area_id: i32,
     #[serde(default = "default_npc_type")]
     pub npc_type: u32,
-    #[serde(default = "default_true")]
-    pub enable_rotation_and_shadow: bool,
+    #[serde(default)]
+    pub enable_tilt: bool,
     #[serde(default)]
     pub tickable_procedures: HashMap<String, TickableProcedureConfig>,
     #[serde(default)]
@@ -146,7 +146,7 @@ pub struct BaseNpc {
     pub visible: bool,
     pub bounce_area_id: i32,
     pub npc_type: u32,
-    pub enable_rotation_and_shadow: bool,
+    pub enable_tilt: bool,
 }
 
 impl BaseNpc {
@@ -198,7 +198,7 @@ impl BaseNpc {
                 unknown34: false,
                 show_health: false,
                 hide_despawn_fade: false,
-                enable_tilt: !self.enable_rotation_and_shadow,
+                enable_tilt: self.enable_tilt,
                 base_attachment_group: BaseAttachmentGroup {
                     unknown1: 0,
                     unknown2: "".to_string(),
@@ -272,7 +272,7 @@ impl From<BaseNpcConfig> for BaseNpc {
             visible: value.visible,
             bounce_area_id: value.bounce_area_id,
             npc_type: value.npc_type,
-            enable_rotation_and_shadow: value.enable_rotation_and_shadow,
+            enable_tilt: value.enable_tilt,
         }
     }
 }
