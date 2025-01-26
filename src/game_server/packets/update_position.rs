@@ -1,6 +1,6 @@
 use packet_serialize::{DeserializePacket, SerializePacket};
 
-use super::{GamePacket, OpCode};
+use super::{GamePacket, OpCode, Pos};
 
 #[derive(Copy, Clone, SerializePacket, DeserializePacket)]
 pub struct UpdatePlayerPosition {
@@ -29,4 +29,16 @@ pub struct PlayerJump {
 impl GamePacket for PlayerJump {
     type Header = OpCode;
     const HEADER: Self::Header = OpCode::PlayerJump;
+}
+
+#[derive(Copy, Clone, SerializePacket, DeserializePacket)]
+pub struct UpdatePlayerPlatformPosition {
+    pub pos_update: UpdatePlayerPosition,
+    pub platform_guid: u64,
+    pub player_pos_relative_to_platform: Pos,
+}
+
+impl GamePacket for UpdatePlayerPlatformPosition {
+    type Header = OpCode;
+    const HEADER: Self::Header = OpCode::UpdatePlayerPlatformPosition;
 }

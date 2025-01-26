@@ -61,6 +61,7 @@ pub enum OpCode {
     UpdatePlayerCamera = 0x7e,
     Housing = 0x7f,
     Squad = 0x81,
+    UpdatePlayerPlatformPosition = 0xb8,
     ClientGameSettings = 0x8f,
     Portrait = 0x9b,
     PlayerJump = 0xa3,
