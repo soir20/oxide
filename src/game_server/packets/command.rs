@@ -67,7 +67,7 @@ pub struct DialogAdvancement {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct EnterDialog {
     pub dialog_message_id: u32,
-    pub unknown2: u32,
+    pub animation_id: i32,
     pub guid: u64,
     pub enable_exit_button: bool,
     pub unknown4: f32,
@@ -81,7 +81,7 @@ pub struct EnterDialog {
     pub unknown10: bool,
     pub unknown11: bool,
     pub zoom_scale: f32,
-    pub unknown13: u32,
+    pub sound_id: u32,
 }
 
 impl GamePacket for EnterDialog {

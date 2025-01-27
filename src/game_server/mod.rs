@@ -701,7 +701,7 @@ impl GameServer {
                                         unknown1: true,
                                         inner: EnterDialog {
                                             dialog_message_id: 1000,
-                                            unknown2: 0,
+                                            animation_id: 3011,
                                             guid: 1,
                                             enable_exit_button: true,
                                             unknown4: 40.0,
@@ -709,9 +709,17 @@ impl GameServer {
                                             {
                                               button_id: 0,
                                               unknown2: 0,
-                                              button_text_id: 0,
+                                              button_text_id: 60710,
                                               unknown4: 0,
                                               unknown5: 0,
+                                            },
+                                            DialogAdvancement
+                                            {
+                                                button_id: 1,
+                                                unknown2: 0,
+                                                button_text_id: 60711,
+                                                unknown4: 0,
+                                                unknown5: 0,
                                             }],
                                             camera_placement: Pos {
                                                 x: 900.3,
@@ -737,7 +745,7 @@ impl GameServer {
                                             unknown10: false,
                                             unknown11: false,
                                             zoom_scale: 0.0,
-                                            unknown13: 0,
+                                            sound_id: 3011,
                                         }
                                     })?/*,
                                     GamePacket::serialize(&TunneledPacket {
