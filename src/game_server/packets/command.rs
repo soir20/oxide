@@ -56,7 +56,7 @@ impl GamePacket for AdvanceDialog {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct DialogAdvancement {
+pub struct DialogChoice {
     pub button_id: u32,
     pub unknown2: u32,
     pub button_text_id: u32,
@@ -67,11 +67,11 @@ pub struct DialogAdvancement {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct EnterDialog {
     pub dialog_message_id: u32,
-    pub animation_id: i32,
-    pub guid: u64,
+    pub speaker_animation_id: i32,
+    pub speaker_guid: u64,
     pub enable_exit_button: bool,
     pub unknown4: f32,
-    pub dialog_advancements: Vec<DialogAdvancement>,
+    pub dialog_choices: Vec<DialogChoice>,
     pub camera_placement: Pos,
     pub look_at: Pos,
     pub change_player_pos: bool,
@@ -80,8 +80,8 @@ pub struct EnterDialog {
     pub hide_player: bool,
     pub unknown10: bool,
     pub unknown11: bool,
-    pub zoom_scale: f32,
-    pub sound_id: u32,
+    pub zoom: f32,
+    pub speaker_sound_id: u32,
 }
 
 impl GamePacket for EnterDialog {

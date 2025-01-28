@@ -37,7 +37,7 @@ use handlers::unique_guid::{
 };
 use handlers::zone::{load_zones, teleport_within_zone, ZoneInstance, ZoneTemplate};
 use packets::client_update::{Health, Power, PreloadCharactersDone, Stat, StatId, Stats};
-use packets::command::{DialogAdvancement, EnterDialog, ExitDialog};
+use packets::command::{DialogChoice, EnterDialog, ExitDialog};
 use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
 use packets::item::ItemDefinition;
 use packets::login::{LoginRequest, WelcomeScreen, ZoneDetailsDone};
@@ -701,11 +701,11 @@ impl GameServer {
                                         unknown1: true,
                                         inner: EnterDialog {
                                             dialog_message_id: 1000,
-                                            animation_id: 3011,
-                                            guid: 1,
+                                            speaker_animation_id: 3011,
+                                            speaker_guid: 1,
                                             enable_exit_button: true,
                                             unknown4: 40.0,
-                                            dialog_advancements: vec![DialogAdvancement
+                                            dialog_choices: vec![DialogChoice
                                             {
                                               button_id: 0,
                                               unknown2: 0,
@@ -713,7 +713,7 @@ impl GameServer {
                                               unknown4: 0,
                                               unknown5: 0,
                                             },
-                                            DialogAdvancement
+                                            DialogChoice
                                             {
                                                 button_id: 1,
                                                 unknown2: 0,
@@ -744,8 +744,8 @@ impl GameServer {
                                             hide_player: false,
                                             unknown10: false,
                                             unknown11: false,
-                                            zoom_scale: 0.0,
-                                            sound_id: 3011,
+                                            zoom: 0.0,
+                                            speaker_sound_id: 3011,
                                         }
                                     })?/*,
                                     GamePacket::serialize(&TunneledPacket {
