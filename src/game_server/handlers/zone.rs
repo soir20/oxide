@@ -923,7 +923,7 @@ pub fn enter_zone(
     destination_read_handle: &RwLockReadGuard<ZoneInstance>,
     destination_pos: Option<Pos>,
     destination_rot: Option<Pos>,
-    update_previous_location: bool,
+    update_previous_location_on_leave: bool,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let destination_pos = destination_pos.unwrap_or(destination_read_handle.default_spawn_pos);
     let destination_rot = destination_rot.unwrap_or(destination_read_handle.default_spawn_rot);
@@ -961,13 +961,14 @@ pub fn enter_zone(
         {
             player.ready = false;
 
-            if update_previous_location {
+            if player.update_previous_location_on_leave {
                 player.previous_location = PreviousLocation {
                     template_guid: previous_zone_template_guid,
                     pos: previous_pos,
                     rot: previous_rot,
                 }
             }
+            player.update_previous_location_on_leave = update_previous_location_on_leave;
         }
         character_write_handle.stats.instance_guid = destination_read_handle.guid;
         character_write_handle.stats.pos = destination_pos;

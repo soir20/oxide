@@ -724,7 +724,7 @@ fn handle_request_create_active_minigame(
                     None,
                     None,
                     game_server.mounts(),
-                    true,
+                    false,
                 );
 
                 if let Some(character_lock) = characters_table_write_handle.get(player_guid(sender)) {
