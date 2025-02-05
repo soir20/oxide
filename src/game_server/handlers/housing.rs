@@ -454,7 +454,6 @@ pub fn process_housing_packet(
                                     None,
                                     None,
                                     game_server.mounts(),
-                                    false,
                                 )
                             } else {
                                 Err(ProcessPacketError::new(

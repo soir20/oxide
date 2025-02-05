@@ -816,7 +816,6 @@ impl Door {
 
         let destination_zone = self.destination_zone;
         let destination_zone_template = self.destination_zone_template;
-        let update_previous_location_on_leave = self.update_previous_location_on_leave;
 
         coerce_to_broadcast_supplier(move |game_server| {
             game_server.lock_enforcer().write_characters(
@@ -850,7 +849,6 @@ impl Door {
                                     Some(destination_pos),
                                     Some(destination_rot),
                                     game_server.mounts(),
-                                    update_previous_location_on_leave,
                                 )
                             } else {
                                 Ok(Vec::new())
