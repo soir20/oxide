@@ -263,7 +263,6 @@ impl MinigameStageGroupConfig {
     pub fn to_stage_group_instance(
         &self,
         portal_entry_guid: u32,
-        default_stage_guid_override: Option<i32>,
         player: &Player,
     ) -> CreateMinigameStageGroupInstance {
         let mut stage_instances = Vec::new();
@@ -340,8 +339,7 @@ impl MinigameStageGroupConfig {
             description_id: self.description_id,
             icon_id: self.icon_id,
             stage_select_map_name: self.stage_select_map_name.clone(),
-            default_stage_instance_guid: default_stage_guid_override
-                .unwrap_or(self.default_stage_instance),
+            default_stage_instance_guid: self.default_stage_instance,
             stage_instances,
             stage_progression: "".to_string(),
             show_start_screen_on_play_next: false,
@@ -506,15 +504,10 @@ impl AllMinigameConfigs {
     pub fn stage_group_instance(
         &self,
         stage_group_guid: i32,
-        default_stage_guid_override: Option<i32>,
         player: &Player,
     ) -> Result<CreateMinigameStageGroupInstance, ProcessPacketError> {
         if let Some((stage_group, portal_entry_guid)) = self.stage_groups.get(&stage_group_guid) {
-            Ok(stage_group.to_stage_group_instance(
-                *portal_entry_guid,
-                default_stage_guid_override,
-                player,
-            ))
+            Ok(stage_group.to_stage_group_instance(*portal_entry_guid, player))
         } else {
             Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
@@ -658,7 +651,6 @@ fn handle_request_stage_group_instance(
                                     unknown1: true,
                                     inner: game_server.minigames().stage_group_instance(
                                         request.header.stage_group_guid,
-                                        None,
                                         player,
                                     )?,
                                 })?,
@@ -832,14 +824,7 @@ fn handle_request_start_active_minigame(
                 if let CharacterType::Player(player) = &character_read_handle.stats.character_type {
                     if let Some(minigame_status) = &player.minigame_status {
                         if request.header.stage_guid == minigame_status.stage_guid {
-                            let mut stage_group_instance = game_server.minigames.stage_group_instance(minigame_status.stage_group_guid, Some(minigame_status.stage_guid), player)?;
-                            stage_group_instance.header.stage_guid = minigame_status.stage_guid;
-
                             let mut packets = vec![
-                                GamePacket::serialize(&TunneledPacket {
-                                    unknown1: true,
-                                    inner: stage_group_instance,
-                                })?,
                                 GamePacket::serialize(&TunneledPacket {
                                     unknown1: true,
                                     inner: StartActiveMinigame {
@@ -1352,6 +1337,13 @@ fn end_active_minigame(
                                 GamePacket::serialize(&TunneledPacket {
                                     unknown1: true,
                                     inner: UpdateCredits { new_credits },
+                                })?,
+                                GamePacket::serialize(&TunneledPacket {
+                                    unknown1: true,
+                                    inner: game_server.minigames().stage_group_instance(
+                                        minigame_status.stage_group_guid,
+                                        player,
+                                    )?,
                                 })?,
                                 GamePacket::serialize(&TunneledPacket {
                                     unknown1: true,
