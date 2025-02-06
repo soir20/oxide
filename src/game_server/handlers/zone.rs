@@ -51,12 +51,17 @@ use super::{
 
 use strum::IntoEnumIterator;
 
+const fn default_true() -> bool {
+    true
+}
+
 #[derive(Deserialize)]
 struct ZoneConfig {
     guid: u8,
     max_players: u32,
     template_name: u32,
-    template_icon: Option<u32>,
+    #[serde(default)]
+    template_icon: u32,
     asset_name: String,
     hide_ui: bool,
     is_combat: bool,
@@ -68,7 +73,8 @@ struct ZoneConfig {
     spawn_rot_y: f32,
     spawn_rot_z: f32,
     spawn_rot_w: f32,
-    spawn_sky: Option<String>,
+    #[serde(default)]
+    spawn_sky: String,
     speed: f32,
     jump_height_multiplier: f32,
     gravity_multiplier: f32,
@@ -78,6 +84,8 @@ struct ZoneConfig {
     transports: Vec<TransportConfig>,
     ambient_npcs: Vec<AmbientNpcConfig>,
     seconds_per_day: u32,
+    #[serde(default = "default_true")]
+    update_previous_location_on_leave: bool,
 }
 
 #[derive(Clone)]
@@ -97,6 +105,7 @@ pub struct ZoneTemplate {
     is_combat: bool,
     characters: Vec<NpcTemplate>,
     pub seconds_per_day: u32,
+    update_previous_location_on_leave: bool,
 }
 
 impl Guid<u8> for ZoneTemplate {
@@ -170,6 +179,7 @@ impl ZoneTemplate {
             is_combat: self.is_combat,
             house_data,
             seconds_per_day: self.seconds_per_day,
+            update_previous_location_on_leave: self.update_previous_location_on_leave,
         }
     }
 }
@@ -211,6 +221,7 @@ pub struct ZoneInstance {
     pub is_combat: bool,
     pub house_data: Option<House>,
     pub seconds_per_day: u32,
+    update_previous_location_on_leave: bool,
 }
 
 impl IndexedGuid<u64, u8> for ZoneInstance {
@@ -858,7 +869,7 @@ impl ZoneConfig {
             guid: self.guid,
             template_name: self.template_name,
             max_players: self.max_players,
-            template_icon: self.template_icon.unwrap_or(0),
+            template_icon: self.template_icon,
             asset_name: self.asset_name.clone(),
             default_spawn_pos: Pos {
                 x: self.spawn_pos_x,
@@ -872,7 +883,7 @@ impl ZoneConfig {
                 z: self.spawn_rot_z,
                 w: self.spawn_rot_w,
             },
-            default_spawn_sky: self.spawn_sky.clone().unwrap_or("".to_string()),
+            default_spawn_sky: self.spawn_sky.clone(),
             speed: self.speed,
             jump_height_multiplier: self.jump_height_multiplier,
             gravity_multiplier: self.gravity_multiplier,
@@ -880,6 +891,7 @@ impl ZoneConfig {
             is_combat: self.is_combat,
             characters,
             seconds_per_day: self.seconds_per_day,
+            update_previous_location_on_leave: self.update_previous_location_on_leave,
         };
 
         (template, Vec::new())
@@ -923,7 +935,6 @@ pub fn enter_zone(
     destination_read_handle: &RwLockReadGuard<ZoneInstance>,
     destination_pos: Option<Pos>,
     destination_rot: Option<Pos>,
-    update_previous_location: bool,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let destination_pos = destination_pos.unwrap_or(destination_read_handle.default_spawn_pos);
     let destination_rot = destination_rot.unwrap_or(destination_read_handle.default_spawn_rot);
@@ -961,13 +972,15 @@ pub fn enter_zone(
         {
             player.ready = false;
 
-            if update_previous_location {
+            if player.update_previous_location_on_leave {
                 player.previous_location = PreviousLocation {
                     template_guid: previous_zone_template_guid,
                     pos: previous_pos,
                     rot: previous_rot,
                 }
             }
+            player.update_previous_location_on_leave =
+                destination_read_handle.update_previous_location_on_leave;
         }
         character_write_handle.stats.instance_guid = destination_read_handle.guid;
         character_write_handle.stats.pos = destination_pos;
@@ -1102,8 +1115,7 @@ fn clean_up_zone(
 #[macro_export]
 macro_rules! teleport_to_zone {
     ($characters_table_write_handle:expr, $player:expr, $zones_table_write_handle:expr,
-     $destination_read_handle:expr, $destination_pos:expr, $destination_rot:expr, $mounts:expr,
-     $update_previous_location:expr$(,)?) => {{
+     $destination_read_handle:expr, $destination_pos:expr, $destination_rot:expr, $mounts:expr$(,)?) => {{
         let character = $crate::game_server::handlers::guid::GuidTableHandle::get(
             $characters_table_write_handle,
             player_guid($player),
@@ -1128,7 +1140,6 @@ macro_rules! teleport_to_zone {
             $destination_read_handle,
             $destination_pos,
             $destination_rot,
-            $update_previous_location,
         )?);
 
         if let Some(previous_instance_guid) = possible_previous_instance_guid {

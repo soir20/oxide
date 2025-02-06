@@ -759,6 +759,8 @@ pub struct DoorConfig {
     pub destination_rot_w: f32,
     pub destination_zone_template: Option<u8>,
     pub destination_zone: Option<u64>,
+    #[serde(default = "default_true")]
+    pub update_previous_location_on_leave: bool,
 }
 
 #[derive(Clone)]
@@ -774,6 +776,7 @@ pub struct Door {
     pub destination_rot_w: f32,
     pub destination_zone_template: Option<u8>,
     pub destination_zone: Option<u64>,
+    pub update_previous_location_on_leave: bool,
 }
 
 impl Door {
@@ -846,7 +849,6 @@ impl Door {
                                     Some(destination_pos),
                                     Some(destination_rot),
                                     game_server.mounts(),
-                                    false,
                                 )
                             } else {
                                 Ok(Vec::new())
@@ -875,6 +877,7 @@ impl From<DoorConfig> for Door {
             destination_rot_w: value.destination_rot_w,
             destination_zone_template: value.destination_zone_template,
             destination_zone: value.destination_zone,
+            update_previous_location_on_leave: value.update_previous_location_on_leave,
         }
     }
 }
@@ -1003,6 +1006,7 @@ pub struct Player {
     pub customizations: BTreeMap<CustomizationSlot, u32>,
     pub minigame_stats: PlayerMinigameStats,
     pub minigame_status: Option<MinigameStatus>,
+    pub update_previous_location_on_leave: bool,
     pub previous_location: PreviousLocation,
 }
 

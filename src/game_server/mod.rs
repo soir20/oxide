@@ -611,7 +611,6 @@ impl GameServer {
                                         None,
                                         None,
                                         self.mounts(),
-                                        true,
                                     ),
                                     Err(err) => Err(err),
                                 }

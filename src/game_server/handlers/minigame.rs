@@ -724,7 +724,6 @@ fn handle_request_create_active_minigame(
                     None,
                     None,
                     game_server.mounts(),
-                    true,
                 );
 
                 if let Some(character_lock) = characters_table_write_handle.get(player_guid(sender)) {
@@ -1476,7 +1475,6 @@ fn end_active_minigame(
         Some(previous_location.pos),
         Some(previous_location.rot),
         game_server.mounts(),
-        false,
     );
     broadcasts.append(&mut teleport_broadcasts?);
 
