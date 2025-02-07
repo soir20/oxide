@@ -39,6 +39,7 @@ use handlers::unique_guid::{
     zone_instance_guid,
 };
 use handlers::zone::{load_zones, teleport_within_zone, ZoneInstance, ZoneTemplate};
+use packets::ability::{LaunchAndLand, TargetArray};
 use packets::client_update::{Health, Power, PreloadCharactersDone, Stat, StatId, Stats};
 use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
 use packets::item::ItemDefinition;
@@ -49,7 +50,7 @@ use packets::store::StoreItemList;
 use packets::tunnel::{TunneledPacket, TunneledWorldPacket};
 use packets::update_position::{PlayerJump, UpdatePlayerPlatformPosition, UpdatePlayerPosition};
 use packets::zone::ZoneTeleportRequest;
-use packets::{GamePacket, OpCode};
+use packets::{GamePacket, GuidTarget, OpCode, Pos, Target};
 use rand::Rng;
 
 use crate::{info, teleport_to_zone};
@@ -717,6 +718,107 @@ impl GameServer {
                                         inner: UpdateWieldType {
                                             guid: player_guid(sender),
                                             wield_type: character_write_handle.wield_type()
+                                        }
+                                    })?,
+                                    GamePacket::serialize(&TunneledPacket {
+                                        unknown1: true,
+                                        inner: LaunchAndLand {
+                                            guid: 1,
+                                            target1: vec![TargetArray {
+                                                target: Target::Guid(GuidTarget {
+                                                fallback_pos: Pos {
+                                                    x: 1.0,
+                                                    y: 5.0,
+                                                    z: 0.0,
+                                                    w: 0.0,
+                                                },
+                                                guid: 1,
+                                             })}],
+                                            unknown1: -1,
+                                            unknown2: 23,
+                                            unknown3: 0,
+                                            unknown4: 1101,
+                                            unknown5: 0,
+                                            unknown6: false,
+                                            unknown7: false,
+                                            unknown8: 1402,
+                                            unknown9: 5236,
+                                            unknown10: 0,
+                                            unknown11: Pos {
+                                                x: 0.0,
+                                                y: 0.0,
+                                                z: 0.0,
+                                                w: 1.0,
+                                            },
+                                            unknown12: 1.0,
+                                            unknown13: 0.0,
+                                            unknown14: 32563,
+                                            unknown15: 1,
+                                            unknown16: 3,
+                                            unknown17: 0,
+                                            unknown18: 0,
+                                            unknown19: false,
+                                            unknown20: 0,
+                                            unknown21: 0,
+                                            unknown22: 0.0,
+                                            unknown23: 0.0,
+                                            unknown24: 0,
+                                            unknown25: 0,
+                                            unknown26: Pos {
+                                                x: 0.0,
+                                                y: 0.0,
+                                                z: 0.0,
+                                                w: 0.0,
+                                            },
+                                            unknown27: Pos {
+                                                x: 0.0,
+                                                y: 0.0,
+                                                z: 1.0,
+                                                w: 1.5,
+                                            },
+                                            model_name: "Ship_JediStarfighter.adr".to_string(),
+                                            target2: Target::Guid(GuidTarget {
+                                                fallback_pos: Pos {
+                                                    x: 1.0,
+                                                    y: 5.0,
+                                                    z: 0.0,
+                                                    w: 0.0,
+                                                },
+                                                guid: 1,
+                                             }),
+                                             target3: Target::Guid(GuidTarget {
+                                                fallback_pos: Pos {
+                                                    x: 1.0,
+                                                    y: 5.0,
+                                                    z: 0.0,
+                                                    w: 0.0,
+                                                },
+                                                guid: 1,
+                                             }),
+                                            unknown29: Pos {
+                                                x: 100.0,
+                                                y: 100.0,
+                                                z: 100.0,
+                                                w: 1.0,
+                                            },
+                                            unknown30: 0.0,
+                                            unknown31: false,
+                                            unknown32: 7.0,
+                                            unknown33: 7.0,
+                                            unknown34: 0,
+                                            unknown35: 0,
+                                            unknown36: 0,
+                                            unknown37: 0,
+                                            unknown38: 6.0,
+                                            unknown39: 0.0,
+                                            unknown40: 0.0,
+                                            unknown41: 0.0,
+                                            unknown42: 0.0,
+                                            unknown43: 7.0,
+                                            unknown44: 7.0,
+                                            unknown45: 7.0,
+                                            unknown46: "".to_string(),
+                                            unknown47: 0,
                                         }
                                     })?,
                                 ]));
