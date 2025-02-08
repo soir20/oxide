@@ -119,6 +119,7 @@ impl MinigameStageConfig {
             .map(|item_guid| player.inventory.contains(&item_guid))
             .unwrap_or(true)
             && (previous_completed || !self.require_previous_completed)
+            && (!self.members_only || player.member)
     }
 
     pub fn to_stage_definition(&self, portal_entry_guid: u32) -> MinigameStageDefinition {
@@ -189,6 +190,7 @@ impl MinigameStageGroupConfig {
             .map(|item_guid| player.inventory.contains(&item_guid))
             .unwrap_or(true)
             && (previous_completed || !self.require_previous_completed)
+            && (!self.members_only || player.member)
     }
 
     pub fn to_stage_group_definition(
@@ -545,7 +547,7 @@ impl AllMinigameConfigs {
             })
     }
 
-    pub fn can_play_stage(&self, stage_group_guid: i32, stage_guid: i32, player: &Player) -> bool {
+    pub fn stage_unlocked(&self, stage_group_guid: i32, stage_guid: i32, player: &Player) -> bool {
         if let Some((root_stage_group, _)) = self.stage_groups.get(&stage_group_guid) {
             let mut previous_completed = true;
 
@@ -559,7 +561,7 @@ impl AllMinigameConfigs {
                         previous_completed = stage.has_completed(player);
 
                         if stage_guid == stage.guid {
-                            return unlocked && (!stage.members_only || player.member);
+                            return unlocked;
                         }
                     }
                 }
@@ -730,7 +732,7 @@ fn handle_request_create_active_minigame(
                 // TODO: Handle multiplayer minigames and wait for a full group
                 if let Some(character_lock) = characters_table_write_handle.get(player_guid(sender)) {
                     if let CharacterType::Player(player) = &mut character_lock.write().stats.character_type {
-                        if game_server.minigames().can_play_stage(request.header.stage_group_guid, request.header.stage_guid, player) {
+                        if game_server.minigames().stage_unlocked(request.header.stage_group_guid, request.header.stage_guid, player) {
                             player.minigame_status = Some(MinigameStatus {
                                 stage_group_guid: request.header.stage_group_guid,
                                 stage_guid: request.header.stage_guid,
