@@ -545,7 +545,7 @@ impl AllMinigameConfigs {
             })
     }
 
-    pub fn stage_unlocked(&self, stage_group_guid: i32, stage_guid: i32, player: &Player) -> bool {
+    pub fn can_play_stage(&self, stage_group_guid: i32, stage_guid: i32, player: &Player) -> bool {
         if let Some((root_stage_group, _)) = self.stage_groups.get(&stage_group_guid) {
             let mut previous_completed = true;
 
@@ -559,7 +559,7 @@ impl AllMinigameConfigs {
                         previous_completed = stage.has_completed(player);
 
                         if stage_guid == stage.guid {
-                            return unlocked;
+                            return unlocked && (!stage.members_only || player.member);
                         }
                     }
                 }
@@ -730,7 +730,7 @@ fn handle_request_create_active_minigame(
                 // TODO: Handle multiplayer minigames and wait for a full group
                 if let Some(character_lock) = characters_table_write_handle.get(player_guid(sender)) {
                     if let CharacterType::Player(player) = &mut character_lock.write().stats.character_type {
-                        if game_server.minigames().stage_unlocked(request.header.stage_group_guid, request.header.stage_guid, player) {
+                        if game_server.minigames().can_play_stage(request.header.stage_group_guid, request.header.stage_guid, player) {
                             player.minigame_status = Some(MinigameStatus {
                                 stage_group_guid: request.header.stage_group_guid,
                                 stage_guid: request.header.stage_guid,
