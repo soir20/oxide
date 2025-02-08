@@ -300,7 +300,7 @@ impl MinigameStageGroupConfig {
                 }
                 MinigameStageGroupChild::Stage(stage) => {
                     let unlocked = stage.unlocked(player, previous_completed);
-                    previous_completed = player.minigame_stats.has_completed(stage.guid);
+                    previous_completed = stage.has_completed(player);
 
                     stage_instances.push(MinigameStageInstance {
                         stage_instance_guid: stage.guid,
