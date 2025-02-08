@@ -544,6 +544,30 @@ impl AllMinigameConfigs {
                     })
             })
     }
+
+    pub fn stage_unlocked(&self, stage_group_guid: i32, stage_guid: i32, player: &Player) -> bool {
+        if let Some((root_stage_group, _)) = self.stage_groups.get(&stage_group_guid) {
+            let mut previous_completed = true;
+
+            for child in root_stage_group.stages.iter() {
+                match child {
+                    MinigameStageGroupChild::StageGroup(stage_group) => {
+                        previous_completed = stage_group.has_completed_any(player);
+                    }
+                    MinigameStageGroupChild::Stage(stage) => {
+                        let unlocked = stage.unlocked(player, previous_completed);
+                        previous_completed = stage.has_completed(player);
+
+                        if stage_guid == stage.guid {
+                            return unlocked;
+                        }
+                    }
+                }
+            }
+        }
+
+        false
+    }
 }
 
 fn insert_stage_groups(
@@ -704,9 +728,31 @@ fn handle_request_create_active_minigame(
         let result: Result<Vec<Broadcast>, ProcessPacketError> = game_server.lock_enforcer().write_characters(|characters_table_write_handle, zones_lock_enforcer| {
             zones_lock_enforcer.write_zones(|zones_table_write_handle| {
                 // TODO: Handle multiplayer minigames and wait for a full group
-                // TODO: Check to make sure the player is allowed to play this game
+                if let Some(character_lock) = characters_table_write_handle.get(player_guid(sender)) {
+                    if let CharacterType::Player(player) = &mut character_lock.write().stats.character_type {
+                        if game_server.minigames().stage_unlocked(request.header.stage_group_guid, request.header.stage_guid, player) {
+                            player.minigame_status = Some(MinigameStatus {
+                                stage_group_guid: request.header.stage_group_guid,
+                                stage_guid: request.header.stage_guid,
+                                game_created: false,
+                                game_won: false,
+                                score_entries: vec![],
+                                total_score: 0,
+                                start_time: Instant::now(),
+                            });
+                            Ok(())
+                        } else {
+                            Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to create an active minigame for a stage {} they haven't unlocked", sender, request.header.stage_guid)))
+                        }
+                    } else {
+                        Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to create an active minigame, but their character isn't a player", sender)))
+                    }
+                } else {
+                    Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} tried to create an active minigame", sender)))
+                }?;
+
                 let new_instance_guid = game_server.get_or_create_instance(characters_table_write_handle, zones_table_write_handle, stage_config.zone_template_guid, 1)?;
-                let teleport_broadcasts = teleport_to_zone!(
+                teleport_to_zone!(
                     characters_table_write_handle,
                     sender,
                     zones_table_write_handle,
@@ -716,26 +762,7 @@ fn handle_request_create_active_minigame(
                     None,
                     None,
                     game_server.mounts(),
-                );
-
-                if let Some(character_lock) = characters_table_write_handle.get(player_guid(sender)) {
-                    if let CharacterType::Player(player) = &mut character_lock.write().stats.character_type {
-                        player.minigame_status = Some(MinigameStatus {
-                            stage_group_guid: request.header.stage_group_guid,
-                            stage_guid: request.header.stage_guid,
-                            game_created: false,
-                            game_won: false,
-                            score_entries: vec![],
-                            total_score: 0,
-                            start_time: Instant::now(),
-                        });
-                        teleport_broadcasts
-                    } else {
-                        Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to create an active minigame, but their character isn't a player", sender)))
-                    }
-                } else {
-                    Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} tried to create an active minigame", sender)))
-                }
+                )
             })
         });
 
