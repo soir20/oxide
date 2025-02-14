@@ -50,7 +50,7 @@ use packets::store::StoreItemList;
 use packets::tunnel::{TunneledPacket, TunneledWorldPacket};
 use packets::update_position::{PlayerJump, UpdatePlayerPlatformPosition, UpdatePlayerPosition};
 use packets::zone::ZoneTeleportRequest;
-use packets::{GamePacket, GuidTarget, OpCode, Pos, Target};
+use packets::{CharacterBoneNameTarget, GamePacket, GuidTarget, OpCode, Pos, Target};
 use rand::Rng;
 
 use crate::{info, teleport_to_zone};
@@ -703,7 +703,7 @@ impl GameServer {
                                 let (_, instance_guid, chunk) = character_write_handle.index1();
                                 let all_players_nearby = ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_read_handle)?;
                                 broadcasts.push(Broadcast::Multi(all_players_nearby, vec![
-                                    GamePacket::serialize(&TunneledPacket {
+                                    /*GamePacket::serialize(&TunneledPacket {
                                         unknown1: true,
                                         inner: QueueAnimation {
                                             character_guid: player_guid(sender),
@@ -719,8 +719,317 @@ impl GameServer {
                                             guid: player_guid(sender),
                                             wield_type: character_write_handle.wield_type()
                                         }
+                                    })?,*/
+                                    GamePacket::serialize(&TunneledPacket { // Test Particle Beam
+                                        unknown1: true,
+                                        inner: LaunchAndLand {
+                                            launcher_guid: 1152945693862658072,
+                                            target1: vec![TargetArray {
+                                                target: Target::Guid(GuidTarget {
+                                                fallback_pos: Pos {
+                                                    x: 0.0,
+                                                    y: 0.0,
+                                                    z: 0.0,
+                                                    w: 1.0,
+                                                },
+                                                guid: 1,
+                                             })}],
+                                            unknown1: 3,
+                                            unknown2: 5,
+                                            launcher_animation_id: 1001,
+                                            launcher_composite_effect: 1166,
+                                            unknown5: 0,
+                                            unknown6: true,
+                                            unknown7: true,
+                                            target_animation_unknown1: 0,
+                                            unknown9: 0,
+                                            unknown10: 0,
+                                            unknown11: Pos {
+                                                x: 0.0,
+                                                y: 0.0,
+                                                z: 0.0,
+                                                w: 1.0,
+                                            },
+                                            launcher_composite_effect_duration: 0.0,
+                                            unknown13: 10.0,
+                                            unknown14: 0,
+                                            unknown15: 0,
+                                            unknown16: 0,
+                                            unknown17: 0,
+                                            override_launcher_guid: 0,
+                                            track_target: true,
+                                            unknown20: 0,
+                                            unknown21: 0,
+                                            progressive_start_speed: 1.0,
+                                            progressive_end_speed: 5.0,
+                                            unknown24: 0,
+                                            unknown25: 0,
+                                            unknown26: Pos {
+                                                x: 0.0,
+                                                y: 0.0,
+                                                z: 0.0,
+                                                w: 1.0,
+                                            },
+                                            unknown27: Pos {
+                                                x: 0.0,
+                                                y: 0.0,
+                                                z: 0.0,
+                                                w: 1.0,
+                                            },
+                                            projectile_adr_name: "".to_string(),
+                                            projectile_bone_source: Target::CharacterBone(CharacterBoneNameTarget {
+                                                fallback_pos: Pos {
+                                                    x: 0.0,
+                                                    y: 0.0,
+                                                    z: 0.0,
+                                                    w: 1.0,
+                                                },
+                                                character_guid: 0,
+                                                bone_name: "spineUpper".to_string(),
+                                             }),
+                                             target3: Target::CharacterBone(CharacterBoneNameTarget {
+                                                fallback_pos: Pos {
+                                                    x: 0.0,
+                                                    y: 0.0,
+                                                    z: 0.0,
+                                                    w: 1.0,
+                                                },
+                                                character_guid: 0,
+                                                bone_name: "".to_string(),
+                                             }),
+                                            unknown29: Pos {
+                                                x: 0.0,
+                                                y: 0.0,
+                                                z: 0.0,
+                                                w: 1.0,
+                                            },
+                                            unknown30: 4.0,
+                                            unknown31: false, // == true Targets NPC's feet?
+                                            projectile_size: 1.0,
+                                            progressive_inflation_size: 0.0,
+                                            trail_composite_effect: 0,
+                                            landed_composite_effect: 1,
+                                            unknown36: 0,
+                                            unknown37: 0,
+                                            unknown38: 0.0,
+                                            projectile_duration_seconds: 0.0,
+                                            unknown40: 0.0,
+                                            unknown41: 0.0,
+                                            unknown42: 0.0,
+                                            unknown43: 0.0,
+                                            unknown44: 0.0,
+                                            unknown45: 0.0,
+                                            unknown46: "".to_string(),
+                                            unknown47: 0,
+                                        }
                                     })?,
-                                    GamePacket::serialize(&TunneledPacket {
+                                    /*GamePacket::serialize(&TunneledPacket { // Pistol projectile
+                                        unknown1: true,
+                                        inner: LaunchAndLand {
+                                            launcher_guid: 1,
+                                            target1: vec![TargetArray {
+                                                target: Target::Guid(GuidTarget {
+                                                fallback_pos: Pos {
+                                                    x: 0.0,
+                                                    y: 0.0,
+                                                    z: 0.0,
+                                                    w: 1.0,
+                                                },
+                                                guid: 1152945693862658072,
+                                             })}],
+                                            unknown1: 3,
+                                            unknown2: 5,
+                                            launcher_animation_id: 1521,//3011,
+                                            launcher_composite_effect: 2579,//1101,
+                                            unknown5: 0,
+                                            unknown6: false,
+                                            unknown7: false,
+                                            target_animation_unknown1: 3101,
+                                            unknown9: 0,
+                                            unknown10: 0,
+                                            unknown11: Pos {
+                                                x: 0.0,
+                                                y: 0.0,
+                                                z: 0.0,
+                                                w: 1.0,
+                                            },
+                                            launcher_composite_effect_duration: 0.0,
+                                            unknown13: 0.0,
+                                            unknown14: 0,
+                                            unknown15: 0,
+                                            unknown16: 0,
+                                            unknown17: 0,
+                                            override_launcher_guid: 0,
+                                            track_target: true,
+                                            unknown20: 0,
+                                            unknown21: 0,
+                                            progressive_start_speed: 1.0,
+                                            progressive_end_speed: 5.0,
+                                            unknown24: 0,
+                                            unknown25: 0,
+                                            unknown26: Pos {
+                                                x: 0.0,
+                                                y: 0.0,
+                                                z: 0.0,
+                                                w: 1.0,
+                                            },
+                                            unknown27: Pos {
+                                                x: 0.0,
+                                                y: 0.0,
+                                                z: 0.0,
+                                                w: 1.0,
+                                            },
+                                            projectile_adr_name: "CMBT_BlasterTracer_Pill_Pistol_Blue.adr".to_string(),
+                                            projectile_bone_source: Target::CharacterBone(CharacterBoneNameTarget {
+                                                fallback_pos: Pos {
+                                                    x: 0.0,
+                                                    y: 0.0,
+                                                    z: 0.0,
+                                                    w: 1.0,
+                                                },
+                                                character_guid: 1,
+                                                bone_name: "spineUpper".to_string(),
+                                             }),
+                                             target3: Target::CharacterBone(CharacterBoneNameTarget {
+                                                fallback_pos: Pos {
+                                                    x: 0.0,
+                                                    y: 0.0,
+                                                    z: 0.0,
+                                                    w: 1.0,
+                                                },
+                                                character_guid: 0,
+                                                bone_name: "".to_string(),
+                                             }),
+                                            unknown29: Pos {
+                                                x: 0.0,
+                                                y: 0.0,
+                                                z: 0.0,
+                                                w: 1.0,
+                                            },
+                                            unknown30: 4.0,
+                                            unknown31: false, // == true Targets NPC's feet?
+                                            projectile_size: 1.0,
+                                            progressive_inflation_size: 0.0,
+                                            trail_composite_effect: 0,
+                                            landed_composite_effect: 1,
+                                            unknown36: 0,
+                                            unknown37: 0,
+                                            unknown38: 0.0,
+                                            projectile_duration_seconds: 0.0,
+                                            unknown40: 0.0,
+                                            unknown41: 0.0,
+                                            unknown42: 0.0,
+                                            unknown43: 0.0,
+                                            unknown44: 0.0,
+                                            unknown45: 0.0,
+                                            unknown46: "".to_string(),
+                                            unknown47: 0,
+                                        }
+                                    })?,*/
+                                    /*GamePacket::serialize(&TunneledPacket { // Grenade
+                                        unknown1: true,
+                                        inner: LaunchAndLand {
+                                            launcher_guid: 1,
+                                            target1: vec![TargetArray {
+                                                target: Target::Guid(GuidTarget {
+                                                fallback_pos: Pos {
+                                                    x: 0.0,
+                                                    y: 0.0,
+                                                    z: 0.0,
+                                                    w: 1.0,
+                                                },
+                                                guid: 1152945693862658072,
+                                             })}],
+                                            unknown1: 3,
+                                            unknown2: 5,
+                                            launcher_animation_id: 1728,//3011,
+                                            launcher_composite_effect: 0,//1101,
+                                            unknown5: 0,
+                                            unknown6: false,
+                                            unknown7: false,
+                                            target_animation_unknown1: 1728,
+                                            unknown9: 0,
+                                            unknown10: 0,
+                                            unknown11: Pos {
+                                                x: 0.0,
+                                                y: 0.0,
+                                                z: 0.0,
+                                                w: 1.0,
+                                            },
+                                            launcher_composite_effect_duration: 0.0,
+                                            unknown13: 0.0,
+                                            unknown14: 0,
+                                            unknown15: 0,
+                                            unknown16: 0,
+                                            unknown17: 0,
+                                            override_launcher_guid: 0,
+                                            track_target: true,
+                                            unknown20: 0,
+                                            unknown21: 0,
+                                            progressive_start_speed: 1.0,
+                                            progressive_end_speed: 5.0,
+                                            unknown24: 0,
+                                            unknown25: 0,
+                                            unknown26: Pos {
+                                                x: 0.0,
+                                                y: 0.0,
+                                                z: 0.0,
+                                                w: 1.0,
+                                            },
+                                            unknown27: Pos {
+                                                x: 0.0,
+                                                y: 0.0,
+                                                z: 0.0,
+                                                w: 1.0,
+                                            },
+                                            projectile_adr_name: "Projectile_Thermal_Grenade.adr".to_string(),
+                                            projectile_bone_source: Target::CharacterBone(CharacterBoneNameTarget {
+                                                fallback_pos: Pos {
+                                                    x: 0.0,
+                                                    y: 0.0,
+                                                    z: 0.0,
+                                                    w: 1.0,
+                                                },
+                                                character_guid: 1,
+                                                bone_name: "spineUpper".to_string(),
+                                             }),
+                                             target3: Target::CharacterBone(CharacterBoneNameTarget {
+                                                fallback_pos: Pos {
+                                                    x: 0.0,
+                                                    y: 0.0,
+                                                    z: 0.0,
+                                                    w: 1.0,
+                                                },
+                                                character_guid: 0,
+                                                bone_name: "".to_string(),
+                                             }),
+                                            unknown29: Pos {
+                                                x: 0.0,
+                                                y: 0.0,
+                                                z: 0.0,
+                                                w: 1.0,
+                                            },
+                                            unknown30: 4.0,
+                                            unknown31: false, // == true Targets NPC's feet?
+                                            projectile_size: 1.0,
+                                            progressive_inflation_size: 0.0,
+                                            trail_composite_effect: 0,
+                                            landed_composite_effect: 1,
+                                            unknown36: 0,
+                                            unknown37: 0,
+                                            unknown38: 0.0,
+                                            projectile_duration_seconds: 0.0,
+                                            unknown40: 0.0,
+                                            unknown41: 0.0,
+                                            unknown42: 0.0,
+                                            unknown43: 0.0,
+                                            unknown44: 0.0,
+                                            unknown45: 0.0,
+                                            unknown46: "".to_string(),
+                                            unknown47: 0,
+                                        }
+                                    })?,*/
+                                    /*GamePacket::serialize(&TunneledPacket {
                                         unknown1: true,
                                         inner: LaunchAndLand {
                                             launcher_guid: 1152945693862658072,
@@ -736,12 +1045,12 @@ impl GameServer {
                                              })}],
                                             unknown1: -1,
                                             unknown2: 23,
-                                            launcher_animation_id: 3011,
-                                            launcher_composite_effect: 1101,
+                                            launcher_animation_id: 0,//3011,
+                                            launcher_composite_effect: 0,//1101,
                                             unknown5: 0,
                                             unknown6: false,
                                             unknown7: false,
-                                            unknown8: 1402,
+                                            target_animation_unknown1: 0,
                                             unknown9: 5236,
                                             unknown10: 0,
                                             unknown11: Pos {
@@ -750,13 +1059,13 @@ impl GameServer {
                                                 z: 0.0,
                                                 w: 1.0,
                                             },
-                                            unknown12: 1.0,
+                                            launcher_composite_effect_duration: 0.0,
                                             unknown13: 1.0,
                                             unknown14: 32563,
                                             unknown15: 2,
                                             unknown16: 5,
                                             unknown17: 0,
-                                            unknown18: 0,
+                                            override_launcher_guid: 0,
                                             track_target: true,
                                             unknown20: 0,
                                             unknown21: 0,
@@ -777,7 +1086,7 @@ impl GameServer {
                                                 w: 1.0,
                                             },
                                             projectile_adr_name: "Projectile_Thermal_Grenade.adr".to_string(),
-                                            target2: Target::Guid(GuidTarget {
+                                            projectile_bone_source: Target::Guid(GuidTarget {
                                                 fallback_pos: Pos {
                                                     x: 0.0,
                                                     y: 0.0,
@@ -805,7 +1114,7 @@ impl GameServer {
                                             unknown31: false, // == true Targets NPC's feet?
                                             projectile_size: 1.0,
                                             progressive_inflation_size: 0.0,
-                                            trail_composite_effect: 2684,
+                                            trail_composite_effect: 0,
                                             landed_composite_effect: 1,
                                             unknown36: 0,
                                             unknown37: 0,
@@ -820,7 +1129,7 @@ impl GameServer {
                                             unknown46: "".to_string(),
                                             unknown47: 0,
                                         }
-                                    })?,
+                                    })?,*/
                                 ]));
                                 Ok(())
                             } else {
