@@ -432,7 +432,7 @@ pub fn spawn_mount_npc(
                 collision: true,
                 rider_guid: 0,
                 npc_type: 2,
-                unknown46: 0.0,
+                interact_popup_radius: 0.0,
                 target: Target::default(),
                 variables: vec![],
                 rail_id: 0,

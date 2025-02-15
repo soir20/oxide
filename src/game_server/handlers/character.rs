@@ -218,7 +218,7 @@ impl BaseNpc {
                 collision: true,
                 rider_guid: 0,
                 npc_type: self.npc_type,
-                unknown46: 0.0,
+                interact_popup_radius: character.stats.interact_radius,
                 target: Target::default(),
                 variables: vec![],
                 rail_id: 0,
