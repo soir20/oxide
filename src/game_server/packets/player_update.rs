@@ -743,7 +743,7 @@ pub struct AddNpc {
     pub collision: bool,
     pub rider_guid: u64,
     pub npc_type: u32,
-    pub unknown46: f32,
+    pub interact_popup_radius: f32,
     pub target: Target,
     pub variables: Vec<Variable>,
     pub rail_id: u32,

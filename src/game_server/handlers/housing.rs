@@ -220,7 +220,7 @@ pub fn fixture_packets(
                 collision: true,
                 rider_guid: 0,
                 npc_type: 0,
-                unknown46: 0.0,
+                interact_popup_radius: 0.0,
                 target: Target::default(),
                 variables: vec![],
                 rail_id: 0,
