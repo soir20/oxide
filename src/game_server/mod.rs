@@ -44,7 +44,10 @@ use packets::client_update::{Health, Power, PreloadCharactersDone, Stat, StatId,
 use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
 use packets::item::ItemDefinition;
 use packets::login::{LoginRequest, WelcomeScreen, ZoneDetailsDone};
-use packets::player_update::{Customization, InitCustomizations, QueueAnimation, UpdateWieldType};
+use packets::player_update::{
+    Customization, InitCustomizations, PlayCompositeEffect, QueueAnimation, SetLookAt,
+    UpdateWieldType,
+};
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
 use packets::store::StoreItemList;
 use packets::tunnel::{TunneledPacket, TunneledWorldPacket};
@@ -720,6 +723,24 @@ impl GameServer {
                                             wield_type: character_write_handle.wield_type()
                                         }
                                     })?,*/
+                                    GamePacket::serialize(&TunneledPacket {
+                                        unknown1: true,
+                                        inner: SetLookAt {
+                                            looker_guid: 1152945693862658072,
+                                            target_guid: 1
+                                        }
+                                    })?,
+                                    GamePacket::serialize(&TunneledPacket {
+                                        unknown1: true,
+                                        inner: PlayCompositeEffect {
+                                            guid: 1,
+                                            triggered_by_guid: 1152945693862658072,
+                                            composite_effect: 1166,
+                                            delay_millis: 0,
+                                            duration_millis: 4000,
+                                            pos: Pos::default()
+                                        }
+                                    })?,
                                     GamePacket::serialize(&TunneledPacket { // Test Particle Beam
                                         unknown1: true,
                                         inner: LaunchAndLand {

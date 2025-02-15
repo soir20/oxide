@@ -24,6 +24,7 @@ pub enum PlayerUpdateOpCode {
     NpcRelevance = 0xc,
     UpdateTemporaryAppearance = 0xe,
     UpdateRemoveTemporaryAppearance = 0xf,
+    SetLookAt = 0x11,
     UpdateCharacterState = 0x14,
     QueueAnimation = 0x16,
     UpdateSpeed = 0x17,
@@ -279,6 +280,17 @@ pub struct UpdateTemporaryAppearance {
 impl GamePacket for UpdateTemporaryAppearance {
     type Header = PlayerUpdateOpCode;
     const HEADER: Self::Header = PlayerUpdateOpCode::UpdateTemporaryAppearance;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct SetLookAt {
+    pub looker_guid: u64,
+    pub target_guid: u64,
+}
+
+impl GamePacket for SetLookAt {
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::SetLookAt;
 }
 
 pub struct ItemDefinitionsReply<'a> {
