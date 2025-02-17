@@ -620,8 +620,13 @@ impl ZoneInstance {
             game_server
                 .lock_enforcer()
                 .write_characters(|characters_table_write_handle, _| {
-                    if let Some((character, (category, instance_guid, old_chunk), index2, index3)) =
-                        characters_table_write_handle.remove(moved_character_guid)
+                    if let Some((
+                        character,
+                        (category, instance_guid, old_chunk),
+                        index2,
+                        index3,
+                        index4,
+                    )) = characters_table_write_handle.remove(moved_character_guid)
                     {
                         // Build characters read and write maps
                         let mut characters_write: BTreeMap<
@@ -692,6 +697,7 @@ impl ZoneInstance {
                             (category, instance_guid, new_chunk),
                             index2,
                             index3,
+                            index4,
                             character,
                         );
 
@@ -948,7 +954,7 @@ pub fn enter_zone(
     )?;
 
     let character = characters_table_write_handle.remove(player_guid(player));
-    if let Some((character, (character_category, _, _), index2, index3)) = character {
+    if let Some((character, (character_category, _, _), index2, index3, index4)) = character {
         let mut character_write_handle = character.write();
         let (_, instance_guid, chunk) = character_write_handle.index1();
         let other_players_nearby = ZoneInstance::other_players_nearby(
@@ -999,6 +1005,7 @@ pub fn enter_zone(
             ),
             index2,
             index3,
+            index4,
             character,
         );
     }

@@ -13,12 +13,13 @@ use super::{
     zone::ZoneInstance,
 };
 
-pub struct TableReadHandleWrapper<'a, K, V, I1 = (), I2 = (), I3 = ()> {
-    handle: GuidTableReadHandle<'a, K, V, I1, I2, I3>,
+pub struct TableReadHandleWrapper<'a, K, V, I1 = (), I2 = (), I3 = (), I4 = ()> {
+    handle: GuidTableReadHandle<'a, K, V, I1, I2, I3, I4>,
 }
 
-impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord>
-    GuidTableIndexer<'a, K, V, I1, I2, I3> for TableReadHandleWrapper<'a, K, V, I1, I2, I3>
+impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4: Clone + Ord>
+    GuidTableIndexer<'a, K, V, I1, I2, I3, I4>
+    for TableReadHandleWrapper<'a, K, V, I1, I2, I3, I4>
 {
     fn index1(&self, guid: K) -> Option<I1> {
         self.handle.index1(guid)
@@ -30,6 +31,10 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord>
 
     fn index3(&self, guid: K) -> Option<&I3> {
         self.handle.index3(guid)
+    }
+
+    fn index4(&self, guid: K) -> Option<&I4> {
+        self.handle.index4(guid)
     }
 
     fn keys(&'a self) -> impl Iterator<Item = K> {
@@ -48,6 +53,10 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord>
         self.handle.keys_by_index3(index)
     }
 
+    fn keys_by_index4(&'a self, index: &I4) -> impl Iterator<Item = K> {
+        self.handle.keys_by_index4(index)
+    }
+
     fn keys_by_index1_range(&'a self, range: impl RangeBounds<I1>) -> impl Iterator<Item = K> {
         self.handle.keys_by_index1_range(range)
     }
@@ -58,6 +67,10 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord>
 
     fn keys_by_index3_range(&'a self, range: impl RangeBounds<I3>) -> impl Iterator<Item = K> {
         self.handle.keys_by_index3_range(range)
+    }
+
+    fn keys_by_index4_range(&'a self, range: impl RangeBounds<I4>) -> impl Iterator<Item = K> {
+        self.handle.keys_by_index4_range(range)
     }
 }
 

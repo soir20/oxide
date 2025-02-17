@@ -136,7 +136,7 @@ pub fn log_out(
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
     game_server.lock_enforcer().write_characters(
         |characters_table_write_handle, zones_lock_enforcer| {
-            if let Some((character, (_, instance_guid, chunk), _, _)) =
+            if let Some((character, (_, instance_guid, chunk), ..)) =
                 characters_table_write_handle.remove(player_guid(sender))
             {
                 let other_players_nearby = ZoneInstance::other_players_nearby(
