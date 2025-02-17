@@ -257,7 +257,7 @@ impl GameServer {
                     self.lock_enforcer()
                         .write_characters(|characters_table_write_handle, _| {
                             match characters_table_write_handle.remove(player_guid(sender)) {
-                                Some((character, _, _, _)) => {
+                                Some((character, ..)) => {
                                     let mut character_write_handle = character.write();
                                     if let CharacterType::Player(ref mut player) =
                                         &mut character_write_handle.stats.character_type
@@ -305,9 +305,11 @@ impl GameServer {
                                     let new_index1 = character_write_handle.index1();
                                     let new_index2 = character_write_handle.index2();
                                     let new_index3 = character_write_handle.index3();
+                                    let new_index4 = character_write_handle.index4();
                                     drop(character_write_handle);
                                     characters_table_write_handle.insert_lock(
-                                        guid, new_index1, new_index2, new_index3, character,
+                                        guid, new_index1, new_index2, new_index3, new_index4,
+                                        character,
                                     );
                                     Ok(())
                                 }
@@ -839,7 +841,7 @@ impl GameServer {
         required_capacity: u32,
     ) -> Vec<u64> {
         let unfilled_zones = zones
-            .values_by_index(template_guid)
+            .values_by_index1(template_guid)
             .filter_map(|zone_lock| {
                 let zone_read_handle = zone_lock.read();
                 let instance_guid = zone_read_handle.guid();
