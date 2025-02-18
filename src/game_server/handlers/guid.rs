@@ -121,11 +121,11 @@ pub trait GuidTableIndexer<'a, K, V: 'a, I1, I2: 'a = (), I3: 'a = (), I4: 'a = 
 
     fn indices1(&'a self) -> impl Iterator<Item = I1>;
 
-    fn indices2(&'a self) -> impl Iterator<Item = &I2>;
+    fn indices2(&'a self) -> impl Iterator<Item = &'a I2>;
 
-    fn indices3(&'a self) -> impl Iterator<Item = &I3>;
+    fn indices3(&'a self) -> impl Iterator<Item = &'a I3>;
 
-    fn indices4(&'a self) -> impl Iterator<Item = &I4>;
+    fn indices4(&'a self) -> impl Iterator<Item = &'a I4>;
 }
 
 pub trait GuidTableHandle<'a, K, V: 'a, I1, I2: 'a, I3: 'a, I4: 'a>:
@@ -241,15 +241,15 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4:
         self.guard.index1.keys().copied()
     }
 
-    fn indices2(&'a self) -> impl Iterator<Item = &I2> {
+    fn indices2(&'a self) -> impl Iterator<Item = &'a I2> {
         self.guard.index2.keys()
     }
 
-    fn indices3(&'a self) -> impl Iterator<Item = &I3> {
+    fn indices3(&'a self) -> impl Iterator<Item = &'a I3> {
         self.guard.index3.keys()
     }
 
-    fn indices4(&'a self) -> impl Iterator<Item = &I4> {
+    fn indices4(&'a self) -> impl Iterator<Item = &'a I4> {
         self.guard.index4.keys()
     }
 }
@@ -487,15 +487,15 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4:
         self.guard.index1.keys().copied()
     }
 
-    fn indices2(&'a self) -> impl Iterator<Item = &I2> {
+    fn indices2(&'a self) -> impl Iterator<Item = &'a I2> {
         self.guard.index2.keys()
     }
 
-    fn indices3(&'a self) -> impl Iterator<Item = &I3> {
+    fn indices3(&'a self) -> impl Iterator<Item = &'a I3> {
         self.guard.index3.keys()
     }
 
-    fn indices4(&'a self) -> impl Iterator<Item = &I4> {
+    fn indices4(&'a self) -> impl Iterator<Item = &'a I4> {
         self.guard.index4.keys()
     }
 }

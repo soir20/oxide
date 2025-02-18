@@ -80,15 +80,15 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4:
         self.handle.indices1()
     }
 
-    fn indices2(&'a self) -> impl Iterator<Item = &I2> {
+    fn indices2(&'a self) -> impl Iterator<Item = &'a I2> {
         self.handle.indices2()
     }
 
-    fn indices3(&'a self) -> impl Iterator<Item = &I3> {
+    fn indices3(&'a self) -> impl Iterator<Item = &'a I3> {
         self.handle.indices3()
     }
 
-    fn indices4(&'a self) -> impl Iterator<Item = &I4> {
+    fn indices4(&'a self) -> impl Iterator<Item = &'a I4> {
         self.handle.indices4()
     }
 }
