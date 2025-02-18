@@ -34,8 +34,8 @@ use crate::{
 
 use super::{
     character::{
-        Character, CharacterLocationIndex, CharacterNameIndex, CharacterSquadIndex, CharacterType,
-        Chunk,
+        Character, CharacterLocationIndex, CharacterMatchmakingGroupIndex, CharacterNameIndex,
+        CharacterSquadIndex, CharacterType, Chunk,
     },
     guid::{GuidTableIndexer, IndexedGuid},
     lock_enforcer::CharacterLockRequest,
@@ -558,6 +558,7 @@ pub fn update_saber_tints<'a>(
         CharacterLocationIndex,
         CharacterNameIndex,
         CharacterSquadIndex,
+        CharacterMatchmakingGroupIndex,
     >,
     instance_guid: u64,
     chunk: Chunk,
@@ -677,6 +678,7 @@ fn equip_item_in_slot<'a>(
         CharacterLocationIndex,
         CharacterNameIndex,
         CharacterSquadIndex,
+        CharacterMatchmakingGroupIndex,
     >,
     characters_write: &mut BTreeMap<u64, RwLockWriteGuard<Character>>,
     game_server: &GameServer,

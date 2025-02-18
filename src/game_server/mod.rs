@@ -9,8 +9,8 @@ use std::vec;
 
 use byteorder::{LittleEndian, ReadBytesExt};
 use handlers::character::{
-    Character, CharacterCategory, CharacterLocationIndex, CharacterNameIndex, CharacterSquadIndex,
-    CharacterType, Chunk,
+    Character, CharacterCategory, CharacterLocationIndex, CharacterMatchmakingGroupIndex,
+    CharacterNameIndex, CharacterSquadIndex, CharacterType, Chunk,
 };
 use handlers::chat::process_chat_packet;
 use handlers::command::process_command;
@@ -585,6 +585,7 @@ impl GameServer {
                             CharacterLocationIndex,
                             CharacterNameIndex,
                             CharacterSquadIndex,
+                            CharacterMatchmakingGroupIndex,
                         >,
                          zones_lock_enforcer| {
                             zones_lock_enforcer.write_zones(|zones_table_write_handle| {

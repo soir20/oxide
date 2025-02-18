@@ -6,7 +6,10 @@ use std::{
 use parking_lot::{RwLockReadGuard, RwLockWriteGuard};
 
 use super::{
-    character::{Character, CharacterLocationIndex, CharacterNameIndex, CharacterSquadIndex},
+    character::{
+        Character, CharacterLocationIndex, CharacterMatchmakingGroupIndex, CharacterNameIndex,
+        CharacterSquadIndex,
+    },
     guid::{
         GuidTable, GuidTableHandle, GuidTableIndexer, GuidTableReadHandle, GuidTableWriteHandle,
     },
@@ -74,10 +77,10 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4:
     }
 }
 
-impl<'a, K, V, I1, I2, I3> From<GuidTableReadHandle<'a, K, V, I1, I2, I3>>
-    for TableReadHandleWrapper<'a, K, V, I1, I2, I3>
+impl<'a, K, V, I1, I2, I3, I4> From<GuidTableReadHandle<'a, K, V, I1, I2, I3, I4>>
+    for TableReadHandleWrapper<'a, K, V, I1, I2, I3, I4>
 {
-    fn from(value: GuidTableReadHandle<'a, K, V, I1, I2, I3>) -> Self {
+    fn from(value: GuidTableReadHandle<'a, K, V, I1, I2, I3, I4>) -> Self {
         TableReadHandleWrapper { handle: value }
     }
 }
@@ -89,6 +92,7 @@ pub type CharacterTableReadHandle<'a> = TableReadHandleWrapper<
     CharacterLocationIndex,
     CharacterNameIndex,
     CharacterSquadIndex,
+    CharacterMatchmakingGroupIndex,
 >;
 pub type CharacterTableWriteHandle<'a> = GuidTableWriteHandle<
     'a,
@@ -97,6 +101,7 @@ pub type CharacterTableWriteHandle<'a> = GuidTableWriteHandle<
     CharacterLocationIndex,
     CharacterNameIndex,
     CharacterSquadIndex,
+    CharacterMatchmakingGroupIndex,
 >;
 pub type CharacterReadGuard<'a> = RwLockReadGuard<'a, Character>;
 pub type CharacterWriteGuard<'a> = RwLockWriteGuard<'a, Character>;
@@ -192,6 +197,7 @@ pub struct LockEnforcer<'a> {
         CharacterLocationIndex,
         CharacterNameIndex,
         CharacterSquadIndex,
+        CharacterMatchmakingGroupIndex,
     >,
     zones: &'a GuidTable<u64, ZoneInstance, u8>,
 }
@@ -264,8 +270,14 @@ impl<'a> From<LockEnforcer<'a>> for ZoneLockEnforcer<'a> {
 }
 
 pub struct LockEnforcerSource {
-    characters:
-        GuidTable<u64, Character, CharacterLocationIndex, CharacterNameIndex, CharacterSquadIndex>,
+    characters: GuidTable<
+        u64,
+        Character,
+        CharacterLocationIndex,
+        CharacterNameIndex,
+        CharacterSquadIndex,
+        CharacterMatchmakingGroupIndex,
+    >,
     zones: GuidTable<u64, ZoneInstance, u8>,
 }
 
@@ -277,6 +289,7 @@ impl LockEnforcerSource {
             CharacterLocationIndex,
             CharacterNameIndex,
             CharacterSquadIndex,
+            CharacterMatchmakingGroupIndex,
         >,
         zones: GuidTable<u64, ZoneInstance, u8>,
     ) -> LockEnforcerSource {

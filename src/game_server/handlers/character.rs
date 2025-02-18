@@ -986,6 +986,13 @@ pub struct MinigameStatus {
 }
 
 #[derive(Clone)]
+pub struct OwnedMatchmakingGroup {
+    pub stage_group_guid: i32,
+    pub stage_guid: i32,
+    pub since: Instant,
+}
+
+#[derive(Clone)]
 pub struct PreviousLocation {
     pub template_guid: u8,
     pub pos: Pos,
@@ -1005,6 +1012,8 @@ pub struct Player {
     pub inventory: BTreeSet<u32>,
     pub customizations: BTreeMap<CustomizationSlot, u32>,
     pub minigame_stats: PlayerMinigameStats,
+    pub matchmaking_group_guid: Option<u32>,
+    pub owned_matchmaking_group: Option<OwnedMatchmakingGroup>,
     pub minigame_status: Option<MinigameStatus>,
     pub update_previous_location_on_leave: bool,
     pub previous_location: PreviousLocation,
@@ -1291,6 +1300,7 @@ pub type Chunk = (i32, i32);
 pub type CharacterLocationIndex = (CharacterCategory, u64, Chunk);
 pub type CharacterNameIndex = String;
 pub type CharacterSquadIndex = u64;
+pub type CharacterMatchmakingGroupIndex = u32;
 
 #[derive(Clone)]
 pub struct CharacterStat {
@@ -1338,8 +1348,14 @@ pub struct Character {
     pub synchronize_with: Option<u64>,
 }
 
-impl IndexedGuid<u64, CharacterLocationIndex, CharacterNameIndex, CharacterSquadIndex>
-    for Character
+impl
+    IndexedGuid<
+        u64,
+        CharacterLocationIndex,
+        CharacterNameIndex,
+        CharacterSquadIndex,
+        CharacterMatchmakingGroupIndex,
+    > for Character
 {
     fn guid(&self) -> u64 {
         self.stats.guid
@@ -1365,12 +1381,19 @@ impl IndexedGuid<u64, CharacterLocationIndex, CharacterNameIndex, CharacterSquad
         )
     }
 
-    fn index2(&self) -> Option<String> {
+    fn index2(&self) -> Option<CharacterNameIndex> {
         self.stats.name.clone()
     }
 
-    fn index3(&self) -> Option<u64> {
+    fn index3(&self) -> Option<CharacterSquadIndex> {
         self.stats.squad_guid
+    }
+
+    fn index4(&self) -> Option<CharacterMatchmakingGroupIndex> {
+        match &self.stats.character_type {
+            CharacterType::Player(player) => player.matchmaking_group_guid,
+            _ => None,
+        }
     }
 }
 

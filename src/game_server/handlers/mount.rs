@@ -26,7 +26,10 @@ use crate::{
 };
 
 use super::{
-    character::{Character, CharacterLocationIndex, CharacterNameIndex, CharacterSquadIndex},
+    character::{
+        Character, CharacterLocationIndex, CharacterMatchmakingGroupIndex, CharacterNameIndex,
+        CharacterSquadIndex,
+    },
     guid::{Guid, GuidTableIndexer, IndexedGuid},
     lock_enforcer::{CharacterLockRequest, ZoneLockRequest},
     unique_guid::{mount_guid, player_guid},
@@ -79,6 +82,7 @@ pub fn reply_dismount<'a>(
         CharacterLocationIndex,
         CharacterNameIndex,
         CharacterSquadIndex,
+        CharacterMatchmakingGroupIndex,
     >,
     zone: &RwLockReadGuard<ZoneInstance>,
     character: &mut RwLockWriteGuard<Character>,

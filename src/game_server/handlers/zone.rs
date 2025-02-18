@@ -30,9 +30,9 @@ use crate::{
 use super::{
     character::{
         coerce_to_broadcast_supplier, AmbientNpcConfig, Character, CharacterCategory,
-        CharacterLocationIndex, CharacterNameIndex, CharacterSquadIndex, CharacterType, Chunk,
-        DoorConfig, NpcTemplate, PreviousFixture, PreviousLocation, TransportConfig,
-        WriteLockingBroadcastSupplier,
+        CharacterLocationIndex, CharacterMatchmakingGroupIndex, CharacterNameIndex,
+        CharacterSquadIndex, CharacterType, Chunk, DoorConfig, NpcTemplate, PreviousFixture,
+        PreviousLocation, TransportConfig, WriteLockingBroadcastSupplier,
     },
     distance3,
     guid::{Guid, GuidTable, GuidTableIndexer, GuidTableWriteHandle, IndexedGuid},
@@ -115,7 +115,14 @@ impl Guid<u8> for ZoneTemplate {
 }
 
 impl From<&Vec<Character>>
-    for GuidTable<u64, Character, CharacterLocationIndex, CharacterNameIndex, CharacterSquadIndex>
+    for GuidTable<
+        u64,
+        Character,
+        CharacterLocationIndex,
+        CharacterNameIndex,
+        CharacterSquadIndex,
+        CharacterMatchmakingGroupIndex,
+    >
 {
     fn from(value: &Vec<Character>) -> Self {
         let table = GuidTable::new();
@@ -144,6 +151,7 @@ impl ZoneTemplate {
             CharacterLocationIndex,
             CharacterNameIndex,
             CharacterSquadIndex,
+            CharacterMatchmakingGroupIndex,
         >,
     ) -> ZoneInstance {
         let keys_to_guid: HashMap<&String, u64> = self
@@ -268,6 +276,7 @@ impl ZoneInstance {
             CharacterLocationIndex,
             CharacterNameIndex,
             CharacterSquadIndex,
+            CharacterMatchmakingGroupIndex,
         >,
     ) -> Self {
         for (index, fixture) in house.fixtures.iter().enumerate() {
@@ -334,6 +343,7 @@ impl ZoneInstance {
             CharacterLocationIndex,
             CharacterNameIndex,
             CharacterSquadIndex,
+            CharacterMatchmakingGroupIndex,
         >,
     ) -> Result<Vec<u32>, ProcessPacketError> {
         let mut guids = Vec::new();
@@ -366,6 +376,7 @@ impl ZoneInstance {
             CharacterLocationIndex,
             CharacterNameIndex,
             CharacterSquadIndex,
+            CharacterMatchmakingGroupIndex,
         >,
     ) -> Result<Vec<u32>, ProcessPacketError> {
         ZoneInstance::other_players_nearby(None, chunk, instance_guid, characters_table_handle)
@@ -382,6 +393,7 @@ impl ZoneInstance {
             CharacterLocationIndex,
             CharacterNameIndex,
             CharacterSquadIndex,
+            CharacterMatchmakingGroupIndex,
         >,
         moved_character_guid: u64,
     ) -> CharacterDiffResult {
