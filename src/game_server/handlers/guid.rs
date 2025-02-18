@@ -76,7 +76,7 @@ impl<K, V, I1, I2, I3, I4> GuidTableData<K, V, I1, I2, I3, I4> {
     }
 }
 
-pub trait GuidTableIndexer<'a, K, V: 'a, I1, I2 = (), I3 = (), I4 = ()> {
+pub trait GuidTableIndexer<'a, K, V: 'a, I1, I2: 'a = (), I3: 'a = (), I4: 'a = ()> {
     fn index1(&self, guid: K) -> Option<I1>;
 
     fn index2(&self, guid: K) -> Option<&I2>;
@@ -118,9 +118,17 @@ pub trait GuidTableIndexer<'a, K, V: 'a, I1, I2 = (), I3 = (), I4 = ()> {
     fn any_by_index4_range(&'a self, range: impl RangeBounds<I4>) -> bool {
         self.keys_by_index4_range(range).next().is_some()
     }
+
+    fn indices1(&'a self) -> impl Iterator<Item = I1>;
+
+    fn indices2(&'a self) -> impl Iterator<Item = &I2>;
+
+    fn indices3(&'a self) -> impl Iterator<Item = &I3>;
+
+    fn indices4(&'a self) -> impl Iterator<Item = &I4>;
 }
 
-pub trait GuidTableHandle<'a, K, V: 'a, I1, I2, I3, I4>:
+pub trait GuidTableHandle<'a, K, V: 'a, I1, I2: 'a, I3: 'a, I4: 'a>:
     GuidTableIndexer<'a, K, V, I1, I2, I3, I4>
 {
     fn get(&self, guid: K) -> Option<&Lock<V>>;
@@ -227,6 +235,22 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4:
             .index4
             .range(range)
             .flat_map(|(_, keys)| keys.iter().copied())
+    }
+
+    fn indices1(&'a self) -> impl Iterator<Item = I1> {
+        self.guard.index1.keys().copied()
+    }
+
+    fn indices2(&'a self) -> impl Iterator<Item = &I2> {
+        self.guard.index2.keys()
+    }
+
+    fn indices3(&'a self) -> impl Iterator<Item = &I3> {
+        self.guard.index3.keys()
+    }
+
+    fn indices4(&'a self) -> impl Iterator<Item = &I4> {
+        self.guard.index4.keys()
     }
 }
 
@@ -457,6 +481,22 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4:
             .index4
             .range(range)
             .flat_map(|(_, keys)| keys.iter().copied())
+    }
+
+    fn indices1(&'a self) -> impl Iterator<Item = I1> {
+        self.guard.index1.keys().copied()
+    }
+
+    fn indices2(&'a self) -> impl Iterator<Item = &I2> {
+        self.guard.index2.keys()
+    }
+
+    fn indices3(&'a self) -> impl Iterator<Item = &I3> {
+        self.guard.index3.keys()
+    }
+
+    fn indices4(&'a self) -> impl Iterator<Item = &I4> {
+        self.guard.index4.keys()
     }
 }
 

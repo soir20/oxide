@@ -75,6 +75,22 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4:
     fn keys_by_index4_range(&'a self, range: impl RangeBounds<I4>) -> impl Iterator<Item = K> {
         self.handle.keys_by_index4_range(range)
     }
+
+    fn indices1(&'a self) -> impl Iterator<Item = I1> {
+        self.handle.indices1()
+    }
+
+    fn indices2(&'a self) -> impl Iterator<Item = &I2> {
+        self.handle.indices2()
+    }
+
+    fn indices3(&'a self) -> impl Iterator<Item = &I3> {
+        self.handle.indices3()
+    }
+
+    fn indices4(&'a self) -> impl Iterator<Item = &I4> {
+        self.handle.indices4()
+    }
 }
 
 impl<'a, K, V, I1, I2, I3, I4> From<GuidTableReadHandle<'a, K, V, I1, I2, I3, I4>>
