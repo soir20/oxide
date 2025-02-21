@@ -1072,7 +1072,7 @@ pub fn clean_up_zone_if_no_players(
         instance_guid,
         Character::MIN_CHUNK,
     )
-        ..(
+        ..=(
             CharacterCategory::PlayerReady,
             instance_guid,
             Character::MAX_CHUNK,
@@ -1082,7 +1082,7 @@ pub fn clean_up_zone_if_no_players(
         instance_guid,
         Character::MIN_CHUNK,
     )
-        ..(
+        ..=(
             CharacterCategory::PlayerUnready,
             instance_guid,
             Character::MAX_CHUNK,
@@ -1107,7 +1107,7 @@ fn clean_up_zone(
 ) {
     for category in CharacterCategory::iter() {
         let range = (category, instance_guid, Character::MIN_CHUNK)
-            ..(category, instance_guid, Character::MAX_CHUNK);
+            ..=(category, instance_guid, Character::MAX_CHUNK);
         let characters_to_remove: Vec<u64> = characters_table_write_handle
             .keys_by_index1_range(range)
             .collect();
