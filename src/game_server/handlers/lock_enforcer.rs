@@ -60,19 +60,31 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4:
         self.handle.keys_by_index4(index)
     }
 
-    fn keys_by_index1_range(&'a self, range: impl RangeBounds<I1>) -> impl Iterator<Item = K> {
+    fn keys_by_index1_range(
+        &'a self,
+        range: impl RangeBounds<I1>,
+    ) -> impl DoubleEndedIterator<Item = K> {
         self.handle.keys_by_index1_range(range)
     }
 
-    fn keys_by_index2_range(&'a self, range: impl RangeBounds<I2>) -> impl Iterator<Item = K> {
+    fn keys_by_index2_range(
+        &'a self,
+        range: impl RangeBounds<I2>,
+    ) -> impl DoubleEndedIterator<Item = K> {
         self.handle.keys_by_index2_range(range)
     }
 
-    fn keys_by_index3_range(&'a self, range: impl RangeBounds<I3>) -> impl Iterator<Item = K> {
+    fn keys_by_index3_range(
+        &'a self,
+        range: impl RangeBounds<I3>,
+    ) -> impl DoubleEndedIterator<Item = K> {
         self.handle.keys_by_index3_range(range)
     }
 
-    fn keys_by_index4_range(&'a self, range: impl RangeBounds<I4>) -> impl Iterator<Item = K> {
+    fn keys_by_index4_range(
+        &'a self,
+        range: impl RangeBounds<I4>,
+    ) -> impl DoubleEndedIterator<Item = K> {
         self.handle.keys_by_index4_range(range)
     }
 
