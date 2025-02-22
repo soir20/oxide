@@ -138,6 +138,26 @@ pub trait GuidTableIndexer<'a, K, V: 'a, I1, I2: 'a = (), I3: 'a = (), I4: 'a = 
     fn indices3(&'a self) -> impl Iterator<Item = &'a I3>;
 
     fn indices4(&'a self) -> impl Iterator<Item = &'a I4>;
+
+    fn indices1_by_range(
+        &'a self,
+        range: impl RangeBounds<I1>,
+    ) -> impl DoubleEndedIterator<Item = I1>;
+
+    fn indices2_by_range(
+        &'a self,
+        range: impl RangeBounds<I2>,
+    ) -> impl DoubleEndedIterator<Item = &'a I2>;
+
+    fn indices3_by_range(
+        &'a self,
+        range: impl RangeBounds<I3>,
+    ) -> impl DoubleEndedIterator<Item = &'a I3>;
+
+    fn indices4_by_range(
+        &'a self,
+        range: impl RangeBounds<I4>,
+    ) -> impl DoubleEndedIterator<Item = &'a I4>;
 }
 
 pub trait GuidTableHandle<'a, K, V: 'a, I1, I2: 'a, I3: 'a, I4: 'a>:
@@ -275,6 +295,34 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4:
 
     fn indices4(&'a self) -> impl Iterator<Item = &'a I4> {
         self.guard.index4.keys()
+    }
+
+    fn indices1_by_range(
+        &'a self,
+        range: impl RangeBounds<I1>,
+    ) -> impl DoubleEndedIterator<Item = I1> {
+        self.guard.index1.range(range).map(|(index, _)| *index)
+    }
+
+    fn indices2_by_range(
+        &'a self,
+        range: impl RangeBounds<I2>,
+    ) -> impl DoubleEndedIterator<Item = &I2> {
+        self.guard.index2.range(range).map(|(index, _)| index)
+    }
+
+    fn indices3_by_range(
+        &'a self,
+        range: impl RangeBounds<I3>,
+    ) -> impl DoubleEndedIterator<Item = &I3> {
+        self.guard.index3.range(range).map(|(index, _)| index)
+    }
+
+    fn indices4_by_range(
+        &'a self,
+        range: impl RangeBounds<I4>,
+    ) -> impl DoubleEndedIterator<Item = &I4> {
+        self.guard.index4.range(range).map(|(index, _)| index)
     }
 }
 
@@ -533,6 +581,34 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4:
 
     fn indices4(&'a self) -> impl Iterator<Item = &'a I4> {
         self.guard.index4.keys()
+    }
+
+    fn indices1_by_range(
+        &'a self,
+        range: impl RangeBounds<I1>,
+    ) -> impl DoubleEndedIterator<Item = I1> {
+        self.guard.index1.range(range).map(|(index, _)| *index)
+    }
+
+    fn indices2_by_range(
+        &'a self,
+        range: impl RangeBounds<I2>,
+    ) -> impl DoubleEndedIterator<Item = &I2> {
+        self.guard.index2.range(range).map(|(index, _)| index)
+    }
+
+    fn indices3_by_range(
+        &'a self,
+        range: impl RangeBounds<I3>,
+    ) -> impl DoubleEndedIterator<Item = &I3> {
+        self.guard.index3.range(range).map(|(index, _)| index)
+    }
+
+    fn indices4_by_range(
+        &'a self,
+        range: impl RangeBounds<I4>,
+    ) -> impl DoubleEndedIterator<Item = &I4> {
+        self.guard.index4.range(range).map(|(index, _)| index)
     }
 }
 
