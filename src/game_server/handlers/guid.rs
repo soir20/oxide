@@ -307,21 +307,21 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4:
     fn indices2_by_range(
         &'a self,
         range: impl RangeBounds<I2>,
-    ) -> impl DoubleEndedIterator<Item = &I2> {
+    ) -> impl DoubleEndedIterator<Item = &'a I2> {
         self.guard.index2.range(range).map(|(index, _)| index)
     }
 
     fn indices3_by_range(
         &'a self,
         range: impl RangeBounds<I3>,
-    ) -> impl DoubleEndedIterator<Item = &I3> {
+    ) -> impl DoubleEndedIterator<Item = &'a I3> {
         self.guard.index3.range(range).map(|(index, _)| index)
     }
 
     fn indices4_by_range(
         &'a self,
         range: impl RangeBounds<I4>,
-    ) -> impl DoubleEndedIterator<Item = &I4> {
+    ) -> impl DoubleEndedIterator<Item = &'a I4> {
         self.guard.index4.range(range).map(|(index, _)| index)
     }
 }
@@ -593,21 +593,21 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4:
     fn indices2_by_range(
         &'a self,
         range: impl RangeBounds<I2>,
-    ) -> impl DoubleEndedIterator<Item = &I2> {
+    ) -> impl DoubleEndedIterator<Item = &'a I2> {
         self.guard.index2.range(range).map(|(index, _)| index)
     }
 
     fn indices3_by_range(
         &'a self,
         range: impl RangeBounds<I3>,
-    ) -> impl DoubleEndedIterator<Item = &I3> {
+    ) -> impl DoubleEndedIterator<Item = &'a I3> {
         self.guard.index3.range(range).map(|(index, _)| index)
     }
 
     fn indices4_by_range(
         &'a self,
         range: impl RangeBounds<I4>,
-    ) -> impl DoubleEndedIterator<Item = &I4> {
+    ) -> impl DoubleEndedIterator<Item = &'a I4> {
         self.guard.index4.range(range).map(|(index, _)| index)
     }
 }
