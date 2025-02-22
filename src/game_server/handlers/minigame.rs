@@ -107,6 +107,8 @@ pub struct MinigameStageConfig {
     pub flash_game: Option<String>,
     pub zone_template_guid: u8,
     pub score_to_credits_expression: String,
+    #[serde(default = "default_matchmaking_timeout_millis")]
+    pub matchmaking_timeout_millis: u32,
 }
 
 impl MinigameStageConfig {
@@ -152,6 +154,10 @@ pub enum MinigameStageGroupChild {
 
 const fn default_true() -> bool {
     true
+}
+
+const fn default_matchmaking_timeout_millis() -> u32 {
+    10000
 }
 
 #[derive(Deserialize)]
@@ -490,6 +496,7 @@ impl From<&[MinigamePortalCategoryConfig]> for MinigameDefinitions {
 pub struct StageConfigRef<'a> {
     pub stage_config: &'a MinigameStageConfig,
     pub stage_number: u32,
+    pub stage_group_guid: i32,
     pub portal_entry_guid: u32,
 }
 
@@ -521,6 +528,26 @@ impl AllMinigameConfigs {
         }
     }
 
+    pub fn stage_configs(&self) -> impl Iterator<Item = StageConfigRef> {
+        self.stage_groups
+            .values()
+            .flat_map(|(stage_group, portal_entry_guid)| {
+                stage_group
+                    .stages
+                    .iter()
+                    .enumerate()
+                    .filter_map(|(index, child)| match child {
+                        MinigameStageGroupChild::StageGroup(_) => None,
+                        MinigameStageGroupChild::Stage(stage) => Some(StageConfigRef {
+                            stage_config: stage,
+                            stage_number: index as u32 + 1,
+                            stage_group_guid: stage_group.guid,
+                            portal_entry_guid: *portal_entry_guid,
+                        }),
+                    })
+            })
+    }
+
     pub fn stage_config(&self, stage_group_guid: i32, stage_guid: i32) -> Option<StageConfigRef> {
         self.stage_groups
             .get(&stage_group_guid)
@@ -535,6 +562,7 @@ impl AllMinigameConfigs {
                                 Some(StageConfigRef {
                                     stage_config: stage,
                                     stage_number: index as u32 + 1,
+                                    stage_group_guid: stage_group.guid,
                                     portal_entry_guid: *portal_entry_guid,
                                 })
                             } else {
