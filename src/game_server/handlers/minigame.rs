@@ -897,7 +897,7 @@ fn remove_from_matchmaking(
             Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
                 format!(
-                    "Remove player {} from matchmaking, but their character isn't a player",
+                    "Tried to remove player {} from matchmaking, but their character isn't a player",
                     player
                 ),
             ))
