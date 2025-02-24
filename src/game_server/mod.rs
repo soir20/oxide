@@ -4,7 +4,7 @@ use std::fmt::Display;
 use std::io::{Cursor, Error};
 use std::num::ParseIntError;
 use std::path::Path;
-use std::time::Instant;
+use std::time::{Duration, Instant};
 use std::vec;
 
 use byteorder::{LittleEndian, ReadBytesExt};
@@ -27,7 +27,8 @@ use handlers::lock_enforcer::{
 };
 use handlers::login::{log_in, log_out, send_points_of_interest};
 use handlers::minigame::{
-    create_active_minigame, load_all_minigames, process_minigame_packet, AllMinigameConfigs,
+    create_active_minigame, load_all_minigames, prepare_active_minigame_instance,
+    process_minigame_packet, AllMinigameConfigs,
 };
 use handlers::mount::{load_mounts, process_mount_packet, MountConfig};
 use handlers::reference_data::{load_categories, load_item_classes, load_item_groups};
@@ -146,6 +147,7 @@ pub struct GameServer {
     item_groups: ItemGroupDefinitions,
     minigames: AllMinigameConfigs,
     mounts: BTreeMap<u32, MountConfig>,
+    start_time: Instant,
     zone_templates: BTreeMap<u8, ZoneTemplate>,
 }
 
@@ -169,6 +171,7 @@ impl GameServer {
             },
             minigames: load_all_minigames(config_dir)?,
             mounts: load_mounts(config_dir)?,
+            start_time: Instant::now(),
             zone_templates: templates,
         })
     }
@@ -225,6 +228,8 @@ impl GameServer {
                 &mut broadcasts,
             )?;
         }
+
+        broadcasts.append(&mut self.tick_minigame_groups()?);
 
         Ok(broadcasts)
     }
@@ -1017,5 +1022,59 @@ impl GameServer {
                 },
             }
         })
+    }
+
+    fn tick_minigame_groups(&self) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let now = Instant::now();
+        let mut broadcasts = Vec::new();
+        self.lock_enforcer().write_characters(
+            |characters_table_write_handle, zones_lock_enforcer| {
+                // Iterate over timed-out groups for every stage, since the number of stages remains
+                // a fairly small constant, while there can theoretically be billions of matchmaking groups.
+                for stage in self.minigames().stage_configs() {
+                    let timeout =
+                        Duration::from_millis(stage.stage_config.matchmaking_timeout_millis as u64);
+                    let max_time = match now.checked_sub(timeout) {
+                        Some(max_time) => max_time,
+                        None => continue,
+                    };
+                    let stage_group_guid = stage.stage_group_guid;
+                    let stage_guid = stage.stage_config.guid;
+                    let min_players = stage.stage_config.min_players;
+
+                    let timed_out_group_range =
+                        (stage_group_guid, stage_guid, self.start_time, u32::MIN)
+                            ..=(stage_group_guid, stage_guid, max_time, u32::MAX);
+                    let timed_out_groups: Vec<(Instant, u32)> = characters_table_write_handle
+                        .indices4_by_range(timed_out_group_range)
+                        .map(|(_, _, creation_time, owner_guid)| (*creation_time, *owner_guid))
+                        .collect();
+                    for (creation_time, owner_guid) in timed_out_groups {
+                        let players_in_group: Vec<u32> = characters_table_write_handle
+                            .keys_by_index4(&(
+                                stage_group_guid,
+                                stage_guid,
+                                creation_time,
+                                owner_guid,
+                            ))
+                            .filter_map(|guid| shorten_player_guid(guid).ok())
+                            .collect();
+                        if players_in_group.len() as u32 >= min_players {
+                            broadcasts.append(&mut prepare_active_minigame_instance(
+                                &players_in_group,
+                                &stage,
+                                characters_table_write_handle,
+                                zones_lock_enforcer,
+                                self,
+                            ));
+                        } else {
+                            info!("TODO: time out the group");
+                            // cancel the game or start as single player
+                        }
+                    }
+                }
+            },
+        );
+        Ok(broadcasts)
     }
 }
