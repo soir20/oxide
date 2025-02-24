@@ -666,7 +666,8 @@
                 "rot_x": 0.032968648,
                 "rot_y": 0.0,
                 "rot_z": 0.9994564,
-                "wait_to_spawn_on_steps": true,
+                "is_spawned": false,
+                "enable_gravity": false,
                 "tickable_procedures": {
                     "green_starfighter": {
                         "steps": [
@@ -674,12 +675,12 @@
                                 "spawn_npc": true,
                                 "rail_id": 36,
                                 "composite_effect_id": 1021,
-                                "effect_delay_millis": 0,
                                 "effect_duration_millis": 12000,
                                 "duration_millis": 12000
                             },
                             {
-                                "remove_fade_millis": 1000,
+                                "despawn_npc": true,
+                                "disable_death_animation": true,                                
                                 "duration_millis": 1000
                             }
                         ]
@@ -705,7 +706,8 @@
                 "rot_x": -0.019411897,
                 "rot_y": 0.0,
                 "rot_z": -0.99913853,
-                "wait_to_spawn_on_steps": true,
+                "is_spawned": false,
+                "enable_gravity": false,
                 "tickable_procedures": {
                     "purple_starfighter": {
                         "steps": [
@@ -713,12 +715,12 @@
                                 "spawn_npc": true,
                                 "rail_id": 37,
                                 "composite_effect_id": 1021,
-                                "effect_delay_millis": 0,
                                 "effect_duration_millis": 12500,
                                 "duration_millis": 12500
                             },
                             {
-                                "remove_fade_millis": 1000,
+                                "despawn_npc": true,
+                                "disable_death_animation": true,
                                 "duration_millis": 1000
                             }
                         ]
