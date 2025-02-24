@@ -1470,6 +1470,7 @@ pub fn create_active_minigame(
                         was_successful: true,
                     },
                 })?,
+                // Re-send the stage group instance to populate the stage data in the settings menu
                 GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
                     inner: CreateActiveMinigame {
