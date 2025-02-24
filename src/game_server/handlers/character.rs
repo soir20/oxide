@@ -1012,7 +1012,7 @@ pub struct Player {
     pub inventory: BTreeSet<u32>,
     pub customizations: BTreeMap<CustomizationSlot, u32>,
     pub minigame_stats: PlayerMinigameStats,
-    pub matchmaking_group_guid: Option<u32>,
+    pub matchmaking_group: Option<CharacterMatchmakingGroupIndex>,
     pub owned_matchmaking_group: Option<OwnedMatchmakingGroup>,
     pub minigame_status: Option<MinigameStatus>,
     pub update_previous_location_on_leave: bool,
@@ -1300,7 +1300,7 @@ pub type Chunk = (i32, i32);
 pub type CharacterLocationIndex = (CharacterCategory, u64, Chunk);
 pub type CharacterNameIndex = String;
 pub type CharacterSquadIndex = u64;
-pub type CharacterMatchmakingGroupIndex = u32;
+pub type CharacterMatchmakingGroupIndex = (i32, i32, Instant, u32);
 
 #[derive(Clone)]
 pub struct CharacterStat {
@@ -1391,7 +1391,7 @@ impl
 
     fn index4(&self) -> Option<CharacterMatchmakingGroupIndex> {
         match &self.stats.character_type {
-            CharacterType::Player(player) => player.matchmaking_group_guid,
+            CharacterType::Player(player) => player.matchmaking_group,
             _ => None,
         }
     }

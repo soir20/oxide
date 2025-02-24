@@ -40,7 +40,9 @@ use crate::{
 
 use super::{
     character::{CharacterType, Player},
-    lock_enforcer::{CharacterLockRequest, CharacterTableWriteHandle, ZoneTableWriteHandle},
+    lock_enforcer::{
+        CharacterLockRequest, CharacterTableWriteHandle, ZoneLockEnforcer, ZoneTableWriteHandle,
+    },
     unique_guid::player_guid,
 };
 
@@ -868,6 +870,177 @@ fn handle_request_create_active_minigame(
     }
 }
 
+fn prepare_active_minigame_instance(
+    members: &[u32],
+    stage_config: &StageConfigRef,
+    characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
+    zones_lock_enforcer: &ZoneLockEnforcer,
+    game_server: &GameServer,
+) -> Vec<Broadcast> {
+    let stage_group_guid = stage_config.stage_group_guid;
+    let stage_guid = stage_config.stage_config.guid;
+
+    let mut broadcasts = Vec::new();
+
+    zones_lock_enforcer.write_zones(|zones_table_write_handle| {
+        let new_instance_guid = match game_server.get_or_create_instance(characters_table_write_handle, zones_table_write_handle, stage_config.stage_config.zone_template_guid, stage_config.stage_config.max_players) {
+            Ok(new_instance_guid) => new_instance_guid,
+            Err(err) => {
+                info!("Failed to create minigame instance (stage group {}, stage {}): {}", stage_group_guid, stage_guid, err);
+                let result_packet = GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: ActiveMinigameCreationResult {
+                        header: MinigameHeader {
+                            stage_guid,
+                            unknown2: -1,
+                            stage_group_guid,
+                        },
+                        was_successful: false,
+                    },
+                });
+                match result_packet {
+                    Ok(packet) => broadcasts.push(Broadcast::Multi(
+                        members.to_vec(),
+                        vec![packet],
+                    )),
+                    Err(err) => info!("Couldn't serialize create game result packet: {} (stage group {}, stage {})", ProcessPacketError::from(err), stage_group_guid, stage_guid),
+                }
+
+                return broadcasts;
+            },
+        };
+
+        let teleport_result = (|| {
+            let mut teleport_broadcasts = Vec::new();
+            let now = Instant::now();
+            for member_guid in members {
+                if let Some(character_lock) = characters_table_write_handle.get(player_guid(*member_guid)) {
+                    if let CharacterType::Player(player) = &mut character_lock.write().stats.character_type {
+                        if game_server.minigames().stage_unlocked(stage_group_guid, stage_guid, player) {
+                            player.minigame_status = Some(MinigameStatus {
+                                stage_group_guid,
+                                stage_guid,
+                                game_created: false,
+                                game_won: false,
+                                score_entries: vec![],
+                                total_score: 0,
+                                start_time: now,
+                            });
+                        } else {
+                            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to create an active minigame for a stage {} they haven't unlocked", member_guid, stage_guid)));
+                        }
+                    } else {
+                        return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to create an active minigame, but their character isn't a player", member_guid)));
+                    }
+                } else {
+                    return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} tried to create an active minigame", member_guid)));
+                }
+
+                let result: Result<Vec<Broadcast>, ProcessPacketError> = teleport_to_zone!(
+                    characters_table_write_handle,
+                    *member_guid,
+                    zones_table_write_handle,
+                    &zones_table_write_handle.get(new_instance_guid)
+                        .unwrap_or_else(|| panic!("Zone instance {} should have been created or already exist but is missing", new_instance_guid))
+                        .read(),
+                    None,
+                    None,
+                    game_server.mounts(),
+                );
+
+                teleport_broadcasts.append(&mut result?);
+            }
+
+            Ok(teleport_broadcasts)
+        })();
+
+        match teleport_result {
+            Ok(mut teleport_broadcasts) => {
+                broadcasts.append(&mut teleport_broadcasts);
+                let create_game_packet_result = GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: CreateActiveMinigame {
+                        header: MinigameHeader {
+                            stage_guid,
+                            unknown2: -1,
+                            stage_group_guid,
+                        },
+                        name_id: stage_config.stage_config.name_id,
+                        icon_set_id: stage_config.stage_config.start_screen_icon_id,
+                        description_id: stage_config.stage_config.description_id,
+                        difficulty: stage_config.stage_config.difficulty,
+                        battle_class_type: 0,
+                        portal_entry_guid: stage_config.portal_entry_guid,
+                        unknown7: false,
+                        unknown8: false,
+                        reward_bundle1: RewardBundle::default(),
+                        reward_bundle2: RewardBundle::default(),
+                        reward_bundle3: RewardBundle::default(),
+                        reward_bundles: vec![],
+                        unknown13: false,
+                        unknown14: false,
+                        unknown15: false,
+                        unknown16: false,
+                        show_end_score_screen: true,
+                        unknown18: "".to_string(),
+                        unknown19: 0,
+                        unknown20: false,
+                        stage_definition_guid: stage_guid,
+                        unknown22: false,
+                        unknown23: false,
+                        unknown24: false,
+                        unknown25: 0,
+                        unknown26: 0,
+                        unknown27: 0,
+                    },
+                });
+
+                match create_game_packet_result {
+                    Ok(packet) => broadcasts.push(Broadcast::Multi(
+                        members.to_vec(),
+                        vec![packet],
+                    )),
+                    Err(err) => info!("Couldn't serialize create game packet: {} (stage group {}, stage {})", ProcessPacketError::from(err), stage_group_guid, stage_guid),
+                }
+            },
+            Err(err) => {
+                // We don't need to clean up the zone here, since the next instance of this stage that starts will use it instead
+                info!("Couldn't add a player to the minigame, ending the game: {} (stage group {}, stage {})", err, stage_group_guid, stage_guid);
+                for member_guid in members {
+                    let end_game_result = end_active_minigame(*member_guid, characters_table_write_handle, zones_table_write_handle, stage_guid, false, game_server);
+                    if let Ok(mut end_game_broadcasts) = end_game_result {
+                        broadcasts.append(&mut end_game_broadcasts);
+                    } else {
+                        info!("Couldn't end minigame for player {}: {} (stage group {}, stage {})", *member_guid, err, stage_group_guid, stage_guid);
+                    }
+                }
+
+                let result_packet = GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: ActiveMinigameCreationResult {
+                        header: MinigameHeader {
+                            stage_guid,
+                            unknown2: -1,
+                            stage_group_guid,
+                        },
+                        was_successful: false,
+                    },
+                });
+                match result_packet {
+                    Ok(packet) => broadcasts.push(Broadcast::Multi(
+                        members.to_vec(),
+                        vec![packet],
+                    )),
+                    Err(err) => info!("Couldn't serialize create game result packet: {} (stage group {}, stage {})", ProcessPacketError::from(err), stage_group_guid, stage_guid),
+                }
+            },
+        }
+
+        // We don't want to return a `Result` because an error would disconnect the sender without disconnecting the group members
+        broadcasts
+    })
+}
+
 fn handle_request_start_active_minigame(
     request: RequestStartActiveMinigame,
     sender: u32,
@@ -945,7 +1118,7 @@ fn handle_request_cancel_active_minigame(
                     sender,
                     characters_table_write_handle,
                     zones_table_write_handle,
-                    request_header,
+                    request_header.stage_guid,
                     skip_if_flash,
                     game_server,
                 )
@@ -1343,7 +1516,7 @@ fn end_active_minigame(
     sender: u32,
     characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
     zones_table_write_handle: &mut ZoneTableWriteHandle<'_>,
-    request_header: &MinigameHeader,
+    stage_guid: i32,
     skip_if_flash: bool,
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
@@ -1355,7 +1528,7 @@ fn end_active_minigame(
             let previous_location = player.previous_location.clone();
 
             if let Some(minigame_status) = &player.minigame_status {
-                if request_header.stage_guid == minigame_status.stage_guid {
+                if stage_guid == minigame_status.stage_guid {
                     if let Some(StageConfigRef { stage_config, .. }) = game_server
                         .minigames()
                         .stage_config(minigame_status.stage_group_guid, minigame_status.stage_guid)
@@ -1481,11 +1654,11 @@ fn end_active_minigame(
                         Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to end player {}'s active minigame with stage config {} (stage group {}) that does not exist", sender, minigame_status.stage_guid, minigame_status.stage_group_guid)))
                     }
                 } else {
-                    info!("Tried to end player {}'s active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", sender, request_header.stage_guid, minigame_status.stage_group_guid, minigame_status.stage_guid);
+                    info!("Tried to end player {}'s active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", sender, stage_guid, minigame_status.stage_group_guid, minigame_status.stage_guid);
                     Ok((vec![], previous_location))
                 }
             } else {
-                info!("Tried to end player {}'s active minigame (stage {}), but they aren't in an active minigame", sender, request_header.stage_guid);
+                info!("Tried to end player {}'s active minigame (stage {}), but they aren't in an active minigame", sender, stage_guid);
                 Ok((vec![], previous_location))
             }
         } else {
