@@ -1054,7 +1054,15 @@ fn handle_request_start_active_minigame(
                 if let CharacterType::Player(player) = &character_read_handle.stats.character_type {
                     if let Some(minigame_status) = &player.minigame_status {
                         if request.header.stage_guid == minigame_status.stage_guid {
+                            // Re-send the stage group instance to populate the stage data in the settings menu
+                            let mut stage_group_instance = game_server.minigames.stage_group_instance(minigame_status.stage_group_guid, player)?;
+                            stage_group_instance.header.stage_guid = minigame_status.stage_guid;
+
                             let mut packets = vec![
+                                GamePacket::serialize(&TunneledPacket {
+                                    unknown1: true,
+                                    inner: stage_group_instance,
+                                })?,
                                 GamePacket::serialize(&TunneledPacket {
                                     unknown1: true,
                                     inner: StartActiveMinigame {
