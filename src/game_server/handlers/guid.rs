@@ -282,47 +282,109 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4:
     }
 
     fn indices1(&'a self) -> impl Iterator<Item = I1> {
-        self.guard.index1.keys().copied()
+        self.guard.index1.iter().filter_map(
+            |(index, guids)| {
+                if guids.is_empty() {
+                    None
+                } else {
+                    Some(*index)
+                }
+            },
+        )
     }
 
     fn indices2(&'a self) -> impl Iterator<Item = &'a I2> {
-        self.guard.index2.keys()
+        self.guard.index2.iter().filter_map(
+            |(index, guids)| {
+                if guids.is_empty() {
+                    None
+                } else {
+                    Some(index)
+                }
+            },
+        )
     }
 
     fn indices3(&'a self) -> impl Iterator<Item = &'a I3> {
-        self.guard.index3.keys()
+        self.guard.index3.iter().filter_map(
+            |(index, guids)| {
+                if guids.is_empty() {
+                    None
+                } else {
+                    Some(index)
+                }
+            },
+        )
     }
 
     fn indices4(&'a self) -> impl Iterator<Item = &'a I4> {
-        self.guard.index4.keys()
+        self.guard.index4.iter().filter_map(
+            |(index, guids)| {
+                if guids.is_empty() {
+                    None
+                } else {
+                    Some(index)
+                }
+            },
+        )
     }
 
     fn indices1_by_range(
         &'a self,
         range: impl RangeBounds<I1>,
     ) -> impl DoubleEndedIterator<Item = I1> {
-        self.guard.index1.range(range).map(|(index, _)| *index)
+        self.guard.index1.range(range).filter_map(|(index, guids)| {
+            if guids.is_empty() {
+                None
+            } else {
+                Some(*index)
+            }
+        })
     }
 
     fn indices2_by_range(
         &'a self,
         range: impl RangeBounds<I2>,
     ) -> impl DoubleEndedIterator<Item = &'a I2> {
-        self.guard.index2.range(range).map(|(index, _)| index)
+        self.guard.index2.range(range).filter_map(
+            |(index, guids)| {
+                if guids.is_empty() {
+                    None
+                } else {
+                    Some(index)
+                }
+            },
+        )
     }
 
     fn indices3_by_range(
         &'a self,
         range: impl RangeBounds<I3>,
     ) -> impl DoubleEndedIterator<Item = &'a I3> {
-        self.guard.index3.range(range).map(|(index, _)| index)
+        self.guard.index3.range(range).filter_map(
+            |(index, guids)| {
+                if guids.is_empty() {
+                    None
+                } else {
+                    Some(index)
+                }
+            },
+        )
     }
 
     fn indices4_by_range(
         &'a self,
         range: impl RangeBounds<I4>,
     ) -> impl DoubleEndedIterator<Item = &'a I4> {
-        self.guard.index4.range(range).map(|(index, _)| index)
+        self.guard.index4.range(range).filter_map(
+            |(index, guids)| {
+                if guids.is_empty() {
+                    None
+                } else {
+                    Some(index)
+                }
+            },
+        )
     }
 }
 
@@ -568,47 +630,109 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4:
     }
 
     fn indices1(&'a self) -> impl Iterator<Item = I1> {
-        self.guard.index1.keys().copied()
+        self.guard.index1.iter().filter_map(
+            |(index, guids)| {
+                if guids.is_empty() {
+                    None
+                } else {
+                    Some(*index)
+                }
+            },
+        )
     }
 
     fn indices2(&'a self) -> impl Iterator<Item = &'a I2> {
-        self.guard.index2.keys()
+        self.guard.index2.iter().filter_map(
+            |(index, guids)| {
+                if guids.is_empty() {
+                    None
+                } else {
+                    Some(index)
+                }
+            },
+        )
     }
 
     fn indices3(&'a self) -> impl Iterator<Item = &'a I3> {
-        self.guard.index3.keys()
+        self.guard.index3.iter().filter_map(
+            |(index, guids)| {
+                if guids.is_empty() {
+                    None
+                } else {
+                    Some(index)
+                }
+            },
+        )
     }
 
     fn indices4(&'a self) -> impl Iterator<Item = &'a I4> {
-        self.guard.index4.keys()
+        self.guard.index4.iter().filter_map(
+            |(index, guids)| {
+                if guids.is_empty() {
+                    None
+                } else {
+                    Some(index)
+                }
+            },
+        )
     }
 
     fn indices1_by_range(
         &'a self,
         range: impl RangeBounds<I1>,
     ) -> impl DoubleEndedIterator<Item = I1> {
-        self.guard.index1.range(range).map(|(index, _)| *index)
+        self.guard.index1.range(range).filter_map(|(index, guids)| {
+            if guids.is_empty() {
+                None
+            } else {
+                Some(*index)
+            }
+        })
     }
 
     fn indices2_by_range(
         &'a self,
         range: impl RangeBounds<I2>,
     ) -> impl DoubleEndedIterator<Item = &'a I2> {
-        self.guard.index2.range(range).map(|(index, _)| index)
+        self.guard.index2.range(range).filter_map(
+            |(index, guids)| {
+                if guids.is_empty() {
+                    None
+                } else {
+                    Some(index)
+                }
+            },
+        )
     }
 
     fn indices3_by_range(
         &'a self,
         range: impl RangeBounds<I3>,
     ) -> impl DoubleEndedIterator<Item = &'a I3> {
-        self.guard.index3.range(range).map(|(index, _)| index)
+        self.guard.index3.range(range).filter_map(
+            |(index, guids)| {
+                if guids.is_empty() {
+                    None
+                } else {
+                    Some(index)
+                }
+            },
+        )
     }
 
     fn indices4_by_range(
         &'a self,
         range: impl RangeBounds<I4>,
     ) -> impl DoubleEndedIterator<Item = &'a I4> {
-        self.guard.index4.range(range).map(|(index, _)| index)
+        self.guard.index4.range(range).filter_map(
+            |(index, guids)| {
+                if guids.is_empty() {
+                    None
+                } else {
+                    Some(index)
+                }
+            },
+        )
     }
 }
 
