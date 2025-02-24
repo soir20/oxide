@@ -793,9 +793,10 @@ fn handle_request_create_active_minigame(
                     ))
                 } else {
                     let mut broadcasts = Vec::new();
+                    let required_space = 1;
                     let (open_group, space_left) = find_matchmaking_group(
                         characters_table_write_handle,
-                        1,
+                        required_space,
                         stage_config.stage_config.max_players,
                         stage_config.stage_group_guid,
                         stage_config.stage_config.guid,
@@ -809,7 +810,7 @@ fn handle_request_create_active_minigame(
                                 Instant::now(),
                                 sender,
                             ),
-                            stage_config.stage_config.max_players.saturating_sub(1),
+                            stage_config.stage_config.max_players,
                         )
                     });
 
@@ -848,7 +849,7 @@ fn handle_request_create_active_minigame(
                         );
                         result?;
 
-                        if space_left == 0 {
+                        if space_left <= required_space {
                             let players_in_group: Vec<u32> = characters_table_write_handle
                                 .keys_by_index4(&open_group)
                                 .filter_map(|guid| shorten_player_guid(guid).ok())
