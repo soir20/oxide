@@ -39,12 +39,12 @@ use crate::{
 };
 
 use super::{
-    character::{CharacterType, Player},
-    guid::IndexedGuid,
+    character::{CharacterMatchmakingGroupIndex, CharacterType, Player},
+    guid::{GuidTableIndexer, IndexedGuid},
     lock_enforcer::{
         CharacterLockRequest, CharacterTableWriteHandle, ZoneLockEnforcer, ZoneTableWriteHandle,
     },
-    unique_guid::player_guid,
+    unique_guid::{player_guid, shorten_player_guid},
 };
 
 #[derive(Clone)]
@@ -745,6 +745,33 @@ fn handle_request_stage_group_instance(
         })
 }
 
+fn find_matchmaking_group(
+    characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
+    required_space: u32,
+    max_players: u32,
+    stage_group_guid: i32,
+    stage_guid: i32,
+    start_time: Instant,
+) -> Option<(CharacterMatchmakingGroupIndex, u32)> {
+    let range = (stage_group_guid, stage_guid, start_time, u32::MIN)
+        ..=(stage_group_guid, stage_guid, Instant::now(), u32::MAX);
+    // Iterates from oldest group to newest groups, so groups waiting longer are prioritized first
+    let mut group_to_join = None;
+    for matchmaking_group in characters_table_write_handle.indices4_by_range(range) {
+        let players_in_group = characters_table_write_handle
+            .keys_by_index4(matchmaking_group)
+            .count() as u32;
+        if players_in_group <= max_players.saturating_sub(required_space) {
+            group_to_join = Some((
+                *matchmaking_group,
+                max_players.saturating_sub(players_in_group),
+            ));
+        }
+    }
+
+    group_to_join
+}
+
 fn handle_request_create_active_minigame(
     request: RequestCreateActiveMinigame,
     sender: u32,
@@ -756,13 +783,87 @@ fn handle_request_create_active_minigame(
     {
         game_server.lock_enforcer().write_characters(
             |characters_table_write_handle, zones_lock_enforcer| {
-                Ok(prepare_active_minigame_instance(
-                    &[sender],
-                    &stage_config,
-                    characters_table_write_handle,
-                    zones_lock_enforcer,
-                    game_server,
-                ))
+                if stage_config.stage_config.max_players == 1 {
+                    Ok(prepare_active_minigame_instance(
+                        &[sender],
+                        &stage_config,
+                        characters_table_write_handle,
+                        zones_lock_enforcer,
+                        game_server,
+                    ))
+                } else {
+                    let mut broadcasts = Vec::new();
+                    let (open_group, space_left) = find_matchmaking_group(
+                        characters_table_write_handle,
+                        1,
+                        stage_config.stage_config.max_players,
+                        stage_config.stage_group_guid,
+                        stage_config.stage_config.guid,
+                        game_server.start_time(),
+                    )
+                    .unwrap_or_else(|| {
+                        (
+                            (
+                                stage_config.stage_group_guid,
+                                stage_config.stage_config.guid,
+                                Instant::now(),
+                                sender,
+                            ),
+                            stage_config.stage_config.max_players.saturating_sub(1),
+                        )
+                    });
+
+                    if let Some((character_lock, ..)) =
+                        characters_table_write_handle.remove(player_guid(sender))
+                    {
+                        let mut character_write_handle = character_lock.write();
+                        let result = if let CharacterType::Player(ref mut player) =
+                            &mut character_write_handle.stats.character_type
+                        {
+                            player.matchmaking_group = Some(open_group);
+                            Ok(())
+                        } else {
+                            Err(ProcessPacketError::new(
+                                ProcessPacketErrorType::ConstraintViolated,
+                                format!(
+                                    "Character {} requested to join a stage {} but is not a player",
+                                    player_guid(sender),
+                                    stage_config.stage_config.guid
+                                ),
+                            ))
+                        };
+
+                        let index1 = character_write_handle.index1();
+                        let index2 = character_write_handle.index2();
+                        let index3 = character_write_handle.index3();
+                        let index4 = character_write_handle.index4();
+                        drop(character_write_handle);
+                        characters_table_write_handle.insert_lock(
+                            player_guid(sender),
+                            index1,
+                            index2,
+                            index3,
+                            index4,
+                            character_lock,
+                        );
+                        result?;
+
+                        if space_left == 0 {
+                            let players_in_group: Vec<u32> = characters_table_write_handle
+                                .keys_by_index4(&open_group)
+                                .filter_map(|guid| shorten_player_guid(guid).ok())
+                                .collect();
+                            broadcasts.append(&mut prepare_active_minigame_instance(
+                                &players_in_group,
+                                &stage_config,
+                                characters_table_write_handle,
+                                zones_lock_enforcer,
+                                game_server,
+                            ));
+                        }
+                    }
+                    Ok(broadcasts)
+                }
             },
         )
     } else {

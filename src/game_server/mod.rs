@@ -785,6 +785,10 @@ impl GameServer {
         &self.mounts
     }
 
+    pub fn start_time(&self) -> Instant {
+        self.start_time
+    }
+
     pub fn lock_enforcer(&self) -> LockEnforcer {
         self.lock_enforcer_source.lock_enforcer()
     }
