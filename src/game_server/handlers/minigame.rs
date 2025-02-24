@@ -1,5 +1,5 @@
 use std::{
-    collections::BTreeMap,
+    collections::{BTreeMap, BTreeSet},
     fs::File,
     io::{Cursor, Error, ErrorKind, Read},
     path::Path,
@@ -882,6 +882,7 @@ fn remove_from_matchmaking(
     player: u32,
     characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
     zones_table_write_handle: &mut ZoneTableWriteHandle<'_>,
+    was_teleported: bool,
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let previous_location = if let Some((character_lock, ..)) =
@@ -926,27 +927,31 @@ fn remove_from_matchmaking(
         ))
     }?;
 
-    let instance_guid = game_server.get_or_create_instance(
-        characters_table_write_handle,
-        zones_table_write_handle,
-        previous_location.template_guid,
-        1,
-    )?;
-    teleport_to_zone!(
-        characters_table_write_handle,
-        player,
-        zones_table_write_handle,
-        &zones_table_write_handle
-            .get(instance_guid)
-            .unwrap_or_else(|| panic!(
-                "Zone instance {} should have been created or already exist but is missing",
-                instance_guid
-            ))
-            .read(),
-        Some(previous_location.pos),
-        Some(previous_location.rot),
-        game_server.mounts(),
-    )
+    if was_teleported {
+        let instance_guid = game_server.get_or_create_instance(
+            characters_table_write_handle,
+            zones_table_write_handle,
+            previous_location.template_guid,
+            1,
+        )?;
+        teleport_to_zone!(
+            characters_table_write_handle,
+            player,
+            zones_table_write_handle,
+            &zones_table_write_handle
+                .get(instance_guid)
+                .unwrap_or_else(|| panic!(
+                    "Zone instance {} should have been created or already exist but is missing",
+                    instance_guid
+                ))
+                .read(),
+            Some(previous_location.pos),
+            Some(previous_location.rot),
+            game_server.mounts(),
+        )
+    } else {
+        Ok(Vec::new())
+    }
 }
 
 pub fn prepare_active_minigame_instance(
@@ -962,6 +967,7 @@ pub fn prepare_active_minigame_instance(
     let mut broadcasts = Vec::new();
 
     zones_lock_enforcer.write_zones(|zones_table_write_handle| {
+        let mut teleported_players = BTreeSet::new();
         let teleport_result = (|| {
             let new_instance_guid = game_server.get_or_create_instance(characters_table_write_handle, zones_table_write_handle, stage_config.stage_config.zone_template_guid, stage_config.stage_config.max_players)?;
 
@@ -1013,6 +1019,7 @@ pub fn prepare_active_minigame_instance(
                     None,
                     game_server.mounts(),
                 );
+                teleported_players.insert(*member_guid);
 
                 teleport_broadcasts.append(&mut result?);
             }
@@ -1073,7 +1080,8 @@ pub fn prepare_active_minigame_instance(
                 // We don't need to clean up the zone here, since the next instance of this stage that starts will use it instead
                 info!("Couldn't add a player to the minigame, ending the game: {} (stage group {}, stage {})", err, stage_group_guid, stage_guid);
                 for member_guid in members {
-                    let end_matchmaking_result = remove_from_matchmaking(*member_guid, characters_table_write_handle, zones_table_write_handle, game_server);
+                    let was_teleported = teleported_players.contains(member_guid);
+                    let end_matchmaking_result = remove_from_matchmaking(*member_guid, characters_table_write_handle, zones_table_write_handle, was_teleported, game_server);
                     if let Ok(mut end_game_broadcasts) = end_matchmaking_result {
                         broadcasts.append(&mut end_game_broadcasts);
                     } else {
