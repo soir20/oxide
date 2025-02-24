@@ -361,10 +361,10 @@ impl TickableStep {
         );
 
         if let Some(true) = self.spawn_npc {
-            if character.is_spawned == false {
+            if !character.is_spawned {
                 character.is_spawned = true;
             }
-            if character.is_spawned == true {
+            if character.is_spawned {
                 match character.character_type {
                     CharacterType::AmbientNpc(ref ambient_npc) => {
                         packets_for_all.extend(ambient_npc.add_packets(&character_ref)?);
