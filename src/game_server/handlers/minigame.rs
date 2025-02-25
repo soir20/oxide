@@ -814,55 +814,49 @@ fn handle_request_create_active_minigame(
                         )
                     });
 
-                    if let Some((character_lock, ..)) =
-                        characters_table_write_handle.remove(player_guid(sender))
-                    {
-                        let mut character_write_handle = character_lock.write();
-                        let result = if let CharacterType::Player(ref mut player) =
-                            &mut character_write_handle.stats.character_type
-                        {
-                            player.matchmaking_group = Some(open_group);
-                            Ok(())
+                    characters_table_write_handle.update_value_indices(player_guid(sender), |possible_character_write_handle| {
+                        if let Some(character_write_handle) = possible_character_write_handle {
+                            if let CharacterType::Player(ref mut player) =
+                                &mut character_write_handle.stats.character_type
+                            {
+                                player.matchmaking_group = Some(open_group);
+                                Ok(())
+                            } else {
+                                Err(ProcessPacketError::new(
+                                    ProcessPacketErrorType::ConstraintViolated,
+                                    format!(
+                                        "Character {} requested to join a stage {} but is not a player",
+                                        player_guid(sender),
+                                        stage_config.stage_config.guid
+                                    ),
+                                ))
+                            }
                         } else {
                             Err(ProcessPacketError::new(
                                 ProcessPacketErrorType::ConstraintViolated,
                                 format!(
-                                    "Character {} requested to join a stage {} but is not a player",
+                                    "Character {} requested to join a stage {} but does not exist",
                                     player_guid(sender),
                                     stage_config.stage_config.guid
                                 ),
                             ))
-                        };
-
-                        let index1 = character_write_handle.index1();
-                        let index2 = character_write_handle.index2();
-                        let index3 = character_write_handle.index3();
-                        let index4 = character_write_handle.index4();
-                        drop(character_write_handle);
-                        characters_table_write_handle.insert_lock(
-                            player_guid(sender),
-                            index1,
-                            index2,
-                            index3,
-                            index4,
-                            character_lock,
-                        );
-                        result?;
-
-                        if space_left <= required_space {
-                            let players_in_group: Vec<u32> = characters_table_write_handle
-                                .keys_by_index4(&open_group)
-                                .filter_map(|guid| shorten_player_guid(guid).ok())
-                                .collect();
-                            broadcasts.append(&mut prepare_active_minigame_instance(
-                                &players_in_group,
-                                &stage_config,
-                                characters_table_write_handle,
-                                zones_lock_enforcer,
-                                game_server,
-                            ));
                         }
+                    })?;
+
+                    if space_left <= required_space {
+                        let players_in_group: Vec<u32> = characters_table_write_handle
+                            .keys_by_index4(&open_group)
+                            .filter_map(|guid| shorten_player_guid(guid).ok())
+                            .collect();
+                        broadcasts.append(&mut prepare_active_minigame_instance(
+                            &players_in_group,
+                            &stage_config,
+                            characters_table_write_handle,
+                            zones_lock_enforcer,
+                            game_server,
+                        ));
                     }
+
                     Ok(broadcasts)
                 }
             },
