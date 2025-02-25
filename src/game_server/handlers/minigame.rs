@@ -885,47 +885,30 @@ fn remove_from_matchmaking(
     was_teleported: bool,
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-    let previous_location = if let Some((character_lock, ..)) =
-        characters_table_write_handle.remove(player_guid(player))
-    {
-        let mut character_write_handle = character_lock.write();
-        let result = if let CharacterType::Player(player) =
-            &mut character_write_handle.stats.character_type
-        {
-            let previous_location = player.previous_location.clone();
-            player.matchmaking_group = None;
-            Ok(previous_location)
+    let previous_location = characters_table_write_handle.update_value_indices(player_guid(player), |possible_character_write_handle| {
+        if let Some(character_write_handle) = possible_character_write_handle {
+            if let CharacterType::Player(player) =
+                &mut character_write_handle.stats.character_type
+            {
+                let previous_location = player.previous_location.clone();
+                player.matchmaking_group = None;
+                Ok(previous_location)
+            } else {
+                Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Tried to remove player {} from matchmaking, but their character isn't a player",
+                        player
+                    ),
+                ))
+            }
         } else {
             Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
-                format!(
-                    "Tried to remove player {} from matchmaking, but their character isn't a player",
-                    player
-                ),
+                format!("Tried to end unknown player {}'s active minigame", player),
             ))
-        };
-
-        let index1 = character_write_handle.index1();
-        let index2 = character_write_handle.index2();
-        let index3 = character_write_handle.index3();
-        let index4 = character_write_handle.index4();
-        drop(character_write_handle);
-        characters_table_write_handle.insert_lock(
-            player_guid(player),
-            index1,
-            index2,
-            index3,
-            index4,
-            character_lock,
-        );
-
-        result
-    } else {
-        Err(ProcessPacketError::new(
-            ProcessPacketErrorType::ConstraintViolated,
-            format!("Tried to end unknown player {}'s active minigame", player),
-        ))
-    }?;
+        }
+    })?;
 
     if was_teleported {
         let instance_guid = game_server.get_or_create_instance(
