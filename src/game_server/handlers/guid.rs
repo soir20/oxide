@@ -4,6 +4,8 @@ use std::{
     ops::RangeBounds,
 };
 
+use crate::game_server::ProcessPacketError;
+
 pub struct Lock<T> {
     inner: RwLock<T>,
 }
@@ -477,6 +479,30 @@ impl<
         }
 
         previous
+    }
+
+    pub fn update_value_indices<T>(
+        &mut self,
+        guid: K,
+        mut f: impl FnMut(Option<&mut RwLockWriteGuard<V>>) -> Result<T, ProcessPacketError>,
+    ) -> Result<T, ProcessPacketError> {
+        let entry = self.remove(guid);
+        if let Some((lock, ..)) = entry {
+            let mut value_write_handle = lock.write();
+
+            let result = f(Some(&mut value_write_handle));
+
+            let index1 = value_write_handle.index1();
+            let index2 = value_write_handle.index2();
+            let index3 = value_write_handle.index3();
+            let index4 = value_write_handle.index4();
+            drop(value_write_handle);
+            self.insert_lock(guid, index1, index2, index3, index4, lock);
+
+            result
+        } else {
+            f(None)
+        }
     }
 
     fn insert_with_index(
