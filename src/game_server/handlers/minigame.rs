@@ -40,7 +40,7 @@ use crate::{
 
 use super::{
     character::{CharacterMatchmakingGroupIndex, CharacterType, Player},
-    guid::{GuidTableIndexer, IndexedGuid},
+    guid::GuidTableIndexer,
     lock_enforcer::{
         CharacterLockRequest, CharacterTableWriteHandle, ZoneLockEnforcer, ZoneTableWriteHandle,
     },
@@ -945,45 +945,37 @@ pub fn prepare_active_minigame_instance(
 
     zones_lock_enforcer.write_zones(|zones_table_write_handle| {
         let mut teleported_players = BTreeSet::new();
-        let teleport_result = (|| {
+        let teleport_result: Result<Vec<Broadcast>, ProcessPacketError> = (|| {
             let new_instance_guid = game_server.get_or_create_instance(characters_table_write_handle, zones_table_write_handle, stage_config.stage_config.zone_template_guid, stage_config.stage_config.max_players)?;
 
             let mut teleport_broadcasts = Vec::new();
             let now = Instant::now();
             for member_guid in members {
-                if let Some((character_lock, ..)) = characters_table_write_handle.remove(player_guid(*member_guid)) {
-                    let mut character_write_handle = character_lock.write();
-                    let result = if let CharacterType::Player(player) = &mut character_write_handle.stats.character_type {
-                        if game_server.minigames().stage_unlocked(stage_group_guid, stage_guid, player) {
-                            player.minigame_status = Some(MinigameStatus {
-                                stage_group_guid,
-                                stage_guid,
-                                game_created: false,
-                                game_won: false,
-                                score_entries: vec![],
-                                total_score: 0,
-                                start_time: now,
-                            });
-                            player.matchmaking_group = None;
-                            Ok(())
+                characters_table_write_handle.update_value_indices(player_guid(*member_guid), |possible_character_write_handle| {
+                    if let Some(character_write_handle) = possible_character_write_handle {
+                        if let CharacterType::Player(player) = &mut character_write_handle.stats.character_type {
+                            if game_server.minigames().stage_unlocked(stage_group_guid, stage_guid, player) {
+                                player.minigame_status = Some(MinigameStatus {
+                                    stage_group_guid,
+                                    stage_guid,
+                                    game_created: false,
+                                    game_won: false,
+                                    score_entries: vec![],
+                                    total_score: 0,
+                                    start_time: now,
+                                });
+                                player.matchmaking_group = None;
+                                Ok(())
+                            } else {
+                                Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to create an active minigame for a stage {} they haven't unlocked", member_guid, stage_guid)))
+                            }
                         } else {
-                            Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to create an active minigame for a stage {} they haven't unlocked", member_guid, stage_guid)))
+                            Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to create an active minigame, but their character isn't a player", member_guid)))
                         }
                     } else {
-                        Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to create an active minigame, but their character isn't a player", member_guid)))
-                    };
-
-                    let index1 = character_write_handle.index1();
-                    let index2 = character_write_handle.index2();
-                    let index3 = character_write_handle.index3();
-                    let index4 = character_write_handle.index4();
-                    drop(character_write_handle);
-                    characters_table_write_handle.insert_lock(player_guid(*member_guid), index1, index2, index3, index4, character_lock);
-
-                    result?
-                } else {
-                    return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} tried to create an active minigame", member_guid)));
-                }
+                        Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} tried to create an active minigame", member_guid)))
+                    }
+                })?;
 
                 let result: Result<Vec<Broadcast>, ProcessPacketError> = teleport_to_zone!(
                     characters_table_write_handle,
