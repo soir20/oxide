@@ -930,62 +930,50 @@ pub fn enter_zone(
         destination_rot,
     )?;
 
-    let character = characters_table_write_handle.remove(player_guid(player));
-    if let Some((character, (character_category, _, _), index2, index3, index4)) = character {
-        let mut character_write_handle = character.write();
-        let (_, instance_guid, chunk) = character_write_handle.index1();
-        let other_players_nearby = ZoneInstance::other_players_nearby(
-            Some(player),
-            chunk,
-            instance_guid,
-            characters_table_write_handle,
-        )?;
-        broadcasts.push(Broadcast::Multi(
-            other_players_nearby,
-            character_write_handle.remove_packets()?,
-        ));
+    characters_table_write_handle.update_value_indices(
+        player_guid(player),
+        |possible_character_write_handle, characters_table_write_handle| {
+            if let Some(character_write_handle) = possible_character_write_handle {
+                let (_, instance_guid, chunk) = character_write_handle.index1();
+                let other_players_nearby = ZoneInstance::other_players_nearby(
+                    Some(player),
+                    chunk,
+                    instance_guid,
+                    characters_table_write_handle,
+                )?;
+                broadcasts.push(Broadcast::Multi(
+                    other_players_nearby,
+                    character_write_handle.remove_packets()?,
+                ));
 
-        let previous_zone_template_guid =
-            zone_template_guid(character_write_handle.stats.instance_guid);
-        let previous_pos = character_write_handle.stats.pos;
-        let previous_rot = character_write_handle.stats.rot;
+                let previous_zone_template_guid =
+                    zone_template_guid(character_write_handle.stats.instance_guid);
+                let previous_pos = character_write_handle.stats.pos;
+                let previous_rot = character_write_handle.stats.rot;
 
-        if let CharacterType::Player(ref mut player) =
-            &mut character_write_handle.stats.character_type
-        {
-            player.ready = false;
+                if let CharacterType::Player(ref mut player) =
+                    &mut character_write_handle.stats.character_type
+                {
+                    player.ready = false;
 
-            if player.update_previous_location_on_leave {
-                player.previous_location = PreviousLocation {
-                    template_guid: previous_zone_template_guid,
-                    pos: previous_pos,
-                    rot: previous_rot,
+                    if player.update_previous_location_on_leave {
+                        player.previous_location = PreviousLocation {
+                            template_guid: previous_zone_template_guid,
+                            pos: previous_pos,
+                            rot: previous_rot,
+                        }
+                    }
+                    player.update_previous_location_on_leave =
+                        destination_read_handle.update_previous_location_on_leave;
                 }
+                character_write_handle.stats.instance_guid = destination_read_handle.guid;
+                character_write_handle.stats.pos = destination_pos;
+                character_write_handle.stats.rot = destination_rot;
             }
-            player.update_previous_location_on_leave =
-                destination_read_handle.update_previous_location_on_leave;
-        }
-        character_write_handle.stats.instance_guid = destination_read_handle.guid;
-        character_write_handle.stats.pos = destination_pos;
-        character_write_handle.stats.rot = destination_rot;
 
-        drop(character_write_handle);
-        characters_table_write_handle.insert_lock(
-            player_guid(player),
-            (
-                character_category,
-                destination_read_handle.guid,
-                Character::chunk(
-                    destination_read_handle.default_spawn_pos.x,
-                    destination_read_handle.default_spawn_pos.z,
-                ),
-            ),
-            index2,
-            index3,
-            index4,
-            character,
-        );
-    }
+            Ok::<(), ProcessPacketError>(())
+        },
+    )?;
 
     Ok(broadcasts)
 }
