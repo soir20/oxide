@@ -482,13 +482,13 @@ impl<
     pub fn update_value_indices<T>(
         &mut self,
         guid: K,
-        mut f: impl FnMut(Option<&mut RwLockWriteGuard<V>>) -> T,
+        mut f: impl FnMut(Option<&mut RwLockWriteGuard<V>>, &Self) -> T,
     ) -> T {
         let entry = self.remove(guid);
         if let Some((lock, ..)) = entry {
             let mut value_write_handle = lock.write();
 
-            let result = f(Some(&mut value_write_handle));
+            let result = f(Some(&mut value_write_handle), self);
 
             let index1 = value_write_handle.index1();
             let index2 = value_write_handle.index2();
@@ -499,7 +499,7 @@ impl<
 
             result
         } else {
-            f(None)
+            f(None, self)
         }
     }
 

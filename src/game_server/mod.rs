@@ -261,7 +261,7 @@ impl GameServer {
                     // Set the player as ready
                     self.lock_enforcer()
                         .write_characters(|characters_table_write_handle, _| {
-                            characters_table_write_handle.update_value_indices(player_guid(sender), |possible_character_write_handle| {
+                            characters_table_write_handle.update_value_indices(player_guid(sender), |possible_character_write_handle, _| {
                                 if let Some(character_write_handle) = possible_character_write_handle {
                                     if let CharacterType::Player(ref mut player) =
                                         &mut character_write_handle.stats.character_type

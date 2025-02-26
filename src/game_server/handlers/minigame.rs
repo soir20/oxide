@@ -814,7 +814,7 @@ fn handle_request_create_active_minigame(
                         )
                     });
 
-                    characters_table_write_handle.update_value_indices(player_guid(sender), |possible_character_write_handle| {
+                    characters_table_write_handle.update_value_indices(player_guid(sender), |possible_character_write_handle, _| {
                         if let Some(character_write_handle) = possible_character_write_handle {
                             if let CharacterType::Player(ref mut player) =
                                 &mut character_write_handle.stats.character_type
@@ -879,7 +879,7 @@ fn remove_from_matchmaking(
     was_teleported: bool,
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-    let previous_location = characters_table_write_handle.update_value_indices(player_guid(player), |possible_character_write_handle| {
+    let previous_location = characters_table_write_handle.update_value_indices(player_guid(player), |possible_character_write_handle, _| {
         if let Some(character_write_handle) = possible_character_write_handle {
             if let CharacterType::Player(player) =
                 &mut character_write_handle.stats.character_type
@@ -951,7 +951,7 @@ pub fn prepare_active_minigame_instance(
             let mut teleport_broadcasts = Vec::new();
             let now = Instant::now();
             for member_guid in members {
-                characters_table_write_handle.update_value_indices(player_guid(*member_guid), |possible_character_write_handle| {
+                characters_table_write_handle.update_value_indices(player_guid(*member_guid), |possible_character_write_handle, _| {
                     if let Some(character_write_handle) = possible_character_write_handle {
                         if let CharacterType::Player(player) = &mut character_write_handle.stats.character_type {
                             if game_server.minigames().stage_unlocked(stage_group_guid, stage_guid, player) {
