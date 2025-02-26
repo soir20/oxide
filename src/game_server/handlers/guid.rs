@@ -4,8 +4,6 @@ use std::{
     ops::RangeBounds,
 };
 
-use crate::game_server::ProcessPacketError;
-
 pub struct Lock<T> {
     inner: RwLock<T>,
 }
@@ -484,8 +482,8 @@ impl<
     pub fn update_value_indices<T>(
         &mut self,
         guid: K,
-        mut f: impl FnMut(Option<&mut RwLockWriteGuard<V>>) -> Result<T, ProcessPacketError>,
-    ) -> Result<T, ProcessPacketError> {
+        mut f: impl FnMut(Option<&mut RwLockWriteGuard<V>>) -> T,
+    ) -> T {
         let entry = self.remove(guid);
         if let Some((lock, ..)) = entry {
             let mut value_write_handle = lock.write();
