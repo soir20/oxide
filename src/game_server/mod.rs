@@ -261,9 +261,8 @@ impl GameServer {
                     // Set the player as ready
                     self.lock_enforcer()
                         .write_characters(|characters_table_write_handle, _| {
-                            match characters_table_write_handle.remove(player_guid(sender)) {
-                                Some((character, ..)) => {
-                                    let mut character_write_handle = character.write();
+                            characters_table_write_handle.update_value_indices(player_guid(sender), |possible_character_write_handle| {
+                                if let Some(character_write_handle) = possible_character_write_handle {
                                     if let CharacterType::Player(ref mut player) =
                                         &mut character_write_handle.stats.character_type
                                     {
@@ -305,27 +304,26 @@ impl GameServer {
 
                                         player.ready = true;
                                         player.first_load = false;
+                                        Ok(())
+                                    } else {
+                                        Err(ProcessPacketError::new(
+                                            ProcessPacketErrorType::ConstraintViolated,
+                                            format!(
+                                                "Character {} sent ready packet but is not a player",
+                                                player_guid(sender)
+                                            ),
+                                        ))
                                     }
-                                    let guid = character_write_handle.guid();
-                                    let new_index1 = character_write_handle.index1();
-                                    let new_index2 = character_write_handle.index2();
-                                    let new_index3 = character_write_handle.index3();
-                                    let new_index4 = character_write_handle.index4();
-                                    drop(character_write_handle);
-                                    characters_table_write_handle.insert_lock(
-                                        guid, new_index1, new_index2, new_index3, new_index4,
-                                        character,
-                                    );
-                                    Ok(())
+                                } else {
+                                    Err(ProcessPacketError::new(
+                                        ProcessPacketErrorType::ConstraintViolated,
+                                        format!(
+                                            "Player {} sent ready packet but does not exist",
+                                            sender
+                                        ),
+                                    ))
                                 }
-                                None => Err(ProcessPacketError::new(
-                                    ProcessPacketErrorType::ConstraintViolated,
-                                    format!(
-                                        "Player {} sent ready packet but is not in any zone",
-                                        sender
-                                    ),
-                                )),
-                            }
+                            })
                         })?;
 
                     sender_only_packets.append(&mut send_points_of_interest(self)?);
