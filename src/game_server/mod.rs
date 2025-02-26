@@ -28,7 +28,7 @@ use handlers::lock_enforcer::{
 use handlers::login::{log_in, log_out, send_points_of_interest};
 use handlers::minigame::{
     create_active_minigame, load_all_minigames, prepare_active_minigame_instance,
-    process_minigame_packet, AllMinigameConfigs,
+    process_minigame_packet, remove_from_matchmaking, AllMinigameConfigs,
 };
 use handlers::mount::{load_mounts, process_mount_packet, MountConfig};
 use handlers::reference_data::{load_categories, load_item_classes, load_item_groups};
@@ -1028,9 +1028,10 @@ impl GameServer {
 
     fn tick_minigame_groups(&self) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let now = Instant::now();
-        let mut broadcasts = Vec::new();
         self.lock_enforcer().write_characters(
             |characters_table_write_handle, zones_lock_enforcer| {
+                let mut broadcasts = Vec::new();
+
                 // Iterate over timed-out groups for every stage, since the number of stages remains
                 // a fairly small constant, while there can theoretically be billions of matchmaking groups.
                 for stage in self.minigames().stage_configs() {
@@ -1061,22 +1062,37 @@ impl GameServer {
                             ))
                             .filter_map(|guid| shorten_player_guid(guid).ok())
                             .collect();
-                        if players_in_group.len() as u32 >= min_players {
-                            broadcasts.append(&mut prepare_active_minigame_instance(
-                                &players_in_group,
-                                &stage,
-                                characters_table_write_handle,
-                                zones_lock_enforcer,
-                                self,
-                            ));
-                        } else {
-                            info!("TODO: time out the group");
-                            // cancel the game or start as single player
-                        }
+
+                        zones_lock_enforcer.write_zones(|zones_table_write_handle| {
+                            if players_in_group.len() as u32 >= min_players {
+                                broadcasts.append(&mut prepare_active_minigame_instance(
+                                    &players_in_group,
+                                    &stage,
+                                    characters_table_write_handle,
+                                    zones_table_write_handle,
+                                    self,
+                                ));
+                            } else {
+                                for player in players_in_group {
+                                    broadcasts.append(&mut remove_from_matchmaking(
+                                        player,
+                                        stage_group_guid,
+                                        stage_guid,
+                                        characters_table_write_handle,
+                                        zones_table_write_handle,
+                                        false,
+                                        self,
+                                    )?);
+                                }
+                            }
+
+                            Ok::<(), ProcessPacketError>(())
+                        })?
                     }
                 }
+
+                Ok(broadcasts)
             },
-        );
-        Ok(broadcasts)
+        )
     }
 }
