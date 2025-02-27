@@ -41,7 +41,7 @@ pub const AMBIENT_NPC_DISCRIMINANT: u8 = 0x10;
 pub const FIXTURE_DISCRIMINANT: u8 = 0x20;
 
 pub fn npc_guid(discriminant: u8, zone_guid: u64, index: u16) -> u64 {
-    ((discriminant as u64) << 56) | (index as u64) << 40 | zone_guid
+    ((discriminant as u64) << 56) | ((index as u64) << 40) | zone_guid
 }
 
 pub fn player_guid(player_guid: u32) -> u64 {
@@ -60,5 +60,5 @@ pub fn shorten_player_guid(player_guid: u64) -> Result<u32, ProcessPacketError> 
 }
 
 pub fn mount_guid(rider: u32, mount_id: u32) -> u64 {
-    0x0100000000000000u64 | (mount_id as u64) << 32 | (rider as u64)
+    0x0100000000000000u64 | ((mount_id as u64) << 32) | (rider as u64)
 }
