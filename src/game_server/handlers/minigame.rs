@@ -90,6 +90,12 @@ impl PlayerMinigameStats {
 }
 
 #[derive(Deserialize)]
+pub struct StageLocator {
+    pub stage_group_guid: i32,
+    pub stage_guid: i32,
+}
+
+#[derive(Deserialize)]
 pub struct MinigameStageConfig {
     pub guid: i32,
     pub name_id: u32,
@@ -111,7 +117,7 @@ pub struct MinigameStageConfig {
     pub score_to_credits_expression: String,
     #[serde(default = "default_matchmaking_timeout_millis")]
     pub matchmaking_timeout_millis: u32,
-    pub single_player_stage_guid: Option<i32>,
+    pub single_player_stage_guid: Option<StageLocator>,
 }
 
 impl MinigameStageConfig {

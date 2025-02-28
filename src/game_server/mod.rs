@@ -28,7 +28,7 @@ use handlers::lock_enforcer::{
 use handlers::login::{log_in, log_out, send_points_of_interest};
 use handlers::minigame::{
     create_active_minigame, load_all_minigames, prepare_active_minigame_instance,
-    process_minigame_packet, remove_from_matchmaking, AllMinigameConfigs,
+    process_minigame_packet, remove_from_matchmaking, AllMinigameConfigs, StageLocator,
 };
 use handlers::mount::{load_mounts, process_mount_packet, MountConfig};
 use handlers::reference_data::{load_categories, load_item_classes, load_item_groups};
@@ -1072,19 +1072,54 @@ impl GameServer {
                                     zones_table_write_handle,
                                     self,
                                 ));
-                            } else {
-                                for player in players_in_group {
-                                    broadcasts.append(&mut remove_from_matchmaking(
-                                        player,
-                                        stage_group_guid,
-                                        stage_guid,
-                                        characters_table_write_handle,
-                                        zones_table_write_handle,
-                                        false,
-                                        Some(33781),
-                                        self,
-                                    )?);
+                                return Ok::<(), ProcessPacketError>(());
+                            } else if players_in_group.len() == 1 {
+                                if let Some(replacement_stage_locator) = &stage.stage_config.single_player_stage_guid {
+                                    if let Some(replacement_stage) = self
+                                        .minigames()
+                                        .stage_config(replacement_stage_locator.stage_group_guid, replacement_stage_locator.stage_guid)
+                                    {
+                                        if replacement_stage.stage_config.min_players == 1 {
+                                            broadcasts.append(&mut prepare_active_minigame_instance(
+                                                &players_in_group,
+                                                &replacement_stage,
+                                                characters_table_write_handle,
+                                                zones_table_write_handle,
+                                                self,
+                                            ));
+                                            return Ok::<(), ProcessPacketError>(());
+                                        } else {
+                                            info!(
+                                                "Replacement stage (stage group {}, stage {}) for (stage group {}, stage {}) isn't single-player",
+                                                replacement_stage_locator.stage_group_guid,
+                                                replacement_stage_locator.stage_guid,
+                                                stage_group_guid,
+                                                stage_guid
+                                            );
+                                        }
+                                    } else {
+                                        info!(
+                                            "Couldn't find replacement stage (stage group {}, stage {}) for (stage group {}, stage {})",
+                                            replacement_stage_locator.stage_group_guid,
+                                            replacement_stage_locator.stage_guid,
+                                            stage_group_guid,
+                                            stage_guid
+                                        );
+                                    }
                                 }
+                            }
+
+                            for player in players_in_group {
+                                broadcasts.append(&mut remove_from_matchmaking(
+                                    player,
+                                    stage_group_guid,
+                                    stage_guid,
+                                    characters_table_write_handle,
+                                    zones_table_write_handle,
+                                    false,
+                                    Some(33781),
+                                    self,
+                                )?);
                             }
 
                             Ok::<(), ProcessPacketError>(())
