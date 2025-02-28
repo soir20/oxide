@@ -796,6 +796,7 @@ fn handle_request_create_active_minigame(
                             &stage_config,
                             characters_table_write_handle,
                             zones_table_write_handle,
+                            None,
                             game_server,
                         ))
                     } else {
@@ -877,6 +878,7 @@ fn handle_request_create_active_minigame(
                                 &stage_config,
                                 characters_table_write_handle,
                                 zones_table_write_handle,
+                                None,
                                 game_server,
                             ));
                         }
@@ -996,6 +998,7 @@ pub fn prepare_active_minigame_instance(
     stage_config: &StageConfigRef,
     characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
     zones_table_write_handle: &mut ZoneTableWriteHandle<'_>,
+    message_id: Option<u32>,
     game_server: &GameServer,
 ) -> Vec<Broadcast> {
     let stage_group_guid = stage_config.stage_group_guid;
@@ -1040,6 +1043,35 @@ pub fn prepare_active_minigame_instance(
                     Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} tried to create an active minigame", member_guid)))
                 }
             })?;
+
+            if let Some(message) = message_id {
+                let string_id_packet_result = GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: SendStringId {
+                        sender_guid: player_guid(*member_guid),
+                        message_id: message,
+                        is_anonymous: true,
+                        unknown2: false,
+                        is_action_bar_message: true,
+                        action_bar_text_color: ActionBarTextColor::Yellow,
+                        target_guid: 0,
+                        owner_guid: 0,
+                        unknown7: 0,
+                    },
+                });
+
+                match string_id_packet_result {
+                    Ok(packet) => {
+                        teleport_broadcasts.push(Broadcast::Single(*member_guid, vec![packet]))
+                    }
+                    Err(err) => info!(
+                        "Couldn't serialize send string packet: {} (stage group {}, stage {})",
+                        ProcessPacketError::from(err),
+                        stage_group_guid,
+                        stage_guid
+                    ),
+                }
+            }
 
             let result: Result<Vec<Broadcast>, ProcessPacketError> = teleport_to_zone!(
                 characters_table_write_handle,

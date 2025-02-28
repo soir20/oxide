@@ -28,7 +28,7 @@ use handlers::lock_enforcer::{
 use handlers::login::{log_in, log_out, send_points_of_interest};
 use handlers::minigame::{
     create_active_minigame, load_all_minigames, prepare_active_minigame_instance,
-    process_minigame_packet, remove_from_matchmaking, AllMinigameConfigs, StageLocator,
+    process_minigame_packet, remove_from_matchmaking, AllMinigameConfigs,
 };
 use handlers::mount::{load_mounts, process_mount_packet, MountConfig};
 use handlers::reference_data::{load_categories, load_item_classes, load_item_groups};
@@ -1070,6 +1070,7 @@ impl GameServer {
                                     &stage,
                                     characters_table_write_handle,
                                     zones_table_write_handle,
+                                    None,
                                     self,
                                 ));
                                 return Ok::<(), ProcessPacketError>(());
@@ -1085,6 +1086,7 @@ impl GameServer {
                                                 &replacement_stage,
                                                 characters_table_write_handle,
                                                 zones_table_write_handle,
+                                                Some(44218),
                                                 self,
                                             ));
                                             return Ok::<(), ProcessPacketError>(());
