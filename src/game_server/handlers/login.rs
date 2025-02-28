@@ -115,7 +115,6 @@ pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, P
                     customizations: make_test_customizations(),
                     minigame_stats: PlayerMinigameStats::default(),
                     matchmaking_group: None,
-                    owned_matchmaking_group: None,
                     minigame_status: None,
                     update_previous_location_on_leave: true,
                     previous_location: PreviousLocation {

@@ -986,13 +986,6 @@ pub struct MinigameStatus {
 }
 
 #[derive(Clone)]
-pub struct OwnedMatchmakingGroup {
-    pub stage_group_guid: i32,
-    pub stage_guid: i32,
-    pub since: Instant,
-}
-
-#[derive(Clone)]
 pub struct PreviousLocation {
     pub template_guid: u8,
     pub pos: Pos,
@@ -1013,7 +1006,6 @@ pub struct Player {
     pub customizations: BTreeMap<CustomizationSlot, u32>,
     pub minigame_stats: PlayerMinigameStats,
     pub matchmaking_group: Option<CharacterMatchmakingGroupIndex>,
-    pub owned_matchmaking_group: Option<OwnedMatchmakingGroup>,
     pub minigame_status: Option<MinigameStatus>,
     pub update_previous_location_on_leave: bool,
     pub previous_location: PreviousLocation,
