@@ -1081,6 +1081,7 @@ impl GameServer {
                                         characters_table_write_handle,
                                         zones_table_write_handle,
                                         false,
+                                        Some(33781),
                                         self,
                                     )?);
                                 }

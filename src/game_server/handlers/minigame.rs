@@ -898,6 +898,7 @@ pub fn remove_from_matchmaking(
     characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
     zones_table_write_handle: &mut ZoneTableWriteHandle<'_>,
     was_teleported: bool,
+    message_id: Option<u32>,
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let previous_location = characters_table_write_handle.update_value_indices(player_guid(player), |possible_character_write_handle, _| {
@@ -925,20 +926,36 @@ pub fn remove_from_matchmaking(
         }
     })?;
 
-    let mut broadcasts = vec![Broadcast::Single(
-        player,
-        vec![GamePacket::serialize(&TunneledPacket {
-            unknown1: true,
-            inner: ActiveMinigameCreationResult {
-                header: MinigameHeader {
-                    stage_guid,
-                    unknown2: -1,
-                    stage_group_guid,
-                },
-                was_successful: false,
+    let mut broadcasts = Vec::new();
+    let mut result_packets = vec![GamePacket::serialize(&TunneledPacket {
+        unknown1: true,
+        inner: ActiveMinigameCreationResult {
+            header: MinigameHeader {
+                stage_guid,
+                unknown2: -1,
+                stage_group_guid,
             },
-        })?],
-    )];
+            was_successful: false,
+        },
+    })?];
+    if let Some(message) = message_id {
+        result_packets.push(GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: SendStringId {
+                sender_guid: player_guid(player),
+                message_id: message,
+                is_anonymous: true,
+                unknown2: false,
+                is_action_bar_message: true,
+                action_bar_text_color: ActionBarTextColor::Yellow,
+                target_guid: 0,
+                owner_guid: 0,
+                unknown7: 0,
+            },
+        })?);
+    }
+    broadcasts.push(Broadcast::Single(player, result_packets));
+
     if was_teleported {
         let instance_guid = game_server.get_or_create_instance(
             characters_table_write_handle,
@@ -1104,6 +1121,7 @@ pub fn prepare_active_minigame_instance(
                     characters_table_write_handle,
                     zones_table_write_handle,
                     was_teleported,
+                    None,
                     game_server,
                 );
                 if let Ok(mut end_game_broadcasts) = end_matchmaking_result {
