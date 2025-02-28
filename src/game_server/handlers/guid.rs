@@ -452,27 +452,39 @@ impl<
                 .remove(&guid);
 
             if let Some(index2) = previous_index2 {
-                self.guard
+                let values_for_index = self
+                    .guard
                     .index2
                     .get_mut(index2)
-                    .expect("GUID table key was never added to index2")
-                    .remove(&guid);
+                    .expect("GUID table key was never added to index2");
+                values_for_index.remove(&guid);
+                if values_for_index.is_empty() {
+                    self.guard.index2.remove(index2);
+                }
             }
 
             if let Some(index3) = previous_index3 {
-                self.guard
+                let values_for_index = self
+                    .guard
                     .index3
                     .get_mut(index3)
-                    .expect("GUID table key was never added to index3")
-                    .remove(&guid);
+                    .expect("GUID table key was never added to index3");
+                values_for_index.remove(&guid);
+                if values_for_index.is_empty() {
+                    self.guard.index3.remove(index3);
+                }
             }
 
             if let Some(index4) = previous_index4 {
-                self.guard
+                let values_for_index = self
+                    .guard
                     .index4
                     .get_mut(index4)
-                    .expect("GUID table key was never added to index4")
-                    .remove(&guid);
+                    .expect("GUID table key was never added to index4");
+                values_for_index.remove(&guid);
+                if values_for_index.is_empty() {
+                    self.guard.index4.remove(index4);
+                }
             }
         }
 
