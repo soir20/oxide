@@ -1296,11 +1296,17 @@ impl NpcTemplate {
     }
 }
 
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub enum MatchmakingGroupStatus {
+    OpenToAll,
+    OpenToFriends,
+}
+
 pub type Chunk = (i32, i32);
 pub type CharacterLocationIndex = (CharacterCategory, u64, Chunk);
 pub type CharacterNameIndex = String;
 pub type CharacterSquadIndex = u64;
-pub type CharacterMatchmakingGroupIndex = (i32, i32, Instant, u32);
+pub type CharacterMatchmakingGroupIndex = (MatchmakingGroupStatus, i32, i32, Instant, u32);
 
 #[derive(Clone)]
 pub struct CharacterStat {

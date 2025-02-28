@@ -40,7 +40,7 @@ use crate::{
 };
 
 use super::{
-    character::{CharacterMatchmakingGroupIndex, CharacterType, Player},
+    character::{CharacterMatchmakingGroupIndex, CharacterType, MatchmakingGroupStatus, Player},
     guid::GuidTableIndexer,
     lock_enforcer::{CharacterLockRequest, CharacterTableWriteHandle, ZoneTableWriteHandle},
     unique_guid::{player_guid, shorten_player_guid},
@@ -759,8 +759,20 @@ fn find_matchmaking_group(
     stage_guid: i32,
     start_time: Instant,
 ) -> Option<(CharacterMatchmakingGroupIndex, u32)> {
-    let range = (stage_group_guid, stage_guid, start_time, u32::MIN)
-        ..=(stage_group_guid, stage_guid, Instant::now(), u32::MAX);
+    let range = (
+        MatchmakingGroupStatus::OpenToAll,
+        stage_group_guid,
+        stage_guid,
+        start_time,
+        u32::MIN,
+    )
+        ..=(
+            MatchmakingGroupStatus::OpenToAll,
+            stage_group_guid,
+            stage_guid,
+            Instant::now(),
+            u32::MAX,
+        );
     // Iterates from oldest group to newest groups, so groups waiting longer are prioritized first
     let mut group_to_join = None;
     for matchmaking_group in characters_table_write_handle.indices4_by_range(range) {
@@ -830,6 +842,7 @@ fn handle_request_create_active_minigame(
                         .unwrap_or_else(|| {
                             (
                                 (
+                                    MatchmakingGroupStatus::OpenToAll,
                                     stage_config.stage_group_guid,
                                     stage_config.stage_config.guid,
                                     Instant::now(),

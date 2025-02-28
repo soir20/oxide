@@ -10,7 +10,7 @@ use std::vec;
 use byteorder::{LittleEndian, ReadBytesExt};
 use handlers::character::{
     Character, CharacterCategory, CharacterLocationIndex, CharacterMatchmakingGroupIndex,
-    CharacterNameIndex, CharacterSquadIndex, CharacterType, Chunk,
+    CharacterNameIndex, CharacterSquadIndex, CharacterType, Chunk, MatchmakingGroupStatus,
 };
 use handlers::chat::process_chat_packet;
 use handlers::command::process_command;
@@ -1046,15 +1046,16 @@ impl GameServer {
                     let min_players = stage.stage_config.min_players;
 
                     let timed_out_group_range =
-                        (stage_group_guid, stage_guid, self.start_time, u32::MIN)
-                            ..=(stage_group_guid, stage_guid, max_time, u32::MAX);
+                        (MatchmakingGroupStatus::OpenToAll, stage_group_guid, stage_guid, self.start_time, u32::MIN)
+                            ..=(MatchmakingGroupStatus::OpenToAll, stage_group_guid, stage_guid, max_time, u32::MAX);
                     let timed_out_groups: Vec<(Instant, u32)> = characters_table_write_handle
                         .indices4_by_range(timed_out_group_range)
-                        .map(|(_, _, creation_time, owner_guid)| (*creation_time, *owner_guid))
+                        .map(|(.., creation_time, owner_guid)| (*creation_time, *owner_guid))
                         .collect();
                     for (creation_time, owner_guid) in timed_out_groups {
                         let players_in_group: Vec<u32> = characters_table_write_handle
                             .keys_by_index4(&(
+                                MatchmakingGroupStatus::OpenToAll,
                                 stage_group_guid,
                                 stage_guid,
                                 creation_time,
