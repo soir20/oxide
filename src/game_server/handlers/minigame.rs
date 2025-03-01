@@ -1101,9 +1101,8 @@ pub fn prepare_active_minigame_instance(
                 None,
                 game_server.mounts(),
             );
-            teleported_players.insert(*member_guid);
-
             teleport_broadcasts.append(&mut result?);
+            teleported_players.insert(*member_guid);
         }
 
         Ok(teleport_broadcasts)
