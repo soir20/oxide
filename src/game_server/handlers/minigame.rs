@@ -1101,6 +1101,7 @@ pub fn prepare_active_minigame_instance(
                 None,
                 game_server.mounts(),
             );
+            // Only mark player as teleported if the teleportation was successful
             teleport_broadcasts.append(&mut result?);
             teleported_players.insert(*member_guid);
         }
