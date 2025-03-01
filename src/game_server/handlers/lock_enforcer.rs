@@ -6,7 +6,10 @@ use std::{
 use parking_lot::{RwLockReadGuard, RwLockWriteGuard};
 
 use super::{
-    character::{Character, CharacterLocationIndex, CharacterNameIndex, CharacterSquadIndex},
+    character::{
+        Character, CharacterLocationIndex, CharacterMatchmakingGroupIndex, CharacterNameIndex,
+        CharacterSquadIndex,
+    },
     guid::{
         GuidTable, GuidTableHandle, GuidTableIndexer, GuidTableReadHandle, GuidTableWriteHandle,
     },
@@ -57,27 +60,83 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4:
         self.handle.keys_by_index4(index)
     }
 
-    fn keys_by_index1_range(&'a self, range: impl RangeBounds<I1>) -> impl Iterator<Item = K> {
+    fn keys_by_index1_range(
+        &'a self,
+        range: impl RangeBounds<I1>,
+    ) -> impl DoubleEndedIterator<Item = K> {
         self.handle.keys_by_index1_range(range)
     }
 
-    fn keys_by_index2_range(&'a self, range: impl RangeBounds<I2>) -> impl Iterator<Item = K> {
+    fn keys_by_index2_range(
+        &'a self,
+        range: impl RangeBounds<I2>,
+    ) -> impl DoubleEndedIterator<Item = K> {
         self.handle.keys_by_index2_range(range)
     }
 
-    fn keys_by_index3_range(&'a self, range: impl RangeBounds<I3>) -> impl Iterator<Item = K> {
+    fn keys_by_index3_range(
+        &'a self,
+        range: impl RangeBounds<I3>,
+    ) -> impl DoubleEndedIterator<Item = K> {
         self.handle.keys_by_index3_range(range)
     }
 
-    fn keys_by_index4_range(&'a self, range: impl RangeBounds<I4>) -> impl Iterator<Item = K> {
+    fn keys_by_index4_range(
+        &'a self,
+        range: impl RangeBounds<I4>,
+    ) -> impl DoubleEndedIterator<Item = K> {
         self.handle.keys_by_index4_range(range)
+    }
+
+    fn indices1(&'a self) -> impl Iterator<Item = I1> {
+        self.handle.indices1()
+    }
+
+    fn indices2(&'a self) -> impl Iterator<Item = &'a I2> {
+        self.handle.indices2()
+    }
+
+    fn indices3(&'a self) -> impl Iterator<Item = &'a I3> {
+        self.handle.indices3()
+    }
+
+    fn indices4(&'a self) -> impl Iterator<Item = &'a I4> {
+        self.handle.indices4()
+    }
+
+    fn indices1_by_range(
+        &'a self,
+        range: impl RangeBounds<I1>,
+    ) -> impl DoubleEndedIterator<Item = I1> {
+        self.handle.indices1_by_range(range)
+    }
+
+    fn indices2_by_range(
+        &'a self,
+        range: impl RangeBounds<I2>,
+    ) -> impl DoubleEndedIterator<Item = &'a I2> {
+        self.handle.indices2_by_range(range)
+    }
+
+    fn indices3_by_range(
+        &'a self,
+        range: impl RangeBounds<I3>,
+    ) -> impl DoubleEndedIterator<Item = &'a I3> {
+        self.handle.indices3_by_range(range)
+    }
+
+    fn indices4_by_range(
+        &'a self,
+        range: impl RangeBounds<I4>,
+    ) -> impl DoubleEndedIterator<Item = &'a I4> {
+        self.handle.indices4_by_range(range)
     }
 }
 
-impl<'a, K, V, I1, I2, I3> From<GuidTableReadHandle<'a, K, V, I1, I2, I3>>
-    for TableReadHandleWrapper<'a, K, V, I1, I2, I3>
+impl<'a, K, V, I1, I2, I3, I4> From<GuidTableReadHandle<'a, K, V, I1, I2, I3, I4>>
+    for TableReadHandleWrapper<'a, K, V, I1, I2, I3, I4>
 {
-    fn from(value: GuidTableReadHandle<'a, K, V, I1, I2, I3>) -> Self {
+    fn from(value: GuidTableReadHandle<'a, K, V, I1, I2, I3, I4>) -> Self {
         TableReadHandleWrapper { handle: value }
     }
 }
@@ -89,6 +148,7 @@ pub type CharacterTableReadHandle<'a> = TableReadHandleWrapper<
     CharacterLocationIndex,
     CharacterNameIndex,
     CharacterSquadIndex,
+    CharacterMatchmakingGroupIndex,
 >;
 pub type CharacterTableWriteHandle<'a> = GuidTableWriteHandle<
     'a,
@@ -97,6 +157,7 @@ pub type CharacterTableWriteHandle<'a> = GuidTableWriteHandle<
     CharacterLocationIndex,
     CharacterNameIndex,
     CharacterSquadIndex,
+    CharacterMatchmakingGroupIndex,
 >;
 pub type CharacterReadGuard<'a> = RwLockReadGuard<'a, Character>;
 pub type CharacterWriteGuard<'a> = RwLockWriteGuard<'a, Character>;
@@ -192,6 +253,7 @@ pub struct LockEnforcer<'a> {
         CharacterLocationIndex,
         CharacterNameIndex,
         CharacterSquadIndex,
+        CharacterMatchmakingGroupIndex,
     >,
     zones: &'a GuidTable<u64, ZoneInstance, u8>,
 }
@@ -264,8 +326,14 @@ impl<'a> From<LockEnforcer<'a>> for ZoneLockEnforcer<'a> {
 }
 
 pub struct LockEnforcerSource {
-    characters:
-        GuidTable<u64, Character, CharacterLocationIndex, CharacterNameIndex, CharacterSquadIndex>,
+    characters: GuidTable<
+        u64,
+        Character,
+        CharacterLocationIndex,
+        CharacterNameIndex,
+        CharacterSquadIndex,
+        CharacterMatchmakingGroupIndex,
+    >,
     zones: GuidTable<u64, ZoneInstance, u8>,
 }
 
@@ -277,6 +345,7 @@ impl LockEnforcerSource {
             CharacterLocationIndex,
             CharacterNameIndex,
             CharacterSquadIndex,
+            CharacterMatchmakingGroupIndex,
         >,
         zones: GuidTable<u64, ZoneInstance, u8>,
     ) -> LockEnforcerSource {

@@ -4,13 +4,13 @@ use std::fmt::Display;
 use std::io::{Cursor, Error};
 use std::num::ParseIntError;
 use std::path::Path;
-use std::time::Instant;
+use std::time::{Duration, Instant};
 use std::vec;
 
 use byteorder::{LittleEndian, ReadBytesExt};
 use handlers::character::{
-    Character, CharacterCategory, CharacterLocationIndex, CharacterNameIndex, CharacterSquadIndex,
-    CharacterType, Chunk,
+    Character, CharacterCategory, CharacterLocationIndex, CharacterMatchmakingGroupIndex,
+    CharacterNameIndex, CharacterSquadIndex, CharacterType, Chunk, MatchmakingGroupStatus,
 };
 use handlers::chat::process_chat_packet;
 use handlers::command::process_command;
@@ -27,7 +27,8 @@ use handlers::lock_enforcer::{
 };
 use handlers::login::{log_in, log_out, send_points_of_interest};
 use handlers::minigame::{
-    create_active_minigame, load_all_minigames, process_minigame_packet, AllMinigameConfigs,
+    create_active_minigame, load_all_minigames, prepare_active_minigame_instance,
+    process_minigame_packet, remove_from_matchmaking, AllMinigameConfigs,
 };
 use handlers::mount::{load_mounts, process_mount_packet, MountConfig};
 use handlers::reference_data::{load_categories, load_item_classes, load_item_groups};
@@ -146,6 +147,7 @@ pub struct GameServer {
     item_groups: ItemGroupDefinitions,
     minigames: AllMinigameConfigs,
     mounts: BTreeMap<u32, MountConfig>,
+    start_time: Instant,
     zone_templates: BTreeMap<u8, ZoneTemplate>,
 }
 
@@ -169,6 +171,7 @@ impl GameServer {
             },
             minigames: load_all_minigames(config_dir)?,
             mounts: load_mounts(config_dir)?,
+            start_time: Instant::now(),
             zone_templates: templates,
         })
     }
@@ -226,6 +229,8 @@ impl GameServer {
             )?;
         }
 
+        broadcasts.append(&mut self.tick_minigame_groups()?);
+
         Ok(broadcasts)
     }
 
@@ -256,9 +261,8 @@ impl GameServer {
                     // Set the player as ready
                     self.lock_enforcer()
                         .write_characters(|characters_table_write_handle, _| {
-                            match characters_table_write_handle.remove(player_guid(sender)) {
-                                Some((character, ..)) => {
-                                    let mut character_write_handle = character.write();
+                            characters_table_write_handle.update_value_indices(player_guid(sender), |possible_character_write_handle, _| {
+                                if let Some(character_write_handle) = possible_character_write_handle {
                                     if let CharacterType::Player(ref mut player) =
                                         &mut character_write_handle.stats.character_type
                                     {
@@ -300,27 +304,26 @@ impl GameServer {
 
                                         player.ready = true;
                                         player.first_load = false;
+                                        Ok(())
+                                    } else {
+                                        Err(ProcessPacketError::new(
+                                            ProcessPacketErrorType::ConstraintViolated,
+                                            format!(
+                                                "Character {} sent ready packet but is not a player",
+                                                player_guid(sender)
+                                            ),
+                                        ))
                                     }
-                                    let guid = character_write_handle.guid();
-                                    let new_index1 = character_write_handle.index1();
-                                    let new_index2 = character_write_handle.index2();
-                                    let new_index3 = character_write_handle.index3();
-                                    let new_index4 = character_write_handle.index4();
-                                    drop(character_write_handle);
-                                    characters_table_write_handle.insert_lock(
-                                        guid, new_index1, new_index2, new_index3, new_index4,
-                                        character,
-                                    );
-                                    Ok(())
+                                } else {
+                                    Err(ProcessPacketError::new(
+                                        ProcessPacketErrorType::ConstraintViolated,
+                                        format!(
+                                            "Player {} sent ready packet but does not exist",
+                                            sender
+                                        ),
+                                    ))
                                 }
-                                None => Err(ProcessPacketError::new(
-                                    ProcessPacketErrorType::ConstraintViolated,
-                                    format!(
-                                        "Player {} sent ready packet but is not in any zone",
-                                        sender
-                                    ),
-                                )),
-                            }
+                            })
                         })?;
 
                     sender_only_packets.append(&mut send_points_of_interest(self)?);
@@ -585,6 +588,7 @@ impl GameServer {
                             CharacterLocationIndex,
                             CharacterNameIndex,
                             CharacterSquadIndex,
+                            CharacterMatchmakingGroupIndex,
                         >,
                          zones_lock_enforcer| {
                             zones_lock_enforcer.write_zones(|zones_table_write_handle| {
@@ -777,6 +781,10 @@ impl GameServer {
 
     pub fn mounts(&self) -> &BTreeMap<u32, MountConfig> {
         &self.mounts
+    }
+
+    pub fn start_time(&self) -> Instant {
+        self.start_time
     }
 
     pub fn lock_enforcer(&self) -> LockEnforcer {
@@ -1016,5 +1024,114 @@ impl GameServer {
                 },
             }
         })
+    }
+
+    fn tick_minigame_groups(&self) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let now = Instant::now();
+        self.lock_enforcer().write_characters(
+            |characters_table_write_handle, zones_lock_enforcer| {
+                let mut broadcasts = Vec::new();
+
+                // Iterate over timed-out groups for every stage, since the number of stages remains
+                // a fairly small constant, while there can theoretically be billions of matchmaking groups.
+                for stage in self.minigames().stage_configs() {
+                    let timeout =
+                        Duration::from_millis(stage.stage_config.matchmaking_timeout_millis as u64);
+                    let max_time = match now.checked_sub(timeout) {
+                        Some(max_time) => max_time,
+                        None => continue,
+                    };
+                    let stage_group_guid = stage.stage_group_guid;
+                    let stage_guid = stage.stage_config.guid;
+                    let min_players = stage.stage_config.min_players;
+
+                    let timed_out_group_range =
+                        (MatchmakingGroupStatus::OpenToAll, stage_group_guid, stage_guid, self.start_time, u32::MIN)
+                            ..=(MatchmakingGroupStatus::OpenToAll, stage_group_guid, stage_guid, max_time, u32::MAX);
+                    let timed_out_groups: Vec<(Instant, u32)> = characters_table_write_handle
+                        .indices4_by_range(timed_out_group_range)
+                        .map(|(.., creation_time, owner_guid)| (*creation_time, *owner_guid))
+                        .collect();
+                    for (creation_time, owner_guid) in timed_out_groups {
+                        let players_in_group: Vec<u32> = characters_table_write_handle
+                            .keys_by_index4(&(
+                                MatchmakingGroupStatus::OpenToAll,
+                                stage_group_guid,
+                                stage_guid,
+                                creation_time,
+                                owner_guid,
+                            ))
+                            .filter_map(|guid| shorten_player_guid(guid).ok())
+                            .collect();
+
+                        zones_lock_enforcer.write_zones(|zones_table_write_handle| {
+                            if players_in_group.len() as u32 >= min_players {
+                                broadcasts.append(&mut prepare_active_minigame_instance(
+                                    &players_in_group,
+                                    &stage,
+                                    characters_table_write_handle,
+                                    zones_table_write_handle,
+                                    None,
+                                    self,
+                                ));
+                                return Ok::<(), ProcessPacketError>(());
+                            } else if players_in_group.len() == 1 {
+                                if let Some(replacement_stage_locator) = &stage.stage_config.single_player_stage_guid {
+                                    if let Some(replacement_stage) = self
+                                        .minigames()
+                                        .stage_config(replacement_stage_locator.stage_group_guid, replacement_stage_locator.stage_guid)
+                                    {
+                                        if replacement_stage.stage_config.min_players == 1 {
+                                            broadcasts.append(&mut prepare_active_minigame_instance(
+                                                &players_in_group,
+                                                &replacement_stage,
+                                                characters_table_write_handle,
+                                                zones_table_write_handle,
+                                                Some(44218),
+                                                self,
+                                            ));
+                                            return Ok::<(), ProcessPacketError>(());
+                                        } else {
+                                            info!(
+                                                "Replacement stage (stage group {}, stage {}) for (stage group {}, stage {}) isn't single-player",
+                                                replacement_stage_locator.stage_group_guid,
+                                                replacement_stage_locator.stage_guid,
+                                                stage_group_guid,
+                                                stage_guid
+                                            );
+                                        }
+                                    } else {
+                                        info!(
+                                            "Couldn't find replacement stage (stage group {}, stage {}) for (stage group {}, stage {})",
+                                            replacement_stage_locator.stage_group_guid,
+                                            replacement_stage_locator.stage_guid,
+                                            stage_group_guid,
+                                            stage_guid
+                                        );
+                                    }
+                                }
+                            }
+
+                            for player in players_in_group {
+                                broadcasts.append(&mut remove_from_matchmaking(
+                                    player,
+                                    stage_group_guid,
+                                    stage_guid,
+                                    characters_table_write_handle,
+                                    zones_table_write_handle,
+                                    false,
+                                    Some(33781),
+                                    self,
+                                )?);
+                            }
+
+                            Ok::<(), ProcessPacketError>(())
+                        })?
+                    }
+                }
+
+                Ok(broadcasts)
+            },
+        )
     }
 }
