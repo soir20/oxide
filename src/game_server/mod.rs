@@ -1037,7 +1037,7 @@ impl GameServer {
                 for stage in self.minigames().stage_configs() {
                     let timeout =
                         Duration::from_millis(stage.stage_config.matchmaking_timeout_millis as u64);
-                    // Make sure max time is larger than start time
+                    // Make sure max time is larger than start time so that the range is valid
                     let max_time = match now.checked_sub(timeout) {
                         Some(max_time) => max_time,
                         None => continue,
