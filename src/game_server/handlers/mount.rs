@@ -247,6 +247,7 @@ fn process_mount_spawn(
                                     mount,
                                     character_write_handle.stats.pos,
                                     character_write_handle.stats.rot,
+                                    true,
                                 )?;
                                 packets.push(
                                     GamePacket::serialize(&TunneledPacket {
@@ -346,7 +347,33 @@ pub fn spawn_mount_npc(
     mount: &MountConfig,
     spawn_pos: Pos,
     spawn_rot: Pos,
+    show_spawn_effect: bool,
 ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+    let effects = if show_spawn_effect {
+        vec![Effect {
+            unknown1: 0,
+            unknown2: 0,
+            unknown3: 0,
+            unknown4: 0,
+            unknown5: 0,
+            unknown6: 0,
+            unknown7: 0,
+            unknown8: false,
+            unknown9: 0,
+            unknown10: 0,
+            unknown11: 0,
+            unknown12: 0,
+            composite_effect: mount.mount_composite_effect,
+            unknown14: 0,
+            unknown15: 0,
+            unknown16: 0,
+            unknown17: false,
+            unknown18: false,
+            unknown19: false,
+        }]
+    } else {
+        Vec::new()
+    };
     Ok(vec![
         GamePacket::serialize(&TunneledPacket {
             unknown1: true,
@@ -390,27 +417,7 @@ pub fn spawn_mount_npc(
                 sub_title_id: 0,
                 one_shot_animation_id: -1,
                 temporary_appearance: 0,
-                effects: vec![Effect {
-                    unknown1: 0,
-                    unknown2: 0,
-                    unknown3: 0,
-                    unknown4: 0,
-                    unknown5: 0,
-                    unknown6: 0,
-                    unknown7: 0,
-                    unknown8: false,
-                    unknown9: 0,
-                    unknown10: 0,
-                    unknown11: 0,
-                    unknown12: 0,
-                    composite_effect: mount.mount_composite_effect,
-                    unknown14: 0,
-                    unknown15: 0,
-                    unknown16: 0,
-                    unknown17: false,
-                    unknown18: false,
-                    unknown19: false,
-                }],
+                effects,
                 disable_interact_popup: true,
                 unknown33: 0,
                 unknown34: false,

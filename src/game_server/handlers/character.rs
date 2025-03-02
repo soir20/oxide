@@ -1035,6 +1035,7 @@ impl Player {
                     mount_config,
                     character.stats.pos,
                     character.stats.rot,
+                    false,
                 )?);
             } else {
                 return Err(ProcessPacketError::new(
