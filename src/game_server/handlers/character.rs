@@ -1293,6 +1293,7 @@ impl NpcTemplate {
 pub enum MatchmakingGroupStatus {
     OpenToAll,
     OpenToFriends,
+    Closed,
 }
 
 pub type Chunk = (i32, i32);
