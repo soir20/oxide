@@ -18,8 +18,9 @@ use crate::{
             player_data::EquippedItem,
             player_update::{
                 AddNotifications, AddNpc, AddPc, Customization, CustomizationSlot, Hostility, Icon,
-                NameplateImage, NotificationData, NpcRelevance, QueueAnimation, RemoveStandard,
-                SetAnimation, SingleNotification, SingleNpcRelevance, UpdateSpeed,
+                MoveOnRail, NameplateImage, NotificationData, NpcRelevance, PlayCompositeEffect,
+                QueueAnimation, RemoveGracefully, RemoveStandard, SetAnimation, SingleNotification,
+                SingleNpcRelevance, UpdateSpeed,
             },
             tunnel::TunneledPacket,
             ui::ExecuteScriptWithParams,
@@ -124,6 +125,8 @@ pub struct BaseNpcConfig {
     pub bounce_area_id: i32,
     #[serde(default = "default_npc_type")]
     pub npc_type: u32,
+    #[serde(default = "default_true")]
+    pub enable_gravity: bool,
     #[serde(default)]
     pub enable_tilt: bool,
     #[serde(default)]
@@ -131,6 +134,8 @@ pub struct BaseNpcConfig {
     #[serde(default)]
     pub first_possible_procedures: Vec<String>,
     pub synchronize_with: Option<String>,
+    #[serde(default = "default_true")]
+    pub is_spawned: bool,
 }
 
 #[derive(Clone)]
@@ -146,12 +151,16 @@ pub struct BaseNpc {
     pub visible: bool,
     pub bounce_area_id: i32,
     pub npc_type: u32,
+    pub enable_gravity: bool,
     pub enable_tilt: bool,
 }
 
 impl BaseNpc {
-    pub fn add_packets(&self, character: &Character) -> (AddNpc, SingleNpcRelevance) {
-        (
+    pub fn add_packets(&self, character: &Character) -> Option<(AddNpc, SingleNpcRelevance)> {
+        if !character.stats.is_spawned {
+            return None;
+        }
+        Some((
             AddNpc {
                 guid: character.guid(),
                 name_id: self.name_id,
@@ -188,7 +197,7 @@ impl BaseNpc {
                 unknown24: -1,
                 looping_animation_id: character.stats.animation_id,
                 unknown26: false,
-                ignore_position: false,
+                disable_gravity: !self.enable_gravity,
                 sub_title_id: 0,
                 one_shot_animation_id: -1,
                 temporary_appearance: 0,
@@ -254,7 +263,7 @@ impl BaseNpc {
                 cursor: character.stats.cursor,
                 unknown1: false,
             },
-        )
+        ))
     }
 }
 
@@ -272,9 +281,21 @@ impl From<BaseNpcConfig> for BaseNpc {
             visible: value.visible,
             bounce_area_id: value.bounce_area_id,
             npc_type: value.npc_type,
+            enable_gravity: value.enable_gravity,
             enable_tilt: value.enable_tilt,
         }
     }
+}
+
+#[derive(Clone, Deserialize)]
+pub struct RemovalConfig {
+    #[serde(default = "default_true")]
+    pub enable_graceful_removal: bool,
+    #[serde(default = "default_true")]
+    pub enable_death_animation: bool,
+    pub removal_delay_millis: Option<u32>,
+    pub removal_effect_delay_millis: Option<u32>,
+    pub removal_composite_effect_id: Option<u32>,
 }
 
 #[derive(Clone, Deserialize)]
@@ -299,6 +320,12 @@ pub struct TickableStep {
     pub one_shot_animation_id: Option<i32>,
     pub chat_message_id: Option<u32>,
     pub sound_id: Option<u32>,
+    pub rail_id: Option<u32>,
+    pub composite_effect_id: Option<u32>,
+    pub effect_delay_millis: Option<u32>,
+    #[serde(flatten)]
+    pub removal_config: RemovalConfig,
+    pub spawned_state: Option<bool>,
     #[serde(default)]
     pub cursor: CursorUpdate,
     pub duration_millis: u64,
@@ -321,6 +348,106 @@ impl TickableStep {
         nearby_players: &BTreeMap<u64, CharacterReadGuard>,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let mut packets_for_all = Vec::new();
+
+        let character_ref = Character::new(
+            character.guid,
+            character.pos,
+            character.rot,
+            character.scale,
+            character.character_type.clone(),
+            character.mount_id,
+            character.cursor,
+            character.interact_radius,
+            character.auto_interact_radius,
+            character.instance_guid,
+            character.wield_type.0,
+            character.animation_id,
+            HashMap::new(),
+            Vec::new(),
+            None,
+        );
+
+        if let Some(spawned_state) = self.spawned_state {
+            character.is_spawned = spawned_state;
+            if spawned_state {
+                match character.character_type {
+                    CharacterType::AmbientNpc(ref ambient_npc) => {
+                        packets_for_all.extend(ambient_npc.add_packets(&character_ref)?);
+                    }
+                    CharacterType::Door(ref door) => {
+                        packets_for_all.extend(door.add_packets(&character_ref)?);
+                    }
+                    CharacterType::Transport(ref transport) => {
+                        packets_for_all.extend(transport.add_packets(&character_ref)?);
+                    }
+                    _ => {}
+                }
+            } else {
+                let graceful_removal = self.removal_config.enable_graceful_removal;
+                if graceful_removal {
+                    packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: RemoveGracefully {
+                            guid: Guid::guid(character),
+                            use_death_animation: self.removal_config.enable_death_animation,
+                            delay_millis: self.removal_config.removal_delay_millis.unwrap_or(0),
+                            composite_effect_delay_millis: self
+                                .removal_config
+                                .removal_delay_millis
+                                .unwrap_or(0),
+                            composite_effect: self
+                                .removal_config
+                                .removal_composite_effect_id
+                                .unwrap_or(0),
+                            fade_duration_millis: self.duration_millis as u32,
+                        },
+                    })?);
+                } else {
+                    packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: RemoveStandard {
+                            guid: Guid::guid(character),
+                        },
+                    })?);
+                }
+            }
+        }
+
+        if let Some(composite_effect_id) = self.composite_effect_id {
+            packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: PlayCompositeEffect {
+                    guid: Guid::guid(character),
+                    triggered_by_guid: 0,
+                    composite_effect: composite_effect_id,
+                    delay_millis: self.effect_delay_millis.unwrap_or(0),
+                    duration_millis: self.duration_millis as u32,
+                    pos: Pos {
+                        x: 0.0,
+                        y: 0.0,
+                        z: 0.0,
+                        w: 0.0,
+                    },
+                },
+            })?);
+        }
+
+        if let Some(rail_id) = self.rail_id {
+            packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: MoveOnRail {
+                    guid: Guid::guid(character),
+                    rail_id,
+                    elapsed_seconds: 0.0,
+                    unknown3: Pos {
+                        x: 0.0,
+                        y: 0.0,
+                        z: 0.0,
+                        w: 0.0,
+                    },
+                },
+            })?);
+        }
 
         if let Some(speed) = self.speed {
             character.speed.base = speed;
@@ -704,7 +831,9 @@ pub struct AmbientNpc {
 
 impl AmbientNpc {
     pub fn add_packets(&self, character: &Character) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
-        let (add_npc, enable_interaction) = self.base_npc.add_packets(character);
+        let Some((add_npc, enable_interaction)) = self.base_npc.add_packets(character) else {
+            return Ok(Vec::new());
+        };
         let packets = vec![
             GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
@@ -781,7 +910,10 @@ pub struct Door {
 
 impl Door {
     pub fn add_packets(&self, character: &Character) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
-        let (mut add_npc, mut enable_interaction) = self.base_npc.add_packets(character);
+        let Some((mut add_npc, mut enable_interaction)) = self.base_npc.add_packets(character)
+        else {
+            return Ok(Vec::new());
+        };
         add_npc.disable_interact_popup = true;
         enable_interaction.cursor = enable_interaction.cursor.or(Some(55));
         let packets = vec![
@@ -901,7 +1033,9 @@ pub struct Transport {
 
 impl Transport {
     pub fn add_packets(&self, character: &Character) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
-        let (mut add_npc, enable_interaction) = self.base_npc.add_packets(character);
+        let Some((mut add_npc, enable_interaction)) = self.base_npc.add_packets(character) else {
+            return Ok(Vec::new());
+        };
         add_npc.hover_description = if self.show_hover_description {
             self.base_npc.name_id
         } else {
@@ -1237,6 +1371,7 @@ pub struct NpcTemplate {
     pub tickable_procedures: HashMap<String, TickableProcedureConfig>,
     pub first_possible_procedures: Vec<String>,
     pub synchronize_with: Option<String>,
+    pub is_spawned: bool,
 }
 
 impl NpcTemplate {
@@ -1272,6 +1407,7 @@ impl NpcTemplate {
                     mount_multiplier: 1.0,
                 },
                 cursor: self.cursor,
+                is_spawned: self.is_spawned,
                 name: None,
                 squad_guid: None,
             },
@@ -1328,6 +1464,7 @@ pub struct CharacterStats {
     pub speed: CharacterStat,
     pub jump_height_multiplier: CharacterStat,
     pub cursor: Option<u8>,
+    pub is_spawned: bool,
     pub name: Option<String>,
     pub squad_guid: Option<u64>,
     wield_type: (WieldType, WieldType),
@@ -1429,6 +1566,7 @@ impl Character {
                 character_type,
                 mount_id,
                 cursor,
+                is_spawned: true,
                 name: None,
                 squad_guid: None,
                 interact_radius,
@@ -1497,6 +1635,7 @@ impl Character {
                 character_type: CharacterType::Player(Box::new(data)),
                 mount_id: None,
                 cursor: None,
+                is_spawned: true,
                 interact_radius: 0.0,
                 auto_interact_radius: 0.0,
                 instance_guid,

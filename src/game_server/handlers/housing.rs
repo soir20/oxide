@@ -190,7 +190,7 @@ pub fn fixture_packets(
                 unknown24: -1,
                 looping_animation_id: -1,
                 unknown26: true,
-                ignore_position: true,
+                disable_gravity: true,
                 sub_title_id: 0,
                 one_shot_animation_id: -1,
                 temporary_appearance: 0,
