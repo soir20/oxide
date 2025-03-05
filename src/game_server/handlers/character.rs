@@ -382,7 +382,7 @@ impl TickableStep {
                     }
                     _ => {}
                 }
-            } else if !spawned_state {
+            } else {
                 let graceful_removal = self.removal_config.enable_graceful_removal;
                 if graceful_removal {
                     packets_for_all.push(GamePacket::serialize(&TunneledPacket {
