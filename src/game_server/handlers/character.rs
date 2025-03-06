@@ -1642,7 +1642,14 @@ impl Character {
                 wield_type: (wield_type, wield_type.holster()),
                 holstered: false,
                 animation_id: 0,
-                speed: 0.0,
+                speed: CharacterStat {
+                    base: 0.0,
+                    mount_multiplier: 1.0,
+                },
+                jump_height_multiplier: CharacterStat {
+                    base: 1.0,
+                    mount_multiplier: 1.0,
+                },
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(HashMap::new(), Vec::new()),
             synchronize_with: None,
