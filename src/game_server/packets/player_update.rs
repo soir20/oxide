@@ -127,7 +127,7 @@ pub struct AddPc {
     pub member: bool,
     pub moderator: bool,
     pub temporary_appearance: u32,
-    pub guilds: Vec<Unknown13Array>,
+    pub squads: Vec<Unknown13Array>,
     pub battle_class: u32,
     pub title: u32,
     pub unknown16: u32,
@@ -499,10 +499,10 @@ impl GamePacket for SetAnimation {
 #[derive(SerializePacket)]
 pub struct UpdateEquippedItem {
     pub guid: u64,
-    pub unknown: u32,
+    pub item_guid: u32,
     pub item: Attachment,
     pub battle_class: u32,
-    pub wield_type: u32,
+    pub wield_type: WieldType,
 }
 
 impl GamePacket for UpdateEquippedItem {
@@ -743,7 +743,7 @@ pub struct AddNpc {
     pub collision: bool,
     pub rider_guid: u64,
     pub npc_type: u32,
-    pub unknown46: f32,
+    pub interact_popup_radius: f32,
     pub target: Target,
     pub variables: Vec<Variable>,
     pub rail_id: u32,

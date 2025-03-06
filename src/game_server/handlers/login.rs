@@ -16,7 +16,7 @@ use super::{
     minigame::PlayerMinigameStats,
     test_data::{make_test_customizations, make_test_player},
     unique_guid::player_guid,
-    zone::ZoneInstance,
+    zone::{clean_up_zone_if_no_players, ZoneInstance},
 };
 
 pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, ProcessPacketError> {
@@ -93,6 +93,7 @@ pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, P
                     first_load: true,
                     ready: false,
                     name: player.inner.data.name,
+                    squad_guid: None,
                     member: player.inner.data.membership_unknown1,
                     credits: player.inner.data.credits,
                     battle_classes: player
@@ -113,7 +114,9 @@ pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, P
                     inventory: player.inner.data.inventory.into_keys().collect(),
                     customizations: make_test_customizations(),
                     minigame_stats: PlayerMinigameStats::default(),
+                    matchmaking_group: None,
                     minigame_status: None,
+                    update_previous_location_on_leave: true,
                     previous_location: PreviousLocation {
                         template_guid: player_zone_template,
                         pos: player.inner.data.pos,
@@ -132,10 +135,9 @@ pub fn log_out(
     sender: u32,
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-    game_server
-        .lock_enforcer()
-        .write_characters(|characters_table_write_handle, _| {
-            if let Some((character, (_, instance_guid, chunk))) =
+    game_server.lock_enforcer().write_characters(
+        |characters_table_write_handle, zones_lock_enforcer| {
+            if let Some((character, (_, instance_guid, chunk), ..)) =
                 characters_table_write_handle.remove(player_guid(sender))
             {
                 let other_players_nearby = ZoneInstance::other_players_nearby(
@@ -147,11 +149,20 @@ pub fn log_out(
 
                 let remove_packets = character.read().remove_packets()?;
 
+                zones_lock_enforcer.write_zones(|zones_table_write_handle| {
+                    clean_up_zone_if_no_players(
+                        instance_guid,
+                        characters_table_write_handle,
+                        zones_table_write_handle,
+                    );
+                });
+
                 Ok(vec![Broadcast::Multi(other_players_nearby, remove_packets)])
             } else {
                 Ok(vec![])
             }
-        })
+        },
+    )
 }
 
 pub fn send_points_of_interest(

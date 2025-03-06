@@ -4,11 +4,14 @@ use std::fmt::Display;
 use std::io::{Cursor, Error};
 use std::num::ParseIntError;
 use std::path::Path;
-use std::time::Instant;
+use std::time::{Duration, Instant};
 use std::vec;
 
 use byteorder::{LittleEndian, ReadBytesExt};
-use handlers::character::{Character, CharacterCategory, CharacterIndex, CharacterType, Chunk};
+use handlers::character::{
+    Character, CharacterCategory, CharacterLocationIndex, CharacterMatchmakingGroupIndex,
+    CharacterNameIndex, CharacterSquadIndex, CharacterType, Chunk, MatchmakingGroupStatus,
+};
 use handlers::chat::process_chat_packet;
 use handlers::command::process_command;
 use handlers::guid::{GuidTable, GuidTableIndexer, GuidTableWriteHandle, IndexedGuid};
@@ -24,7 +27,8 @@ use handlers::lock_enforcer::{
 };
 use handlers::login::{log_in, log_out, send_points_of_interest};
 use handlers::minigame::{
-    create_active_minigame, load_all_minigames, process_minigame_packet, AllMinigameConfigs,
+    create_active_minigame, load_all_minigames, prepare_active_minigame_instance,
+    process_minigame_packet, remove_from_matchmaking, AllMinigameConfigs,
 };
 use handlers::mount::{load_mounts, process_mount_packet, MountConfig};
 use handlers::reference_data::{load_categories, load_item_classes, load_item_groups};
@@ -44,8 +48,7 @@ use packets::player_update::{Customization, InitCustomizations, QueueAnimation, 
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
 use packets::store::StoreItemList;
 use packets::tunnel::{TunneledPacket, TunneledWorldPacket};
-use packets::ui::ExecuteScriptWithParams;
-use packets::update_position::{PlayerJump, UpdatePlayerPosition};
+use packets::update_position::{PlayerJump, UpdatePlayerPlatformPosition, UpdatePlayerPosition};
 use packets::zone::ZoneTeleportRequest;
 use packets::{GamePacket, OpCode};
 use rand::Rng;
@@ -144,6 +147,7 @@ pub struct GameServer {
     item_groups: ItemGroupDefinitions,
     minigames: AllMinigameConfigs,
     mounts: BTreeMap<u32, MountConfig>,
+    start_time: Instant,
     zone_templates: BTreeMap<u8, ZoneTemplate>,
 }
 
@@ -167,6 +171,7 @@ impl GameServer {
             },
             minigames: load_all_minigames(config_dir)?,
             mounts: load_mounts(config_dir)?,
+            start_time: Instant::now(),
             zone_templates: templates,
         })
     }
@@ -224,6 +229,8 @@ impl GameServer {
             )?;
         }
 
+        broadcasts.append(&mut self.tick_minigame_groups()?);
+
         Ok(broadcasts)
     }
 
@@ -254,9 +261,8 @@ impl GameServer {
                     // Set the player as ready
                     self.lock_enforcer()
                         .write_characters(|characters_table_write_handle, _| {
-                            match characters_table_write_handle.remove(player_guid(sender)) {
-                                Some((character, _)) => {
-                                    let mut character_write_handle = character.write();
+                            characters_table_write_handle.update_value_indices(player_guid(sender), |possible_character_write_handle, _| {
+                                if let Some(character_write_handle) = possible_character_write_handle {
                                     if let CharacterType::Player(ref mut player) =
                                         &mut character_write_handle.stats.character_type
                                     {
@@ -298,22 +304,26 @@ impl GameServer {
 
                                         player.ready = true;
                                         player.first_load = false;
+                                        Ok(())
+                                    } else {
+                                        Err(ProcessPacketError::new(
+                                            ProcessPacketErrorType::ConstraintViolated,
+                                            format!(
+                                                "Character {} sent ready packet but is not a player",
+                                                player_guid(sender)
+                                            ),
+                                        ))
                                     }
-                                    let guid = character_write_handle.guid();
-                                    let new_index = character_write_handle.index();
-                                    drop(character_write_handle);
-                                    characters_table_write_handle
-                                        .insert_lock(guid, new_index, character);
-                                    Ok(())
+                                } else {
+                                    Err(ProcessPacketError::new(
+                                        ProcessPacketErrorType::ConstraintViolated,
+                                        format!(
+                                            "Player {} sent ready packet but does not exist",
+                                            sender
+                                        ),
+                                    ))
                                 }
-                                None => Err(ProcessPacketError::new(
-                                    ProcessPacketErrorType::ConstraintViolated,
-                                    format!(
-                                        "Player {} sent ready packet but is not in any zone",
-                                        sender
-                                    ),
-                                )),
-                            }
+                            })
                         })?;
 
                     sender_only_packets.append(&mut send_points_of_interest(self)?);
@@ -337,7 +347,7 @@ impl GameServer {
                     sender_only_packets.push(GamePacket::serialize(&store_items)?);
 
                     let mut character_broadcasts = self.lock_enforcer().read_characters(|characters_table_read_handle| {
-                        let possible_index = characters_table_read_handle.index(player_guid(sender));
+                        let possible_index = characters_table_read_handle.index1(player_guid(sender));
                         let character_diffs = possible_index.map(|(_, instance_guid, chunk)| ZoneInstance::diff_character_guids(
                             instance_guid,
                             Character::MIN_CHUNK,
@@ -419,7 +429,8 @@ impl GameServer {
                                                 let mut character_broadcasts = Vec::new();
 
                                                 if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) {
-                                                    character_write_handle.stats.speed = zone.speed;
+                                                    character_write_handle.stats.speed.base = zone.speed;
+                                                    character_write_handle.stats.jump_height_multiplier.base = zone.jump_height_multiplier;
 
                                                     let mut global_packets = character_write_handle.add_packets(self.mounts(), self.items(), self.customizations())?;
                                                     let wield_type = TunneledPacket {
@@ -440,11 +451,20 @@ impl GameServer {
                                                         })?);
 
                                                         if let Some(battle_class) = player.battle_classes.get(&player.active_battle_class) {
-                                                            character_broadcasts.append(&mut update_saber_tints(sender, &battle_class.items, player.active_battle_class, self)?);
+                                                            character_broadcasts.append(&mut update_saber_tints(
+                                                                sender,
+                                                                characters_table_read_handle,
+                                                                instance_guid,
+                                                                chunk,
+                                                                &battle_class.items,
+                                                                player.active_battle_class,
+                                                                character_write_handle.wield_type(),
+                                                                self
+                                                            )?);
                                                         }
                                                     }
 
-                                                    let all_players_nearby = ZoneInstance::all_players_nearby(Some(sender), chunk, instance_guid, characters_table_read_handle)?;
+                                                    let all_players_nearby = ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_read_handle)?;
                                                     character_broadcasts.push(Broadcast::Multi(all_players_nearby, global_packets));
                                                 } else {
                                                     return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} sent a ready packet", sender)));
@@ -494,7 +514,7 @@ impl GameServer {
                             character_consumer:
                                 |characters_table_read_handle, _, _, zones_lock_enforcer| {
                                     if let Some((_, instance_guid, _)) =
-                                        characters_table_read_handle.index(sender_guid)
+                                        characters_table_read_handle.index1(sender_guid)
                                     {
                                         zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
                                             read_guids: vec![instance_guid],
@@ -535,17 +555,21 @@ impl GameServer {
                         DeserializePacket::deserialize(&mut cursor)?;
                     // Don't allow players to update another player's position
                     pos_update.guid = player_guid(sender);
-                    broadcasts.append(&mut ZoneInstance::move_character(
-                        pos_update, pos_update, false, self,
-                    )?);
+                    broadcasts.append(&mut ZoneInstance::move_character(pos_update, false, self)?);
                 }
                 OpCode::PlayerJump => {
                     let mut player_jump: PlayerJump = DeserializePacket::deserialize(&mut cursor)?;
                     // Don't allow players to update another player's position
                     player_jump.pos_update.guid = player_guid(sender);
+                    broadcasts.append(&mut ZoneInstance::move_character(player_jump, false, self)?);
+                }
+                OpCode::UpdatePlayerPlatformPosition => {
+                    let mut platform_pos_update: UpdatePlayerPlatformPosition =
+                        DeserializePacket::deserialize(&mut cursor)?;
+                    // Don't allow players to update another player's position
+                    platform_pos_update.pos_update.guid = player_guid(sender);
                     broadcasts.append(&mut ZoneInstance::move_character(
-                        player_jump.pos_update,
-                        player_jump,
+                        platform_pos_update,
                         false,
                         self,
                     )?);
@@ -561,7 +585,10 @@ impl GameServer {
                         |characters_table_write_handle: &mut GuidTableWriteHandle<
                             u64,
                             Character,
-                            CharacterIndex,
+                            CharacterLocationIndex,
+                            CharacterNameIndex,
+                            CharacterSquadIndex,
+                            CharacterMatchmakingGroupIndex,
                         >,
                          zones_lock_enforcer| {
                             zones_lock_enforcer.write_zones(|zones_table_write_handle| {
@@ -580,14 +607,16 @@ impl GameServer {
                                     Ok(instance_guid) => teleport_to_zone!(
                                         characters_table_write_handle,
                                         sender,
+                                        zones_table_write_handle,
                                         &zones_table_write_handle
                                             .get(instance_guid)
-                                            .expect("any_instance returned invalid zone GUID")
+                                            .expect(
+                                                "get_or_create_instance returned invalid zone GUID"
+                                            )
                                             .read(),
                                         None,
                                         None,
                                         self.mounts(),
-                                        true,
                                     ),
                                     Err(err) => Err(err),
                                 }
@@ -601,7 +630,7 @@ impl GameServer {
                             read_guids: Vec::new(),
                             write_guids: Vec::new(),
                             character_consumer: |characters_table_read_handle, _, _, zones_lock_enforcer| {
-                                if let Some((_, instance_guid, _)) = characters_table_read_handle.index(player_guid(sender)) {
+                                if let Some((_, instance_guid, _)) = characters_table_read_handle.index1(player_guid(sender)) {
                                     zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
                                         read_guids: vec![instance_guid],
                                         write_guids: Vec::new(),
@@ -663,7 +692,7 @@ impl GameServer {
                     ));
                 }
                 OpCode::Chat => {
-                    broadcasts.append(&mut process_chat_packet(&mut cursor, sender)?);
+                    broadcasts.append(&mut process_chat_packet(&mut cursor, sender, self)?);
                 }
                 OpCode::Inventory => {
                     broadcasts.append(&mut process_inventory_packet(self, &mut cursor, sender)?);
@@ -676,8 +705,8 @@ impl GameServer {
                             if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) {
                                 character_write_handle.brandish_or_holster();
 
-                                let (_, instance_guid, chunk) = character_write_handle.index();
-                                let all_players_nearby = ZoneInstance::all_players_nearby(Some(sender), chunk, instance_guid, characters_table_read_handle)?;
+                                let (_, instance_guid, chunk) = character_write_handle.index1();
+                                let all_players_nearby = ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_read_handle)?;
                                 broadcasts.push(Broadcast::Multi(all_players_nearby, vec![
                                     GamePacket::serialize(&TunneledPacket {
                                         unknown1: true,
@@ -754,6 +783,10 @@ impl GameServer {
         &self.mounts
     }
 
+    pub fn start_time(&self) -> Instant {
+        self.start_time
+    }
+
     pub fn lock_enforcer(&self) -> LockEnforcer {
         self.lock_enforcer_source.lock_enforcer()
     }
@@ -816,7 +849,7 @@ impl GameServer {
         required_capacity: u32,
     ) -> Vec<u64> {
         let unfilled_zones = zones
-            .values_by_index(template_guid)
+            .values_by_index1(template_guid)
             .filter_map(|zone_lock| {
                 let zone_read_handle = zone_lock.read();
                 let instance_guid = zone_read_handle.guid();
@@ -831,7 +864,7 @@ impl GameServer {
                         instance_guid,
                         Character::MAX_CHUNK,
                     );
-                let current_players = characters.keys_by_range(range).count() as u32;
+                let current_players = characters.keys_by_index1_range(range).count() as u32;
 
                 let remaining_capacity =
                     zone_read_handle.max_players.saturating_sub(current_players);
@@ -852,7 +885,7 @@ impl GameServer {
         template_guid: u8,
     ) -> Option<u32> {
         let used_indices: BTreeSet<u32> = zones
-            .keys_by_index(template_guid)
+            .keys_by_index1(template_guid)
             .map(shorten_zone_index)
             .collect();
         if let Some(max) = used_indices.last() {
@@ -885,15 +918,16 @@ impl GameServer {
                         u64::MAX,
                         Character::MAX_CHUNK,
                     );
-                let tickable_characters: Vec<u64> =
-                    characters_table_read_handle.keys_by_range(range).collect();
+                let tickable_characters: Vec<u64> = characters_table_read_handle
+                    .keys_by_index1_range(range)
+                    .collect();
 
                 let tickable_characters_by_chunk = tickable_characters.into_iter().fold(
                     BTreeMap::new(),
                     |mut acc: BTreeMap<(u64, Chunk), Vec<u64>>, guid| {
                         // The NPC could have been removed since we last acquired the table read lock
                         if let Some((_, instance_guid, chunk)) =
-                            characters_table_read_handle.index(guid)
+                            characters_table_read_handle.index1(guid)
                         {
                             acc.entry((instance_guid, chunk)).or_default().push(guid);
                         }
@@ -918,7 +952,7 @@ impl GameServer {
         broadcasts: &mut Vec<Broadcast>,
     ) -> Result<(), ProcessPacketError> {
         self.lock_enforcer().read_characters(|characters_table_read_handle| {
-            let nearby_player_guids = ZoneInstance::all_players_nearby(None, chunk, instance_guid, characters_table_read_handle)
+            let nearby_player_guids = ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_read_handle)
                 .unwrap_or_default();
             let nearby_players: Vec<u64> = nearby_player_guids.iter()
                 .map(|guid| *guid as u64)
@@ -990,5 +1024,115 @@ impl GameServer {
                 },
             }
         })
+    }
+
+    fn tick_minigame_groups(&self) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let now = Instant::now();
+        self.lock_enforcer().write_characters(
+            |characters_table_write_handle, zones_lock_enforcer| {
+                let mut broadcasts = Vec::new();
+
+                // Iterate over timed-out groups for every stage, since the number of stages remains
+                // a fairly small constant, while there can theoretically be billions of matchmaking groups.
+                for stage in self.minigames().stage_configs() {
+                    let timeout =
+                        Duration::from_millis(stage.stage_config.matchmaking_timeout_millis as u64);
+                    // Make sure max time is greater than or equal to start time so that the range is valid
+                    let max_time = match now.checked_sub(timeout) {
+                        Some(max_time) => max_time,
+                        None => continue,
+                    }.max(self.start_time);
+                    let stage_group_guid = stage.stage_group_guid;
+                    let stage_guid = stage.stage_config.guid;
+                    let min_players = stage.stage_config.min_players;
+
+                    let timed_out_group_range =
+                        (MatchmakingGroupStatus::OpenToAll, stage_group_guid, stage_guid, self.start_time, u32::MIN)
+                            ..=(MatchmakingGroupStatus::OpenToAll, stage_group_guid, stage_guid, max_time, u32::MAX);
+                    let timed_out_groups: Vec<(Instant, u32)> = characters_table_write_handle
+                        .indices4_by_range(timed_out_group_range)
+                        .map(|(.., creation_time, owner_guid)| (*creation_time, *owner_guid))
+                        .collect();
+                    for (creation_time, owner_guid) in timed_out_groups {
+                        let players_in_group: Vec<u32> = characters_table_write_handle
+                            .keys_by_index4(&(
+                                MatchmakingGroupStatus::OpenToAll,
+                                stage_group_guid,
+                                stage_guid,
+                                creation_time,
+                                owner_guid,
+                            ))
+                            .filter_map(|guid| shorten_player_guid(guid).ok())
+                            .collect();
+
+                        zones_lock_enforcer.write_zones(|zones_table_write_handle| {
+                            if players_in_group.len() as u32 >= min_players {
+                                broadcasts.append(&mut prepare_active_minigame_instance(
+                                    &players_in_group,
+                                    &stage,
+                                    characters_table_write_handle,
+                                    zones_table_write_handle,
+                                    None,
+                                    self,
+                                ));
+                                return Ok::<(), ProcessPacketError>(());
+                            } else if players_in_group.len() == 1 {
+                                if let Some(replacement_stage_locator) = &stage.stage_config.single_player_stage_guid {
+                                    if let Some(replacement_stage) = self
+                                        .minigames()
+                                        .stage_config(replacement_stage_locator.stage_group_guid, replacement_stage_locator.stage_guid)
+                                    {
+                                        if replacement_stage.stage_config.min_players == 1 {
+                                            broadcasts.append(&mut prepare_active_minigame_instance(
+                                                &players_in_group,
+                                                &replacement_stage,
+                                                characters_table_write_handle,
+                                                zones_table_write_handle,
+                                                Some(44218),
+                                                self,
+                                            ));
+                                            return Ok::<(), ProcessPacketError>(());
+                                        } else {
+                                            info!(
+                                                "Replacement stage (stage group {}, stage {}) for (stage group {}, stage {}) isn't single-player",
+                                                replacement_stage_locator.stage_group_guid,
+                                                replacement_stage_locator.stage_guid,
+                                                stage_group_guid,
+                                                stage_guid
+                                            );
+                                        }
+                                    } else {
+                                        info!(
+                                            "Couldn't find replacement stage (stage group {}, stage {}) for (stage group {}, stage {})",
+                                            replacement_stage_locator.stage_group_guid,
+                                            replacement_stage_locator.stage_guid,
+                                            stage_group_guid,
+                                            stage_guid
+                                        );
+                                    }
+                                }
+                            }
+
+                            for player in players_in_group {
+                                broadcasts.append(&mut remove_from_matchmaking(
+                                    player,
+                                    stage_group_guid,
+                                    stage_guid,
+                                    characters_table_write_handle,
+                                    zones_table_write_handle,
+                                    false,
+                                    Some(33781),
+                                    self,
+                                )?);
+                            }
+
+                            Ok::<(), ProcessPacketError>(())
+                        })?
+                    }
+                }
+
+                Ok(broadcasts)
+            },
+        )
     }
 }

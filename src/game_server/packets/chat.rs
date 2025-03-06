@@ -36,86 +36,72 @@ pub enum MessageType {
     Trade = 0x6,
     LookingForGroup = 0x7,
     Area = 0x8,
-    Guild = 0x9,
+    Squad = 0x9,
     MembersOnly = 0xb,
 }
 
-#[derive(SerializePacket, DeserializePacket)]
+#[derive(Copy, Clone, Debug)]
+pub enum MessageTypeData {
+    World,
+    Whisper,
+    System,
+    ReceivedItems,
+    Group,
+    Yell,
+    Trade,
+    LookingForGroup,
+    Area(u32),
+    Squad,
+    MembersOnly,
+}
+
+impl MessageTypeData {
+    pub fn message_type(&self) -> MessageType {
+        match self {
+            MessageTypeData::World => MessageType::World,
+            MessageTypeData::Whisper => MessageType::Whisper,
+            MessageTypeData::System => MessageType::System,
+            MessageTypeData::ReceivedItems => MessageType::ReceivedItems,
+            MessageTypeData::Group => MessageType::Group,
+            MessageTypeData::Yell => MessageType::Yell,
+            MessageTypeData::Trade => MessageType::Trade,
+            MessageTypeData::LookingForGroup => MessageType::LookingForGroup,
+            MessageTypeData::Area(_) => MessageType::Area,
+            MessageTypeData::Squad => MessageType::Squad,
+            MessageTypeData::MembersOnly => MessageType::MembersOnly,
+        }
+    }
+}
+
+#[derive(Clone, SerializePacket, DeserializePacket)]
 pub struct MessagePayload {
     pub sender_guid: u64,
     pub target_guid: u64,
-    pub sender_name: Name,
+    pub channel_name: Name,
     pub target_name: Name,
     pub message: String,
     pub pos: Pos,
-    pub guild_guid: u64,
+    pub squad_guid: u64,
     pub language_id: u32,
 }
 
-pub enum SendMessage {
-    World(MessagePayload),
-    Whisper(MessagePayload),
-    System(MessagePayload),
-    ReceivedItems(MessagePayload),
-    Group(MessagePayload),
-    Yell(MessagePayload),
-    Trade(MessagePayload),
-    LookingForGroup(MessagePayload),
-    Area(MessagePayload, u32),
-    Guild(MessagePayload),
-    MembersOnly(MessagePayload),
+#[derive(Clone)]
+pub struct SendMessage {
+    pub message_type_data: MessageTypeData,
+    pub payload: MessagePayload,
 }
 
 impl SerializePacket for SendMessage {
     fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        match self {
-            SendMessage::World(payload) => {
-                buffer.write_u16::<LittleEndian>(MessageType::World as u16)?;
-                payload.serialize(buffer)
+        buffer.write_u16::<LittleEndian>(self.message_type_data.message_type() as u16)?;
+        self.payload.serialize(buffer)?;
+        match self.message_type_data {
+            MessageTypeData::Area(area_id) => {
+                Ok::<(), SerializePacketError>(buffer.write_u32::<LittleEndian>(area_id)?)
             }
-            SendMessage::Whisper(payload) => {
-                buffer.write_u16::<LittleEndian>(MessageType::Whisper as u16)?;
-                payload.serialize(buffer)
-            }
-            SendMessage::System(payload) => {
-                buffer.write_u16::<LittleEndian>(MessageType::System as u16)?;
-                payload.serialize(buffer)
-            }
-            SendMessage::ReceivedItems(payload) => {
-                buffer.write_u16::<LittleEndian>(MessageType::ReceivedItems as u16)?;
-                payload.serialize(buffer)
-            }
-            SendMessage::Group(payload) => {
-                buffer.write_u16::<LittleEndian>(MessageType::Group as u16)?;
-                payload.serialize(buffer)
-            }
-            SendMessage::Yell(payload) => {
-                buffer.write_u16::<LittleEndian>(MessageType::Yell as u16)?;
-                payload.serialize(buffer)
-            }
-            SendMessage::Trade(payload) => {
-                buffer.write_u16::<LittleEndian>(MessageType::Trade as u16)?;
-                payload.serialize(buffer)
-            }
-            SendMessage::LookingForGroup(payload) => {
-                buffer.write_u16::<LittleEndian>(MessageType::LookingForGroup as u16)?;
-                payload.serialize(buffer)
-            }
-            SendMessage::Area(payload, area_id) => {
-                buffer.write_u16::<LittleEndian>(MessageType::Area as u16)?;
-                payload.serialize(buffer)?;
-                buffer.write_u32::<LittleEndian>(*area_id)?;
-                Ok(())
-            }
-            SendMessage::Guild(payload) => {
-                buffer.write_u16::<LittleEndian>(MessageType::Guild as u16)?;
-                payload.serialize(buffer)
-            }
-            SendMessage::MembersOnly(payload) => {
-                buffer.write_u16::<LittleEndian>(MessageType::MembersOnly as u16)?;
-                payload.serialize(buffer)
-            }
-        }
+            _ => Ok(()),
+        }?;
+        Ok(())
     }
 }
 
@@ -125,27 +111,30 @@ impl DeserializePacket for SendMessage {
         Self: Sized,
     {
         let raw_message_type = cursor.read_u16::<LittleEndian>()?;
-        if let Ok(message_type) = MessageType::try_from(raw_message_type) {
-            let payload = MessagePayload::deserialize(cursor)?;
-            match message_type {
-                MessageType::World => Ok(SendMessage::World(payload)),
-                MessageType::Whisper => Ok(SendMessage::Whisper(payload)),
-                MessageType::System => Ok(SendMessage::System(payload)),
-                MessageType::ReceivedItems => Ok(SendMessage::ReceivedItems(payload)),
-                MessageType::Group => Ok(SendMessage::Group(payload)),
-                MessageType::Yell => Ok(SendMessage::Yell(payload)),
-                MessageType::Trade => Ok(SendMessage::Trade(payload)),
-                MessageType::LookingForGroup => Ok(SendMessage::LookingForGroup(payload)),
-                MessageType::Area => {
-                    let unknown = u32::deserialize(cursor)?;
-                    Ok(SendMessage::Area(payload, unknown))
-                }
-                MessageType::Guild => Ok(SendMessage::Guild(payload)),
-                MessageType::MembersOnly => Ok(SendMessage::MembersOnly(payload)),
+        let message_type = MessageType::try_from(raw_message_type)
+            .map_err(|_| DeserializePacketError::UnknownDiscriminator)?;
+        let payload = MessagePayload::deserialize(cursor)?;
+        let message_type_data = match message_type {
+            MessageType::World => MessageTypeData::World,
+            MessageType::Whisper => MessageTypeData::Whisper,
+            MessageType::System => MessageTypeData::System,
+            MessageType::ReceivedItems => MessageTypeData::ReceivedItems,
+            MessageType::Group => MessageTypeData::Group,
+            MessageType::Yell => MessageTypeData::Yell,
+            MessageType::Trade => MessageTypeData::Trade,
+            MessageType::LookingForGroup => MessageTypeData::LookingForGroup,
+            MessageType::Area => {
+                let area_id = u32::deserialize(cursor)?;
+                MessageTypeData::Area(area_id)
             }
-        } else {
-            Err(DeserializePacketError::UnknownDiscriminator)
-        }
+            MessageType::Squad => MessageTypeData::Squad,
+            MessageType::MembersOnly => MessageTypeData::MembersOnly,
+        };
+
+        Ok(SendMessage {
+            message_type_data,
+            payload,
+        })
     }
 }
 

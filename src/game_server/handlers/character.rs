@@ -37,7 +37,7 @@ use super::{
     guid::{Guid, IndexedGuid},
     housing::fixture_packets,
     inventory::wield_type_from_slot,
-    lock_enforcer::{CharacterReadGuard, ZoneLockRequest},
+    lock_enforcer::CharacterReadGuard,
     minigame::PlayerMinigameStats,
     mount::{spawn_mount_npc, MountConfig},
     unique_guid::{mount_guid, npc_guid, player_guid, shorten_player_guid},
@@ -126,9 +126,9 @@ pub struct BaseNpcConfig {
     #[serde(default = "default_npc_type")]
     pub npc_type: u32,
     #[serde(default = "default_true")]
-    pub enable_rotation_and_shadow: bool,
-    #[serde(default = "default_true")]
     pub enable_gravity: bool,
+    #[serde(default)]
+    pub enable_tilt: bool,
     #[serde(default)]
     pub tickable_procedures: HashMap<String, TickableProcedureConfig>,
     #[serde(default)]
@@ -151,8 +151,8 @@ pub struct BaseNpc {
     pub visible: bool,
     pub bounce_area_id: i32,
     pub npc_type: u32,
-    pub enable_rotation_and_shadow: bool,
     pub enable_gravity: bool,
+    pub enable_tilt: bool,
 }
 
 impl BaseNpc {
@@ -190,7 +190,7 @@ impl BaseNpc {
                 name_offset_z: self.name_offset_z,
                 terrain_object_id: self.terrain_object_id,
                 invisible: !self.visible,
-                speed: character.stats.speed,
+                speed: character.stats.speed.total(),
                 unknown21: false,
                 interactable_size_pct: 100,
                 unknown23: -1,
@@ -207,7 +207,7 @@ impl BaseNpc {
                 unknown34: false,
                 show_health: false,
                 hide_despawn_fade: false,
-                enable_tilt: !self.enable_rotation_and_shadow,
+                enable_tilt: self.enable_tilt,
                 base_attachment_group: BaseAttachmentGroup {
                     unknown1: 0,
                     unknown2: "".to_string(),
@@ -227,7 +227,7 @@ impl BaseNpc {
                 collision: true,
                 rider_guid: 0,
                 npc_type: self.npc_type,
-                unknown46: 0.0,
+                interact_popup_radius: character.stats.interact_radius,
                 target: Target::default(),
                 variables: vec![],
                 rail_id: 0,
@@ -281,8 +281,8 @@ impl From<BaseNpcConfig> for BaseNpc {
             visible: value.visible,
             bounce_area_id: value.bounce_area_id,
             npc_type: value.npc_type,
-            enable_rotation_and_shadow: value.enable_rotation_and_shadow,
             enable_gravity: value.enable_gravity,
+            enable_tilt: value.enable_tilt,
         }
     }
 }
@@ -450,7 +450,7 @@ impl TickableStep {
         }
 
         if let Some(speed) = self.speed {
-            character.speed = speed;
+            character.speed.base = speed;
             packets_for_all.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: UpdateSpeed {
@@ -888,6 +888,8 @@ pub struct DoorConfig {
     pub destination_rot_w: f32,
     pub destination_zone_template: Option<u8>,
     pub destination_zone: Option<u64>,
+    #[serde(default = "default_true")]
+    pub update_previous_location_on_leave: bool,
 }
 
 #[derive(Clone)]
@@ -903,6 +905,7 @@ pub struct Door {
     pub destination_rot_w: f32,
     pub destination_zone_template: Option<u8>,
     pub destination_zone: Option<u64>,
+    pub update_previous_location_on_leave: bool,
 }
 
 impl Door {
@@ -949,48 +952,43 @@ impl Door {
         coerce_to_broadcast_supplier(move |game_server| {
             game_server.lock_enforcer().write_characters(
                 |characters_table_write_handle, zones_lock_enforcer| {
-                    let destination_zone_guid = if let &Some(destination_zone_guid) =
-                        &destination_zone
-                    {
-                        destination_zone_guid
-                    } else if let &Some(destination_zone_template) = &destination_zone_template {
-                        zones_lock_enforcer.write_zones(|zones_table_write_handle| {
+                    zones_lock_enforcer.write_zones(|zones_table_write_handle| {
+                        let destination_zone_guid = if let &Some(destination_zone_guid) =
+                            &destination_zone
+                        {
+                            destination_zone_guid
+                        } else if let &Some(destination_zone_template) = &destination_zone_template
+                        {
                             game_server.get_or_create_instance(
                                 characters_table_write_handle,
                                 zones_table_write_handle,
                                 destination_zone_template,
                                 1,
-                            )
-                        })?
-                    } else {
-                        source_zone_guid
-                    };
+                            )?
+                        } else {
+                            source_zone_guid
+                        };
 
-                    if source_zone_guid != destination_zone_guid {
-                        zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
-                            read_guids: vec![destination_zone_guid],
-                            write_guids: Vec::new(),
-                            zone_consumer: |_, zones_read, _| {
-                                if let Some(destination_read_handle) =
-                                    zones_read.get(&destination_zone_guid)
-                                {
-                                    teleport_to_zone!(
-                                        characters_table_write_handle,
-                                        requester,
-                                        destination_read_handle,
-                                        Some(destination_pos),
-                                        Some(destination_rot),
-                                        game_server.mounts(),
-                                        false,
-                                    )
-                                } else {
-                                    Ok(Vec::new())
-                                }
-                            },
-                        })
-                    } else {
-                        teleport_within_zone(requester, destination_pos, destination_rot)
-                    }
+                        if source_zone_guid != destination_zone_guid {
+                            if let Some(destination_lock) =
+                                zones_table_write_handle.get(destination_zone_guid)
+                            {
+                                teleport_to_zone!(
+                                    characters_table_write_handle,
+                                    requester,
+                                    zones_table_write_handle,
+                                    &destination_lock.read(),
+                                    Some(destination_pos),
+                                    Some(destination_rot),
+                                    game_server.mounts(),
+                                )
+                            } else {
+                                Ok(Vec::new())
+                            }
+                        } else {
+                            teleport_within_zone(requester, destination_pos, destination_rot)
+                        }
+                    })
                 },
             )
         })
@@ -1011,6 +1009,7 @@ impl From<DoorConfig> for Door {
             destination_rot_w: value.destination_rot_w,
             destination_zone_template: value.destination_zone_template,
             destination_zone: value.destination_zone,
+            update_previous_location_on_leave: value.update_previous_location_on_leave,
         }
     }
 }
@@ -1132,6 +1131,7 @@ pub struct Player {
     pub first_load: bool,
     pub ready: bool,
     pub name: Name,
+    pub squad_guid: Option<u64>,
     pub member: bool,
     pub credits: u32,
     pub battle_classes: BTreeMap<u32, BattleClass>,
@@ -1139,7 +1139,9 @@ pub struct Player {
     pub inventory: BTreeSet<u32>,
     pub customizations: BTreeMap<CustomizationSlot, u32>,
     pub minigame_stats: PlayerMinigameStats,
+    pub matchmaking_group: Option<CharacterMatchmakingGroupIndex>,
     pub minigame_status: Option<MinigameStatus>,
+    pub update_previous_location_on_leave: bool,
     pub previous_location: PreviousLocation,
 }
 
@@ -1167,6 +1169,7 @@ impl Player {
                     mount_config,
                     character.stats.pos,
                     character.stats.rot,
+                    false,
                 )?);
             } else {
                 return Err(ProcessPacketError::new(
@@ -1188,13 +1191,27 @@ impl Player {
                     .items
                     .iter()
                     .filter_map(|(slot, item)| {
+                        let tint_override = match slot {
+                            EquipmentSlot::PrimarySaberShape => battle_class
+                                .items
+                                .get(&EquipmentSlot::PrimarySaberColor)
+                                .and_then(|item| item_definitions.get(&item.guid))
+                                .map(|item_def| item_def.tint),
+                            EquipmentSlot::SecondarySaberShape => battle_class
+                                .items
+                                .get(&EquipmentSlot::SecondarySaberColor)
+                                .and_then(|item| item_definitions.get(&item.guid))
+                                .map(|item_def| item_def.tint),
+                            _ => None,
+                        };
+
                         item_definitions
                             .get(&item.guid)
                             .map(|item_definition| Attachment {
                                 model_name: item_definition.model_name.clone(),
                                 texture_alias: item_definition.texture_alias.clone(),
                                 tint_alias: item_definition.tint_alias.clone(),
-                                tint: item_definition.tint,
+                                tint: tint_override.unwrap_or(item_definition.tint),
                                 composite_effect: item_definition.composite_effect,
                                 slot: *slot,
                             })
@@ -1263,12 +1280,12 @@ impl Player {
                     .and_then(|customization_guid| customizations.get(customization_guid))
                     .map(|customization| customization.customization_param1.clone())
                     .unwrap_or_default(),
-                speed: character.stats.speed,
+                speed: character.stats.speed.total(),
                 underage: false,
                 member: self.member,
                 moderator: false,
                 temporary_appearance: 0,
-                guilds: Vec::new(),
+                squads: Vec::new(),
                 battle_class: self.active_battle_class,
                 title: 0,
                 unknown16: 0,
@@ -1381,9 +1398,18 @@ impl NpcTemplate {
                 wield_type: (self.wield_type, self.wield_type.holster()),
                 holstered: false,
                 animation_id: self.animation_id,
-                speed: 0.0,
+                speed: CharacterStat {
+                    base: 0.0,
+                    mount_multiplier: 1.0,
+                },
+                jump_height_multiplier: CharacterStat {
+                    base: 1.0,
+                    mount_multiplier: 1.0,
+                },
                 cursor: self.cursor,
                 is_spawned: self.is_spawned,
+                name: None,
+                squad_guid: None,
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(
                 self.tickable_procedures.clone(),
@@ -1399,8 +1425,29 @@ impl NpcTemplate {
     }
 }
 
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub enum MatchmakingGroupStatus {
+    OpenToAll,
+    OpenToFriends,
+}
+
 pub type Chunk = (i32, i32);
-pub type CharacterIndex = (CharacterCategory, u64, Chunk);
+pub type CharacterLocationIndex = (CharacterCategory, u64, Chunk);
+pub type CharacterNameIndex = String;
+pub type CharacterSquadIndex = u64;
+pub type CharacterMatchmakingGroupIndex = (MatchmakingGroupStatus, i32, i32, Instant, u32);
+
+#[derive(Clone)]
+pub struct CharacterStat {
+    pub base: f32,
+    pub mount_multiplier: f32,
+}
+
+impl CharacterStat {
+    pub fn total(&self) -> f32 {
+        self.base * self.mount_multiplier
+    }
+}
 
 #[derive(Clone)]
 pub struct CharacterStats {
@@ -1414,11 +1461,14 @@ pub struct CharacterStats {
     pub auto_interact_radius: f32,
     pub instance_guid: u64,
     pub animation_id: i32,
-    pub speed: f32,
+    pub speed: CharacterStat,
+    pub jump_height_multiplier: CharacterStat,
     pub cursor: Option<u8>,
+    pub is_spawned: bool,
+    pub name: Option<String>,
+    pub squad_guid: Option<u64>,
     wield_type: (WieldType, WieldType),
     holstered: bool,
-    pub is_spawned: bool,
 }
 
 impl Guid<u64> for CharacterStats {
@@ -1434,12 +1484,20 @@ pub struct Character {
     pub synchronize_with: Option<u64>,
 }
 
-impl IndexedGuid<u64, CharacterIndex> for Character {
+impl
+    IndexedGuid<
+        u64,
+        CharacterLocationIndex,
+        CharacterNameIndex,
+        CharacterSquadIndex,
+        CharacterMatchmakingGroupIndex,
+    > for Character
+{
     fn guid(&self) -> u64 {
         self.stats.guid
     }
 
-    fn index(&self) -> CharacterIndex {
+    fn index1(&self) -> CharacterLocationIndex {
         (
             match &self.stats.character_type {
                 CharacterType::Player(player) => match player.ready {
@@ -1457,6 +1515,21 @@ impl IndexedGuid<u64, CharacterIndex> for Character {
             self.stats.instance_guid,
             Character::chunk(self.stats.pos.x, self.stats.pos.z),
         )
+    }
+
+    fn index2(&self) -> Option<CharacterNameIndex> {
+        self.stats.name.clone()
+    }
+
+    fn index3(&self) -> Option<CharacterSquadIndex> {
+        self.stats.squad_guid
+    }
+
+    fn index4(&self) -> Option<CharacterMatchmakingGroupIndex> {
+        match &self.stats.character_type {
+            CharacterType::Player(player) => player.matchmaking_group,
+            _ => None,
+        }
     }
 }
 
@@ -1494,13 +1567,22 @@ impl Character {
                 mount_id,
                 cursor,
                 is_spawned: true,
+                name: None,
+                squad_guid: None,
                 interact_radius,
                 auto_interact_radius,
                 instance_guid,
                 wield_type: (wield_type, wield_type.holster()),
                 holstered: false,
                 animation_id,
-                speed: 0.0,
+                speed: CharacterStat {
+                    base: 0.0,
+                    mount_multiplier: 1.0,
+                },
+                jump_height_multiplier: CharacterStat {
+                    base: 1.0,
+                    mount_multiplier: 1.0,
+                },
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(
                 tickable_procedures,
@@ -1548,9 +1630,12 @@ impl Character {
                 pos,
                 rot,
                 scale: 1.0,
+                name: Some(format!("{}", data.name)),
+                squad_guid: data.squad_guid,
                 character_type: CharacterType::Player(Box::new(data)),
                 mount_id: None,
                 cursor: None,
+                is_spawned: true,
                 interact_radius: 0.0,
                 auto_interact_radius: 0.0,
                 instance_guid,
@@ -1558,7 +1643,6 @@ impl Character {
                 holstered: false,
                 animation_id: 0,
                 speed: 0.0,
-                is_spawned: true,
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(HashMap::new(), Vec::new()),
             synchronize_with: None,
