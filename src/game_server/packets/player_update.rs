@@ -85,9 +85,9 @@ impl GamePacket for RemoveStandard {
 pub struct RemoveGracefully {
     pub guid: u64,
     pub use_death_animation: bool,
-    pub removal_delay_millis: u32,
+    pub delay_millis: u32,
     pub composite_effect_delay_millis: u32,
-    pub composite_effect_id: u32,
+    pub composite_effect: u32, // Continuos effects remain looping after character removal
     pub fade_duration_millis: u32,
 }
 
@@ -420,7 +420,7 @@ impl GamePacket for ClearRail {
 pub struct MoveOnRail {
     pub guid: u64,
     pub rail_id: u32,
-    pub unknown2: u32,
+    pub elapsed_seconds: f32,
     pub unknown3: Pos,
 }
 

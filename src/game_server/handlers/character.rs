@@ -134,7 +134,8 @@ pub struct BaseNpcConfig {
     #[serde(default)]
     pub first_possible_procedures: Vec<String>,
     pub synchronize_with: Option<String>,
-    pub is_spawned: Option<bool>,
+    #[serde(default = "default_true")]
+    pub is_spawned: bool,
 }
 
 #[derive(Clone)]
@@ -281,9 +282,20 @@ impl From<BaseNpcConfig> for BaseNpc {
             bounce_area_id: value.bounce_area_id,
             npc_type: value.npc_type,
             enable_rotation_and_shadow: value.enable_rotation_and_shadow,
-            enable_gravity: value.enable_gravity
+            enable_gravity: value.enable_gravity,
         }
     }
+}
+
+#[derive(Clone, Deserialize)]
+pub struct RemovalConfig {
+    #[serde(default = "default_true")]
+    pub enable_graceful_removal: bool,
+    #[serde(default = "default_true")]
+    pub enable_death_animation: bool,
+    pub removal_delay_millis: Option<u32>,
+    pub removal_effect_delay_millis: Option<u32>,
+    pub removal_composite_effect_id: Option<u32>,
 }
 
 #[derive(Clone, Deserialize)]
@@ -308,20 +320,15 @@ pub struct TickableStep {
     pub one_shot_animation_id: Option<i32>,
     pub chat_message_id: Option<u32>,
     pub sound_id: Option<u32>,
+    pub rail_id: Option<u32>,
     pub composite_effect_id: Option<u32>,
     pub effect_delay_millis: Option<u32>,
-    pub effect_duration_millis: Option<u32>,
-    pub rail_id: Option<u32>,
-    pub disable_death_animation: Option<bool>,
-    pub removal_delay_millis: Option<u32>,
-    pub removal_fade_millis: Option<u32>,
-    pub removal_composite_effect_id: Option<u32>,
-    pub removal_effect_delay_millis: Option<u32>,
+    #[serde(flatten)]
+    pub removal_config: RemovalConfig,
+    pub spawned_state: Option<bool>,
     #[serde(default)]
     pub cursor: CursorUpdate,
     pub duration_millis: u64,
-    pub spawn_npc: Option<bool>,
-    pub despawn_npc: Option<bool>,
 }
 
 impl TickableStep {
@@ -360,11 +367,9 @@ impl TickableStep {
             None,
         );
 
-        if let Some(true) = self.spawn_npc {
-            if !character.is_spawned {
-                character.is_spawned = true;
-            }
-            if character.is_spawned {
+        if let Some(spawned_state) = self.spawned_state {
+            character.is_spawned = spawned_state;
+            if spawned_state {
                 match character.character_type {
                     CharacterType::AmbientNpc(ref ambient_npc) => {
                         packets_for_all.extend(ambient_npc.add_packets(&character_ref)?);
@@ -377,22 +382,35 @@ impl TickableStep {
                     }
                     _ => {}
                 }
+            } else if !spawned_state {
+                let graceful_removal = self.removal_config.enable_graceful_removal;
+                if graceful_removal {
+                    packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: RemoveGracefully {
+                            guid: Guid::guid(character),
+                            use_death_animation: self.removal_config.enable_death_animation,
+                            delay_millis: self.removal_config.removal_delay_millis.unwrap_or(0),
+                            composite_effect_delay_millis: self
+                                .removal_config
+                                .removal_delay_millis
+                                .unwrap_or(0),
+                            composite_effect: self
+                                .removal_config
+                                .removal_composite_effect_id
+                                .unwrap_or(0),
+                            fade_duration_millis: self.duration_millis as u32,
+                        },
+                    })?);
+                } else {
+                    packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: RemoveStandard {
+                            guid: Guid::guid(character),
+                        },
+                    })?);
+                }
             }
-        }
-
-        if let Some(true) = self.despawn_npc {
-            character.is_spawned = false;
-            packets_for_all.push(GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: RemoveGracefully {
-                    guid: Guid::guid(character),
-                    use_death_animation: !self.disable_death_animation.unwrap_or(true),
-                    removal_delay_millis: self.removal_delay_millis.unwrap_or(0),
-                    composite_effect_delay_millis: self.removal_effect_delay_millis.unwrap_or(0),
-                    composite_effect_id: self.removal_composite_effect_id.unwrap_or(0),
-                    fade_duration_millis: self.removal_fade_millis.unwrap_or(1000),
-                },
-            })?);
         }
 
         if let Some(composite_effect_id) = self.composite_effect_id {
@@ -403,7 +421,7 @@ impl TickableStep {
                     triggered_by_guid: 0,
                     composite_effect: composite_effect_id,
                     delay_millis: self.effect_delay_millis.unwrap_or(0),
-                    duration_millis: self.effect_duration_millis.unwrap_or(1000),
+                    duration_millis: self.duration_millis as u32,
                     pos: Pos {
                         x: 0.0,
                         y: 0.0,
@@ -420,7 +438,7 @@ impl TickableStep {
                 inner: MoveOnRail {
                     guid: Guid::guid(character),
                     rail_id,
-                    unknown2: 0,
+                    elapsed_seconds: 0.0,
                     unknown3: Pos {
                         x: 0.0,
                         y: 0.0,
@@ -1336,7 +1354,7 @@ pub struct NpcTemplate {
     pub tickable_procedures: HashMap<String, TickableProcedureConfig>,
     pub first_possible_procedures: Vec<String>,
     pub synchronize_with: Option<String>,
-    pub is_spawned: Option<bool>,
+    pub is_spawned: bool,
 }
 
 impl NpcTemplate {
@@ -1365,7 +1383,7 @@ impl NpcTemplate {
                 animation_id: self.animation_id,
                 speed: 0.0,
                 cursor: self.cursor,
-                is_spawned: self.is_spawned.unwrap_or(true),
+                is_spawned: self.is_spawned,
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(
                 self.tickable_procedures.clone(),

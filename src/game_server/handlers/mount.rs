@@ -94,9 +94,9 @@ pub fn reply_dismount(
                         inner: RemoveGracefully {
                             guid: mount_guid(sender, mount_id),
                             use_death_animation: false,
-                            removal_delay_millis: 0,
+                            delay_millis: 0,
                             composite_effect_delay_millis: 0,
-                            composite_effect_id: 0,
+                            composite_effect: 0,
                             fade_duration_millis: 1000,
                         },
                     })?,

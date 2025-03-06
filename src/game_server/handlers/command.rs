@@ -5,7 +5,7 @@ use packet_serialize::DeserializePacket;
 
 use crate::{
     game_server::{
-        packets::command::{AdvanceDialog, CommandOpCode, SelectPlayer},
+        packets::command::{CommandOpCode, SelectPlayer},
         Broadcast, GameServer, ProcessPacketError,
     },
     info,
@@ -23,12 +23,6 @@ pub fn process_command(
             CommandOpCode::SelectPlayer => {
                 let req = SelectPlayer::deserialize(cursor)?;
                 interact_with_character(req, game_server)
-            }
-            CommandOpCode::AdvanceDialog => {
-                let advance_dialog = AdvanceDialog::deserialize(cursor)?;
-
-                info!("Received Button ID {}", advance_dialog.button_id);
-                Ok(Vec::new())
             }
             _ => {
                 info!("Unimplemented command: {:?}", op_code);

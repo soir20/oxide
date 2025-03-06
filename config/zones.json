@@ -659,34 +659,42 @@
                 "comment": "Green Starfighter",
                 "model_id": 721,
                 "npc_type": 2,
-                "pos_x": 102.07826,
-                "pos_y": 23.625809,
-                "pos_z": -202.4084,
+                "pos_x": 118.403900,
+                "pos_y": 56.782230,
+                "pos_z": -328.281600,
                 "pos_w": 1.0,
-                "rot_x": 0.032968648,
+                "rot_x": 0.0,
                 "rot_y": 0.0,
-                "rot_z": 0.9994564,
+                "rot_z": 0.0,
                 "is_spawned": false,
                 "enable_gravity": false,
                 "tickable_procedures": {
                     "green_starfighter": {
+                        "weight": 36,
                         "steps": [
                             {
-                                "spawn_npc": true,
+                                "spawned_state": true,
                                 "rail_id": 36,
+                                "duration_millis": 0
+                            }
+                        ],
+                        "next_possible_procedures": ["final_procedure"]
+                    },
+                    "final_procedure": {
+                        "steps": [
+                            {
                                 "composite_effect_id": 1021,
-                                "effect_duration_millis": 12000,
                                 "duration_millis": 12000
                             },
                             {
-                                "despawn_npc": true,
-                                "disable_death_animation": true,                                
+                                "spawned_state": false,
+                                "enable_graceful_removal": false,
                                 "duration_millis": 1000
                             }
                         ]
                     },
                     "empty": {
-                        "weight": 35,
+                        "weight": 1259,
                         "steps": [
                             {
                                 "duration_millis": 1000
@@ -699,34 +707,42 @@
                 "comment": "Purple Starfighter",
                 "model_id": 723,
                 "npc_type": 2,
-                "pos_x": 120.92088,
-                "pos_y": 23.625809,
-                "pos_z": -161.41364,
+                "pos_x": 135.588600,
+                "pos_y": 24.974580,
+                "pos_z": -26.692560,
                 "pos_w": 1.0,
-                "rot_x": -0.019411897,
+                "rot_x": 0.0,
                 "rot_y": 0.0,
-                "rot_z": -0.99913853,
+                "rot_z": 0.0,
                 "is_spawned": false,
                 "enable_gravity": false,
                 "tickable_procedures": {
                     "purple_starfighter": {
+                        "weight": 36,
                         "steps": [
                             {
-                                "spawn_npc": true,
+                                "spawned_state": true,
                                 "rail_id": 37,
+                                "duration_millis": 0
+                            }
+                        ],
+                        "next_possible_procedures": ["final_procedure"]
+                    },
+                    "final_procedure": {
+                        "steps": [
+                            {
                                 "composite_effect_id": 1021,
-                                "effect_duration_millis": 12500,
                                 "duration_millis": 12500
                             },
                             {
-                                "despawn_npc": true,
-                                "disable_death_animation": true,
+                                "spawned_state": false,
+                                "enable_graceful_removal": false,
                                 "duration_millis": 1000
                             }
                         ]
                     },
                     "empty": {
-                        "weight": 35,
+                        "weight": 1259,
                         "steps": [
                             {
                                 "duration_millis": 1000

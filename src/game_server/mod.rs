@@ -37,7 +37,6 @@ use handlers::unique_guid::{
 };
 use handlers::zone::{load_zones, teleport_within_zone, ZoneInstance, ZoneTemplate};
 use packets::client_update::{Health, Power, PreloadCharactersDone, Stat, StatId, Stats};
-use packets::command::{DialogChoice, EnterDialog, ExitDialog};
 use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
 use packets::item::ItemDefinition;
 use packets::login::{LoginRequest, WelcomeScreen, ZoneDetailsDone};
@@ -48,7 +47,7 @@ use packets::tunnel::{TunneledPacket, TunneledWorldPacket};
 use packets::ui::ExecuteScriptWithParams;
 use packets::update_position::{PlayerJump, UpdatePlayerPosition};
 use packets::zone::ZoneTeleportRequest;
-use packets::{GamePacket, OpCode, Pos};
+use packets::{GamePacket, OpCode};
 use rand::Rng;
 
 use crate::{info, teleport_to_zone};
@@ -697,61 +696,6 @@ impl GameServer {
                                             wield_type: character_write_handle.wield_type()
                                         }
                                     })?,
-                                    GamePacket::serialize(&TunneledPacket {
-                                        unknown1: true,
-                                        inner: EnterDialog {
-                                            dialog_message_id: 1000,
-                                            speaker_animation_id: 3011,
-                                            speaker_guid: 1,
-                                            enable_exit_button: true,
-                                            unknown4: 40.0,
-                                            dialog_choices: vec![DialogChoice
-                                            {
-                                              button_id: 0,
-                                              unknown2: 0,
-                                              button_text_id: 60710,
-                                              unknown4: 0,
-                                              unknown5: 0,
-                                            },
-                                            DialogChoice
-                                            {
-                                                button_id: 1,
-                                                unknown2: 0,
-                                                button_text_id: 60711,
-                                                unknown4: 0,
-                                                unknown5: 0,
-                                            }],
-                                            camera_placement: Pos {
-                                                x: 900.3,
-                                                y: 171.93376,
-                                                z: 1546.956,
-                                                w: 1.0,
-                                            },
-                                            look_at: Pos {
-                                                x: 887.3,
-                                                y: 171.93376,
-                                                z: 1546.956,
-                                                w: 1.0,
-                                            },
-                                            change_player_pos: false,
-                                            player_pos: Pos {
-                                                x: 887.3,
-                                                y: 171.93376,
-                                                z: 1546.956,
-                                                w: 1.0,
-                                            },
-                                            unknown8: 40.0,
-                                            hide_player: false,
-                                            unknown10: false,
-                                            unknown11: false,
-                                            zoom: 0.0,
-                                            speaker_sound_id: 3011,
-                                        }
-                                    })?/*,
-                                    GamePacket::serialize(&TunneledPacket {
-                                        unknown1: true,
-                                        inner: ExitDialog {}
-                                    })?,*/
                                 ]));
                                 Ok(())
                             } else {
