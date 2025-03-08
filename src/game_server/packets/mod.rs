@@ -35,6 +35,7 @@ pub enum OpCode {
     TunneledClient = 0x5,
     TunneledWorld = 0x6,
     Player = 0xc,
+    ClientIsDoneLoading = 0xa,
     ClientIsReady = 0xd,
     ZoneDetailsDone = 0xe,
     Chat = 0xf,
