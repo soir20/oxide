@@ -28,7 +28,8 @@ use handlers::lock_enforcer::{
 use handlers::login::{log_in, log_out, send_points_of_interest};
 use handlers::minigame::{
     create_active_minigame, load_all_minigames, prepare_active_minigame_instance,
-    process_minigame_packet, remove_from_matchmaking, AllMinigameConfigs,
+    process_minigame_packet, remove_from_matchmaking, update_minigame_settings_menu,
+    AllMinigameConfigs,
 };
 use handlers::mount::{load_mounts, process_mount_packet, MountConfig};
 use handlers::reference_data::{load_categories, load_item_classes, load_item_groups};
@@ -254,6 +255,24 @@ impl GameServer {
                     let packet: TunneledWorldPacket<Vec<u8>> =
                         DeserializePacket::deserialize(&mut cursor)?;
                     broadcasts.append(&mut self.process_packet(sender, packet.inner)?);
+                }
+                OpCode::ClientIsDoneLoading => {
+                    self.lock_enforcer().read_characters(|_| CharacterLockRequest {
+                        read_guids: vec![player_guid(sender)],
+                        write_guids: Vec::new(),
+                        character_consumer: |_, characters_read, _, _| {
+                            if let Some(character_read_handle) = characters_read.get(&player_guid(sender)) {
+                                if let CharacterType::Player(player) = &character_read_handle.stats.character_type {
+                                    broadcasts.append(&mut update_minigame_settings_menu(sender, player, self.minigames())?);
+                                    Ok(())
+                                } else {
+                                    Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!{"Character {} sent a done loading packet but is not a player", sender}))
+                                }
+                            } else {
+                                Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!{"Player {} sent a done loading packet but does not exist", sender}))
+                            }
+                        },
+                    })?;
                 }
                 OpCode::ClientIsReady => {
                     let mut sender_only_packets = Vec::new();
