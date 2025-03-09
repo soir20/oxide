@@ -1167,7 +1167,7 @@ fn handle_request_start_active_minigame(
                                             stage_group_guid: minigame_status.stage_group_guid,
                                         },
                                         stage_id: 1,
-                                        disable_default_saber: true,
+                                        use_player_weapon: true,
                                     }
                                 })?,
                                 GamePacket::serialize(&TunneledPacket {

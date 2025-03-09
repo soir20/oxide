@@ -9,7 +9,7 @@ use super::{
 pub struct SaberStrikeInit {
     pub minigame_header: MinigameHeader,
     pub stage_id: u32,
-    pub disable_default_saber: bool,
+    pub use_player_weapon: bool,
 }
 
 impl GamePacket for SaberStrikeInit {
