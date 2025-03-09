@@ -31,6 +31,7 @@ use crate::{
                 ScoreType, ShowStageInstanceSelect, StartActiveMinigame,
                 UpdateActiveMinigameRewards,
             },
+            saber_strike::SaberStrikeInit,
             tunnel::TunneledPacket,
             GamePacket, RewardBundle,
         },
@@ -348,7 +349,7 @@ impl MinigameStageGroupConfig {
         CreateMinigameStageGroupInstance {
             header: MinigameHeader {
                 stage_guid: -1,
-                unknown2: -1,
+                sub_op_code: -1,
                 stage_group_guid: self.guid,
             },
             stage_group_guid: self.guid,
@@ -491,7 +492,7 @@ impl From<&[MinigamePortalCategoryConfig]> for MinigameDefinitions {
         MinigameDefinitions {
             header: MinigameHeader {
                 stage_guid: -1,
-                unknown2: -1,
+                sub_op_code: -1,
                 stage_group_guid: -1,
             },
             stages,
@@ -722,7 +723,7 @@ fn handle_request_stage_group_instance(
                                     inner: ShowStageInstanceSelect {
                                         header: MinigameHeader {
                                             stage_guid: -1,
-                                            unknown2: -1,
+                                            sub_op_code: -1,
                                             stage_group_guid: request.header.stage_group_guid,
                                         },
                                     },
@@ -953,7 +954,7 @@ pub fn remove_from_matchmaking(
         inner: ActiveMinigameCreationResult {
             header: MinigameHeader {
                 stage_guid,
-                unknown2: -1,
+                sub_op_code: -1,
                 stage_group_guid,
             },
             was_successful: false,
@@ -1159,10 +1160,22 @@ fn handle_request_start_active_minigame(
                             let mut packets = vec![
                                 GamePacket::serialize(&TunneledPacket {
                                     unknown1: true,
+                                    inner: SaberStrikeInit {
+                                        minigame_header: MinigameHeader {
+                                            stage_guid: minigame_status.stage_guid,
+                                            sub_op_code: 1,
+                                            stage_group_guid: minigame_status.stage_group_guid,
+                                        },
+                                        unknown1: 1,
+                                        unknown2: true,
+                                    }
+                                })?,
+                                GamePacket::serialize(&TunneledPacket {
+                                    unknown1: true,
                                     inner: StartActiveMinigame {
                                         header: MinigameHeader {
                                             stage_guid: minigame_status.stage_guid,
-                                            unknown2: -1,
+                                            sub_op_code: -1,
                                             stage_group_guid: minigame_status.stage_group_guid,
                                         },
                                     },
@@ -1385,7 +1398,7 @@ fn handle_flash_payload_win(
                         inner: FlashPayload {
                             header: MinigameHeader {
                                 stage_guid: minigame_status.stage_guid,
-                                unknown2: -1,
+                                sub_op_code: -1,
                                 stage_group_guid: minigame_status.stage_group_guid,
                             },
                             payload: format!(
@@ -1433,7 +1446,7 @@ fn handle_flash_payload(
                         inner: FlashPayload {
                             header: MinigameHeader {
                                 stage_guid: minigame_status.stage_guid,
-                                unknown2: -1,
+                                sub_op_code: -1,
                                 stage_group_guid: minigame_status.stage_group_guid,
                             },
                             payload: format!(
@@ -1504,7 +1517,7 @@ fn handle_flash_payload(
                             inner: FlashPayload {
                                 header: MinigameHeader {
                                     stage_guid: minigame_status.stage_guid,
-                                    unknown2: -1,
+                                    sub_op_code: -1,
                                     stage_group_guid: minigame_status.stage_group_guid,
                                 },
                                 payload: format!("OnShowEndRoundScreenMsg\t{}", awarded_credits),
@@ -1607,7 +1620,7 @@ pub fn create_active_minigame(
                     inner: ActiveMinigameCreationResult {
                         header: MinigameHeader {
                             stage_guid: minigame_status.stage_guid,
-                            unknown2: -1,
+                            sub_op_code: -1,
                             stage_group_guid: minigame_status.stage_group_guid,
                         },
                         was_successful: true,
@@ -1618,7 +1631,7 @@ pub fn create_active_minigame(
                     inner: CreateActiveMinigame {
                         header: MinigameHeader {
                             stage_guid: minigame_status.stage_guid,
-                            unknown2: -1,
+                            sub_op_code: -1,
                             stage_group_guid: minigame_status.stage_group_guid,
                         },
                         name_id: stage_config.name_id,
@@ -1740,7 +1753,7 @@ fn end_active_minigame(
                                     inner: FlashPayload {
                                         header: MinigameHeader {
                                             stage_guid: minigame_status.stage_guid,
-                                            unknown2: -1,
+                                            sub_op_code: -1,
                                             stage_group_guid: minigame_status.stage_group_guid,
                                         },
                                         payload: if minigame_status.game_won {
@@ -1755,7 +1768,7 @@ fn end_active_minigame(
                                     inner: ActiveMinigameEndScore {
                                         header: MinigameHeader {
                                             stage_guid,
-                                            unknown2: -1,
+                                            sub_op_code: -1,
                                             stage_group_guid: minigame_status.stage_group_guid,
                                         },
                                         scores: minigame_status.score_entries.clone(),
@@ -1767,7 +1780,7 @@ fn end_active_minigame(
                                     inner: UpdateActiveMinigameRewards {
                                         header: MinigameHeader {
                                             stage_guid: minigame_status.stage_guid,
-                                            unknown2: -1,
+                                            sub_op_code: -1,
                                             stage_group_guid: minigame_status.stage_group_guid,
                                         },
                                         reward_bundle1: RewardBundle {
@@ -1800,7 +1813,7 @@ fn end_active_minigame(
                                     inner: EndActiveMinigame {
                                         header: MinigameHeader {
                                             stage_guid: minigame_status.stage_guid,
-                                            unknown2: -1,
+                                            sub_op_code: -1,
                                             stage_group_guid: minigame_status.stage_group_guid,
                                         },
                                         won: minigame_status.game_won,
@@ -1814,7 +1827,7 @@ fn end_active_minigame(
                                     inner: LeaveActiveMinigame {
                                         header: MinigameHeader {
                                             stage_guid: minigame_status.stage_guid,
-                                            unknown2: -1,
+                                            sub_op_code: -1,
                                             stage_group_guid: minigame_status.stage_group_guid,
                                         },
                                     },

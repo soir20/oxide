@@ -23,6 +23,7 @@ pub enum MinigameOpCode {
     RequestMinigameStageGroupInstance = 0x31,
     CreateMinigameStageGroupInstance = 0x33,
     ShowStageInstanceSelect = 0x34,
+    SaberStrike = 0x39,
     ActiveMinigameCreationResult = 0x44,
 }
 
@@ -37,7 +38,7 @@ impl SerializePacket for MinigameOpCode {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct MinigameHeader {
     pub stage_guid: i32,
-    pub unknown2: i32,
+    pub sub_op_code: i32,
     pub stage_group_guid: i32,
 }
 

@@ -101,7 +101,7 @@
                 }
             },
             {
-                "guid": 10000,
+                "guid": 1004,
                 "name_id": 7103,
                 "description_id": 9754,
                 "members_only": false,
@@ -115,7 +115,7 @@
                 "sort_order": 10000,
                 "tutorial_swf": "HowToStuntGungan.swf",
                 "stage_group": {
-                    "guid": 10000,
+                    "guid": 1004,
                     "name_id": 7103,
                     "description_id": 9754,
                     "icon_id": 542,
@@ -138,7 +138,6 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "",
-                                "flash_game": "StuntGungan.swf",
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 29"
                             }
