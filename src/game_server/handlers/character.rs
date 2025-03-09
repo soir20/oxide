@@ -982,6 +982,7 @@ pub struct MinigameStatus {
     pub game_won: bool,
     pub score_entries: Vec<ScoreEntry>,
     pub total_score: i32,
+    pub awarded_credits: u32,
     pub start_time: Instant,
 }
 
