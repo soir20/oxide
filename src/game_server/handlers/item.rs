@@ -2,6 +2,8 @@ use std::{collections::BTreeMap, fs::File, io::Error, path::Path};
 
 use crate::game_server::packets::item::ItemDefinition;
 
+pub const SABER_ITEM_TYPE: u32 = 25;
+
 pub fn load_item_definitions(config_dir: &Path) -> Result<BTreeMap<u32, ItemDefinition>, Error> {
     let mut file = File::open(config_dir.join("items.json"))?;
     let item_defs: Vec<ItemDefinition> = serde_json::from_reader(&mut file)?;

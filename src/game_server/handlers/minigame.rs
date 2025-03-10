@@ -20,6 +20,7 @@ use crate::{
             chat::{ActionBarTextColor, SendStringId},
             client_update::UpdateCredits,
             command::StartFlashGame,
+            item::EquipmentSlot,
             minigame::{
                 ActiveMinigameCreationResult, ActiveMinigameEndScore, CreateActiveMinigame,
                 CreateMinigameStageGroupInstance, EndActiveMinigame, FlashPayload,
@@ -31,7 +32,7 @@ use crate::{
                 ScoreType, ShowStageInstanceSelect, StartActiveMinigame,
                 UpdateActiveMinigameRewards,
             },
-            saber_strike::SaberStrikeStageData,
+            saber_strike::{SaberStrikeOpCode, SaberStrikeStageData},
             tunnel::TunneledPacket,
             GamePacket, RewardBundle,
         },
@@ -43,6 +44,7 @@ use crate::{
 use super::{
     character::{CharacterMatchmakingGroupIndex, CharacterType, MatchmakingGroupStatus, Player},
     guid::GuidTableIndexer,
+    item::SABER_ITEM_TYPE,
     lock_enforcer::{CharacterLockRequest, CharacterTableWriteHandle, ZoneTableWriteHandle},
     unique_guid::{player_guid, shorten_player_guid},
 };
@@ -96,6 +98,12 @@ pub struct StageLocator {
     pub stage_guid: i32,
 }
 
+#[derive(Clone, Deserialize)]
+pub enum MinigameType {
+    Flash { game_swf_name: String },
+    SaberStrike { saber_strike_stage_id: u32 },
+}
+
 #[derive(Deserialize)]
 pub struct MinigameStageConfig {
     pub guid: i32,
@@ -113,7 +121,7 @@ pub struct MinigameStageConfig {
     pub require_previous_completed: bool,
     pub link_name: String,
     pub short_name: String,
-    pub flash_game: Option<String>,
+    pub minigame_type: MinigameType,
     pub zone_template_guid: u8,
     pub score_to_credits_expression: String,
     #[serde(default = "default_matchmaking_timeout_millis")]
@@ -1157,19 +1165,64 @@ fn handle_request_start_active_minigame(
                 if let CharacterType::Player(player) = &character_read_handle.stats.character_type {
                     if let Some(minigame_status) = &player.minigame_status {
                         if request.header.stage_guid == minigame_status.stage_guid {
-                            let mut packets = vec![
-                                GamePacket::serialize(&TunneledPacket {
-                                    unknown1: true,
-                                    inner: SaberStrikeStageData {
-                                        minigame_header: MinigameHeader {
-                                            stage_guid: minigame_status.stage_guid,
-                                            sub_op_code: 1,
-                                            stage_group_guid: minigame_status.stage_group_guid,
-                                        },
-                                        saber_strike_stage_id: 1,
-                                        use_player_weapon: true,
-                                    }
-                                })?,
+                            let mut packets = Vec::new();
+
+                            if let Some(StageConfigRef {stage_config, ..}) = game_server.minigames().stage_config(minigame_status.stage_group_guid, minigame_status.stage_guid) {
+                                let mut stage_group_instance =
+                                    game_server.minigames().stage_group_instance(minigame_status.stage_group_guid, player)?;
+                                stage_group_instance.header.stage_guid = minigame_status.stage_guid;
+
+                                match &stage_config.minigame_type {
+                                    MinigameType::Flash { game_swf_name } => {
+                                        let flash_packet = GamePacket::serialize(&TunneledPacket {
+                                            unknown1: true,
+                                            inner: StartFlashGame {
+                                                loader_script_name: "MiniGameFlash".to_string(),
+                                                game_swf_name: game_swf_name.clone(),
+                                                is_micro: false,
+                                            },
+                                        })?;
+
+                                        // Re-send the stage group instance to populate the stage data in the settings menu.
+                                        // When we enter the Flash game HUD state, the current minigame group is cleared.
+                                        // This removes the game name from the options menu and breaks the how-to button.
+                                        // To avoid this, we need to send a Flash game packet to transition the HUD to the
+                                        // Flash game state. Then we re-send the stage group instance data. Finally, we
+                                        // have to reload the Flash game (by sending another Flash game packet) to ensure
+                                        // that stage group instance data is loaded in the options menu.
+                                        packets.push(flash_packet.clone());
+                                        packets.push(GamePacket::serialize(&TunneledPacket {
+                                            unknown1: true,
+                                            inner: stage_group_instance,
+                                        })?);
+                                        packets.push(flash_packet);
+                                    },
+                                    MinigameType::SaberStrike { saber_strike_stage_id } => {
+                                        packets.push(
+                                            GamePacket::serialize(&TunneledPacket {
+                                                unknown1: true,
+                                                inner: SaberStrikeStageData {
+                                                    minigame_header: MinigameHeader {
+                                                        stage_guid: minigame_status.stage_guid,
+                                                        sub_op_code: SaberStrikeOpCode::StageData as i32,
+                                                        stage_group_guid: minigame_status.stage_group_guid,
+                                                    },
+                                                    saber_strike_stage_id: *saber_strike_stage_id,
+                                                    use_player_weapon: player.battle_classes.get(&player.active_battle_class)
+                                                        .and_then(|battle_class| battle_class.items.get(&EquipmentSlot::PrimaryWeapon)
+                                                        .and_then(|item| game_server.items().get(&item.guid)))
+                                                        .map(|item| item.item_type == SABER_ITEM_TYPE)
+                                                        .unwrap_or(false),
+                                                }
+                                            })?,
+                                        );
+                                    },
+                                }
+                            } else {
+                                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} requested to start active minigame with stage config {} (stage group {}) that does not exist", sender, minigame_status.stage_guid, minigame_status.stage_group_guid)));
+                            }
+
+                            packets.push(
                                 GamePacket::serialize(&TunneledPacket {
                                     unknown1: true,
                                     inner: StartActiveMinigame {
@@ -1180,40 +1233,7 @@ fn handle_request_start_active_minigame(
                                         },
                                     },
                                 })?,
-                            ];
-
-                            if let Some(StageConfigRef {stage_config, ..}) = game_server.minigames().stage_config(minigame_status.stage_group_guid, minigame_status.stage_guid) {
-                                if let Some(flash_game) = &stage_config.flash_game {
-                                    let flash_packet = GamePacket::serialize(&TunneledPacket {
-                                        unknown1: true,
-                                        inner: StartFlashGame {
-                                            loader_script_name: "MiniGameFlash".to_string(),
-                                            game_swf_name: flash_game.clone(),
-                                            is_micro: false,
-                                        },
-                                    })?;
-
-                                    let mut stage_group_instance =
-                                        game_server.minigames().stage_group_instance(minigame_status.stage_group_guid, player)?;
-                                    stage_group_instance.header.stage_guid = minigame_status.stage_guid;
-
-                                    // Re-send the stage group instance to populate the stage data in the settings menu.
-                                    // When we enter the Flash game HUD state, the current minigame group is cleared.
-                                    // This removes the game name from the options menu and breaks the how-to button.
-                                    // To avoid this, we need to send a Flash game packet to transition the HUD to the
-                                    // Flash game state. Then we re-send the stage group instance data. Finally, we
-                                    // have to reload the Flash game (by sending another Flash game packet) to ensure
-                                    // that stage group instance data is loaded in the options menu.
-                                    packets.push(flash_packet.clone());
-                                    packets.push(GamePacket::serialize(&TunneledPacket {
-                                        unknown1: true,
-                                        inner: stage_group_instance,
-                                    })?);
-                                    packets.push(flash_packet);
-                                }
-                            } else {
-                                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} requested to start active minigame with stage config {} (stage group {}) that does not exist", sender, minigame_status.stage_guid, minigame_status.stage_group_guid)));
-                            }
+                            );
 
                             Ok(vec![
                                 Broadcast::Single(sender, packets)
@@ -1727,7 +1747,9 @@ fn end_active_minigame(
                         .stage_config(minigame_status.stage_group_guid, minigame_status.stage_guid)
                     {
                         // Wait for the end signal from the Flash payload because those games send additional score data
-                        if skip_if_flash && stage_config.flash_game.is_some() {
+                        if skip_if_flash
+                            && matches!(stage_config.minigame_type, MinigameType::Flash { .. })
+                        {
                             return Ok(Vec::new());
                         }
 

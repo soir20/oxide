@@ -52,7 +52,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage01",
-                                "flash_game": "HasbroAttackShip.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "HasbroAttackShip.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 177"
                             }
@@ -72,7 +76,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage02",
-                                "flash_game": "HasbroAttackShip.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "HasbroAttackShip.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 208"
                             }
@@ -92,7 +100,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage03",
-                                "flash_game": "HasbroAttackShip.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "HasbroAttackShip.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 219"
                             }
@@ -101,7 +113,7 @@
                 }
             },
             {
-                "guid": 1004,
+                "guid": 10000,
                 "name_id": 7103,
                 "description_id": 9754,
                 "members_only": false,
@@ -115,7 +127,7 @@
                 "sort_order": 10000,
                 "tutorial_swf": "HowToStuntGungan.swf",
                 "stage_group": {
-                    "guid": 1004,
+                    "guid": 10000,
                     "name_id": 7103,
                     "description_id": 9754,
                     "icon_id": 542,
@@ -138,6 +150,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "StuntGungan.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 29"
                             }
@@ -183,7 +200,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage01",
-                                "flash_game": "CrisisZiro.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "CrisisZiro.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 160"
                             }
@@ -203,7 +224,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage02",
-                                "flash_game": "CrisisZiro.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "CrisisZiro.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 180"
                             }
@@ -223,7 +248,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage03",
-                                "flash_game": "CrisisZiro.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "CrisisZiro.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 180"
                             }
@@ -269,7 +298,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage01",
-                                "flash_game": "r2.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "r2.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 15.25"
                             }
@@ -289,7 +322,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage02",
-                                "flash_game": "r2.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "r2.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 14"
                             }
@@ -309,7 +346,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage03",
-                                "flash_game": "r2.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "r2.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 14.45"
                             }
@@ -329,7 +370,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage04",
-                                "flash_game": "r2.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "r2.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 19.4"
                             }
@@ -349,7 +394,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage05",
-                                "flash_game": "r2.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "r2.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 13.9"
                             }
@@ -369,7 +418,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage06",
-                                "flash_game": "r2.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "r2.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 14.7"
                             }
@@ -389,7 +442,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage07",
-                                "flash_game": "r2.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "r2.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 19.8"
                             }
@@ -409,7 +466,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage08",
-                                "flash_game": "r2.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "r2.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 11.55"
                             }
@@ -429,7 +490,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage09",
-                                "flash_game": "r2.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "r2.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 12.55"
                             }
@@ -449,7 +514,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage10",
-                                "flash_game": "r2.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "r2.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 22.7"
                             }
@@ -469,7 +538,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage11",
-                                "flash_game": "r2.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "r2.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 17"
                             }
@@ -489,7 +562,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage12",
-                                "flash_game": "r2.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "r2.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 17"
                             }
@@ -509,7 +586,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage13",
-                                "flash_game": "r2.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "r2.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 11"
                             }
@@ -529,7 +610,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage14",
-                                "flash_game": "r2.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "r2.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 17"
                             }
@@ -549,7 +634,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage15",
-                                "flash_game": "r2.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "r2.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 18"
                             }
@@ -569,7 +658,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage16",
-                                "flash_game": "r2.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "r2.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 25"
                             }
@@ -589,7 +682,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage17",
-                                "flash_game": "r2.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "r2.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 17"
                             }
@@ -609,7 +706,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage18",
-                                "flash_game": "r2.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "r2.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 39"
                             }
@@ -629,7 +730,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage19",
-                                "flash_game": "r2.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "r2.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 18"
                             }
@@ -649,7 +754,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage20",
-                                "flash_game": "r2.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "r2.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 24"
                             }
@@ -669,7 +778,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage21",
-                                "flash_game": "r2.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "r2.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 20"
                             }
@@ -689,7 +802,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage22",
-                                "flash_game": "r2.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "r2.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 22"
                             }
@@ -709,7 +826,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage23",
-                                "flash_game": "r2.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "r2.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 12"
                             }
@@ -729,7 +850,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage24",
-                                "flash_game": "r2.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "r2.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 18"
                             }
@@ -749,7 +874,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage25",
-                                "flash_game": "r2.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "r2.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 18"
                             }
@@ -769,7 +898,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage26",
-                                "flash_game": "r2.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "r2.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 15"
                             }
@@ -789,7 +922,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage27",
-                                "flash_game": "r2.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "r2.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 19"
                             }
@@ -809,7 +946,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage28",
-                                "flash_game": "r2.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "r2.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 21"
                             }
@@ -829,7 +970,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage29",
-                                "flash_game": "r2.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "r2.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 15"
                             }
@@ -849,7 +994,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage30",
-                                "flash_game": "r2.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "r2.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 20"
                             }
@@ -895,7 +1044,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage01",
-                                "flash_game": "RepublicGunship.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "RepublicGunship.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 115"
                             }
@@ -915,7 +1068,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage02",
-                                "flash_game": "RepublicGunship.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "RepublicGunship.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 167"
                             }
@@ -935,7 +1092,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage03",
-                                "flash_game": "RepublicGunship.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "RepublicGunship.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 201"
                             }
@@ -981,7 +1142,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage01",
-                                "flash_game": "AquaticAssault.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "AquaticAssault.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 102.5"
                             }
@@ -1001,7 +1166,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage02",
-                                "flash_game": "AquaticAssault.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "AquaticAssault.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 108"
                             }
@@ -1021,7 +1190,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage03",
-                                "flash_game": "AquaticAssault.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "AquaticAssault.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 168"
                             }
@@ -1068,7 +1241,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage01",
-                                "flash_game": "BlasterTraining.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "BlasterTraining.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 180"
                             }
@@ -1088,7 +1265,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage02",
-                                "flash_game": "BlasterTraining.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "BlasterTraining.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 180"
                             }
@@ -1108,7 +1289,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage03",
-                                "flash_game": "BlasterTraining.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "BlasterTraining.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 180"
                             }
@@ -1154,7 +1339,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "",
-                                "flash_game": "TurretTactics.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "TurretTactics.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 69.5"
                             }
@@ -1209,7 +1398,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage01",
-                                "flash_game": "CrystalAttunement.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "CrystalAttunement.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 153"
                             }
@@ -1229,7 +1422,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage02",
-                                "flash_game": "CrystalAttunement.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "CrystalAttunement.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 153"
                             }
@@ -1249,7 +1446,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage03",
-                                "flash_game": "CrystalAttunement.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "CrystalAttunement.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 153"
                             }
@@ -1296,7 +1497,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage01",
-                                "flash_game": "Infiltration.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "Infiltration.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 40"
                             }
@@ -1316,7 +1521,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage02",
-                                "flash_game": "Infiltration.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "Infiltration.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 65"
                             }
@@ -1336,7 +1545,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage03",
-                                "flash_game": "Infiltration.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "Infiltration.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 71"
                             }
@@ -1356,7 +1569,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage04",
-                                "flash_game": "Infiltration.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "Infiltration.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 57"
                             }
@@ -1376,7 +1593,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage05",
-                                "flash_game": "Infiltration.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "Infiltration.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 70"
                             }
@@ -1396,7 +1617,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage06",
-                                "flash_game": "Infiltration.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "Infiltration.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 76"
                             }
@@ -1416,7 +1641,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage07",
-                                "flash_game": "Infiltration.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "Infiltration.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 120"
                             }
@@ -1436,7 +1665,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage08",
-                                "flash_game": "Infiltration.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "Infiltration.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 71"
                             }
@@ -1456,7 +1689,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage09",
-                                "flash_game": "Infiltration.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "Infiltration.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 140"
                             }
@@ -1476,7 +1713,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage10",
-                                "flash_game": "Infiltration.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "Infiltration.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 76"
                             }
@@ -1496,7 +1737,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage11",
-                                "flash_game": "Infiltration.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "Infiltration.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 114"
                             }
@@ -1516,7 +1761,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage12",
-                                "flash_game": "Infiltration.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "Infiltration.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 267"
                             }
@@ -1536,7 +1785,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage13",
-                                "flash_game": "Infiltration.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "Infiltration.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 87"
                             }
@@ -1556,7 +1809,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage14",
-                                "flash_game": "Infiltration.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "Infiltration.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 160"
                             }
@@ -1576,7 +1833,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage15",
-                                "flash_game": "Infiltration.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "Infiltration.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 120"
                             }
@@ -1596,7 +1857,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage16",
-                                "flash_game": "Infiltration.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "Infiltration.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 159"
                             }
@@ -1616,7 +1881,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage17",
-                                "flash_game": "Infiltration.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "Infiltration.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 90"
                             }
@@ -1636,7 +1905,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage18",
-                                "flash_game": "Infiltration.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "Infiltration.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 94"
                             }
@@ -1656,7 +1929,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage19",
-                                "flash_game": "Infiltration.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "Infiltration.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 85"
                             }
@@ -1676,7 +1953,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage20",
-                                "flash_game": "Infiltration.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "Infiltration.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 90.5"
                             }
@@ -1696,7 +1977,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage21",
-                                "flash_game": "Infiltration.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "Infiltration.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 125"
                             }
@@ -1716,7 +2001,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage22",
-                                "flash_game": "Infiltration.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "Infiltration.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 91"
                             }
@@ -1736,7 +2025,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage23",
-                                "flash_game": "Infiltration.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "Infiltration.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 91"
                             }
@@ -1756,7 +2049,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage24",
-                                "flash_game": "Infiltration.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "Infiltration.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 91"
                             }
@@ -1776,7 +2073,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage25",
-                                "flash_game": "Infiltration.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "Infiltration.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 91"
                             }
@@ -1796,7 +2097,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage26",
-                                "flash_game": "Infiltration.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "Infiltration.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 91"
                             }
@@ -1816,7 +2121,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage27",
-                                "flash_game": "Infiltration.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "Infiltration.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 91"
                             }
@@ -1836,7 +2145,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage28",
-                                "flash_game": "Infiltration.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "Infiltration.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 91"
                             }
@@ -1882,7 +2195,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage01",
-                                "flash_game": "ForcePerception.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "ForcePerception.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 437"
                             }
@@ -1902,7 +2219,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage02",
-                                "flash_game": "ForcePerception.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "ForcePerception.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 439"
                             }
@@ -1922,7 +2243,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage03",
-                                "flash_game": "ForcePerception.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "ForcePerception.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 446"
                             }
@@ -1969,7 +2294,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage01",
-                                "flash_game": "DroidProgramming.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "DroidProgramming.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 243"
                             }
@@ -1989,7 +2318,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage02",
-                                "flash_game": "DroidProgramming.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "DroidProgramming.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 225"
                             }
@@ -2009,7 +2342,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage03",
-                                "flash_game": "DroidProgramming.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "DroidProgramming.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 215"
                             }
@@ -2029,7 +2366,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage04",
-                                "flash_game": "DroidProgramming.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "DroidProgramming.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 224"
                             }
@@ -2049,7 +2390,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage05",
-                                "flash_game": "DroidProgramming.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "DroidProgramming.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 218"
                             }
@@ -2069,7 +2414,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage06",
-                                "flash_game": "DroidProgramming.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "DroidProgramming.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 217"
                             }
@@ -2089,7 +2438,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage07",
-                                "flash_game": "DroidProgramming.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "DroidProgramming.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 214"
                             }
@@ -2109,7 +2462,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage08",
-                                "flash_game": "DroidProgramming.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "DroidProgramming.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 220"
                             }
@@ -2129,7 +2486,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage09",
-                                "flash_game": "DroidProgramming.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "DroidProgramming.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 217"
                             }
@@ -2149,7 +2510,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage10",
-                                "flash_game": "DroidProgramming.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "DroidProgramming.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 211.5"
                             }
@@ -2169,7 +2534,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage11",
-                                "flash_game": "DroidProgramming.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "DroidProgramming.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 247"
                             }
@@ -2189,7 +2558,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage12",
-                                "flash_game": "DroidProgramming.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "DroidProgramming.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 241"
                             }
@@ -2209,7 +2582,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage13",
-                                "flash_game": "DroidProgramming.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "DroidProgramming.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 278"
                             }
@@ -2229,7 +2606,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage14",
-                                "flash_game": "DroidProgramming.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "DroidProgramming.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 238"
                             }
@@ -2249,7 +2630,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage15",
-                                "flash_game": "DroidProgramming.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "DroidProgramming.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 270"
                             }
@@ -2269,7 +2654,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage16",
-                                "flash_game": "DroidProgramming.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "DroidProgramming.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 242"
                             }
@@ -2289,7 +2678,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage17",
-                                "flash_game": "DroidProgramming.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "DroidProgramming.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 234"
                             }
@@ -2309,7 +2702,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage18",
-                                "flash_game": "DroidProgramming.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "DroidProgramming.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 232"
                             }
@@ -2329,7 +2726,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage19",
-                                "flash_game": "DroidProgramming.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "DroidProgramming.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 285"
                             }
@@ -2349,7 +2750,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage20",
-                                "flash_game": "DroidProgramming.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "DroidProgramming.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 225"
                             }
@@ -2369,7 +2774,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage21",
-                                "flash_game": "DroidProgramming.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "DroidProgramming.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 235"
                             }
@@ -2389,7 +2798,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage22",
-                                "flash_game": "DroidProgramming.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "DroidProgramming.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 249"
                             }
@@ -2409,7 +2822,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage23",
-                                "flash_game": "DroidProgramming.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "DroidProgramming.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 251"
                             }
@@ -2429,7 +2846,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage24",
-                                "flash_game": "DroidProgramming.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "DroidProgramming.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 189"
                             }
@@ -2449,7 +2870,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage25",
-                                "flash_game": "DroidProgramming.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "DroidProgramming.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 229"
                             }
@@ -2469,7 +2894,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage26",
-                                "flash_game": "DroidProgramming.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "DroidProgramming.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 229"
                             }
@@ -2489,7 +2918,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage27",
-                                "flash_game": "DroidProgramming.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "DroidProgramming.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 229"
                             }
@@ -2509,7 +2942,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage28",
-                                "flash_game": "DroidProgramming.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "DroidProgramming.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 229"
                             }
@@ -2529,7 +2966,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage29",
-                                "flash_game": "DroidProgramming.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "DroidProgramming.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 229"
                             }
@@ -2549,7 +2990,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage30",
-                                "flash_game": "DroidProgramming.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "DroidProgramming.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 229"
                             }
@@ -2595,7 +3040,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage01",
-                                "flash_game": "MineBuster.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "MineBuster.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 139"
                             }
@@ -2615,7 +3064,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage02",
-                                "flash_game": "MineBuster.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "MineBuster.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 169.25"
                             }
@@ -2635,7 +3088,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage03",
-                                "flash_game": "MineBuster.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "MineBuster.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 71.5"
                             }
@@ -2681,7 +3138,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage01",
-                                "flash_game": "HoloScramble.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "HoloScramble.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 200"
                             }
@@ -2701,7 +3162,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage02",
-                                "flash_game": "HoloScramble.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "HoloScramble.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 200"
                             }
@@ -2721,7 +3186,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage03",
-                                "flash_game": "HoloScramble.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "HoloScramble.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 200"
                             }
@@ -2767,7 +3236,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage01",
-                                "flash_game": "startyper.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "startyper.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 40.9"
                             }
@@ -2787,7 +3260,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage02",
-                                "flash_game": "startyper.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "startyper.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 80"
                             }
@@ -2807,7 +3284,11 @@
                                 "require_previous_completed": false,
                                 "link_name": "stage",
                                 "short_name": "stage03",
-                                "flash_game": "startyper.swf",
+                                "minigame_type": {
+                                    "Flash": {
+                                        "game_swf_name": "startyper.swf"
+                                    }
+                                },
                                 "zone_template_guid": 200,
                                 "score_to_credits_expression": "x / 81"
                             }
