@@ -34,6 +34,7 @@ use crate::{
             },
             saber_strike::{SaberStrikeOpCode, SaberStrikeStageData},
             tunnel::TunneledPacket,
+            ui::ExecuteScriptWithParams,
             GamePacket, RewardBundle,
         },
         Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
@@ -1198,6 +1199,23 @@ fn handle_request_start_active_minigame(
                                         packets.push(flash_packet);
                                     },
                                     MinigameType::SaberStrike { saber_strike_stage_id } => {
+                                        // Re-send the stage group instance to populate the stage data in the settings menu.
+                                        // When we enter the Saber Strike HUD state, the current minigame group is cleared.
+                                        // This removes the game name from the options menu and breaks the how-to button.
+                                        // To avoid this, we need to send a script packet to transition the HUD to the
+                                        // main state. Then we re-send the stage group instance data. Then we can load
+                                        // Saber Strike.
+                                        packets.push(GamePacket::serialize(&TunneledPacket {
+                                            unknown1: true,
+                                            inner: ExecuteScriptWithParams {
+                                                script_name: "UIGlobal.SetStateMain".to_string(),
+                                                params: vec![],
+                                            },
+                                        })?);
+                                        packets.push(GamePacket::serialize(&TunneledPacket {
+                                            unknown1: true,
+                                            inner: stage_group_instance,
+                                        })?);
                                         packets.push(
                                             GamePacket::serialize(&TunneledPacket {
                                                 unknown1: true,
