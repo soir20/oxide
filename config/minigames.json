@@ -125,7 +125,7 @@
                 "is_popular": true,
                 "is_game_of_day": false,
                 "sort_order": 10000,
-                "tutorial_swf": "HowToStuntGungan.swf",
+                "tutorial_swf": "HowtoStuntGungan.swf",
                 "stage_group": {
                     "guid": 10000,
                     "name_id": 7103,
