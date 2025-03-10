@@ -1172,13 +1172,14 @@ fn handle_request_start_active_minigame(
                                 let mut stage_group_instance =
                                     game_server.minigames().stage_group_instance(minigame_status.stage_group_guid, player)?;
                                 stage_group_instance.header.stage_guid = minigame_status.stage_guid;
+                                // The default stage instance must be set for the how-to button the options menu to work
+                                stage_group_instance.default_stage_instance_guid = minigame_status.stage_guid;
 
                                 // Re-send the stage group instance to populate the stage data in the settings menu.
                                 // When we enter the Flash or 3D game HUD state, the current minigame group is cleared.
-                                // This removes the game name from the options menu and breaks the how-to button.
-                                // To avoid this, we need to send a script packet to transition the HUD to the
-                                // main state. Then we re-send the stage group instance data. Then we can load
-                                // the minigame.
+                                // This removes the game name from the options menu. To avoid this, we need to send a 
+                                // script packet to transition the HUD to the main state. Then we re-send the stage 
+                                // group instance data. Then we can load the minigame.
                                 packets.push(GamePacket::serialize(&TunneledPacket {
                                     unknown1: true,
                                     inner: ExecuteScriptWithParams {
