@@ -1173,49 +1173,38 @@ fn handle_request_start_active_minigame(
                                     game_server.minigames().stage_group_instance(minigame_status.stage_group_guid, player)?;
                                 stage_group_instance.header.stage_guid = minigame_status.stage_guid;
 
+                                // Re-send the stage group instance to populate the stage data in the settings menu.
+                                // When we enter the Flash or 3D game HUD state, the current minigame group is cleared.
+                                // This removes the game name from the options menu and breaks the how-to button.
+                                // To avoid this, we need to send a script packet to transition the HUD to the
+                                // main state. Then we re-send the stage group instance data. Then we can load
+                                // the minigame.
+                                packets.push(GamePacket::serialize(&TunneledPacket {
+                                    unknown1: true,
+                                    inner: ExecuteScriptWithParams {
+                                        script_name: "UIGlobal.SetStateMain".to_string(),
+                                        params: vec![],
+                                    },
+                                })?);
+                                packets.push(GamePacket::serialize(&TunneledPacket {
+                                    unknown1: true,
+                                    inner: stage_group_instance,
+                                })?);
+
                                 match &stage_config.minigame_type {
                                     MinigameType::Flash { game_swf_name } => {
-                                        let flash_packet = GamePacket::serialize(&TunneledPacket {
-                                            unknown1: true,
-                                            inner: StartFlashGame {
-                                                loader_script_name: "MiniGameFlash".to_string(),
-                                                game_swf_name: game_swf_name.clone(),
-                                                is_micro: false,
-                                            },
-                                        })?;
-
-                                        // Re-send the stage group instance to populate the stage data in the settings menu.
-                                        // When we enter the Flash game HUD state, the current minigame group is cleared.
-                                        // This removes the game name from the options menu and breaks the how-to button.
-                                        // To avoid this, we need to send a Flash game packet to transition the HUD to the
-                                        // Flash game state. Then we re-send the stage group instance data. Finally, we
-                                        // have to reload the Flash game (by sending another Flash game packet) to ensure
-                                        // that stage group instance data is loaded in the options menu.
-                                        packets.push(flash_packet.clone());
-                                        packets.push(GamePacket::serialize(&TunneledPacket {
-                                            unknown1: true,
-                                            inner: stage_group_instance,
-                                        })?);
-                                        packets.push(flash_packet);
+                                        packets.push(
+                                            GamePacket::serialize(&TunneledPacket {
+                                                unknown1: true,
+                                                inner: StartFlashGame {
+                                                    loader_script_name: "MiniGameFlash".to_string(),
+                                                    game_swf_name: game_swf_name.clone(),
+                                                    is_micro: false,
+                                                },
+                                            })?
+                                        );
                                     },
                                     MinigameType::SaberStrike { saber_strike_stage_id } => {
-                                        // Re-send the stage group instance to populate the stage data in the settings menu.
-                                        // When we enter the Saber Strike HUD state, the current minigame group is cleared.
-                                        // This removes the game name from the options menu and breaks the how-to button.
-                                        // To avoid this, we need to send a script packet to transition the HUD to the
-                                        // main state. Then we re-send the stage group instance data. Then we can load
-                                        // Saber Strike.
-                                        packets.push(GamePacket::serialize(&TunneledPacket {
-                                            unknown1: true,
-                                            inner: ExecuteScriptWithParams {
-                                                script_name: "UIGlobal.SetStateMain".to_string(),
-                                                params: vec![],
-                                            },
-                                        })?);
-                                        packets.push(GamePacket::serialize(&TunneledPacket {
-                                            unknown1: true,
-                                            inner: stage_group_instance,
-                                        })?);
                                         packets.push(
                                             GamePacket::serialize(&TunneledPacket {
                                                 unknown1: true,
