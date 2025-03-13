@@ -43,12 +43,6 @@ impl GamePacket for SaberStrikeGameOver {
     const HEADER: Self::Header = MinigameOpCode::SaberStrike;
 }
 
-fn ror(x: u32, bits: u8) -> u32 {
-    let right_shift = (bits as u32) % u32::BITS;
-    let left_shift = 32 - right_shift;
-    (x >> right_shift) | (x << left_shift)
-}
-
 #[derive(SerializePacket, DeserializePacket)]
 pub struct SaberStrikeObfuscatedScore {
     pub minigame_header: MinigameHeader,
@@ -64,6 +58,53 @@ impl GamePacket for SaberStrikeObfuscatedScore {
 
 impl SaberStrikeObfuscatedScore {
     pub fn score(&self) -> u32 {
-        self.obfuscated_score ^ ror(self.seed, 1)
+        self.obfuscated_score ^ self.seed.rotate_right(1)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_score_zero() {
+        let obfuscated_score = SaberStrikeObfuscatedScore {
+            minigame_header: MinigameHeader {
+                stage_guid: -1,
+                sub_op_code: -1,
+                stage_group_guid: -1,
+            },
+            seed: 0x113bf61a,
+            obfuscated_score: 0x89dfb0d,
+        };
+        assert_eq!(obfuscated_score.score(), 0)
+    }
+
+    #[test]
+    fn test_small_score() {
+        let obfuscated_score = SaberStrikeObfuscatedScore {
+            minigame_header: MinigameHeader {
+                stage_guid: -1,
+                sub_op_code: -1,
+                stage_group_guid: -1,
+            },
+            seed: 0x113bf61a,
+            obfuscated_score: 0x89de5f7,
+        };
+        assert_eq!(obfuscated_score.score(), 7930)
+    }
+
+    #[test]
+    fn test_large_score() {
+        let obfuscated_score = SaberStrikeObfuscatedScore {
+            minigame_header: MinigameHeader {
+                stage_guid: -1,
+                sub_op_code: -1,
+                stage_group_guid: -1,
+            },
+            seed: 0x113bf61a,
+            obfuscated_score: 0xf76204f2,
+        };
+        assert_eq!(obfuscated_score.score(), u32::MAX)
     }
 }
