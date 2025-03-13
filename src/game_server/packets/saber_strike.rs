@@ -60,7 +60,7 @@ impl GamePacket for SaberStrikeSingleKill {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct SaberStrikeThrowKill {
     pub minigame_header: MinigameHeader,
-    pub enemy_count: u32,
+    pub enemies_killed: u32,
 }
 
 impl GamePacket for SaberStrikeThrowKill {
