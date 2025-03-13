@@ -8,8 +8,8 @@ use super::{
 #[derive(SerializePacket, DeserializePacket)]
 pub struct SaberStrikeInit {
     pub minigame_header: MinigameHeader,
-    pub unknown1: u32,
-    pub unknown2: bool,
+    pub stage_id: u32,
+    pub disable_default_saber: bool,
 }
 
 impl GamePacket for SaberStrikeInit {
