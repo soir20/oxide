@@ -11,6 +11,8 @@ use super::{
 pub enum SaberStrikeOpCode {
     StageData = 0x1,
     GameOver = 0x2,
+    SingleKill = 0x3,
+    ThrowKill = 0x4,
     ObfuscatedScore = 0x9,
 }
 
@@ -38,6 +40,30 @@ pub struct SaberStrikeGameOver {
 }
 
 impl GamePacket for SaberStrikeGameOver {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::SaberStrike;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct SaberStrikeSingleKill {
+    pub minigame_header: MinigameHeader,
+    pub enemy_type: u32,
+}
+
+impl GamePacket for SaberStrikeSingleKill {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::SaberStrike;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct SaberStrikeThrowKill {
+    pub minigame_header: MinigameHeader,
+    pub enemy_count: u32,
+}
+
+impl GamePacket for SaberStrikeThrowKill {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::SaberStrike;
