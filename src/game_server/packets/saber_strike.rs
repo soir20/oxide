@@ -64,6 +64,6 @@ impl GamePacket for SaberStrikeObfuscatedScore {
 
 impl SaberStrikeObfuscatedScore {
     pub fn score(&self) -> u32 {
-        self.obfuscated_score ^ self.seed - ror(self.seed, 1)
+        (self.obfuscated_score ^ self.seed) - ror(self.seed, 1)
     }
 }
