@@ -31,6 +31,7 @@ impl GamePacket for SaberStrikeStageData {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct SaberStrikeGameOver {
+    pub minigame_header: MinigameHeader,
     pub won: bool,
     pub score: u32,
     pub best_throw: u32,
