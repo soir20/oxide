@@ -29,9 +29,8 @@ impl GamePacket for SaberStrikeStageData {
     const HEADER: Self::Header = MinigameOpCode::SaberStrike;
 }
 
-#[derive(SerializePacket, DeserializePacket)]
+#[derive(DeserializePacket)]
 pub struct SaberStrikeGameOver {
-    pub minigame_header: MinigameHeader,
     pub won: bool,
     pub score: u32,
     pub best_throw: u32,
@@ -40,47 +39,20 @@ pub struct SaberStrikeGameOver {
     pub remaining_sabers: u32,
 }
 
-impl GamePacket for SaberStrikeGameOver {
-    type Header = MinigameOpCode;
-
-    const HEADER: Self::Header = MinigameOpCode::SaberStrike;
-}
-
-#[derive(SerializePacket, DeserializePacket)]
+#[derive(DeserializePacket)]
 pub struct SaberStrikeSingleKill {
-    pub minigame_header: MinigameHeader,
     pub enemy_type: u32,
 }
 
-impl GamePacket for SaberStrikeSingleKill {
-    type Header = MinigameOpCode;
-
-    const HEADER: Self::Header = MinigameOpCode::SaberStrike;
-}
-
-#[derive(SerializePacket, DeserializePacket)]
+#[derive(DeserializePacket)]
 pub struct SaberStrikeThrowKill {
-    pub minigame_header: MinigameHeader,
     pub enemies_killed: u32,
 }
 
-impl GamePacket for SaberStrikeThrowKill {
-    type Header = MinigameOpCode;
-
-    const HEADER: Self::Header = MinigameOpCode::SaberStrike;
-}
-
-#[derive(SerializePacket, DeserializePacket)]
+#[derive(DeserializePacket)]
 pub struct SaberStrikeObfuscatedScore {
-    pub minigame_header: MinigameHeader,
     seed: u32,
     obfuscated_score: u32,
-}
-
-impl GamePacket for SaberStrikeObfuscatedScore {
-    type Header = MinigameOpCode;
-
-    const HEADER: Self::Header = MinigameOpCode::SaberStrike;
 }
 
 impl SaberStrikeObfuscatedScore {
@@ -96,11 +68,6 @@ mod tests {
     #[test]
     fn test_score_zero() {
         let obfuscated_score = SaberStrikeObfuscatedScore {
-            minigame_header: MinigameHeader {
-                stage_guid: -1,
-                sub_op_code: -1,
-                stage_group_guid: -1,
-            },
             seed: 0x113bf61a,
             obfuscated_score: 0x89dfb0d,
         };
@@ -110,11 +77,6 @@ mod tests {
     #[test]
     fn test_small_score() {
         let obfuscated_score = SaberStrikeObfuscatedScore {
-            minigame_header: MinigameHeader {
-                stage_guid: -1,
-                sub_op_code: -1,
-                stage_group_guid: -1,
-            },
             seed: 0x113bf61a,
             obfuscated_score: 0x89de5f7,
         };
@@ -124,11 +86,6 @@ mod tests {
     #[test]
     fn test_large_score() {
         let obfuscated_score = SaberStrikeObfuscatedScore {
-            minigame_header: MinigameHeader {
-                stage_guid: -1,
-                sub_op_code: -1,
-                stage_group_guid: -1,
-            },
             seed: 0x113bf61a,
             obfuscated_score: 0xf76204f2,
         };
