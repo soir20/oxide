@@ -32,11 +32,11 @@ impl GamePacket for SaberStrikeStageData {
 #[derive(DeserializePacket)]
 pub struct SaberStrikeGameOver {
     pub won: bool,
-    pub score: u32,
-    pub best_throw: u32,
-    pub enemies_killed: u32,
+    pub score: i32,
+    pub best_throw: i32,
+    pub enemies_killed: i32,
     pub duration_seconds: f32,
-    pub remaining_sabers: u32,
+    pub remaining_sabers: i32,
 }
 
 #[derive(DeserializePacket)]

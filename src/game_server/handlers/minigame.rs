@@ -47,6 +47,7 @@ use super::{
     guid::GuidTableIndexer,
     item::SABER_ITEM_TYPE,
     lock_enforcer::{CharacterLockRequest, CharacterTableWriteHandle, ZoneTableWriteHandle},
+    saber_strike::process_saber_strike_packet,
     unique_guid::{player_guid, shorten_player_guid},
 };
 
@@ -683,6 +684,7 @@ pub fn process_minigame_packet(
                 let payload = FlashPayload::deserialize(cursor)?;
                 handle_flash_payload(payload, sender, game_server)
             }
+            MinigameOpCode::SaberStrike => process_saber_strike_packet(cursor, sender, game_server),
             _ => {
                 let mut buffer = Vec::new();
                 cursor.read_to_end(&mut buffer)?;
@@ -1286,7 +1288,7 @@ fn handle_request_cancel_active_minigame(
     )
 }
 
-fn handle_flash_payload_write<T: Default>(
+pub fn handle_minigame_packet_write<T: Default>(
     sender: u32,
     game_server: &GameServer,
     header: &MinigameHeader,
@@ -1316,18 +1318,18 @@ fn handle_flash_payload_write<T: Default>(
                                 Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process Flash payload for {}'s active minigame with stage config {} (stage group {}) that does not exist", sender, minigame_status.stage_guid, minigame_status.stage_group_guid)))
                             }
                         } else {
-                            info!("Tried to process Flash payload for {}'s active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", sender, header.stage_guid, minigame_status.stage_group_guid, minigame_status.stage_guid);
+                            info!("Tried to process packet for {}'s active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", sender, header.stage_guid, minigame_status.stage_group_guid, minigame_status.stage_guid);
                             Ok(T::default())
                         }
                     } else {
-                        info!("Tried to process Flash payload for {}'s active minigame (stage {}), but they aren't in an active minigame", sender, header.stage_guid);
+                        info!("Tried to process packet for {}'s active minigame (stage {}), but they aren't in an active minigame", sender, header.stage_guid);
                         Ok(T::default())
                     }
                 } else {
                     Err(ProcessPacketError::new(
                         ProcessPacketErrorType::ConstraintViolated,
                         format!(
-                            "Tried to process Flash payload for {}'s active minigame, but their character isn't a player",
+                            "Tried to process packet for {}'s active minigame, but their character isn't a player",
                             sender
                         ),
                     ))
@@ -1335,7 +1337,7 @@ fn handle_flash_payload_write<T: Default>(
             } else {
                 Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
-                    format!("Tried to process Flash payload for unknown player {}'s active minigame", sender),
+                    format!("Tried to process packet for unknown player {}'s active minigame", sender),
                 ))
             }
         },
@@ -1399,7 +1401,7 @@ fn handle_flash_payload_win(
     payload: &FlashPayload,
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-    handle_flash_payload_write(
+    handle_minigame_packet_write(
         sender,
         game_server,
         &payload.header,
@@ -1486,7 +1488,7 @@ fn handle_flash_payload(
                 )])
             },
         ),
-        "FRServer_ScoreInfo" => handle_flash_payload_write(
+        "FRServer_ScoreInfo" => handle_minigame_packet_write(
             sender,
             game_server,
             &payload.header,
@@ -1523,7 +1525,7 @@ fn handle_flash_payload(
                 }
             },
         ),
-        "FRServer_EndRoundNoValidation" => handle_flash_payload_write(
+        "FRServer_EndRoundNoValidation" => handle_minigame_packet_write(
             sender,
             game_server,
             &payload.header,
@@ -1566,7 +1568,7 @@ fn handle_flash_payload(
             },
         ),
         "FRServer_GameWon" => handle_flash_payload_win(&parts, sender, &payload, game_server),
-        "FRServer_GameLost" => handle_flash_payload_write(
+        "FRServer_GameLost" => handle_minigame_packet_write(
             sender,
             game_server,
             &payload.header,
@@ -1598,7 +1600,7 @@ fn handle_flash_payload(
         "FRServer_GameClose" => {
             handle_request_cancel_active_minigame(&payload.header, false, sender, game_server)
         }
-        "FRServer_StatUpdate" => handle_flash_payload_write(
+        "FRServer_StatUpdate" => handle_minigame_packet_write(
             sender,
             game_server,
             &payload.header,
@@ -1733,7 +1735,7 @@ fn award_credits(
     Ok((broadcasts, awarded_credits))
 }
 
-fn end_active_minigame(
+pub fn end_active_minigame(
     sender: u32,
     characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
     zones_table_write_handle: &mut ZoneTableWriteHandle<'_>,
