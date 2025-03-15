@@ -7,15 +7,16 @@ use crate::{
         packets::{
             minigame::{MinigameHeader, ScoreEntry, ScoreType},
             saber_strike::{
-                SaberStrikeGameOver, SaberStrikeOpCode, SaberStrikeSingleKill, SaberStrikeThrowKill,
+                SaberStrikeGameOver, SaberStrikeObfuscatedScore, SaberStrikeOpCode,
+                SaberStrikeSingleKill, SaberStrikeThrowKill,
             },
         },
-        Broadcast, GameServer, ProcessPacketError,
+        Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
     info,
 };
 
-use super::minigame::{end_active_minigame, handle_minigame_packet_write};
+use super::minigame::{end_active_minigame, handle_minigame_packet_write, MinigameTypeData};
 
 pub fn process_saber_strike_packet(
     cursor: &mut Cursor<&[u8]>,
@@ -30,14 +31,34 @@ pub fn process_saber_strike_packet(
                 handle_saber_strike_game_over(&header, &game_over, sender, game_server)
             }
             SaberStrikeOpCode::SingleKill => {
-                let single_kill = SaberStrikeSingleKill::deserialize(cursor)?;
+                let _ = SaberStrikeSingleKill::deserialize(cursor)?;
                 // TODO: update player achievement progress
                 Ok(Vec::new())
             }
             SaberStrikeOpCode::ThrowKill => {
-                let throw_kill = SaberStrikeThrowKill::deserialize(cursor)?;
+                let _ = SaberStrikeThrowKill::deserialize(cursor)?;
                 // TODO: update player achievement progress
                 Ok(Vec::new())
+            }
+            SaberStrikeOpCode::ObfuscatedScore => {
+                let obfuscated_score_packet = SaberStrikeObfuscatedScore::deserialize(cursor)?;
+                handle_minigame_packet_write(
+                    sender,
+                    game_server,
+                    &header,
+                    |minigame_status, _, _, _| {
+                        match &mut minigame_status.type_data {
+                            MinigameTypeData::SaberStrike { obfuscated_score } => {
+                                *obfuscated_score = obfuscated_score_packet.score();
+                                Ok(Vec::new())
+                            },
+                            _ => Err(ProcessPacketError::new(
+                                ProcessPacketErrorType::ConstraintViolated,
+                                format!("Player {} sent a Saber Strike obfuscated score packet, but they have no Saber Strike game data", sender)
+                            ))
+                        }
+                    },
+                )
             }
             _ => {
                 let mut buffer = Vec::new();
@@ -72,6 +93,25 @@ fn handle_saber_strike_game_over(
         game_server,
         header,
         |minigame_status, minigame_stats, _, stage_config| {
+            if let MinigameTypeData::SaberStrike { obfuscated_score } = minigame_status.type_data {
+                if obfuscated_score != game_over.total_score {
+                    return Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::ConstraintViolated,
+                        format!(
+                            "Player {} sent a Saber Strike game over packet with score {}, but their obfuscated score was {}",
+                            sender,
+                            game_over.total_score,
+                            obfuscated_score,
+                        )
+                    ));
+                }
+            } else {
+                return Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!("Player {} sent a Saber Strike game over packet, but they have no Saber Strike game data", sender)
+                ));
+            }
+
             minigame_status.score_entries.push(ScoreEntry {
                 entry_text: "lt_TotalTime".to_string(),
                 icon_set_id: 0,
@@ -109,14 +149,14 @@ fn handle_saber_strike_game_over(
                 entry_text: "lt_TotalScore".to_string(),
                 icon_set_id: 0,
                 score_type: ScoreType::Total,
-                score_count: game_over.score,
+                score_count: game_over.total_score,
                 score_max: 0,
                 score_points: 0,
             });
-            minigame_status.total_score = game_over.score;
+            minigame_status.total_score = game_over.total_score;
             minigame_status.game_won = game_over.won;
             if game_over.won {
-                minigame_stats.complete(stage_config.stage_config.guid, game_over.score);
+                minigame_stats.complete(stage_config.stage_config.guid, game_over.total_score);
             }
             Ok(())
         },

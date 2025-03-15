@@ -32,7 +32,7 @@ impl GamePacket for SaberStrikeStageData {
 #[derive(DeserializePacket)]
 pub struct SaberStrikeGameOver {
     pub won: bool,
-    pub score: i32,
+    pub total_score: i32,
     pub best_throw: i32,
     pub enemies_killed: i32,
     pub duration_seconds: f32,
@@ -53,12 +53,12 @@ pub struct SaberStrikeThrowKill {
 
 #[derive(DeserializePacket)]
 pub struct SaberStrikeObfuscatedScore {
-    seed: u32,
-    obfuscated_score: u32,
+    seed: i32,
+    obfuscated_score: i32,
 }
 
 impl SaberStrikeObfuscatedScore {
-    pub fn score(&self) -> u32 {
+    pub fn score(&self) -> i32 {
         self.obfuscated_score ^ self.seed.rotate_right(1)
     }
 }
@@ -89,8 +89,8 @@ mod tests {
     fn test_large_score() {
         let obfuscated_score = SaberStrikeObfuscatedScore {
             seed: 0x113bf61a,
-            obfuscated_score: 0xf76204f2,
+            obfuscated_score: 0x776204f2,
         };
-        assert_eq!(obfuscated_score.score(), u32::MAX)
+        assert_eq!(obfuscated_score.score(), i32::MAX)
     }
 }

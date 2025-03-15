@@ -106,6 +106,27 @@ pub enum MinigameType {
     SaberStrike { saber_strike_stage_id: u32 },
 }
 
+#[non_exhaustive]
+#[derive(Clone, Default)]
+pub enum MinigameTypeData {
+    #[default]
+    Empty,
+    SaberStrike {
+        obfuscated_score: i32,
+    },
+}
+
+impl From<&MinigameType> for MinigameTypeData {
+    fn from(value: &MinigameType) -> Self {
+        match value {
+            MinigameType::Flash { .. } => MinigameTypeData::default(),
+            MinigameType::SaberStrike { .. } => MinigameTypeData::SaberStrike {
+                obfuscated_score: 0,
+            },
+        }
+    }
+}
+
 #[derive(Deserialize)]
 pub struct MinigameStageConfig {
     pub guid: i32,
@@ -1056,6 +1077,7 @@ pub fn prepare_active_minigame_instance(
                                 total_score: 0,
                                 awarded_credits: 0,
                                 start_time: now,
+                                type_data: (&stage_config.stage_config.minigame_type).into(),
                             });
                             player.matchmaking_group = None;
                             Ok(())
