@@ -6,7 +6,9 @@ use crate::{
     game_server::{
         packets::{
             minigame::{MinigameHeader, ScoreEntry, ScoreType},
-            saber_strike::{SaberStrikeGameOver, SaberStrikeOpCode},
+            saber_strike::{
+                SaberStrikeGameOver, SaberStrikeOpCode, SaberStrikeSingleKill, SaberStrikeThrowKill,
+            },
         },
         Broadcast, GameServer, ProcessPacketError,
     },
@@ -26,6 +28,16 @@ pub fn process_saber_strike_packet(
             SaberStrikeOpCode::GameOver => {
                 let game_over = SaberStrikeGameOver::deserialize(cursor)?;
                 handle_saber_strike_game_over(&header, &game_over, sender, game_server)
+            }
+            SaberStrikeOpCode::SingleKill => {
+                let single_kill = SaberStrikeSingleKill::deserialize(cursor)?;
+                // TODO: update player achievement progress
+                Ok(Vec::new())
+            }
+            SaberStrikeOpCode::ThrowKill => {
+                let throw_kill = SaberStrikeThrowKill::deserialize(cursor)?;
+                // TODO: update player achievement progress
+                Ok(Vec::new())
             }
             _ => {
                 let mut buffer = Vec::new();

@@ -39,11 +39,13 @@ pub struct SaberStrikeGameOver {
     pub remaining_sabers: i32,
 }
 
+#[allow(dead_code)]
 #[derive(DeserializePacket)]
 pub struct SaberStrikeSingleKill {
     pub enemy_type: u32,
 }
 
+#[allow(dead_code)]
 #[derive(DeserializePacket)]
 pub struct SaberStrikeThrowKill {
     pub enemies_killed: u32,
