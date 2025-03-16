@@ -13,6 +13,10 @@ pub enum SaberStrikeOpCode {
     GameOver = 0x2,
     SingleKill = 0x3,
     ThrowKill = 0x4,
+    ExtraSabersBoost = 0x5,
+    DemagnetizeWallsBoost = 0x6,
+    ReducedGoalBoost = 0x7,
+    EnableTrajectoryBoost = 0x8,
     ObfuscatedScore = 0x9,
 }
 
@@ -49,6 +53,28 @@ pub struct SaberStrikeSingleKill {
 #[derive(DeserializePacket)]
 pub struct SaberStrikeThrowKill {
     pub enemies_killed: u32,
+}
+
+#[derive(DeserializePacket)]
+pub struct ExtraSabersBoost {
+    pub minigame_header: MinigameHeader,
+    pub sabers: u32,
+}
+
+#[derive(DeserializePacket)]
+pub struct DemagnetizeWallsBoost {
+    pub minigame_header: MinigameHeader,
+}
+
+#[derive(DeserializePacket)]
+pub struct ReducedGoalBoost {
+    pub minigame_header: MinigameHeader,
+    pub goal_deduction: u32,
+}
+
+#[derive(DeserializePacket)]
+pub struct EnableTrajectoryBoost {
+    pub minigame_header: MinigameHeader,
 }
 
 #[derive(DeserializePacket)]
