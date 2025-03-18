@@ -55,26 +55,50 @@ pub struct SaberStrikeThrowKill {
     pub enemies_killed: u32,
 }
 
-#[derive(DeserializePacket)]
+#[derive(SerializePacket, DeserializePacket)]
 pub struct ExtraSabersBoost {
     pub minigame_header: MinigameHeader,
     pub sabers: u32,
 }
 
-#[derive(DeserializePacket)]
+impl GamePacket for ExtraSabersBoost {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::SaberStrike;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
 pub struct DemagnetizeWallsBoost {
     pub minigame_header: MinigameHeader,
 }
 
-#[derive(DeserializePacket)]
+impl GamePacket for DemagnetizeWallsBoost {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::SaberStrike;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
 pub struct ReducedGoalBoost {
     pub minigame_header: MinigameHeader,
     pub goal_deduction: u32,
 }
 
-#[derive(DeserializePacket)]
+impl GamePacket for ReducedGoalBoost {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::SaberStrike;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
 pub struct EnableTrajectoryBoost {
     pub minigame_header: MinigameHeader,
+}
+
+impl GamePacket for EnableTrajectoryBoost {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::SaberStrike;
 }
 
 #[derive(DeserializePacket)]
