@@ -87,7 +87,7 @@ pub struct RemoveGracefully {
     pub use_death_animation: bool,
     pub delay_millis: u32,
     pub composite_effect_delay_millis: u32,
-    pub composite_effect: u32, // Continuos effects remain looping after character removal
+    pub composite_effect: u32, // Continuous effects remain looping after character removal
     pub fade_duration_millis: u32,
 }
 

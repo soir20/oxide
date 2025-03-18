@@ -75,7 +75,7 @@ pub struct EnterDialog {
     pub camera_placement: Pos,
     pub look_at: Pos,
     pub change_player_pos: bool,
-    pub player_pos: Pos,
+    pub new_player_pos: Pos,
     pub unknown8: f32,
     pub hide_player: bool,
     pub unknown10: bool,

@@ -669,7 +669,7 @@
                 "is_spawned": false,
                 "enable_gravity": false,
                 "tickable_procedures": {
-                    "green_starfighter": {
+                    "spawn": {
                         "weight": 36,
                         "steps": [
                             {
@@ -678,9 +678,9 @@
                                 "duration_millis": 0
                             }
                         ],
-                        "next_possible_procedures": ["final_procedure"]
+                        "next_possible_procedures": ["remove"]
                     },
-                    "final_procedure": {
+                    "remove": {
                         "steps": [
                             {
                                 "composite_effect_id": 1021,
@@ -691,7 +691,8 @@
                                 "enable_graceful_removal": false,
                                 "duration_millis": 1000
                             }
-                        ]
+                        ],
+                        "next_possible_procedures": ["spawn"]
                     },
                     "empty": {
                         "weight": 1259,
@@ -717,7 +718,7 @@
                 "is_spawned": false,
                 "enable_gravity": false,
                 "tickable_procedures": {
-                    "purple_starfighter": {
+                    "spawn": {
                         "weight": 36,
                         "steps": [
                             {
@@ -726,9 +727,9 @@
                                 "duration_millis": 0
                             }
                         ],
-                        "next_possible_procedures": ["final_procedure"]
+                        "next_possible_procedures": ["remove"]
                     },
-                    "final_procedure": {
+                    "remove": {
                         "steps": [
                             {
                                 "composite_effect_id": 1021,
@@ -739,7 +740,8 @@
                                 "enable_graceful_removal": false,
                                 "duration_millis": 1000
                             }
-                        ]
+                        ],
+                        "next_possible_procedures": ["spawn"]
                     },
                     "empty": {
                         "weight": 1259,
