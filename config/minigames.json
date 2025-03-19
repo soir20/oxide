@@ -131,7 +131,7 @@
                     "name_id": 7103,
                     "description_id": 9754,
                     "icon_id": 542,
-                    "stage_icon_id": 5129,
+                    "stage_icon_id": 542,
                     "members_only": false,
                     "stage_select_map_name": "",
                     "stages": [
@@ -270,7 +270,7 @@
                 "param1": 0,
                 "icon_id": 1248,
                 "background_icon_id": 0,
-                "is_popular": true,
+                "is_popular": false,
                 "is_game_of_day": false,
                 "sort_order": 12000,
                 "tutorial_swf": "HowtoRocketRescue.swf",
@@ -1360,6 +1360,896 @@
         "icon_id": 5809,
         "sort_order": 3,
         "portal_entries": [
+            {
+                "guid": 1004,
+                "name_id": 7040,
+                "description_id": 7041,
+                "members_only": false,
+                "is_flash": false,
+                "is_active": true,
+                "param1": 0,
+                "icon_id": 1249,
+                "background_icon_id": 0,
+                "is_popular": true,
+                "is_game_of_day": false,
+                "sort_order": 15000,
+                "tutorial_swf": "HowtoSaberStrike.swf",
+                "stage_group": {
+                    "guid": 13,
+                    "name_id": 7040,
+                    "description_id": 7041,
+                    "icon_id": 369,
+                    "stage_icon_id": 369,
+                    "members_only": false,
+                    "stage_select_map_name": "saberStrike",
+                    "stages": [
+                        {
+                            "Stage": {
+                                "guid": 27001,
+                                "name_id": 7270,
+                                "description_id": 9000,
+                                "stage_icon_id": 247,
+                                "start_screen_icon_id": 663,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 1510,
+                                "members_only": false,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage01",
+                                "minigame_type": {
+                                    "SaberStrike": {
+                                        "saber_strike_stage_id": 11
+                                    }
+                                },
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 129"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 27002,
+                                "name_id": 7271,
+                                "description_id": 9001,
+                                "stage_icon_id": 248,
+                                "start_screen_icon_id": 664,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 3055,
+                                "members_only": false,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage02",
+                                "minigame_type": {
+                                    "SaberStrike": {
+                                        "saber_strike_stage_id": 24
+                                    }
+                                },
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 94"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 27003,
+                                "name_id": 7272,
+                                "description_id": 9002,
+                                "stage_icon_id": 249,
+                                "start_screen_icon_id": 665,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 3056,
+                                "members_only": false,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage03",
+                                "minigame_type": {
+                                    "SaberStrike": {
+                                        "saber_strike_stage_id": 12
+                                    }
+                                },
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 160"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 27004,
+                                "name_id": 7273,
+                                "description_id": 9003,
+                                "stage_icon_id": 250,
+                                "start_screen_icon_id": 666,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 3223,
+                                "members_only": false,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage04",
+                                "minigame_type": {
+                                    "SaberStrike": {
+                                        "saber_strike_stage_id": 25
+                                    }
+                                },
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 143"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 27005,
+                                "name_id": 7274,
+                                "description_id": 9004,
+                                "stage_icon_id": 251,
+                                "start_screen_icon_id": 667,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 3224,
+                                "members_only": false,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage05",
+                                "minigame_type": {
+                                    "SaberStrike": {
+                                        "saber_strike_stage_id": 13
+                                    }
+                                },
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 157"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 27006,
+                                "name_id": 7275,
+                                "description_id": 9005,
+                                "stage_icon_id": 252,
+                                "start_screen_icon_id": 668,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 3225,
+                                "members_only": false,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage06",
+                                "minigame_type": {
+                                    "SaberStrike": {
+                                        "saber_strike_stage_id": 17
+                                    }
+                                },
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 120"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 27007,
+                                "name_id": 7276,
+                                "description_id": 9006,
+                                "stage_icon_id": 253,
+                                "start_screen_icon_id": 669,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 3226,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage07",
+                                "minigame_type": {
+                                    "SaberStrike": {
+                                        "saber_strike_stage_id": 20
+                                    }
+                                },
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 244"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 27008,
+                                "name_id": 7277,
+                                "description_id": 9007,
+                                "stage_icon_id": 254,
+                                "start_screen_icon_id": 670,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 3227,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage08",
+                                "minigame_type": {
+                                    "SaberStrike": {
+                                        "saber_strike_stage_id": 32
+                                    }
+                                },
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 1148"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 27009,
+                                "name_id": 8421,
+                                "description_id": 9008,
+                                "stage_icon_id": 255,
+                                "start_screen_icon_id": 671,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 1,
+                                "start_sound_id": 3228,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage09",
+                                "minigame_type": {
+                                    "SaberStrike": {
+                                        "saber_strike_stage_id": 132
+                                    }
+                                },
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 1014"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 27010,
+                                "name_id": 7278,
+                                "description_id": 9009,
+                                "stage_icon_id": 256,
+                                "start_screen_icon_id": 690,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 3229,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage10",
+                                "minigame_type": {
+                                    "SaberStrike": {
+                                        "saber_strike_stage_id": 23
+                                    }
+                                },
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 114"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 27011,
+                                "name_id": 7279,
+                                "description_id": 9010,
+                                "stage_icon_id": 257,
+                                "start_screen_icon_id": 691,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 3230,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage11",
+                                "minigame_type": {
+                                    "SaberStrike": {
+                                        "saber_strike_stage_id": 70
+                                    }
+                                },
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 93"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 27012,
+                                "name_id": 7280,
+                                "description_id": 9011,
+                                "stage_icon_id": 258,
+                                "start_screen_icon_id": 692,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 3231,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage12",
+                                "minigame_type": {
+                                    "SaberStrike": {
+                                        "saber_strike_stage_id": 50
+                                    }
+                                },
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 170"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 27013,
+                                "name_id": 7281,
+                                "description_id": 9012,
+                                "stage_icon_id": 259,
+                                "start_screen_icon_id": 693,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 3232,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage13",
+                                "minigame_type": {
+                                    "SaberStrike": {
+                                        "saber_strike_stage_id": 51
+                                    }
+                                },
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 144"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 27014,
+                                "name_id": 7282,
+                                "description_id": 9013,
+                                "stage_icon_id": 260,
+                                "start_screen_icon_id": 694,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 3233,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage14",
+                                "minigame_type": {
+                                    "SaberStrike": {
+                                        "saber_strike_stage_id": 52
+                                    }
+                                },
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 147"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 27015,
+                                "name_id": 7283,
+                                "description_id": 9014,
+                                "stage_icon_id": 261,
+                                "start_screen_icon_id": 695,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 3234,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage15",
+                                "minigame_type": {
+                                    "SaberStrike": {
+                                        "saber_strike_stage_id": 18
+                                    }
+                                },
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 237"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 27016,
+                                "name_id": 7284,
+                                "description_id": 9015,
+                                "stage_icon_id": 262,
+                                "start_screen_icon_id": 696,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 3235,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage16",
+                                "minigame_type": {
+                                    "SaberStrike": {
+                                        "saber_strike_stage_id": 33
+                                    }
+                                },
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 144"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 27017,
+                                "name_id": 7285,
+                                "description_id": 9016,
+                                "stage_icon_id": 263,
+                                "start_screen_icon_id": 697,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 3236,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage17",
+                                "minigame_type": {
+                                    "SaberStrike": {
+                                        "saber_strike_stage_id": 53
+                                    }
+                                },
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 141"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 27018,
+                                "name_id": 8422,
+                                "description_id": 9017,
+                                "stage_icon_id": 264,
+                                "start_screen_icon_id": 698,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 2,
+                                "start_sound_id": 3237,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage18",
+                                "minigame_type": {
+                                    "SaberStrike": {
+                                        "saber_strike_stage_id": 136
+                                    }
+                                },
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 159"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 27019,
+                                "name_id": 7286,
+                                "description_id": 9018,
+                                "stage_icon_id": 265,
+                                "start_screen_icon_id": 672,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 3238,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage19",
+                                "minigame_type": {
+                                    "SaberStrike": {
+                                        "saber_strike_stage_id": 27
+                                    }
+                                },
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 140"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 27020,
+                                "name_id": 7287,
+                                "description_id": 9019,
+                                "stage_icon_id": 266,
+                                "start_screen_icon_id": 673,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 3239,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage20",
+                                "minigame_type": {
+                                    "SaberStrike": {
+                                        "saber_strike_stage_id": 49
+                                    }
+                                },
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 191"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 27021,
+                                "name_id": 7288,
+                                "description_id": 9020,
+                                "stage_icon_id": 267,
+                                "start_screen_icon_id": 674,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 3240,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage21",
+                                "minigame_type": {
+                                    "SaberStrike": {
+                                        "saber_strike_stage_id": 36
+                                    }
+                                },
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 116"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 27022,
+                                "name_id": 7289,
+                                "description_id": 9021,
+                                "stage_icon_id": 268,
+                                "start_screen_icon_id": 675,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 3241,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage22",
+                                "minigame_type": {
+                                    "SaberStrike": {
+                                        "saber_strike_stage_id": 38
+                                    }
+                                },
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 289"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 27023,
+                                "name_id": 7290,
+                                "description_id": 9022,
+                                "stage_icon_id": 269,
+                                "start_screen_icon_id": 676,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 3242,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage23",
+                                "minigame_type": {
+                                    "SaberStrike": {
+                                        "saber_strike_stage_id": 22
+                                    }
+                                },
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 214"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 27024,
+                                "name_id": 7291,
+                                "description_id": 9023,
+                                "stage_icon_id": 270,
+                                "start_screen_icon_id": 677,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 3243,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage24",
+                                "minigame_type": {
+                                    "SaberStrike": {
+                                        "saber_strike_stage_id": 45
+                                    }
+                                },
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 594"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 27025,
+                                "name_id": 7292,
+                                "description_id": 9024,
+                                "stage_icon_id": 271,
+                                "start_screen_icon_id": 678,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 3244,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage25",
+                                "minigame_type": {
+                                    "SaberStrike": {
+                                        "saber_strike_stage_id": 46
+                                    }
+                                },
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 432"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 27026,
+                                "name_id": 7293,
+                                "description_id": 9025,
+                                "stage_icon_id": 272,
+                                "start_screen_icon_id": 679,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 3245,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage26",
+                                "minigame_type": {
+                                    "SaberStrike": {
+                                        "saber_strike_stage_id": 15
+                                    }
+                                },
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 144"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 27027,
+                                "name_id": 8423,
+                                "description_id": 9026,
+                                "stage_icon_id": 273,
+                                "start_screen_icon_id": 680,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 3,
+                                "start_sound_id": 3246,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage27",
+                                "minigame_type": {
+                                    "SaberStrike": {
+                                        "saber_strike_stage_id": 139
+                                    }
+                                },
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 173"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 27028,
+                                "name_id": 7294,
+                                "description_id": 9027,
+                                "stage_icon_id": 274,
+                                "start_screen_icon_id": 681,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 4,
+                                "start_sound_id": 3247,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage28",
+                                "minigame_type": {
+                                    "SaberStrike": {
+                                        "saber_strike_stage_id": 28
+                                    }
+                                },
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 110"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 27029,
+                                "name_id": 7295,
+                                "description_id": 9028,
+                                "stage_icon_id": 275,
+                                "start_screen_icon_id": 682,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 4,
+                                "start_sound_id": 3248,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage29",
+                                "minigame_type": {
+                                    "SaberStrike": {
+                                        "saber_strike_stage_id": 41
+                                    }
+                                },
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 153"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 27030,
+                                "name_id": 7296,
+                                "description_id": 9029,
+                                "stage_icon_id": 276,
+                                "start_screen_icon_id": 683,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 4,
+                                "start_sound_id": 3249,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage30",
+                                "minigame_type": {
+                                    "SaberStrike": {
+                                        "saber_strike_stage_id": 40
+                                    }
+                                },
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 244"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 27031,
+                                "name_id": 7297,
+                                "description_id": 9030,
+                                "stage_icon_id": 277,
+                                "start_screen_icon_id": 684,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 4,
+                                "start_sound_id": 3250,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage31",
+                                "minigame_type": {
+                                    "SaberStrike": {
+                                        "saber_strike_stage_id": 141
+                                    }
+                                },
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 221"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 27032,
+                                "name_id": 7298,
+                                "description_id": 9032,
+                                "stage_icon_id": 278,
+                                "start_screen_icon_id": 685,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 4,
+                                "start_sound_id": 3251,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage32",
+                                "minigame_type": {
+                                    "SaberStrike": {
+                                        "saber_strike_stage_id": 42
+                                    }
+                                },
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 170"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 27033,
+                                "name_id": 7299,
+                                "description_id": 9031,
+                                "stage_icon_id": 279,
+                                "start_screen_icon_id": 686,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 4,
+                                "start_sound_id": 3252,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage33",
+                                "minigame_type": {
+                                    "SaberStrike": {
+                                        "saber_strike_stage_id": 43
+                                    }
+                                },
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 147"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 27034,
+                                "name_id": 7300,
+                                "description_id": 9033,
+                                "stage_icon_id": 280,
+                                "start_screen_icon_id": 687,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 4,
+                                "start_sound_id": 3253,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage34",
+                                "minigame_type": {
+                                    "SaberStrike": {
+                                        "saber_strike_stage_id": 47
+                                    }
+                                },
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 126"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 27035,
+                                "name_id": 7301,
+                                "description_id": 9034,
+                                "stage_icon_id": 281,
+                                "start_screen_icon_id": 688,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 4,
+                                "start_sound_id": 3254,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage35",
+                                "minigame_type": {
+                                    "SaberStrike": {
+                                        "saber_strike_stage_id": 140
+                                    }
+                                },
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 152"
+                            }
+                        },
+                        {
+                            "Stage": {
+                                "guid": 27036,
+                                "name_id": 8424,
+                                "description_id": 9035,
+                                "stage_icon_id": 282,
+                                "start_screen_icon_id": 689,
+                                "min_players": 1,
+                                "max_players": 1,
+                                "difficulty": 4,
+                                "start_sound_id": 3255,
+                                "members_only": true,
+                                "require_previous_completed": false,
+                                "link_name": "stage",
+                                "short_name": "stage36",
+                                "minigame_type": {
+                                    "SaberStrike": {
+                                        "saber_strike_stage_id": 48
+                                    }
+                                },
+                                "zone_template_guid": 200,
+                                "score_to_credits_expression": "x / 153"
+                            }
+                        }
+                    ]
+                }
+            },
             {
                 "guid": 16000,
                 "name_id": 5555,
