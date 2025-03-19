@@ -37,7 +37,7 @@ use super::{
     housing::fixture_packets,
     inventory::wield_type_from_slot,
     lock_enforcer::CharacterReadGuard,
-    minigame::PlayerMinigameStats,
+    minigame::{MinigameTypeData, PlayerMinigameStats},
     mount::{spawn_mount_npc, MountConfig},
     unique_guid::{mount_guid, npc_guid, player_guid, shorten_player_guid},
     zone::teleport_within_zone,
@@ -984,6 +984,7 @@ pub struct MinigameStatus {
     pub total_score: i32,
     pub awarded_credits: u32,
     pub start_time: Instant,
+    pub type_data: MinigameTypeData,
 }
 
 #[derive(Clone)]
