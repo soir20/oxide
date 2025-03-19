@@ -113,7 +113,7 @@
                 }
             },
             {
-                "guid": 1004,
+                "guid": 10000,
                 "name_id": 7103,
                 "description_id": 9754,
                 "members_only": false,
@@ -124,10 +124,10 @@
                 "background_icon_id": 0,
                 "is_popular": true,
                 "is_game_of_day": false,
-                "sort_order": 1004,
+                "sort_order": 10000,
                 "tutorial_swf": "HowtoStuntGungan.swf",
                 "stage_group": {
-                    "guid": 13,
+                    "guid": 10000,
                     "name_id": 7103,
                     "description_id": 9754,
                     "icon_id": 542,
@@ -151,8 +151,8 @@
                                 "link_name": "stage",
                                 "short_name": "",
                                 "minigame_type": {
-                                    "SaberStrike": {
-                                        "saber_strike_stage_id": 1
+                                    "Flash": {
+                                        "game_swf_name": "StuntGungan.swf"
                                     }
                                 },
                                 "zone_template_guid": 200,
