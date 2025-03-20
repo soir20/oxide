@@ -59,7 +59,7 @@ pub struct PlacedFixture {
     pub unknown2: f32,
     pub pos: Pos,
     pub rot: Pos,
-    pub scale: Pos,
+    pub unknown1: Pos,
     pub npc_guid: u64,
     pub item_def_id: u32,
     pub unknown3: u32,
@@ -70,7 +70,7 @@ pub struct PlacedFixture {
     pub unknown7: String,
     pub unknown8: bool,
     pub unknown9: u32,
-    pub unknown10: f32,
+    pub scale: f32,
 }
 
 #[derive(SerializePacket, DeserializePacket)]

@@ -45,10 +45,10 @@ fn placed_fixture(
         unknown2: 0.0,
         pos,
         rot,
-        scale: Pos {
+        unknown1: Pos {
             x: 0.0,
             y: 0.0,
-            z: scale,
+            z: 0.0,
             w: 0.0,
         },
         npc_guid: fixture_guid,
@@ -67,7 +67,7 @@ fn placed_fixture(
         unknown7: "".to_string(),
         unknown8: false,
         unknown9: 0,
-        unknown10: 1.0,
+        scale,
     }
 }
 
