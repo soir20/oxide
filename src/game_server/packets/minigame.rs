@@ -382,7 +382,7 @@ pub struct MinigameStageInstance {
     pub name_id: u32,
     pub description_id: u32,
     pub icon_id: u32,
-    pub parent_minigame_id: u32,
+    pub parent_stage_instance_guid: u32,
     pub members_only: bool,
     pub unknown12: u32,
     pub background_swf: String,
