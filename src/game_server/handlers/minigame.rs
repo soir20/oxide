@@ -150,7 +150,6 @@ pub struct MinigameStageConfig {
     #[serde(default = "default_matchmaking_timeout_millis")]
     pub matchmaking_timeout_millis: u32,
     pub single_player_stage_guid: Option<StageLocator>,
-    pub parent_stage_guid: Option<u32>,
 }
 
 impl MinigameStageConfig {
@@ -362,7 +361,7 @@ impl MinigameStageGroupConfig {
                         name_id: stage.name_id,
                         description_id: stage.description_id,
                         icon_id: stage.stage_icon_id,
-                        parent_stage_instance_guid: stage.parent_stage_guid.unwrap_or_default(),
+                        parent_stage_instance_guid: 0,
                         members_only: stage.members_only,
                         unknown12: 0,
                         background_swf: "".to_string(),
