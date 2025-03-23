@@ -395,9 +395,6 @@ impl MinigameStageGroupConfig {
                 }
                 MinigameStageGroupChild::Stage(stage) => {
                     stages.push(stage.to_stage_definition(portal_entry_guid));
-                    stage.challenges.iter().for_each(|challenge| {
-                        stages.push(challenge.to_stage_definition(portal_entry_guid, stage))
-                    });
                     group_links.push(MinigameStageGroupLink {
                         link_id: 0,
                         parent_stage_group_definition_guid: self.guid,
@@ -408,6 +405,21 @@ impl MinigameStageGroupConfig {
                         short_name: stage.short_name.clone(),
                         stage_number,
                         child_stage_group_definition_guid: 0,
+                    });
+
+                    stage.challenges.iter().for_each(|challenge| {
+                        stages.push(challenge.to_stage_definition(portal_entry_guid, stage));
+                        group_links.push(MinigameStageGroupLink {
+                            link_id: 0,
+                            parent_stage_group_definition_guid: self.guid,
+                            parent_stage_definition_guid: 0,
+                            child_stage_definition_guid: challenge.guid,
+                            icon_id: 0,
+                            link_name: "challenge".to_string(),
+                            short_name: "".to_string(),
+                            stage_number,
+                            child_stage_group_definition_guid: 0,
+                        });
                     });
                 }
             }
