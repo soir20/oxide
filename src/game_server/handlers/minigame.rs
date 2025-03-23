@@ -2052,7 +2052,7 @@ pub fn end_active_minigame(
                             .0
                         };
 
-                        broadcasts.push(Broadcast::Single(
+                        let last_broadcast = Broadcast::Single(
                             sender,
                             vec![
                                 GamePacket::serialize(&TunneledPacket {
@@ -2139,15 +2139,20 @@ pub fn end_active_minigame(
                                         },
                                     },
                                 })?,
-                                GamePacket::serialize(&TunneledPacket {
-                                    unknown1: true,
-                                    inner: game_server.minigames().stage_group_instance(
-                                        minigame_status.stage_group_guid,
-                                        player,
-                                    )?,
-                                })?,
                             ],
+                        );
+
+                        broadcasts.push(Broadcast::Single(
+                            sender,
+                            vec![GamePacket::serialize(&TunneledPacket {
+                                unknown1: true,
+                                inner: game_server.minigames().stage_group_instance(
+                                    minigame_status.stage_group_guid,
+                                    player,
+                                )?,
+                            })?],
                         ));
+                        broadcasts.push(last_broadcast);
 
                         player.minigame_status = None;
 
