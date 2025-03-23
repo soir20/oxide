@@ -432,7 +432,7 @@ impl GameServer {
                                                     character_write_handle.stats.speed.base = zone.speed;
                                                     character_write_handle.stats.jump_height_multiplier.base = zone.jump_height_multiplier;
 
-                                                    let mut global_packets = character_write_handle.stats.add_packets(Some(self.mounts()), Some(self.items()), Some(self.customizations()))?;
+                                                    let mut global_packets = character_write_handle.stats.add_packets(self.mounts(), self.items(), self.customizations())?;
                                                     let wield_type = TunneledPacket {
                                                         unknown1: true,
                                                         inner: UpdateWieldType {
@@ -972,7 +972,7 @@ impl GameServer {
                     for tickable_character in characters_write.values_mut() {
                         if tickable_character.synchronize_with.is_none() {
                             broadcasts.append(
-                                &mut tickable_character.tick(now, &nearby_player_guids, &characters_read)?,
+                                &mut tickable_character.tick(now, &nearby_player_guids, &characters_read, self.mounts(), self.items(), self.customizations())?,
                             );
                         } else {
                             characters_not_updated.push(tickable_character.guid());
@@ -1016,7 +1016,7 @@ impl GameServer {
                         }
 
                         broadcasts.append(
-                            &mut tickable_character.tick(now, &nearby_player_guids, &characters_read)?,
+                            &mut tickable_character.tick(now, &nearby_player_guids, &characters_read, self.mounts(), self.items(), self.customizations())?,
                         );
                     }
 

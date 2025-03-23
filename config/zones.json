@@ -692,7 +692,7 @@
                                 "duration_millis": 1000
                             }
                         ],
-                        "next_possible_procedures": ["spawn"]
+                        "next_possible_procedures": ["spawn", "empty"]
                     },
                     "empty": {
                         "weight": 1259,
@@ -741,7 +741,7 @@
                                 "duration_millis": 1000
                             }
                         ],
-                        "next_possible_procedures": ["spawn"]
+                        "next_possible_procedures": ["spawn", "empty"]
                     },
                     "empty": {
                         "weight": 1259,

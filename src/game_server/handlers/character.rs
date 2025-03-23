@@ -346,13 +346,16 @@ impl TickableStep {
         character: &mut CharacterStats,
         nearby_player_guids: &[u32],
         nearby_players: &BTreeMap<u64, CharacterReadGuard>,
+        mount_configs: &BTreeMap<u32, MountConfig>,
+        item_definitions: &BTreeMap<u32, ItemDefinition>,
+        customizations: &BTreeMap<u32, Customization>,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let mut packets_for_all = Vec::new();
 
         if let Some(spawned_state) = self.spawned_state {
             character.is_spawned = spawned_state;
             if spawned_state {
-                packets_for_all.extend(character.add_packets(None, None, None)?);
+                packets_for_all.extend(character.add_packets(mount_configs, item_definitions, customizations)?);
             } else if !spawned_state {
                 let graceful_removal = self.removal_config.enable_graceful_removal;
                 if graceful_removal {
@@ -389,7 +392,7 @@ impl TickableStep {
                     guid: Guid::guid(character),
                     rail_id,
                     elapsed_seconds: 0.0,
-                    unknown3: Pos {
+                    rail_origin: Pos {
                         x: 0.0,
                         y: 0.0,
                         z: 0.0,
@@ -597,6 +600,9 @@ impl TickableProcedure {
         now: Instant,
         nearby_player_guids: &[u32],
         nearby_players: &BTreeMap<u64, CharacterReadGuard>,
+        mount_configs: &BTreeMap<u32, MountConfig>,
+        item_definitions: &BTreeMap<u32, ItemDefinition>,
+        customizations: &BTreeMap<u32, Customization>,
     ) -> TickResult {
         self.panic_if_empty();
 
@@ -623,6 +629,9 @@ impl TickableProcedure {
                     character,
                     nearby_player_guids,
                     nearby_players,
+                    mount_configs,
+                    item_definitions,
+                    customizations,
                 ))
             }
         } else {
@@ -735,6 +744,9 @@ impl TickableProcedureTracker {
         now: Instant,
         nearby_player_guids: &[u32],
         nearby_players: &BTreeMap<u64, CharacterReadGuard>,
+        mount_configs: &BTreeMap<u32, MountConfig>,
+        item_definitions: &BTreeMap<u32, ItemDefinition>,
+        customizations: &BTreeMap<u32, Customization>,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         if self.procedures.is_empty() {
             return Ok(Vec::new());
@@ -746,7 +758,7 @@ impl TickableProcedureTracker {
             .expect("Missing procedure");
         loop {
             let tick_result =
-                current_procedure.tick(character, now, nearby_player_guids, nearby_players);
+                current_procedure.tick(character, now, nearby_player_guids, nearby_players, mount_configs, item_definitions, customizations);
             if let TickResult::TickedCurrentProcedure(result) = tick_result {
                 break result;
             } else if let TickResult::MustChangeProcedure(procedure_key) = tick_result {
@@ -1255,7 +1267,7 @@ impl Player {
                 mount_guid: player_mount_guid,
                 unknown19: 0,
                 unknown20: 0,
-                wield_type: character.wield_type.0, //character.wield_type, fix later
+                wield_type: character.wield_type.0,
                 unknown22: 0.0,
                 unknown23: 0,
                 nameplate_image_id: NameplateImage::from_battle_class_guid(
@@ -1435,20 +1447,15 @@ pub struct CharacterStats {
 impl CharacterStats {
     pub fn add_packets(
         &self,
-        mount_configs: Option<&BTreeMap<u32, MountConfig>>,
-        item_definitions: Option<&BTreeMap<u32, ItemDefinition>>,
-        customizations: Option<&BTreeMap<u32, Customization>>,
+        mount_configs: &BTreeMap<u32, MountConfig>,
+        item_definitions: &BTreeMap<u32, ItemDefinition>,
+        customizations: &BTreeMap<u32, Customization>,
     ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
         let packets = match &self.character_type {
             CharacterType::AmbientNpc(ambient_npc) => ambient_npc.add_packets(self)?,
             CharacterType::Door(door) => door.add_packets(self)?,
             CharacterType::Transport(transport) => transport.add_packets(self)?,
-            CharacterType::Player(player) => player.add_packets(
-                self,
-                mount_configs.expect(""),
-                item_definitions.expect(""),
-                customizations.expect(""),
-            )?,
+            CharacterType::Player(player) => player.add_packets(self, mount_configs, item_definitions, customizations)?,
             CharacterType::Fixture(house_guid, fixture) => fixture_packets(
                 *house_guid,
                 Guid::guid(self),
@@ -1729,50 +1736,6 @@ impl Character {
         )
     }
 
-    /*pub fn remove_packets(&self) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
-        let mut packets = vec![GamePacket::serialize(&TunneledPacket {
-            unknown1: true,
-            inner: RemoveStandard { guid: self.guid() },
-        })?];
-
-        if let Some(mount_id) = self.stats.mount_id {
-            packets.push(GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: RemoveStandard {
-                    guid: mount_guid(shorten_player_guid(self.guid())?, mount_id),
-                },
-            })?);
-        }
-
-        Ok(packets)
-    }*/
-
-    /*pub fn add_packets(
-        &self,
-        mount_configs: &BTreeMap<u32, MountConfig>,
-        item_definitions: &BTreeMap<u32, ItemDefinition>,
-        customizations: &BTreeMap<u32, Customization>,
-    ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
-        let packets = match &self.stats.character_type {
-            CharacterType::AmbientNpc(ambient_npc) => ambient_npc.add_packets(self)?,
-            CharacterType::Door(door) => door.add_packets(self)?,
-            CharacterType::Transport(transport) => transport.add_packets(self)?,
-            CharacterType::Player(player) => {
-                player.add_packets(self, mount_configs, item_definitions, customizations)?
-            }
-            CharacterType::Fixture(house_guid, fixture) => fixture_packets(
-                *house_guid,
-                self.guid(),
-                fixture,
-                self.stats.pos,
-                self.stats.rot,
-                self.stats.scale,
-            )?,
-        };
-
-        Ok(packets)
-    }*/
-
     pub fn set_tickable_procedure_if_exists(
         &mut self,
         new_tickable_procedure: String,
@@ -1787,12 +1750,18 @@ impl Character {
         now: Instant,
         nearby_player_guids: &[u32],
         nearby_players: &BTreeMap<u64, CharacterReadGuard>,
+        mount_configs: &BTreeMap<u32, MountConfig>,
+        item_definitions: &BTreeMap<u32, ItemDefinition>,
+        customizations: &BTreeMap<u32, Customization>,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         self.tickable_procedure_tracker.tick(
             &mut self.stats,
             now,
             nearby_player_guids,
             nearby_players,
+            mount_configs,
+            item_definitions,
+            customizations,
         )
     }
 

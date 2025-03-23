@@ -463,9 +463,9 @@ impl ZoneInstance {
                 if let Some(character) = characters_read.get(guid) {
                     if *add {
                         diff_packets.append(&mut character.stats.add_packets(
-                            Some(mount_configs),
-                            Some(item_definitions),
-                            Some(customizations),
+                            mount_configs,
+                            item_definitions,
+                            customizations,
                         )?);
                     } else {
                         diff_packets.append(&mut character.stats.remove_packets(false, None)?);
@@ -480,9 +480,9 @@ impl ZoneInstance {
             broadcasts.push(Broadcast::Multi(
                 character_diffs.new_players_close_to_moved_character,
                 moved_character_read_handle.stats.add_packets(
-                    Some(mount_configs),
-                    Some(item_definitions),
-                    Some(customizations),
+                    mount_configs,
+                    item_definitions,
+                    customizations,
                 )?,
             ));
             broadcasts.push(Broadcast::Multi(
@@ -696,9 +696,9 @@ impl ZoneInstance {
                                 characters_table_write_handle,
                             )?;
                             let mut new_chunk_packets = moved_character_write_handle.stats.add_packets(
-                                Some(game_server.mounts()),
-                                Some(game_server.items()),
-                                Some(game_server.customizations()),
+                                game_server.mounts(),
+                                game_server.items(),
+                                game_server.customizations(),
                             )?;
                             new_chunk_packets.push(GamePacket::serialize(&TunneledPacket {
                                 unknown1: true,

@@ -421,7 +421,7 @@ pub struct MoveOnRail {
     pub guid: u64,
     pub rail_id: u32,
     pub elapsed_seconds: f32,
-    pub unknown3: Pos,
+    pub rail_origin: Pos,
 }
 
 impl GamePacket for MoveOnRail {
