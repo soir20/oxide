@@ -128,6 +128,9 @@ impl From<&MinigameType> for MinigameTypeData {
     }
 }
 
+const CHALLENGE_LINK_NAME: &str = "challenge";
+const GROUP_LINK_NAME: &str = "group";
+
 #[derive(Deserialize)]
 pub struct MinigameChallengeConfig {
     pub guid: i32,
@@ -193,7 +196,7 @@ impl MinigameChallengeConfig {
         MinigameStageInstance {
             stage_instance_guid: self.guid,
             portal_entry_guid,
-            link_name: "challenge".to_string(),
+            link_name: CHALLENGE_LINK_NAME.to_string(),
             short_name: "".to_string(),
             unlocked: self.unlocked(player, base_stage.completed),
             unknown6: 0,
@@ -387,7 +390,7 @@ impl MinigameStageGroupConfig {
                         parent_stage_definition_guid: 0,
                         child_stage_definition_guid: 0,
                         icon_id: 0,
-                        link_name: "group".to_string(),
+                        link_name: GROUP_LINK_NAME.to_string(),
                         short_name: stage_group.short_name.clone(),
                         stage_number,
                         child_stage_group_definition_guid: stage_group.guid,
@@ -415,7 +418,7 @@ impl MinigameStageGroupConfig {
                             parent_stage_definition_guid: 0,
                             child_stage_definition_guid: challenge.guid,
                             icon_id: 0,
-                            link_name: "challenge".to_string(),
+                            link_name: CHALLENGE_LINK_NAME.to_string(),
                             short_name: "".to_string(),
                             stage_number,
                             child_stage_group_definition_guid: 0,
@@ -463,7 +466,7 @@ impl MinigameStageGroupConfig {
                     stage_instances.push(MinigameStageInstance {
                         stage_instance_guid: 0,
                         portal_entry_guid,
-                        link_name: "group".to_string(),
+                        link_name: GROUP_LINK_NAME.to_string(),
                         short_name: stage_group.short_name.clone(),
                         unlocked,
                         unknown6: 0,
