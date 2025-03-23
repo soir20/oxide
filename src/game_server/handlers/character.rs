@@ -355,7 +355,11 @@ impl TickableStep {
         if let Some(spawned_state) = self.spawned_state {
             character.is_spawned = spawned_state;
             if spawned_state {
-                packets_for_all.extend(character.add_packets(mount_configs, item_definitions, customizations)?);
+                packets_for_all.extend(character.add_packets(
+                    mount_configs,
+                    item_definitions,
+                    customizations,
+                )?);
             } else if !spawned_state {
                 let graceful_removal = self.removal_config.enable_graceful_removal;
                 if graceful_removal {
@@ -757,8 +761,15 @@ impl TickableProcedureTracker {
             .get_mut(&self.current_procedure_key)
             .expect("Missing procedure");
         loop {
-            let tick_result =
-                current_procedure.tick(character, now, nearby_player_guids, nearby_players, mount_configs, item_definitions, customizations);
+            let tick_result = current_procedure.tick(
+                character,
+                now,
+                nearby_player_guids,
+                nearby_players,
+                mount_configs,
+                item_definitions,
+                customizations,
+            );
             if let TickResult::TickedCurrentProcedure(result) = tick_result {
                 break result;
             } else if let TickResult::MustChangeProcedure(procedure_key) = tick_result {
@@ -1455,7 +1466,9 @@ impl CharacterStats {
             CharacterType::AmbientNpc(ambient_npc) => ambient_npc.add_packets(self)?,
             CharacterType::Door(door) => door.add_packets(self)?,
             CharacterType::Transport(transport) => transport.add_packets(self)?,
-            CharacterType::Player(player) => player.add_packets(self, mount_configs, item_definitions, customizations)?,
+            CharacterType::Player(player) => {
+                player.add_packets(self, mount_configs, item_definitions, customizations)?
+            }
             CharacterType::Fixture(house_guid, fixture) => fixture_packets(
                 *house_guid,
                 Guid::guid(self),
