@@ -876,6 +876,12 @@ impl AllMinigameConfigs {
                         if stage_guid == stage.guid {
                             return unlocked;
                         }
+
+                        for challenge in &stage.challenges {
+                            if stage_guid == challenge.guid {
+                                return challenge.unlocked(player, previous_completed);
+                            }
+                        }
                     }
                 }
             }
