@@ -200,7 +200,7 @@ impl MinigameChallengeConfig {
             name_id: self.name_id,
             description_id: self.description_id,
             icon_id: base_stage.icon_id,
-            parent_stage_instance_guid: 0,
+            parent_stage_instance_guid: base_stage.stage_instance_guid,
             members_only: self.members_only,
             unknown12: 0,
             background_swf: "".to_string(),
