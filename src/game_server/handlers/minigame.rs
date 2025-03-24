@@ -155,7 +155,11 @@ impl MinigameChallengeConfig {
     }
 
     pub fn unlocked(&self, player: &Player, base_stage_completed: bool) -> bool {
-        true
+        self.required_item_guid
+            .map(|item_guid| player.inventory.contains(&item_guid))
+            .unwrap_or(true)
+            && base_stage_completed
+            && (!self.members_only || player.member)
     }
 
     pub fn to_stage_definition(
@@ -205,7 +209,7 @@ impl MinigameChallengeConfig {
             background_swf: "".to_string(),
             min_players: self.min_players,
             max_players: self.max_players,
-            stage_number: 0,
+            stage_number: base_stage.stage_number,
             required_item_id: 0,
             unknown18: 0,
             completed: self.has_completed(player),
