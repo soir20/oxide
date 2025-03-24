@@ -209,7 +209,7 @@ impl MinigameChallengeConfig {
             required_item_id: 0,
             unknown18: 0,
             completed: self.has_completed(player),
-            stage_group_instance_guid: 0,
+            stage_group_instance_guid: base_stage.stage_group_instance_guid,
         }
     }
 }
