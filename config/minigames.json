@@ -3024,7 +3024,60 @@
                                     }
                                 },
                                 "zone_template_guid": 200,
-                                "score_to_credits_expression": "x / 110"
+                                "score_to_credits_expression": "x / 110",
+                                "challenges": [
+                                    {
+                                        "comment": "Use base level's credit ratio as a placeholder",
+                                        "guid": 27154,
+                                        "name_id": 9104,
+                                        "description_id": 9140,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4496,
+                                        "members_only": true,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 105
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 110"
+                                    },
+                                    {
+                                        "comment": "Use base level's credit ratio as a placeholder",
+                                        "guid": 27155,
+                                        "name_id": 9105,
+                                        "description_id": 9138,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4494,
+                                        "members_only": true,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 106
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 110"
+                                    },
+                                    {
+                                        "comment": "Use base level's credit ratio as a placeholder",
+                                        "guid": 27156,
+                                        "name_id": 9106,
+                                        "description_id": 9137,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4493,
+                                        "members_only": true,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 107
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 110"
+                                    }
+                                ]
                             }
                         },
                         {
@@ -3048,7 +3101,60 @@
                                     }
                                 },
                                 "zone_template_guid": 200,
-                                "score_to_credits_expression": "x / 153"
+                                "score_to_credits_expression": "x / 153",
+                                "challenges": [
+                                    {
+                                        "comment": "Use base level's credit ratio as a placeholder",
+                                        "guid": 27157,
+                                        "name_id": 9107,
+                                        "description_id": 9137,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4493,
+                                        "members_only": true,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 108
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 153"
+                                    },
+                                    {
+                                        "comment": "Use base level's credit ratio as a placeholder",
+                                        "guid": 27158,
+                                        "name_id": 9108,
+                                        "description_id": 9135,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4491,
+                                        "members_only": true,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 109
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 153"
+                                    },
+                                    {
+                                        "comment": "Use base level's credit ratio as a placeholder",
+                                        "guid": 27159,
+                                        "name_id": 9109,
+                                        "description_id": 9139,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4495,
+                                        "members_only": true,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 110
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 153"
+                                    }
+                                ]
                             }
                         },
                         {
@@ -3072,7 +3178,60 @@
                                     }
                                 },
                                 "zone_template_guid": 200,
-                                "score_to_credits_expression": "x / 244"
+                                "score_to_credits_expression": "x / 244",
+                                "challenges": [
+                                    {
+                                        "comment": "Use base level's credit ratio as a placeholder",
+                                        "guid": 27160,
+                                        "name_id": 9110,
+                                        "description_id": 9138,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4494,
+                                        "members_only": true,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 111
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 244"
+                                    },
+                                    {
+                                        "comment": "Use base level's credit ratio as a placeholder",
+                                        "guid": 27161,
+                                        "name_id": 9111,
+                                        "description_id": 9139,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4495,
+                                        "members_only": true,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 112
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 244"
+                                    },
+                                    {
+                                        "comment": "Use base level's credit ratio as a placeholder",
+                                        "guid": 27162,
+                                        "name_id": 9112,
+                                        "description_id": 9143,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4499,
+                                        "members_only": true,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 113
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 244"
+                                    }
+                                ]
                             }
                         },
                         {
@@ -3096,7 +3255,60 @@
                                     }
                                 },
                                 "zone_template_guid": 200,
-                                "score_to_credits_expression": "x / 221"
+                                "score_to_credits_expression": "x / 221",
+                                "challenges": [
+                                    {
+                                        "comment": "Use base level's credit ratio as a placeholder",
+                                        "guid": 27163,
+                                        "name_id": 9113,
+                                        "description_id": 9138,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4494,
+                                        "members_only": true,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 114
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 221"
+                                    },
+                                    {
+                                        "comment": "Use base level's credit ratio as a placeholder",
+                                        "guid": 27164,
+                                        "name_id": 9114,
+                                        "description_id": 9139,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4495,
+                                        "members_only": true,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 115
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 221"
+                                    },
+                                    {
+                                        "comment": "Use base level's credit ratio as a placeholder",
+                                        "guid": 27165,
+                                        "name_id": 9115,
+                                        "description_id": 9143,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4499,
+                                        "members_only": true,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 116
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 221"
+                                    }
+                                ]
                             }
                         },
                         {
@@ -3120,7 +3332,60 @@
                                     }
                                 },
                                 "zone_template_guid": 200,
-                                "score_to_credits_expression": "x / 170"
+                                "score_to_credits_expression": "x / 170",
+                                "challenges": [
+                                    {
+                                        "comment": "Use base level's credit ratio as a placeholder",
+                                        "guid": 27166,
+                                        "name_id": 9116,
+                                        "description_id": 9139,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4495,
+                                        "members_only": true,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 117
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 170"
+                                    },
+                                    {
+                                        "comment": "Use base level's credit ratio as a placeholder",
+                                        "guid": 27167,
+                                        "name_id": 9117,
+                                        "description_id": 9135,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4491,
+                                        "members_only": true,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 118
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 170"
+                                    },
+                                    {
+                                        "comment": "Use base level's credit ratio as a placeholder",
+                                        "guid": 27168,
+                                        "name_id": 9118,
+                                        "description_id": 9138,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4494,
+                                        "members_only": true,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 119
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 170"
+                                    }
+                                ]
                             }
                         },
                         {
@@ -3144,7 +3409,60 @@
                                     }
                                 },
                                 "zone_template_guid": 200,
-                                "score_to_credits_expression": "x / 147"
+                                "score_to_credits_expression": "x / 147",
+                                "challenges": [
+                                    {
+                                        "comment": "Use base level's credit ratio as a placeholder",
+                                        "guid": 27169,
+                                        "name_id": 9119,
+                                        "description_id": 9137,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4493,
+                                        "members_only": true,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 120
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 147"
+                                    },
+                                    {
+                                        "comment": "Use base level's credit ratio as a placeholder",
+                                        "guid": 27170,
+                                        "name_id": 9120,
+                                        "description_id": 9143,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4499,
+                                        "members_only": true,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 121
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 147"
+                                    },
+                                    {
+                                        "comment": "Use base level's credit ratio as a placeholder",
+                                        "guid": 27171,
+                                        "name_id": 9121,
+                                        "description_id": 9139,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4495,
+                                        "members_only": true,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 122
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 147"
+                                    }
+                                ]
                             }
                         },
                         {
@@ -3168,7 +3486,60 @@
                                     }
                                 },
                                 "zone_template_guid": 200,
-                                "score_to_credits_expression": "x / 126"
+                                "score_to_credits_expression": "x / 126",
+                                "challenges": [
+                                    {
+                                        "comment": "Use base level's credit ratio as a placeholder",
+                                        "guid": 27172,
+                                        "name_id": 9122,
+                                        "description_id": 9137,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4493,
+                                        "members_only": true,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 123
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 126"
+                                    },
+                                    {
+                                        "comment": "Use base level's credit ratio as a placeholder",
+                                        "guid": 27173,
+                                        "name_id": 9123,
+                                        "description_id": 9138,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4494,
+                                        "members_only": true,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 124
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 126"
+                                    },
+                                    {
+                                        "comment": "Use base level's credit ratio as a placeholder",
+                                        "guid": 27174,
+                                        "name_id": 9124,
+                                        "description_id": 9139,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4495,
+                                        "members_only": true,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 125
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 126"
+                                    }
+                                ]
                             }
                         },
                         {
@@ -3192,7 +3563,60 @@
                                     }
                                 },
                                 "zone_template_guid": 200,
-                                "score_to_credits_expression": "x / 152"
+                                "score_to_credits_expression": "x / 152",
+                                "challenges": [
+                                    {
+                                        "comment": "Use base level's credit ratio as a placeholder",
+                                        "guid": 27175,
+                                        "name_id": 9125,
+                                        "description_id": 9139,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4495,
+                                        "members_only": true,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 126
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 152"
+                                    },
+                                    {
+                                        "comment": "Use base level's credit ratio as a placeholder",
+                                        "guid": 27176,
+                                        "name_id": 9126,
+                                        "description_id": 9137,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4493,
+                                        "members_only": true,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 127
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 152"
+                                    },
+                                    {
+                                        "comment": "Use base level's credit ratio as a placeholder",
+                                        "guid": 27177,
+                                        "name_id": 9127,
+                                        "description_id": 9143,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4499,
+                                        "members_only": true,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 128
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 152"
+                                    }
+                                ]
                             }
                         },
                         {
@@ -3216,7 +3640,60 @@
                                     }
                                 },
                                 "zone_template_guid": 200,
-                                "score_to_credits_expression": "x / 153"
+                                "score_to_credits_expression": "x / 153",
+                                "challenges": [
+                                    {
+                                        "comment": "Use base level's credit ratio as a placeholder",
+                                        "guid": 27178,
+                                        "name_id": 9128,
+                                        "description_id": 9142,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4498,
+                                        "members_only": true,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 129
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 153"
+                                    },
+                                    {
+                                        "comment": "Use base level's credit ratio as a placeholder",
+                                        "guid": 27179,
+                                        "name_id": 9129,
+                                        "description_id": 9138,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4494,
+                                        "members_only": true,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 130
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 153"
+                                    },
+                                    {
+                                        "comment": "Use base level's credit ratio as a placeholder",
+                                        "guid": 27180,
+                                        "name_id": 9130,
+                                        "description_id": 9137,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4493,
+                                        "members_only": true,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 131
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 153"
+                                    }
+                                ]
                             }
                         }
                     ]
