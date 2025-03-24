@@ -209,7 +209,7 @@ impl MinigameChallengeConfig {
             background_swf: "".to_string(),
             min_players: self.min_players,
             max_players: self.max_players,
-            stage_number: base_stage.stage_number,
+            stage_number: 0,
             required_item_id: 0,
             unknown18: 0,
             completed: self.has_completed(player),
