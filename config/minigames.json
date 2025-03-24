@@ -1404,7 +1404,43 @@
                                     }
                                 },
                                 "zone_template_guid": 200,
-                                "score_to_credits_expression": "x / 129"
+                                "score_to_credits_expression": "x / 129",
+                                "challenges": [
+                                    {
+                                        "comment": "Use base level's credit ratio without OG evidence",
+                                        "guid": 27100,
+                                        "name_id": 9050,
+                                        "description_id": 9135,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4491,
+                                        "members_only": false,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 54
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 129"
+                                    },
+                                    {
+                                        "comment": "Use base level's credit ratio without OG evidence",
+                                        "guid": 27101,
+                                        "name_id": 9051,
+                                        "description_id": 9136,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4492,
+                                        "members_only": false,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 55
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 129"
+                                    }
+                                ]
                             }
                         },
                         {
@@ -1428,7 +1464,43 @@
                                     }
                                 },
                                 "zone_template_guid": 200,
-                                "score_to_credits_expression": "x / 94"
+                                "score_to_credits_expression": "x / 94",
+                                "challenges": [
+                                    {
+                                        "comment": "Use base level's credit ratio without OG evidence",
+                                        "guid": 27102,
+                                        "name_id": 9052,
+                                        "description_id": 9137,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4493,
+                                        "members_only": false,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 56
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 94"
+                                    },
+                                    {
+                                        "comment": "Use base level's credit ratio without OG evidence",
+                                        "guid": 27103,
+                                        "name_id": 9053,
+                                        "description_id": 9138,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4494,
+                                        "members_only": false,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 57
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 94"
+                                    }
+                                ]
                             }
                         },
                         {
@@ -1452,7 +1524,43 @@
                                     }
                                 },
                                 "zone_template_guid": 200,
-                                "score_to_credits_expression": "x / 160"
+                                "score_to_credits_expression": "x / 160",
+                                "challenges": [
+                                    {
+                                        "comment": "Use base level's credit ratio without OG evidence",
+                                        "guid": 27104,
+                                        "name_id": 9054,
+                                        "description_id": 9138,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4494,
+                                        "members_only": false,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 58
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 160"
+                                    },
+                                    {
+                                        "comment": "Use base level's credit ratio without OG evidence",
+                                        "guid": 27105,
+                                        "name_id": 9055,
+                                        "description_id": 9135,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4491,
+                                        "members_only": false,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 59
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 160"
+                                    }
+                                ]
                             }
                         },
                         {
@@ -1476,7 +1584,43 @@
                                     }
                                 },
                                 "zone_template_guid": 200,
-                                "score_to_credits_expression": "x / 143"
+                                "score_to_credits_expression": "x / 143",
+                                "challenges": [
+                                    {
+                                        "comment": "Use base level's credit ratio without OG evidence",
+                                        "guid": 27106,
+                                        "name_id": 9056,
+                                        "description_id": 9136,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4492,
+                                        "members_only": false,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 60
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 143"
+                                    },
+                                    {
+                                        "comment": "Use base level's credit ratio without OG evidence",
+                                        "guid": 27107,
+                                        "name_id": 9057,
+                                        "description_id": 9138,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4494,
+                                        "members_only": false,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 61
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 143"
+                                    }
+                                ]
                             }
                         },
                         {
@@ -1500,7 +1644,43 @@
                                     }
                                 },
                                 "zone_template_guid": 200,
-                                "score_to_credits_expression": "x / 157"
+                                "score_to_credits_expression": "x / 157",
+                                "challenges": [
+                                    {
+                                        "comment": "Use base level's credit ratio without OG evidence",
+                                        "guid": 27108,
+                                        "name_id": 9058,
+                                        "description_id": 9136,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4492,
+                                        "members_only": false,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 62
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 157"
+                                    },
+                                    {
+                                        "comment": "Use base level's credit ratio without OG evidence",
+                                        "guid": 27109,
+                                        "name_id": 9059,
+                                        "description_id": 9139,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4495,
+                                        "members_only": false,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 63
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 157"
+                                    }
+                                ]
                             }
                         },
                         {
@@ -1524,7 +1704,43 @@
                                     }
                                 },
                                 "zone_template_guid": 200,
-                                "score_to_credits_expression": "x / 120"
+                                "score_to_credits_expression": "x / 120",
+                                "challenges": [
+                                    {
+                                        "comment": "Use base level's credit ratio without OG evidence",
+                                        "guid": 27110,
+                                        "name_id": 9060,
+                                        "description_id": 9140,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4496,
+                                        "members_only": false,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 64
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 120"
+                                    },
+                                    {
+                                        "comment": "Use base level's credit ratio without OG evidence",
+                                        "guid": 27111,
+                                        "name_id": 9061,
+                                        "description_id": 9135,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4491,
+                                        "members_only": false,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 65
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 120"
+                                    }
+                                ]
                             }
                         },
                         {
@@ -1548,7 +1764,43 @@
                                     }
                                 },
                                 "zone_template_guid": 200,
-                                "score_to_credits_expression": "x / 244"
+                                "score_to_credits_expression": "x / 244",
+                                "challenges": [
+                                    {
+                                        "comment": "Use base level's credit ratio without OG evidence",
+                                        "guid": 27112,
+                                        "name_id": 9062,
+                                        "description_id": 9140,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4496,
+                                        "members_only": true,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 66
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 244"
+                                    },
+                                    {
+                                        "comment": "Use base level's credit ratio without OG evidence",
+                                        "guid": 27113,
+                                        "name_id": 9063,
+                                        "description_id": 9138,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4494,
+                                        "members_only": true,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 67
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 244"
+                                    }
+                                ]
                             }
                         },
                         {
@@ -1572,7 +1824,43 @@
                                     }
                                 },
                                 "zone_template_guid": 200,
-                                "score_to_credits_expression": "x / 1148"
+                                "score_to_credits_expression": "x / 1148",
+                                "challenges": [
+                                    {
+                                        "comment": "Use base level's credit ratio without OG evidence",
+                                        "guid": 27114,
+                                        "name_id": 9064,
+                                        "description_id": 9139,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4495,
+                                        "members_only": true,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 68
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 1148"
+                                    },
+                                    {
+                                        "comment": "Use base level's credit ratio without OG evidence",
+                                        "guid": 27115,
+                                        "name_id": 9065,
+                                        "description_id": 9142,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4498,
+                                        "members_only": true,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 69
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 1148"
+                                    }
+                                ]
                             }
                         },
                         {
@@ -1596,7 +1884,43 @@
                                     }
                                 },
                                 "zone_template_guid": 200,
-                                "score_to_credits_expression": "x / 1014"
+                                "score_to_credits_expression": "x / 1014",
+                                "challenges": [
+                                    {
+                                        "comment": "Use base level's credit ratio without OG evidence",
+                                        "guid": 27116,
+                                        "name_id": 9066,
+                                        "description_id": 9142,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4498,
+                                        "members_only": true,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 134
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 1014"
+                                    },
+                                    {
+                                        "comment": "Use base level's credit ratio without OG evidence",
+                                        "guid": 27117,
+                                        "name_id": 9067,
+                                        "description_id": 9136,
+                                        "min_players": 1,
+                                        "max_players": 1,
+                                        "start_sound_id": 4492,
+                                        "members_only": true,
+                                        "minigame_type": {
+                                            "SaberStrike": {
+                                                "saber_strike_stage_id": 135
+                                            }
+                                        },
+                                        "zone_template_guid": 200,
+                                        "score_to_credits_expression": "x / 1014"
+                                    }
+                                ]
                             }
                         },
                         {
