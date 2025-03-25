@@ -603,12 +603,16 @@ impl TickableProcedure {
             )
         };
 
-        TickableProcedure {
+        let procedure = TickableProcedure {
             steps: config.steps,
             current_step: None,
             distribution: distribution.expect("Couldn't create weighted alias index"),
             next_possible_procedures,
-        }
+        };
+
+        procedure.panic_if_removal_exceeds_duration();
+
+        procedure
     }
 
     pub fn tick(
@@ -622,7 +626,6 @@ impl TickableProcedure {
         customizations: &BTreeMap<u32, Customization>,
     ) -> TickResult {
         self.panic_if_empty();
-        self.panic_if_removal_exceeds_duration();
 
         let should_change_steps =
             if let Some((current_step_index, last_step_change)) = self.current_step {
