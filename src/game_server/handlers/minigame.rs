@@ -141,6 +141,8 @@ pub struct MinigameChallengeConfig {
     pub start_sound_id: u32,
     pub required_item_guid: Option<u32>,
     pub members_only: bool,
+    #[serde(default = "default_true")]
+    pub require_base_stage_completed: bool,
     pub minigame_type: MinigameType,
     pub zone_template_guid: u8,
     pub score_to_credits_expression: String,
@@ -154,11 +156,16 @@ impl MinigameChallengeConfig {
         player.minigame_stats.has_completed(self.guid)
     }
 
-    pub fn unlocked(&self, player: &Player, base_stage_completed: bool) -> bool {
+    pub fn unlocked(
+        &self,
+        player: &Player,
+        base_stage_completed: bool,
+        base_stage_unlocked: bool,
+    ) -> bool {
         self.required_item_guid
             .map(|item_guid| player.inventory.contains(&item_guid))
             .unwrap_or(true)
-            && base_stage_completed
+            && (base_stage_completed || (!self.require_base_stage_completed && base_stage_unlocked))
             && (!self.members_only || player.member)
     }
 
@@ -198,7 +205,7 @@ impl MinigameChallengeConfig {
             portal_entry_guid,
             link_name: CHALLENGE_LINK_NAME.to_string(),
             short_name: "".to_string(),
-            unlocked: self.unlocked(player, base_stage.completed),
+            unlocked: self.unlocked(player, base_stage.completed, base_stage.unlocked),
             unknown6: 0,
             name_id: self.name_id,
             description_id: self.description_id,
@@ -882,7 +889,7 @@ impl AllMinigameConfigs {
 
                         for challenge in &stage.challenges {
                             if stage_guid == challenge.guid {
-                                return challenge.unlocked(player, previous_completed);
+                                return challenge.unlocked(player, previous_completed, unlocked);
                             }
                         }
                     }
