@@ -369,9 +369,7 @@ impl TickableStep {
         let mut packets_for_all = Vec::new();
 
         if let Some(spawned_state) = self.spawned_state {
-            if character.is_spawned == spawned_state {
-                return Ok(Vec::new());
-            }
+            if character.is_spawned != spawned_state {
             character.is_spawned = spawned_state;
             if spawned_state {
                 packets_for_all.extend(character.add_packets(
@@ -383,6 +381,7 @@ impl TickableStep {
                 packets_for_all.extend(character.remove_packets(self.removal_mode)?);
             }
         }
+    }
 
         if let Some(composite_effect_id) = self.composite_effect_id {
             packets_for_all.push(GamePacket::serialize(&TunneledPacket {
@@ -391,7 +390,7 @@ impl TickableStep {
                     guid: Guid::guid(character),
                     triggered_by_guid: 0,
                     composite_effect: composite_effect_id,
-                    delay_millis: self.effect_delay_millis.unwrap_or(0),
+                    delay_millis: self.effect_delay_millis,
                     duration_millis: self.duration_millis as u32,
                     pos: Pos {
                         x: 0.0,
