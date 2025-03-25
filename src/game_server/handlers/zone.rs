@@ -32,7 +32,7 @@ use super::{
         coerce_to_broadcast_supplier, AmbientNpcConfig, Character, CharacterCategory,
         CharacterLocationIndex, CharacterMatchmakingGroupIndex, CharacterNameIndex,
         CharacterSquadIndex, CharacterType, Chunk, DoorConfig, NpcTemplate, PreviousFixture,
-        PreviousLocation, TransportConfig, WriteLockingBroadcastSupplier,
+        PreviousLocation, RemovalMode, TransportConfig, WriteLockingBroadcastSupplier,
     },
     distance3,
     guid::{Guid, GuidTable, GuidTableIndexer, GuidTableWriteHandle, IndexedGuid},
@@ -468,7 +468,8 @@ impl ZoneInstance {
                             customizations,
                         )?);
                     } else {
-                        diff_packets.append(&mut character.stats.remove_packets(false, None)?);
+                        diff_packets
+                            .append(&mut character.stats.remove_packets(RemovalMode::default())?);
                     }
                 }
             }
@@ -489,7 +490,7 @@ impl ZoneInstance {
                 character_diffs.players_too_far_from_moved_character,
                 moved_character_read_handle
                     .stats
-                    .remove_packets(false, None)?,
+                    .remove_packets(RemovalMode::default())?,
             ));
         }
 
@@ -671,7 +672,7 @@ impl ZoneInstance {
                             )?;
                             broadcasts.push(Broadcast::Multi(
                                 previous_other_players_nearby,
-                                moved_character_write_handle.stats.remove_packets(false, None)?,
+                                moved_character_write_handle.stats.remove_packets(RemovalMode::default())?,
                             ));
 
                             // Move the character
@@ -948,7 +949,9 @@ pub fn enter_zone(
                 )?;
                 broadcasts.push(Broadcast::Multi(
                     other_players_nearby,
-                    character_write_handle.stats.remove_packets(false, None)?,
+                    character_write_handle
+                        .stats
+                        .remove_packets(RemovalMode::default())?,
                 ));
 
                 let previous_zone_template_guid =

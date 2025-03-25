@@ -437,7 +437,7 @@ impl GameServer {
                                                         unknown1: true,
                                                         inner: UpdateWieldType {
                                                             guid: player_guid(sender),
-                                                            wield_type: character_write_handle.wield_type(),
+                                                            wield_type: character_write_handle.stats.wield_type(),
                                                         },
                                                     };
                                                     global_packets.push(GamePacket::serialize(&wield_type)?);
@@ -458,7 +458,7 @@ impl GameServer {
                                                                 chunk,
                                                                 &battle_class.items,
                                                                 player.active_battle_class,
-                                                                character_write_handle.wield_type(),
+                                                                character_write_handle.stats.wield_type(),
                                                                 self
                                                             )?);
                                                         }
@@ -722,7 +722,7 @@ impl GameServer {
                                         unknown1: true,
                                         inner: UpdateWieldType {
                                             guid: player_guid(sender),
-                                            wield_type: character_write_handle.wield_type()
+                                            wield_type: character_write_handle.stats.wield_type()
                                         }
                                     })?,
                                 ]));

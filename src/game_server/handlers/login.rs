@@ -11,7 +11,7 @@ use crate::game_server::{
 };
 
 use super::{
-    character::{BattleClass, Character, Player, PreviousLocation},
+    character::{BattleClass, Character, Player, PreviousLocation, RemovalMode},
     guid::IndexedGuid,
     minigame::PlayerMinigameStats,
     test_data::{make_test_customizations, make_test_player},
@@ -147,7 +147,10 @@ pub fn log_out(
                     characters_table_write_handle,
                 )?;
 
-                let remove_packets = character.read().stats.remove_packets(false, None)?;
+                let remove_packets = character
+                    .read()
+                    .stats
+                    .remove_packets(RemovalMode::default())?;
 
                 zones_lock_enforcer.write_zones(|zones_table_write_handle| {
                     clean_up_zone_if_no_players(

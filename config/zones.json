@@ -688,7 +688,6 @@
                             },
                             {
                                 "spawned_state": false,
-                                "enable_graceful_removal": false,
                                 "duration_millis": 1000
                             }
                         ],
@@ -700,7 +699,8 @@
                             {
                                 "duration_millis": 1000
                             }
-                        ]
+                        ],
+                        "next_possible_procedures": ["spawn", "empty"]
                     }
                 }
             },
@@ -737,7 +737,6 @@
                             },
                             {
                                 "spawned_state": false,
-                                "enable_graceful_removal": false,
                                 "duration_millis": 1000
                             }
                         ],
@@ -749,7 +748,8 @@
                             {
                                 "duration_millis": 1000
                             }
-                        ]
+                        ],
+                        "next_possible_procedures": ["spawn", "empty"]
                     }
                 }
             },

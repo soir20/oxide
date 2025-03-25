@@ -57,6 +57,14 @@ pub fn coerce_to_broadcast_supplier(
 
 pub const CHAT_BUBBLE_VISIBLE_RADIUS: f32 = 32.0;
 
+const fn default_fade_millis() -> u32 {
+    1000
+}
+
+const fn default_removal_delay_millis() -> u32 {
+    5000
+}
+
 const fn default_scale() -> f32 {
     1.0
 }
@@ -80,6 +88,24 @@ pub enum CursorUpdate {
     Disable,
     Enable {
         new_cursor: u8,
+    },
+}
+
+#[derive(Clone, Copy, Default, Deserialize)]
+pub enum RemovalMode {
+    #[default]
+    Immediate,
+    Graceful {
+        #[serde(default = "default_true")]
+        enable_death_animation: bool,
+        #[serde(default = "default_removal_delay_millis")]
+        removal_delay_millis: u32,
+        #[serde(default)]
+        removal_effect_delay_millis: u32,
+        #[serde(default)]
+        removal_composite_effect_id: u32,
+        #[serde(default = "default_fade_millis")]
+        fade_duration_millis: u32,
     },
 }
 
@@ -288,17 +314,6 @@ impl From<BaseNpcConfig> for BaseNpc {
 }
 
 #[derive(Clone, Deserialize)]
-pub struct RemovalConfig {
-    #[serde(default = "default_true")]
-    pub enable_graceful_removal: bool,
-    #[serde(default = "default_true")]
-    pub enable_death_animation: bool,
-    pub removal_delay_millis: Option<u32>,
-    pub removal_effect_delay_millis: Option<u32>,
-    pub removal_composite_effect_id: Option<u32>,
-}
-
-#[derive(Clone, Deserialize)]
 pub struct TickableStep {
     pub speed: Option<f32>,
     pub new_pos_x: Option<f32>,
@@ -323,8 +338,8 @@ pub struct TickableStep {
     pub rail_id: Option<u32>,
     pub composite_effect_id: Option<u32>,
     pub effect_delay_millis: Option<u32>,
-    #[serde(flatten)]
-    pub removal_config: RemovalConfig,
+    #[serde(default)]
+    pub removal_mode: RemovalMode,
     pub spawned_state: Option<bool>,
     #[serde(default)]
     pub cursor: CursorUpdate,
@@ -353,6 +368,9 @@ impl TickableStep {
         let mut packets_for_all = Vec::new();
 
         if let Some(spawned_state) = self.spawned_state {
+            if character.is_spawned == spawned_state {
+                return Ok(Vec::new());
+            }
             character.is_spawned = spawned_state;
             if spawned_state {
                 packets_for_all.extend(character.add_packets(
@@ -360,13 +378,8 @@ impl TickableStep {
                     item_definitions,
                     customizations,
                 )?);
-            } else if !spawned_state {
-                let graceful_removal = self.removal_config.enable_graceful_removal;
-                if graceful_removal {
-                    packets_for_all.extend(character.remove_packets(true, Some(self))?);
-                } else {
-                    packets_for_all.extend(character.remove_packets(false, Some(self))?);
-                }
+            } else {
+                packets_for_all.extend(character.remove_packets(self.removal_mode)?);
             }
         }
 
@@ -609,6 +622,7 @@ impl TickableProcedure {
         customizations: &BTreeMap<u32, Customization>,
     ) -> TickResult {
         self.panic_if_empty();
+        self.panic_if_removal_exceeds_duration();
 
         let should_change_steps =
             if let Some((current_step_index, last_step_change)) = self.current_step {
@@ -655,6 +669,29 @@ impl TickableProcedure {
     fn panic_if_empty(&self) {
         if self.steps.is_empty() {
             panic!("Every tickable NPC procedure must have steps");
+        }
+    }
+
+    fn panic_if_removal_exceeds_duration(&self) {
+        for step in &self.steps {
+            if let RemovalMode::Graceful {
+                enable_death_animation: _,
+                removal_delay_millis,
+                removal_effect_delay_millis,
+                removal_composite_effect_id: _,
+                fade_duration_millis,
+            } = step.removal_mode
+            {
+                let total_removal_time =
+                    removal_delay_millis + removal_effect_delay_millis + fade_duration_millis;
+
+                if total_removal_time > step.duration_millis as u32 {
+                    panic!(
+                        "(Removal delay: {}) + (Fade duration: {}) exceeded (Step duration: {})",
+                        removal_delay_millis, fade_duration_millis, step.duration_millis
+                );
+                }
+            }
         }
     }
 }
@@ -1278,7 +1315,7 @@ impl Player {
                 mount_guid: player_mount_guid,
                 unknown19: 0,
                 unknown20: 0,
-                wield_type: character.wield_type.0,
+                wield_type: character.wield_type(),
                 unknown22: 0.0,
                 unknown23: 0,
                 nameplate_image_id: NameplateImage::from_battle_class_guid(
@@ -1482,78 +1519,65 @@ impl CharacterStats {
         Ok(packets)
     }
 
-    pub fn remove_packets(
-        &self,
-        graceful: bool,
-        tickable_step: Option<&TickableStep>,
-    ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
-        let removal_config = tickable_step.as_ref().map(|ts| &ts.removal_config);
-
-        let mut packets = vec![if !graceful {
-            GamePacket::serialize(&TunneledPacket {
+    pub fn remove_packets(&self, mode: RemovalMode) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+        let mut packets = vec![match mode {
+            RemovalMode::Immediate => GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: RemoveStandard {
                     guid: Guid::guid(self),
                 },
-            })?
-        } else {
-            GamePacket::serialize(&TunneledPacket {
+            })?,
+            RemovalMode::Graceful {
+                enable_death_animation,
+                removal_delay_millis,
+                removal_effect_delay_millis,
+                removal_composite_effect_id,
+                fade_duration_millis,
+            } => GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: RemoveGracefully {
                     guid: Guid::guid(self),
-                    use_death_animation: removal_config
-                        .map(|rc| rc.enable_death_animation)
-                        .unwrap_or(true),
-                    delay_millis: removal_config
-                        .and_then(|rc| rc.removal_delay_millis)
-                        .unwrap_or(0),
-                    composite_effect_delay_millis: removal_config
-                        .and_then(|rc| rc.removal_effect_delay_millis)
-                        .unwrap_or(0),
-                    composite_effect: removal_config
-                        .and_then(|rc| rc.removal_composite_effect_id)
-                        .unwrap_or(0),
-                    fade_duration_millis: tickable_step
-                        .map(|ts| ts.duration_millis as u32)
-                        .unwrap_or(1000),
+                    use_death_animation: enable_death_animation,
+                    delay_millis: removal_delay_millis,
+                    composite_effect_delay_millis: removal_effect_delay_millis,
+                    composite_effect: removal_composite_effect_id,
+                    fade_duration_millis,
                 },
-            })?
+            })?,
         }];
 
         if let Some(mount_id) = self.mount_id {
-            packets.push(if !graceful {
-                GamePacket::serialize(&TunneledPacket {
+            packets.push(match mode {
+                RemovalMode::Immediate => GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
                     inner: RemoveStandard {
                         guid: mount_guid(shorten_player_guid(Guid::guid(self))?, mount_id),
                     },
-                })?
-            } else {
-                GamePacket::serialize(&TunneledPacket {
+                })?,
+                RemovalMode::Graceful {
+                    enable_death_animation,
+                    removal_delay_millis,
+                    removal_effect_delay_millis,
+                    removal_composite_effect_id,
+                    fade_duration_millis,
+                } => GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
                     inner: RemoveGracefully {
-                        guid: mount_guid(shorten_player_guid(Guid::guid(self))?, mount_id),
-                        use_death_animation: removal_config
-                            .map(|rc| rc.enable_death_animation)
-                            .unwrap_or(true),
-                        delay_millis: removal_config
-                            .and_then(|rc| rc.removal_delay_millis)
-                            .unwrap_or(0),
-                        composite_effect_delay_millis: removal_config
-                            .and_then(|rc| rc.removal_effect_delay_millis)
-                            .unwrap_or(0),
-                        composite_effect: removal_config
-                            .and_then(|rc| rc.removal_composite_effect_id)
-                            .unwrap_or(0),
-                        fade_duration_millis: tickable_step
-                            .map(|ts| ts.duration_millis as u32)
-                            .unwrap_or(1000),
+                        guid: Guid::guid(self),
+                        use_death_animation: enable_death_animation,
+                        delay_millis: removal_delay_millis,
+                        composite_effect_delay_millis: removal_effect_delay_millis,
+                        composite_effect: removal_composite_effect_id,
+                        fade_duration_millis,
                     },
-                })?
+                })?,
             });
         }
-
         Ok(packets)
+    }
+
+    pub fn wield_type(&self) -> WieldType {
+        self.wield_type.0
     }
 }
 
@@ -1784,10 +1808,6 @@ impl Character {
 
     pub fn last_procedure_change(&self) -> Instant {
         self.tickable_procedure_tracker.last_procedure_change()
-    }
-
-    pub fn wield_type(&self) -> WieldType {
-        self.stats.wield_type.0
     }
 
     pub fn brandished_wield_type(&self) -> WieldType {
