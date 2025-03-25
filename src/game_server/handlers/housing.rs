@@ -224,8 +224,8 @@ pub fn fixture_packets(
                 target: Target::default(),
                 variables: vec![],
                 rail_id: 0,
-                rail_speed: 0.0,
-                rail_origin: Pos {
+                rail_elapsed_seconds: 0.0,
+                rail_offset: Pos {
                     x: 0.0,
                     y: 0.0,
                     z: 0.0,
