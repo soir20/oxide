@@ -370,18 +370,18 @@ impl TickableStep {
 
         if let Some(spawned_state) = self.spawned_state {
             if character.is_spawned != spawned_state {
-            character.is_spawned = spawned_state;
-            if spawned_state {
-                packets_for_all.extend(character.add_packets(
-                    mount_configs,
-                    item_definitions,
-                    customizations,
-                )?);
-            } else {
-                packets_for_all.extend(character.remove_packets(self.removal_mode)?);
+                character.is_spawned = spawned_state;
+                if spawned_state {
+                    packets_for_all.extend(character.add_packets(
+                        mount_configs,
+                        item_definitions,
+                        customizations,
+                    )?);
+                } else {
+                    packets_for_all.extend(character.remove_packets(self.removal_mode)?);
+                }
             }
         }
-    }
 
         if let Some(composite_effect_id) = self.composite_effect_id {
             packets_for_all.push(GamePacket::serialize(&TunneledPacket {
