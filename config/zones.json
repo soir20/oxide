@@ -684,7 +684,7 @@
                         "steps": [
                             {
                                 "composite_effect_id": 1021,
-                                "duration_millis": 12000
+                                "duration_millis": 11500
                             },
                             {
                                 "spawned_state": false,
