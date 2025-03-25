@@ -689,7 +689,7 @@ impl TickableProcedure {
                     panic!(
                         "(Removal delay: {}) + (Fade duration: {}) exceeded (Step duration: {})",
                         removal_delay_millis, fade_duration_millis, step.duration_millis
-                );
+                    );
                 }
             }
         }
