@@ -279,6 +279,7 @@ impl ZoneInstance {
         for (index, fixture) in house.fixtures.iter().enumerate() {
             global_characters_table.insert(Character::new(
                 npc_guid(FIXTURE_DISCRIMINANT, guid, index as u16),
+                fixture.model_id,
                 fixture.pos,
                 fixture.rot,
                 fixture.scale,
@@ -753,6 +754,7 @@ impl ZoneConfig {
                     key: ambient_npc.base_npc.key.clone(),
                     discriminant: AMBIENT_NPC_DISCRIMINANT,
                     index,
+                    model_id: ambient_npc.base_npc.model_id,
                     pos: Pos {
                         x: ambient_npc.base_npc.pos_x,
                         y: ambient_npc.base_npc.pos_y,
@@ -789,6 +791,7 @@ impl ZoneConfig {
                     key: door.base_npc.key.clone(),
                     discriminant: AMBIENT_NPC_DISCRIMINANT,
                     index,
+                    model_id: door.base_npc.model_id,
                     pos: Pos {
                         x: door.base_npc.pos_x,
                         y: door.base_npc.pos_y,
@@ -822,6 +825,7 @@ impl ZoneConfig {
                     key: transport.base_npc.key.clone(),
                     discriminant: AMBIENT_NPC_DISCRIMINANT,
                     index,
+                    model_id: transport.base_npc.model_id,
                     pos: Pos {
                         x: transport.base_npc.pos_x,
                         y: transport.base_npc.pos_y,

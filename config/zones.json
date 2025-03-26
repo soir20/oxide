@@ -85,7 +85,17 @@
                 "show_name": false,
                 "show_icon": false,
                 "large_icon": false,
-                "show_hover_description": false
+                "show_hover_description": false,
+				"tickable_procedures": {
+                    "lift": {
+                        "steps": [
+                            {
+								"model_id": 276,
+                                "duration_millis": 15000
+                            }
+                        ]
+                    }
+                }
             },
             {
                 "comment": "fighter",

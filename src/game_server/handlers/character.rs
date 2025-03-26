@@ -19,8 +19,8 @@ use crate::{
             player_update::{
                 AddNotifications, AddNpc, AddPc, Customization, CustomizationSlot, Hostility, Icon,
                 MoveOnRail, NameplateImage, NotificationData, NpcRelevance, PlayCompositeEffect,
-                QueueAnimation, RemoveGracefully, RemoveStandard, SetAnimation, SingleNotification,
-                SingleNpcRelevance, UpdateSpeed,
+                QueueAnimation, RemoveGracefully, RemoveStandard, ReplaceBaseModel, SetAnimation,
+                SingleNotification, SingleNpcRelevance, UpdateSpeed,
             },
             tunnel::TunneledPacket,
             ui::ExecuteScriptWithParams,
@@ -166,7 +166,7 @@ pub struct BaseNpcConfig {
 
 #[derive(Clone)]
 pub struct BaseNpc {
-    pub model_id: u32,
+    //pub model_id: u32,
     pub name_id: u32,
     pub terrain_object_id: u32,
     pub name_offset_x: f32,
@@ -190,7 +190,7 @@ impl BaseNpc {
             AddNpc {
                 guid: Guid::guid(character),
                 name_id: self.name_id,
-                model_id: self.model_id,
+                model_id: character.model_id,
                 unknown3: true,
                 chat_text_color: Character::DEFAULT_CHAT_TEXT_COLOR,
                 chat_bubble_color: Character::DEFAULT_CHAT_BUBBLE_COLOR,
@@ -296,7 +296,7 @@ impl BaseNpc {
 impl From<BaseNpcConfig> for BaseNpc {
     fn from(value: BaseNpcConfig) -> Self {
         BaseNpc {
-            model_id: value.model_id,
+            //model_id: value.model_id,
             name_id: value.name_id,
             terrain_object_id: value.terrain_object_id,
             name_offset_x: value.name_offset_x,
@@ -334,6 +334,7 @@ pub struct TickableStep {
     pub animation_id: Option<i32>,
     pub one_shot_animation_id: Option<i32>,
     pub chat_message_id: Option<u32>,
+    pub model_id: Option<u32>,
     pub sound_id: Option<u32>,
     pub rail_id: Option<u32>,
     pub composite_effect_id: Option<u32>,
@@ -380,6 +381,20 @@ impl TickableStep {
                 } else {
                     packets_for_all.extend(character.remove_packets(self.removal_mode)?);
                 }
+            }
+        }
+
+        if let Some(model_id) = self.model_id {
+            if character.model_id != model_id {
+                character.model_id = model_id;
+                packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: ReplaceBaseModel {
+                        guid: Guid::guid(character),
+                        model: model_id,
+                        composite_effect: 0,
+                    },
+                })?);
             }
         }
 
@@ -1381,6 +1396,7 @@ pub struct NpcTemplate {
     pub key: Option<String>,
     pub discriminant: u8,
     pub index: u16,
+    pub model_id: u32,
     pub pos: Pos,
     pub rot: Pos,
     pub scale: f32,
@@ -1410,6 +1426,7 @@ impl NpcTemplate {
         Character {
             stats: CharacterStats {
                 guid: self.guid(instance_guid),
+                model_id: self.model_id,
                 pos: self.pos,
                 rot: self.rot,
                 scale: self.scale,
@@ -1476,6 +1493,7 @@ impl CharacterStat {
 #[derive(Clone)]
 pub struct CharacterStats {
     guid: u64,
+    pub model_id: u32,
     pub pos: Pos,
     pub rot: Pos,
     pub scale: f32,
@@ -1655,6 +1673,7 @@ impl Character {
 
     pub fn new(
         guid: u64,
+        model_id: u32,
         pos: Pos,
         rot: Pos,
         scale: f32,
@@ -1673,6 +1692,7 @@ impl Character {
         Character {
             stats: CharacterStats {
                 guid,
+                model_id,
                 pos,
                 rot,
                 scale,
@@ -1740,6 +1760,7 @@ impl Character {
         Character {
             stats: CharacterStats {
                 guid: player_guid(guid),
+                model_id: 0,
                 pos,
                 rot,
                 scale: 1.0,
