@@ -3260,15 +3260,15 @@
                                     {
                                         "comment": "Use base level's credit ratio as a placeholder",
                                         "guid": 27163,
-                                        "name_id": 9113,
-                                        "description_id": 9138,
+                                        "name_id": 9128,
+                                        "description_id": 9142,
                                         "min_players": 1,
                                         "max_players": 1,
-                                        "start_sound_id": 4494,
+                                        "start_sound_id": 4498,
                                         "members_only": true,
                                         "minigame_type": {
                                             "SaberStrike": {
-                                                "saber_strike_stage_id": 114
+                                                "saber_strike_stage_id": 142
                                             }
                                         },
                                         "zone_template_guid": 200,
@@ -3285,7 +3285,7 @@
                                         "members_only": true,
                                         "minigame_type": {
                                             "SaberStrike": {
-                                                "saber_strike_stage_id": 115
+                                                "saber_strike_stage_id": 143
                                             }
                                         },
                                         "zone_template_guid": 200,
@@ -3294,15 +3294,15 @@
                                     {
                                         "comment": "Use base level's credit ratio as a placeholder",
                                         "guid": 27165,
-                                        "name_id": 9115,
-                                        "description_id": 9143,
+                                        "name_id": 9130,
+                                        "description_id": 9137,
                                         "min_players": 1,
                                         "max_players": 1,
-                                        "start_sound_id": 4499,
+                                        "start_sound_id": 4493,
                                         "members_only": true,
                                         "minigame_type": {
                                             "SaberStrike": {
-                                                "saber_strike_stage_id": 116
+                                                "saber_strike_stage_id": 144
                                             }
                                         },
                                         "zone_template_guid": 200,
