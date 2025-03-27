@@ -362,11 +362,7 @@ impl TickableStep {
                 )?);
             } else if !spawned_state {
                 let graceful_removal = self.removal_config.enable_graceful_removal;
-                if graceful_removal {
-                    packets_for_all.extend(character.remove_packets(true, Some(self))?);
-                } else {
-                    packets_for_all.extend(character.remove_packets(false, Some(self))?);
-                }
+                packets_for_all.extend(character.remove_packets(graceful_removal, Some(self))?);
             }
         }
 
