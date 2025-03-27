@@ -1036,15 +1036,15 @@ impl GameServer {
                 // a fairly small constant, while there can theoretically be billions of matchmaking groups.
                 for stage in self.minigames().stage_configs() {
                     let timeout =
-                        Duration::from_millis(stage.stage_config.matchmaking_timeout_millis as u64);
+                        Duration::from_millis(stage.stage_config.matchmaking_timeout_millis() as u64);
                     // Make sure max time is greater than or equal to start time so that the range is valid
                     let max_time = match now.checked_sub(timeout) {
                         Some(max_time) => max_time,
                         None => continue,
                     }.max(self.start_time);
                     let stage_group_guid = stage.stage_group_guid;
-                    let stage_guid = stage.stage_config.guid;
-                    let min_players = stage.stage_config.min_players;
+                    let stage_guid = stage.stage_config.guid();
+                    let min_players = stage.stage_config.min_players();
 
                     let timed_out_group_range =
                         (MatchmakingGroupStatus::OpenToAll, stage_group_guid, stage_guid, self.start_time, u32::MIN)
@@ -1077,12 +1077,12 @@ impl GameServer {
                                 ));
                                 return Ok::<(), ProcessPacketError>(());
                             } else if players_in_group.len() == 1 {
-                                if let Some(replacement_stage_locator) = &stage.stage_config.single_player_stage_guid {
+                                if let Some(replacement_stage_locator) = &stage.stage_config.single_player_stage_guid() {
                                     if let Some(replacement_stage) = self
                                         .minigames()
                                         .stage_config(replacement_stage_locator.stage_group_guid, replacement_stage_locator.stage_guid)
                                     {
-                                        if replacement_stage.stage_config.min_players == 1 {
+                                        if replacement_stage.stage_config.min_players() == 1 {
                                             broadcasts.append(&mut prepare_active_minigame_instance(
                                                 &players_in_group,
                                                 &replacement_stage,

@@ -2,6 +2,7 @@ use std::{
     collections::{BTreeMap, BTreeSet},
     fs::File,
     io::{Cursor, Error, ErrorKind, Read},
+    iter,
     path::Path,
     sync::Arc,
     time::Instant,
@@ -94,7 +95,7 @@ impl PlayerMinigameStats {
     }
 }
 
-#[derive(Deserialize)]
+#[derive(Clone, Copy, Deserialize)]
 pub struct StageLocator {
     pub stage_group_guid: i32,
     pub stage_guid: i32,
@@ -127,8 +128,98 @@ impl From<&MinigameType> for MinigameTypeData {
     }
 }
 
+const CHALLENGE_LINK_NAME: &str = "challenge";
+const GROUP_LINK_NAME: &str = "group";
+
 #[derive(Deserialize)]
-pub struct MinigameStageConfig {
+pub struct MinigameChallengeConfig {
+    pub guid: i32,
+    pub name_id: u32,
+    pub description_id: u32,
+    pub min_players: u32,
+    pub max_players: u32,
+    pub start_sound_id: u32,
+    pub required_item_guid: Option<u32>,
+    pub members_only: bool,
+    pub minigame_type: MinigameType,
+    pub zone_template_guid: u8,
+    pub score_to_credits_expression: String,
+    #[serde(default = "default_matchmaking_timeout_millis")]
+    pub matchmaking_timeout_millis: u32,
+    pub single_player_stage_guid: Option<StageLocator>,
+}
+
+impl MinigameChallengeConfig {
+    pub fn has_completed(&self, player: &Player) -> bool {
+        player.minigame_stats.has_completed(self.guid)
+    }
+
+    pub fn unlocked(&self, player: &Player, base_stage_completed: bool) -> bool {
+        self.required_item_guid
+            .map(|item_guid| player.inventory.contains(&item_guid))
+            .unwrap_or(true)
+            && base_stage_completed
+            && (!self.members_only || player.member)
+    }
+
+    pub fn to_stage_definition(
+        &self,
+        portal_entry_guid: u32,
+        base_stage: &MinigameCampaignStageConfig,
+    ) -> MinigameStageDefinition {
+        MinigameStageDefinition {
+            guid: self.guid,
+            portal_entry_guid,
+            start_screen_name_id: self.name_id,
+            start_screen_description_id: self.description_id,
+            start_screen_icon_id: base_stage.start_screen_icon_id,
+            difficulty: base_stage.difficulty,
+            members_only: self.members_only,
+            unknown8: 0,
+            unknown9: "".to_string(),
+            unknown10: 0,
+            unknown11: 0,
+            start_sound_id: self.start_sound_id,
+            unknown13: "".to_string(),
+            unknown14: 0,
+            unknown15: 0,
+            unknown16: 0,
+        }
+    }
+
+    pub fn to_stage_instance(
+        &self,
+        portal_entry_guid: u32,
+        player: &Player,
+        base_stage: &MinigameStageInstance,
+    ) -> MinigameStageInstance {
+        MinigameStageInstance {
+            stage_instance_guid: self.guid,
+            portal_entry_guid,
+            link_name: CHALLENGE_LINK_NAME.to_string(),
+            short_name: "".to_string(),
+            unlocked: self.unlocked(player, base_stage.completed),
+            unknown6: 0,
+            name_id: self.name_id,
+            description_id: self.description_id,
+            icon_id: base_stage.icon_id,
+            parent_stage_instance_guid: base_stage.stage_instance_guid,
+            members_only: self.members_only,
+            unknown12: 0,
+            background_swf: "".to_string(),
+            min_players: self.min_players,
+            max_players: self.max_players,
+            stage_number: 0,
+            required_item_id: 0,
+            unknown18: 0,
+            completed: self.has_completed(player),
+            stage_group_instance_guid: base_stage.stage_group_instance_guid,
+        }
+    }
+}
+
+#[derive(Deserialize)]
+pub struct MinigameCampaignStageConfig {
     pub guid: i32,
     pub name_id: u32,
     pub description_id: u32,
@@ -150,9 +241,11 @@ pub struct MinigameStageConfig {
     #[serde(default = "default_matchmaking_timeout_millis")]
     pub matchmaking_timeout_millis: u32,
     pub single_player_stage_guid: Option<StageLocator>,
+    #[serde(default)]
+    pub challenges: Vec<MinigameChallengeConfig>,
 }
 
-impl MinigameStageConfig {
+impl MinigameCampaignStageConfig {
     pub fn has_completed(&self, player: &Player) -> bool {
         player.minigame_stats.has_completed(self.guid)
     }
@@ -185,12 +278,43 @@ impl MinigameStageConfig {
             unknown16: 0,
         }
     }
+
+    pub fn to_stage_instance(
+        &self,
+        portal_entry_guid: u32,
+        stage_number: u32,
+        player: &Player,
+        previous_completed: bool,
+    ) -> MinigameStageInstance {
+        MinigameStageInstance {
+            stage_instance_guid: self.guid,
+            portal_entry_guid,
+            link_name: self.link_name.clone(),
+            short_name: self.short_name.clone(),
+            unlocked: self.unlocked(player, previous_completed),
+            unknown6: 0,
+            name_id: self.name_id,
+            description_id: self.description_id,
+            icon_id: self.stage_icon_id,
+            parent_stage_instance_guid: 0,
+            members_only: self.members_only,
+            unknown12: 0,
+            background_swf: "".to_string(),
+            min_players: self.min_players,
+            max_players: self.max_players,
+            stage_number,
+            required_item_id: 0,
+            unknown18: 0,
+            completed: self.has_completed(player),
+            stage_group_instance_guid: 0,
+        }
+    }
 }
 
 #[derive(Deserialize)]
 pub enum MinigameStageGroupChild {
     StageGroup(Arc<MinigameStageGroupConfig>),
-    Stage(MinigameStageConfig),
+    Stage(MinigameCampaignStageConfig),
 }
 
 const fn default_true() -> bool {
@@ -266,7 +390,7 @@ impl MinigameStageGroupConfig {
                         parent_stage_definition_guid: 0,
                         child_stage_definition_guid: 0,
                         icon_id: 0,
-                        link_name: "group".to_string(),
+                        link_name: GROUP_LINK_NAME.to_string(),
                         short_name: stage_group.short_name.clone(),
                         stage_number,
                         child_stage_group_definition_guid: stage_group.guid,
@@ -284,6 +408,21 @@ impl MinigameStageGroupConfig {
                         short_name: stage.short_name.clone(),
                         stage_number,
                         child_stage_group_definition_guid: 0,
+                    });
+
+                    stage.challenges.iter().for_each(|challenge| {
+                        stages.push(challenge.to_stage_definition(portal_entry_guid, stage));
+                        group_links.push(MinigameStageGroupLink {
+                            link_id: 0,
+                            parent_stage_group_definition_guid: self.guid,
+                            parent_stage_definition_guid: 0,
+                            child_stage_definition_guid: challenge.guid,
+                            icon_id: 0,
+                            link_name: CHALLENGE_LINK_NAME.to_string(),
+                            short_name: "".to_string(),
+                            stage_number,
+                            child_stage_group_definition_guid: 0,
+                        });
                     });
                 }
             }
@@ -327,14 +466,14 @@ impl MinigameStageGroupConfig {
                     stage_instances.push(MinigameStageInstance {
                         stage_instance_guid: 0,
                         portal_entry_guid,
-                        link_name: "group".to_string(),
+                        link_name: GROUP_LINK_NAME.to_string(),
                         short_name: stage_group.short_name.clone(),
                         unlocked,
                         unknown6: 0,
                         name_id: stage_group.name_id,
                         description_id: stage_group.description_id,
                         icon_id: stage_group.stage_icon_id,
-                        parent_minigame_id: 0,
+                        parent_stage_instance_guid: 0,
                         members_only: stage_group.members_only,
                         unknown12: 0,
                         background_swf: "".to_string(),
@@ -348,31 +487,22 @@ impl MinigameStageGroupConfig {
                     });
                 }
                 MinigameStageGroupChild::Stage(stage) => {
-                    let unlocked = stage.unlocked(player, previous_completed);
-                    previous_completed = stage.has_completed(player);
-
-                    stage_instances.push(MinigameStageInstance {
-                        stage_instance_guid: stage.guid,
+                    let stage_instance = stage.to_stage_instance(
                         portal_entry_guid,
-                        link_name: stage.link_name.clone(),
-                        short_name: stage.short_name.clone(),
-                        unlocked,
-                        unknown6: 0,
-                        name_id: stage.name_id,
-                        description_id: stage.description_id,
-                        icon_id: stage.stage_icon_id,
-                        parent_minigame_id: 0,
-                        members_only: stage.members_only,
-                        unknown12: 0,
-                        background_swf: "".to_string(),
-                        min_players: stage.min_players,
-                        max_players: stage.max_players,
                         stage_number,
-                        required_item_id: 0,
-                        unknown18: 0,
-                        completed: previous_completed,
-                        stage_group_instance_guid: 0,
-                    });
+                        player,
+                        previous_completed,
+                    );
+                    previous_completed = stage_instance.completed;
+
+                    for challenge in &stage.challenges {
+                        stage_instances.push(challenge.to_stage_instance(
+                            portal_entry_guid,
+                            player,
+                            &stage_instance,
+                        ));
+                    }
+                    stage_instances.push(stage_instance);
                 }
             }
         }
@@ -534,8 +664,99 @@ impl From<&[MinigamePortalCategoryConfig]> for MinigameDefinitions {
     }
 }
 
+pub enum MinigameStageConfig<'a> {
+    CampaignStage(&'a MinigameCampaignStageConfig),
+    Challenge(&'a MinigameChallengeConfig, &'a MinigameCampaignStageConfig),
+}
+
+impl MinigameStageConfig<'_> {
+    pub fn guid(&self) -> i32 {
+        match self {
+            MinigameStageConfig::CampaignStage(stage) => stage.guid,
+            MinigameStageConfig::Challenge(challenge, ..) => challenge.guid,
+        }
+    }
+
+    pub fn max_players(&self) -> u32 {
+        match self {
+            MinigameStageConfig::CampaignStage(stage) => stage.max_players,
+            MinigameStageConfig::Challenge(challenge, ..) => challenge.max_players,
+        }
+    }
+
+    pub fn min_players(&self) -> u32 {
+        match self {
+            MinigameStageConfig::CampaignStage(stage) => stage.min_players,
+            MinigameStageConfig::Challenge(challenge, ..) => challenge.min_players,
+        }
+    }
+
+    pub fn zone_template_guid(&self) -> u8 {
+        match self {
+            MinigameStageConfig::CampaignStage(stage) => stage.zone_template_guid,
+            MinigameStageConfig::Challenge(challenge, ..) => challenge.zone_template_guid,
+        }
+    }
+
+    pub fn minigame_type(&self) -> &MinigameType {
+        match self {
+            MinigameStageConfig::CampaignStage(stage) => &stage.minigame_type,
+            MinigameStageConfig::Challenge(challenge, ..) => &challenge.minigame_type,
+        }
+    }
+
+    pub fn matchmaking_timeout_millis(&self) -> u32 {
+        match self {
+            MinigameStageConfig::CampaignStage(stage) => stage.matchmaking_timeout_millis,
+            MinigameStageConfig::Challenge(challenge, ..) => challenge.matchmaking_timeout_millis,
+        }
+    }
+
+    pub fn single_player_stage_guid(&self) -> Option<StageLocator> {
+        match self {
+            MinigameStageConfig::CampaignStage(stage) => stage.single_player_stage_guid,
+            MinigameStageConfig::Challenge(challenge, ..) => challenge.single_player_stage_guid,
+        }
+    }
+
+    pub fn score_to_credits_expression(&self) -> &String {
+        match self {
+            MinigameStageConfig::CampaignStage(stage) => &stage.score_to_credits_expression,
+            MinigameStageConfig::Challenge(challenge, ..) => &challenge.score_to_credits_expression,
+        }
+    }
+
+    pub fn name_id(&self) -> u32 {
+        match self {
+            MinigameStageConfig::CampaignStage(stage) => stage.name_id,
+            MinigameStageConfig::Challenge(challenge, ..) => challenge.name_id,
+        }
+    }
+
+    pub fn description_id(&self) -> u32 {
+        match self {
+            MinigameStageConfig::CampaignStage(stage) => stage.description_id,
+            MinigameStageConfig::Challenge(challenge, ..) => challenge.description_id,
+        }
+    }
+
+    pub fn start_screen_icon_id(&self) -> u32 {
+        match self {
+            MinigameStageConfig::CampaignStage(stage) => stage.start_screen_icon_id,
+            MinigameStageConfig::Challenge(_, base_stage) => base_stage.start_screen_icon_id,
+        }
+    }
+
+    pub fn difficulty(&self) -> u32 {
+        match self {
+            MinigameStageConfig::CampaignStage(stage) => stage.difficulty,
+            MinigameStageConfig::Challenge(_, base_stage) => base_stage.difficulty,
+        }
+    }
+}
+
 pub struct StageConfigRef<'a> {
-    pub stage_config: &'a MinigameStageConfig,
+    pub stage_config: MinigameStageConfig<'a>,
     pub stage_number: u32,
     pub stage_group_guid: i32,
     pub portal_entry_guid: u32,
@@ -579,12 +800,24 @@ impl AllMinigameConfigs {
                     .enumerate()
                     .filter_map(|(index, child)| match child {
                         MinigameStageGroupChild::StageGroup(_) => None,
-                        MinigameStageGroupChild::Stage(stage) => Some(StageConfigRef {
-                            stage_config: stage,
-                            stage_number: index as u32 + 1,
+                        MinigameStageGroupChild::Stage(stage) => Some((index, stage)),
+                    })
+                    .flat_map(move |(index, stage)| {
+                        let stage_number = index as u32 + 1;
+                        iter::once(StageConfigRef {
+                            stage_config: MinigameStageConfig::CampaignStage(stage),
+                            stage_number,
                             stage_group_guid: stage_group.guid,
                             portal_entry_guid: *portal_entry_guid,
-                        }),
+                        })
+                        .chain(stage.challenges.iter().map(
+                            move |challenge| StageConfigRef {
+                                stage_config: MinigameStageConfig::Challenge(challenge, stage),
+                                stage_number,
+                                stage_group_guid: stage_group.guid,
+                                portal_entry_guid: *portal_entry_guid,
+                            },
+                        ))
                     })
             })
     }
@@ -599,14 +832,28 @@ impl AllMinigameConfigs {
                     .enumerate()
                     .find_map(|(index, child)| {
                         if let MinigameStageGroupChild::Stage(stage) = child {
+                            let stage_number = index as u32 + 1;
                             if stage.guid == stage_guid {
                                 Some(StageConfigRef {
-                                    stage_config: stage,
-                                    stage_number: index as u32 + 1,
+                                    stage_config: MinigameStageConfig::CampaignStage(stage),
+                                    stage_number,
                                     stage_group_guid: stage_group.guid,
                                     portal_entry_guid: *portal_entry_guid,
                                 })
                             } else {
+                                for challenge in &stage.challenges {
+                                    if challenge.guid == stage_guid {
+                                        return Some(StageConfigRef {
+                                            stage_config: MinigameStageConfig::Challenge(
+                                                challenge, stage,
+                                            ),
+                                            stage_number,
+                                            stage_group_guid: stage_group.guid,
+                                            portal_entry_guid: *portal_entry_guid,
+                                        });
+                                    }
+                                }
+
                                 None
                             }
                         } else {
@@ -631,6 +878,12 @@ impl AllMinigameConfigs {
 
                         if stage_guid == stage.guid {
                             return unlocked;
+                        }
+
+                        for challenge in &stage.challenges {
+                            if stage_guid == challenge.guid {
+                                return challenge.unlocked(player, previous_completed);
+                            }
                         }
                     }
                 }
@@ -835,7 +1088,7 @@ fn handle_request_create_active_minigame(
         game_server.lock_enforcer().write_characters(
             |characters_table_write_handle, zones_lock_enforcer| {
                 zones_lock_enforcer.write_zones(|zones_table_write_handle| {
-                    if stage_config.stage_config.max_players == 1 {
+                    if stage_config.stage_config.max_players() == 1 {
                         Ok(prepare_active_minigame_instance(
                             &[sender],
                             &stage_config,
@@ -867,9 +1120,9 @@ fn handle_request_create_active_minigame(
                         let (open_group, space_left) = find_matchmaking_group(
                             characters_table_write_handle,
                             required_space,
-                            stage_config.stage_config.max_players,
+                            stage_config.stage_config.max_players(),
                             stage_config.stage_group_guid,
-                            stage_config.stage_config.guid,
+                            stage_config.stage_config.guid(),
                             game_server.start_time(),
                         )
                         .unwrap_or_else(|| {
@@ -877,11 +1130,11 @@ fn handle_request_create_active_minigame(
                                 (
                                     MatchmakingGroupStatus::OpenToAll,
                                     stage_config.stage_group_guid,
-                                    stage_config.stage_config.guid,
+                                    stage_config.stage_config.guid(),
                                     Instant::now(),
                                     sender,
                                 ),
-                                stage_config.stage_config.max_players,
+                                stage_config.stage_config.max_players(),
                             )
                         });
 
@@ -898,7 +1151,7 @@ fn handle_request_create_active_minigame(
                                         format!(
                                             "Character {} requested to join a stage {} but is not a player",
                                             player_guid(sender),
-                                            stage_config.stage_config.guid
+                                            stage_config.stage_config.guid()
                                         ),
                                     ))
                                 }
@@ -908,7 +1161,7 @@ fn handle_request_create_active_minigame(
                                     format!(
                                         "Character {} requested to join a stage {} but does not exist",
                                         player_guid(sender),
-                                        stage_config.stage_config.guid
+                                        stage_config.stage_config.guid()
                                     ),
                                 ))
                             }
@@ -1048,7 +1301,7 @@ pub fn prepare_active_minigame_instance(
     game_server: &GameServer,
 ) -> Vec<Broadcast> {
     let stage_group_guid = stage_config.stage_group_guid;
-    let stage_guid = stage_config.stage_config.guid;
+    let stage_guid = stage_config.stage_config.guid();
 
     let mut broadcasts = Vec::new();
 
@@ -1057,8 +1310,8 @@ pub fn prepare_active_minigame_instance(
         let new_instance_guid = game_server.get_or_create_instance(
             characters_table_write_handle,
             zones_table_write_handle,
-            stage_config.stage_config.zone_template_guid,
-            stage_config.stage_config.max_players,
+            stage_config.stage_config.zone_template_guid(),
+            stage_config.stage_config.max_players(),
         )?;
 
         let mut teleport_broadcasts = Vec::new();
@@ -1077,7 +1330,7 @@ pub fn prepare_active_minigame_instance(
                                 total_score: 0,
                                 awarded_credits: 0,
                                 start_time: now,
-                                type_data: (&stage_config.stage_config.minigame_type).into(),
+                                type_data: stage_config.stage_config.minigame_type().into(),
                             });
                             player.matchmaking_group = None;
                             Ok(())
@@ -1216,7 +1469,7 @@ fn handle_request_start_active_minigame(
                                     inner: stage_group_instance,
                                 })?);
 
-                                match &stage_config.minigame_type {
+                                match stage_config.minigame_type() {
                                     MinigameType::Flash { game_swf_name } => {
                                         packets.push(
                                             GamePacket::serialize(&TunneledPacket {
@@ -1558,7 +1811,7 @@ fn handle_flash_payload(
                         sender,
                         player_credits,
                         minigame_status,
-                        stage_config.stage_config,
+                        &stage_config.stage_config,
                         round_score,
                     )?;
 
@@ -1686,10 +1939,10 @@ pub fn create_active_minigame(
                             sub_op_code: -1,
                             stage_group_guid: minigame_status.stage_group_guid,
                         },
-                        name_id: stage_config.name_id,
-                        icon_set_id: stage_config.start_screen_icon_id,
-                        description_id: stage_config.description_id,
-                        difficulty: stage_config.difficulty,
+                        name_id: stage_config.name_id(),
+                        icon_set_id: stage_config.start_screen_icon_id(),
+                        description_id: stage_config.description_id(),
+                        difficulty: stage_config.difficulty(),
                         battle_class_type: 0,
                         portal_entry_guid,
                         unknown7: false,
@@ -1736,7 +1989,7 @@ fn award_credits(
     score: i32,
 ) -> Result<(Vec<Broadcast>, u32), ProcessPacketError> {
     let awarded_credits =
-        evaluate_score_to_credits_expression(&stage_config.score_to_credits_expression, score)?
+        evaluate_score_to_credits_expression(stage_config.score_to_credits_expression(), score)?
             .max(0) as u32;
 
     minigame_status.awarded_credits = minigame_status
@@ -1780,7 +2033,7 @@ pub fn end_active_minigame(
                     {
                         // Wait for the end signal from the Flash payload because those games send additional score data
                         if skip_if_flash
-                            && matches!(stage_config.minigame_type, MinigameType::Flash { .. })
+                            && matches!(stage_config.minigame_type(), MinigameType::Flash { .. })
                         {
                             return Ok(Vec::new());
                         }
@@ -1793,13 +2046,13 @@ pub fn end_active_minigame(
                                 sender,
                                 &mut player.credits,
                                 minigame_status,
-                                stage_config,
+                                &stage_config,
                                 minigame_status.total_score,
                             )?
                             .0
                         };
 
-                        broadcasts.push(Broadcast::Single(
+                        let last_broadcast = Broadcast::Single(
                             sender,
                             vec![
                                 GamePacket::serialize(&TunneledPacket {
@@ -1886,15 +2139,20 @@ pub fn end_active_minigame(
                                         },
                                     },
                                 })?,
-                                GamePacket::serialize(&TunneledPacket {
-                                    unknown1: true,
-                                    inner: game_server.minigames().stage_group_instance(
-                                        minigame_status.stage_group_guid,
-                                        player,
-                                    )?,
-                                })?,
                             ],
+                        );
+
+                        broadcasts.push(Broadcast::Single(
+                            sender,
+                            vec![GamePacket::serialize(&TunneledPacket {
+                                unknown1: true,
+                                inner: game_server.minigames().stage_group_instance(
+                                    minigame_status.stage_group_guid,
+                                    player,
+                                )?,
+                            })?],
                         ));
+                        broadcasts.push(last_broadcast);
 
                         player.minigame_status = None;
 
