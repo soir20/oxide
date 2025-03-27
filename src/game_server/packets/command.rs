@@ -2,15 +2,19 @@ use byteorder::{LittleEndian, WriteBytesExt};
 use num_enum::TryFromPrimitive;
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
 
-use super::{GamePacket, OpCode, Rgba, Target};
+use super::{GamePacket, OpCode, Pos, Rgba, Target};
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u16)]
 pub enum CommandOpCode {
+    EnterDialog = 0x3,
+    ExitDialog = 0x4,
+    AdvanceDialog = 0x6,
     InteractionList = 0x9,
     StartFlashGame = 0xc,
     ChatBubbleColor = 0xe,
     SelectPlayer = 0xf,
+    DialogEffect = 0x17,
     PlaySoundOnTarget = 0x22,
 }
 
@@ -20,6 +24,69 @@ impl SerializePacket for CommandOpCode {
         buffer.write_u16::<LittleEndian>(*self as u16)?;
         Ok(())
     }
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct DialogEffect {
+    pub guid: u64,
+    pub composite_effect: u32,
+}
+
+impl GamePacket for DialogEffect {
+    type Header = CommandOpCode;
+    const HEADER: Self::Header = CommandOpCode::DialogEffect;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct ExitDialog {}
+
+impl GamePacket for ExitDialog {
+    type Header = CommandOpCode;
+    const HEADER: Self::Header = CommandOpCode::ExitDialog;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct AdvanceDialog {
+    pub button_id: u32,
+}
+
+impl GamePacket for AdvanceDialog {
+    type Header = CommandOpCode;
+    const HEADER: Self::Header = CommandOpCode::AdvanceDialog;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct DialogChoice {
+    pub button_id: u32,
+    pub unknown2: u32,
+    pub button_text_id: u32,
+    pub unknown4: u32,
+    pub unknown5: u32,
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct EnterDialog {
+    pub dialog_message_id: u32,
+    pub speaker_animation_id: i32,
+    pub speaker_guid: u64,
+    pub enable_exit_button: bool,
+    pub unknown4: f32,
+    pub dialog_choices: Vec<DialogChoice>,
+    pub camera_placement: Pos,
+    pub look_at: Pos,
+    pub change_player_pos: bool,
+    pub new_player_pos: Pos,
+    pub unknown8: f32,
+    pub hide_player: bool,
+    pub unknown10: bool,
+    pub unknown11: bool,
+    pub zoom: f32,
+    pub speaker_sound_id: u32,
+}
+
+impl GamePacket for EnterDialog {
+    type Header = CommandOpCode;
+    const HEADER: Self::Header = CommandOpCode::EnterDialog;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
