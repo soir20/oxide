@@ -19,9 +19,8 @@ use crate::{
             player_update::{
                 AddNotifications, AddNpc, AddPc, Customization, CustomizationSlot, Hostility, Icon,
                 MoveOnRail, NameplateImage, NotificationData, NpcRelevance, PlayCompositeEffect,
-                QueueAnimation, RemoveGracefully, RemoveStandard, SetAnimation,
+                QueueAnimation, RemoveGracefully, RemoveStandard, ReplaceBaseModel, SetAnimation,
                 SingleNotification, SingleNpcRelevance, UpdateSpeed, UpdateTemporaryAppearance,
-                ReplaceBaseModel,
             },
             tunnel::TunneledPacket,
             ui::ExecuteScriptWithParams,
@@ -384,13 +383,13 @@ impl TickableStep {
         }
 
         if let Some(model_id) = self.model_id {
-                packets_for_all.push(GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: UpdateTemporaryAppearance {
-                        model: model_id,
-                        guid: Guid::guid(character),
-                    },
-                })?);
+            packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: UpdateTemporaryAppearance {
+                    model: model_id,
+                    guid: Guid::guid(character),
+                },
+            })?);
         }
 
         if let Some(composite_effect_id) = self.composite_effect_id {
