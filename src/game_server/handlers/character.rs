@@ -167,7 +167,6 @@ pub struct BaseNpcConfig {
 
 #[derive(Clone)]
 pub struct BaseNpc {
-    //pub model_id: u32,
     pub name_id: u32,
     pub terrain_object_id: u32,
     pub name_offset_x: f32,
@@ -385,15 +384,6 @@ impl TickableStep {
         }
 
         if let Some(model_id) = self.model_id {
-                character.model_id = model_id;
-                /*packets_for_all.push(GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: ReplaceBaseModel {
-                        guid: Guid::guid(character),
-                        model: model_id,
-                        composite_effect: 0,
-                    },
-                })?);*/
                 packets_for_all.push(GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
                     inner: UpdateTemporaryAppearance {

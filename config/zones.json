@@ -70,9 +70,9 @@
         "doors": [],
         "transports": [
             {
-                "comment": "holo table",
+                "comment": "holo table holograms",
                 "name_id": 32914,
-                "model_id": 352,
+                "model_id": 44,
                 "pos_x": 593.89545,
                 "pos_y": 10.0,
                 "pos_z": 672.5175,
@@ -90,50 +90,50 @@
                     "arc_troopers_hologram": {
                         "steps": [
                             {
-								"animation_id": 9002,
                                 "model_id": 354,
-                                "duration_millis": 10000
+                                "duration_millis": 0
                             }
-							],
-							"next_possible_procedures": ["remove"]
-					},
-						"battle_droid_hologram": {
+                        ],
+                        "next_possible_procedures": ["phantom_countdown"]
+                    },
+                    "battle_droid_hologram": {
                         "steps": [
                             {
-								"animation_id": 9002,
                                 "model_id": 352,
-                                "duration_millis": 10000
+                                "duration_millis": 0
                             }
-							],
-							"next_possible_procedures": ["remove"]
-						},
-						"super_battle_droid_hologram": {
+                        ],
+                        "next_possible_procedures": ["phantom_countdown"]
+                    },
+                    "super_battle_droid_hologram": {
                         "steps": [
                             {
-								"animation_id": 9002,
                                 "model_id": 351,
-                                "duration_millis": 10000
+                                "duration_millis": 0
                             }
-							],
-							"next_possible_procedures": ["remove"]
-						},
-						"droideka_hologram": {
+                        ],
+                        "next_possible_procedures": ["phantom_countdown"]
+                    },
+                    "droideka_hologram": {
                         "steps": [
                             {
-								"animation_id": 9002,
                                 "model_id": 350,
-                                "duration_millis": 10000
+                                "duration_millis": 0
                             }
-							],
-							"next_possible_procedures": ["remove"]
-						},
-						"remove": {
+                        ],
+                        "next_possible_procedures": ["phantom_countdown"]
+                    },
+                    "phantom_countdown": {
                         "steps": [
                             {
-								"model_id": 44,
+                                "duration_millis": 10000
+                            },
+                            {
+                                "model_id": 44,
                                 "duration_millis": 5000
                             }
-                        ]
+                        ],
+                        "next_possible_procedures": ["arc_troopers_hologram", "battle_droid_hologram", "super_battle_droid_hologram", "droideka_hologram"]
                     }
                 }
             },
