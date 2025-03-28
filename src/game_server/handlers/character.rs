@@ -19,8 +19,9 @@ use crate::{
             player_update::{
                 AddNotifications, AddNpc, AddPc, Customization, CustomizationSlot, Hostility, Icon,
                 MoveOnRail, NameplateImage, NotificationData, NpcRelevance, PlayCompositeEffect,
-                QueueAnimation, RemoveGracefully, RemoveStandard, ReplaceBaseModel, SetAnimation,
-                SingleNotification, SingleNpcRelevance, UpdateSpeed,
+                QueueAnimation, RemoveGracefully, RemoveStandard, SetAnimation,
+                SingleNotification, SingleNpcRelevance, UpdateSpeed, UpdateTemporaryAppearance,
+                ReplaceBaseModel,
             },
             tunnel::TunneledPacket,
             ui::ExecuteScriptWithParams,
@@ -296,7 +297,6 @@ impl BaseNpc {
 impl From<BaseNpcConfig> for BaseNpc {
     fn from(value: BaseNpcConfig) -> Self {
         BaseNpc {
-            //model_id: value.model_id,
             name_id: value.name_id,
             terrain_object_id: value.terrain_object_id,
             name_offset_x: value.name_offset_x,
@@ -385,17 +385,22 @@ impl TickableStep {
         }
 
         if let Some(model_id) = self.model_id {
-            if character.model_id != model_id {
                 character.model_id = model_id;
-                packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                /*packets_for_all.push(GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
                     inner: ReplaceBaseModel {
                         guid: Guid::guid(character),
                         model: model_id,
                         composite_effect: 0,
                     },
+                })?);*/
+                packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: UpdateTemporaryAppearance {
+                        model: model_id,
+                        guid: Guid::guid(character),
+                    },
                 })?);
-            }
         }
 
         if let Some(composite_effect_id) = self.composite_effect_id {

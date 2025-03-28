@@ -87,11 +87,51 @@
                 "large_icon": false,
                 "show_hover_description": false,
 				"tickable_procedures": {
-                    "lift": {
+                    "arc_troopers_hologram": {
                         "steps": [
                             {
-								"model_id": 276,
-                                "duration_millis": 15000
+								"animation_id": 9002,
+                                "model_id": 354,
+                                "duration_millis": 10000
+                            }
+							],
+							"next_possible_procedures": ["remove"]
+					},
+						"battle_droid_hologram": {
+                        "steps": [
+                            {
+								"animation_id": 9002,
+                                "model_id": 352,
+                                "duration_millis": 10000
+                            }
+							],
+							"next_possible_procedures": ["remove"]
+						},
+						"super_battle_droid_hologram": {
+                        "steps": [
+                            {
+								"animation_id": 9002,
+                                "model_id": 351,
+                                "duration_millis": 10000
+                            }
+							],
+							"next_possible_procedures": ["remove"]
+						},
+						"droideka_hologram": {
+                        "steps": [
+                            {
+								"animation_id": 9002,
+                                "model_id": 350,
+                                "duration_millis": 10000
+                            }
+							],
+							"next_possible_procedures": ["remove"]
+						},
+						"remove": {
+                        "steps": [
+                            {
+								"model_id": 44,
+                                "duration_millis": 5000
                             }
                         ]
                     }
