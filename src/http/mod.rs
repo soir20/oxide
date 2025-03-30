@@ -336,7 +336,7 @@ async fn try_start(
 
     let listener = TcpListener::bind(format!("{}:{}", bind_ip, port)).await?;
     let app: Router<()> = Router::new()
-        .route("/assets/*asset", get(asset_handler))
+        .route("/assets/{*asset}", get(asset_handler))
         .with_state((Arc::new(assets_cache_path), Arc::new(crc_map)));
 
     serve(listener, app).await
