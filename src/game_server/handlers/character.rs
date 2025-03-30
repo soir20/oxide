@@ -678,11 +678,10 @@ impl TickableProcedure {
     fn panic_if_removal_exceeds_duration(&self) {
         for step in &self.steps {
             if let RemovalMode::Graceful {
-                enable_death_animation: _,
                 removal_delay_millis,
                 removal_effect_delay_millis,
-                removal_composite_effect_id: _,
                 fade_duration_millis,
+                ..
             } = step.removal_mode
             {
                 let total_removal_time =
