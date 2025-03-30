@@ -67,12 +67,12 @@ async fn main() {
         Path::new("config/custom_assets"),
         PathBuf::from(".asset_cache"),
     ));
-    info!("Hello, world!");
     let socket = UdpSocket::bind(SocketAddr::new(
         server_options.bind_ip,
         server_options.udp_port,
     ))
     .expect("couldn't bind to socket");
+    info!("Hello, world!");
 
     let channel_manager = RwLock::new(ChannelManager::new(server_options.max_sessions));
     let game_server = GameServer::new(config_dir).unwrap();
