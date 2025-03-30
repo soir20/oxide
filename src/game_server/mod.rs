@@ -739,9 +739,19 @@ impl GameServer {
                 OpCode::Minigame => {
                     broadcasts.append(&mut process_minigame_packet(&mut cursor, sender, self)?);
                 }
-                _ => info!("Unimplemented: {:?}, {:x?}", op_code, data),
+                _ => {
+                    return Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::UnknownOpCode,
+                        format!("Unimplemented: {:?}, {:x?}", op_code, data),
+                    ))
+                }
             },
-            Err(_) => info!("Unknown op code: {}, {:x?}", raw_op_code, data),
+            Err(_) => {
+                return Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::UnknownOpCode,
+                    format!("Unknown op code: {}, {:x?}", raw_op_code, data),
+                ))
+            }
         }
 
         Ok(broadcasts)
