@@ -369,10 +369,7 @@ fn process_once(
         if let Some(guid) = channel_manager_read_handle.guid(&src) {
             match game_server.process_packet(guid, packet) {
                 Ok(mut new_broadcasts) => broadcasts.append(&mut new_broadcasts),
-                Err(err) => {
-                    info!("Unable to process packet for client {}: {}", src, err);
-                    let _ = channel_handle.disconnect(DisconnectReason::Application);
-                }
+                Err(err) => info!("Unable to process packet for client {}: {}", src, err),
             }
         } else {
             match game_server.authenticate(packet) {
@@ -419,7 +416,11 @@ fn process_once(
                                 guid, src, err
                             );
                             if let Some(channel) = channel_manager_write_handle.get_by_addr(&src) {
-                                let _ = channel.lock().disconnect(DisconnectReason::Application);
+                                disconnect_or_log_err(
+                                    &mut channel.lock(),
+                                    DisconnectReason::Application,
+                                    socket,
+                                );
                             }
                         }
                     };
@@ -436,7 +437,11 @@ fn process_once(
                 }
                 Err(err) => {
                     info!("Unable to process login packet for client {}: {}", src, err);
-                    let _ = channel_handle.disconnect(DisconnectReason::Application);
+                    disconnect_or_log_err(
+                        &mut channel_handle,
+                        DisconnectReason::Application,
+                        socket,
+                    );
                 }
             }
         }
@@ -524,7 +529,7 @@ fn cleanup_once(
     let mut channel_manager_handle = channel_manager.write();
     let channels_to_disconnect = channel_manager_handle.drain_filter(|channel| {
         if channel.elapsed_since_last_receive() > channel_inactive_timeout {
-            let _ = channel.disconnect(DisconnectReason::Timeout);
+            disconnect_or_log_err(channel, DisconnectReason::Timeout, socket);
         }
         !channel.connected()
     });
@@ -568,6 +573,20 @@ fn send_packets(packets: &[Vec<u8>], addr: &SocketAddr, socket: &Arc<UdpSocket>)
         .for_each(|packet| send_packet(packet, addr, socket))
 }
 
+fn disconnect_or_log_err(
+    channel_handle: &mut MutexGuard<Channel>,
+    disconnect_reason: DisconnectReason,
+    socket: &Arc<UdpSocket>,
+) {
+    match channel_handle.disconnect(disconnect_reason) {
+        Ok(disconnect_packets) => send_packets(&disconnect_packets, &channel_handle.addr, socket),
+        Err(err) => info!(
+            "Unable to serialize disconnect packet for client {}: {:?}",
+            channel_handle.addr, err
+        ),
+    }
+}
+
 fn disconnect(
     reason_override: Option<DisconnectReason>,
     packets_to_process_first: &[&[u8]],
@@ -589,13 +608,7 @@ fn disconnect(
     let disconnect_reason = reason_override
         .or(channel_handle.disconnect_reason)
         .unwrap_or(DisconnectReason::Unknown);
-    match channel_handle.disconnect(disconnect_reason) {
-        Ok(disconnect_packets) => send_packets(&disconnect_packets, &channel_handle.addr, socket),
-        Err(err) => info!(
-            "Unable to serialize disconnect packet for client {}: {:?}",
-            channel_handle.addr, err
-        ),
-    }
+    disconnect_or_log_err(&mut channel_handle, disconnect_reason, socket);
 }
 
 fn log_out_and_disconnect(
