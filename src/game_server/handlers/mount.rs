@@ -10,19 +10,16 @@ use packet_serialize::DeserializePacket;
 use parking_lot::{RwLockReadGuard, RwLockWriteGuard};
 use serde::Deserialize;
 
-use crate::{
-    game_server::{
-        packets::{
-            client_update::{Stat, StatId, Stats},
-            item::{BaseAttachmentGroup, WieldType},
-            mount::{DismountReply, MountOpCode, MountReply, MountSpawn},
-            player_update::{AddNpc, Hostility, Icon, RemoveGracefully, UpdateSpeed},
-            tunnel::TunneledPacket,
-            Effect, GamePacket, Pos, Target,
-        },
-        Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
+use crate::game_server::{
+    packets::{
+        client_update::{Stat, StatId, Stats},
+        item::{BaseAttachmentGroup, WieldType},
+        mount::{DismountReply, MountOpCode, MountReply, MountSpawn},
+        player_update::{AddNpc, Hostility, Icon, RemoveGracefully, UpdateSpeed},
+        tunnel::TunneledPacket,
+        Effect, GamePacket, Pos, Target,
     },
-    info,
+    Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
 };
 
 use super::{
@@ -329,10 +326,10 @@ pub fn process_mount_packet(
         Ok(op_code) => match op_code {
             MountOpCode::DismountRequest => process_dismount(sender, game_server),
             MountOpCode::MountSpawn => process_mount_spawn(cursor, sender, game_server),
-            _ => {
-                info!("Unimplemented mount op code: {:?}", op_code);
-                Ok(Vec::new())
-            }
+            _ => Err(ProcessPacketError::new(
+                ProcessPacketErrorType::UnknownOpCode,
+                format!("Unimplemented mount op code: {:?}", op_code),
+            )),
         },
         Err(_) => Err(ProcessPacketError::new(
             ProcessPacketErrorType::UnknownOpCode,

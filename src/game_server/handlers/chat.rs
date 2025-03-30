@@ -3,16 +3,13 @@ use std::io::{Cursor, Read};
 use byteorder::{LittleEndian, ReadBytesExt};
 use packet_serialize::DeserializePacket;
 
-use crate::{
-    game_server::{
-        packets::{
-            chat::{ChatOpCode, MessageTypeData, SendMessage},
-            tunnel::TunneledPacket,
-            GamePacket,
-        },
-        Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
+use crate::game_server::{
+    packets::{
+        chat::{ChatOpCode, MessageTypeData, SendMessage},
+        tunnel::TunneledPacket,
+        GamePacket,
     },
-    info,
+    Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
 };
 
 use super::{
@@ -157,8 +154,10 @@ pub fn process_chat_packet(
             _ => {
                 let mut buffer = Vec::new();
                 cursor.read_to_end(&mut buffer)?;
-                info!("Unimplemented: {:?}, {:x?}", op_code, buffer);
-                Ok(Vec::new())
+                Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::UnknownOpCode,
+                    format!("Unimplemented chat op code: {:?}, {:x?}", op_code, buffer),
+                ))
             }
         },
         Err(_) => Err(ProcessPacketError::new(

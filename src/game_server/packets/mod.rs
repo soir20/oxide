@@ -58,6 +58,9 @@ pub enum OpCode {
     QuickChat = 0x43,
     ZoneTeleportRequest = 0x5a,
     WelcomeScreen = 0x5d,
+    LobbyGameDefinition = 0x66,
+    ClientMetrics = 0x69,
+    ClientLog = 0x6d,
     TeleportToSafety = 0x7a,
     UpdatePlayerPosition = 0x7d,
     UpdatePlayerCamera = 0x7e,
@@ -71,6 +74,7 @@ pub enum OpCode {
     Store = 0xa4,
     DeploymentEnv = 0xa5,
     BrandishHolster = 0xb4,
+    UiInteractions = 0xbd,
 }
 
 impl SerializePacket for OpCode {
