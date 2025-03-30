@@ -739,6 +739,9 @@ impl GameServer {
                 OpCode::Minigame => {
                     broadcasts.append(&mut process_minigame_packet(&mut cursor, sender, self)?);
                 }
+                OpCode::LobbyGame => {}
+                OpCode::UiInteractions => {}
+                OpCode::ClientLog => {}
                 _ => {
                     return Err(ProcessPacketError::new(
                         ProcessPacketErrorType::UnknownOpCode,
