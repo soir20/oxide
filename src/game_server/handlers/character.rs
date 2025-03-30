@@ -337,7 +337,8 @@ pub struct TickableStep {
     pub sound_id: Option<u32>,
     pub rail_id: Option<u32>,
     pub composite_effect_id: Option<u32>,
-    pub effect_delay_millis: Option<u32>,
+    #[serde(default)]
+    pub effect_delay_millis: u32,
     #[serde(default)]
     pub removal_mode: RemovalMode,
     pub spawned_state: Option<bool>,
