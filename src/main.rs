@@ -6,11 +6,12 @@ use parking_lot::{Mutex, MutexGuard, RwLock, RwLockReadGuard};
 use protocol::{BufferSize, DisconnectReason, MAX_BUFFER_SIZE};
 use serde::Deserialize;
 use std::cell::Cell;
+use std::env;
 use std::fs::File;
 use std::io::Error;
 use std::net::{IpAddr, SocketAddr, UdpSocket};
 use std::path::{Path, PathBuf};
-use std::sync::Arc;
+use std::sync::{Arc, LazyLock};
 use std::thread::{self, JoinHandle};
 use std::time::{Duration, Instant};
 use tokio::spawn;
@@ -43,6 +44,18 @@ pub fn log_info(message: &str) {
     println!("{}{}{}\t{}", Utc::now().to_rfc3339(), client, guid, message);
 }
 
+static DEBUG_ENABLED: LazyLock<bool> = LazyLock::new(|| {
+    env::var("RUST_LOG")
+        .map(|value| value.to_lowercase() == "debug")
+        .unwrap_or_default()
+});
+
+pub fn log_debug(message: &str) {
+    if *DEBUG_ENABLED {
+        log_info(message);
+    }
+}
+
 #[macro_export]
 macro_rules! info {
     () => {
@@ -50,6 +63,16 @@ macro_rules! info {
     };
     ($($arg:tt)*) => {{
         $crate::log_info(&format!($($arg)*))
+    }};
+}
+
+#[macro_export]
+macro_rules! debug {
+    () => {
+        $crate::log_debug("");
+    };
+    ($($arg:tt)*) => {{
+        $crate::log_debug(&format!($($arg)*))
     }};
 }
 
