@@ -1,7 +1,7 @@
-use crate::protocol::hash::{compute_crc, CrcHash};
+use crate::protocol::hash::{CrcHash, compute_crc};
 use crate::protocol::{DisconnectReason, Packet, ProtocolOpCode, Session};
 use byteorder::{BigEndian, ReadBytesExt};
-use miniz_oxide::inflate::{decompress_to_vec_zlib, DecompressError};
+use miniz_oxide::inflate::{DecompressError, decompress_to_vec_zlib};
 use std::io::{Cursor, Error, Read};
 use std::mem::size_of;
 

@@ -3,14 +3,16 @@ use std::{
     time::{Duration, Instant},
 };
 
-use rand::thread_rng;
-use rand_distr::{Distribution, WeightedAliasIndex};
+use rand::rng;
+use rand_distr::{Distribution, weighted::WeightedAliasIndex};
 use serde::Deserialize;
 use strum::EnumIter;
 
 use crate::{
     game_server::{
+        Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
         packets::{
+            GamePacket, GuidTarget, Name, Pos, Rgba, Target,
             chat::{ActionBarTextColor, SendStringId},
             command::PlaySoundIdOnTarget,
             item::{Attachment, BaseAttachmentGroup, EquipmentSlot, ItemDefinition, WieldType},
@@ -25,9 +27,7 @@ use crate::{
             tunnel::TunneledPacket,
             ui::ExecuteScriptWithParams,
             update_position::UpdatePlayerPosition,
-            GamePacket, GuidTarget, Name, Pos, Rgba, Target,
         },
-        Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
     teleport_to_zone,
 };
@@ -39,7 +39,7 @@ use super::{
     inventory::wield_type_from_slot,
     lock_enforcer::CharacterReadGuard,
     minigame::{MinigameTypeData, PlayerMinigameStats},
-    mount::{spawn_mount_npc, MountConfig},
+    mount::{MountConfig, spawn_mount_npc},
     unique_guid::{mount_guid, npc_guid, player_guid, shorten_player_guid},
     zone::teleport_within_zone,
 };
@@ -661,7 +661,7 @@ impl TickableProcedure {
     }
 
     fn next_procedure(&mut self) -> String {
-        let next_procedure_index = self.distribution.sample(&mut thread_rng());
+        let next_procedure_index = self.distribution.sample(&mut rng());
         self.next_possible_procedures[next_procedure_index].clone()
     }
 
@@ -736,7 +736,7 @@ impl TickableProcedureTracker {
 
             let distribution =
                 WeightedAliasIndex::new(weights).expect("Couldn't create weighted alias index");
-            let index = distribution.sample(&mut thread_rng());
+            let index = distribution.sample(&mut rng());
 
             procedure_keys[index].clone()
         };

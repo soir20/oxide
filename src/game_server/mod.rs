@@ -17,8 +17,8 @@ use handlers::command::process_command;
 use handlers::guid::{GuidTable, GuidTableIndexer, GuidTableWriteHandle, IndexedGuid};
 use handlers::housing::process_housing_packet;
 use handlers::inventory::{
-    customizations_from_guids, load_customization_item_mappings, load_customizations,
-    load_default_sabers, process_inventory_packet, update_saber_tints, DefaultSaber,
+    DefaultSaber, customizations_from_guids, load_customization_item_mappings, load_customizations,
+    load_default_sabers, process_inventory_packet, update_saber_tints,
 };
 use handlers::item::load_item_definitions;
 use handlers::lock_enforcer::{
@@ -27,19 +27,19 @@ use handlers::lock_enforcer::{
 };
 use handlers::login::{log_in, log_out, send_points_of_interest};
 use handlers::minigame::{
-    create_active_minigame, load_all_minigames, prepare_active_minigame_instance,
-    process_minigame_packet, remove_from_matchmaking, AllMinigameConfigs,
+    AllMinigameConfigs, create_active_minigame, load_all_minigames,
+    prepare_active_minigame_instance, process_minigame_packet, remove_from_matchmaking,
 };
-use handlers::mount::{load_mounts, process_mount_packet, MountConfig};
+use handlers::mount::{MountConfig, load_mounts, process_mount_packet};
 use handlers::reference_data::{load_categories, load_item_classes, load_item_groups};
-use handlers::store::{load_cost_map, CostEntry};
+use handlers::store::{CostEntry, load_cost_map};
 use handlers::test_data::make_test_nameplate_image;
 use handlers::time::make_game_time_sync;
 use handlers::unique_guid::{
     player_guid, shorten_player_guid, shorten_zone_index, shorten_zone_template_guid,
     zone_instance_guid,
 };
-use handlers::zone::{load_zones, teleport_within_zone, ZoneInstance, ZoneTemplate};
+use handlers::zone::{ZoneInstance, ZoneTemplate, load_zones, teleport_within_zone};
 use packets::client_update::{Health, Power, PreloadCharactersDone, Stat, StatId, Stats};
 use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
 use packets::item::ItemDefinition;
@@ -263,7 +263,7 @@ impl GameServer {
                         .write_characters(|characters_table_write_handle, _| {
                             characters_table_write_handle.update_value_indices(player_guid(sender), |possible_character_write_handle, _| {
                                 if let Some(character_write_handle) = possible_character_write_handle {
-                                    if let CharacterType::Player(ref mut player) =
+                                    if let CharacterType::Player(player) =
                                         &mut character_write_handle.stats.character_type
                                     {
                                         if let Some(minigame_status) = &mut player.minigame_status {
@@ -747,14 +747,14 @@ impl GameServer {
                     return Err(ProcessPacketError::new(
                         ProcessPacketErrorType::UnknownOpCode,
                         format!("Unimplemented: {:?}, {:x?}", op_code, data),
-                    ))
+                    ));
                 }
             },
             Err(_) => {
                 return Err(ProcessPacketError::new(
                     ProcessPacketErrorType::UnknownOpCode,
                     format!("Unknown op code: {}, {:x?}", raw_op_code, data),
-                ))
+                ));
             }
         }
 
@@ -819,7 +819,7 @@ impl GameServer {
             required_capacity,
         );
         if !instances.is_empty() {
-            let index = rand::thread_rng().gen_range(0..instances.len());
+            let index = rand::rng().random_range(0..instances.len());
             Ok(instances[index])
         } else if let Some(new_instance_index) =
             GameServer::find_min_unused_zone_index(zones, template_guid)

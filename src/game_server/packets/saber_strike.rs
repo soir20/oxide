@@ -2,8 +2,8 @@ use num_enum::TryFromPrimitive;
 use packet_serialize::{DeserializePacket, SerializePacket};
 
 use super::{
-    minigame::{MinigameHeader, MinigameOpCode},
     GamePacket,
+    minigame::{MinigameHeader, MinigameOpCode},
 };
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]

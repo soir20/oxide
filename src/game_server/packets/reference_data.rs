@@ -4,7 +4,7 @@ use byteorder::{LittleEndian, WriteBytesExt};
 use packet_serialize::{SerializePacket, SerializePacketError};
 use serde::Deserialize;
 
-use super::{item::WieldType, GamePacket, OpCode};
+use super::{GamePacket, OpCode, item::WieldType};
 
 #[allow(clippy::enum_variant_names)]
 #[derive(Copy, Clone, Debug)]

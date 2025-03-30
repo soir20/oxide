@@ -5,7 +5,7 @@ use packet_serialize::{
 };
 use serde::Deserialize;
 
-use super::{player_update::CustomizationSlot, GamePacket, OpCode};
+use super::{GamePacket, OpCode, player_update::CustomizationSlot};
 
 #[derive(Copy, Clone, Debug, Deserialize, PartialEq, Eq, PartialOrd, Ord, TryFromPrimitive)]
 #[repr(u32)]

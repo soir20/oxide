@@ -1,4 +1,4 @@
-use crate::protocol::hash::{compute_crc, CrcSeed, CrcSize};
+use crate::protocol::hash::{CrcSeed, CrcSize, compute_crc};
 use crate::protocol::{
     BufferSize, ClientTick, DisconnectReason, Packet, PacketCount, Protocol, ProtocolOpCode,
     ProtocolVersion, SequenceNumber, ServerTick, Session, SessionId, Timestamp,
@@ -286,11 +286,7 @@ fn add_non_session_packets(
 }
 
 fn header_size(session: &Session) -> u32 {
-    if session.allow_compression {
-        3
-    } else {
-        2
-    }
+    if session.allow_compression { 3 } else { 2 }
 }
 
 fn footer_size(session: &Session) -> u32 {

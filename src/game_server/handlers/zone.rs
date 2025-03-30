@@ -10,7 +10,9 @@ use parking_lot::RwLockReadGuard;
 use serde::Deserialize;
 
 use crate::game_server::{
+    Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     packets::{
+        GamePacket, Pos,
         client_update::Position,
         command::SelectPlayer,
         housing::BuildArea,
@@ -19,17 +21,15 @@ use crate::game_server::{
         player_update::Customization,
         tunnel::TunneledPacket,
         ui::ExecuteScriptWithParams,
-        GamePacket, Pos,
     },
-    Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
 };
 
 use super::{
     character::{
-        coerce_to_broadcast_supplier, AmbientNpcConfig, Character, CharacterCategory,
-        CharacterLocationIndex, CharacterMatchmakingGroupIndex, CharacterNameIndex,
-        CharacterSquadIndex, CharacterType, Chunk, DoorConfig, NpcTemplate, PreviousFixture,
-        PreviousLocation, RemovalMode, TransportConfig, WriteLockingBroadcastSupplier,
+        AmbientNpcConfig, Character, CharacterCategory, CharacterLocationIndex,
+        CharacterMatchmakingGroupIndex, CharacterNameIndex, CharacterSquadIndex, CharacterType,
+        Chunk, DoorConfig, NpcTemplate, PreviousFixture, PreviousLocation, RemovalMode,
+        TransportConfig, WriteLockingBroadcastSupplier, coerce_to_broadcast_supplier,
     },
     distance3,
     guid::{Guid, GuidTable, GuidTableIndexer, GuidTableWriteHandle, IndexedGuid},
@@ -40,8 +40,8 @@ use super::{
     },
     mount::MountConfig,
     unique_guid::{
-        npc_guid, player_guid, shorten_player_guid, zone_template_guid, AMBIENT_NPC_DISCRIMINANT,
-        FIXTURE_DISCRIMINANT,
+        AMBIENT_NPC_DISCRIMINANT, FIXTURE_DISCRIMINANT, npc_guid, player_guid, shorten_player_guid,
+        zone_template_guid,
     },
     update_position::UpdatePositionPacket,
 };
@@ -956,7 +956,7 @@ pub fn enter_zone(
                 let previous_pos = character_write_handle.stats.pos;
                 let previous_rot = character_write_handle.stats.rot;
 
-                if let CharacterType::Player(ref mut player) =
+                if let CharacterType::Player(player) =
                     &mut character_write_handle.stats.character_type
                 {
                     player.ready = false;

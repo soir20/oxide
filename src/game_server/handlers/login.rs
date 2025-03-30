@@ -1,13 +1,13 @@
 use packet_serialize::{NullTerminatedString, SerializePacketError};
 
 use crate::game_server::{
+    Broadcast, GameServer, ProcessPacketError,
     packets::{
+        GamePacket, Pos,
         login::{DefinePointsOfInterest, DeploymentEnv, GameSettings, LoginReply, PointOfInterest},
         player_update::ItemDefinitionsReply,
         tunnel::TunneledPacket,
-        GamePacket, Pos,
     },
-    Broadcast, GameServer, ProcessPacketError,
 };
 
 use super::{
@@ -16,7 +16,7 @@ use super::{
     minigame::PlayerMinigameStats,
     test_data::{make_test_customizations, make_test_player},
     unique_guid::player_guid,
-    zone::{clean_up_zone_if_no_players, ZoneInstance},
+    zone::{ZoneInstance, clean_up_zone_if_no_players},
 };
 
 pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, ProcessPacketError> {

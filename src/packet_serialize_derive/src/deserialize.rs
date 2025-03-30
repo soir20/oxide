@@ -1,7 +1,7 @@
 use proc_macro2::TokenStream;
 use quote::{quote, quote_spanned};
 use syn::spanned::Spanned;
-use syn::{parse_quote, Data, Fields, GenericParam, Generics, Index};
+use syn::{Data, Fields, GenericParam, Generics, Index, parse_quote};
 
 pub fn add_trait_bounds(mut generics: Generics) -> Generics {
     for param in &mut generics.params {

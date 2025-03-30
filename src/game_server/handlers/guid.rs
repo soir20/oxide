@@ -284,11 +284,7 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4:
     fn indices1(&'a self) -> impl Iterator<Item = I1> {
         self.guard.index1.iter().filter_map(
             |(index, guids)| {
-                if guids.is_empty() {
-                    None
-                } else {
-                    Some(*index)
-                }
+                if guids.is_empty() { None } else { Some(*index) }
             },
         )
     }
@@ -296,11 +292,7 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4:
     fn indices2(&'a self) -> impl Iterator<Item = &'a I2> {
         self.guard.index2.iter().filter_map(
             |(index, guids)| {
-                if guids.is_empty() {
-                    None
-                } else {
-                    Some(index)
-                }
+                if guids.is_empty() { None } else { Some(index) }
             },
         )
     }
@@ -308,11 +300,7 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4:
     fn indices3(&'a self) -> impl Iterator<Item = &'a I3> {
         self.guard.index3.iter().filter_map(
             |(index, guids)| {
-                if guids.is_empty() {
-                    None
-                } else {
-                    Some(index)
-                }
+                if guids.is_empty() { None } else { Some(index) }
             },
         )
     }
@@ -320,11 +308,7 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4:
     fn indices4(&'a self) -> impl Iterator<Item = &'a I4> {
         self.guard.index4.iter().filter_map(
             |(index, guids)| {
-                if guids.is_empty() {
-                    None
-                } else {
-                    Some(index)
-                }
+                if guids.is_empty() { None } else { Some(index) }
             },
         )
     }
@@ -334,11 +318,7 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4:
         range: impl RangeBounds<I1>,
     ) -> impl DoubleEndedIterator<Item = I1> {
         self.guard.index1.range(range).filter_map(|(index, guids)| {
-            if guids.is_empty() {
-                None
-            } else {
-                Some(*index)
-            }
+            if guids.is_empty() { None } else { Some(*index) }
         })
     }
 
@@ -348,11 +328,7 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4:
     ) -> impl DoubleEndedIterator<Item = &'a I2> {
         self.guard.index2.range(range).filter_map(
             |(index, guids)| {
-                if guids.is_empty() {
-                    None
-                } else {
-                    Some(index)
-                }
+                if guids.is_empty() { None } else { Some(index) }
             },
         )
     }
@@ -363,11 +339,7 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4:
     ) -> impl DoubleEndedIterator<Item = &'a I3> {
         self.guard.index3.range(range).filter_map(
             |(index, guids)| {
-                if guids.is_empty() {
-                    None
-                } else {
-                    Some(index)
-                }
+                if guids.is_empty() { None } else { Some(index) }
             },
         )
     }
@@ -378,11 +350,7 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4:
     ) -> impl DoubleEndedIterator<Item = &'a I4> {
         self.guard.index4.range(range).filter_map(
             |(index, guids)| {
-                if guids.is_empty() {
-                    None
-                } else {
-                    Some(index)
-                }
+                if guids.is_empty() { None } else { Some(index) }
             },
         )
     }
@@ -401,13 +369,13 @@ pub struct GuidTableWriteHandle<'a, K, V, I1 = (), I2 = (), I3 = (), I4 = ()> {
 }
 
 impl<
-        K: Copy + Ord,
-        V: IndexedGuid<K, I1, I2, I3, I4>,
-        I1: Copy + Ord,
-        I2: Clone + Ord,
-        I3: Clone + Ord,
-        I4: Clone + Ord,
-    > GuidTableWriteHandle<'_, K, V, I1, I2, I3, I4>
+    K: Copy + Ord,
+    V: IndexedGuid<K, I1, I2, I3, I4>,
+    I1: Copy + Ord,
+    I2: Clone + Ord,
+    I3: Clone + Ord,
+    I4: Clone + Ord,
+> GuidTableWriteHandle<'_, K, V, I1, I2, I3, I4>
 {
     pub fn get(&self, guid: K) -> Option<&Lock<V>> {
         self.guard.data.get(&guid).map(|(lock, _, _, _, _)| lock)
@@ -668,11 +636,7 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4:
     fn indices1(&'a self) -> impl Iterator<Item = I1> {
         self.guard.index1.iter().filter_map(
             |(index, guids)| {
-                if guids.is_empty() {
-                    None
-                } else {
-                    Some(*index)
-                }
+                if guids.is_empty() { None } else { Some(*index) }
             },
         )
     }
@@ -680,11 +644,7 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4:
     fn indices2(&'a self) -> impl Iterator<Item = &'a I2> {
         self.guard.index2.iter().filter_map(
             |(index, guids)| {
-                if guids.is_empty() {
-                    None
-                } else {
-                    Some(index)
-                }
+                if guids.is_empty() { None } else { Some(index) }
             },
         )
     }
@@ -692,11 +652,7 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4:
     fn indices3(&'a self) -> impl Iterator<Item = &'a I3> {
         self.guard.index3.iter().filter_map(
             |(index, guids)| {
-                if guids.is_empty() {
-                    None
-                } else {
-                    Some(index)
-                }
+                if guids.is_empty() { None } else { Some(index) }
             },
         )
     }
@@ -704,11 +660,7 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4:
     fn indices4(&'a self) -> impl Iterator<Item = &'a I4> {
         self.guard.index4.iter().filter_map(
             |(index, guids)| {
-                if guids.is_empty() {
-                    None
-                } else {
-                    Some(index)
-                }
+                if guids.is_empty() { None } else { Some(index) }
             },
         )
     }
@@ -718,11 +670,7 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4:
         range: impl RangeBounds<I1>,
     ) -> impl DoubleEndedIterator<Item = I1> {
         self.guard.index1.range(range).filter_map(|(index, guids)| {
-            if guids.is_empty() {
-                None
-            } else {
-                Some(*index)
-            }
+            if guids.is_empty() { None } else { Some(*index) }
         })
     }
 
@@ -732,11 +680,7 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4:
     ) -> impl DoubleEndedIterator<Item = &'a I2> {
         self.guard.index2.range(range).filter_map(
             |(index, guids)| {
-                if guids.is_empty() {
-                    None
-                } else {
-                    Some(index)
-                }
+                if guids.is_empty() { None } else { Some(index) }
             },
         )
     }
@@ -747,11 +691,7 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4:
     ) -> impl DoubleEndedIterator<Item = &'a I3> {
         self.guard.index3.range(range).filter_map(
             |(index, guids)| {
-                if guids.is_empty() {
-                    None
-                } else {
-                    Some(index)
-                }
+                if guids.is_empty() { None } else { Some(index) }
             },
         )
     }
@@ -762,25 +702,21 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4:
     ) -> impl DoubleEndedIterator<Item = &'a I4> {
         self.guard.index4.range(range).filter_map(
             |(index, guids)| {
-                if guids.is_empty() {
-                    None
-                } else {
-                    Some(index)
-                }
+                if guids.is_empty() { None } else { Some(index) }
             },
         )
     }
 }
 
 impl<
-        'a,
-        K: Copy + Ord,
-        I1: Copy + Ord,
-        I2: Clone + Ord,
-        I3: Clone + Ord,
-        I4: Clone + Ord,
-        V: IndexedGuid<K, I1, I2, I3, I4>,
-    > GuidTableHandle<'a, K, V, I1, I2, I3, I4> for GuidTableWriteHandle<'a, K, V, I1, I2, I3, I4>
+    'a,
+    K: Copy + Ord,
+    I1: Copy + Ord,
+    I2: Clone + Ord,
+    I3: Clone + Ord,
+    I4: Clone + Ord,
+    V: IndexedGuid<K, I1, I2, I3, I4>,
+> GuidTableHandle<'a, K, V, I1, I2, I3, I4> for GuidTableWriteHandle<'a, K, V, I1, I2, I3, I4>
 {
     fn get(&self, guid: K) -> Option<&Lock<V>> {
         self.guard.data.get(&guid).map(|(item, _, _, _, _)| item)

@@ -5,8 +5,8 @@ use byteorder::{LittleEndian, WriteBytesExt};
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
 
 use super::{
-    item::{Attachment, EquipmentSlot, Item, ItemDefinition},
     GamePacket, OpCode, Pos,
+    item::{Attachment, EquipmentSlot, Item, ItemDefinition},
 };
 
 #[derive(Copy, Clone, Debug)]

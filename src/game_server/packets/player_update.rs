@@ -6,8 +6,8 @@ use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError}
 use serde::Deserialize;
 
 use super::{
-    item::{Attachment, BaseAttachmentGroup, ItemDefinition, WieldType},
     Effect, GamePacket, Name, OpCode, Pos, Rgba, Target,
+    item::{Attachment, BaseAttachmentGroup, ItemDefinition, WieldType},
 };
 
 #[derive(Copy, Clone, Debug)]

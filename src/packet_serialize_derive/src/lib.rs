@@ -2,8 +2,8 @@ mod deserialize;
 mod serialize;
 
 use quote::quote;
-use syn::parse_macro_input;
 use syn::DeriveInput;
+use syn::parse_macro_input;
 
 #[proc_macro_derive(SerializePacket)]
 pub fn derive_serialize(input: proc_macro::TokenStream) -> proc_macro::TokenStream {

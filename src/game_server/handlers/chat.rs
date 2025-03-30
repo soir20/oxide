@@ -4,12 +4,12 @@ use byteorder::{LittleEndian, ReadBytesExt};
 use packet_serialize::DeserializePacket;
 
 use crate::game_server::{
+    Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     packets::{
+        GamePacket,
         chat::{ChatOpCode, MessageTypeData, SendMessage},
         tunnel::TunneledPacket,
-        GamePacket,
     },
-    Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
 };
 
 use super::{

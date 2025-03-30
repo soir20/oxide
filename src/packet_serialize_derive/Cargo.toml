@@ -1,12 +1,12 @@
 [package]
 name = "packet_serialize_derive"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 [lib]
 proc-macro = true
 
 [dependencies]
-proc-macro2 = "1.0.78"
-syn = "2.0.52"
-quote = "1.0.35"
+proc-macro2 = "=1.0.94"
+syn = "=2.0.100"
+quote = "=1.0.40"

@@ -2,7 +2,7 @@ use byteorder::{LittleEndian, WriteBytesExt};
 use num_enum::TryFromPrimitive;
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
 
-use super::{item::EquipmentSlot, OpCode};
+use super::{OpCode, item::EquipmentSlot};
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u16)]

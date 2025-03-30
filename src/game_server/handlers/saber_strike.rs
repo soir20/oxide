@@ -3,6 +3,7 @@ use std::io::{Cursor, Read};
 use packet_serialize::DeserializePacket;
 
 use crate::game_server::{
+    Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     packets::{
         minigame::{MinigameHeader, ScoreEntry, ScoreType},
         saber_strike::{
@@ -10,10 +11,9 @@ use crate::game_server::{
             SaberStrikeSingleKill, SaberStrikeThrowKill,
         },
     },
-    Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
 };
 
-use super::minigame::{end_active_minigame, handle_minigame_packet_write, MinigameTypeData};
+use super::minigame::{MinigameTypeData, end_active_minigame, handle_minigame_packet_write};
 
 pub fn process_saber_strike_packet(
     cursor: &mut Cursor<&[u8]>,
@@ -43,17 +43,18 @@ pub fn process_saber_strike_packet(
                     sender,
                     game_server,
                     &header,
-                    |minigame_status, _, _, _| {
-                        match &mut minigame_status.type_data {
-                            MinigameTypeData::SaberStrike { obfuscated_score } => {
-                                *obfuscated_score = obfuscated_score_packet.score();
-                                Ok(Vec::new())
-                            },
-                            _ => Err(ProcessPacketError::new(
-                                ProcessPacketErrorType::ConstraintViolated,
-                                format!("Player {} sent a Saber Strike obfuscated score packet, but they have no Saber Strike game data", sender)
-                            ))
+                    |minigame_status, _, _, _| match &mut minigame_status.type_data {
+                        MinigameTypeData::SaberStrike { obfuscated_score } => {
+                            *obfuscated_score = obfuscated_score_packet.score();
+                            Ok(Vec::new())
                         }
+                        _ => Err(ProcessPacketError::new(
+                            ProcessPacketErrorType::ConstraintViolated,
+                            format!(
+                                "Player {} sent a Saber Strike obfuscated score packet, but they have no Saber Strike game data",
+                                sender
+                            ),
+                        )),
                     },
                 )
             }
@@ -100,16 +101,17 @@ fn handle_saber_strike_game_over(
                         ProcessPacketErrorType::ConstraintViolated,
                         format!(
                             "Player {} sent a Saber Strike game over packet with score {}, but their obfuscated score was {}",
-                            sender,
-                            game_over.total_score,
-                            obfuscated_score,
-                        )
+                            sender, game_over.total_score, obfuscated_score,
+                        ),
                     ));
                 }
             } else {
                 return Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
-                    format!("Player {} sent a Saber Strike game over packet, but they have no Saber Strike game data", sender)
+                    format!(
+                        "Player {} sent a Saber Strike game over packet, but they have no Saber Strike game data",
+                        sender
+                    ),
                 ));
             }
 

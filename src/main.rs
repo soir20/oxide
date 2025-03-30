@@ -1,5 +1,5 @@
 use chrono::Utc;
-use crossbeam_channel::{bounded, tick, Receiver, Sender};
+use crossbeam_channel::{Receiver, Sender, bounded, tick};
 use defer_lite::defer;
 use game_server::Broadcast;
 use parking_lot::{Mutex, MutexGuard, RwLock, RwLockReadGuard};
@@ -229,15 +229,17 @@ fn spawn_receive_threads(
             let server_options = server_options.clone();
             let game_server = game_server.clone();
 
-            thread::spawn(move || loop {
-                receive_once(
-                    initial_buffer_size,
-                    &channel_manager,
-                    &socket,
-                    &client_enqueue,
-                    &server_options,
-                    &game_server,
-                );
+            thread::spawn(move || {
+                loop {
+                    receive_once(
+                        initial_buffer_size,
+                        &channel_manager,
+                        &socket,
+                        &client_enqueue,
+                        &server_options,
+                        &game_server,
+                    );
+                }
             })
         })
         .collect()
@@ -336,15 +338,17 @@ fn spawn_process_threads(
             let client_enqueue = client_enqueue.clone();
             let client_dequeue = client_dequeue.clone();
 
-            thread::spawn(move || loop {
-                process_once(
-                    &channel_manager,
-                    &socket,
-                    &server_options,
-                    &game_server,
-                    &client_dequeue,
-                    &client_enqueue,
-                );
+            thread::spawn(move || {
+                loop {
+                    process_once(
+                        &channel_manager,
+                        &socket,
+                        &server_options,
+                        &game_server,
+                        &client_dequeue,
+                        &client_enqueue,
+                    );
+                }
             })
         })
         .collect()
@@ -419,7 +423,10 @@ fn process_once(
                     if let Some(existing_channel) =
                         channel_manager_write_handle.authenticate(&src, guid)
                     {
-                        info!("Client {} logged in as an already logged-in player {}, disconnecting existing client", src, guid);
+                        info!(
+                            "Client {} logged in as an already logged-in player {}, disconnecting existing client",
+                            src, guid
+                        );
                         broadcasts.append(&mut log_out_and_disconnect(
                             Some(DisconnectReason::NewConnectionAttempt),
                             guid,
@@ -492,19 +499,21 @@ fn spawn_game_tick_thread(
     let client_enqueue = client_enqueue.clone();
     let server_options = server_options.clone();
     let game_server = game_server.clone();
-    thread::spawn(move || loop {
-        game_tick_dequeue
-            .recv()
-            .expect("Game tick channel disconnected");
-        match game_server.tick() {
-            Ok(broadcasts) => {
-                channel_manager.read().broadcast(
-                    client_enqueue.clone(),
-                    broadcasts,
-                    &server_options,
-                );
+    thread::spawn(move || {
+        loop {
+            game_tick_dequeue
+                .recv()
+                .expect("Game tick channel disconnected");
+            match game_server.tick() {
+                Ok(broadcasts) => {
+                    channel_manager.read().broadcast(
+                        client_enqueue.clone(),
+                        broadcasts,
+                        &server_options,
+                    );
+                }
+                Err(err) => info!("Unable to process game tick: {}", err),
             }
-            Err(err) => info!("Unable to process game tick: {}", err),
         }
     });
 }
@@ -524,16 +533,18 @@ fn spawn_cleanup_thread(
     let client_enqueue = client_enqueue.clone();
     let server_options = server_options.clone();
     let game_server = game_server.clone();
-    thread::spawn(move || loop {
-        cleanup_once(
-            &cleanup_tick_dequeue,
-            channel_inactive_timeout,
-            &channel_manager,
-            &socket,
-            &client_enqueue,
-            &server_options,
-            &game_server,
-        );
+    thread::spawn(move || {
+        loop {
+            cleanup_once(
+                &cleanup_tick_dequeue,
+                channel_inactive_timeout,
+                &channel_manager,
+                &socket,
+                &client_enqueue,
+                &server_options,
+                &game_server,
+            );
+        }
     });
 }
 

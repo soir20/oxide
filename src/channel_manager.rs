@@ -1,6 +1,6 @@
 use crate::game_server::Broadcast;
 use crate::protocol::{Channel, DisconnectReason};
-use crate::{info, ServerOptions};
+use crate::{ServerOptions, info};
 use crossbeam_channel::Sender;
 use parking_lot::{Mutex, MutexGuard};
 use std::collections::BTreeMap;

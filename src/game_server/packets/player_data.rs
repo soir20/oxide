@@ -4,8 +4,8 @@ use byteorder::{LittleEndian, WriteBytesExt};
 use packet_serialize::{LengthlessVec, SerializePacket, SerializePacketError};
 
 use super::{
-    item::{EquipmentSlot, Item, MarketData},
     Effect, GamePacket, Name, OpCode, Pos,
+    item::{EquipmentSlot, Item, MarketData},
 };
 
 #[derive(Clone, SerializePacket)]

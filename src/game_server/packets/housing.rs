@@ -4,7 +4,7 @@ use byteorder::{LittleEndian, WriteBytesExt};
 use num_enum::TryFromPrimitive;
 use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
 
-use super::{item::BaseAttachmentGroup, GamePacket, OpCode, Pos};
+use super::{GamePacket, OpCode, Pos, item::BaseAttachmentGroup};
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u16)]

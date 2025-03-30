@@ -4,13 +4,13 @@ use std::time::{Duration, Instant};
 
 use rand::random;
 
-use crate::protocol::deserialize::{deserialize_packet, DeserializeError};
+use crate::protocol::deserialize::{DeserializeError, deserialize_packet};
 use crate::protocol::hash::{CrcSeed, CrcSize};
 use crate::protocol::reliable_data_ops::{
-    fragment_data, unbundle_reliable_data, DataPacket, FragmentState,
+    DataPacket, FragmentState, fragment_data, unbundle_reliable_data,
 };
-use crate::protocol::serialize::{serialize_packets, SerializeError};
-use crate::{debug, info, ServerOptions};
+use crate::protocol::serialize::{SerializeError, serialize_packets};
+use crate::{ServerOptions, debug, info};
 
 mod deserialize;
 mod hash;
@@ -332,7 +332,12 @@ impl Channel {
                 match self.fragment_state.add(packet) {
                     Ok((possible_packet, remaining_bytes)) => {
                         if remaining_bytes > server_options.max_defragmented_packet_bytes {
-                            info!("Disconnecting client {} that sent a fragmented packet that is too large ({} bytes > {} bytes)", self.addr, remaining_bytes, server_options.max_defragmented_packet_bytes);
+                            info!(
+                                "Disconnecting client {} that sent a fragmented packet that is too large ({} bytes > {} bytes)",
+                                self.addr,
+                                remaining_bytes,
+                                server_options.max_defragmented_packet_bytes
+                            );
                             let _ = self.disconnect(DisconnectReason::Application);
                             return Vec::new();
                         }
@@ -500,7 +505,10 @@ impl Channel {
             .saturating_add(self.reordered_packets.len())
             .saturating_add(new_packets);
         if new_total_packets > server_options.max_received_packets_queued {
-            info!("Disconnecting client {} that exceeded the maximum number of packets in the receive queue ({} > {})", self.addr, new_total_packets, server_options.max_received_packets_queued);
+            info!(
+                "Disconnecting client {} that exceeded the maximum number of packets in the receive queue ({} > {})",
+                self.addr, new_total_packets, server_options.max_received_packets_queued
+            );
             let _ = self.disconnect(DisconnectReason::ReliableOverflow);
             return 0;
         }
@@ -521,7 +529,10 @@ impl Channel {
     fn enqueue_packet_to_send(&mut self, packet: PendingPacket, server_options: &ServerOptions) {
         let new_total_packets = self.send_queue.len().saturating_add(1);
         if new_total_packets > server_options.max_unacknowledged_packets_queued {
-            info!("Disconnecting client {} that exceeded the maximum number of packets in the send queue ({} > {})", self.addr, new_total_packets, server_options.max_unacknowledged_packets_queued);
+            info!(
+                "Disconnecting client {} that exceeded the maximum number of packets in the send queue ({} > {})",
+                self.addr, new_total_packets, server_options.max_unacknowledged_packets_queued
+            );
             let _ = self.disconnect(DisconnectReason::ReliableOverflow);
         }
 

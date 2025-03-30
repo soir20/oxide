@@ -1,6 +1,6 @@
 use crate::game_server::packets::{
-    update_position::{PlayerJump, UpdatePlayerPlatformPosition, UpdatePlayerPosition},
     GamePacket, Pos,
+    update_position::{PlayerJump, UpdatePlayerPlatformPosition, UpdatePlayerPosition},
 };
 
 pub trait UpdatePositionPacket: Copy + GamePacket {

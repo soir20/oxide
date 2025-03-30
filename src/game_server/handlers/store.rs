@@ -5,7 +5,7 @@ use std::{
     path::Path,
 };
 
-use evalexpr::{context_map, eval_with_context, Value};
+use evalexpr::{DefaultNumericTypes, Value, context_map, eval_with_context};
 use serde::Deserialize;
 
 use crate::{
@@ -149,15 +149,16 @@ fn evaluate_cost_expression(
         )
     });
 
-    let result = eval_with_context(cost_expression, &context).map_err(|err| {
-        Error::new(
-            ErrorKind::InvalidData,
-            format!(
-                "Unable to evaluate cost expression for item {}: {}",
-                item_guid, err
-            ),
-        )
-    })?;
+    let result: Value<DefaultNumericTypes> =
+        eval_with_context(cost_expression, &context).map_err(|err| {
+            Error::new(
+                ErrorKind::InvalidData,
+                format!(
+                    "Unable to evaluate cost expression for item {}: {}",
+                    item_guid, err
+                ),
+            )
+        })?;
 
     if let Value::Float(new_cost) = result {
         u32::try_from(new_cost.round() as i64).map_err(|err| {

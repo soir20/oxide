@@ -3,15 +3,15 @@ use std::collections::BTreeMap;
 use packet_serialize::{LengthlessVec, SerializePacketError};
 
 use crate::game_server::packets::{
+    GamePacket, Name, Pos,
     item::{EquipmentSlot, Item, ItemDefinition, MarketData},
     player_data::{
         Ability, ActionBar, BattleClass, BattleClassItem, BattleClassUnknown10, EquippedItem,
-        InventoryItem, Item2, ItemGuid, Mount, Pet, PetTrick, Player, PlayerData, Slot, Unknown12,
-        Unknown13, Unknown2,
+        InventoryItem, Item2, ItemGuid, Mount, Pet, PetTrick, Player, PlayerData, Slot, Unknown2,
+        Unknown12, Unknown13,
     },
     player_update::{CustomizationSlot, NameplateImage, NameplateImageId},
     tunnel::TunneledPacket,
-    GamePacket, Name, Pos,
 };
 
 use super::{

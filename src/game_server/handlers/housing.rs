@@ -6,7 +6,9 @@ use parking_lot::RwLockReadGuard;
 
 use crate::{
     game_server::{
+        Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
         packets::{
+            GamePacket, Pos, Target,
             housing::{
                 BuildArea, EnterRequest, FixtureAssetData, FixtureUpdate, HouseDescription,
                 HouseInfo, HouseInstanceData, HouseItemList, HouseZoneData, HousingOpCode,
@@ -15,9 +17,7 @@ use crate::{
             item::{BaseAttachmentGroup, WieldType},
             player_update::{AddNpc, Hostility, Icon},
             tunnel::TunneledPacket,
-            GamePacket, Pos, Target,
         },
-        Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
     info, teleport_to_zone,
 };
@@ -26,7 +26,7 @@ use super::{
     character::{Character, CurrentFixture, PreviousFixture},
     guid::{GuidTableIndexer, IndexedGuid},
     lock_enforcer::{CharacterLockRequest, ZoneLockRequest},
-    unique_guid::{npc_guid, player_guid, zone_template_guid, FIXTURE_DISCRIMINANT},
+    unique_guid::{FIXTURE_DISCRIMINANT, npc_guid, player_guid, zone_template_guid},
     zone::{House, ZoneInstance},
 };
 

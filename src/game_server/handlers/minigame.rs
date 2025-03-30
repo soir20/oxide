@@ -9,15 +9,17 @@ use std::{
 };
 
 use byteorder::ReadBytesExt;
-use evalexpr::{context_map, eval_with_context, Value};
+use evalexpr::{DefaultNumericTypes, Value, context_map, eval_with_context};
 use num_enum::TryFromPrimitive;
 use packet_serialize::DeserializePacket;
 use serde::Deserialize;
 
 use crate::{
     game_server::{
+        Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
         handlers::character::MinigameStatus,
         packets::{
+            GamePacket, RewardBundle,
             chat::{ActionBarTextColor, SendStringId},
             client_update::UpdateCredits,
             command::StartFlashGame,
@@ -36,9 +38,7 @@ use crate::{
             saber_strike::{SaberStrikeOpCode, SaberStrikeStageData},
             tunnel::TunneledPacket,
             ui::ExecuteScriptWithParams,
-            GamePacket, RewardBundle,
         },
-        Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
     info, teleport_to_zone,
 };
@@ -1144,7 +1144,7 @@ fn handle_request_create_active_minigame(
 
                         characters_table_write_handle.update_value_indices(player_guid(sender), |possible_character_write_handle, _| {
                             if let Some(character_write_handle) = possible_character_write_handle {
-                                if let CharacterType::Player(ref mut player) =
+                                if let CharacterType::Player(player) =
                                     &mut character_write_handle.stats.character_type
                                 {
                                     player.matchmaking_group = Some(open_group);
@@ -1407,7 +1407,10 @@ pub fn prepare_active_minigame_instance(
         Ok(mut teleport_broadcasts) => broadcasts.append(&mut teleport_broadcasts),
         Err(err) => {
             // We don't need to clean up the zone here, since the next instance of this stage that starts will use it instead
-            info!("Couldn't add a player to the minigame, ending the game: {} (stage group {}, stage {})", err, stage_group_guid, stage_guid);
+            info!(
+                "Couldn't add a player to the minigame, ending the game: {} (stage group {}, stage {})",
+                err, stage_group_guid, stage_guid
+            );
             for member_guid in members {
                 let was_teleported = teleported_players.contains(member_guid);
                 let end_matchmaking_result = remove_from_matchmaking(
@@ -2226,15 +2229,16 @@ fn evaluate_score_to_credits_expression(
         )
     });
 
-    let result = eval_with_context(score_to_credits_expression, &context).map_err(|err| {
-        Error::new(
-            ErrorKind::InvalidData,
-            format!(
-                "Unable to evaluate score-to-credits expression for score {}: {}",
-                score, err
-            ),
-        )
-    })?;
+    let result: Value<DefaultNumericTypes> =
+        eval_with_context(score_to_credits_expression, &context).map_err(|err| {
+            Error::new(
+                ErrorKind::InvalidData,
+                format!(
+                    "Unable to evaluate score-to-credits expression for score {}: {}",
+                    score, err
+                ),
+            )
+        })?;
 
     if let Value::Float(credits) = result {
         i32::try_from(credits.round() as i64).map_err(|err| {
