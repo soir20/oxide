@@ -93,10 +93,10 @@ pub fn process_inventory_packet(
                 process_equip_customization(game_server, cursor, sender)
             }
         },
-        Err(_) => {
-            info!("Unknown inventory packet: {}, {:x?}", raw_op_code, cursor);
-            Ok(Vec::new())
-        }
+        Err(_) => Err(ProcessPacketError::new(
+            ProcessPacketErrorType::UnknownOpCode,
+            format!("Unknown inventory packet: {}, {:x?}", raw_op_code, cursor),
+        )),
     }
 }
 
@@ -462,7 +462,7 @@ fn process_equip_customization(
                         };
 
                         if cost > player.credits {
-                            return Ok(vec![]);
+                            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to purchase customization {} for {} but only has {} credits", sender, equip_customization.item_guid, cost, player.credits)));
                         }
                         player.credits -= cost;
                         let new_credits = player.credits;

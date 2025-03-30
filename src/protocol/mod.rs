@@ -10,7 +10,7 @@ use crate::protocol::reliable_data_ops::{
     fragment_data, unbundle_reliable_data, DataPacket, FragmentState,
 };
 use crate::protocol::serialize::{serialize_packets, SerializeError};
-use crate::{info, ServerOptions};
+use crate::{debug, info, ServerOptions};
 
 mod deserialize;
 mod hash;
@@ -562,7 +562,7 @@ impl Channel {
     }
 
     fn process_packet(&mut self, packet: &Packet, server_options: &ServerOptions) {
-        info!("Received packet op code {:?}", packet.op_code());
+        debug!("Received packet op code {:?}", packet.op_code());
         match packet {
             Packet::SessionRequest(protocol_version, session_id, buffer_size, protocol) => self
                 .process_session_request(

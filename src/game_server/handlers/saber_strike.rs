@@ -2,18 +2,15 @@ use std::io::{Cursor, Read};
 
 use packet_serialize::DeserializePacket;
 
-use crate::{
-    game_server::{
-        packets::{
-            minigame::{MinigameHeader, ScoreEntry, ScoreType},
-            saber_strike::{
-                SaberStrikeGameOver, SaberStrikeObfuscatedScore, SaberStrikeOpCode,
-                SaberStrikeSingleKill, SaberStrikeThrowKill,
-            },
+use crate::game_server::{
+    packets::{
+        minigame::{MinigameHeader, ScoreEntry, ScoreType},
+        saber_strike::{
+            SaberStrikeGameOver, SaberStrikeObfuscatedScore, SaberStrikeOpCode,
+            SaberStrikeSingleKill, SaberStrikeThrowKill,
         },
-        Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
-    info,
+    Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
 };
 
 use super::minigame::{end_active_minigame, handle_minigame_packet_write, MinigameTypeData};
@@ -63,21 +60,25 @@ pub fn process_saber_strike_packet(
             _ => {
                 let mut buffer = Vec::new();
                 cursor.read_to_end(&mut buffer)?;
-                info!(
-                    "Unimplemented minigame op code: {:?} {:x?}",
-                    op_code, buffer
-                );
-                Ok(Vec::new())
+                Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::UnknownOpCode,
+                    format!(
+                        "Unimplemented minigame op code: {:?} {:x?}",
+                        op_code, buffer
+                    ),
+                ))
             }
         },
         Err(_) => {
             let mut buffer = Vec::new();
             cursor.read_to_end(&mut buffer)?;
-            info!(
-                "Unknown minigame packet: {}, {:x?}",
-                header.sub_op_code, buffer
-            );
-            Ok(Vec::new())
+            Err(ProcessPacketError::new(
+                ProcessPacketErrorType::UnknownOpCode,
+                format!(
+                    "Unknown minigame packet: {}, {:x?}",
+                    header.sub_op_code, buffer
+                ),
+            ))
         }
     }
 }

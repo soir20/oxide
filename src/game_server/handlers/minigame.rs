@@ -962,18 +962,22 @@ pub fn process_minigame_packet(
             _ => {
                 let mut buffer = Vec::new();
                 cursor.read_to_end(&mut buffer)?;
-                info!(
-                    "Unimplemented minigame op code: {:?} {:x?}",
-                    op_code, buffer
-                );
-                Ok(Vec::new())
+                Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::UnknownOpCode,
+                    format!(
+                        "Unimplemented minigame op code: {:?} {:x?}",
+                        op_code, buffer
+                    ),
+                ))
             }
         },
         Err(_) => {
             let mut buffer = Vec::new();
             cursor.read_to_end(&mut buffer)?;
-            info!("Unknown minigame packet: {}, {:x?}", raw_op_code, buffer);
-            Ok(Vec::new())
+            Err(ProcessPacketError::new(
+                ProcessPacketErrorType::UnknownOpCode,
+                format!("Unknown minigame packet: {}, {:x?}", raw_op_code, buffer),
+            ))
         }
     }
 }
@@ -1526,12 +1530,10 @@ fn handle_request_start_active_minigame(
                                 Broadcast::Single(sender, packets)
                             ])
                         } else {
-                            info!("Player {} requested to start an active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", sender, request.header.stage_guid, minigame_status.stage_group_guid, minigame_status.stage_guid);
-                            Ok(vec![])
+                            Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} requested to start an active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", sender, request.header.stage_guid, minigame_status.stage_group_guid, minigame_status.stage_guid)))
                         }
                     } else {
-                        info!("Player {} requested to start an active minigame (stage {}), but they aren't in an active minigame", sender, request.header.stage_guid);
-                        Ok(vec![])
+                        Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} requested to start an active minigame (stage {}), but they aren't in an active minigame", sender, request.header.stage_guid)))
                     }
                 } else {
                     Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} requested to start an active minigame, but their character isn't a player", sender)))
@@ -1595,12 +1597,10 @@ pub fn handle_minigame_packet_write<T: Default>(
                                 Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process Flash payload for {}'s active minigame with stage config {} (stage group {}) that does not exist", sender, minigame_status.stage_guid, minigame_status.stage_group_guid)))
                             }
                         } else {
-                            info!("Tried to process packet for {}'s active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", sender, header.stage_guid, minigame_status.stage_group_guid, minigame_status.stage_guid);
-                            Ok(T::default())
+                            Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process packet for {}'s active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", sender, header.stage_guid, minigame_status.stage_group_guid, minigame_status.stage_guid)))
                         }
                     } else {
-                        info!("Tried to process packet for {}'s active minigame (stage {}), but they aren't in an active minigame", sender, header.stage_guid);
-                        Ok(T::default())
+                        Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process packet for {}'s active minigame (stage {}), but they aren't in an active minigame", sender, header.stage_guid)))
                     }
                 } else {
                     Err(ProcessPacketError::new(
@@ -1646,12 +1646,10 @@ fn handle_flash_payload_read_only<T: Default>(
                                 Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process Flash payload for {}'s active minigame with stage config {} (stage group {}) that does not exist", sender, minigame_status.stage_guid, minigame_status.stage_group_guid)))
                             }
                         } else {
-                            info!("Tried to process Flash payload for {}'s active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", sender, header.stage_guid, minigame_status.stage_group_guid, minigame_status.stage_guid);
-                            Ok(T::default())
+                            Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process Flash payload for {}'s active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", sender, header.stage_guid, minigame_status.stage_group_guid, minigame_status.stage_guid)))
                         }
                     } else {
-                        info!("Tried to process Flash payload for {}'s active minigame (stage {}), but they aren't in an active minigame", sender, header.stage_guid);
-                        Ok(T::default())
+                        Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process Flash payload for {}'s active minigame (stage {}), but they aren't in an active minigame", sender, header.stage_guid)))
                     }
                 } else {
                     Err(ProcessPacketError::new(
@@ -1898,13 +1896,13 @@ fn handle_flash_payload(
                 }
             },
         ),
-        _ => {
-            info!(
+        _ => Err(ProcessPacketError::new(
+            ProcessPacketErrorType::ConstraintViolated,
+            format!(
                 "Received unknown Flash payload {} in stage {}, stage group {} from player {}",
                 payload.payload, payload.header.stage_guid, payload.header.stage_group_guid, sender
-            );
-            Ok(vec![])
-        }
+            ),
+        )),
     }
 }
 
@@ -2162,12 +2160,10 @@ pub fn end_active_minigame(
                             Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to end player {}'s active minigame with stage config {} (stage group {}) that does not exist", sender, minigame_status.stage_guid, minigame_status.stage_group_guid)))
                         }
                     } else {
-                        info!("Tried to end player {}'s active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", sender, stage_guid, minigame_status.stage_group_guid, minigame_status.stage_guid);
-                        Ok((vec![], previous_location, true))
+                        Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to end player {}'s active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", sender, stage_guid, minigame_status.stage_group_guid, minigame_status.stage_guid)))
                     }
                 } else {
-                    info!("Tried to end player {}'s active minigame (stage {}), but they aren't in an active minigame", sender, stage_guid);
-                    Ok((vec![], previous_location, true))
+                    Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to end player {}'s active minigame (stage {}), but they aren't in an active minigame", sender, stage_guid)))
                 }
             } else {
                 Err(ProcessPacketError::new(

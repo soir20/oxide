@@ -468,15 +468,19 @@ pub fn process_housing_packet(
             _ => {
                 let mut buffer = Vec::new();
                 cursor.read_to_end(&mut buffer)?;
-                info!("Unimplemented housing packet: {:?}, {:x?}", op_code, buffer);
-                Ok(Vec::new())
+                Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::UnknownOpCode,
+                    format!("Unimplemented housing packet: {:?}, {:x?}", op_code, buffer),
+                ))
             }
         },
         Err(_) => {
             let mut buffer = Vec::new();
             cursor.read_to_end(&mut buffer)?;
-            info!("Unknown housing packet: {}, {:x?}", raw_op_code, buffer);
-            Ok(Vec::new())
+            Err(ProcessPacketError::new(
+                ProcessPacketErrorType::UnknownOpCode,
+                format!("Unknown housing packet: {}, {:x?}", raw_op_code, buffer),
+            ))
         }
     }
 }
