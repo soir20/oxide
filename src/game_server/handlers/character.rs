@@ -1293,6 +1293,7 @@ impl NpcTemplate {
 
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum MatchmakingGroupStatus {
+    Closed,
     OpenToAll,
     OpenToFriends,
 }
