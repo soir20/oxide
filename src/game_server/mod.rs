@@ -432,12 +432,12 @@ impl GameServer {
                                                     character_write_handle.stats.speed.base = zone.speed;
                                                     character_write_handle.stats.jump_height_multiplier.base = zone.jump_height_multiplier;
 
-                                                    let mut global_packets = character_write_handle.add_packets(self.mounts(), self.items(), self.customizations())?;
+                                                    let mut global_packets = character_write_handle.stats.add_packets(self.mounts(), self.items(), self.customizations())?;
                                                     let wield_type = TunneledPacket {
                                                         unknown1: true,
                                                         inner: UpdateWieldType {
                                                             guid: player_guid(sender),
-                                                            wield_type: character_write_handle.wield_type(),
+                                                            wield_type: character_write_handle.stats.wield_type(),
                                                         },
                                                     };
                                                     global_packets.push(GamePacket::serialize(&wield_type)?);
@@ -458,7 +458,7 @@ impl GameServer {
                                                                 chunk,
                                                                 &battle_class.items,
                                                                 player.active_battle_class,
-                                                                character_write_handle.wield_type(),
+                                                                character_write_handle.stats.wield_type(),
                                                                 self
                                                             )?);
                                                         }
@@ -722,7 +722,7 @@ impl GameServer {
                                         unknown1: true,
                                         inner: UpdateWieldType {
                                             guid: player_guid(sender),
-                                            wield_type: character_write_handle.wield_type()
+                                            wield_type: character_write_handle.stats.wield_type()
                                         }
                                     })?,
                                 ]));
@@ -986,7 +986,7 @@ impl GameServer {
                     for tickable_character in characters_write.values_mut() {
                         if tickable_character.synchronize_with.is_none() {
                             broadcasts.append(
-                                &mut tickable_character.tick(now, &nearby_player_guids, &characters_read)?,
+                                &mut tickable_character.tick(now, &nearby_player_guids, &characters_read, self.mounts(), self.items(), self.customizations())?,
                             );
                         } else {
                             characters_not_updated.push(tickable_character.guid());
@@ -1030,7 +1030,7 @@ impl GameServer {
                         }
 
                         broadcasts.append(
-                            &mut tickable_character.tick(now, &nearby_player_guids, &characters_read)?,
+                            &mut tickable_character.tick(now, &nearby_player_guids, &characters_read, self.mounts(), self.items(), self.customizations())?,
                         );
                     }
 

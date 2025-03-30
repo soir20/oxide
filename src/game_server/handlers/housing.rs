@@ -190,7 +190,7 @@ pub fn fixture_packets(
                 unknown24: -1,
                 looping_animation_id: -1,
                 unknown26: true,
-                ignore_position: true,
+                disable_gravity: true,
                 sub_title_id: 0,
                 one_shot_animation_id: -1,
                 temporary_appearance: 0,
@@ -224,8 +224,8 @@ pub fn fixture_packets(
                 target: Target::default(),
                 variables: vec![],
                 rail_id: 0,
-                rail_speed: 0.0,
-                rail_origin: Pos {
+                rail_elapsed_seconds: 0.0,
+                rail_offset: Pos {
                     x: 0.0,
                     y: 0.0,
                     z: 0.0,

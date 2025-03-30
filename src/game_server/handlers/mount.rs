@@ -108,11 +108,11 @@ pub fn reply_dismount<'a>(
                             unknown1: true,
                             inner: RemoveGracefully {
                                 guid: mount_guid(sender, mount_id),
-                                unknown1: false,
-                                unknown2: 0,
-                                unknown3: 0,
-                                unknown4: 0,
-                                timer: 1000,
+                                use_death_animation: false,
+                                delay_millis: 0,
+                                composite_effect_delay_millis: 0,
+                                composite_effect: 0,
+                                fade_duration_millis: 1000,
                             },
                         })?,
                         GamePacket::serialize(&TunneledPacket {
@@ -410,7 +410,7 @@ pub fn spawn_mount_npc(
                 unknown24: -1,
                 looping_animation_id: -1,
                 unknown26: false,
-                ignore_position: false,
+                disable_gravity: false,
                 sub_title_id: 0,
                 one_shot_animation_id: -1,
                 temporary_appearance: 0,
@@ -444,8 +444,8 @@ pub fn spawn_mount_npc(
                 target: Target::default(),
                 variables: vec![],
                 rail_id: 0,
-                rail_speed: 0.0,
-                rail_origin: Pos {
+                rail_elapsed_seconds: 0.0,
+                rail_offset: Pos {
                     x: 0.0,
                     y: 0.0,
                     z: 0.0,

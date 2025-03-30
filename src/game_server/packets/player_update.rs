@@ -84,11 +84,11 @@ impl GamePacket for RemoveStandard {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct RemoveGracefully {
     pub guid: u64,
-    pub unknown1: bool,
-    pub unknown2: u32,
-    pub unknown3: u32,
-    pub unknown4: u32,
-    pub timer: u32,
+    pub use_death_animation: bool,
+    pub delay_millis: u32,
+    pub composite_effect_delay_millis: u32,
+    pub composite_effect: u32, // Continuous effects remain looping after character removal
+    pub fade_duration_millis: u32,
 }
 
 impl GamePacket for RemoveGracefully {
@@ -418,10 +418,10 @@ impl GamePacket for ClearRail {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct MoveOnRail {
-    guid: u64,
-    unknown1: u32,
-    unknown2: u32,
-    pos: Pos,
+    pub guid: u64,
+    pub rail_id: u32,
+    pub elapsed_seconds: f32,
+    pub rail_offset: Pos,
 }
 
 impl GamePacket for MoveOnRail {
@@ -724,7 +724,7 @@ pub struct AddNpc {
     pub unknown24: i32,
     pub looping_animation_id: i32,
     pub unknown26: bool,
-    pub ignore_position: bool,
+    pub disable_gravity: bool,
     pub sub_title_id: u32,
     pub one_shot_animation_id: i32,
     pub temporary_appearance: u32,
@@ -747,8 +747,8 @@ pub struct AddNpc {
     pub target: Target,
     pub variables: Vec<Variable>,
     pub rail_id: u32,
-    pub rail_speed: f32,
-    pub rail_origin: Pos,
+    pub rail_elapsed_seconds: f32,
+    pub rail_offset: Pos,
     pub unknown54: u32,
     pub rail_unknown1: f32,
     pub rail_unknown2: f32,

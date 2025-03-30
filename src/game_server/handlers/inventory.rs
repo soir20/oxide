@@ -248,7 +248,7 @@ fn process_unequip_slot(
                                     slot: unequip_slot.slot,
                                 },
                                 battle_class: unequip_slot.battle_class,
-                                wield_type: character_write_handle.wield_type()
+                                wield_type: character_write_handle.stats.wield_type()
                             }
                         })?
                     );
@@ -305,7 +305,7 @@ fn process_equip_guid(
                                         chunk,
                                         &battle_class.items,
                                         player.active_battle_class,
-                                        character_write_handle.wield_type(),
+                                        character_write_handle.stats.wield_type(),
                                         game_server,
                                     )?);
                                 }
@@ -685,7 +685,7 @@ fn equip_item_in_slot<'a>(
     tint_override: Option<u32>,
 ) -> Result<(Vec<Broadcast>, u32), ProcessPacketError> {
     if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) {
-        let current_wield_type = character_write_handle.wield_type();
+        let current_wield_type = character_write_handle.stats.wield_type();
 
         // Always brandish a saber when any saber component changes. If we're equipping a new saber, the
         // wield type will be updated appropriately later.

@@ -656,6 +656,104 @@
         ],
         "ambient_npcs": [
             {
+                "comment": "Green Starfighter",
+                "model_id": 721,
+                "npc_type": 2,
+                "pos_x": 118.403900,
+                "pos_y": 56.782230,
+                "pos_z": -328.281600,
+                "pos_w": 1.0,
+                "rot_x": 0.0,
+                "rot_y": 0.0,
+                "rot_z": 0.0,
+                "is_spawned": false,
+                "enable_gravity": false,
+                "tickable_procedures": {
+                    "spawn": {
+                        "weight": 36,
+                        "steps": [
+                            {
+                                "spawned_state": true,
+                                "rail_id": 36,
+                                "duration_millis": 0
+                            }
+                        ],
+                        "next_possible_procedures": ["remove"]
+                    },
+                    "remove": {
+                        "steps": [
+                            {
+                                "composite_effect_id": 1021,
+                                "duration_millis": 11500
+                            },
+                            {
+                                "spawned_state": false,
+                                "duration_millis": 1000
+                            }
+                        ],
+                        "next_possible_procedures": ["spawn", "empty"]
+                    },
+                    "empty": {
+                        "weight": 1259,
+                        "steps": [
+                            {
+                                "duration_millis": 1000
+                            }
+                        ],
+                        "next_possible_procedures": ["spawn", "empty"]
+                    }
+                }
+            },
+			{
+                "comment": "Purple Starfighter",
+                "model_id": 723,
+                "npc_type": 2,
+                "pos_x": 135.588600,
+                "pos_y": 24.974580,
+                "pos_z": -26.692560,
+                "pos_w": 1.0,
+                "rot_x": 0.0,
+                "rot_y": 0.0,
+                "rot_z": 0.0,
+                "is_spawned": false,
+                "enable_gravity": false,
+                "tickable_procedures": {
+                    "spawn": {
+                        "weight": 36,
+                        "steps": [
+                            {
+                                "spawned_state": true,
+                                "rail_id": 37,
+                                "duration_millis": 0
+                            }
+                        ],
+                        "next_possible_procedures": ["remove"]
+                    },
+                    "remove": {
+                        "steps": [
+                            {
+                                "composite_effect_id": 1021,
+                                "duration_millis": 12500
+                            },
+                            {
+                                "spawned_state": false,
+                                "duration_millis": 1000
+                            }
+                        ],
+                        "next_possible_procedures": ["spawn", "empty"]
+                    },
+                    "empty": {
+                        "weight": 1259,
+                        "steps": [
+                            {
+                                "duration_millis": 1000
+                            }
+                        ],
+                        "next_possible_procedures": ["spawn", "empty"]
+                    }
+                }
+            },
+            {
                 "comment": "Training Room Main Platform Lift",
                 "model_id": 1438,
                 "npc_type": 1,

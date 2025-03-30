@@ -29,7 +29,7 @@ use super::{
         coerce_to_broadcast_supplier, AmbientNpcConfig, Character, CharacterCategory,
         CharacterLocationIndex, CharacterMatchmakingGroupIndex, CharacterNameIndex,
         CharacterSquadIndex, CharacterType, Chunk, DoorConfig, NpcTemplate, PreviousFixture,
-        PreviousLocation, TransportConfig, WriteLockingBroadcastSupplier,
+        PreviousLocation, RemovalMode, TransportConfig, WriteLockingBroadcastSupplier,
     },
     distance3,
     guid::{Guid, GuidTable, GuidTableIndexer, GuidTableWriteHandle, IndexedGuid},
@@ -459,13 +459,14 @@ impl ZoneInstance {
             for (guid, add) in &character_diffs.character_diffs_for_moved_character {
                 if let Some(character) = characters_read.get(guid) {
                     if *add {
-                        diff_packets.append(&mut character.add_packets(
+                        diff_packets.append(&mut character.stats.add_packets(
                             mount_configs,
                             item_definitions,
                             customizations,
                         )?);
                     } else {
-                        diff_packets.append(&mut character.remove_packets()?);
+                        diff_packets
+                            .append(&mut character.stats.remove_packets(RemovalMode::default())?);
                     }
                 }
             }
@@ -476,7 +477,7 @@ impl ZoneInstance {
         if let Some(moved_character_read_handle) = characters_read.get(&moved_character_guid) {
             broadcasts.push(Broadcast::Multi(
                 character_diffs.new_players_close_to_moved_character,
-                moved_character_read_handle.add_packets(
+                moved_character_read_handle.stats.add_packets(
                     mount_configs,
                     item_definitions,
                     customizations,
@@ -484,7 +485,9 @@ impl ZoneInstance {
             ));
             broadcasts.push(Broadcast::Multi(
                 character_diffs.players_too_far_from_moved_character,
-                moved_character_read_handle.remove_packets()?,
+                moved_character_read_handle
+                    .stats
+                    .remove_packets(RemovalMode::default())?,
             ));
         }
 
@@ -666,7 +669,7 @@ impl ZoneInstance {
                             )?;
                             broadcasts.push(Broadcast::Multi(
                                 previous_other_players_nearby,
-                                moved_character_write_handle.remove_packets()?,
+                                moved_character_write_handle.stats.remove_packets(RemovalMode::default())?,
                             ));
 
                             // Move the character
@@ -690,7 +693,7 @@ impl ZoneInstance {
                                 instance_guid,
                                 characters_table_write_handle,
                             )?;
-                            let mut new_chunk_packets = moved_character_write_handle.add_packets(
+                            let mut new_chunk_packets = moved_character_write_handle.stats.add_packets(
                                 game_server.mounts(),
                                 game_server.items(),
                                 game_server.customizations(),
@@ -771,6 +774,7 @@ impl ZoneConfig {
                     synchronize_with: ambient_npc.base_npc.synchronize_with.clone(),
                     animation_id: ambient_npc.base_npc.active_animation_slot,
                     cursor: ambient_npc.base_npc.cursor,
+                    is_spawned: ambient_npc.base_npc.is_spawned,
                     character_type: CharacterType::AmbientNpc(ambient_npc.into()),
                     mount_id: None,
                     interact_radius: self.interact_radius,
@@ -803,6 +807,7 @@ impl ZoneConfig {
                     synchronize_with: door.base_npc.synchronize_with.clone(),
                     animation_id: door.base_npc.active_animation_slot,
                     cursor: door.base_npc.cursor,
+                    is_spawned: door.base_npc.is_spawned,
                     character_type: CharacterType::Door(door.into()),
                     mount_id: None,
                     interact_radius: self.interact_radius,
@@ -835,6 +840,7 @@ impl ZoneConfig {
                     synchronize_with: transport.base_npc.synchronize_with.clone(),
                     animation_id: transport.base_npc.active_animation_slot,
                     cursor: transport.base_npc.cursor,
+                    is_spawned: transport.base_npc.is_spawned,
                     character_type: CharacterType::Transport(transport.into()),
                     mount_id: None,
                     interact_radius: self.interact_radius,
@@ -940,7 +946,9 @@ pub fn enter_zone(
                 )?;
                 broadcasts.push(Broadcast::Multi(
                     other_players_nearby,
-                    character_write_handle.remove_packets()?,
+                    character_write_handle
+                        .stats
+                        .remove_packets(RemovalMode::default())?,
                 ));
 
                 let previous_zone_template_guid =
