@@ -59,6 +59,7 @@ pub enum OpCode {
     ZoneTeleportRequest = 0x5a,
     WelcomeScreen = 0x5d,
     LobbyGame = 0x66,
+    ClientMetrics = 0x69,
     ClientLog = 0x6d,
     TeleportToSafety = 0x7a,
     UpdatePlayerPosition = 0x7d,

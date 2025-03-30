@@ -741,6 +741,7 @@ impl GameServer {
                 }
                 OpCode::LobbyGame => {}
                 OpCode::UiInteractions => {}
+                OpCode::ClientMetrics => {}
                 OpCode::ClientLog => {}
                 _ => {
                     return Err(ProcessPacketError::new(
