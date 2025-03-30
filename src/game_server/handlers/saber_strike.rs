@@ -63,21 +63,25 @@ pub fn process_saber_strike_packet(
             _ => {
                 let mut buffer = Vec::new();
                 cursor.read_to_end(&mut buffer)?;
-                info!(
-                    "Unimplemented minigame op code: {:?} {:x?}",
-                    op_code, buffer
-                );
-                Ok(Vec::new())
+                Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::UnknownOpCode,
+                    format!(
+                        "Unimplemented minigame op code: {:?} {:x?}",
+                        op_code, buffer
+                    ),
+                ))
             }
         },
         Err(_) => {
             let mut buffer = Vec::new();
             cursor.read_to_end(&mut buffer)?;
-            info!(
-                "Unknown minigame packet: {}, {:x?}",
-                header.sub_op_code, buffer
-            );
-            Ok(Vec::new())
+            Err(ProcessPacketError::new(
+                ProcessPacketErrorType::UnknownOpCode,
+                format!(
+                    "Unknown minigame packet: {}, {:x?}",
+                    header.sub_op_code, buffer
+                ),
+            ))
         }
     }
 }

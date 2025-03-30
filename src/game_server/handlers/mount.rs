@@ -329,10 +329,10 @@ pub fn process_mount_packet(
         Ok(op_code) => match op_code {
             MountOpCode::DismountRequest => process_dismount(sender, game_server),
             MountOpCode::MountSpawn => process_mount_spawn(cursor, sender, game_server),
-            _ => {
-                info!("Unimplemented mount op code: {:?}", op_code);
-                Ok(Vec::new())
-            }
+            _ => Err(ProcessPacketError::new(
+                ProcessPacketErrorType::UnknownOpCode,
+                format!("Unimplemented mount op code: {:?}", op_code),
+            )),
         },
         Err(_) => Err(ProcessPacketError::new(
             ProcessPacketErrorType::UnknownOpCode,
