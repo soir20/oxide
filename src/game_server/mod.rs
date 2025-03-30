@@ -739,7 +739,7 @@ impl GameServer {
                 OpCode::Minigame => {
                     broadcasts.append(&mut process_minigame_packet(&mut cursor, sender, self)?);
                 }
-                OpCode::LobbyGame => {}
+                OpCode::LobbyGameDefinition => {}
                 OpCode::UiInteractions => {}
                 OpCode::ClientMetrics => {}
                 OpCode::ClientLog => {}
