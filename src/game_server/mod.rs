@@ -41,7 +41,6 @@ use handlers::unique_guid::{
 };
 use handlers::zone::{load_zones, teleport_within_zone, ZoneInstance, ZoneTemplate};
 use packets::client_update::{Health, Power, PreloadCharactersDone, Stat, StatId, Stats};
-use packets::housing::{HouseDescription, HouseInstanceEntry, HouseInstanceList};
 use packets::item::ItemDefinition;
 use packets::login::{LoginRequest, WelcomeScreen, ZoneDetailsDone};
 use packets::player_update::{Customization, InitCustomizations, QueueAnimation, UpdateWieldType};
@@ -658,38 +657,6 @@ impl GameServer {
                 }
                 OpCode::Housing => {
                     broadcasts.append(&mut process_housing_packet(sender, self, &mut cursor)?);
-                    broadcasts.push(Broadcast::Single(
-                        sender,
-                        vec![GamePacket::serialize(&TunneledPacket {
-                            unknown1: true,
-                            inner: HouseInstanceList {
-                                instances: vec![HouseInstanceEntry {
-                                    description: HouseDescription {
-                                        owner_guid: player_guid(sender),
-                                        house_guid: zone_instance_guid(0, 100),
-                                        house_name: 1987,
-                                        player_given_name: "Blaster's Mustafar Lot".to_string(),
-                                        owner_name: "BLASTER NICESHOT".to_string(),
-                                        icon_id: 4209,
-                                        unknown5: true,
-                                        fixture_count: 1,
-                                        unknown7: 0,
-                                        furniture_score: 3,
-                                        is_locked: false,
-                                        unknown10: "".to_string(),
-                                        unknown11: "".to_string(),
-                                        rating: 4.5,
-                                        total_votes: 5,
-                                        is_published: false,
-                                        is_rateable: false,
-                                        unknown16: 0,
-                                        unknown17: 0,
-                                    },
-                                    unknown1: player_guid(sender),
-                                }],
-                            },
-                        })?],
-                    ));
                 }
                 OpCode::Chat => {
                     broadcasts.append(&mut process_chat_packet(&mut cursor, sender, self)?);

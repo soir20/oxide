@@ -9,8 +9,9 @@ use crate::{
         packets::{
             housing::{
                 BuildArea, EnterRequest, FixtureAssetData, FixtureUpdate, HouseDescription,
-                HouseInfo, HouseInstanceData, HouseItemList, HouseZoneData, HousingOpCode,
-                InnerInstanceData, PlacedFixture, RoomInstances, SetEditMode, Unknown1,
+                HouseInfo, HouseInstanceData, HouseInstanceEntry, HouseInstanceList, HouseItemList,
+                HouseZoneData, HousingOpCode, InnerInstanceData, PlacedFixture,
+                RequestPlayerHouseList, RoomInstances, SetEditMode, Unknown1,
             },
             item::{BaseAttachmentGroup, WieldType},
             player_update::{AddNpc, Hostility, Icon},
@@ -26,7 +27,9 @@ use super::{
     character::{Character, CurrentFixture, PreviousFixture},
     guid::{GuidTableIndexer, IndexedGuid},
     lock_enforcer::{CharacterLockRequest, ZoneLockRequest},
-    unique_guid::{npc_guid, player_guid, zone_template_guid, FIXTURE_DISCRIMINANT},
+    unique_guid::{
+        npc_guid, player_guid, zone_instance_guid, zone_template_guid, FIXTURE_DISCRIMINANT,
+    },
     zone::{House, ZoneInstance},
 };
 
@@ -410,6 +413,41 @@ pub fn process_housing_packet(
                         Ok(vec![Broadcast::Single(sender, packets)])
                     },
                 })
+            }
+            HousingOpCode::RequestPlayerHouseList => {
+                let request = RequestPlayerHouseList::deserialize(cursor)?;
+                Ok(vec![Broadcast::Single(
+                    sender,
+                    vec![GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: HouseInstanceList {
+                            instances: vec![HouseInstanceEntry {
+                                description: HouseDescription {
+                                    owner_guid: request.player_guid,
+                                    house_guid: zone_instance_guid(0, 100),
+                                    house_name: 1987,
+                                    player_given_name: "Blaster's Mustafar Lot".to_string(),
+                                    owner_name: "BLASTER NICESHOT".to_string(),
+                                    icon_id: 4209,
+                                    unknown5: true,
+                                    fixture_count: 1,
+                                    unknown7: 0,
+                                    furniture_score: 3,
+                                    is_locked: false,
+                                    unknown10: "".to_string(),
+                                    unknown11: "".to_string(),
+                                    rating: 4.5,
+                                    total_votes: 5,
+                                    is_published: false,
+                                    is_rateable: false,
+                                    unknown16: 0,
+                                    unknown17: 0,
+                                },
+                                unknown1: request.player_guid,
+                            }],
+                        },
+                    })?],
+                )])
             }
             HousingOpCode::EnterRequest => {
                 let enter_request: EnterRequest = DeserializePacket::deserialize(cursor)?;

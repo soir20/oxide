@@ -10,6 +10,7 @@ use super::{item::BaseAttachmentGroup, GamePacket, OpCode, Pos};
 #[repr(u16)]
 pub enum HousingOpCode {
     SetEditMode = 0x6,
+    RequestPlayerHouseList = 0xb,
     EnterRequest = 0x10,
     InstanceData = 0x18,
     InstanceList = 0x26,
@@ -37,6 +38,16 @@ pub struct SetEditMode {
 impl GamePacket for SetEditMode {
     type Header = HousingOpCode;
     const HEADER: Self::Header = HousingOpCode::SetEditMode;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct RequestPlayerHouseList {
+    pub player_guid: u64,
+}
+
+impl GamePacket for RequestPlayerHouseList {
+    type Header = HousingOpCode;
+    const HEADER: Self::Header = HousingOpCode::RequestPlayerHouseList;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
