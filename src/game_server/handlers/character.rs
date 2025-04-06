@@ -8,8 +8,7 @@ use rand_distr::{Distribution, WeightedAliasIndex};
 use serde::Deserialize;
 use strum::EnumIter;
 
-use crate::{
-    game_server::{
+use crate::game_server::{
         packets::{
             chat::{ActionBarTextColor, SendStringId},
             command::PlaySoundIdOnTarget,
@@ -23,13 +22,11 @@ use crate::{
                 SingleNpcRelevance, UpdateSpeed, UpdateTemporaryAppearance,
             },
             tunnel::TunneledPacket,
-            ui::ExecuteScriptWithParams,
+            ui::ExecuteScriptWithStringParams,
             update_position::UpdatePlayerPosition,
             GamePacket, GuidTarget, Name, Pos, Rgba, Target,
         },
         Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
-    },
-    teleport_to_zone,
 };
 
 use super::{
