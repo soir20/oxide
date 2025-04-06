@@ -400,7 +400,7 @@ impl TickableStep {
                 }
                 SpawnedState::OnFirstStepTick => {
                     if self.first_tick && !character.is_spawned {
-                        // Spawn the character without updating its state to prevent it from being visible to players joining the room mid-step
+                        // Spawn the character without updating it's state to prevent it from being visible to players joining the room mid-step
                         packets_for_all.extend(character.add_packets(
                             true, // Override is_spawned
                             mount_configs,
@@ -413,7 +413,7 @@ impl TickableStep {
                     if character.is_spawned {
                         character.is_spawned = false;
                     }
-                    // Skip checking if the character is spawned before despawning it and instead check if its state needs updating as OnFirstStepTick doesn't maintain states
+                    // Skip checking if the character is spawned before despawning it and instead check if it's state needs updating as OnFirstStepTick doesn't maintain states
                     packets_for_all.extend(character.remove_packets(self.removal_mode)?);
                 }
                 SpawnedState::Keep => {}
@@ -698,19 +698,19 @@ impl TickableProcedure {
                 .map(|(current_step_index, _)| current_step_index.saturating_add(1))
                 .unwrap_or_default();
             if new_step_index >= self.steps.len() {
-                return TickResult::MustChangeProcedure(self.next_procedure());
+                TickResult::MustChangeProcedure(self.next_procedure())
             } else {
                 self.current_step = Some((new_step_index, now));
                 let next_step = &mut self.steps[new_step_index];
                 next_step.first_tick = true;
-                return TickResult::TickedCurrentProcedure(next_step.apply(
+                TickResult::TickedCurrentProcedure(next_step.apply(
                     character,
                     nearby_player_guids,
                     nearby_players,
                     mount_configs,
                     item_definitions,
                     customizations,
-                ));
+                ))
             }
         } else {
             TickResult::TickedCurrentProcedure(Ok(Vec::new()))

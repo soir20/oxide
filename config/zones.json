@@ -704,6 +704,66 @@
         ],
         "ambient_npcs": [
             {
+                "comment": "War Room Holotable Holograms",
+                "model_id": 44,
+                "pos_x": 707.52936,
+                "pos_y": 10.979759,
+                "pos_z": -5.1,
+                "pos_w": 1.0,
+                "rot_x": 0.0,
+                "rot_y": 0.0,
+                "rot_z": 0.0,
+                "rot_w": 0.0,
+				"tickable_procedures": {
+                    "arc_troopers_hologram": {
+                        "steps": [
+                            {
+                                "model_id": 354,
+                                "duration_millis": 10000
+                            }
+                        ],
+                        "next_possible_procedures": ["invisible"]
+                    },
+                    "battle_droid_hologram": {
+                        "steps": [
+                            {
+                                "model_id": 352,
+                                "duration_millis": 10000
+                            }
+                        ],
+                        "next_possible_procedures": ["invisible"]
+                    },
+                    "super_battle_droid_hologram": {
+                        "steps": [
+                            {
+                                "model_id": 351,
+                                "duration_millis": 10000
+                            }
+                        ],
+                        "next_possible_procedures": ["invisible"]
+                    },
+                    "droideka_hologram": {
+                        "steps": [
+                            {
+                                "animation_id": 9002,
+                                "model_id": 350,
+                                "duration_millis": 10000
+                            }
+                        ],
+                        "next_possible_procedures": ["invisible"]
+                    },
+                    "invisible": {
+                        "steps": [
+                            {
+                                "model_id": 44,
+                                "duration_millis": 5000
+                            }
+                        ],
+                        "next_possible_procedures": ["arc_troopers_hologram", "battle_droid_hologram", "super_battle_droid_hologram", "droideka_hologram"]
+                    }
+                }
+            },
+            {
                 "comment": "Green Starfighter",
                 "model_id": 721,
                 "npc_type": 2,
