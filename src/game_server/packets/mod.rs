@@ -56,7 +56,7 @@ pub enum OpCode {
     ZoneCombatSettings = 0x3e,
     Purchase = 0x42,
     QuickChat = 0x43,
-    ZoneTeleportRequest = 0x5a,
+    PointOfInterestTeleportRequest = 0x5a,
     WelcomeScreen = 0x5d,
     LobbyGameDefinition = 0x66,
     ClientMetrics = 0x69,

@@ -18,21 +18,6 @@ pub fn zone_template_guid(instance_guid: u64) -> u8 {
     (instance_guid & 0xff) as u8
 }
 
-pub fn shorten_zone_template_guid(point_of_interest_id: u32) -> Result<u8, ProcessPacketError> {
-    if point_of_interest_id > u8::MAX as u32 {
-        Err(ProcessPacketError::new(
-            ProcessPacketErrorType::ConstraintViolated,
-            format!(
-                "Point of interest ID {} must be <= {}",
-                point_of_interest_id,
-                u8::MAX
-            ),
-        ))
-    } else {
-        Ok(point_of_interest_id as u8)
-    }
-}
-
 pub fn shorten_zone_index(instance_guid: u64) -> u32 {
     ((instance_guid >> 8) & 0xffffffff) as u32
 }
