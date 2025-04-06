@@ -9,24 +9,24 @@ use serde::Deserialize;
 use strum::EnumIter;
 
 use crate::game_server::{
-        packets::{
-            chat::{ActionBarTextColor, SendStringId},
-            command::PlaySoundIdOnTarget,
-            item::{Attachment, BaseAttachmentGroup, EquipmentSlot, ItemDefinition, WieldType},
-            minigame::ScoreEntry,
-            player_data::EquippedItem,
-            player_update::{
-                AddNotifications, AddNpc, AddPc, Customization, CustomizationSlot, Hostility, Icon,
-                MoveOnRail, NameplateImage, NotificationData, NpcRelevance, PlayCompositeEffect,
-                QueueAnimation, RemoveGracefully, RemoveStandard, SetAnimation, SingleNotification,
-                SingleNpcRelevance, UpdateSpeed, UpdateTemporaryAppearance,
-            },
-            tunnel::TunneledPacket,
-            ui::ExecuteScriptWithStringParams,
-            update_position::UpdatePlayerPosition,
-            GamePacket, GuidTarget, Name, Pos, Rgba, Target,
+    packets::{
+        chat::{ActionBarTextColor, SendStringId},
+        command::PlaySoundIdOnTarget,
+        item::{Attachment, BaseAttachmentGroup, EquipmentSlot, ItemDefinition, WieldType},
+        minigame::ScoreEntry,
+        player_data::EquippedItem,
+        player_update::{
+            AddNotifications, AddNpc, AddPc, Customization, CustomizationSlot, Hostility, Icon,
+            MoveOnRail, NameplateImage, NotificationData, NpcRelevance, PlayCompositeEffect,
+            QueueAnimation, RemoveGracefully, RemoveStandard, SetAnimation, SingleNotification,
+            SingleNpcRelevance, UpdateSpeed, UpdateTemporaryAppearance,
         },
-        Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
+        tunnel::TunneledPacket,
+        ui::ExecuteScriptWithStringParams,
+        update_position::UpdatePlayerPosition,
+        GamePacket, GuidTarget, Name, Pos, Rgba, Target,
+    },
+    Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
 };
 
 use super::{
