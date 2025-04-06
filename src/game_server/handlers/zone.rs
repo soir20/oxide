@@ -279,7 +279,6 @@ impl ZoneInstance {
         for (index, fixture) in house.fixtures.iter().enumerate() {
             global_characters_table.insert(Character::new(
                 npc_guid(FIXTURE_DISCRIMINANT, guid, index as u16),
-                fixture.model_id,
                 fixture.pos,
                 fixture.rot,
                 fixture.scale,
@@ -461,6 +460,7 @@ impl ZoneInstance {
                 if let Some(character) = characters_read.get(guid) {
                     if *add {
                         diff_packets.append(&mut character.stats.add_packets(
+                            false,
                             mount_configs,
                             item_definitions,
                             customizations,
@@ -479,6 +479,7 @@ impl ZoneInstance {
             broadcasts.push(Broadcast::Multi(
                 character_diffs.new_players_close_to_moved_character,
                 moved_character_read_handle.stats.add_packets(
+                    false,
                     mount_configs,
                     item_definitions,
                     customizations,
@@ -695,6 +696,7 @@ impl ZoneInstance {
                                 characters_table_write_handle,
                             )?;
                             let mut new_chunk_packets = moved_character_write_handle.stats.add_packets(
+                                false,
                                 game_server.mounts(),
                                 game_server.items(),
                                 game_server.customizations(),
@@ -754,7 +756,6 @@ impl ZoneConfig {
                     key: ambient_npc.base_npc.key.clone(),
                     discriminant: AMBIENT_NPC_DISCRIMINANT,
                     index,
-                    model_id: ambient_npc.base_npc.model_id,
                     pos: Pos {
                         x: ambient_npc.base_npc.pos_x,
                         y: ambient_npc.base_npc.pos_y,
@@ -791,7 +792,6 @@ impl ZoneConfig {
                     key: door.base_npc.key.clone(),
                     discriminant: AMBIENT_NPC_DISCRIMINANT,
                     index,
-                    model_id: door.base_npc.model_id,
                     pos: Pos {
                         x: door.base_npc.pos_x,
                         y: door.base_npc.pos_y,
@@ -825,7 +825,6 @@ impl ZoneConfig {
                     key: transport.base_npc.key.clone(),
                     discriminant: AMBIENT_NPC_DISCRIMINANT,
                     index,
-                    model_id: transport.base_npc.model_id,
                     pos: Pos {
                         x: transport.base_npc.pos_x,
                         y: transport.base_npc.pos_y,

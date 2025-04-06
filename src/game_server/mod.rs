@@ -432,7 +432,7 @@ impl GameServer {
                                                     character_write_handle.stats.speed.base = zone.speed;
                                                     character_write_handle.stats.jump_height_multiplier.base = zone.jump_height_multiplier;
 
-                                                    let mut global_packets = character_write_handle.stats.add_packets(self.mounts(), self.items(), self.customizations())?;
+                                                    let mut global_packets = character_write_handle.stats.add_packets(false, self.mounts(), self.items(), self.customizations())?;
                                                     let wield_type = TunneledPacket {
                                                         unknown1: true,
                                                         inner: UpdateWieldType {
@@ -553,6 +553,10 @@ impl GameServer {
                 OpCode::UpdatePlayerPosition => {
                     let mut pos_update: UpdatePlayerPosition =
                         DeserializePacket::deserialize(&mut cursor)?;
+                    println!(
+                        "Coordinates: (X: {}) (Y: {}) (Z: {})",
+                        pos_update.pos_x, pos_update.pos_y, pos_update.pos_z
+                    );
                     // Don't allow players to update another player's position
                     pos_update.guid = player_guid(sender);
                     broadcasts.append(&mut ZoneInstance::move_character(pos_update, false, self)?);

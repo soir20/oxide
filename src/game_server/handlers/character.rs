@@ -19,8 +19,8 @@ use crate::{
             player_update::{
                 AddNotifications, AddNpc, AddPc, Customization, CustomizationSlot, Hostility, Icon,
                 MoveOnRail, NameplateImage, NotificationData, NpcRelevance, PlayCompositeEffect,
-                QueueAnimation, RemoveGracefully, RemoveStandard, ReplaceBaseModel, SetAnimation,
-                SingleNotification, SingleNpcRelevance, UpdateSpeed, UpdateTemporaryAppearance,
+                QueueAnimation, RemoveGracefully, RemoveStandard, SetAnimation, SingleNotification,
+                SingleNpcRelevance, UpdateSpeed, UpdateTemporaryAppearance,
             },
             tunnel::TunneledPacket,
             ui::ExecuteScriptWithParams,
@@ -109,6 +109,15 @@ pub enum RemovalMode {
     },
 }
 
+#[derive(Clone, Copy, Default, Deserialize, PartialEq)]
+pub enum SpawnedState {
+    #[default]
+    Keep,
+    Always,
+    OnFirstStepTick,
+    Despawn,
+}
+
 #[derive(Clone, Deserialize)]
 pub struct BaseNpcConfig {
     pub key: Option<String>,
@@ -166,6 +175,7 @@ pub struct BaseNpcConfig {
 
 #[derive(Clone)]
 pub struct BaseNpc {
+    pub model_id: u32,
     pub name_id: u32,
     pub terrain_object_id: u32,
     pub name_offset_x: f32,
@@ -181,15 +191,19 @@ pub struct BaseNpc {
 }
 
 impl BaseNpc {
-    pub fn add_packets(&self, character: &CharacterStats) -> Option<(AddNpc, SingleNpcRelevance)> {
-        if !character.is_spawned {
+    pub fn add_packets(
+        &self,
+        character: &CharacterStats,
+        override_is_spawned: bool,
+    ) -> Option<(AddNpc, SingleNpcRelevance)> {
+        if !character.is_spawned && !override_is_spawned {
             return None;
         }
         Some((
             AddNpc {
                 guid: Guid::guid(character),
                 name_id: self.name_id,
-                model_id: character.model_id,
+                model_id: self.model_id,
                 unknown3: true,
                 chat_text_color: Character::DEFAULT_CHAT_TEXT_COLOR,
                 chat_bubble_color: Character::DEFAULT_CHAT_BUBBLE_COLOR,
@@ -295,6 +309,7 @@ impl BaseNpc {
 impl From<BaseNpcConfig> for BaseNpc {
     fn from(value: BaseNpcConfig) -> Self {
         BaseNpc {
+            model_id: value.model_id,
             name_id: value.name_id,
             terrain_object_id: value.terrain_object_id,
             name_offset_x: value.name_offset_x,
@@ -340,10 +355,13 @@ pub struct TickableStep {
     pub effect_delay_millis: u32,
     #[serde(default)]
     pub removal_mode: RemovalMode,
-    pub spawned_state: Option<bool>,
+    #[serde(default)]
+    pub spawned_state: SpawnedState,
     #[serde(default)]
     pub cursor: CursorUpdate,
     pub duration_millis: u64,
+    #[serde(default)]
+    pub first_tick: bool,
 }
 
 impl TickableStep {
@@ -367,29 +385,51 @@ impl TickableStep {
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let mut packets_for_all = Vec::new();
 
-        if let Some(spawned_state) = self.spawned_state {
-            if character.is_spawned != spawned_state {
-                character.is_spawned = spawned_state;
-                if spawned_state {
-                    packets_for_all.extend(character.add_packets(
-                        mount_configs,
-                        item_definitions,
-                        customizations,
-                    )?);
-                } else {
+        if self.spawned_state != SpawnedState::Keep {
+            match self.spawned_state {
+                SpawnedState::Always => {
+                    if !character.is_spawned {
+                        character.is_spawned = true;
+                        packets_for_all.extend(character.add_packets(
+                            false,
+                            mount_configs,
+                            item_definitions,
+                            customizations,
+                        )?);
+                    }
+                }
+                SpawnedState::OnFirstStepTick => {
+                    if self.first_tick && !character.is_spawned {
+                        // Spawn the character without updating its state to prevent it from being visible to players joining the room mid-step
+                        packets_for_all.extend(character.add_packets(
+                            true, // Override is_spawned
+                            mount_configs,
+                            item_definitions,
+                            customizations,
+                        )?);
+                    }
+                }
+                SpawnedState::Despawn => {
+                    if character.is_spawned {
+                        character.is_spawned = false;
+                    }
+                    // Skip checking if the character is spawned before despawning it and instead check if its state needs updating as OnFirstStepTick doesn't maintain states
                     packets_for_all.extend(character.remove_packets(self.removal_mode)?);
                 }
+                SpawnedState::Keep => {}
             }
         }
 
         if let Some(model_id) = self.model_id {
-            packets_for_all.push(GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: UpdateTemporaryAppearance {
-                    model: model_id,
-                    guid: Guid::guid(character),
-                },
-            })?);
+            if self.first_tick {
+                packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: UpdateTemporaryAppearance {
+                        model: model_id,
+                        guid: Guid::guid(character),
+                    },
+                })?);
+            }
         }
 
         if let Some(composite_effect_id) = self.composite_effect_id {
@@ -412,20 +452,22 @@ impl TickableStep {
         }
 
         if let Some(rail_id) = self.rail_id {
-            packets_for_all.push(GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: MoveOnRail {
-                    guid: Guid::guid(character),
-                    rail_id,
-                    elapsed_seconds: 0.0,
-                    rail_offset: Pos {
-                        x: 0.0,
-                        y: 0.0,
-                        z: 0.0,
-                        w: 0.0,
+            if self.first_tick {
+                packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: MoveOnRail {
+                        guid: Guid::guid(character),
+                        rail_id,
+                        elapsed_seconds: 0.0,
+                        rail_offset: Pos {
+                            x: 0.0,
+                            y: 0.0,
+                            z: 0.0,
+                            w: 0.0,
+                        },
                     },
-                },
-            })?);
+                })?);
+            }
         }
 
         if let Some(speed) = self.speed {
@@ -639,7 +681,11 @@ impl TickableProcedure {
         let should_change_steps =
             if let Some((current_step_index, last_step_change)) = self.current_step {
                 let time_since_last_step_change = now.saturating_duration_since(last_step_change);
-                let current_step = &self.steps[current_step_index];
+                let current_step = &mut self.steps[current_step_index];
+
+                if current_step.first_tick {
+                    current_step.first_tick = false;
+                }
 
                 time_since_last_step_change >= Duration::from_millis(current_step.duration_millis)
             } else {
@@ -652,17 +698,19 @@ impl TickableProcedure {
                 .map(|(current_step_index, _)| current_step_index.saturating_add(1))
                 .unwrap_or_default();
             if new_step_index >= self.steps.len() {
-                TickResult::MustChangeProcedure(self.next_procedure())
+                return TickResult::MustChangeProcedure(self.next_procedure());
             } else {
                 self.current_step = Some((new_step_index, now));
-                TickResult::TickedCurrentProcedure(self.steps[new_step_index].apply(
+                let next_step = &mut self.steps[new_step_index];
+                next_step.first_tick = true;
+                return TickResult::TickedCurrentProcedure(next_step.apply(
                     character,
                     nearby_player_guids,
                     nearby_players,
                     mount_configs,
                     item_definitions,
                     customizations,
-                ))
+                ));
             }
         } else {
             TickResult::TickedCurrentProcedure(Ok(Vec::new()))
@@ -854,8 +902,11 @@ impl AmbientNpc {
     pub fn add_packets(
         &self,
         character: &CharacterStats,
+        override_is_spawned: bool,
     ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
-        let Some((add_npc, enable_interaction)) = self.base_npc.add_packets(character) else {
+        let Some((add_npc, enable_interaction)) =
+            self.base_npc.add_packets(character, override_is_spawned)
+        else {
             return Ok(Vec::new());
         };
         let packets = vec![
@@ -936,8 +987,10 @@ impl Door {
     pub fn add_packets(
         &self,
         character: &CharacterStats,
+        override_is_spawned: bool,
     ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
-        let Some((mut add_npc, mut enable_interaction)) = self.base_npc.add_packets(character)
+        let Some((mut add_npc, mut enable_interaction)) =
+            self.base_npc.add_packets(character, override_is_spawned)
         else {
             return Ok(Vec::new());
         };
@@ -1062,8 +1115,11 @@ impl Transport {
     pub fn add_packets(
         &self,
         character: &CharacterStats,
+        override_is_spawned: bool,
     ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
-        let Some((mut add_npc, enable_interaction)) = self.base_npc.add_packets(character) else {
+        let Some((mut add_npc, enable_interaction)) =
+            self.base_npc.add_packets(character, override_is_spawned)
+        else {
             return Ok(Vec::new());
         };
         add_npc.hover_description = if self.show_hover_description {
@@ -1390,7 +1446,6 @@ pub struct NpcTemplate {
     pub key: Option<String>,
     pub discriminant: u8,
     pub index: u16,
-    pub model_id: u32,
     pub pos: Pos,
     pub rot: Pos,
     pub scale: f32,
@@ -1420,7 +1475,6 @@ impl NpcTemplate {
         Character {
             stats: CharacterStats {
                 guid: self.guid(instance_guid),
-                model_id: self.model_id,
                 pos: self.pos,
                 rot: self.rot,
                 scale: self.scale,
@@ -1487,7 +1541,6 @@ impl CharacterStat {
 #[derive(Clone)]
 pub struct CharacterStats {
     guid: u64,
-    pub model_id: u32,
     pub pos: Pos,
     pub rot: Pos,
     pub scale: f32,
@@ -1510,14 +1563,19 @@ pub struct CharacterStats {
 impl CharacterStats {
     pub fn add_packets(
         &self,
+        override_is_spawned: bool,
         mount_configs: &BTreeMap<u32, MountConfig>,
         item_definitions: &BTreeMap<u32, ItemDefinition>,
         customizations: &BTreeMap<u32, Customization>,
     ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
         let packets = match &self.character_type {
-            CharacterType::AmbientNpc(ambient_npc) => ambient_npc.add_packets(self)?,
-            CharacterType::Door(door) => door.add_packets(self)?,
-            CharacterType::Transport(transport) => transport.add_packets(self)?,
+            CharacterType::AmbientNpc(ambient_npc) => {
+                ambient_npc.add_packets(self, override_is_spawned)?
+            }
+            CharacterType::Door(door) => door.add_packets(self, override_is_spawned)?,
+            CharacterType::Transport(transport) => {
+                transport.add_packets(self, override_is_spawned)?
+            }
             CharacterType::Player(player) => {
                 player.add_packets(self, mount_configs, item_definitions, customizations)?
             }
@@ -1667,7 +1725,6 @@ impl Character {
 
     pub fn new(
         guid: u64,
-        model_id: u32,
         pos: Pos,
         rot: Pos,
         scale: f32,
@@ -1686,7 +1743,6 @@ impl Character {
         Character {
             stats: CharacterStats {
                 guid,
-                model_id,
                 pos,
                 rot,
                 scale,
@@ -1754,7 +1810,6 @@ impl Character {
         Character {
             stats: CharacterStats {
                 guid: player_guid(guid),
-                model_id: 0,
                 pos,
                 rot,
                 scale: 1.0,

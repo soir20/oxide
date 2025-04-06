@@ -70,7 +70,7 @@
         "doors": [],
         "transports": [
             {
-                "comment": "holo table holograms",
+                "comment": "Holotable Holograms",
                 "name_id": 32914,
                 "model_id": 44,
                 "pos_x": 593.89545,
@@ -91,43 +91,41 @@
                         "steps": [
                             {
                                 "model_id": 354,
-                                "duration_millis": 0
+                                "duration_millis": 10000
                             }
                         ],
-                        "next_possible_procedures": ["phantom_countdown"]
+                        "next_possible_procedures": ["invisible"]
                     },
                     "battle_droid_hologram": {
                         "steps": [
                             {
                                 "model_id": 352,
-                                "duration_millis": 0
+                                "duration_millis": 10000
                             }
                         ],
-                        "next_possible_procedures": ["phantom_countdown"]
+                        "next_possible_procedures": ["invisible"]
                     },
                     "super_battle_droid_hologram": {
                         "steps": [
                             {
                                 "model_id": 351,
-                                "duration_millis": 0
+                                "duration_millis": 10000
                             }
                         ],
-                        "next_possible_procedures": ["phantom_countdown"]
+                        "next_possible_procedures": ["invisible"]
                     },
                     "droideka_hologram": {
                         "steps": [
                             {
+                                "animation_id": 9002,
                                 "model_id": 350,
-                                "duration_millis": 0
+                                "duration_millis": 10000
                             }
                         ],
-                        "next_possible_procedures": ["phantom_countdown"]
+                        "next_possible_procedures": ["invisible"]
                     },
-                    "phantom_countdown": {
+                    "invisible": {
                         "steps": [
-                            {
-                                "duration_millis": 10000
-                            },
                             {
                                 "model_id": 44,
                                 "duration_millis": 5000
@@ -723,9 +721,10 @@
                         "weight": 36,
                         "steps": [
                             {
-                                "spawned_state": true,
+                                "spawned_state": "OnFirstStepTick",
                                 "rail_id": 36,
-                                "duration_millis": 0
+                                "composite_effect_id": 1021,
+                                "duration_millis": 11500
                             }
                         ],
                         "next_possible_procedures": ["remove"]
@@ -733,11 +732,7 @@
                     "remove": {
                         "steps": [
                             {
-                                "composite_effect_id": 1021,
-                                "duration_millis": 11500
-                            },
-                            {
-                                "spawned_state": false,
+                                "spawned_state": "Despawn",
                                 "duration_millis": 1000
                             }
                         ],
@@ -772,9 +767,10 @@
                         "weight": 36,
                         "steps": [
                             {
-                                "spawned_state": true,
+                                "spawned_state": "OnFirstStepTick",
                                 "rail_id": 37,
-                                "duration_millis": 0
+                                "composite_effect_id": 1021,
+                                "duration_millis": 12500
                             }
                         ],
                         "next_possible_procedures": ["remove"]
@@ -782,11 +778,7 @@
                     "remove": {
                         "steps": [
                             {
-                                "composite_effect_id": 1021,
-                                "duration_millis": 12500
-                            },
-                            {
-                                "spawned_state": false,
+                                "spawned_state": "Despawn",
                                 "duration_millis": 1000
                             }
                         ],
