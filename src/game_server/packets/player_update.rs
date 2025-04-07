@@ -296,7 +296,7 @@ impl GamePacket for RemoveTemporaryAppearance {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct UpdateTemporaryAppearance {
-    pub model: u32,
+    pub model_id: u32,
     pub guid: u64,
 }
 

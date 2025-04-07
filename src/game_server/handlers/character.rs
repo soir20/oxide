@@ -407,7 +407,7 @@ impl TickableStep {
                 packets_for_all.push(GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
                     inner: UpdateTemporaryAppearance {
-                        model: model_id,
+                        model_id,
                         guid: Guid::guid(character),
                     },
                 })?);
