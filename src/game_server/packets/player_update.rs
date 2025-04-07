@@ -285,8 +285,8 @@ impl GamePacket for SlotCompositeEffectOverride {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct RemoveTemporaryAppearance {
-    pub guid: u64,
-    pub model: u32,
+    guid: u64,
+    model_id: u32,
 }
 
 impl GamePacket for RemoveTemporaryAppearance {

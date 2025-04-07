@@ -369,7 +369,6 @@ impl TickableStep {
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let mut packets_for_all = Vec::new();
 
-        if self.spawned_state != SpawnedState::Keep {
             match self.spawned_state {
                 SpawnedState::Always => {
                     if !character.is_spawned {
@@ -402,7 +401,6 @@ impl TickableStep {
                 }
                 SpawnedState::Keep => {}
             }
-        }
 
         if let Some(model_id) = self.model_id {
             if self.first_tick {
