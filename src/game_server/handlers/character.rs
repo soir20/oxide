@@ -344,8 +344,6 @@ pub struct TickableStep {
     #[serde(default)]
     pub cursor: CursorUpdate,
     pub duration_millis: u64,
-    #[serde(default)]
-    pub first_tick: bool,
 }
 
 impl TickableStep {
@@ -403,15 +401,13 @@ impl TickableStep {
         }
 
         if let Some(model_id) = self.model_id {
-            if self.first_tick {
-                packets_for_all.push(GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: UpdateTemporaryAppearance {
-                        model_id,
-                        guid: Guid::guid(character),
-                    },
-                })?);
-            }
+            packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: UpdateTemporaryAppearance {
+                    model_id,
+                    guid: Guid::guid(character),
+                },
+            })?);
         }
 
         if let Some(composite_effect_id) = self.composite_effect_id {
@@ -434,22 +430,20 @@ impl TickableStep {
         }
 
         if let Some(rail_id) = self.rail_id {
-            if self.first_tick {
-                packets_for_all.push(GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: MoveOnRail {
-                        guid: Guid::guid(character),
-                        rail_id,
-                        elapsed_seconds: 0.0,
-                        rail_offset: Pos {
-                            x: 0.0,
-                            y: 0.0,
-                            z: 0.0,
-                            w: 0.0,
-                        },
+            packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: MoveOnRail {
+                    guid: Guid::guid(character),
+                    rail_id,
+                    elapsed_seconds: 0.0,
+                    rail_offset: Pos {
+                        x: 0.0,
+                        y: 0.0,
+                        z: 0.0,
+                        w: 0.0,
                     },
-                })?);
-            }
+                },
+            })?);
         }
 
         if let Some(speed) = self.speed {
@@ -665,8 +659,6 @@ impl TickableProcedure {
                 let time_since_last_step_change = now.saturating_duration_since(last_step_change);
                 let current_step = &mut self.steps[current_step_index];
 
-                current_step.first_tick = false;
-
                 time_since_last_step_change >= Duration::from_millis(current_step.duration_millis)
             } else {
                 true
@@ -681,9 +673,7 @@ impl TickableProcedure {
                 TickResult::MustChangeProcedure(self.next_procedure())
             } else {
                 self.current_step = Some((new_step_index, now));
-                let next_step = &mut self.steps[new_step_index];
-                next_step.first_tick = true;
-                TickResult::TickedCurrentProcedure(next_step.apply(
+                TickResult::TickedCurrentProcedure(self.steps[new_step_index].apply(
                     character,
                     nearby_player_guids,
                     nearby_players,
