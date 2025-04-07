@@ -369,38 +369,38 @@ impl TickableStep {
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let mut packets_for_all = Vec::new();
 
-            match self.spawned_state {
-                SpawnedState::Always => {
-                    if !character.is_spawned {
-                        character.is_spawned = true;
-                        packets_for_all.extend(character.add_packets(
-                            false,
-                            mount_configs,
-                            item_definitions,
-                            customizations,
-                        )?);
-                    }
+        match self.spawned_state {
+            SpawnedState::Always => {
+                if !character.is_spawned {
+                    character.is_spawned = true;
+                    packets_for_all.extend(character.add_packets(
+                        false,
+                        mount_configs,
+                        item_definitions,
+                        customizations,
+                    )?);
                 }
-                SpawnedState::OnFirstStepTick => {
-                    if self.first_tick && !character.is_spawned {
-                        // Spawn the character without updating it's state to prevent it from being visible to players joining the room mid-step
-                        packets_for_all.extend(character.add_packets(
-                            true, // Override is_spawned
-                            mount_configs,
-                            item_definitions,
-                            customizations,
-                        )?);
-                    }
-                }
-                SpawnedState::Despawn => {
-                    if character.is_spawned {
-                        character.is_spawned = false;
-                    }
-                    // Skip checking if the character is spawned before despawning it and instead check if its state needs updating as OnFirstStepTick doesn't maintain states
-                    packets_for_all.extend(character.remove_packets(self.removal_mode)?);
-                }
-                SpawnedState::Keep => {}
             }
+            SpawnedState::OnFirstStepTick => {
+                if !character.is_spawned {
+                    // Spawn the character without updating it's state to prevent it from being visible to players joining the room mid-step
+                    packets_for_all.extend(character.add_packets(
+                        true, // Override is_spawned
+                        mount_configs,
+                        item_definitions,
+                        customizations,
+                    )?);
+                }
+            }
+            SpawnedState::Despawn => {
+                if character.is_spawned {
+                    character.is_spawned = false;
+                }
+                // Skip checking if the character is spawned before despawning it and instead check if its state needs updating as OnFirstStepTick doesn't maintain states
+                packets_for_all.extend(character.remove_packets(self.removal_mode)?);
+            }
+            SpawnedState::Keep => {}
+        }
 
         if let Some(model_id) = self.model_id {
             if self.first_tick {
