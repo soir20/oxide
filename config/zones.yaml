@@ -23,7 +23,6 @@
   jump_height_multiplier: 1
   gravity_multiplier: 1
   seconds_per_day: 10800
-  interact_radius: 7
   door_auto_interact_radius: 0
   doors: []
   transports:
@@ -71,7 +70,6 @@
   gravity_multiplier: 1
   seconds_per_day: 10800
   map_id: 115
-  interact_radius: 7
   door_auto_interact_radius: 0
   doors: []
   transports:
@@ -173,7 +171,6 @@
   gravity_multiplier: 1
   seconds_per_day: 10800
   map_id: 104
-  interact_radius: 7
   door_auto_interact_radius: 0
   doors: []
   transports:
@@ -232,7 +229,7 @@
       name_offset_y: 0
       name_offset_z: 5
       cursor: 54
-      interact_radius_override: 15
+      interact_radius: 15
       show_name: false
       show_icon: true
       large_icon: true
@@ -263,7 +260,6 @@
   gravity_multiplier: 1
   seconds_per_day: 10800
   map_id: 113
-  interact_radius: 7
   door_auto_interact_radius: 0
   doors: []
   transports:
@@ -330,7 +326,6 @@
   gravity_multiplier: 1
   seconds_per_day: 10800
   map_id: 128
-  interact_radius: 7
   door_auto_interact_radius: 0
   doors: []
   transports:
@@ -391,7 +386,6 @@
   jump_height_multiplier: 1
   gravity_multiplier: 1
   seconds_per_day: 10800
-  interact_radius: 7
   door_auto_interact_radius: 1.5
   doors:
     - comment: Veranda -> Archives
@@ -1189,7 +1183,6 @@
   jump_height_multiplier: 1
   gravity_multiplier: 1
   seconds_per_day: 10800
-  interact_radius: 7
   door_auto_interact_radius: 1.5
   doors:
     - comment: Construction Chamber -> Veranda
@@ -1259,7 +1252,6 @@
   gravity_multiplier: 1
   seconds_per_day: 10800
   update_previous_location_on_leave: false
-  interact_radius: 7
   door_auto_interact_radius: 0
   doors: []
   transports:
@@ -1308,7 +1300,6 @@
   gravity_multiplier: 1
   seconds_per_day: 10800
   update_previous_location_on_leave: false
-  interact_radius: 7
   door_auto_interact_radius: 0
   doors: []
   transports: []

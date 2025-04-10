@@ -92,7 +92,6 @@ struct ZoneConfig {
     jump_height_multiplier: f32,
     gravity_multiplier: f32,
     doors: Vec<DoorConfig>,
-    interact_radius: f32,
     door_auto_interact_radius: f32,
     transports: Vec<TransportConfig>,
     ambient_npcs: Vec<AmbientNpcConfig>,
@@ -179,11 +178,7 @@ impl From<ZoneConfig> for ZoneTemplate {
                     synchronize_with: ambient_npc.base_npc.synchronize_with.clone(),
                     animation_id: ambient_npc.base_npc.active_animation_slot,
                     cursor: ambient_npc.base_npc.cursor,
-                    interact_radius: if ambient_npc.base_npc.interact_radius_override > 0.0 {
-                        ambient_npc.base_npc.interact_radius_override
-                    } else {
-                        value.interact_radius
-                    },
+                    interact_radius: ambient_npc.base_npc.interact_radius,
                     is_spawned: ambient_npc.base_npc.is_spawned,
                     character_type: CharacterType::AmbientNpc(ambient_npc.into()),
                     mount_id: None,
@@ -206,11 +201,7 @@ impl From<ZoneConfig> for ZoneTemplate {
                     synchronize_with: door.base_npc.synchronize_with.clone(),
                     animation_id: door.base_npc.active_animation_slot,
                     cursor: door.base_npc.cursor,
-                    interact_radius: if door.base_npc.interact_radius_override > 0.0 {
-                        door.base_npc.interact_radius_override
-                    } else {
-                        value.interact_radius
-                    },
+                    interact_radius: door.base_npc.interact_radius,
                     is_spawned: door.base_npc.is_spawned,
                     character_type: CharacterType::Door(door.into()),
                     mount_id: None,
@@ -233,11 +224,7 @@ impl From<ZoneConfig> for ZoneTemplate {
                     synchronize_with: transport.base_npc.synchronize_with.clone(),
                     animation_id: transport.base_npc.active_animation_slot,
                     cursor: transport.base_npc.cursor,
-                    interact_radius: if transport.base_npc.interact_radius_override > 0.0 {
-                        transport.base_npc.interact_radius_override
-                    } else {
-                        value.interact_radius
-                    },
+                    interact_radius: transport.base_npc.interact_radius,
                     is_spawned: transport.base_npc.is_spawned,
                     character_type: CharacterType::Transport(transport.into()),
                     mount_id: None,
