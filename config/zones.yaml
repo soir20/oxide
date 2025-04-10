@@ -232,6 +232,7 @@
       name_offset_y: 0
       name_offset_z: 5
       cursor: 54
+      interact_radius_override: 15
       show_name: false
       show_icon: true
       large_icon: true
