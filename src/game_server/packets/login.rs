@@ -5,6 +5,8 @@ use packet_serialize::{
     DeserializePacket, NullTerminatedString, SerializePacket, SerializePacketError,
 };
 
+use crate::game_server::handlers::zone::PointOfInterestConfig;
+
 use super::{GamePacket, OpCode, Pos};
 
 #[derive(DeserializePacket)]
@@ -135,6 +137,23 @@ pub struct PointOfInterest {
     pub unknown: u32,
     pub quest_id: u32,
     pub teleport_pos_id: u32,
+}
+
+impl From<&PointOfInterestConfig> for PointOfInterest {
+    fn from(value: &PointOfInterestConfig) -> Self {
+        PointOfInterest {
+            id: value.id,
+            name_id: value.name_id,
+            location_id: 0,
+            teleport_pos: value.pos,
+            icon_id: 0,
+            notification_type: 0,
+            subtitle_id: 0,
+            unknown: 0,
+            quest_id: 0,
+            teleport_pos_id: 0,
+        }
+    }
 }
 
 pub struct DefinePointsOfInterest {

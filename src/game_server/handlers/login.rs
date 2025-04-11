@@ -2,10 +2,10 @@ use packet_serialize::{NullTerminatedString, SerializePacketError};
 
 use crate::game_server::{
     packets::{
-        login::{DefinePointsOfInterest, DeploymentEnv, GameSettings, LoginReply, PointOfInterest},
+        login::{DefinePointsOfInterest, DeploymentEnv, GameSettings, LoginReply},
         player_update::ItemDefinitionsReply,
         tunnel::TunneledPacket,
-        GamePacket, Pos,
+        GamePacket,
     },
     Broadcast, GameServer, ProcessPacketError,
 };
@@ -172,24 +172,11 @@ pub fn send_points_of_interest(
     game_server: &GameServer,
 ) -> Result<Vec<Vec<u8>>, SerializePacketError> {
     let mut points = Vec::new();
-    for (guid, _) in game_server.zone_templates.iter() {
-        points.push(PointOfInterest {
-            id: *guid as u32,
-            name_id: 0,
-            location_id: 0,
-            teleport_pos: Pos {
-                x: 0.0,
-                y: 0.0,
-                z: 0.0,
-                w: 1.0,
-            },
-            icon_id: 0,
-            notification_type: 0,
-            subtitle_id: 0,
-            unknown: 0,
-            quest_id: 0,
-            teleport_pos_id: 0,
-        });
+    for (_, template) in game_server.zone_templates.iter() {
+        points.push((&template.default_point_of_interest).into());
+        for point_of_interest in template.other_points_of_interest.iter() {
+            points.push(point_of_interest.into());
+        }
     }
 
     Ok(vec![GamePacket::serialize(&TunneledPacket {

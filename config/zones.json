@@ -7,14 +7,21 @@
         "asset_name": "MonCala_Venetor",
         "hide_ui": false,
         "is_combat": false,
-        "spawn_pos_x": 179.8072,
-        "spawn_pos_y": 10.0,
-        "spawn_pos_z": 115.0493,
-        "spawn_pos_w": 1.0,
-        "spawn_rot_x": 0.0,
-        "spawn_rot_y": 0.0,
-        "spawn_rot_z": 1.5,
-        "spawn_rot_w": 0.0,
+        "default_point_of_interest": {
+            "id": 14,
+            "pos": {
+                "x": 179.8072,
+                "y": 10.0,
+                "z": 115.0493,
+                "w": 1.0
+            },
+            "rot": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 1.5,
+                "w": 0.0
+            }
+        },
         "spawn_sky": "sky_starship_geonosis.xml",
         "speed": 8.0,
         "jump_height_multiplier": 1.0,
@@ -53,14 +60,21 @@
         "asset_name": "Combat_Ryloth_StartingZone_01",
         "hide_ui": false,
         "is_combat": true,
-        "spawn_pos_x": 598.0,
-        "spawn_pos_y": 9.0,
-        "spawn_pos_z": 669.0,
-        "spawn_pos_w": 1.0,
-        "spawn_rot_x": -0.75,
-        "spawn_rot_y": 0.0,
-        "spawn_rot_z": -0.67,
-        "spawn_rot_w": 0.0,
+        "default_point_of_interest": {
+            "id": 15,
+            "pos": {
+                "x": 598.0,
+                "y": 9.0,
+                "z": 669.0,
+                "w": 1.0
+            },
+            "rot": {
+                "x": -0.75,
+                "y": 0.0,
+                "z": -0.67,
+                "w": 0.0
+            }
+        },
         "speed": 8.0,
         "jump_height_multiplier": 1.0,
         "gravity_multiplier": 1.0,
@@ -117,14 +131,21 @@
         "asset_name": "Combat_Umbara_South_01",
         "hide_ui": false,
         "is_combat": true,
-        "spawn_pos_x": 69.0,
-        "spawn_pos_y": 1.9294561,
-        "spawn_pos_z": 38.0,
-        "spawn_pos_w": 1.0,
-        "spawn_rot_x": 0.5,
-        "spawn_rot_y": 0.0,
-        "spawn_rot_z": 0.85,
-        "spawn_rot_w": 0.0,
+        "default_point_of_interest": {
+            "id": 19,
+            "pos": {
+                "x": 69.0,
+                "y": 1.9294561,
+                "z": 38.0,
+                "w": 1.0
+            },
+            "rot": {
+                "x": 0.5,
+                "y": 0.0,
+                "z": 0.85,
+                "w": 0.0
+            }
+        },
         "speed": 8.0,
         "jump_height_multiplier": 1.0,
         "gravity_multiplier": 1.0,
@@ -203,14 +224,21 @@
         "asset_name": "Combat_Carlac_01",
         "hide_ui": false,
         "is_combat": true,
-        "spawn_pos_x": 37.0,
-        "spawn_pos_y": 0.954847,
-        "spawn_pos_z": 29.0,
-        "spawn_pos_w": 1.0,
-        "spawn_rot_x": 0.67,
-        "spawn_rot_y": 0.0,
-        "spawn_rot_z": 0.75,
-        "spawn_rot_w": 0.0,
+        "default_point_of_interest": {
+            "id": 34,
+            "pos": {
+                "x": 37.0,
+                "y": 0.954847,
+                "z": 29.0,
+                "w": 1.0
+            },
+            "rot": {
+                "x": 0.67,
+                "y": 0.0,
+                "z": 0.75,
+                "w": 0.0
+            }
+        },
         "speed": 8.0,
         "jump_height_multiplier": 1.0,
         "gravity_multiplier": 1.0,
@@ -267,14 +295,21 @@
         "asset_name": "Combat_Felucia_01",
         "hide_ui": false,
         "is_combat": true,
-        "spawn_pos_x": 488.0,
-        "spawn_pos_y": 0.9538704,
-        "spawn_pos_z": 278.0,
-        "spawn_pos_w": 1.0,
-        "spawn_rot_x": 0.0,
-        "spawn_rot_y": 0.0,
-        "spawn_rot_z": 1.0,
-        "spawn_rot_w": 0.0,
+        "default_point_of_interest": {
+            "id": 36,
+            "pos": {
+                "x": 488.0,
+                "y": 0.9538704,
+                "z": 278.0,
+                "w": 1.0
+            },
+            "rot": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 1.0,
+                "w": 0.0
+            }
+        },
         "speed": 8.0,
         "jump_height_multiplier": 1.0,
         "gravity_multiplier": 1.0,
@@ -328,14 +363,21 @@
         "asset_name": "JediTemple",
         "hide_ui": false,
         "is_combat": false,
-        "spawn_pos_x": 101.9832,
-        "spawn_pos_y": 10.0,
-        "spawn_pos_z": -181.1351,
-        "spawn_pos_w": 1.0,
-        "spawn_rot_x": -1.5,
-        "spawn_rot_y": 0.0,
-        "spawn_rot_z": 0.0,
-        "spawn_rot_w": 0.0,
+        "default_point_of_interest": {
+            "id": 24,
+            "pos": {
+                "x": 101.9832,
+                "y": 10.0,
+                "z": -181.1351,
+                "w": 1.0
+            },
+            "rot": {
+                "x": -1.5,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 0.0
+            }
+        },
         "speed": 8.0,
         "jump_height_multiplier": 1.0,
         "gravity_multiplier": 1.0,
@@ -1368,14 +1410,21 @@
         "asset_name": "Members",
         "hide_ui": false,
         "is_combat": false,
-        "spawn_pos_x": 1487.53,
-        "spawn_pos_y": 70.0,
-        "spawn_pos_z": 890.248076,
-        "spawn_pos_w": 1.0,
-        "spawn_rot_x": 0.0,
-        "spawn_rot_y": 0.0,
-        "spawn_rot_z": 1.5,
-        "spawn_rot_w": 0.0,
+        "default_point_of_interest": {
+            "id": 25,
+            "pos": {
+                "x": 1487.53,
+                "y": 70.0,
+                "z": 890.248076,
+                "w": 1.0
+            },
+            "rot": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 1.5,
+                "w": 0.0
+            }
+        },
         "speed": 8.0,
         "jump_height_multiplier": 1.0,
         "gravity_multiplier": 1.0,
@@ -1430,14 +1479,21 @@
         "asset_name": "Housing_EmptyLot_Mustafar",
         "hide_ui": false,
         "is_combat": false,
-        "spawn_pos_x": 515.0,
-        "spawn_pos_y": 0.03999996,
-        "spawn_pos_z": 481.5,
-        "spawn_pos_w": 1.0,
-        "spawn_rot_x": -1.0,
-        "spawn_rot_y": 0.0,
-        "spawn_rot_z": 0.0,
-        "spawn_rot_w": 0.0,
+        "default_point_of_interest": {
+            "id": 100,
+            "pos": {
+                "x": 515.0,
+                "y": 0.03999996,
+                "z": 481.5,
+                "w": 1.0
+            },
+            "rot": {
+                "x": -1.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 0.0
+            }
+        },
         "speed": 8.0,
         "jump_height_multiplier": 1.0,
         "gravity_multiplier": 1.0,
@@ -1477,14 +1533,21 @@
         "asset_name": "Starship_Housing",
         "hide_ui": false,
         "is_combat": false,
-        "spawn_pos_x": 244.0913,
-        "spawn_pos_y": 10.0,
-        "spawn_pos_z": 465,
-        "spawn_pos_w": 1.0,
-        "spawn_rot_x": 0.0,
-        "spawn_rot_y": 0.0,
-        "spawn_rot_z": 1.5708,
-        "spawn_rot_w": 0.0,
+        "default_point_of_interest": {
+            "id": 200,
+            "pos": {
+                "x": 244.0913,
+                "y": 10.0,
+                "z": 465.0,
+                "w": 1.0
+            },
+            "rot": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 1.5708,
+                "w": 0.0
+            }
+        },
         "spawn_sky": "sky_starship_default.xml",
         "speed": 8.0,
         "jump_height_multiplier": 1.0,

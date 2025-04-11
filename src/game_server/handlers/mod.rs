@@ -1,4 +1,4 @@
-use super::packets::Pos;
+use super::{packets::Pos, Broadcast, GameServer, ProcessPacketError};
 
 pub mod character;
 pub mod chat;
@@ -19,6 +19,11 @@ pub mod time;
 pub mod unique_guid;
 pub mod update_position;
 pub mod zone;
+
+pub type WriteLockingBroadcastSupplier = Result<
+    Box<dyn FnOnce(&GameServer) -> Result<Vec<Broadcast>, ProcessPacketError>>,
+    ProcessPacketError,
+>;
 
 pub fn distance3_pos(pos1: Pos, pos2: Pos) -> f32 {
     distance3(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z)

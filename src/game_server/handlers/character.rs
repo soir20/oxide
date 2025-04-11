@@ -8,28 +8,25 @@ use rand_distr::{Distribution, WeightedAliasIndex};
 use serde::Deserialize;
 use strum::EnumIter;
 
-use crate::{
-    game_server::{
-        packets::{
-            chat::{ActionBarTextColor, SendStringId},
-            command::PlaySoundIdOnTarget,
-            item::{Attachment, BaseAttachmentGroup, EquipmentSlot, ItemDefinition, WieldType},
-            minigame::ScoreEntry,
-            player_data::EquippedItem,
-            player_update::{
-                AddNotifications, AddNpc, AddPc, Customization, CustomizationSlot, Hostility, Icon,
-                MoveOnRail, NameplateImage, NotificationData, NpcRelevance, PlayCompositeEffect,
-                QueueAnimation, RemoveGracefully, RemoveStandard, SetAnimation, SingleNotification,
-                SingleNpcRelevance, UpdateSpeed,
-            },
-            tunnel::TunneledPacket,
-            ui::ExecuteScriptWithStringParams,
-            update_position::UpdatePlayerPosition,
-            GamePacket, GuidTarget, Name, Pos, Rgba, Target,
+use crate::game_server::{
+    packets::{
+        chat::{ActionBarTextColor, SendStringId},
+        command::PlaySoundIdOnTarget,
+        item::{Attachment, BaseAttachmentGroup, EquipmentSlot, ItemDefinition, WieldType},
+        minigame::ScoreEntry,
+        player_data::EquippedItem,
+        player_update::{
+            AddNotifications, AddNpc, AddPc, Customization, CustomizationSlot, Hostility, Icon,
+            MoveOnRail, NameplateImage, NotificationData, NpcRelevance, PlayCompositeEffect,
+            QueueAnimation, RemoveGracefully, RemoveStandard, SetAnimation, SingleNotification,
+            SingleNpcRelevance, UpdateSpeed,
         },
-        Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
+        tunnel::TunneledPacket,
+        ui::ExecuteScriptWithStringParams,
+        update_position::UpdatePlayerPosition,
+        GamePacket, GuidTarget, Name, Pos, Rgba, Target,
     },
-    teleport_to_zone,
+    Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
 };
 
 use super::{
@@ -41,13 +38,9 @@ use super::{
     minigame::{MinigameTypeData, PlayerMinigameStats},
     mount::{spawn_mount_npc, MountConfig},
     unique_guid::{mount_guid, npc_guid, player_guid, shorten_player_guid},
-    zone::teleport_within_zone,
+    zone::{teleport_anywhere, DestinationZoneInstance},
+    WriteLockingBroadcastSupplier,
 };
-
-pub type WriteLockingBroadcastSupplier = Result<
-    Box<dyn FnOnce(&GameServer) -> Result<Vec<Broadcast>, ProcessPacketError>>,
-    ProcessPacketError,
->;
 
 pub fn coerce_to_broadcast_supplier(
     f: impl FnOnce(&GameServer) -> Result<Vec<Broadcast>, ProcessPacketError> + 'static,
@@ -120,18 +113,9 @@ pub struct BaseNpcConfig {
     pub terrain_object_id: u32,
     #[serde(default = "default_scale")]
     pub scale: f32,
-    pub pos_x: f32,
-    pub pos_y: f32,
-    pub pos_z: f32,
-    pub pos_w: f32,
+    pub pos: Pos,
     #[serde(default)]
-    pub rot_x: f32,
-    #[serde(default)]
-    pub rot_y: f32,
-    #[serde(default)]
-    pub rot_z: f32,
-    #[serde(default)]
-    pub rot_w: f32,
+    pub rot: Pos,
     #[serde(default)]
     pub active_animation_slot: i32,
     #[serde(default)]
@@ -893,16 +877,10 @@ impl From<AmbientNpcConfig> for AmbientNpc {
 pub struct DoorConfig {
     #[serde(flatten)]
     pub base_npc: BaseNpcConfig,
-    pub destination_pos_x: f32,
-    pub destination_pos_y: f32,
-    pub destination_pos_z: f32,
-    pub destination_pos_w: f32,
-    pub destination_rot_x: f32,
-    pub destination_rot_y: f32,
-    pub destination_rot_z: f32,
-    pub destination_rot_w: f32,
-    pub destination_zone_template: Option<u8>,
-    pub destination_zone: Option<u64>,
+    pub destination_pos: Pos,
+    pub destination_rot: Pos,
+    #[serde(default)]
+    pub destination_zone: DestinationZoneInstance,
     #[serde(default = "default_true")]
     pub update_previous_location_on_leave: bool,
 }
@@ -910,16 +888,9 @@ pub struct DoorConfig {
 #[derive(Clone)]
 pub struct Door {
     pub base_npc: BaseNpc,
-    pub destination_pos_x: f32,
-    pub destination_pos_y: f32,
-    pub destination_pos_z: f32,
-    pub destination_pos_w: f32,
-    pub destination_rot_x: f32,
-    pub destination_rot_y: f32,
-    pub destination_rot_z: f32,
-    pub destination_rot_w: f32,
-    pub destination_zone_template: Option<u8>,
-    pub destination_zone: Option<u64>,
+    pub destination_pos: Pos,
+    pub destination_rot: Pos,
+    pub destination_zone: DestinationZoneInstance,
     pub update_previous_location_on_leave: bool,
 }
 
@@ -951,65 +922,13 @@ impl Door {
     }
 
     pub fn interact(&self, requester: u32, source_zone_guid: u64) -> WriteLockingBroadcastSupplier {
-        let destination_pos = Pos {
-            x: self.destination_pos_x,
-            y: self.destination_pos_y,
-            z: self.destination_pos_z,
-            w: self.destination_pos_w,
-        };
-        let destination_rot = Pos {
-            x: self.destination_rot_x,
-            y: self.destination_rot_y,
-            z: self.destination_rot_z,
-            w: self.destination_rot_w,
-        };
-
-        let destination_zone = self.destination_zone;
-        let destination_zone_template = self.destination_zone_template;
-
-        coerce_to_broadcast_supplier(move |game_server| {
-            game_server.lock_enforcer().write_characters(
-                |characters_table_write_handle, zones_lock_enforcer| {
-                    zones_lock_enforcer.write_zones(|zones_table_write_handle| {
-                        let destination_zone_guid = if let &Some(destination_zone_guid) =
-                            &destination_zone
-                        {
-                            destination_zone_guid
-                        } else if let &Some(destination_zone_template) = &destination_zone_template
-                        {
-                            game_server.get_or_create_instance(
-                                characters_table_write_handle,
-                                zones_table_write_handle,
-                                destination_zone_template,
-                                1,
-                            )?
-                        } else {
-                            source_zone_guid
-                        };
-
-                        if source_zone_guid != destination_zone_guid {
-                            if let Some(destination_lock) =
-                                zones_table_write_handle.get(destination_zone_guid)
-                            {
-                                teleport_to_zone!(
-                                    characters_table_write_handle,
-                                    requester,
-                                    zones_table_write_handle,
-                                    &destination_lock.read(),
-                                    Some(destination_pos),
-                                    Some(destination_rot),
-                                    game_server.mounts(),
-                                )
-                            } else {
-                                Ok(Vec::new())
-                            }
-                        } else {
-                            teleport_within_zone(requester, destination_pos, destination_rot)
-                        }
-                    })
-                },
-            )
-        })
+        teleport_anywhere(
+            self.destination_pos,
+            self.destination_rot,
+            self.destination_zone,
+            requester,
+            source_zone_guid,
+        )
     }
 }
 
@@ -1017,15 +936,8 @@ impl From<DoorConfig> for Door {
     fn from(value: DoorConfig) -> Self {
         Door {
             base_npc: value.base_npc.into(),
-            destination_pos_x: value.destination_pos_x,
-            destination_pos_y: value.destination_pos_y,
-            destination_pos_z: value.destination_pos_z,
-            destination_pos_w: value.destination_pos_w,
-            destination_rot_x: value.destination_rot_x,
-            destination_rot_y: value.destination_rot_y,
-            destination_rot_z: value.destination_rot_z,
-            destination_rot_w: value.destination_rot_w,
-            destination_zone_template: value.destination_zone_template,
+            destination_pos: value.destination_pos,
+            destination_rot: value.destination_rot,
             destination_zone: value.destination_zone,
             update_previous_location_on_leave: value.update_previous_location_on_leave,
         }

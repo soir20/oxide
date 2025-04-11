@@ -28,7 +28,7 @@ use super::{
         coerce_to_broadcast_supplier, AmbientNpcConfig, Character, CharacterCategory,
         CharacterLocationIndex, CharacterMatchmakingGroupIndex, CharacterNameIndex,
         CharacterSquadIndex, CharacterType, Chunk, DoorConfig, NpcTemplate, PreviousFixture,
-        PreviousLocation, RemovalMode, TransportConfig, WriteLockingBroadcastSupplier,
+        PreviousLocation, RemovalMode, TransportConfig,
     },
     distance3,
     guid::{Guid, GuidTable, GuidTableIndexer, GuidTableWriteHandle, IndexedGuid},
@@ -43,12 +43,22 @@ use super::{
         FIXTURE_DISCRIMINANT,
     },
     update_position::UpdatePositionPacket,
+    WriteLockingBroadcastSupplier,
 };
 
 use strum::IntoEnumIterator;
 
 const fn default_true() -> bool {
     true
+}
+
+#[derive(Clone, Deserialize)]
+pub struct PointOfInterestConfig {
+    pub id: u32,
+    pub pos: Pos,
+    pub rot: Pos,
+    #[serde(default)]
+    pub name_id: u32,
 }
 
 #[derive(Deserialize)]
@@ -61,14 +71,9 @@ struct ZoneConfig {
     asset_name: String,
     hide_ui: bool,
     is_combat: bool,
-    spawn_pos_x: f32,
-    spawn_pos_y: f32,
-    spawn_pos_z: f32,
-    spawn_pos_w: f32,
-    spawn_rot_x: f32,
-    spawn_rot_y: f32,
-    spawn_rot_z: f32,
-    spawn_rot_w: f32,
+    default_point_of_interest: PointOfInterestConfig,
+    #[serde(default)]
+    other_points_of_interest: Vec<PointOfInterestConfig>,
     #[serde(default)]
     spawn_sky: String,
     speed: f32,
@@ -91,8 +96,8 @@ pub struct ZoneTemplate {
     pub template_icon: u32,
     pub max_players: u32,
     pub asset_name: String,
-    pub default_spawn_pos: Pos,
-    pub default_spawn_rot: Pos,
+    pub default_point_of_interest: PointOfInterestConfig,
+    pub other_points_of_interest: Vec<PointOfInterestConfig>,
     default_spawn_sky: String,
     pub speed: f32,
     pub jump_height_multiplier: f32,
@@ -173,8 +178,8 @@ impl ZoneTemplate {
             max_players: self.max_players,
             icon: self.template_icon,
             asset_name: self.asset_name.clone(),
-            default_spawn_pos: self.default_spawn_pos,
-            default_spawn_rot: self.default_spawn_rot,
+            default_spawn_pos: self.default_point_of_interest.pos,
+            default_spawn_rot: self.default_point_of_interest.rot,
             default_spawn_sky: self.default_spawn_sky.clone(),
             speed: self.speed,
             jump_height_multiplier: self.jump_height_multiplier,
@@ -780,18 +785,8 @@ impl ZoneConfig {
                     key: ambient_npc.base_npc.key.clone(),
                     discriminant: AMBIENT_NPC_DISCRIMINANT,
                     index,
-                    pos: Pos {
-                        x: ambient_npc.base_npc.pos_x,
-                        y: ambient_npc.base_npc.pos_y,
-                        z: ambient_npc.base_npc.pos_z,
-                        w: ambient_npc.base_npc.pos_w,
-                    },
-                    rot: Pos {
-                        x: ambient_npc.base_npc.rot_x,
-                        y: ambient_npc.base_npc.rot_y,
-                        z: ambient_npc.base_npc.rot_z,
-                        w: ambient_npc.base_npc.rot_w,
-                    },
+                    pos: ambient_npc.base_npc.pos,
+                    rot: ambient_npc.base_npc.rot,
                     scale: ambient_npc.base_npc.scale,
                     tickable_procedures: ambient_npc.base_npc.tickable_procedures.clone(),
                     first_possible_procedures: ambient_npc
@@ -816,18 +811,8 @@ impl ZoneConfig {
                     key: door.base_npc.key.clone(),
                     discriminant: AMBIENT_NPC_DISCRIMINANT,
                     index,
-                    pos: Pos {
-                        x: door.base_npc.pos_x,
-                        y: door.base_npc.pos_y,
-                        z: door.base_npc.pos_z,
-                        w: door.base_npc.pos_w,
-                    },
-                    rot: Pos {
-                        x: door.base_npc.rot_x,
-                        y: door.base_npc.rot_y,
-                        z: door.base_npc.rot_z,
-                        w: door.base_npc.rot_w,
-                    },
+                    pos: door.base_npc.pos,
+                    rot: door.base_npc.rot,
                     scale: door.base_npc.scale,
                     tickable_procedures: door.base_npc.tickable_procedures.clone(),
                     first_possible_procedures: door.base_npc.first_possible_procedures.clone(),
@@ -849,18 +834,8 @@ impl ZoneConfig {
                     key: transport.base_npc.key.clone(),
                     discriminant: AMBIENT_NPC_DISCRIMINANT,
                     index,
-                    pos: Pos {
-                        x: transport.base_npc.pos_x,
-                        y: transport.base_npc.pos_y,
-                        z: transport.base_npc.pos_z,
-                        w: transport.base_npc.pos_w,
-                    },
-                    rot: Pos {
-                        x: transport.base_npc.rot_x,
-                        y: transport.base_npc.rot_y,
-                        z: transport.base_npc.rot_z,
-                        w: transport.base_npc.rot_w,
-                    },
+                    pos: transport.base_npc.pos,
+                    rot: transport.base_npc.rot,
                     scale: transport.base_npc.scale,
                     tickable_procedures: transport.base_npc.tickable_procedures.clone(),
                     first_possible_procedures: transport.base_npc.first_possible_procedures.clone(),
@@ -884,18 +859,6 @@ impl ZoneConfig {
             max_players: self.max_players,
             template_icon: self.template_icon,
             asset_name: self.asset_name.clone(),
-            default_spawn_pos: Pos {
-                x: self.spawn_pos_x,
-                y: self.spawn_pos_y,
-                z: self.spawn_pos_z,
-                w: self.spawn_pos_w,
-            },
-            default_spawn_rot: Pos {
-                x: self.spawn_rot_x,
-                y: self.spawn_rot_y,
-                z: self.spawn_rot_z,
-                w: self.spawn_rot_w,
-            },
             default_spawn_sky: self.spawn_sky.clone(),
             speed: self.speed,
             jump_height_multiplier: self.jump_height_multiplier,
@@ -905,6 +868,8 @@ impl ZoneConfig {
             characters,
             seconds_per_day: self.seconds_per_day,
             update_previous_location_on_leave: self.update_previous_location_on_leave,
+            default_point_of_interest: self.default_point_of_interest,
+            other_points_of_interest: self.other_points_of_interest.clone(),
         };
 
         (template, Vec::new())
@@ -1138,6 +1103,67 @@ macro_rules! teleport_to_zone {
 
         Ok(broadcasts)
     }};
+}
+
+#[derive(Clone, Copy, Default, Deserialize)]
+pub enum DestinationZoneInstance {
+    #[default]
+    Same,
+    Other {
+        instance_guid: u64,
+    },
+    Any {
+        zone_template: u8,
+    },
+}
+
+pub fn teleport_anywhere(
+    destination_pos: Pos,
+    destination_rot: Pos,
+    destination_zone: DestinationZoneInstance,
+    requester: u32,
+    source_zone_guid: u64,
+) -> WriteLockingBroadcastSupplier {
+    coerce_to_broadcast_supplier(move |game_server| {
+        game_server.lock_enforcer().write_characters(
+            |characters_table_write_handle, zones_lock_enforcer| {
+                zones_lock_enforcer.write_zones(|zones_table_write_handle| {
+                    let destination_zone_guid = match destination_zone {
+                        DestinationZoneInstance::Same => source_zone_guid,
+                        DestinationZoneInstance::Other { instance_guid } => instance_guid,
+                        DestinationZoneInstance::Any {
+                            zone_template: template_guid,
+                        } => game_server.get_or_create_instance(
+                            characters_table_write_handle,
+                            zones_table_write_handle,
+                            template_guid,
+                            1,
+                        )?,
+                    };
+
+                    if source_zone_guid != destination_zone_guid {
+                        if let Some(destination_lock) =
+                            zones_table_write_handle.get(destination_zone_guid)
+                        {
+                            teleport_to_zone!(
+                                characters_table_write_handle,
+                                requester,
+                                zones_table_write_handle,
+                                &destination_lock.read(),
+                                Some(destination_pos),
+                                Some(destination_rot),
+                                game_server.mounts(),
+                            )
+                        } else {
+                            Ok(Vec::new())
+                        }
+                    } else {
+                        teleport_within_zone(requester, destination_pos, destination_rot)
+                    }
+                })
+            },
+        )
+    })
 }
 
 pub fn interact_with_character(
