@@ -35,14 +35,18 @@
                 "comment": "door",
                 "name_id": 32914,
                 "terrain_object_id": 1304118562,
-                "pos_x": 180.1113,
-                "pos_y": 10.0,
-                "pos_z": 110.6422,
-                "pos_w": 1.0,
-                "rot_x": 1.0,
-                "rot_y": 0.0,
-                "rot_z": 0.0,
-                "rot_w": 0.0,
+                "pos": {
+                    "x": 180.1113,
+                    "y": 10.0,
+                    "z": 110.6422,
+                    "w": 1.0
+                },
+                "rot": {
+                    "x": 1.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 0.0
+                },
                 "cursor": 54,
                 "show_name": false,
                 "show_icon": false,
@@ -87,14 +91,18 @@
                 "comment": "holo table",
                 "name_id": 32914,
                 "model_id": 352,
-                "pos_x": 593.89545,
-                "pos_y": 10.0,
-                "pos_z": 672.5175,
-                "pos_w": 1.0,
-                "rot_x": 0.0,
-                "rot_y": 0.0,
-                "rot_z": 0.0,
-                "rot_w": 0.0,
+                "pos": {
+                    "x": 593.89545,
+                    "y": 10.0,
+                    "z": 672.5175,
+                    "w": 1.0
+                },
+                "rot": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 0.0
+                },
                 "cursor": 54,
                 "show_name": false,
                 "show_icon": false,
@@ -105,14 +113,18 @@
                 "comment": "fighter",
                 "name_id": 32914,
                 "terrain_object_id": 1332791341,
-                "pos_x": 555.7068,
-                "pos_y": 10.99902,
-                "pos_z": 649.7574,
-                "pos_w": 1.0,
-                "rot_x": 0.0,
-                "rot_y": 0.0,
-                "rot_z": 0.0,
-                "rot_w": 0.0,
+                "pos": {
+                    "x": 555.7068,
+                    "y": 10.99902,
+                    "z": 649.7574,
+                    "w": 1.0
+                },
+                "rot": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 0.0
+                },
                 "name_offset_x": -0.5,
                 "cursor": 0,
                 "show_name": false,
@@ -158,14 +170,18 @@
                 "comment": "holo table",
                 "name_id": 32914,
                 "model_id": 1603,
-                "pos_x": 74.2301,
-                "pos_y": 1.9294561,
-                "pos_z": 36.314392,
-                "pos_w": 1.0,
-                "rot_x": 0.5,
-                "rot_y": 0.0,
-                "rot_z": 0.85,
-                "rot_w": 0.0,
+                "pos": {
+                    "x": 74.2301,
+                    "y": 1.9294561,
+                    "z": 36.314392,
+                    "w": 1.0
+                },
+                "rot": {
+                    "x": 0.5,
+                    "y": 0.0,
+                    "z": 0.85,
+                    "w": 0.0
+                },
                 "cursor": 54,
                 "show_name": false,
                 "show_icon": false,
@@ -176,14 +192,18 @@
                 "comment": "fighter",
                 "name_id": 32914,
                 "terrain_object_id": 1319570319,
-                "pos_x": 87.0,
-                "pos_y": 3,
-                "pos_z": 101.0,
-                "pos_w": 1.0,
-                "rot_x": 0.0,
-                "rot_y": 0.0,
-                "rot_z": 0.0,
-                "rot_w": 0.0,
+                "pos": {
+                    "x": 87.0,
+                    "y": 3.0,
+                    "z": 101.0,
+                    "w": 1.0
+                },
+                "rot": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 0.0
+                },
                 "name_offset_x": -0.5,
                 "cursor": 0,
                 "show_name": false,
@@ -196,14 +216,18 @@
                 "name_id": 32914,
                 "model_id": 2133,
                 "scale": 0.55,
-                "pos_x": 156.5,
-                "pos_y": 0.9885109,
-                "pos_z": 91.0,
-                "pos_w": 1.0,
-                "rot_x": 1.0,
-                "rot_y": 0.0,
-                "rot_z": 0.13,
-                "rot_w": 0.0,
+                "pos": {
+                    "x": 156.5,
+                    "y": 0.9885109,
+                    "z": 91.0,
+                    "w": 1.0
+                },
+                "rot": {
+                    "x": 1.0,
+                    "y": 0.0,
+                    "z": 0.13,
+                    "w": 0.0
+                },
                 "name_offset_x": 3.0,
                 "name_offset_y": 0.0,
                 "name_offset_z": 5.0,
@@ -251,14 +275,18 @@
                 "comment": "holo table",
                 "name_id": 32914,
                 "model_id": 1603,
-                "pos_x": 42.08351,
-                "pos_y": 0.954847,
-                "pos_z": 25.374752,
-                "pos_w": 1.0,
-                "rot_x": 0.67,
-                "rot_y": 0.0,
-                "rot_z": 0.75,
-                "rot_w": 0.0,
+                "pos": {
+                    "x": 42.08351,
+                    "y": 0.954847,
+                    "z": 25.374752,
+                    "w": 1.0
+                },
+                "rot": {
+                    "x": 0.67,
+                    "y": 0.0,
+                    "z": 0.75,
+                    "w": 0.0
+                },
                 "cursor": 54,
                 "show_name": false,
                 "show_icon": false,
@@ -269,14 +297,18 @@
                 "comment": "fighter",
                 "name_id": 32914,
                 "terrain_object_id": 1341008324,
-                "pos_x": 70.51049,
-                "pos_y": 2.02564,
-                "pos_z": 88.98817,
-                "pos_w": 1.0,
-                "rot_x": 0.0,
-                "rot_y": 0.0,
-                "rot_z": 0.0,
-                "rot_w": 0.0,
+                "pos": {
+                    "x": 70.51049,
+                    "y": 2.02564,
+                    "z": 88.98817,
+                    "w": 1.0
+                },
+                "rot": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 0.0
+                },
                 "name_offset_x": -0.5,
                 "cursor": 0,
                 "show_name": false,
@@ -322,14 +354,18 @@
                 "comment": "holo table",
                 "name_id": 32914,
                 "model_id": 1603,
-                "pos_x": 495.00208,
-                "pos_y": 0.9538704,
-                "pos_z": 278.28928,
-                "pos_w": 1.0,
-                "rot_x": 0.0,
-                "rot_y": 0.0,
-                "rot_z": 1.0,
-                "rot_w": 0.0,
+                "pos": {
+                    "x": 495.00208,
+                    "y": 0.9538704,
+                    "z": 278.28928,
+                    "w": 1.0
+                },
+                "rot": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 1.0,
+                    "w": 0.0
+                },
                 "cursor": 54,
                 "show_name": false,
                 "show_icon": false,
@@ -342,14 +378,18 @@
                 "comment": "Sarlacc bouncer",
                 "model_id": 178,
                 "scale": 5.0,
-                "pos_x": 147.5,
-                "pos_y": -99.0,
-                "pos_z": 505.0,
-                "pos_w": 1.0,
-                "rot_x": 0.0,
-                "rot_y": 1.1,
-                "rot_z": 0.0,
-                "rot_w": 0.0,
+                "pos": {
+                    "x": 147.5,
+                    "y": -99,
+                    "z": 505,
+                    "w": 1
+                },
+                "rot": {
+                    "x": 0,
+                    "y": 1.1,
+                    "z": 0,
+                    "w": 0
+                },
                 "visible": false,
                 "bounce_area_id": 5003
             }
@@ -387,292 +427,400 @@
         "doors": [
             {
                 "comment": "Veranda -> Archives",
-                "pos_x": 898.7137,
-                "pos_y": 172.44917,
-                "pos_z": 1527.221,
-                "pos_w": 1.0,
+                "pos": {
+                    "x": 898.7137,
+                    "y": 172.44917,
+                    "z": 1527.221,
+                    "w": 1.0
+                },
                 "terrain_object_id": 1278971264,
-                "destination_pos_x": 1757.083,
-                "destination_pos_y": 10.0,
-                "destination_pos_z": 1694.0,
-                "destination_pos_w": 1.0,
-                "destination_rot_x": -1.5,
-                "destination_rot_y": 0.0,
-                "destination_rot_z": 0.0,
-                "destination_rot_w": 0.0
+                "destination_pos": {
+                    "x": 1757.083,
+                    "y": 10.0,
+                    "z": 1694.0,
+                    "w": 1.0
+                },
+                "destination_rot": {
+                    "x": -1.5,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 0.0
+                }
             },
             {
                 "comment": "Archives -> Veranda",
-                "pos_x": 1760.083,
-                "pos_y": 10.0,
-                "pos_z": 1694.0,
-                "pos_w": 1.0,
+                "pos": {
+                    "x": 1760.083,
+                    "y": 10.0,
+                    "z": 1694,
+                    "w": 1.0
+                },
                 "terrain_object_id": 1278971880,
-                "destination_pos_x": 898.7137,
-                "destination_pos_y": 172.44917,
-                "destination_pos_z": 1529.221,
-                "destination_pos_w": 1.0,
-                "destination_rot_x": 0.0,
-                "destination_rot_y": 0.0,
-                "destination_rot_z": 1.5,
-                "destination_rot_w": 0.0
+                "destination_pos": {
+                    "x": 898.7137,
+                    "y": 172.44917,
+                    "z": 1529.221,
+                    "w": 1.0
+                },
+                "destination_rot": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 1.5,
+                    "w": 0.0
+                }
             },
             {
                 "comment": "Veranda -> Workshop",
-                "pos_x": 898.6971,
-                "pos_y": 172.44917,
-                "pos_z": 1566.624,
-                "pos_w": 1.0,
+                "pos": {
+                    "x": 898.6971,
+                    "y": 172.44917,
+                    "z": 1566.624,
+                    "w": 1.0
+                },
                 "terrain_object_id": 1278971325,
-                "destination_pos_x": -356.4902,
-                "destination_pos_y": 10.0,
-                "destination_pos_z": 1780.211,
-                "destination_pos_w": 1.0,
-                "destination_rot_x": 1.5,
-                "destination_rot_y": 0.0,
-                "destination_rot_z": 0.0,
-                "destination_rot_w": 0.0
+                "destination_pos": {
+                    "x": -356.4902,
+                    "y": 10.0,
+                    "z": 1780.211,
+                    "w": 1.0
+                },
+                "destination_rot": {
+                    "x": 1.5,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 0.0
+                }
             },
             {
                 "comment": "Workshop -> Veranda",
-                "pos_x": -359.4902,
-                "pos_y": 10.0,
-                "pos_z": 1780.211,
-                "pos_w": 1.0,
+                "pos": {
+                    "x": -359.4902,
+                    "y": 10.0,
+                    "z": 1780.211,
+                    "w": 1.0
+                },
                 "terrain_object_id": 1278971932,
-                "destination_pos_x": 898.6971,
-                "destination_pos_y": 172.44917,
-                "destination_pos_z": 1564.624,
-                "destination_pos_w": 1.0,
-                "destination_rot_x": 0.0,
-                "destination_rot_y": 0.0,
-                "destination_rot_z": -1.5,
-                "destination_rot_w": 0.0
+                "destination_pos": {
+                    "x": 898.6971,
+                    "y": 172.44917,
+                    "z": 1564.624,
+                    "w": 1.0
+                },
+                "destination_rot": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": -1.5,
+                    "w": 0.0
+                }
             },
             {
                 "comment": "Veranda -> Main Hall (left)",
-                "pos_x": 922.5864,
-                "pos_y": 178.51657,
-                "pos_z": 1530.958,
-                "pos_w": 1.0,
+                "pos": {
+                    "x": 922.5864,
+                    "y": 178.51657,
+                    "z": 1530.958,
+                    "w": 1.0
+                },
                 "terrain_object_id": 1278971263,
-                "destination_pos_x": 1256.403,
-                "destination_pos_y": 10.0,
-                "destination_pos_z": 291.7501,
-                "destination_pos_w": 1.0,
-                "destination_rot_x": 0.0,
-                "destination_rot_y": 0.0,
-                "destination_rot_z": -1.0,
-                "destination_rot_w": 0.0
+                "destination_pos": {
+                    "x": 1256.403,
+                    "y": 10.0,
+                    "z": 291.7501,
+                    "w": 1.0
+                },
+                "destination_rot": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": -1.0,
+                    "w": 0.0
+                }
             },
             {
                 "comment": "Main Hall (left) -> Veranda",
-                "pos_x": 1256.403,
-                "pos_y": 10.0,
-                "pos_z": 294.7501,
-                "pos_w": 1.0,
+                "pos": {
+                    "x": 1256.403,
+                    "y": 10.0,
+                    "z": 294.7501,
+                    "w": 1.0
+                },
                 "terrain_object_id": 1278972312,
-                "destination_pos_x": 919.5864,
-                "destination_pos_y": 178.51657,
-                "destination_pos_z": 1530.958,
-                "destination_pos_w": 1.0,
-                "destination_rot_x": -1.5,
-                "destination_rot_y": 0.0,
-                "destination_rot_z": 0.0,
-                "destination_rot_w": 0.0
+                "destination_pos": {
+                    "x": 919.5864,
+                    "y": 178.51657,
+                    "z": 1530.958,
+                    "w": 1.0
+                },
+                "destination_rot": {
+                    "x": -1.5,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 0.0
+                }
             },
             {
                 "comment": "Veranda -> Main Hall (right)",
-                "pos_x": 922.5864,
-                "pos_y": 178.51657,
-                "pos_z": 1562.8,
-                "pos_w": 1.0,
+                "pos": {
+                    "x": 922.5864,
+                    "y": 178.51657,
+                    "z": 1562.8,
+                    "w": 1.0
+                },
                 "terrain_object_id": 1278971324,
-                "destination_pos_x": 1305.649,
-                "destination_pos_y": 10.0,
-                "destination_pos_z": 291.7528,
-                "destination_pos_w": 1.0,
-                "destination_rot_x": 0.0,
-                "destination_rot_y": 0.0,
-                "destination_rot_z": -1.0,
-                "destination_rot_w": 0.0
+                "destination_pos": {
+                    "x": 1305.649,
+                    "y": 10.0,
+                    "z": 291.7528,
+                    "w": 1.0
+                },
+                "destination_rot": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": -1.0,
+                    "w": 0.0
+                }
             },
             {
                 "comment": "Main Hall (right) -> Veranda",
-                "pos_x": 1305.649,
-                "pos_y": 10.0,
-                "pos_z": 294.7528,
-                "pos_w": 1.0,
+                "pos": {
+                    "x": 1305.649,
+                    "y": 10.0,
+                    "z": 294.7528,
+                    "w": 1.0
+                },
                 "terrain_object_id": 1278972383,
-                "destination_pos_x": 919.5864,
-                "destination_pos_y": 178.51657,
-                "destination_pos_z": 1562.8,
-                "destination_pos_w": 1.0,
-                "destination_rot_x": -1.5,
-                "destination_rot_y": 0.0,
-                "destination_rot_z": 0.0,
-                "destination_rot_w": 0.0
+                "destination_pos": {
+                    "x": 919.5864,
+                    "y": 178.51657,
+                    "z": 1562.8,
+                    "w": 1.0
+                },
+                "destination_rot": {
+                    "x": -1.5,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 0.0
+                }
             },
             {
                 "comment": "Main Hall -> Training Room",
-                "pos_x": 1242.232,
-                "pos_y": 10.0,
-                "pos_z": 275.1337,
-                "pos_w": 1.0,
+                "pos": {
+                    "x": 1242.232,
+                    "y": 10.0,
+                    "z": 275.1337,
+                    "w": 1.0
+                },
                 "terrain_object_id": 1278972313,
-                "destination_pos_x": 160.4435,
-                "destination_pos_y": 6.8242483,
-                "destination_pos_z": 415.3869,
-                "destination_pos_w": 1.0,
-                "destination_rot_x": 0.0,
-                "destination_rot_y": 0.0,
-                "destination_rot_z": -1.5,
-                "destination_rot_w": 0.0
+                "destination_pos": {
+                    "x": 160.4435,
+                    "y": 6.8242483,
+                    "z": 415.3869,
+                    "w": 1.0
+                },
+                "destination_rot": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": -1.5,
+                    "w": 0.0
+                }
             },
             {
                 "comment": "Training Room -> Main Hall",
-                "pos_x": 160.4435,
-                "pos_y": 6.8242483,
-                "pos_z": 418.3869,
-                "pos_w": 1.0,
+                "pos": {
+                    "x": 160.4435,
+                    "y": 6.8242483,
+                    "z": 418.3869,
+                    "w": 1.0
+                },
                 "terrain_object_id": 1265074699,
-                "destination_pos_x": 1245.232,
-                "destination_pos_y": 10.0,
-                "destination_pos_z": 275.1337,
-                "destination_pos_w": 1.0,
-                "destination_rot_x": 1.5,
-                "destination_rot_y": 0.0,
-                "destination_rot_z": 0.0,
-                "destination_rot_w": 0.0
+                "destination_pos": {
+                    "x": 1245.232,
+                    "y": 10.0,
+                    "z": 275.1337,
+                    "w": 1.0
+                },
+                "destination_rot": {
+                    "x": 1.5,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 0.0
+                }
             },
             {
                 "comment": "Main Hall -> Hangar",
-                "pos_x": 1242.241,
-                "pos_y": 10.0,
-                "pos_z": 253.2976,
-                "pos_w": 1.0,
+                "pos": {
+                    "x": 1242.241,
+                    "y": 10.0,
+                    "z": 253.2976,
+                    "w": 1.0
+                },
                 "terrain_object_id": 1278972223,
-                "destination_pos_x": 130.3168,
-                "destination_pos_y": 10.0,
-                "destination_pos_z": -181.1351,
-                "destination_pos_w": 1.0,
-                "destination_rot_x": -1.5,
-                "destination_rot_y": 0.0,
-                "destination_rot_z": 0.0,
-                "destination_rot_w": 0.0
+                "destination_pos": {
+                    "x": 130.3168,
+                    "y": 10.0,
+                    "z": -181.1351,
+                    "w": 1.0
+                },
+                "destination_rot": {
+                    "x": -1.5,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 0.0
+                }
             },
             {
                 "comment": "Hangar -> Main Hall",
-                "pos_x": 133.3168,
-                "pos_y": 10.0,
-                "pos_z": -181.1351,
-                "pos_w": 1.0,
+                "pos": {
+                    "x": 133.3168,
+                    "y": 10.0,
+                    "z": -181.1351,
+                    "w": 1.0
+                },
                 "terrain_object_id": 1278977468,
-                "destination_pos_x": 1245.241,
-                "destination_pos_y": 10.0,
-                "destination_pos_z": 253.2976,
-                "destination_pos_w": 1.0,
-                "destination_rot_x": 1.5,
-                "destination_rot_y": 0.0,
-                "destination_rot_z": 0.0,
-                "destination_rot_w": 0.0
+                "destination_pos": {
+                    "x": 1245.241,
+                    "y": 10.0,
+                    "z": 253.2976,
+                    "w": 1.0
+                },
+                "destination_rot": {
+                    "x": 1.5,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 0.0
+                }
             },
             {
                 "comment": "Main Hall -> Lounge",
-                "pos_x": 1319.713,
-                "pos_y": 10.0,
-                "pos_z": 275.1354,
-                "pos_w": 1.0,
+                "pos": {
+                    "x": 1319.713,
+                    "y": 10.0,
+                    "z": 275.1354,
+                    "w": 1.0
+                },
                 "terrain_object_id": 1278972382,
-                "destination_pos_x": -133.2943,
-                "destination_pos_y": 10.0,
-                "destination_pos_z": 1270.001,
-                "destination_pos_w": 1.0,
-                "destination_rot_x": 1.5,
-                "destination_rot_y": 0.0,
-                "destination_rot_z": 0.0,
-                "destination_rot_w": 0.0
+                "destination_pos": {
+                    "x": -133.2943,
+                    "y": 10.0,
+                    "z": 1270.001,
+                    "w": 1.0
+                },
+                "destination_rot": {
+                    "x": 1.5,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 0.0
+                }
             },
             {
                 "comment": "Lounge -> Main Hall",
-                "pos_x": -136.2943,
-                "pos_y": 10.0,
-                "pos_z": 1270.001,
-                "pos_w": 1.0,
+                "pos": {
+                    "x": -136.2943,
+                    "y": 10.0,
+                    "z": 1270.001,
+                    "w": 1.0
+                },
                 "terrain_object_id": 1278976521,
-                "destination_pos_x": 1316.713,
-                "destination_pos_y": 10.0,
-                "destination_pos_z": 275.1354,
-                "destination_pos_w": 1.0,
-                "destination_rot_x": -1.5,
-                "destination_rot_y": 0.0,
-                "destination_rot_z": 0.0,
-                "destination_rot_w": 0.0
+                "destination_pos": {
+                    "x": 1316.713,
+                    "y": 10.0,
+                    "z": 275.1354,
+                    "w": 1.0
+                },
+                "destination_rot": {
+                    "x": -1.5,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 0.0
+                }
             },
             {
                 "comment": "Main Hall -> War Room",
-                "pos_x": 1319.77,
-                "pos_y": 10.0,
-                "pos_z": 253.2967,
-                "pos_w": 1.0,
+                "pos": {
+                    "x": 1319.77,
+                    "y": 10.0,
+                    "z": 253.2967,
+                    "w": 1.0
+                },
                 "terrain_object_id": 1278972261,
-                "destination_pos_x": 693.7585,
-                "destination_pos_y": 10.0,
-                "destination_pos_z": -2.675201,
-                "destination_pos_w": 1.0,
-                "destination_rot_x": 1.5,
-                "destination_rot_y": 0.0,
-                "destination_rot_z": 0.0,
-                "destination_rot_w": 0.0
+                "destination_pos": {
+                    "x": 693.7585,
+                    "y": 10.0,
+                    "z": -2.675201,
+                    "w": 1.0
+                },
+                "destination_rot": {
+                    "x": 1.5,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 0.0
+                }
             },
             {
                 "comment": "War Room -> Main Hall",
-                "pos_x": 690.7585,
-                "pos_y": 10.0,
-                "pos_z": -2.675201,
-                "pos_w": 1.0,
+                "pos": {
+                    "x": 690.7585,
+                    "y": 10.0,
+                    "z": -2.675201,
+                    "w": 1.0
+                },
                 "terrain_object_id": 1278976738,
-                "destination_pos_x": 1316.77,
-                "destination_pos_y": 10.0,
-                "destination_pos_z": 253.2967,
-                "destination_pos_w": 1.0,
-                "destination_rot_x": -1.5,
-                "destination_rot_y": 0.0,
-                "destination_rot_z": 0.0,
-                "destination_rot_w": 0.0
+                "destination_pos": {
+                    "x": 1316.77,
+                    "y": 10.0,
+                    "z": 253.2967,
+                    "w": 1.0
+                },
+                "destination_rot": {
+                    "x": -1.5,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 0.0
+                }
             },
             {
                 "comment": "Veranda -> Construction Chamber",
-                "pos_x": 922.5898,
-                "pos_y": 178.51657,
-                "pos_z": 1546.969,
-                "pos_w": 1.0,
+                "pos": {
+                    "x": 922.5898,
+                    "y": 178.51657,
+                    "z": 1546.969,
+                    "w": 1.0
+                },
                 "terrain_object_id": 1359076121,
-                "destination_pos_x": 1487.53,
-                "destination_pos_y": 70.0,
-                "destination_pos_z": 890.248076,
-                "destination_pos_w": 1.0,
-                "destination_rot_x": 0.0,
-                "destination_rot_y": 0.0,
-                "destination_rot_z": 1.5,
-                "destination_rot_w": 0.0,
+                "destination_pos": {
+                    "x": 1487.53,
+                    "y": 70.0,
+                    "z": 890.248076,
+                    "w": 1.0
+                },
+                "destination_rot": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 1.5,
+                    "w": 0.0
+                },
                 "destination_zone_template": 25
             },
             {
                 "comment": "Lounge -> Club",
-                "pos_x": -106.5555,
-                "pos_y": 10.0,
-                "pos_z": 1247.071,
-                "pos_w": 1.0,
+                "pos": {
+                    "x": -106.5555,
+                    "y": 10.0,
+                    "z": 1247.071,
+                    "w": 1.0
+                },
                 "terrain_object_id": 1359076115,
-                "destination_pos_x": 764.51,
-                "destination_pos_y": 10.0,
-                "destination_pos_z": 683.99,
-                "destination_pos_w": 1.0,
-                "destination_rot_x": 1.5,
-                "destination_rot_y": 0.0,
-                "destination_rot_z": 0.0,
-                "destination_rot_w": 0.0,
+                "destination_pos": {
+                    "x": 764.51,
+                    "y": 10.0,
+                    "z": 683.99,
+                    "w": 1.0
+                },
+                "destination_rot": {
+                    "x": 1.5,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 0.0
+                },
                 "destination_zone_template": 25
             }
         ],
@@ -681,14 +829,18 @@
                 "comment": "Breaker",
                 "model_id": 1207,
                 "name_id": 19237,
-                "pos_x": 72.97756,
-                "pos_y": 10.049025,
-                "pos_z": -181.1351,
-                "pos_w": 1.0,
-                "rot_x": 1.0,
-                "rot_y": 0.0,
-                "rot_z": 0.0,
-                "rot_w": 0.0,
+                "pos": {
+                    "x": 72.97756,
+                    "y": 10.049025,
+                    "z": -181.1351,
+                    "w": 1.0
+                },
+                "rot": {
+                    "x": 1.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 0.0
+                },
                 "cursor": 53,
                 "show_name": true,
                 "show_icon": true,
@@ -701,13 +853,18 @@
                 "comment": "Green Starfighter",
                 "model_id": 721,
                 "npc_type": 2,
-                "pos_x": 118.403900,
-                "pos_y": 56.782230,
-                "pos_z": -328.281600,
-                "pos_w": 1.0,
-                "rot_x": 0.0,
-                "rot_y": 0.0,
-                "rot_z": 0.0,
+                "pos": {
+                    "x": 118.4039,
+                    "y": 56.78223,
+                    "z": -328.2816,
+                    "w": 1.0
+                },
+                "rot": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 0.0
+                },
                 "is_spawned": false,
                 "enable_gravity": false,
                 "tickable_procedures": {
@@ -750,13 +907,18 @@
                 "comment": "Purple Starfighter",
                 "model_id": 723,
                 "npc_type": 2,
-                "pos_x": 135.588600,
-                "pos_y": 24.974580,
-                "pos_z": -26.692560,
-                "pos_w": 1.0,
-                "rot_x": 0.0,
-                "rot_y": 0.0,
-                "rot_z": 0.0,
+                "pos": {
+                    "x": 135.5886,
+                    "y": 24.97458,
+                    "z": -26.69256,
+                    "w": 1.0
+                },
+                "rot": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 0.0
+                },
                 "is_spawned": false,
                 "enable_gravity": false,
                 "tickable_procedures": {
@@ -799,11 +961,18 @@
                 "comment": "Training Room Main Platform Lift",
                 "model_id": 1438,
                 "npc_type": 1,
-                "pos_x": 148.8,
-                "pos_y": -3.6210175,
-                "pos_z": 379.9795,
-                "pos_w": 1.0,
-                "rot_x": 1.5708,
+                "pos": {
+                    "x": 148.8,
+                    "y": -3.6210175,
+                    "z": 379.9795,
+                    "w": 1
+                },
+                "rot": {
+                    "x": 1.5708,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 0.0
+                },
                 "tickable_procedures": {
                     "lift": {
                         "steps": [
@@ -825,11 +994,18 @@
                 "comment": "Training Room Dueling Platform Lift",
                 "model_id": 1438,
                 "npc_type": 1,
-                "pos_x": 130.9,
-                "pos_y": -3.6210175,
-                "pos_z": 379.9795,
-                "pos_w": 1.0,
-                "rot_x": -1.5708,
+                "pos": {
+                    "x": 130.9,
+                    "y": -3.6210175,
+                    "z": 379.9795,
+                    "w": 1
+                },
+                "rot": {
+                    "x": -1.5708,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 0.0
+                },
                 "tickable_procedures": {
                     "lift": {
                         "steps": [
@@ -853,13 +1029,18 @@
                 "model_id": 1580,
                 "name_id": 3967,
                 "show_name": false,
-                "pos_x": 128.93307,
-                "pos_y": 10.146215,
-                "pos_z": -188.32434,
-                "pos_w": 1.0,
-                "rot_x": 0.64425725,
-                "rot_y": 0.0,
-                "rot_z": 0.7648088,
+                "pos": {
+                    "x": 128.93307,
+                    "y": 10.146215,
+                    "z": -188.32434,
+                    "w": 1.0
+                },
+                "rot": {
+                    "x": 0.64425725,
+                    "y": 0,
+                    "z": 0.7648088,
+                    "w": 0.0
+                },
                 "cursor": 53,
                 "enable_interact_popup": false,
                 "tickable_procedures": {
@@ -1131,13 +1312,18 @@
                 "model_id": 708,
                 "name_id": 3968,
                 "show_name": false,
-                "pos_x": 129.79893,
-                "pos_y": 10.146215,
-                "pos_z": -186.46703,
-                "pos_w": 1.0,
-                "rot_x": -0.55723685,
-                "rot_y": 0.0,
-                "rot_z": -0.83035356,
+                "pos": {
+                    "x": 129.79893,
+                    "y": 10.146215,
+                    "z": -186.46703,
+                    "w": 1.0
+                },
+                "rot": {
+                    "x": -0.55723685,
+                    "y": 0,
+                    "z": -0.83035356,
+                    "w": 0.0
+                },
                 "cursor": 53,
                 "enable_interact_popup": false,
                 "tickable_procedures": {
@@ -1434,36 +1620,48 @@
         "doors": [
             {
                 "comment": "Construction Chamber -> Veranda",
-                "pos_x": 1489.03,
-                "pos_y": 70.0,
-                "pos_z": 887.65,
-                "pos_w": 1.0,
+                "pos": {
+                    "x": 1489.03,
+                    "y": 70.0,
+                    "z": 887.65,
+                    "w": 1.0
+                },
                 "terrain_object_id": 1281994173,
-                "destination_pos_x": 919.5898,
-                "destination_pos_y": 178.51657,
-                "destination_pos_z": 1546.969,
-                "destination_pos_w": 1.0,
-                "destination_rot_x": -1.5,
-                "destination_rot_y": 0.0,
-                "destination_rot_z": 0.0,
-                "destination_rot_w": 0.0,
+                "destination_pos": {
+                    "x": 919.5898,
+                    "y": 178.51657,
+                    "z": 1546.969,
+                    "w": 1.0
+                },
+                "destination_rot": {
+                    "x": -1.5,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 0.0
+                },
                 "destination_zone_template": 24
             },
             {
                 "comment": "Club -> Lounge",
-                "pos_x": 761.51,
-                "pos_y": 10.0,
-                "pos_z": 683.99,
-                "pos_w": 1.0,
+                "pos": {
+                    "x": 761.51,
+                    "y": 10.0,
+                    "z": 683.99,
+                    "w": 1.0
+                },
                 "terrain_object_id": 1281995677,
-                "destination_pos_x": -106.5555,
-                "destination_pos_y": 10.0,
-                "destination_pos_z": 1250.071,
-                "destination_pos_w": 1.0,
-                "destination_rot_x": 0.0,
-                "destination_rot_y": 0.0,
-                "destination_rot_z": 1.5,
-                "destination_rot_w": 0.0,
+                "destination_pos": {
+                    "x": -106.5555,
+                    "y": 10.0,
+                    "z": 1250.071,
+                    "w": 1.0
+                },
+                "destination_rot": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 1.5,
+                    "w": 0.0
+                },
                 "destination_zone_template": 24
             }
         ],
@@ -1507,14 +1705,18 @@
                 "comment": "fighter",
                 "name_id": 32914,
                 "terrain_object_id": 1297277377,
-                "pos_x": 520.9936,
-                "pos_y": 1.2,
-                "pos_z": 482.5715,
-                "pos_w": 1.0,
-                "rot_x": 0.0,
-                "rot_y": 0.0,
-                "rot_z": 0.0,
-                "rot_w": 0.0,
+                "pos": {
+                    "x": 520.9936,
+                    "y": 1.2,
+                    "z": 482.5715,
+                    "w": 1.0
+                },
+                "rot": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 0.0
+                },
                 "name_offset_x": -0.5,
                 "cursor": 0,
                 "show_name": false,
