@@ -1113,7 +1113,7 @@ pub enum DestinationZoneInstance {
         instance_guid: u64,
     },
     Any {
-        zone_template: u8,
+        template_guid: u8,
     },
 }
 
@@ -1132,7 +1132,7 @@ pub fn teleport_anywhere(
                         DestinationZoneInstance::Same => source_zone_guid,
                         DestinationZoneInstance::Other { instance_guid } => instance_guid,
                         DestinationZoneInstance::Any {
-                            zone_template: template_guid,
+                            template_guid,
                         } => game_server.get_or_create_instance(
                             characters_table_write_handle,
                             zones_table_write_handle,

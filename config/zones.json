@@ -798,7 +798,11 @@
                     "z": 1.5,
                     "w": 0.0
                 },
-                "destination_zone_template": 25
+                "destination_zone": {
+                    "Any": {
+                        "template_guid": 25
+                    }
+                }
             },
             {
                 "comment": "Lounge -> Club",
@@ -821,7 +825,11 @@
                     "z": 0.0,
                     "w": 0.0
                 },
-                "destination_zone_template": 25
+                "destination_zone": {
+                    "Any": {
+                        "template_guid": 25
+                    }
+                }
             }
         ],
         "transports": [
@@ -1639,7 +1647,11 @@
                     "z": 0.0,
                     "w": 0.0
                 },
-                "destination_zone_template": 24
+                "destination_zone": {
+                    "Any": {
+                        "template_guid": 24
+                    }
+                }
             },
             {
                 "comment": "Club -> Lounge",
@@ -1662,7 +1674,11 @@
                     "z": 1.5,
                     "w": 0.0
                 },
-                "destination_zone_template": 24
+                "destination_zone": {
+                    "Any": {
+                        "template_guid": 24
+                    }
+                }
             }
         ],
         "transports": [],
