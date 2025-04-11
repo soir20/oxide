@@ -53,7 +53,7 @@ pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, P
                         zones_table_write_handle.get(instance_guid).unwrap().read();
                     Ok::<(u64, Vec<Vec<u8>>), ProcessPacketError>((
                         zone_read_handle.guid(),
-                        zone_read_handle.send_self()?,
+                        zone_read_handle.send_self(sender)?,
                     ))
                 })?;
             packets.append(&mut zone_packets);
