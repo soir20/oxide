@@ -1131,14 +1131,13 @@ pub fn teleport_anywhere(
                     let destination_zone_guid = match destination_zone {
                         DestinationZoneInstance::Same => source_zone_guid,
                         DestinationZoneInstance::Other { instance_guid } => instance_guid,
-                        DestinationZoneInstance::Any {
-                            template_guid,
-                        } => game_server.get_or_create_instance(
-                            characters_table_write_handle,
-                            zones_table_write_handle,
-                            template_guid,
-                            1,
-                        )?,
+                        DestinationZoneInstance::Any { template_guid } => game_server
+                            .get_or_create_instance(
+                                characters_table_write_handle,
+                                zones_table_write_handle,
+                                template_guid,
+                                1,
+                            )?,
                     };
 
                     if source_zone_guid != destination_zone_guid {
