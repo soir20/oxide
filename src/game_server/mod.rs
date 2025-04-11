@@ -368,6 +368,8 @@ impl GameServer {
                                         zone_consumer: |_, zones_read, _| {
                                             if let Some(zone) = zones_read.get(&instance_guid) {
                                                 let mut sender_only_character_packets = Vec::new();
+                                                sender_only_character_packets.append(&mut zone.send_self_on_client_ready()?);
+
                                                 let stats = TunneledPacket {
                                                     unknown1: true,
                                                     inner: Stats {

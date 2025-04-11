@@ -298,20 +298,29 @@ impl ZoneInstance {
     }
 
     pub fn send_self(&self, sender: u32) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
-        let mut packets = vec![
-            GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: ZoneDetails {
-                    name: self.asset_name.clone(),
-                    zone_type: 2,
-                    hide_ui: self.hide_ui,
-                    combat_hud: self.is_combat,
-                    sky_definition_file_name: self.default_spawn_sky.clone(),
-                    combat_camera: self.is_combat,
-                    unknown7: 0,
-                    unknown8: 0,
-                },
-            })?,
+        let mut packets = vec![GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: ZoneDetails {
+                name: self.asset_name.clone(),
+                zone_type: 2,
+                hide_ui: self.hide_ui,
+                combat_hud: self.is_combat,
+                sky_definition_file_name: self.default_spawn_sky.clone(),
+                combat_camera: self.is_combat,
+                unknown7: 0,
+                unknown8: 0,
+            },
+        })?];
+
+        if let Some(house) = &self.house_data {
+            packets.append(&mut prepare_init_house_packets(sender, self, house)?);
+        }
+
+        Ok(packets)
+    }
+
+    pub fn send_self_on_client_ready(&self) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+        Ok(vec![
             GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: ExecuteScriptWithIntParams {
@@ -329,13 +338,7 @@ impl ZoneInstance {
                     params: vec![],
                 },
             })?,
-        ];
-
-        if let Some(house) = &self.house_data {
-            packets.append(&mut prepare_init_house_packets(sender, self, house)?);
-        }
-
-        Ok(packets)
+        ])
     }
 
     fn nearby_chunks(center: Chunk) -> BTreeSet<Chunk> {
