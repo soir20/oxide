@@ -24,7 +24,7 @@ use crate::{
                 Customization, UpdateCustomizations, UpdateEquippedItem, UpdateWieldType,
             },
             tunnel::TunneledPacket,
-            ui::ExecuteScriptWithParams,
+            ui::ExecuteScriptWithStringParams,
             GamePacket,
         },
         Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
@@ -509,7 +509,7 @@ fn process_equip_customization(
                                     // Fix UI not updating the equipped customization item ID properly
                                     GamePacket::serialize(&TunneledPacket {
                                         unknown1: true,
-                                        inner: ExecuteScriptWithParams {
+                                        inner: ExecuteScriptWithStringParams {
                                             script_name:
                                                 "CharacterWindowHandler.requestDataSourceUpdate"
                                                     .to_string(),

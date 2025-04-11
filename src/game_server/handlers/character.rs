@@ -23,7 +23,7 @@ use crate::{
                 SingleNpcRelevance, UpdateSpeed,
             },
             tunnel::TunneledPacket,
-            ui::ExecuteScriptWithParams,
+            ui::ExecuteScriptWithStringParams,
             update_position::UpdatePlayerPosition,
             GamePacket, GuidTarget, Name, Pos, Rgba, Target,
         },
@@ -1103,7 +1103,7 @@ impl Transport {
                 requester,
                 vec![GamePacket::serialize(&TunneledPacket {
                     unknown1: false,
-                    inner: ExecuteScriptWithParams {
+                    inner: ExecuteScriptWithStringParams {
                         script_name: "UIGlobal.ShowGalaxyMap".to_string(),
                         params: vec![],
                     },

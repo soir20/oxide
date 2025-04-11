@@ -47,7 +47,7 @@
     },
     {
         "comment": "Ryloth",
-        "guid": 15,
+        "guid": 115,
         "max_players": 4294967295,
         "template_name": 10386,
         "asset_name": "Combat_Ryloth_StartingZone_01",
@@ -111,7 +111,7 @@
     },
     {
         "comment": "Umbara",
-        "guid": 19,
+        "guid": 104,
         "max_players": 4294967295,
         "template_name": 10635,
         "asset_name": "Combat_Umbara_South_01",
@@ -197,7 +197,7 @@
     },
     {
         "comment": "Carlac",
-        "guid": 34,
+        "guid": 113,
         "max_players": 4294967295,
         "template_name": 52057,
         "asset_name": "Combat_Carlac_01",
@@ -261,7 +261,7 @@
     },
     {
         "comment": "Felucia",
-        "guid": 36,
+        "guid": 128,
         "max_players": 4294967295,
         "template_name": 52276,
         "asset_name": "Combat_Felucia_01",

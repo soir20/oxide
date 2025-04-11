@@ -18,7 +18,7 @@ use crate::game_server::{
         login::{ClientBeginZoning, ZoneDetails},
         player_update::Customization,
         tunnel::TunneledPacket,
-        ui::ExecuteScriptWithParams,
+        ui::{ExecuteScriptWithIntParams, ExecuteScriptWithStringParams},
         GamePacket, Pos,
     },
     Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
@@ -1012,7 +1012,14 @@ fn prepare_init_zone_packets(
     packets.append(&mut destination.send_self()?);
     packets.push(GamePacket::serialize(&TunneledPacket {
         unknown1: true,
-        inner: ExecuteScriptWithParams {
+        inner: ExecuteScriptWithIntParams {
+            script_name: "UIGlobal.AtlasLoadZone".to_string(),
+            params: vec![destination.template_guid as i32],
+        },
+    })?);
+    packets.push(GamePacket::serialize(&TunneledPacket {
+        unknown1: true,
+        inner: ExecuteScriptWithStringParams {
             script_name: format!(
                 "CombatHandler.{}",
                 if destination.is_combat {

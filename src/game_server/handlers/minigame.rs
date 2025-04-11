@@ -35,7 +35,7 @@ use crate::{
             },
             saber_strike::{SaberStrikeOpCode, SaberStrikeStageData},
             tunnel::TunneledPacket,
-            ui::ExecuteScriptWithParams,
+            ui::ExecuteScriptWithStringParams,
             GamePacket, RewardBundle,
         },
         Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
@@ -1465,7 +1465,7 @@ fn handle_request_start_active_minigame(
                                 // group instance data. Then we can load the minigame.
                                 packets.push(GamePacket::serialize(&TunneledPacket {
                                     unknown1: true,
-                                    inner: ExecuteScriptWithParams {
+                                    inner: ExecuteScriptWithStringParams {
                                         script_name: "UIGlobal.SetStateMain".to_string(),
                                         params: vec![],
                                     },
