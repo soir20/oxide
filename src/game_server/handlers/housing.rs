@@ -2,7 +2,6 @@ use std::io::{Cursor, Read};
 
 use byteorder::{LittleEndian, ReadBytesExt};
 use packet_serialize::{DeserializePacket, SerializePacketError};
-use parking_lot::RwLockReadGuard;
 
 use crate::{
     game_server::{
@@ -260,7 +259,7 @@ pub fn fixture_packets(
 
 pub fn prepare_init_house_packets(
     sender: u32,
-    zone: &RwLockReadGuard<ZoneInstance>,
+    zone: &ZoneInstance,
     house: &House,
 ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
     if house.is_locked && sender != house.owner {

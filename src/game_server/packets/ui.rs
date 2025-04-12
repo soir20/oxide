@@ -6,7 +6,8 @@ use super::{GamePacket, OpCode};
 
 #[derive(Copy, Clone, Debug)]
 pub enum UiOpCode {
-    ExecuteScriptWithParams = 0x8,
+    ExecuteScriptWithIntParams = 0x7,
+    ExecuteScriptWithStringParams = 0x8,
 }
 
 impl SerializePacket for UiOpCode {
@@ -18,12 +19,23 @@ impl SerializePacket for UiOpCode {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct ExecuteScriptWithParams {
+pub struct ExecuteScriptWithIntParams {
+    pub script_name: String,
+    pub params: Vec<i32>,
+}
+
+impl GamePacket for ExecuteScriptWithIntParams {
+    type Header = UiOpCode;
+    const HEADER: Self::Header = UiOpCode::ExecuteScriptWithIntParams;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct ExecuteScriptWithStringParams {
     pub script_name: String,
     pub params: Vec<String>,
 }
 
-impl GamePacket for ExecuteScriptWithParams {
+impl GamePacket for ExecuteScriptWithStringParams {
     type Header = UiOpCode;
-    const HEADER: Self::Header = UiOpCode::ExecuteScriptWithParams;
+    const HEADER: Self::Header = UiOpCode::ExecuteScriptWithStringParams;
 }
