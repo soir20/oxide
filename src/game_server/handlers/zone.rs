@@ -1231,7 +1231,8 @@ pub fn interact_with_character(
                     }
 
                     if let Some(target_read_handle) = characters_write.get_mut(&target) {
-                        // Ensure the character is within interaction radius; if not, send MoveToInteract
+                        // Ensure the character is close enough to interact
+                        // Otherwise send MoveToInteract
                         let distance = distance3(
                             requester_x,
                             requester_y,
