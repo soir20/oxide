@@ -230,6 +230,7 @@
       name_offset_z: 5
       cursor: 54
       interact_radius: 15
+      move_to_interact_offset: 14
       show_name: false
       show_icon: true
       large_icon: true
