@@ -58,6 +58,10 @@ const fn default_interact_radius() -> f32 {
     7.0
 }
 
+const fn default_move_to_interact_offset() -> f32 {
+    2.2
+}
+
 const fn default_removal_delay_millis() -> u32 {
     5000
 }
@@ -149,6 +153,8 @@ pub struct BaseNpcConfig {
     #[serde(default = "default_interact_radius")]
     pub interact_radius: f32,
     pub interact_popup_radius: Option<f32>,
+    #[serde(default = "default_move_to_interact_offset")]
+    pub move_to_interact_offset: f32,
     #[serde(default = "default_true")]
     pub show_name: bool,
     #[serde(default = "default_true")]
@@ -1386,6 +1392,7 @@ pub struct NpcTemplate {
     pub cursor: Option<u8>,
     pub interact_radius: f32,
     pub auto_interact_radius: f32,
+    pub move_to_interact_offset: f32,
     pub wield_type: WieldType,
     pub tickable_procedures: HashMap<String, TickableProcedureConfig>,
     pub first_possible_procedures: Vec<String>,
@@ -1413,6 +1420,7 @@ impl NpcTemplate {
                 mount_id: self.mount_id,
                 interact_radius: self.interact_radius,
                 auto_interact_radius: self.auto_interact_radius,
+                move_to_interact_offset: self.move_to_interact_offset,
                 instance_guid,
                 wield_type: (self.wield_type, self.wield_type.holster()),
                 holstered: false,
@@ -1479,6 +1487,7 @@ pub struct CharacterStats {
     pub mount_id: Option<u32>,
     pub interact_radius: f32,
     pub auto_interact_radius: f32,
+    pub move_to_interact_offset: f32,
     pub instance_guid: u64,
     pub animation_id: i32,
     pub speed: CharacterStat,
@@ -1664,6 +1673,7 @@ impl Character {
         cursor: Option<u8>,
         interact_radius: f32,
         auto_interact_radius: f32,
+        move_to_interact_offset: f32,
         instance_guid: u64,
         wield_type: WieldType,
         animation_id: i32,
@@ -1685,6 +1695,7 @@ impl Character {
                 squad_guid: None,
                 interact_radius,
                 auto_interact_radius,
+                move_to_interact_offset,
                 instance_guid,
                 wield_type: (wield_type, wield_type.holster()),
                 holstered: false,
@@ -1752,6 +1763,7 @@ impl Character {
                 is_spawned: true,
                 interact_radius: 0.0,
                 auto_interact_radius: 0.0,
+                move_to_interact_offset: 2.2,
                 instance_guid,
                 wield_type: (wield_type, wield_type.holster()),
                 holstered: false,

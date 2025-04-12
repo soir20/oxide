@@ -179,6 +179,7 @@ impl From<ZoneConfig> for ZoneTemplate {
                     animation_id: ambient_npc.base_npc.active_animation_slot,
                     cursor: ambient_npc.base_npc.cursor,
                     interact_radius: ambient_npc.base_npc.interact_radius,
+                    move_to_interact_offset: ambient_npc.base_npc.move_to_interact_offset,
                     is_spawned: ambient_npc.base_npc.is_spawned,
                     character_type: CharacterType::AmbientNpc(ambient_npc.into()),
                     mount_id: None,
@@ -206,6 +207,7 @@ impl From<ZoneConfig> for ZoneTemplate {
                     character_type: CharacterType::Door(door.into()),
                     mount_id: None,
                     auto_interact_radius: value.door_auto_interact_radius,
+                    move_to_interact_offset: 0.0,
                     wield_type: WieldType::None,
                 });
                 index += 1;
@@ -225,6 +227,7 @@ impl From<ZoneConfig> for ZoneTemplate {
                     animation_id: transport.base_npc.active_animation_slot,
                     cursor: transport.base_npc.cursor,
                     interact_radius: transport.base_npc.interact_radius,
+                    move_to_interact_offset: transport.base_npc.move_to_interact_offset,
                     is_spawned: transport.base_npc.is_spawned,
                     character_type: CharacterType::Transport(transport.into()),
                     mount_id: None,
@@ -407,6 +410,7 @@ impl ZoneInstance {
                 CharacterType::Fixture(guid, fixture.as_current_fixture()),
                 None,
                 None,
+                0.0,
                 0.0,
                 0.0,
                 guid,
@@ -1249,13 +1253,14 @@ pub fn interact_with_character(
                             let interaction_angle = (target_read_handle.stats.pos.z - requester_z)
                                 .atan2(target_read_handle.stats.pos.x - requester_x);
 
-                            let offset_distance = 2.2;
                             let destination = Pos {
                                 x: target_read_handle.stats.pos.x
-                                    - offset_distance * interaction_angle.cos(),
+                                    - target_read_handle.stats.move_to_interact_offset
+                                        * interaction_angle.cos(),
                                 y: target_read_handle.stats.pos.y,
                                 z: target_read_handle.stats.pos.z
-                                    - offset_distance * interaction_angle.sin(),
+                                    - target_read_handle.stats.move_to_interact_offset
+                                        * interaction_angle.sin(),
                                 w: 1.0,
                             };
 
