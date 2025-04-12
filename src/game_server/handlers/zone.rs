@@ -88,6 +88,8 @@ struct ZoneConfig {
     seconds_per_day: u32,
     #[serde(default = "default_true")]
     update_previous_location_on_leave: bool,
+    #[serde(default)]
+    map_id: u32,
 }
 
 #[derive(Clone)]
@@ -108,6 +110,7 @@ pub struct ZoneTemplate {
     characters: Vec<NpcTemplate>,
     pub seconds_per_day: u32,
     update_previous_location_on_leave: bool,
+    map_id: u32,
 }
 
 impl Guid<u8> for ZoneTemplate {
@@ -239,6 +242,7 @@ impl From<ZoneConfig> for ZoneTemplate {
             characters,
             seconds_per_day: value.seconds_per_day,
             update_previous_location_on_leave: value.update_previous_location_on_leave,
+            map_id: value.map_id,
         }
     }
 }
@@ -291,6 +295,7 @@ impl ZoneTemplate {
             house_data,
             seconds_per_day: self.seconds_per_day,
             update_previous_location_on_leave: self.update_previous_location_on_leave,
+            map_id: self.map_id,
         }
     }
 }
@@ -333,6 +338,7 @@ pub struct ZoneInstance {
     pub house_data: Option<House>,
     pub seconds_per_day: u32,
     update_previous_location_on_leave: bool,
+    map_id: u32,
 }
 
 impl IndexedGuid<u64, u8> for ZoneInstance {
@@ -432,7 +438,7 @@ impl ZoneInstance {
                 unknown1: true,
                 inner: ExecuteScriptWithIntParams {
                     script_name: "UIGlobal.AtlasLoadZone".to_string(),
-                    params: vec![self.template_guid as i32],
+                    params: vec![self.map_id as i32],
                 },
             })?,
             GamePacket::serialize(&TunneledPacket {

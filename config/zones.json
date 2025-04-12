@@ -58,7 +58,7 @@
     },
     {
         "comment": "Ryloth",
-        "guid": 115,
+        "guid": 12,
         "max_players": 4294967295,
         "template_name": 10386,
         "asset_name": "Combat_Ryloth_StartingZone_01",
@@ -77,12 +77,14 @@
                 "y": 0.0,
                 "z": -0.67,
                 "w": 0.0
-            }
+            },
+            "name_id": 50654
         },
         "speed": 8.0,
         "jump_height_multiplier": 1.0,
         "gravity_multiplier": 1.0,
         "seconds_per_day": 10800,
+        "map_id": 115,
         "interact_radius": 7.0,
         "door_auto_interact_radius": 0.0,
         "doors": [],
@@ -137,7 +139,7 @@
     },
     {
         "comment": "Umbara",
-        "guid": 104,
+        "guid": 10,
         "max_players": 4294967295,
         "template_name": 10635,
         "asset_name": "Combat_Umbara_South_01",
@@ -156,12 +158,14 @@
                 "y": 0.0,
                 "z": 0.85,
                 "w": 0.0
-            }
+            },
+            "name_id": 50654
         },
         "speed": 8.0,
         "jump_height_multiplier": 1.0,
         "gravity_multiplier": 1.0,
         "seconds_per_day": 10800,
+        "map_id": 104,
         "interact_radius": 7.0,
         "door_auto_interact_radius": 0.0,
         "doors": [],
@@ -242,7 +246,7 @@
     },
     {
         "comment": "Carlac",
-        "guid": 113,
+        "guid": 11,
         "max_players": 4294967295,
         "template_name": 52057,
         "asset_name": "Combat_Carlac_01",
@@ -261,12 +265,14 @@
                 "y": 0.0,
                 "z": 0.75,
                 "w": 0.0
-            }
+            },
+            "name_id": 50654
         },
         "speed": 8.0,
         "jump_height_multiplier": 1.0,
         "gravity_multiplier": 1.0,
         "seconds_per_day": 10800,
+        "map_id": 113,
         "interact_radius": 7.0,
         "door_auto_interact_radius": 0.0,
         "doors": [],
@@ -321,7 +327,7 @@
     },
     {
         "comment": "Felucia",
-        "guid": 128,
+        "guid": 15,
         "max_players": 4294967295,
         "template_name": 52276,
         "asset_name": "Combat_Felucia_01",
@@ -340,12 +346,14 @@
                 "y": 0.0,
                 "z": 1.0,
                 "w": 0.0
-            }
+            },
+            "name_id": 50654
         },
         "speed": 8.0,
         "jump_height_multiplier": 1.0,
         "gravity_multiplier": 1.0,
         "seconds_per_day": 10800,
+        "map_id": 128,
         "interact_radius": 7.0,
         "door_auto_interact_radius": 0.0,
         "doors": [],
