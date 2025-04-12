@@ -8,7 +8,7 @@
         "hide_ui": false,
         "is_combat": false,
         "default_point_of_interest": {
-            "id": 14,
+            "guid": 14,
             "pos": {
                 "x": 179.8072,
                 "y": 10.0,
@@ -65,7 +65,7 @@
         "hide_ui": false,
         "is_combat": true,
         "default_point_of_interest": {
-            "id": 15,
+            "guid": 15,
             "pos": {
                 "x": 598.0,
                 "y": 9.0,
@@ -144,7 +144,7 @@
         "hide_ui": false,
         "is_combat": true,
         "default_point_of_interest": {
-            "id": 19,
+            "guid": 19,
             "pos": {
                 "x": 69.0,
                 "y": 1.9294561,
@@ -249,7 +249,7 @@
         "hide_ui": false,
         "is_combat": true,
         "default_point_of_interest": {
-            "id": 34,
+            "guid": 34,
             "pos": {
                 "x": 37.0,
                 "y": 0.954847,
@@ -328,7 +328,7 @@
         "hide_ui": false,
         "is_combat": true,
         "default_point_of_interest": {
-            "id": 36,
+            "guid": 36,
             "pos": {
                 "x": 488.0,
                 "y": 0.9538704,
@@ -404,7 +404,7 @@
         "hide_ui": false,
         "is_combat": false,
         "default_point_of_interest": {
-            "id": 24,
+            "guid": 24,
             "pos": {
                 "x": 101.9832,
                 "y": 10.0,
@@ -1605,7 +1605,7 @@
         "hide_ui": false,
         "is_combat": false,
         "default_point_of_interest": {
-            "id": 25,
+            "guid": 25,
             "pos": {
                 "x": 1487.53,
                 "y": 70.0,
@@ -1694,7 +1694,7 @@
         "hide_ui": false,
         "is_combat": false,
         "default_point_of_interest": {
-            "id": 100,
+            "guid": 100,
             "pos": {
                 "x": 515.0,
                 "y": 0.03999996,
@@ -1752,7 +1752,7 @@
         "hide_ui": false,
         "is_combat": false,
         "default_point_of_interest": {
-            "id": 200,
+            "guid": 200,
             "pos": {
                 "x": 244.0913,
                 "y": 10.0,

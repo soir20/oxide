@@ -172,11 +172,8 @@ pub fn send_points_of_interest(
     game_server: &GameServer,
 ) -> Result<Vec<Vec<u8>>, SerializePacketError> {
     let mut points = Vec::new();
-    for (_, template) in game_server.zone_templates.iter() {
-        points.push((&template.default_point_of_interest).into());
-        for point_of_interest in template.other_points_of_interest.iter() {
-            points.push(point_of_interest.into());
-        }
+    for (_, point_of_interest) in game_server.points_of_interest().values() {
+        points.push(point_of_interest.into());
     }
 
     Ok(vec![GamePacket::serialize(&TunneledPacket {

@@ -2,6 +2,7 @@ use std::{
     collections::{BTreeMap, BTreeSet, HashMap},
     fs::File,
     io::Error,
+    iter,
     path::Path,
 };
 
@@ -54,7 +55,7 @@ const fn default_true() -> bool {
 
 #[derive(Clone, Deserialize)]
 pub struct PointOfInterestConfig {
-    pub id: u32,
+    pub guid: u32,
     pub pos: Pos,
     pub rot: Pos,
     #[serde(default)]
@@ -96,8 +97,8 @@ pub struct ZoneTemplate {
     pub template_icon: u32,
     pub max_players: u32,
     pub asset_name: String,
-    pub default_point_of_interest: PointOfInterestConfig,
-    pub other_points_of_interest: Vec<PointOfInterestConfig>,
+    pub default_spawn_pos: Pos,
+    pub default_spawn_rot: Pos,
     default_spawn_sky: String,
     pub speed: f32,
     pub jump_height_multiplier: f32,
@@ -141,6 +142,107 @@ impl From<&Vec<Character>>
     }
 }
 
+impl From<ZoneConfig> for ZoneTemplate {
+    fn from(value: ZoneConfig) -> Self {
+        let mut characters = Vec::new();
+
+        let mut index = 0;
+
+        {
+            for ambient_npc in value.ambient_npcs {
+                characters.push(NpcTemplate {
+                    key: ambient_npc.base_npc.key.clone(),
+                    discriminant: AMBIENT_NPC_DISCRIMINANT,
+                    index,
+                    pos: ambient_npc.base_npc.pos,
+                    rot: ambient_npc.base_npc.rot,
+                    scale: ambient_npc.base_npc.scale,
+                    tickable_procedures: ambient_npc.base_npc.tickable_procedures.clone(),
+                    first_possible_procedures: ambient_npc
+                        .base_npc
+                        .first_possible_procedures
+                        .clone(),
+                    synchronize_with: ambient_npc.base_npc.synchronize_with.clone(),
+                    animation_id: ambient_npc.base_npc.active_animation_slot,
+                    cursor: ambient_npc.base_npc.cursor,
+                    is_spawned: ambient_npc.base_npc.is_spawned,
+                    character_type: CharacterType::AmbientNpc(ambient_npc.into()),
+                    mount_id: None,
+                    interact_radius: value.interact_radius,
+                    auto_interact_radius: 0.0,
+                    wield_type: WieldType::None,
+                });
+                index += 1;
+            }
+
+            for door in value.doors {
+                characters.push(NpcTemplate {
+                    key: door.base_npc.key.clone(),
+                    discriminant: AMBIENT_NPC_DISCRIMINANT,
+                    index,
+                    pos: door.base_npc.pos,
+                    rot: door.base_npc.rot,
+                    scale: door.base_npc.scale,
+                    tickable_procedures: door.base_npc.tickable_procedures.clone(),
+                    first_possible_procedures: door.base_npc.first_possible_procedures.clone(),
+                    synchronize_with: door.base_npc.synchronize_with.clone(),
+                    animation_id: door.base_npc.active_animation_slot,
+                    cursor: door.base_npc.cursor,
+                    is_spawned: door.base_npc.is_spawned,
+                    character_type: CharacterType::Door(door.into()),
+                    mount_id: None,
+                    interact_radius: value.interact_radius,
+                    auto_interact_radius: value.door_auto_interact_radius,
+                    wield_type: WieldType::None,
+                });
+                index += 1;
+            }
+
+            for transport in value.transports {
+                characters.push(NpcTemplate {
+                    key: transport.base_npc.key.clone(),
+                    discriminant: AMBIENT_NPC_DISCRIMINANT,
+                    index,
+                    pos: transport.base_npc.pos,
+                    rot: transport.base_npc.rot,
+                    scale: transport.base_npc.scale,
+                    tickable_procedures: transport.base_npc.tickable_procedures.clone(),
+                    first_possible_procedures: transport.base_npc.first_possible_procedures.clone(),
+                    synchronize_with: transport.base_npc.synchronize_with.clone(),
+                    animation_id: transport.base_npc.active_animation_slot,
+                    cursor: transport.base_npc.cursor,
+                    is_spawned: transport.base_npc.is_spawned,
+                    character_type: CharacterType::Transport(transport.into()),
+                    mount_id: None,
+                    interact_radius: value.interact_radius,
+                    auto_interact_radius: 0.0,
+                    wield_type: WieldType::None,
+                });
+                index += 1;
+            }
+        }
+
+        ZoneTemplate {
+            guid: value.guid,
+            template_name: value.template_name,
+            max_players: value.max_players,
+            template_icon: value.template_icon,
+            asset_name: value.asset_name.clone(),
+            default_spawn_pos: value.default_point_of_interest.pos,
+            default_spawn_rot: value.default_point_of_interest.rot,
+            default_spawn_sky: value.spawn_sky.clone(),
+            speed: value.speed,
+            jump_height_multiplier: value.jump_height_multiplier,
+            gravity_multiplier: value.gravity_multiplier,
+            hide_ui: value.hide_ui,
+            is_combat: value.is_combat,
+            characters,
+            seconds_per_day: value.seconds_per_day,
+            update_previous_location_on_leave: value.update_previous_location_on_leave,
+        }
+    }
+}
+
 impl ZoneTemplate {
     pub fn to_zone_instance(
         &self,
@@ -178,8 +280,8 @@ impl ZoneTemplate {
             max_players: self.max_players,
             icon: self.template_icon,
             asset_name: self.asset_name.clone(),
-            default_spawn_pos: self.default_point_of_interest.pos,
-            default_spawn_rot: self.default_point_of_interest.rot,
+            default_spawn_pos: self.default_spawn_pos,
+            default_spawn_rot: self.default_spawn_rot,
             default_spawn_sky: self.default_spawn_sky.clone(),
             speed: self.speed,
             jump_height_multiplier: self.jump_height_multiplier,
@@ -773,138 +875,48 @@ impl ZoneInstance {
     }
 }
 
-impl ZoneConfig {
-    fn into_zone_instances(self) -> (ZoneTemplate, Vec<ZoneInstance>) {
-        let mut characters = Vec::new();
-
-        let mut index = 0;
-
-        {
-            for ambient_npc in self.ambient_npcs {
-                characters.push(NpcTemplate {
-                    key: ambient_npc.base_npc.key.clone(),
-                    discriminant: AMBIENT_NPC_DISCRIMINANT,
-                    index,
-                    pos: ambient_npc.base_npc.pos,
-                    rot: ambient_npc.base_npc.rot,
-                    scale: ambient_npc.base_npc.scale,
-                    tickable_procedures: ambient_npc.base_npc.tickable_procedures.clone(),
-                    first_possible_procedures: ambient_npc
-                        .base_npc
-                        .first_possible_procedures
-                        .clone(),
-                    synchronize_with: ambient_npc.base_npc.synchronize_with.clone(),
-                    animation_id: ambient_npc.base_npc.active_animation_slot,
-                    cursor: ambient_npc.base_npc.cursor,
-                    is_spawned: ambient_npc.base_npc.is_spawned,
-                    character_type: CharacterType::AmbientNpc(ambient_npc.into()),
-                    mount_id: None,
-                    interact_radius: self.interact_radius,
-                    auto_interact_radius: 0.0,
-                    wield_type: WieldType::None,
-                });
-                index += 1;
-            }
-
-            for door in self.doors {
-                characters.push(NpcTemplate {
-                    key: door.base_npc.key.clone(),
-                    discriminant: AMBIENT_NPC_DISCRIMINANT,
-                    index,
-                    pos: door.base_npc.pos,
-                    rot: door.base_npc.rot,
-                    scale: door.base_npc.scale,
-                    tickable_procedures: door.base_npc.tickable_procedures.clone(),
-                    first_possible_procedures: door.base_npc.first_possible_procedures.clone(),
-                    synchronize_with: door.base_npc.synchronize_with.clone(),
-                    animation_id: door.base_npc.active_animation_slot,
-                    cursor: door.base_npc.cursor,
-                    is_spawned: door.base_npc.is_spawned,
-                    character_type: CharacterType::Door(door.into()),
-                    mount_id: None,
-                    interact_radius: self.interact_radius,
-                    auto_interact_radius: self.door_auto_interact_radius,
-                    wield_type: WieldType::None,
-                });
-                index += 1;
-            }
-
-            for transport in self.transports {
-                characters.push(NpcTemplate {
-                    key: transport.base_npc.key.clone(),
-                    discriminant: AMBIENT_NPC_DISCRIMINANT,
-                    index,
-                    pos: transport.base_npc.pos,
-                    rot: transport.base_npc.rot,
-                    scale: transport.base_npc.scale,
-                    tickable_procedures: transport.base_npc.tickable_procedures.clone(),
-                    first_possible_procedures: transport.base_npc.first_possible_procedures.clone(),
-                    synchronize_with: transport.base_npc.synchronize_with.clone(),
-                    animation_id: transport.base_npc.active_animation_slot,
-                    cursor: transport.base_npc.cursor,
-                    is_spawned: transport.base_npc.is_spawned,
-                    character_type: CharacterType::Transport(transport.into()),
-                    mount_id: None,
-                    interact_radius: self.interact_radius,
-                    auto_interact_radius: 0.0,
-                    wield_type: WieldType::None,
-                });
-                index += 1;
-            }
-        }
-
-        let template = ZoneTemplate {
-            guid: self.guid,
-            template_name: self.template_name,
-            max_players: self.max_players,
-            template_icon: self.template_icon,
-            asset_name: self.asset_name.clone(),
-            default_spawn_sky: self.spawn_sky.clone(),
-            speed: self.speed,
-            jump_height_multiplier: self.jump_height_multiplier,
-            gravity_multiplier: self.gravity_multiplier,
-            hide_ui: self.hide_ui,
-            is_combat: self.is_combat,
-            characters,
-            seconds_per_day: self.seconds_per_day,
-            update_previous_location_on_leave: self.update_previous_location_on_leave,
-            default_point_of_interest: self.default_point_of_interest,
-            other_points_of_interest: self.other_points_of_interest.clone(),
-        };
-
-        (template, Vec::new())
-    }
-}
-
 type ZoneTemplateMap = BTreeMap<u8, ZoneTemplate>;
-pub fn load_zones(
-    config_dir: &Path,
-) -> Result<(ZoneTemplateMap, GuidTable<u64, ZoneInstance, u8>), Error> {
+type PointOfInterestMap = BTreeMap<u32, (u8, PointOfInterestConfig)>;
+type LoadedZones = (
+    ZoneTemplateMap,
+    GuidTable<u64, ZoneInstance, u8>,
+    PointOfInterestMap,
+);
+pub fn load_zones(config_dir: &Path) -> Result<LoadedZones, Error> {
     let mut file = File::open(config_dir.join("zones.json"))?;
     let zone_configs: Vec<ZoneConfig> = serde_json::from_reader(&mut file)?;
 
     let mut templates = BTreeMap::new();
     let zones = GuidTable::new();
+    let mut points_of_interest = BTreeMap::new();
     {
-        let mut zones_write_handle = zones.write();
         for zone_config in zone_configs {
-            let (template, zones) = zone_config.into_zone_instances();
+            let iter = zone_config
+                .other_points_of_interest
+                .iter()
+                .chain(iter::once(&zone_config.default_point_of_interest));
+            for point_of_interest in iter {
+                if points_of_interest
+                    .insert(
+                        point_of_interest.guid,
+                        (zone_config.guid, point_of_interest.clone()),
+                    )
+                    .is_some()
+                {
+                    panic!("Two points of interest have ID {}", point_of_interest.guid);
+                }
+            }
+
+            let template = zone_config.into();
             let template_guid = Guid::guid(&template);
 
             if templates.insert(template_guid, template).is_some() {
                 panic!("Two zone templates have ID {}", template_guid);
             }
-
-            for zone in zones {
-                let zone_guid = zone.guid();
-                if zones_write_handle.insert(zone).is_some() {
-                    panic!("Two zone templates have ID {}", zone_guid);
-                }
-            }
         }
     }
 
-    Ok((templates, zones))
+    Ok((templates, zones, points_of_interest))
 }
 
 pub fn enter_zone(
@@ -1122,12 +1134,20 @@ pub fn teleport_anywhere(
     destination_rot: Pos,
     destination_zone: DestinationZoneInstance,
     requester: u32,
-    source_zone_guid: u64,
 ) -> WriteLockingBroadcastSupplier {
     coerce_to_broadcast_supplier(move |game_server| {
         game_server.lock_enforcer().write_characters(
             |characters_table_write_handle, zones_lock_enforcer| {
                 zones_lock_enforcer.write_zones(|zones_table_write_handle| {
+                    let source_zone_guid =
+                        match characters_table_write_handle.get(player_guid(requester)) {
+                            Some(character) => Ok(character.read().stats.instance_guid),
+                            None => Err(ProcessPacketError::new(
+                                ProcessPacketErrorType::ConstraintViolated,
+                                format!("Tried to teleport unknown player {} anywhere", requester),
+                            )),
+                        }?;
+
                     let destination_zone_guid = match destination_zone {
                         DestinationZoneInstance::Same => source_zone_guid,
                         DestinationZoneInstance::Other { instance_guid } => instance_guid,
@@ -1199,11 +1219,13 @@ pub fn interact_with_character(
                             target_read_handle.stats.pos.y,
                             target_read_handle.stats.pos.z,
                         );
-                        if distance > target_read_handle.stats.interact_radius {
+                        if distance > target_read_handle.stats.interact_radius
+                            || target_read_handle.stats.instance_guid != source_zone_guid
+                        {
                             return coerce_to_broadcast_supplier(|_| Ok(Vec::new()));
                         }
 
-                        target_read_handle.interact(requester, source_zone_guid)
+                        target_read_handle.interact(requester)
                     } else {
                         Err(ProcessPacketError::new(
                             ProcessPacketErrorType::ConstraintViolated,

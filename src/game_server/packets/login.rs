@@ -142,7 +142,7 @@ pub struct PointOfInterest {
 impl From<&PointOfInterestConfig> for PointOfInterest {
     fn from(value: &PointOfInterestConfig) -> Self {
         PointOfInterest {
-            id: value.id,
+            id: value.guid,
             name_id: value.name_id,
             location_id: 0,
             teleport_pos: value.pos,

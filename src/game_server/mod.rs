@@ -9,12 +9,11 @@ use std::vec;
 
 use byteorder::{LittleEndian, ReadBytesExt};
 use handlers::character::{
-    Character, CharacterCategory, CharacterLocationIndex, CharacterMatchmakingGroupIndex,
-    CharacterNameIndex, CharacterSquadIndex, CharacterType, Chunk, MatchmakingGroupStatus,
+    Character, CharacterCategory, CharacterType, Chunk, MatchmakingGroupStatus,
 };
 use handlers::chat::process_chat_packet;
 use handlers::command::process_command;
-use handlers::guid::{GuidTable, GuidTableIndexer, GuidTableWriteHandle, IndexedGuid};
+use handlers::guid::{GuidTable, GuidTableIndexer, IndexedGuid};
 use handlers::housing::process_housing_packet;
 use handlers::inventory::{
     customizations_from_guids, load_customization_item_mappings, load_customizations,
@@ -36,10 +35,12 @@ use handlers::store::{load_cost_map, CostEntry};
 use handlers::test_data::make_test_nameplate_image;
 use handlers::time::make_game_time_sync;
 use handlers::unique_guid::{
-    player_guid, shorten_player_guid, shorten_zone_index, shorten_zone_template_guid,
-    zone_instance_guid,
+    player_guid, shorten_player_guid, shorten_zone_index, zone_instance_guid,
 };
-use handlers::zone::{load_zones, teleport_within_zone, ZoneInstance, ZoneTemplate};
+use handlers::zone::{
+    load_zones, teleport_anywhere, teleport_within_zone, DestinationZoneInstance,
+    PointOfInterestConfig, ZoneInstance, ZoneTemplate,
+};
 use packets::client_update::{Health, Power, PreloadCharactersDone, Stat, StatId, Stats};
 use packets::item::ItemDefinition;
 use packets::login::{LoginRequest, WelcomeScreen, ZoneDetailsDone};
@@ -48,11 +49,11 @@ use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGro
 use packets::store::StoreItemList;
 use packets::tunnel::{TunneledPacket, TunneledWorldPacket};
 use packets::update_position::{PlayerJump, UpdatePlayerPlatformPosition, UpdatePlayerPosition};
-use packets::zone::ZoneTeleportRequest;
+use packets::zone::PointOfInterestTeleportRequest;
 use packets::{GamePacket, OpCode};
 use rand::Rng;
 
-use crate::{info, teleport_to_zone};
+use crate::info;
 use packet_serialize::{DeserializePacket, DeserializePacketError, SerializePacketError};
 
 mod handlers;
@@ -146,6 +147,7 @@ pub struct GameServer {
     item_groups: ItemGroupDefinitions,
     minigames: AllMinigameConfigs,
     mounts: BTreeMap<u32, MountConfig>,
+    points_of_interest: BTreeMap<u32, (u8, PointOfInterestConfig)>,
     start_time: Instant,
     zone_templates: BTreeMap<u8, ZoneTemplate>,
 }
@@ -153,7 +155,7 @@ pub struct GameServer {
 impl GameServer {
     pub fn new(config_dir: &Path) -> Result<Self, Error> {
         let characters = GuidTable::new();
-        let (templates, zones) = load_zones(config_dir)?;
+        let (templates, zones, points_of_interest) = load_zones(config_dir)?;
         let item_definitions = load_item_definitions(config_dir)?;
         let item_groups = load_item_groups(config_dir)?;
         Ok(GameServer {
@@ -170,6 +172,7 @@ impl GameServer {
             },
             minigames: load_all_minigames(config_dir)?,
             mounts: load_mounts(config_dir)?,
+            points_of_interest,
             start_time: Instant::now(),
             zone_templates: templates,
         })
@@ -578,52 +581,32 @@ impl GameServer {
                 OpCode::UpdatePlayerCamera => {
                     // Ignore this unused packet to reduce log spam for now
                 }
-                OpCode::ZoneTeleportRequest => {
-                    let teleport_request: ZoneTeleportRequest =
+                OpCode::PointOfInterestTeleportRequest => {
+                    let teleport_request: PointOfInterestTeleportRequest =
                         DeserializePacket::deserialize(&mut cursor)?;
 
-                    broadcasts.append(&mut self.lock_enforcer().write_characters(
-                        |characters_table_write_handle: &mut GuidTableWriteHandle<
-                            u64,
-                            Character,
-                            CharacterLocationIndex,
-                            CharacterNameIndex,
-                            CharacterSquadIndex,
-                            CharacterMatchmakingGroupIndex,
-                        >,
-                         zones_lock_enforcer| {
-                            zones_lock_enforcer.write_zones(|zones_table_write_handle| {
-                                let possible_instance_guid =
-                                    shorten_zone_template_guid(teleport_request.destination_guid)
-                                        .and_then(|template_guid| {
-                                            self.get_or_create_instance(
-                                                characters_table_write_handle,
-                                                zones_table_write_handle,
-                                                template_guid,
-                                                1,
-                                            )
-                                        });
-
-                                match possible_instance_guid {
-                                    Ok(instance_guid) => teleport_to_zone!(
-                                        characters_table_write_handle,
-                                        sender,
-                                        zones_table_write_handle,
-                                        &zones_table_write_handle
-                                            .get(instance_guid)
-                                            .expect(
-                                                "get_or_create_instance returned invalid zone GUID"
-                                            )
-                                            .read(),
-                                        None,
-                                        None,
-                                        self.mounts(),
-                                    ),
-                                    Err(err) => Err(err),
-                                }
-                            })
-                        },
-                    )?);
+                    if let Some((template_guid, point_of_interest)) = self
+                        .points_of_interest()
+                        .get(&teleport_request.point_of_interest_guid)
+                    {
+                        broadcasts.append(&mut teleport_anywhere(
+                            point_of_interest.pos,
+                            point_of_interest.rot,
+                            DestinationZoneInstance::Any {
+                                template_guid: *template_guid,
+                            },
+                            sender,
+                        )?(self)?);
+                        Ok(())
+                    } else {
+                        Err(ProcessPacketError::new(
+                            ProcessPacketErrorType::ConstraintViolated,
+                            format!(
+                                "Player {} requested to teleport to unknown point of interest {}",
+                                sender, teleport_request.point_of_interest_guid
+                            ),
+                        ))
+                    }?;
                 }
                 OpCode::TeleportToSafety => {
                     let mut packets = self.lock_enforcer().read_characters(|_| {
@@ -764,6 +747,10 @@ impl GameServer {
 
     pub fn mounts(&self) -> &BTreeMap<u32, MountConfig> {
         &self.mounts
+    }
+
+    pub fn points_of_interest(&self) -> &BTreeMap<u32, (u8, PointOfInterestConfig)> {
+        &self.points_of_interest
     }
 
     pub fn start_time(&self) -> Instant {

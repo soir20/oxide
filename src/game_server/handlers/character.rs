@@ -921,13 +921,12 @@ impl Door {
         Ok(packets)
     }
 
-    pub fn interact(&self, requester: u32, source_zone_guid: u64) -> WriteLockingBroadcastSupplier {
+    pub fn interact(&self, requester: u32) -> WriteLockingBroadcastSupplier {
         teleport_anywhere(
             self.destination_pos,
             self.destination_rot,
             self.destination_zone,
             requester,
-            source_zone_guid,
         )
     }
 }
@@ -1744,11 +1743,7 @@ impl Character {
         self.stats.holstered = !self.stats.holstered;
     }
 
-    pub fn interact(
-        &mut self,
-        requester: u32,
-        source_zone_guid: u64,
-    ) -> WriteLockingBroadcastSupplier {
+    pub fn interact(&mut self, requester: u32) -> WriteLockingBroadcastSupplier {
         let mut new_procedure = None;
 
         let broadcast_supplier = match &self.stats.character_type {
@@ -1756,7 +1751,7 @@ impl Character {
                 new_procedure = ambient_npc.interact(self);
                 coerce_to_broadcast_supplier(|_| Ok(Vec::new()))
             }
-            CharacterType::Door(door) => door.interact(requester, source_zone_guid),
+            CharacterType::Door(door) => door.interact(requester),
             CharacterType::Transport(transport) => transport.interact(requester),
             _ => coerce_to_broadcast_supplier(|_| Ok(Vec::new())),
         };
