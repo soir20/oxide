@@ -127,31 +127,37 @@ impl GamePacket for ClientBeginZoning {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct PointOfInterest {
-    pub id: u32,
+    pub guid: u32,
     pub name_id: u32,
-    pub location_id: u32,
-    pub teleport_pos: Pos,
+    pub unknown1: u32,
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
+    pub heading: f32,
     pub icon_id: u32,
     pub notification_type: u32,
     pub subtitle_id: u32,
-    pub unknown: u32,
     pub quest_id: u32,
-    pub teleport_pos_id: u32,
+    pub unknown2: u32,
+    pub zone_template_guid: u32,
 }
 
-impl From<&PointOfInterestConfig> for PointOfInterest {
-    fn from(value: &PointOfInterestConfig) -> Self {
+impl From<&(u8, PointOfInterestConfig)> for PointOfInterest {
+    fn from((zone_template_guid, value): &(u8, PointOfInterestConfig)) -> Self {
         PointOfInterest {
-            id: value.guid,
+            guid: value.guid,
             name_id: value.name_id,
-            location_id: 0,
-            teleport_pos: value.pos,
+            unknown1: 0,
+            x: value.pos.x,
+            y: value.pos.y,
+            z: value.pos.z,
+            heading: 0.0,
             icon_id: 0,
             notification_type: 0,
             subtitle_id: 0,
-            unknown: 0,
             quest_id: 0,
-            teleport_pos_id: 0,
+            unknown2: 0,
+            zone_template_guid: *zone_template_guid as u32,
         }
     }
 }

@@ -172,7 +172,7 @@ pub fn send_points_of_interest(
     game_server: &GameServer,
 ) -> Result<Vec<Vec<u8>>, SerializePacketError> {
     let mut points = Vec::new();
-    for (_, point_of_interest) in game_server.points_of_interest().values() {
+    for point_of_interest in game_server.points_of_interest().values() {
         points.push(point_of_interest.into());
     }
 
