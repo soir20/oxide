@@ -589,14 +589,16 @@ impl GameServer {
                         .points_of_interest()
                         .get(&teleport_request.point_of_interest_guid)
                     {
-                        broadcasts.append(&mut teleport_anywhere(
-                            point_of_interest.pos,
-                            point_of_interest.rot,
-                            DestinationZoneInstance::Any {
-                                template_guid: *template_guid,
-                            },
-                            sender,
-                        )?(self)?);
+                        if point_of_interest.teleport_enabled {
+                            broadcasts.append(&mut teleport_anywhere(
+                                point_of_interest.pos,
+                                point_of_interest.rot,
+                                DestinationZoneInstance::Any {
+                                    template_guid: *template_guid,
+                                },
+                                sender,
+                            )?(self)?);
+                        }
                         Ok(())
                     } else {
                         Err(ProcessPacketError::new(

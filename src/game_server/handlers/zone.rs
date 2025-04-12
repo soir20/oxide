@@ -60,6 +60,8 @@ pub struct PointOfInterestConfig {
     pub rot: Pos,
     #[serde(default)]
     pub name_id: u32,
+    #[serde(default = "default_true")]
+    pub teleport_enabled: bool,
 }
 
 #[derive(Deserialize)]
