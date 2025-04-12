@@ -552,7 +552,7 @@ impl GameServer {
                         })?;
                 }
                 OpCode::Command => {
-                    broadcasts.append(&mut process_command(self, &mut cursor)?);
+                    broadcasts.append(&mut process_command(self, sender, &mut cursor)?);
                 }
                 OpCode::UpdatePlayerPosition => {
                     let mut pos_update: UpdatePlayerPosition =

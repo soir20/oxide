@@ -4,14 +4,15 @@ use byteorder::{LittleEndian, ReadBytesExt};
 use packet_serialize::DeserializePacket;
 
 use crate::game_server::{
-    packets::command::{CommandOpCode, SelectPlayer},
+    packets::command::{CommandOpCode, InteractRequest, SelectPlayer},
     Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
 };
 
-use super::zone::interact_with_character;
+use super::{unique_guid::player_guid, zone::interact_with_character};
 
 pub fn process_command(
     game_server: &GameServer,
+    sender: u32,
     cursor: &mut Cursor<&[u8]>,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let raw_op_code = cursor.read_u16::<LittleEndian>()?;
@@ -19,7 +20,11 @@ pub fn process_command(
         Ok(op_code) => match op_code {
             CommandOpCode::SelectPlayer => {
                 let req = SelectPlayer::deserialize(cursor)?;
-                interact_with_character(req, game_server)
+                interact_with_character(req.requester, req.target, game_server)
+            }
+            CommandOpCode::InteractRequest => {
+                let req = InteractRequest::deserialize(cursor)?;
+                interact_with_character(player_guid(sender), req.guid, game_server)
             }
             _ => {
                 let mut buffer = Vec::new();

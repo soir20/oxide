@@ -16,6 +16,7 @@ pub enum CommandOpCode {
     ChatBubbleColor = 0xe,
     SelectPlayer = 0xf,
     FreeInteractNpc = 0x10,
+    MoveToInteract = 0x11,
     DialogEffect = 0x17,
     PlaySoundOnTarget = 0x22,
 }
@@ -26,6 +27,27 @@ impl SerializePacket for CommandOpCode {
         buffer.write_u16::<LittleEndian>(*self as u16)?;
         Ok(())
     }
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct InteractRequest {
+    pub guid: u64,
+}
+
+impl GamePacket for InteractRequest {
+    type Header = CommandOpCode;
+    const HEADER: Self::Header = CommandOpCode::InteractRequest;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct MoveToInteract {
+    pub destination: Pos,
+    pub guid: u64,
+}
+
+impl GamePacket for MoveToInteract {
+    type Header = CommandOpCode;
+    const HEADER: Self::Header = CommandOpCode::MoveToInteract;
 }
 
 #[derive(SerializePacket, DeserializePacket)]

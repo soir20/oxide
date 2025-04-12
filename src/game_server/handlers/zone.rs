@@ -12,7 +12,7 @@ use crate::{
     game_server::{
         packets::{
             client_update::Position,
-            command::SelectPlayer,
+            command::MoveToInteract,
             housing::BuildArea,
             item::{ItemDefinition, WieldType},
             login::{ClientBeginZoning, ZoneDetails},
@@ -866,11 +866,11 @@ impl ZoneInstance {
         };
 
         for character_guid in npcs_to_interact_with {
-            let interact_request = SelectPlayer {
-                requester: moved_character_guid,
-                target: character_guid,
-            };
-            broadcasts.append(&mut interact_with_character(interact_request, game_server)?);
+            broadcasts.append(&mut interact_with_character(
+                moved_character_guid,
+                character_guid,
+                game_server,
+            )?);
         }
 
         if should_teleport {
@@ -1206,21 +1206,22 @@ pub fn teleport_anywhere(
 }
 
 pub fn interact_with_character(
-    request: SelectPlayer,
+    requester: u64,
+    target: u64,
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-    let requester = shorten_player_guid(request.requester)?;
+    let requester_guid = shorten_player_guid(requester)?;
     let broadcast_supplier: WriteLockingBroadcastSupplier =
         game_server.lock_enforcer().read_characters(|_| {
             CharacterLockRequest {
                 read_guids: Vec::new(),
-                write_guids: vec![request.requester, request.target],
+                write_guids: vec![requester, target],
                 character_consumer: move |_, _, mut characters_write, _| {
                     let source_zone_guid;
                     let requester_x;
                     let requester_y;
                     let requester_z;
-                    if let Some(requester_read_handle) = characters_write.get(&request.requester) {
+                    if let Some(requester_read_handle) = characters_write.get(&requester) {
                         source_zone_guid = requester_read_handle.stats.instance_guid;
                         requester_x = requester_read_handle.stats.pos.x;
                         requester_y = requester_read_handle.stats.pos.y;
@@ -1229,8 +1230,8 @@ pub fn interact_with_character(
                         return coerce_to_broadcast_supplier(|_| Ok(Vec::new()));
                     }
 
-                    if let Some(target_read_handle) = characters_write.get_mut(&request.target) {
-                        // Ensure the character is close enough to interact
+                    if let Some(target_read_handle) = characters_write.get_mut(&target) {
+                        // Ensure the character is within interaction radius; if not, send MoveToInteract
                         let distance = distance3(
                             requester_x,
                             requester_y,
@@ -1242,16 +1243,42 @@ pub fn interact_with_character(
                         if distance > target_read_handle.stats.interact_radius
                             || target_read_handle.stats.instance_guid != source_zone_guid
                         {
-                            return coerce_to_broadcast_supplier(|_| Ok(Vec::new()));
+                            let mut broadcasts = Vec::new();
+
+                            let theta = (target_read_handle.stats.pos.z - requester_z)
+                                .atan2(target_read_handle.stats.pos.x - requester_x);
+
+                            let offset_distance = 2.2;
+                            let new_x =
+                                target_read_handle.stats.pos.x - offset_distance * theta.cos();
+                            let new_z =
+                                target_read_handle.stats.pos.z - offset_distance * theta.sin();
+
+                            broadcasts.push(Broadcast::Single(
+                                requester_guid,
+                                vec![GamePacket::serialize(&TunneledPacket {
+                                    unknown1: true,
+                                    inner: MoveToInteract {
+                                        destination: Pos {
+                                            x: new_x,
+                                            y: target_read_handle.stats.pos.y,
+                                            z: new_z,
+                                            w: 1.0,
+                                        },
+                                        guid: target,
+                                    },
+                                })?],
+                            ));
+                            return coerce_to_broadcast_supplier(|_| Ok(broadcasts));
                         }
 
-                        target_read_handle.interact(requester)
+                        target_read_handle.interact(requester_guid)
                     } else {
                         Err(ProcessPacketError::new(
                             ProcessPacketErrorType::ConstraintViolated,
                             format!(
                                 "Received request to interact with unknown NPC {} from {}",
-                                request.target, request.requester
+                                target, requester
                             ),
                         ))
                     }
