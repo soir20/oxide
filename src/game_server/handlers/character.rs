@@ -5,7 +5,7 @@ use std::{
 
 use rand::thread_rng;
 use rand_distr::{Distribution, WeightedAliasIndex};
-use serde::Deserialize;
+use serde::{de::IgnoredAny, Deserialize};
 use strum::EnumIter;
 
 use crate::game_server::{
@@ -54,6 +54,10 @@ const fn default_fade_millis() -> u32 {
     1000
 }
 
+const fn default_interact_radius() -> f32 {
+    7.0
+}
+
 const fn default_removal_delay_millis() -> u32 {
     5000
 }
@@ -75,6 +79,7 @@ const fn default_weight() -> u32 {
 }
 
 #[derive(Clone, Default, Deserialize, Eq, PartialEq)]
+#[serde(deny_unknown_fields)]
 pub enum CursorUpdate {
     #[default]
     Keep,
@@ -85,6 +90,7 @@ pub enum CursorUpdate {
 }
 
 #[derive(Clone, Copy, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub enum RemovalMode {
     #[default]
     Immediate,
@@ -103,6 +109,7 @@ pub enum RemovalMode {
 }
 
 #[derive(Clone, Copy, Default, Deserialize, PartialEq)]
+#[serde(deny_unknown_fields)]
 pub enum SpawnedState {
     #[default]
     Keep,
@@ -112,7 +119,10 @@ pub enum SpawnedState {
 }
 
 #[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct BaseNpcConfig {
+    #[serde(default)]
+    pub comment: IgnoredAny,
     pub key: Option<String>,
     #[serde(default)]
     pub model_id: u32,
@@ -136,6 +146,9 @@ pub struct BaseNpcConfig {
     pub cursor: Option<u8>,
     #[serde(default = "default_true")]
     pub enable_interact_popup: bool,
+    #[serde(default = "default_interact_radius")]
+    pub interact_radius: f32,
+    pub interact_popup_radius: Option<f32>,
     #[serde(default = "default_true")]
     pub show_name: bool,
     #[serde(default = "default_true")]
@@ -166,6 +179,8 @@ pub struct BaseNpc {
     pub name_offset_y: f32,
     pub name_offset_z: f32,
     pub enable_interact_popup: bool,
+    pub interact_radius: f32,
+    pub interact_popup_radius: Option<f32>,
     pub show_name: bool,
     pub visible: bool,
     pub bounce_area_id: i32,
@@ -250,7 +265,9 @@ impl BaseNpc {
                 collision: true,
                 rider_guid: 0,
                 npc_type: self.npc_type,
-                interact_popup_radius: character.interact_radius,
+                interact_popup_radius: self
+                    .interact_popup_radius
+                    .unwrap_or(character.interact_radius),
                 target: Target::default(),
                 variables: vec![],
                 rail_id: 0,
@@ -300,6 +317,8 @@ impl From<BaseNpcConfig> for BaseNpc {
             name_offset_y: value.name_offset_y,
             name_offset_z: value.name_offset_z,
             enable_interact_popup: value.enable_interact_popup,
+            interact_radius: value.interact_radius,
+            interact_popup_radius: value.interact_popup_radius,
             show_name: value.show_name,
             visible: value.visible,
             bounce_area_id: value.bounce_area_id,
@@ -311,7 +330,10 @@ impl From<BaseNpcConfig> for BaseNpc {
 }
 
 #[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct TickableStep {
+    #[serde(default)]
+    pub comment: IgnoredAny,
     pub speed: Option<f32>,
     pub new_pos_x: Option<f32>,
     pub new_pos_y: Option<f32>,
@@ -575,7 +597,10 @@ impl TickableStep {
 }
 
 #[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct TickableProcedureConfig {
+    #[serde(default)]
+    pub comment: IgnoredAny,
     #[serde(default = "default_weight")]
     pub weight: u32,
     pub steps: Vec<TickableStep>,
@@ -856,7 +881,10 @@ impl TickableProcedureTracker {
 }
 
 #[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct AmbientNpcConfig {
+    #[serde(default)]
+    pub comment: IgnoredAny,
     #[serde(flatten)]
     pub base_npc: BaseNpcConfig,
     pub procedure_on_interact: Option<String>,
@@ -920,7 +948,10 @@ impl From<AmbientNpcConfig> for AmbientNpc {
 }
 
 #[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct DoorConfig {
+    #[serde(default)]
+    pub comment: IgnoredAny,
     #[serde(flatten)]
     pub base_npc: BaseNpcConfig,
     pub destination_pos: Pos,
@@ -992,7 +1023,10 @@ impl From<DoorConfig> for Door {
 }
 
 #[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct TransportConfig {
+    #[serde(default)]
+    pub comment: IgnoredAny,
     #[serde(flatten)]
     pub base_npc: BaseNpcConfig,
     pub show_icon: bool,

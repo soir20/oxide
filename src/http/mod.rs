@@ -15,6 +15,8 @@ use tokio::io;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpListener;
 
+use crate::ConfigError;
+
 const COMPRESSED_MAGIC: u32 = 0xa1b2c3d4;
 const ZLIB_COMPRESSION_LEVEL: u8 = 6;
 const COMPRESSED_EXTENSION: &str = "z";
@@ -26,9 +28,9 @@ struct Manifest {
     prefix: PathBuf,
 }
 
-async fn read_manifests_config(config_dir: &std::path::Path) -> io::Result<Vec<Manifest>> {
-    let manifests_data = read(config_dir.join("manifests.json")).await?;
-    let manifests: Vec<PathBuf> = serde_json::from_slice(&manifests_data)?;
+async fn read_manifests_config(config_dir: &std::path::Path) -> Result<Vec<Manifest>, ConfigError> {
+    let manifests_data = read(config_dir.join("manifests.yaml")).await?;
+    let manifests: Vec<PathBuf> = serde_yaml::from_slice(&manifests_data)?;
     Ok(manifests
         .into_iter()
         .map(|manifest_path| Manifest {
@@ -330,7 +332,7 @@ async fn try_start(
     config_dir: &std::path::Path,
     assets_path: &std::path::Path,
     assets_cache_path: PathBuf,
-) -> io::Result<()> {
+) -> Result<(), ConfigError> {
     let manifests = read_manifests_config(config_dir).await?;
     let crc_map = prepare_asset_cache(assets_path, &assets_cache_path, &manifests).await?;
 
@@ -339,7 +341,7 @@ async fn try_start(
         .route("/assets/*asset", get(asset_handler))
         .with_state((Arc::new(assets_cache_path), Arc::new(crc_map)));
 
-    serve(listener, app).await
+    Ok(serve(listener, app).await?)
 }
 
 pub async fn start(

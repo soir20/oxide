@@ -6,7 +6,7 @@ use std::{
 };
 
 use evalexpr::{context_map, eval_with_context, Value};
-use serde::Deserialize;
+use serde::{de::IgnoredAny, Deserialize};
 
 use crate::{
     game_server::packets::{
@@ -14,16 +14,26 @@ use crate::{
         reference_data::ItemGroupDefinition,
         store::{StoreItem, StoreItemList},
     },
-    info,
+    info, ConfigError,
 };
 
 const DEFAULT_COST_EXPRESSION: &str = "x";
 
+fn default_cost_expression() -> String {
+    DEFAULT_COST_EXPRESSION.to_string()
+}
+
 #[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
 struct Sale {
+    #[serde(default)]
+    #[allow(dead_code)]
+    pub comment: IgnoredAny,
     item_group_guid: i32,
-    base_cost_expression: Option<String>,
-    members_cost_expression: Option<String>,
+    #[serde(default = "default_cost_expression")]
+    base_cost_expression: String,
+    #[serde(default = "default_cost_expression")]
+    members_cost_expression: String,
 }
 
 pub struct CostEntry {
@@ -35,9 +45,9 @@ pub fn load_cost_map(
     config_dir: &Path,
     items: &BTreeMap<u32, ItemDefinition>,
     item_groups: &[ItemGroupDefinition],
-) -> Result<BTreeMap<u32, CostEntry>, Error> {
-    let mut file = File::open(config_dir.join("sales.json"))?;
-    let sales: Vec<Sale> = serde_json::from_reader(&mut file)?;
+) -> Result<BTreeMap<u32, CostEntry>, ConfigError> {
+    let mut file = File::open(config_dir.join("sales.yaml"))?;
+    let sales: Vec<Sale> = serde_yaml::from_reader(&mut file)?;
     cost_map_from_sales(items, item_groups, sales)
 }
 
@@ -71,7 +81,7 @@ fn cost_map_from_sales(
     items: &BTreeMap<u32, ItemDefinition>,
     item_groups: &[ItemGroupDefinition],
     sales: Vec<Sale>,
-) -> Result<BTreeMap<u32, CostEntry>, Error> {
+) -> Result<BTreeMap<u32, CostEntry>, ConfigError> {
     let items_by_group = items_by_group(item_groups);
     let mut costs = BTreeMap::new();
 
@@ -94,16 +104,12 @@ fn cost_map_from_sales(
                 });
 
                 cost_entry.base = evaluate_cost_expression(
-                    sale.base_cost_expression
-                        .as_deref()
-                        .unwrap_or(DEFAULT_COST_EXPRESSION),
+                    &sale.base_cost_expression,
                     cost_entry.base,
                     *item_guid,
                 )?;
                 cost_entry.members = evaluate_cost_expression(
-                    sale.members_cost_expression
-                        .as_deref()
-                        .unwrap_or(DEFAULT_COST_EXPRESSION),
+                    &sale.members_cost_expression,
                     cost_entry.members,
                     *item_guid,
                 )?;

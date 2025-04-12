@@ -1,27 +1,29 @@
 use std::{
     collections::{BTreeMap, BTreeSet, HashMap},
     fs::File,
-    io::Error,
     iter,
     path::Path,
 };
 
 use parking_lot::RwLockReadGuard;
-use serde::Deserialize;
+use serde::{de::IgnoredAny, Deserialize};
 
-use crate::game_server::{
-    packets::{
-        client_update::Position,
-        command::SelectPlayer,
-        housing::BuildArea,
-        item::{ItemDefinition, WieldType},
-        login::{ClientBeginZoning, ZoneDetails},
-        player_update::Customization,
-        tunnel::TunneledPacket,
-        ui::{ExecuteScriptWithIntParams, ExecuteScriptWithStringParams},
-        GamePacket, Pos,
+use crate::{
+    game_server::{
+        packets::{
+            client_update::Position,
+            command::SelectPlayer,
+            housing::BuildArea,
+            item::{ItemDefinition, WieldType},
+            login::{ClientBeginZoning, ZoneDetails},
+            player_update::Customization,
+            tunnel::TunneledPacket,
+            ui::{ExecuteScriptWithIntParams, ExecuteScriptWithStringParams},
+            GamePacket, Pos,
+        },
+        Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
-    Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
+    ConfigError,
 };
 
 use super::{
@@ -54,7 +56,10 @@ const fn default_true() -> bool {
 }
 
 #[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct PointOfInterestConfig {
+    #[serde(default)]
+    pub comment: IgnoredAny,
     pub guid: u32,
     pub pos: Pos,
     pub rot: Pos,
@@ -65,7 +70,11 @@ pub struct PointOfInterestConfig {
 }
 
 #[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
 struct ZoneConfig {
+    #[serde(default)]
+    #[allow(dead_code)]
+    pub comment: IgnoredAny,
     guid: u8,
     max_players: u32,
     template_name: u32,
@@ -83,7 +92,6 @@ struct ZoneConfig {
     jump_height_multiplier: f32,
     gravity_multiplier: f32,
     doors: Vec<DoorConfig>,
-    interact_radius: f32,
     door_auto_interact_radius: f32,
     transports: Vec<TransportConfig>,
     ambient_npcs: Vec<AmbientNpcConfig>,
@@ -170,10 +178,10 @@ impl From<ZoneConfig> for ZoneTemplate {
                     synchronize_with: ambient_npc.base_npc.synchronize_with.clone(),
                     animation_id: ambient_npc.base_npc.active_animation_slot,
                     cursor: ambient_npc.base_npc.cursor,
+                    interact_radius: ambient_npc.base_npc.interact_radius,
                     is_spawned: ambient_npc.base_npc.is_spawned,
                     character_type: CharacterType::AmbientNpc(ambient_npc.into()),
                     mount_id: None,
-                    interact_radius: value.interact_radius,
                     auto_interact_radius: 0.0,
                     wield_type: WieldType::None,
                 });
@@ -193,10 +201,10 @@ impl From<ZoneConfig> for ZoneTemplate {
                     synchronize_with: door.base_npc.synchronize_with.clone(),
                     animation_id: door.base_npc.active_animation_slot,
                     cursor: door.base_npc.cursor,
+                    interact_radius: door.base_npc.interact_radius,
                     is_spawned: door.base_npc.is_spawned,
                     character_type: CharacterType::Door(door.into()),
                     mount_id: None,
-                    interact_radius: value.interact_radius,
                     auto_interact_radius: value.door_auto_interact_radius,
                     wield_type: WieldType::None,
                 });
@@ -216,10 +224,10 @@ impl From<ZoneConfig> for ZoneTemplate {
                     synchronize_with: transport.base_npc.synchronize_with.clone(),
                     animation_id: transport.base_npc.active_animation_slot,
                     cursor: transport.base_npc.cursor,
+                    interact_radius: transport.base_npc.interact_radius,
                     is_spawned: transport.base_npc.is_spawned,
                     character_type: CharacterType::Transport(transport.into()),
                     mount_id: None,
-                    interact_radius: value.interact_radius,
                     auto_interact_radius: 0.0,
                     wield_type: WieldType::None,
                 });
@@ -893,9 +901,9 @@ type LoadedZones = (
     GuidTable<u64, ZoneInstance, u8>,
     PointOfInterestMap,
 );
-pub fn load_zones(config_dir: &Path) -> Result<LoadedZones, Error> {
-    let mut file = File::open(config_dir.join("zones.json"))?;
-    let zone_configs: Vec<ZoneConfig> = serde_json::from_reader(&mut file)?;
+pub fn load_zones(config_dir: &Path) -> Result<LoadedZones, ConfigError> {
+    let mut file = File::open(config_dir.join("zones.yaml"))?;
+    let zone_configs: Vec<ZoneConfig> = serde_yaml::from_reader(&mut file)?;
 
     let mut templates = BTreeMap::new();
     let zones = GuidTable::new();
@@ -1129,6 +1137,7 @@ macro_rules! teleport_to_zone {
 }
 
 #[derive(Clone, Copy, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub enum DestinationZoneInstance {
     #[default]
     Same,

@@ -1,0 +1,151 @@
+---
+definitions:
+  - comment: Equipped Gear
+    guid: -2
+    name_id: 132
+    icon_set_id: 0
+    sort_order: -2
+    visible: true
+  - comment: Root
+    guid: -1
+    name_id: 0
+    icon_set_id: 0
+    sort_order: -1
+    visible: true
+  - comment: Portal
+    guid: 10
+    name_id: 0
+    icon_set_id: 0
+    sort_order: 10
+    visible: true
+  - comment: Gear
+    guid: 11
+    name_id: 1219
+    icon_set_id: 424
+    sort_order: 11
+    visible: true
+  - comment: Lightsaber Customization
+    guid: 12
+    name_id: 1220
+    icon_set_id: 1150
+    sort_order: 12
+    visible: true
+  - comment: Character Customization
+    guid: 13
+    name_id: 1221
+    icon_set_id: 1151
+    sort_order: 13
+    visible: true
+  - comment: Face Customization
+    guid: 18
+    name_id: 1226
+    icon_set_id: 668
+    sort_order: 18
+    visible: true
+  - comment: Species Customization
+    guid: 19
+    name_id: 1227
+    icon_set_id: 431
+    sort_order: 19
+    visible: true
+  - comment: Housing
+    guid: 65
+    name_id: 1222
+    icon_set_id: 0
+    sort_order: 65
+    visible: true
+  - comment: My Headgear
+    guid: 60
+    name_id: 1228
+    icon_set_id: 677
+    sort_order: 60
+    visible: true
+  - comment: My Clothes
+    guid: 61
+    name_id: 1229
+    icon_set_id: 673
+    sort_order: 61
+    visible: true
+  - comment: My Gloves
+    guid: 62
+    name_id: 1230
+    icon_set_id: 676
+    sort_order: 62
+    visible: true
+  - comment: My Shoes
+    guid: 63
+    name_id: 1231
+    icon_set_id: 680
+    sort_order: 63
+    visible: true
+  - comment: My Weapons
+    guid: 64
+    name_id: 1232
+    icon_set_id: 681
+    sort_order: 59
+    visible: true
+  - comment: My Gear
+    guid: 70
+    name_id: 1238
+    icon_set_id: 675
+    sort_order: 70
+    visible: true
+  - comment: Collections
+    guid: 90
+    name_id: 4321
+    icon_set_id: 2597
+    sort_order: 90
+    visible: true
+  - comment: Crates and Codes
+    guid: 96
+    name_id: 4485
+    icon_set_id: 2582
+    sort_order: 96
+    visible: true
+  - comment: Chairs
+    guid: 1000
+    name_id: 316
+    icon_set_id: 786
+    sort_order: 1000
+    visible: true
+  - comment: Tables
+    guid: 1001
+    name_id: 317
+    icon_set_id: 787
+    sort_order: 1001
+    visible: true
+relations:
+  - parent_guid: -1
+    child_guid: 10
+  - parent_guid: 10
+    child_guid: -2
+  - parent_guid: 10
+    child_guid: 12
+  - parent_guid: 10
+    child_guid: 13
+  - parent_guid: 10
+    child_guid: 70
+  - parent_guid: 70
+    child_guid: 11
+  - parent_guid: 10
+    child_guid: 90
+  - parent_guid: 10
+    child_guid: 96
+  - parent_guid: 11
+    child_guid: 60
+  - parent_guid: 11
+    child_guid: 61
+  - parent_guid: 11
+    child_guid: 62
+  - parent_guid: 11
+    child_guid: 63
+  - parent_guid: 11
+    child_guid: 64
+  - parent_guid: 13
+    child_guid: 18
+  - parent_guid: 13
+    child_guid: 19
+  - parent_guid: 65
+    child_guid: 1000
+  - parent_guid: 65
+    child_guid: 1001
