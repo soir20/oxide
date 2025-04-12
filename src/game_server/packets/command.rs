@@ -31,7 +31,7 @@ impl SerializePacket for CommandOpCode {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct InteractRequest {
-    pub guid: u64,
+    pub target: u64,
 }
 
 impl GamePacket for InteractRequest {
@@ -42,7 +42,7 @@ impl GamePacket for InteractRequest {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct MoveToInteract {
     pub destination: Pos,
-    pub guid: u64,
+    pub target: u64,
 }
 
 impl GamePacket for MoveToInteract {

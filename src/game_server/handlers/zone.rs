@@ -1245,27 +1245,26 @@ pub fn interact_with_character(
                         {
                             let mut broadcasts = Vec::new();
 
-                            let theta = (target_read_handle.stats.pos.z - requester_z)
+                            let interaction_angle = (target_read_handle.stats.pos.z - requester_z)
                                 .atan2(target_read_handle.stats.pos.x - requester_x);
 
                             let offset_distance = 2.2;
-                            let new_x =
-                                target_read_handle.stats.pos.x - offset_distance * theta.cos();
-                            let new_z =
-                                target_read_handle.stats.pos.z - offset_distance * theta.sin();
+                            let destination = Pos {
+                                x: target_read_handle.stats.pos.x
+                                    - offset_distance * interaction_angle.cos(),
+                                y: target_read_handle.stats.pos.y,
+                                z: target_read_handle.stats.pos.z
+                                    - offset_distance * interaction_angle.sin(),
+                                w: 1.0,
+                            };
 
                             broadcasts.push(Broadcast::Single(
                                 requester_guid,
                                 vec![GamePacket::serialize(&TunneledPacket {
                                     unknown1: true,
                                     inner: MoveToInteract {
-                                        destination: Pos {
-                                            x: new_x,
-                                            y: target_read_handle.stats.pos.y,
-                                            z: new_z,
-                                            w: 1.0,
-                                        },
-                                        guid: target,
+                                        destination,
+                                        target,
                                     },
                                 })?],
                             ));
