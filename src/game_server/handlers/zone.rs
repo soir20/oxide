@@ -178,9 +178,7 @@ impl From<ZoneConfig> for ZoneTemplate {
                     animation_id: ambient_npc.base_npc.active_animation_slot,
                     cursor: ambient_npc.base_npc.cursor,
                     interact_radius: ambient_npc.base_npc.interact_radius,
-                    auto_interact_radius: Some(
-                        ambient_npc.base_npc.auto_interact_radius.unwrap_or(0.0),
-                    ),
+                    auto_interact_radius: ambient_npc.base_npc.auto_interact_radius.unwrap_or(0.0),
                     move_to_interact_offset: ambient_npc.base_npc.move_to_interact_offset,
                     is_spawned: ambient_npc.base_npc.is_spawned,
                     character_type: CharacterType::AmbientNpc(ambient_npc.into()),
@@ -204,7 +202,7 @@ impl From<ZoneConfig> for ZoneTemplate {
                     animation_id: door.base_npc.active_animation_slot,
                     cursor: door.base_npc.cursor,
                     interact_radius: door.base_npc.interact_radius,
-                    auto_interact_radius: Some(door.base_npc.auto_interact_radius.unwrap_or(1.5)),
+                    auto_interact_radius: door.base_npc.auto_interact_radius.unwrap_or(1.5),
                     is_spawned: door.base_npc.is_spawned,
                     character_type: CharacterType::Door(door.into()),
                     mount_id: None,
@@ -228,9 +226,7 @@ impl From<ZoneConfig> for ZoneTemplate {
                     animation_id: transport.base_npc.active_animation_slot,
                     cursor: transport.base_npc.cursor,
                     interact_radius: transport.base_npc.interact_radius,
-                    auto_interact_radius: Some(
-                        transport.base_npc.auto_interact_radius.unwrap_or(0.0),
-                    ),
+                    auto_interact_radius: transport.base_npc.auto_interact_radius.unwrap_or(0.0),
                     move_to_interact_offset: transport.base_npc.move_to_interact_offset,
                     is_spawned: transport.base_npc.is_spawned,
                     character_type: CharacterType::Transport(transport.into()),
@@ -414,7 +410,7 @@ impl ZoneInstance {
                 None,
                 None,
                 0.0,
-                Some(0.0),
+                0.0,
                 0.0,
                 guid,
                 WieldType::None,
@@ -667,31 +663,29 @@ impl ZoneInstance {
         let mut characters_to_interact = Vec::new();
         for npc_guid in auto_interact_npcs {
             if let Some(npc_read_handle) = characters_read.get(npc_guid) {
-                if let Some(auto_interact_radius) = npc_read_handle.stats.auto_interact_radius {
-                    if auto_interact_radius > 0.0 {
-                        let distance_now = distance3(
-                            moved_character_write_handle.stats.pos.x,
-                            moved_character_write_handle.stats.pos.y,
-                            moved_character_write_handle.stats.pos.z,
-                            npc_read_handle.stats.pos.x,
-                            npc_read_handle.stats.pos.y,
-                            npc_read_handle.stats.pos.z,
-                        );
-                        let distance_before = distance3(
-                            previous_pos.x,
-                            previous_pos.y,
-                            previous_pos.z,
-                            npc_read_handle.stats.pos.x,
-                            npc_read_handle.stats.pos.y,
-                            npc_read_handle.stats.pos.z,
-                        );
+                if npc_read_handle.stats.auto_interact_radius > 0.0 {
+                    let distance_now = distance3(
+                        moved_character_write_handle.stats.pos.x,
+                        moved_character_write_handle.stats.pos.y,
+                        moved_character_write_handle.stats.pos.z,
+                        npc_read_handle.stats.pos.x,
+                        npc_read_handle.stats.pos.y,
+                        npc_read_handle.stats.pos.z,
+                    );
+                    let distance_before = distance3(
+                        previous_pos.x,
+                        previous_pos.y,
+                        previous_pos.z,
+                        npc_read_handle.stats.pos.x,
+                        npc_read_handle.stats.pos.y,
+                        npc_read_handle.stats.pos.z,
+                    );
 
-                        // Only trigger the interaction when the player first enters the radius
-                        if distance_now <= auto_interact_radius
-                            && distance_before > auto_interact_radius
-                        {
-                            characters_to_interact.push(npc_read_handle.guid());
-                        }
+                    // Only trigger the interaction when the player first enters the radius
+                    if distance_now <= npc_read_handle.stats.auto_interact_radius
+                        && distance_before > npc_read_handle.stats.auto_interact_radius
+                    {
+                        characters_to_interact.push(npc_read_handle.guid());
                     }
                 }
             }
