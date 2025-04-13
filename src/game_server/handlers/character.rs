@@ -397,7 +397,7 @@ impl TickableStep {
                     if character.is_spawned {
                         character.is_spawned = false;
                     }
-                    // Skip checking if the character is spawned before despawning it and instead check if it's state needs updating as OnFirstStepTick doesn't maintain states
+                    // Skip checking if the character is spawned before despawning it and instead check if its state needs updating as OnFirstStepTick doesn't maintain states
                     packets_for_all.extend(character.remove_packets(self.removal_mode)?);
                 }
                 SpawnedState::Keep => {}
