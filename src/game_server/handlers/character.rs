@@ -383,7 +383,8 @@ impl TickableStep {
             }
             SpawnedState::OnFirstStepTick => {
                 if !character.is_spawned {
-                    // Spawn the character without updating it's state to prevent it from being visible to players joining the room mid-step
+                    // Spawn the character without updating its state to prevent it from being visible
+                    // to players joining the room mid-step
                     packets_for_all.extend(character.add_packets(
                         true, // Override is_spawned
                         mount_configs,
@@ -396,7 +397,8 @@ impl TickableStep {
                 if character.is_spawned {
                     character.is_spawned = false;
                 }
-                // Skip checking if the character is spawned before despawning it and instead check if its state needs updating as OnFirstStepTick doesn't maintain states
+                // Skip checking if the character is spawned before despawning it and instead check if
+                // its state needs updating as OnFirstStepTick doesn't maintain states
                 packets_for_all.extend(character.remove_packets(self.removal_mode)?);
             }
             SpawnedState::Keep => {}
