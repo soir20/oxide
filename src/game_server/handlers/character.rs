@@ -667,9 +667,7 @@ impl TickableProcedure {
                 let time_since_last_step_change = now.saturating_duration_since(last_step_change);
                 let current_step = &mut self.steps[current_step_index];
 
-                if current_step.first_tick {
-                    current_step.first_tick = false;
-                }
+                current_step.first_tick = false;
 
                 time_since_last_step_change >= Duration::from_millis(current_step.duration_millis)
             } else {
