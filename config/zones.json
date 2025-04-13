@@ -110,7 +110,7 @@
                 "show_icon": false,
                 "large_icon": false,
                 "show_hover_description": false,
-				"tickable_procedures": {
+                "tickable_procedures": {
                     "arc_troopers_hologram": {
                         "steps": [
                             {
@@ -118,7 +118,9 @@
                                 "duration_millis": 10000
                             }
                         ],
-                        "next_possible_procedures": ["invisible"]
+                        "next_possible_procedures": [
+                            "invisible"
+                        ]
                     },
                     "battle_droid_hologram": {
                         "steps": [
@@ -127,7 +129,9 @@
                                 "duration_millis": 10000
                             }
                         ],
-                        "next_possible_procedures": ["invisible"]
+                        "next_possible_procedures": [
+                            "invisible"
+                        ]
                     },
                     "super_battle_droid_hologram": {
                         "steps": [
@@ -136,7 +140,9 @@
                                 "duration_millis": 10000
                             }
                         ],
-                        "next_possible_procedures": ["invisible"]
+                        "next_possible_procedures": [
+                            "invisible"
+                        ]
                     },
                     "droideka_hologram": {
                         "steps": [
@@ -146,7 +152,9 @@
                                 "duration_millis": 10000
                             }
                         ],
-                        "next_possible_procedures": ["invisible"]
+                        "next_possible_procedures": [
+                            "invisible"
+                        ]
                     },
                     "invisible": {
                         "steps": [
@@ -155,7 +163,12 @@
                                 "duration_millis": 5000
                             }
                         ],
-                        "next_possible_procedures": ["arc_troopers_hologram", "battle_droid_hologram", "super_battle_droid_hologram", "droideka_hologram"]
+                        "next_possible_procedures": [
+                            "arc_troopers_hologram",
+                            "battle_droid_hologram",
+                            "super_battle_droid_hologram",
+                            "droideka_hologram"
+                        ]
                     }
                 }
             },
@@ -928,7 +941,7 @@
                     "z": 0.0,
                     "w": 0.0
                 },
-				"tickable_procedures": {
+                "tickable_procedures": {
                     "arc_troopers_hologram": {
                         "steps": [
                             {
@@ -936,7 +949,9 @@
                                 "duration_millis": 10000
                             }
                         ],
-                        "next_possible_procedures": ["invisible"]
+                        "next_possible_procedures": [
+                            "invisible"
+                        ]
                     },
                     "battle_droid_hologram": {
                         "steps": [
@@ -945,7 +960,9 @@
                                 "duration_millis": 10000
                             }
                         ],
-                        "next_possible_procedures": ["invisible"]
+                        "next_possible_procedures": [
+                            "invisible"
+                        ]
                     },
                     "super_battle_droid_hologram": {
                         "steps": [
@@ -954,7 +971,9 @@
                                 "duration_millis": 10000
                             }
                         ],
-                        "next_possible_procedures": ["invisible"]
+                        "next_possible_procedures": [
+                            "invisible"
+                        ]
                     },
                     "droideka_hologram": {
                         "steps": [
@@ -964,7 +983,9 @@
                                 "duration_millis": 10000
                             }
                         ],
-                        "next_possible_procedures": ["invisible"]
+                        "next_possible_procedures": [
+                            "invisible"
+                        ]
                     },
                     "invisible": {
                         "steps": [
@@ -973,7 +994,12 @@
                                 "duration_millis": 5000
                             }
                         ],
-                        "next_possible_procedures": ["arc_troopers_hologram", "battle_droid_hologram", "super_battle_droid_hologram", "droideka_hologram"]
+                        "next_possible_procedures": [
+                            "arc_troopers_hologram",
+                            "battle_droid_hologram",
+                            "super_battle_droid_hologram",
+                            "droideka_hologram"
+                        ]
                     }
                 }
             },
@@ -1006,7 +1032,9 @@
                                 "duration_millis": 11500
                             }
                         ],
-                        "next_possible_procedures": ["remove"]
+                        "next_possible_procedures": [
+                            "remove"
+                        ]
                     },
                     "remove": {
                         "steps": [
@@ -1015,7 +1043,10 @@
                                 "duration_millis": 1000
                             }
                         ],
-                        "next_possible_procedures": ["spawn", "empty"]
+                        "next_possible_procedures": [
+                            "spawn",
+                            "empty"
+                        ]
                     },
                     "empty": {
                         "weight": 1259,
@@ -1024,11 +1055,14 @@
                                 "duration_millis": 1000
                             }
                         ],
-                        "next_possible_procedures": ["spawn", "empty"]
+                        "next_possible_procedures": [
+                            "spawn",
+                            "empty"
+                        ]
                     }
                 }
             },
-			{
+            {
                 "comment": "Purple Starfighter",
                 "model_id": 723,
                 "npc_type": 2,
@@ -1057,7 +1091,9 @@
                                 "duration_millis": 12500
                             }
                         ],
-                        "next_possible_procedures": ["remove"]
+                        "next_possible_procedures": [
+                            "remove"
+                        ]
                     },
                     "remove": {
                         "steps": [
@@ -1066,7 +1102,10 @@
                                 "duration_millis": 1000
                             }
                         ],
-                        "next_possible_procedures": ["spawn", "empty"]
+                        "next_possible_procedures": [
+                            "spawn",
+                            "empty"
+                        ]
                     },
                     "empty": {
                         "weight": 1259,
@@ -1075,7 +1114,10 @@
                                 "duration_millis": 1000
                             }
                         ],
-                        "next_possible_procedures": ["spawn", "empty"]
+                        "next_possible_procedures": [
+                            "spawn",
+                            "empty"
+                        ]
                     }
                 }
             },
