@@ -23,7 +23,6 @@
   jump_height_multiplier: 1
   gravity_multiplier: 1
   seconds_per_day: 10800
-  door_auto_interact_radius: 0
   doors: []
   transports:
     - comment: door
@@ -40,6 +39,8 @@
         z: 0
         w: 0
       cursor: 54
+      auto_interact_radius: 1.5
+      move_to_interact_offset: 0
       show_name: false
       show_icon: false
       large_icon: false
@@ -70,7 +71,6 @@
   gravity_multiplier: 1
   seconds_per_day: 10800
   map_id: 115
-  door_auto_interact_radius: 0
   doors: []
   transports:
     - comment: Holotable Holograms
@@ -171,7 +171,6 @@
   gravity_multiplier: 1
   seconds_per_day: 10800
   map_id: 104
-  door_auto_interact_radius: 0
   doors: []
   transports:
     - comment: holo table
@@ -261,7 +260,6 @@
   gravity_multiplier: 1
   seconds_per_day: 10800
   map_id: 113
-  door_auto_interact_radius: 0
   doors: []
   transports:
     - comment: holo table
@@ -327,7 +325,6 @@
   gravity_multiplier: 1
   seconds_per_day: 10800
   map_id: 128
-  door_auto_interact_radius: 0
   doors: []
   transports:
     - comment: holo table
@@ -387,7 +384,6 @@
   jump_height_multiplier: 1
   gravity_multiplier: 1
   seconds_per_day: 10800
-  door_auto_interact_radius: 1.5
   doors:
     - comment: Veranda -> Archives
       pos:
@@ -1184,7 +1180,6 @@
   jump_height_multiplier: 1
   gravity_multiplier: 1
   seconds_per_day: 10800
-  door_auto_interact_radius: 1.5
   doors:
     - comment: Construction Chamber -> Veranda
       pos:
@@ -1253,7 +1248,6 @@
   gravity_multiplier: 1
   seconds_per_day: 10800
   update_previous_location_on_leave: false
-  door_auto_interact_radius: 0
   doors: []
   transports:
     - comment: fighter
@@ -1301,7 +1295,6 @@
   gravity_multiplier: 1
   seconds_per_day: 10800
   update_previous_location_on_leave: false
-  door_auto_interact_radius: 0
   doors: []
   transports: []
   ambient_npcs: []

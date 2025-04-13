@@ -152,6 +152,7 @@ pub struct BaseNpcConfig {
     pub enable_interact_popup: bool,
     #[serde(default = "default_interact_radius")]
     pub interact_radius: f32,
+    pub auto_interact_radius: Option<f32>,
     pub interact_popup_radius: Option<f32>,
     #[serde(default = "default_move_to_interact_offset")]
     pub move_to_interact_offset: f32,
@@ -186,6 +187,7 @@ pub struct BaseNpc {
     pub name_offset_z: f32,
     pub enable_interact_popup: bool,
     pub interact_radius: f32,
+    pub auto_interact_radius: Option<f32>,
     pub interact_popup_radius: Option<f32>,
     pub show_name: bool,
     pub visible: bool,
@@ -324,6 +326,7 @@ impl From<BaseNpcConfig> for BaseNpc {
             name_offset_z: value.name_offset_z,
             enable_interact_popup: value.enable_interact_popup,
             interact_radius: value.interact_radius,
+            auto_interact_radius: value.auto_interact_radius,
             interact_popup_radius: value.interact_popup_radius,
             show_name: value.show_name,
             visible: value.visible,
@@ -1391,7 +1394,7 @@ pub struct NpcTemplate {
     pub mount_id: Option<u32>,
     pub cursor: Option<u8>,
     pub interact_radius: f32,
-    pub auto_interact_radius: f32,
+    pub auto_interact_radius: Option<f32>,
     pub move_to_interact_offset: f32,
     pub wield_type: WieldType,
     pub tickable_procedures: HashMap<String, TickableProcedureConfig>,
@@ -1486,7 +1489,7 @@ pub struct CharacterStats {
     pub character_type: CharacterType,
     pub mount_id: Option<u32>,
     pub interact_radius: f32,
-    pub auto_interact_radius: f32,
+    pub auto_interact_radius: Option<f32>,
     pub move_to_interact_offset: f32,
     pub instance_guid: u64,
     pub animation_id: i32,
@@ -1627,7 +1630,7 @@ impl
                     true => CharacterCategory::PlayerReady,
                     false => CharacterCategory::PlayerUnready,
                 },
-                _ => match self.stats.auto_interact_radius > 0.0 {
+                _ => match self.stats.auto_interact_radius > Some(0.0) {
                     true => CharacterCategory::NpcAutoInteractEnabled,
                     false => match self.tickable() {
                         true => CharacterCategory::NpcTickable,
@@ -1672,7 +1675,7 @@ impl Character {
         mount_id: Option<u32>,
         cursor: Option<u8>,
         interact_radius: f32,
-        auto_interact_radius: f32,
+        auto_interact_radius: Option<f32>,
         move_to_interact_offset: f32,
         instance_guid: u64,
         wield_type: WieldType,
@@ -1762,7 +1765,7 @@ impl Character {
                 cursor: None,
                 is_spawned: true,
                 interact_radius: 0.0,
-                auto_interact_radius: 0.0,
+                auto_interact_radius: None,
                 move_to_interact_offset: 2.2,
                 instance_guid,
                 wield_type: (wield_type, wield_type.holster()),
