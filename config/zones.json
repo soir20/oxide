@@ -90,9 +90,9 @@
         "doors": [],
         "transports": [
             {
-                "comment": "holo table",
+                "comment": "Holotable Holograms",
                 "name_id": 32914,
-                "model_id": 352,
+                "model_id": 44,
                 "pos": {
                     "x": 593.89545,
                     "y": 10.0,
@@ -109,7 +109,68 @@
                 "show_name": false,
                 "show_icon": false,
                 "large_icon": false,
-                "show_hover_description": false
+                "show_hover_description": false,
+                "tickable_procedures": {
+                    "arc_troopers_hologram": {
+                        "steps": [
+                            {
+                                "model_id": 354,
+                                "duration_millis": 10000
+                            }
+                        ],
+                        "next_possible_procedures": [
+                            "invisible"
+                        ]
+                    },
+                    "battle_droid_hologram": {
+                        "steps": [
+                            {
+                                "model_id": 352,
+                                "duration_millis": 10000
+                            }
+                        ],
+                        "next_possible_procedures": [
+                            "invisible"
+                        ]
+                    },
+                    "super_battle_droid_hologram": {
+                        "steps": [
+                            {
+                                "model_id": 351,
+                                "duration_millis": 10000
+                            }
+                        ],
+                        "next_possible_procedures": [
+                            "invisible"
+                        ]
+                    },
+                    "droideka_hologram": {
+                        "steps": [
+                            {
+                                "animation_id": 9002,
+                                "model_id": 350,
+                                "duration_millis": 10000
+                            }
+                        ],
+                        "next_possible_procedures": [
+                            "invisible"
+                        ]
+                    },
+                    "invisible": {
+                        "steps": [
+                            {
+                                "model_id": 44,
+                                "duration_millis": 5000
+                            }
+                        ],
+                        "next_possible_procedures": [
+                            "arc_troopers_hologram",
+                            "battle_droid_hologram",
+                            "super_battle_droid_hologram",
+                            "droideka_hologram"
+                        ]
+                    }
+                }
             },
             {
                 "comment": "fighter",
@@ -866,6 +927,83 @@
         ],
         "ambient_npcs": [
             {
+                "comment": "War Room Holotable Holograms",
+                "model_id": 44,
+                "pos": {
+                    "x": 707.52936,
+                    "y": 10.979759,
+                    "z": -5.1,
+                    "w": 1
+                },
+                "rot": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 0.0
+                },
+                "tickable_procedures": {
+                    "arc_troopers_hologram": {
+                        "steps": [
+                            {
+                                "model_id": 354,
+                                "duration_millis": 10000
+                            }
+                        ],
+                        "next_possible_procedures": [
+                            "invisible"
+                        ]
+                    },
+                    "battle_droid_hologram": {
+                        "steps": [
+                            {
+                                "model_id": 352,
+                                "duration_millis": 10000
+                            }
+                        ],
+                        "next_possible_procedures": [
+                            "invisible"
+                        ]
+                    },
+                    "super_battle_droid_hologram": {
+                        "steps": [
+                            {
+                                "model_id": 351,
+                                "duration_millis": 10000
+                            }
+                        ],
+                        "next_possible_procedures": [
+                            "invisible"
+                        ]
+                    },
+                    "droideka_hologram": {
+                        "steps": [
+                            {
+                                "animation_id": 9002,
+                                "model_id": 350,
+                                "duration_millis": 10000
+                            }
+                        ],
+                        "next_possible_procedures": [
+                            "invisible"
+                        ]
+                    },
+                    "invisible": {
+                        "steps": [
+                            {
+                                "model_id": 44,
+                                "duration_millis": 5000
+                            }
+                        ],
+                        "next_possible_procedures": [
+                            "arc_troopers_hologram",
+                            "battle_droid_hologram",
+                            "super_battle_droid_hologram",
+                            "droideka_hologram"
+                        ]
+                    }
+                }
+            },
+            {
                 "comment": "Green Starfighter",
                 "model_id": 721,
                 "npc_type": 2,
@@ -888,25 +1026,27 @@
                         "weight": 36,
                         "steps": [
                             {
-                                "spawned_state": true,
+                                "spawned_state": "OnFirstStepTick",
                                 "rail_id": 36,
-                                "duration_millis": 0
+                                "composite_effect_id": 1021,
+                                "duration_millis": 11500
                             }
                         ],
-                        "next_possible_procedures": ["remove"]
+                        "next_possible_procedures": [
+                            "remove"
+                        ]
                     },
                     "remove": {
                         "steps": [
                             {
-                                "composite_effect_id": 1021,
-                                "duration_millis": 11500
-                            },
-                            {
-                                "spawned_state": false,
+                                "spawned_state": "Despawn",
                                 "duration_millis": 1000
                             }
                         ],
-                        "next_possible_procedures": ["spawn", "empty"]
+                        "next_possible_procedures": [
+                            "spawn",
+                            "empty"
+                        ]
                     },
                     "empty": {
                         "weight": 1259,
@@ -915,11 +1055,14 @@
                                 "duration_millis": 1000
                             }
                         ],
-                        "next_possible_procedures": ["spawn", "empty"]
+                        "next_possible_procedures": [
+                            "spawn",
+                            "empty"
+                        ]
                     }
                 }
             },
-			{
+            {
                 "comment": "Purple Starfighter",
                 "model_id": 723,
                 "npc_type": 2,
@@ -942,25 +1085,27 @@
                         "weight": 36,
                         "steps": [
                             {
-                                "spawned_state": true,
+                                "spawned_state": "OnFirstStepTick",
                                 "rail_id": 37,
-                                "duration_millis": 0
+                                "composite_effect_id": 1021,
+                                "duration_millis": 12500
                             }
                         ],
-                        "next_possible_procedures": ["remove"]
+                        "next_possible_procedures": [
+                            "remove"
+                        ]
                     },
                     "remove": {
                         "steps": [
                             {
-                                "composite_effect_id": 1021,
-                                "duration_millis": 12500
-                            },
-                            {
-                                "spawned_state": false,
+                                "spawned_state": "Despawn",
                                 "duration_millis": 1000
                             }
                         ],
-                        "next_possible_procedures": ["spawn", "empty"]
+                        "next_possible_procedures": [
+                            "spawn",
+                            "empty"
+                        ]
                     },
                     "empty": {
                         "weight": 1259,
@@ -969,7 +1114,10 @@
                                 "duration_millis": 1000
                             }
                         ],
-                        "next_possible_procedures": ["spawn", "empty"]
+                        "next_possible_procedures": [
+                            "spawn",
+                            "empty"
+                        ]
                     }
                 }
             },

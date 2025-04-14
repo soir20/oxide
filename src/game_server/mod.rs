@@ -436,7 +436,7 @@ impl GameServer {
                                                     character_write_handle.stats.speed.base = zone.speed;
                                                     character_write_handle.stats.jump_height_multiplier.base = zone.jump_height_multiplier;
 
-                                                    let mut global_packets = character_write_handle.stats.add_packets(self.mounts(), self.items(), self.customizations())?;
+                                                    let mut global_packets = character_write_handle.stats.add_packets(false, self.mounts(), self.items(), self.customizations())?;
                                                     let wield_type = TunneledPacket {
                                                         unknown1: true,
                                                         inner: UpdateWieldType {

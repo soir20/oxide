@@ -19,7 +19,7 @@ use crate::game_server::{
             AddNotifications, AddNpc, AddPc, Customization, CustomizationSlot, Hostility, Icon,
             MoveOnRail, NameplateImage, NotificationData, NpcRelevance, PlayCompositeEffect,
             QueueAnimation, RemoveGracefully, RemoveStandard, SetAnimation, SingleNotification,
-            SingleNpcRelevance, UpdateSpeed,
+            SingleNpcRelevance, UpdateSpeed, UpdateTemporaryAppearance,
         },
         tunnel::TunneledPacket,
         ui::ExecuteScriptWithStringParams,
@@ -102,6 +102,15 @@ pub enum RemovalMode {
     },
 }
 
+#[derive(Clone, Copy, Default, Deserialize, PartialEq)]
+pub enum SpawnedState {
+    #[default]
+    Keep,
+    Always,
+    OnFirstStepTick,
+    Despawn,
+}
+
 #[derive(Clone, Deserialize)]
 pub struct BaseNpcConfig {
     pub key: Option<String>,
@@ -166,8 +175,12 @@ pub struct BaseNpc {
 }
 
 impl BaseNpc {
-    pub fn add_packets(&self, character: &CharacterStats) -> Option<(AddNpc, SingleNpcRelevance)> {
-        if !character.is_spawned {
+    pub fn add_packets(
+        &self,
+        character: &CharacterStats,
+        override_is_spawned: bool,
+    ) -> Option<(AddNpc, SingleNpcRelevance)> {
+        if !character.is_spawned && !override_is_spawned {
             return None;
         }
         Some((
@@ -318,6 +331,7 @@ pub struct TickableStep {
     pub animation_id: Option<i32>,
     pub one_shot_animation_id: Option<i32>,
     pub chat_message_id: Option<u32>,
+    pub model_id: Option<u32>,
     pub sound_id: Option<u32>,
     pub rail_id: Option<u32>,
     pub composite_effect_id: Option<u32>,
@@ -325,7 +339,8 @@ pub struct TickableStep {
     pub effect_delay_millis: u32,
     #[serde(default)]
     pub removal_mode: RemovalMode,
-    pub spawned_state: Option<bool>,
+    #[serde(default)]
+    pub spawned_state: SpawnedState,
     #[serde(default)]
     pub cursor: CursorUpdate,
     pub duration_millis: u64,
@@ -352,19 +367,47 @@ impl TickableStep {
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let mut packets_for_all = Vec::new();
 
-        if let Some(spawned_state) = self.spawned_state {
-            if character.is_spawned != spawned_state {
-                character.is_spawned = spawned_state;
-                if spawned_state {
+        match self.spawned_state {
+            SpawnedState::Always => {
+                if !character.is_spawned {
+                    character.is_spawned = true;
                     packets_for_all.extend(character.add_packets(
+                        false,
                         mount_configs,
                         item_definitions,
                         customizations,
                     )?);
-                } else {
-                    packets_for_all.extend(character.remove_packets(self.removal_mode)?);
                 }
             }
+            SpawnedState::OnFirstStepTick => {
+                if !character.is_spawned {
+                    // Spawn the character without updating its state to prevent it from being visible
+                    // to players joining the room mid-step
+                    packets_for_all.extend(character.add_packets(
+                        true, // Override is_spawned
+                        mount_configs,
+                        item_definitions,
+                        customizations,
+                    )?);
+                }
+            }
+            SpawnedState::Despawn => {
+                character.is_spawned = false;
+                // Skip checking if the character is spawned before despawning it and instead check if
+                // its state needs updating as OnFirstStepTick doesn't maintain states
+                packets_for_all.extend(character.remove_packets(self.removal_mode)?);
+            }
+            SpawnedState::Keep => {}
+        }
+
+        if let Some(model_id) = self.model_id {
+            packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: UpdateTemporaryAppearance {
+                    model_id,
+                    guid: Guid::guid(character),
+                },
+            })?);
         }
 
         if let Some(composite_effect_id) = self.composite_effect_id {
@@ -829,8 +872,11 @@ impl AmbientNpc {
     pub fn add_packets(
         &self,
         character: &CharacterStats,
+        override_is_spawned: bool,
     ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
-        let Some((add_npc, enable_interaction)) = self.base_npc.add_packets(character) else {
+        let Some((add_npc, enable_interaction)) =
+            self.base_npc.add_packets(character, override_is_spawned)
+        else {
             return Ok(Vec::new());
         };
         let packets = vec![
@@ -898,8 +944,10 @@ impl Door {
     pub fn add_packets(
         &self,
         character: &CharacterStats,
+        override_is_spawned: bool,
     ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
-        let Some((mut add_npc, mut enable_interaction)) = self.base_npc.add_packets(character)
+        let Some((mut add_npc, mut enable_interaction)) =
+            self.base_npc.add_packets(character, override_is_spawned)
         else {
             return Ok(Vec::new());
         };
@@ -964,8 +1012,11 @@ impl Transport {
     pub fn add_packets(
         &self,
         character: &CharacterStats,
+        override_is_spawned: bool,
     ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
-        let Some((mut add_npc, enable_interaction)) = self.base_npc.add_packets(character) else {
+        let Some((mut add_npc, enable_interaction)) =
+            self.base_npc.add_packets(character, override_is_spawned)
+        else {
             return Ok(Vec::new());
         };
         add_npc.hover_description = if self.show_hover_description {
@@ -1409,14 +1460,19 @@ pub struct CharacterStats {
 impl CharacterStats {
     pub fn add_packets(
         &self,
+        override_is_spawned: bool,
         mount_configs: &BTreeMap<u32, MountConfig>,
         item_definitions: &BTreeMap<u32, ItemDefinition>,
         customizations: &BTreeMap<u32, Customization>,
     ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
         let packets = match &self.character_type {
-            CharacterType::AmbientNpc(ambient_npc) => ambient_npc.add_packets(self)?,
-            CharacterType::Door(door) => door.add_packets(self)?,
-            CharacterType::Transport(transport) => transport.add_packets(self)?,
+            CharacterType::AmbientNpc(ambient_npc) => {
+                ambient_npc.add_packets(self, override_is_spawned)?
+            }
+            CharacterType::Door(door) => door.add_packets(self, override_is_spawned)?,
+            CharacterType::Transport(transport) => {
+                transport.add_packets(self, override_is_spawned)?
+            }
             CharacterType::Player(player) => {
                 player.add_packets(self, mount_configs, item_definitions, customizations)?
             }

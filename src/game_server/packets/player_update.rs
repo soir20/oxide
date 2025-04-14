@@ -22,12 +22,14 @@ pub enum PlayerUpdateOpCode {
     PlayCompositeEffect = 0x10,
     AddNotifications = 0xa,
     NpcRelevance = 0xc,
+    UpdateScale = 0xd,
     UpdateTemporaryAppearance = 0xe,
-    UpdateRemoveTemporaryAppearance = 0xf,
+    RemoveTemporaryAppearance = 0xf,
     UpdateCharacterState = 0x14,
     QueueAnimation = 0x16,
     UpdateSpeed = 0x17,
     LootEvent = 0x1d,
+    ProgressiveHeadScale = 0x1e,
     SlotCompositeEffectOverride = 0x1f,
     Freeze = 0x20,
     ItemDefinitionsRequest = 0x22,
@@ -148,6 +150,28 @@ impl GamePacket for AddPc {
     const HEADER: Self::Header = PlayerUpdateOpCode::AddPc;
 }
 
+#[derive(SerializePacket, DeserializePacket)]
+pub struct ProgressiveHeadScale {
+    pub guid: u64,
+    pub scale: f32,
+}
+
+impl GamePacket for ProgressiveHeadScale {
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::ProgressiveHeadScale;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct UpdateScale {
+    pub guid: u64,
+    pub scale: f32,
+}
+
+impl GamePacket for UpdateScale {
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::UpdateScale;
+}
+
 #[derive(Copy, Clone, Debug)]
 pub enum NameplateImage {
     None = 0,
@@ -260,20 +284,20 @@ impl GamePacket for SlotCompositeEffectOverride {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct UpdateRemoveTemporaryAppearance {
+pub struct RemoveTemporaryAppearance {
     guid: u64,
     model_id: u32,
 }
 
-impl GamePacket for UpdateRemoveTemporaryAppearance {
+impl GamePacket for RemoveTemporaryAppearance {
     type Header = PlayerUpdateOpCode;
-    const HEADER: Self::Header = PlayerUpdateOpCode::UpdateRemoveTemporaryAppearance;
+    const HEADER: Self::Header = PlayerUpdateOpCode::RemoveTemporaryAppearance;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct UpdateTemporaryAppearance {
-    model_id: u32,
-    guid: u64,
+    pub model_id: u32,
+    pub guid: u64,
 }
 
 impl GamePacket for UpdateTemporaryAppearance {
