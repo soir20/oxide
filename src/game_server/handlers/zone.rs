@@ -718,6 +718,13 @@ impl ZoneInstance {
                                 instance_guid,
                                 new_chunk,
                             ))
+                            .chain(
+                                characters_table_read_handle.keys_by_index1((
+                                    CharacterCategory::NpcAutoInteractTickable,
+                                    instance_guid,
+                                    new_chunk,
+                                ))
+                            )
                             .collect();
 
                         (Some(instance_guid), true, auto_interactable_npcs, vec![moved_character_guid])
@@ -799,6 +806,13 @@ impl ZoneInstance {
                                     instance_guid,
                                     new_chunk,
                                 ))
+                                .chain(
+                                    characters_table_write_handle.keys_by_index1((
+                                        CharacterCategory::NpcAutoInteractTickable,
+                                        instance_guid,
+                                        new_chunk,
+                                    ))
+                                )
                                 .collect();
                             for npc_guid in auto_interactable_npcs {
                                 if let Some(npc) = characters_table_write_handle.get(npc_guid) {
