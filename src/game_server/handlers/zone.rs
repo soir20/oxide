@@ -1,27 +1,29 @@
 use std::{
     collections::{BTreeMap, BTreeSet, HashMap},
     fs::File,
-    io::Error,
     iter,
     path::Path,
 };
 
 use parking_lot::RwLockReadGuard;
-use serde::Deserialize;
+use serde::{de::IgnoredAny, Deserialize};
 
-use crate::game_server::{
-    packets::{
-        client_update::Position,
-        command::SelectPlayer,
-        housing::BuildArea,
-        item::{ItemDefinition, WieldType},
-        login::{ClientBeginZoning, ZoneDetails},
-        player_update::Customization,
-        tunnel::TunneledPacket,
-        ui::{ExecuteScriptWithIntParams, ExecuteScriptWithStringParams},
-        GamePacket, Pos,
+use crate::{
+    game_server::{
+        packets::{
+            client_update::Position,
+            command::SelectPlayer,
+            housing::BuildArea,
+            item::{ItemDefinition, WieldType},
+            login::{ClientBeginZoning, ZoneDetails},
+            player_update::Customization,
+            tunnel::TunneledPacket,
+            ui::{ExecuteScriptWithIntParams, ExecuteScriptWithStringParams},
+            GamePacket, Pos,
+        },
+        Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
-    Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
+    ConfigError,
 };
 
 use super::{
@@ -54,7 +56,10 @@ const fn default_true() -> bool {
 }
 
 #[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct PointOfInterestConfig {
+    #[serde(default)]
+    pub comment: IgnoredAny,
     pub guid: u32,
     pub pos: Pos,
     pub rot: Pos,
@@ -65,7 +70,11 @@ pub struct PointOfInterestConfig {
 }
 
 #[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
 struct ZoneConfig {
+    #[serde(default)]
+    #[allow(dead_code)]
+    pub comment: IgnoredAny,
     guid: u8,
     max_players: u32,
     template_name: u32,
@@ -893,9 +902,9 @@ type LoadedZones = (
     GuidTable<u64, ZoneInstance, u8>,
     PointOfInterestMap,
 );
-pub fn load_zones(config_dir: &Path) -> Result<LoadedZones, Error> {
-    let mut file = File::open(config_dir.join("zones.json"))?;
-    let zone_configs: Vec<ZoneConfig> = serde_json::from_reader(&mut file)?;
+pub fn load_zones(config_dir: &Path) -> Result<LoadedZones, ConfigError> {
+    let mut file = File::open(config_dir.join("zones.yaml"))?;
+    let zone_configs: Vec<ZoneConfig> = serde_yaml::from_reader(&mut file)?;
 
     let mut templates = BTreeMap::new();
     let zones = GuidTable::new();
@@ -1129,6 +1138,7 @@ macro_rules! teleport_to_zone {
 }
 
 #[derive(Clone, Copy, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub enum DestinationZoneInstance {
     #[default]
     Same,

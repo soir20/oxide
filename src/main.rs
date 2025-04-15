@@ -4,6 +4,7 @@ use defer_lite::defer;
 use game_server::Broadcast;
 use parking_lot::{Mutex, MutexGuard, RwLock, RwLockReadGuard};
 use protocol::{BufferSize, DisconnectReason, MAX_BUFFER_SIZE};
+use serde::de::IgnoredAny;
 use serde::Deserialize;
 use std::cell::Cell;
 use std::env;
@@ -74,6 +75,24 @@ macro_rules! debug {
     ($($arg:tt)*) => {{
         $crate::log_debug(&format!($($arg)*))
     }};
+}
+
+#[derive(Debug)]
+pub enum ConfigError {
+    Io(Error),
+    Deserialize(serde_yaml::Error),
+}
+
+impl From<Error> for ConfigError {
+    fn from(value: Error) -> Self {
+        ConfigError::Io(value)
+    }
+}
+
+impl From<serde_yaml::Error> for ConfigError {
+    fn from(value: serde_yaml::Error) -> Self {
+        ConfigError::Deserialize(value)
+    }
 }
 
 #[tokio::main]
@@ -153,7 +172,10 @@ async fn main() {
 }
 
 #[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct ServerOptions {
+    #[serde(default)]
+    pub comment: IgnoredAny,
     pub bind_ip: IpAddr,
     pub udp_port: u16,
     pub https_port: u16,
@@ -207,9 +229,9 @@ impl ServerOptions {
     }
 }
 
-fn load_server_options(config_dir: &Path) -> Result<ServerOptions, Error> {
-    let mut file = File::open(config_dir.join("server.json"))?;
-    Ok(serde_json::from_reader(&mut file)?)
+fn load_server_options(config_dir: &Path) -> Result<ServerOptions, ConfigError> {
+    let mut file = File::open(config_dir.join("server.yaml"))?;
+    Ok(serde_yaml::from_reader(&mut file)?)
 }
 
 fn spawn_receive_threads(

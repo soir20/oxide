@@ -53,7 +53,7 @@ use packets::zone::PointOfInterestTeleportRequest;
 use packets::{GamePacket, OpCode};
 use rand::Rng;
 
-use crate::info;
+use crate::{info, ConfigError};
 use packet_serialize::{DeserializePacket, DeserializePacketError, SerializePacketError};
 
 mod handlers;
@@ -153,7 +153,7 @@ pub struct GameServer {
 }
 
 impl GameServer {
-    pub fn new(config_dir: &Path) -> Result<Self, Error> {
+    pub fn new(config_dir: &Path) -> Result<Self, ConfigError> {
         let characters = GuidTable::new();
         let (templates, zones, points_of_interest) = load_zones(config_dir)?;
         let item_definitions = load_item_definitions(config_dir)?;

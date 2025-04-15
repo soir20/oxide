@@ -1,0 +1,92 @@
+---
+- comment: Standard Reverse Single Saber
+  guid: 7
+  name_id: 0
+  icon_set_id: 0
+  wield_type: ReverseSingleSaber
+  stat_id: 0
+  battle_class_name_id: 0
+- comment: Standard Staff Saber
+  guid: 8
+  name_id: 0
+  icon_set_id: 0
+  wield_type: StaffSaber
+  stat_id: 0
+  battle_class_name_id: 0
+- comment: Standard Single Pistol
+  guid: 9
+  name_id: 0
+  icon_set_id: 0
+  wield_type: SinglePistol
+  stat_id: 0
+  battle_class_name_id: 0
+- comment: Standard Single Saber
+  guid: 10
+  name_id: 0
+  icon_set_id: 0
+  wield_type: SingleSaber
+  stat_id: 0
+  battle_class_name_id: 0
+- comment: Standard Rifle
+  guid: 10000
+  name_id: 0
+  icon_set_id: 0
+  wield_type: Rifle
+  stat_id: 0
+  battle_class_name_id: 0
+- comment: Standard Sniper Rifle
+  guid: 10001
+  name_id: 0
+  icon_set_id: 0
+  wield_type: SniperRifle
+  stat_id: 0
+  battle_class_name_id: 0
+- comment: Standard Rocket Launcher
+  guid: 10002
+  name_id: 0
+  icon_set_id: 0
+  wield_type: RocketLauncher
+  stat_id: 0
+  battle_class_name_id: 0
+- comment: Standard Flame Thrower
+  guid: 10003
+  name_id: 0
+  icon_set_id: 0
+  wield_type: FlameThrower
+  stat_id: 0
+  battle_class_name_id: 0
+- comment: Standard Staff
+  guid: 10004
+  name_id: 0
+  icon_set_id: 0
+  wield_type: Staff
+  stat_id: 0
+  battle_class_name_id: 0
+- comment: Standard Misc
+  guid: 10005
+  name_id: 0
+  icon_set_id: 0
+  wield_type: Misc
+  stat_id: 0
+  battle_class_name_id: 0
+- comment: Standard Bow
+  guid: 21
+  name_id: 0
+  icon_set_id: 0
+  wield_type: Bow
+  stat_id: 0
+  battle_class_name_id: 0
+- comment: Standard Sparklers
+  guid: 10007
+  name_id: 0
+  icon_set_id: 0
+  wield_type: Sparklers
+  stat_id: 0
+  battle_class_name_id: 0
+- comment: Standard Heavy Cannon
+  guid: 10008
+  name_id: 0
+  icon_set_id: 0
+  wield_type: HeavyCannon
+  stat_id: 0
+  battle_class_name_id: 0

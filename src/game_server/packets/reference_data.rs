@@ -2,7 +2,7 @@ use std::{collections::BTreeMap, io::Write};
 
 use byteorder::{LittleEndian, WriteBytesExt};
 use packet_serialize::{SerializePacket, SerializePacketError};
-use serde::Deserialize;
+use serde::{de::IgnoredAny, Deserialize};
 
 use super::{item::WieldType, GamePacket, OpCode};
 
@@ -23,7 +23,10 @@ impl SerializePacket for ReferenceDataOpCode {
 }
 
 #[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct ItemClassDefinition {
+    #[serde(default)]
+    pub comment: IgnoredAny,
     pub guid: i32,
     pub name_id: u32,
     pub icon_set_id: u32,
@@ -45,7 +48,7 @@ impl SerializePacket for ItemClassDefinition {
     }
 }
 
-#[derive(SerializePacket, Deserialize)]
+#[derive(SerializePacket)]
 pub struct ItemClassDefinitions {
     pub definitions: BTreeMap<i32, ItemClassDefinition>,
 }
@@ -57,7 +60,11 @@ impl GamePacket for ItemClassDefinitions {
 }
 
 #[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct CategoryDefinition {
+    #[serde(default)]
+    #[allow(dead_code)]
+    pub comment: IgnoredAny,
     pub guid: i32,
     pub name_id: u32,
     pub icon_set_id: u32,
@@ -78,7 +85,11 @@ impl SerializePacket for CategoryDefinition {
 }
 
 #[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct CategoryRelation {
+    #[serde(default)]
+    #[allow(dead_code)]
+    pub comment: IgnoredAny,
     pub parent_guid: i32,
     pub child_guid: i32,
 }
@@ -93,7 +104,10 @@ impl SerializePacket for CategoryRelation {
 }
 
 #[derive(Clone, Deserialize, SerializePacket)]
+#[serde(deny_unknown_fields)]
 pub struct CategoryDefinitions {
+    #[serde(default)]
+    pub comment: IgnoredAny,
     pub definitions: Vec<CategoryDefinition>,
     pub relations: Vec<CategoryRelation>,
 }
@@ -104,7 +118,11 @@ impl GamePacket for CategoryDefinitions {
 }
 
 #[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct ItemGroupItem {
+    #[serde(default)]
+    #[allow(dead_code)]
+    pub comment: IgnoredAny,
     pub guid: u32,
     pub unknown: u32,
 }
@@ -119,7 +137,10 @@ impl SerializePacket for ItemGroupItem {
 }
 
 #[derive(Deserialize, SerializePacket)]
+#[serde(deny_unknown_fields)]
 pub struct ItemGroupDefinition {
+    #[serde(default)]
+    pub comment: IgnoredAny,
     pub guid: i32,
     pub unknown2: i32,
     pub name_id: u32,
@@ -139,7 +160,6 @@ pub struct ItemGroupDefinition {
     pub items: Vec<ItemGroupItem>,
 }
 
-#[derive(Deserialize)]
 pub struct ItemGroupDefinitions {
     pub definitions: Vec<ItemGroupDefinition>,
 }

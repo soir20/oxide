@@ -5,7 +5,7 @@ use std::{
 
 use rand::thread_rng;
 use rand_distr::{Distribution, WeightedAliasIndex};
-use serde::Deserialize;
+use serde::{de::IgnoredAny, Deserialize};
 use strum::EnumIter;
 
 use crate::game_server::{
@@ -75,6 +75,7 @@ const fn default_weight() -> u32 {
 }
 
 #[derive(Clone, Default, Deserialize, Eq, PartialEq)]
+#[serde(deny_unknown_fields)]
 pub enum CursorUpdate {
     #[default]
     Keep,
@@ -85,6 +86,7 @@ pub enum CursorUpdate {
 }
 
 #[derive(Clone, Copy, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub enum RemovalMode {
     #[default]
     Immediate,
@@ -103,6 +105,7 @@ pub enum RemovalMode {
 }
 
 #[derive(Clone, Copy, Default, Deserialize, PartialEq)]
+#[serde(deny_unknown_fields)]
 pub enum SpawnedState {
     #[default]
     Keep,
@@ -112,7 +115,10 @@ pub enum SpawnedState {
 }
 
 #[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct BaseNpcConfig {
+    #[serde(default)]
+    pub comment: IgnoredAny,
     pub key: Option<String>,
     #[serde(default)]
     pub model_id: u32,
@@ -311,7 +317,10 @@ impl From<BaseNpcConfig> for BaseNpc {
 }
 
 #[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct TickableStep {
+    #[serde(default)]
+    pub comment: IgnoredAny,
     pub speed: Option<f32>,
     pub new_pos_x: Option<f32>,
     pub new_pos_y: Option<f32>,
@@ -575,7 +584,10 @@ impl TickableStep {
 }
 
 #[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct TickableProcedureConfig {
+    #[serde(default)]
+    pub comment: IgnoredAny,
     #[serde(default = "default_weight")]
     pub weight: u32,
     pub steps: Vec<TickableStep>,
@@ -856,7 +868,10 @@ impl TickableProcedureTracker {
 }
 
 #[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct AmbientNpcConfig {
+    #[serde(default)]
+    pub comment: IgnoredAny,
     #[serde(flatten)]
     pub base_npc: BaseNpcConfig,
     pub procedure_on_interact: Option<String>,
@@ -920,7 +935,10 @@ impl From<AmbientNpcConfig> for AmbientNpc {
 }
 
 #[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct DoorConfig {
+    #[serde(default)]
+    pub comment: IgnoredAny,
     #[serde(flatten)]
     pub base_npc: BaseNpcConfig,
     pub destination_pos: Pos,
@@ -992,7 +1010,10 @@ impl From<DoorConfig> for Door {
 }
 
 #[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct TransportConfig {
+    #[serde(default)]
+    pub comment: IgnoredAny,
     #[serde(flatten)]
     pub base_npc: BaseNpcConfig,
     pub show_icon: bool,

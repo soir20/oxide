@@ -3,11 +3,12 @@ use num_enum::TryFromPrimitive;
 use packet_serialize::{
     DeserializePacket, DeserializePacketError, SerializePacket, SerializePacketError,
 };
-use serde::Deserialize;
+use serde::{de::IgnoredAny, Deserialize};
 
 use super::{player_update::CustomizationSlot, GamePacket, OpCode};
 
 #[derive(Copy, Clone, Debug, Deserialize, PartialEq, Eq, PartialOrd, Ord, TryFromPrimitive)]
+#[serde(deny_unknown_fields)]
 #[repr(u32)]
 pub enum EquipmentSlot {
     None = 0,
@@ -71,6 +72,7 @@ impl DeserializePacket for EquipmentSlot {
 }
 
 #[derive(Copy, Clone, Debug, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub enum WieldType {
     None = 0,
     SingleSaber = 1,
@@ -143,14 +145,22 @@ pub struct Item {
 #[derive(Clone)]
 pub enum MarketData {
     None,
+    #[allow(dead_code)]
     Some(u64, u32, u32),
 }
 
 #[derive(Clone, Deserialize, SerializePacket)]
-pub struct ItemStat {}
+#[serde(deny_unknown_fields)]
+pub struct ItemStat {
+    #[serde(default)]
+    pub comment: IgnoredAny,
+}
 
 #[derive(Clone, Deserialize, SerializePacket)]
+#[serde(deny_unknown_fields)]
 pub struct ItemAbility {
+    #[serde(default)]
+    pub comment: IgnoredAny,
     unknown1: u32,
     unknown2: u32,
     unknown3: u32,
@@ -161,7 +171,10 @@ pub struct ItemAbility {
 }
 
 #[derive(Clone, Deserialize, SerializePacket)]
+#[serde(deny_unknown_fields)]
 pub struct ItemDefinition {
+    #[serde(default)]
+    pub comment: IgnoredAny,
     pub guid: u32,
     pub name_id: u32,
     pub description_id: u32,
