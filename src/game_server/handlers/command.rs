@@ -1,4 +1,4 @@
-use std::io::Cursor;
+use std::io::{Cursor, Read};
 
 use byteorder::{LittleEndian, ReadBytesExt};
 use packet_serialize::DeserializePacket;
@@ -21,14 +21,25 @@ pub fn process_command(
                 let req = SelectPlayer::deserialize(cursor)?;
                 interact_with_character(req, game_server)
             }
-            _ => Err(ProcessPacketError::new(
-                ProcessPacketErrorType::UnknownOpCode,
-                format!("Unimplemented command: {:?}", op_code),
-            )),
+            _ => {
+                let mut buffer = Vec::new();
+                cursor.read_to_end(&mut buffer)?;
+                Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::UnknownOpCode,
+                    format!(
+                        "Unimplemented command packet: {}, {:x?}",
+                        raw_op_code, buffer
+                    ),
+                ))
+            }
         },
-        Err(_) => Err(ProcessPacketError::new(
-            ProcessPacketErrorType::UnknownOpCode,
-            format!("Unknown command: {}", raw_op_code),
-        )),
+        Err(_) => {
+            let mut buffer = Vec::new();
+            cursor.read_to_end(&mut buffer)?;
+            Err(ProcessPacketError::new(
+                ProcessPacketErrorType::UnknownOpCode,
+                format!("Unknown command packet: {}, {:x?}", raw_op_code, buffer),
+            ))
+        }
     }
 }
