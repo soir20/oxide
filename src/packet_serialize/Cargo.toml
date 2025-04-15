@@ -6,3 +6,4 @@ edition = "2021"
 [dependencies]
 byteorder = "1.5.0"
 packet_serialize_derive = { path = "../packet_serialize_derive" }
+serde = "1.0.196"

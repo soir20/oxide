@@ -6,7 +6,7 @@ use std::{
 };
 
 use parking_lot::RwLockReadGuard;
-use serde::Deserialize;
+use serde::{de::IgnoredAny, Deserialize};
 
 use crate::{
     game_server::{
@@ -56,7 +56,10 @@ const fn default_true() -> bool {
 }
 
 #[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct PointOfInterestConfig {
+    #[serde(default)]
+    pub comment: IgnoredAny,
     pub guid: u32,
     pub pos: Pos,
     pub rot: Pos,
@@ -67,7 +70,11 @@ pub struct PointOfInterestConfig {
 }
 
 #[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
 struct ZoneConfig {
+    #[serde(default)]
+    #[allow(dead_code)]
+    pub comment: IgnoredAny,
     guid: u8,
     max_players: u32,
     template_name: u32,
@@ -1131,6 +1138,7 @@ macro_rules! teleport_to_zone {
 }
 
 #[derive(Clone, Copy, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub enum DestinationZoneInstance {
     #[default]
     Same,

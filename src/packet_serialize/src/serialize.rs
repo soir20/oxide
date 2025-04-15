@@ -1,5 +1,6 @@
 use crate::{LengthlessVec, NullTerminatedString};
 use byteorder::{LittleEndian, WriteBytesExt};
+use serde::de::IgnoredAny;
 use std::{
     collections::BTreeMap,
     io::{Error, Write},
@@ -161,6 +162,12 @@ impl<K, V: SerializePacket> SerializePacket for BTreeMap<K, V> {
             SerializePacket::serialize(value, buffer)?;
         }
 
+        Ok(())
+    }
+}
+
+impl SerializePacket for IgnoredAny {
+    fn serialize(&self, _: &mut Vec<u8>) -> Result<(), SerializePacketError> {
         Ok(())
     }
 }

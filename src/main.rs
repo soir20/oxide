@@ -4,6 +4,7 @@ use defer_lite::defer;
 use game_server::Broadcast;
 use parking_lot::{Mutex, MutexGuard, RwLock, RwLockReadGuard};
 use protocol::{BufferSize, DisconnectReason, MAX_BUFFER_SIZE};
+use serde::de::IgnoredAny;
 use serde::Deserialize;
 use std::cell::Cell;
 use std::env;
@@ -171,7 +172,10 @@ async fn main() {
 }
 
 #[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct ServerOptions {
+    #[serde(default)]
+    pub comment: IgnoredAny,
     pub bind_ip: IpAddr,
     pub udp_port: u16,
     pub https_port: u16,

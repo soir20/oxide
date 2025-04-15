@@ -12,7 +12,7 @@ use byteorder::ReadBytesExt;
 use evalexpr::{context_map, eval_with_context, Value};
 use num_enum::TryFromPrimitive;
 use packet_serialize::DeserializePacket;
-use serde::Deserialize;
+use serde::{de::IgnoredAny, Deserialize};
 
 use crate::{
     game_server::{
@@ -96,12 +96,16 @@ impl PlayerMinigameStats {
 }
 
 #[derive(Clone, Copy, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct StageLocator {
+    #[serde(default)]
+    pub comment: IgnoredAny,
     pub stage_group_guid: i32,
     pub stage_guid: i32,
 }
 
 #[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub enum MinigameType {
     Flash { game_swf_name: String },
     SaberStrike { saber_strike_stage_id: u32 },
@@ -132,7 +136,10 @@ const CHALLENGE_LINK_NAME: &str = "challenge";
 const GROUP_LINK_NAME: &str = "group";
 
 #[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct MinigameChallengeConfig {
+    #[serde(default)]
+    pub comment: IgnoredAny,
     pub guid: i32,
     pub name_id: u32,
     pub description_id: u32,
@@ -219,7 +226,10 @@ impl MinigameChallengeConfig {
 }
 
 #[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct MinigameCampaignStageConfig {
+    #[serde(default)]
+    pub comment: IgnoredAny,
     pub guid: i32,
     pub name_id: u32,
     pub description_id: u32,
@@ -312,6 +322,7 @@ impl MinigameCampaignStageConfig {
 }
 
 #[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
 pub enum MinigameStageGroupChild {
     StageGroup(Arc<MinigameStageGroupConfig>),
     Stage(MinigameCampaignStageConfig),
@@ -326,7 +337,10 @@ const fn default_matchmaking_timeout_millis() -> u32 {
 }
 
 #[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct MinigameStageGroupConfig {
+    #[serde(default)]
+    pub comment: IgnoredAny,
     pub guid: i32,
     pub name_id: u32,
     pub description_id: u32,
@@ -528,7 +542,10 @@ impl MinigameStageGroupConfig {
 }
 
 #[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct MinigamePortalEntryConfig {
+    #[serde(default)]
+    pub comment: IgnoredAny,
     pub guid: u32,
     pub name_id: u32,
     pub description_id: u32,
@@ -587,7 +604,10 @@ impl MinigamePortalEntryConfig {
 }
 
 #[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct MinigamePortalCategoryConfig {
+    #[serde(default)]
+    pub comment: IgnoredAny,
     pub guid: u32,
     pub name_id: u32,
     pub icon_id: u32,
