@@ -1,12 +1,14 @@
-use std::{collections::BTreeMap, fs::File, io::Error, path::Path};
+use std::{collections::BTreeMap, fs::File, path::Path};
 
-use crate::game_server::packets::item::ItemDefinition;
+use crate::{game_server::packets::item::ItemDefinition, ConfigError};
 
 pub const SABER_ITEM_TYPE: u32 = 25;
 
-pub fn load_item_definitions(config_dir: &Path) -> Result<BTreeMap<u32, ItemDefinition>, Error> {
+pub fn load_item_definitions(
+    config_dir: &Path,
+) -> Result<BTreeMap<u32, ItemDefinition>, ConfigError> {
     let mut file = File::open(config_dir.join("items.json"))?;
-    let item_defs: Vec<ItemDefinition> = serde_json::from_reader(&mut file)?;
+    let item_defs: Vec<ItemDefinition> = serde_yaml::from_reader(&mut file)?;
 
     let mut item_def_map = BTreeMap::new();
     for item_def in item_defs {

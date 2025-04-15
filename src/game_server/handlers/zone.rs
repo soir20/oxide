@@ -1,7 +1,6 @@
 use std::{
     collections::{BTreeMap, BTreeSet, HashMap},
     fs::File,
-    io::Error,
     iter,
     path::Path,
 };
@@ -9,19 +8,22 @@ use std::{
 use parking_lot::RwLockReadGuard;
 use serde::Deserialize;
 
-use crate::game_server::{
-    packets::{
-        client_update::Position,
-        command::SelectPlayer,
-        housing::BuildArea,
-        item::{ItemDefinition, WieldType},
-        login::{ClientBeginZoning, ZoneDetails},
-        player_update::Customization,
-        tunnel::TunneledPacket,
-        ui::{ExecuteScriptWithIntParams, ExecuteScriptWithStringParams},
-        GamePacket, Pos,
+use crate::{
+    game_server::{
+        packets::{
+            client_update::Position,
+            command::SelectPlayer,
+            housing::BuildArea,
+            item::{ItemDefinition, WieldType},
+            login::{ClientBeginZoning, ZoneDetails},
+            player_update::Customization,
+            tunnel::TunneledPacket,
+            ui::{ExecuteScriptWithIntParams, ExecuteScriptWithStringParams},
+            GamePacket, Pos,
+        },
+        Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
-    Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
+    ConfigError,
 };
 
 use super::{
@@ -893,9 +895,9 @@ type LoadedZones = (
     GuidTable<u64, ZoneInstance, u8>,
     PointOfInterestMap,
 );
-pub fn load_zones(config_dir: &Path) -> Result<LoadedZones, Error> {
+pub fn load_zones(config_dir: &Path) -> Result<LoadedZones, ConfigError> {
     let mut file = File::open(config_dir.join("zones.json"))?;
-    let zone_configs: Vec<ZoneConfig> = serde_json::from_reader(&mut file)?;
+    let zone_configs: Vec<ZoneConfig> = serde_yaml::from_reader(&mut file)?;
 
     let mut templates = BTreeMap::new();
     let zones = GuidTable::new();

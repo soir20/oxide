@@ -40,7 +40,7 @@ use crate::{
         },
         Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
-    info, teleport_to_zone,
+    info, teleport_to_zone, ConfigError,
 };
 
 use super::{
@@ -924,9 +924,9 @@ impl From<Vec<MinigamePortalCategoryConfig>> for AllMinigameConfigs {
     }
 }
 
-pub fn load_all_minigames(config_dir: &Path) -> Result<AllMinigameConfigs, Error> {
+pub fn load_all_minigames(config_dir: &Path) -> Result<AllMinigameConfigs, ConfigError> {
     let mut file = File::open(config_dir.join("minigames.json"))?;
-    let configs: Vec<MinigamePortalCategoryConfig> = serde_json::from_reader(&mut file)?;
+    let configs: Vec<MinigamePortalCategoryConfig> = serde_yaml::from_reader(&mut file)?;
     Ok(configs.into())
 }
 

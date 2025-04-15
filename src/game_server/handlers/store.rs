@@ -14,7 +14,7 @@ use crate::{
         reference_data::ItemGroupDefinition,
         store::{StoreItem, StoreItemList},
     },
-    info,
+    info, ConfigError,
 };
 
 const DEFAULT_COST_EXPRESSION: &str = "x";
@@ -35,9 +35,9 @@ pub fn load_cost_map(
     config_dir: &Path,
     items: &BTreeMap<u32, ItemDefinition>,
     item_groups: &[ItemGroupDefinition],
-) -> Result<BTreeMap<u32, CostEntry>, Error> {
+) -> Result<BTreeMap<u32, CostEntry>, ConfigError> {
     let mut file = File::open(config_dir.join("sales.json"))?;
-    let sales: Vec<Sale> = serde_json::from_reader(&mut file)?;
+    let sales: Vec<Sale> = serde_yaml::from_reader(&mut file)?;
     cost_map_from_sales(items, item_groups, sales)
 }
 
@@ -71,7 +71,7 @@ fn cost_map_from_sales(
     items: &BTreeMap<u32, ItemDefinition>,
     item_groups: &[ItemGroupDefinition],
     sales: Vec<Sale>,
-) -> Result<BTreeMap<u32, CostEntry>, Error> {
+) -> Result<BTreeMap<u32, CostEntry>, ConfigError> {
     let items_by_group = items_by_group(item_groups);
     let mut costs = BTreeMap::new();
 

@@ -17,7 +17,7 @@ num_enum = "0.7.2"
 parking_lot = "0.12.1"
 rand = "0.8.5"
 rand_distr = "0.4.3"
-serde_json = "1.0.1"
+serde_yaml = "0.9.34"
 serde = { version = "1.0.196", features = ["derive", "rc"] }
 strum = { version = "0.26.2", features = ["derive"] }
 tokio = { version = "1.38.0", features = ["fs", "io-util", "rt", "rt-multi-thread", "macros"] }

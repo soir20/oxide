@@ -76,6 +76,24 @@ macro_rules! debug {
     }};
 }
 
+#[derive(Debug)]
+pub enum ConfigError {
+    Io(Error),
+    Deserialize(serde_yaml::Error),
+}
+
+impl From<Error> for ConfigError {
+    fn from(value: Error) -> Self {
+        ConfigError::Io(value)
+    }
+}
+
+impl From<serde_yaml::Error> for ConfigError {
+    fn from(value: serde_yaml::Error) -> Self {
+        ConfigError::Deserialize(value)
+    }
+}
+
 #[tokio::main]
 async fn main() {
     let config_dir = Path::new("config");
@@ -207,9 +225,9 @@ impl ServerOptions {
     }
 }
 
-fn load_server_options(config_dir: &Path) -> Result<ServerOptions, Error> {
+fn load_server_options(config_dir: &Path) -> Result<ServerOptions, ConfigError> {
     let mut file = File::open(config_dir.join("server.json"))?;
-    Ok(serde_json::from_reader(&mut file)?)
+    Ok(serde_yaml::from_reader(&mut file)?)
 }
 
 fn spawn_receive_threads(

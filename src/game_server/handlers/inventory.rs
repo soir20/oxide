@@ -1,10 +1,4 @@
-use std::{
-    collections::BTreeMap,
-    fs::File,
-    io::{Cursor, Error},
-    iter,
-    path::Path,
-};
+use std::{collections::BTreeMap, fs::File, io::Cursor, iter, path::Path};
 
 use byteorder::{LittleEndian, ReadBytesExt};
 use packet_serialize::DeserializePacket;
@@ -29,7 +23,7 @@ use crate::{
         },
         Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
-    info,
+    info, ConfigError,
 };
 
 use super::{
@@ -50,18 +44,18 @@ pub struct DefaultSaber {
     color_item_guid: u32,
 }
 
-pub fn load_default_sabers(config_dir: &Path) -> Result<BTreeMap<u32, DefaultSaber>, Error> {
+pub fn load_default_sabers(config_dir: &Path) -> Result<BTreeMap<u32, DefaultSaber>, ConfigError> {
     let mut file = File::open(config_dir.join("default_sabers.json"))?;
-    let default_sabers: Vec<DefaultSaber> = serde_json::from_reader(&mut file)?;
+    let default_sabers: Vec<DefaultSaber> = serde_yaml::from_reader(&mut file)?;
     Ok(default_sabers
         .into_iter()
         .map(|saber| (saber.hilt_item_guid, saber))
         .collect())
 }
 
-pub fn load_customizations(config_dir: &Path) -> Result<BTreeMap<u32, Customization>, Error> {
+pub fn load_customizations(config_dir: &Path) -> Result<BTreeMap<u32, Customization>, ConfigError> {
     let mut file = File::open(config_dir.join("customizations.json"))?;
-    let customizations: Vec<Customization> = serde_json::from_reader(&mut file)?;
+    let customizations: Vec<Customization> = serde_yaml::from_reader(&mut file)?;
     Ok(customizations
         .into_iter()
         .map(|customization: Customization| (customization.guid, customization))
@@ -70,9 +64,9 @@ pub fn load_customizations(config_dir: &Path) -> Result<BTreeMap<u32, Customizat
 
 pub fn load_customization_item_mappings(
     config_dir: &Path,
-) -> Result<BTreeMap<u32, Vec<u32>>, Error> {
+) -> Result<BTreeMap<u32, Vec<u32>>, ConfigError> {
     let mut file = File::open(config_dir.join("customization_item_mappings.json"))?;
-    Ok(serde_json::from_reader(&mut file)?)
+    Ok(serde_yaml::from_reader(&mut file)?)
 }
 
 pub fn process_inventory_packet(

@@ -1,25 +1,23 @@
-use std::{
-    collections::BTreeMap,
-    fs::File,
-    io::{Cursor, Error},
-    path::Path,
-};
+use std::{collections::BTreeMap, fs::File, io::Cursor, path::Path};
 
 use byteorder::ReadBytesExt;
 use packet_serialize::DeserializePacket;
 use parking_lot::{RwLockReadGuard, RwLockWriteGuard};
 use serde::Deserialize;
 
-use crate::game_server::{
-    packets::{
-        client_update::{Stat, StatId, Stats},
-        item::{BaseAttachmentGroup, WieldType},
-        mount::{DismountReply, MountOpCode, MountReply, MountSpawn},
-        player_update::{AddNpc, Hostility, Icon, RemoveGracefully, UpdateSpeed},
-        tunnel::TunneledPacket,
-        Effect, GamePacket, Pos, Target,
+use crate::{
+    game_server::{
+        packets::{
+            client_update::{Stat, StatId, Stats},
+            item::{BaseAttachmentGroup, WieldType},
+            mount::{DismountReply, MountOpCode, MountReply, MountSpawn},
+            player_update::{AddNpc, Hostility, Icon, RemoveGracefully, UpdateSpeed},
+            tunnel::TunneledPacket,
+            Effect, GamePacket, Pos, Target,
+        },
+        Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
-    Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
+    ConfigError,
 };
 
 use super::{
@@ -53,9 +51,9 @@ impl Guid<u32> for MountConfig {
     }
 }
 
-pub fn load_mounts(config_dir: &Path) -> Result<BTreeMap<u32, MountConfig>, Error> {
+pub fn load_mounts(config_dir: &Path) -> Result<BTreeMap<u32, MountConfig>, ConfigError> {
     let mut file = File::open(config_dir.join("mounts.json"))?;
-    let mounts: Vec<MountConfig> = serde_json::from_reader(&mut file)?;
+    let mounts: Vec<MountConfig> = serde_yaml::from_reader(&mut file)?;
 
     let mut mount_table = BTreeMap::new();
     for mount in mounts {
