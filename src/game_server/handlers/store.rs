@@ -19,6 +19,10 @@ use crate::{
 
 const DEFAULT_COST_EXPRESSION: &str = "x";
 
+fn default_cost_expression() -> String {
+    DEFAULT_COST_EXPRESSION.to_string()
+}
+
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 struct Sale {
@@ -26,8 +30,10 @@ struct Sale {
     #[allow(dead_code)]
     pub comment: IgnoredAny,
     item_group_guid: i32,
-    base_cost_expression: Option<String>,
-    members_cost_expression: Option<String>,
+    #[serde(default = "default_cost_expression")]
+    base_cost_expression: String,
+    #[serde(default = "default_cost_expression")]
+    members_cost_expression: String,
 }
 
 pub struct CostEntry {
@@ -98,16 +104,12 @@ fn cost_map_from_sales(
                 });
 
                 cost_entry.base = evaluate_cost_expression(
-                    sale.base_cost_expression
-                        .as_deref()
-                        .unwrap_or(DEFAULT_COST_EXPRESSION),
+                    &sale.base_cost_expression,
                     cost_entry.base,
                     *item_guid,
                 )?;
                 cost_entry.members = evaluate_cost_expression(
-                    sale.members_cost_expression
-                        .as_deref()
-                        .unwrap_or(DEFAULT_COST_EXPRESSION),
+                    &sale.members_cost_expression,
                     cost_entry.members,
                     *item_guid,
                 )?;
