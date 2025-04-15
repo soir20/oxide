@@ -1,3 +1,4 @@
+---
 bind_ip: 127.0.0.1
 udp_port: 20225
 https_port: 4000

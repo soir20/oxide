@@ -1,3 +1,4 @@
+---
 - item_group_guid: 122
   members_cost_expression: 'max(0.9*x - 1, 0.0)'
 - item_group_guid: 123
