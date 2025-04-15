@@ -36,7 +36,7 @@ pub fn load_cost_map(
     items: &BTreeMap<u32, ItemDefinition>,
     item_groups: &[ItemGroupDefinition],
 ) -> Result<BTreeMap<u32, CostEntry>, ConfigError> {
-    let mut file = File::open(config_dir.join("sales.json"))?;
+    let mut file = File::open(config_dir.join("sales.yaml"))?;
     let sales: Vec<Sale> = serde_yaml::from_reader(&mut file)?;
     cost_map_from_sales(items, item_groups, sales)
 }

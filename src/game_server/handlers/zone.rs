@@ -896,7 +896,7 @@ type LoadedZones = (
     PointOfInterestMap,
 );
 pub fn load_zones(config_dir: &Path) -> Result<LoadedZones, ConfigError> {
-    let mut file = File::open(config_dir.join("zones.json"))?;
+    let mut file = File::open(config_dir.join("zones.yaml"))?;
     let zone_configs: Vec<ZoneConfig> = serde_yaml::from_reader(&mut file)?;
 
     let mut templates = BTreeMap::new();

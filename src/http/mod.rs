@@ -29,7 +29,7 @@ struct Manifest {
 }
 
 async fn read_manifests_config(config_dir: &std::path::Path) -> Result<Vec<Manifest>, ConfigError> {
-    let manifests_data = read(config_dir.join("manifests.json")).await?;
+    let manifests_data = read(config_dir.join("manifests.yaml")).await?;
     let manifests: Vec<PathBuf> = serde_yaml::from_slice(&manifests_data)?;
     Ok(manifests
         .into_iter()

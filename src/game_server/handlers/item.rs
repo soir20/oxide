@@ -7,7 +7,7 @@ pub const SABER_ITEM_TYPE: u32 = 25;
 pub fn load_item_definitions(
     config_dir: &Path,
 ) -> Result<BTreeMap<u32, ItemDefinition>, ConfigError> {
-    let mut file = File::open(config_dir.join("items.json"))?;
+    let mut file = File::open(config_dir.join("items.yaml"))?;
     let item_defs: Vec<ItemDefinition> = serde_yaml::from_reader(&mut file)?;
 
     let mut item_def_map = BTreeMap::new();

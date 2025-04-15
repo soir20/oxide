@@ -52,7 +52,7 @@ impl Guid<u32> for MountConfig {
 }
 
 pub fn load_mounts(config_dir: &Path) -> Result<BTreeMap<u32, MountConfig>, ConfigError> {
-    let mut file = File::open(config_dir.join("mounts.json"))?;
+    let mut file = File::open(config_dir.join("mounts.yaml"))?;
     let mounts: Vec<MountConfig> = serde_yaml::from_reader(&mut file)?;
 
     let mut mount_table = BTreeMap::new();

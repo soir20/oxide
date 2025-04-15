@@ -226,7 +226,7 @@ impl ServerOptions {
 }
 
 fn load_server_options(config_dir: &Path) -> Result<ServerOptions, ConfigError> {
-    let mut file = File::open(config_dir.join("server.json"))?;
+    let mut file = File::open(config_dir.join("server.yaml"))?;
     Ok(serde_yaml::from_reader(&mut file)?)
 }
 

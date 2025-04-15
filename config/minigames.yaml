@@ -1,0 +1,4438 @@
+- comment: Popular
+  guid: 1
+  name_id: 51596
+  icon_id: 5808
+  sort_order: 1
+  portal_entries: []
+- comment: Action
+  guid: 2
+  name_id: 51597
+  icon_id: 5805
+  sort_order: 2
+  portal_entries:
+    - guid: 9000
+      name_id: 45187
+      description_id: 45193
+      members_only: true
+      is_flash: true
+      is_active: true
+      param1: 0
+      icon_id: 4911
+      background_icon_id: 0
+      is_popular: false
+      is_game_of_day: false
+      sort_order: 9000
+      tutorial_swf: HowtoHasbroAttackShip.swf
+      stage_group:
+        guid: 9000
+        name_id: 45187
+        description_id: 45193
+        icon_id: 4905
+        stage_icon_id: 4905
+        members_only: true
+        stage_select_map_name: RepublicGunship
+        stages:
+          - Stage:
+              guid: 9001
+              name_id: 45254
+              description_id: 45193
+              stage_icon_id: 4906
+              start_screen_icon_id: 4849
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 5502
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage01
+              minigame_type:
+                Flash:
+                  game_swf_name: HasbroAttackShip.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 177
+          - Stage:
+              guid: 9002
+              name_id: 45255
+              description_id: 45193
+              stage_icon_id: 4907
+              start_screen_icon_id: 4848
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 5502
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage02
+              minigame_type:
+                Flash:
+                  game_swf_name: HasbroAttackShip.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 208
+          - Stage:
+              guid: 9003
+              name_id: 45256
+              description_id: 45193
+              stage_icon_id: 4908
+              start_screen_icon_id: 4847
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 5502
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage03
+              minigame_type:
+                Flash:
+                  game_swf_name: HasbroAttackShip.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 219
+    - guid: 10000
+      name_id: 7103
+      description_id: 9754
+      members_only: false
+      is_flash: true
+      is_active: true
+      param1: 0
+      icon_id: 1253
+      background_icon_id: 0
+      is_popular: true
+      is_game_of_day: false
+      sort_order: 10000
+      tutorial_swf: HowtoStuntGungan.swf
+      stage_group:
+        guid: 10000
+        name_id: 7103
+        description_id: 9754
+        icon_id: 542
+        stage_icon_id: 542
+        members_only: false
+        stage_select_map_name: ''
+        stages:
+          - Stage:
+              guid: 10001
+              name_id: 7103
+              description_id: 9754
+              stage_icon_id: 1253
+              start_screen_icon_id: 1333
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 2241
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: ''
+              minigame_type:
+                Flash:
+                  game_swf_name: StuntGungan.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 29
+    - guid: 11000
+      name_id: 19700
+      description_id: 14960
+      members_only: true
+      is_flash: true
+      is_active: true
+      param1: 0
+      icon_id: 2387
+      background_icon_id: 0
+      is_popular: false
+      is_game_of_day: false
+      sort_order: 11000
+      tutorial_swf: HowtoCrisisZiro.swf
+      stage_group:
+        guid: 11000
+        name_id: 19700
+        description_id: 14960
+        icon_id: 2391
+        stage_icon_id: 2391
+        members_only: true
+        stage_select_map_name: RepublicGunship
+        stages:
+          - Stage:
+              guid: 11001
+              name_id: 19701
+              description_id: 14960
+              stage_icon_id: 2377
+              start_screen_icon_id: 2376
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 4514
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage01
+              minigame_type:
+                Flash:
+                  game_swf_name: CrisisZiro.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 160
+          - Stage:
+              guid: 11002
+              name_id: 19702
+              description_id: 14960
+              stage_icon_id: 2378
+              start_screen_icon_id: 2375
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 4514
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage02
+              minigame_type:
+                Flash:
+                  game_swf_name: CrisisZiro.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 180
+          - Stage:
+              guid: 11003
+              name_id: 19703
+              description_id: 14960
+              stage_icon_id: 2379
+              start_screen_icon_id: 2374
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 4514
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage03
+              minigame_type:
+                Flash:
+                  game_swf_name: CrisisZiro.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 180
+    - guid: 22
+      name_id: 12200
+      description_id: 11921
+      members_only: false
+      is_flash: true
+      is_active: true
+      param1: 0
+      icon_id: 1248
+      background_icon_id: 0
+      is_popular: false
+      is_game_of_day: false
+      sort_order: 12000
+      tutorial_swf: HowtoRocketRescue.swf
+      stage_group:
+        guid: 22
+        name_id: 12200
+        description_id: 11921
+        icon_id: 538
+        stage_icon_id: 538
+        members_only: false
+        stage_select_map_name: r2
+        stages:
+          - Stage:
+              guid: 12001
+              name_id: 11920
+              description_id: 11921
+              stage_icon_id: 376
+              start_screen_icon_id: 979
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 2224
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage01
+              minigame_type:
+                Flash:
+                  game_swf_name: r2.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 15.25
+          - Stage:
+              guid: 12002
+              name_id: 11922
+              description_id: 11923
+              stage_icon_id: 376
+              start_screen_icon_id: 979
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3026
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage02
+              minigame_type:
+                Flash:
+                  game_swf_name: r2.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 14
+          - Stage:
+              guid: 12003
+              name_id: 11924
+              description_id: 11925
+              stage_icon_id: 376
+              start_screen_icon_id: 979
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3027
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage03
+              minigame_type:
+                Flash:
+                  game_swf_name: r2.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 14.45
+          - Stage:
+              guid: 12004
+              name_id: 11926
+              description_id: 11927
+              stage_icon_id: 376
+              start_screen_icon_id: 979
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3028
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage04
+              minigame_type:
+                Flash:
+                  game_swf_name: r2.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 19.4
+          - Stage:
+              guid: 12005
+              name_id: 11928
+              description_id: 11929
+              stage_icon_id: 376
+              start_screen_icon_id: 979
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3029
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage05
+              minigame_type:
+                Flash:
+                  game_swf_name: r2.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 13.9
+          - Stage:
+              guid: 12006
+              name_id: 11930
+              description_id: 11931
+              stage_icon_id: 376
+              start_screen_icon_id: 979
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3030
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage06
+              minigame_type:
+                Flash:
+                  game_swf_name: r2.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 14.7
+          - Stage:
+              guid: 12007
+              name_id: 11932
+              description_id: 11933
+              stage_icon_id: 376
+              start_screen_icon_id: 979
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3031
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage07
+              minigame_type:
+                Flash:
+                  game_swf_name: r2.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 19.8
+          - Stage:
+              guid: 12008
+              name_id: 11934
+              description_id: 11935
+              stage_icon_id: 376
+              start_screen_icon_id: 979
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3032
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage08
+              minigame_type:
+                Flash:
+                  game_swf_name: r2.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 11.55
+          - Stage:
+              guid: 12009
+              name_id: 11936
+              description_id: 11937
+              stage_icon_id: 376
+              start_screen_icon_id: 979
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3033
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage09
+              minigame_type:
+                Flash:
+                  game_swf_name: r2.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 12.55
+          - Stage:
+              guid: 12010
+              name_id: 11938
+              description_id: 11939
+              stage_icon_id: 376
+              start_screen_icon_id: 979
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3034
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage10
+              minigame_type:
+                Flash:
+                  game_swf_name: r2.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 22.7
+          - Stage:
+              guid: 12011
+              name_id: 11940
+              description_id: 11941
+              stage_icon_id: 378
+              start_screen_icon_id: 981
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 3035
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage11
+              minigame_type:
+                Flash:
+                  game_swf_name: r2.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 17
+          - Stage:
+              guid: 12012
+              name_id: 11942
+              description_id: 11943
+              stage_icon_id: 378
+              start_screen_icon_id: 981
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3036
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage12
+              minigame_type:
+                Flash:
+                  game_swf_name: r2.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 17
+          - Stage:
+              guid: 12013
+              name_id: 11944
+              description_id: 11945
+              stage_icon_id: 378
+              start_screen_icon_id: 981
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 3037
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage13
+              minigame_type:
+                Flash:
+                  game_swf_name: r2.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 11
+          - Stage:
+              guid: 12014
+              name_id: 11946
+              description_id: 11947
+              stage_icon_id: 378
+              start_screen_icon_id: 981
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 3038
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage14
+              minigame_type:
+                Flash:
+                  game_swf_name: r2.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 17
+          - Stage:
+              guid: 12015
+              name_id: 11948
+              description_id: 11949
+              stage_icon_id: 378
+              start_screen_icon_id: 981
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 3039
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage15
+              minigame_type:
+                Flash:
+                  game_swf_name: r2.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 18
+          - Stage:
+              guid: 12016
+              name_id: 11950
+              description_id: 11951
+              stage_icon_id: 378
+              start_screen_icon_id: 981
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 3040
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage16
+              minigame_type:
+                Flash:
+                  game_swf_name: r2.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 25
+          - Stage:
+              guid: 12017
+              name_id: 11952
+              description_id: 11953
+              stage_icon_id: 378
+              start_screen_icon_id: 981
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 3041
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage17
+              minigame_type:
+                Flash:
+                  game_swf_name: r2.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 17
+          - Stage:
+              guid: 12018
+              name_id: 11954
+              description_id: 11955
+              stage_icon_id: 378
+              start_screen_icon_id: 981
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 3042
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage18
+              minigame_type:
+                Flash:
+                  game_swf_name: r2.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 39
+          - Stage:
+              guid: 12019
+              name_id: 11956
+              description_id: 11957
+              stage_icon_id: 378
+              start_screen_icon_id: 981
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 3043
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage19
+              minigame_type:
+                Flash:
+                  game_swf_name: r2.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 18
+          - Stage:
+              guid: 12020
+              name_id: 11958
+              description_id: 11959
+              stage_icon_id: 378
+              start_screen_icon_id: 981
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 3044
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage20
+              minigame_type:
+                Flash:
+                  game_swf_name: r2.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 24
+          - Stage:
+              guid: 12021
+              name_id: 11960
+              description_id: 11961
+              stage_icon_id: 377
+              start_screen_icon_id: 980
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 3045
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage21
+              minigame_type:
+                Flash:
+                  game_swf_name: r2.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 20
+          - Stage:
+              guid: 12022
+              name_id: 11962
+              description_id: 11963
+              stage_icon_id: 377
+              start_screen_icon_id: 980
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 3046
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage22
+              minigame_type:
+                Flash:
+                  game_swf_name: r2.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 22
+          - Stage:
+              guid: 12023
+              name_id: 11964
+              description_id: 11965
+              stage_icon_id: 377
+              start_screen_icon_id: 980
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 3047
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage23
+              minigame_type:
+                Flash:
+                  game_swf_name: r2.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 12
+          - Stage:
+              guid: 12024
+              name_id: 11966
+              description_id: 11967
+              stage_icon_id: 377
+              start_screen_icon_id: 980
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 3048
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage24
+              minigame_type:
+                Flash:
+                  game_swf_name: r2.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 18
+          - Stage:
+              guid: 12025
+              name_id: 11968
+              description_id: 11969
+              stage_icon_id: 377
+              start_screen_icon_id: 980
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 3049
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage25
+              minigame_type:
+                Flash:
+                  game_swf_name: r2.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 18
+          - Stage:
+              guid: 12026
+              name_id: 11970
+              description_id: 11971
+              stage_icon_id: 377
+              start_screen_icon_id: 980
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 3050
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage26
+              minigame_type:
+                Flash:
+                  game_swf_name: r2.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 15
+          - Stage:
+              guid: 12027
+              name_id: 11972
+              description_id: 11973
+              stage_icon_id: 377
+              start_screen_icon_id: 980
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 3051
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage27
+              minigame_type:
+                Flash:
+                  game_swf_name: r2.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 19
+          - Stage:
+              guid: 12028
+              name_id: 11974
+              description_id: 11975
+              stage_icon_id: 377
+              start_screen_icon_id: 980
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 3052
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage28
+              minigame_type:
+                Flash:
+                  game_swf_name: r2.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 21
+          - Stage:
+              guid: 12029
+              name_id: 11976
+              description_id: 11977
+              stage_icon_id: 377
+              start_screen_icon_id: 980
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 3053
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage29
+              minigame_type:
+                Flash:
+                  game_swf_name: r2.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 15
+          - Stage:
+              guid: 12030
+              name_id: 11978
+              description_id: 11979
+              stage_icon_id: 377
+              start_screen_icon_id: 980
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 3054
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage30
+              minigame_type:
+                Flash:
+                  game_swf_name: r2.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 20
+    - guid: 13000
+      name_id: 14051
+      description_id: 14964
+      members_only: true
+      is_flash: true
+      is_active: true
+      param1: 0
+      icon_id: 1247
+      background_icon_id: 0
+      is_popular: false
+      is_game_of_day: false
+      sort_order: 13000
+      tutorial_swf: HowtoGunship.swf
+      stage_group:
+        guid: 13000
+        name_id: 14051
+        description_id: 14964
+        icon_id: 887
+        stage_icon_id: 887
+        members_only: true
+        stage_select_map_name: RepublicGunship
+        stages:
+          - Stage:
+              guid: 13001
+              name_id: 14961
+              description_id: 14964
+              stage_icon_id: 1261
+              start_screen_icon_id: 1255
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 2242
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage01
+              minigame_type:
+                Flash:
+                  game_swf_name: RepublicGunship.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 115
+          - Stage:
+              guid: 13002
+              name_id: 14962
+              description_id: 14964
+              stage_icon_id: 1263
+              start_screen_icon_id: 1257
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 2242
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage02
+              minigame_type:
+                Flash:
+                  game_swf_name: RepublicGunship.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 167
+          - Stage:
+              guid: 13003
+              name_id: 14963
+              description_id: 14964
+              stage_icon_id: 1262
+              start_screen_icon_id: 1256
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 2242
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage03
+              minigame_type:
+                Flash:
+                  game_swf_name: RepublicGunship.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 201
+    - guid: 14000
+      name_id: 45898
+      description_id: 45897
+      members_only: true
+      is_flash: true
+      is_active: true
+      param1: 0
+      icon_id: 5131
+      background_icon_id: 0
+      is_popular: false
+      is_game_of_day: false
+      sort_order: 14000
+      tutorial_swf: HowToAquaticAssault.swf
+      stage_group:
+        guid: 14000
+        name_id: 45898
+        description_id: 45897
+        icon_id: 5129
+        stage_icon_id: 5129
+        members_only: true
+        stage_select_map_name: RepublicGunship
+        stages:
+          - Stage:
+              guid: 14001
+              name_id: 45892
+              description_id: 45897
+              stage_icon_id: 5153
+              start_screen_icon_id: 5150
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 5643
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage01
+              minigame_type:
+                Flash:
+                  game_swf_name: AquaticAssault.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 102.5
+          - Stage:
+              guid: 14002
+              name_id: 45893
+              description_id: 45897
+              stage_icon_id: 5154
+              start_screen_icon_id: 5151
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 5643
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage02
+              minigame_type:
+                Flash:
+                  game_swf_name: AquaticAssault.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 108
+          - Stage:
+              guid: 14003
+              name_id: 45894
+              description_id: 45897
+              stage_icon_id: 5155
+              start_screen_icon_id: 5152
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 5643
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage03
+              minigame_type:
+                Flash:
+                  game_swf_name: AquaticAssault.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 168
+    - comment: Medium and Hard currently use Easy's ratio as a placeholder
+      guid: 11
+      name_id: 6237
+      description_id: 9755
+      members_only: true
+      is_flash: true
+      is_active: true
+      param1: 0
+      icon_id: 1233
+      background_icon_id: 0
+      is_popular: true
+      is_game_of_day: false
+      sort_order: 14000
+      tutorial_swf: HowtoBlasterTraining.swf
+      stage_group:
+        guid: 11
+        name_id: 6237
+        description_id: 9755
+        icon_id: 1391
+        stage_icon_id: 1391
+        members_only: true
+        stage_select_map_name: RepublicGunship
+        stages:
+          - Stage:
+              guid: 15001
+              name_id: 13950
+              description_id: 9755
+              stage_icon_id: 315
+              start_screen_icon_id: 1335
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 1512
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage01
+              minigame_type:
+                Flash:
+                  game_swf_name: BlasterTraining.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 180
+          - Stage:
+              guid: 15002
+              name_id: 13951
+              description_id: 9755
+              stage_icon_id: 317
+              start_screen_icon_id: 1337
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 1512
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage02
+              minigame_type:
+                Flash:
+                  game_swf_name: BlasterTraining.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 180
+          - Stage:
+              guid: 15003
+              name_id: 13952
+              description_id: 9755
+              stage_icon_id: 316
+              start_screen_icon_id: 1336
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 1512
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage03
+              minigame_type:
+                Flash:
+                  game_swf_name: BlasterTraining.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 180
+    - guid: 26000
+      name_id: 43960
+      description_id: 44217
+      members_only: false
+      is_flash: true
+      is_active: true
+      param1: 0
+      icon_id: 4601
+      background_icon_id: 0
+      is_popular: false
+      is_game_of_day: false
+      sort_order: 26000
+      tutorial_swf: HowtoTurretTactics.swf
+      stage_group:
+        guid: 26000
+        name_id: 43960
+        description_id: 44217
+        icon_id: 4599
+        stage_icon_id: 4599
+        members_only: false
+        stage_select_map_name: ''
+        stages:
+          - Stage:
+              guid: 26001
+              name_id: 43960
+              description_id: 44217
+              stage_icon_id: 4597
+              start_screen_icon_id: 4597
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 5501
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: ''
+              minigame_type:
+                Flash:
+                  game_swf_name: TurretTactics.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 69.5
+- comment: Puzzle
+  guid: 3
+  name_id: 51598
+  icon_id: 5809
+  sort_order: 3
+  portal_entries:
+    - guid: 1004
+      name_id: 7040
+      description_id: 7041
+      members_only: false
+      is_flash: false
+      is_active: true
+      param1: 0
+      icon_id: 1249
+      background_icon_id: 0
+      is_popular: true
+      is_game_of_day: false
+      sort_order: 15000
+      tutorial_swf: HowtoSaberStrike.swf
+      stage_group:
+        guid: 13
+        name_id: 7040
+        description_id: 7041
+        icon_id: 369
+        stage_icon_id: 369
+        members_only: false
+        stage_select_map_name: saberStrike
+        stages:
+          - Stage:
+              guid: 27001
+              name_id: 7270
+              description_id: 9000
+              stage_icon_id: 247
+              start_screen_icon_id: 663
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 1510
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage01
+              minigame_type:
+                SaberStrike:
+                  saber_strike_stage_id: 11
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27100
+                  name_id: 9050
+                  description_id: 9135
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4491
+                  members_only: false
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 54
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27101
+                  name_id: 9051
+                  description_id: 9136
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4492
+                  members_only: false
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 55
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+          - Stage:
+              guid: 27002
+              name_id: 7271
+              description_id: 9001
+              stage_icon_id: 248
+              start_screen_icon_id: 664
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3055
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage02
+              minigame_type:
+                SaberStrike:
+                  saber_strike_stage_id: 24
+              zone_template_guid: 200
+              score_to_credits_expression: x / 94
+              challenges:
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27102
+                  name_id: 9052
+                  description_id: 9137
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4493
+                  members_only: false
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 56
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 94
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27103
+                  name_id: 9053
+                  description_id: 9138
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4494
+                  members_only: false
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 57
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 94
+          - Stage:
+              guid: 27003
+              name_id: 7272
+              description_id: 9002
+              stage_icon_id: 249
+              start_screen_icon_id: 665
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3056
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage03
+              minigame_type:
+                SaberStrike:
+                  saber_strike_stage_id: 12
+              zone_template_guid: 200
+              score_to_credits_expression: x / 160
+              challenges:
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27104
+                  name_id: 9054
+                  description_id: 9138
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4494
+                  members_only: false
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 58
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 160
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27105
+                  name_id: 9055
+                  description_id: 9135
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4491
+                  members_only: false
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 59
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 160
+          - Stage:
+              guid: 27004
+              name_id: 7273
+              description_id: 9003
+              stage_icon_id: 250
+              start_screen_icon_id: 666
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3223
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage04
+              minigame_type:
+                SaberStrike:
+                  saber_strike_stage_id: 25
+              zone_template_guid: 200
+              score_to_credits_expression: x / 143
+              challenges:
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27106
+                  name_id: 9056
+                  description_id: 9136
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4492
+                  members_only: false
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 60
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 143
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27107
+                  name_id: 9057
+                  description_id: 9138
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4494
+                  members_only: false
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 61
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 143
+          - Stage:
+              guid: 27005
+              name_id: 7274
+              description_id: 9004
+              stage_icon_id: 251
+              start_screen_icon_id: 667
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3224
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage05
+              minigame_type:
+                SaberStrike:
+                  saber_strike_stage_id: 13
+              zone_template_guid: 200
+              score_to_credits_expression: x / 157
+              challenges:
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27108
+                  name_id: 9058
+                  description_id: 9136
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4492
+                  members_only: false
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 62
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 157
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27109
+                  name_id: 9059
+                  description_id: 9139
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4495
+                  members_only: false
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 63
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 157
+          - Stage:
+              guid: 27006
+              name_id: 7275
+              description_id: 9005
+              stage_icon_id: 252
+              start_screen_icon_id: 668
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3225
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage06
+              minigame_type:
+                SaberStrike:
+                  saber_strike_stage_id: 17
+              zone_template_guid: 200
+              score_to_credits_expression: x / 120
+              challenges:
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27110
+                  name_id: 9060
+                  description_id: 9140
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4496
+                  members_only: false
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 64
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 120
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27111
+                  name_id: 9061
+                  description_id: 9135
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4491
+                  members_only: false
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 65
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 120
+          - Stage:
+              guid: 27007
+              name_id: 7276
+              description_id: 9006
+              stage_icon_id: 253
+              start_screen_icon_id: 669
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3226
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage07
+              minigame_type:
+                SaberStrike:
+                  saber_strike_stage_id: 20
+              zone_template_guid: 200
+              score_to_credits_expression: x / 244
+              challenges:
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27112
+                  name_id: 9062
+                  description_id: 9140
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4496
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 66
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 244
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27113
+                  name_id: 9063
+                  description_id: 9138
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4494
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 67
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 244
+          - Stage:
+              guid: 27008
+              name_id: 7277
+              description_id: 9007
+              stage_icon_id: 254
+              start_screen_icon_id: 670
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3227
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage08
+              minigame_type:
+                SaberStrike:
+                  saber_strike_stage_id: 32
+              zone_template_guid: 200
+              score_to_credits_expression: x / 1148
+              challenges:
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27114
+                  name_id: 9064
+                  description_id: 9139
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4495
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 68
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 1148
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27115
+                  name_id: 9065
+                  description_id: 9142
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4498
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 69
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 1148
+          - Stage:
+              guid: 27009
+              name_id: 8421
+              description_id: 9008
+              stage_icon_id: 255
+              start_screen_icon_id: 671
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3228
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage09
+              minigame_type:
+                SaberStrike:
+                  saber_strike_stage_id: 132
+              zone_template_guid: 200
+              score_to_credits_expression: x / 1014
+              challenges:
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27116
+                  name_id: 9066
+                  description_id: 9142
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4498
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 134
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 1014
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27117
+                  name_id: 9067
+                  description_id: 9136
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4492
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 135
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 1014
+          - Stage:
+              guid: 27010
+              name_id: 7278
+              description_id: 9009
+              stage_icon_id: 256
+              start_screen_icon_id: 690
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 3229
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage10
+              minigame_type:
+                SaberStrike:
+                  saber_strike_stage_id: 23
+              zone_template_guid: 200
+              score_to_credits_expression: x / 114
+              challenges:
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27118
+                  name_id: 9068
+                  description_id: 9136
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4492
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 71
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 114
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27119
+                  name_id: 9069
+                  description_id: 9137
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4493
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 72
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 114
+          - Stage:
+              guid: 27011
+              name_id: 7279
+              description_id: 9010
+              stage_icon_id: 257
+              start_screen_icon_id: 691
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 3230
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage11
+              minigame_type:
+                SaberStrike:
+                  saber_strike_stage_id: 70
+              zone_template_guid: 200
+              score_to_credits_expression: x / 93
+              challenges:
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27120
+                  name_id: 9070
+                  description_id: 9135
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4491
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 73
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 93
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27121
+                  name_id: 9071
+                  description_id: 9138
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4494
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 74
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 93
+          - Stage:
+              guid: 27012
+              name_id: 7280
+              description_id: 9011
+              stage_icon_id: 258
+              start_screen_icon_id: 692
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 3231
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage12
+              minigame_type:
+                SaberStrike:
+                  saber_strike_stage_id: 50
+              zone_template_guid: 200
+              score_to_credits_expression: x / 170
+              challenges:
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27122
+                  name_id: 9072
+                  description_id: 9139
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4495
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 75
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 170
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27123
+                  name_id: 9073
+                  description_id: 9135
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4491
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 76
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 170
+          - Stage:
+              guid: 27013
+              name_id: 7281
+              description_id: 9012
+              stage_icon_id: 259
+              start_screen_icon_id: 693
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 3232
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage13
+              minigame_type:
+                SaberStrike:
+                  saber_strike_stage_id: 51
+              zone_template_guid: 200
+              score_to_credits_expression: x / 144
+              challenges:
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27124
+                  name_id: 9074
+                  description_id: 9137
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4493
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 77
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 144
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27125
+                  name_id: 9075
+                  description_id: 9138
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4494
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 78
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 144
+          - Stage:
+              guid: 27014
+              name_id: 7282
+              description_id: 9013
+              stage_icon_id: 260
+              start_screen_icon_id: 694
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 3233
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage14
+              minigame_type:
+                SaberStrike:
+                  saber_strike_stage_id: 52
+              zone_template_guid: 200
+              score_to_credits_expression: x / 147
+              challenges:
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27126
+                  name_id: 9076
+                  description_id: 9135
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4491
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 79
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 147
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27127
+                  name_id: 9077
+                  description_id: 9139
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4495
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 80
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 147
+          - Stage:
+              guid: 27015
+              name_id: 7283
+              description_id: 9014
+              stage_icon_id: 261
+              start_screen_icon_id: 695
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 3234
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage15
+              minigame_type:
+                SaberStrike:
+                  saber_strike_stage_id: 18
+              zone_template_guid: 200
+              score_to_credits_expression: x / 237
+              challenges:
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27128
+                  name_id: 9078
+                  description_id: 9141
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4497
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 81
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 237
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27129
+                  name_id: 9079
+                  description_id: 9139
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4495
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 82
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 237
+          - Stage:
+              guid: 27016
+              name_id: 7284
+              description_id: 9015
+              stage_icon_id: 262
+              start_screen_icon_id: 696
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 3235
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage16
+              minigame_type:
+                SaberStrike:
+                  saber_strike_stage_id: 33
+              zone_template_guid: 200
+              score_to_credits_expression: x / 144
+              challenges:
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27130
+                  name_id: 9080
+                  description_id: 9135
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4491
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 83
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 144
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27131
+                  name_id: 9081
+                  description_id: 9137
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4493
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 84
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 144
+          - Stage:
+              guid: 27017
+              name_id: 7285
+              description_id: 9016
+              stage_icon_id: 263
+              start_screen_icon_id: 697
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 3236
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage17
+              minigame_type:
+                SaberStrike:
+                  saber_strike_stage_id: 53
+              zone_template_guid: 200
+              score_to_credits_expression: x / 141
+              challenges:
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27132
+                  name_id: 9082
+                  description_id: 9141
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4497
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 85
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 141
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27133
+                  name_id: 9083
+                  description_id: 9138
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4494
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 86
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 141
+          - Stage:
+              guid: 27018
+              name_id: 8422
+              description_id: 9017
+              stage_icon_id: 264
+              start_screen_icon_id: 698
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 3237
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage18
+              minigame_type:
+                SaberStrike:
+                  saber_strike_stage_id: 136
+              zone_template_guid: 200
+              score_to_credits_expression: x / 159
+              challenges:
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27134
+                  name_id: 9084
+                  description_id: 9136
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4492
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 137
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 159
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27135
+                  name_id: 9085
+                  description_id: 9137
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4493
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 138
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 159
+          - Stage:
+              guid: 27019
+              name_id: 7286
+              description_id: 9018
+              stage_icon_id: 265
+              start_screen_icon_id: 672
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 3238
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage19
+              minigame_type:
+                SaberStrike:
+                  saber_strike_stage_id: 27
+              zone_template_guid: 200
+              score_to_credits_expression: x / 140
+              challenges:
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27136
+                  name_id: 9086
+                  description_id: 9139
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4495
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 87
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 140
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27137
+                  name_id: 9087
+                  description_id: 9143
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4499
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 88
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 140
+          - Stage:
+              guid: 27020
+              name_id: 7287
+              description_id: 9019
+              stage_icon_id: 266
+              start_screen_icon_id: 673
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 3239
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage20
+              minigame_type:
+                SaberStrike:
+                  saber_strike_stage_id: 49
+              zone_template_guid: 200
+              score_to_credits_expression: x / 191
+              challenges:
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27138
+                  name_id: 9088
+                  description_id: 9138
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4494
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 89
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 191
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27139
+                  name_id: 9089
+                  description_id: 9137
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4493
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 90
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 191
+          - Stage:
+              guid: 27021
+              name_id: 7288
+              description_id: 9020
+              stage_icon_id: 267
+              start_screen_icon_id: 674
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 3240
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage21
+              minigame_type:
+                SaberStrike:
+                  saber_strike_stage_id: 36
+              zone_template_guid: 200
+              score_to_credits_expression: x / 116
+              challenges:
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27140
+                  name_id: 9090
+                  description_id: 9137
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4493
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 91
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 116
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27141
+                  name_id: 9091
+                  description_id: 9139
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4495
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 92
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 116
+          - Stage:
+              guid: 27022
+              name_id: 7289
+              description_id: 9021
+              stage_icon_id: 268
+              start_screen_icon_id: 675
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 3241
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage22
+              minigame_type:
+                SaberStrike:
+                  saber_strike_stage_id: 38
+              zone_template_guid: 200
+              score_to_credits_expression: x / 289
+              challenges:
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27142
+                  name_id: 9092
+                  description_id: 9137
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4493
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 93
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 289
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27143
+                  name_id: 9093
+                  description_id: 9136
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4492
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 94
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 289
+          - Stage:
+              guid: 27023
+              name_id: 7290
+              description_id: 9022
+              stage_icon_id: 269
+              start_screen_icon_id: 676
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 3242
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage23
+              minigame_type:
+                SaberStrike:
+                  saber_strike_stage_id: 22
+              zone_template_guid: 200
+              score_to_credits_expression: x / 214
+              challenges:
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27144
+                  name_id: 9094
+                  description_id: 9135
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4491
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 95
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 214
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27145
+                  name_id: 9095
+                  description_id: 9139
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4495
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 96
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 214
+          - Stage:
+              guid: 27024
+              name_id: 7291
+              description_id: 9023
+              stage_icon_id: 270
+              start_screen_icon_id: 677
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 3243
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage24
+              minigame_type:
+                SaberStrike:
+                  saber_strike_stage_id: 45
+              zone_template_guid: 200
+              score_to_credits_expression: x / 594
+              challenges:
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27146
+                  name_id: 9096
+                  description_id: 9137
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4493
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 97
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 594
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27147
+                  name_id: 9097
+                  description_id: 9138
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4494
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 98
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 594
+          - Stage:
+              guid: 27025
+              name_id: 7292
+              description_id: 9024
+              stage_icon_id: 271
+              start_screen_icon_id: 678
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 3244
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage25
+              minigame_type:
+                SaberStrike:
+                  saber_strike_stage_id: 46
+              zone_template_guid: 200
+              score_to_credits_expression: x / 432
+              challenges:
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27148
+                  name_id: 9098
+                  description_id: 9139
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4495
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 99
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 432
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27149
+                  name_id: 9099
+                  description_id: 9137
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4493
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 100
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 432
+          - Stage:
+              guid: 27026
+              name_id: 7293
+              description_id: 9025
+              stage_icon_id: 272
+              start_screen_icon_id: 679
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 3245
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage26
+              minigame_type:
+                SaberStrike:
+                  saber_strike_stage_id: 15
+              zone_template_guid: 200
+              score_to_credits_expression: x / 144
+              challenges:
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27150
+                  name_id: 9100
+                  description_id: 9137
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4493
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 101
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 144
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27151
+                  name_id: 9101
+                  description_id: 9138
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4494
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 102
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 144
+          - Stage:
+              guid: 27027
+              name_id: 8423
+              description_id: 9026
+              stage_icon_id: 273
+              start_screen_icon_id: 680
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 3246
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage27
+              minigame_type:
+                SaberStrike:
+                  saber_strike_stage_id: 139
+              zone_template_guid: 200
+              score_to_credits_expression: x / 173
+              challenges:
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27152
+                  name_id: 9102
+                  description_id: 9136
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4492
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 103
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 173
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27153
+                  name_id: 9103
+                  description_id: 9139
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4495
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 104
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 173
+          - Stage:
+              guid: 27028
+              name_id: 7294
+              description_id: 9027
+              stage_icon_id: 274
+              start_screen_icon_id: 681
+              min_players: 1
+              max_players: 1
+              difficulty: 4
+              start_sound_id: 3247
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage28
+              minigame_type:
+                SaberStrike:
+                  saber_strike_stage_id: 28
+              zone_template_guid: 200
+              score_to_credits_expression: x / 110
+              challenges:
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27154
+                  name_id: 9104
+                  description_id: 9140
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4496
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 105
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 110
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27155
+                  name_id: 9105
+                  description_id: 9138
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4494
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 106
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 110
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27156
+                  name_id: 9106
+                  description_id: 9137
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4493
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 107
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 110
+          - Stage:
+              guid: 27029
+              name_id: 7295
+              description_id: 9028
+              stage_icon_id: 275
+              start_screen_icon_id: 682
+              min_players: 1
+              max_players: 1
+              difficulty: 4
+              start_sound_id: 3248
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage29
+              minigame_type:
+                SaberStrike:
+                  saber_strike_stage_id: 41
+              zone_template_guid: 200
+              score_to_credits_expression: x / 153
+              challenges:
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27157
+                  name_id: 9107
+                  description_id: 9137
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4493
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 108
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 153
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27158
+                  name_id: 9108
+                  description_id: 9135
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4491
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 109
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 153
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27159
+                  name_id: 9109
+                  description_id: 9139
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4495
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 110
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 153
+          - Stage:
+              guid: 27030
+              name_id: 7296
+              description_id: 9029
+              stage_icon_id: 276
+              start_screen_icon_id: 683
+              min_players: 1
+              max_players: 1
+              difficulty: 4
+              start_sound_id: 3249
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage30
+              minigame_type:
+                SaberStrike:
+                  saber_strike_stage_id: 40
+              zone_template_guid: 200
+              score_to_credits_expression: x / 244
+              challenges:
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27160
+                  name_id: 9110
+                  description_id: 9138
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4494
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 111
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 244
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27161
+                  name_id: 9111
+                  description_id: 9139
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4495
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 112
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 244
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27162
+                  name_id: 9112
+                  description_id: 9143
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4499
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 113
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 244
+          - Stage:
+              guid: 27031
+              name_id: 7297
+              description_id: 9030
+              stage_icon_id: 277
+              start_screen_icon_id: 684
+              min_players: 1
+              max_players: 1
+              difficulty: 4
+              start_sound_id: 3250
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage31
+              minigame_type:
+                SaberStrike:
+                  saber_strike_stage_id: 141
+              zone_template_guid: 200
+              score_to_credits_expression: x / 221
+              challenges:
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27163
+                  name_id: 9128
+                  description_id: 9142
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4498
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 142
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 221
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27164
+                  name_id: 9114
+                  description_id: 9139
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4495
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 143
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 221
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27165
+                  name_id: 9130
+                  description_id: 9137
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4493
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 144
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 221
+          - Stage:
+              guid: 27032
+              name_id: 7298
+              description_id: 9032
+              stage_icon_id: 278
+              start_screen_icon_id: 685
+              min_players: 1
+              max_players: 1
+              difficulty: 4
+              start_sound_id: 3251
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage32
+              minigame_type:
+                SaberStrike:
+                  saber_strike_stage_id: 42
+              zone_template_guid: 200
+              score_to_credits_expression: x / 170
+              challenges:
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27166
+                  name_id: 9116
+                  description_id: 9139
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4495
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 117
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 170
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27167
+                  name_id: 9117
+                  description_id: 9135
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4491
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 118
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 170
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27168
+                  name_id: 9118
+                  description_id: 9138
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4494
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 119
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 170
+          - Stage:
+              guid: 27033
+              name_id: 7299
+              description_id: 9031
+              stage_icon_id: 279
+              start_screen_icon_id: 686
+              min_players: 1
+              max_players: 1
+              difficulty: 4
+              start_sound_id: 3252
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage33
+              minigame_type:
+                SaberStrike:
+                  saber_strike_stage_id: 43
+              zone_template_guid: 200
+              score_to_credits_expression: x / 147
+              challenges:
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27169
+                  name_id: 9119
+                  description_id: 9137
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4493
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 120
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 147
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27170
+                  name_id: 9120
+                  description_id: 9143
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4499
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 121
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 147
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27171
+                  name_id: 9121
+                  description_id: 9139
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4495
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 122
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 147
+          - Stage:
+              guid: 27034
+              name_id: 7300
+              description_id: 9033
+              stage_icon_id: 280
+              start_screen_icon_id: 687
+              min_players: 1
+              max_players: 1
+              difficulty: 4
+              start_sound_id: 3253
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage34
+              minigame_type:
+                SaberStrike:
+                  saber_strike_stage_id: 47
+              zone_template_guid: 200
+              score_to_credits_expression: x / 126
+              challenges:
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27172
+                  name_id: 9122
+                  description_id: 9137
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4493
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 123
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 126
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27173
+                  name_id: 9123
+                  description_id: 9138
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4494
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 124
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 126
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27174
+                  name_id: 9124
+                  description_id: 9139
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4495
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 125
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 126
+          - Stage:
+              guid: 27035
+              name_id: 7301
+              description_id: 9034
+              stage_icon_id: 281
+              start_screen_icon_id: 688
+              min_players: 1
+              max_players: 1
+              difficulty: 4
+              start_sound_id: 3254
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage35
+              minigame_type:
+                SaberStrike:
+                  saber_strike_stage_id: 140
+              zone_template_guid: 200
+              score_to_credits_expression: x / 152
+              challenges:
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27175
+                  name_id: 9125
+                  description_id: 9139
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4495
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 126
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 152
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27176
+                  name_id: 9126
+                  description_id: 9137
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4493
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 127
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 152
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27177
+                  name_id: 9127
+                  description_id: 9143
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4499
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 128
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 152
+          - Stage:
+              guid: 27036
+              name_id: 8424
+              description_id: 9035
+              stage_icon_id: 282
+              start_screen_icon_id: 689
+              min_players: 1
+              max_players: 1
+              difficulty: 4
+              start_sound_id: 3255
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage36
+              minigame_type:
+                SaberStrike:
+                  saber_strike_stage_id: 48
+              zone_template_guid: 200
+              score_to_credits_expression: x / 153
+              challenges:
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27178
+                  name_id: 9128
+                  description_id: 9142
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4498
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 129
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 153
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27179
+                  name_id: 9129
+                  description_id: 9138
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4494
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 130
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 153
+                - comment: Use base level's credit ratio as a placeholder
+                  guid: 27180
+                  name_id: 9130
+                  description_id: 9137
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4493
+                  members_only: true
+                  minigame_type:
+                    SaberStrike:
+                      saber_strike_stage_id: 131
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 153
+    - guid: 16000
+      name_id: 5555
+      description_id: 9757
+      members_only: false
+      is_flash: true
+      is_active: true
+      param1: 0
+      icon_id: 1235
+      background_icon_id: 0
+      is_popular: false
+      is_game_of_day: false
+      sort_order: 16000
+      tutorial_swf: HowtoCrystalAttunement.swf
+      stage_group:
+        guid: 16000
+        name_id: 5555
+        description_id: 9757
+        icon_id: 529
+        stage_icon_id: 529
+        members_only: false
+        stage_select_map_name: RepublicGunship
+        stages:
+          - Stage:
+              guid: 16001
+              name_id: 13953
+              description_id: 9757
+              stage_icon_id: 362
+              start_screen_icon_id: 1953
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 2226
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage01
+              minigame_type:
+                Flash:
+                  game_swf_name: CrystalAttunement.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 153
+          - Stage:
+              guid: 16002
+              name_id: 13954
+              description_id: 9757
+              stage_icon_id: 364
+              start_screen_icon_id: 1955
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 2226
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage02
+              minigame_type:
+                Flash:
+                  game_swf_name: CrystalAttunement.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 153
+          - Stage:
+              guid: 16003
+              name_id: 13955
+              description_id: 9757
+              stage_icon_id: 363
+              start_screen_icon_id: 1954
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 2226
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage03
+              minigame_type:
+                Flash:
+                  game_swf_name: CrystalAttunement.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 153
+    - guid: 8
+      name_id: 5557
+      description_id: 14128
+      members_only: false
+      is_flash: true
+      is_active: true
+      param1: 0
+      icon_id: 1242
+      background_icon_id: 0
+      is_popular: false
+      is_game_of_day: false
+      sort_order: 17000
+      tutorial_swf: HowtoInfiltration.swf
+      stage_group:
+        comment: Levels 23-28 use level 22's credit ratio as a placeholder
+        guid: 8
+        name_id: 5557
+        description_id: 14128
+        icon_id: 1231
+        stage_icon_id: 1231
+        members_only: false
+        stage_select_map_name: infiltration
+        stages:
+          - Stage:
+              guid: 17001
+              name_id: 14100
+              description_id: 14128
+              stage_icon_id: 332
+              start_screen_icon_id: 1341
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 1511
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage01
+              minigame_type:
+                Flash:
+                  game_swf_name: Infiltration.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 40
+          - Stage:
+              guid: 17002
+              name_id: 14101
+              description_id: 14129
+              stage_icon_id: 333
+              start_screen_icon_id: 1342
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3265
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage02
+              minigame_type:
+                Flash:
+                  game_swf_name: Infiltration.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 65
+          - Stage:
+              guid: 17003
+              name_id: 14102
+              description_id: 14130
+              stage_icon_id: 334
+              start_screen_icon_id: 1343
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3266
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage03
+              minigame_type:
+                Flash:
+                  game_swf_name: Infiltration.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 71
+          - Stage:
+              guid: 17004
+              name_id: 14103
+              description_id: 14131
+              stage_icon_id: 335
+              start_screen_icon_id: 1344
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3267
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage04
+              minigame_type:
+                Flash:
+                  game_swf_name: Infiltration.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 57
+          - Stage:
+              guid: 17005
+              name_id: 14104
+              description_id: 14132
+              stage_icon_id: 336
+              start_screen_icon_id: 1345
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3268
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage05
+              minigame_type:
+                Flash:
+                  game_swf_name: Infiltration.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 70
+          - Stage:
+              guid: 17006
+              name_id: 14105
+              description_id: 14133
+              stage_icon_id: 337
+              start_screen_icon_id: 1346
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3269
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage06
+              minigame_type:
+                Flash:
+                  game_swf_name: Infiltration.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 76
+          - Stage:
+              guid: 17007
+              name_id: 14106
+              description_id: 14134
+              stage_icon_id: 338
+              start_screen_icon_id: 1347
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3270
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage07
+              minigame_type:
+                Flash:
+                  game_swf_name: Infiltration.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 120
+          - Stage:
+              guid: 17008
+              name_id: 14107
+              description_id: 14135
+              stage_icon_id: 339
+              start_screen_icon_id: 1348
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 3271
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage08
+              minigame_type:
+                Flash:
+                  game_swf_name: Infiltration.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 71
+          - Stage:
+              guid: 17009
+              name_id: 14108
+              description_id: 14136
+              stage_icon_id: 340
+              start_screen_icon_id: 1349
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 3272
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage09
+              minigame_type:
+                Flash:
+                  game_swf_name: Infiltration.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 140
+          - Stage:
+              guid: 17010
+              name_id: 14109
+              description_id: 14137
+              stage_icon_id: 341
+              start_screen_icon_id: 1350
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 3273
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage10
+              minigame_type:
+                Flash:
+                  game_swf_name: Infiltration.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 76
+          - Stage:
+              guid: 17011
+              name_id: 14110
+              description_id: 14138
+              stage_icon_id: 342
+              start_screen_icon_id: 1351
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 3274
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage11
+              minigame_type:
+                Flash:
+                  game_swf_name: Infiltration.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 114
+          - Stage:
+              guid: 17012
+              name_id: 14111
+              description_id: 14139
+              stage_icon_id: 343
+              start_screen_icon_id: 1352
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 3275
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage12
+              minigame_type:
+                Flash:
+                  game_swf_name: Infiltration.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 267
+          - Stage:
+              guid: 17013
+              name_id: 14112
+              description_id: 14140
+              stage_icon_id: 344
+              start_screen_icon_id: 1353
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 3276
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage13
+              minigame_type:
+                Flash:
+                  game_swf_name: Infiltration.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 87
+          - Stage:
+              guid: 17014
+              name_id: 14113
+              description_id: 14141
+              stage_icon_id: 345
+              start_screen_icon_id: 1354
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 3277
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage14
+              minigame_type:
+                Flash:
+                  game_swf_name: Infiltration.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 160
+          - Stage:
+              guid: 17015
+              name_id: 14114
+              description_id: 14142
+              stage_icon_id: 346
+              start_screen_icon_id: 1355
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 3278
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage15
+              minigame_type:
+                Flash:
+                  game_swf_name: Infiltration.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 120
+          - Stage:
+              guid: 17016
+              name_id: 14115
+              description_id: 14143
+              stage_icon_id: 347
+              start_screen_icon_id: 1356
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 3279
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage16
+              minigame_type:
+                Flash:
+                  game_swf_name: Infiltration.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 159
+          - Stage:
+              guid: 17017
+              name_id: 14116
+              description_id: 14144
+              stage_icon_id: 348
+              start_screen_icon_id: 1357
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 3280
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage17
+              minigame_type:
+                Flash:
+                  game_swf_name: Infiltration.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 90
+          - Stage:
+              guid: 17018
+              name_id: 14117
+              description_id: 14145
+              stage_icon_id: 349
+              start_screen_icon_id: 1358
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 3281
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage18
+              minigame_type:
+                Flash:
+                  game_swf_name: Infiltration.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 94
+          - Stage:
+              guid: 17019
+              name_id: 14118
+              description_id: 14146
+              stage_icon_id: 350
+              start_screen_icon_id: 1359
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 3282
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage19
+              minigame_type:
+                Flash:
+                  game_swf_name: Infiltration.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 85
+          - Stage:
+              guid: 17020
+              name_id: 14119
+              description_id: 14147
+              stage_icon_id: 351
+              start_screen_icon_id: 1360
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 3283
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage20
+              minigame_type:
+                Flash:
+                  game_swf_name: Infiltration.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 90.5
+          - Stage:
+              guid: 17021
+              name_id: 14120
+              description_id: 14148
+              stage_icon_id: 352
+              start_screen_icon_id: 1361
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 3284
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage21
+              minigame_type:
+                Flash:
+                  game_swf_name: Infiltration.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 125
+          - Stage:
+              guid: 17022
+              name_id: 14121
+              description_id: 14149
+              stage_icon_id: 353
+              start_screen_icon_id: 1362
+              min_players: 1
+              max_players: 1
+              difficulty: 4
+              start_sound_id: 3285
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage22
+              minigame_type:
+                Flash:
+                  game_swf_name: Infiltration.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 91
+          - Stage:
+              guid: 17023
+              name_id: 14122
+              description_id: 14150
+              stage_icon_id: 354
+              start_screen_icon_id: 1363
+              min_players: 1
+              max_players: 1
+              difficulty: 4
+              start_sound_id: 3286
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage23
+              minigame_type:
+                Flash:
+                  game_swf_name: Infiltration.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 91
+          - Stage:
+              guid: 17024
+              name_id: 14123
+              description_id: 14151
+              stage_icon_id: 355
+              start_screen_icon_id: 1364
+              min_players: 1
+              max_players: 1
+              difficulty: 4
+              start_sound_id: 3287
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage24
+              minigame_type:
+                Flash:
+                  game_swf_name: Infiltration.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 91
+          - Stage:
+              guid: 17025
+              name_id: 14124
+              description_id: 14152
+              stage_icon_id: 356
+              start_screen_icon_id: 1365
+              min_players: 1
+              max_players: 1
+              difficulty: 4
+              start_sound_id: 3288
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage25
+              minigame_type:
+                Flash:
+                  game_swf_name: Infiltration.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 91
+          - Stage:
+              guid: 17026
+              name_id: 14125
+              description_id: 14153
+              stage_icon_id: 357
+              start_screen_icon_id: 1366
+              min_players: 1
+              max_players: 1
+              difficulty: 4
+              start_sound_id: 3289
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage26
+              minigame_type:
+                Flash:
+                  game_swf_name: Infiltration.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 91
+          - Stage:
+              guid: 17027
+              name_id: 14126
+              description_id: 14154
+              stage_icon_id: 358
+              start_screen_icon_id: 1367
+              min_players: 1
+              max_players: 1
+              difficulty: 4
+              start_sound_id: 3290
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage27
+              minigame_type:
+                Flash:
+                  game_swf_name: Infiltration.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 91
+          - Stage:
+              guid: 17028
+              name_id: 14127
+              description_id: 14155
+              stage_icon_id: 359
+              start_screen_icon_id: 1368
+              min_players: 1
+              max_players: 1
+              difficulty: 4
+              start_sound_id: 3291
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage28
+              minigame_type:
+                Flash:
+                  game_swf_name: Infiltration.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 91
+    - guid: 10
+      name_id: 5559
+      description_id: 9756
+      members_only: true
+      is_flash: true
+      is_active: true
+      param1: 0
+      icon_id: 1241
+      background_icon_id: 0
+      is_popular: false
+      is_game_of_day: false
+      sort_order: 18000
+      tutorial_swf: HowtoForcePerception.swf
+      stage_group:
+        guid: 10
+        name_id: 5559
+        description_id: 9756
+        icon_id: 535
+        stage_icon_id: 535
+        members_only: true
+        stage_select_map_name: RepublicGunship
+        stages:
+          - Stage:
+              guid: 18001
+              name_id: 13959
+              description_id: 9756
+              stage_icon_id: 321
+              start_screen_icon_id: 1338
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 2225
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage01
+              minigame_type:
+                Flash:
+                  game_swf_name: ForcePerception.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 437
+          - Stage:
+              guid: 18002
+              name_id: 13960
+              description_id: 9756
+              stage_icon_id: 323
+              start_screen_icon_id: 1340
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 2225
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage02
+              minigame_type:
+                Flash:
+                  game_swf_name: ForcePerception.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 439
+          - Stage:
+              guid: 18003
+              name_id: 13961
+              description_id: 9756
+              stage_icon_id: 322
+              start_screen_icon_id: 1339
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 2225
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage03
+              minigame_type:
+                Flash:
+                  game_swf_name: ForcePerception.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 446
+    - guid: 15
+      name_id: 7133
+      description_id: 11468
+      members_only: false
+      is_flash: true
+      is_active: true
+      param1: 0
+      icon_id: 1240
+      background_icon_id: 0
+      is_popular: false
+      is_game_of_day: false
+      sort_order: 19000
+      tutorial_swf: HowtoDroidProgramming.swf
+      stage_group:
+        comment: Levels 26-30 use level 25's credit ratio as a placeholder
+        guid: 15
+        name_id: 7133
+        description_id: 11468
+        icon_id: 533
+        stage_icon_id: 533
+        members_only: false
+        stage_select_map_name: DroidProgramming
+        stages:
+          - Stage:
+              guid: 19001
+              name_id: 11469
+              description_id: 11468
+              stage_icon_id: 318
+              start_screen_icon_id: 1702
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 2227
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage01
+              minigame_type:
+                Flash:
+                  game_swf_name: DroidProgramming.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 243
+          - Stage:
+              guid: 19002
+              name_id: 11470
+              description_id: 11471
+              stage_icon_id: 318
+              start_screen_icon_id: 1702
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3294
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage02
+              minigame_type:
+                Flash:
+                  game_swf_name: DroidProgramming.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 225
+          - Stage:
+              guid: 19003
+              name_id: 11472
+              description_id: 11473
+              stage_icon_id: 318
+              start_screen_icon_id: 1702
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3296
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage03
+              minigame_type:
+                Flash:
+                  game_swf_name: DroidProgramming.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 215
+          - Stage:
+              guid: 19004
+              name_id: 11474
+              description_id: 11475
+              stage_icon_id: 318
+              start_screen_icon_id: 1702
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3297
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage04
+              minigame_type:
+                Flash:
+                  game_swf_name: DroidProgramming.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 224
+          - Stage:
+              guid: 19005
+              name_id: 11476
+              description_id: 11477
+              stage_icon_id: 318
+              start_screen_icon_id: 1702
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3298
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage05
+              minigame_type:
+                Flash:
+                  game_swf_name: DroidProgramming.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 218
+          - Stage:
+              guid: 19006
+              name_id: 11182
+              description_id: 11183
+              stage_icon_id: 318
+              start_screen_icon_id: 1702
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3299
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage06
+              minigame_type:
+                Flash:
+                  game_swf_name: DroidProgramming.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 217
+          - Stage:
+              guid: 19007
+              name_id: 11478
+              description_id: 11479
+              stage_icon_id: 318
+              start_screen_icon_id: 1702
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3300
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage07
+              minigame_type:
+                Flash:
+                  game_swf_name: DroidProgramming.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 214
+          - Stage:
+              guid: 19008
+              name_id: 11480
+              description_id: 11481
+              stage_icon_id: 318
+              start_screen_icon_id: 1702
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3301
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage08
+              minigame_type:
+                Flash:
+                  game_swf_name: DroidProgramming.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 220
+          - Stage:
+              guid: 19009
+              name_id: 11482
+              description_id: 11483
+              stage_icon_id: 318
+              start_screen_icon_id: 1702
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3302
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage09
+              minigame_type:
+                Flash:
+                  game_swf_name: DroidProgramming.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 217
+          - Stage:
+              guid: 19010
+              name_id: 11484
+              description_id: 11485
+              stage_icon_id: 318
+              start_screen_icon_id: 1702
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3303
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage10
+              minigame_type:
+                Flash:
+                  game_swf_name: DroidProgramming.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 211.5
+          - Stage:
+              guid: 19011
+              name_id: 11486
+              description_id: 11487
+              stage_icon_id: 320
+              start_screen_icon_id: 1702
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 3304
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage11
+              minigame_type:
+                Flash:
+                  game_swf_name: DroidProgramming.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 247
+          - Stage:
+              guid: 19012
+              name_id: 11488
+              description_id: 11489
+              stage_icon_id: 320
+              start_screen_icon_id: 1702
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 3305
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage12
+              minigame_type:
+                Flash:
+                  game_swf_name: DroidProgramming.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 241
+          - Stage:
+              guid: 19013
+              name_id: 11490
+              description_id: 11491
+              stage_icon_id: 320
+              start_screen_icon_id: 1702
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 3306
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage13
+              minigame_type:
+                Flash:
+                  game_swf_name: DroidProgramming.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 278
+          - Stage:
+              guid: 19014
+              name_id: 11492
+              description_id: 11493
+              stage_icon_id: 320
+              start_screen_icon_id: 1702
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 3307
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage14
+              minigame_type:
+                Flash:
+                  game_swf_name: DroidProgramming.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 238
+          - Stage:
+              guid: 19015
+              name_id: 11494
+              description_id: 11495
+              stage_icon_id: 320
+              start_screen_icon_id: 1702
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 3308
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage15
+              minigame_type:
+                Flash:
+                  game_swf_name: DroidProgramming.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 270
+          - Stage:
+              guid: 19016
+              name_id: 11496
+              description_id: 11497
+              stage_icon_id: 320
+              start_screen_icon_id: 1702
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 3309
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage16
+              minigame_type:
+                Flash:
+                  game_swf_name: DroidProgramming.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 242
+          - Stage:
+              guid: 19017
+              name_id: 11498
+              description_id: 11499
+              stage_icon_id: 320
+              start_screen_icon_id: 1702
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 3310
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage17
+              minigame_type:
+                Flash:
+                  game_swf_name: DroidProgramming.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 234
+          - Stage:
+              guid: 19018
+              name_id: 11500
+              description_id: 11501
+              stage_icon_id: 320
+              start_screen_icon_id: 1702
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 3311
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage18
+              minigame_type:
+                Flash:
+                  game_swf_name: DroidProgramming.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 232
+          - Stage:
+              guid: 19019
+              name_id: 11502
+              description_id: 11503
+              stage_icon_id: 320
+              start_screen_icon_id: 1702
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 3312
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage19
+              minigame_type:
+                Flash:
+                  game_swf_name: DroidProgramming.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 285
+          - Stage:
+              guid: 19020
+              name_id: 11504
+              description_id: 11505
+              stage_icon_id: 320
+              start_screen_icon_id: 1702
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 3313
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage20
+              minigame_type:
+                Flash:
+                  game_swf_name: DroidProgramming.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 225
+          - Stage:
+              guid: 19021
+              name_id: 11506
+              description_id: 11507
+              stage_icon_id: 319
+              start_screen_icon_id: 1702
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 3314
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage21
+              minigame_type:
+                Flash:
+                  game_swf_name: DroidProgramming.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 235
+          - Stage:
+              guid: 19022
+              name_id: 11508
+              description_id: 11509
+              stage_icon_id: 319
+              start_screen_icon_id: 1702
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 3315
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage22
+              minigame_type:
+                Flash:
+                  game_swf_name: DroidProgramming.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 249
+          - Stage:
+              guid: 19023
+              name_id: 11510
+              description_id: 11511
+              stage_icon_id: 319
+              start_screen_icon_id: 1702
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 3316
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage23
+              minigame_type:
+                Flash:
+                  game_swf_name: DroidProgramming.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 251
+          - Stage:
+              guid: 19024
+              name_id: 11512
+              description_id: 11513
+              stage_icon_id: 319
+              start_screen_icon_id: 1702
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 3317
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage24
+              minigame_type:
+                Flash:
+                  game_swf_name: DroidProgramming.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 189
+          - Stage:
+              guid: 19025
+              name_id: 11514
+              description_id: 11515
+              stage_icon_id: 319
+              start_screen_icon_id: 1702
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 3318
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage25
+              minigame_type:
+                Flash:
+                  game_swf_name: DroidProgramming.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 229
+          - Stage:
+              guid: 19026
+              name_id: 11516
+              description_id: 11517
+              stage_icon_id: 319
+              start_screen_icon_id: 1702
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 3319
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage26
+              minigame_type:
+                Flash:
+                  game_swf_name: DroidProgramming.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 229
+          - Stage:
+              guid: 19027
+              name_id: 11518
+              description_id: 11519
+              stage_icon_id: 319
+              start_screen_icon_id: 1702
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 3320
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage27
+              minigame_type:
+                Flash:
+                  game_swf_name: DroidProgramming.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 229
+          - Stage:
+              guid: 19028
+              name_id: 11520
+              description_id: 11521
+              stage_icon_id: 319
+              start_screen_icon_id: 1702
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 3321
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage28
+              minigame_type:
+                Flash:
+                  game_swf_name: DroidProgramming.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 229
+          - Stage:
+              guid: 19029
+              name_id: 11522
+              description_id: 11523
+              stage_icon_id: 319
+              start_screen_icon_id: 1702
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 3322
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage29
+              minigame_type:
+                Flash:
+                  game_swf_name: DroidProgramming.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 229
+          - Stage:
+              guid: 19030
+              name_id: 11524
+              description_id: 11525
+              stage_icon_id: 319
+              start_screen_icon_id: 1702
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 3323
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage30
+              minigame_type:
+                Flash:
+                  game_swf_name: DroidProgramming.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 229
+    - guid: 21000
+      name_id: 14050
+      description_id: 14955
+      members_only: true
+      is_flash: true
+      is_active: true
+      param1: 0
+      icon_id: 1245
+      background_icon_id: 0
+      is_popular: true
+      is_game_of_day: false
+      sort_order: 21000
+      tutorial_swf: HowtoMineBuster.swf
+      stage_group:
+        guid: 21000
+        name_id: 14050
+        description_id: 14955
+        icon_id: 885
+        stage_icon_id: 885
+        members_only: true
+        stage_select_map_name: RepublicGunship
+        stages:
+          - Stage:
+              guid: 21001
+              name_id: 14956
+              description_id: 14955
+              stage_icon_id: 1258
+              start_screen_icon_id: 1330
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 2247
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage01
+              minigame_type:
+                Flash:
+                  game_swf_name: MineBuster.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 139
+          - Stage:
+              guid: 21002
+              name_id: 14957
+              description_id: 14955
+              stage_icon_id: 1260
+              start_screen_icon_id: 1332
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 2247
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage02
+              minigame_type:
+                Flash:
+                  game_swf_name: MineBuster.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 169.25
+          - Stage:
+              guid: 21003
+              name_id: 14958
+              description_id: 14955
+              stage_icon_id: 1259
+              start_screen_icon_id: 1331
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 2247
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage03
+              minigame_type:
+                Flash:
+                  game_swf_name: MineBuster.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 71.5
+    - guid: 23000
+      name_id: 50473
+      description_id: 50472
+      members_only: true
+      is_flash: true
+      is_active: true
+      param1: 0
+      icon_id: 5342
+      background_icon_id: 0
+      is_popular: false
+      is_game_of_day: false
+      sort_order: 23000
+      tutorial_swf: HowtoHoloScramble.swf
+      stage_group:
+        guid: 23000
+        name_id: 50473
+        description_id: 50472
+        icon_id: 5340
+        stage_icon_id: 5340
+        members_only: true
+        stage_select_map_name: RepublicGunship
+        stages:
+          - Stage:
+              guid: 23001
+              name_id: 50467
+              description_id: 50472
+              stage_icon_id: 5346
+              start_screen_icon_id: 5343
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 5499
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage01
+              minigame_type:
+                Flash:
+                  game_swf_name: HoloScramble.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 200
+          - Stage:
+              guid: 23002
+              name_id: 50468
+              description_id: 50472
+              stage_icon_id: 5347
+              start_screen_icon_id: 5344
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 5499
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage02
+              minigame_type:
+                Flash:
+                  game_swf_name: HoloScramble.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 200
+          - Stage:
+              guid: 23003
+              name_id: 50469
+              description_id: 50472
+              stage_icon_id: 5348
+              start_screen_icon_id: 5345
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 5499
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage03
+              minigame_type:
+                Flash:
+                  game_swf_name: HoloScramble.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 200
+    - guid: 12
+      name_id: 6171
+      description_id: 9753
+      members_only: true
+      is_flash: true
+      is_active: true
+      param1: 0
+      icon_id: 1252
+      background_icon_id: 0
+      is_popular: false
+      is_game_of_day: false
+      sort_order: 25000
+      tutorial_swf: HowtoStarTyper.swf
+      stage_group:
+        guid: 12
+        name_id: 6171
+        description_id: 9753
+        icon_id: 540
+        stage_icon_id: 540
+        members_only: true
+        stage_select_map_name: RepublicGunship
+        stages:
+          - Stage:
+              guid: 25001
+              name_id: 13956
+              description_id: 9753
+              stage_icon_id: 324
+              start_screen_icon_id: 1798
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 1509
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage01
+              minigame_type:
+                Flash:
+                  game_swf_name: startyper.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 40.9
+          - Stage:
+              guid: 25002
+              name_id: 13957
+              description_id: 9753
+              stage_icon_id: 326
+              start_screen_icon_id: 1800
+              min_players: 1
+              max_players: 1
+              difficulty: 2
+              start_sound_id: 1509
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage02
+              minigame_type:
+                Flash:
+                  game_swf_name: startyper.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 80
+          - Stage:
+              guid: 25003
+              name_id: 13958
+              description_id: 9753
+              stage_icon_id: 325
+              start_screen_icon_id: 1799
+              min_players: 1
+              max_players: 1
+              difficulty: 3
+              start_sound_id: 1509
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage03
+              minigame_type:
+                Flash:
+                  game_swf_name: startyper.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 81
+- comment: Campaigns
+  guid: 4
+  name_id: 51599
+  icon_id: 5804
+  sort_order: 4
+  portal_entries: []
+- comment: Dailies
+  guid: 5
+  name_id: 51600
+  icon_id: 5806
+  sort_order: 5
+  portal_entries: []

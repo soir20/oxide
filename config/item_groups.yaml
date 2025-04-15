@@ -1,0 +1,1148 @@
+- comment: Primary Hilts
+  guid: 3
+  unknown2: 0
+  name_id: 0
+  description_id: 0
+  sort_order: 0
+  icon_set_id: 0
+  category: 0
+  page: 0
+  unknown9: 0
+  unknown10: 0
+  unknown11: false
+  unknown12: 0
+  unknown13: 0
+  unknown14: 0
+  unknown16: ''
+  unknown17: false
+  items:
+    - guid: 70010
+      unknown: 0
+    - guid: 70011
+      unknown: 0
+    - guid: 70012
+      unknown: 0
+    - guid: 70005
+      unknown: 0
+    - guid: 70015
+      unknown: 0
+    - guid: 70058
+      unknown: 0
+    - guid: 70060
+      unknown: 0
+    - guid: 70017
+      unknown: 0
+    - guid: 70053
+      unknown: 0
+    - guid: 70018
+      unknown: 0
+    - guid: 70025
+      unknown: 0
+    - guid: 70054
+      unknown: 0
+    - guid: 70064
+      unknown: 0
+    - guid: 70024
+      unknown: 0
+    - guid: 70052
+      unknown: 0
+    - guid: 70022
+      unknown: 0
+    - guid: 70026
+      unknown: 0
+    - guid: 70055
+      unknown: 0
+    - guid: 70007
+      unknown: 0
+    - guid: 70028
+      unknown: 0
+    - guid: 70029
+      unknown: 0
+    - guid: 70031
+      unknown: 0
+    - guid: 70008
+      unknown: 0
+    - guid: 70027
+      unknown: 0
+    - guid: 70032
+      unknown: 0
+    - guid: 70033
+      unknown: 0
+    - guid: 70035
+      unknown: 0
+    - guid: 70036
+      unknown: 0
+    - guid: 70037
+      unknown: 0
+    - guid: 70009
+      unknown: 0
+    - guid: 70038
+      unknown: 0
+    - guid: 70040
+      unknown: 0
+    - guid: 70041
+      unknown: 0
+    - guid: 70043
+      unknown: 0
+    - guid: 70034
+      unknown: 0
+    - guid: 70019
+      unknown: 0
+    - guid: 70002
+      unknown: 0
+    - guid: 70045
+      unknown: 0
+    - guid: 70046
+      unknown: 0
+    - guid: 70023
+      unknown: 0
+    - guid: 70042
+      unknown: 0
+    - guid: 70021
+      unknown: 0
+    - guid: 70049
+      unknown: 0
+    - guid: 70050
+      unknown: 0
+    - guid: 70003
+      unknown: 0
+    - guid: 70059
+      unknown: 0
+    - guid: 70051
+      unknown: 0
+    - guid: 70047
+      unknown: 0
+    - guid: 70048
+      unknown: 0
+    - guid: 70020
+      unknown: 0
+    - guid: 70006
+      unknown: 0
+    - guid: 70000
+      unknown: 0
+    - guid: 70004
+      unknown: 0
+    - guid: 70039
+      unknown: 0
+    - guid: 70056
+      unknown: 0
+    - guid: 70057
+      unknown: 0
+    - guid: 70030
+      unknown: 0
+    - guid: 70013
+      unknown: 0
+    - guid: 70016
+      unknown: 0
+    - guid: 70044
+      unknown: 0
+    - guid: 70062
+      unknown: 0
+    - guid: 70001
+      unknown: 0
+    - guid: 70063
+      unknown: 0
+- comment: Secondary Hilts
+  guid: 8
+  unknown2: 0
+  name_id: 0
+  description_id: 0
+  sort_order: 0
+  icon_set_id: 0
+  category: 0
+  page: 0
+  unknown9: 0
+  unknown10: 0
+  unknown11: false
+  unknown12: 0
+  unknown13: 0
+  unknown14: 0
+  unknown16: ''
+  unknown17: false
+  items:
+    - guid: 80010
+      unknown: 0
+    - guid: 80011
+      unknown: 0
+    - guid: 80014
+      unknown: 0
+    - guid: 80015
+      unknown: 0
+    - guid: 80058
+      unknown: 0
+    - guid: 80061
+      unknown: 0
+    - guid: 80017
+      unknown: 0
+    - guid: 80053
+      unknown: 0
+    - guid: 80018
+      unknown: 0
+    - guid: 80025
+      unknown: 0
+    - guid: 80054
+      unknown: 0
+    - guid: 80064
+      unknown: 0
+    - guid: 80024
+      unknown: 0
+    - guid: 80052
+      unknown: 0
+    - guid: 80022
+      unknown: 0
+    - guid: 80026
+      unknown: 0
+    - guid: 80055
+      unknown: 0
+    - guid: 80028
+      unknown: 0
+    - guid: 80029
+      unknown: 0
+    - guid: 80031
+      unknown: 0
+    - guid: 80027
+      unknown: 0
+    - guid: 80032
+      unknown: 0
+    - guid: 80033
+      unknown: 0
+    - guid: 80035
+      unknown: 0
+    - guid: 80036
+      unknown: 0
+    - guid: 80037
+      unknown: 0
+    - guid: 80038
+      unknown: 0
+    - guid: 80040
+      unknown: 0
+    - guid: 80041
+      unknown: 0
+    - guid: 80043
+      unknown: 0
+    - guid: 80034
+      unknown: 0
+    - guid: 80019
+      unknown: 0
+    - guid: 80045
+      unknown: 0
+    - guid: 80046
+      unknown: 0
+    - guid: 80023
+      unknown: 0
+    - guid: 80042
+      unknown: 0
+    - guid: 80021
+      unknown: 0
+    - guid: 80049
+      unknown: 0
+    - guid: 80050
+      unknown: 0
+    - guid: 80059
+      unknown: 0
+    - guid: 80051
+      unknown: 0
+    - guid: 80047
+      unknown: 0
+    - guid: 80048
+      unknown: 0
+    - guid: 80020
+      unknown: 0
+    - guid: 80039
+      unknown: 0
+    - guid: 80056
+      unknown: 0
+    - guid: 80057
+      unknown: 0
+    - guid: 80030
+      unknown: 0
+    - guid: 80013
+      unknown: 0
+    - guid: 80016
+      unknown: 0
+    - guid: 80044
+      unknown: 0
+    - guid: 80062
+      unknown: 0
+    - guid: 80063
+      unknown: 0
+- comment: Primary Colors
+  guid: 4
+  unknown2: 0
+  name_id: 0
+  description_id: 0
+  sort_order: 0
+  icon_set_id: 0
+  category: 0
+  page: 0
+  unknown9: 0
+  unknown10: 0
+  unknown11: false
+  unknown12: 0
+  unknown13: 0
+  unknown14: 0
+  unknown16: ''
+  unknown17: false
+  items:
+    - guid: 60000
+      unknown: 0
+    - guid: 60001
+      unknown: 0
+    - guid: 60002
+      unknown: 0
+    - guid: 60003
+      unknown: 0
+    - guid: 60004
+      unknown: 0
+    - guid: 60005
+      unknown: 0
+    - guid: 60006
+      unknown: 0
+    - guid: 60007
+      unknown: 0
+    - guid: 60008
+      unknown: 0
+    - guid: 60009
+      unknown: 0
+    - guid: 60010
+      unknown: 0
+    - guid: 60011
+      unknown: 0
+    - guid: 60012
+      unknown: 0
+- comment: Secondary Colors
+  guid: 149
+  unknown2: 0
+  name_id: 0
+  description_id: 0
+  sort_order: 0
+  icon_set_id: 0
+  category: 0
+  page: 0
+  unknown9: 0
+  unknown10: 0
+  unknown11: false
+  unknown12: 0
+  unknown13: 0
+  unknown14: 0
+  unknown16: ''
+  unknown17: false
+  items:
+    - guid: 100000
+      unknown: 0
+    - guid: 100001
+      unknown: 0
+    - guid: 100002
+      unknown: 0
+    - guid: 100003
+      unknown: 0
+    - guid: 100004
+      unknown: 0
+    - guid: 100005
+      unknown: 0
+    - guid: 100006
+      unknown: 0
+    - guid: 100007
+      unknown: 0
+    - guid: 100008
+      unknown: 0
+    - guid: 100009
+      unknown: 0
+    - guid: 100010
+      unknown: 0
+    - guid: 100011
+      unknown: 0
+    - guid: 100012
+      unknown: 0
+- comment: Primary Shapes
+  guid: 5
+  unknown2: 0
+  name_id: 0
+  description_id: 0
+  sort_order: 0
+  icon_set_id: 0
+  category: 0
+  page: 0
+  unknown9: 0
+  unknown10: 0
+  unknown11: false
+  unknown12: 0
+  unknown13: 0
+  unknown14: 0
+  unknown16: ''
+  unknown17: false
+  items:
+    - guid: 50000
+      unknown: 0
+    - guid: 50001
+      unknown: 0
+    - guid: 50002
+      unknown: 0
+    - guid: 50003
+      unknown: 0
+    - guid: 50004
+      unknown: 0
+    - guid: 50005
+      unknown: 0
+    - guid: 50006
+      unknown: 0
+    - guid: 50007
+      unknown: 0
+    - guid: 50008
+      unknown: 0
+    - guid: 50009
+      unknown: 0
+    - guid: 50010
+      unknown: 0
+    - guid: 50011
+      unknown: 0
+    - guid: 50012
+      unknown: 0
+    - guid: 50013
+      unknown: 0
+    - guid: 50014
+      unknown: 0
+    - guid: 50015
+      unknown: 0
+    - guid: 50016
+      unknown: 0
+    - guid: 50017
+      unknown: 0
+    - guid: 50018
+      unknown: 0
+    - guid: 50019
+      unknown: 0
+- comment: Secondary Shapes
+  guid: 9
+  unknown2: 0
+  name_id: 0
+  description_id: 0
+  sort_order: 0
+  icon_set_id: 0
+  category: 0
+  page: 0
+  unknown9: 0
+  unknown10: 0
+  unknown11: false
+  unknown12: 0
+  unknown13: 0
+  unknown14: 0
+  unknown16: ''
+  unknown17: false
+  items:
+    - guid: 90000
+      unknown: 0
+    - guid: 90001
+      unknown: 0
+    - guid: 90002
+      unknown: 0
+    - guid: 90003
+      unknown: 0
+    - guid: 90004
+      unknown: 0
+    - guid: 90005
+      unknown: 0
+    - guid: 90006
+      unknown: 0
+    - guid: 90007
+      unknown: 0
+    - guid: 90008
+      unknown: 0
+    - guid: 90009
+      unknown: 0
+    - guid: 90010
+      unknown: 0
+    - guid: 90011
+      unknown: 0
+    - guid: 90012
+      unknown: 0
+    - guid: 90013
+      unknown: 0
+    - guid: 90014
+      unknown: 0
+    - guid: 90015
+      unknown: 0
+    - guid: 90016
+      unknown: 0
+    - guid: 90017
+      unknown: 0
+    - guid: 90018
+      unknown: 0
+    - guid: 90019
+      unknown: 0
+- comment: Hair Style
+  guid: 122
+  unknown2: 0
+  name_id: 0
+  description_id: 0
+  sort_order: 0
+  icon_set_id: 0
+  category: 0
+  page: 8
+  unknown9: 0
+  unknown10: 0
+  unknown11: false
+  unknown12: 0
+  unknown13: 0
+  unknown14: 0
+  unknown16: ''
+  unknown17: false
+  items:
+    - guid: 130118
+      unknown: 0
+    - guid: 130117
+      unknown: 0
+    - guid: 130116
+      unknown: 0
+    - guid: 130115
+      unknown: 0
+    - guid: 130114
+      unknown: 0
+    - guid: 130113
+      unknown: 0
+    - guid: 130112
+      unknown: 0
+    - guid: 130111
+      unknown: 0
+    - guid: 130110
+      unknown: 0
+    - guid: 130109
+      unknown: 0
+    - guid: 130108
+      unknown: 0
+    - guid: 130107
+      unknown: 0
+    - guid: 130106
+      unknown: 0
+    - guid: 130105
+      unknown: 0
+    - guid: 130104
+      unknown: 0
+    - guid: 130103
+      unknown: 0
+    - guid: 130102
+      unknown: 0
+    - guid: 130101
+      unknown: 0
+    - guid: 130100
+      unknown: 0
+    - guid: 130099
+      unknown: 0
+    - guid: 130098
+      unknown: 0
+    - guid: 130097
+      unknown: 0
+    - guid: 130096
+      unknown: 0
+    - guid: 130095
+      unknown: 0
+    - guid: 130094
+      unknown: 0
+    - guid: 130093
+      unknown: 0
+    - guid: 130092
+      unknown: 0
+    - guid: 130091
+      unknown: 0
+    - guid: 130090
+      unknown: 0
+    - guid: 130089
+      unknown: 0
+    - guid: 130088
+      unknown: 0
+    - guid: 130087
+      unknown: 0
+    - guid: 130086
+      unknown: 0
+    - guid: 130085
+      unknown: 0
+    - guid: 130084
+      unknown: 0
+    - guid: 130083
+      unknown: 0
+    - guid: 130082
+      unknown: 0
+    - guid: 130081
+      unknown: 0
+    - guid: 130080
+      unknown: 0
+    - guid: 130079
+      unknown: 0
+    - guid: 130078
+      unknown: 0
+    - guid: 130077
+      unknown: 0
+    - guid: 130076
+      unknown: 0
+    - guid: 130075
+      unknown: 0
+    - guid: 130074
+      unknown: 0
+    - guid: 130073
+      unknown: 0
+    - guid: 130072
+      unknown: 0
+    - guid: 130071
+      unknown: 0
+    - guid: 130070
+      unknown: 0
+    - guid: 130069
+      unknown: 0
+    - guid: 130068
+      unknown: 0
+    - guid: 130067
+      unknown: 0
+    - guid: 130066
+      unknown: 0
+    - guid: 130065
+      unknown: 0
+    - guid: 130064
+      unknown: 0
+    - guid: 130063
+      unknown: 0
+    - guid: 130062
+      unknown: 0
+    - guid: 130061
+      unknown: 0
+    - guid: 130060
+      unknown: 0
+    - guid: 130059
+      unknown: 0
+    - guid: 130058
+      unknown: 0
+    - guid: 130057
+      unknown: 0
+    - guid: 130056
+      unknown: 0
+    - guid: 130055
+      unknown: 0
+    - guid: 130054
+      unknown: 0
+    - guid: 130053
+      unknown: 0
+    - guid: 130052
+      unknown: 0
+    - guid: 130051
+      unknown: 0
+    - guid: 130050
+      unknown: 0
+    - guid: 130049
+      unknown: 0
+    - guid: 130048
+      unknown: 0
+    - guid: 130047
+      unknown: 0
+    - guid: 130046
+      unknown: 0
+    - guid: 130045
+      unknown: 0
+    - guid: 130044
+      unknown: 0
+    - guid: 130043
+      unknown: 0
+    - guid: 130042
+      unknown: 0
+    - guid: 130041
+      unknown: 0
+    - guid: 130040
+      unknown: 0
+    - guid: 130039
+      unknown: 0
+    - guid: 130038
+      unknown: 0
+    - guid: 130037
+      unknown: 0
+    - guid: 130036
+      unknown: 0
+    - guid: 130035
+      unknown: 0
+    - guid: 130034
+      unknown: 0
+    - guid: 130033
+      unknown: 0
+    - guid: 130032
+      unknown: 0
+    - guid: 130031
+      unknown: 0
+    - guid: 130030
+      unknown: 0
+    - guid: 130029
+      unknown: 0
+    - guid: 130028
+      unknown: 0
+    - guid: 130027
+      unknown: 0
+    - guid: 130026
+      unknown: 0
+    - guid: 130025
+      unknown: 0
+    - guid: 130024
+      unknown: 0
+    - guid: 130023
+      unknown: 0
+    - guid: 130022
+      unknown: 0
+    - guid: 130021
+      unknown: 0
+    - guid: 130020
+      unknown: 0
+    - guid: 130019
+      unknown: 0
+    - guid: 130018
+      unknown: 0
+    - guid: 130017
+      unknown: 0
+    - guid: 130016
+      unknown: 0
+    - guid: 130015
+      unknown: 0
+    - guid: 130014
+      unknown: 0
+    - guid: 130013
+      unknown: 0
+    - guid: 130012
+      unknown: 0
+    - guid: 130011
+      unknown: 0
+    - guid: 130010
+      unknown: 0
+    - guid: 130009
+      unknown: 0
+    - guid: 130008
+      unknown: 0
+    - guid: 130007
+      unknown: 0
+    - guid: 130006
+      unknown: 0
+    - guid: 130005
+      unknown: 0
+    - guid: 130004
+      unknown: 0
+    - guid: 130003
+      unknown: 0
+    - guid: 130002
+      unknown: 0
+    - guid: 130001
+      unknown: 0
+    - guid: 130000
+      unknown: 0
+- comment: Hair Color
+  guid: 123
+  unknown2: 0
+  name_id: 0
+  description_id: 0
+  sort_order: 0
+  icon_set_id: 0
+  category: 0
+  page: 8
+  unknown9: 0
+  unknown10: 0
+  unknown11: false
+  unknown12: 0
+  unknown13: 0
+  unknown14: 0
+  unknown16: ''
+  unknown17: false
+  items:
+    - guid: 140021
+      unknown: 0
+    - guid: 140020
+      unknown: 0
+    - guid: 140019
+      unknown: 0
+    - guid: 140018
+      unknown: 0
+    - guid: 140017
+      unknown: 0
+    - guid: 140016
+      unknown: 0
+    - guid: 140015
+      unknown: 0
+    - guid: 140014
+      unknown: 0
+    - guid: 140013
+      unknown: 0
+    - guid: 140012
+      unknown: 0
+    - guid: 140011
+      unknown: 0
+    - guid: 140010
+      unknown: 0
+    - guid: 140009
+      unknown: 0
+    - guid: 140008
+      unknown: 0
+    - guid: 140007
+      unknown: 0
+    - guid: 140006
+      unknown: 0
+    - guid: 140005
+      unknown: 0
+    - guid: 140004
+      unknown: 0
+    - guid: 140003
+      unknown: 0
+    - guid: 140002
+      unknown: 0
+    - guid: 140001
+      unknown: 0
+    - guid: 140000
+      unknown: 0
+- comment: Eye Color
+  guid: 124
+  unknown2: 0
+  name_id: 0
+  description_id: 0
+  sort_order: 0
+  icon_set_id: 0
+  category: 0
+  page: 8
+  unknown9: 0
+  unknown10: 0
+  unknown11: false
+  unknown12: 0
+  unknown13: 0
+  unknown14: 0
+  unknown16: ''
+  unknown17: false
+  items:
+    - guid: 150012
+      unknown: 0
+    - guid: 150011
+      unknown: 0
+    - guid: 150010
+      unknown: 0
+    - guid: 150009
+      unknown: 0
+    - guid: 150008
+      unknown: 0
+    - guid: 150007
+      unknown: 0
+    - guid: 150006
+      unknown: 0
+    - guid: 150005
+      unknown: 0
+    - guid: 150004
+      unknown: 0
+    - guid: 150003
+      unknown: 0
+    - guid: 150002
+      unknown: 0
+    - guid: 150001
+      unknown: 0
+    - guid: 150000
+      unknown: 0
+- comment: Skin Tone
+  guid: 125
+  unknown2: 0
+  name_id: 0
+  description_id: 0
+  sort_order: 0
+  icon_set_id: 0
+  category: 0
+  page: 8
+  unknown9: 0
+  unknown10: 0
+  unknown11: false
+  unknown12: 0
+  unknown13: 0
+  unknown14: 0
+  unknown16: ''
+  unknown17: false
+  items:
+    - guid: 120029
+      unknown: 0
+    - guid: 120028
+      unknown: 0
+    - guid: 120027
+      unknown: 0
+    - guid: 120026
+      unknown: 0
+    - guid: 120025
+      unknown: 0
+    - guid: 120024
+      unknown: 0
+    - guid: 120023
+      unknown: 0
+    - guid: 120022
+      unknown: 0
+    - guid: 120021
+      unknown: 0
+    - guid: 120020
+      unknown: 0
+    - guid: 120019
+      unknown: 0
+    - guid: 120018
+      unknown: 0
+    - guid: 120017
+      unknown: 0
+    - guid: 120016
+      unknown: 0
+    - guid: 120015
+      unknown: 0
+    - guid: 120014
+      unknown: 0
+    - guid: 120013
+      unknown: 0
+    - guid: 120012
+      unknown: 0
+    - guid: 120011
+      unknown: 0
+    - guid: 120010
+      unknown: 0
+    - guid: 120009
+      unknown: 0
+    - guid: 120008
+      unknown: 0
+    - guid: 120007
+      unknown: 0
+    - guid: 120006
+      unknown: 0
+    - guid: 120005
+      unknown: 0
+    - guid: 120004
+      unknown: 0
+    - guid: 120003
+      unknown: 0
+    - guid: 120002
+      unknown: 0
+    - guid: 120001
+      unknown: 0
+    - guid: 120000
+      unknown: 0
+- comment: Face Design
+  guid: 126
+  unknown2: 0
+  name_id: 0
+  description_id: 0
+  sort_order: 0
+  icon_set_id: 0
+  category: 0
+  page: 8
+  unknown9: 0
+  unknown10: 0
+  unknown11: false
+  unknown12: 0
+  unknown13: 0
+  unknown14: 0
+  unknown16: ''
+  unknown17: false
+  items:
+    - guid: 170062
+      unknown: 0
+    - guid: 170061
+      unknown: 0
+    - guid: 170060
+      unknown: 0
+    - guid: 170059
+      unknown: 0
+    - guid: 170058
+      unknown: 0
+    - guid: 170057
+      unknown: 0
+    - guid: 170056
+      unknown: 0
+    - guid: 170055
+      unknown: 0
+    - guid: 170054
+      unknown: 0
+    - guid: 170053
+      unknown: 0
+    - guid: 170052
+      unknown: 0
+    - guid: 170051
+      unknown: 0
+    - guid: 170050
+      unknown: 0
+    - guid: 170049
+      unknown: 0
+    - guid: 170048
+      unknown: 0
+    - guid: 170047
+      unknown: 0
+    - guid: 170046
+      unknown: 0
+    - guid: 170045
+      unknown: 0
+    - guid: 170044
+      unknown: 0
+    - guid: 170043
+      unknown: 0
+    - guid: 170042
+      unknown: 0
+    - guid: 170041
+      unknown: 0
+    - guid: 170040
+      unknown: 0
+    - guid: 170039
+      unknown: 0
+    - guid: 170038
+      unknown: 0
+    - guid: 170037
+      unknown: 0
+    - guid: 170036
+      unknown: 0
+    - guid: 170035
+      unknown: 0
+    - guid: 170034
+      unknown: 0
+    - guid: 170033
+      unknown: 0
+    - guid: 170032
+      unknown: 0
+    - guid: 170031
+      unknown: 0
+    - guid: 170030
+      unknown: 0
+    - guid: 170029
+      unknown: 0
+    - guid: 170028
+      unknown: 0
+    - guid: 170027
+      unknown: 0
+    - guid: 170026
+      unknown: 0
+    - guid: 170025
+      unknown: 0
+    - guid: 170024
+      unknown: 0
+    - guid: 170023
+      unknown: 0
+    - guid: 170022
+      unknown: 0
+    - guid: 170021
+      unknown: 0
+    - guid: 170020
+      unknown: 0
+    - guid: 170019
+      unknown: 0
+    - guid: 170018
+      unknown: 0
+    - guid: 170017
+      unknown: 0
+    - guid: 170016
+      unknown: 0
+    - guid: 170015
+      unknown: 0
+    - guid: 170014
+      unknown: 0
+    - guid: 170013
+      unknown: 0
+    - guid: 170012
+      unknown: 0
+    - guid: 170011
+      unknown: 0
+    - guid: 170010
+      unknown: 0
+    - guid: 170009
+      unknown: 0
+    - guid: 170008
+      unknown: 0
+    - guid: 170007
+      unknown: 0
+    - guid: 170006
+      unknown: 0
+    - guid: 170005
+      unknown: 0
+    - guid: 170004
+      unknown: 0
+    - guid: 170003
+      unknown: 0
+    - guid: 170002
+      unknown: 0
+    - guid: 170001
+      unknown: 0
+    - guid: 170000
+      unknown: 0
+- comment: Facial Hair
+  guid: 139
+  unknown2: 0
+  name_id: 0
+  description_id: 0
+  sort_order: 0
+  icon_set_id: 0
+  category: 0
+  page: 8
+  unknown9: 0
+  unknown10: 0
+  unknown11: false
+  unknown12: 0
+  unknown13: 0
+  unknown14: 0
+  unknown16: ''
+  unknown17: false
+  items:
+    - guid: 160014
+      unknown: 0
+    - guid: 160013
+      unknown: 0
+    - guid: 160012
+      unknown: 0
+    - guid: 160011
+      unknown: 0
+    - guid: 160010
+      unknown: 0
+    - guid: 160009
+      unknown: 0
+    - guid: 160008
+      unknown: 0
+    - guid: 160007
+      unknown: 0
+    - guid: 160006
+      unknown: 0
+    - guid: 160005
+      unknown: 0
+    - guid: 160004
+      unknown: 0
+    - guid: 160003
+      unknown: 0
+    - guid: 160002
+      unknown: 0
+    - guid: 160001
+      unknown: 0
+    - guid: 160000
+      unknown: 0
+- comment: Species
+  guid: 127
+  unknown2: 0
+  name_id: 0
+  description_id: 0
+  sort_order: 0
+  icon_set_id: 0
+  category: 0
+  page: 9
+  unknown9: 0
+  unknown10: 0
+  unknown11: false
+  unknown12: 0
+  unknown13: 0
+  unknown14: 0
+  unknown16: ''
+  unknown17: false
+  items:
+    - guid: 180012
+      unknown: 0
+    - guid: 180011
+      unknown: 0
+    - guid: 180010
+      unknown: 0
+    - guid: 180009
+      unknown: 0
+    - guid: 180008
+      unknown: 0
+    - guid: 180007
+      unknown: 0
+    - guid: 180006
+      unknown: 0
+    - guid: 180005
+      unknown: 0
+    - guid: 180004
+      unknown: 0
+    - guid: 180003
+      unknown: 0
+    - guid: 180002
+      unknown: 0
+    - guid: 180001
+      unknown: 0
+    - guid: 180000
+      unknown: 0

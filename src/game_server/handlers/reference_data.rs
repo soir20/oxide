@@ -8,7 +8,7 @@ use crate::{
 };
 
 pub fn load_item_classes(config_dir: &Path) -> Result<ItemClassDefinitions, ConfigError> {
-    let mut file = File::open(config_dir.join("item_classes.json"))?;
+    let mut file = File::open(config_dir.join("item_classes.yaml"))?;
     let definitions: Vec<ItemClassDefinition> = serde_yaml::from_reader(&mut file)?;
     Ok(ItemClassDefinitions {
         definitions: definitions
@@ -19,11 +19,11 @@ pub fn load_item_classes(config_dir: &Path) -> Result<ItemClassDefinitions, Conf
 }
 
 pub fn load_categories(config_dir: &Path) -> Result<CategoryDefinitions, ConfigError> {
-    let mut file = File::open(config_dir.join("item_categories.json"))?;
+    let mut file = File::open(config_dir.join("item_categories.yaml"))?;
     Ok(serde_yaml::from_reader(&mut file)?)
 }
 
 pub fn load_item_groups(config_dir: &Path) -> Result<Vec<ItemGroupDefinition>, ConfigError> {
-    let mut file = File::open(config_dir.join("item_groups.json"))?;
+    let mut file = File::open(config_dir.join("item_groups.yaml"))?;
     Ok(serde_yaml::from_reader(&mut file)?)
 }

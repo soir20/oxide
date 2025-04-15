@@ -45,7 +45,7 @@ pub struct DefaultSaber {
 }
 
 pub fn load_default_sabers(config_dir: &Path) -> Result<BTreeMap<u32, DefaultSaber>, ConfigError> {
-    let mut file = File::open(config_dir.join("default_sabers.json"))?;
+    let mut file = File::open(config_dir.join("default_sabers.yaml"))?;
     let default_sabers: Vec<DefaultSaber> = serde_yaml::from_reader(&mut file)?;
     Ok(default_sabers
         .into_iter()
@@ -54,7 +54,7 @@ pub fn load_default_sabers(config_dir: &Path) -> Result<BTreeMap<u32, DefaultSab
 }
 
 pub fn load_customizations(config_dir: &Path) -> Result<BTreeMap<u32, Customization>, ConfigError> {
-    let mut file = File::open(config_dir.join("customizations.json"))?;
+    let mut file = File::open(config_dir.join("customizations.yaml"))?;
     let customizations: Vec<Customization> = serde_yaml::from_reader(&mut file)?;
     Ok(customizations
         .into_iter()
@@ -65,7 +65,7 @@ pub fn load_customizations(config_dir: &Path) -> Result<BTreeMap<u32, Customizat
 pub fn load_customization_item_mappings(
     config_dir: &Path,
 ) -> Result<BTreeMap<u32, Vec<u32>>, ConfigError> {
-    let mut file = File::open(config_dir.join("customization_item_mappings.json"))?;
+    let mut file = File::open(config_dir.join("customization_item_mappings.yaml"))?;
     Ok(serde_yaml::from_reader(&mut file)?)
 }
 
