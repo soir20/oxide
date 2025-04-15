@@ -27,8 +27,8 @@ pub fn process_command(
                 Err(ProcessPacketError::new(
                     ProcessPacketErrorType::UnknownOpCode,
                     format!(
-                        "Unimplemented command packet: {}, {:x?}",
-                        raw_op_code, buffer
+                        "Unimplemented command packet: {:?}, {:x?}",
+                        op_code, buffer
                     ),
                 ))
             }
