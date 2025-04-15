@@ -682,8 +682,8 @@
         z: 1.5
         w: 0
       destination_zone:
-        Any:
-          template_guid: 25
+        !Any
+        template_guid: 25
     - comment: Lounge -> Club
       pos:
         x: -106.5555
@@ -702,8 +702,8 @@
         z: 0
         w: 0
       destination_zone:
-        Any:
-          template_guid: 25
+        !Any
+        template_guid: 25
   transports:
     - comment: Breaker
       model_id: 1207
@@ -1242,8 +1242,8 @@
         z: 0
         w: 0
       destination_zone:
-        Any:
-          template_guid: 24
+        !Any
+        template_guid: 24
     - comment: Club -> Lounge
       pos:
         x: 761.51
@@ -1262,8 +1262,8 @@
         z: 1.5
         w: 0
       destination_zone:
-        Any:
-          template_guid: 24
+        !Any
+        template_guid: 24
   transports: []
   ambient_npcs: []
 - comment: Mustafar Lot
