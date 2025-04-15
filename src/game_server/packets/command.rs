@@ -10,10 +10,12 @@ pub enum CommandOpCode {
     EnterDialog = 0x3,
     ExitDialog = 0x4,
     AdvanceDialog = 0x6,
+    InteractRequest = 0x8,
     InteractionList = 0x9,
     StartFlashGame = 0xc,
     ChatBubbleColor = 0xe,
     SelectPlayer = 0xf,
+    FreeInteractNpc = 0x10,
     DialogEffect = 0x17,
     PlaySoundOnTarget = 0x22,
 }
