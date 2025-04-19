@@ -167,6 +167,12 @@ pub type ZoneTableReadHandle<'a> = TableReadHandleWrapper<'a, u64, ZoneInstance,
 pub type ZoneTableWriteHandle<'a> = GuidTableWriteHandle<'a, u64, ZoneInstance, u8>;
 pub type ZoneReadGuard<'a> = RwLockReadGuard<'a, ZoneInstance>;
 pub type ZoneWriteGuard<'a> = RwLockWriteGuard<'a, ZoneInstance>;
+pub type MinigameDataTableReadHandle<'a> =
+    TableReadHandleWrapper<'a, CharacterMatchmakingGroupIndex, SharedMinigameData>;
+pub type MinigameDataTableWriteHandle<'a> =
+    GuidTableWriteHandle<'a, CharacterMatchmakingGroupIndex, SharedMinigameData>;
+pub type MinigameDataReadGuard<'a> = RwLockReadGuard<'a, SharedMinigameData>;
+pub type MinigameDataWriteGuard<'a> = RwLockWriteGuard<'a, SharedMinigameData>;
 
 struct LockRequest<K, F> {
     pub read_guids: Vec<K>,
@@ -235,6 +241,66 @@ impl<
     }
 }
 
+pub struct MinigameDataLockRequest<
+    R,
+    F: FnOnce(
+        &MinigameDataTableReadHandle<'_>,
+        BTreeMap<CharacterMatchmakingGroupIndex, MinigameDataReadGuard<'_>>,
+        BTreeMap<CharacterMatchmakingGroupIndex, MinigameDataWriteGuard<'_>>,
+    ) -> R,
+> {
+    pub read_guids: Vec<CharacterMatchmakingGroupIndex>,
+    pub write_guids: Vec<CharacterMatchmakingGroupIndex>,
+    pub minigame_data_consumer: F,
+}
+
+impl<
+        R,
+        F: FnOnce(
+            &MinigameDataTableReadHandle<'_>,
+            BTreeMap<CharacterMatchmakingGroupIndex, MinigameDataReadGuard<'_>>,
+            BTreeMap<CharacterMatchmakingGroupIndex, MinigameDataWriteGuard<'_>>,
+        ) -> R,
+    > From<MinigameDataLockRequest<R, F>> for LockRequest<CharacterMatchmakingGroupIndex, F>
+{
+    fn from(value: MinigameDataLockRequest<R, F>) -> Self {
+        LockRequest {
+            read_guids: value.read_guids,
+            write_guids: value.write_guids,
+            consumer: value.minigame_data_consumer,
+        }
+    }
+}
+
+pub struct MinigameDataLockEnforcer<'a> {
+    enforcer: LockEnforcer<'a, CharacterMatchmakingGroupIndex, SharedMinigameData>,
+}
+
+impl MinigameDataLockEnforcer<'_> {
+    pub fn read_minigame_data<
+        R,
+        F: FnOnce(
+            &MinigameDataTableReadHandle<'_>,
+            BTreeMap<CharacterMatchmakingGroupIndex, MinigameDataReadGuard<'_>>,
+            BTreeMap<CharacterMatchmakingGroupIndex, MinigameDataWriteGuard<'_>>,
+        ) -> R,
+        T: FnOnce(&MinigameDataTableReadHandle<'_>) -> MinigameDataLockRequest<R, F>,
+    >(
+        &self,
+        table_consumer: T,
+    ) -> R {
+        self.enforcer
+            .read(|table_read_handle| table_consumer(table_read_handle).into())
+    }
+
+    pub fn write_minigame_data<R, T: FnOnce(&mut MinigameDataTableWriteHandle) -> R>(
+        &self,
+        table_consumer: T,
+    ) -> R {
+        self.enforcer.write(table_consumer)
+    }
+}
+
 pub struct ZoneLockRequest<
     R,
     F: FnOnce(
@@ -268,6 +334,7 @@ impl<
 
 pub struct ZoneLockEnforcer<'a> {
     enforcer: LockEnforcer<'a, u64, ZoneInstance, u8>,
+    minigame_data: &'a GuidTable<CharacterMatchmakingGroupIndex, SharedMinigameData>,
 }
 
 impl ZoneLockEnforcer<'_> {
@@ -292,6 +359,16 @@ impl ZoneLockEnforcer<'_> {
         table_consumer: T,
     ) -> R {
         self.enforcer.write(table_consumer)
+    }
+}
+
+impl<'a> From<ZoneLockEnforcer<'a>> for MinigameDataLockEnforcer<'a> {
+    fn from(val: ZoneLockEnforcer<'a>) -> Self {
+        MinigameDataLockEnforcer {
+            enforcer: LockEnforcer {
+                table: val.minigame_data,
+            },
+        }
     }
 }
 
@@ -320,6 +397,7 @@ pub struct CharacterLockEnforcer<'a> {
         CharacterMatchmakingGroupIndex,
     >,
     zones: &'a GuidTable<u64, ZoneInstance, u8>,
+    minigame_data: &'a GuidTable<CharacterMatchmakingGroupIndex, SharedMinigameData>,
 }
 
 impl CharacterLockEnforcer<'_> {
@@ -344,6 +422,7 @@ impl CharacterLockEnforcer<'_> {
                 consumer: |table_read_handle: &CharacterTableReadHandle<'_>, characters_read: BTreeMap<u64, CharacterReadGuard<'_>>, characters_write: BTreeMap<u64, CharacterWriteGuard<'_>>| {
                     let zones_enforcer = ZoneLockEnforcer {
                         enforcer: LockEnforcer { table: self.zones },
+                        minigame_data: self.minigame_data,
                     };
                     (character_lock_request.character_consumer)(
                         table_read_handle,
@@ -366,6 +445,7 @@ impl CharacterLockEnforcer<'_> {
         self.enforcer.write(|table_write_handle| {
             let zones_enforcer = ZoneLockEnforcer {
                 enforcer: LockEnforcer { table: self.zones },
+                minigame_data: self.minigame_data,
             };
             table_consumer(table_write_handle, &zones_enforcer)
         })
@@ -376,6 +456,7 @@ impl<'a> From<CharacterLockEnforcer<'a>> for ZoneLockEnforcer<'a> {
     fn from(val: CharacterLockEnforcer<'a>) -> Self {
         ZoneLockEnforcer {
             enforcer: LockEnforcer { table: val.zones },
+            minigame_data: val.minigame_data,
         }
     }
 }
@@ -390,7 +471,7 @@ pub struct LockEnforcerSource {
         CharacterMatchmakingGroupIndex,
     >,
     zones: GuidTable<u64, ZoneInstance, u8>,
-    shared_minigame_data: GuidTable<CharacterMatchmakingGroupIndex, SharedMinigameData>,
+    minigame_data: GuidTable<CharacterMatchmakingGroupIndex, SharedMinigameData>,
 }
 
 impl LockEnforcerSource {
@@ -404,12 +485,12 @@ impl LockEnforcerSource {
             CharacterMatchmakingGroupIndex,
         >,
         zones: GuidTable<u64, ZoneInstance, u8>,
-        shared_minigame_data: GuidTable<CharacterMatchmakingGroupIndex, SharedMinigameData>,
+        minigame_data: GuidTable<CharacterMatchmakingGroupIndex, SharedMinigameData>,
     ) -> LockEnforcerSource {
         LockEnforcerSource {
             characters,
             zones,
-            shared_minigame_data,
+            minigame_data,
         }
     }
 
@@ -419,6 +500,7 @@ impl LockEnforcerSource {
                 table: &self.characters,
             },
             zones: &self.zones,
+            minigame_data: &self.minigame_data,
         }
     }
 }
