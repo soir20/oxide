@@ -12,7 +12,9 @@ use super::{
     },
     guid::{
         GuidTable, GuidTableHandle, GuidTableIndexer, GuidTableReadHandle, GuidTableWriteHandle,
+        IndexedGuid,
     },
+    minigame::SharedMinigameData,
     zone::ZoneInstance,
 };
 
@@ -166,6 +168,73 @@ pub type ZoneTableWriteHandle<'a> = GuidTableWriteHandle<'a, u64, ZoneInstance, 
 pub type ZoneReadGuard<'a> = RwLockReadGuard<'a, ZoneInstance>;
 pub type ZoneWriteGuard<'a> = RwLockWriteGuard<'a, ZoneInstance>;
 
+struct LeafLockRequest<K, F> {
+    pub read_guids: Vec<K>,
+    pub write_guids: Vec<K>,
+    pub consumer: F,
+}
+
+struct LeafLockEnforcer<'a, K, V, I1 = (), I2 = (), I3 = (), I4 = ()> {
+    table: &'a GuidTable<K, V, I1, I2, I3, I4>,
+}
+
+impl<
+        K: Copy + Ord,
+        I1: Copy + Ord,
+        I2: Clone + Ord,
+        I3: Clone + Ord,
+        I4: Clone + Ord,
+        V: IndexedGuid<K, I1, I2, I3, I4>,
+    > LeafLockEnforcer<'_, K, V, I1, I2, I3, I4>
+{
+    pub fn read<
+        R,
+        F: FnOnce(
+            &TableReadHandleWrapper<'_, K, V, I1, I2, I3, I4>,
+            BTreeMap<K, RwLockReadGuard<'_, V>>,
+            BTreeMap<K, RwLockWriteGuard<'_, V>>,
+        ) -> R,
+        T: FnOnce(&TableReadHandleWrapper<'_, K, V, I1, I2, I3, I4>) -> LeafLockRequest<K, F>,
+    >(
+        &self,
+        table_consumer: T,
+    ) -> R {
+        let table_read_handle = self.table.read().into();
+        let lock_request = table_consumer(&table_read_handle);
+
+        let mut combined_guids = BTreeSet::from_iter(lock_request.read_guids);
+        combined_guids.extend(lock_request.write_guids.iter());
+
+        let write_set = BTreeSet::from_iter(lock_request.write_guids);
+
+        let mut read_map = BTreeMap::new();
+        let mut write_map = BTreeMap::new();
+        for guid in combined_guids {
+            if write_set.contains(&guid) {
+                if let Some(lock) = table_read_handle.handle.get(guid) {
+                    write_map.insert(guid, lock.write());
+                }
+            } else if let Some(lock) = table_read_handle.handle.get(guid) {
+                read_map.insert(guid, lock.read());
+            }
+        }
+
+        (lock_request.consumer)(&table_read_handle, read_map, write_map)
+    }
+
+    // This thread can access individual items if and only if it holds the table read or write lock.
+    // If this thread holds the table write lock, then no other threads may hold a table lock.
+    // Therefore, if this thread holds the table write lock, it is the only thread that can hold any
+    // item locks, and we can provide full access to the table without fear of deadlock.
+    pub fn write<R, T: FnOnce(&mut GuidTableWriteHandle<'_, K, V, I1, I2, I3, I4>) -> R>(
+        &self,
+        table_consumer: T,
+    ) -> R {
+        let mut zones_table_write_handle = self.table.write();
+        table_consumer(&mut zones_table_write_handle)
+    }
+}
+
 pub struct ZoneLockRequest<
     R,
     F: FnOnce(
@@ -179,56 +248,50 @@ pub struct ZoneLockRequest<
     pub zone_consumer: F,
 }
 
+impl<
+        R,
+        F: FnOnce(
+            &ZoneTableReadHandle<'_>,
+            BTreeMap<u64, ZoneReadGuard<'_>>,
+            BTreeMap<u64, ZoneWriteGuard<'_>>,
+        ) -> R,
+    > From<ZoneLockRequest<R, F>> for LeafLockRequest<u64, F>
+{
+    fn from(value: ZoneLockRequest<R, F>) -> Self {
+        LeafLockRequest {
+            read_guids: value.read_guids,
+            write_guids: value.write_guids,
+            consumer: value.zone_consumer,
+        }
+    }
+}
+
 pub struct ZoneLockEnforcer<'a> {
-    zones: &'a GuidTable<u64, ZoneInstance, u8>,
+    enforcer: LeafLockEnforcer<'a, u64, ZoneInstance, u8>,
 }
 
 impl ZoneLockEnforcer<'_> {
     pub fn read_zones<
         R,
-        Z: FnOnce(
+        F: FnOnce(
             &ZoneTableReadHandle<'_>,
             BTreeMap<u64, ZoneReadGuard<'_>>,
             BTreeMap<u64, ZoneWriteGuard<'_>>,
         ) -> R,
-        T: FnOnce(&ZoneTableReadHandle<'_>) -> ZoneLockRequest<R, Z>,
+        T: FnOnce(&ZoneTableReadHandle<'_>) -> ZoneLockRequest<R, F>,
     >(
         &self,
         table_consumer: T,
     ) -> R {
-        let zones_table_read_handle = self.zones.read().into();
-        let zone_lock_request = table_consumer(&zones_table_read_handle);
-
-        let mut combined_guids = BTreeSet::from_iter(zone_lock_request.read_guids);
-        combined_guids.extend(zone_lock_request.write_guids.iter());
-
-        let write_set = BTreeSet::from_iter(zone_lock_request.write_guids);
-
-        let mut zones_read_map = BTreeMap::new();
-        let mut zones_write_map = BTreeMap::new();
-        for guid in combined_guids {
-            if write_set.contains(&guid) {
-                if let Some(lock) = zones_table_read_handle.handle.get(guid) {
-                    zones_write_map.insert(guid, lock.write());
-                }
-            } else if let Some(lock) = zones_table_read_handle.handle.get(guid) {
-                zones_read_map.insert(guid, lock.read());
-            }
-        }
-
-        (zone_lock_request.zone_consumer)(&zones_table_read_handle, zones_read_map, zones_write_map)
+        self.enforcer
+            .read(|table_read_handle| table_consumer(table_read_handle).into())
     }
 
-    // This thread can access individual zones if and only if it holds the table read or write lock.
-    // If this thread holds the table write lock, then no other threads may hold a table lock.
-    // Therefore, if this thread holds the table write lock, it is the only thread that can hold any
-    // zone locks, and we can provide full access to the table without fear of deadlock.
     pub fn write_zones<R, T: FnOnce(&mut ZoneTableWriteHandle) -> R>(
         &self,
         table_consumer: T,
     ) -> R {
-        let mut zones_table_write_handle = self.zones.write();
-        table_consumer(&mut zones_table_write_handle)
+        self.enforcer.write(table_consumer)
     }
 }
 
@@ -293,7 +356,9 @@ impl LockEnforcer<'_> {
             }
         }
 
-        let zones_enforcer = ZoneLockEnforcer { zones: self.zones };
+        let zones_enforcer = ZoneLockEnforcer {
+            enforcer: LeafLockEnforcer { table: self.zones },
+        };
         (character_lock_request.character_consumer)(
             &characters_table_read_handle,
             characters_read_map,
@@ -314,14 +379,18 @@ impl LockEnforcer<'_> {
         table_consumer: T,
     ) -> R {
         let mut characters_table_write_handle = self.characters.write();
-        let zones_enforcer = ZoneLockEnforcer { zones: self.zones };
+        let zones_enforcer = ZoneLockEnforcer {
+            enforcer: LeafLockEnforcer { table: self.zones },
+        };
         table_consumer(&mut characters_table_write_handle, &zones_enforcer)
     }
 }
 
 impl<'a> From<LockEnforcer<'a>> for ZoneLockEnforcer<'a> {
     fn from(val: LockEnforcer<'a>) -> Self {
-        ZoneLockEnforcer { zones: val.zones }
+        ZoneLockEnforcer {
+            enforcer: LeafLockEnforcer { table: val.zones },
+        }
     }
 }
 
@@ -335,6 +404,7 @@ pub struct LockEnforcerSource {
         CharacterMatchmakingGroupIndex,
     >,
     zones: GuidTable<u64, ZoneInstance, u8>,
+    shared_minigame_data: GuidTable<CharacterMatchmakingGroupIndex, SharedMinigameData>,
 }
 
 impl LockEnforcerSource {
@@ -348,8 +418,13 @@ impl LockEnforcerSource {
             CharacterMatchmakingGroupIndex,
         >,
         zones: GuidTable<u64, ZoneInstance, u8>,
+        shared_minigame_data: GuidTable<CharacterMatchmakingGroupIndex, SharedMinigameData>,
     ) -> LockEnforcerSource {
-        LockEnforcerSource { characters, zones }
+        LockEnforcerSource {
+            characters,
+            zones,
+            shared_minigame_data,
+        }
     }
 
     pub fn lock_enforcer(&self) -> LockEnforcer {

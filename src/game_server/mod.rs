@@ -164,7 +164,7 @@ impl GameServer {
             customizations: load_customizations(config_dir)?,
             customization_item_mappings: load_customization_item_mappings(config_dir)?,
             default_sabers: load_default_sabers(config_dir)?,
-            lock_enforcer_source: LockEnforcerSource::from(characters, zones),
+            lock_enforcer_source: LockEnforcerSource::from(characters, zones, GuidTable::new()),
             items: item_definitions,
             item_classes: load_item_classes(config_dir)?,
             item_groups: ItemGroupDefinitions {
