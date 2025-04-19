@@ -378,7 +378,7 @@ pub struct CharacterLockRequest<
         &CharacterTableReadHandle<'_>,
         BTreeMap<u64, CharacterReadGuard<'_>>,
         BTreeMap<u64, CharacterWriteGuard<'_>>,
-        &ZoneLockEnforcer,
+        ZoneLockEnforcer,
     ) -> R,
 > {
     pub read_guids: Vec<u64>,
@@ -407,7 +407,7 @@ impl CharacterLockEnforcer<'_> {
             &CharacterTableReadHandle<'_>,
             BTreeMap<u64, CharacterReadGuard<'_>>,
             BTreeMap<u64, CharacterWriteGuard<'_>>,
-            &ZoneLockEnforcer,
+            ZoneLockEnforcer,
         ) -> R,
         T: FnOnce(&CharacterTableReadHandle<'_>) -> CharacterLockRequest<R, C>,
     >(
@@ -428,7 +428,7 @@ impl CharacterLockEnforcer<'_> {
                         table_read_handle,
                         characters_read,
                         characters_write,
-                        &zones_enforcer,
+                        zones_enforcer,
                     )
                 },
             }
