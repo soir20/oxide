@@ -21,7 +21,7 @@ use handlers::inventory::{
 };
 use handlers::item::load_item_definitions;
 use handlers::lock_enforcer::{
-    CharacterLockRequest, CharacterTableWriteHandle, LockEnforcer, LockEnforcerSource,
+    CharacterLockEnforcer, CharacterLockRequest, CharacterTableWriteHandle, LockEnforcerSource,
     ZoneLockRequest, ZoneTableWriteHandle,
 };
 use handlers::login::{log_in, log_out, send_points_of_interest};
@@ -759,7 +759,7 @@ impl GameServer {
         self.start_time
     }
 
-    pub fn lock_enforcer(&self) -> LockEnforcer {
+    pub fn lock_enforcer(&self) -> CharacterLockEnforcer {
         self.lock_enforcer_source.lock_enforcer()
     }
 

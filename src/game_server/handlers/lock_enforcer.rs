@@ -168,13 +168,13 @@ pub type ZoneTableWriteHandle<'a> = GuidTableWriteHandle<'a, u64, ZoneInstance, 
 pub type ZoneReadGuard<'a> = RwLockReadGuard<'a, ZoneInstance>;
 pub type ZoneWriteGuard<'a> = RwLockWriteGuard<'a, ZoneInstance>;
 
-struct LeafLockRequest<K, F> {
+struct LockRequest<K, F> {
     pub read_guids: Vec<K>,
     pub write_guids: Vec<K>,
     pub consumer: F,
 }
 
-struct LeafLockEnforcer<'a, K, V, I1 = (), I2 = (), I3 = (), I4 = ()> {
+struct LockEnforcer<'a, K, V, I1 = (), I2 = (), I3 = (), I4 = ()> {
     table: &'a GuidTable<K, V, I1, I2, I3, I4>,
 }
 
@@ -185,7 +185,7 @@ impl<
         I3: Clone + Ord,
         I4: Clone + Ord,
         V: IndexedGuid<K, I1, I2, I3, I4>,
-    > LeafLockEnforcer<'_, K, V, I1, I2, I3, I4>
+    > LockEnforcer<'_, K, V, I1, I2, I3, I4>
 {
     pub fn read<
         R,
@@ -194,7 +194,7 @@ impl<
             BTreeMap<K, RwLockReadGuard<'_, V>>,
             BTreeMap<K, RwLockWriteGuard<'_, V>>,
         ) -> R,
-        T: FnOnce(&TableReadHandleWrapper<'_, K, V, I1, I2, I3, I4>) -> LeafLockRequest<K, F>,
+        T: FnOnce(&TableReadHandleWrapper<'_, K, V, I1, I2, I3, I4>) -> LockRequest<K, F>,
     >(
         &self,
         table_consumer: T,
@@ -255,10 +255,10 @@ impl<
             BTreeMap<u64, ZoneReadGuard<'_>>,
             BTreeMap<u64, ZoneWriteGuard<'_>>,
         ) -> R,
-    > From<ZoneLockRequest<R, F>> for LeafLockRequest<u64, F>
+    > From<ZoneLockRequest<R, F>> for LockRequest<u64, F>
 {
     fn from(value: ZoneLockRequest<R, F>) -> Self {
-        LeafLockRequest {
+        LockRequest {
             read_guids: value.read_guids,
             write_guids: value.write_guids,
             consumer: value.zone_consumer,
@@ -267,7 +267,7 @@ impl<
 }
 
 pub struct ZoneLockEnforcer<'a> {
-    enforcer: LeafLockEnforcer<'a, u64, ZoneInstance, u8>,
+    enforcer: LockEnforcer<'a, u64, ZoneInstance, u8>,
 }
 
 impl ZoneLockEnforcer<'_> {
@@ -309,8 +309,8 @@ pub struct CharacterLockRequest<
     pub character_consumer: F,
 }
 
-pub struct LockEnforcer<'a> {
-    enforcer: LeafLockEnforcer<
+pub struct CharacterLockEnforcer<'a> {
+    enforcer: LockEnforcer<
         'a,
         u64,
         Character,
@@ -322,7 +322,7 @@ pub struct LockEnforcer<'a> {
     zones: &'a GuidTable<u64, ZoneInstance, u8>,
 }
 
-impl LockEnforcer<'_> {
+impl CharacterLockEnforcer<'_> {
     pub fn read_characters<
         R,
         C: FnOnce(
@@ -338,12 +338,12 @@ impl LockEnforcer<'_> {
     ) -> R {
         self.enforcer.read(|table_read_handle: &CharacterTableReadHandle<'_>| {
             let character_lock_request = table_consumer(table_read_handle);
-            LeafLockRequest {
+            LockRequest {
                 read_guids: character_lock_request.read_guids,
                 write_guids: character_lock_request.write_guids,
                 consumer: |table_read_handle: &CharacterTableReadHandle<'_>, characters_read: BTreeMap<u64, CharacterReadGuard<'_>>, characters_write: BTreeMap<u64, CharacterWriteGuard<'_>>| {
                     let zones_enforcer = ZoneLockEnforcer {
-                        enforcer: LeafLockEnforcer { table: self.zones },
+                        enforcer: LockEnforcer { table: self.zones },
                     };
                     (character_lock_request.character_consumer)(
                         table_read_handle,
@@ -365,17 +365,17 @@ impl LockEnforcer<'_> {
     ) -> R {
         self.enforcer.write(|table_write_handle| {
             let zones_enforcer = ZoneLockEnforcer {
-                enforcer: LeafLockEnforcer { table: self.zones },
+                enforcer: LockEnforcer { table: self.zones },
             };
             table_consumer(table_write_handle, &zones_enforcer)
         })
     }
 }
 
-impl<'a> From<LockEnforcer<'a>> for ZoneLockEnforcer<'a> {
-    fn from(val: LockEnforcer<'a>) -> Self {
+impl<'a> From<CharacterLockEnforcer<'a>> for ZoneLockEnforcer<'a> {
+    fn from(val: CharacterLockEnforcer<'a>) -> Self {
         ZoneLockEnforcer {
-            enforcer: LeafLockEnforcer { table: val.zones },
+            enforcer: LockEnforcer { table: val.zones },
         }
     }
 }
@@ -413,9 +413,9 @@ impl LockEnforcerSource {
         }
     }
 
-    pub fn lock_enforcer(&self) -> LockEnforcer {
-        LockEnforcer {
-            enforcer: LeafLockEnforcer {
+    pub fn lock_enforcer(&self) -> CharacterLockEnforcer {
+        CharacterLockEnforcer {
+            enforcer: LockEnforcer {
                 table: &self.characters,
             },
             zones: &self.zones,
