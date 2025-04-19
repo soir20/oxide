@@ -230,8 +230,8 @@ impl<
         &self,
         table_consumer: T,
     ) -> R {
-        let mut zones_table_write_handle = self.table.write();
-        table_consumer(&mut zones_table_write_handle)
+        let mut table_write_handle = self.table.write();
+        table_consumer(&mut table_write_handle)
     }
 }
 
@@ -310,7 +310,8 @@ pub struct CharacterLockRequest<
 }
 
 pub struct LockEnforcer<'a> {
-    characters: &'a GuidTable<
+    enforcer: LeafLockEnforcer<
+        'a,
         u64,
         Character,
         CharacterLocationIndex,
@@ -335,42 +336,26 @@ impl LockEnforcer<'_> {
         &self,
         table_consumer: T,
     ) -> R {
-        let characters_table_read_handle = self.characters.read().into();
-        let character_lock_request: CharacterLockRequest<R, C> =
-            table_consumer(&characters_table_read_handle);
-
-        let mut combined_guids = BTreeSet::from_iter(character_lock_request.read_guids);
-        combined_guids.extend(character_lock_request.write_guids.iter());
-
-        let write_set = BTreeSet::from_iter(character_lock_request.write_guids);
-
-        let mut characters_read_map = BTreeMap::new();
-        let mut characters_write_map = BTreeMap::new();
-        for guid in combined_guids {
-            if write_set.contains(&guid) {
-                if let Some(lock) = characters_table_read_handle.handle.get(guid) {
-                    characters_write_map.insert(guid, lock.write());
-                }
-            } else if let Some(lock) = characters_table_read_handle.handle.get(guid) {
-                characters_read_map.insert(guid, lock.read());
+        self.enforcer.read(|table_read_handle: &CharacterTableReadHandle<'_>| {
+            let character_lock_request = table_consumer(table_read_handle);
+            LeafLockRequest {
+                read_guids: character_lock_request.read_guids,
+                write_guids: character_lock_request.write_guids,
+                consumer: |table_read_handle: &CharacterTableReadHandle<'_>, characters_read: BTreeMap<u64, CharacterReadGuard<'_>>, characters_write: BTreeMap<u64, CharacterWriteGuard<'_>>| {
+                    let zones_enforcer = ZoneLockEnforcer {
+                        enforcer: LeafLockEnforcer { table: self.zones },
+                    };
+                    (character_lock_request.character_consumer)(
+                        table_read_handle,
+                        characters_read,
+                        characters_write,
+                        &zones_enforcer,
+                    )
+                },
             }
-        }
-
-        let zones_enforcer = ZoneLockEnforcer {
-            enforcer: LeafLockEnforcer { table: self.zones },
-        };
-        (character_lock_request.character_consumer)(
-            &characters_table_read_handle,
-            characters_read_map,
-            characters_write_map,
-            &zones_enforcer,
-        )
+        })
     }
 
-    // This thread can access individual characters if and only if it holds the table read or write lock.
-    // If this thread holds the table write lock, then no other threads may hold a table lock.
-    // Therefore, if this thread holds the table write lock, it is the only thread that can hold any
-    // character locks, and we can provide full access to the table without fear of deadlock.
     pub fn write_characters<
         R,
         T: FnOnce(&mut CharacterTableWriteHandle, &ZoneLockEnforcer) -> R,
@@ -378,11 +363,12 @@ impl LockEnforcer<'_> {
         &self,
         table_consumer: T,
     ) -> R {
-        let mut characters_table_write_handle = self.characters.write();
-        let zones_enforcer = ZoneLockEnforcer {
-            enforcer: LeafLockEnforcer { table: self.zones },
-        };
-        table_consumer(&mut characters_table_write_handle, &zones_enforcer)
+        self.enforcer.write(|table_write_handle| {
+            let zones_enforcer = ZoneLockEnforcer {
+                enforcer: LeafLockEnforcer { table: self.zones },
+            };
+            table_consumer(table_write_handle, &zones_enforcer)
+        })
     }
 }
 
@@ -429,7 +415,9 @@ impl LockEnforcerSource {
 
     pub fn lock_enforcer(&self) -> LockEnforcer {
         LockEnforcer {
-            characters: &self.characters,
+            enforcer: LeafLockEnforcer {
+                table: &self.characters,
+            },
             zones: &self.zones,
         }
     }
