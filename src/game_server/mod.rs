@@ -22,7 +22,7 @@ use handlers::inventory::{
 use handlers::item::load_item_definitions;
 use handlers::lock_enforcer::{
     CharacterLockEnforcer, CharacterLockRequest, CharacterTableWriteHandle, LockEnforcerSource,
-    ZoneLockRequest, ZoneTableWriteHandle,
+    ZoneLockEnforcer, ZoneLockRequest, ZoneTableWriteHandle,
 };
 use handlers::login::{log_in, log_out, send_points_of_interest};
 use handlers::minigame::{
@@ -363,12 +363,13 @@ impl GameServer {
                         CharacterLockRequest {
                             read_guids: read_character_guids,
                             write_guids: vec![player_guid(sender)],
-                            character_consumer: move |characters_table_read_handle, characters_read, mut characters_write, zones_lock_enforcer| {
+                            character_consumer: move |characters_table_read_handle, characters_read, mut characters_write, minigame_data_lock_enforcer| {
                                 if let Some((_, instance_guid, chunk)) = possible_index {
+                                    let zones_lock_enforcer: ZoneLockEnforcer = minigame_data_lock_enforcer.into();
                                     zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
                                         read_guids: vec![instance_guid],
                                         write_guids: Vec::new(),
-                                        zone_consumer: |_, zones_read, _, _| {
+                                        zone_consumer: |_, zones_read, _| {
                                             if let Some(zone) = zones_read.get(&instance_guid) {
                                                 let mut sender_only_character_packets = Vec::new();
                                                 sender_only_character_packets.append(&mut zone.send_self_on_client_ready()?);
@@ -516,14 +517,16 @@ impl GameServer {
                             read_guids: vec![],
                             write_guids: vec![],
                             character_consumer:
-                                |characters_table_read_handle, _, _, zones_lock_enforcer| {
+                                |characters_table_read_handle, _, _, minigame_data_lock_enforcer| {
                                     if let Some((_, instance_guid, _)) =
                                         characters_table_read_handle.index1(sender_guid)
                                     {
+                                        let zones_lock_enforcer: ZoneLockEnforcer =
+                                            minigame_data_lock_enforcer.into();
                                         zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
                                             read_guids: vec![instance_guid],
                                             write_guids: vec![],
-                                            zone_consumer: |_, zones_read, _, _| {
+                                            zone_consumer: |_, zones_read, _| {
                                                 if let Some(zone_read_handle) =
                                                     zones_read.get(&instance_guid)
                                                 {
@@ -615,12 +618,13 @@ impl GameServer {
                         CharacterLockRequest {
                             read_guids: Vec::new(),
                             write_guids: Vec::new(),
-                            character_consumer: |characters_table_read_handle, _, _, zones_lock_enforcer| {
+                            character_consumer: |characters_table_read_handle, _, _, minigame_data_lock_enforcer| {
                                 if let Some((_, instance_guid, _)) = characters_table_read_handle.index1(player_guid(sender)) {
+                                    let zones_lock_enforcer: ZoneLockEnforcer = minigame_data_lock_enforcer.into();
                                     zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
                                         read_guids: vec![instance_guid],
                                         write_guids: Vec::new(),
-                                        zone_consumer: |_, zones_read, _, _| {
+                                        zone_consumer: |_, zones_read, _| {
                                             if let Some(zone) = zones_read.get(&instance_guid) {
                                                 let spawn_pos = zone.default_spawn_pos;
                                                 let spawn_rot = zone.default_spawn_rot;
