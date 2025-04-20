@@ -368,7 +368,7 @@ impl GameServer {
                                     zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
                                         read_guids: vec![instance_guid],
                                         write_guids: Vec::new(),
-                                        zone_consumer: |_, zones_read, _| {
+                                        zone_consumer: |_, zones_read, _, _| {
                                             if let Some(zone) = zones_read.get(&instance_guid) {
                                                 let mut sender_only_character_packets = Vec::new();
                                                 sender_only_character_packets.append(&mut zone.send_self_on_client_ready()?);
@@ -523,7 +523,7 @@ impl GameServer {
                                         zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
                                             read_guids: vec![instance_guid],
                                             write_guids: vec![],
-                                            zone_consumer: |_, zones_read, _| {
+                                            zone_consumer: |_, zones_read, _, _| {
                                                 if let Some(zone_read_handle) =
                                                     zones_read.get(&instance_guid)
                                                 {
@@ -620,7 +620,7 @@ impl GameServer {
                                     zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
                                         read_guids: vec![instance_guid],
                                         write_guids: Vec::new(),
-                                        zone_consumer: |_, zones_read, _| {
+                                        zone_consumer: |_, zones_read, _, _| {
                                             if let Some(zone) = zones_read.get(&instance_guid) {
                                                 let spawn_pos = zone.default_spawn_pos;
                                                 let spawn_rot = zone.default_spawn_rot;

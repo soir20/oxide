@@ -307,6 +307,7 @@ pub struct ZoneLockRequest<
         &ZoneTableReadHandle<'_>,
         BTreeMap<u64, ZoneReadGuard<'_>>,
         BTreeMap<u64, ZoneWriteGuard<'_>>,
+        MinigameDataLockEnforcer<'_>,
     ) -> R,
 > {
     pub read_guids: Vec<u64>,
@@ -320,6 +321,7 @@ impl<
             &ZoneTableReadHandle<'_>,
             BTreeMap<u64, ZoneReadGuard<'_>>,
             BTreeMap<u64, ZoneWriteGuard<'_>>,
+            MinigameDataLockEnforcer<'_>,
         ) -> R,
     > From<ZoneLockRequest<R, F>> for LockRequest<u64, F>
 {
@@ -344,6 +346,7 @@ impl ZoneLockEnforcer<'_> {
             &ZoneTableReadHandle<'_>,
             BTreeMap<u64, ZoneReadGuard<'_>>,
             BTreeMap<u64, ZoneWriteGuard<'_>>,
+            MinigameDataLockEnforcer<'_>,
         ) -> R,
         T: FnOnce(&ZoneTableReadHandle<'_>) -> ZoneLockRequest<R, F>,
     >(
@@ -351,7 +354,29 @@ impl ZoneLockEnforcer<'_> {
         table_consumer: T,
     ) -> R {
         self.enforcer
-            .read(|table_read_handle| table_consumer(table_read_handle).into())
+            .read(|table_read_handle: &ZoneTableReadHandle<'_>| {
+                let zone_lock_request = table_consumer(table_read_handle);
+                LockRequest {
+                    read_guids: zone_lock_request.read_guids,
+                    write_guids: zone_lock_request.write_guids,
+                    consumer:
+                        |table_read_handle: &ZoneTableReadHandle<'_>,
+                         zones_read: BTreeMap<u64, ZoneReadGuard<'_>>,
+                         zones_write: BTreeMap<u64, ZoneWriteGuard<'_>>| {
+                            let minigame_data_enforcer = MinigameDataLockEnforcer {
+                                enforcer: LockEnforcer {
+                                    table: self.minigame_data,
+                                },
+                            };
+                            (zone_lock_request.zone_consumer)(
+                                table_read_handle,
+                                zones_read,
+                                zones_write,
+                                minigame_data_enforcer,
+                            )
+                        },
+                }
+            })
     }
 
     pub fn write_zones<R, T: FnOnce(&mut ZoneTableWriteHandle) -> R>(

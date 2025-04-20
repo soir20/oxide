@@ -187,7 +187,7 @@ fn process_dismount(
                     zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
                         read_guids: vec![character_write_handle.stats.instance_guid],
                         write_guids: Vec::new(),
-                        zone_consumer: |_, zones_read, _| {
+                        zone_consumer: |_, zones_read, _, _| {
                             if let Some(zone_read_handle) =
                                 zones_read.get(&character_write_handle.stats.instance_guid)
                             {
@@ -233,7 +233,7 @@ fn process_mount_spawn(
                     zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
                         read_guids: vec![character_write_handle.stats.instance_guid],
                         write_guids: Vec::new(),
-                        zone_consumer: |_, zones_read, _| {
+                        zone_consumer: |_, zones_read, _, _| {
                             if let Some(zone_read_handle) = zones_read.get(&character_write_handle.stats.instance_guid) {
                                 character_write_handle.stats.speed.mount_multiplier = mount.speed_multiplier;
                                 character_write_handle.stats.jump_height_multiplier.mount_multiplier = mount.jump_height_multiplier;

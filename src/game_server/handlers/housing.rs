@@ -369,7 +369,7 @@ pub fn process_housing_packet(
                             zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
                                 read_guids: vec![instance_guid],
                                 write_guids: Vec::new(),
-                                zone_consumer: |_, zones_read, _| {
+                                zone_consumer: |_, zones_read, _, _| {
                                     if let Some(zone_read_handle) = zones_read.get(&instance_guid){
                                         if let Some(house) = &zone_read_handle.house_data {
                                             if house.owner == sender {
