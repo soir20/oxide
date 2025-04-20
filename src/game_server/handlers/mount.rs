@@ -26,7 +26,7 @@ use super::{
         CharacterSquadIndex,
     },
     guid::{Guid, GuidTableIndexer, IndexedGuid},
-    lock_enforcer::{CharacterLockRequest, ZoneLockRequest},
+    lock_enforcer::{CharacterLockRequest, ZoneLockEnforcer, ZoneLockRequest},
     unique_guid::{mount_guid, player_guid},
     zone::ZoneInstance,
 };
@@ -181,9 +181,10 @@ fn process_dismount(
             character_consumer: |characters_table_read_handle,
                                  _,
                                  mut characters_write,
-                                 zones_lock_enforcer| {
+                                 minigame_data_lock_enforcer| {
                 if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender))
                 {
+                    let zones_lock_enforcer: ZoneLockEnforcer = minigame_data_lock_enforcer.into();
                     zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
                         read_guids: vec![character_write_handle.stats.instance_guid],
                         write_guids: Vec::new(),
@@ -228,8 +229,9 @@ fn process_mount_spawn(
         game_server.lock_enforcer().read_characters(|_| CharacterLockRequest {
             read_guids: Vec::new(),
             write_guids: vec![player_guid(sender)],
-            character_consumer: |characters_table_read_handle, _, mut characters_write, zones_lock_enforcer| {
+            character_consumer: |characters_table_read_handle, _, mut characters_write, minigame_data_lock_enforcer| {
                 if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) {
+                    let zones_lock_enforcer: ZoneLockEnforcer = minigame_data_lock_enforcer.into();
                     zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
                         read_guids: vec![character_write_handle.stats.instance_guid],
                         write_guids: Vec::new(),

@@ -25,7 +25,7 @@ use crate::{
 use super::{
     character::{Character, CurrentFixture, PreviousFixture},
     guid::{GuidTableIndexer, IndexedGuid},
-    lock_enforcer::{CharacterLockRequest, ZoneLockRequest},
+    lock_enforcer::{CharacterLockRequest, ZoneLockEnforcer, ZoneLockRequest},
     unique_guid::{
         npc_guid, player_guid, zone_instance_guid, zone_template_guid, FIXTURE_DISCRIMINANT,
     },
@@ -364,8 +364,9 @@ pub fn process_housing_packet(
                 game_server.lock_enforcer().read_characters(|_| CharacterLockRequest {
                     read_guids: Vec::new(),
                     write_guids: Vec::new(),
-                    character_consumer: |characters_table_read_handle, _, _, zones_lock_enforcer| {
+                    character_consumer: |characters_table_read_handle, _, _, minigame_data_lock_enforcer| {
                         let packets = if let Some((_, instance_guid, _)) = characters_table_read_handle.index1(player_guid(sender)) {
+                            let zones_lock_enforcer: ZoneLockEnforcer = minigame_data_lock_enforcer.into();
                             zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
                                 read_guids: vec![instance_guid],
                                 write_guids: Vec::new(),

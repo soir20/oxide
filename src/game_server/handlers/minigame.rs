@@ -45,7 +45,7 @@ use crate::{
 
 use super::{
     character::{CharacterMatchmakingGroupIndex, CharacterType, MatchmakingGroupStatus, Player},
-    guid::GuidTableIndexer,
+    guid::{Guid, GuidTableIndexer},
     item::SABER_ITEM_TYPE,
     lock_enforcer::{CharacterLockRequest, CharacterTableWriteHandle, ZoneTableWriteHandle},
     saber_strike::process_saber_strike_packet,
@@ -131,6 +131,22 @@ impl From<&MinigameType> for MinigameTypeData {
         }
     }
 }
+
+#[derive(Clone)]
+pub struct SharedMinigameData {
+    pub guid: CharacterMatchmakingGroupIndex,
+    pub data: SharedMinigameTypeData,
+}
+
+impl Guid<CharacterMatchmakingGroupIndex> for SharedMinigameData {
+    fn guid(&self) -> CharacterMatchmakingGroupIndex {
+        self.guid
+    }
+}
+
+#[non_exhaustive]
+#[derive(Clone)]
+pub enum SharedMinigameTypeData {}
 
 const CHALLENGE_LINK_NAME: &str = "challenge";
 const GROUP_LINK_NAME: &str = "group";
