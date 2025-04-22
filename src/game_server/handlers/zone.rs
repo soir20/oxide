@@ -12,7 +12,7 @@ use crate::{
     game_server::{
         packets::{
             client_update::Position,
-            command::SelectPlayer,
+            command::MoveToInteract,
             housing::BuildArea,
             item::{ItemDefinition, WieldType},
             login::{ClientBeginZoning, ZoneDetails},
@@ -92,7 +92,6 @@ struct ZoneConfig {
     jump_height_multiplier: f32,
     gravity_multiplier: f32,
     doors: Vec<DoorConfig>,
-    door_auto_interact_radius: f32,
     transports: Vec<TransportConfig>,
     ambient_npcs: Vec<AmbientNpcConfig>,
     seconds_per_day: u32,
@@ -179,10 +178,11 @@ impl From<ZoneConfig> for ZoneTemplate {
                     animation_id: ambient_npc.base_npc.active_animation_slot,
                     cursor: ambient_npc.base_npc.cursor,
                     interact_radius: ambient_npc.base_npc.interact_radius,
+                    auto_interact_radius: ambient_npc.base_npc.auto_interact_radius.unwrap_or(0.0),
+                    move_to_interact_offset: ambient_npc.base_npc.move_to_interact_offset,
                     is_spawned: ambient_npc.base_npc.is_spawned,
                     character_type: CharacterType::AmbientNpc(ambient_npc.into()),
                     mount_id: None,
-                    auto_interact_radius: 0.0,
                     wield_type: WieldType::None,
                 });
                 index += 1;
@@ -202,10 +202,11 @@ impl From<ZoneConfig> for ZoneTemplate {
                     animation_id: door.base_npc.active_animation_slot,
                     cursor: door.base_npc.cursor,
                     interact_radius: door.base_npc.interact_radius,
+                    auto_interact_radius: door.base_npc.auto_interact_radius.unwrap_or(1.5),
                     is_spawned: door.base_npc.is_spawned,
                     character_type: CharacterType::Door(door.into()),
                     mount_id: None,
-                    auto_interact_radius: value.door_auto_interact_radius,
+                    move_to_interact_offset: 0.0,
                     wield_type: WieldType::None,
                 });
                 index += 1;
@@ -225,10 +226,11 @@ impl From<ZoneConfig> for ZoneTemplate {
                     animation_id: transport.base_npc.active_animation_slot,
                     cursor: transport.base_npc.cursor,
                     interact_radius: transport.base_npc.interact_radius,
+                    auto_interact_radius: transport.base_npc.auto_interact_radius.unwrap_or(0.0),
+                    move_to_interact_offset: transport.base_npc.move_to_interact_offset,
                     is_spawned: transport.base_npc.is_spawned,
                     character_type: CharacterType::Transport(transport.into()),
                     mount_id: None,
-                    auto_interact_radius: 0.0,
                     wield_type: WieldType::None,
                 });
                 index += 1;
@@ -407,6 +409,7 @@ impl ZoneInstance {
                 CharacterType::Fixture(guid, fixture.as_current_fixture()),
                 None,
                 None,
+                0.0,
                 0.0,
                 0.0,
                 guid,
@@ -866,11 +869,11 @@ impl ZoneInstance {
         };
 
         for character_guid in npcs_to_interact_with {
-            let interact_request = SelectPlayer {
-                requester: moved_character_guid,
-                target: character_guid,
-            };
-            broadcasts.append(&mut interact_with_character(interact_request, game_server)?);
+            broadcasts.append(&mut interact_with_character(
+                moved_character_guid,
+                character_guid,
+                game_server,
+            )?);
         }
 
         if should_teleport {
@@ -1206,21 +1209,22 @@ pub fn teleport_anywhere(
 }
 
 pub fn interact_with_character(
-    request: SelectPlayer,
+    requester: u64,
+    target: u64,
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-    let requester = shorten_player_guid(request.requester)?;
+    let requester_guid = shorten_player_guid(requester)?;
     let broadcast_supplier: WriteLockingBroadcastSupplier =
         game_server.lock_enforcer().read_characters(|_| {
             CharacterLockRequest {
                 read_guids: Vec::new(),
-                write_guids: vec![request.requester, request.target],
+                write_guids: vec![requester, target],
                 character_consumer: move |_, _, mut characters_write, _| {
                     let source_zone_guid;
                     let requester_x;
                     let requester_y;
                     let requester_z;
-                    if let Some(requester_read_handle) = characters_write.get(&request.requester) {
+                    if let Some(requester_read_handle) = characters_write.get(&requester) {
                         source_zone_guid = requester_read_handle.stats.instance_guid;
                         requester_x = requester_read_handle.stats.pos.x;
                         requester_y = requester_read_handle.stats.pos.y;
@@ -1229,8 +1233,9 @@ pub fn interact_with_character(
                         return coerce_to_broadcast_supplier(|_| Ok(Vec::new()));
                     }
 
-                    if let Some(target_read_handle) = characters_write.get_mut(&request.target) {
+                    if let Some(target_read_handle) = characters_write.get_mut(&target) {
                         // Ensure the character is close enough to interact
+                        // Otherwise send MoveToInteract
                         let distance = distance3(
                             requester_x,
                             requester_y,
@@ -1242,16 +1247,42 @@ pub fn interact_with_character(
                         if distance > target_read_handle.stats.interact_radius
                             || target_read_handle.stats.instance_guid != source_zone_guid
                         {
-                            return coerce_to_broadcast_supplier(|_| Ok(Vec::new()));
+                            let mut broadcasts = Vec::new();
+
+                            let interaction_angle = (target_read_handle.stats.pos.z - requester_z)
+                                .atan2(target_read_handle.stats.pos.x - requester_x);
+
+                            let destination = Pos {
+                                x: target_read_handle.stats.pos.x
+                                    - target_read_handle.stats.move_to_interact_offset
+                                        * interaction_angle.cos(),
+                                y: target_read_handle.stats.pos.y,
+                                z: target_read_handle.stats.pos.z
+                                    - target_read_handle.stats.move_to_interact_offset
+                                        * interaction_angle.sin(),
+                                w: 1.0,
+                            };
+
+                            broadcasts.push(Broadcast::Single(
+                                requester_guid,
+                                vec![GamePacket::serialize(&TunneledPacket {
+                                    unknown1: true,
+                                    inner: MoveToInteract {
+                                        destination,
+                                        target,
+                                    },
+                                })?],
+                            ));
+                            return coerce_to_broadcast_supplier(|_| Ok(broadcasts));
                         }
 
-                        target_read_handle.interact(requester)
+                        target_read_handle.interact(requester_guid)
                     } else {
                         Err(ProcessPacketError::new(
                             ProcessPacketErrorType::ConstraintViolated,
                             format!(
                                 "Received request to interact with unknown NPC {} from {}",
-                                request.target, request.requester
+                                target, requester
                             ),
                         ))
                     }
