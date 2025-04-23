@@ -884,18 +884,18 @@ impl GameServer {
     fn tickable_characters_by_chunk(&self) -> BTreeMap<(u64, Chunk), Vec<u64>> {
         self.lock_enforcer()
             .read_characters(|characters_table_read_handle| {
-                let range = (
+                let categories = [
                     CharacterCategory::NpcTickable,
-                    u64::MIN,
-                    Character::MIN_CHUNK,
-                )
-                    ..=(
-                        CharacterCategory::NpcTickable,
-                        u64::MAX,
-                        Character::MAX_CHUNK,
-                    );
-                let tickable_characters: Vec<u64> = characters_table_read_handle
-                    .keys_by_index1_range(range)
+                    CharacterCategory::NpcAutoInteractTickable,
+                ];
+
+                let tickable_characters: Vec<u64> = categories
+                    .into_iter()
+                    .flat_map(|category| {
+                        let range = (category, u64::MIN, Character::MIN_CHUNK)
+                            ..=(category, u64::MAX, Character::MAX_CHUNK);
+                        characters_table_read_handle.keys_by_index1_range(range)
+                    })
                     .collect();
 
                 let tickable_characters_by_chunk = tickable_characters.into_iter().fold(

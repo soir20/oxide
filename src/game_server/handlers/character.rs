@@ -1377,6 +1377,7 @@ pub enum CharacterCategory {
     PlayerReady,
     PlayerUnready,
     NpcAutoInteractEnabled,
+    NpcAutoInteractTickable,
     NpcTickable,
     NpcBasic,
 }
@@ -1630,12 +1631,11 @@ impl
                     true => CharacterCategory::PlayerReady,
                     false => CharacterCategory::PlayerUnready,
                 },
-                _ => match self.stats.auto_interact_radius > 0.0 {
-                    true => CharacterCategory::NpcAutoInteractEnabled,
-                    false => match self.tickable() {
-                        true => CharacterCategory::NpcTickable,
-                        false => CharacterCategory::NpcBasic,
-                    },
+                _ => match (self.stats.auto_interact_radius > 0.0, self.tickable()) {
+                    (true, true) => CharacterCategory::NpcAutoInteractTickable,
+                    (true, false) => CharacterCategory::NpcAutoInteractEnabled,
+                    (false, true) => CharacterCategory::NpcTickable,
+                    (false, false) => CharacterCategory::NpcBasic,
                 },
             },
             self.stats.instance_guid,
