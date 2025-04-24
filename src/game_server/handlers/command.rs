@@ -4,7 +4,7 @@ use byteorder::{LittleEndian, ReadBytesExt};
 use packet_serialize::DeserializePacket;
 
 use crate::game_server::{
-    packets::command::{CommandOpCode, InteractRequest, SelectPlayer},
+    packets::command::{CommandOpCode, InteractRequest},
     Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
 };
 
