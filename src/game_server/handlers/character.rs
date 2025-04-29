@@ -605,16 +605,27 @@ impl TickableStep {
     }
 }
 
+#[derive(Clone, Deserialize, Eq, PartialEq)]
+#[serde(deny_unknown_fields)]
+pub struct TickableProcedureReference {
+    #[serde(default)]
+    pub procedure: String,
+    #[serde(default = "default_weight")]
+    pub weight: u32,
+}
+
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct TickableProcedureConfig {
     #[serde(default)]
     pub comment: IgnoredAny,
-    #[serde(default = "default_weight")]
-    pub weight: u32,
+    #[serde(flatten)]
+    pub reference: TickableProcedureReference,
     pub steps: Vec<TickableStep>,
     #[serde(default)]
-    pub next_possible_procedures: Vec<String>,
+    pub next_possible_procedures: Vec<TickableProcedureReference>,
+    #[serde(default = "default_true")]
+    pub is_interruptible: bool,
 }
 
 pub enum TickResult {
@@ -628,6 +639,7 @@ pub struct TickableProcedure {
     current_step: Option<(usize, Instant)>,
     distribution: WeightedAliasIndex<u32>,
     next_possible_procedures: Vec<String>,
+    is_interruptible: bool,
 }
 
 impl TickableProcedure {
@@ -641,7 +653,7 @@ impl TickableProcedure {
                 WeightedAliasIndex::new(
                     all_procedures
                         .values()
-                        .map(|procedure| procedure.weight)
+                        .map(|procedure| procedure.reference.weight)
                         .collect(),
                 ),
                 all_procedures.keys().cloned().collect(),
@@ -650,18 +662,19 @@ impl TickableProcedure {
             let weights = config
                 .next_possible_procedures
                 .iter()
-                .map(|procedure_key| {
-                    if let Some(procedure) = all_procedures.get(procedure_key) {
-                        procedure.weight
-                    } else {
-                        panic!("Reference to unknown procedure {}", procedure_key)
+                .map(|proc_ref| {
+                    if !all_procedures.contains_key(&proc_ref.procedure) {
+                        panic!("Reference to unknown procedure: {}", proc_ref.procedure);
                     }
+                    proc_ref.weight
                 })
                 .collect();
-            (
-                WeightedAliasIndex::new(weights),
-                config.next_possible_procedures,
-            )
+            let references = config
+                .next_possible_procedures
+                .iter()
+                .map(|proc_ref| proc_ref.procedure.clone())
+                .collect();
+            (WeightedAliasIndex::new(weights), references)
         };
 
         let procedure = TickableProcedure {
@@ -669,6 +682,7 @@ impl TickableProcedure {
             current_step: None,
             distribution: distribution.expect("Couldn't create weighted alias index"),
             next_possible_procedures,
+            is_interruptible: config.is_interruptible,
         };
 
         procedure.panic_if_removal_exceeds_duration();
@@ -736,6 +750,10 @@ impl TickableProcedure {
         }
     }
 
+    pub fn is_interruptible(&self) -> bool {
+        self.is_interruptible
+    }
+
     fn panic_if_removal_exceeds_duration(&self) {
         for step in &self.steps {
             if let RemovalMode::Graceful {
@@ -778,7 +796,7 @@ impl TickableProcedureTracker {
                 if first_possible_procedures.is_empty() {
                     let weights = procedures
                         .values()
-                        .map(|procedure| procedure.weight)
+                        .map(|procedure| procedure.reference.weight)
                         .collect();
                     (weights, procedures.keys().collect())
                 } else {
@@ -786,7 +804,7 @@ impl TickableProcedureTracker {
                         .iter()
                         .map(|procedure_key| {
                             if let Some(procedure) = procedures.get(procedure_key) {
-                                procedure.weight
+                                procedure.reference.weight
                             } else {
                                 panic!("Reference to unknown procedure {}", procedure_key);
                             }
@@ -896,13 +914,13 @@ pub struct AmbientNpcConfig {
     pub comment: IgnoredAny,
     #[serde(flatten)]
     pub base_npc: BaseNpcConfig,
-    pub procedure_on_interact: Option<String>,
+    pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
 }
 
 #[derive(Clone)]
 pub struct AmbientNpc {
     pub base_npc: BaseNpc,
-    pub procedure_on_interact: Option<String>,
+    pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
 }
 
 impl AmbientNpc {
@@ -933,14 +951,24 @@ impl AmbientNpc {
     }
 
     pub fn interact(&self, character: &Character) -> Option<String> {
-        if let Some(new_procedure) = &self.procedure_on_interact {
-            let is_different_procedure = character
-                .current_tickable_procedure()
-                .map(|current_procedure| current_procedure != new_procedure)
-                .unwrap_or(true);
-            if is_different_procedure {
-                return Some(new_procedure.clone());
+        if let Some(active_procedure_key) = character.current_tickable_procedure() {
+            if let Some(active_procedure) = character
+                .tickable_procedure_tracker
+                .procedures
+                .get(active_procedure_key)
+            {
+                if !active_procedure.is_interruptible() {
+                    return None;
+                }
             }
+        }
+
+        if let Some(new_procedure) = &self.procedure_on_interact {
+            let weights: Vec<u32> = new_procedure.iter().map(|p| p.weight).collect();
+            let distribution =
+                WeightedAliasIndex::new(weights).expect("Couldn't create weighted alias index");
+            let chosen_index = distribution.sample(&mut thread_rng());
+            return Some(new_procedure[chosen_index].procedure.clone());
         }
 
         None

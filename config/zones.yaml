@@ -97,35 +97,35 @@
             - model_id: 354
               duration_millis: 10000
           next_possible_procedures:
-            - invisible
+            - procedure: invisible
         battle_droid_hologram:
           steps:
             - model_id: 352
               duration_millis: 10000
           next_possible_procedures:
-            - invisible
+            - procedure: invisible
         super_battle_droid_hologram:
           steps:
             - model_id: 351
               duration_millis: 10000
           next_possible_procedures:
-            - invisible
+            - procedure: invisible
         droideka_hologram:
           steps:
             - animation_id: 9002
               model_id: 350
               duration_millis: 10000
           next_possible_procedures:
-            - invisible
+            - procedure: invisible
         invisible:
           steps:
             - model_id: 44
               duration_millis: 5000
           next_possible_procedures:
-            - arc_troopers_hologram
-            - battle_droid_hologram
-            - super_battle_droid_hologram
-            - droideka_hologram
+            - procedure: arc_troopers_hologram
+            - procedure: battle_droid_hologram
+            - procedure: super_battle_droid_hologram
+            - procedure: droideka_hologram
     - comment: fighter
       name_id: 32914
       terrain_object_id: 1332791341
@@ -754,21 +754,24 @@
               composite_effect_id: 1021
               duration_millis: 11500
           next_possible_procedures:
-            - remove
+            - procedure: remove
         remove:
           steps:
             - spawned_state: Despawn
               duration_millis: 1000
           next_possible_procedures:
-            - spawn
-            - empty
+            - procedure: spawn
+            - procedure: empty
+              weight: 1259
         empty:
           weight: 1259
           steps:
             - duration_millis: 1000
           next_possible_procedures:
-            - spawn
-            - empty
+            - procedure: spawn
+              weight: 36
+            - procedure: empty
+              weight: 1259
     - comment: Purple Starfighter
       model_id: 723
       npc_type: 2
@@ -793,21 +796,24 @@
               composite_effect_id: 1021
               duration_millis: 12500
           next_possible_procedures:
-            - remove
+            - procedure: remove
         remove:
           steps:
             - spawned_state: Despawn
               duration_millis: 1000
           next_possible_procedures:
-            - spawn
-            - empty
+            - procedure: spawn
+            - procedure: empty
+              weight: 1259
         empty:
           weight: 1259
           steps:
             - duration_millis: 1000
           next_possible_procedures:
-            - spawn
-            - empty
+            - procedure: spawn
+              weight: 36
+            - procedure: empty
+              weight: 1259
     - comment: Training Room Main Platform Lift
       model_id: 1438
       npc_type: 1
@@ -869,8 +875,22 @@
         w: 0
       cursor: 53
       enable_interact_popup: false
+      procedure_on_interact:
+        - procedure: "naboo"
+        - procedure: "dooku"
+        - procedure: "yoda_music"
+        - procedure: "manufacturing_droid"
+        - procedure: "windu"
+        - procedure: "r2"
+        - procedure: "no_more"
+        - procedure: "yoda_birthday"
+        - procedure: "twilek_coin_flip"
+        - procedure: "medics_jedi"
+        - procedure: "commander_trouble"
+        - procedure: "yoda_short"
       tickable_procedures:
         naboo:
+          is_interruptible: false
           steps:
             - chat_message_id: 17300
               sound_id: 3580
@@ -886,6 +906,7 @@
               duration_millis: 7000
             - duration_millis: 5000
         dooku:
+          is_interruptible: false
           steps:
             - chat_message_id: 17300
               sound_id: 3580
@@ -901,6 +922,7 @@
               duration_millis: 6000
             - duration_millis: 6000
         yoda_music:
+          is_interruptible: false
           steps:
             - chat_message_id: 17309
               sound_id: 3589
@@ -912,6 +934,7 @@
               duration_millis: 7000
             - duration_millis: 5000
         manufacturing_droid:
+          is_interruptible: false
           steps:
             - chat_message_id: 17313
               sound_id: 3593
@@ -923,6 +946,7 @@
               duration_millis: 10000
             - duration_millis: 5000
         windu:
+          is_interruptible: false
           steps:
             - chat_message_id: 17300
               sound_id: 3580
@@ -938,6 +962,7 @@
               duration_millis: 7000
             - duration_millis: 7000
         r2:
+          is_interruptible: false
           steps:
             - chat_message_id: 17320
               sound_id: 3600
@@ -949,6 +974,7 @@
               duration_millis: 6000
             - duration_millis: 7000
         no_more:
+          is_interruptible: false
           steps:
             - duration_millis: 5000
             - chat_message_id: 17325
@@ -956,6 +982,7 @@
               duration_millis: 2000
             - duration_millis: 9000
         yoda_birthday:
+          is_interruptible: false
           steps:
             - chat_message_id: 17327
               sound_id: 3607
@@ -966,6 +993,7 @@
               one_shot_animation_id: 3006
               duration_millis: 8000
         twilek_coin_flip:
+          is_interruptible: false
           steps:
             - chat_message_id: 17330
               sound_id: 3610
@@ -977,6 +1005,7 @@
               duration_millis: 6000
             - duration_millis: 6000
         medics_jedi:
+          is_interruptible: false
           steps:
             - chat_message_id: 17335
               sound_id: 3615
@@ -987,6 +1016,7 @@
               one_shot_animation_id: 3006
               duration_millis: 6000
         commander_trouble:
+          is_interruptible: false
           steps:
             - chat_message_id: 17338
               sound_id: 3618
@@ -997,6 +1027,7 @@
               one_shot_animation_id: 3006
               duration_millis: 10000
         yoda_short:
+          is_interruptible: false
           steps:
             - chat_message_id: 17342
               sound_id: 3622
@@ -1021,7 +1052,6 @@
         y: 0
         z: -0.83035356
         w: 0
-      cursor: 53
       enable_interact_popup: false
       tickable_procedures:
         naboo:
