@@ -86,87 +86,87 @@ pub fn reply_dismount<'a>(
     character: &mut RwLockWriteGuard<Character>,
     mounts: &BTreeMap<u32, MountConfig>,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-    if let Some(mount_id) = character.stats.mount_id {
-        character.stats.mount_id = None;
-        if let Some(mount) = mounts.get(&mount_id) {
-            character.stats.speed.mount_multiplier = 1.0;
-            character.stats.jump_height_multiplier.mount_multiplier = 1.0;
-            let (_, instance_guid, chunk) = character.index1();
-            let all_players_nearby =
-                ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_handle)?;
-            Ok(vec![
-                Broadcast::Multi(
-                    all_players_nearby,
-                    vec![
-                        GamePacket::serialize(&TunneledPacket {
-                            unknown1: true,
-                            inner: DismountReply {
-                                rider_guid: player_guid(sender),
-                                composite_effect: mount.dismount_composite_effect,
-                            },
-                        })?,
-                        GamePacket::serialize(&TunneledPacket {
-                            unknown1: true,
-                            inner: RemoveGracefully {
-                                guid: mount_guid(sender, mount_id),
-                                use_death_animation: false,
-                                delay_millis: 0,
-                                composite_effect_delay_millis: 0,
-                                composite_effect: 0,
-                                fade_duration_millis: 1000,
-                            },
-                        })?,
-                        GamePacket::serialize(&TunneledPacket {
-                            unknown1: true,
-                            inner: UpdateSpeed {
-                                guid: player_guid(sender),
-                                speed: character.stats.speed.total(),
-                            },
-                        })?,
-                    ],
-                ),
-                Broadcast::Single(
-                    sender,
-                    vec![GamePacket::serialize(&TunneledPacket {
-                        unknown1: true,
-                        inner: Stats {
-                            stats: vec![
-                                Stat {
-                                    id: StatId::Speed,
-                                    multiplier: 1,
-                                    value1: 0.0,
-                                    value2: zone.speed,
-                                },
-                                Stat {
-                                    id: StatId::JumpHeightMultiplier,
-                                    multiplier: 1,
-                                    value1: 0.0,
-                                    value2: zone.jump_height_multiplier,
-                                },
-                                Stat {
-                                    id: StatId::GravityMultiplier,
-                                    multiplier: 1,
-                                    value1: 0.0,
-                                    value2: zone.gravity_multiplier,
-                                },
-                            ],
-                        },
-                    })?],
-                ),
-            ])
-        } else {
-            Err(ProcessPacketError::new(
-                ProcessPacketErrorType::ConstraintViolated,
-                format!(
-                    "Player {} tried to dismount from non-existent mount",
-                    sender
-                ),
-            ))
-        }
-    } else {
+    let Some(mount_id) = character.stats.mount_id else {
         // Character is already dismounted
-        Ok(Vec::new())
-    }
+        return Ok(Vec::new());
+    };
+
+    character.stats.mount_id = None;
+    let Some(mount) = mounts.get(&mount_id) else {
+        return Err(ProcessPacketError::new(
+            ProcessPacketErrorType::ConstraintViolated,
+            format!(
+                "Player {} tried to dismount from non-existent mount",
+                sender
+            ),
+        ));
+    };
+
+    character.stats.speed.mount_multiplier = 1.0;
+    character.stats.jump_height_multiplier.mount_multiplier = 1.0;
+    let (_, instance_guid, chunk) = character.index1();
+    let all_players_nearby =
+        ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_handle)?;
+    Ok(vec![
+        Broadcast::Multi(
+            all_players_nearby,
+            vec![
+                GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: DismountReply {
+                        rider_guid: player_guid(sender),
+                        composite_effect: mount.dismount_composite_effect,
+                    },
+                })?,
+                GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: RemoveGracefully {
+                        guid: mount_guid(sender, mount_id),
+                        use_death_animation: false,
+                        delay_millis: 0,
+                        composite_effect_delay_millis: 0,
+                        composite_effect: 0,
+                        fade_duration_millis: 1000,
+                    },
+                })?,
+                GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: UpdateSpeed {
+                        guid: player_guid(sender),
+                        speed: character.stats.speed.total(),
+                    },
+                })?,
+            ],
+        ),
+        Broadcast::Single(
+            sender,
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: Stats {
+                    stats: vec![
+                        Stat {
+                            id: StatId::Speed,
+                            multiplier: 1,
+                            value1: 0.0,
+                            value2: zone.speed,
+                        },
+                        Stat {
+                            id: StatId::JumpHeightMultiplier,
+                            multiplier: 1,
+                            value1: 0.0,
+                            value2: zone.jump_height_multiplier,
+                        },
+                        Stat {
+                            id: StatId::GravityMultiplier,
+                            multiplier: 1,
+                            value1: 0.0,
+                            value2: zone.gravity_multiplier,
+                        },
+                    ],
+                },
+            })?],
+        ),
+    ])
 }
 
 fn process_dismount(
@@ -182,37 +182,37 @@ fn process_dismount(
                                  _,
                                  mut characters_write,
                                  minigame_data_lock_enforcer| {
-                if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender))
-                {
-                    let zones_lock_enforcer: ZoneLockEnforcer = minigame_data_lock_enforcer.into();
-                    zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
-                        read_guids: vec![character_write_handle.stats.instance_guid],
-                        write_guids: Vec::new(),
-                        zone_consumer: |_, zones_read, _| {
-                            if let Some(zone_read_handle) =
-                                zones_read.get(&character_write_handle.stats.instance_guid)
-                            {
-                                reply_dismount(
-                                    sender,
-                                    characters_table_read_handle,
-                                    zone_read_handle,
-                                    character_write_handle,
-                                    game_server.mounts(),
-                                )
-                            } else {
-                                Err(ProcessPacketError::new(
-                                    ProcessPacketErrorType::ConstraintViolated,
-                                    format!("Player {} tried to enter unknown zone", sender),
-                                ))
-                            }
-                        },
-                    })
-                } else {
-                    Err(ProcessPacketError::new(
+                let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender))
+                else {
+                    return Err(ProcessPacketError::new(
                         ProcessPacketErrorType::ConstraintViolated,
                         format!("Non-existent player {} tried to dismount", sender),
-                    ))
-                }
+                    ));
+                };
+
+                let zones_lock_enforcer: ZoneLockEnforcer = minigame_data_lock_enforcer.into();
+                zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
+                    read_guids: vec![character_write_handle.stats.instance_guid],
+                    write_guids: Vec::new(),
+                    zone_consumer: |_, zones_read, _| {
+                        let Some(zone_read_handle) =
+                            zones_read.get(&character_write_handle.stats.instance_guid)
+                        else {
+                            return Err(ProcessPacketError::new(
+                                ProcessPacketErrorType::ConstraintViolated,
+                                format!("Player {} tried to enter unknown zone", sender),
+                            ));
+                        };
+
+                        reply_dismount(
+                            sender,
+                            characters_table_read_handle,
+                            zone_read_handle,
+                            character_write_handle,
+                            game_server.mounts(),
+                        )
+                    },
+                })
             },
         })
 }
@@ -225,98 +225,131 @@ fn process_mount_spawn(
     let mount_spawn = MountSpawn::deserialize(cursor)?;
     let mount_guid = mount_guid(sender, mount_spawn.mount_id);
 
-    if let Some(mount) = game_server.mounts().get(&mount_spawn.mount_id) {
-        game_server.lock_enforcer().read_characters(|_| CharacterLockRequest {
-            read_guids: Vec::new(),
-            write_guids: vec![player_guid(sender)],
-            character_consumer: |characters_table_read_handle, _, mut characters_write, minigame_data_lock_enforcer| {
-                if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) {
-                    let zones_lock_enforcer: ZoneLockEnforcer = minigame_data_lock_enforcer.into();
-                    zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
-                        read_guids: vec![character_write_handle.stats.instance_guid],
-                        write_guids: Vec::new(),
-                        zone_consumer: |_, zones_read, _| {
-                            if let Some(zone_read_handle) = zones_read.get(&character_write_handle.stats.instance_guid) {
-                                character_write_handle.stats.speed.mount_multiplier = mount.speed_multiplier;
-                                character_write_handle.stats.jump_height_multiplier.mount_multiplier = mount.jump_height_multiplier;
-                                let new_gravity = zone_read_handle.gravity_multiplier * mount.gravity_multiplier;
-
-                                let mut packets = spawn_mount_npc(
-                                    mount_guid,
-                                    player_guid(sender),
-                                    mount,
-                                    character_write_handle.stats.pos,
-                                    character_write_handle.stats.rot,
-                                    true,
-                                )?;
-                                packets.push(
-                                    GamePacket::serialize(&TunneledPacket {
-                                        unknown1: true,
-                                        inner: UpdateSpeed {
-                                            guid: player_guid(sender),
-                                            speed: character_write_handle.stats.speed.total(),
-                                        },
-                                    })?,
-                                );
-
-                                if let Some(mount_id) = character_write_handle.stats.mount_id {
-                                    return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to mount while already mounted on mount ID {}",
-                                        sender, mount_id)));
-                                }
-
-                                character_write_handle.stats.mount_id = Some(Guid::guid(mount));
-
-                                let (_, instance_guid, chunk) = character_write_handle.index1();
-                                let all_players_nearby = ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_read_handle)?;
-                                Ok(vec![
-                                    Broadcast::Multi(all_players_nearby, packets),
-                                    Broadcast::Single(sender, vec![
-                                        GamePacket::serialize(&TunneledPacket {
-                                            unknown1: true,
-                                            inner: Stats {
-                                                stats: vec![
-                                                    Stat {
-                                                        id: StatId::Speed,
-                                                        multiplier: 1,
-                                                        value1: 0.0,
-                                                        value2: character_write_handle.stats.speed.total(),
-                                                    },
-                                                    Stat {
-                                                        id: StatId::JumpHeightMultiplier,
-                                                        multiplier: 1,
-                                                        value1: 0.0,
-                                                        value2: character_write_handle.stats.jump_height_multiplier.total(),
-                                                    },
-                                                    Stat {
-                                                        id: StatId::GravityMultiplier,
-                                                        multiplier: 1,
-                                                        value1: 0.0,
-                                                        value2: new_gravity,
-                                                    },
-                                                ],
-                                            },
-                                        })?,
-                                    ])
-                                ])
-                            } else {
-                                Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to mount but is in a non-existent zone", sender)))
-                            }
-                        },
-                    })
-                } else {
-                    Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Non-existent player {} tried to mount", sender)))
-                }
-            },
-        })
-    } else {
-        Err(ProcessPacketError::new(
+    let Some(mount) = game_server.mounts().get(&mount_spawn.mount_id) else {
+        return Err(ProcessPacketError::new(
             ProcessPacketErrorType::ConstraintViolated,
             format!(
                 "Player {} tried to mount on unknown mount ID {}",
                 sender, mount_spawn.mount_id
             ),
-        ))
-    }
+        ));
+    };
+
+    game_server
+        .lock_enforcer()
+        .read_characters(|_| CharacterLockRequest {
+            read_guids: Vec::new(),
+            write_guids: vec![player_guid(sender)],
+            character_consumer: |characters_table_read_handle,
+                                 _,
+                                 mut characters_write,
+                                 minigame_data_lock_enforcer| {
+                let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender))
+                else {
+                    return Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::ConstraintViolated,
+                        format!("Non-existent player {} tried to mount", sender),
+                    ));
+                };
+
+                let zones_lock_enforcer: ZoneLockEnforcer = minigame_data_lock_enforcer.into();
+                zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
+                    read_guids: vec![character_write_handle.stats.instance_guid],
+                    write_guids: Vec::new(),
+                    zone_consumer: |_, zones_read, _| {
+                        let Some(zone_read_handle) =
+                            zones_read.get(&character_write_handle.stats.instance_guid)
+                        else {
+                            return Err(ProcessPacketError::new(
+                                ProcessPacketErrorType::ConstraintViolated,
+                                format!(
+                                    "Player {} tried to mount but is in a non-existent zone",
+                                    sender
+                                ),
+                            ));
+                        };
+
+                        character_write_handle.stats.speed.mount_multiplier =
+                            mount.speed_multiplier;
+                        character_write_handle
+                            .stats
+                            .jump_height_multiplier
+                            .mount_multiplier = mount.jump_height_multiplier;
+                        let new_gravity =
+                            zone_read_handle.gravity_multiplier * mount.gravity_multiplier;
+
+                        let mut packets = spawn_mount_npc(
+                            mount_guid,
+                            player_guid(sender),
+                            mount,
+                            character_write_handle.stats.pos,
+                            character_write_handle.stats.rot,
+                            true,
+                        )?;
+                        packets.push(GamePacket::serialize(&TunneledPacket {
+                            unknown1: true,
+                            inner: UpdateSpeed {
+                                guid: player_guid(sender),
+                                speed: character_write_handle.stats.speed.total(),
+                            },
+                        })?);
+
+                        if let Some(mount_id) = character_write_handle.stats.mount_id {
+                            return Err(ProcessPacketError::new(
+                                ProcessPacketErrorType::ConstraintViolated,
+                                format!(
+                                    "Player {} tried to mount while already mounted on mount ID {}",
+                                    sender, mount_id
+                                ),
+                            ));
+                        }
+
+                        character_write_handle.stats.mount_id = Some(Guid::guid(mount));
+
+                        let (_, instance_guid, chunk) = character_write_handle.index1();
+                        let all_players_nearby = ZoneInstance::all_players_nearby(
+                            chunk,
+                            instance_guid,
+                            characters_table_read_handle,
+                        )?;
+                        Ok(vec![
+                            Broadcast::Multi(all_players_nearby, packets),
+                            Broadcast::Single(
+                                sender,
+                                vec![GamePacket::serialize(&TunneledPacket {
+                                    unknown1: true,
+                                    inner: Stats {
+                                        stats: vec![
+                                            Stat {
+                                                id: StatId::Speed,
+                                                multiplier: 1,
+                                                value1: 0.0,
+                                                value2: character_write_handle.stats.speed.total(),
+                                            },
+                                            Stat {
+                                                id: StatId::JumpHeightMultiplier,
+                                                multiplier: 1,
+                                                value1: 0.0,
+                                                value2: character_write_handle
+                                                    .stats
+                                                    .jump_height_multiplier
+                                                    .total(),
+                                            },
+                                            Stat {
+                                                id: StatId::GravityMultiplier,
+                                                multiplier: 1,
+                                                value1: 0.0,
+                                                value2: new_gravity,
+                                            },
+                                        ],
+                                    },
+                                })?],
+                            ),
+                        ])
+                    },
+                })
+            },
+        })
 }
 
 pub fn process_mount_packet(

@@ -365,50 +365,50 @@ pub fn process_housing_packet(
                     read_guids: Vec::new(),
                     write_guids: Vec::new(),
                     character_consumer: |characters_table_read_handle, _, _, minigame_data_lock_enforcer| {
-                        let packets = if let Some((_, instance_guid, _)) = characters_table_read_handle.index1(player_guid(sender)) {
-                            let zones_lock_enforcer: ZoneLockEnforcer = minigame_data_lock_enforcer.into();
-                            zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
-                                read_guids: vec![instance_guid],
-                                write_guids: Vec::new(),
-                                zone_consumer: |_, zones_read, _| {
-                                    if let Some(zone_read_handle) = zones_read.get(&instance_guid){
-                                        if let Some(house) = &zone_read_handle.house_data {
-                                            if house.owner == sender {
-                                                Ok(vec![GamePacket::serialize(&TunneledPacket {
-                                                    unknown1: true,
-                                                    inner: HouseInfo {
-                                                        edit_mode_enabled: set_edit_mode.enabled,
-                                                        unknown2: 0,
-                                                        unknown3: true,
-                                                        fixtures: house.fixtures.len() as u32,
-                                                        unknown5: 0,
-                                                        unknown6: 0,
-                                                        unknown7: 0,
-                                                    },
-                                                })?])
-                                            } else {
-                                                Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!(
-                                                    "Player {} tried to set edit mode in a house they don't own",
-                                                    sender
-                                                )))
-                                            }
-                                        } else {
-                                            Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!(
-                                                "Player {} tried to set edit mode outside of a house",
-                                                sender
-                                            )))
-                                        }
-                                    } else {
-                                        Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!(
-                                            "Player {} tried to set edit mode but is not in any zone",
-                                            sender
-                                        )))
-                                    }
-                                },
-                            })
-                        } else {
-                            Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Non-existent player {} tried to set edit mode", sender)))
-                        }?;
+                        let Some((_, instance_guid, _)) = characters_table_read_handle.index1(player_guid(sender)) else {
+                            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Non-existent player {} tried to set edit mode", sender)));
+                        };
+
+                        let zones_lock_enforcer: ZoneLockEnforcer = minigame_data_lock_enforcer.into();
+                        let packets = zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
+                            read_guids: vec![instance_guid],
+                            write_guids: Vec::new(),
+                            zone_consumer: |_, zones_read, _| {
+                                let Some(zone_read_handle) = zones_read.get(&instance_guid) else {
+                                    return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!(
+                                        "Player {} tried to set edit mode but is not in any zone",
+                                        sender
+                                    )));
+                                };
+
+                                let Some(house) = &zone_read_handle.house_data else {
+                                    return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!(
+                                        "Player {} tried to set edit mode outside of a house",
+                                        sender
+                                    )));
+                                };
+
+                                if house.owner != sender {
+                                    return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!(
+                                        "Player {} tried to set edit mode in a house they don't own",
+                                        sender
+                                    )));
+                                }
+
+                                Ok(vec![GamePacket::serialize(&TunneledPacket {
+                                    unknown1: true,
+                                    inner: HouseInfo {
+                                        edit_mode_enabled: set_edit_mode.enabled,
+                                        unknown2: 0,
+                                        unknown3: true,
+                                        fixtures: house.fixtures.len() as u32,
+                                        unknown5: 0,
+                                        unknown6: 0,
+                                        unknown7: 0,
+                                    },
+                                })?])
+                            },
+                        })?;
 
                         Ok(vec![Broadcast::Single(sender, packets)])
                     },
@@ -461,16 +461,9 @@ pub fn process_housing_packet(
                                 .is_none()
                             {
                                 let template_guid = zone_template_guid(enter_request.house_guid);
-                                if let Some(template) =
+                                let Some(template) =
                                     game_server.read_zone_templates().get(&template_guid)
-                                {
-                                    zones_table_write_handle.insert(ZoneInstance::new_house(
-                                        enter_request.house_guid,
-                                        template,
-                                        lookup_house(sender, enter_request.house_guid)?,
-                                        characters_table_write_handle,
-                                    ));
-                                } else {
+                                else {
                                     return Err(ProcessPacketError::new(
                                         ProcessPacketErrorType::ConstraintViolated,
                                         format!(
@@ -478,27 +471,34 @@ pub fn process_housing_packet(
                                             template_guid
                                         ),
                                     ));
-                                }
+                                };
+
+                                zones_table_write_handle.insert(ZoneInstance::new_house(
+                                    enter_request.house_guid,
+                                    template,
+                                    lookup_house(sender, enter_request.house_guid)?,
+                                    characters_table_write_handle,
+                                ));
                             }
 
-                            if let Some(zone_read_handle) =
+                            let Some(zone_read_handle) =
                                 zones_table_write_handle.get(enter_request.house_guid)
-                            {
-                                teleport_to_zone!(
-                                    characters_table_write_handle,
-                                    sender,
-                                    zones_table_write_handle,
-                                    &zone_read_handle.read(),
-                                    None,
-                                    None,
-                                    game_server.mounts(),
-                                )
-                            } else {
-                                Err(ProcessPacketError::new(
+                            else {
+                                return Err(ProcessPacketError::new(
                                     ProcessPacketErrorType::ConstraintViolated,
                                     format!("Unable to create house {}", enter_request.house_guid),
-                                ))
-                            }
+                                ));
+                            };
+
+                            teleport_to_zone!(
+                                characters_table_write_handle,
+                                sender,
+                                zones_table_write_handle,
+                                &zone_read_handle.read(),
+                                None,
+                                None,
+                                game_server.mounts(),
+                            )
                         })
                     },
                 )
