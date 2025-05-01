@@ -86,39 +86,37 @@ fn cost_map_from_sales(
     let mut costs = BTreeMap::new();
 
     for sale in sales {
-        if let Some(items_in_group) = items_by_group.get(&sale.item_group_guid) {
-            for item_guid in items_in_group {
-                let cost_entry = costs.entry(*item_guid).or_insert_with(|| {
-                    if let Some(item_definition) = items.get(item_guid) {
-                        CostEntry {
-                            base: item_definition.cost,
-                            members: item_definition.cost,
-                        }
-                    } else {
-                        info!("Defaulting to 0 cost for unknown item {}", item_guid);
-                        CostEntry {
-                            base: 0,
-                            members: 0,
-                        }
-                    }
-                });
-
-                cost_entry.base = evaluate_cost_expression(
-                    &sale.base_cost_expression,
-                    cost_entry.base,
-                    *item_guid,
-                )?;
-                cost_entry.members = evaluate_cost_expression(
-                    &sale.members_cost_expression,
-                    cost_entry.members,
-                    *item_guid,
-                )?;
-            }
-        } else {
+        let Some(items_in_group) = items_by_group.get(&sale.item_group_guid) else {
             info!(
                 "Skipping sale for unknown item group {}",
                 sale.item_group_guid
-            )
+            );
+            continue;
+        };
+
+        for item_guid in items_in_group {
+            let cost_entry = costs.entry(*item_guid).or_insert_with(|| {
+                if let Some(item_definition) = items.get(item_guid) {
+                    CostEntry {
+                        base: item_definition.cost,
+                        members: item_definition.cost,
+                    }
+                } else {
+                    info!("Defaulting to 0 cost for unknown item {}", item_guid);
+                    CostEntry {
+                        base: 0,
+                        members: 0,
+                    }
+                }
+            });
+
+            cost_entry.base =
+                evaluate_cost_expression(&sale.base_cost_expression, cost_entry.base, *item_guid)?;
+            cost_entry.members = evaluate_cost_expression(
+                &sale.members_cost_expression,
+                cost_entry.members,
+                *item_guid,
+            )?;
         }
     }
 
@@ -165,25 +163,25 @@ fn evaluate_cost_expression(
         )
     })?;
 
-    if let Value::Float(new_cost) = result {
-        u32::try_from(new_cost.round() as i64).map_err(|err| {
-            Error::new(
-                ErrorKind::InvalidData,
-                format!(
-                    "Cost expression returned float that could not be converted to an integer for item {}: {}, {}",
-                    item_guid,
-                    new_cost,
-                    err
-                ),
-            )
-        })
-    } else {
-        Err(Error::new(
+    let Value::Float(new_cost) = result else {
+        return Err(Error::new(
             ErrorKind::InvalidData,
             format!(
                 "Cost expression did not return an integer for item {}, returned: {}",
                 item_guid, result
             ),
-        ))
-    }
+        ));
+    };
+
+    u32::try_from(new_cost.round() as i64).map_err(|err| {
+        Error::new(
+            ErrorKind::InvalidData,
+            format!(
+                "Cost expression returned float that could not be converted to an integer for item {}: {}, {}",
+                item_guid,
+                new_cost,
+                err
+            ),
+        )
+    })
 }

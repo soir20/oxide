@@ -94,22 +94,23 @@ fn handle_saber_strike_game_over(
         game_server,
         header,
         |minigame_status, minigame_stats, _, stage_config| {
-            if let MinigameTypeData::SaberStrike { obfuscated_score } = minigame_status.type_data {
-                if obfuscated_score != game_over.total_score {
-                    return Err(ProcessPacketError::new(
-                        ProcessPacketErrorType::ConstraintViolated,
-                        format!(
-                            "Player {} sent a Saber Strike game over packet with score {}, but their obfuscated score was {}",
-                            sender,
-                            game_over.total_score,
-                            obfuscated_score,
-                        )
-                    ));
-                }
-            } else {
+            let MinigameTypeData::SaberStrike { obfuscated_score } = minigame_status.type_data
+            else {
                 return Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
                     format!("Player {} sent a Saber Strike game over packet, but they have no Saber Strike game data", sender)
+                ));
+            };
+
+            if obfuscated_score != game_over.total_score {
+                return Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Player {} sent a Saber Strike game over packet with score {}, but their obfuscated score was {}",
+                        sender,
+                        game_over.total_score,
+                        obfuscated_score,
+                    )
                 ));
             }
 

@@ -1218,16 +1218,7 @@ impl Player {
         if let Some(mount_id) = character.mount_id {
             let short_rider_guid = shorten_player_guid(Guid::guid(character))?;
             player_mount_guid = mount_guid(short_rider_guid, mount_id);
-            if let Some(mount_config) = mount_configs.get(&mount_id) {
-                mount_packets.append(&mut spawn_mount_npc(
-                    player_mount_guid,
-                    Guid::guid(character),
-                    mount_config,
-                    character.pos,
-                    character.rot,
-                    false,
-                )?);
-            } else {
+            let Some(mount_config) = mount_configs.get(&mount_id) else {
                 return Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
                     format!(
@@ -1236,7 +1227,16 @@ impl Player {
                         mount_id
                     ),
                 ));
-            }
+            };
+
+            mount_packets.append(&mut spawn_mount_npc(
+                player_mount_guid,
+                Guid::guid(character),
+                mount_config,
+                character.pos,
+                character.rot,
+                false,
+            )?);
         }
 
         let attachments: Vec<Attachment> = self
