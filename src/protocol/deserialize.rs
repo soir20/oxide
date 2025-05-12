@@ -271,40 +271,39 @@ pub fn deserialize_packet(
 
     let mut packet_data;
     if op_code.requires_session() {
-        if let Some(session) = possible_session {
-            let compressed = session.allow_compression && cursor.read_u8()? != 0;
-
-            // Two bytes for the op code and, optionally, one byte for the compression flag
-            let data_offset = if session.allow_compression {
-                size_of::<u8>()
-            } else {
-                0
-            } + size_of::<u16>();
-
-            let crc_offset = data
-                .len()
-                .checked_sub(session.crc_length as usize)
-                .unwrap_or(data_offset);
-            cursor.set_position(crc_offset as u64);
-            let expected_hash = cursor.read_uint::<BigEndian>(session.crc_length as usize)? as u32;
-
-            packet_data = data[data_offset..crc_offset].to_vec();
-            if compressed {
-                packet_data = decompress_to_vec_zlib(&packet_data)?;
-            }
-            let actual_hash =
-                compute_crc(&data[0..crc_offset], session.crc_seed, session.crc_length);
-
-            if actual_hash != expected_hash {
-                return Err(DeserializeError::MismatchedHash(
-                    actual_hash,
-                    expected_hash,
-                    session.crc_seed,
-                    session.crc_length,
-                ));
-            }
-        } else {
+        let Some(session) = possible_session else {
             return Err(DeserializeError::MissingSession(op_code));
+        };
+
+        let compressed = session.allow_compression && cursor.read_u8()? != 0;
+
+        // Two bytes for the op code and, optionally, one byte for the compression flag
+        let data_offset = if session.allow_compression {
+            size_of::<u8>()
+        } else {
+            0
+        } + size_of::<u16>();
+
+        let crc_offset = data
+            .len()
+            .checked_sub(session.crc_length as usize)
+            .unwrap_or(data_offset);
+        cursor.set_position(crc_offset as u64);
+        let expected_hash = cursor.read_uint::<BigEndian>(session.crc_length as usize)? as u32;
+
+        packet_data = data[data_offset..crc_offset].to_vec();
+        if compressed {
+            packet_data = decompress_to_vec_zlib(&packet_data)?;
+        }
+        let actual_hash = compute_crc(&data[0..crc_offset], session.crc_seed, session.crc_length);
+
+        if actual_hash != expected_hash {
+            return Err(DeserializeError::MismatchedHash(
+                actual_hash,
+                expected_hash,
+                session.crc_seed,
+                session.crc_length,
+            ));
         }
     } else {
         packet_data = data[2..].to_vec();
