@@ -129,32 +129,32 @@ pub fn fragment_data(
     let mut is_first = true;
     let mut packets = Vec::new();
 
-    if let Some(session) = possible_session {
-        let max_size = max_fragment_data_size(buffer_size, session) as usize;
+    let Some(session) = possible_session else {
+        return Err(DataError::MissingSession);
+    };
 
-        if remaining_data.len() <= max_size {
-            packets.push(DataPacket::Single(data));
-            return Ok(packets);
-        }
+    let max_size = max_fragment_data_size(buffer_size, session) as usize;
 
-        while !remaining_data.is_empty() {
-            let mut end = max_size.min(remaining_data.len());
-            let mut buffer = Vec::new();
-            if is_first {
-                buffer.write_u32::<BigEndian>(data.len() as u32)?;
-                end -= size_of::<u32>();
-                is_first = false;
-            }
-
-            let fragment = &remaining_data[0..end];
-            buffer.write_all(fragment)?;
-            remaining_data = &remaining_data[end..];
-
-            packets.push(DataPacket::Fragment(buffer));
-        }
-
-        Ok(packets)
-    } else {
-        Err(DataError::MissingSession)
+    if remaining_data.len() <= max_size {
+        packets.push(DataPacket::Single(data));
+        return Ok(packets);
     }
+
+    while !remaining_data.is_empty() {
+        let mut end = max_size.min(remaining_data.len());
+        let mut buffer = Vec::new();
+        if is_first {
+            buffer.write_u32::<BigEndian>(data.len() as u32)?;
+            end -= size_of::<u32>();
+            is_first = false;
+        }
+
+        let fragment = &remaining_data[0..end];
+        buffer.write_all(fragment)?;
+        remaining_data = &remaining_data[end..];
+
+        packets.push(DataPacket::Fragment(buffer));
+    }
+
+    Ok(packets)
 }

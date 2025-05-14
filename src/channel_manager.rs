@@ -77,32 +77,32 @@ impl ChannelManager {
         data: &[u8],
         server_options: &ServerOptions,
     ) -> ReceiveResult {
-        if let Some(channel) = self.get_by_addr(addr) {
-            let mut channel_handle = channel.lock();
-            let client_not_queued = !channel_handle.needs_processing();
+        let Some(channel) = self.get_by_addr(addr) else {
+            return ReceiveResult::CreateChannelFirst;
+        };
 
-            match channel_handle.receive(data, server_options) {
-                Ok(packets_received) => {
-                    // If the last processing thread did not process all packets, the client is already queued
-                    if client_not_queued && packets_received > 0 {
-                        client_enqueue
-                            .send(*addr)
-                            .expect("Tried to enqueue client after queue channel disconnected");
-                    }
+        let mut channel_handle = channel.lock();
+        let client_not_queued = !channel_handle.needs_processing();
 
-                    ReceiveResult::Success(packets_received)
+        match channel_handle.receive(data, server_options) {
+            Ok(packets_received) => {
+                // If the last processing thread did not process all packets, the client is already queued
+                if client_not_queued && packets_received > 0 {
+                    client_enqueue
+                        .send(*addr)
+                        .expect("Tried to enqueue client after queue channel disconnected");
                 }
-                Err(err) => {
-                    info!(
-                        "Deserialize error on channel {}: {:?}, data={:x?}",
-                        addr, err, data
-                    );
-                    let _ = channel_handle.disconnect(DisconnectReason::CorruptPacket);
-                    ReceiveResult::DeserializeError
-                }
+
+                ReceiveResult::Success(packets_received)
             }
-        } else {
-            ReceiveResult::CreateChannelFirst
+            Err(err) => {
+                info!(
+                    "Deserialize error on channel {}: {:?}, data={:x?}",
+                    addr, err, data
+                );
+                let _ = channel_handle.disconnect(DisconnectReason::CorruptPacket);
+                ReceiveResult::DeserializeError
+            }
         }
     }
 

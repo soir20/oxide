@@ -297,54 +297,53 @@ impl Channel {
         let mut packets_to_process = Vec::new();
 
         for _ in 0..count {
-            if let Some(packet) = self.receive_queue.pop_front() {
-                // Special processing for reliable packets
-                if let Some(sequence_number) = packet.sequence_number() {
-                    // Add out-of-order packets to a separate queue until the expected
-                    // packets arrive.
-                    if sequence_number != self.next_client_sequence {
-                        if self.save_for_reorder(sequence_number) {
-                            self.reordered_packets.insert(sequence_number, packet);
-                        }
-
-                        // Ack single packet in case the client didn't receive the ack
-                        self.acknowledge_one(sequence_number, server_options);
-
-                        continue;
-                    }
-
-                    self.last_server_ack = sequence_number;
-                    self.next_client_sequence = self.next_client_sequence.wrapping_add(1);
-                    needs_new_ack = true;
-
-                    // Add a previously-received data packet if it is next in sequence
-                    if let Some(next_packet) =
-                        self.reordered_packets.remove(&self.next_client_sequence)
-                    {
-                        self.enqueue_received_packets(
-                            vec![next_packet],
-                            EnqueueDirection::Front,
-                            server_options,
-                        );
-                    }
-                }
-
-                match self.fragment_state.add(packet) {
-                    Ok((possible_packet, remaining_bytes)) => {
-                        if remaining_bytes > server_options.max_defragmented_packet_bytes {
-                            info!("Disconnecting client {} that sent a fragmented packet that is too large ({} bytes > {} bytes)", self.addr, remaining_bytes, server_options.max_defragmented_packet_bytes);
-                            let _ = self.disconnect(DisconnectReason::Application);
-                            return Vec::new();
-                        }
-
-                        if let Some(packet) = possible_packet {
-                            packets_to_process.push(packet);
-                        }
-                    }
-                    Err(err) => info!("Unable to process packet: {:?}", err),
-                }
-            } else {
+            let Some(packet) = self.receive_queue.pop_front() else {
                 break;
+            };
+
+            // Special processing for reliable packets
+            if let Some(sequence_number) = packet.sequence_number() {
+                // Add out-of-order packets to a separate queue until the expected
+                // packets arrive.
+                if sequence_number != self.next_client_sequence {
+                    if self.save_for_reorder(sequence_number) {
+                        self.reordered_packets.insert(sequence_number, packet);
+                    }
+
+                    // Ack single packet in case the client didn't receive the ack
+                    self.acknowledge_one(sequence_number, server_options);
+
+                    continue;
+                }
+
+                self.last_server_ack = sequence_number;
+                self.next_client_sequence = self.next_client_sequence.wrapping_add(1);
+                needs_new_ack = true;
+
+                // Add a previously-received data packet if it is next in sequence
+                if let Some(next_packet) = self.reordered_packets.remove(&self.next_client_sequence)
+                {
+                    self.enqueue_received_packets(
+                        vec![next_packet],
+                        EnqueueDirection::Front,
+                        server_options,
+                    );
+                }
+            }
+
+            match self.fragment_state.add(packet) {
+                Ok((possible_packet, remaining_bytes)) => {
+                    if remaining_bytes > server_options.max_defragmented_packet_bytes {
+                        info!("Disconnecting client {} that sent a fragmented packet that is too large ({} bytes > {} bytes)", self.addr, remaining_bytes, server_options.max_defragmented_packet_bytes);
+                        let _ = self.disconnect(DisconnectReason::Application);
+                        return Vec::new();
+                    }
+
+                    if let Some(packet) = possible_packet {
+                        packets_to_process.push(packet);
+                    }
+                }
+                Err(err) => info!("Unable to process packet: {:?}", err),
             }
         }
 
@@ -688,17 +687,17 @@ impl Channel {
         let mut ready_to_update = false;
         for packet in self.send_queue.iter() {
             if !packet.needs_send && packet.is_reliable() {
-                if let SendTime::Instant(first_send) = packet.first_send {
-                    self.last_round_trip_times[self.next_round_trip_index] =
-                        Instant::now().saturating_duration_since(first_send);
-                    self.next_round_trip_index += 1;
-
-                    if self.next_round_trip_index == self.last_round_trip_times.len() {
-                        self.next_round_trip_index = 0;
-                        ready_to_update = true;
-                    }
-                } else {
+                let SendTime::Instant(first_send) = packet.first_send else {
                     panic!("Packet was marked as sent but has no timing statistics");
+                };
+
+                self.last_round_trip_times[self.next_round_trip_index] =
+                    Instant::now().saturating_duration_since(first_send);
+                self.next_round_trip_index += 1;
+
+                if self.next_round_trip_index == self.last_round_trip_times.len() {
+                    self.next_round_trip_index = 0;
+                    ready_to_update = true;
                 }
             }
         }
