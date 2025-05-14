@@ -263,69 +263,73 @@ impl GameServer {
                     // Set the player as ready
                     self.lock_enforcer()
                         .write_characters(|characters_table_write_handle, _| {
-                            characters_table_write_handle.update_value_indices(player_guid(sender), |possible_character_write_handle, _| {
-                                if let Some(character_write_handle) = possible_character_write_handle {
-                                    if let CharacterType::Player(ref mut player) =
-                                        &mut character_write_handle.stats.character_type
-                                    {
-                                        if let Some(minigame_status) = &mut player.minigame_status {
-                                            if !minigame_status.game_created {
-                                                minigame_status.game_created = true;
-                                                broadcasts.append(&mut create_active_minigame(
-                                                    sender,
-                                                    self.minigames(),
-                                                    minigame_status,
-                                                )?);
-                                            }
-                                        }
-
-                                        if player.first_load {
-                                            let welcome_screen = TunneledPacket {
-                                                unknown1: true,
-                                                inner: WelcomeScreen {
-                                                    show_ui: true,
-                                                    unknown1: vec![],
-                                                    unknown2: vec![],
-                                                    unknown3: 0,
-                                                    unknown4: 0,
-                                                },
-                                            };
-                                            sender_only_packets
-                                                .push(GamePacket::serialize(&welcome_screen)?);
-
-                                            let minigame_definitions = TunneledPacket {
-                                                unknown1: true,
-                                                inner: GamePacket::serialize(
-                                                    &self.minigames.definitions(),
-                                                )?,
-                                            };
-                                            sender_only_packets.push(GamePacket::serialize(
-                                                &minigame_definitions,
-                                            )?);
-                                        }
-
-                                        player.ready = true;
-                                        player.first_load = false;
-                                        Ok(())
-                                    } else {
-                                        Err(ProcessPacketError::new(
+                            characters_table_write_handle.update_value_indices(
+                                player_guid(sender),
+                                |possible_character_write_handle, _| {
+                                    let Some(character_write_handle) =
+                                        possible_character_write_handle
+                                    else {
+                                        return Err(ProcessPacketError::new(
                                             ProcessPacketErrorType::ConstraintViolated,
                                             format!(
-                                                "Character {} sent ready packet but is not a player",
-                                                player_guid(sender)
+                                                "Player {} sent ready packet but does not exist",
+                                                sender
                                             ),
-                                        ))
-                                    }
-                                } else {
-                                    Err(ProcessPacketError::new(
-                                        ProcessPacketErrorType::ConstraintViolated,
-                                        format!(
-                                            "Player {} sent ready packet but does not exist",
-                                            sender
+                                        ));
+                                    };
+
+                                    let CharacterType::Player(ref mut player) =
+                                        &mut character_write_handle.stats.character_type
+                                    else {
+                                        return Err(ProcessPacketError::new(
+                                            ProcessPacketErrorType::ConstraintViolated,
+                                            format!(
+                                            "Character {} sent ready packet but is not a player",
+                                            player_guid(sender)
                                         ),
-                                    ))
-                                }
-                            })
+                                        ));
+                                    };
+
+                                    if let Some(minigame_status) = &mut player.minigame_status {
+                                        if !minigame_status.game_created {
+                                            minigame_status.game_created = true;
+                                            broadcasts.append(&mut create_active_minigame(
+                                                sender,
+                                                self.minigames(),
+                                                minigame_status,
+                                            )?);
+                                        }
+                                    }
+
+                                    if player.first_load {
+                                        let welcome_screen = TunneledPacket {
+                                            unknown1: true,
+                                            inner: WelcomeScreen {
+                                                show_ui: true,
+                                                unknown1: vec![],
+                                                unknown2: vec![],
+                                                unknown3: 0,
+                                                unknown4: 0,
+                                            },
+                                        };
+                                        sender_only_packets
+                                            .push(GamePacket::serialize(&welcome_screen)?);
+
+                                        let minigame_definitions = TunneledPacket {
+                                            unknown1: true,
+                                            inner: GamePacket::serialize(
+                                                &self.minigames.definitions(),
+                                            )?,
+                                        };
+                                        sender_only_packets
+                                            .push(GamePacket::serialize(&minigame_definitions)?);
+                                    }
+
+                                    player.ready = true;
+                                    player.first_load = false;
+                                    Ok(())
+                                },
+                            )
                         })?;
 
                     sender_only_packets.append(&mut send_points_of_interest(self)?);
@@ -364,131 +368,130 @@ impl GameServer {
                             read_guids: read_character_guids,
                             write_guids: vec![player_guid(sender)],
                             character_consumer: move |characters_table_read_handle, characters_read, mut characters_write, minigame_data_lock_enforcer| {
-                                if let Some((_, instance_guid, chunk)) = possible_index {
-                                    let zones_lock_enforcer: ZoneLockEnforcer = minigame_data_lock_enforcer.into();
-                                    zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
-                                        read_guids: vec![instance_guid],
-                                        write_guids: Vec::new(),
-                                        zone_consumer: |_, zones_read, _| {
-                                            if let Some(zone) = zones_read.get(&instance_guid) {
-                                                let mut sender_only_character_packets = Vec::new();
-                                                sender_only_character_packets.append(&mut zone.send_self_on_client_ready()?);
+                                let Some((_, instance_guid, chunk)) = possible_index else {
+                                    return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} sent a ready packet but is not in any zone",
+                                        sender)));
+                                };
 
-                                                let stats = TunneledPacket {
-                                                    unknown1: true,
-                                                    inner: Stats {
-                                                        stats: vec![
-                                                            Stat {
-                                                                id: StatId::Speed,
-                                                                multiplier: 1,
-                                                                value1: 0.0,
-                                                                value2: zone.speed,
-                                                            },
-                                                            Stat {
-                                                                id: StatId::PowerRegen,
-                                                                multiplier: 1,
-                                                                value1: 0.0,
-                                                                value2: 1.0,
-                                                            },
-                                                            Stat {
-                                                                id: StatId::PowerRegen,
-                                                                multiplier: 1,
-                                                                value1: 0.0,
-                                                                value2: 1.0,
-                                                            },
-                                                            Stat {
-                                                                id: StatId::GravityMultiplier,
-                                                                multiplier: 1,
-                                                                value1: 0.0,
-                                                                value2: zone.gravity_multiplier,
-                                                            },
-                                                            Stat {
-                                                                id: StatId::JumpHeightMultiplier,
-                                                                multiplier: 1,
-                                                                value1: 0.0,
-                                                                value2: zone.jump_height_multiplier,
-                                                            },
-                                                        ],
+                                let zones_lock_enforcer: ZoneLockEnforcer = minigame_data_lock_enforcer.into();
+                                zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
+                                    read_guids: vec![instance_guid],
+                                    write_guids: Vec::new(),
+                                    zone_consumer: |_, zones_read, _| {
+                                        let Some(zone) = zones_read.get(&instance_guid) else {
+                                            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} sent a ready packet from unknown zone {}",
+                                                sender, instance_guid)));
+                                        };
+
+                                        let mut sender_only_character_packets = zone.send_self_on_client_ready()?;
+
+                                        let stats = TunneledPacket {
+                                            unknown1: true,
+                                            inner: Stats {
+                                                stats: vec![
+                                                    Stat {
+                                                        id: StatId::Speed,
+                                                        multiplier: 1,
+                                                        value1: 0.0,
+                                                        value2: zone.speed,
                                                     },
-                                                };
-                                                sender_only_character_packets.push(GamePacket::serialize(&stats)?);
-
-                                                let health = TunneledPacket {
-                                                    unknown1: true,
-                                                    inner: Health {
-                                                        current: 25000,
-                                                        max: 25000,
+                                                    Stat {
+                                                        id: StatId::PowerRegen,
+                                                        multiplier: 1,
+                                                        value1: 0.0,
+                                                        value2: 1.0,
                                                     },
-                                                };
-                                                sender_only_character_packets.push(GamePacket::serialize(&health)?);
-
-                                                let power = TunneledPacket {
-                                                    unknown1: true,
-                                                    inner: Power {
-                                                        current: 300,
-                                                        max: 300,
+                                                    Stat {
+                                                        id: StatId::PowerRegen,
+                                                        multiplier: 1,
+                                                        value1: 0.0,
+                                                        value2: 1.0,
                                                     },
-                                                };
-                                                sender_only_character_packets.push(GamePacket::serialize(&power)?);
+                                                    Stat {
+                                                        id: StatId::GravityMultiplier,
+                                                        multiplier: 1,
+                                                        value1: 0.0,
+                                                        value2: zone.gravity_multiplier,
+                                                    },
+                                                    Stat {
+                                                        id: StatId::JumpHeightMultiplier,
+                                                        multiplier: 1,
+                                                        value1: 0.0,
+                                                        value2: zone.jump_height_multiplier,
+                                                    },
+                                                ],
+                                            },
+                                        };
+                                        sender_only_character_packets.push(GamePacket::serialize(&stats)?);
 
-                                                let mut character_broadcasts = Vec::new();
+                                        let health = TunneledPacket {
+                                            unknown1: true,
+                                            inner: Health {
+                                                current: 25000,
+                                                max: 25000,
+                                            },
+                                        };
+                                        sender_only_character_packets.push(GamePacket::serialize(&health)?);
 
-                                                if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) {
-                                                    character_write_handle.stats.speed.base = zone.speed;
-                                                    character_write_handle.stats.jump_height_multiplier.base = zone.jump_height_multiplier;
+                                        let power = TunneledPacket {
+                                            unknown1: true,
+                                            inner: Power {
+                                                current: 300,
+                                                max: 300,
+                                            },
+                                        };
+                                        sender_only_character_packets.push(GamePacket::serialize(&power)?);
 
-                                                    let mut global_packets = character_write_handle.stats.add_packets(false, self.mounts(), self.items(), self.customizations())?;
-                                                    let wield_type = TunneledPacket {
-                                                        unknown1: true,
-                                                        inner: UpdateWieldType {
-                                                            guid: player_guid(sender),
-                                                            wield_type: character_write_handle.stats.wield_type(),
-                                                        },
-                                                    };
-                                                    global_packets.push(GamePacket::serialize(&wield_type)?);
+                                        let mut character_broadcasts = Vec::new();
 
-                                                    if let CharacterType::Player(player) = &character_write_handle.stats.character_type {
-                                                        sender_only_character_packets.push(GamePacket::serialize(&TunneledPacket {
-                                                            unknown1: true,
-                                                            inner: InitCustomizations {
-                                                                customizations: customizations_from_guids(player.customizations.values().cloned(), self.customizations()),
-                                                            },
-                                                        })?);
+                                        let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) else {
+                                            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} sent a ready packet", sender)));
+                                        };
 
-                                                        if let Some(battle_class) = player.battle_classes.get(&player.active_battle_class) {
-                                                            character_broadcasts.append(&mut update_saber_tints(
-                                                                sender,
-                                                                characters_table_read_handle,
-                                                                instance_guid,
-                                                                chunk,
-                                                                &battle_class.items,
-                                                                player.active_battle_class,
-                                                                character_write_handle.stats.wield_type(),
-                                                                self
-                                                            )?);
-                                                        }
-                                                    }
+                                        character_write_handle.stats.speed.base = zone.speed;
+                                        character_write_handle.stats.jump_height_multiplier.base = zone.jump_height_multiplier;
 
-                                                    let all_players_nearby = ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_read_handle)?;
-                                                    character_broadcasts.push(Broadcast::Multi(all_players_nearby, global_packets));
-                                                } else {
-                                                    return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} sent a ready packet", sender)));
-                                                }
+                                        let mut global_packets = character_write_handle.stats.add_packets(false, self.mounts(), self.items(), self.customizations())?;
+                                        let wield_type = TunneledPacket {
+                                            unknown1: true,
+                                            inner: UpdateWieldType {
+                                                guid: player_guid(sender),
+                                                wield_type: character_write_handle.stats.wield_type(),
+                                            },
+                                        };
+                                        global_packets.push(GamePacket::serialize(&wield_type)?);
 
-                                                character_broadcasts.push(Broadcast::Single(sender, sender_only_character_packets));
-                                                character_broadcasts.append(&mut ZoneInstance::diff_character_broadcasts(player_guid(sender), character_diffs, &characters_read, self.mounts(), self.items(), self.customizations())?);
+                                        if let CharacterType::Player(player) = &character_write_handle.stats.character_type {
+                                            sender_only_character_packets.push(GamePacket::serialize(&TunneledPacket {
+                                                unknown1: true,
+                                                inner: InitCustomizations {
+                                                    customizations: customizations_from_guids(player.customizations.values().cloned(), self.customizations()),
+                                                },
+                                            })?);
 
-                                                Ok(character_broadcasts)
-                                            } else {
-                                                Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} sent a ready packet from unknown zone {}",
-                                                    sender, instance_guid)))
+                                            if let Some(battle_class) = player.battle_classes.get(&player.active_battle_class) {
+                                                character_broadcasts.append(&mut update_saber_tints(
+                                                    sender,
+                                                    characters_table_read_handle,
+                                                    instance_guid,
+                                                    chunk,
+                                                    &battle_class.items,
+                                                    player.active_battle_class,
+                                                    character_write_handle.stats.wield_type(),
+                                                    self
+                                                )?);
                                             }
-                                        },
-                                    })
-                                } else {
-                                    Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} sent a ready packet but is not in any zone",
-                                        sender)))
-                                }
+                                        }
+
+                                        let all_players_nearby = ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_read_handle)?;
+                                        character_broadcasts.push(Broadcast::Multi(all_players_nearby, global_packets));
+
+                                        character_broadcasts.push(Broadcast::Single(sender, sender_only_character_packets));
+                                        character_broadcasts.append(&mut ZoneInstance::diff_character_broadcasts(player_guid(sender), character_diffs, &characters_read, self.mounts(), self.items(), self.customizations())?);
+
+                                        Ok(character_broadcasts)
+                                    },
+                                })
                             },
                         }
                     })?;
@@ -518,39 +521,43 @@ impl GameServer {
                             write_guids: vec![],
                             character_consumer:
                                 |characters_table_read_handle, _, _, minigame_data_lock_enforcer| {
-                                    if let Some((_, instance_guid, _)) =
+                                    let Some((_, instance_guid, _)) =
                                         characters_table_read_handle.index1(sender_guid)
-                                    {
-                                        let zones_lock_enforcer: ZoneLockEnforcer =
-                                            minigame_data_lock_enforcer.into();
-                                        zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
-                                            read_guids: vec![instance_guid],
-                                            write_guids: vec![],
-                                            zone_consumer: |_, zones_read, _| {
-                                                if let Some(zone_read_handle) =
-                                                    zones_read.get(&instance_guid)
-                                                {
-                                                    let game_time_sync = TunneledPacket {
-                                                        unknown1: true,
-                                                        inner: make_game_time_sync(
-                                                            zone_read_handle.seconds_per_day,
-                                                        ),
-                                                    };
+                                    else {
+                                        return Err(ProcessPacketError::new(
+                                            ProcessPacketErrorType::ConstraintViolated,
+                                            format!("Couldn't sync time for player {} because they are not in any zone", sender_guid)
+                                        ));
+                                    };
 
-                                                    broadcasts.push(Broadcast::Single(
-                                                        sender,
-                                                        vec![GamePacket::serialize(
-                                                            &game_time_sync,
-                                                        )?],
-                                                    ));
-                                                }
+                                    let zones_lock_enforcer: ZoneLockEnforcer =
+                                        minigame_data_lock_enforcer.into();
+                                    zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
+                                        read_guids: vec![instance_guid],
+                                        write_guids: vec![],
+                                        zone_consumer: |_, zones_read, _| {
+                                            let Some(zone_read_handle) = zones_read.get(&instance_guid) else {
+                                                return Err(ProcessPacketError::new(
+                                                    ProcessPacketErrorType::ConstraintViolated,
+                                                    format!("Couldn't sync time for player {} because their instance {} does not exist", sender_guid, instance_guid)
+                                                ));
+                                            };
 
-                                                Ok::<(), ProcessPacketError>(())
-                                            },
-                                        })
-                                    } else {
-                                        Ok(())
-                                    }
+                                            let game_time_sync = TunneledPacket {
+                                                unknown1: true,
+                                                inner: make_game_time_sync(
+                                                    zone_read_handle.seconds_per_day,
+                                                ),
+                                            };
+
+                                            broadcasts.push(Broadcast::Single(
+                                                sender,
+                                                vec![GamePacket::serialize(&game_time_sync)?],
+                                            ));
+
+                                            Ok::<(), ProcessPacketError>(())
+                                        },
+                                    })
                                 },
                         })?;
                 }
@@ -588,30 +595,29 @@ impl GameServer {
                     let teleport_request: PointOfInterestTeleportRequest =
                         DeserializePacket::deserialize(&mut cursor)?;
 
-                    if let Some((template_guid, point_of_interest)) = self
+                    let Some((template_guid, point_of_interest)) = self
                         .points_of_interest()
                         .get(&teleport_request.point_of_interest_guid)
-                    {
-                        if point_of_interest.teleport_enabled {
-                            broadcasts.append(&mut teleport_anywhere(
-                                point_of_interest.pos,
-                                point_of_interest.rot,
-                                DestinationZoneInstance::Any {
-                                    template_guid: *template_guid,
-                                },
-                                sender,
-                            )?(self)?);
-                        }
-                        Ok(())
-                    } else {
-                        Err(ProcessPacketError::new(
+                    else {
+                        return Err(ProcessPacketError::new(
                             ProcessPacketErrorType::ConstraintViolated,
                             format!(
                                 "Player {} requested to teleport to unknown point of interest {}",
                                 sender, teleport_request.point_of_interest_guid
                             ),
-                        ))
-                    }?;
+                        ));
+                    };
+
+                    if point_of_interest.teleport_enabled {
+                        broadcasts.append(&mut teleport_anywhere(
+                            point_of_interest.pos,
+                            point_of_interest.rot,
+                            DestinationZoneInstance::Any {
+                                template_guid: *template_guid,
+                            },
+                            sender,
+                        )?(self)?);
+                    }
                 }
                 OpCode::TeleportToSafety => {
                     let mut packets = self.lock_enforcer().read_characters(|_| {
@@ -619,25 +625,25 @@ impl GameServer {
                             read_guids: Vec::new(),
                             write_guids: Vec::new(),
                             character_consumer: |characters_table_read_handle, _, _, minigame_data_lock_enforcer| {
-                                if let Some((_, instance_guid, _)) = characters_table_read_handle.index1(player_guid(sender)) {
-                                    let zones_lock_enforcer: ZoneLockEnforcer = minigame_data_lock_enforcer.into();
-                                    zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
-                                        read_guids: vec![instance_guid],
-                                        write_guids: Vec::new(),
-                                        zone_consumer: |_, zones_read, _| {
-                                            if let Some(zone) = zones_read.get(&instance_guid) {
-                                                let spawn_pos = zone.default_spawn_pos;
-                                                let spawn_rot = zone.default_spawn_rot;
+                                let Some((_, instance_guid, _)) = characters_table_read_handle.index1(player_guid(sender)) else {
+                                    return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} tried to teleport to safety", sender)));
+                                };
 
-                                                teleport_within_zone(sender, spawn_pos, spawn_rot)
-                                            } else {
-                                                Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} outside zone tried to teleport to safety", sender)))
-                                            }
-                                        },
-                                    })
-                                } else {
-                                    Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} tried to teleport to safety", sender)))
-                                }
+                                let zones_lock_enforcer: ZoneLockEnforcer = minigame_data_lock_enforcer.into();
+                                zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
+                                    read_guids: vec![instance_guid],
+                                    write_guids: Vec::new(),
+                                    zone_consumer: |_, zones_read, _| {
+                                        let Some(zone) = zones_read.get(&instance_guid) else {
+                                            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} outside zone tried to teleport to safety", sender)));
+                                        };
+
+                                        let spawn_pos = zone.default_spawn_pos;
+                                        let spawn_rot = zone.default_spawn_rot;
+
+                                        teleport_within_zone(sender, spawn_pos, spawn_rot)
+                                    },
+                                })
                             },
                         }
                     })?;
@@ -660,34 +666,34 @@ impl GameServer {
                         read_guids: Vec::new(),
                         write_guids: vec![player_guid(sender)],
                         character_consumer: |characters_table_read_handle, _, mut characters_write, _| {
-                            if let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) {
-                                character_write_handle.brandish_or_holster();
+                            let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) else {
+                                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} requested to brandish or holster their weapon", sender)));
+                            };
 
-                                let (_, instance_guid, chunk) = character_write_handle.index1();
-                                let all_players_nearby = ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_read_handle)?;
-                                broadcasts.push(Broadcast::Multi(all_players_nearby, vec![
-                                    GamePacket::serialize(&TunneledPacket {
-                                        unknown1: true,
-                                        inner: QueueAnimation {
-                                            character_guid: player_guid(sender),
-                                            animation_id: 3300,
-                                            queue_pos: 0,
-                                            delay_seconds: 0.0,
-                                            duration_seconds: 2.0,
-                                        }
-                                    })?,
-                                    GamePacket::serialize(&TunneledPacket {
-                                        unknown1: true,
-                                        inner: UpdateWieldType {
-                                            guid: player_guid(sender),
-                                            wield_type: character_write_handle.stats.wield_type()
-                                        }
-                                    })?,
-                                ]));
-                                Ok(())
-                            } else {
-                                Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} requested to brandish or holster their weapon", sender)))
-                            }
+                            character_write_handle.brandish_or_holster();
+
+                            let (_, instance_guid, chunk) = character_write_handle.index1();
+                            let all_players_nearby = ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_read_handle)?;
+                            broadcasts.push(Broadcast::Multi(all_players_nearby, vec![
+                                GamePacket::serialize(&TunneledPacket {
+                                    unknown1: true,
+                                    inner: QueueAnimation {
+                                        character_guid: player_guid(sender),
+                                        animation_id: 3300,
+                                        queue_pos: 0,
+                                        delay_seconds: 0.0,
+                                        duration_seconds: 2.0,
+                                    }
+                                })?,
+                                GamePacket::serialize(&TunneledPacket {
+                                    unknown1: true,
+                                    inner: UpdateWieldType {
+                                        guid: player_guid(sender),
+                                        wield_type: character_write_handle.stats.wield_type()
+                                    }
+                                })?,
+                            ]));
+                            Ok(())
                         }
                     })?;
                 }
@@ -782,40 +788,41 @@ impl GameServer {
         );
         if !instances.is_empty() {
             let index = rand::thread_rng().gen_range(0..instances.len());
-            Ok(instances[index])
-        } else if let Some(new_instance_index) =
-            GameServer::find_min_unused_zone_index(zones, template_guid)
-        {
-            if let Some(template) = self.zone_templates.get(&template_guid) {
-                if required_capacity <= template.max_players {
-                    let instance_guid = zone_instance_guid(new_instance_index, template_guid);
-                    let new_instance = template.to_zone_instance(instance_guid, None, characters);
-                    zones.insert(new_instance);
-                    Ok(instance_guid)
-                } else {
-                    Err(ProcessPacketError::new(
-                        ProcessPacketErrorType::ConstraintViolated,
-                        format!(
-                            "Zone template {} (capacity {}) does not have the required capacity {}",
-                            template_guid, template.max_players, required_capacity
-                        ),
-                    ))
-                }
-            } else {
-                Err(ProcessPacketError::new(
-                    ProcessPacketErrorType::ConstraintViolated,
-                    format!(
-                        "Tried to teleport to unknown zone template {}",
-                        template_guid
-                    ),
-                ))
-            }
-        } else {
-            Err(ProcessPacketError::new(
+            return Ok(instances[index]);
+        }
+
+        let Some(new_instance_index) = GameServer::find_min_unused_zone_index(zones, template_guid)
+        else {
+            return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
                 format!("At capacity for zones for template ID {}", template_guid),
-            ))
+            ));
+        };
+
+        let Some(template) = self.zone_templates.get(&template_guid) else {
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!(
+                    "Tried to teleport to unknown zone template {}",
+                    template_guid
+                ),
+            ));
+        };
+
+        if required_capacity > template.max_players {
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!(
+                    "Zone template {} (capacity {}) does not have the required capacity {}",
+                    template_guid, template.max_players, required_capacity
+                ),
+            ));
         }
+
+        let instance_guid = zone_instance_guid(new_instance_index, template_guid);
+        let new_instance = template.to_zone_instance(instance_guid, None, characters);
+        zones.insert(new_instance);
+        Ok(instance_guid)
     }
 
     fn unfilled_zones_by_template(
@@ -864,20 +871,20 @@ impl GameServer {
             .keys_by_index1(template_guid)
             .map(shorten_zone_index)
             .collect();
-        if let Some(max) = used_indices.last() {
-            // Only do the expensive operation if we know we can't simply increment the largest index
-            if *max == u32::MAX {
-                // 0.saturating_sub(0) == 0, so we'll never subtract from 0
-                used_indices
-                    .iter()
-                    .find(|index| !used_indices.contains(&(*index).saturating_sub(1)))
-                    .map(|used_index| *used_index - 1)
-            } else {
-                Some(max + 1)
-            }
+        let Some(max) = used_indices.last() else {
+            // If we can't simply increment the largest index, just start at the first index
+            return Some(0);
+        };
+
+        // Only do the expensive operation if we know we can't simply increment the largest index
+        if *max == u32::MAX {
+            // 0.saturating_sub(0) == 0, so we'll never subtract from 0
+            used_indices
+                .iter()
+                .find(|index| !used_indices.contains(&(*index).saturating_sub(1)))
+                .map(|used_index| *used_index - 1)
         } else {
-            // Otherwise, just start at the first index
-            Some(0)
+            Some(max + 1)
         }
     }
 
