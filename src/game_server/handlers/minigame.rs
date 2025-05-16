@@ -47,7 +47,10 @@ use super::{
     character::{CharacterMatchmakingGroupIndex, CharacterType, MatchmakingGroupStatus, Player},
     guid::{Guid, GuidTableIndexer},
     item::SABER_ITEM_TYPE,
-    lock_enforcer::{CharacterLockRequest, CharacterTableWriteHandle, ZoneTableWriteHandle},
+    lock_enforcer::{
+        CharacterLockRequest, CharacterTableWriteHandle, MinigameDataTableWriteHandle,
+        ZoneLockEnforcer, ZoneTableWriteHandle,
+    },
     saber_strike::process_saber_strike_packet,
     unique_guid::{player_guid, shorten_player_guid},
 };
@@ -1132,7 +1135,8 @@ fn handle_request_create_active_minigame(
     };
 
     game_server.lock_enforcer().write_characters(
-        |characters_table_write_handle, zones_lock_enforcer| {
+        |characters_table_write_handle, minigame_data_lock_enforcer| {
+            let zones_lock_enforcer: ZoneLockEnforcer<'_> = minigame_data_lock_enforcer.into();
             zones_lock_enforcer.write_zones(|zones_table_write_handle| {
                 if stage_config.stage_config.max_players() == 1 {
                     Ok(prepare_active_minigame_instance(
@@ -1586,17 +1590,22 @@ fn handle_request_cancel_active_minigame(
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
     game_server.lock_enforcer().write_characters(
-        |characters_table_write_handle, zones_lock_enforcer| {
-            zones_lock_enforcer.write_zones(|zones_table_write_handle| {
-                end_active_minigame(
-                    sender,
-                    characters_table_write_handle,
-                    zones_table_write_handle,
-                    request_header.stage_guid,
-                    skip_if_flash,
-                    game_server,
-                )
-            })
+        |characters_table_write_handle, minigame_data_lock_enforcer| {
+            minigame_data_lock_enforcer.write_minigame_data(
+                |minigame_data_table_write_handle, zones_lock_enforcer| {
+                    zones_lock_enforcer.write_zones(|zones_table_write_handle| {
+                        leave_active_minigame_if_any(
+                            sender,
+                            characters_table_write_handle,
+                            minigame_data_table_write_handle,
+                            zones_table_write_handle,
+                            Some(request_header.stage_guid),
+                            skip_if_flash,
+                            game_server,
+                        )
+                    })
+                },
+            )
         },
     )
 }
@@ -2038,11 +2047,12 @@ fn award_credits(
     Ok((broadcasts, awarded_credits))
 }
 
-pub fn end_active_minigame(
+pub fn leave_active_minigame_if_any(
     sender: u32,
     characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
+    minigame_data_write_handle: &mut MinigameDataTableWriteHandle<'_>,
     zones_table_write_handle: &mut ZoneTableWriteHandle<'_>,
-    stage_guid: i32,
+    required_stage_guid: Option<i32>,
     skip_if_flash: bool,
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
@@ -2067,11 +2077,13 @@ pub fn end_active_minigame(
         let previous_location = player.previous_location.clone();
 
         let Some(minigame_status) = &mut player.minigame_status else {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to end player {}'s active minigame (stage {}), but they aren't in an active minigame", sender, stage_guid)));
+            return Ok((Vec::new(), previous_location, true));
         };
 
-        if stage_guid != minigame_status.stage_guid {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to end player {}'s active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", sender, stage_guid, minigame_status.stage_group_guid, minigame_status.stage_guid)));
+        if let Some(stage_guid) = required_stage_guid {
+            if stage_guid != minigame_status.stage_guid {
+                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to end player {}'s active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", sender, stage_guid, minigame_status.stage_group_guid, minigame_status.stage_guid)));
+            }
         }
 
         let Some(StageConfigRef { stage_config, .. }) = game_server
@@ -2124,7 +2136,7 @@ pub fn end_active_minigame(
                     unknown1: true,
                     inner: ActiveMinigameEndScore {
                         header: MinigameHeader {
-                            stage_guid,
+                            stage_guid: minigame_status.stage_guid,
                             sub_op_code: -1,
                             stage_group_guid: minigame_status.stage_group_guid,
                         },

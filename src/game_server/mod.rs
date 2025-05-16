@@ -1012,7 +1012,8 @@ impl GameServer {
     fn tick_minigame_groups(&self) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let now = Instant::now();
         self.lock_enforcer().write_characters(
-            |characters_table_write_handle, zones_lock_enforcer| {
+            |characters_table_write_handle, minigame_data_lock_enforcer| {
+                let zones_lock_enforcer: ZoneLockEnforcer<'_> = minigame_data_lock_enforcer.into();
                 let mut broadcasts = Vec::new();
 
                 // Iterate over timed-out groups for every stage, since the number of stages remains

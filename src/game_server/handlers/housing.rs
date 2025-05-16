@@ -453,7 +453,9 @@ pub fn process_housing_packet(
                 let enter_request: EnterRequest = DeserializePacket::deserialize(cursor)?;
 
                 game_server.lock_enforcer().write_characters(
-                    |characters_table_write_handle, zones_lock_enforcer| {
+                    |characters_table_write_handle, minigame_data_lock_enforcer| {
+                        let zones_lock_enforcer: ZoneLockEnforcer<'_> =
+                            minigame_data_lock_enforcer.into();
                         zones_lock_enforcer.write_zones(|zones_table_write_handle| {
                             // Create the house instance if it does not already exist
                             if zones_table_write_handle
