@@ -38,7 +38,7 @@ use super::{
     housing::prepare_init_house_packets,
     lock_enforcer::{
         CharacterLockRequest, CharacterReadGuard, CharacterTableWriteHandle, CharacterWriteGuard,
-        ZoneTableWriteHandle,
+        ZoneLockEnforcer, ZoneTableWriteHandle,
     },
     mount::MountConfig,
     unique_guid::{
@@ -1202,7 +1202,8 @@ pub fn teleport_anywhere(
 ) -> WriteLockingBroadcastSupplier {
     coerce_to_broadcast_supplier(move |game_server| {
         game_server.lock_enforcer().write_characters(
-            |characters_table_write_handle, zones_lock_enforcer| {
+            |characters_table_write_handle, minigame_data_lock_enforcer| {
+                let zones_lock_enforcer: ZoneLockEnforcer<'_> = minigame_data_lock_enforcer.into();
                 zones_lock_enforcer.write_zones(|zones_table_write_handle| {
                     let source_zone_guid =
                         match characters_table_write_handle.get(player_guid(requester)) {

@@ -13,7 +13,9 @@ use crate::game_server::{
     Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
 };
 
-use super::minigame::{end_active_minigame, handle_minigame_packet_write, MinigameTypeData};
+use super::minigame::{
+    handle_minigame_packet_write, leave_active_minigame_if_any, MinigameTypeData,
+};
 
 pub fn process_saber_strike_packet(
     cursor: &mut Cursor<&[u8]>,
@@ -165,17 +167,22 @@ fn handle_saber_strike_game_over(
     )?;
 
     game_server.lock_enforcer().write_characters(
-        |characters_table_write_handle, zones_lock_enforcer| {
-            zones_lock_enforcer.write_zones(|zones_table_write_handle| {
-                end_active_minigame(
-                    sender,
-                    characters_table_write_handle,
-                    zones_table_write_handle,
-                    header.stage_guid,
-                    false,
-                    game_server,
-                )
-            })
+        |characters_table_write_handle, minigame_data_lock_enforcer| {
+            minigame_data_lock_enforcer.write_minigame_data(
+                |minigame_data_table_write_handle, zones_lock_enforcer| {
+                    zones_lock_enforcer.write_zones(|zones_table_write_handle| {
+                        leave_active_minigame_if_any(
+                            sender,
+                            characters_table_write_handle,
+                            minigame_data_table_write_handle,
+                            zones_table_write_handle,
+                            Some(header.stage_guid),
+                            false,
+                            game_server,
+                        )
+                    })
+                },
+            )
         },
     )
 }

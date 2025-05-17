@@ -390,11 +390,19 @@ impl MinigameDataLockEnforcer<'_> {
             })
     }
 
-    pub fn write_minigame_data<R, T: FnOnce(&mut MinigameDataTableWriteHandle) -> R>(
+    pub fn write_minigame_data<
+        R,
+        T: FnOnce(&mut MinigameDataTableWriteHandle, ZoneLockEnforcer) -> R,
+    >(
         &self,
         table_consumer: T,
     ) -> R {
-        self.enforcer.write(table_consumer)
+        self.enforcer.write(|table_write_handle| {
+            let zones_enforcer = ZoneLockEnforcer {
+                enforcer: LockEnforcer { table: self.zones },
+            };
+            table_consumer(table_write_handle, zones_enforcer)
+        })
     }
 }
 
@@ -463,16 +471,19 @@ impl CharacterLockEnforcer<'_> {
 
     pub fn write_characters<
         R,
-        T: FnOnce(&mut CharacterTableWriteHandle, &ZoneLockEnforcer) -> R,
+        T: FnOnce(&mut CharacterTableWriteHandle, MinigameDataLockEnforcer) -> R,
     >(
         &self,
         table_consumer: T,
     ) -> R {
         self.enforcer.write(|table_write_handle| {
-            let zones_enforcer = ZoneLockEnforcer {
-                enforcer: LockEnforcer { table: self.zones },
+            let minigame_data_enforcer = MinigameDataLockEnforcer {
+                enforcer: LockEnforcer {
+                    table: self.minigame_data,
+                },
+                zones: self.zones,
             };
-            table_consumer(table_write_handle, &zones_enforcer)
+            table_consumer(table_write_handle, minigame_data_enforcer)
         })
     }
 }
