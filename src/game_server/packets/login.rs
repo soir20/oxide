@@ -166,10 +166,10 @@ impl SerializePacket for DefinePointsOfInterest {
         let mut inner_buffer = Vec::new();
 
         for point in self.points.iter() {
-            1u8.serialize(&mut inner_buffer);
+            true.serialize(&mut inner_buffer);
             point.serialize(&mut inner_buffer);
         }
-        0u8.serialize(&mut inner_buffer);
+        false.serialize(&mut inner_buffer);
 
         inner_buffer.serialize(buffer);
     }
