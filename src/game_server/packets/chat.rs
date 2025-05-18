@@ -1,11 +1,9 @@
 use std::io::Cursor;
 
-use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
+use byteorder::{LittleEndian, ReadBytesExt};
 use num_enum::TryFromPrimitive;
 
-use packet_serialize::{
-    DeserializePacket, DeserializePacketError, SerializePacket, SerializePacketError,
-};
+use packet_serialize::{DeserializePacket, DeserializePacketError, SerializePacket};
 
 use super::{GamePacket, Name, OpCode, Pos};
 
@@ -17,10 +15,9 @@ pub enum ChatOpCode {
 }
 
 impl SerializePacket for ChatOpCode {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        OpCode::Chat.serialize(buffer)?;
-        buffer.write_u16::<LittleEndian>(*self as u16)?;
-        Ok(())
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        OpCode::Chat.serialize(buffer);
+        (*self as u16).serialize(buffer);
     }
 }
 
@@ -92,16 +89,12 @@ pub struct SendMessage {
 }
 
 impl SerializePacket for SendMessage {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        buffer.write_u16::<LittleEndian>(self.message_type_data.message_type() as u16)?;
-        self.payload.serialize(buffer)?;
-        match self.message_type_data {
-            MessageTypeData::Area(area_id) => {
-                Ok::<(), SerializePacketError>(buffer.write_u32::<LittleEndian>(area_id)?)
-            }
-            _ => Ok(()),
-        }?;
-        Ok(())
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        (self.message_type_data.message_type() as u16).serialize(buffer);
+        self.payload.serialize(buffer);
+        if let MessageTypeData::Area(area_id) = self.message_type_data {
+            area_id.serialize(buffer);
+        }
     }
 }
 
@@ -155,9 +148,8 @@ pub enum ActionBarTextColor {
 }
 
 impl SerializePacket for ActionBarTextColor {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        buffer.write_u32::<LittleEndian>(*self as u32)?;
-        Ok(())
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        (*self as u32).serialize(buffer);
     }
 }
 

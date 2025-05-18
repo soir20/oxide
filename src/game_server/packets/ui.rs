@@ -1,6 +1,4 @@
-use byteorder::WriteBytesExt;
-
-use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
+use packet_serialize::{DeserializePacket, SerializePacket};
 
 use super::{GamePacket, OpCode};
 
@@ -11,10 +9,9 @@ pub enum UiOpCode {
 }
 
 impl SerializePacket for UiOpCode {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        OpCode::Ui.serialize(buffer)?;
-        buffer.write_u8(*self as u8)?;
-        Ok(())
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        OpCode::Ui.serialize(buffer);
+        (*self as u8).serialize(buffer);
     }
 }
 

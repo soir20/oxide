@@ -1,7 +1,4 @@
-use std::io::Write;
-
-use byteorder::{LittleEndian, WriteBytesExt};
-use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
+use packet_serialize::{DeserializePacket, SerializePacket};
 
 use super::{GamePacket, OpCode};
 
@@ -13,10 +10,9 @@ pub enum PurchaseOpCode {
 }
 
 impl SerializePacket for PurchaseOpCode {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        OpCode::Purchase.serialize(buffer)?;
-        buffer.write_u16::<LittleEndian>(*self as u16)?;
-        Ok(())
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        OpCode::Purchase.serialize(buffer);
+        (*self as u16).serialize(buffer);
     }
 }
 
@@ -70,13 +66,12 @@ pub struct Billboards {
 }
 
 impl SerializePacket for Billboards {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+    fn serialize(&self, buffer: &mut Vec<u8>) {
         let mut inner_buffer = Vec::new();
-        self.data.serialize(&mut inner_buffer)?;
-        buffer.write_u32::<LittleEndian>(self.data.billboards.len() as u32)?;
-        buffer.write_u32::<LittleEndian>(inner_buffer.len() as u32 - 4)?;
-        buffer.write_all(&inner_buffer[4..])?;
-        Ok(())
+        self.data.serialize(&mut inner_buffer);
+        (self.data.billboards.len() as u32).serialize(buffer);
+        (inner_buffer.len() as u32 - 4).serialize(buffer);
+        (&inner_buffer[4..]).serialize(buffer);
     }
 }
 

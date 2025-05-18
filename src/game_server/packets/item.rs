@@ -1,8 +1,6 @@
-use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
+use byteorder::{LittleEndian, ReadBytesExt};
 use num_enum::TryFromPrimitive;
-use packet_serialize::{
-    DeserializePacket, DeserializePacketError, SerializePacket, SerializePacketError,
-};
+use packet_serialize::{DeserializePacket, DeserializePacketError, SerializePacket};
 use serde::{de::IgnoredAny, Deserialize};
 
 use super::{player_update::CustomizationSlot, GamePacket, OpCode};
@@ -49,9 +47,8 @@ impl EquipmentSlot {
 }
 
 impl SerializePacket for EquipmentSlot {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        buffer.write_u32::<LittleEndian>(*self as u32)?;
-        Ok(())
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        (*self as u32).serialize(buffer);
     }
 }
 
@@ -93,9 +90,8 @@ pub enum WieldType {
 }
 
 impl SerializePacket for WieldType {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        buffer.write_u32::<LittleEndian>(*self as u32)?;
-        Ok(())
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        (*self as u32).serialize(buffer);
     }
 }
 

@@ -23,9 +23,8 @@ pub mod zone;
 
 use std::fmt::Display;
 
-use byteorder::{LittleEndian, WriteBytesExt};
 use num_enum::TryFromPrimitive;
-use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
+use packet_serialize::{DeserializePacket, SerializePacket};
 use serde::Deserialize;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
@@ -78,9 +77,8 @@ pub enum OpCode {
 }
 
 impl SerializePacket for OpCode {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        buffer.write_u16::<LittleEndian>(*self as u16)?;
-        Ok(())
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        (*self as u16).serialize(buffer);
     }
 }
 
@@ -88,11 +86,11 @@ pub trait GamePacket: SerializePacket {
     type Header: SerializePacket;
     const HEADER: Self::Header;
 
-    fn serialize(&self) -> Result<Vec<u8>, SerializePacketError> {
+    fn serialize(&self) -> Vec<u8> {
         let mut buffer = Vec::new();
-        SerializePacket::serialize(&Self::HEADER, &mut buffer)?;
-        SerializePacket::serialize(self, &mut buffer)?;
-        Ok(buffer)
+        SerializePacket::serialize(&Self::HEADER, &mut buffer);
+        SerializePacket::serialize(self, &mut buffer);
+        buffer
     }
 }
 
@@ -219,38 +217,36 @@ pub enum Target {
 }
 
 impl SerializePacket for Target {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+    fn serialize(&self, buffer: &mut Vec<u8>) {
         match self {
             Target::None => {
-                buffer.write_u32::<LittleEndian>(0)?;
+                0u32.serialize(buffer);
             }
             Target::Guid(guid_target) => {
-                buffer.write_u32::<LittleEndian>(1)?;
-                guid_target.serialize(buffer)?;
+                1u32.serialize(buffer);
+                guid_target.serialize(buffer);
             }
             Target::BoundingBox(bounding_box_target) => {
-                buffer.write_u32::<LittleEndian>(2)?;
-                bounding_box_target.serialize(buffer)?;
+                2u32.serialize(buffer);
+                bounding_box_target.serialize(buffer);
             }
             Target::CharacterBone(character_bone_name_target) => {
-                buffer.write_u32::<LittleEndian>(3)?;
-                character_bone_name_target.serialize(buffer)?;
+                3u32.serialize(buffer);
+                character_bone_name_target.serialize(buffer);
             }
             Target::CharacterBoneId(character_bone_id_target) => {
-                buffer.write_u32::<LittleEndian>(4)?;
-                character_bone_id_target.serialize(buffer)?;
+                4u32.serialize(buffer);
+                character_bone_id_target.serialize(buffer);
             }
             Target::ActorBoneName(actor_bone_name_target) => {
-                buffer.write_u32::<LittleEndian>(5)?;
-                actor_bone_name_target.serialize(buffer)?;
+                5u32.serialize(buffer);
+                actor_bone_name_target.serialize(buffer);
             }
             Target::ActorBoneId(actor_bone_id_target) => {
-                buffer.write_u32::<LittleEndian>(1)?;
-                actor_bone_id_target.serialize(buffer)?;
+                6u32.serialize(buffer);
+                actor_bone_id_target.serialize(buffer);
             }
         }
-
-        Ok(())
     }
 }
 
@@ -274,12 +270,11 @@ pub struct NewItemRewardEntry {
 }
 
 impl SerializePacket for NewItemRewardEntry {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        self.base.serialize(buffer)?;
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        self.base.serialize(buffer);
         if let Some(value) = self.unknown1 {
-            value.serialize(buffer)?;
+            value.serialize(buffer);
         }
-        Ok(())
     }
 }
 
@@ -368,66 +363,66 @@ pub enum RewardEntry {
 }
 
 impl SerializePacket for RewardEntry {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+    fn serialize(&self, buffer: &mut Vec<u8>) {
         match self {
             RewardEntry::NewItem(item_reward_entry) => {
-                buffer.write_u32::<LittleEndian>(1)?;
+                1u32.serialize(buffer);
                 item_reward_entry.serialize(buffer)
             }
             RewardEntry::Xp(xp_reward_entry) => {
-                buffer.write_u32::<LittleEndian>(3)?;
+                3u32.serialize(buffer);
                 xp_reward_entry.serialize(buffer)
             }
             RewardEntry::NewQuest(new_quest_reward_entry) => {
-                buffer.write_u32::<LittleEndian>(6)?;
+                6u32.serialize(buffer);
                 new_quest_reward_entry.serialize(buffer)
             }
             RewardEntry::NewBattleClass(new_battle_class_reward_entry) => {
-                buffer.write_u32::<LittleEndian>(7)?;
+                7u32.serialize(buffer);
                 new_battle_class_reward_entry.serialize(buffer)
             }
             RewardEntry::NewAbility(new_ability_reward_entry) => {
-                buffer.write_u32::<LittleEndian>(8)?;
+                8u32.serialize(buffer);
                 new_ability_reward_entry.serialize(buffer)
             }
             RewardEntry::NewCollection(new_collection_reward_entry) => {
-                buffer.write_u32::<LittleEndian>(10)?;
+                10u32.serialize(buffer);
                 new_collection_reward_entry.serialize(buffer)
             }
             RewardEntry::NewCollectionItem(new_collection_item_reward_entry) => {
-                buffer.write_u32::<LittleEndian>(11)?;
+                11u32.serialize(buffer);
                 new_collection_item_reward_entry.serialize(buffer)
             }
             RewardEntry::Token(token_reward_entry) => {
-                buffer.write_u32::<LittleEndian>(12)?;
+                12u32.serialize(buffer);
                 token_reward_entry.serialize(buffer)
             }
             RewardEntry::PetTrickXp(pet_trick_xp_entry) => {
-                buffer.write_u32::<LittleEndian>(13)?;
+                13u32.serialize(buffer);
                 pet_trick_xp_entry.serialize(buffer)
             }
             RewardEntry::NewRecipe(new_recipe_entry) => {
-                buffer.write_u32::<LittleEndian>(14)?;
+                14u32.serialize(buffer);
                 new_recipe_entry.serialize(buffer)
             }
             RewardEntry::ZoneFlag(zone_flag_entry) => {
-                buffer.write_u32::<LittleEndian>(15)?;
+                15u32.serialize(buffer);
                 zone_flag_entry.serialize(buffer)
             }
             RewardEntry::CharacterFlag(character_flag_entry) => {
-                buffer.write_u32::<LittleEndian>(17)?;
+                17u32.serialize(buffer);
                 character_flag_entry.serialize(buffer)
             }
             RewardEntry::WheelSpin(wheel_spin_entry) => {
-                buffer.write_u32::<LittleEndian>(18)?;
+                18u32.serialize(buffer);
                 wheel_spin_entry.serialize(buffer)
             }
             RewardEntry::NewTrophy(new_trophy_entry) => {
-                buffer.write_u32::<LittleEndian>(19)?;
+                19u32.serialize(buffer);
                 new_trophy_entry.serialize(buffer)
             }
             RewardEntry::ClientExitUrl(client_exit_url_entry) => {
-                buffer.write_u32::<LittleEndian>(20)?;
+                20u32.serialize(buffer);
                 client_exit_url_entry.serialize(buffer)
             }
         }

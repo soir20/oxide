@@ -1,8 +1,5 @@
-use std::io::Write;
-
-use byteorder::{LittleEndian, WriteBytesExt};
 use num_enum::TryFromPrimitive;
-use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
+use packet_serialize::{DeserializePacket, SerializePacket};
 
 use super::{item::BaseAttachmentGroup, GamePacket, OpCode, Pos};
 
@@ -23,10 +20,9 @@ pub enum HousingOpCode {
 }
 
 impl SerializePacket for HousingOpCode {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        OpCode::Housing.serialize(buffer)?;
-        buffer.write_u16::<LittleEndian>(*self as u16)?;
-        Ok(())
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        OpCode::Housing.serialize(buffer);
+        (*self as u16).serialize(buffer);
     }
 }
 
@@ -243,13 +239,12 @@ pub struct HouseInstanceData {
 }
 
 impl SerializePacket for HouseInstanceData {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+    fn serialize(&self, buffer: &mut Vec<u8>) {
         let mut inner = Vec::new();
-        self.inner.serialize(&mut inner)?;
-        buffer.write_u32::<LittleEndian>(inner.len() as u32)?;
-        buffer.write_all(&inner)?;
-        self.rooms.serialize(buffer)?;
-        Ok(())
+        self.inner.serialize(&mut inner);
+        (inner.len() as u32).serialize(buffer);
+        inner.serialize(buffer);
+        self.rooms.serialize(buffer);
     }
 }
 

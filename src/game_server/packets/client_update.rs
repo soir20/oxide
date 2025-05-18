@@ -1,8 +1,4 @@
-use std::io::Write;
-
-use byteorder::{LittleEndian, WriteBytesExt};
-
-use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
+use packet_serialize::{DeserializePacket, SerializePacket};
 
 use super::{
     item::{Attachment, EquipmentSlot, Item, ItemDefinition},
@@ -23,10 +19,9 @@ pub enum ClientUpdateOpCode {
 }
 
 impl SerializePacket for ClientUpdateOpCode {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        OpCode::ClientUpdate.serialize(buffer)?;
-        buffer.write_u16::<LittleEndian>(*self as u16)?;
-        Ok(())
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        OpCode::ClientUpdate.serialize(buffer);
+        (*self as u16).serialize(buffer);
     }
 }
 
@@ -54,12 +49,11 @@ pub struct AddItems {
 }
 
 impl SerializePacket for AddItems {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+    fn serialize(&self, buffer: &mut Vec<u8>) {
         let mut inner_buffer = Vec::new();
-        self.data.serialize(&mut inner_buffer)?;
-        buffer.write_u32::<LittleEndian>(inner_buffer.len() as u32)?;
-        buffer.write_all(&inner_buffer)?;
-        Ok(())
+        self.data.serialize(&mut inner_buffer);
+        (inner_buffer.len() as u32).serialize(buffer);
+        inner_buffer.serialize(buffer);
     }
 }
 
@@ -157,9 +151,8 @@ pub enum StatId {
 }
 
 impl SerializePacket for StatId {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        buffer.write_u32::<LittleEndian>(*self as u32)?;
-        Ok(())
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        (*self as u32).serialize(buffer);
     }
 }
 
