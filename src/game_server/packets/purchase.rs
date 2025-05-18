@@ -1,4 +1,4 @@
-use packet_serialize::{DeserializePacket, SerializePacket};
+use packet_serialize::{DeserializePacket, LengthlessVec, SerializePacket};
 
 use super::{GamePacket, OpCode};
 
@@ -56,9 +56,9 @@ pub struct Billboard {
     pub panels: Vec<BillboardPanel>,
 }
 
-#[derive(SerializePacket, DeserializePacket)]
+#[derive(SerializePacket)]
 pub struct BillboardsData {
-    pub billboards: Vec<Billboard>,
+    pub billboards: LengthlessVec<Billboard>,
 }
 
 pub struct Billboards {
@@ -69,9 +69,8 @@ impl SerializePacket for Billboards {
     fn serialize(&self, buffer: &mut Vec<u8>) {
         let mut inner_buffer = Vec::new();
         self.data.serialize(&mut inner_buffer);
-        (self.data.billboards.len() as u32).serialize(buffer);
-        (inner_buffer.len() as u32 - 4).serialize(buffer);
-        (&inner_buffer[4..]).serialize(buffer);
+        (self.data.billboards.0.len() as u32).serialize(buffer);
+        inner_buffer.serialize(buffer);
     }
 }
 

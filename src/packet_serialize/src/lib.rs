@@ -9,4 +9,7 @@ pub use serialize::*;
 pub struct LengthlessVec<T>(pub Vec<T>);
 
 #[derive(Clone)]
+pub struct LengthlessSlice<'a, T>(pub &'a [T]);
+
+#[derive(Clone)]
 pub struct NullTerminatedString(pub String);

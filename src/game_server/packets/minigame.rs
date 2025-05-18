@@ -1,5 +1,5 @@
 use num_enum::TryFromPrimitive;
-use packet_serialize::{DeserializePacket, SerializePacket};
+use packet_serialize::{DeserializePacket, LengthlessSlice, SerializePacket};
 
 use super::{GamePacket, OpCode, RewardBundle};
 
@@ -133,7 +133,6 @@ impl SerializePacket for MinigameDefinitions {
         self.portal_categories.serialize(&mut inner_buffer);
 
         self.header.serialize(buffer);
-        SerializePacket::serialize(&(inner_buffer.len() as u32), buffer);
         SerializePacket::serialize(&inner_buffer, buffer);
     }
 }
@@ -186,7 +185,7 @@ impl SerializePacket for FlashPayload {
     fn serialize(&self, buffer: &mut Vec<u8>) {
         self.header.serialize(buffer);
         SerializePacket::serialize(&(self.payload.len().saturating_add(1) as u32), buffer);
-        SerializePacket::serialize(&self.payload.as_bytes(), buffer);
+        SerializePacket::serialize(&LengthlessSlice(self.payload.as_bytes()), buffer);
         SerializePacket::serialize(&0u8, buffer);
     }
 }

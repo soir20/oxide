@@ -242,7 +242,6 @@ impl SerializePacket for HouseInstanceData {
     fn serialize(&self, buffer: &mut Vec<u8>) {
         let mut inner = Vec::new();
         self.inner.serialize(&mut inner);
-        (inner.len() as u32).serialize(buffer);
         inner.serialize(buffer);
         self.rooms.serialize(buffer);
     }

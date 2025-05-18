@@ -12,14 +12,11 @@ fn serialize_tunneled_packet_from_game_packet<T: GamePacket>(
     unknown1.serialize(buffer);
 
     let inner_buffer = GamePacket::serialize(inner);
-    (inner_buffer.len() as u32).serialize(buffer);
     inner_buffer.serialize(buffer);
 }
 
 fn serialize_tunneled_packet_from_bytes(buffer: &mut Vec<u8>, unknown1: bool, inner: &[u8]) {
     unknown1.serialize(buffer);
-
-    (inner.len() as u32).serialize(buffer);
     inner.serialize(buffer);
 }
 

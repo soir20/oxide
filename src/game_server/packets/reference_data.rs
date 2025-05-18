@@ -162,7 +162,6 @@ impl SerializePacket for ItemGroupDefinitions {
     fn serialize(&self, buffer: &mut Vec<u8>) {
         let mut inner_buffer = Vec::new();
         self.definitions.serialize(&mut inner_buffer);
-        (inner_buffer.len() as u32).serialize(buffer);
         inner_buffer.serialize(buffer);
     }
 }

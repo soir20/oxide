@@ -459,7 +459,6 @@ impl SerializePacket for Player {
     fn serialize(&self, buffer: &mut Vec<u8>) {
         let mut data_buffer = Vec::new();
         self.data.serialize(&mut data_buffer);
-        (data_buffer.len() as u32).serialize(buffer);
         data_buffer.serialize(buffer);
     }
 }

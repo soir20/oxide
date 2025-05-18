@@ -1,4 +1,4 @@
-use crate::{LengthlessVec, NullTerminatedString};
+use crate::{LengthlessSlice, LengthlessVec, NullTerminatedString};
 use byteorder::{LittleEndian, WriteBytesExt};
 use serde::de::IgnoredAny;
 use std::{collections::BTreeMap, io::Write};
@@ -146,12 +146,18 @@ impl<T: SerializePacket> SerializePacket for Vec<T> {
     }
 }
 
+impl<'a, T: SerializePacket> SerializePacket for LengthlessSlice<'a, T> {
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        let inner_slice = self.0;
+        for index in 0..inner_slice.len() {
+            SerializePacket::serialize(&inner_slice[index], buffer);
+        }
+    }
+}
+
 impl<T: SerializePacket> SerializePacket for LengthlessVec<T> {
     fn serialize(&self, buffer: &mut Vec<u8>) {
-        let inner_vec = &self.0;
-        for index in 0..inner_vec.len() {
-            SerializePacket::serialize(&inner_vec[index], buffer);
-        }
+        LengthlessSlice(self.0.as_slice()).serialize(buffer);
     }
 }
 
