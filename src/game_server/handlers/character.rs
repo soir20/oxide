@@ -438,7 +438,7 @@ impl TickableStep {
                     model_id,
                     guid: Guid::guid(character),
                 },
-            })?);
+            }));
         }
 
         if let Some(composite_effect_id) = self.composite_effect_id {
@@ -457,7 +457,7 @@ impl TickableStep {
                         w: 0.0,
                     },
                 },
-            })?);
+            }));
         }
 
         if let Some(rail_id) = self.rail_id {
@@ -474,7 +474,7 @@ impl TickableStep {
                         w: 0.0,
                     },
                 },
-            })?);
+            }));
         }
 
         if let Some(speed) = self.speed {
@@ -485,7 +485,7 @@ impl TickableStep {
                     guid: Guid::guid(character),
                     speed,
                 },
-            })?);
+            }));
         }
 
         let new_pos = self.new_pos(character.pos);
@@ -503,7 +503,7 @@ impl TickableStep {
                 character_state: 1,
                 unknown: 0,
             },
-        })?);
+        }));
 
         if let Some(animation_id) = self.animation_id {
             character.animation_id = animation_id;
@@ -515,7 +515,7 @@ impl TickableStep {
                     animation_group_id: -1,
                     override_animation: true,
                 },
-            })?);
+            }));
         }
 
         if let Some(animation_id) = self.one_shot_animation_id {
@@ -528,7 +528,7 @@ impl TickableStep {
                     delay_seconds: 0.0,
                     duration_seconds: self.duration_millis as f32 / 1000.0,
                 },
-            })?);
+            }));
         }
 
         if let Some(sound_id) = self.sound_id {
@@ -541,7 +541,7 @@ impl TickableStep {
                         guid: Guid::guid(character),
                     }),
                 },
-            })?);
+            }));
         }
 
         if self.cursor != CursorUpdate::Keep {
@@ -562,7 +562,7 @@ impl TickableStep {
                         unknown1: false,
                     }],
                 },
-            })?);
+            }));
         }
 
         let mut broadcasts = vec![Broadcast::Multi(
@@ -584,7 +584,7 @@ impl TickableStep {
                     owner_guid: 0,
                     unknown7: 0,
                 },
-            })?];
+            })];
 
             let recipients = nearby_player_guids
                 .iter()
@@ -938,13 +938,13 @@ impl AmbientNpc {
             GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: add_npc,
-            })?,
+            }),
             GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: NpcRelevance {
                     new_states: vec![enable_interaction],
                 },
-            })?,
+            }),
         ];
 
         Ok(packets)
@@ -1025,13 +1025,13 @@ impl Door {
             GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: add_npc,
-            })?,
+            }),
             GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: NpcRelevance {
                     new_states: vec![enable_interaction],
                 },
-            })?,
+            }),
         ];
 
         Ok(packets)
@@ -1099,13 +1099,13 @@ impl Transport {
             GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: add_npc,
-            })?,
+            }),
             GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: NpcRelevance {
                     new_states: vec![enable_interaction],
                 },
-            })?,
+            }),
             GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: AddNotifications {
@@ -1124,7 +1124,7 @@ impl Transport {
                         unknown2: false,
                     }],
                 },
-            })?,
+            }),
         ];
 
         Ok(packets)
@@ -1140,7 +1140,7 @@ impl Transport {
                         script_name: "UIGlobal.ShowGalaxyMap".to_string(),
                         params: vec![],
                     },
-                })?],
+                })],
             )])
         })
     }
@@ -1357,7 +1357,7 @@ impl Player {
                     self.active_battle_class,
                 ),
             },
-        })?];
+        })];
 
         packets.append(&mut mount_packets);
 
@@ -1558,7 +1558,7 @@ impl CharacterStats {
                 self.pos,
                 self.rot,
                 self.scale,
-            )?,
+            ),
         };
 
         Ok(packets)
@@ -1571,7 +1571,7 @@ impl CharacterStats {
                 inner: RemoveStandard {
                     guid: Guid::guid(self),
                 },
-            })?,
+            }),
             RemovalMode::Graceful {
                 enable_death_animation,
                 removal_delay_millis,
@@ -1588,7 +1588,7 @@ impl CharacterStats {
                     composite_effect: removal_composite_effect_id,
                     fade_duration_millis,
                 },
-            })?,
+            }),
         }];
 
         if let Some(mount_id) = self.mount_id {
@@ -1598,7 +1598,7 @@ impl CharacterStats {
                     inner: RemoveStandard {
                         guid: mount_guid(shorten_player_guid(Guid::guid(self))?, mount_id),
                     },
-                })?,
+                }),
                 RemovalMode::Graceful {
                     enable_death_animation,
                     removal_delay_millis,
@@ -1615,7 +1615,7 @@ impl CharacterStats {
                         composite_effect: removal_composite_effect_id,
                         fade_duration_millis,
                     },
-                })?,
+                }),
             });
         }
         Ok(packets)

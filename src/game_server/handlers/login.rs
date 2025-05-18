@@ -1,4 +1,4 @@
-use packet_serialize::{NullTerminatedString, SerializePacketError};
+use packet_serialize::NullTerminatedString;
 
 use crate::game_server::{
     packets::{
@@ -33,7 +33,7 @@ pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, P
                 unknown1: true,
                 inner: LoginReply { logged_in: true },
             };
-            packets.push(GamePacket::serialize(&login_reply)?);
+            packets.push(GamePacket::serialize(&login_reply));
 
             let deployment_env = TunneledPacket {
                 unknown1: true,
@@ -41,7 +41,7 @@ pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, P
                     environment: NullTerminatedString("prod".to_string()),
                 },
             };
-            packets.push(GamePacket::serialize(&deployment_env)?);
+            packets.push(GamePacket::serialize(&deployment_env));
 
             let (instance_guid, mut zone_packets) =
                 zones_lock_enforcer.write_zones(|zones_table_write_handle| {
@@ -70,7 +70,7 @@ pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, P
                     time_scale: 1.0,
                 },
             };
-            packets.push(GamePacket::serialize(&settings)?);
+            packets.push(GamePacket::serialize(&settings));
 
             let item_defs = TunneledPacket {
                 unknown1: true,
@@ -78,13 +78,13 @@ pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, P
                     definitions: game_server.items(),
                 },
             };
-            packets.push(GamePacket::serialize(&item_defs)?);
+            packets.push(GamePacket::serialize(&item_defs));
 
             let player = TunneledPacket {
                 unknown1: true,
                 inner: make_test_player(sender, game_server.mounts(), game_server.items()),
             };
-            packets.push(GamePacket::serialize(&player)?);
+            packets.push(GamePacket::serialize(&player));
 
             characters_table_write_handle.insert(Character::from_player(
                 sender,
@@ -172,16 +172,14 @@ pub fn log_out(
     )
 }
 
-pub fn send_points_of_interest(
-    game_server: &GameServer,
-) -> Result<Vec<Vec<u8>>, SerializePacketError> {
+pub fn send_points_of_interest(game_server: &GameServer) -> Vec<Vec<u8>> {
     let mut points = Vec::new();
     for point_of_interest in game_server.points_of_interest().values() {
         points.push(point_of_interest.into());
     }
 
-    Ok(vec![GamePacket::serialize(&TunneledPacket {
+    vec![GamePacket::serialize(&TunneledPacket {
         unknown1: true,
         inner: DefinePointsOfInterest { points },
-    })?])
+    })]
 }

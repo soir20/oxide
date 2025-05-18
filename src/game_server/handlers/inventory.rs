@@ -215,7 +215,7 @@ fn process_unequip_slot(
                                 slot: unequip_slot.slot,
                                 battle_class: unequip_slot.battle_class
                             }
-                        })?
+                        })
                     ])
                 ];
 
@@ -229,7 +229,7 @@ fn process_unequip_slot(
                             guid: player_guid(sender),
                             wield_type,
                         }
-                    })?);
+                    }));
                 }
 
                 all_player_packets.push(
@@ -249,7 +249,7 @@ fn process_unequip_slot(
                             battle_class: unequip_slot.battle_class,
                             wield_type: character_write_handle.stats.wield_type()
                         }
-                    })?
+                    })
                 );
 
                 let (_, instance_guid, chunk) = character_write_handle.index1();
@@ -424,7 +424,7 @@ fn process_preview_customization(
                     game_server.customization_item_mappings(),
                 )?,
             },
-        })?],
+        })],
     )])
 }
 
@@ -506,7 +506,7 @@ fn process_equip_customization(
                                 is_preview: false,
                                 customizations: customizations_to_apply,
                             },
-                        })?],
+                        })],
                     ),
                     Broadcast::Single(
                         sender,
@@ -514,7 +514,7 @@ fn process_equip_customization(
                             GamePacket::serialize(&TunneledPacket {
                                 unknown1: true,
                                 inner: UpdateCredits { new_credits },
-                            })?,
+                            }),
                             // Fix UI not updating the equipped customization item ID properly
                             GamePacket::serialize(&TunneledPacket {
                                 unknown1: true,
@@ -525,7 +525,7 @@ fn process_equip_customization(
                                     params: vec!["BaseClient.CustomizationItemDataSource"
                                         .to_string()],
                                 },
-                            })?,
+                            }),
                         ],
                     ),
                 ])
@@ -586,7 +586,7 @@ pub fn update_saber_tints<'a>(
                     item_class: primary_shape_def.item_class,
                     equip: true,
                 },
-            })?);
+            }));
             nearby_player_packets.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: UpdateEquippedItem {
@@ -603,7 +603,7 @@ pub fn update_saber_tints<'a>(
                     battle_class,
                     wield_type,
                 },
-            })?);
+            }));
         }
     }
 
@@ -629,7 +629,7 @@ pub fn update_saber_tints<'a>(
                     item_class: secondary_shape_def.item_class,
                     equip: true,
                 },
-            })?);
+            }));
             nearby_player_packets.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: UpdateEquippedItem {
@@ -646,7 +646,7 @@ pub fn update_saber_tints<'a>(
                     battle_class,
                     wield_type,
                 },
-            })?);
+            }));
         }
     }
 
@@ -757,7 +757,7 @@ fn equip_item_in_slot<'a>(
             item_class: item_def.item_class,
             equip: true,
         },
-    })?];
+    })];
     let mut other_player_packets = vec![GamePacket::serialize(&TunneledPacket {
         unknown1: true,
         inner: UpdateEquippedItem {
@@ -774,7 +774,7 @@ fn equip_item_in_slot<'a>(
             battle_class: equip_guid.battle_class,
             wield_type: current_wield_type,
         },
-    })?];
+    })];
 
     if let Some(item_class) = game_server
         .item_classes()
@@ -794,7 +794,7 @@ fn equip_item_in_slot<'a>(
                         slot: other_weapon_slot,
                         battle_class: equip_guid.battle_class,
                     },
-                })?);
+                }));
                 other_player_packets.push(GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
                     inner: UpdateEquippedItem {
@@ -811,7 +811,7 @@ fn equip_item_in_slot<'a>(
                         battle_class: equip_guid.battle_class,
                         wield_type: current_wield_type,
                     },
-                })?);
+                }));
                 battle_class.items.remove(&other_weapon_slot);
             }
 
@@ -878,7 +878,7 @@ fn equip_item_in_slot<'a>(
                     guid: player_guid(sender),
                     wield_type,
                 },
-            })?],
+            })],
         ));
     }
 

@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 
-use packet_serialize::{LengthlessVec, SerializePacketError};
+use packet_serialize::LengthlessVec;
 
 use crate::game_server::packets::{
     item::{EquipmentSlot, Item, ItemDefinition, MarketData},
@@ -372,12 +372,12 @@ pub fn make_test_customizations() -> BTreeMap<CustomizationSlot, u32> {
     customizations
 }
 
-pub fn make_test_nameplate_image(guid: u32) -> Result<Vec<Vec<u8>>, SerializePacketError> {
-    Ok(vec![GamePacket::serialize(&TunneledPacket {
+pub fn make_test_nameplate_image(guid: u32) -> Vec<Vec<u8>> {
+    vec![GamePacket::serialize(&TunneledPacket {
         unknown1: true,
         inner: NameplateImageId {
             image_id: NameplateImage::Trooper,
             guid: player_guid(guid),
         },
-    })?])
+    })]
 }

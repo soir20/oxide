@@ -70,7 +70,7 @@ pub fn process_chat_packet(
                                         vec![GamePacket::serialize(&TunneledPacket {
                                             unknown1: true,
                                             inner: message,
-                                        })?],
+                                        })],
                                     )])
                                 }
                                 MessageTypeData::Whisper => {
@@ -84,7 +84,7 @@ pub fn process_chat_packet(
                                         GamePacket::serialize(&TunneledPacket {
                                             unknown1: true,
                                             inner: message.clone(),
-                                        })?;
+                                        });
                                     let mut broadcasts: Vec<Broadcast> =
                                         characters_table_read_handle
                                             .keys_by_index2(&message.payload.target_name.first_name)
@@ -116,7 +116,7 @@ pub fn process_chat_packet(
                                         GamePacket::serialize(&TunneledPacket {
                                             unknown1: true,
                                             inner: message,
-                                        })?;
+                                        });
                                     broadcasts.push(Broadcast::Single(
                                         sender,
                                         vec![message_packet_for_sender],
@@ -140,7 +140,7 @@ pub fn process_chat_packet(
                                             vec![GamePacket::serialize(&TunneledPacket {
                                                 unknown1: true,
                                                 inner: message,
-                                            })?],
+                                            })],
                                         )])
                                     } else {
                                         Ok(Vec::new())

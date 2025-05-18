@@ -436,7 +436,7 @@ impl ZoneInstance {
                 unknown7: 0,
                 unknown8: 0,
             },
-        })?];
+        })];
 
         if let Some(house) = &self.house_data {
             packets.append(&mut prepare_init_house_packets(sender, self, house)?);
@@ -453,7 +453,7 @@ impl ZoneInstance {
                     script_name: "UIGlobal.AtlasLoadZone".to_string(),
                     params: vec![self.map_id as i32],
                 },
-            })?,
+            }),
             GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: ExecuteScriptWithStringParams {
@@ -463,7 +463,7 @@ impl ZoneInstance {
                     ),
                     params: vec![],
                 },
-            })?,
+            }),
         ])
     }
 
@@ -786,7 +786,7 @@ impl ZoneInstance {
                                 vec![GamePacket::serialize(&TunneledPacket {
                                     unknown1: true,
                                     inner: full_update_packet,
-                                })?],
+                                })],
                             ));
                             Ok::<(bool, bool, Vec<Broadcast>, Vec<u64>), ProcessPacketError>((
                                 true,
@@ -900,7 +900,7 @@ impl ZoneInstance {
                             new_chunk_packets.push(GamePacket::serialize(&TunneledPacket {
                                 unknown1: true,
                                 inner: full_update_packet,
-                            })?);
+                            }));
                             broadcasts
                                 .push(Broadcast::Multi(other_players_nearby, new_chunk_packets));
 
@@ -930,7 +930,7 @@ impl ZoneInstance {
                             is_teleport: true,
                             unknown2: true,
                         },
-                    })?],
+                    })],
                 ));
             }
         }
@@ -1075,7 +1075,7 @@ fn prepare_init_zone_packets(
             unknown6: false,
             unknown7: false,
         },
-    })?);
+    }));
 
     packets.append(&mut destination.send_self(player)?);
 
@@ -1319,7 +1319,7 @@ pub fn interact_with_character(
                                     destination,
                                     target,
                                 },
-                            })?],
+                            })],
                         ));
                         return coerce_to_broadcast_supplier(|_| Ok(broadcasts));
                     }
@@ -1347,6 +1347,6 @@ pub fn teleport_within_zone(
                 is_teleport: true,
                 unknown2: true,
             },
-        })?],
+        })],
     )])
 }
