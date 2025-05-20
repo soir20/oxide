@@ -1,8 +1,6 @@
-use std::{collections::BTreeMap, io::Write};
+use std::collections::BTreeMap;
 
-use byteorder::{LittleEndian, WriteBytesExt};
-
-use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
+use packet_serialize::{DeserializePacket, SerializePacket};
 use serde::{de::IgnoredAny, Deserialize};
 
 use super::{
@@ -52,10 +50,9 @@ pub enum PlayerUpdateOpCode {
 }
 
 impl SerializePacket for PlayerUpdateOpCode {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        OpCode::PlayerUpdate.serialize(buffer)?;
-        buffer.write_u16::<LittleEndian>(*self as u16)?;
-        Ok(())
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        OpCode::PlayerUpdate.serialize(buffer);
+        (*self as u16).serialize(buffer);
     }
 }
 
@@ -66,10 +63,9 @@ pub enum PlayerUpdateRemoveOpCode {
 }
 
 impl SerializePacket for PlayerUpdateRemoveOpCode {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        PlayerUpdateOpCode::Remove.serialize(buffer)?;
-        buffer.write_u16::<LittleEndian>(*self as u16)?;
-        Ok(())
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        PlayerUpdateOpCode::Remove.serialize(buffer);
+        (*self as u16).serialize(buffer);
     }
 }
 
@@ -184,9 +180,8 @@ pub enum NameplateImage {
 }
 
 impl SerializePacket for NameplateImage {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        buffer.write_u32::<LittleEndian>(*self as u32)?;
-        Ok(())
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        (*self as u32).serialize(buffer);
     }
 }
 
@@ -310,12 +305,10 @@ pub struct ItemDefinitionsReply<'a> {
 }
 
 impl SerializePacket for ItemDefinitionsReply<'_> {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+    fn serialize(&self, buffer: &mut Vec<u8>) {
         let mut inner_buffer = Vec::new();
-        self.definitions.serialize(&mut inner_buffer)?;
-        buffer.write_u32::<LittleEndian>(inner_buffer.len() as u32)?;
-        buffer.write_all(&inner_buffer)?;
-        Ok(())
+        self.definitions.serialize(&mut inner_buffer);
+        inner_buffer.serialize(buffer);
     }
 }
 
@@ -339,9 +332,8 @@ pub enum CustomizationSlot {
 }
 
 impl SerializePacket for CustomizationSlot {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        buffer.write_u32::<LittleEndian>(*self as u32)?;
-        Ok(())
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        (*self as u32).serialize(buffer);
     }
 }
 
@@ -628,15 +620,14 @@ pub struct SingleNotification {
 }
 
 impl SerializePacket for SingleNotification {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        buffer.write_u64::<LittleEndian>(self.guid)?;
-        buffer.write_u8(self.notification.is_none() as u8)?;
-        buffer.write_u32::<LittleEndian>(self.unknown1)?;
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        self.guid.serialize(buffer);
+        self.notification.is_none().serialize(buffer);
+        self.unknown1.serialize(buffer);
         if let Some(notification) = &self.notification {
-            notification.serialize(buffer)?;
+            notification.serialize(buffer);
         }
-        buffer.write_u8(self.unknown2 as u8)?;
-        Ok(())
+        self.unknown2.serialize(buffer);
     }
 }
 
@@ -657,14 +648,13 @@ pub struct SingleNpcRelevance {
 }
 
 impl SerializePacket for SingleNpcRelevance {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        buffer.write_u64::<LittleEndian>(self.guid)?;
-        buffer.write_u8(self.cursor.is_some() as u8)?;
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        self.guid.serialize(buffer);
+        self.cursor.is_some().serialize(buffer);
         if let Some(cursor) = self.cursor {
-            buffer.write_u8(cursor)?;
+            cursor.serialize(buffer);
         }
-        buffer.write_u8(self.unknown1 as u8)?;
-        Ok(())
+        self.unknown1.serialize(buffer);
     }
 }
 
@@ -687,9 +677,8 @@ pub enum Hostility {
 }
 
 impl SerializePacket for Hostility {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        buffer.write_u32::<LittleEndian>(*self as u32)?;
-        Ok(())
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        (*self as u32).serialize(buffer);
     }
 }
 
@@ -709,9 +698,8 @@ pub enum Icon {
 }
 
 impl SerializePacket for Icon {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        buffer.write_u32::<LittleEndian>(*self as u32)?;
-        Ok(())
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        (*self as u32).serialize(buffer);
     }
 }
 

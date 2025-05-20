@@ -1,7 +1,6 @@
-use std::{collections::BTreeMap, io::Write};
+use std::collections::BTreeMap;
 
-use byteorder::{LittleEndian, WriteBytesExt};
-use packet_serialize::{LengthlessVec, SerializePacket, SerializePacketError};
+use packet_serialize::{LengthlessVec, SerializePacket};
 
 use super::{
     item::{EquipmentSlot, Item, MarketData},
@@ -39,9 +38,9 @@ pub enum Ability {
 }
 
 impl SerializePacket for Ability {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+    fn serialize(&self, buffer: &mut Vec<u8>) {
         match self {
-            Ability::Empty => Ok(buffer.write_u32::<LittleEndian>(0)?),
+            Ability::Empty => 0u32.serialize(buffer),
             Ability::Type1(
                 unknown2,
                 unknown3,
@@ -54,14 +53,13 @@ impl SerializePacket for Ability {
                 unknown11,
                 unknown12,
             ) => {
-                buffer.write_u32::<LittleEndian>(1)?;
-                buffer.write_u32::<LittleEndian>(*unknown2)?;
-                buffer.write_u32::<LittleEndian>(*unknown3)?;
+                1u32.serialize(buffer);
+                unknown2.serialize(buffer);
+                unknown3.serialize(buffer);
                 write_ability_end(
                     *unknown5, *unknown6, *unknown7, *unknown8, *unknown9, *unknown10, *unknown11,
                     *unknown12, buffer,
-                )?;
-                Ok(())
+                );
             }
             Ability::Type2(
                 unknown4,
@@ -74,13 +72,12 @@ impl SerializePacket for Ability {
                 unknown11,
                 unknown12,
             ) => {
-                buffer.write_u32::<LittleEndian>(2)?;
-                buffer.write_u32::<LittleEndian>(*unknown4)?;
+                2u32.serialize(buffer);
+                unknown4.serialize(buffer);
                 write_ability_end(
                     *unknown5, *unknown6, *unknown7, *unknown8, *unknown9, *unknown10, *unknown11,
                     *unknown12, buffer,
-                )?;
-                Ok(())
+                );
             }
             Ability::Type3(
                 unknown2,
@@ -94,14 +91,13 @@ impl SerializePacket for Ability {
                 unknown11,
                 unknown12,
             ) => {
-                buffer.write_u32::<LittleEndian>(3)?;
-                buffer.write_u32::<LittleEndian>(*unknown2)?;
-                buffer.write_u32::<LittleEndian>(*unknown3)?;
+                3u32.serialize(buffer);
+                unknown2.serialize(buffer);
+                unknown3.serialize(buffer);
                 write_ability_end(
                     *unknown5, *unknown6, *unknown7, *unknown8, *unknown9, *unknown10, *unknown11,
                     *unknown12, buffer,
-                )?;
-                Ok(())
+                );
             }
             Ability::OtherType(
                 unknown1,
@@ -114,12 +110,11 @@ impl SerializePacket for Ability {
                 unknown11,
                 unknown12,
             ) => {
-                buffer.write_u32::<LittleEndian>(*unknown1)?;
+                unknown1.serialize(buffer);
                 write_ability_end(
                     *unknown5, *unknown6, *unknown7, *unknown8, *unknown9, *unknown10, *unknown11,
                     *unknown12, buffer,
-                )?;
-                Ok(())
+                );
             }
         }
     }
@@ -135,16 +130,15 @@ fn write_ability_end(
     unknown11: u32,
     unknown12: bool,
     buffer: &mut Vec<u8>,
-) -> Result<(), SerializePacketError> {
-    buffer.write_u32::<LittleEndian>(unknown5)?;
-    buffer.write_u32::<LittleEndian>(unknown6)?;
-    buffer.write_u32::<LittleEndian>(unknown7)?;
-    buffer.write_u32::<LittleEndian>(unknown8)?;
-    buffer.write_u32::<LittleEndian>(unknown9)?;
-    buffer.write_u32::<LittleEndian>(unknown10)?;
-    buffer.write_u32::<LittleEndian>(unknown11)?;
-    buffer.write_u8(unknown12 as u8)?;
-    Ok(())
+) {
+    unknown5.serialize(buffer);
+    unknown6.serialize(buffer);
+    unknown7.serialize(buffer);
+    unknown8.serialize(buffer);
+    unknown9.serialize(buffer);
+    unknown10.serialize(buffer);
+    unknown11.serialize(buffer);
+    unknown12.serialize(buffer);
 }
 
 #[derive(Clone)]
@@ -154,9 +148,9 @@ pub enum BattleClassUnknown10 {
 }
 
 impl SerializePacket for BattleClassUnknown10 {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+    fn serialize(&self, buffer: &mut Vec<u8>) {
         match self {
-            BattleClassUnknown10::None => Ok(buffer.write_u32::<LittleEndian>(0)?),
+            BattleClassUnknown10::None => 0u32.serialize(buffer),
             BattleClassUnknown10::Some(
                 unknown1,
                 unknown2,
@@ -169,17 +163,16 @@ impl SerializePacket for BattleClassUnknown10 {
                 unknown9,
                 unknown10,
             ) => {
-                buffer.write_u32::<LittleEndian>(*unknown1)?;
-                buffer.write_u8(*unknown2 as u8)?;
-                buffer.write_u32::<LittleEndian>(*unknown3)?;
-                buffer.write_u32::<LittleEndian>(*unknown4)?;
-                buffer.write_u32::<LittleEndian>(*unknown5)?;
-                buffer.write_u32::<LittleEndian>(*unknown6)?;
-                buffer.write_u32::<LittleEndian>(*unknown7)?;
-                buffer.write_u32::<LittleEndian>(*unknown8)?;
-                buffer.write_u32::<LittleEndian>(*unknown9)?;
-                buffer.write_u32::<LittleEndian>(*unknown10)?;
-                Ok(())
+                unknown1.serialize(buffer);
+                unknown2.serialize(buffer);
+                unknown3.serialize(buffer);
+                unknown4.serialize(buffer);
+                unknown5.serialize(buffer);
+                unknown6.serialize(buffer);
+                unknown7.serialize(buffer);
+                unknown8.serialize(buffer);
+                unknown9.serialize(buffer);
+                unknown10.serialize(buffer);
             }
         }
     }
@@ -224,16 +217,15 @@ pub struct Unknown {
 pub struct SocialInfo {}
 
 impl SerializePacket for MarketData {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+    fn serialize(&self, buffer: &mut Vec<u8>) {
         if let MarketData::Some(expiration, upsells, bundle_id) = &self {
-            buffer.write_u8(true as u8)?;
-            buffer.write_u64::<LittleEndian>(*expiration)?;
-            buffer.write_u32::<LittleEndian>(*upsells)?;
-            buffer.write_u32::<LittleEndian>(*bundle_id)?;
+            true.serialize(buffer);
+            expiration.serialize(buffer);
+            upsells.serialize(buffer);
+            bundle_id.serialize(buffer);
         } else {
-            buffer.write_u8(false as u8)?;
+            false.serialize(buffer);
         }
-        Ok(())
     }
 }
 
@@ -464,12 +456,10 @@ pub struct Player {
 }
 
 impl SerializePacket for Player {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+    fn serialize(&self, buffer: &mut Vec<u8>) {
         let mut data_buffer = Vec::new();
-        SerializePacket::serialize(&self.data, &mut data_buffer)?;
-        buffer.write_u32::<LittleEndian>(data_buffer.len() as u32)?;
-        buffer.write_all(&data_buffer)?;
-        Ok(())
+        self.data.serialize(&mut data_buffer);
+        data_buffer.serialize(buffer);
     }
 }
 

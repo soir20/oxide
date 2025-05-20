@@ -1060,7 +1060,7 @@ fn handle_request_stage_group_instance(
                             inner: game_server
                                 .minigames()
                                 .stage_group_instance(request.header.stage_group_guid, player)?,
-                        })?,
+                        }),
                         GamePacket::serialize(&TunneledPacket {
                             unknown1: true,
                             inner: ShowStageInstanceSelect {
@@ -1070,7 +1070,7 @@ fn handle_request_stage_group_instance(
                                     stage_group_guid: request.header.stage_group_guid,
                                 },
                             },
-                        })?,
+                        }),
                     ],
                 )])
             },
@@ -1163,7 +1163,7 @@ fn handle_request_create_active_minigame(
                                 owner_guid: 0,
                                 unknown7: 0,
                             },
-                        })?],
+                        })],
                     )];
                     let required_space = 1;
                     let (open_group, space_left) = find_matchmaking_group(
@@ -1286,7 +1286,7 @@ pub fn remove_from_matchmaking(
             },
             was_successful: false,
         },
-    })?];
+    })];
     if let Some(message) = message_id {
         result_packets.push(GamePacket::serialize(&TunneledPacket {
             unknown1: true,
@@ -1301,7 +1301,7 @@ pub fn remove_from_matchmaking(
                 owner_guid: 0,
                 unknown7: 0,
             },
-        })?);
+        }));
     }
     broadcasts.push(Broadcast::Single(player, result_packets));
 
@@ -1390,32 +1390,23 @@ pub fn prepare_active_minigame_instance(
             })?;
 
             if let Some(message) = message_id {
-                let string_id_packet_result = GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: SendStringId {
-                        sender_guid: player_guid(*member_guid),
-                        message_id: message,
-                        is_anonymous: true,
-                        unknown2: false,
-                        is_action_bar_message: true,
-                        action_bar_text_color: ActionBarTextColor::Yellow,
-                        target_guid: 0,
-                        owner_guid: 0,
-                        unknown7: 0,
-                    },
-                });
-
-                match string_id_packet_result {
-                    Ok(packet) => {
-                        teleport_broadcasts.push(Broadcast::Single(*member_guid, vec![packet]))
-                    }
-                    Err(err) => info!(
-                        "Couldn't serialize send string packet: {} (stage group {}, stage {})",
-                        ProcessPacketError::from(err),
-                        stage_group_guid,
-                        stage_guid
-                    ),
-                }
+                teleport_broadcasts.push(Broadcast::Single(
+                    *member_guid,
+                    vec![GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: SendStringId {
+                            sender_guid: player_guid(*member_guid),
+                            message_id: message,
+                            is_anonymous: true,
+                            unknown2: false,
+                            is_action_bar_message: true,
+                            action_bar_text_color: ActionBarTextColor::Yellow,
+                            target_guid: 0,
+                            owner_guid: 0,
+                            unknown7: 0,
+                        },
+                    })],
+                ));
             }
 
             let result: Result<Vec<Broadcast>, ProcessPacketError> = teleport_to_zone!(
@@ -1522,11 +1513,11 @@ fn handle_request_start_active_minigame(
                     script_name: "UIGlobal.SetStateMain".to_string(),
                     params: vec![],
                 },
-            })?);
+            }));
             packets.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: stage_group_instance,
-            })?);
+            }));
 
             match stage_config.minigame_type() {
                 MinigameType::Flash { game_swf_name } => {
@@ -1538,7 +1529,7 @@ fn handle_request_start_active_minigame(
                                 game_swf_name: game_swf_name.clone(),
                                 is_micro: false,
                             },
-                        })?
+                        })
                     );
                 },
                 MinigameType::SaberStrike { saber_strike_stage_id } => {
@@ -1558,7 +1549,7 @@ fn handle_request_start_active_minigame(
                                     .map(|item| item.item_type == SABER_ITEM_TYPE)
                                     .unwrap_or(false),
                             }
-                        })?,
+                        }),
                     );
                 },
             }
@@ -1573,7 +1564,7 @@ fn handle_request_start_active_minigame(
                             stage_group_guid: minigame_status.stage_group_guid,
                         },
                     },
-                })?,
+                }),
             );
 
             Ok(vec![
@@ -1750,7 +1741,7 @@ fn handle_flash_payload_win(
                                     .as_millis()
                             ),
                         },
-                    })?],
+                    })],
                 )])
             } else {
                 Err(ProcessPacketError::new(
@@ -1796,7 +1787,7 @@ fn handle_flash_payload(
                                 stage_config_ref.stage_number
                             ),
                         },
-                    })?],
+                    })],
                 )])
             },
         ),
@@ -1864,7 +1855,7 @@ fn handle_flash_payload(
                                 },
                                 payload: format!("OnShowEndRoundScreenMsg\t{}", awarded_credits),
                             },
-                        })?],
+                        })],
                     ));
 
                     Ok(broadcasts)
@@ -1976,7 +1967,7 @@ pub fn create_active_minigame(
                     },
                     was_successful: true,
                 },
-            })?,
+            }),
             GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: CreateActiveMinigame {
@@ -2013,7 +2004,7 @@ pub fn create_active_minigame(
                     unknown26: 0,
                     unknown27: 0,
                 },
-            })?,
+            }),
         ],
     )])
 }
@@ -2041,7 +2032,7 @@ fn award_credits(
         vec![GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: UpdateCredits { new_credits },
-        })?],
+        })],
     )];
 
     Ok((broadcasts, awarded_credits))
@@ -2131,7 +2122,7 @@ pub fn leave_active_minigame_if_any(
                             "OnGameLostMsg".to_string()
                         },
                     },
-                })?,
+                }),
                 GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
                     inner: ActiveMinigameEndScore {
@@ -2143,7 +2134,7 @@ pub fn leave_active_minigame_if_any(
                         scores: minigame_status.score_entries.clone(),
                         unknown2: true,
                     },
-                })?,
+                }),
                 GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
                     inner: UpdateActiveMinigameRewards {
@@ -2176,7 +2167,7 @@ pub fn leave_active_minigame_if_any(
                         reward_bundle2: RewardBundle::default(),
                         earned_trophies: vec![],
                     },
-                })?,
+                }),
                 GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
                     inner: EndActiveMinigame {
@@ -2190,7 +2181,7 @@ pub fn leave_active_minigame_if_any(
                         unknown3: 0,
                         unknown4: 0,
                     },
-                })?,
+                }),
                 GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
                     inner: LeaveActiveMinigame {
@@ -2200,7 +2191,7 @@ pub fn leave_active_minigame_if_any(
                             stage_group_guid: minigame_status.stage_group_guid,
                         },
                     },
-                })?,
+                }),
             ],
         );
 
@@ -2212,7 +2203,7 @@ pub fn leave_active_minigame_if_any(
                     minigame_status.stage_group_guid,
                     player,
                 )?,
-            })?],
+            })],
         ));
         broadcasts.push(last_broadcast);
 

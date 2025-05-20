@@ -18,9 +18,8 @@ pub fn derive_serialize(input: proc_macro::TokenStream) -> proc_macro::TokenStre
 
     let expanded = quote! {
         impl #impl_generics packet_serialize::SerializePacket for #name #ty_generics #where_clause {
-            fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), packet_serialize::SerializePacketError> {
+            fn serialize(&self, buffer: &mut Vec<u8>) {
                 #writes
-                Ok(())
             }
         }
     };

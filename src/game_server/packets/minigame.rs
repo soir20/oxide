@@ -1,8 +1,5 @@
-use std::io::Write;
-
-use byteorder::{LittleEndian, WriteBytesExt};
 use num_enum::TryFromPrimitive;
-use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
+use packet_serialize::{DeserializePacket, LengthlessSlice, SerializePacket};
 
 use super::{GamePacket, OpCode, RewardBundle};
 
@@ -28,10 +25,9 @@ pub enum MinigameOpCode {
 }
 
 impl SerializePacket for MinigameOpCode {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        OpCode::Minigame.serialize(buffer)?;
-        buffer.write_u8(*self as u8)?;
-        Ok(())
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        OpCode::Minigame.serialize(buffer);
+        SerializePacket::serialize(&(*self as u8), buffer);
     }
 }
 
@@ -129,17 +125,15 @@ pub struct MinigameDefinitions {
 }
 
 impl SerializePacket for MinigameDefinitions {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+    fn serialize(&self, buffer: &mut Vec<u8>) {
         let mut inner_buffer = Vec::new();
-        SerializePacket::serialize(&self.stages, &mut inner_buffer)?;
-        SerializePacket::serialize(&self.stage_groups, &mut inner_buffer)?;
-        SerializePacket::serialize(&self.portal_entries, &mut inner_buffer)?;
-        SerializePacket::serialize(&self.portal_categories, &mut inner_buffer)?;
+        self.stages.serialize(&mut inner_buffer);
+        self.stage_groups.serialize(&mut inner_buffer);
+        self.portal_entries.serialize(&mut inner_buffer);
+        self.portal_categories.serialize(&mut inner_buffer);
 
-        SerializePacket::serialize(&self.header, buffer)?;
-        buffer.write_u32::<LittleEndian>(inner_buffer.len() as u32)?;
-        buffer.write_all(&inner_buffer)?;
-        Ok(())
+        self.header.serialize(buffer);
+        SerializePacket::serialize(&inner_buffer, buffer);
     }
 }
 
@@ -188,12 +182,11 @@ pub struct FlashPayload {
 }
 
 impl SerializePacket for FlashPayload {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        self.header.serialize(buffer)?;
-        buffer.write_u32::<LittleEndian>(self.payload.len().saturating_add(1) as u32)?;
-        buffer.write_all(self.payload.as_bytes())?;
-        buffer.write_u8(0)?;
-        Ok(())
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        self.header.serialize(buffer);
+        SerializePacket::serialize(&(self.payload.len().saturating_add(1) as u32), buffer);
+        SerializePacket::serialize(&LengthlessSlice(self.payload.as_bytes()), buffer);
+        SerializePacket::serialize(&0u8, buffer);
     }
 }
 
@@ -342,9 +335,8 @@ pub enum ScoreType {
 }
 
 impl SerializePacket for ScoreType {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        buffer.write_i32::<LittleEndian>(*self as i32)?;
-        Ok(())
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        SerializePacket::serialize(&(*self as i32), buffer);
     }
 }
 

@@ -1,7 +1,6 @@
-use std::{collections::BTreeMap, io::Write};
+use std::collections::BTreeMap;
 
-use byteorder::{LittleEndian, WriteBytesExt};
-use packet_serialize::{SerializePacket, SerializePacketError};
+use packet_serialize::SerializePacket;
 use serde::{de::IgnoredAny, Deserialize};
 
 use super::{item::WieldType, GamePacket, OpCode};
@@ -15,10 +14,9 @@ pub enum ReferenceDataOpCode {
 }
 
 impl SerializePacket for ReferenceDataOpCode {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        OpCode::ReferenceData.serialize(buffer)?;
-        buffer.write_u16::<LittleEndian>(*self as u16)?;
-        Ok(())
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        OpCode::ReferenceData.serialize(buffer);
+        (*self as u16).serialize(buffer);
     }
 }
 
@@ -36,15 +34,14 @@ pub struct ItemClassDefinition {
 }
 
 impl SerializePacket for ItemClassDefinition {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        buffer.write_i32::<LittleEndian>(self.guid)?;
-        buffer.write_i32::<LittleEndian>(self.guid)?;
-        buffer.write_u32::<LittleEndian>(self.name_id)?;
-        buffer.write_u32::<LittleEndian>(self.icon_set_id)?;
-        self.wield_type.serialize(buffer)?;
-        buffer.write_u32::<LittleEndian>(self.stat_id)?;
-        buffer.write_u32::<LittleEndian>(self.battle_class_name_id)?;
-        Ok(())
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        self.guid.serialize(buffer);
+        self.guid.serialize(buffer);
+        self.name_id.serialize(buffer);
+        self.icon_set_id.serialize(buffer);
+        self.wield_type.serialize(buffer);
+        self.stat_id.serialize(buffer);
+        self.battle_class_name_id.serialize(buffer);
     }
 }
 
@@ -73,14 +70,13 @@ pub struct CategoryDefinition {
 }
 
 impl SerializePacket for CategoryDefinition {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        buffer.write_i32::<LittleEndian>(self.guid)?;
-        buffer.write_i32::<LittleEndian>(self.guid)?;
-        buffer.write_u32::<LittleEndian>(self.name_id)?;
-        buffer.write_u32::<LittleEndian>(self.icon_set_id)?;
-        buffer.write_i32::<LittleEndian>(self.sort_order)?;
-        buffer.write_u8(self.visible as u8)?;
-        Ok(())
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        self.guid.serialize(buffer);
+        self.guid.serialize(buffer);
+        self.name_id.serialize(buffer);
+        self.icon_set_id.serialize(buffer);
+        self.sort_order.serialize(buffer);
+        self.visible.serialize(buffer);
     }
 }
 
@@ -95,11 +91,10 @@ pub struct CategoryRelation {
 }
 
 impl SerializePacket for CategoryRelation {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        buffer.write_i32::<LittleEndian>(self.parent_guid)?;
-        buffer.write_i32::<LittleEndian>(self.parent_guid)?;
-        buffer.write_i32::<LittleEndian>(self.child_guid)?;
-        Ok(())
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        self.parent_guid.serialize(buffer);
+        self.parent_guid.serialize(buffer);
+        self.child_guid.serialize(buffer);
     }
 }
 
@@ -128,11 +123,10 @@ pub struct ItemGroupItem {
 }
 
 impl SerializePacket for ItemGroupItem {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        buffer.write_u32::<LittleEndian>(self.guid)?;
-        buffer.write_u32::<LittleEndian>(self.guid)?;
-        buffer.write_u32::<LittleEndian>(self.unknown)?;
-        Ok(())
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        self.guid.serialize(buffer);
+        self.guid.serialize(buffer);
+        self.unknown.serialize(buffer);
     }
 }
 
@@ -165,12 +159,10 @@ pub struct ItemGroupDefinitions {
 }
 
 impl SerializePacket for ItemGroupDefinitions {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+    fn serialize(&self, buffer: &mut Vec<u8>) {
         let mut inner_buffer = Vec::new();
-        self.definitions.serialize(&mut inner_buffer)?;
-        buffer.write_u32::<LittleEndian>(inner_buffer.len() as u32)?;
-        buffer.write_all(&inner_buffer)?;
-        Ok(())
+        self.definitions.serialize(&mut inner_buffer);
+        inner_buffer.serialize(buffer);
     }
 }
 

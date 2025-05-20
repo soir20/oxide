@@ -21,7 +21,7 @@ pub fn write_fields(data: &Data) -> TokenStream {
                 let writes = fields.named.iter().map(|f| {
                     let name = &f.ident;
                     quote_spanned! {f.span()=>
-                        packet_serialize::SerializePacket::serialize(&self.#name, buffer)?;
+                        packet_serialize::SerializePacket::serialize(&self.#name, buffer);
                     }
                 });
                 quote! {
@@ -34,7 +34,7 @@ pub fn write_fields(data: &Data) -> TokenStream {
                 let writes = fields.unnamed.iter().enumerate().map(|(i, f)| {
                     let index = Index::from(i);
                     quote_spanned! {f.span()=>
-                        packet_serialize::SerializePacket::serialize(&self.#index, buffer)?;
+                        packet_serialize::SerializePacket::serialize(&self.#index, buffer);
                     }
                 });
                 quote! {

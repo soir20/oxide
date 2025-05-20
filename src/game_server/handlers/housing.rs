@@ -1,7 +1,7 @@
 use std::io::{Cursor, Read};
 
 use byteorder::{LittleEndian, ReadBytesExt};
-use packet_serialize::{DeserializePacket, SerializePacketError};
+use packet_serialize::DeserializePacket;
 
 use crate::{
     game_server::{
@@ -73,10 +73,7 @@ fn placed_fixture(
     }
 }
 
-fn fixture_item_list(
-    fixtures: &[PreviousFixture],
-    house_guid: u64,
-) -> Result<Vec<u8>, SerializePacketError> {
+fn fixture_item_list(fixtures: &[PreviousFixture], house_guid: u64) -> Vec<u8> {
     let mut unknown1 = Vec::new();
     let mut unknown2 = Vec::new();
 
@@ -119,8 +116,8 @@ pub fn fixture_packets(
     pos: Pos,
     rot: Pos,
     scale: f32,
-) -> Result<Vec<Vec<u8>>, SerializePacketError> {
-    Ok(vec![
+) -> Vec<Vec<u8>> {
+    vec![
         GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: FixtureUpdate {
@@ -153,7 +150,7 @@ pub fn fixture_packets(
                 unknown5: 0,
                 unknown6: 0,
             },
-        })?,
+        }),
         GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: AddNpc {
@@ -253,8 +250,8 @@ pub fn fixture_packets(
                 unknown71: 0,
                 icon_id: Icon::None,
             },
-        })?,
-    ])
+        }),
+    ]
 }
 
 pub fn prepare_init_house_packets(
@@ -301,7 +298,7 @@ pub fn prepare_init_house_packets(
                     unknown17: 0,
                 },
             },
-        })?,
+        }),
         GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: HouseInstanceData {
@@ -335,7 +332,7 @@ pub fn prepare_init_house_packets(
                     unknown2: vec![],
                 },
             },
-        })?,
+        }),
         GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: HouseInfo {
@@ -347,7 +344,7 @@ pub fn prepare_init_house_packets(
                 unknown6: 0,
                 unknown7: 0,
             },
-        })?,
+        }),
     ])
 }
 
@@ -406,7 +403,7 @@ pub fn process_housing_packet(
                                         unknown6: 0,
                                         unknown7: 0,
                                     },
-                                })?])
+                                })])
                             },
                         })?;
 
@@ -446,7 +443,7 @@ pub fn process_housing_packet(
                                 unknown1: request.player_guid,
                             }],
                         },
-                    })?],
+                    })],
                 )])
             }
             HousingOpCode::EnterRequest => {

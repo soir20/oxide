@@ -1,5 +1,4 @@
-use byteorder::{LittleEndian, WriteBytesExt};
-use packet_serialize::{SerializePacket, SerializePacketError};
+use packet_serialize::SerializePacket;
 
 use super::{GamePacket, OpCode};
 
@@ -10,10 +9,9 @@ pub enum StoreOpCode {
 }
 
 impl SerializePacket for StoreOpCode {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        OpCode::Store.serialize(buffer)?;
-        buffer.write_u16::<LittleEndian>(*self as u16)?;
-        Ok(())
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        OpCode::Store.serialize(buffer);
+        (*self as u16).serialize(buffer);
     }
 }
 
@@ -34,22 +32,21 @@ pub struct StoreItem {
 }
 
 impl SerializePacket for StoreItem {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        buffer.write_u32::<LittleEndian>(self.guid)?;
-        buffer.write_u32::<LittleEndian>(self.guid)?;
-        buffer.write_u32::<LittleEndian>(self.unknown2)?;
-        buffer.write_u32::<LittleEndian>(self.unknown3)?;
-        buffer.write_u8(self.unknown4 as u8)?;
-        buffer.write_u8(self.unknown5 as u8)?;
-        buffer.write_u32::<LittleEndian>(self.unknown6)?;
-        buffer.write_u8(self.unknown7 as u8)?;
-        buffer.write_u8(self.unknown8 as u8)?;
-        buffer.write_u32::<LittleEndian>(self.base_cost)?;
-        buffer.write_u32::<LittleEndian>(self.unknown10)?;
-        buffer.write_u32::<LittleEndian>(self.unknown11)?;
-        buffer.write_u32::<LittleEndian>(self.unknown12)?;
-        buffer.write_u32::<LittleEndian>(self.member_cost)?;
-        Ok(())
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        self.guid.serialize(buffer);
+        self.guid.serialize(buffer);
+        self.unknown2.serialize(buffer);
+        self.unknown3.serialize(buffer);
+        self.unknown4.serialize(buffer);
+        self.unknown5.serialize(buffer);
+        self.unknown6.serialize(buffer);
+        self.unknown7.serialize(buffer);
+        self.unknown8.serialize(buffer);
+        self.base_cost.serialize(buffer);
+        self.unknown10.serialize(buffer);
+        self.unknown11.serialize(buffer);
+        self.unknown12.serialize(buffer);
+        self.member_cost.serialize(buffer);
     }
 }
 

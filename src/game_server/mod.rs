@@ -54,7 +54,7 @@ use packets::{GamePacket, OpCode};
 use rand::Rng;
 
 use crate::{info, ConfigError};
-use packet_serialize::{DeserializePacket, DeserializePacketError, SerializePacketError};
+use packet_serialize::{DeserializePacket, DeserializePacketError};
 
 mod handlers;
 mod packets;
@@ -113,15 +113,6 @@ impl From<DeserializePacketError> for ProcessPacketError {
         ProcessPacketError::new(
             ProcessPacketErrorType::DeserializeError,
             format!("Deserialize Error: {:?}", err),
-        )
-    }
-}
-
-impl From<SerializePacketError> for ProcessPacketError {
-    fn from(err: SerializePacketError) -> Self {
-        ProcessPacketError::new(
-            ProcessPacketErrorType::SerializeError,
-            format!("Serialize Error: {:?}", err),
         )
     }
 }
@@ -313,16 +304,16 @@ impl GameServer {
                                             },
                                         };
                                         sender_only_packets
-                                            .push(GamePacket::serialize(&welcome_screen)?);
+                                            .push(GamePacket::serialize(&welcome_screen));
 
                                         let minigame_definitions = TunneledPacket {
                                             unknown1: true,
                                             inner: GamePacket::serialize(
                                                 &self.minigames.definitions(),
-                                            )?,
+                                            ),
                                         };
                                         sender_only_packets
-                                            .push(GamePacket::serialize(&minigame_definitions)?);
+                                            .push(GamePacket::serialize(&minigame_definitions));
                                     }
 
                                     player.ready = true;
@@ -332,25 +323,25 @@ impl GameServer {
                             )
                         })?;
 
-                    sender_only_packets.append(&mut send_points_of_interest(self)?);
+                    sender_only_packets.append(&mut send_points_of_interest(self));
 
                     let categories = TunneledPacket {
                         unknown1: true,
-                        inner: GamePacket::serialize(&self.categories)?,
+                        inner: GamePacket::serialize(&self.categories),
                     };
-                    sender_only_packets.push(GamePacket::serialize(&categories)?);
+                    sender_only_packets.push(GamePacket::serialize(&categories));
 
                     let item_groups = TunneledPacket {
                         unknown1: true,
-                        inner: GamePacket::serialize(&self.item_groups)?,
+                        inner: GamePacket::serialize(&self.item_groups),
                     };
-                    sender_only_packets.push(GamePacket::serialize(&item_groups)?);
+                    sender_only_packets.push(GamePacket::serialize(&item_groups));
 
                     let store_items = TunneledPacket {
                         unknown1: true,
-                        inner: GamePacket::serialize(&StoreItemList::from(&self.costs))?,
+                        inner: GamePacket::serialize(&StoreItemList::from(&self.costs)),
                     };
-                    sender_only_packets.push(GamePacket::serialize(&store_items)?);
+                    sender_only_packets.push(GamePacket::serialize(&store_items));
 
                     let mut character_broadcasts = self.lock_enforcer().read_characters(|characters_table_read_handle| {
                         let possible_index = characters_table_read_handle.index1(player_guid(sender));
@@ -422,7 +413,7 @@ impl GameServer {
                                                 ],
                                             },
                                         };
-                                        sender_only_character_packets.push(GamePacket::serialize(&stats)?);
+                                        sender_only_character_packets.push(GamePacket::serialize(&stats));
 
                                         let health = TunneledPacket {
                                             unknown1: true,
@@ -431,7 +422,7 @@ impl GameServer {
                                                 max: 25000,
                                             },
                                         };
-                                        sender_only_character_packets.push(GamePacket::serialize(&health)?);
+                                        sender_only_character_packets.push(GamePacket::serialize(&health));
 
                                         let power = TunneledPacket {
                                             unknown1: true,
@@ -440,7 +431,7 @@ impl GameServer {
                                                 max: 300,
                                             },
                                         };
-                                        sender_only_character_packets.push(GamePacket::serialize(&power)?);
+                                        sender_only_character_packets.push(GamePacket::serialize(&power));
 
                                         let mut character_broadcasts = Vec::new();
 
@@ -459,7 +450,7 @@ impl GameServer {
                                                 wield_type: character_write_handle.stats.wield_type(),
                                             },
                                         };
-                                        global_packets.push(GamePacket::serialize(&wield_type)?);
+                                        global_packets.push(GamePacket::serialize(&wield_type));
 
                                         if let CharacterType::Player(player) = &character_write_handle.stats.character_type {
                                             sender_only_character_packets.push(GamePacket::serialize(&TunneledPacket {
@@ -467,7 +458,7 @@ impl GameServer {
                                                 inner: InitCustomizations {
                                                     customizations: customizations_from_guids(player.customizations.values().cloned(), self.customizations()),
                                                 },
-                                            })?);
+                                            }));
 
                                             if let Some(battle_class) = player.battle_classes.get(&player.active_battle_class) {
                                                 character_broadcasts.append(&mut update_saber_tints(
@@ -497,19 +488,19 @@ impl GameServer {
                     })?;
                     broadcasts.append(&mut character_broadcasts);
 
-                    sender_only_packets.append(&mut make_test_nameplate_image(sender)?);
+                    sender_only_packets.append(&mut make_test_nameplate_image(sender));
 
                     let zone_details_done = TunneledPacket {
                         unknown1: true,
                         inner: ZoneDetailsDone {},
                     };
-                    sender_only_packets.push(GamePacket::serialize(&zone_details_done)?);
+                    sender_only_packets.push(GamePacket::serialize(&zone_details_done));
 
                     let preload_characters_done = TunneledPacket {
                         unknown1: true,
                         inner: PreloadCharactersDone { unknown1: false },
                     };
-                    sender_only_packets.push(GamePacket::serialize(&preload_characters_done)?);
+                    sender_only_packets.push(GamePacket::serialize(&preload_characters_done));
 
                     broadcasts.push(Broadcast::Single(sender, sender_only_packets));
                 }
@@ -552,7 +543,7 @@ impl GameServer {
 
                                             broadcasts.push(Broadcast::Single(
                                                 sender,
-                                                vec![GamePacket::serialize(&game_time_sync)?],
+                                                vec![GamePacket::serialize(&game_time_sync)],
                                             ));
 
                                             Ok::<(), ProcessPacketError>(())
@@ -684,14 +675,14 @@ impl GameServer {
                                         delay_seconds: 0.0,
                                         duration_seconds: 2.0,
                                     }
-                                })?,
+                                }),
                                 GamePacket::serialize(&TunneledPacket {
                                     unknown1: true,
                                     inner: UpdateWieldType {
                                         guid: player_guid(sender),
                                         wield_type: character_write_handle.stats.wield_type()
                                     }
-                                })?,
+                                }),
                             ]));
                             Ok(())
                         }

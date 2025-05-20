@@ -1,6 +1,5 @@
-use byteorder::WriteBytesExt;
 use num_enum::TryFromPrimitive;
-use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
+use packet_serialize::{DeserializePacket, SerializePacket};
 
 use super::{GamePacket, OpCode};
 
@@ -19,10 +18,9 @@ pub enum MountOpCode {
 }
 
 impl SerializePacket for MountOpCode {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        OpCode::Mount.serialize(buffer)?;
-        buffer.write_u8(*self as u8)?;
-        Ok(())
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        OpCode::Mount.serialize(buffer);
+        (*self as u8).serialize(buffer);
     }
 }
 

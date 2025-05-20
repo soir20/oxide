@@ -1,6 +1,5 @@
-use byteorder::{LittleEndian, WriteBytesExt};
 use num_enum::TryFromPrimitive;
-use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
+use packet_serialize::{DeserializePacket, SerializePacket};
 
 use crate::game_server::handlers::unique_guid::player_guid;
 
@@ -15,10 +14,9 @@ pub enum SquadOpCode {
 }
 
 impl SerializePacket for SquadOpCode {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        OpCode::Squad.serialize(buffer)?;
-        buffer.write_u16::<LittleEndian>(*self as u16)?;
-        Ok(())
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        OpCode::Squad.serialize(buffer);
+        (*self as u16).serialize(buffer);
     }
 }
 
@@ -35,9 +33,8 @@ pub enum SquadEvent {
 }
 
 impl SerializePacket for SquadEvent {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        buffer.write_u32::<LittleEndian>(*self as u32)?;
-        Ok(())
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        (*self as u32).serialize(buffer);
     }
 }
 
@@ -68,9 +65,8 @@ pub enum SquadNameStatus {
 }
 
 impl SerializePacket for SquadNameStatus {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        buffer.write_u32::<LittleEndian>(*self as u32)?;
-        Ok(())
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        (*self as u32).serialize(buffer);
     }
 }
 
@@ -84,14 +80,14 @@ pub struct SquadMember {
 }
 
 impl SerializePacket for SquadMember {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        self.player_guid.serialize(buffer)?;
-        player_guid(self.player_guid).serialize(buffer)?;
-        self.name.serialize(buffer)?;
-        self.rank.serialize(buffer)?;
-        self.online.serialize(buffer)?;
-        self.member.serialize(buffer)?;
-        self.unknown7.serialize(buffer)
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        self.player_guid.serialize(buffer);
+        player_guid(self.player_guid).serialize(buffer);
+        self.name.serialize(buffer);
+        self.rank.serialize(buffer);
+        self.online.serialize(buffer);
+        self.member.serialize(buffer);
+        self.unknown7.serialize(buffer);
     }
 }
 
@@ -105,9 +101,8 @@ pub enum SquadRank {
 }
 
 impl SerializePacket for SquadRank {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        buffer.write_u32::<LittleEndian>(*self as u32)?;
-        Ok(())
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        (*self as u32).serialize(buffer);
     }
 }
 
@@ -118,13 +113,13 @@ pub struct SquadRankDefinition {
 }
 
 impl SerializePacket for SquadRankDefinition {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+    fn serialize(&self, buffer: &mut Vec<u8>) {
         // Use the rank as the ID because the client only allows IDs up to 4
-        self.rank.serialize(buffer)?;
-        self.unknown2.serialize(buffer)?;
-        self.rank.serialize(buffer)?;
-        self.name_override_id.serialize(buffer)?;
-        self.rank.serialize(buffer)
+        self.rank.serialize(buffer);
+        self.unknown2.serialize(buffer);
+        self.rank.serialize(buffer);
+        self.name_override_id.serialize(buffer);
+        self.rank.serialize(buffer);
     }
 }
 
@@ -139,15 +134,15 @@ pub struct SquadFullData {
 }
 
 impl SerializePacket for SquadFullData {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        self.squad_guid.serialize(buffer)?;
-        self.squad_guid.serialize(buffer)?;
-        self.squad_name.serialize(buffer)?;
-        self.unknown4.serialize(buffer)?;
-        self.name_status.serialize(buffer)?;
-        self.members.serialize(buffer)?;
-        self.rank_definitions.serialize(buffer)?;
-        self.max_members.serialize(buffer)
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        self.squad_guid.serialize(buffer);
+        self.squad_guid.serialize(buffer);
+        self.squad_name.serialize(buffer);
+        self.unknown4.serialize(buffer);
+        self.name_status.serialize(buffer);
+        self.members.serialize(buffer);
+        self.rank_definitions.serialize(buffer);
+        self.max_members.serialize(buffer);
     }
 }
 

@@ -1,6 +1,5 @@
-use byteorder::{LittleEndian, WriteBytesExt};
 use num_enum::TryFromPrimitive;
-use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
+use packet_serialize::{DeserializePacket, SerializePacket};
 
 use super::{GamePacket, OpCode, Pos, Rgba, Target};
 
@@ -22,10 +21,9 @@ pub enum CommandOpCode {
 }
 
 impl SerializePacket for CommandOpCode {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        OpCode::Command.serialize(buffer)?;
-        buffer.write_u16::<LittleEndian>(*self as u16)?;
-        Ok(())
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        OpCode::Command.serialize(buffer);
+        (*self as u16).serialize(buffer);
     }
 }
 

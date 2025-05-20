@@ -1,6 +1,5 @@
-use byteorder::{LittleEndian, WriteBytesExt};
 use num_enum::TryFromPrimitive;
-use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
+use packet_serialize::{DeserializePacket, SerializePacket};
 
 use super::{item::EquipmentSlot, OpCode};
 
@@ -15,10 +14,9 @@ pub enum InventoryOpCode {
 }
 
 impl SerializePacket for InventoryOpCode {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        OpCode::Inventory.serialize(buffer)?;
-        buffer.write_u16::<LittleEndian>(*self as u16)?;
-        Ok(())
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        OpCode::Inventory.serialize(buffer);
+        (*self as u16).serialize(buffer);
     }
 }
 

@@ -117,7 +117,7 @@ pub fn reply_dismount<'a>(
                         rider_guid: player_guid(sender),
                         composite_effect: mount.dismount_composite_effect,
                     },
-                })?,
+                }),
                 GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
                     inner: RemoveGracefully {
@@ -128,14 +128,14 @@ pub fn reply_dismount<'a>(
                         composite_effect: 0,
                         fade_duration_millis: 1000,
                     },
-                })?,
+                }),
                 GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
                     inner: UpdateSpeed {
                         guid: player_guid(sender),
                         speed: character.stats.speed.total(),
                     },
-                })?,
+                }),
             ],
         ),
         Broadcast::Single(
@@ -164,7 +164,7 @@ pub fn reply_dismount<'a>(
                         },
                     ],
                 },
-            })?],
+            })],
         ),
     ])
 }
@@ -292,7 +292,7 @@ fn process_mount_spawn(
                                 guid: player_guid(sender),
                                 speed: character_write_handle.stats.speed.total(),
                             },
-                        })?);
+                        }));
 
                         if let Some(mount_id) = character_write_handle.stats.mount_id {
                             return Err(ProcessPacketError::new(
@@ -343,7 +343,7 @@ fn process_mount_spawn(
                                             },
                                         ],
                                     },
-                                })?],
+                                })],
                             ),
                         ])
                     },
@@ -507,7 +507,7 @@ pub fn spawn_mount_npc(
                 unknown71: 0,
                 icon_id: Icon::None,
             },
-        })?,
+        }),
         GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: MountReply {
@@ -519,6 +519,6 @@ pub fn spawn_mount_npc(
                 composite_effect: 0,
                 unknown5: 0,
             },
-        })?,
+        }),
     ])
 }

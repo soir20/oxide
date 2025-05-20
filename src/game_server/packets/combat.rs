@@ -1,5 +1,4 @@
-use byteorder::{LittleEndian, WriteBytesExt};
-use packet_serialize::{DeserializePacket, SerializePacket, SerializePacketError};
+use packet_serialize::{DeserializePacket, SerializePacket};
 
 use super::{GamePacket, OpCode};
 
@@ -9,10 +8,9 @@ pub enum CombatOpCode {
 }
 
 impl SerializePacket for CombatOpCode {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
-        OpCode::Combat.serialize(buffer)?;
-        buffer.write_u16::<LittleEndian>(*self as u16)?;
-        Ok(())
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        OpCode::Combat.serialize(buffer);
+        (*self as u16).serialize(buffer);
     }
 }
 

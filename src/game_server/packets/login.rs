@@ -1,9 +1,4 @@
-use std::io::Write;
-
-use byteorder::{LittleEndian, WriteBytesExt};
-use packet_serialize::{
-    DeserializePacket, NullTerminatedString, SerializePacket, SerializePacketError,
-};
+use packet_serialize::{DeserializePacket, NullTerminatedString, SerializePacket};
 
 use crate::game_server::handlers::zone::PointOfInterestConfig;
 
@@ -167,19 +162,16 @@ pub struct DefinePointsOfInterest {
 }
 
 impl SerializePacket for DefinePointsOfInterest {
-    fn serialize(&self, buffer: &mut Vec<u8>) -> Result<(), SerializePacketError> {
+    fn serialize(&self, buffer: &mut Vec<u8>) {
         let mut inner_buffer = Vec::new();
 
         for point in self.points.iter() {
-            inner_buffer.write_u8(1)?;
-            SerializePacket::serialize(point, &mut inner_buffer)?;
+            true.serialize(&mut inner_buffer);
+            point.serialize(&mut inner_buffer);
         }
-        inner_buffer.write_u8(0)?;
+        false.serialize(&mut inner_buffer);
 
-        buffer.write_u32::<LittleEndian>(inner_buffer.len() as u32)?;
-        buffer.write_all(&inner_buffer)?;
-
-        Ok(())
+        inner_buffer.serialize(buffer);
     }
 }
 
