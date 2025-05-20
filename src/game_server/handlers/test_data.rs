@@ -31,7 +31,7 @@ pub fn make_test_player(
             mount_id: mount.guid(),
             name_id: mount.name_id,
             icon_set_id: mount.icon_set_id,
-            guid: mount_guid(guid, mount.guid()),
+            guid: mount_guid(player_guid(guid)),
             unknown5: false,
             unknown6: 0,
             unknown7: "".to_string(),

@@ -8,25 +8,28 @@ use rand_distr::{Distribution, WeightedAliasIndex};
 use serde::{de::IgnoredAny, Deserialize};
 use strum::EnumIter;
 
-use crate::game_server::{
-    packets::{
-        chat::{ActionBarTextColor, SendStringId},
-        command::PlaySoundIdOnTarget,
-        item::{Attachment, BaseAttachmentGroup, EquipmentSlot, ItemDefinition, WieldType},
-        minigame::ScoreEntry,
-        player_data::EquippedItem,
-        player_update::{
-            AddNotifications, AddNpc, AddPc, Customization, CustomizationSlot, Hostility, Icon,
-            MoveOnRail, NameplateImage, NotificationData, NpcRelevance, PlayCompositeEffect,
-            QueueAnimation, RemoveGracefully, RemoveStandard, SetAnimation, SingleNotification,
-            SingleNpcRelevance, UpdateSpeed, UpdateTemporaryAppearance,
+use crate::{
+    game_server::{
+        packets::{
+            chat::{ActionBarTextColor, SendStringId},
+            command::PlaySoundIdOnTarget,
+            item::{Attachment, BaseAttachmentGroup, EquipmentSlot, ItemDefinition, WieldType},
+            minigame::ScoreEntry,
+            player_data::EquippedItem,
+            player_update::{
+                AddNotifications, AddNpc, AddPc, Customization, CustomizationSlot, Hostility, Icon,
+                MoveOnRail, NameplateImage, NotificationData, NpcRelevance, PlayCompositeEffect,
+                QueueAnimation, RemoveGracefully, RemoveStandard, SetAnimation, SingleNotification,
+                SingleNpcRelevance, UpdateSpeed, UpdateTemporaryAppearance,
+            },
+            tunnel::TunneledPacket,
+            ui::ExecuteScriptWithStringParams,
+            update_position::UpdatePlayerPosition,
+            GamePacket, GuidTarget, Name, Pos, Rgba, Target,
         },
-        tunnel::TunneledPacket,
-        ui::ExecuteScriptWithStringParams,
-        update_position::UpdatePlayerPosition,
-        GamePacket, GuidTarget, Name, Pos, Rgba, Target,
+        Broadcast, GameServer, ProcessPacketError,
     },
-    Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
+    info,
 };
 
 use super::{
@@ -37,7 +40,7 @@ use super::{
     lock_enforcer::CharacterReadGuard,
     minigame::{MinigameTypeData, PlayerMinigameStats},
     mount::{spawn_mount_npc, MountConfig},
-    unique_guid::{mount_guid, npc_guid, player_guid, shorten_player_guid},
+    unique_guid::{mount_guid, npc_guid, player_guid},
     zone::{teleport_anywhere, DestinationZoneInstance},
     WriteLockingBroadcastSupplier,
 };
@@ -395,7 +398,7 @@ impl TickableStep {
         mount_configs: &BTreeMap<u32, MountConfig>,
         item_definitions: &BTreeMap<u32, ItemDefinition>,
         customizations: &BTreeMap<u32, Customization>,
-    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    ) -> Vec<Broadcast> {
         let mut packets_for_all = Vec::new();
 
         match self.spawned_state {
@@ -407,7 +410,7 @@ impl TickableStep {
                         mount_configs,
                         item_definitions,
                         customizations,
-                    )?);
+                    ));
                 }
             }
             SpawnedState::OnFirstStepTick => {
@@ -419,14 +422,14 @@ impl TickableStep {
                         mount_configs,
                         item_definitions,
                         customizations,
-                    )?);
+                    ));
                 }
             }
             SpawnedState::Despawn => {
                 character.is_spawned = false;
                 // Skip checking if the character is spawned before despawning it and instead check if
                 // its state needs updating as OnFirstStepTick doesn't maintain states
-                packets_for_all.extend(character.remove_packets(self.removal_mode)?);
+                packets_for_all.extend(character.remove_packets(self.removal_mode));
             }
             SpawnedState::Keep => {}
         }
@@ -601,7 +604,7 @@ impl TickableStep {
             broadcasts.push(Broadcast::Multi(recipients, chat_packets));
         }
 
-        Ok(broadcasts)
+        broadcasts
     }
 }
 
@@ -629,7 +632,7 @@ pub struct TickableProcedureConfig {
 }
 
 pub enum TickResult {
-    TickedCurrentProcedure(Result<Vec<Broadcast>, ProcessPacketError>),
+    TickedCurrentProcedure(Vec<Broadcast>),
     MustChangeProcedure(String),
 }
 
@@ -731,7 +734,7 @@ impl TickableProcedure {
                 ))
             }
         } else {
-            TickResult::TickedCurrentProcedure(Ok(Vec::new()))
+            TickResult::TickedCurrentProcedure(Vec::new())
         }
     }
 
@@ -869,9 +872,9 @@ impl TickableProcedureTracker {
         mount_configs: &BTreeMap<u32, MountConfig>,
         item_definitions: &BTreeMap<u32, ItemDefinition>,
         customizations: &BTreeMap<u32, Customization>,
-    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    ) -> Vec<Broadcast> {
         if self.procedures.is_empty() {
-            return Ok(Vec::new());
+            return Vec::new();
         }
 
         let mut current_procedure = self
@@ -928,11 +931,11 @@ impl AmbientNpc {
         &self,
         character: &CharacterStats,
         override_is_spawned: bool,
-    ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+    ) -> Vec<Vec<u8>> {
         let Some((add_npc, enable_interaction)) =
             self.base_npc.add_packets(character, override_is_spawned)
         else {
-            return Ok(Vec::new());
+            return Vec::new();
         };
         let packets = vec![
             GamePacket::serialize(&TunneledPacket {
@@ -947,7 +950,7 @@ impl AmbientNpc {
             }),
         ];
 
-        Ok(packets)
+        packets
     }
 
     pub fn interact(&self, character: &Character) -> Option<String> {
@@ -1013,11 +1016,11 @@ impl Door {
         &self,
         character: &CharacterStats,
         override_is_spawned: bool,
-    ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+    ) -> Vec<Vec<u8>> {
         let Some((mut add_npc, mut enable_interaction)) =
             self.base_npc.add_packets(character, override_is_spawned)
         else {
-            return Ok(Vec::new());
+            return Vec::new();
         };
         add_npc.disable_interact_popup = true;
         enable_interaction.cursor = enable_interaction.cursor.or(Some(55));
@@ -1034,7 +1037,7 @@ impl Door {
             }),
         ];
 
-        Ok(packets)
+        packets
     }
 
     pub fn interact(&self, requester: u32) -> WriteLockingBroadcastSupplier {
@@ -1084,11 +1087,11 @@ impl Transport {
         &self,
         character: &CharacterStats,
         override_is_spawned: bool,
-    ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+    ) -> Vec<Vec<u8>> {
         let Some((mut add_npc, enable_interaction)) =
             self.base_npc.add_packets(character, override_is_spawned)
         else {
-            return Ok(Vec::new());
+            return Vec::new();
         };
         add_npc.hover_description = if self.show_hover_description {
             self.base_npc.name_id
@@ -1127,7 +1130,7 @@ impl Transport {
             }),
         ];
 
-        Ok(packets)
+        packets
     }
 
     pub fn interact(&self, requester: u32) -> WriteLockingBroadcastSupplier {
@@ -1208,35 +1211,35 @@ impl Player {
         mount_configs: &BTreeMap<u32, MountConfig>,
         item_definitions: &BTreeMap<u32, ItemDefinition>,
         customizations: &BTreeMap<u32, Customization>,
-    ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+    ) -> Vec<Vec<u8>> {
         if !self.ready {
-            return Ok(Vec::new());
+            return Vec::new();
         }
 
         let mut mount_packets = Vec::new();
         let mut player_mount_guid = 0;
-        if let Some(mount_id) = character.mount_id {
-            let short_rider_guid = shorten_player_guid(Guid::guid(character))?;
-            player_mount_guid = mount_guid(short_rider_guid, mount_id);
-            let Some(mount_config) = mount_configs.get(&mount_id) else {
-                return Err(ProcessPacketError::new(
-                    ProcessPacketErrorType::ConstraintViolated,
-                    format!(
-                        "Character {} is mounted on unknown mount ID {}",
-                        Guid::guid(character),
-                        mount_id
-                    ),
+        if let Some(CharacterMount {
+            mount_id,
+            mount_guid,
+        }) = character.mount
+        {
+            player_mount_guid = mount_guid;
+            if let Some(mount_config) = mount_configs.get(&mount_id) {
+                mount_packets.append(&mut spawn_mount_npc(
+                    player_mount_guid,
+                    Guid::guid(character),
+                    mount_config,
+                    character.pos,
+                    character.rot,
+                    false,
                 ));
-            };
-
-            mount_packets.append(&mut spawn_mount_npc(
-                player_mount_guid,
-                Guid::guid(character),
-                mount_config,
-                character.pos,
-                character.rot,
-                false,
-            )?);
+            } else {
+                info!(
+                    "Character {} is mounted on unknown mount ID {}",
+                    Guid::guid(character),
+                    mount_id
+                );
+            }
         }
 
         let attachments: Vec<Attachment> = self
@@ -1361,7 +1364,7 @@ impl Player {
 
         packets.append(&mut mount_packets);
 
-        Ok(packets)
+        packets
     }
 }
 
@@ -1442,14 +1445,18 @@ impl NpcTemplate {
         instance_guid: u64,
         keys_to_guid: &HashMap<&String, u64>,
     ) -> Character {
+        let guid = self.guid(instance_guid);
         Character {
             stats: CharacterStats {
-                guid: self.guid(instance_guid),
+                guid,
                 pos: self.pos,
                 rot: self.rot,
                 scale: self.scale,
                 character_type: self.character_type.clone(),
-                mount_id: self.mount_id,
+                mount: self.mount_id.map(|mount_id| CharacterMount {
+                    mount_id,
+                    mount_guid: mount_guid(guid),
+                }),
                 interact_radius: self.interact_radius,
                 auto_interact_radius: self.auto_interact_radius,
                 move_to_interact_offset: self.move_to_interact_offset,
@@ -1510,13 +1517,19 @@ impl CharacterStat {
 }
 
 #[derive(Clone)]
+pub struct CharacterMount {
+    pub mount_id: u32,
+    pub mount_guid: u64,
+}
+
+#[derive(Clone)]
 pub struct CharacterStats {
     guid: u64,
     pub pos: Pos,
     pub rot: Pos,
     pub scale: f32,
     pub character_type: CharacterType,
-    pub mount_id: Option<u32>,
+    pub mount: Option<CharacterMount>,
     pub interact_radius: f32,
     pub auto_interact_radius: f32,
     pub move_to_interact_offset: f32,
@@ -1539,17 +1552,15 @@ impl CharacterStats {
         mount_configs: &BTreeMap<u32, MountConfig>,
         item_definitions: &BTreeMap<u32, ItemDefinition>,
         customizations: &BTreeMap<u32, Customization>,
-    ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
-        let packets = match &self.character_type {
+    ) -> Vec<Vec<u8>> {
+        match &self.character_type {
             CharacterType::AmbientNpc(ambient_npc) => {
-                ambient_npc.add_packets(self, override_is_spawned)?
+                ambient_npc.add_packets(self, override_is_spawned)
             }
-            CharacterType::Door(door) => door.add_packets(self, override_is_spawned)?,
-            CharacterType::Transport(transport) => {
-                transport.add_packets(self, override_is_spawned)?
-            }
+            CharacterType::Door(door) => door.add_packets(self, override_is_spawned),
+            CharacterType::Transport(transport) => transport.add_packets(self, override_is_spawned),
             CharacterType::Player(player) => {
-                player.add_packets(self, mount_configs, item_definitions, customizations)?
+                player.add_packets(self, mount_configs, item_definitions, customizations)
             }
             CharacterType::Fixture(house_guid, fixture) => fixture_packets(
                 *house_guid,
@@ -1559,12 +1570,10 @@ impl CharacterStats {
                 self.rot,
                 self.scale,
             ),
-        };
-
-        Ok(packets)
+        }
     }
 
-    pub fn remove_packets(&self, mode: RemovalMode) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+    pub fn remove_packets(&self, mode: RemovalMode) -> Vec<Vec<u8>> {
         let mut packets = vec![match mode {
             RemovalMode::Immediate => GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
@@ -1591,13 +1600,11 @@ impl CharacterStats {
             }),
         }];
 
-        if let Some(mount_id) = self.mount_id {
+        if let Some(CharacterMount { mount_guid, .. }) = self.mount {
             packets.push(match mode {
                 RemovalMode::Immediate => GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
-                    inner: RemoveStandard {
-                        guid: mount_guid(shorten_player_guid(Guid::guid(self))?, mount_id),
-                    },
+                    inner: RemoveStandard { guid: mount_guid },
                 }),
                 RemovalMode::Graceful {
                     enable_death_animation,
@@ -1618,7 +1625,7 @@ impl CharacterStats {
                 }),
             });
         }
-        Ok(packets)
+        packets
     }
 
     pub fn wield_type(&self) -> WieldType {
@@ -1700,7 +1707,7 @@ impl Character {
         rot: Pos,
         scale: f32,
         character_type: CharacterType,
-        mount_id: Option<u32>,
+        mount_id: Option<CharacterMount>,
         cursor: Option<u8>,
         interact_radius: f32,
         auto_interact_radius: f32,
@@ -1719,7 +1726,7 @@ impl Character {
                 rot,
                 scale,
                 character_type,
-                mount_id,
+                mount: mount_id,
                 cursor,
                 is_spawned: true,
                 name: None,
@@ -1789,7 +1796,7 @@ impl Character {
                 name: Some(format!("{}", data.name)),
                 squad_guid: data.squad_guid,
                 character_type: CharacterType::Player(Box::new(data)),
-                mount_id: None,
+                mount: None,
                 cursor: None,
                 is_spawned: true,
                 interact_radius: 0.0,
@@ -1837,7 +1844,7 @@ impl Character {
         mount_configs: &BTreeMap<u32, MountConfig>,
         item_definitions: &BTreeMap<u32, ItemDefinition>,
         customizations: &BTreeMap<u32, Customization>,
-    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    ) -> Vec<Broadcast> {
         self.tickable_procedure_tracker.tick(
             &mut self.stats,
             now,

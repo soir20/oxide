@@ -22,8 +22,8 @@ use crate::{
 
 use super::{
     character::{
-        Character, CharacterLocationIndex, CharacterMatchmakingGroupIndex, CharacterNameIndex,
-        CharacterSquadIndex,
+        Character, CharacterLocationIndex, CharacterMatchmakingGroupIndex, CharacterMount,
+        CharacterNameIndex, CharacterSquadIndex,
     },
     guid::{Guid, GuidTableIndexer, IndexedGuid},
     lock_enforcer::{CharacterLockRequest, ZoneLockEnforcer, ZoneLockRequest},
@@ -86,12 +86,16 @@ pub fn reply_dismount<'a>(
     character: &mut RwLockWriteGuard<Character>,
     mounts: &BTreeMap<u32, MountConfig>,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-    let Some(mount_id) = character.stats.mount_id else {
+    let Some(CharacterMount {
+        mount_id,
+        mount_guid,
+    }) = character.stats.mount
+    else {
         // Character is already dismounted
         return Ok(Vec::new());
     };
 
-    character.stats.mount_id = None;
+    character.stats.mount = None;
     let Some(mount) = mounts.get(&mount_id) else {
         return Err(ProcessPacketError::new(
             ProcessPacketErrorType::ConstraintViolated,
@@ -121,7 +125,7 @@ pub fn reply_dismount<'a>(
                 GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
                     inner: RemoveGracefully {
-                        guid: mount_guid(sender, mount_id),
+                        guid: mount_guid,
                         use_death_animation: false,
                         delay_millis: 0,
                         composite_effect_delay_millis: 0,
@@ -223,7 +227,7 @@ fn process_mount_spawn(
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let mount_spawn = MountSpawn::deserialize(cursor)?;
-    let mount_guid = mount_guid(sender, mount_spawn.mount_id);
+    let mount_guid = mount_guid(player_guid(sender));
 
     let Some(mount) = game_server.mounts().get(&mount_spawn.mount_id) else {
         return Err(ProcessPacketError::new(
@@ -285,7 +289,7 @@ fn process_mount_spawn(
                             character_write_handle.stats.pos,
                             character_write_handle.stats.rot,
                             true,
-                        )?;
+                        );
                         packets.push(GamePacket::serialize(&TunneledPacket {
                             unknown1: true,
                             inner: UpdateSpeed {
@@ -294,17 +298,17 @@ fn process_mount_spawn(
                             },
                         }));
 
-                        if let Some(mount_id) = character_write_handle.stats.mount_id {
+                        if let Some(CharacterMount { mount_id, mount_guid }) = character_write_handle.stats.mount {
                             return Err(ProcessPacketError::new(
                                 ProcessPacketErrorType::ConstraintViolated,
                                 format!(
-                                    "Player {} tried to mount while already mounted on mount ID {}",
-                                    sender, mount_id
+                                    "Player {} tried to mount while already mounted on mount ID {}, GUID {}",
+                                    sender, mount_id, mount_guid
                                 ),
                             ));
                         }
 
-                        character_write_handle.stats.mount_id = Some(Guid::guid(mount));
+                        character_write_handle.stats.mount = Some(CharacterMount { mount_id: Guid::guid(mount), mount_guid });
 
                         let (_, instance_guid, chunk) = character_write_handle.index1();
                         let all_players_nearby = ZoneInstance::all_players_nearby(
@@ -381,7 +385,7 @@ pub fn spawn_mount_npc(
     spawn_pos: Pos,
     spawn_rot: Pos,
     show_spawn_effect: bool,
-) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+) -> Vec<Vec<u8>> {
     let effects = if show_spawn_effect {
         vec![Effect {
             unknown1: 0,
@@ -407,7 +411,7 @@ pub fn spawn_mount_npc(
     } else {
         Vec::new()
     };
-    Ok(vec![
+    vec![
         GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: AddNpc {
@@ -520,5 +524,5 @@ pub fn spawn_mount_npc(
                 unknown5: 0,
             },
         }),
-    ])
+    ]
 }
