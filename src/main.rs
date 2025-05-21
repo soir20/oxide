@@ -518,16 +518,10 @@ fn spawn_game_tick_thread(
         game_tick_dequeue
             .recv()
             .expect("Game tick channel disconnected");
-        match game_server.tick() {
-            Ok(broadcasts) => {
-                channel_manager.read().broadcast(
-                    client_enqueue.clone(),
-                    broadcasts,
-                    &server_options,
-                );
-            }
-            Err(err) => info!("Unable to process game tick: {}", err),
-        }
+        let broadcasts = game_server.tick();
+        channel_manager
+            .read()
+            .broadcast(client_enqueue.clone(), broadcasts, &server_options);
     });
 }
 

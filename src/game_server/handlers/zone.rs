@@ -23,7 +23,7 @@ use crate::{
         },
         Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
-    ConfigError,
+    info, ConfigError,
 };
 
 use super::{
@@ -445,8 +445,8 @@ impl ZoneInstance {
         Ok(packets)
     }
 
-    pub fn send_self_on_client_ready(&self) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
-        Ok(vec![
+    pub fn send_self_on_client_ready(&self) -> Vec<Vec<u8>> {
+        vec![
             GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: ExecuteScriptWithIntParams {
@@ -464,7 +464,7 @@ impl ZoneInstance {
                     params: vec![],
                 },
             }),
-        ])
+        ]
     }
 
     fn nearby_chunks(center: Chunk) -> BTreeSet<Chunk> {
@@ -495,7 +495,7 @@ impl ZoneInstance {
             CharacterSquadIndex,
             CharacterMatchmakingGroupIndex,
         >,
-    ) -> Result<Vec<u32>, ProcessPacketError> {
+    ) -> Vec<u32> {
         let mut guids = Vec::new();
 
         for chunk in ZoneInstance::nearby_chunks(chunk) {
@@ -508,12 +508,19 @@ impl ZoneInstance {
                     .map(|sender_guid| guid != player_guid(sender_guid))
                     .unwrap_or(true)
                 {
-                    guids.push(shorten_player_guid(guid)?);
+                    match shorten_player_guid(guid) {
+                        Ok(short_guid) => guids.push(short_guid),
+                        Err(err) => info!(
+                            "Skipped nearby player {} because their GUID is not a player's GUID: {}",
+                            guid,
+                            err
+                        ),
+                    }
                 }
             }
         }
 
-        Ok(guids)
+        guids
     }
 
     pub fn all_players_nearby<'a>(
@@ -528,7 +535,7 @@ impl ZoneInstance {
             CharacterSquadIndex,
             CharacterMatchmakingGroupIndex,
         >,
-    ) -> Result<Vec<u32>, ProcessPacketError> {
+    ) -> Vec<u32> {
         ZoneInstance::other_players_nearby(None, chunk, instance_guid, characters_table_handle)
     }
 
@@ -603,7 +610,7 @@ impl ZoneInstance {
         mount_configs: &BTreeMap<u32, MountConfig>,
         item_definitions: &BTreeMap<u32, ItemDefinition>,
         customizations: &BTreeMap<u32, Customization>,
-    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    ) -> Vec<Broadcast> {
         let mut broadcasts = Vec::new();
 
         if let Ok(moved_player_guid) = shorten_player_guid(moved_character_guid) {
@@ -646,7 +653,7 @@ impl ZoneInstance {
             ));
         }
 
-        Ok(broadcasts)
+        broadcasts
     }
 
     fn move_character_with_locks(
@@ -655,7 +662,7 @@ impl ZoneInstance {
         moved_character_write_handle: &mut CharacterWriteGuard<'_>,
         new_pos: Pos,
         new_rot: Pos,
-    ) -> Result<Vec<u64>, ProcessPacketError> {
+    ) -> Vec<u64> {
         let previous_pos = moved_character_write_handle.stats.pos;
         moved_character_write_handle.stats.pos = new_pos;
         moved_character_write_handle.stats.rot = new_rot;
@@ -691,7 +698,7 @@ impl ZoneInstance {
             }
         }
 
-        Ok(characters_to_interact)
+        characters_to_interact
     }
 
     pub fn move_character<T: UpdatePositionPacket>(
@@ -748,11 +755,11 @@ impl ZoneInstance {
                                                   mut characters_write,
                                                   _| {
                             let Some(instance_guid) = instance_guid_if_exists else {
-                                return Ok((false, same_chunk, Vec::new(), Vec::new()));
+                                return (false, same_chunk, Vec::new(), Vec::new());
                             };
 
                             if !same_chunk {
-                                return Ok((true, same_chunk, Vec::new(), Vec::new()));
+                                return (true, same_chunk, Vec::new(), Vec::new());
                             }
 
                             let mut broadcasts = Vec::new();
@@ -764,14 +771,13 @@ impl ZoneInstance {
                                 .unwrap_or(1.0);
                             full_update_packet.apply_jump_height_multiplier(jump_multiplier);
 
-                            let filtered_npcs_to_interact =
-                                ZoneInstance::move_character_with_locks(
-                                    &auto_interact_npcs,
-                                    characters_read,
-                                    characters_write.get_mut(&moved_character_guid).unwrap(),
-                                    new_pos,
-                                    new_rot,
-                                )?;
+                            let filtered_npcs_to_interact = ZoneInstance::move_character_with_locks(
+                                &auto_interact_npcs,
+                                characters_read,
+                                characters_write.get_mut(&moved_character_guid).unwrap(),
+                                new_pos,
+                                new_rot,
+                            );
 
                             // We don't return this value when the chunks are different, as players could change between when
                             // we release the read lock and acquire the write lock
@@ -780,7 +786,7 @@ impl ZoneInstance {
                                 new_chunk,
                                 instance_guid,
                                 characters_table_read_handle,
-                            )?;
+                            );
                             broadcasts.push(Broadcast::Multi(
                                 other_players_nearby,
                                 vec![GamePacket::serialize(&TunneledPacket {
@@ -788,15 +794,10 @@ impl ZoneInstance {
                                     inner: full_update_packet,
                                 })],
                             ));
-                            Ok::<(bool, bool, Vec<Broadcast>, Vec<u64>), ProcessPacketError>((
-                                true,
-                                same_chunk,
-                                broadcasts,
-                                filtered_npcs_to_interact,
-                            ))
+                            (true, same_chunk, broadcasts, filtered_npcs_to_interact)
                         },
                     }
-                })?;
+                });
 
         if !character_exists {
             return Ok(broadcasts);
@@ -814,7 +815,7 @@ impl ZoneInstance {
                             let Some(moved_character_write_handle) =
                                 possible_character_write_handle
                             else {
-                                return Ok(Vec::new());
+                                return Vec::new();
                             };
 
                             let (_, instance_guid, old_chunk) =
@@ -853,7 +854,7 @@ impl ZoneInstance {
                                 game_server.mounts(),
                                 game_server.items(),
                                 game_server.customizations(),
-                            )?);
+                            ));
 
                             // Remove the moved character when they change chunks
                             let previous_other_players_nearby = ZoneInstance::other_players_nearby(
@@ -861,7 +862,7 @@ impl ZoneInstance {
                                 old_chunk,
                                 instance_guid,
                                 characters_table_write_handle,
-                            )?;
+                            );
                             broadcasts.push(Broadcast::Multi(
                                 previous_other_players_nearby,
                                 moved_character_write_handle
@@ -876,7 +877,7 @@ impl ZoneInstance {
                                 moved_character_write_handle,
                                 new_pos,
                                 new_rot,
-                            )?;
+                            );
 
                             let jump_multiplier = moved_character_write_handle
                                 .stats
@@ -889,7 +890,7 @@ impl ZoneInstance {
                                 new_chunk,
                                 instance_guid,
                                 characters_table_write_handle,
-                            )?;
+                            );
                             let mut new_chunk_packets =
                                 moved_character_write_handle.stats.add_packets(
                                     false,
@@ -904,10 +905,10 @@ impl ZoneInstance {
                             broadcasts
                                 .push(Broadcast::Multi(other_players_nearby, new_chunk_packets));
 
-                            Ok::<Vec<u64>, ProcessPacketError>(characters_to_interact)
+                            characters_to_interact
                         },
                     )
-                })?
+                })
         };
 
         for character_guid in npcs_to_interact_with {
@@ -1011,7 +1012,7 @@ pub fn enter_zone(
                     chunk,
                     instance_guid,
                     characters_table_write_handle,
-                )?;
+                );
                 broadcasts.push(Broadcast::Multi(
                     other_players_nearby,
                     character_write_handle
@@ -1043,10 +1044,8 @@ pub fn enter_zone(
                 character_write_handle.stats.pos = destination_pos;
                 character_write_handle.stats.rot = destination_rot;
             }
-
-            Ok::<(), ProcessPacketError>(())
         },
-    )?;
+    );
 
     Ok(broadcasts)
 }
@@ -1243,7 +1242,11 @@ pub fn teleport_anywhere(
                             game_server.mounts(),
                         )
                     } else {
-                        teleport_within_zone(requester, destination_pos, destination_rot)
+                        Ok(teleport_within_zone(
+                            requester,
+                            destination_pos,
+                            destination_rot,
+                        ))
                     }
                 })
             },
@@ -1336,8 +1339,8 @@ pub fn teleport_within_zone(
     sender: u32,
     destination_pos: Pos,
     destination_rot: Pos,
-) -> Result<Vec<Broadcast>, ProcessPacketError> {
-    Ok(vec![Broadcast::Single(
+) -> Vec<Broadcast> {
+    vec![Broadcast::Single(
         sender,
         vec![GamePacket::serialize(&TunneledPacket {
             unknown1: true,
@@ -1348,5 +1351,5 @@ pub fn teleport_within_zone(
                 unknown2: true,
             },
         })],
-    )])
+    )]
 }

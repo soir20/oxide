@@ -110,7 +110,7 @@ pub fn reply_dismount<'a>(
     character.stats.jump_height_multiplier.mount_multiplier = 1.0;
     let (_, instance_guid, chunk) = character.index1();
     let all_players_nearby =
-        ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_handle)?;
+        ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_handle);
     Ok(vec![
         Broadcast::Multi(
             all_players_nearby,
@@ -256,6 +256,8 @@ fn process_mount_spawn(
                     ));
                 };
 
+                // TODO: check that player owns mount
+
                 let zones_lock_enforcer: ZoneLockEnforcer = minigame_data_lock_enforcer.into();
                 zones_lock_enforcer.read_zones(|_| ZoneLockRequest {
                     read_guids: vec![character_write_handle.stats.instance_guid],
@@ -315,7 +317,7 @@ fn process_mount_spawn(
                             chunk,
                             instance_guid,
                             characters_table_read_handle,
-                        )?;
+                        );
                         Ok(vec![
                             Broadcast::Multi(all_players_nearby, packets),
                             Broadcast::Single(

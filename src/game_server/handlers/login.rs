@@ -133,10 +133,7 @@ pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, P
     )
 }
 
-pub fn log_out(
-    sender: u32,
-    game_server: &GameServer,
-) -> Result<Vec<Broadcast>, ProcessPacketError> {
+pub fn log_out(sender: u32, game_server: &GameServer) -> Vec<Broadcast> {
     game_server.lock_enforcer().write_characters(
         |characters_table_write_handle, minigame_data_lock_enforcer| {
             let zones_lock_enforcer: ZoneLockEnforcer<'_> = minigame_data_lock_enforcer.into();
@@ -144,7 +141,7 @@ pub fn log_out(
             let Some((character, (_, instance_guid, chunk), ..)) =
                 characters_table_write_handle.remove(player_guid(sender))
             else {
-                return Ok(Vec::new());
+                return Vec::new();
             };
 
             let other_players_nearby = ZoneInstance::other_players_nearby(
@@ -152,7 +149,7 @@ pub fn log_out(
                 chunk,
                 instance_guid,
                 characters_table_write_handle,
-            )?;
+            );
 
             let remove_packets = character
                 .read()
@@ -167,7 +164,7 @@ pub fn log_out(
                 );
             });
 
-            Ok(vec![Broadcast::Multi(other_players_nearby, remove_packets)])
+            vec![Broadcast::Multi(other_players_nearby, remove_packets)]
         },
     )
 }

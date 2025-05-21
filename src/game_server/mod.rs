@@ -199,10 +199,10 @@ impl GameServer {
     }
 
     pub fn log_out(&self, sender: u32) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        log_out(sender, self)
+        Ok(log_out(sender, self))
     }
 
-    pub fn tick(&self) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    pub fn tick(&self) -> Vec<Broadcast> {
         let now = Instant::now();
         let tickable_characters_by_chunk = self.tickable_characters_by_chunk();
 
@@ -219,12 +219,12 @@ impl GameServer {
                 chunk,
                 tickable_characters,
                 &mut broadcasts,
-            )?;
+            );
         }
 
-        broadcasts.append(&mut self.tick_minigame_groups()?);
+        broadcasts.append(&mut self.tick_minigame_groups());
 
-        Ok(broadcasts)
+        broadcasts
     }
 
     pub fn process_packet(
@@ -374,7 +374,7 @@ impl GameServer {
                                                 sender, instance_guid)));
                                         };
 
-                                        let mut sender_only_character_packets = zone.send_self_on_client_ready()?;
+                                        let mut sender_only_character_packets = zone.send_self_on_client_ready();
 
                                         let stats = TunneledPacket {
                                             unknown1: true,
@@ -470,15 +470,15 @@ impl GameServer {
                                                     player.active_battle_class,
                                                     character_write_handle.stats.wield_type(),
                                                     self
-                                                )?);
+                                                ));
                                             }
                                         }
 
-                                        let all_players_nearby = ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_read_handle)?;
+                                        let all_players_nearby = ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_read_handle);
                                         character_broadcasts.push(Broadcast::Multi(all_players_nearby, global_packets));
 
                                         character_broadcasts.push(Broadcast::Single(sender, sender_only_character_packets));
-                                        character_broadcasts.append(&mut ZoneInstance::diff_character_broadcasts(player_guid(sender), character_diffs, &characters_read, self.mounts(), self.items(), self.customizations())?);
+                                        character_broadcasts.append(&mut ZoneInstance::diff_character_broadcasts(player_guid(sender), character_diffs, &characters_read, self.mounts(), self.items(), self.customizations()));
 
                                         Ok(character_broadcasts)
                                     },
@@ -632,7 +632,7 @@ impl GameServer {
                                         let spawn_pos = zone.default_spawn_pos;
                                         let spawn_rot = zone.default_spawn_rot;
 
-                                        teleport_within_zone(sender, spawn_pos, spawn_rot)
+                                        Ok(teleport_within_zone(sender, spawn_pos, spawn_rot))
                                     },
                                 })
                             },
@@ -664,7 +664,7 @@ impl GameServer {
                             character_write_handle.brandish_or_holster();
 
                             let (_, instance_guid, chunk) = character_write_handle.index1();
-                            let all_players_nearby = ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_read_handle)?;
+                            let all_players_nearby = ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_read_handle);
                             broadcasts.push(Broadcast::Multi(all_players_nearby, vec![
                                 GamePacket::serialize(&TunneledPacket {
                                     unknown1: true,
@@ -924,10 +924,9 @@ impl GameServer {
         chunk: Chunk,
         tickable_characters: Vec<u64>,
         broadcasts: &mut Vec<Broadcast>,
-    ) -> Result<(), ProcessPacketError> {
+    ) {
         self.lock_enforcer().read_characters(|characters_table_read_handle| {
-            let nearby_player_guids = ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_read_handle)
-                .unwrap_or_default();
+            let nearby_player_guids = ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_read_handle);
             let nearby_players: Vec<u64> = nearby_player_guids.iter()
                 .map(|guid| *guid as u64)
                 .collect();
@@ -993,14 +992,12 @@ impl GameServer {
                             &mut tickable_character.tick(now, &nearby_player_guids, &characters_read, self.mounts(), self.items(), self.customizations()),
                         );
                     }
-
-                    Ok(())
                 },
             }
         })
     }
 
-    fn tick_minigame_groups(&self) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    fn tick_minigame_groups(&self) -> Vec<Broadcast> {
         let now = Instant::now();
         self.lock_enforcer().write_characters(
             |characters_table_write_handle, minigame_data_lock_enforcer| {
@@ -1050,7 +1047,7 @@ impl GameServer {
                                     None,
                                     self,
                                 ));
-                                return Ok::<(), ProcessPacketError>(());
+                                return;
                             } else if players_in_group.len() == 1 {
                                 if let Some(replacement_stage_locator) = &stage.stage_config.single_player_stage_guid() {
                                     if let Some(replacement_stage) = self
@@ -1066,7 +1063,7 @@ impl GameServer {
                                                 Some(44218),
                                                 self,
                                             ));
-                                            return Ok::<(), ProcessPacketError>(());
+                                            return;
                                         } else {
                                             info!(
                                                 "Replacement stage (stage group {}, stage {}) for (stage group {}, stage {}) isn't single-player",
@@ -1089,7 +1086,7 @@ impl GameServer {
                             }
 
                             for player in players_in_group {
-                                broadcasts.append(&mut remove_from_matchmaking(
+                                let remove_result = remove_from_matchmaking(
                                     player,
                                     stage_group_guid,
                                     stage_guid,
@@ -1098,15 +1095,18 @@ impl GameServer {
                                     false,
                                     Some(33781),
                                     self,
-                                )?);
-                            }
+                                );
 
-                            Ok::<(), ProcessPacketError>(())
-                        })?
+                                match remove_result {
+                                    Ok(mut remove_broadcasts) => broadcasts.append(&mut remove_broadcasts),
+                                    Err(err) => info!("Unable to remove player {} from matchmaking on tick: {}", player, err),
+                                }
+                            }
+                        })
                     }
                 }
 
-                Ok(broadcasts)
+                broadcasts
             },
         )
     }
