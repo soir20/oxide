@@ -253,7 +253,7 @@ fn process_unequip_slot(
                 );
 
                 let (_, instance_guid, chunk) = character_write_handle.index1();
-                let all_players_nearby = ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_read_handle)?;
+                let all_players_nearby = ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_read_handle);
                 broadcasts.push(Broadcast::Multi(all_players_nearby, all_player_packets));
 
                 Ok(broadcasts)
@@ -281,7 +281,7 @@ fn process_equip_guid(
                     game_server,
                     None,
                 )
-                .and_then(|(mut broadcasts, _)| {
+                .map(|(mut broadcasts, _)| {
                     if equip_guid.slot.is_saber() {
                         if let Some(character_write_handle) =
                             characters_write.get(&player_guid(sender))
@@ -302,13 +302,13 @@ fn process_equip_guid(
                                         player.active_battle_class,
                                         character_write_handle.stats.wield_type(),
                                         game_server,
-                                    )?);
+                                    ));
                                 }
                             }
                         }
                     }
 
-                    Ok(broadcasts)
+                    broadcasts
                 })
             },
         })
@@ -494,7 +494,7 @@ fn process_equip_customization(
                     chunk,
                     instance_guid,
                     characters_table_read_handle,
-                )?;
+                );
 
                 Ok(vec![
                     Broadcast::Multi(
@@ -560,7 +560,7 @@ pub fn update_saber_tints<'a>(
     battle_class: u32,
     wield_type: WieldType,
     game_server: &GameServer,
-) -> Result<Vec<Broadcast>, ProcessPacketError> {
+) -> Vec<Broadcast> {
     let mut sender_only_packets = Vec::new();
     let mut nearby_player_packets = Vec::new();
 
@@ -655,11 +655,11 @@ pub fn update_saber_tints<'a>(
         chunk,
         instance_guid,
         characters_table_handle,
-    )?;
-    Ok(vec![
+    );
+    vec![
         Broadcast::Single(sender, sender_only_packets),
         Broadcast::Multi(other_players_nearby, nearby_player_packets),
-    ])
+    ]
 }
 
 fn equip_item_in_slot<'a>(
@@ -860,7 +860,7 @@ fn equip_item_in_slot<'a>(
         chunk,
         instance_guid,
         characters_table_handle,
-    )?;
+    );
     let mut broadcasts = vec![
         Broadcast::Single(sender, sender_only_packets),
         Broadcast::Multi(nearby_players.clone(), other_player_packets),

@@ -64,7 +64,7 @@ pub fn process_chat_packet(
                                         chunk,
                                         instance_guid,
                                         characters_table_read_handle,
-                                    )?;
+                                    );
                                     Ok(vec![Broadcast::Multi(
                                         all_players_nearby,
                                         vec![GamePacket::serialize(&TunneledPacket {
