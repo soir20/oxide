@@ -617,10 +617,10 @@ impl ZoneInstance {
                             mount_configs,
                             item_definitions,
                             customizations,
-                        )?);
+                        ));
                     } else {
                         diff_packets
-                            .append(&mut character.stats.remove_packets(RemovalMode::default())?);
+                            .append(&mut character.stats.remove_packets(RemovalMode::default()));
                     }
                 }
             }
@@ -636,13 +636,13 @@ impl ZoneInstance {
                     mount_configs,
                     item_definitions,
                     customizations,
-                )?,
+                ),
             ));
             broadcasts.push(Broadcast::Multi(
                 character_diffs.players_too_far_from_moved_character,
                 moved_character_read_handle
                     .stats
-                    .remove_packets(RemovalMode::default())?,
+                    .remove_packets(RemovalMode::default()),
             ));
         }
 
@@ -866,7 +866,7 @@ impl ZoneInstance {
                                 previous_other_players_nearby,
                                 moved_character_write_handle
                                     .stats
-                                    .remove_packets(RemovalMode::default())?,
+                                    .remove_packets(RemovalMode::default()),
                             ));
 
                             // Move the character
@@ -896,7 +896,7 @@ impl ZoneInstance {
                                     game_server.mounts(),
                                     game_server.items(),
                                     game_server.customizations(),
-                                )?;
+                                );
                             new_chunk_packets.push(GamePacket::serialize(&TunneledPacket {
                                 unknown1: true,
                                 inner: full_update_packet,
@@ -1016,7 +1016,7 @@ pub fn enter_zone(
                     other_players_nearby,
                     character_write_handle
                         .stats
-                        .remove_packets(RemovalMode::default())?,
+                        .remove_packets(RemovalMode::default()),
                 ));
 
                 let previous_zone_template_guid =

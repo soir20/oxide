@@ -157,7 +157,7 @@ pub fn log_out(
             let remove_packets = character
                 .read()
                 .stats
-                .remove_packets(RemovalMode::default())?;
+                .remove_packets(RemovalMode::default());
 
             zones_lock_enforcer.write_zones(|zones_table_write_handle| {
                 clean_up_zone_if_no_players(
