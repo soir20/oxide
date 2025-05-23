@@ -2310,6 +2310,8 @@ pub fn leave_active_minigame_if_any(
                     game_server,
                 )
             });
+
+            // Don't error for this player if there's an issue with another player
             match leave_result {
                 Ok(mut leave_broadcasts) => broadcasts.append(&mut leave_broadcasts),
                 Err(err) => info!("Unable to remove player {} from minigame (stage group {}, stage {}) that does not have enough players: {}", member_guid, group.stage_group_guid, group.stage_guid, err),
