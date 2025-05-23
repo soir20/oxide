@@ -719,7 +719,7 @@ pub struct AddNpc {
     pub attachments: Vec<Attachment>,
     pub hostility: Hostility,
     pub unknown10: u32,
-    pub texture_name: String,
+    pub texture_alias: String,
     pub tint_name: String,
     pub tint_id: u32,
     pub unknown11: bool,

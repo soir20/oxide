@@ -431,7 +431,7 @@ pub fn spawn_mount_npc(
                 attachments: vec![],
                 hostility: Hostility::Neutral,
                 unknown10: 0,
-                texture_name: mount.texture.clone(),
+                texture_alias: mount.texture.clone(),
                 tint_name: "".to_string(),
                 tint_id: 0,
                 unknown11: true,

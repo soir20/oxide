@@ -134,6 +134,8 @@ pub struct BaseNpcConfig {
     #[serde(default)]
     pub model_id: u32,
     #[serde(default)]
+    pub texture_alias: String,
+    #[serde(default)]
     pub name_id: u32,
     #[serde(default)]
     pub terrain_object_id: u32,
@@ -183,6 +185,7 @@ pub struct BaseNpcConfig {
 #[derive(Clone)]
 pub struct BaseNpc {
     pub model_id: u32,
+    pub texture_alias: String,
     pub name_id: u32,
     pub terrain_object_id: u32,
     pub name_offset_x: f32,
@@ -225,7 +228,7 @@ impl BaseNpc {
                 attachments: vec![],
                 hostility: Hostility::Neutral,
                 unknown10: 1,
-                texture_name: "".to_string(),
+                texture_alias: self.texture_alias.clone(),
                 tint_name: "".to_string(),
                 tint_id: 0,
                 unknown11: true,
@@ -322,6 +325,7 @@ impl From<BaseNpcConfig> for BaseNpc {
     fn from(value: BaseNpcConfig) -> Self {
         BaseNpc {
             model_id: value.model_id,
+            texture_alias: value.texture_alias,
             name_id: value.name_id,
             terrain_object_id: value.terrain_object_id,
             name_offset_x: value.name_offset_x,
@@ -1374,7 +1378,7 @@ pub struct PreviousFixture {
     pub scale: f32,
     pub item_def_id: u32,
     pub model_id: u32,
-    pub texture_name: String,
+    pub texture_alias: String,
 }
 
 impl PreviousFixture {
@@ -1382,7 +1386,7 @@ impl PreviousFixture {
         CurrentFixture {
             item_def_id: self.item_def_id,
             model_id: self.model_id,
-            texture_name: self.texture_name.clone(),
+            texture_alias: self.texture_alias.clone(),
         }
     }
 }
@@ -1391,7 +1395,7 @@ impl PreviousFixture {
 pub struct CurrentFixture {
     pub item_def_id: u32,
     pub model_id: u32,
-    pub texture_name: String,
+    pub texture_alias: String,
 }
 
 #[derive(Clone)]
