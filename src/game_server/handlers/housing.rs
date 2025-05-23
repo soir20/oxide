@@ -168,7 +168,7 @@ pub fn fixture_packets(
                 attachments: vec![],
                 hostility: Hostility::Neutral,
                 unknown10: 0,
-                texture_name: fixture.texture_name.clone(),
+                texture_alias: fixture.texture_alias.clone(),
                 tint_name: "".to_string(),
                 tint_id: 0,
                 unknown11: true,
@@ -547,7 +547,7 @@ pub fn lookup_house(sender: u32, house_guid: u64) -> Result<House, ProcessPacket
                 scale: 1.0,
                 item_def_id: 6,
                 model_id: 1417,
-                texture_name: "".to_string(),
+                texture_alias: "".to_string(),
             },
             PreviousFixture {
                 pos: Pos {
@@ -565,7 +565,7 @@ pub fn lookup_house(sender: u32, house_guid: u64) -> Result<House, ProcessPacket
                 scale: 1.0,
                 item_def_id: 7,
                 model_id: 1419,
-                texture_name: "".to_string(),
+                texture_alias: "".to_string(),
             },
             PreviousFixture {
                 pos: Pos {
@@ -583,7 +583,7 @@ pub fn lookup_house(sender: u32, house_guid: u64) -> Result<House, ProcessPacket
                 scale: 1.0,
                 item_def_id: 7,
                 model_id: 1419,
-                texture_name: "".to_string(),
+                texture_alias: "".to_string(),
             },
             PreviousFixture {
                 pos: Pos {
@@ -601,7 +601,7 @@ pub fn lookup_house(sender: u32, house_guid: u64) -> Result<House, ProcessPacket
                 scale: 1.0,
                 item_def_id: 8,
                 model_id: 1420,
-                texture_name: "".to_string(),
+                texture_alias: "".to_string(),
             },
             PreviousFixture {
                 pos: Pos {
@@ -619,7 +619,7 @@ pub fn lookup_house(sender: u32, house_guid: u64) -> Result<House, ProcessPacket
                 scale: 1.0,
                 item_def_id: 9,
                 model_id: 1418,
-                texture_name: "".to_string(),
+                texture_alias: "".to_string(),
             },
             PreviousFixture {
                 pos: Pos {
@@ -637,7 +637,7 @@ pub fn lookup_house(sender: u32, house_guid: u64) -> Result<House, ProcessPacket
                 scale: 1.0,
                 item_def_id: 9,
                 model_id: 1418,
-                texture_name: "".to_string(),
+                texture_alias: "".to_string(),
             },
             PreviousFixture {
                 pos: Pos {
@@ -655,7 +655,7 @@ pub fn lookup_house(sender: u32, house_guid: u64) -> Result<House, ProcessPacket
                 scale: 1.0,
                 item_def_id: 9,
                 model_id: 1418,
-                texture_name: "".to_string(),
+                texture_alias: "".to_string(),
             },
             PreviousFixture {
                 pos: Pos {
@@ -673,7 +673,7 @@ pub fn lookup_house(sender: u32, house_guid: u64) -> Result<House, ProcessPacket
                 scale: 1.0,
                 item_def_id: 9,
                 model_id: 1418,
-                texture_name: "".to_string(),
+                texture_alias: "".to_string(),
             },
             PreviousFixture {
                 pos: Pos {
@@ -691,7 +691,7 @@ pub fn lookup_house(sender: u32, house_guid: u64) -> Result<House, ProcessPacket
                 scale: 1.0,
                 item_def_id: 10,
                 model_id: 1416,
-                texture_name: "".to_string(),
+                texture_alias: "".to_string(),
             },
             PreviousFixture {
                 pos: Pos {
@@ -709,7 +709,7 @@ pub fn lookup_house(sender: u32, house_guid: u64) -> Result<House, ProcessPacket
                 scale: 1.0,
                 item_def_id: 10,
                 model_id: 1416,
-                texture_name: "".to_string(),
+                texture_alias: "".to_string(),
             },
             PreviousFixture {
                 pos: Pos {
@@ -727,7 +727,7 @@ pub fn lookup_house(sender: u32, house_guid: u64) -> Result<House, ProcessPacket
                 scale: 1.0,
                 item_def_id: 10,
                 model_id: 1416,
-                texture_name: "".to_string(),
+                texture_alias: "".to_string(),
             },
             PreviousFixture {
                 pos: Pos {
@@ -745,7 +745,7 @@ pub fn lookup_house(sender: u32, house_guid: u64) -> Result<House, ProcessPacket
                 scale: 1.0,
                 item_def_id: 10,
                 model_id: 1416,
-                texture_name: "".to_string(),
+                texture_alias: "".to_string(),
             },
         ],
         build_areas: vec![BuildArea {
