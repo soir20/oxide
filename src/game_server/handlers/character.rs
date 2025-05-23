@@ -228,7 +228,7 @@ impl BaseNpc {
                 attachments: vec![],
                 hostility: Hostility::Neutral,
                 unknown10: 1,
-                texture_alias: "".to_string(),
+                texture_alias: self.texture_alias.clone(),
                 tint_name: "".to_string(),
                 tint_id: 0,
                 unknown11: true,
