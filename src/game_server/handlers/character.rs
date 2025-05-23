@@ -1171,8 +1171,7 @@ pub struct BattleClass {
 
 #[derive(Clone)]
 pub struct MinigameStatus {
-    pub stage_group_guid: i32,
-    pub stage_guid: i32,
+    pub group: CharacterMatchmakingGroupIndex,
     pub game_created: bool,
     pub game_won: bool,
     pub score_entries: Vec<ScoreEntry>,
@@ -1202,7 +1201,6 @@ pub struct Player {
     pub inventory: BTreeSet<u32>,
     pub customizations: BTreeMap<CustomizationSlot, u32>,
     pub minigame_stats: PlayerMinigameStats,
-    pub matchmaking_group: Option<CharacterMatchmakingGroupIndex>,
     pub minigame_status: Option<MinigameStatus>,
     pub update_previous_location_on_leave: bool,
     pub previous_location: PreviousLocation,
@@ -1506,7 +1504,15 @@ pub type Chunk = (i32, i32);
 pub type CharacterLocationIndex = (CharacterCategory, u64, Chunk);
 pub type CharacterNameIndex = String;
 pub type CharacterSquadIndex = u64;
-pub type CharacterMatchmakingGroupIndex = (MatchmakingGroupStatus, i32, i32, Instant, u32);
+
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub struct CharacterMatchmakingGroupIndex {
+    pub status: MatchmakingGroupStatus,
+    pub stage_group_guid: i32,
+    pub stage_guid: i32,
+    pub creation_time: Instant,
+    pub owner_guid: u32,
+}
 
 #[derive(Clone)]
 pub struct CharacterStat {
@@ -1692,7 +1698,9 @@ impl
 
     fn index4(&self) -> Option<CharacterMatchmakingGroupIndex> {
         match &self.stats.character_type {
-            CharacterType::Player(player) => player.matchmaking_group,
+            CharacterType::Player(player) => {
+                player.minigame_status.as_ref().map(|status| status.group)
+            }
             _ => None,
         }
     }
