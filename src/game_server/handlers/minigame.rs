@@ -1037,7 +1037,6 @@ pub fn process_minigame_packet(
                 handle_request_create_active_minigame(request, sender, game_server)
             }
             MinigameOpCode::RequestStartActiveMinigame => {
-                info!("START MINIGAME!");
                 let request = RequestStartActiveMinigame::deserialize(cursor)?;
                 handle_request_start_active_minigame(request, sender, game_server)
             }
