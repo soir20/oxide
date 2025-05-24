@@ -1026,20 +1026,22 @@ impl GameServer {
                             .map(|CharacterMatchmakingGroupIndex { creation_time, owner_guid, .. }| (*creation_time, *owner_guid))
                             .collect();
                         for (creation_time, owner_guid) in timed_out_groups {
+                            let matchmaking_group = CharacterMatchmakingGroupIndex {
+                                status: MatchmakingGroupStatus::OpenToAll,
+                                stage_group_guid,
+                                stage_guid,
+                                creation_time,
+                                owner_guid,
+                            };
                             let players_in_group: Vec<u32> = characters_table_write_handle
-                                .keys_by_index4(&CharacterMatchmakingGroupIndex {
-                                    status: MatchmakingGroupStatus::OpenToAll,
-                                    stage_group_guid,
-                                    stage_guid,
-                                    creation_time,
-                                    owner_guid,
-                                })
+                                .keys_by_index4(&matchmaking_group)
                                 .filter_map(|guid| shorten_player_guid(guid).ok())
                                 .collect();
 
                             zones_lock_enforcer.write_zones(|zones_table_write_handle| {
                                 if players_in_group.len() as u32 >= min_players {
                                     broadcasts.append(&mut prepare_active_minigame_instance(
+                                        matchmaking_group,
                                         &players_in_group,
                                         &stage,
                                         characters_table_write_handle,
@@ -1057,6 +1059,7 @@ impl GameServer {
                                         {
                                             if replacement_stage.stage_config.min_players() == 1 {
                                                 broadcasts.append(&mut prepare_active_minigame_instance(
+                                                    matchmaking_group,
                                                     &players_in_group,
                                                     &replacement_stage,
                                                     characters_table_write_handle,

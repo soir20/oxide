@@ -152,7 +152,9 @@ impl Guid<CharacterMatchmakingGroupIndex> for SharedMinigameData {
 
 #[non_exhaustive]
 #[derive(Clone)]
-pub enum SharedMinigameTypeData {}
+pub enum SharedMinigameTypeData {
+    None,
+}
 
 const CHALLENGE_LINK_NAME: &str = "challenge";
 const GROUP_LINK_NAME: &str = "group";
@@ -1242,7 +1244,7 @@ fn handle_request_create_active_minigame(
                 |minigame_data_table_write_handle, zones_lock_enforcer| {
                     zones_lock_enforcer.write_zones(|zones_table_write_handle| {
                         if stage_config.stage_config.max_players() == 1 {
-                            let group = CharacterMatchmakingGroupIndex {
+                            let matchmaking_group = CharacterMatchmakingGroupIndex {
                                 status: MatchmakingGroupStatus::Closed,
                                 stage_group_guid: stage_config.stage_group_guid,
                                 stage_guid: stage_config.stage_config.guid(),
@@ -1251,12 +1253,13 @@ fn handle_request_create_active_minigame(
                             };
                             set_initial_minigame_status(
                                 sender,
-                                group,
+                                matchmaking_group,
                                 characters_table_write_handle,
                                 &stage_config,
                             )?;
 
                             Ok(prepare_active_minigame_instance(
+                                matchmaking_group,
                                 &[sender],
                                 &stage_config,
                                 characters_table_write_handle,
@@ -1318,6 +1321,7 @@ fn handle_request_create_active_minigame(
                                     .filter_map(|guid| shorten_player_guid(guid).ok())
                                     .collect();
                                 broadcasts.append(&mut prepare_active_minigame_instance(
+                                    open_group,
                                     &players_in_group,
                                     &stage_config,
                                     characters_table_write_handle,
@@ -1430,6 +1434,7 @@ pub fn remove_from_matchmaking(
 }
 
 pub fn prepare_active_minigame_instance(
+    matchmaking_group: CharacterMatchmakingGroupIndex,
     members: &[u32],
     stage_config: &StageConfigRef,
     characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
@@ -1547,6 +1552,11 @@ pub fn prepare_active_minigame_instance(
             }
         }
     }
+
+    minigame_data_table_write_handle.insert(SharedMinigameData {
+        guid: matchmaking_group,
+        data: SharedMinigameTypeData::None,
+    });
 
     // Don't return a result here so that we properly handle updates for all players in the group, rather than returning early
     broadcasts
