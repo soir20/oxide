@@ -2343,13 +2343,22 @@ pub fn leave_active_minigame_if_any(
         return Ok(Vec::new());
     }
 
-    let mut broadcasts = leave_active_minigame_single_player_if_any(
+    let mut broadcasts = Vec::new();
+
+    let leave_result = leave_active_minigame_single_player_if_any(
         sender,
         characters_table_write_handle,
         zones_table_write_handle,
         &stage_config,
         game_server,
-    )?;
+    );
+    match leave_result {
+        Ok(mut leave_broadcasts) => broadcasts.append(&mut leave_broadcasts),
+        Err(err) => info!(
+            "Unable to remove player {} from minigame (stage group {}, stage {}): {}",
+            sender, group.stage_group_guid, group.stage_guid, err
+        ),
+    }
 
     let remaining_players = characters_table_write_handle.keys_by_index4(&group).count() as u32;
     if remaining_players < stage_config.min_players() {
@@ -2357,20 +2366,21 @@ pub fn leave_active_minigame_if_any(
             .keys_by_index4(&group)
             .collect();
         for member_guid in member_guids {
-            let leave_result = shorten_player_guid(member_guid).and_then(|short_member_guid| {
-                leave_active_minigame_single_player_if_any(
-                    short_member_guid,
-                    characters_table_write_handle,
-                    zones_table_write_handle,
-                    &stage_config,
-                    game_server,
-                )
-            });
+            let other_player_leave_result =
+                shorten_player_guid(member_guid).and_then(|short_member_guid| {
+                    leave_active_minigame_single_player_if_any(
+                        short_member_guid,
+                        characters_table_write_handle,
+                        zones_table_write_handle,
+                        &stage_config,
+                        game_server,
+                    )
+                });
 
             // Don't error for this player if there's an issue with another player
-            match leave_result {
+            match other_player_leave_result {
                 Ok(mut leave_broadcasts) => broadcasts.append(&mut leave_broadcasts),
-                Err(err) => info!("Unable to remove player {} from minigame (stage group {}, stage {}) that does not have enough players: {}", member_guid, group.stage_group_guid, group.stage_guid, err),
+                Err(err) => info!("Unable to remove other player {} from minigame (stage group {}, stage {}) that does not have enough players: {}", member_guid, group.stage_group_guid, group.stage_guid, err),
             }
         }
     }
