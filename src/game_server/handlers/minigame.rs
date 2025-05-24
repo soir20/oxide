@@ -44,7 +44,10 @@ use crate::{
 };
 
 use super::{
-    character::{CharacterMatchmakingGroupIndex, CharacterType, MatchmakingGroupStatus, Player},
+    character::{
+        CharacterMatchmakingGroupIndex, CharacterType, MatchmakingGroupStatus, MinigameJoinedState,
+        Player,
+    },
     guid::{Guid, GuidTableIndexer},
     item::SABER_ITEM_TYPE,
     lock_enforcer::{
@@ -1202,12 +1205,11 @@ fn set_initial_minigame_status(
 
             player.minigame_status = Some(MinigameStatus {
                 group,
-                game_created: false,
+                joined_state: MinigameJoinedState::NotCreated,
                 game_won: false,
                 score_entries: Vec::new(),
                 total_score: 0,
                 awarded_credits: 0,
-                start_time: Instant::now(),
                 type_data: MinigameTypeData::Empty,
             });
             Ok(())
@@ -1445,7 +1447,6 @@ pub fn prepare_active_minigame_instance(
         )?;
 
         let mut teleport_broadcasts = Vec::new();
-        let now = Instant::now();
         for member_guid in members {
             characters_table_write_handle.update_value_indices(player_guid(*member_guid), |possible_character_write_handle, _| {
                 let Some(character_write_handle) = possible_character_write_handle else {
@@ -1465,7 +1466,6 @@ pub fn prepare_active_minigame_instance(
                 };
 
                 minigame_status.group.status = MatchmakingGroupStatus::Closed;
-                minigame_status.start_time = now;
                 minigame_status.type_data = stage_config.stage_config.minigame_type().into();
                 Ok(())
             })?;
@@ -1691,6 +1691,7 @@ pub fn handle_minigame_packet_write<T: Default>(
         &mut PlayerMinigameStats,
         &mut u32,
         StageConfigRef,
+        Instant,
     ) -> Result<T, ProcessPacketError>,
 ) -> Result<T, ProcessPacketError> {
     game_server.lock_enforcer().read_characters(|_| CharacterLockRequest {
@@ -1728,7 +1729,11 @@ pub fn handle_minigame_packet_write<T: Default>(
                 return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process Flash payload for {}'s active minigame with stage config {} (stage group {}) that does not exist", sender, minigame_status.group.stage_guid, minigame_status.group.stage_group_guid)));
             };
 
-            func(minigame_status, &mut player.minigame_stats, &mut player.credits, stage_config_ref)
+            let MinigameJoinedState::Joined(joined_time) = minigame_status.joined_state else {
+                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Cannot process Flash payload for {}'s active minigame (stage {}) that they haven't joined", sender, minigame_status.group.stage_guid)))
+            };
+
+            func(minigame_status, &mut player.minigame_stats, &mut player.credits, stage_config_ref, joined_time)
         },
     })
 }
@@ -1737,7 +1742,7 @@ fn handle_flash_payload_read_only<T: Default>(
     sender: u32,
     game_server: &GameServer,
     header: &MinigameHeader,
-    func: impl FnOnce(&MinigameStatus, StageConfigRef) -> Result<T, ProcessPacketError>,
+    func: impl FnOnce(&MinigameStatus, StageConfigRef, Instant) -> Result<T, ProcessPacketError>,
 ) -> Result<T, ProcessPacketError> {
     game_server.lock_enforcer().read_characters(|_| CharacterLockRequest {
         read_guids: vec![player_guid(sender)],
@@ -1774,7 +1779,11 @@ fn handle_flash_payload_read_only<T: Default>(
                 return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process Flash payload for {}'s active minigame with stage config {} (stage group {}) that does not exist", sender, minigame_status.group.stage_guid, minigame_status.group.stage_group_guid)));
             };
 
-            func(minigame_status, stage_config_ref)
+            let MinigameJoinedState::Joined(joined_time) = minigame_status.joined_state else {
+                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Cannot process Flash payload for {}'s active minigame (stage {}) that they haven't joined", sender, minigame_status.group.stage_guid)))
+            };
+
+            func(minigame_status, stage_config_ref, joined_time)
         },
     })
 }
@@ -1789,7 +1798,7 @@ fn handle_flash_payload_win(
         sender,
         game_server,
         &payload.header,
-        |minigame_status, minigame_stats, _, _| {
+        |minigame_status, minigame_stats, _, _, joined_time| {
             if parts.len() == 2 {
                 let total_score = parts[1].parse()?;
                 minigame_status.total_score = total_score;
@@ -1817,9 +1826,7 @@ fn handle_flash_payload_win(
                             },
                             payload: format!(
                                 "OnGamePlayTimeMsg\t{}",
-                                Instant::now()
-                                    .duration_since(minigame_status.start_time)
-                                    .as_millis()
+                                Instant::now().duration_since(joined_time).as_millis()
                             ),
                         },
                     })],
@@ -1852,7 +1859,7 @@ fn handle_flash_payload(
             sender,
             game_server,
             &payload.header,
-            |minigame_status, stage_config_ref| {
+            |minigame_status, stage_config_ref, _| {
                 Ok(vec![Broadcast::Single(
                     sender,
                     vec![GamePacket::serialize(&TunneledPacket {
@@ -1876,7 +1883,7 @@ fn handle_flash_payload(
             sender,
             game_server,
             &payload.header,
-            |minigame_status, _, _, _| {
+            |minigame_status, _, _, _, _| {
                 if parts.len() == 7 {
                     let icon_set_id = parts[2].parse()?;
                     let score_type = ScoreType::try_from_primitive(parts[3].parse()?)
@@ -1913,7 +1920,7 @@ fn handle_flash_payload(
             sender,
             game_server,
             &payload.header,
-            |minigame_status, _, player_credits, stage_config| {
+            |minigame_status, _, player_credits, stage_config, _| {
                 if parts.len() == 2 {
                     let round_score = parts[1].parse()?;
                     let (mut broadcasts, awarded_credits) = award_credits(
@@ -1956,7 +1963,7 @@ fn handle_flash_payload(
             sender,
             game_server,
             &payload.header,
-            |minigame_status, _, _, _| {
+            |minigame_status, _, _, _, _| {
                 if parts.len() == 2 {
                     let total_score = parts[1].parse()?;
                     minigame_status.total_score = total_score;
@@ -1988,7 +1995,7 @@ fn handle_flash_payload(
             sender,
             game_server,
             &payload.header,
-            |_, minigame_stats, _, _| {
+            |_, minigame_stats, _, _, _| {
                 if parts.len() == 3 {
                     let trophy_guid = parts[1].parse()?;
                     let delta = parts[2].parse()?;
@@ -2015,10 +2022,10 @@ fn handle_flash_payload(
     }
 }
 
-pub fn create_active_minigame(
+pub fn create_active_minigame_if_uncreated(
     sender: u32,
     minigames: &AllMinigameConfigs,
-    minigame_status: &MinigameStatus,
+    minigame_status: &mut MinigameStatus,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let Some(StageConfigRef {
         stage_config,
@@ -2037,6 +2044,11 @@ pub fn create_active_minigame(
             ),
         ));
     };
+
+    if minigame_status.joined_state != MinigameJoinedState::NotCreated {
+        return Ok(Vec::new());
+    }
+    minigame_status.joined_state = MinigameJoinedState::Created;
 
     Ok(vec![Broadcast::Single(
         sender,

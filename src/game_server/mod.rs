@@ -27,7 +27,7 @@ use handlers::lock_enforcer::{
 };
 use handlers::login::{log_in, log_out, send_points_of_interest};
 use handlers::minigame::{
-    create_active_minigame, load_all_minigames, prepare_active_minigame_instance,
+    create_active_minigame_if_uncreated, load_all_minigames, prepare_active_minigame_instance,
     process_minigame_packet, remove_from_matchmaking, AllMinigameConfigs,
 };
 use handlers::mount::{load_mounts, process_mount_packet, MountConfig};
@@ -283,14 +283,13 @@ impl GameServer {
                                     };
 
                                     if let Some(minigame_status) = &mut player.minigame_status {
-                                        if !minigame_status.game_created {
-                                            minigame_status.game_created = true;
-                                            broadcasts.append(&mut create_active_minigame(
+                                        broadcasts.append(
+                                            &mut create_active_minigame_if_uncreated(
                                                 sender,
                                                 self.minigames(),
                                                 minigame_status,
-                                            )?);
-                                        }
+                                            )?,
+                                        );
                                     }
 
                                     if player.first_load {

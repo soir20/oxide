@@ -1169,15 +1169,21 @@ pub struct BattleClass {
     pub items: BTreeMap<EquipmentSlot, EquippedItem>,
 }
 
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub enum MinigameJoinedState {
+    NotCreated,
+    Created,
+    Joined(Instant),
+}
+
 #[derive(Clone)]
 pub struct MinigameStatus {
     pub group: CharacterMatchmakingGroupIndex,
-    pub game_created: bool,
+    pub joined_state: MinigameJoinedState,
     pub game_won: bool,
     pub score_entries: Vec<ScoreEntry>,
     pub total_score: i32,
     pub awarded_credits: u32,
-    pub start_time: Instant,
     pub type_data: MinigameTypeData,
 }
 
