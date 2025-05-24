@@ -1,13 +1,17 @@
 use packet_serialize::NullTerminatedString;
 
-use crate::game_server::{
-    packets::{
-        login::{DefinePointsOfInterest, DeploymentEnv, GameSettings, LoginReply},
-        player_update::ItemDefinitionsReply,
-        tunnel::TunneledPacket,
-        GamePacket,
+use crate::{
+    game_server::{
+        handlers::minigame::leave_active_minigame_if_any,
+        packets::{
+            login::{DefinePointsOfInterest, DeploymentEnv, GameSettings, LoginReply},
+            player_update::ItemDefinitionsReply,
+            tunnel::TunneledPacket,
+            GamePacket,
+        },
+        Broadcast, GameServer, ProcessPacketError,
     },
-    Broadcast, GameServer, ProcessPacketError,
+    info,
 };
 
 use super::{
@@ -133,37 +137,60 @@ pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, P
 }
 
 pub fn log_out(sender: u32, game_server: &GameServer) -> Vec<Broadcast> {
+    info!("Logging out player {}", sender);
     game_server.lock_enforcer().write_characters(
         |characters_table_write_handle, minigame_data_lock_enforcer| {
-            let zones_lock_enforcer: ZoneLockEnforcer<'_> = minigame_data_lock_enforcer.into();
+            minigame_data_lock_enforcer.write_minigame_data(
+                |minigame_data_write_handle, zones_lock_enforcer| {
+                    zones_lock_enforcer.write_zones(|zones_table_write_handle| {
+                        let mut broadcasts = Vec::new();
 
-            let Some((character, (_, instance_guid, chunk), ..)) =
-                characters_table_write_handle.remove(player_guid(sender))
-            else {
-                return Vec::new();
-            };
+                        let leave_minigame_result = leave_active_minigame_if_any(
+                            sender,
+                            characters_table_write_handle,
+                            minigame_data_write_handle,
+                            zones_table_write_handle,
+                            None,
+                            false,
+                            game_server,
+                        );
+                        match leave_minigame_result {
+                            Ok(mut leave_minigame_broadcasts) => {
+                                info!("Removing player {} from minigame because they logged out", sender);
+                                broadcasts.append(&mut leave_minigame_broadcasts);
+                            },
+                            Err(err) => info!("Unable to remove player {} from minigame as they were logging out: {}", sender, err),
+                        }
 
-            let other_players_nearby = ZoneInstance::other_players_nearby(
-                Some(sender),
-                chunk,
-                instance_guid,
-                characters_table_write_handle,
-            );
+                        let Some((character, (_, instance_guid, chunk), ..)) =
+                            characters_table_write_handle.remove(player_guid(sender))
+                        else {
+                            return Vec::new();
+                        };
 
-            let remove_packets = character
-                .read()
-                .stats
-                .remove_packets(RemovalMode::default());
+                        let other_players_nearby = ZoneInstance::other_players_nearby(
+                            Some(sender),
+                            chunk,
+                            instance_guid,
+                            characters_table_write_handle,
+                        );
 
-            zones_lock_enforcer.write_zones(|zones_table_write_handle| {
-                clean_up_zone_if_no_players(
-                    instance_guid,
-                    characters_table_write_handle,
-                    zones_table_write_handle,
-                );
-            });
+                        let remove_packets = character
+                            .read()
+                            .stats
+                            .remove_packets(RemovalMode::default());
+                        broadcasts.push(Broadcast::Multi(other_players_nearby, remove_packets));
 
-            vec![Broadcast::Multi(other_players_nearby, remove_packets)]
+                        clean_up_zone_if_no_players(
+                            instance_guid,
+                            characters_table_write_handle,
+                            zones_table_write_handle,
+                        );
+
+                        broadcasts
+                    })
+                },
+            )
         },
     )
 }
