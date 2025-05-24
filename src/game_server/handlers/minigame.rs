@@ -1548,7 +1548,7 @@ pub fn prepare_active_minigame_instance(
         }
     }
 
-    // We don't want to return a `Result` because an error would disconnect the sender without disconnecting the group members
+    // Don't return a result here so that we properly handle updates for all players in the group, rather than returning early
     broadcasts
 }
 
