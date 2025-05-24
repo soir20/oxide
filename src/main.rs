@@ -81,6 +81,7 @@ macro_rules! debug {
 pub enum ConfigError {
     Io(Error),
     Deserialize(serde_yaml::Error),
+    ConstraintViolated(String),
 }
 
 impl From<Error> for ConfigError {

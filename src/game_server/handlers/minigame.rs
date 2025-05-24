@@ -965,6 +965,58 @@ impl From<Vec<MinigamePortalCategoryConfig>> for AllMinigameConfigs {
 pub fn load_all_minigames(config_dir: &Path) -> Result<AllMinigameConfigs, ConfigError> {
     let mut file = File::open(config_dir.join("minigames.yaml"))?;
     let configs: Vec<MinigamePortalCategoryConfig> = serde_yaml::from_reader(&mut file)?;
+
+    let mut portal_category_guids = BTreeSet::new();
+    let mut portal_entry_guids = BTreeSet::new();
+    let mut stage_group_guids = BTreeSet::new();
+    let mut stage_guids = BTreeSet::new();
+
+    for portal_category in configs.iter() {
+        if !portal_category_guids.insert(portal_category.guid) {
+            return Err(ConfigError::ConstraintViolated(format!(
+                "Two portal categories have GUID {}",
+                portal_category.guid
+            )));
+        }
+
+        for potral_entry in portal_category.portal_entries.iter() {
+            if !portal_entry_guids.insert(potral_entry.guid) {
+                return Err(ConfigError::ConstraintViolated(format!(
+                    "Two portal entries have GUID {}",
+                    potral_entry.guid
+                )));
+            }
+
+            if !stage_group_guids.insert(potral_entry.stage_group.guid) {
+                return Err(ConfigError::ConstraintViolated(format!(
+                    "Two stage groups have GUID {}",
+                    potral_entry.stage_group.guid
+                )));
+            }
+
+            for child in potral_entry.stage_group.stages.iter() {
+                match child {
+                    MinigameStageGroupChild::StageGroup(stage_group) => {
+                        if !stage_group_guids.insert(stage_group.guid) {
+                            return Err(ConfigError::ConstraintViolated(format!(
+                                "Two stage groups have GUID {}",
+                                stage_group.guid
+                            )));
+                        }
+                    }
+                    MinigameStageGroupChild::Stage(stage) => {
+                        if !stage_guids.insert(stage.guid) {
+                            return Err(ConfigError::ConstraintViolated(format!(
+                                "Two stages have GUID {}",
+                                stage.guid
+                            )));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     Ok(configs.into())
 }
 
@@ -1085,20 +1137,19 @@ fn find_matchmaking_group(
     stage_guid: i32,
     start_time: Instant,
 ) -> Option<(CharacterMatchmakingGroupIndex, u32)> {
-    let range = (
-        MatchmakingGroupStatus::OpenToAll,
+    let range = CharacterMatchmakingGroupIndex {
+        status: MatchmakingGroupStatus::OpenToAll,
         stage_group_guid,
         stage_guid,
-        start_time,
-        u32::MIN,
-    )
-        ..=(
-            MatchmakingGroupStatus::OpenToAll,
-            stage_group_guid,
-            stage_guid,
-            Instant::now(),
-            u32::MAX,
-        );
+        creation_time: start_time,
+        owner_guid: u32::MIN,
+    }..=CharacterMatchmakingGroupIndex {
+        status: MatchmakingGroupStatus::OpenToAll,
+        stage_group_guid,
+        stage_guid,
+        creation_time: Instant::now(),
+        owner_guid: u32::MAX,
+    };
     // Iterates from oldest group to newest groups, so groups waiting longer are prioritized first
     let mut group_to_join = None;
     for matchmaking_group in characters_table_write_handle.indices4_by_range(range) {
@@ -1114,6 +1165,54 @@ fn find_matchmaking_group(
     }
 
     group_to_join
+}
+
+fn set_initial_minigame_status(
+    sender: u32,
+    group: CharacterMatchmakingGroupIndex,
+    characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
+    stage_config: &StageConfigRef,
+) -> Result<(), ProcessPacketError> {
+    characters_table_write_handle.update_value_indices(
+        player_guid(sender),
+        |possible_character_write_handle, _| {
+            let Some(character_write_handle) = possible_character_write_handle else {
+                return Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Character {} requested to join a stage {} but does not exist",
+                        player_guid(sender),
+                        stage_config.stage_config.guid()
+                    ),
+                ));
+            };
+
+            let CharacterType::Player(ref mut player) =
+                &mut character_write_handle.stats.character_type
+            else {
+                return Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Character {} requested to join a stage {} but is not a player",
+                        player_guid(sender),
+                        stage_config.stage_config.guid()
+                    ),
+                ));
+            };
+
+            player.minigame_status = Some(MinigameStatus {
+                group,
+                game_created: false,
+                game_won: false,
+                score_entries: Vec::new(),
+                total_score: 0,
+                awarded_credits: 0,
+                start_time: Instant::now(),
+                type_data: MinigameTypeData::Empty,
+            });
+            Ok(())
+        },
+    )
 }
 
 fn handle_request_create_active_minigame(
@@ -1134,11 +1233,26 @@ fn handle_request_create_active_minigame(
         ));
     };
 
+    let now = Instant::now();
     game_server.lock_enforcer().write_characters(
         |characters_table_write_handle, minigame_data_lock_enforcer| {
             let zones_lock_enforcer: ZoneLockEnforcer<'_> = minigame_data_lock_enforcer.into();
             zones_lock_enforcer.write_zones(|zones_table_write_handle| {
                 if stage_config.stage_config.max_players() == 1 {
+                    let group = CharacterMatchmakingGroupIndex {
+                        status: MatchmakingGroupStatus::Closed,
+                        stage_group_guid: stage_config.stage_group_guid,
+                        stage_guid: stage_config.stage_config.guid(),
+                        creation_time: now,
+                        owner_guid: sender,
+                    };
+                    set_initial_minigame_status(
+                        sender,
+                        group,
+                        characters_table_write_handle,
+                        &stage_config,
+                    )?;
+
                     Ok(prepare_active_minigame_instance(
                         &[sender],
                         &stage_config,
@@ -1176,48 +1290,22 @@ fn handle_request_create_active_minigame(
                     )
                     .unwrap_or_else(|| {
                         (
-                            (
-                                MatchmakingGroupStatus::OpenToAll,
-                                stage_config.stage_group_guid,
-                                stage_config.stage_config.guid(),
-                                Instant::now(),
-                                sender,
-                            ),
+                            CharacterMatchmakingGroupIndex {
+                                status: MatchmakingGroupStatus::OpenToAll,
+                                stage_group_guid: stage_config.stage_group_guid,
+                                stage_guid: stage_config.stage_config.guid(),
+                                creation_time: now,
+                                owner_guid: sender,
+                            },
                             stage_config.stage_config.max_players(),
                         )
                     });
 
-                    characters_table_write_handle.update_value_indices(
-                        player_guid(sender),
-                        |possible_character_write_handle, _| {
-                            let Some(character_write_handle) = possible_character_write_handle
-                            else {
-                                return Err(ProcessPacketError::new(
-                                    ProcessPacketErrorType::ConstraintViolated,
-                                    format!(
-                                    "Character {} requested to join a stage {} but does not exist",
-                                    player_guid(sender),
-                                    stage_config.stage_config.guid()
-                                ),
-                                ));
-                            };
-
-                            let CharacterType::Player(ref mut player) =
-                                &mut character_write_handle.stats.character_type
-                            else {
-                                return Err(ProcessPacketError::new(
-                                    ProcessPacketErrorType::ConstraintViolated,
-                                    format!(
-                                    "Character {} requested to join a stage {} but is not a player",
-                                    player_guid(sender),
-                                    stage_config.stage_config.guid()
-                                ),
-                                ));
-                            };
-
-                            player.matchmaking_group = Some(open_group);
-                            Ok(())
-                        },
+                    set_initial_minigame_status(
+                        sender,
+                        open_group,
+                        characters_table_write_handle,
+                        &stage_config,
                     )?;
 
                     if space_left <= required_space {
@@ -1271,7 +1359,7 @@ pub fn remove_from_matchmaking(
         };
 
         let previous_location = player.previous_location.clone();
-        player.matchmaking_group = None;
+        player.minigame_status = None;
         Ok(previous_location)
     })?;
 
@@ -1372,20 +1460,13 @@ pub fn prepare_active_minigame_instance(
                     return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to create an active minigame for a stage {} they haven't unlocked", member_guid, stage_guid)));
                 }
 
-                player.minigame_status = Some(MinigameStatus {
-                    stage_group_guid,
-                    stage_guid,
-                    game_created: false,
-                    game_won: false,
-                    score_entries: vec![],
-                    total_score: 0,
-                    awarded_credits: 0,
-                    start_time: now,
-                    type_data: stage_config.stage_config.minigame_type().into(),
-                });
-                if let Some(group) = player.matchmaking_group.as_mut() {
-                    group.0 = MatchmakingGroupStatus::Closed;
-                }
+                let Some(minigame_status) = &mut player.minigame_status else {
+                    return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to create an active minigame, but their minigame status is not set", member_guid)));
+                };
+
+                minigame_status.group.status = MatchmakingGroupStatus::Closed;
+                minigame_status.start_time = now;
+                minigame_status.type_data = stage_config.stage_config.minigame_type().into();
                 Ok(())
             })?;
 
@@ -1486,21 +1567,21 @@ fn handle_request_start_active_minigame(
                 return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} requested to start an active minigame (stage {}), but they aren't in an active minigame", sender, request.header.stage_guid)));
             };
 
-            if request.header.stage_guid != minigame_status.stage_guid {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} requested to start an active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", sender, request.header.stage_guid, minigame_status.stage_group_guid, minigame_status.stage_guid)));
+            if request.header.stage_guid != minigame_status.group.stage_guid {
+                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} requested to start an active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", sender, request.header.stage_guid, minigame_status.group.stage_group_guid, minigame_status.group.stage_guid)));
             };
 
             let mut packets = Vec::new();
 
-            let Some(StageConfigRef {stage_config, ..}) = game_server.minigames().stage_config(minigame_status.stage_group_guid, minigame_status.stage_guid) else {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} requested to start active minigame with stage config {} (stage group {}) that does not exist", sender, minigame_status.stage_guid, minigame_status.stage_group_guid)));
+            let Some(StageConfigRef {stage_config, ..}) = game_server.minigames().stage_config(minigame_status.group.stage_group_guid, minigame_status.group.stage_guid) else {
+                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} requested to start active minigame with stage config {} (stage group {}) that does not exist", sender, minigame_status.group.stage_guid, minigame_status.group.stage_group_guid)));
             };
 
             let mut stage_group_instance =
-                game_server.minigames().stage_group_instance(minigame_status.stage_group_guid, player)?;
-            stage_group_instance.header.stage_guid = minigame_status.stage_guid;
+                game_server.minigames().stage_group_instance(minigame_status.group.stage_group_guid, player)?;
+            stage_group_instance.header.stage_guid = minigame_status.group.stage_guid;
             // The default stage instance must be set for the how-to button the options menu to work
-            stage_group_instance.default_stage_instance_guid = minigame_status.stage_guid;
+            stage_group_instance.default_stage_instance_guid = minigame_status.group.stage_guid;
 
             // Re-send the stage group instance to populate the stage data in the settings menu.
             // When we enter the Flash or 3D game HUD state, the current minigame group is cleared.
@@ -1538,9 +1619,9 @@ fn handle_request_start_active_minigame(
                             unknown1: true,
                             inner: SaberStrikeStageData {
                                 minigame_header: MinigameHeader {
-                                    stage_guid: minigame_status.stage_guid,
+                                    stage_guid: minigame_status.group.stage_guid,
                                     sub_op_code: SaberStrikeOpCode::StageData as i32,
-                                    stage_group_guid: minigame_status.stage_group_guid,
+                                    stage_group_guid: minigame_status.group.stage_group_guid,
                                 },
                                 saber_strike_stage_id: *saber_strike_stage_id,
                                 use_player_weapon: player.battle_classes.get(&player.active_battle_class)
@@ -1559,9 +1640,9 @@ fn handle_request_start_active_minigame(
                     unknown1: true,
                     inner: StartActiveMinigame {
                         header: MinigameHeader {
-                            stage_guid: minigame_status.stage_guid,
+                            stage_guid: minigame_status.group.stage_guid,
                             sub_op_code: -1,
-                            stage_group_guid: minigame_status.stage_group_guid,
+                            stage_group_guid: minigame_status.group.stage_group_guid,
                         },
                     },
                 }),
@@ -1637,14 +1718,14 @@ pub fn handle_minigame_packet_write<T: Default>(
                 return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process packet for {}'s active minigame (stage {}), but they aren't in an active minigame", sender, header.stage_guid)));
             };
 
-            if header.stage_guid != minigame_status.stage_guid {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process packet for {}'s active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", sender, header.stage_guid, minigame_status.stage_group_guid, minigame_status.stage_guid)));
+            if header.stage_guid != minigame_status.group.stage_guid {
+                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process packet for {}'s active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", sender, header.stage_guid, minigame_status.group.stage_group_guid, minigame_status.group.stage_guid)));
             };
 
             let Some(stage_config_ref) = game_server
                 .minigames()
-                .stage_config(minigame_status.stage_group_guid, minigame_status.stage_guid) else {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process Flash payload for {}'s active minigame with stage config {} (stage group {}) that does not exist", sender, minigame_status.stage_guid, minigame_status.stage_group_guid)));
+                .stage_config(minigame_status.group.stage_group_guid, minigame_status.group.stage_guid) else {
+                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process Flash payload for {}'s active minigame with stage config {} (stage group {}) that does not exist", sender, minigame_status.group.stage_guid, minigame_status.group.stage_group_guid)));
             };
 
             func(minigame_status, &mut player.minigame_stats, &mut player.credits, stage_config_ref)
@@ -1683,14 +1764,14 @@ fn handle_flash_payload_read_only<T: Default>(
                 return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process Flash payload for {}'s active minigame (stage {}), but they aren't in an active minigame", sender, header.stage_guid)));
             };
 
-            if header.stage_guid != minigame_status.stage_guid {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process Flash payload for {}'s active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", sender, header.stage_guid, minigame_status.stage_group_guid, minigame_status.stage_guid)));
+            if header.stage_guid != minigame_status.group.stage_guid {
+                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process Flash payload for {}'s active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", sender, header.stage_guid, minigame_status.group.stage_group_guid, minigame_status.group.stage_guid)));
             }
 
             let Some(stage_config_ref) = game_server
                 .minigames()
-                .stage_config(minigame_status.stage_group_guid, minigame_status.stage_guid) else {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process Flash payload for {}'s active minigame with stage config {} (stage group {}) that does not exist", sender, minigame_status.stage_guid, minigame_status.stage_group_guid)));
+                .stage_config(minigame_status.group.stage_group_guid, minigame_status.group.stage_guid) else {
+                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process Flash payload for {}'s active minigame with stage config {} (stage group {}) that does not exist", sender, minigame_status.group.stage_guid, minigame_status.group.stage_group_guid)));
             };
 
             func(minigame_status, stage_config_ref)
@@ -1722,7 +1803,7 @@ fn handle_flash_payload_win(
                 });
                 minigame_status.game_won = true;
 
-                minigame_stats.complete(minigame_status.stage_guid, total_score);
+                minigame_stats.complete(minigame_status.group.stage_guid, total_score);
 
                 Ok(vec![Broadcast::Single(
                     sender,
@@ -1730,9 +1811,9 @@ fn handle_flash_payload_win(
                         unknown1: true,
                         inner: FlashPayload {
                             header: MinigameHeader {
-                                stage_guid: minigame_status.stage_guid,
+                                stage_guid: minigame_status.group.stage_guid,
                                 sub_op_code: -1,
-                                stage_group_guid: minigame_status.stage_group_guid,
+                                stage_group_guid: minigame_status.group.stage_group_guid,
                             },
                             payload: format!(
                                 "OnGamePlayTimeMsg\t{}",
@@ -1778,9 +1859,9 @@ fn handle_flash_payload(
                         unknown1: true,
                         inner: FlashPayload {
                             header: MinigameHeader {
-                                stage_guid: minigame_status.stage_guid,
+                                stage_guid: minigame_status.group.stage_guid,
                                 sub_op_code: -1,
-                                stage_group_guid: minigame_status.stage_group_guid,
+                                stage_group_guid: minigame_status.group.stage_group_guid,
                             },
                             payload: format!(
                                 "VOnServerSetStageIdMsg\t{}",
@@ -1849,9 +1930,9 @@ fn handle_flash_payload(
                             unknown1: true,
                             inner: FlashPayload {
                                 header: MinigameHeader {
-                                    stage_guid: minigame_status.stage_guid,
+                                    stage_guid: minigame_status.group.stage_guid,
                                     sub_op_code: -1,
-                                    stage_group_guid: minigame_status.stage_group_guid,
+                                    stage_group_guid: minigame_status.group.stage_group_guid,
                                 },
                                 payload: format!("OnShowEndRoundScreenMsg\t{}", awarded_credits),
                             },
@@ -1943,13 +2024,16 @@ pub fn create_active_minigame(
         stage_config,
         portal_entry_guid,
         ..
-    }) = minigames.stage_config(minigame_status.stage_group_guid, minigame_status.stage_guid)
+    }) = minigames.stage_config(
+        minigame_status.group.stage_group_guid,
+        minigame_status.group.stage_guid,
+    )
     else {
         return Err(ProcessPacketError::new(
             ProcessPacketErrorType::ConstraintViolated,
             format!(
                 "Player {} requested creation of unknown stage {} (stage group {})",
-                sender, minigame_status.stage_guid, minigame_status.stage_group_guid
+                sender, minigame_status.group.stage_guid, minigame_status.group.stage_group_guid
             ),
         ));
     };
@@ -1961,9 +2045,9 @@ pub fn create_active_minigame(
                 unknown1: true,
                 inner: ActiveMinigameCreationResult {
                     header: MinigameHeader {
-                        stage_guid: minigame_status.stage_guid,
+                        stage_guid: minigame_status.group.stage_guid,
                         sub_op_code: -1,
-                        stage_group_guid: minigame_status.stage_group_guid,
+                        stage_group_guid: minigame_status.group.stage_group_guid,
                     },
                     was_successful: true,
                 },
@@ -1972,9 +2056,9 @@ pub fn create_active_minigame(
                 unknown1: true,
                 inner: CreateActiveMinigame {
                     header: MinigameHeader {
-                        stage_guid: minigame_status.stage_guid,
+                        stage_guid: minigame_status.group.stage_guid,
                         sub_op_code: -1,
-                        stage_group_guid: minigame_status.stage_group_guid,
+                        stage_group_guid: minigame_status.group.stage_group_guid,
                     },
                     name_id: stage_config.name_id(),
                     icon_set_id: stage_config.start_screen_icon_id(),
@@ -1996,7 +2080,7 @@ pub fn create_active_minigame(
                     unknown18: "".to_string(),
                     unknown19: 0,
                     unknown20: false,
-                    stage_definition_guid: minigame_status.stage_guid,
+                    stage_definition_guid: minigame_status.group.stage_guid,
                     unknown22: false,
                     unknown23: false,
                     unknown24: false,
@@ -2038,180 +2122,162 @@ fn award_credits(
     Ok((broadcasts, awarded_credits))
 }
 
-pub fn leave_active_minigame_if_any(
+fn leave_active_minigame_single_player_if_any(
     sender: u32,
     characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
-    minigame_data_write_handle: &mut MinigameDataTableWriteHandle<'_>,
     zones_table_write_handle: &mut ZoneTableWriteHandle<'_>,
-    required_stage_guid: Option<i32>,
-    skip_if_flash: bool,
+    stage_config: &MinigameStageConfig,
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-    let (mut broadcasts, previous_location, skip) = characters_table_write_handle.update_value_indices(player_guid(sender), |possible_character_write_handle, _| {
-        let Some(character_write_handle) = possible_character_write_handle else {
-            return Err(ProcessPacketError::new(
-                ProcessPacketErrorType::ConstraintViolated,
-                format!("Tried to end unknown player {}'s active minigame", sender),
-            ));
-        };
+    let (mut broadcasts, previous_location, skip) = characters_table_write_handle
+        .update_value_indices(player_guid(sender), |possible_character_write_handle, _| {
+            let Some(character_write_handle) = possible_character_write_handle else {
+                return Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!("Tried to end unknown player {}'s active minigame", sender),
+                ));
+            };
 
-        let CharacterType::Player(player) = &mut character_write_handle.stats.character_type else {
-            return Err(ProcessPacketError::new(
-                ProcessPacketErrorType::ConstraintViolated,
-                format!(
+            let CharacterType::Player(player) = &mut character_write_handle.stats.character_type
+            else {
+                return Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
                     "Tried to end player {}'s active minigame, but their character isn't a player",
                     sender
                 ),
-            ));
-        };
+                ));
+            };
 
-        let previous_location = player.previous_location.clone();
+            let previous_location = player.previous_location.clone();
 
-        let Some(minigame_status) = &mut player.minigame_status else {
-            return Ok((Vec::new(), previous_location, true));
-        };
+            let Some(minigame_status) = &mut player.minigame_status else {
+                return Ok((Vec::new(), previous_location, true));
+            };
 
-        if let Some(stage_guid) = required_stage_guid {
-            if stage_guid != minigame_status.stage_guid {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to end player {}'s active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", sender, stage_guid, minigame_status.stage_group_guid, minigame_status.stage_guid)));
+            if stage_config.guid() != minigame_status.group.stage_guid {
+                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to end player {}'s active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", sender, stage_config.guid(), minigame_status.group.stage_group_guid, minigame_status.group.stage_guid)));
             }
-        }
 
-        let Some(StageConfigRef { stage_config, .. }) = game_server
-            .minigames()
-            .stage_config(minigame_status.stage_group_guid, minigame_status.stage_guid)
-        else {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to end player {}'s active minigame with stage config {} (stage group {}) that does not exist", sender, minigame_status.stage_guid, minigame_status.stage_group_guid)));
-        };
+            // If we've already awarded credits after a round, don't grant those credits again
+            let mut broadcasts = if minigame_status.awarded_credits > 0 {
+                Vec::new()
+            } else {
+                award_credits(
+                    sender,
+                    &mut player.credits,
+                    minigame_status,
+                    stage_config,
+                    minigame_status.total_score,
+                )?
+                .0
+            };
 
-        // Wait for the end signal from the Flash payload because those games send additional score data
-        if skip_if_flash
-            && matches!(stage_config.minigame_type(), MinigameType::Flash { .. })
-        {
-            return Ok((Vec::new(), previous_location, true));
-        }
-
-        // If we've already awarded credits after a round, don't grant those credits again
-        let mut broadcasts = if minigame_status.awarded_credits > 0 {
-            Vec::new()
-        } else {
-            award_credits(
+            let last_broadcast = Broadcast::Single(
                 sender,
-                &mut player.credits,
-                minigame_status,
-                &stage_config,
-                minigame_status.total_score,
-            )?
-            .0
-        };
-
-        let last_broadcast = Broadcast::Single(
-            sender,
-            vec![
-                GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: FlashPayload {
-                        header: MinigameHeader {
-                            stage_guid: minigame_status.stage_guid,
-                            sub_op_code: -1,
-                            stage_group_guid: minigame_status.stage_group_guid,
+                vec![
+                    GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: FlashPayload {
+                            header: MinigameHeader {
+                                stage_guid: minigame_status.group.stage_guid,
+                                sub_op_code: -1,
+                                stage_group_guid: minigame_status.group.stage_group_guid,
+                            },
+                            payload: if minigame_status.game_won {
+                                "OnGameWonMsg".to_string()
+                            } else {
+                                "OnGameLostMsg".to_string()
+                            },
                         },
-                        payload: if minigame_status.game_won {
-                            "OnGameWonMsg".to_string()
-                        } else {
-                            "OnGameLostMsg".to_string()
+                    }),
+                    GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: ActiveMinigameEndScore {
+                            header: MinigameHeader {
+                                stage_guid: minigame_status.group.stage_guid,
+                                sub_op_code: -1,
+                                stage_group_guid: minigame_status.group.stage_group_guid,
+                            },
+                            scores: minigame_status.score_entries.clone(),
+                            unknown2: true,
                         },
-                    },
-                }),
-                GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: ActiveMinigameEndScore {
-                        header: MinigameHeader {
-                            stage_guid: minigame_status.stage_guid,
-                            sub_op_code: -1,
-                            stage_group_guid: minigame_status.stage_group_guid,
+                    }),
+                    GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: UpdateActiveMinigameRewards {
+                            header: MinigameHeader {
+                                stage_guid: minigame_status.group.stage_guid,
+                                sub_op_code: -1,
+                                stage_group_guid: minigame_status.group.stage_group_guid,
+                            },
+                            reward_bundle1: RewardBundle {
+                                unknown1: false,
+                                credits: minigame_status.awarded_credits,
+                                battle_class_xp: 0,
+                                unknown4: 0,
+                                unknown5: 0,
+                                unknown6: 0,
+                                unknown7: 0,
+                                unknown8: 0,
+                                unknown9: 0,
+                                unknown10: 0,
+                                unknown11: 0,
+                                unknown12: 0,
+                                unknown13: 0,
+                                icon_set_id: 0,
+                                name_id: 0,
+                                entries: vec![],
+                                unknown17: 0,
+                            },
+                            unknown1: 0,
+                            unknown2: 0,
+                            reward_bundle2: RewardBundle::default(),
+                            earned_trophies: vec![],
                         },
-                        scores: minigame_status.score_entries.clone(),
-                        unknown2: true,
-                    },
-                }),
-                GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: UpdateActiveMinigameRewards {
-                        header: MinigameHeader {
-                            stage_guid: minigame_status.stage_guid,
-                            sub_op_code: -1,
-                            stage_group_guid: minigame_status.stage_group_guid,
-                        },
-                        reward_bundle1: RewardBundle {
-                            unknown1: false,
-                            credits: minigame_status.awarded_credits,
-                            battle_class_xp: 0,
+                    }),
+                    GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: EndActiveMinigame {
+                            header: MinigameHeader {
+                                stage_guid: minigame_status.group.stage_guid,
+                                sub_op_code: -1,
+                                stage_group_guid: minigame_status.group.stage_group_guid,
+                            },
+                            won: minigame_status.game_won,
+                            unknown2: 0,
+                            unknown3: 0,
                             unknown4: 0,
-                            unknown5: 0,
-                            unknown6: 0,
-                            unknown7: 0,
-                            unknown8: 0,
-                            unknown9: 0,
-                            unknown10: 0,
-                            unknown11: 0,
-                            unknown12: 0,
-                            unknown13: 0,
-                            icon_set_id: 0,
-                            name_id: 0,
-                            entries: vec![],
-                            unknown17: 0,
                         },
-                        unknown1: 0,
-                        unknown2: 0,
-                        reward_bundle2: RewardBundle::default(),
-                        earned_trophies: vec![],
-                    },
-                }),
-                GamePacket::serialize(&TunneledPacket {
+                    }),
+                    GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: LeaveActiveMinigame {
+                            header: MinigameHeader {
+                                stage_guid: minigame_status.group.stage_guid,
+                                sub_op_code: -1,
+                                stage_group_guid: minigame_status.group.stage_group_guid,
+                            },
+                        },
+                    }),
+                ],
+            );
+
+            broadcasts.push(Broadcast::Single(
+                sender,
+                vec![GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
-                    inner: EndActiveMinigame {
-                        header: MinigameHeader {
-                            stage_guid: minigame_status.stage_guid,
-                            sub_op_code: -1,
-                            stage_group_guid: minigame_status.stage_group_guid,
-                        },
-                        won: minigame_status.game_won,
-                        unknown2: 0,
-                        unknown3: 0,
-                        unknown4: 0,
-                    },
-                }),
-                GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: LeaveActiveMinigame {
-                        header: MinigameHeader {
-                            stage_guid: minigame_status.stage_guid,
-                            sub_op_code: -1,
-                            stage_group_guid: minigame_status.stage_group_guid,
-                        },
-                    },
-                }),
-            ],
-        );
+                    inner: game_server
+                        .minigames()
+                        .stage_group_instance(minigame_status.group.stage_group_guid, player)?,
+                })],
+            ));
+            broadcasts.push(last_broadcast);
 
-        broadcasts.push(Broadcast::Single(
-            sender,
-            vec![GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: game_server.minigames().stage_group_instance(
-                    minigame_status.stage_group_guid,
-                    player,
-                )?,
-            })],
-        ));
-        broadcasts.push(last_broadcast);
+            player.minigame_status = None;
 
-        player.minigame_status = None;
-        player.matchmaking_group = None;
-
-        Ok((broadcasts, previous_location, false))
-    })?;
+            Ok((broadcasts, previous_location, false))
+        })?;
 
     if skip {
         return Ok(Vec::new());
@@ -2239,6 +2305,85 @@ pub fn leave_active_minigame_if_any(
         game_server.mounts(),
     );
     broadcasts.append(&mut teleport_broadcasts?);
+
+    Ok(broadcasts)
+}
+
+pub fn leave_active_minigame_if_any(
+    sender: u32,
+    characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
+    minigame_data_write_handle: &mut MinigameDataTableWriteHandle<'_>,
+    zones_table_write_handle: &mut ZoneTableWriteHandle<'_>,
+    required_stage_guid: Option<i32>,
+    skip_if_flash: bool,
+    game_server: &GameServer,
+) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    let Some(group) = characters_table_write_handle
+        .index4(player_guid(sender))
+        .cloned()
+    else {
+        return Ok(Vec::new());
+    };
+
+    if let Some(stage_guid) = required_stage_guid {
+        if stage_guid != group.stage_guid {
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to end player {}'s active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", sender, stage_guid, group.stage_group_guid, stage_guid)));
+        }
+    }
+
+    let Some(StageConfigRef { stage_config, .. }) = game_server
+        .minigames()
+        .stage_config(group.stage_group_guid, group.stage_guid)
+    else {
+        return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to end player {}'s active minigame with stage config {} (stage group {}) that does not exist", sender, group.stage_guid, group.stage_group_guid)));
+    };
+
+    // Wait for the end signal from the Flash payload because those games send additional score data
+    if skip_if_flash && matches!(stage_config.minigame_type(), MinigameType::Flash { .. }) {
+        return Ok(Vec::new());
+    }
+
+    let mut broadcasts = Vec::new();
+
+    let leave_result = leave_active_minigame_single_player_if_any(
+        sender,
+        characters_table_write_handle,
+        zones_table_write_handle,
+        &stage_config,
+        game_server,
+    );
+    match leave_result {
+        Ok(mut leave_broadcasts) => broadcasts.append(&mut leave_broadcasts),
+        Err(err) => info!(
+            "Unable to remove player {} from minigame (stage group {}, stage {}): {}",
+            sender, group.stage_group_guid, group.stage_guid, err
+        ),
+    }
+
+    let remaining_players = characters_table_write_handle.keys_by_index4(&group).count() as u32;
+    if remaining_players < stage_config.min_players() {
+        let member_guids: Vec<u64> = characters_table_write_handle
+            .keys_by_index4(&group)
+            .collect();
+        for member_guid in member_guids {
+            let other_player_leave_result =
+                shorten_player_guid(member_guid).and_then(|short_member_guid| {
+                    leave_active_minigame_single_player_if_any(
+                        short_member_guid,
+                        characters_table_write_handle,
+                        zones_table_write_handle,
+                        &stage_config,
+                        game_server,
+                    )
+                });
+
+            // Don't error for this player if there's an issue with another player
+            match other_player_leave_result {
+                Ok(mut leave_broadcasts) => broadcasts.append(&mut leave_broadcasts),
+                Err(err) => info!("Unable to remove other player {} from minigame (stage group {}, stage {}) that does not have enough players: {}", member_guid, group.stage_group_guid, group.stage_guid, err),
+            }
+        }
+    }
 
     Ok(broadcasts)
 }

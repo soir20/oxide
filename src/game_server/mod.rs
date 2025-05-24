@@ -9,7 +9,8 @@ use std::vec;
 
 use byteorder::{LittleEndian, ReadBytesExt};
 use handlers::character::{
-    Character, CharacterCategory, CharacterType, Chunk, MatchmakingGroupStatus,
+    Character, CharacterCategory, CharacterMatchmakingGroupIndex, CharacterType, Chunk,
+    MatchmakingGroupStatus,
 };
 use handlers::chat::process_chat_packet;
 use handlers::command::process_command;
@@ -1019,21 +1020,21 @@ impl GameServer {
                     let min_players = stage.stage_config.min_players();
 
                     let timed_out_group_range =
-                        (MatchmakingGroupStatus::OpenToAll, stage_group_guid, stage_guid, self.start_time, u32::MIN)
-                            ..=(MatchmakingGroupStatus::OpenToAll, stage_group_guid, stage_guid, max_time, u32::MAX);
+                        CharacterMatchmakingGroupIndex { status: MatchmakingGroupStatus::OpenToAll, stage_group_guid, stage_guid, creation_time: self.start_time, owner_guid: u32::MIN }
+                            ..=CharacterMatchmakingGroupIndex { status: MatchmakingGroupStatus::OpenToAll, stage_group_guid, stage_guid, creation_time: max_time, owner_guid: u32::MAX };
                     let timed_out_groups: Vec<(Instant, u32)> = characters_table_write_handle
                         .indices4_by_range(timed_out_group_range)
-                        .map(|(.., creation_time, owner_guid)| (*creation_time, *owner_guid))
+                        .map(|CharacterMatchmakingGroupIndex { creation_time, owner_guid, .. }| (*creation_time, *owner_guid))
                         .collect();
                     for (creation_time, owner_guid) in timed_out_groups {
                         let players_in_group: Vec<u32> = characters_table_write_handle
-                            .keys_by_index4(&(
-                                MatchmakingGroupStatus::OpenToAll,
+                            .keys_by_index4(&CharacterMatchmakingGroupIndex {
+                                status: MatchmakingGroupStatus::OpenToAll,
                                 stage_group_guid,
                                 stage_guid,
                                 creation_time,
                                 owner_guid,
-                            ))
+                            })
                             .filter_map(|guid| shorten_player_guid(guid).ok())
                             .collect();
 
