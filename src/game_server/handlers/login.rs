@@ -155,10 +155,7 @@ pub fn log_out(sender: u32, game_server: &GameServer) -> Vec<Broadcast> {
                             game_server,
                         );
                         match leave_minigame_result {
-                            Ok(mut leave_minigame_broadcasts) => {
-                                info!("Removing player {} from minigame because they logged out", sender);
-                                broadcasts.append(&mut leave_minigame_broadcasts);
-                            },
+                            Ok(mut leave_minigame_broadcasts) => broadcasts.append(&mut leave_minigame_broadcasts),
                             Err(err) => info!("Unable to remove player {} from minigame as they were logging out: {}", sender, err),
                         }
 
