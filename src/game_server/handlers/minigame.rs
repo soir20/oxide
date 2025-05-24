@@ -965,6 +965,58 @@ impl From<Vec<MinigamePortalCategoryConfig>> for AllMinigameConfigs {
 pub fn load_all_minigames(config_dir: &Path) -> Result<AllMinigameConfigs, ConfigError> {
     let mut file = File::open(config_dir.join("minigames.yaml"))?;
     let configs: Vec<MinigamePortalCategoryConfig> = serde_yaml::from_reader(&mut file)?;
+
+    let mut portal_category_guids = BTreeSet::new();
+    let mut portal_entry_guids = BTreeSet::new();
+    let mut stage_group_guids = BTreeSet::new();
+    let mut stage_guids = BTreeSet::new();
+
+    for portal_category in configs.iter() {
+        if !portal_category_guids.insert(portal_category.guid) {
+            return Err(ConfigError::ConstraintViolated(format!(
+                "Two portal categories have GUID {}",
+                portal_category.guid
+            )));
+        }
+
+        for potral_entry in portal_category.portal_entries.iter() {
+            if !portal_entry_guids.insert(potral_entry.guid) {
+                return Err(ConfigError::ConstraintViolated(format!(
+                    "Two portal entries have GUID {}",
+                    potral_entry.guid
+                )));
+            }
+
+            if !stage_group_guids.insert(potral_entry.stage_group.guid) {
+                return Err(ConfigError::ConstraintViolated(format!(
+                    "Two stage groups have GUID {}",
+                    potral_entry.stage_group.guid
+                )));
+            }
+
+            for child in potral_entry.stage_group.stages.iter() {
+                match child {
+                    MinigameStageGroupChild::StageGroup(stage_group) => {
+                        if !stage_group_guids.insert(stage_group.guid) {
+                            return Err(ConfigError::ConstraintViolated(format!(
+                                "Two stage groups have GUID {}",
+                                stage_group.guid
+                            )));
+                        }
+                    }
+                    MinigameStageGroupChild::Stage(stage) => {
+                        if !stage_guids.insert(stage.guid) {
+                            return Err(ConfigError::ConstraintViolated(format!(
+                                "Two stages have GUID {}",
+                                stage.guid
+                            )));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     Ok(configs.into())
 }
 
