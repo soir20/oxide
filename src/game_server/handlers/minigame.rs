@@ -52,7 +52,7 @@ use super::{
     item::SABER_ITEM_TYPE,
     lock_enforcer::{
         CharacterLockRequest, CharacterTableWriteHandle, MinigameDataTableWriteHandle,
-        ZoneLockEnforcer, ZoneTableWriteHandle,
+        ZoneTableWriteHandle,
     },
     saber_strike::process_saber_strike_packet,
     unique_guid::{player_guid, shorten_player_guid},
@@ -1238,96 +1238,101 @@ fn handle_request_create_active_minigame(
     let now = Instant::now();
     game_server.lock_enforcer().write_characters(
         |characters_table_write_handle, minigame_data_lock_enforcer| {
-            let zones_lock_enforcer: ZoneLockEnforcer<'_> = minigame_data_lock_enforcer.into();
-            zones_lock_enforcer.write_zones(|zones_table_write_handle| {
-                if stage_config.stage_config.max_players() == 1 {
-                    let group = CharacterMatchmakingGroupIndex {
-                        status: MatchmakingGroupStatus::Closed,
-                        stage_group_guid: stage_config.stage_group_guid,
-                        stage_guid: stage_config.stage_config.guid(),
-                        creation_time: now,
-                        owner_guid: sender,
-                    };
-                    set_initial_minigame_status(
-                        sender,
-                        group,
-                        characters_table_write_handle,
-                        &stage_config,
-                    )?;
-
-                    Ok(prepare_active_minigame_instance(
-                        &[sender],
-                        &stage_config,
-                        characters_table_write_handle,
-                        zones_table_write_handle,
-                        None,
-                        game_server,
-                    ))
-                } else {
-                    let mut broadcasts = vec![Broadcast::Single(
-                        sender,
-                        vec![GamePacket::serialize(&TunneledPacket {
-                            unknown1: true,
-                            inner: SendStringId {
-                                sender_guid: player_guid(sender),
-                                message_id: 19149,
-                                is_anonymous: true,
-                                unknown2: false,
-                                is_action_bar_message: true,
-                                action_bar_text_color: ActionBarTextColor::Yellow,
-                                target_guid: 0,
-                                owner_guid: 0,
-                                unknown7: 0,
-                            },
-                        })],
-                    )];
-                    let required_space = 1;
-                    let (open_group, space_left) = find_matchmaking_group(
-                        characters_table_write_handle,
-                        required_space,
-                        stage_config.stage_config.max_players(),
-                        stage_config.stage_group_guid,
-                        stage_config.stage_config.guid(),
-                        game_server.start_time(),
-                    )
-                    .unwrap_or_else(|| {
-                        (
-                            CharacterMatchmakingGroupIndex {
-                                status: MatchmakingGroupStatus::OpenToAll,
+            minigame_data_lock_enforcer.write_minigame_data(
+                |minigame_data_table_write_handle, zones_lock_enforcer| {
+                    zones_lock_enforcer.write_zones(|zones_table_write_handle| {
+                        if stage_config.stage_config.max_players() == 1 {
+                            let group = CharacterMatchmakingGroupIndex {
+                                status: MatchmakingGroupStatus::Closed,
                                 stage_group_guid: stage_config.stage_group_guid,
                                 stage_guid: stage_config.stage_config.guid(),
                                 creation_time: now,
                                 owner_guid: sender,
-                            },
-                            stage_config.stage_config.max_players(),
-                        )
-                    });
+                            };
+                            set_initial_minigame_status(
+                                sender,
+                                group,
+                                characters_table_write_handle,
+                                &stage_config,
+                            )?;
 
-                    set_initial_minigame_status(
-                        sender,
-                        open_group,
-                        characters_table_write_handle,
-                        &stage_config,
-                    )?;
+                            Ok(prepare_active_minigame_instance(
+                                &[sender],
+                                &stage_config,
+                                characters_table_write_handle,
+                                minigame_data_table_write_handle,
+                                zones_table_write_handle,
+                                None,
+                                game_server,
+                            ))
+                        } else {
+                            let mut broadcasts = vec![Broadcast::Single(
+                                sender,
+                                vec![GamePacket::serialize(&TunneledPacket {
+                                    unknown1: true,
+                                    inner: SendStringId {
+                                        sender_guid: player_guid(sender),
+                                        message_id: 19149,
+                                        is_anonymous: true,
+                                        unknown2: false,
+                                        is_action_bar_message: true,
+                                        action_bar_text_color: ActionBarTextColor::Yellow,
+                                        target_guid: 0,
+                                        owner_guid: 0,
+                                        unknown7: 0,
+                                    },
+                                })],
+                            )];
+                            let required_space = 1;
+                            let (open_group, space_left) = find_matchmaking_group(
+                                characters_table_write_handle,
+                                required_space,
+                                stage_config.stage_config.max_players(),
+                                stage_config.stage_group_guid,
+                                stage_config.stage_config.guid(),
+                                game_server.start_time(),
+                            )
+                            .unwrap_or_else(|| {
+                                (
+                                    CharacterMatchmakingGroupIndex {
+                                        status: MatchmakingGroupStatus::OpenToAll,
+                                        stage_group_guid: stage_config.stage_group_guid,
+                                        stage_guid: stage_config.stage_config.guid(),
+                                        creation_time: now,
+                                        owner_guid: sender,
+                                    },
+                                    stage_config.stage_config.max_players(),
+                                )
+                            });
 
-                    if space_left <= required_space {
-                        let players_in_group: Vec<u32> = characters_table_write_handle
-                            .keys_by_index4(&open_group)
-                            .filter_map(|guid| shorten_player_guid(guid).ok())
-                            .collect();
-                        broadcasts.append(&mut prepare_active_minigame_instance(
-                            &players_in_group,
-                            &stage_config,
-                            characters_table_write_handle,
-                            zones_table_write_handle,
-                            None,
-                            game_server,
-                        ));
-                    }
+                            set_initial_minigame_status(
+                                sender,
+                                open_group,
+                                characters_table_write_handle,
+                                &stage_config,
+                            )?;
 
-                    Ok(broadcasts)
-                }
-            })
+                            if space_left <= required_space {
+                                let players_in_group: Vec<u32> = characters_table_write_handle
+                                    .keys_by_index4(&open_group)
+                                    .filter_map(|guid| shorten_player_guid(guid).ok())
+                                    .collect();
+                                broadcasts.append(&mut prepare_active_minigame_instance(
+                                    &players_in_group,
+                                    &stage_config,
+                                    characters_table_write_handle,
+                                    minigame_data_table_write_handle,
+                                    zones_table_write_handle,
+                                    None,
+                                    game_server,
+                                ));
+                            }
+
+                            Ok(broadcasts)
+                        }
+                    })
+                },
+            )
         },
     )
 }
@@ -1428,6 +1433,7 @@ pub fn prepare_active_minigame_instance(
     members: &[u32],
     stage_config: &StageConfigRef,
     characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
+    minigame_data_table_write_handle: &mut MinigameDataTableWriteHandle<'_>,
     zones_table_write_handle: &mut ZoneTableWriteHandle<'_>,
     message_id: Option<u32>,
     game_server: &GameServer,
@@ -2324,7 +2330,7 @@ fn leave_active_minigame_single_player_if_any(
 pub fn leave_active_minigame_if_any(
     sender: u32,
     characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
-    minigame_data_write_handle: &mut MinigameDataTableWriteHandle<'_>,
+    minigame_data_table_write_handle: &mut MinigameDataTableWriteHandle<'_>,
     zones_table_write_handle: &mut ZoneTableWriteHandle<'_>,
     required_stage_guid: Option<i32>,
     skip_if_flash: bool,
