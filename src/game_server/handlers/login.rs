@@ -165,7 +165,7 @@ pub fn log_out(sender: u32, game_server: &GameServer) -> Vec<Broadcast> {
                         let Some((character, (_, instance_guid, chunk), ..)) =
                             characters_table_write_handle.remove(player_guid(sender))
                         else {
-                            return Vec::new();
+                            return broadcasts;
                         };
 
                         let other_players_nearby = ZoneInstance::other_players_nearby(
