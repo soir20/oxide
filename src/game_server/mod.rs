@@ -9,8 +9,7 @@ use std::vec;
 
 use byteorder::{LittleEndian, ReadBytesExt};
 use handlers::character::{
-    Character, CharacterCategory, CharacterMatchmakingGroupIndex, CharacterType, Chunk,
-    MatchmakingGroupStatus,
+    Character, CharacterCategory, CharacterType, Chunk, MinigameMatchmakingGroup,
 };
 use handlers::chat::process_chat_packet;
 use handlers::command::process_command;
@@ -28,7 +27,8 @@ use handlers::lock_enforcer::{
 use handlers::login::{log_in, log_out, send_points_of_interest};
 use handlers::minigame::{
     create_active_minigame_if_uncreated, load_all_minigames, prepare_active_minigame_instance,
-    process_minigame_packet, remove_from_matchmaking, AllMinigameConfigs,
+    process_minigame_packet, remove_group_from_matchmaking, AllMinigameConfigs,
+    MatchmakingGroupStatus,
 };
 use handlers::mount::{load_mounts, process_mount_packet, MountConfig};
 use handlers::reference_data::{load_categories, load_item_classes, load_item_groups};
@@ -1018,21 +1018,11 @@ impl GameServer {
                         let stage_guid = stage.stage_config.guid();
                         let min_players = stage.stage_config.min_players();
 
-                        let timed_out_group_range =
-                            CharacterMatchmakingGroupIndex { status: MatchmakingGroupStatus::OpenToAll, stage_group_guid, stage_guid, creation_time: self.start_time, owner_guid: u32::MIN }
-                                ..=CharacterMatchmakingGroupIndex { status: MatchmakingGroupStatus::OpenToAll, stage_group_guid, stage_guid, creation_time: max_time, owner_guid: u32::MAX };
-                        let timed_out_groups: Vec<(Instant, u32)> = characters_table_write_handle
-                            .indices4_by_range(timed_out_group_range)
-                            .map(|CharacterMatchmakingGroupIndex { creation_time, owner_guid, .. }| (*creation_time, *owner_guid))
+                        let timed_out_group_range = (MatchmakingGroupStatus::Open, stage_guid, self.start_time)..=(MatchmakingGroupStatus::Open, stage_guid, max_time);
+                        let timed_out_groups: Vec<MinigameMatchmakingGroup> = minigame_data_table_write_handle
+                            .keys_by_index2_range(timed_out_group_range)
                             .collect();
-                        for (creation_time, owner_guid) in timed_out_groups {
-                            let matchmaking_group = CharacterMatchmakingGroupIndex {
-                                status: MatchmakingGroupStatus::OpenToAll,
-                                stage_group_guid,
-                                stage_guid,
-                                creation_time,
-                                owner_guid,
-                            };
+                        for matchmaking_group in timed_out_groups {
                             let players_in_group: Vec<u32> = characters_table_write_handle
                                 .keys_by_index4(&matchmaking_group)
                                 .filter_map(|guid| shorten_player_guid(guid).ok())
@@ -1090,23 +1080,16 @@ impl GameServer {
                                     }
                                 }
 
-                                for player in players_in_group {
-                                    let remove_result = remove_from_matchmaking(
-                                        player,
-                                        stage_group_guid,
-                                        stage_guid,
-                                        characters_table_write_handle,
-                                        zones_table_write_handle,
-                                        false,
-                                        Some(33781),
-                                        self,
-                                    );
-
-                                    match remove_result {
-                                        Ok(mut remove_broadcasts) => broadcasts.append(&mut remove_broadcasts),
-                                        Err(err) => info!("Unable to remove player {} from matchmaking on tick: {}", player, err),
-                                    }
-                                }
+                                broadcasts.append(&mut remove_group_from_matchmaking(
+                                    &players_in_group,
+                                    &BTreeSet::new(),
+                                    matchmaking_group,
+                                    characters_table_write_handle,
+                                    minigame_data_table_write_handle,
+                                    zones_table_write_handle,
+                                    Some(33781),
+                                    self,
+                                ));
                             })
                         }
                     }

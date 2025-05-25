@@ -1171,7 +1171,7 @@ pub struct BattleClass {
 
 #[derive(Clone)]
 pub struct MinigameStatus {
-    pub group: CharacterMatchmakingGroupIndex,
+    pub group: MinigameMatchmakingGroup,
     pub game_created: bool,
     pub game_won: bool,
     pub score_entries: Vec<ScoreEntry>,
@@ -1492,26 +1492,20 @@ impl NpcTemplate {
     }
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
-pub enum MatchmakingGroupStatus {
-    Closed,
-    OpenToAll,
-    OpenToFriends,
-}
-
 pub type Chunk = (i32, i32);
 pub type CharacterLocationIndex = (CharacterCategory, u64, Chunk);
 pub type CharacterNameIndex = String;
 pub type CharacterSquadIndex = u64;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
-pub struct CharacterMatchmakingGroupIndex {
-    pub status: MatchmakingGroupStatus,
+pub struct MinigameMatchmakingGroup {
     pub stage_group_guid: i32,
     pub stage_guid: i32,
     pub creation_time: Instant,
     pub owner_guid: u32,
 }
+
+pub type CharacterMatchmakingGroupIndex = MinigameMatchmakingGroup;
 
 #[derive(Clone)]
 pub struct CharacterStat {
@@ -1698,7 +1692,7 @@ impl
     fn index4(&self) -> Option<CharacterMatchmakingGroupIndex> {
         match &self.stats.character_type {
             CharacterType::Player(player) => {
-                player.minigame_status.as_ref().map(|status| status.group)
+                (player.minigame_status.as_ref().map(|status| status.group))
             }
             _ => None,
         }
