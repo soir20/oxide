@@ -15,7 +15,7 @@ use super::{
         IndexedGuid,
     },
     minigame::{
-        SharedMinigameData, SharedMinigameDataMatchmakingIndex, SharedMinigameDataStageGuidIndex,
+        SharedMinigameData, SharedMinigameDataMatchmakingIndex, SharedMinigameDataUnusedIndex,
     },
     zone::ZoneInstance,
 };
@@ -173,14 +173,14 @@ pub type MinigameDataTableReadHandle<'a> = TableReadHandleWrapper<
     'a,
     MinigameMatchmakingGroup,
     SharedMinigameData,
-    SharedMinigameDataStageGuidIndex,
+    SharedMinigameDataUnusedIndex,
     SharedMinigameDataMatchmakingIndex,
 >;
 pub type MinigameDataTableWriteHandle<'a> = GuidTableWriteHandle<
     'a,
     MinigameMatchmakingGroup,
     SharedMinigameData,
-    SharedMinigameDataStageGuidIndex,
+    SharedMinigameDataUnusedIndex,
     SharedMinigameDataMatchmakingIndex,
 >;
 pub type MinigameDataReadGuard<'a> = RwLockReadGuard<'a, SharedMinigameData>;
@@ -359,7 +359,7 @@ pub struct MinigameDataLockEnforcer<'a> {
         'a,
         MinigameMatchmakingGroup,
         SharedMinigameData,
-        SharedMinigameDataStageGuidIndex,
+        SharedMinigameDataUnusedIndex,
         SharedMinigameDataMatchmakingIndex,
     >,
     zones: &'a GuidTable<u64, ZoneInstance, u8>,
@@ -452,7 +452,7 @@ pub struct CharacterLockEnforcer<'a> {
     minigame_data: &'a GuidTable<
         MinigameMatchmakingGroup,
         SharedMinigameData,
-        SharedMinigameDataStageGuidIndex,
+        SharedMinigameDataUnusedIndex,
         SharedMinigameDataMatchmakingIndex,
     >,
 }
@@ -543,7 +543,7 @@ pub struct LockEnforcerSource {
     minigame_data: GuidTable<
         MinigameMatchmakingGroup,
         SharedMinigameData,
-        SharedMinigameDataStageGuidIndex,
+        SharedMinigameDataUnusedIndex,
         SharedMinigameDataMatchmakingIndex,
     >,
 }
@@ -562,7 +562,7 @@ impl LockEnforcerSource {
         minigame_data: GuidTable<
             MinigameMatchmakingGroup,
             SharedMinigameData,
-            SharedMinigameDataStageGuidIndex,
+            SharedMinigameDataUnusedIndex,
             SharedMinigameDataMatchmakingIndex,
         >,
     ) -> LockEnforcerSource {
