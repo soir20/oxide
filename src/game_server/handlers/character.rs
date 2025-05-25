@@ -1169,17 +1169,10 @@ pub struct BattleClass {
     pub items: BTreeMap<EquipmentSlot, EquippedItem>,
 }
 
-#[derive(Clone, PartialEq, Eq, PartialOrd, Ord)]
-pub enum MinigameJoinedState {
-    NotCreated,
-    Created,
-    Joined(Instant),
-}
-
 #[derive(Clone)]
 pub struct MinigameStatus {
     pub group: CharacterMatchmakingGroupIndex,
-    pub joined_state: MinigameJoinedState,
+    pub game_created: bool,
     pub game_won: bool,
     pub score_entries: Vec<ScoreEntry>,
     pub total_score: i32,
@@ -1499,7 +1492,7 @@ impl NpcTemplate {
     }
 }
 
-#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum MatchmakingGroupStatus {
     Closed,
     OpenToAll,
@@ -1511,7 +1504,7 @@ pub type CharacterLocationIndex = (CharacterCategory, u64, Chunk);
 pub type CharacterNameIndex = String;
 pub type CharacterSquadIndex = u64;
 
-#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct CharacterMatchmakingGroupIndex {
     pub status: MatchmakingGroupStatus,
     pub stage_group_guid: i32,

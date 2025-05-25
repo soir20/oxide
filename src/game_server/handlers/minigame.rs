@@ -44,15 +44,12 @@ use crate::{
 };
 
 use super::{
-    character::{
-        CharacterMatchmakingGroupIndex, CharacterType, MatchmakingGroupStatus, MinigameJoinedState,
-        Player,
-    },
+    character::{CharacterMatchmakingGroupIndex, CharacterType, MatchmakingGroupStatus, Player},
     guid::{Guid, GuidTableIndexer},
     item::SABER_ITEM_TYPE,
     lock_enforcer::{
-        CharacterLockRequest, CharacterTableWriteHandle, MinigameDataTableWriteHandle,
-        ZoneTableWriteHandle,
+        CharacterLockRequest, CharacterTableWriteHandle, MinigameDataLockRequest,
+        MinigameDataTableWriteHandle, ZoneTableWriteHandle,
     },
     saber_strike::process_saber_strike_packet,
     unique_guid::{player_guid, shorten_player_guid},
@@ -139,8 +136,15 @@ impl From<&MinigameType> for MinigameTypeData {
 }
 
 #[derive(Clone)]
+pub enum MinigameReadiness {
+    InitialPlayersLoading(BTreeSet<u32>),
+    Ready(Instant),
+}
+
+#[derive(Clone)]
 pub struct SharedMinigameData {
     pub guid: CharacterMatchmakingGroupIndex,
+    pub readiness: MinigameReadiness,
     pub data: SharedMinigameTypeData,
 }
 
@@ -1207,7 +1211,7 @@ fn set_initial_minigame_status(
 
             player.minigame_status = Some(MinigameStatus {
                 group,
-                joined_state: MinigameJoinedState::NotCreated,
+                game_created: false,
                 game_won: false,
                 score_entries: Vec::new(),
                 total_score: 0,
@@ -1555,6 +1559,9 @@ pub fn prepare_active_minigame_instance(
 
     minigame_data_table_write_handle.insert(SharedMinigameData {
         guid: matchmaking_group,
+        readiness: MinigameReadiness::InitialPlayersLoading(BTreeSet::from_iter(
+            members.iter().cloned(),
+        )),
         data: SharedMinigameTypeData::None,
     });
 
@@ -1570,7 +1577,7 @@ fn handle_request_start_active_minigame(
     game_server.lock_enforcer().read_characters(|_| CharacterLockRequest {
         read_guids: vec![player_guid(sender)],
         write_guids: Vec::new(),
-        character_consumer: |_, characters_read, _, _| {
+        character_consumer: |_, characters_read, _, minigame_data_lock_enforcer| {
             let Some(character_read_handle) = characters_read.get(&player_guid(sender)) else {
                 return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} requested to start an active minigame", sender)));
             };
@@ -1593,80 +1600,96 @@ fn handle_request_start_active_minigame(
                 return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} requested to start active minigame with stage config {} (stage group {}) that does not exist", sender, minigame_status.group.stage_guid, minigame_status.group.stage_group_guid)));
             };
 
-            let mut stage_group_instance =
-                game_server.minigames().stage_group_instance(minigame_status.group.stage_group_guid, player)?;
-            stage_group_instance.header.stage_guid = minigame_status.group.stage_guid;
-            // The default stage instance must be set for the how-to button the options menu to work
-            stage_group_instance.default_stage_instance_guid = minigame_status.group.stage_guid;
+            minigame_data_lock_enforcer.read_minigame_data(|_| MinigameDataLockRequest {
+                read_guids: Vec::new(),
+                write_guids: vec![minigame_status.group],
+                minigame_data_consumer: |_, _, mut minigame_data_write, _| {
+                    let Some(shared_minigame_data) = minigame_data_write.get_mut(&minigame_status.group) else {
+                        return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unable to find shared minigame data for group {:?} when starting minigame for player {}", minigame_status.group, sender)));
+                    };
 
-            // Re-send the stage group instance to populate the stage data in the settings menu.
-            // When we enter the Flash or 3D game HUD state, the current minigame group is cleared.
-            // This removes the game name from the options menu. To avoid this, we need to send a 
-            // script packet to transition the HUD to the main state. Then we re-send the stage 
-            // group instance data. Then we can load the minigame.
-            packets.push(GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: ExecuteScriptWithStringParams {
-                    script_name: "UIGlobal.SetStateMain".to_string(),
-                    params: vec![],
-                },
-            }));
-            packets.push(GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: stage_group_instance,
-            }));
+                    if let MinigameReadiness::InitialPlayersLoading(players) = &mut shared_minigame_data.readiness {
+                        if players.remove(&sender) && players.is_empty() {
+                            shared_minigame_data.readiness = MinigameReadiness::Ready(Instant::now());
+                        }
+                    }
 
-            match stage_config.minigame_type() {
-                MinigameType::Flash { game_swf_name } => {
+                    let mut stage_group_instance =
+                    game_server.minigames().stage_group_instance(minigame_status.group.stage_group_guid, player)?;
+                    stage_group_instance.header.stage_guid = minigame_status.group.stage_guid;
+                    // The default stage instance must be set for the how-to button the options menu to work
+                    stage_group_instance.default_stage_instance_guid = minigame_status.group.stage_guid;
+
+                    // Re-send the stage group instance to populate the stage data in the settings menu.
+                    // When we enter the Flash or 3D game HUD state, the current minigame group is cleared.
+                    // This removes the game name from the options menu. To avoid this, we need to send a 
+                    // script packet to transition the HUD to the main state. Then we re-send the stage 
+                    // group instance data. Then we can load the minigame.
+                    packets.push(GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: ExecuteScriptWithStringParams {
+                            script_name: "UIGlobal.SetStateMain".to_string(),
+                            params: vec![],
+                        },
+                    }));
+                    packets.push(GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: stage_group_instance,
+                    }));
+
+                    match stage_config.minigame_type() {
+                        MinigameType::Flash { game_swf_name } => {
+                            packets.push(
+                                GamePacket::serialize(&TunneledPacket {
+                                    unknown1: true,
+                                    inner: StartFlashGame {
+                                        loader_script_name: "MiniGameFlash".to_string(),
+                                        game_swf_name: game_swf_name.clone(),
+                                        is_micro: false,
+                                    },
+                                })
+                            );
+                        },
+                        MinigameType::SaberStrike { saber_strike_stage_id } => {
+                            packets.push(
+                                GamePacket::serialize(&TunneledPacket {
+                                    unknown1: true,
+                                    inner: SaberStrikeStageData {
+                                        minigame_header: MinigameHeader {
+                                            stage_guid: minigame_status.group.stage_guid,
+                                            sub_op_code: SaberStrikeOpCode::StageData as i32,
+                                            stage_group_guid: minigame_status.group.stage_group_guid,
+                                        },
+                                        saber_strike_stage_id: *saber_strike_stage_id,
+                                        use_player_weapon: player.battle_classes.get(&player.active_battle_class)
+                                            .and_then(|battle_class| battle_class.items.get(&EquipmentSlot::PrimaryWeapon)
+                                            .and_then(|item| game_server.items().get(&item.guid)))
+                                            .map(|item| item.item_type == SABER_ITEM_TYPE)
+                                            .unwrap_or(false),
+                                    }
+                                }),
+                            );
+                        },
+                    }
+
                     packets.push(
                         GamePacket::serialize(&TunneledPacket {
                             unknown1: true,
-                            inner: StartFlashGame {
-                                loader_script_name: "MiniGameFlash".to_string(),
-                                game_swf_name: game_swf_name.clone(),
-                                is_micro: false,
-                            },
-                        })
-                    );
-                },
-                MinigameType::SaberStrike { saber_strike_stage_id } => {
-                    packets.push(
-                        GamePacket::serialize(&TunneledPacket {
-                            unknown1: true,
-                            inner: SaberStrikeStageData {
-                                minigame_header: MinigameHeader {
+                            inner: StartActiveMinigame {
+                                header: MinigameHeader {
                                     stage_guid: minigame_status.group.stage_guid,
-                                    sub_op_code: SaberStrikeOpCode::StageData as i32,
+                                    sub_op_code: -1,
                                     stage_group_guid: minigame_status.group.stage_group_guid,
                                 },
-                                saber_strike_stage_id: *saber_strike_stage_id,
-                                use_player_weapon: player.battle_classes.get(&player.active_battle_class)
-                                    .and_then(|battle_class| battle_class.items.get(&EquipmentSlot::PrimaryWeapon)
-                                    .and_then(|item| game_server.items().get(&item.guid)))
-                                    .map(|item| item.item_type == SABER_ITEM_TYPE)
-                                    .unwrap_or(false),
-                            }
+                            },
                         }),
                     );
+
+                    Ok(vec![
+                        Broadcast::Single(sender, packets)
+                    ])
                 },
-            }
-
-            packets.push(
-                GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: StartActiveMinigame {
-                        header: MinigameHeader {
-                            stage_guid: minigame_status.group.stage_guid,
-                            sub_op_code: -1,
-                            stage_group_guid: minigame_status.group.stage_group_guid,
-                        },
-                    },
-                }),
-            );
-
-            Ok(vec![
-                Broadcast::Single(sender, packets)
-            ])
+            })
         }
     })
 }
@@ -1745,10 +1768,7 @@ pub fn handle_minigame_packet_write<T: Default>(
                 return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process Flash payload for {}'s active minigame with stage config {} (stage group {}) that does not exist", sender, minigame_status.group.stage_guid, minigame_status.group.stage_group_guid)));
             };
 
-            let MinigameJoinedState::Joined(joined_time) = minigame_status.joined_state else {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Cannot process Flash payload for {}'s active minigame (stage {}) that they haven't joined", sender, minigame_status.group.stage_guid)))
-            };
-
+            let joined_time = Instant::now();
             func(minigame_status, &mut player.minigame_stats, &mut player.credits, stage_config_ref, joined_time)
         },
     })
@@ -1795,10 +1815,7 @@ fn handle_flash_payload_read_only<T: Default>(
                 return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process Flash payload for {}'s active minigame with stage config {} (stage group {}) that does not exist", sender, minigame_status.group.stage_guid, minigame_status.group.stage_group_guid)));
             };
 
-            let MinigameJoinedState::Joined(joined_time) = minigame_status.joined_state else {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Cannot process Flash payload for {}'s active minigame (stage {}) that they haven't joined", sender, minigame_status.group.stage_guid)))
-            };
-
+            let joined_time = Instant::now();
             func(minigame_status, stage_config_ref, joined_time)
         },
     })
@@ -2061,10 +2078,10 @@ pub fn create_active_minigame_if_uncreated(
         ));
     };
 
-    if minigame_status.joined_state != MinigameJoinedState::NotCreated {
+    if minigame_status.game_created {
         return Ok(Vec::new());
     }
-    minigame_status.joined_state = MinigameJoinedState::Created;
+    minigame_status.game_created = true;
 
     Ok(vec![Broadcast::Single(
         sender,
