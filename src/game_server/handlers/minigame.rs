@@ -2433,6 +2433,8 @@ pub fn leave_active_minigame_if_any(
                 Err(err) => info!("Unable to remove other player {} from minigame (stage group {}, stage {}) that does not have enough players: {}", member_guid, group.stage_group_guid, group.stage_guid, err),
             }
         }
+
+        minigame_data_table_write_handle.remove(group);
     }
 
     Ok(broadcasts)
