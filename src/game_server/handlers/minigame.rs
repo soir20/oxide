@@ -1268,40 +1268,10 @@ fn handle_request_create_active_minigame(
             minigame_data_lock_enforcer.write_minigame_data(
                 |minigame_data_table_write_handle, zones_lock_enforcer| {
                     zones_lock_enforcer.write_zones(|zones_table_write_handle| {
-                        if stage_config.stage_config.max_players() == 1 {
-                            let matchmaking_group = MinigameMatchmakingGroup {
-                                stage_group_guid: stage_config.stage_group_guid,
-                                stage_guid: stage_config.stage_config.guid(),
-                                creation_time: now,
-                                owner_guid: sender,
-                            };
+                        let mut broadcasts = Vec::new();
 
-                            minigame_data_table_write_handle.insert(SharedMinigameData {
-                                guid: matchmaking_group,
-                                readiness: MinigameReadiness::InitialPlayersLoading(
-                                    BTreeSet::from([sender]),
-                                ),
-                                data: SharedMinigameTypeData::None,
-                            });
-                            set_initial_minigame_status(
-                                sender,
-                                matchmaking_group,
-                                characters_table_write_handle,
-                                &stage_config,
-                            )?;
-
-                            Ok(prepare_active_minigame_instance(
-                                matchmaking_group,
-                                &[sender],
-                                &stage_config,
-                                characters_table_write_handle,
-                                minigame_data_table_write_handle,
-                                zones_table_write_handle,
-                                None,
-                                game_server,
-                            ))
-                        } else {
-                            let mut broadcasts = vec![Broadcast::Single(
+                        if stage_config.stage_config.max_players() > 1 {
+                            broadcasts.push(Broadcast::Single(
                                 sender,
                                 vec![GamePacket::serialize(&TunneledPacket {
                                     unknown1: true,
@@ -1317,60 +1287,61 @@ fn handle_request_create_active_minigame(
                                         unknown7: 0,
                                     },
                                 })],
-                            )];
-                            let required_space = 1;
-                            let (open_group, space_left) = find_matchmaking_group(
-                                characters_table_write_handle,
-                                minigame_data_table_write_handle,
-                                required_space,
-                                stage_config.stage_config.max_players(),
-                                stage_config.stage_config.guid(),
-                                game_server.start_time(),
-                            )
-                            .unwrap_or_else(|| {
-                                let new_group = MinigameMatchmakingGroup {
-                                    stage_group_guid: stage_config.stage_group_guid,
-                                    stage_guid: stage_config.stage_config.guid(),
-                                    creation_time: now,
-                                    owner_guid: sender,
-                                };
+                            ));
+                        }
 
-                                minigame_data_table_write_handle.insert(SharedMinigameData {
-                                    guid: new_group,
-                                    readiness: MinigameReadiness::Matchmaking,
-                                    data: SharedMinigameTypeData::None,
-                                });
+                        let required_space = 1;
+                        let (open_group, space_left) = find_matchmaking_group(
+                            characters_table_write_handle,
+                            minigame_data_table_write_handle,
+                            required_space,
+                            stage_config.stage_config.max_players(),
+                            stage_config.stage_config.guid(),
+                            game_server.start_time(),
+                        )
+                        .unwrap_or_else(|| {
+                            let new_group = MinigameMatchmakingGroup {
+                                stage_group_guid: stage_config.stage_group_guid,
+                                stage_guid: stage_config.stage_config.guid(),
+                                creation_time: now,
+                                owner_guid: sender,
+                            };
 
-                                (new_group, stage_config.stage_config.max_players())
+                            minigame_data_table_write_handle.insert(SharedMinigameData {
+                                guid: new_group,
+                                readiness: MinigameReadiness::Matchmaking,
+                                data: SharedMinigameTypeData::None,
                             });
 
-                            set_initial_minigame_status(
-                                sender,
+                            (new_group, stage_config.stage_config.max_players())
+                        });
+
+                        set_initial_minigame_status(
+                            sender,
+                            open_group,
+                            characters_table_write_handle,
+                            &stage_config,
+                        )?;
+
+                        if space_left <= required_space {
+                            let players_in_group: Vec<u32> = characters_table_write_handle
+                                .keys_by_index4(&open_group)
+                                .filter_map(|guid| shorten_player_guid(guid).ok())
+                                .collect();
+
+                            broadcasts.append(&mut prepare_active_minigame_instance(
                                 open_group,
-                                characters_table_write_handle,
+                                &players_in_group,
                                 &stage_config,
-                            )?;
-
-                            if space_left <= required_space {
-                                let players_in_group: Vec<u32> = characters_table_write_handle
-                                    .keys_by_index4(&open_group)
-                                    .filter_map(|guid| shorten_player_guid(guid).ok())
-                                    .collect();
-
-                                broadcasts.append(&mut prepare_active_minigame_instance(
-                                    open_group,
-                                    &players_in_group,
-                                    &stage_config,
-                                    characters_table_write_handle,
-                                    minigame_data_table_write_handle,
-                                    zones_table_write_handle,
-                                    None,
-                                    game_server,
-                                ));
-                            }
-
-                            Ok(broadcasts)
+                                characters_table_write_handle,
+                                minigame_data_table_write_handle,
+                                zones_table_write_handle,
+                                None,
+                                game_server,
+                            ));
                         }
+
+                        Ok(broadcasts)
                     })
                 },
             )
