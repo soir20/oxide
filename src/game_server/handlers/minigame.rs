@@ -1529,7 +1529,16 @@ pub fn prepare_active_minigame_instance(
     })();
 
     match teleport_result {
-        Ok(mut teleport_broadcasts) => broadcasts.append(&mut teleport_broadcasts),
+        Ok(mut teleport_broadcasts) => {
+            broadcasts.append(&mut teleport_broadcasts);
+            minigame_data_table_write_handle.insert(SharedMinigameData {
+                guid: matchmaking_group,
+                readiness: MinigameReadiness::InitialPlayersLoading(BTreeSet::from_iter(
+                    members.iter().cloned(),
+                )),
+                data: SharedMinigameTypeData::None,
+            });
+        }
         Err(err) => {
             // We don't need to clean up the zone here, since the next instance of this stage that starts will use it instead
             info!("Couldn't add a player to the minigame, ending the game: {} (stage group {}, stage {})", err, stage_group_guid, stage_guid);
@@ -1556,14 +1565,6 @@ pub fn prepare_active_minigame_instance(
             }
         }
     }
-
-    minigame_data_table_write_handle.insert(SharedMinigameData {
-        guid: matchmaking_group,
-        readiness: MinigameReadiness::InitialPlayersLoading(BTreeSet::from_iter(
-            members.iter().cloned(),
-        )),
-        data: SharedMinigameTypeData::None,
-    });
 
     // Don't return a result here so that we properly handle updates for all players in the group, rather than returning early
     broadcasts
