@@ -1692,7 +1692,7 @@ impl
     fn index4(&self) -> Option<CharacterMatchmakingGroupIndex> {
         match &self.stats.character_type {
             CharacterType::Player(player) => {
-                (player.minigame_status.as_ref().map(|status| status.group))
+                player.minigame_status.as_ref().map(|status| status.group)
             }
             _ => None,
         }
