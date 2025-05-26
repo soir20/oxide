@@ -141,7 +141,7 @@ pub enum MatchmakingGroupStatus {
     Closed,
 }
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq, Eq)]
 pub enum MinigameReadiness {
     Matchmaking,
     InitialPlayersLoading(BTreeSet<u32>, Option<Instant>),
@@ -2447,6 +2447,10 @@ pub fn leave_active_minigame_if_any(
         return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to end player {}'s active minigame with stage config {} (stage group {}) that does not exist", sender, group.stage_guid, group.stage_group_guid)));
     };
 
+    let Some(shared_minigame_data) = minigame_data_table_write_handle.get(group) else {
+        return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to end player {}'s active minigame with shared minigame data {} (stage group {}) that does not exist", sender, group.stage_guid, group.stage_group_guid)));
+    };
+
     // Wait for the end signal from the Flash payload because those games send additional score data
     if skip_if_flash && matches!(stage_config.minigame_type(), MinigameType::Flash { .. }) {
         return Ok(Vec::new());
@@ -2470,7 +2474,9 @@ pub fn leave_active_minigame_if_any(
     }
 
     let remaining_players = characters_table_write_handle.keys_by_index4(&group).count() as u32;
-    if remaining_players < stage_config.min_players() {
+    if remaining_players < stage_config.min_players()
+        && shared_minigame_data.read().readiness != MinigameReadiness::Matchmaking
+    {
         let member_guids: Vec<u64> = characters_table_write_handle
             .keys_by_index4(&group)
             .collect();
