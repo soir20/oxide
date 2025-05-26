@@ -144,7 +144,7 @@ pub enum MatchmakingGroupStatus {
 #[derive(Clone)]
 pub enum MinigameReadiness {
     Matchmaking,
-    InitialPlayersLoading(BTreeSet<u32>),
+    InitialPlayersLoading(BTreeSet<u32>, Option<Instant>),
     Ready(Instant),
 }
 
@@ -1600,6 +1600,7 @@ pub fn prepare_active_minigame_instance(
 
                     minigame_data.readiness = MinigameReadiness::InitialPlayersLoading(
                         BTreeSet::from_iter(members.iter().copied()),
+                        None,
                     );
                 },
             );
@@ -1663,9 +1664,14 @@ fn handle_request_start_active_minigame(
                         return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unable to find shared minigame data for group {:?} when starting minigame for player {}", minigame_status.group, sender)));
                     };
 
-                    if let MinigameReadiness::InitialPlayersLoading(players) = &mut shared_minigame_data.readiness {
+                    if let MinigameReadiness::InitialPlayersLoading(players, first_player_load_time) = &mut shared_minigame_data.readiness {
+                        let now = Instant::now();
+                        if first_player_load_time.is_none() {
+                            *first_player_load_time = Some(now);
+                        }
+
                         if players.remove(&sender) && players.is_empty() {
-                            shared_minigame_data.readiness = MinigameReadiness::Ready(Instant::now());
+                            shared_minigame_data.readiness = MinigameReadiness::Ready(first_player_load_time.unwrap_or(now));
                         }
                     }
 
