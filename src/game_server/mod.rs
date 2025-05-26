@@ -26,9 +26,9 @@ use handlers::lock_enforcer::{
 };
 use handlers::login::{log_in, log_out, send_points_of_interest};
 use handlers::minigame::{
-    create_active_minigame_if_uncreated, load_all_minigames, prepare_active_minigame_instance,
-    process_minigame_packet, remove_group_from_matchmaking, AllMinigameConfigs,
-    MatchmakingGroupStatus,
+    create_active_minigame_if_uncreated, leave_active_minigame_if_any, load_all_minigames,
+    prepare_active_minigame_instance, process_minigame_packet, AllMinigameConfigs,
+    LeaveMinigameTarget, MatchmakingGroupStatus,
 };
 use handlers::mount::{load_mounts, process_mount_packet, MountConfig};
 use handlers::reference_data::{load_categories, load_item_classes, load_item_groups};
@@ -1082,16 +1082,19 @@ impl GameServer {
                                     }
                                 }
 
-                                broadcasts.append(&mut remove_group_from_matchmaking(
-                                    &players_in_group,
-                                    &BTreeSet::new(),
-                                    matchmaking_group,
+                                let leave_result = leave_active_minigame_if_any(
+                                    LeaveMinigameTarget::Group(matchmaking_group),
                                     characters_table_write_handle,
                                     minigame_data_table_write_handle,
                                     zones_table_write_handle,
                                     Some(33781),
+                                    false,
                                     self,
-                                ));
+                                );
+                                match leave_result {
+                                    Ok(mut leave_broadcasts) => broadcasts.append(&mut leave_broadcasts),
+                                    Err(err) => info!("Unable to remove timed-out group {:?} from matchmaking: {}", matchmaking_group, err),
+                                }
                             })
                         }
                     }

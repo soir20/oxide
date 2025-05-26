@@ -14,7 +14,8 @@ use crate::game_server::{
 };
 
 use super::minigame::{
-    handle_minigame_packet_write, leave_active_minigame_if_any, MinigameTypeData,
+    handle_minigame_packet_write, leave_active_minigame_if_any, LeaveMinigameTarget,
+    MinigameTypeData,
 };
 
 pub fn process_saber_strike_packet(
@@ -172,11 +173,11 @@ fn handle_saber_strike_game_over(
                 |minigame_data_table_write_handle, zones_lock_enforcer| {
                     zones_lock_enforcer.write_zones(|zones_table_write_handle| {
                         leave_active_minigame_if_any(
-                            sender,
+                            LeaveMinigameTarget::Single(sender),
                             characters_table_write_handle,
                             minigame_data_table_write_handle,
                             zones_table_write_handle,
-                            Some(header.stage_guid),
+                            None,
                             false,
                             game_server,
                         )
