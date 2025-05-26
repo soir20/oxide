@@ -1307,12 +1307,6 @@ fn handle_request_create_active_minigame(
                                 owner_guid: sender,
                             };
 
-                            minigame_data_table_write_handle.insert(SharedMinigameData {
-                                guid: new_group,
-                                readiness: MinigameReadiness::Matchmaking,
-                                data: SharedMinigameTypeData::None,
-                            });
-
                             (new_group, stage_config.stage_config.max_players())
                         });
 
@@ -1323,6 +1317,16 @@ fn handle_request_create_active_minigame(
                             &stage_config,
                         )?;
 
+                        // Wait to insert a new group in case there's an error updating the player's status
+                        if minigame_data_table_write_handle.get(open_group).is_none() {
+                            minigame_data_table_write_handle.insert(SharedMinigameData {
+                                guid: open_group,
+                                readiness: MinigameReadiness::Matchmaking,
+                                data: SharedMinigameTypeData::None,
+                            });
+                        }
+
+                        // Start the game because the group is full
                         if space_left <= required_space {
                             let players_in_group: Vec<u32> = characters_table_write_handle
                                 .keys_by_index4(&open_group)
