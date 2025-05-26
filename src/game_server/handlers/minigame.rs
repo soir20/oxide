@@ -1507,7 +1507,8 @@ pub fn prepare_active_minigame_instance(
             );
         }
         Err(err) => {
-            // We don't need to clean up the zone here, since the next instance of this stage that starts will use it instead
+            // Teleportation out of the minigame zone should clean it up if it is empty. If there is some error, the next game that starts
+            // can use the zone
             info!("Couldn't add a player to the minigame, ending the game: {} (stage group {}, stage {})", err, stage_group_guid, stage_guid);
             let leave_result = leave_active_minigame_if_any(
                 LeaveMinigameTarget::Group(matchmaking_group),
