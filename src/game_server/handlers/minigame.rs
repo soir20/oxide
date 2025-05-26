@@ -1270,26 +1270,6 @@ fn handle_request_create_active_minigame(
                     zones_lock_enforcer.write_zones(|zones_table_write_handle| {
                         let mut broadcasts = Vec::new();
 
-                        if stage_config.stage_config.max_players() > 1 {
-                            broadcasts.push(Broadcast::Single(
-                                sender,
-                                vec![GamePacket::serialize(&TunneledPacket {
-                                    unknown1: true,
-                                    inner: SendStringId {
-                                        sender_guid: player_guid(sender),
-                                        message_id: 19149,
-                                        is_anonymous: true,
-                                        unknown2: false,
-                                        is_action_bar_message: true,
-                                        action_bar_text_color: ActionBarTextColor::Yellow,
-                                        target_guid: 0,
-                                        owner_guid: 0,
-                                        unknown7: 0,
-                                    },
-                                })],
-                            ));
-                        }
-
                         let required_space = 1;
                         let (open_group, space_left) = find_matchmaking_group(
                             characters_table_write_handle,
@@ -1342,6 +1322,24 @@ fn handle_request_create_active_minigame(
                                 zones_table_write_handle,
                                 None,
                                 game_server,
+                            ));
+                        } else {
+                            broadcasts.push(Broadcast::Single(
+                                sender,
+                                vec![GamePacket::serialize(&TunneledPacket {
+                                    unknown1: true,
+                                    inner: SendStringId {
+                                        sender_guid: player_guid(sender),
+                                        message_id: 19149,
+                                        is_anonymous: true,
+                                        unknown2: false,
+                                        is_action_bar_message: true,
+                                        action_bar_text_color: ActionBarTextColor::Yellow,
+                                        target_guid: 0,
+                                        owner_guid: 0,
+                                        unknown7: 0,
+                                    },
+                                })],
                             ));
                         }
 
