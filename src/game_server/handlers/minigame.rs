@@ -2166,10 +2166,6 @@ fn leave_active_minigame_single_player_if_any(
                 return Ok((Vec::new(), previous_location, true));
             };
 
-            if stage_config.guid() != minigame_status.group.stage_guid {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to end player {}'s active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", sender, stage_config.guid(), minigame_status.group.stage_group_guid, minigame_status.group.stage_guid)));
-            }
-
             // If we've already awarded credits after a round, don't grant those credits again
             let mut broadcasts = if minigame_status.awarded_credits > 0 {
                 Vec::new()
