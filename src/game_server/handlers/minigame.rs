@@ -2339,7 +2339,7 @@ fn remove_single_player_from_matchmaking(
         let Some(character_write_handle) = possible_character_write_handle  else {
             return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
-                format!("Tried to end unknown player {}'s active minigame", player),
+                format!("Tried to remove unknown player {} from matchmaking", player),
             ));
         };
 
