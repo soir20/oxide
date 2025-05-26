@@ -28,9 +28,10 @@ use crate::{
                 LeaveActiveMinigame, MinigameDefinitions, MinigameHeader, MinigameOpCode,
                 MinigamePortalCategory, MinigamePortalEntry, MinigameStageDefinition,
                 MinigameStageGroupDefinition, MinigameStageGroupLink, MinigameStageInstance,
-                RequestCreateActiveMinigame, RequestMinigameStageGroupInstance,
-                RequestStartActiveMinigame, ScoreEntry, ScoreType, ShowStageInstanceSelect,
-                StartActiveMinigame, UpdateActiveMinigameRewards,
+                RequestCancelActiveMinigame, RequestCreateActiveMinigame,
+                RequestMinigameStageGroupInstance, RequestStartActiveMinigame, ScoreEntry,
+                ScoreType, ShowStageInstanceSelect, StartActiveMinigame,
+                UpdateActiveMinigameRewards,
             },
             saber_strike::{SaberStrikeOpCode, SaberStrikeStageData},
             tunnel::TunneledPacket,
@@ -1080,6 +1081,7 @@ pub fn process_minigame_packet(
                 handle_request_start_active_minigame(request, sender, game_server)
             }
             MinigameOpCode::RequestCancelActiveMinigame => {
+                RequestCancelActiveMinigame::deserialize(cursor)?;
                 handle_request_cancel_active_minigame(true, sender, game_server)
             }
             MinigameOpCode::FlashPayload => {
