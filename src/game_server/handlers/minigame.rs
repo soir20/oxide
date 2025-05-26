@@ -1591,6 +1591,10 @@ pub fn prepare_active_minigame_instance(
                 matchmaking_group,
                 |possible_minigame_data, _| {
                     let Some(minigame_data) = possible_minigame_data else {
+                        info!(
+                            "Unable to find shared minigame data for group {:?}",
+                            matchmaking_group
+                        );
                         return;
                     };
 
