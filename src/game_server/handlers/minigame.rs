@@ -1170,8 +1170,8 @@ fn handle_request_stage_group_instance(
 }
 
 fn find_matchmaking_group(
-    characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
-    minigame_data_table_write_handle: &mut MinigameDataTableWriteHandle<'_>,
+    characters_table_write_handle: &CharacterTableWriteHandle<'_>,
+    minigame_data_table_write_handle: &MinigameDataTableWriteHandle<'_>,
     required_space: u32,
     max_players: u32,
     stage_guid: i32,
