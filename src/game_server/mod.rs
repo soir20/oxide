@@ -1041,7 +1041,9 @@ impl GameServer {
                                         self,
                                     ));
                                     return;
-                                } else if players_in_group.len() == 1 {
+                                }
+
+                                if players_in_group.len() == 1 {
                                     if let Some(replacement_stage_locator) = &stage.stage_config.single_player_stage_guid() {
                                         if let Some(replacement_stage) = self
                                             .minigames()
