@@ -1171,13 +1171,12 @@ pub struct BattleClass {
 
 #[derive(Clone)]
 pub struct MinigameStatus {
-    pub group: CharacterMatchmakingGroupIndex,
+    pub group: MinigameMatchmakingGroup,
     pub game_created: bool,
     pub game_won: bool,
     pub score_entries: Vec<ScoreEntry>,
     pub total_score: i32,
     pub awarded_credits: u32,
-    pub start_time: Instant,
     pub type_data: MinigameTypeData,
 }
 
@@ -1493,26 +1492,20 @@ impl NpcTemplate {
     }
 }
 
-#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-pub enum MatchmakingGroupStatus {
-    Closed,
-    OpenToAll,
-    OpenToFriends,
-}
-
 pub type Chunk = (i32, i32);
 pub type CharacterLocationIndex = (CharacterCategory, u64, Chunk);
 pub type CharacterNameIndex = String;
 pub type CharacterSquadIndex = u64;
 
-#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-pub struct CharacterMatchmakingGroupIndex {
-    pub status: MatchmakingGroupStatus,
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct MinigameMatchmakingGroup {
     pub stage_group_guid: i32,
     pub stage_guid: i32,
     pub creation_time: Instant,
     pub owner_guid: u32,
 }
+
+pub type CharacterMatchmakingGroupIndex = MinigameMatchmakingGroup;
 
 #[derive(Clone)]
 pub struct CharacterStat {

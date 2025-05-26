@@ -9,8 +9,7 @@ use std::vec;
 
 use byteorder::{LittleEndian, ReadBytesExt};
 use handlers::character::{
-    Character, CharacterCategory, CharacterMatchmakingGroupIndex, CharacterType, Chunk,
-    MatchmakingGroupStatus,
+    Character, CharacterCategory, CharacterType, Chunk, MinigameMatchmakingGroup,
 };
 use handlers::chat::process_chat_packet;
 use handlers::command::process_command;
@@ -27,8 +26,9 @@ use handlers::lock_enforcer::{
 };
 use handlers::login::{log_in, log_out, send_points_of_interest};
 use handlers::minigame::{
-    create_active_minigame, load_all_minigames, prepare_active_minigame_instance,
-    process_minigame_packet, remove_from_matchmaking, AllMinigameConfigs,
+    create_active_minigame_if_uncreated, load_all_minigames, prepare_active_minigame_instance,
+    process_minigame_packet, remove_group_from_matchmaking, AllMinigameConfigs,
+    MatchmakingGroupStatus,
 };
 use handlers::mount::{load_mounts, process_mount_packet, MountConfig};
 use handlers::reference_data::{load_categories, load_item_classes, load_item_groups};
@@ -283,14 +283,13 @@ impl GameServer {
                                     };
 
                                     if let Some(minigame_status) = &mut player.minigame_status {
-                                        if !minigame_status.game_created {
-                                            minigame_status.game_created = true;
-                                            broadcasts.append(&mut create_active_minigame(
+                                        broadcasts.append(
+                                            &mut create_active_minigame_if_uncreated(
                                                 sender,
                                                 self.minigames(),
                                                 minigame_status,
-                                            )?);
-                                        }
+                                            )?,
+                                        );
                                     }
 
                                     if player.first_load {
@@ -1002,112 +1001,103 @@ impl GameServer {
         let now = Instant::now();
         self.lock_enforcer().write_characters(
             |characters_table_write_handle, minigame_data_lock_enforcer| {
-                let zones_lock_enforcer: ZoneLockEnforcer<'_> = minigame_data_lock_enforcer.into();
-                let mut broadcasts = Vec::new();
+                minigame_data_lock_enforcer.write_minigame_data(|minigame_data_table_write_handle, zones_lock_enforcer| {
+                    let mut broadcasts = Vec::new();
 
-                // Iterate over timed-out groups for every stage, since the number of stages remains
-                // a fairly small constant, while there can theoretically be billions of matchmaking groups.
-                for stage in self.minigames().stage_configs() {
-                    let timeout =
-                        Duration::from_millis(stage.stage_config.matchmaking_timeout_millis() as u64);
-                    // Make sure max time is greater than or equal to start time so that the range is valid
-                    let max_time = match now.checked_sub(timeout) {
-                        Some(max_time) => max_time,
-                        None => continue,
-                    }.max(self.start_time);
-                    let stage_group_guid = stage.stage_group_guid;
-                    let stage_guid = stage.stage_config.guid();
-                    let min_players = stage.stage_config.min_players();
+                    // Iterate over timed-out groups for every stage, since the number of stages remains
+                    // a fairly small constant, while there can theoretically be billions of matchmaking groups.
+                    for stage in self.minigames().stage_configs() {
+                        let timeout =
+                            Duration::from_millis(stage.stage_config.matchmaking_timeout_millis() as u64);
+                        // Make sure max time is greater than or equal to start time so that the range is valid
+                        let max_time = match now.checked_sub(timeout) {
+                            Some(max_time) => max_time,
+                            None => continue,
+                        }.max(self.start_time);
+                        let stage_group_guid = stage.stage_group_guid;
+                        let stage_guid = stage.stage_config.guid();
+                        let min_players = stage.stage_config.min_players();
 
-                    let timed_out_group_range =
-                        CharacterMatchmakingGroupIndex { status: MatchmakingGroupStatus::OpenToAll, stage_group_guid, stage_guid, creation_time: self.start_time, owner_guid: u32::MIN }
-                            ..=CharacterMatchmakingGroupIndex { status: MatchmakingGroupStatus::OpenToAll, stage_group_guid, stage_guid, creation_time: max_time, owner_guid: u32::MAX };
-                    let timed_out_groups: Vec<(Instant, u32)> = characters_table_write_handle
-                        .indices4_by_range(timed_out_group_range)
-                        .map(|CharacterMatchmakingGroupIndex { creation_time, owner_guid, .. }| (*creation_time, *owner_guid))
-                        .collect();
-                    for (creation_time, owner_guid) in timed_out_groups {
-                        let players_in_group: Vec<u32> = characters_table_write_handle
-                            .keys_by_index4(&CharacterMatchmakingGroupIndex {
-                                status: MatchmakingGroupStatus::OpenToAll,
-                                stage_group_guid,
-                                stage_guid,
-                                creation_time,
-                                owner_guid,
-                            })
-                            .filter_map(|guid| shorten_player_guid(guid).ok())
+                        let timed_out_group_range = (MatchmakingGroupStatus::Open, stage_guid, self.start_time)..=(MatchmakingGroupStatus::Open, stage_guid, max_time);
+                        let timed_out_groups: Vec<MinigameMatchmakingGroup> = minigame_data_table_write_handle
+                            .keys_by_index2_range(timed_out_group_range)
                             .collect();
+                        for matchmaking_group in timed_out_groups {
+                            let players_in_group: Vec<u32> = characters_table_write_handle
+                                .keys_by_index4(&matchmaking_group)
+                                .filter_map(|guid| shorten_player_guid(guid).ok())
+                                .collect();
 
-                        zones_lock_enforcer.write_zones(|zones_table_write_handle| {
-                            if players_in_group.len() as u32 >= min_players {
-                                broadcasts.append(&mut prepare_active_minigame_instance(
-                                    &players_in_group,
-                                    &stage,
-                                    characters_table_write_handle,
-                                    zones_table_write_handle,
-                                    None,
-                                    self,
-                                ));
-                                return;
-                            } else if players_in_group.len() == 1 {
-                                if let Some(replacement_stage_locator) = &stage.stage_config.single_player_stage_guid() {
-                                    if let Some(replacement_stage) = self
-                                        .minigames()
-                                        .stage_config(replacement_stage_locator.stage_group_guid, replacement_stage_locator.stage_guid)
-                                    {
-                                        if replacement_stage.stage_config.min_players() == 1 {
-                                            broadcasts.append(&mut prepare_active_minigame_instance(
-                                                &players_in_group,
-                                                &replacement_stage,
-                                                characters_table_write_handle,
-                                                zones_table_write_handle,
-                                                Some(44218),
-                                                self,
-                                            ));
-                                            return;
+                            zones_lock_enforcer.write_zones(|zones_table_write_handle| {
+                                if players_in_group.len() as u32 >= min_players {
+                                    broadcasts.append(&mut prepare_active_minigame_instance(
+                                        matchmaking_group,
+                                        &players_in_group,
+                                        &stage,
+                                        characters_table_write_handle,
+                                        minigame_data_table_write_handle,
+                                        zones_table_write_handle,
+                                        None,
+                                        self,
+                                    ));
+                                    return;
+                                }
+
+                                if players_in_group.len() == 1 {
+                                    if let Some(replacement_stage_locator) = &stage.stage_config.single_player_stage_guid() {
+                                        if let Some(replacement_stage) = self
+                                            .minigames()
+                                            .stage_config(replacement_stage_locator.stage_group_guid, replacement_stage_locator.stage_guid)
+                                        {
+                                            if replacement_stage.stage_config.min_players() == 1 {
+                                                broadcasts.append(&mut prepare_active_minigame_instance(
+                                                    matchmaking_group,
+                                                    &players_in_group,
+                                                    &replacement_stage,
+                                                    characters_table_write_handle,
+                                                    minigame_data_table_write_handle,
+                                                    zones_table_write_handle,
+                                                    Some(44218),
+                                                    self,
+                                                ));
+                                                return;
+                                            } else {
+                                                info!(
+                                                    "Replacement stage (stage group {}, stage {}) for (stage group {}, stage {}) isn't single-player",
+                                                    replacement_stage_locator.stage_group_guid,
+                                                    replacement_stage_locator.stage_guid,
+                                                    stage_group_guid,
+                                                    stage_guid
+                                                );
+                                            }
                                         } else {
                                             info!(
-                                                "Replacement stage (stage group {}, stage {}) for (stage group {}, stage {}) isn't single-player",
+                                                "Couldn't find replacement stage (stage group {}, stage {}) for (stage group {}, stage {})",
                                                 replacement_stage_locator.stage_group_guid,
                                                 replacement_stage_locator.stage_guid,
                                                 stage_group_guid,
                                                 stage_guid
                                             );
                                         }
-                                    } else {
-                                        info!(
-                                            "Couldn't find replacement stage (stage group {}, stage {}) for (stage group {}, stage {})",
-                                            replacement_stage_locator.stage_group_guid,
-                                            replacement_stage_locator.stage_guid,
-                                            stage_group_guid,
-                                            stage_guid
-                                        );
                                     }
                                 }
-                            }
 
-                            for player in players_in_group {
-                                let remove_result = remove_from_matchmaking(
-                                    player,
-                                    stage_group_guid,
-                                    stage_guid,
+                                broadcasts.append(&mut remove_group_from_matchmaking(
+                                    &players_in_group,
+                                    &BTreeSet::new(),
+                                    matchmaking_group,
                                     characters_table_write_handle,
+                                    minigame_data_table_write_handle,
                                     zones_table_write_handle,
-                                    false,
                                     Some(33781),
                                     self,
-                                );
-
-                                match remove_result {
-                                    Ok(mut remove_broadcasts) => broadcasts.append(&mut remove_broadcasts),
-                                    Err(err) => info!("Unable to remove player {} from matchmaking on tick: {}", player, err),
-                                }
-                            }
-                        })
+                                ));
+                            })
+                        }
                     }
-                }
 
-                broadcasts
+                    broadcasts
+                })
             },
         )
     }
