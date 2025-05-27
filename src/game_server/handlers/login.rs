@@ -2,7 +2,7 @@ use packet_serialize::NullTerminatedString;
 
 use crate::{
     game_server::{
-        handlers::minigame::leave_active_minigame_if_any,
+        handlers::minigame::{leave_active_minigame_if_any, LeaveMinigameTarget},
         packets::{
             login::{DefinePointsOfInterest, DeploymentEnv, GameSettings, LoginReply},
             player_update::ItemDefinitionsReply,
@@ -146,7 +146,7 @@ pub fn log_out(sender: u32, game_server: &GameServer) -> Vec<Broadcast> {
                         let mut broadcasts = Vec::new();
 
                         let leave_minigame_result = leave_active_minigame_if_any(
-                            sender,
+                            LeaveMinigameTarget::Single(sender),
                             characters_table_write_handle,
                             minigame_data_write_handle,
                             zones_table_write_handle,

@@ -1172,6 +1172,7 @@ pub struct BattleClass {
 #[derive(Clone)]
 pub struct MinigameStatus {
     pub group: MinigameMatchmakingGroup,
+    pub teleported_to_game: bool,
     pub game_created: bool,
     pub game_won: bool,
     pub score_entries: Vec<ScoreEntry>,
