@@ -183,7 +183,7 @@ fn process_unequip_slot(
             read_guids: vec![],
             write_guids: vec![player_guid(sender)],
             character_consumer: |characters_table_read_handle, _, mut characters_write, _| {
-                let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender))  else {
+                let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) else {
                     return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} tried to unequip slot", sender)));
                 };
 
@@ -194,7 +194,7 @@ fn process_unequip_slot(
 
                 let possible_battle_class = player_data.battle_classes.get_mut(&unequip_slot.battle_class);
 
-                let Some(battle_class) = possible_battle_class  else {
+                let Some(battle_class) = possible_battle_class else {
                     return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to unequip slot in battle class {} that they don't own", sender, unequip_slot.battle_class)));
                 };
 

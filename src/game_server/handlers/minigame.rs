@@ -1770,7 +1770,7 @@ fn handle_flash_payload_read_only<T: Default>(
                 ));
             };
 
-            let CharacterType::Player(player) = &character_read_handle.stats.character_type  else {
+            let CharacterType::Player(player) = &character_read_handle.stats.character_type else {
                 return Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
                     format!(
@@ -2335,7 +2335,7 @@ fn remove_single_player_from_matchmaking(
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let removal_mode = characters_table_write_handle.update_value_indices(player_guid(player), |possible_character_write_handle, _| {
-        let Some(character_write_handle) = possible_character_write_handle  else {
+        let Some(character_write_handle) = possible_character_write_handle else {
             return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
                 format!("Tried to remove unknown player {} from matchmaking", player),
