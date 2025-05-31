@@ -12,6 +12,7 @@ use byteorder::ReadBytesExt;
 use evalexpr::{context_map, eval_with_context, Value};
 use num_enum::TryFromPrimitive;
 use packet_serialize::DeserializePacket;
+use rand::{seq::SliceRandom, thread_rng};
 use serde::{de::IgnoredAny, Deserialize};
 
 use crate::{
@@ -107,11 +108,26 @@ pub struct StageLocator {
     pub stage_guid: i32,
 }
 
+#[derive(Clone, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub enum FlashMinigameType {
+    FleetCommander,
+    ForceConnection,
+    #[default]
+    Simple,
+}
+
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub enum MinigameType {
-    Flash { game_swf_name: String },
-    SaberStrike { saber_strike_stage_id: u32 },
+    Flash {
+        game_swf_name: String,
+        #[serde(default)]
+        game_type: FlashMinigameType,
+    },
+    SaberStrike {
+        saber_strike_stage_id: u32,
+    },
 }
 
 #[non_exhaustive]
@@ -186,9 +202,39 @@ impl
 }
 
 #[non_exhaustive]
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub enum SharedMinigameTypeData {
+    FleetCommander {
+        player1: u32,
+        player2: Option<u32>,
+    },
+    ForceConnection {
+        player1: u32,
+        player2: Option<u32>,
+    },
+    #[default]
     None,
+}
+
+impl SharedMinigameTypeData {
+    pub fn from(minigame_type: &MinigameType, members: &[u32]) -> Self {
+        // We can't have a game without at least one player
+        let player1 = members[0];
+        let player2 = members.get(1).cloned();
+
+        match minigame_type {
+            MinigameType::Flash { game_type, .. } => match game_type {
+                FlashMinigameType::FleetCommander => {
+                    SharedMinigameTypeData::FleetCommander { player1, player2 }
+                }
+                FlashMinigameType::ForceConnection => {
+                    SharedMinigameTypeData::ForceConnection { player1, player2 }
+                }
+                FlashMinigameType::Simple => SharedMinigameTypeData::default(),
+            },
+            MinigameType::SaberStrike { .. } => SharedMinigameTypeData::default(),
+        }
+    }
 }
 
 const CHALLENGE_LINK_NAME: &str = "challenge";
@@ -1299,21 +1345,25 @@ fn handle_request_create_active_minigame(
                         )?;
 
                         // Wait to insert a new group in case there's an error updating the player's status
+                        let mut players_in_group: Vec<u32> = characters_table_write_handle
+                            .keys_by_index4(&open_group)
+                            .filter_map(|guid| shorten_player_guid(guid).ok())
+                            .collect();
+                        players_in_group.shuffle(&mut thread_rng());
+
                         if minigame_data_table_write_handle.get(open_group).is_none() {
                             minigame_data_table_write_handle.insert(SharedMinigameData {
                                 guid: open_group,
                                 readiness: MinigameReadiness::Matchmaking,
-                                data: SharedMinigameTypeData::None,
+                                data: SharedMinigameTypeData::from(
+                                    stage_config.stage_config.minigame_type(),
+                                    &players_in_group,
+                                ),
                             });
                         }
 
                         // Start the game because the group is full
                         if space_left <= required_space {
-                            let players_in_group: Vec<u32> = characters_table_write_handle
-                                .keys_by_index4(&open_group)
-                                .filter_map(|guid| shorten_player_guid(guid).ok())
-                                .collect();
-
                             broadcasts.append(&mut prepare_active_minigame_instance(
                                 open_group,
                                 &players_in_group,
@@ -1605,7 +1655,7 @@ fn handle_request_start_active_minigame(
                     }));
 
                     match stage_config.minigame_type() {
-                        MinigameType::Flash { game_swf_name } => {
+                        MinigameType::Flash { game_swf_name, .. } => {
                             packets.push(
                                 GamePacket::serialize(&TunneledPacket {
                                     unknown1: true,
