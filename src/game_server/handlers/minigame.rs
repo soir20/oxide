@@ -107,11 +107,26 @@ pub struct StageLocator {
     pub stage_guid: i32,
 }
 
+#[derive(Clone, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub enum FlashMinigameType {
+    FleetCommander,
+    ForceConnection,
+    #[default]
+    Simple,
+}
+
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub enum MinigameType {
-    Flash { game_swf_name: String },
-    SaberStrike { saber_strike_stage_id: u32 },
+    Flash {
+        game_swf_name: String,
+        #[serde(default)]
+        game_type: FlashMinigameType,
+    },
+    SaberStrike {
+        saber_strike_stage_id: u32,
+    },
 }
 
 #[non_exhaustive]
@@ -186,9 +201,25 @@ impl
 }
 
 #[non_exhaustive]
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub enum SharedMinigameTypeData {
+    FleetCommander,
+    ForceConnection,
+    #[default]
     None,
+}
+
+impl From<&MinigameType> for SharedMinigameTypeData {
+    fn from(value: &MinigameType) -> Self {
+        match value {
+            MinigameType::Flash { game_type, .. } => match game_type {
+                FlashMinigameType::FleetCommander => SharedMinigameTypeData::FleetCommander,
+                FlashMinigameType::ForceConnection => SharedMinigameTypeData::ForceConnection,
+                FlashMinigameType::Simple => SharedMinigameTypeData::default(),
+            },
+            MinigameType::SaberStrike { .. } => SharedMinigameTypeData::default(),
+        }
+    }
 }
 
 const CHALLENGE_LINK_NAME: &str = "challenge";
@@ -1303,7 +1334,7 @@ fn handle_request_create_active_minigame(
                             minigame_data_table_write_handle.insert(SharedMinigameData {
                                 guid: open_group,
                                 readiness: MinigameReadiness::Matchmaking,
-                                data: SharedMinigameTypeData::None,
+                                data: stage_config.stage_config.minigame_type().into(),
                             });
                         }
 
@@ -1605,7 +1636,7 @@ fn handle_request_start_active_minigame(
                     }));
 
                     match stage_config.minigame_type() {
-                        MinigameType::Flash { game_swf_name } => {
+                        MinigameType::Flash { game_swf_name, .. } => {
                             packets.push(
                                 GamePacket::serialize(&TunneledPacket {
                                     unknown1: true,
