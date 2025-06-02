@@ -30,8 +30,8 @@ use super::{
     character::{
         coerce_to_broadcast_supplier, AmbientNpcConfig, Character, CharacterCategory,
         CharacterLocationIndex, CharacterMatchmakingGroupIndex, CharacterNameIndex,
-        CharacterSquadIndex, CharacterType, Chunk, DoorConfig, NpcTemplate, PreviousFixture,
-        PreviousLocation, RemovalMode, TransportConfig,
+        CharacterSquadIndex, CharacterSynchronizationIndex, CharacterType, Chunk, DoorConfig,
+        NpcTemplate, PreviousFixture, PreviousLocation, RemovalMode, TransportConfig,
     },
     distance3,
     guid::{Guid, GuidTable, GuidTableIndexer, GuidTableWriteHandle, IndexedGuid},
@@ -136,6 +136,7 @@ impl From<&Vec<Character>>
         CharacterNameIndex,
         CharacterSquadIndex,
         CharacterMatchmakingGroupIndex,
+        CharacterSynchronizationIndex,
     >
 {
     fn from(value: &Vec<Character>) -> Self {
@@ -271,6 +272,7 @@ impl ZoneTemplate {
             CharacterNameIndex,
             CharacterSquadIndex,
             CharacterMatchmakingGroupIndex,
+            CharacterSynchronizationIndex,
         >,
     ) -> ZoneInstance {
         let keys_to_guid: HashMap<&String, u64> = self
@@ -398,6 +400,7 @@ impl ZoneInstance {
             CharacterNameIndex,
             CharacterSquadIndex,
             CharacterMatchmakingGroupIndex,
+            CharacterSynchronizationIndex,
         >,
     ) -> Self {
         for (index, fixture) in house.fixtures.iter().enumerate() {
@@ -494,6 +497,7 @@ impl ZoneInstance {
             CharacterNameIndex,
             CharacterSquadIndex,
             CharacterMatchmakingGroupIndex,
+            CharacterSynchronizationIndex,
         >,
     ) -> Vec<u32> {
         let mut guids = Vec::new();
@@ -534,6 +538,7 @@ impl ZoneInstance {
             CharacterNameIndex,
             CharacterSquadIndex,
             CharacterMatchmakingGroupIndex,
+            CharacterSynchronizationIndex,
         >,
     ) -> Vec<u32> {
         ZoneInstance::other_players_nearby(None, chunk, instance_guid, characters_table_handle)
@@ -551,6 +556,7 @@ impl ZoneInstance {
             CharacterNameIndex,
             CharacterSquadIndex,
             CharacterMatchmakingGroupIndex,
+            CharacterSynchronizationIndex,
         >,
         moved_character_guid: u64,
     ) -> CharacterDiffResult {

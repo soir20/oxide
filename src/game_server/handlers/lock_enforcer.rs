@@ -8,7 +8,7 @@ use parking_lot::{RwLockReadGuard, RwLockWriteGuard};
 use super::{
     character::{
         Character, CharacterLocationIndex, CharacterMatchmakingGroupIndex, CharacterNameIndex,
-        CharacterSquadIndex, MinigameMatchmakingGroup,
+        CharacterSquadIndex, CharacterSynchronizationIndex, MinigameMatchmakingGroup,
     },
     guid::{
         GuidTable, GuidTableHandle, GuidTableIndexer, GuidTableReadHandle, GuidTableWriteHandle,
@@ -187,6 +187,7 @@ pub type CharacterTableReadHandle<'a> = TableReadHandleWrapper<
     CharacterNameIndex,
     CharacterSquadIndex,
     CharacterMatchmakingGroupIndex,
+    CharacterSynchronizationIndex,
 >;
 pub type CharacterTableWriteHandle<'a> = GuidTableWriteHandle<
     'a,
@@ -196,6 +197,7 @@ pub type CharacterTableWriteHandle<'a> = GuidTableWriteHandle<
     CharacterNameIndex,
     CharacterSquadIndex,
     CharacterMatchmakingGroupIndex,
+    CharacterSynchronizationIndex,
 >;
 pub type CharacterReadGuard<'a> = RwLockReadGuard<'a, Character>;
 pub type CharacterWriteGuard<'a> = RwLockWriteGuard<'a, Character>;
@@ -482,6 +484,7 @@ pub struct CharacterLockEnforcer<'a> {
         CharacterNameIndex,
         CharacterSquadIndex,
         CharacterMatchmakingGroupIndex,
+        CharacterSynchronizationIndex,
     >,
     zones: &'a GuidTable<u64, ZoneInstance, u8>,
     minigame_data: &'a GuidTable<
@@ -573,6 +576,7 @@ pub struct LockEnforcerSource {
         CharacterNameIndex,
         CharacterSquadIndex,
         CharacterMatchmakingGroupIndex,
+        CharacterSynchronizationIndex,
     >,
     zones: GuidTable<u64, ZoneInstance, u8>,
     minigame_data: GuidTable<
@@ -592,6 +596,7 @@ impl LockEnforcerSource {
             CharacterNameIndex,
             CharacterSquadIndex,
             CharacterMatchmakingGroupIndex,
+            CharacterSynchronizationIndex,
         >,
         zones: GuidTable<u64, ZoneInstance, u8>,
         minigame_data: GuidTable<
