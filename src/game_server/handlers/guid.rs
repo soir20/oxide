@@ -193,10 +193,10 @@ pub trait GuidTableHandle<'a, K, V: 'a, I1, I2: 'a, I3: 'a, I4: 'a, I5: 'a>:
     fn get(&self, guid: K) -> Option<&Lock<V>>;
 }
 
-fn keys_by_index<'a, 'b, I: Clone + Ord, K: Copy + Ord>(
-    index: &'a I,
-    index_map: &'b BTreeMap<I, BTreeSet<K>>,
-) -> impl Iterator<Item = K> + use<'b, I, K> {
+fn keys_by_index<'a, I: Clone + Ord, K: Copy + Ord>(
+    index: &I,
+    index_map: &'a BTreeMap<I, BTreeSet<K>>,
+) -> impl Iterator<Item = K> + use<'a, I, K> {
     index_map
         .get(index)
         .map(|index_list| index_list.iter())
