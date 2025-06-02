@@ -1507,6 +1507,7 @@ pub struct MinigameMatchmakingGroup {
 }
 
 pub type CharacterMatchmakingGroupIndex = MinigameMatchmakingGroup;
+pub type CharacterSynchronizationIndex = u64;
 
 #[derive(Clone)]
 pub struct CharacterStat {
@@ -1657,6 +1658,7 @@ impl
         CharacterNameIndex,
         CharacterSquadIndex,
         CharacterMatchmakingGroupIndex,
+        CharacterSynchronizationIndex,
     > for Character
 {
     fn guid(&self) -> u64 {
@@ -1697,6 +1699,10 @@ impl
             }
             _ => None,
         }
+    }
+
+    fn index5(&self) -> Option<CharacterSynchronizationIndex> {
+        self.synchronize_with
     }
 }
 

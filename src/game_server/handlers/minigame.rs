@@ -164,7 +164,11 @@ pub enum MinigameReadiness {
     Ready(Instant),
 }
 
-pub type SharedMinigameDataUnusedIndex = ();
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub enum SharedMinigameDataTickableIndex {
+    Tickable,
+    NotTickable,
+}
 pub type SharedMinigameDataMatchmakingIndex = (MatchmakingGroupStatus, i32, Instant);
 
 #[derive(Clone)]
@@ -177,7 +181,7 @@ pub struct SharedMinigameData {
 impl
     IndexedGuid<
         MinigameMatchmakingGroup,
-        SharedMinigameDataUnusedIndex,
+        SharedMinigameDataTickableIndex,
         SharedMinigameDataMatchmakingIndex,
     > for SharedMinigameData
 {
@@ -185,7 +189,14 @@ impl
         self.guid
     }
 
-    fn index1(&self) -> SharedMinigameDataUnusedIndex {}
+    fn index1(&self) -> SharedMinigameDataTickableIndex {
+        match self.data {
+            SharedMinigameTypeData::ForceConnection { .. } => {
+                SharedMinigameDataTickableIndex::Tickable
+            }
+            _ => SharedMinigameDataTickableIndex::NotTickable,
+        }
+    }
 
     fn index2(&self) -> Option<SharedMinigameDataMatchmakingIndex> {
         let matchmaking_status = match self.readiness {
