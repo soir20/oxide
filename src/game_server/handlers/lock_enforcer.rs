@@ -20,13 +20,21 @@ use super::{
     zone::ZoneInstance,
 };
 
-pub struct TableReadHandleWrapper<'a, K, V, I1 = (), I2 = (), I3 = (), I4 = ()> {
-    handle: GuidTableReadHandle<'a, K, V, I1, I2, I3, I4>,
+pub struct TableReadHandleWrapper<'a, K, V, I1 = (), I2 = (), I3 = (), I4 = (), I5 = ()> {
+    handle: GuidTableReadHandle<'a, K, V, I1, I2, I3, I4, I5>,
 }
 
-impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4: Clone + Ord>
-    GuidTableIndexer<'a, K, V, I1, I2, I3, I4>
-    for TableReadHandleWrapper<'a, K, V, I1, I2, I3, I4>
+impl<
+        'a,
+        K: Copy + Ord,
+        V,
+        I1: Copy + Ord,
+        I2: Clone + Ord,
+        I3: Clone + Ord,
+        I4: Clone + Ord,
+        I5: Clone + Ord,
+    > GuidTableIndexer<'a, K, V, I1, I2, I3, I4, I5>
+    for TableReadHandleWrapper<'a, K, V, I1, I2, I3, I4, I5>
 {
     fn index1(&self, guid: K) -> Option<I1> {
         self.handle.index1(guid)
@@ -42,6 +50,10 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4:
 
     fn index4(&self, guid: K) -> Option<&I4> {
         self.handle.index4(guid)
+    }
+
+    fn index5(&self, guid: K) -> Option<&I5> {
+        self.handle.index5(guid)
     }
 
     fn keys(&'a self) -> impl Iterator<Item = K> {
@@ -62,6 +74,10 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4:
 
     fn keys_by_index4(&'a self, index: &I4) -> impl Iterator<Item = K> {
         self.handle.keys_by_index4(index)
+    }
+
+    fn keys_by_index5(&'a self, index: &I5) -> impl Iterator<Item = K> {
+        self.handle.keys_by_index5(index)
     }
 
     fn keys_by_index1_range(
@@ -92,6 +108,13 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4:
         self.handle.keys_by_index4_range(range)
     }
 
+    fn keys_by_index5_range(
+        &'a self,
+        range: impl RangeBounds<I5>,
+    ) -> impl DoubleEndedIterator<Item = K> {
+        self.handle.keys_by_index5_range(range)
+    }
+
     fn indices1(&'a self) -> impl Iterator<Item = I1> {
         self.handle.indices1()
     }
@@ -106,6 +129,10 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4:
 
     fn indices4(&'a self) -> impl Iterator<Item = &'a I4> {
         self.handle.indices4()
+    }
+
+    fn indices5(&'a self) -> impl Iterator<Item = &'a I5> {
+        self.handle.indices5()
     }
 
     fn indices1_by_range(
@@ -135,12 +162,19 @@ impl<'a, K: Copy + Ord, V, I1: Copy + Ord, I2: Clone + Ord, I3: Clone + Ord, I4:
     ) -> impl DoubleEndedIterator<Item = &'a I4> {
         self.handle.indices4_by_range(range)
     }
+
+    fn indices5_by_range(
+        &'a self,
+        range: impl RangeBounds<I5>,
+    ) -> impl DoubleEndedIterator<Item = &'a I5> {
+        self.handle.indices5_by_range(range)
+    }
 }
 
-impl<'a, K, V, I1, I2, I3, I4> From<GuidTableReadHandle<'a, K, V, I1, I2, I3, I4>>
-    for TableReadHandleWrapper<'a, K, V, I1, I2, I3, I4>
+impl<'a, K, V, I1, I2, I3, I4, I5> From<GuidTableReadHandle<'a, K, V, I1, I2, I3, I4, I5>>
+    for TableReadHandleWrapper<'a, K, V, I1, I2, I3, I4, I5>
 {
-    fn from(value: GuidTableReadHandle<'a, K, V, I1, I2, I3, I4>) -> Self {
+    fn from(value: GuidTableReadHandle<'a, K, V, I1, I2, I3, I4, I5>) -> Self {
         TableReadHandleWrapper { handle: value }
     }
 }
@@ -192,8 +226,8 @@ struct LockRequest<K, F> {
     pub consumer: F,
 }
 
-struct LockEnforcer<'a, K, V, I1 = (), I2 = (), I3 = (), I4 = ()> {
-    table: &'a GuidTable<K, V, I1, I2, I3, I4>,
+struct LockEnforcer<'a, K, V, I1 = (), I2 = (), I3 = (), I4 = (), I5 = ()> {
+    table: &'a GuidTable<K, V, I1, I2, I3, I4, I5>,
 }
 
 impl<
@@ -202,17 +236,18 @@ impl<
         I2: Clone + Ord,
         I3: Clone + Ord,
         I4: Clone + Ord,
-        V: IndexedGuid<K, I1, I2, I3, I4>,
-    > LockEnforcer<'_, K, V, I1, I2, I3, I4>
+        I5: Clone + Ord,
+        V: IndexedGuid<K, I1, I2, I3, I4, I5>,
+    > LockEnforcer<'_, K, V, I1, I2, I3, I4, I5>
 {
     pub fn read<
         R,
         F: FnOnce(
-            &TableReadHandleWrapper<'_, K, V, I1, I2, I3, I4>,
+            &TableReadHandleWrapper<'_, K, V, I1, I2, I3, I4, I5>,
             BTreeMap<K, RwLockReadGuard<'_, V>>,
             BTreeMap<K, RwLockWriteGuard<'_, V>>,
         ) -> R,
-        T: FnOnce(&TableReadHandleWrapper<'_, K, V, I1, I2, I3, I4>) -> LockRequest<K, F>,
+        T: FnOnce(&TableReadHandleWrapper<'_, K, V, I1, I2, I3, I4, I5>) -> LockRequest<K, F>,
     >(
         &self,
         table_consumer: T,
@@ -244,7 +279,7 @@ impl<
     // If this thread holds the table write lock, then no other threads may hold a table lock.
     // Therefore, if this thread holds the table write lock, it is the only thread that can hold any
     // item locks, and we can provide full access to the table without fear of deadlock.
-    pub fn write<R, T: FnOnce(&mut GuidTableWriteHandle<'_, K, V, I1, I2, I3, I4>) -> R>(
+    pub fn write<R, T: FnOnce(&mut GuidTableWriteHandle<'_, K, V, I1, I2, I3, I4, I5>) -> R>(
         &self,
         table_consumer: T,
     ) -> R {
