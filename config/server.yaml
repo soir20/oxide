@@ -19,5 +19,6 @@ desired_resend_pct: 5
 max_millis_until_resend: 300
 chunk_tick_period_millis: 500
 chunk_tick_threads: 2
+matchmaking_tick_period_millis: 1000
 channel_cleanup_period_millis: 1000
 channel_inactive_timeout_millis: 60000

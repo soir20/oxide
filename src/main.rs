@@ -161,6 +161,17 @@ async fn main() {
         &game_server_arc,
     );
 
+    let matchmaking_tick_dequeue = tick(Duration::from_millis(
+        server_options.matchmaking_tick_period_millis,
+    ));
+    spawn_matchmaking_tick_thread(
+        &channel_manager_arc,
+        matchmaking_tick_dequeue,
+        client_enqueue.clone(),
+        &server_options,
+        &game_server_arc,
+    );
+
     let cleanup_tick_dequeue = tick(Duration::from_millis(
         server_options.channel_cleanup_period_millis,
     ));
@@ -203,6 +214,7 @@ pub struct ServerOptions {
     pub max_millis_until_resend: u64,
     pub chunk_tick_period_millis: u64,
     pub chunk_tick_threads: u16,
+    pub matchmaking_tick_period_millis: u64,
     pub channel_cleanup_period_millis: u64,
     pub channel_inactive_timeout_millis: u64,
     pub min_client_version: Option<String>,
@@ -588,6 +600,30 @@ fn spawn_chunk_tick_threads(
                 .expect("Chunk tick done channel disconnected");
             done_signals += 1;
         }
+    });
+}
+
+fn spawn_matchmaking_tick_thread(
+    channel_manager: &Arc<RwLock<ChannelManager>>,
+    matchmaking_tick_dequeue: Receiver<Instant>,
+    client_enqueue: Sender<SocketAddr>,
+    server_options: &Arc<ServerOptions>,
+    game_server: &Arc<GameServer>,
+) {
+    let client_enqueue = client_enqueue.clone();
+    let channel_manager = channel_manager.clone();
+    let server_options = server_options.clone();
+    let game_server = game_server.clone();
+
+    thread::spawn(move || loop {
+        matchmaking_tick_dequeue
+            .recv()
+            .expect("Matchmaking tick channel disconnected");
+
+        let broadcasts = game_server.tick_minigame_groups();
+        channel_manager
+            .read()
+            .broadcast(client_enqueue.clone(), broadcasts, &server_options);
     });
 }
 
