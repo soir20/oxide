@@ -5,6 +5,7 @@ use std::{
     path::Path,
 };
 
+use enum_iterator::all;
 use parking_lot::RwLockReadGuard;
 use serde::{de::IgnoredAny, Deserialize};
 
@@ -22,6 +23,7 @@ use crate::{
             GamePacket, Pos,
         },
         Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
+        TickableNpcSynchronization,
     },
     info, ConfigError,
 };
@@ -48,8 +50,6 @@ use super::{
     update_position::UpdatePositionPacket,
     WriteLockingBroadcastSupplier,
 };
-
-use strum::IntoEnumIterator;
 
 const fn default_true() -> bool {
     true
@@ -568,7 +568,7 @@ impl ZoneInstance {
         let mut character_diffs_for_moved_character = BTreeMap::new();
         let mut players_too_far_from_moved_character = Vec::new();
         let mut new_players_close_to_moved_character = Vec::new();
-        for category in CharacterCategory::iter() {
+        for category in all::<CharacterCategory>() {
             for chunk in chunks_to_remove.iter() {
                 for guid in
                     characters_table_handle.keys_by_index1((category, instance_guid, **chunk))
@@ -584,7 +584,7 @@ impl ZoneInstance {
             }
         }
 
-        for category in CharacterCategory::iter() {
+        for category in all::<CharacterCategory>() {
             for chunk in chunks_to_add.iter() {
                 for guid in
                     characters_table_handle.keys_by_index1((category, instance_guid, **chunk))
@@ -729,12 +729,21 @@ impl ZoneInstance {
                             if same_chunk {
                                 let auto_interactable_npcs: Vec<u64> = characters_table_read_handle
                                     .keys_by_index1((
-                                        CharacterCategory::NpcAutoInteractEnabled,
+                                        CharacterCategory::NpcAutoInteractable,
                                         instance_guid,
                                         new_chunk,
                                     ))
                                     .chain(characters_table_read_handle.keys_by_index1((
-                                        CharacterCategory::NpcAutoInteractTickable,
+                                        CharacterCategory::NpcAutoInteractableTickable(
+                                            TickableNpcSynchronization::Synchronized,
+                                        ),
+                                        instance_guid,
+                                        new_chunk,
+                                    )))
+                                    .chain(characters_table_read_handle.keys_by_index1((
+                                        CharacterCategory::NpcAutoInteractableTickable(
+                                            TickableNpcSynchronization::Unsynchronized,
+                                        ),
                                         instance_guid,
                                         new_chunk,
                                     )))
@@ -837,12 +846,21 @@ impl ZoneInstance {
 
                             let auto_interactable_npcs: Vec<u64> = characters_table_write_handle
                                 .keys_by_index1((
-                                    CharacterCategory::NpcAutoInteractEnabled,
+                                    CharacterCategory::NpcAutoInteractable,
                                     instance_guid,
                                     new_chunk,
                                 ))
                                 .chain(characters_table_write_handle.keys_by_index1((
-                                    CharacterCategory::NpcAutoInteractTickable,
+                                    CharacterCategory::NpcAutoInteractableTickable(
+                                        TickableNpcSynchronization::Synchronized,
+                                    ),
+                                    instance_guid,
+                                    new_chunk,
+                                )))
+                                .chain(characters_table_write_handle.keys_by_index1((
+                                    CharacterCategory::NpcAutoInteractableTickable(
+                                        TickableNpcSynchronization::Unsynchronized,
+                                    ),
                                     instance_guid,
                                     new_chunk,
                                 )))
@@ -1130,7 +1148,7 @@ fn clean_up_zone(
     characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
     zones_table_write_handle: &mut ZoneTableWriteHandle<'_>,
 ) {
-    for category in CharacterCategory::iter() {
+    for category in all::<CharacterCategory>() {
         let range = (category, instance_guid, Character::MIN_CHUNK)
             ..=(category, instance_guid, Character::MAX_CHUNK);
         let characters_to_remove: Vec<u64> = characters_table_write_handle

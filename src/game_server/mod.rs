@@ -4,13 +4,13 @@ use std::fmt::Display;
 use std::io::{Cursor, Error};
 use std::num::ParseIntError;
 use std::path::Path;
-use std::time::{Duration, Instant};
+use std::time::Instant;
 use std::vec;
 
 use byteorder::{LittleEndian, ReadBytesExt};
-use handlers::character::{
-    Character, CharacterCategory, CharacterType, Chunk, MinigameMatchmakingGroup,
-};
+use crossbeam_channel::Sender;
+use enum_iterator::Sequence;
+use handlers::character::{Character, CharacterCategory, CharacterType, Chunk};
 use handlers::chat::process_chat_packet;
 use handlers::command::process_command;
 use handlers::guid::{GuidTable, GuidTableIndexer, IndexedGuid};
@@ -26,14 +26,14 @@ use handlers::lock_enforcer::{
 };
 use handlers::login::{log_in, log_out, send_points_of_interest};
 use handlers::minigame::{
-    create_active_minigame_if_uncreated, leave_active_minigame_if_any, load_all_minigames,
-    prepare_active_minigame_instance, process_minigame_packet, AllMinigameConfigs,
-    LeaveMinigameTarget, MatchmakingGroupStatus,
+    create_active_minigame_if_uncreated, load_all_minigames, process_minigame_packet,
+    AllMinigameConfigs,
 };
 use handlers::mount::{load_mounts, process_mount_packet, MountConfig};
 use handlers::reference_data::{load_categories, load_item_classes, load_item_groups};
 use handlers::store::{load_cost_map, CostEntry};
 use handlers::test_data::make_test_nameplate_image;
+use handlers::tick::{enqueue_tickable_chunks, tick_minigame_groups, tick_single_chunk};
 use handlers::time::make_game_time_sync;
 use handlers::unique_guid::{
     player_guid, shorten_player_guid, shorten_zone_index, zone_instance_guid,
@@ -54,7 +54,7 @@ use packets::zone::PointOfInterestTeleportRequest;
 use packets::{GamePacket, OpCode};
 use rand::Rng;
 
-use crate::{info, ConfigError};
+use crate::ConfigError;
 use packet_serialize::{DeserializePacket, DeserializePacketError};
 
 mod handlers;
@@ -125,6 +125,12 @@ impl Display for ProcessPacketError {
             self.err_type, self.message, self.backtrace
         ))
     }
+}
+
+#[derive(Copy, Clone, Eq, PartialOrd, PartialEq, Ord, Sequence)]
+pub enum TickableNpcSynchronization {
+    Synchronized,
+    Unsynchronized,
 }
 
 pub struct GameServer {
@@ -203,29 +209,26 @@ impl GameServer {
         Ok(log_out(sender, self))
     }
 
-    pub fn tick(&self) -> Vec<Broadcast> {
-        let now = Instant::now();
-        let tickable_characters_by_chunk = self.tickable_characters_by_chunk();
+    pub fn enqueue_tickable_chunks(
+        &self,
+        synchronization: TickableNpcSynchronization,
+        chunks_enqueue: Sender<(u64, Chunk, TickableNpcSynchronization)>,
+    ) {
+        enqueue_tickable_chunks(self, synchronization, chunks_enqueue);
+    }
 
-        let mut broadcasts = Vec::new();
+    pub fn tick_single_chunk(
+        &self,
+        now: Instant,
+        instance_guid: u64,
+        chunk: Chunk,
+        synchronization: TickableNpcSynchronization,
+    ) -> Vec<Broadcast> {
+        tick_single_chunk(self, now, instance_guid, chunk, synchronization)
+    }
 
-        // Lock once for each chunk to avoid holding the lock for an extended period of time,
-        // because we are considering all characters in all worlds
-        for ((instance_guid, chunk), tickable_characters) in
-            tickable_characters_by_chunk.into_iter()
-        {
-            self.tick_single_chunk(
-                now,
-                instance_guid,
-                chunk,
-                tickable_characters,
-                &mut broadcasts,
-            );
-        }
-
-        broadcasts.append(&mut self.tick_minigame_groups());
-
-        broadcasts
+    pub fn tick_minigame_groups(&self) -> Vec<Broadcast> {
+        tick_minigame_groups(self)
     }
 
     pub fn process_packet(
@@ -877,231 +880,5 @@ impl GameServer {
         } else {
             Some(max + 1)
         }
-    }
-
-    fn tickable_characters_by_chunk(&self) -> BTreeMap<(u64, Chunk), Vec<u64>> {
-        self.lock_enforcer()
-            .read_characters(|characters_table_read_handle| {
-                let categories = [
-                    CharacterCategory::NpcTickable,
-                    CharacterCategory::NpcAutoInteractTickable,
-                ];
-
-                let tickable_characters: Vec<u64> = categories
-                    .into_iter()
-                    .flat_map(|category| {
-                        let range = (category, u64::MIN, Character::MIN_CHUNK)
-                            ..=(category, u64::MAX, Character::MAX_CHUNK);
-                        characters_table_read_handle.keys_by_index1_range(range)
-                    })
-                    .collect();
-
-                let tickable_characters_by_chunk = tickable_characters.into_iter().fold(
-                    BTreeMap::new(),
-                    |mut acc: BTreeMap<(u64, Chunk), Vec<u64>>, guid| {
-                        // The NPC could have been removed since we last acquired the table read lock
-                        if let Some((_, instance_guid, chunk)) =
-                            characters_table_read_handle.index1(guid)
-                        {
-                            acc.entry((instance_guid, chunk)).or_default().push(guid);
-                        }
-                        acc
-                    },
-                );
-
-                CharacterLockRequest {
-                    read_guids: Vec::new(),
-                    write_guids: Vec::new(),
-                    character_consumer: |_, _, _, _| tickable_characters_by_chunk,
-                }
-            })
-    }
-
-    fn tick_single_chunk(
-        &self,
-        now: Instant,
-        instance_guid: u64,
-        chunk: Chunk,
-        tickable_characters: Vec<u64>,
-        broadcasts: &mut Vec<Broadcast>,
-    ) {
-        self.lock_enforcer().read_characters(|characters_table_read_handle| {
-            let nearby_player_guids = ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_read_handle);
-            let nearby_players: Vec<u64> = nearby_player_guids.iter()
-                .map(|guid| *guid as u64)
-                .collect();
-
-            CharacterLockRequest {
-                read_guids: nearby_players.clone(),
-                write_guids: tickable_characters,
-                character_consumer: move |_,
-                characters_read,
-                mut characters_write,
-                _| {
-
-                    // We need to tick characters who update independently first, so that their dependent
-                    // characters' previous procedures are not ticked
-                    let mut characters_not_updated = Vec::new();
-                    for tickable_character in characters_write.values_mut() {
-                        if tickable_character.synchronize_with.is_none() {
-                            broadcasts.append(
-                                &mut tickable_character.tick(now, &nearby_player_guids, &characters_read, self.mounts(), self.items(), self.customizations()),
-                            );
-                        } else {
-                            characters_not_updated.push(tickable_character.guid());
-                        }
-                    }
-
-                    // Determine which procedures to update in the dependent characters
-                    let mut new_procedures = BTreeMap::new();
-                    for guid in characters_not_updated.iter() {
-                        let tickable_character = characters_write.get(guid).unwrap();
-                        if let Some(synchronize_with) = &tickable_character.synchronize_with {
-                            if let Some(synchronized_character) =
-                                characters_write.get(synchronize_with)
-                            {
-                                if let Some(synchronized_guid) = synchronized_character.synchronize_with {
-                                    panic!(
-                                        "Cannot synchronize character {} to a character {} because they are synchronized to character {}",
-                                        guid,
-                                        synchronized_character.guid(),
-                                        synchronized_guid
-                                    );
-                                }
-
-                                if synchronized_character.last_procedure_change() > tickable_character.last_procedure_change() {
-                                    if let Some(key) =
-                                        synchronized_character.current_tickable_procedure()
-                                    {
-                                        new_procedures
-                                            .insert(guid, key.clone());
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    // Tick all the dependent characters
-                    for guid in characters_not_updated.iter() {
-                        let tickable_character = characters_write.get_mut(guid).unwrap();
-                        if let Some(key) = new_procedures.remove(&tickable_character.guid()) {
-                            tickable_character.set_tickable_procedure_if_exists(key, now);
-                        }
-
-                        broadcasts.append(
-                            &mut tickable_character.tick(now, &nearby_player_guids, &characters_read, self.mounts(), self.items(), self.customizations()),
-                        );
-                    }
-                },
-            }
-        })
-    }
-
-    fn tick_minigame_groups(&self) -> Vec<Broadcast> {
-        let now = Instant::now();
-        self.lock_enforcer().write_characters(
-            |characters_table_write_handle, minigame_data_lock_enforcer| {
-                minigame_data_lock_enforcer.write_minigame_data(|minigame_data_table_write_handle, zones_lock_enforcer| {
-                    let mut broadcasts = Vec::new();
-
-                    // Iterate over timed-out groups for every stage, since the number of stages remains
-                    // a fairly small constant, while there can theoretically be billions of matchmaking groups.
-                    for stage in self.minigames().stage_configs() {
-                        let timeout =
-                            Duration::from_millis(stage.stage_config.matchmaking_timeout_millis() as u64);
-                        // Make sure max time is greater than or equal to start time so that the range is valid
-                        let max_time = match now.checked_sub(timeout) {
-                            Some(max_time) => max_time,
-                            None => continue,
-                        }.max(self.start_time);
-                        let stage_group_guid = stage.stage_group_guid;
-                        let stage_guid = stage.stage_config.guid();
-                        let min_players = stage.stage_config.min_players();
-
-                        let timed_out_group_range = (MatchmakingGroupStatus::Open, stage_guid, self.start_time)..=(MatchmakingGroupStatus::Open, stage_guid, max_time);
-                        let timed_out_groups: Vec<MinigameMatchmakingGroup> = minigame_data_table_write_handle
-                            .keys_by_index2_range(timed_out_group_range)
-                            .collect();
-                        for matchmaking_group in timed_out_groups {
-                            let players_in_group: Vec<u32> = characters_table_write_handle
-                                .keys_by_index4(&matchmaking_group)
-                                .filter_map(|guid| shorten_player_guid(guid).ok())
-                                .collect();
-
-                            zones_lock_enforcer.write_zones(|zones_table_write_handle| {
-                                if players_in_group.len() as u32 >= min_players {
-                                    broadcasts.append(&mut prepare_active_minigame_instance(
-                                        matchmaking_group,
-                                        &players_in_group,
-                                        &stage,
-                                        characters_table_write_handle,
-                                        minigame_data_table_write_handle,
-                                        zones_table_write_handle,
-                                        None,
-                                        self,
-                                    ));
-                                    return;
-                                }
-
-                                if players_in_group.len() == 1 {
-                                    if let Some(replacement_stage_locator) = &stage.stage_config.single_player_stage_guid() {
-                                        if let Some(replacement_stage) = self
-                                            .minigames()
-                                            .stage_config(replacement_stage_locator.stage_group_guid, replacement_stage_locator.stage_guid)
-                                        {
-                                            if replacement_stage.stage_config.min_players() == 1 {
-                                                broadcasts.append(&mut prepare_active_minigame_instance(
-                                                    matchmaking_group,
-                                                    &players_in_group,
-                                                    &replacement_stage,
-                                                    characters_table_write_handle,
-                                                    minigame_data_table_write_handle,
-                                                    zones_table_write_handle,
-                                                    Some(44218),
-                                                    self,
-                                                ));
-                                                return;
-                                            } else {
-                                                info!(
-                                                    "Replacement stage (stage group {}, stage {}) for (stage group {}, stage {}) isn't single-player",
-                                                    replacement_stage_locator.stage_group_guid,
-                                                    replacement_stage_locator.stage_guid,
-                                                    stage_group_guid,
-                                                    stage_guid
-                                                );
-                                            }
-                                        } else {
-                                            info!(
-                                                "Couldn't find replacement stage (stage group {}, stage {}) for (stage group {}, stage {})",
-                                                replacement_stage_locator.stage_group_guid,
-                                                replacement_stage_locator.stage_guid,
-                                                stage_group_guid,
-                                                stage_guid
-                                            );
-                                        }
-                                    }
-                                }
-
-                                let leave_result = leave_active_minigame_if_any(
-                                    LeaveMinigameTarget::Group(matchmaking_group),
-                                    characters_table_write_handle,
-                                    minigame_data_table_write_handle,
-                                    zones_table_write_handle,
-                                    Some(33781),
-                                    false,
-                                    self,
-                                );
-                                match leave_result {
-                                    Ok(mut leave_broadcasts) => broadcasts.append(&mut leave_broadcasts),
-                                    Err(err) => info!("Unable to remove timed-out group {:?} from matchmaking: {}", matchmaking_group, err),
-                                }
-                            })
-                        }
-                    }
-
-                    broadcasts
-                })
-            },
-        )
     }
 }
