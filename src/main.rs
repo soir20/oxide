@@ -7,7 +7,6 @@ use protocol::{BufferSize, DisconnectReason, MAX_BUFFER_SIZE};
 use serde::de::IgnoredAny;
 use serde::Deserialize;
 use std::cell::Cell;
-use std::env;
 use std::fs::File;
 use std::io::Error;
 use std::net::{IpAddr, SocketAddr, UdpSocket};
@@ -15,6 +14,7 @@ use std::path::{Path, PathBuf};
 use std::sync::{Arc, LazyLock};
 use std::thread::{self, JoinHandle};
 use std::time::{Duration, Instant};
+use std::{env, panic, process};
 use tokio::spawn;
 
 use crate::channel_manager::{ChannelManager, ReceiveResult};
@@ -98,6 +98,12 @@ impl From<serde_yaml::Error> for ConfigError {
 
 #[tokio::main]
 async fn main() {
+    let default_hook = panic::take_hook();
+    panic::set_hook(Box::new(move |panic_info| {
+        default_hook(panic_info);
+        process::exit(1);
+    }));
+
     let config_dir = Path::new("config");
     let server_options =
         Arc::new(load_server_options(config_dir).expect("Unable to read server options"));
