@@ -542,33 +542,25 @@ fn spawn_chunk_tick_threads(
         let game_server = game_server.clone();
 
         thread::spawn(move || loop {
-            match chunks_dequeue.try_recv() {
-                Ok((instance_guid, chunk, synchronization)) => {
-                    let broadcasts = game_server.tick_single_chunk(
-                        Instant::now(),
-                        instance_guid,
-                        chunk,
-                        synchronization,
-                    );
-                    channel_manager.read().broadcast(
-                        client_enqueue.clone(),
-                        broadcasts,
-                        &server_options,
-                    );
-                }
-                Err(err) => match err {
-                    crossbeam_channel::TryRecvError::Empty => done_enqueue
-                        .send(())
-                        .expect("Chunk tick done channel disconnected"),
-                    crossbeam_channel::TryRecvError::Disconnected => {
-                        panic!("Chunk tick done channel disconnected")
-                    }
-                },
-            }
+            let (instance_guid, chunk, synchronization) = chunks_dequeue
+                .recv()
+                .expect("Chunk tick channel disconnected");
+            let broadcasts = game_server.tick_single_chunk(
+                Instant::now(),
+                instance_guid,
+                chunk,
+                synchronization,
+            );
+            channel_manager
+                .read()
+                .broadcast(client_enqueue.clone(), broadcasts, &server_options);
+
+            done_enqueue
+                .send(())
+                .expect("Chunk tick done channel disconnected");
         });
     }
 
-    let server_options = server_options.clone();
     let game_server = game_server.clone();
 
     // Always spawn the control thread
@@ -577,24 +569,24 @@ fn spawn_chunk_tick_threads(
             .recv()
             .expect("Chunk tick channel disconnected");
 
-        game_server.enqueue_tickable_chunks(
+        let tasks = game_server.enqueue_tickable_chunks(
             TickableNpcSynchronization::Unsynchronized,
             chunks_enqueue.clone(),
         );
         let mut done_signals = 0;
-        while done_signals < server_options.chunk_tick_threads {
+        while done_signals < tasks {
             done_dequeue
                 .recv()
                 .expect("Chunk tick done channel disconnected");
             done_signals += 1;
         }
 
-        game_server.enqueue_tickable_chunks(
+        let tasks = game_server.enqueue_tickable_chunks(
             TickableNpcSynchronization::Synchronized,
             chunks_enqueue.clone(),
         );
         let mut done_signals = 0;
-        while done_signals < server_options.chunk_tick_threads {
+        while done_signals < tasks {
             done_dequeue
                 .recv()
                 .expect("Chunk tick done channel disconnected");

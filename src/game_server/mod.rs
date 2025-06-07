@@ -213,8 +213,8 @@ impl GameServer {
         &self,
         synchronization: TickableNpcSynchronization,
         chunks_enqueue: Sender<(u64, Chunk, TickableNpcSynchronization)>,
-    ) {
-        enqueue_tickable_chunks(self, synchronization, chunks_enqueue);
+    ) -> usize {
+        enqueue_tickable_chunks(self, synchronization, chunks_enqueue)
     }
 
     pub fn tick_single_chunk(

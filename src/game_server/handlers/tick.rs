@@ -32,10 +32,11 @@ pub fn enqueue_tickable_chunks(
     game_server: &GameServer,
     synchronization: TickableNpcSynchronization,
     chunks_enqueue: Sender<(u64, Chunk, TickableNpcSynchronization)>,
-) {
+) -> usize {
     game_server
         .lock_enforcer()
         .read_characters(|characters_table_read_handle| {
+            let mut counter = 0;
             tickable_categories(synchronization)
                 .into_iter()
                 .flat_map(|category| {
@@ -44,6 +45,7 @@ pub fn enqueue_tickable_chunks(
                     characters_table_read_handle.indices1_by_range(range)
                 })
                 .for_each(|(_, instance_guid, chunk)| {
+                    counter += 1;
                     chunks_enqueue
                         .send((instance_guid, chunk, synchronization))
                         .expect("Tickable channel disconnected")
@@ -52,7 +54,7 @@ pub fn enqueue_tickable_chunks(
             CharacterLockRequest {
                 read_guids: Vec::new(),
                 write_guids: Vec::new(),
-                character_consumer: |_, _, _, _| {},
+                character_consumer: move |_, _, _, _| counter,
             }
         })
 }
