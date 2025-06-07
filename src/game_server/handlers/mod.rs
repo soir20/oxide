@@ -15,6 +15,7 @@ pub mod reference_data;
 pub mod saber_strike;
 pub mod store;
 pub mod test_data;
+pub mod tick;
 pub mod time;
 pub mod unique_guid;
 pub mod update_position;

@@ -3,10 +3,10 @@ use std::{
     time::{Duration, Instant},
 };
 
+use enum_iterator::Sequence;
 use rand::thread_rng;
 use rand_distr::{Distribution, WeightedAliasIndex};
 use serde::{de::IgnoredAny, Deserialize};
-use strum::EnumIter;
 
 use crate::{
     game_server::{
@@ -27,7 +27,7 @@ use crate::{
             update_position::UpdatePlayerPosition,
             GamePacket, GuidTarget, Name, Pos, Rgba, Target,
         },
-        Broadcast, GameServer, ProcessPacketError,
+        Broadcast, GameServer, ProcessPacketError, TickableNpcSynchronization,
     },
     info,
 };
@@ -1405,13 +1405,13 @@ pub enum CharacterType {
     Fixture(u64, CurrentFixture),
 }
 
-#[derive(Copy, Clone, Eq, EnumIter, PartialOrd, PartialEq, Ord)]
+#[derive(Copy, Clone, Eq, PartialOrd, PartialEq, Ord, Sequence)]
 pub enum CharacterCategory {
     PlayerReady,
     PlayerUnready,
-    NpcAutoInteractEnabled,
-    NpcAutoInteractTickable,
-    NpcTickable,
+    NpcAutoInteractable,
+    NpcAutoInteractableTickable(TickableNpcSynchronization),
+    NpcTickable(TickableNpcSynchronization),
     NpcBasic,
 }
 
@@ -1666,6 +1666,10 @@ impl
     }
 
     fn index1(&self) -> CharacterLocationIndex {
+        let tickable_synchronization = match self.synchronize_with {
+            Some(_) => TickableNpcSynchronization::Synchronized,
+            None => TickableNpcSynchronization::Unsynchronized,
+        };
         (
             match &self.stats.character_type {
                 CharacterType::Player(player) => match player.ready {
@@ -1673,9 +1677,11 @@ impl
                     false => CharacterCategory::PlayerUnready,
                 },
                 _ => match (self.stats.auto_interact_radius > 0.0, self.tickable()) {
-                    (true, true) => CharacterCategory::NpcAutoInteractTickable,
-                    (true, false) => CharacterCategory::NpcAutoInteractEnabled,
-                    (false, true) => CharacterCategory::NpcTickable,
+                    (true, true) => {
+                        CharacterCategory::NpcAutoInteractableTickable(tickable_synchronization)
+                    }
+                    (true, false) => CharacterCategory::NpcAutoInteractable,
+                    (false, true) => CharacterCategory::NpcTickable(tickable_synchronization),
                     (false, false) => CharacterCategory::NpcBasic,
                 },
             },
