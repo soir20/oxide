@@ -10,10 +10,10 @@ use crate::{
 use super::{
     character::{Character, CharacterCategory, Chunk, MinigameMatchmakingGroup},
     guid::GuidTableIndexer,
-    lock_enforcer::CharacterLockRequest,
+    lock_enforcer::{CharacterLockRequest, MinigameDataLockEnforcer, MinigameDataLockRequest},
     minigame::{
         leave_active_minigame_if_any, prepare_active_minigame_instance, LeaveMinigameTarget,
-        MatchmakingGroupStatus,
+        MatchmakingGroupStatus, SharedMinigameDataTickableIndex,
     },
     unique_guid::shorten_player_guid,
     zone::ZoneInstance,
@@ -128,7 +128,7 @@ pub fn tick_single_chunk(
     })
 }
 
-pub fn tick_minigame_groups(game_server: &GameServer) -> Vec<Broadcast> {
+pub fn tick_matchmaking_groups(game_server: &GameServer) -> Vec<Broadcast> {
     let now = Instant::now();
     game_server.lock_enforcer().write_characters(
         |characters_table_write_handle, minigame_data_lock_enforcer| {
@@ -234,4 +234,46 @@ pub fn tick_minigame_groups(game_server: &GameServer) -> Vec<Broadcast> {
             })
         },
     )
+}
+
+pub fn enqueue_tickable_minigames(
+    game_server: &GameServer,
+    minigames_enqueue: Sender<MinigameMatchmakingGroup>,
+) -> usize {
+    let minigame_data_lock_enforcer: MinigameDataLockEnforcer = game_server.lock_enforcer().into();
+    minigame_data_lock_enforcer.read_minigame_data(|minigame_data_table_read_handle| {
+        let count = minigame_data_table_read_handle
+            .keys_by_index1(SharedMinigameDataTickableIndex::Tickable)
+            .fold(0, |count, minigame_group| {
+                minigames_enqueue
+                    .send(minigame_group)
+                    .expect("Minigame tick channel disconnected");
+                count + 1
+            });
+        MinigameDataLockRequest {
+            read_guids: Vec::new(),
+            write_guids: Vec::new(),
+            minigame_data_consumer: move |_, _, _, _| count,
+        }
+    })
+}
+
+pub fn tick_minigame(
+    game_server: &GameServer,
+    now: Instant,
+    minigame_group: MinigameMatchmakingGroup,
+) -> Vec<Broadcast> {
+    let minigame_data_lock_enforcer: MinigameDataLockEnforcer = game_server.lock_enforcer().into();
+    minigame_data_lock_enforcer.read_minigame_data(|_| MinigameDataLockRequest {
+        read_guids: Vec::new(),
+        write_guids: vec![minigame_group],
+        minigame_data_consumer: |_, _, mut minigame_data_write, _| {
+            let mut broadcasts = Vec::new();
+            for minigame_data in minigame_data_write.values_mut() {
+                broadcasts.append(&mut minigame_data.tick(now));
+            }
+
+            broadcasts
+        },
+    })
 }

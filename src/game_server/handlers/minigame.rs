@@ -178,6 +178,12 @@ pub struct SharedMinigameData {
     pub data: SharedMinigameTypeData,
 }
 
+impl SharedMinigameData {
+    pub fn tick(&self, now: Instant) -> Vec<Broadcast> {
+        self.data.tick(now)
+    }
+}
+
 impl
     IndexedGuid<
         MinigameMatchmakingGroup,
@@ -244,6 +250,13 @@ impl SharedMinigameTypeData {
                 FlashMinigameType::Simple => SharedMinigameTypeData::default(),
             },
             MinigameType::SaberStrike { .. } => SharedMinigameTypeData::default(),
+        }
+    }
+
+    pub fn tick(&self, _: Instant) -> Vec<Broadcast> {
+        match self {
+            SharedMinigameTypeData::ForceConnection { .. } => Vec::new(),
+            _ => Vec::new(),
         }
     }
 }
