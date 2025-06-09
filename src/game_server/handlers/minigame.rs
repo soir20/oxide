@@ -179,7 +179,7 @@ pub struct SharedMinigameData {
 }
 
 impl SharedMinigameData {
-    pub fn tick(&self, now: Instant) -> Vec<Broadcast> {
+    pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
         self.data.tick(now)
     }
 }
@@ -253,7 +253,7 @@ impl SharedMinigameTypeData {
         }
     }
 
-    pub fn tick(&self, _: Instant) -> Vec<Broadcast> {
+    pub fn tick(&mut self, _: Instant) -> Vec<Broadcast> {
         match self {
             SharedMinigameTypeData::ForceConnection { .. } => Vec::new(),
             _ => Vec::new(),
