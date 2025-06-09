@@ -172,6 +172,17 @@ async fn main() {
         &game_server_arc,
     );
 
+    let mainigame_tick_dequeue = tick(Duration::from_millis(
+        server_options.minigame_tick_period_millis,
+    ));
+    spawn_minigame_tick_threads(
+        &channel_manager_arc,
+        mainigame_tick_dequeue,
+        client_enqueue.clone(),
+        &server_options,
+        &game_server_arc,
+    );
+
     let cleanup_tick_dequeue = tick(Duration::from_millis(
         server_options.channel_cleanup_period_millis,
     ));
@@ -215,6 +226,8 @@ pub struct ServerOptions {
     pub chunk_tick_period_millis: u64,
     pub chunk_tick_threads: u16,
     pub matchmaking_tick_period_millis: u64,
+    pub minigame_tick_period_millis: u64,
+    pub minigame_tick_threads: u16,
     pub channel_cleanup_period_millis: u64,
     pub channel_inactive_timeout_millis: u64,
     pub min_client_version: Option<String>,
@@ -531,7 +544,7 @@ fn spawn_chunk_tick_threads(
     game_server: &Arc<GameServer>,
 ) {
     let (chunks_enqueue, chunks_dequeue) = unbounded();
-    let (done_enqueue, done_dequeue) = bounded(server_options.chunk_tick_threads as usize);
+    let (done_enqueue, done_dequeue) = unbounded();
 
     for _ in 0..server_options.chunk_tick_threads {
         let chunks_dequeue = chunks_dequeue.clone();
@@ -612,10 +625,62 @@ fn spawn_matchmaking_tick_thread(
             .recv()
             .expect("Matchmaking tick channel disconnected");
 
-        let broadcasts = game_server.tick_minigame_groups();
+        let broadcasts = game_server.tick_matchmaking_groups();
         channel_manager
             .read()
             .broadcast(client_enqueue.clone(), broadcasts, &server_options);
+    });
+}
+
+fn spawn_minigame_tick_threads(
+    channel_manager: &Arc<RwLock<ChannelManager>>,
+    minigame_tick_dequeue: Receiver<Instant>,
+    client_enqueue: Sender<SocketAddr>,
+    server_options: &Arc<ServerOptions>,
+    game_server: &Arc<GameServer>,
+) {
+    let (minigames_enqueue, minigames_dequeue) = unbounded();
+    let (done_enqueue, done_dequeue) = unbounded();
+
+    for _ in 0..server_options.minigame_tick_threads {
+        let minigames_dequeue = minigames_dequeue.clone();
+        let done_enqueue = done_enqueue.clone();
+        let client_enqueue = client_enqueue.clone();
+        let channel_manager = channel_manager.clone();
+        let server_options = server_options.clone();
+        let game_server = game_server.clone();
+
+        thread::spawn(move || loop {
+            let group = minigames_dequeue
+                .recv()
+                .expect("Minigame tick channel disconnected");
+            let broadcasts = game_server.tick_minigame(Instant::now(), group);
+            channel_manager
+                .read()
+                .broadcast(client_enqueue.clone(), broadcasts, &server_options);
+
+            done_enqueue
+                .send(())
+                .expect("Minigame tick done channel disconnected");
+        });
+    }
+
+    let game_server = game_server.clone();
+
+    // Always spawn the control thread
+    thread::spawn(move || loop {
+        minigame_tick_dequeue
+            .recv()
+            .expect("Minigame tick channel disconnected");
+
+        let tasks = game_server.enqueue_tickable_minigames(minigames_enqueue.clone());
+        let mut done_signals = 0;
+        while done_signals < tasks {
+            done_dequeue
+                .recv()
+                .expect("Minigame tick done channel disconnected");
+            done_signals += 1;
+        }
     });
 }
 

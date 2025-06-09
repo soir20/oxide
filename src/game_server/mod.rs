@@ -10,7 +10,9 @@ use std::vec;
 use byteorder::{LittleEndian, ReadBytesExt};
 use crossbeam_channel::Sender;
 use enum_iterator::Sequence;
-use handlers::character::{Character, CharacterCategory, CharacterType, Chunk};
+use handlers::character::{
+    Character, CharacterCategory, CharacterType, Chunk, MinigameMatchmakingGroup,
+};
 use handlers::chat::process_chat_packet;
 use handlers::command::process_command;
 use handlers::guid::{GuidTable, GuidTableIndexer, IndexedGuid};
@@ -33,7 +35,10 @@ use handlers::mount::{load_mounts, process_mount_packet, MountConfig};
 use handlers::reference_data::{load_categories, load_item_classes, load_item_groups};
 use handlers::store::{load_cost_map, CostEntry};
 use handlers::test_data::make_test_nameplate_image;
-use handlers::tick::{enqueue_tickable_chunks, tick_minigame_groups, tick_single_chunk};
+use handlers::tick::{
+    enqueue_tickable_chunks, enqueue_tickable_minigames, tick_matchmaking_groups, tick_minigame,
+    tick_single_chunk,
+};
 use handlers::time::make_game_time_sync;
 use handlers::unique_guid::{
     player_guid, shorten_player_guid, shorten_zone_index, zone_instance_guid,
@@ -227,8 +232,23 @@ impl GameServer {
         tick_single_chunk(self, now, instance_guid, chunk, synchronization)
     }
 
-    pub fn tick_minigame_groups(&self) -> Vec<Broadcast> {
-        tick_minigame_groups(self)
+    pub fn tick_matchmaking_groups(&self) -> Vec<Broadcast> {
+        tick_matchmaking_groups(self)
+    }
+
+    pub fn enqueue_tickable_minigames(
+        &self,
+        minigames_enqueue: Sender<MinigameMatchmakingGroup>,
+    ) -> usize {
+        enqueue_tickable_minigames(self, minigames_enqueue)
+    }
+
+    pub fn tick_minigame(
+        &self,
+        now: Instant,
+        minigame_group: MinigameMatchmakingGroup,
+    ) -> Vec<Broadcast> {
+        tick_minigame(self, now, minigame_group)
     }
 
     pub fn process_packet(
