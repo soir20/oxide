@@ -363,4 +363,35 @@ mod tests {
         assert_eq!(board.next_open_row, [3, 2, 1, 0, 0, 0, 0, 1, 2, 3]);
         assert_eq!(board.modified_cols, [0; BOARD_SIZE as usize]);
     }
+
+    #[test]
+    fn test_vertical_match_drop_on_wall() {
+        let mut board = ForceConnectionBoard::new();
+        board.drop_piece(2, Player1).unwrap();
+        board.drop_piece(2, Player1).unwrap();
+        board.drop_piece(2, Player1).unwrap();
+        board.drop_piece(2, Player1).unwrap();
+
+        board.drop_piece(2, Player2).unwrap();
+
+        let (player1_matches, player2_matches, empty_slots) = board.process_matches();
+        assert_eq!(vec![4], player1_matches);
+        assert!(player2_matches.is_empty());
+        assert_eq!(vec![(4, 2), (3, 2), (2, 2), (1, 2)], empty_slots);
+
+        let mut expected_board = EMPTY_BOARD;
+        expected_board[2][1] = Player2;
+        assert_eq!(expected_board, board.board);
+        assert_eq!(board.next_open_row, [3, 2, 2, 0, 0, 0, 0, 1, 2, 3]);
+        assert_eq!(board.modified_cols, [0, 0, 5, 0, 0, 0, 0, 0, 0, 0]);
+
+        let (player1_matches, player2_matches, empty_slots) = board.process_matches();
+        assert!(player1_matches.is_empty());
+        assert!(player2_matches.is_empty());
+        assert!(empty_slots.is_empty());
+
+        assert_eq!(expected_board, board.board);
+        assert_eq!(board.next_open_row, [3, 2, 2, 0, 0, 0, 0, 1, 2, 3]);
+        assert_eq!(board.modified_cols, [0; BOARD_SIZE as usize]);
+    }
 }
