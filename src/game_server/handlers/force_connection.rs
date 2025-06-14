@@ -250,6 +250,39 @@ mod tests {
     use crate::game_server::handlers::force_connection::ForceConnectionPiece::Player2;
     use crate::game_server::handlers::force_connection::ForceConnectionPiece::Wall;
 
+    const EMPTY_BOARD: [[ForceConnectionPiece; 10]; 10] = [
+        [
+            Wall, Wall, Wall, Empty, Empty, Empty, Empty, Wall, Wall, Wall,
+        ],
+        [
+            Wall, Wall, Empty, Empty, Empty, Empty, Empty, Empty, Wall, Wall,
+        ],
+        [
+            Wall, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Wall,
+        ],
+        [
+            Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty,
+        ],
+        [
+            Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty,
+        ],
+        [
+            Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty,
+        ],
+        [
+            Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty,
+        ],
+        [
+            Wall, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Wall,
+        ],
+        [
+            Wall, Wall, Empty, Empty, Empty, Empty, Empty, Empty, Wall, Wall,
+        ],
+        [
+            Wall, Wall, Wall, Empty, Empty, Empty, Empty, Wall, Wall, Wall,
+        ],
+    ];
+
     #[test]
     fn test_two_matches_at_once() {
         let mut board = ForceConnectionBoard::new();
@@ -280,21 +313,7 @@ mod tests {
             empty_slots
         );
 
-        assert_eq!(
-            [
-                [Wall, Wall, Wall, Empty, Empty, Empty, Empty, Wall, Wall, Wall],
-                [Wall, Wall, Empty, Empty, Empty, Empty, Empty, Empty, Wall, Wall],
-                [Wall, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Wall],
-                [Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty],
-                [Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty],
-                [Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty],
-                [Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty],
-                [Wall, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Wall],
-                [Wall, Wall, Empty, Empty, Empty, Empty, Empty, Empty, Wall, Wall],
-                [Wall, Wall, Wall, Empty, Empty, Empty, Empty, Wall, Wall, Wall],
-            ],
-            board.board
-        );
+        assert_eq!(EMPTY_BOARD, board.board);
         assert_eq!(board.next_open_row, [3, 2, 1, 0, 0, 0, 0, 1, 2, 3]);
         assert_eq!(board.modified_cols, [0, 0, 0, 1, 1, 1, 1, 0, 0, 0]);
 
@@ -303,21 +322,7 @@ mod tests {
         assert!(player2_matches.is_empty());
         assert!(empty_slots.is_empty());
 
-        assert_eq!(
-            [
-                [Wall, Wall, Wall, Empty, Empty, Empty, Empty, Wall, Wall, Wall],
-                [Wall, Wall, Empty, Empty, Empty, Empty, Empty, Empty, Wall, Wall],
-                [Wall, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Wall],
-                [Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty],
-                [Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty],
-                [Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty],
-                [Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty],
-                [Wall, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Wall],
-                [Wall, Wall, Empty, Empty, Empty, Empty, Empty, Empty, Wall, Wall],
-                [Wall, Wall, Wall, Empty, Empty, Empty, Empty, Wall, Wall, Wall],
-            ],
-            board.board
-        );
+        assert_eq!(EMPTY_BOARD, board.board);
         assert_eq!(board.next_open_row, [3, 2, 1, 0, 0, 0, 0, 1, 2, 3]);
         assert_eq!(board.modified_cols, [0; BOARD_SIZE as usize]);
     }
