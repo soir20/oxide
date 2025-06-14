@@ -9,7 +9,6 @@ pub enum ForceConnectionPiece {
 }
 
 const BOARD_SIZE: u8 = 10;
-const OUT_OF_BOUNDS_SIZE: u8 = 3;
 const MIN_MATCH_LENGTH: u8 = 4;
 
 pub struct ForceConnectionBoard {
