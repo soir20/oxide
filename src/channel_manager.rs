@@ -44,6 +44,7 @@ impl ChannelManager {
         self.authenticated.guid(addr)
     }
 
+    #[allow(clippy::result_large_err)]
     pub fn insert(
         &mut self,
         addr: &SocketAddr,
