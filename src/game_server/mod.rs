@@ -80,6 +80,7 @@ pub enum ProcessPacketErrorType {
     UnknownOpCode,
 }
 
+#[derive(Debug)]
 pub struct ProcessPacketError {
     backtrace: Backtrace,
     err_type: ProcessPacketErrorType,

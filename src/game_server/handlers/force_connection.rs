@@ -23,20 +23,21 @@ impl ForceConnectionBoard {
         let mut board = [[ForceConnectionPiece::Empty; BOARD_SIZE as usize]; BOARD_SIZE as usize];
         let next_open_row = [3u8, 2u8, 1u8, 0u8, 0u8, 0u8, 0u8, 1u8, 2u8, 3u8];
 
-        let corner_indices = [0u8, 1u8, 2u8, 7u8, 8u8, 9u8];
+        let corner_indices = [0u8, 9u8, 1u8, 8u8, 2u8, 7u8];
 
         let mut col_index = 0;
         while col_index < corner_indices.len() {
             let col = corner_indices[col_index];
-            col_index += 1;
 
             let mut row_index = 0;
-            while row_index < corner_indices.len() {
+            while row_index < corner_indices.len() - (col_index / 2) * 2 {
                 let row = corner_indices[row_index];
-                row_index += 1;
-
                 board[col as usize][row as usize] = ForceConnectionPiece::Wall;
+
+                row_index += 1;
             }
+
+            col_index += 1;
         }
 
         ForceConnectionBoard {
@@ -239,5 +240,86 @@ impl ForceConnectionBoard {
         }
 
         (first_piece, match_spaces)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::game_server::handlers::force_connection::ForceConnectionPiece::Empty;
+    use crate::game_server::handlers::force_connection::ForceConnectionPiece::Player1;
+    use crate::game_server::handlers::force_connection::ForceConnectionPiece::Player2;
+    use crate::game_server::handlers::force_connection::ForceConnectionPiece::Wall;
+
+    #[test]
+    fn test_two_matches_at_once() {
+        let mut board = ForceConnectionBoard::new();
+        board.drop_piece(3, Player1).unwrap();
+        board.drop_piece(4, Player1).unwrap();
+        board.drop_piece(5, Player1).unwrap();
+        board.drop_piece(6, Player1).unwrap();
+
+        board.drop_piece(3, Player2).unwrap();
+        board.drop_piece(4, Player2).unwrap();
+        board.drop_piece(5, Player2).unwrap();
+        board.drop_piece(6, Player2).unwrap();
+
+        let (player1_matches, player2_matches, empty_slots) = board.process_matches();
+        assert_eq!(vec![4], player1_matches);
+        assert_eq!(vec![4], player2_matches);
+        assert_eq!(
+            vec![
+                (1, 3),
+                (1, 4),
+                (1, 5),
+                (1, 6),
+                (0, 3),
+                (0, 4),
+                (0, 5),
+                (0, 6)
+            ],
+            empty_slots
+        );
+
+        assert_eq!(
+            [
+                [Wall, Wall, Wall, Empty, Empty, Empty, Empty, Wall, Wall, Wall],
+                [Wall, Wall, Empty, Empty, Empty, Empty, Empty, Empty, Wall, Wall],
+                [Wall, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Wall],
+                [Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty],
+                [Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty],
+                [Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty],
+                [Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty],
+                [Wall, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Wall],
+                [Wall, Wall, Empty, Empty, Empty, Empty, Empty, Empty, Wall, Wall],
+                [Wall, Wall, Wall, Empty, Empty, Empty, Empty, Wall, Wall, Wall],
+            ],
+            board.board
+        );
+        assert_eq!(board.next_open_row, [3, 2, 1, 0, 0, 0, 0, 1, 2, 3]);
+        assert_eq!(board.modified_cols, [0, 0, 0, 1, 1, 1, 1, 0, 0, 0]);
+
+        let (player1_matches, player2_matches, empty_slots) = board.process_matches();
+        assert!(player1_matches.is_empty());
+        assert!(player2_matches.is_empty());
+        assert!(empty_slots.is_empty());
+
+        assert_eq!(
+            [
+                [Wall, Wall, Wall, Empty, Empty, Empty, Empty, Wall, Wall, Wall],
+                [Wall, Wall, Empty, Empty, Empty, Empty, Empty, Empty, Wall, Wall],
+                [Wall, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Wall],
+                [Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty],
+                [Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty],
+                [Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty],
+                [Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty],
+                [Wall, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Wall],
+                [Wall, Wall, Empty, Empty, Empty, Empty, Empty, Empty, Wall, Wall],
+                [Wall, Wall, Wall, Empty, Empty, Empty, Empty, Wall, Wall, Wall],
+            ],
+            board.board
+        );
+        assert_eq!(board.next_open_row, [3, 2, 1, 0, 0, 0, 0, 1, 2, 3]);
+        assert_eq!(board.modified_cols, [0; BOARD_SIZE as usize]);
     }
 }
