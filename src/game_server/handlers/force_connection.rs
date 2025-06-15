@@ -293,6 +293,12 @@ mod tests {
     ];
 
     #[test]
+    fn test_drop_col_out_of_bounds() {
+        let mut board = ForceConnectionBoard::new();
+        assert!(board.drop_piece(10, Player1).is_err());
+    }
+
+    #[test]
     fn test_wall_match() {
         let mut board = ForceConnectionBoard::new();
         board.drop_piece(3, Wall).unwrap();
