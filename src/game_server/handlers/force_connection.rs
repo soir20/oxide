@@ -369,6 +369,70 @@ mod tests {
     }
 
     #[test]
+    fn test_diagonal_match() {
+        let mut board = ForceConnectionBoard::new();
+        board.drop_piece(6, Player1).unwrap();
+        board.drop_piece(8, Player1).unwrap();
+        board.drop_piece(9, Player1).unwrap();
+
+        let (player1_matches, player2_matches, empty_slots) = board.process_matches();
+        assert!(player1_matches.is_empty());
+        assert!(player2_matches.is_empty());
+        assert!(empty_slots.is_empty());
+
+        let mut expected_board = EMPTY_BOARD;
+        expected_board[6][0] = Player1;
+        expected_board[8][2] = Player1;
+        expected_board[9][3] = Player1;
+        assert_eq!(expected_board, board.board);
+        assert_eq!([3, 2, 1, 0, 0, 0, 1, 1, 3, 4], board.next_open_row);
+        assert_eq!([0; BOARD_SIZE as usize], board.modified_cols);
+
+        board.drop_piece(7, Player1).unwrap();
+
+        let (player1_matches, player2_matches, empty_slots) = board.process_matches();
+        assert_eq!(vec![4], player1_matches);
+        assert!(player2_matches.is_empty());
+        assert_eq!(vec![(0, 6), (1, 7), (2, 8), (3, 9)], empty_slots);
+
+        assert_eq!(EMPTY_BOARD, board.board);
+        assert_eq!([3, 2, 1, 0, 0, 0, 0, 1, 2, 3], board.next_open_row);
+        assert_eq!([0, 0, 0, 0, 0, 0, 0, 1, 2, 3], board.modified_cols);
+    }
+
+    #[test]
+    fn test_mirror_diagonal_match() {
+        let mut board = ForceConnectionBoard::new();
+        board.drop_piece(0, Player1).unwrap();
+        board.drop_piece(2, Player1).unwrap();
+        board.drop_piece(3, Player1).unwrap();
+
+        let (player1_matches, player2_matches, empty_slots) = board.process_matches();
+        assert!(player1_matches.is_empty());
+        assert!(player2_matches.is_empty());
+        assert!(empty_slots.is_empty());
+
+        let mut expected_board = EMPTY_BOARD;
+        expected_board[0][3] = Player1;
+        expected_board[2][1] = Player1;
+        expected_board[3][0] = Player1;
+        assert_eq!(expected_board, board.board);
+        assert_eq!([4, 2, 2, 1, 0, 0, 0, 1, 2, 3], board.next_open_row);
+        assert_eq!([0; BOARD_SIZE as usize], board.modified_cols);
+
+        board.drop_piece(1, Player1).unwrap();
+
+        let (player1_matches, player2_matches, empty_slots) = board.process_matches();
+        assert_eq!(vec![4], player1_matches);
+        assert!(player2_matches.is_empty());
+        assert_eq!(vec![(2, 1), (3, 0), (1, 2), (0, 3)], empty_slots);
+
+        assert_eq!(EMPTY_BOARD, board.board);
+        assert_eq!([3, 2, 1, 0, 0, 0, 0, 1, 2, 3], board.next_open_row);
+        assert_eq!([3, 2, 1, 0, 0, 0, 0, 0, 0, 0], board.modified_cols);
+    }
+
+    #[test]
     fn test_two_matches_at_once() {
         let mut board = ForceConnectionBoard::new();
         board.drop_piece(3, Player1).unwrap();
