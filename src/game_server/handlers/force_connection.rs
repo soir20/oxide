@@ -445,6 +445,8 @@ mod tests {
         board.drop_piece(3, Player1).unwrap();
         board.drop_piece(3, Player1).unwrap();
 
+        assert!(board.drop_piece(3, Player1).is_err());
+
         let (player1_matches, player2_matches, empty_slots) = board.process_matches();
         assert_eq!(vec![10], player1_matches);
         assert!(player2_matches.is_empty());
@@ -486,6 +488,8 @@ mod tests {
         board.drop_piece(0, Player1).unwrap();
         board.drop_piece(0, Player1).unwrap();
 
+        assert!(board.drop_piece(0, Player1).is_err());
+
         let (player1_matches, player2_matches, empty_slots) = board.process_matches();
         assert_eq!(vec![4], player1_matches);
         assert!(player2_matches.is_empty());
@@ -512,6 +516,8 @@ mod tests {
         board.drop_piece(9, Player1).unwrap();
         board.drop_piece(9, Player1).unwrap();
         board.drop_piece(9, Player1).unwrap();
+
+        assert!(board.drop_piece(9, Player1).is_err());
 
         let (player1_matches, player2_matches, empty_slots) = board.process_matches();
         assert_eq!(vec![4], player1_matches);
