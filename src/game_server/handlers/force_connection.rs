@@ -168,6 +168,10 @@ impl ForceConnectionBoard {
                 }
             }
         } else {
+            // There are two cases:
+            // 1) The piece is below the next open row, so the next open row is unchanged.
+            // 2) The piece is at or above the next open row, implying all spaces above
+            //    are empty. This means the next open row is the row above this piece.
             self.next_open_row[col as usize] = next_open_row.max(row + 1);
         }
     }
