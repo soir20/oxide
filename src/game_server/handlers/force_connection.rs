@@ -147,7 +147,7 @@ impl ForceConnectionBoard {
         let next_open_row = self.next_open_row[col as usize];
 
         if piece == ForceConnectionPiece::Empty {
-            // If we modified emptied the space where the topmost piece used to be,
+            // If we emptied the space where the topmost piece used to be,
             // we need to search for the new next empty space.
             if next_open_row > 0 && row == next_open_row - 1 {
                 let mut possible_empty_row = row;
