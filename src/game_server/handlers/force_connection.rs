@@ -398,4 +398,105 @@ mod tests {
         assert_eq!(board.next_open_row, [3, 2, 2, 0, 0, 0, 0, 1, 2, 3]);
         assert_eq!(board.modified_cols, [0; BOARD_SIZE as usize]);
     }
+
+    #[test]
+    fn test_vertical_match_filled_col_without_walls() {
+        let mut board = ForceConnectionBoard::new();
+        board.drop_piece(3, Player1).unwrap();
+        board.drop_piece(3, Player1).unwrap();
+        board.drop_piece(3, Player1).unwrap();
+        board.drop_piece(3, Player1).unwrap();
+        board.drop_piece(3, Player1).unwrap();
+        board.drop_piece(3, Player1).unwrap();
+        board.drop_piece(3, Player1).unwrap();
+        board.drop_piece(3, Player1).unwrap();
+        board.drop_piece(3, Player1).unwrap();
+        board.drop_piece(3, Player1).unwrap();
+
+        let (player1_matches, player2_matches, empty_slots) = board.process_matches();
+        assert_eq!(vec![10], player1_matches);
+        assert!(player2_matches.is_empty());
+        assert_eq!(
+            vec![
+                (9, 3),
+                (8, 3),
+                (7, 3),
+                (6, 3),
+                (5, 3),
+                (4, 3),
+                (3, 3),
+                (2, 3),
+                (1, 3),
+                (0, 3)
+            ],
+            empty_slots
+        );
+
+        assert_eq!(EMPTY_BOARD, board.board);
+        assert_eq!(board.next_open_row, [3, 2, 1, 0, 0, 0, 0, 1, 2, 3]);
+        assert_eq!(board.modified_cols, [0, 0, 0, 9, 0, 0, 0, 0, 0, 0]);
+
+        let (player1_matches, player2_matches, empty_slots) = board.process_matches();
+        assert!(player1_matches.is_empty());
+        assert!(player2_matches.is_empty());
+        assert!(empty_slots.is_empty());
+
+        assert_eq!(EMPTY_BOARD, board.board);
+        assert_eq!(board.next_open_row, [3, 2, 1, 0, 0, 0, 0, 1, 2, 3]);
+        assert_eq!(board.modified_cols, [0; BOARD_SIZE as usize]);
+    }
+
+    #[test]
+    fn test_vertical_match_filled_col_between_left_wall() {
+        let mut board = ForceConnectionBoard::new();
+        board.drop_piece(0, Player1).unwrap();
+        board.drop_piece(0, Player1).unwrap();
+        board.drop_piece(0, Player1).unwrap();
+        board.drop_piece(0, Player1).unwrap();
+
+        let (player1_matches, player2_matches, empty_slots) = board.process_matches();
+        assert_eq!(vec![4], player1_matches);
+        assert!(player2_matches.is_empty());
+        assert_eq!(vec![(6, 0), (5, 0), (4, 0), (3, 0)], empty_slots);
+
+        assert_eq!(EMPTY_BOARD, board.board);
+        assert_eq!(board.next_open_row, [3, 2, 1, 0, 0, 0, 0, 1, 2, 3]);
+        assert_eq!(board.modified_cols, [6, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+
+        let (player1_matches, player2_matches, empty_slots) = board.process_matches();
+        assert!(player1_matches.is_empty());
+        assert!(player2_matches.is_empty());
+        assert!(empty_slots.is_empty());
+
+        assert_eq!(EMPTY_BOARD, board.board);
+        assert_eq!(board.next_open_row, [3, 2, 1, 0, 0, 0, 0, 1, 2, 3]);
+        assert_eq!(board.modified_cols, [0; BOARD_SIZE as usize]);
+    }
+
+    #[test]
+    fn test_vertical_match_filled_col_between_right_wall() {
+        let mut board = ForceConnectionBoard::new();
+        board.drop_piece(9, Player1).unwrap();
+        board.drop_piece(9, Player1).unwrap();
+        board.drop_piece(9, Player1).unwrap();
+        board.drop_piece(9, Player1).unwrap();
+
+        let (player1_matches, player2_matches, empty_slots) = board.process_matches();
+        assert_eq!(vec![4], player1_matches);
+        assert!(player2_matches.is_empty());
+        assert_eq!(vec![(6, 9), (5, 9), (4, 9), (3, 9)], empty_slots);
+
+        assert_eq!(EMPTY_BOARD, board.board);
+        assert_eq!(board.next_open_row, [3, 2, 1, 0, 0, 0, 0, 1, 2, 3]);
+        assert_eq!(board.modified_cols, [0, 0, 0, 0, 0, 0, 0, 0, 0, 6]);
+
+        let (player1_matches, player2_matches, empty_slots) = board.process_matches();
+        assert!(player1_matches.is_empty());
+        assert!(player2_matches.is_empty());
+        assert!(empty_slots.is_empty());
+
+        assert_eq!(EMPTY_BOARD, board.board);
+        assert_eq!(board.next_open_row, [3, 2, 1, 0, 0, 0, 0, 1, 2, 3]);
+        assert_eq!(board.modified_cols, [0; BOARD_SIZE as usize]);
+    }
 }
