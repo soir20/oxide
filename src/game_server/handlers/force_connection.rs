@@ -223,8 +223,12 @@ impl ForceConnectionBoard {
             let adjusted_delta_row = direction_coefficient * delta_row;
             let adjusted_delta_col = direction_coefficient * delta_col;
 
-            let mut cur_row = origin_row.saturating_add_signed(adjusted_delta_row);
-            let mut cur_col = origin_col.saturating_add_signed(adjusted_delta_col);
+            let Some(mut cur_row) = origin_row.checked_add_signed(adjusted_delta_row) else {
+                continue;
+            };
+            let Some(mut cur_col) = origin_col.checked_add_signed(adjusted_delta_col) else {
+                continue;
+            };
             while cur_row < BOARD_SIZE && cur_col < BOARD_SIZE {
                 if self.piece(cur_row, cur_col) != first_piece {
                     break;
@@ -232,13 +236,14 @@ impl ForceConnectionBoard {
 
                 match_spaces.push((cur_row, cur_col));
 
-                if (cur_row == 0 && adjusted_delta_row < 0)
-                    || (cur_col == 0 && adjusted_delta_col < 0)
-                {
+                let Some(new_row) = cur_row.checked_add_signed(adjusted_delta_row) else {
                     break;
-                }
-                cur_row = cur_row.saturating_add_signed(adjusted_delta_row);
-                cur_col = cur_col.saturating_add_signed(adjusted_delta_col);
+                };
+                let Some(new_col) = cur_col.checked_add_signed(adjusted_delta_col) else {
+                    break;
+                };
+                cur_row = new_row;
+                cur_col = new_col;
             }
         }
 
@@ -316,6 +321,44 @@ mod tests {
 
         assert_eq!(expected_board, board.board);
         assert_eq!([3, 2, 1, 4, 0, 0, 0, 1, 2, 3], board.next_open_row);
+        assert_eq!([0; BOARD_SIZE as usize], board.modified_cols);
+    }
+
+    #[test]
+    fn test_length_three_no_match() {
+        let mut board = ForceConnectionBoard::new();
+        board.drop_piece(3, Player1).unwrap();
+        board.drop_piece(4, Player2).unwrap();
+        board.drop_piece(4, Player1).unwrap();
+        board.drop_piece(6, Player2).unwrap();
+        board.drop_piece(6, Player2).unwrap();
+        board.drop_piece(6, Player2).unwrap();
+        board.drop_piece(6, Player1).unwrap();
+
+        let (player1_matches, player2_matches, empty_slots) = board.process_matches();
+        assert!(player1_matches.is_empty());
+        assert!(player2_matches.is_empty());
+        assert!(empty_slots.is_empty());
+
+        let mut expected_board = EMPTY_BOARD;
+        expected_board[3][0] = Player1;
+        expected_board[4][0] = Player2;
+        expected_board[4][1] = Player1;
+        expected_board[6][0] = Player2;
+        expected_board[6][1] = Player2;
+        expected_board[6][2] = Player2;
+        expected_board[6][3] = Player1;
+        assert_eq!(expected_board, board.board);
+        assert_eq!([3, 2, 1, 1, 2, 0, 4, 1, 2, 3], board.next_open_row);
+        assert_eq!([0; BOARD_SIZE as usize], board.modified_cols);
+
+        let (player1_matches, player2_matches, empty_slots) = board.process_matches();
+        assert!(player1_matches.is_empty());
+        assert!(player2_matches.is_empty());
+        assert!(empty_slots.is_empty());
+
+        assert_eq!(expected_board, board.board);
+        assert_eq!([3, 2, 1, 1, 2, 0, 4, 1, 2, 3], board.next_open_row);
         assert_eq!([0; BOARD_SIZE as usize], board.modified_cols);
     }
 
