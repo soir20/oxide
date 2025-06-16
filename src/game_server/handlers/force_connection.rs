@@ -137,6 +137,8 @@ impl ForceConnectionBoard {
 
         self.set_piece(row, col, ForceConnectionPiece::Empty);
 
+        self.apply_gravity(self.modified_cols);
+
         Ok(())
     }
 
@@ -172,36 +174,7 @@ impl ForceConnectionBoard {
             }
         }
 
-        for col in 0..BOARD_SIZE {
-            let mut next_empty_row = None;
-            let Some(max_row) = modified_cols[col as usize] else {
-                continue;
-            };
-            for row in 0..=max_row {
-                match self.piece(row, col) {
-                    ForceConnectionPiece::Wall => next_empty_row = None,
-                    ForceConnectionPiece::Empty => next_empty_row = next_empty_row.or(Some(row)),
-                    piece => {
-                        let Some(empty_row) = next_empty_row else {
-                            continue;
-                        };
-
-                        self.set_piece(empty_row, col, piece);
-                        self.set_piece(row, col, ForceConnectionPiece::Empty);
-
-                        // We already moved all pieces below this downwards, so we can simply check
-                        // if the row above the row we filled is empty
-                        if empty_row < BOARD_SIZE - 1
-                            && self.piece(empty_row + 1, col) == ForceConnectionPiece::Empty
-                        {
-                            next_empty_row = Some(empty_row + 1);
-                        } else {
-                            next_empty_row = None;
-                        }
-                    }
-                }
-            }
-        }
+        self.apply_gravity(modified_cols);
 
         (player1_matches, player2_matches, cleared_pieces)
     }
@@ -341,6 +314,39 @@ impl ForceConnectionBoard {
         }
 
         (first_piece, match_spaces)
+    }
+
+    fn apply_gravity(&mut self, modified_cols: [Option<u8>; BOARD_SIZE as usize]) {
+        for col in 0..BOARD_SIZE {
+            let mut next_empty_row = None;
+            let Some(max_row) = modified_cols[col as usize] else {
+                continue;
+            };
+            for row in 0..=max_row {
+                match self.piece(row, col) {
+                    ForceConnectionPiece::Wall => next_empty_row = None,
+                    ForceConnectionPiece::Empty => next_empty_row = next_empty_row.or(Some(row)),
+                    piece => {
+                        let Some(empty_row) = next_empty_row else {
+                            continue;
+                        };
+
+                        self.set_piece(empty_row, col, piece);
+                        self.set_piece(row, col, ForceConnectionPiece::Empty);
+
+                        // We already moved all pieces below this downwards, so we can simply check
+                        // if the row above the row we filled is empty
+                        if empty_row < BOARD_SIZE - 1
+                            && self.piece(empty_row + 1, col) == ForceConnectionPiece::Empty
+                        {
+                            next_empty_row = Some(empty_row + 1);
+                        } else {
+                            next_empty_row = None;
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
