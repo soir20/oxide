@@ -65,6 +65,81 @@ impl ForceConnectionBoard {
         Ok(())
     }
 
+    pub fn swap_pieces(
+        &mut self,
+        row1: u8,
+        col1: u8,
+        row2: u8,
+        col2: u8,
+    ) -> Result<(), ProcessPacketError> {
+        ForceConnectionBoard::check_row_in_bounds(row1)?;
+        ForceConnectionBoard::check_col_in_bounds(col1)?;
+        ForceConnectionBoard::check_row_in_bounds(row2)?;
+        ForceConnectionBoard::check_col_in_bounds(col2)?;
+
+        let piece1 = self.piece(row1, col1);
+        let piece2 = self.piece(row2, col2);
+        if piece1 == ForceConnectionPiece::Empty || piece1 == ForceConnectionPiece::Wall {
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!(
+                    "Piece 1 at ({}, {}) must be a player piece but was: {:?}",
+                    row1, col1, piece1
+                ),
+            ));
+        }
+
+        if piece2 == ForceConnectionPiece::Empty || piece2 == ForceConnectionPiece::Wall {
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!(
+                    "Piece 2 at ({}, {}) must be a player piece but was: {:?}",
+                    row2, col2, piece2
+                ),
+            ));
+        }
+
+        if piece1 == piece2 {
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!(
+                    "Tried to swap identical pieces at ({}, {}) and ({}, {}): {:?}",
+                    row1, col1, row2, col2, piece1
+                ),
+            ));
+        }
+
+        self.set_piece(row1, col1, piece2);
+        self.set_piece(row2, col2, piece1);
+
+        Ok(())
+    }
+
+    pub fn delete_piece_if_matches(
+        &mut self,
+        row: u8,
+        col: u8,
+        expected_piece: ForceConnectionPiece,
+    ) -> Result<(), ProcessPacketError> {
+        ForceConnectionBoard::check_row_in_bounds(row)?;
+        ForceConnectionBoard::check_col_in_bounds(col)?;
+
+        let piece = self.piece(row, col);
+        if piece != expected_piece {
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!(
+                    "Piece to remove at ({}, {}) was expected to be {:?}, but was {:?}",
+                    row, col, expected_piece, piece
+                ),
+            ));
+        }
+
+        self.set_piece(row, col, ForceConnectionPiece::Empty);
+
+        Ok(())
+    }
+
     pub fn process_matches(&mut self) -> (Vec<u8>, Vec<u8>, Vec<(u8, u8)>) {
         let mut player1_matches = Vec::new();
         let mut player2_matches = Vec::new();
@@ -129,6 +204,17 @@ impl ForceConnectionBoard {
         }
 
         (player1_matches, player2_matches, cleared_pieces)
+    }
+
+    fn check_row_in_bounds(row: u8) -> Result<(), ProcessPacketError> {
+        if row >= BOARD_SIZE {
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!("Row {} is outside the board", row),
+            ));
+        }
+
+        Ok(())
     }
 
     fn check_col_in_bounds(col: u8) -> Result<(), ProcessPacketError> {
