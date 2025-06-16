@@ -646,7 +646,55 @@ mod tests {
     }
 
     #[test]
-    fn test_two_matches_at_once() {
+    fn test_two_matches_at_once_same_player() {
+        let mut board = ForceConnectionBoard::new();
+        board.drop_piece(3, Player1).unwrap();
+        board.drop_piece(3, Player1).unwrap();
+        board.drop_piece(3, Player1).unwrap();
+        board.drop_piece(3, Player1).unwrap();
+        board.drop_piece(4, Player1).unwrap();
+        board.drop_piece(5, Player1).unwrap();
+        board.drop_piece(6, Player1).unwrap();
+
+        let (player1_matches, player2_matches, empty_slots) = board.process_matches();
+        assert_eq!(vec![4], player1_matches);
+        assert!(player2_matches.is_empty());
+        assert_eq!(vec![(3, 3), (2, 3), (1, 3), (0, 3)], empty_slots);
+
+        let mut expected_board = EMPTY_BOARD;
+        expected_board[4][0] = Player1;
+        expected_board[5][0] = Player1;
+        expected_board[6][0] = Player1;
+        assert_eq!(expected_board, board.board);
+        assert_eq!([3, 2, 1, 0, 1, 1, 1, 1, 2, 3], board.next_open_row);
+        assert_eq!(
+            [
+                None,
+                None,
+                None,
+                Some(3),
+                None,
+                None,
+                None,
+                None,
+                None,
+                None
+            ],
+            board.modified_cols
+        );
+
+        let (player1_matches, player2_matches, empty_slots) = board.process_matches();
+        assert!(player1_matches.is_empty());
+        assert!(player2_matches.is_empty());
+        assert!(empty_slots.is_empty());
+
+        assert_eq!(expected_board, board.board);
+        assert_eq!([3, 2, 1, 0, 1, 1, 1, 1, 2, 3], board.next_open_row);
+        assert_eq!([None; BOARD_SIZE as usize], board.modified_cols);
+    }
+
+    #[test]
+    fn test_two_matches_at_once_diff_players() {
         let mut board = ForceConnectionBoard::new();
         board.drop_piece(3, Player1).unwrap();
         board.drop_piece(4, Player1).unwrap();
