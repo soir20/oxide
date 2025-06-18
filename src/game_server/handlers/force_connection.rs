@@ -109,6 +109,16 @@ impl ForceConnectionBoard {
             ));
         }
 
+        if row1.abs_diff(row2) > 1 || col1.abs_diff(col2) > 0 {
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!(
+                    "Tried to swap pieces at ({}, {}) and ({}, {}), which are more than 1 row or column apart: {:?}",
+                    row1, col1, row2, col2, piece1
+                ),
+            ));
+        }
+
         self.set_piece(row1, col1, piece2);
         self.set_piece(row2, col2, piece1);
 
@@ -1154,5 +1164,76 @@ mod tests {
             ],
             board.modified_cols
         );
+    }
+
+    #[test]
+    fn test_swap_out_of_bounds_row1() {
+        let mut board = ForceConnectionBoard::new();
+        board.drop_piece(3, Player1).unwrap();
+        board.drop_piece(4, Player2).unwrap();
+        assert!(board.swap_pieces(10, 3, 0, 4).is_err());
+    }
+
+    #[test]
+    fn test_swap_out_of_bounds_col1() {
+        let mut board = ForceConnectionBoard::new();
+        board.drop_piece(3, Player1).unwrap();
+        board.drop_piece(4, Player2).unwrap();
+        assert!(board.swap_pieces(0, 10, 0, 4).is_err());
+    }
+
+    #[test]
+    fn test_swap_out_of_bounds_row2() {
+        let mut board = ForceConnectionBoard::new();
+        board.drop_piece(3, Player1).unwrap();
+        board.drop_piece(4, Player2).unwrap();
+        assert!(board.swap_pieces(0, 3, 10, 4).is_err());
+    }
+
+    #[test]
+    fn test_swap_out_of_bounds_col2() {
+        let mut board = ForceConnectionBoard::new();
+        board.drop_piece(3, Player1).unwrap();
+        board.drop_piece(4, Player2).unwrap();
+        assert!(board.swap_pieces(0, 3, 0, 10).is_err());
+    }
+
+    #[test]
+    fn test_swap_same_piece() {
+        let mut board = ForceConnectionBoard::new();
+        board.drop_piece(3, Player1).unwrap();
+        board.drop_piece(4, Player1).unwrap();
+        assert!(board.swap_pieces(0, 3, 0, 4).is_err());
+    }
+
+    #[test]
+    fn test_swap_empty() {
+        let mut board = ForceConnectionBoard::new();
+        board.drop_piece(3, Player1).unwrap();
+        assert!(board.swap_pieces(0, 3, 0, 4).is_err());
+    }
+
+    #[test]
+    fn test_swap_wall() {
+        let mut board = ForceConnectionBoard::new();
+        board.drop_piece(3, Player1).unwrap();
+        assert!(board.swap_pieces(0, 3, 0, 2).is_err());
+    }
+
+    #[test]
+    fn test_swap_rowss_too_far() {
+        let mut board = ForceConnectionBoard::new();
+        board.drop_piece(3, Player1).unwrap();
+        board.drop_piece(3, Player1).unwrap();
+        board.drop_piece(3, Player2).unwrap();
+        assert!(board.swap_pieces(0, 3, 2, 3).is_err());
+    }
+
+    #[test]
+    fn test_swap_cols_too_far() {
+        let mut board = ForceConnectionBoard::new();
+        board.drop_piece(3, Player1).unwrap();
+        board.drop_piece(5, Player2).unwrap();
+        assert!(board.swap_pieces(0, 3, 0, 5).is_err());
     }
 }
