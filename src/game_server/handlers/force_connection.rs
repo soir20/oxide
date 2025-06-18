@@ -1089,6 +1089,25 @@ mod tests {
     }
 
     #[test]
+    fn test_delete_mismatch() {
+        let mut board = ForceConnectionBoard::new();
+        board.drop_piece(4, Player1).unwrap();
+        assert!(board.delete_piece_if_matches(0, 4, Player2).is_err());
+    }
+
+    #[test]
+    fn test_delete_out_of_bounds_row() {
+        let mut board = ForceConnectionBoard::new();
+        assert!(board.delete_piece_if_matches(10, 0, Player1).is_err());
+    }
+
+    #[test]
+    fn test_delete_out_of_bounds_col() {
+        let mut board = ForceConnectionBoard::new();
+        assert!(board.delete_piece_if_matches(0, 10, Player1).is_err());
+    }
+
+    #[test]
     fn test_delete_and_match() {
         let mut board = ForceConnectionBoard::new();
         board.drop_piece(4, Player1).unwrap();
