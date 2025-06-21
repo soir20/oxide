@@ -418,6 +418,9 @@ impl ForceConnectionGame {
         } else {
             ForceConnectionTurn::Player2
         };
+
+        let now = Instant::now();
+
         ForceConnectionGame {
             board: ForceConnectionBoard::new(),
             player1,
@@ -425,8 +428,8 @@ impl ForceConnectionGame {
             player1_ready: false,
             player2_ready: player2.is_none(),
             turn,
-            turn_start: Instant::now(),
-            last_tick: Instant::now(),
+            turn_start: now,
+            last_tick: now,
         }
     }
 
@@ -538,8 +541,14 @@ impl ForceConnectionGame {
         minigame_status: &MinigameStatus,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         if sender == self.player1 {
+            if self.player1_ready {
+                return Ok(Vec::new());
+            }
             self.player1_ready = true;
         } else if Some(sender) == self.player2 {
+            if self.player2_ready {
+                return Ok(Vec::new());
+            }
             self.player2_ready = true;
         } else {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} sent a ready payload for Force Connection, but they aren't one of the game's players (stage {}, stage group {})", sender, minigame_status.group.stage_guid, minigame_status.group.stage_group_guid)));
@@ -548,6 +557,10 @@ impl ForceConnectionGame {
         if !self.player1_ready || !self.player2_ready {
             return Ok(Vec::new());
         }
+
+        let now = Instant::now();
+        self.turn_start = now;
+        self.last_tick = now;
 
         Ok(vec![Broadcast::Multi(
             self.list_recipients(),
