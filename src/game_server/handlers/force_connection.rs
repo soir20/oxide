@@ -382,7 +382,7 @@ impl Display for ForceConnectionBoard {
         for row in 0..BOARD_SIZE {
             for col in 0..BOARD_SIZE {
                 f.serialize_u8(self.piece(row, col) as u8)?;
-                if row < BOARD_SIZE - 1 || col == BOARD_SIZE - 1 {
+                if row < BOARD_SIZE - 1 || col < BOARD_SIZE - 1 {
                     f.serialize_char(',')?;
                 }
             }
