@@ -603,8 +603,19 @@ impl ForceConnectionGame {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to select column {} in Force Connection, but it isn't a valid column", sender, player_index, col)));
         }
 
-        Ok(vec![Broadcast::Multi(
-            self.list_recipients(),
+        let recipient = match self.turn {
+            ForceConnectionTurn::Player1 => {
+                let Some(player2) = self.player2 else {
+                    return Ok(Vec::new());
+                };
+
+                player2
+            }
+            ForceConnectionTurn::Player2 => self.player1,
+        };
+
+        Ok(vec![Broadcast::Single(
+            recipient,
             vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: FlashPayload {
@@ -613,7 +624,7 @@ impl ForceConnectionGame {
                         sub_op_code: -1,
                         stage_group_guid: minigame_status.group.stage_group_guid,
                     },
-                    payload: format!("OnSelectNewColumnMsg\t{}\t{}", col, self.turn as u8),
+                    payload: format!("OnOtherPlayerSelectNewColumnMsg\t{}", col),
                 },
             })],
         )])
