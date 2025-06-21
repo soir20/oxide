@@ -1370,26 +1370,24 @@ fn handle_request_create_active_minigame(
                             &stage_config,
                         )?;
 
-                        // Wait to insert a new group in case there's an error updating the player's status
-                        let mut players_in_group: Vec<u32> = characters_table_write_handle
-                            .keys_by_index4(&open_group)
-                            .filter_map(|guid| shorten_player_guid(guid).ok())
-                            .collect();
-                        players_in_group.shuffle(&mut thread_rng());
-
+                        // Wait to insert a new group in case there's an error updating the player's status,
+                        // and wait to populate the shared type data until all players have joined
                         if minigame_data_table_write_handle.get(open_group).is_none() {
                             minigame_data_table_write_handle.insert(SharedMinigameData {
                                 guid: open_group,
                                 readiness: MinigameReadiness::Matchmaking,
-                                data: SharedMinigameTypeData::from(
-                                    stage_config.stage_config.minigame_type(),
-                                    &players_in_group,
-                                ),
+                                data: SharedMinigameTypeData::None,
                             });
                         }
 
                         // Start the game because the group is full
                         if space_left <= required_space {
+                            let mut players_in_group: Vec<u32> = characters_table_write_handle
+                                .keys_by_index4(&open_group)
+                                .filter_map(|guid| shorten_player_guid(guid).ok())
+                                .collect();
+                            players_in_group.shuffle(&mut thread_rng());
+
                             broadcasts.append(&mut prepare_active_minigame_instance(
                                 open_group,
                                 &players_in_group,
@@ -1574,6 +1572,11 @@ pub fn prepare_active_minigame_instance(
                         );
                         return;
                     };
+
+                    minigame_data.data = SharedMinigameTypeData::from(
+                        stage_config.stage_config.minigame_type(),
+                        members,
+                    );
 
                     minigame_data.readiness = MinigameReadiness::InitialPlayersLoading(
                         BTreeSet::from_iter(members.iter().copied()),
