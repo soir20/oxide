@@ -17,7 +17,10 @@ use serde::{de::IgnoredAny, Deserialize};
 
 use crate::{
     game_server::{
-        handlers::character::MinigameStatus,
+        handlers::{
+            character::MinigameStatus, force_connection::ForceConnectionGame,
+            lock_enforcer::CharacterTableReadHandle,
+        },
         packets::{
             chat::{ActionBarTextColor, SendStringId},
             client_update::UpdateCredits,
@@ -226,8 +229,7 @@ pub enum SharedMinigameTypeData {
         player2: Option<u32>,
     },
     ForceConnection {
-        player1: u32,
-        player2: Option<u32>,
+        game: ForceConnectionGame,
     },
     #[default]
     None,
@@ -244,9 +246,9 @@ impl SharedMinigameTypeData {
                 FlashMinigameType::FleetCommander => {
                     SharedMinigameTypeData::FleetCommander { player1, player2 }
                 }
-                FlashMinigameType::ForceConnection => {
-                    SharedMinigameTypeData::ForceConnection { player1, player2 }
-                }
+                FlashMinigameType::ForceConnection => SharedMinigameTypeData::ForceConnection {
+                    game: ForceConnectionGame::new(player1, player2),
+                },
                 FlashMinigameType::Simple => SharedMinigameTypeData::default(),
             },
             MinigameType::SaberStrike { .. } => SharedMinigameTypeData::default(),
@@ -1771,12 +1773,13 @@ pub fn handle_minigame_packet_write<T: Default>(
         &mut u32,
         StageConfigRef,
         &mut SharedMinigameData,
+        &CharacterTableReadHandle,
     ) -> Result<T, ProcessPacketError>,
 ) -> Result<T, ProcessPacketError> {
     game_server.lock_enforcer().read_characters(|_| CharacterLockRequest {
         read_guids: Vec::new(),
         write_guids: vec![player_guid(sender)],
-        character_consumer: |_, _, mut characters_write, minigame_data_lock_enforcer|  {
+        character_consumer: |characters_table_read_handle, _, mut characters_write, minigame_data_lock_enforcer|  {
             let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) else {
                 return Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
@@ -1805,7 +1808,7 @@ pub fn handle_minigame_packet_write<T: Default>(
             let Some(stage_config_ref) = game_server
                 .minigames()
                 .stage_config(minigame_status.group.stage_group_guid, minigame_status.group.stage_guid) else {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process Flash payload for {}'s active minigame with stage config {} (stage group {}) that does not exist", sender, minigame_status.group.stage_guid, minigame_status.group.stage_group_guid)));
+                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process packet for {}'s active minigame with stage config {} (stage group {}) that does not exist", sender, minigame_status.group.stage_guid, minigame_status.group.stage_group_guid)));
             };
 
             minigame_data_lock_enforcer.read_minigame_data(|_| MinigameDataLockRequest {
@@ -1813,10 +1816,10 @@ pub fn handle_minigame_packet_write<T: Default>(
                 write_guids: vec![minigame_status.group],
                 minigame_data_consumer: |_, _, mut minigame_data_write, _| {
                     let Some(shared_minigame_data) = minigame_data_write.get_mut(&minigame_status.group) else {
-                        return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process Flash payload for {}'s active minigame with stage config {} (stage group {}) that is missing shared minigame data", sender, minigame_status.group.stage_guid, minigame_status.group.stage_group_guid)))
+                        return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process packet for {}'s active minigame with stage config {} (stage group {}) that is missing shared minigame data", sender, minigame_status.group.stage_guid, minigame_status.group.stage_group_guid)))
                     };
 
-                    func(minigame_status, &mut player.minigame_stats, &mut player.credits, stage_config_ref, shared_minigame_data)
+                    func(minigame_status, &mut player.minigame_stats, &mut player.credits, stage_config_ref, shared_minigame_data, characters_table_read_handle)
                 },
             })
         },
@@ -1894,7 +1897,7 @@ fn handle_flash_payload_game_result(
         sender,
         game_server,
         &payload.header,
-        |minigame_status, minigame_stats, _, _, shared_minigame_data| {
+        |minigame_status, minigame_stats, _, _, shared_minigame_data, _| {
             if parts.len() != 2 {
                 return Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
@@ -1957,6 +1960,50 @@ fn handle_flash_payload(
     }
 
     match parts[0] {
+        "OnConnectMsg" => handle_minigame_packet_write(
+            sender,
+            game_server,
+            &payload.header,
+            |minigame_status, _, _, _, shared_minigame_data, characters_table_read_handle| {
+                match &mut shared_minigame_data.data {
+                    SharedMinigameTypeData::ForceConnection { game } => {
+                        game.connect(sender, minigame_status, characters_table_read_handle)
+                    }
+                    _ => Ok(Vec::new()),
+                }
+                /*Ok(vec![Broadcast::Single(
+                    sender,
+                    vec![
+                        GamePacket::serialize(&TunneledPacket {
+                            unknown1: true,
+                            inner: FlashPayload {
+                                header: MinigameHeader {
+                                    stage_guid: minigame_status.group.stage_guid,
+                                    sub_op_code: -1,
+                                    stage_group_guid: minigame_status.group.stage_group_guid,
+                                },
+                                payload: format!(
+                                    "OnStartGameMsg"
+                                ),
+                            },
+                        }),
+                        GamePacket::serialize(&TunneledPacket {
+                            unknown1: true,
+                            inner: FlashPayload {
+                                header: MinigameHeader {
+                                    stage_guid: minigame_status.group.stage_guid,
+                                    sub_op_code: -1,
+                                    stage_group_guid: minigame_status.group.stage_group_guid,
+                                },
+                                payload: format!(
+                                    "OnStartPlayerTurnMsg\t1\t20"
+                                ),
+                            },
+                        }),
+                    ],
+                )])*/
+            },
+        ),
         "FRServer_RequestStageId" => handle_flash_payload_read_only(
             sender,
             game_server,
@@ -1985,7 +2032,7 @@ fn handle_flash_payload(
             sender,
             game_server,
             &payload.header,
-            |minigame_status, _, _, _, _| {
+            |minigame_status, _, _, _, _, _| {
                 if parts.len() == 7 {
                     let icon_set_id = parts[2].parse()?;
                     let score_type = ScoreType::try_from_primitive(parts[3].parse()?)
@@ -2022,7 +2069,7 @@ fn handle_flash_payload(
             sender,
             game_server,
             &payload.header,
-            |minigame_status, _, player_credits, stage_config, _| {
+            |minigame_status, _, player_credits, stage_config, _, _| {
                 if parts.len() == 2 {
                     let round_score = parts[1].parse()?;
                     let (mut broadcasts, awarded_credits) = award_credits(
@@ -2071,7 +2118,7 @@ fn handle_flash_payload(
             sender,
             game_server,
             &payload.header,
-            |_, minigame_stats, _, _, _| {
+            |_, minigame_stats, _, _, _, _| {
                 if parts.len() == 3 {
                     let trophy_guid = parts[1].parse()?;
                     let delta = parts[2].parse()?;

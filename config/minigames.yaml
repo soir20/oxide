@@ -4267,6 +4267,48 @@
               game_swf_name: MineBuster.swf
             zone_template_guid: 200
             score_to_credits_expression: x / 71.5
+    - guid: 22000
+      name_id: 33611
+      description_id: 33612
+      members_only: true
+      is_flash: true
+      is_active: true
+      param1: 0
+      icon_id: 4041
+      background_icon_id: 0
+      is_popular: false
+      is_game_of_day: false
+      sort_order: 22000
+      tutorial_swf: HowtoForceConnection.gfx
+      stage_group:
+        guid: 22000
+        name_id: 33611
+        description_id: 33612
+        icon_id: 3922
+        stage_icon_id: 3922
+        members_only: true
+        stage_select_map_name: ''
+        stages:
+          - !Stage
+            guid: 22001
+            name_id: 19815
+            description_id: 33612
+            stage_icon_id: 4041
+            start_screen_icon_id: 4187
+            min_players: 1
+            max_players: 2
+            difficulty: 1
+            start_sound_id: 5258
+            members_only: true
+            require_previous_completed: false
+            link_name: stage
+            short_name: ''
+            minigame_type:
+              !Flash
+              game_swf_name: ForceConnection.swf
+              game_type: ForceConnection
+            zone_template_guid: 200
+            score_to_credits_expression: x / 18.55
     - guid: 23000
       name_id: 50473
       description_id: 50472

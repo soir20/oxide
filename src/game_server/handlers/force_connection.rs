@@ -1,17 +1,34 @@
-use crate::game_server::{ProcessPacketError, ProcessPacketErrorType};
+use std::{fmt::Display, time::Instant};
+
+use rand::Rng;
+use serde::Serializer;
+
+use crate::game_server::{
+    handlers::{
+        character::MinigameStatus, guid::GuidTableIndexer, lock_enforcer::CharacterTableReadHandle,
+        unique_guid::player_guid,
+    },
+    packets::{
+        minigame::{FlashPayload, MinigameHeader},
+        tunnel::TunneledPacket,
+        GamePacket,
+    },
+    Broadcast, ProcessPacketError, ProcessPacketErrorType,
+};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum ForceConnectionPiece {
-    Wall,
-    Empty,
-    Player1,
-    Player2,
+enum ForceConnectionPiece {
+    Wall = 0,
+    Empty = 1,
+    Player1 = 2,
+    Player2 = 3,
 }
 
 const BOARD_SIZE: u8 = 10;
 const MIN_MATCH_LENGTH: u8 = 4;
 
-pub struct ForceConnectionBoard {
+#[derive(Clone)]
+struct ForceConnectionBoard {
     board: [[ForceConnectionPiece; BOARD_SIZE as usize]; BOARD_SIZE as usize],
     next_open_row: [u8; BOARD_SIZE as usize],
     modified_cols: [Option<u8>; BOARD_SIZE as usize],
@@ -356,6 +373,158 @@ impl ForceConnectionBoard {
                 }
             }
         }
+    }
+}
+
+impl Display for ForceConnectionBoard {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        for row in 0..BOARD_SIZE {
+            for col in 0..BOARD_SIZE {
+                f.serialize_u8(self.piece(row, col) as u8)?;
+            }
+        }
+
+        Ok(())
+    }
+}
+
+#[derive(Clone, Copy)]
+enum ForceConnectionTurn {
+    Player1,
+    Player2,
+}
+
+#[derive(Clone)]
+pub struct ForceConnectionGame {
+    board: ForceConnectionBoard,
+    player1: u32,
+    player2: Option<u32>,
+    turn: ForceConnectionTurn,
+    turn_start: Instant,
+    last_tick: Instant,
+    done_matching: bool,
+    ready_players: u8,
+}
+
+impl ForceConnectionGame {
+    pub fn new(player1: u32, player2: Option<u32>) -> Self {
+        let turn = if rand::thread_rng().gen_bool(0.5) {
+            ForceConnectionTurn::Player1
+        } else {
+            ForceConnectionTurn::Player2
+        };
+        ForceConnectionGame {
+            board: ForceConnectionBoard::new(),
+            player1,
+            player2,
+            turn,
+            turn_start: Instant::now(),
+            last_tick: Instant::now(),
+            done_matching: true,
+            ready_players: 0,
+        }
+    }
+
+    pub fn connect(
+        &mut self,
+        sender: u32,
+        minigame_status: &MinigameStatus,
+        characters_table_read_handle: &CharacterTableReadHandle,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let Some(name1) = characters_table_read_handle.index2(player_guid(self.player1)) else {
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!(
+                    "Force Connection player 1 with GUID {} is missing or has no name",
+                    self.player1
+                ),
+            ));
+        };
+
+        let name2 = match self.player2 {
+            Some(player2_guid) => characters_table_read_handle
+                .index2(player_guid(player2_guid))
+                .ok_or(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Force Connection player 2 with GUID {} is missing or has no name",
+                        player2_guid
+                    ),
+                ))?,
+            None => &"".to_string(),
+        };
+        Ok(vec![Broadcast::Single(
+            sender,
+            vec![
+                GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: FlashPayload {
+                        header: MinigameHeader {
+                            stage_guid: minigame_status.group.stage_guid,
+                            sub_op_code: -1,
+                            stage_group_guid: minigame_status.group.stage_group_guid,
+                        },
+                        payload: "OnServerReadyMsg".to_string(),
+                    },
+                }),
+                GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: FlashPayload {
+                        header: MinigameHeader {
+                            stage_guid: minigame_status.group.stage_guid,
+                            sub_op_code: -1,
+                            stage_group_guid: minigame_status.group.stage_group_guid,
+                        },
+                        payload: format!(
+                            "OnLevelDataMsg\t{size},{size},{board}",
+                            size = BOARD_SIZE,
+                            board = self.board
+                        ),
+                    },
+                }),
+                GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: FlashPayload {
+                        header: MinigameHeader {
+                            stage_guid: minigame_status.group.stage_guid,
+                            sub_op_code: -1,
+                            stage_group_guid: minigame_status.group.stage_group_guid,
+                        },
+                        payload: format!(
+                            "OnAssignPlayerIndexMsg\t{}",
+                            (sender != self.player1) as u8
+                        ),
+                    },
+                }),
+                GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: FlashPayload {
+                        header: MinigameHeader {
+                            stage_guid: minigame_status.group.stage_guid,
+                            sub_op_code: -1,
+                            stage_group_guid: minigame_status.group.stage_group_guid,
+                        },
+                        payload: format!("OnAddPlayerMsg\t0\t{}\t{}\tfalse", name1, self.player1),
+                    },
+                }),
+                GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: FlashPayload {
+                        header: MinigameHeader {
+                            stage_guid: minigame_status.group.stage_guid,
+                            sub_op_code: -1,
+                            stage_group_guid: minigame_status.group.stage_group_guid,
+                        },
+                        payload: format!(
+                            "OnAddPlayerMsg\t1\t{}\t{}\t{}",
+                            name2,
+                            self.player2.unwrap_or(0),
+                            self.player2.is_none()
+                        ),
+                    },
+                }),
+            ],
+        )])
     }
 }
 

@@ -1300,9 +1300,9 @@
       large_icon: false
       show_hover_description: true
   ambient_npcs: []
-- comment: Singleplayer Minigame
+- comment: Non-World Minigame
   guid: 200
-  max_players: 1
+  max_players: 2
   template_name: 9
   asset_name: Starship_Housing
   hide_ui: false
