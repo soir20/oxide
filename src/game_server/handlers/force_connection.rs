@@ -420,7 +420,7 @@ impl ForceConnectionGame {
             player1,
             player2,
             player1_ready: false,
-            player2_ready: false,
+            player2_ready: player2.is_none(),
             turn,
             turn_start: Instant::now(),
             last_tick: Instant::now(),
@@ -583,22 +583,21 @@ impl ForceConnectionGame {
         &self,
         sender: u32,
         col: u8,
+        player_index: u8,
         minigame_status: &MinigameStatus,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        let is_player_1 = sender == self.player1;
-        let is_valid_for_player1 = is_player_1 && self.turn == ForceConnectionTurn::Player1;
-        let is_valid_for_player2 = ((is_player_1 && self.player2.is_none())
-            || (Some(sender) == self.player2))
-            && self.turn == ForceConnectionTurn::Player2;
+        let is_valid_for_player = match player_index {
+            0 => self.turn == ForceConnectionTurn::Player1 && sender == self.player1,
+            1 => self.turn == ForceConnectionTurn::Player2 && ((sender == self.player1 && self.player2.is_none()) || (Some(sender) == self.player2)),
+            _ => return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to select column {} in Force Connection, but the player index {} isn't valid", sender, col, player_index)))
+        };
 
-        let is_valid_column = col < BOARD_SIZE;
-
-        if !is_valid_for_player1 && !is_valid_for_player2 {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to select column {} in Force Connection, but it isn't their turn", sender, col)));
+        if !is_valid_for_player {
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to select column {} in Force Connection, but it isn't their turn", sender, player_index, col)));
         }
 
-        if !is_valid_column {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to select column {} in Force Connection, but it isn't a valid column", sender, col)));
+        if col >= BOARD_SIZE {
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to select column {} in Force Connection, but it isn't a valid column", sender, player_index, col)));
         }
 
         Ok(vec![Broadcast::Multi(
@@ -611,7 +610,7 @@ impl ForceConnectionGame {
                         sub_op_code: -1,
                         stage_group_guid: minigame_status.group.stage_group_guid,
                     },
-                    payload: format!("OnSelectNewColumnMsg\t{}\t{}", col, self.turn as u8,),
+                    payload: format!("OnSelectNewColumnMsg\t{}\t{}", col, self.turn as u8),
                 },
             })],
         )])
