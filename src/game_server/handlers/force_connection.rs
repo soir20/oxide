@@ -396,7 +396,14 @@ impl Display for ForceConnectionBoard {
 enum ForceConnectionTurn {
     Player1 = 0,
     Player2 = 1,
-    Matching = 2,
+}
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum ForceConnectionGameState {
+    WaitingForPlayersReady,
+    WaitingForMove,
+    PieceDropped,
+    Matching,
 }
 
 #[derive(Clone)]
@@ -408,6 +415,7 @@ pub struct ForceConnectionGame {
     player2_ready: bool,
     turn: ForceConnectionTurn,
     turn_start: Instant,
+    state: ForceConnectionGameState,
     last_tick: Instant,
 }
 
@@ -429,16 +437,27 @@ impl ForceConnectionGame {
             player2_ready: player2.is_none(),
             turn,
             turn_start: now,
+            state: ForceConnectionGameState::WaitingForPlayersReady,
             last_tick: now,
         }
     }
 
     pub fn connect(
-        &mut self,
+        &self,
         sender: u32,
         minigame_status: &MinigameStatus,
         characters_table_read_handle: &CharacterTableReadHandle,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        if self.state != ForceConnectionGameState::WaitingForPlayersReady {
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!(
+                    "Player {} tried to connect to Force Connection, but the game has already started",
+                    sender
+                ),
+            ));
+        }
+
         let Some(name1) = characters_table_read_handle.index2(player_guid(self.player1)) else {
             return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
@@ -561,6 +580,7 @@ impl ForceConnectionGame {
         let now = Instant::now();
         self.turn_start = now;
         self.last_tick = now;
+        self.state = ForceConnectionGameState::WaitingForMove;
 
         Ok(vec![Broadcast::Multi(
             self.list_recipients(),
@@ -616,9 +636,6 @@ impl ForceConnectionGame {
                 player2
             }
             ForceConnectionTurn::Player2 => self.player1,
-            ForceConnectionTurn::Matching => {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to select column {} in Force Connection, but the game is processing matches", sender, player_index, col)));
-            }
         };
 
         Ok(vec![Broadcast::Single(
@@ -650,9 +667,6 @@ impl ForceConnectionGame {
             match self.turn {
                 ForceConnectionTurn::Player1 => ForceConnectionPiece::Player1,
                 ForceConnectionTurn::Player2 => ForceConnectionPiece::Player2,
-                ForceConnectionTurn::Matching => {
-                    return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to drop a piece {} in Force Connection, but the game is processing matches", sender, player_index, col)));
-                },
             },
         )?;
 
@@ -675,6 +689,10 @@ impl ForceConnectionGame {
                 },
             })],
         )])
+    }
+
+    pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
+        Vec::new()
     }
 
     fn list_recipients(&self) -> Vec<u32> {
