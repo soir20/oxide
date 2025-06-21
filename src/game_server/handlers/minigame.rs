@@ -1963,81 +1963,6 @@ fn handle_flash_payload(
     }
 
     match parts[0] {
-        "OnConnectMsg" => handle_minigame_packet_write(
-            sender,
-            game_server,
-            &payload.header,
-            |minigame_status, _, _, _, shared_minigame_data, characters_table_read_handle| {
-                match &mut shared_minigame_data.data {
-                    SharedMinigameTypeData::ForceConnection { game } => {
-                        game.connect(sender, minigame_status, characters_table_read_handle)
-                    }
-                    _ => Ok(Vec::new()),
-                }
-            },
-        ),
-        "OnPlayerReadyMsg" => handle_minigame_packet_write(
-            sender,
-            game_server,
-            &payload.header,
-            |minigame_status, _, _, _, shared_minigame_data, _| match &mut shared_minigame_data.data
-            {
-                SharedMinigameTypeData::ForceConnection { game } => {
-                    game.mark_player_ready(sender, minigame_status)
-                }
-                _ => Ok(Vec::new()),
-            },
-        ),
-        "OnSelectNewColumnMsg" => handle_flash_payload_read_only(
-            sender,
-            game_server,
-            &payload.header,
-            |minigame_status, _, shared_minigame_data| {
-                match &shared_minigame_data.data
-            {
-                SharedMinigameTypeData::ForceConnection { game } => {
-                    if parts.len() == 3 {
-                        let col = parts[1].parse()?;
-                        let player_index = parts[2].parse()?;
-                        game.select_column(sender, col, player_index, minigame_status)
-                    } else {
-                        Err(ProcessPacketError::new(
-                            ProcessPacketErrorType::ConstraintViolated,
-                            format!(
-                                "Expected 2 parameters in select column payload, but only found {}",
-                                parts.len().saturating_sub(1)
-                            ),
-                        ))
-                    }
-                }
-                _ => Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Received select column message for non-Force Connection game from player {}", sender))),
-            }
-            },
-        ),
-        "OnRequestDropPieceMsg" => handle_minigame_packet_write(
-            sender,
-            game_server,
-            &payload.header,
-            |minigame_status, _, _, _, shared_minigame_data, _| match &mut shared_minigame_data.data
-            {
-                SharedMinigameTypeData::ForceConnection { game } => {
-                    if parts.len() == 3 {
-                        let col = parts[1].parse()?;
-                        let player_index = parts[2].parse()?;
-                        game.drop_piece(sender, col, player_index, minigame_status)
-                    } else {
-                        Err(ProcessPacketError::new(
-                            ProcessPacketErrorType::ConstraintViolated,
-                            format!(
-                                "Expected 2 parameters in drop piece payload, but only found {}",
-                                parts.len().saturating_sub(1)
-                            ),
-                        ))
-                    }
-                }
-                _ => Ok(Vec::new()),
-            },
-        ),
         "FRServer_RequestStageId" => handle_flash_payload_read_only(
             sender,
             game_server,
@@ -2167,6 +2092,81 @@ fn handle_flash_payload(
                         ),
                     ))
                 }
+            },
+        ),
+        "OnConnectMsg" => handle_minigame_packet_write(
+            sender,
+            game_server,
+            &payload.header,
+            |minigame_status, _, _, _, shared_minigame_data, characters_table_read_handle| {
+                match &mut shared_minigame_data.data {
+                    SharedMinigameTypeData::ForceConnection { game } => {
+                        game.connect(sender, minigame_status, characters_table_read_handle)
+                    }
+                    _ => Ok(Vec::new()),
+                }
+            },
+        ),
+        "OnPlayerReadyMsg" => handle_minigame_packet_write(
+            sender,
+            game_server,
+            &payload.header,
+            |minigame_status, _, _, _, shared_minigame_data, _| match &mut shared_minigame_data.data
+            {
+                SharedMinigameTypeData::ForceConnection { game } => {
+                    game.mark_player_ready(sender, minigame_status)
+                }
+                _ => Ok(Vec::new()),
+            },
+        ),
+        "OnSelectNewColumnMsg" => handle_flash_payload_read_only(
+            sender,
+            game_server,
+            &payload.header,
+            |minigame_status, _, shared_minigame_data| {
+                match &shared_minigame_data.data
+            {
+                SharedMinigameTypeData::ForceConnection { game } => {
+                    if parts.len() == 3 {
+                        let col = parts[1].parse()?;
+                        let player_index = parts[2].parse()?;
+                        game.select_column(sender, col, player_index, minigame_status)
+                    } else {
+                        Err(ProcessPacketError::new(
+                            ProcessPacketErrorType::ConstraintViolated,
+                            format!(
+                                "Expected 2 parameters in select column payload, but only found {}",
+                                parts.len().saturating_sub(1)
+                            ),
+                        ))
+                    }
+                }
+                _ => Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Received select column message for non-Force Connection game from player {}", sender))),
+            }
+            },
+        ),
+        "OnRequestDropPieceMsg" => handle_minigame_packet_write(
+            sender,
+            game_server,
+            &payload.header,
+            |minigame_status, _, _, _, shared_minigame_data, _| match &mut shared_minigame_data.data
+            {
+                SharedMinigameTypeData::ForceConnection { game } => {
+                    if parts.len() == 3 {
+                        let col = parts[1].parse()?;
+                        let player_index = parts[2].parse()?;
+                        game.drop_piece(sender, col, player_index, minigame_status)
+                    } else {
+                        Err(ProcessPacketError::new(
+                            ProcessPacketErrorType::ConstraintViolated,
+                            format!(
+                                "Expected 2 parameters in drop piece payload, but only found {}",
+                                parts.len().saturating_sub(1)
+                            ),
+                        ))
+                    }
+                }
+                _ => Ok(Vec::new()),
             },
         ),
         _ => Err(ProcessPacketError::new(
