@@ -493,6 +493,20 @@ impl ForceConnectionGame {
                             sub_op_code: -1,
                             stage_group_guid: minigame_status.group.stage_group_guid,
                         },
+                        payload: format!(
+                            "OnAssignPlayerIndexMsg\t{}",
+                            (sender != self.player1) as u8
+                        ),
+                    },
+                }),
+                GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: FlashPayload {
+                        header: MinigameHeader {
+                            stage_guid: minigame_status.group.stage_guid,
+                            sub_op_code: -1,
+                            stage_group_guid: minigame_status.group.stage_group_guid,
+                        },
                         payload: format!("OnAddPlayerMsg\t0\t{}\t{}\tfalse", name1, self.player1),
                     },
                 }),
@@ -509,20 +523,6 @@ impl ForceConnectionGame {
                             name2,
                             self.player2.unwrap_or(0),
                             self.player2.is_none()
-                        ),
-                    },
-                }),
-                GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: FlashPayload {
-                        header: MinigameHeader {
-                            stage_guid: minigame_status.group.stage_guid,
-                            sub_op_code: -1,
-                            stage_group_guid: minigame_status.group.stage_group_guid,
-                        },
-                        payload: format!(
-                            "OnAssignPlayerIndexMsg\t{}",
-                            (sender != self.player1) as u8
                         ),
                     },
                 }),
@@ -547,13 +547,8 @@ impl ForceConnectionGame {
             return Ok(Vec::new());
         }
 
-        let mut recipients = vec![self.player1];
-        if let Some(player2) = self.player2 {
-            recipients.push(player2);
-        }
-
         Ok(vec![Broadcast::Multi(
-            recipients,
+            self.list_recipients(),
             vec![
                 GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
@@ -582,6 +577,15 @@ impl ForceConnectionGame {
                 }),
             ],
         )])
+    }
+
+    fn list_recipients(&self) -> Vec<u32> {
+        let mut recipients = vec![self.player1];
+        if let Some(player2) = self.player2 {
+            recipients.push(player2);
+        }
+
+        recipients
     }
 }
 
