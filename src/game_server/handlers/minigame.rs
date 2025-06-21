@@ -1974,37 +1974,18 @@ fn handle_flash_payload(
                     }
                     _ => Ok(Vec::new()),
                 }
-                /*Ok(vec![Broadcast::Single(
-                    sender,
-                    vec![
-                        GamePacket::serialize(&TunneledPacket {
-                            unknown1: true,
-                            inner: FlashPayload {
-                                header: MinigameHeader {
-                                    stage_guid: minigame_status.group.stage_guid,
-                                    sub_op_code: -1,
-                                    stage_group_guid: minigame_status.group.stage_group_guid,
-                                },
-                                payload: format!(
-                                    "OnStartGameMsg"
-                                ),
-                            },
-                        }),
-                        GamePacket::serialize(&TunneledPacket {
-                            unknown1: true,
-                            inner: FlashPayload {
-                                header: MinigameHeader {
-                                    stage_guid: minigame_status.group.stage_guid,
-                                    sub_op_code: -1,
-                                    stage_group_guid: minigame_status.group.stage_group_guid,
-                                },
-                                payload: format!(
-                                    "OnStartPlayerTurnMsg\t1\t20"
-                                ),
-                            },
-                        }),
-                    ],
-                )])*/
+            },
+        ),
+        "OnPlayerReadyMsg" => handle_minigame_packet_write(
+            sender,
+            game_server,
+            &payload.header,
+            |minigame_status, _, _, _, shared_minigame_data, _| match &mut shared_minigame_data.data
+            {
+                SharedMinigameTypeData::ForceConnection { game } => {
+                    game.mark_player_ready(sender, minigame_status)
+                }
+                _ => Ok(Vec::new()),
             },
         ),
         "FRServer_RequestStageId" => handle_flash_payload_read_only(

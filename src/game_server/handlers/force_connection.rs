@@ -26,6 +26,7 @@ enum ForceConnectionPiece {
 
 const BOARD_SIZE: u8 = 10;
 const MIN_MATCH_LENGTH: u8 = 4;
+const TURN_TIME_SECONDS: u8 = 20;
 
 #[derive(Clone)]
 struct ForceConnectionBoard {
@@ -390,8 +391,8 @@ impl Display for ForceConnectionBoard {
 
 #[derive(Clone, Copy)]
 enum ForceConnectionTurn {
-    Player1,
-    Player2,
+    Player1 = 0,
+    Player2 = 1,
 }
 
 #[derive(Clone)]
@@ -399,11 +400,12 @@ pub struct ForceConnectionGame {
     board: ForceConnectionBoard,
     player1: u32,
     player2: Option<u32>,
+    player1_ready: bool,
+    player2_ready: bool,
     turn: ForceConnectionTurn,
     turn_start: Instant,
     last_tick: Instant,
     done_matching: bool,
-    ready_players: u8,
 }
 
 impl ForceConnectionGame {
@@ -417,11 +419,12 @@ impl ForceConnectionGame {
             board: ForceConnectionBoard::new(),
             player1,
             player2,
+            player1_ready: false,
+            player2_ready: false,
             turn,
             turn_start: Instant::now(),
             last_tick: Instant::now(),
             done_matching: true,
-            ready_players: 0,
         }
     }
 
@@ -520,6 +523,60 @@ impl ForceConnectionGame {
                             name2,
                             self.player2.unwrap_or(0),
                             self.player2.is_none()
+                        ),
+                    },
+                }),
+            ],
+        )])
+    }
+
+    pub fn mark_player_ready(
+        &mut self,
+        sender: u32,
+        minigame_status: &MinigameStatus,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        if sender == self.player1 {
+            self.player1_ready = true;
+        } else if Some(sender) == self.player2 {
+            self.player2_ready = true;
+        } else {
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} sent a ready payload for Force Connection, but they aren't one of the game's players (stage {}, stage group {})", sender, minigame_status.group.stage_guid, minigame_status.group.stage_group_guid)));
+        }
+
+        if !self.player1_ready || !self.player2_ready {
+            return Ok(Vec::new());
+        }
+
+        let mut recipients = vec![self.player1];
+        if let Some(player2) = self.player2 {
+            recipients.push(player2);
+        }
+
+        Ok(vec![Broadcast::Multi(
+            recipients,
+            vec![
+                GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: FlashPayload {
+                        header: MinigameHeader {
+                            stage_guid: minigame_status.group.stage_guid,
+                            sub_op_code: -1,
+                            stage_group_guid: minigame_status.group.stage_group_guid,
+                        },
+                        payload: "OnStartGameMsg".to_string(),
+                    },
+                }),
+                GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: FlashPayload {
+                        header: MinigameHeader {
+                            stage_guid: minigame_status.group.stage_guid,
+                            sub_op_code: -1,
+                            stage_group_guid: minigame_status.group.stage_group_guid,
+                        },
+                        payload: format!(
+                            "OnStartPlayerTurnMsg\t{}\t{}",
+                            self.turn as u8, TURN_TIME_SECONDS,
                         ),
                     },
                 }),
