@@ -379,7 +379,7 @@ impl ForceConnectionBoard {
 
 impl Display for ForceConnectionBoard {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        for row in 0..BOARD_SIZE {
+        for row in (0..BOARD_SIZE).rev() {
             for col in 0..BOARD_SIZE {
                 f.serialize_u8(self.piece(row, col) as u8)?;
                 if row < BOARD_SIZE - 1 || col < BOARD_SIZE - 1 {
@@ -396,6 +396,7 @@ impl Display for ForceConnectionBoard {
 enum ForceConnectionTurn {
     Player1 = 0,
     Player2 = 1,
+    Matching = 2,
 }
 
 #[derive(Clone)]
@@ -408,7 +409,6 @@ pub struct ForceConnectionGame {
     turn: ForceConnectionTurn,
     turn_start: Instant,
     last_tick: Instant,
-    done_matching: bool,
 }
 
 impl ForceConnectionGame {
@@ -427,7 +427,6 @@ impl ForceConnectionGame {
             turn,
             turn_start: Instant::now(),
             last_tick: Instant::now(),
-            done_matching: true,
         }
     }
 
@@ -604,6 +603,9 @@ impl ForceConnectionGame {
                 player2
             }
             ForceConnectionTurn::Player2 => self.player1,
+            ForceConnectionTurn::Matching => {
+                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to select column {} in Force Connection, but the game is processing matches", sender, player_index, col)));
+            }
         };
 
         Ok(vec![Broadcast::Single(
@@ -635,6 +637,9 @@ impl ForceConnectionGame {
             match self.turn {
                 ForceConnectionTurn::Player1 => ForceConnectionPiece::Player1,
                 ForceConnectionTurn::Player2 => ForceConnectionPiece::Player2,
+                ForceConnectionTurn::Matching => {
+                    return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to drop a piece {} in Force Connection, but the game is processing matches", sender, player_index, col)));
+                },
             },
         )?;
 
