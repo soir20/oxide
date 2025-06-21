@@ -389,7 +389,7 @@ impl Display for ForceConnectionBoard {
     }
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 enum ForceConnectionTurn {
     Player1 = 0,
     Player2 = 1,
@@ -576,6 +576,44 @@ impl ForceConnectionGame {
                     },
                 }),
             ],
+        )])
+    }
+
+    pub fn select_column(
+        &self,
+        sender: u32,
+        col: u8,
+        minigame_status: &MinigameStatus,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let is_player_1 = sender == self.player1;
+        let is_valid_for_player1 = is_player_1 && self.turn == ForceConnectionTurn::Player1;
+        let is_valid_for_player2 = ((is_player_1 && self.player2.is_none())
+            || (Some(sender) == self.player2))
+            && self.turn == ForceConnectionTurn::Player2;
+
+        let is_valid_column = col < BOARD_SIZE;
+
+        if !is_valid_for_player1 && !is_valid_for_player2 {
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to select column {} in Force Connection, but it isn't their turn", sender, col)));
+        }
+
+        if !is_valid_column {
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to select column {} in Force Connection, but it isn't a valid column", sender, col)));
+        }
+
+        Ok(vec![Broadcast::Multi(
+            self.list_recipients(),
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: FlashPayload {
+                    header: MinigameHeader {
+                        stage_guid: minigame_status.group.stage_guid,
+                        sub_op_code: -1,
+                        stage_group_guid: minigame_status.group.stage_group_guid,
+                    },
+                    payload: format!("OnSelectNewColumnMsg\t{}\t{}", col, self.turn as u8,),
+                },
+            })],
         )])
     }
 
