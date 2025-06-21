@@ -68,7 +68,7 @@ impl ForceConnectionBoard {
         &mut self,
         col: u8,
         piece: ForceConnectionPiece,
-    ) -> Result<(), ProcessPacketError> {
+    ) -> Result<u8, ProcessPacketError> {
         ForceConnectionBoard::check_col_in_bounds(col)?;
 
         let Some(next_open_row) = self.next_open_row(col) else {
@@ -80,7 +80,7 @@ impl ForceConnectionBoard {
 
         self.set_piece(next_open_row, col, piece);
 
-        Ok(())
+        Ok(next_open_row)
     }
 
     pub fn swap_pieces(
@@ -589,15 +589,7 @@ impl ForceConnectionGame {
         player_index: u8,
         minigame_status: &MinigameStatus,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        let is_valid_for_player = match player_index {
-            0 => self.turn == ForceConnectionTurn::Player1 && sender == self.player1,
-            1 => self.turn == ForceConnectionTurn::Player2 && ((sender == self.player1 && self.player2.is_none()) || (Some(sender) == self.player2)),
-            _ => return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to select column {} in Force Connection, but the player index {} isn't valid", sender, col, player_index)))
-        };
-
-        if !is_valid_for_player {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to select column {} in Force Connection, but it isn't their turn", sender, player_index, col)));
-        }
+        self.check_turn(sender, player_index)?;
 
         if col >= BOARD_SIZE {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to select column {} in Force Connection, but it isn't a valid column", sender, player_index, col)));
@@ -630,6 +622,43 @@ impl ForceConnectionGame {
         )])
     }
 
+    pub fn drop_piece(
+        &mut self,
+        sender: u32,
+        col: u8,
+        player_index: u8,
+        minigame_status: &MinigameStatus,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        self.check_turn(sender, player_index)?;
+        let row = self.board.drop_piece(
+            col,
+            match self.turn {
+                ForceConnectionTurn::Player1 => ForceConnectionPiece::Player1,
+                ForceConnectionTurn::Player2 => ForceConnectionPiece::Player2,
+            },
+        )?;
+
+        Ok(vec![Broadcast::Multi(
+            self.list_recipients(),
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: FlashPayload {
+                    header: MinigameHeader {
+                        stage_guid: minigame_status.group.stage_guid,
+                        sub_op_code: -1,
+                        stage_group_guid: minigame_status.group.stage_group_guid,
+                    },
+                    payload: format!(
+                        "OnDropPieceMsg\t{}\t{}\t{}",
+                        player_index,
+                        BOARD_SIZE - row - 1,
+                        col
+                    ),
+                },
+            })],
+        )])
+    }
+
     fn list_recipients(&self) -> Vec<u32> {
         let mut recipients = vec![self.player1];
         if let Some(player2) = self.player2 {
@@ -637,6 +666,20 @@ impl ForceConnectionGame {
         }
 
         recipients
+    }
+
+    fn check_turn(&self, sender: u32, player_index: u8) -> Result<(), ProcessPacketError> {
+        let is_valid_for_player = match player_index {
+            0 => self.turn == ForceConnectionTurn::Player1 && sender == self.player1,
+            1 => self.turn == ForceConnectionTurn::Player2 && ((sender == self.player1 && self.player2.is_none()) || (Some(sender) == self.player2)),
+            _ => return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to make a move in Force Connection, but the player index {} isn't valid", sender, player_index)))
+        };
+
+        if !is_valid_for_player {
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to make a move in Force Connection, but it isn't their turn", sender, player_index)));
+        }
+
+        Ok(())
     }
 }
 
