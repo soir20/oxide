@@ -1,5 +1,5 @@
 use std::{
-    fmt::Display,
+    fmt::{Display, Write},
     time::{Duration, Instant},
 };
 
@@ -411,6 +411,22 @@ enum ForceConnectionGameState {
     Matching,
 }
 
+struct EmptySlots(Vec<(u8, u8)>);
+
+impl Display for EmptySlots {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        for index in 0..self.0.len() {
+            let (row, col) = self.0[index];
+            f.serialize_u8((BOARD_SIZE - row - 1) * BOARD_SIZE + col)?;
+            if index < self.0.len() - 1 {
+                f.write_char(',')?;
+            }
+        }
+
+        Ok(())
+    }
+}
+
 #[derive(Clone)]
 pub struct ForceConnectionGame {
     board: ForceConnectionBoard,
@@ -419,7 +435,6 @@ pub struct ForceConnectionGame {
     player1_ready: bool,
     player2_ready: bool,
     turn: ForceConnectionTurn,
-    turn_start: Instant,
     state: ForceConnectionGameState,
     tick_end: Instant,
     stage_guid: i32,
@@ -434,8 +449,6 @@ impl ForceConnectionGame {
             ForceConnectionTurn::Player2
         };
 
-        let now = Instant::now();
-
         ForceConnectionGame {
             board: ForceConnectionBoard::new(),
             player1,
@@ -443,9 +456,8 @@ impl ForceConnectionGame {
             player1_ready: false,
             player2_ready: player2.is_none(),
             turn,
-            turn_start: now,
             state: ForceConnectionGameState::WaitingForPlayersReady,
-            tick_end: now,
+            tick_end: Instant::now(),
             stage_guid,
             stage_group_guid,
         }
@@ -581,41 +593,23 @@ impl ForceConnectionGame {
             return Ok(Vec::new());
         }
 
-        let now = Instant::now();
-        self.turn_start = now;
-        self.tick_end = now;
-        self.state = ForceConnectionGameState::WaitingForMove;
-
-        Ok(vec![Broadcast::Multi(
+        let mut broadcasts = vec![Broadcast::Multi(
             self.list_recipients(),
-            vec![
-                GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: FlashPayload {
-                        header: MinigameHeader {
-                            stage_guid: self.stage_guid,
-                            sub_op_code: -1,
-                            stage_group_guid: self.stage_group_guid,
-                        },
-                        payload: "OnStartGameMsg".to_string(),
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: FlashPayload {
+                    header: MinigameHeader {
+                        stage_guid: self.stage_guid,
+                        sub_op_code: -1,
+                        stage_group_guid: self.stage_group_guid,
                     },
-                }),
-                GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: FlashPayload {
-                        header: MinigameHeader {
-                            stage_guid: self.stage_guid,
-                            sub_op_code: -1,
-                            stage_group_guid: self.stage_group_guid,
-                        },
-                        payload: format!(
-                            "OnStartPlayerTurnMsg\t{}\t{}",
-                            self.turn as u8, TURN_TIME_SECONDS,
-                        ),
-                    },
-                }),
-            ],
-        )])
+                    payload: "OnStartGameMsg".to_string(),
+                },
+            })],
+        )];
+        broadcasts.append(&mut self.switch_turn());
+
+        Ok(broadcasts)
     }
 
     pub fn select_column(
@@ -673,7 +667,7 @@ impl ForceConnectionGame {
         )?;
 
         self.state = ForceConnectionGameState::Matching;
-        match Instant::now().checked_add(Duration::from_millis(1000)) {
+        match Instant::now().checked_add(Duration::from_secs(1)) {
             Some(tick_end) => self.tick_end = tick_end,
             None => info!("Overflow while computing Force Connection tick end time after a piece drop. Defaulting to the current time."),
         }
@@ -710,12 +704,8 @@ impl ForceConnectionGame {
             ForceConnectionGameState::Matching => {
                 let (player1_matches, player2_matches, empty_slots) = self.board.process_matches();
                 if empty_slots.is_empty() {
-                    self.state = ForceConnectionGameState::WaitingForMove;
-                    self.turn = match self.turn {
-                        ForceConnectionTurn::Player1 => ForceConnectionTurn::Player2,
-                        ForceConnectionTurn::Player2 => ForceConnectionTurn::Player1,
-                    };
-
+                    self.switch_turn()
+                } else {
                     vec![Broadcast::Multi(
                         self.list_recipients(),
                         vec![GamePacket::serialize(&TunneledPacket {
@@ -726,15 +716,10 @@ impl ForceConnectionGame {
                                     sub_op_code: -1,
                                     stage_group_guid: self.stage_group_guid,
                                 },
-                                payload: format!(
-                                    "OnStartPlayerTurnMsg\t{}\t{}",
-                                    self.turn as u8, TURN_TIME_SECONDS,
-                                ),
+                                payload: format!("OnSlotsToClearMsg\t{}", EmptySlots(empty_slots)),
                             },
                         })],
                     )]
-                } else {
-                    Vec::new()
                 }
             }
         }
@@ -761,6 +746,37 @@ impl ForceConnectionGame {
         }
 
         Ok(())
+    }
+
+    fn switch_turn(&mut self) -> Vec<Broadcast> {
+        self.state = ForceConnectionGameState::WaitingForMove;
+        self.turn = match self.turn {
+            ForceConnectionTurn::Player1 => ForceConnectionTurn::Player2,
+            ForceConnectionTurn::Player2 => ForceConnectionTurn::Player1,
+        };
+
+        match Instant::now().checked_add(Duration::from_secs(TURN_TIME_SECONDS as u64)) {
+            Some(tick_end) => self.tick_end = tick_end,
+            None => info!("Overflow while computing Force Connection tick end time after starting a turn. Defaulting to the current time."),
+        }
+
+        vec![Broadcast::Multi(
+            self.list_recipients(),
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: FlashPayload {
+                    header: MinigameHeader {
+                        stage_guid: self.stage_guid,
+                        sub_op_code: -1,
+                        stage_group_guid: self.stage_group_guid,
+                    },
+                    payload: format!(
+                        "OnStartPlayerTurnMsg\t{}\t{}",
+                        self.turn as u8, TURN_TIME_SECONDS,
+                    ),
+                },
+            })],
+        )]
     }
 }
 
