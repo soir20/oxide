@@ -30,6 +30,13 @@ enum ForceConnectionPiece {
     Player2 = 3,
 }
 
+impl Display for ForceConnectionPiece {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.serialize_u8(*self as u8)?;
+        Ok(())
+    }
+}
+
 const BOARD_SIZE: u8 = 10;
 const MIN_MATCH_LENGTH: u8 = 4;
 const TURN_TIME_SECONDS: u8 = 20;
@@ -404,6 +411,13 @@ enum ForceConnectionTurn {
     Player2 = 1,
 }
 
+impl Display for ForceConnectionTurn {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.serialize_u8(*self as u8)?;
+        Ok(())
+    }
+}
+
 #[derive(Clone, Copy, PartialEq, Eq)]
 enum ForceConnectionGameState {
     WaitingForPlayersReady,
@@ -702,7 +716,26 @@ impl ForceConnectionGame {
 
         match self.state {
             ForceConnectionGameState::WaitingForPlayersReady => Vec::new(),
-            ForceConnectionGameState::WaitingForMove => Vec::new(),
+            ForceConnectionGameState::WaitingForMove => {
+                let mut broadcasts = vec![Broadcast::Multi(
+                    self.list_recipients(),
+                    vec![GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: FlashPayload {
+                            header: MinigameHeader {
+                                stage_guid: self.stage_guid,
+                                sub_op_code: -1,
+                                stage_group_guid: self.stage_group_guid,
+                            },
+                            payload: format!("OnTurnTimerExpiredMsg\t{}", self.turn),
+                        },
+                    })],
+                )];
+
+                broadcasts.append(&mut self.switch_turn());
+
+                broadcasts
+            }
             ForceConnectionGameState::Matching => {
                 let (player1_matches, player2_matches, empty_slots) = self.board.process_matches();
                 if empty_slots.is_empty() {
@@ -779,10 +812,7 @@ impl ForceConnectionGame {
                         sub_op_code: -1,
                         stage_group_guid: self.stage_group_guid,
                     },
-                    payload: format!(
-                        "OnStartPlayerTurnMsg\t{}\t{}",
-                        self.turn as u8, TURN_TIME_SECONDS,
-                    ),
+                    payload: format!("OnStartPlayerTurnMsg\t{}\t{}", self.turn, TURN_TIME_SECONDS,),
                 },
             })],
         )]
