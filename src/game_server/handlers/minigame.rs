@@ -236,7 +236,12 @@ pub enum SharedMinigameTypeData {
 }
 
 impl SharedMinigameTypeData {
-    pub fn from(minigame_type: &MinigameType, members: &[u32]) -> Self {
+    pub fn from(
+        minigame_type: &MinigameType,
+        members: &[u32],
+        stage_guid: i32,
+        stage_group_guid: i32,
+    ) -> Self {
         // We can't have a game without at least one player
         let player1 = members[0];
         let player2 = members.get(1).cloned();
@@ -247,7 +252,7 @@ impl SharedMinigameTypeData {
                     SharedMinigameTypeData::FleetCommander { player1, player2 }
                 }
                 FlashMinigameType::ForceConnection => SharedMinigameTypeData::ForceConnection {
-                    game: ForceConnectionGame::new(player1, player2),
+                    game: ForceConnectionGame::new(player1, player2, stage_guid, stage_group_guid),
                 },
                 FlashMinigameType::Simple => SharedMinigameTypeData::default(),
             },
@@ -255,9 +260,9 @@ impl SharedMinigameTypeData {
         }
     }
 
-    pub fn tick(&mut self, _: Instant) -> Vec<Broadcast> {
+    pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
         match self {
-            SharedMinigameTypeData::ForceConnection { .. } => Vec::new(),
+            SharedMinigameTypeData::ForceConnection { game } => game.tick(now),
             _ => Vec::new(),
         }
     }
@@ -1576,6 +1581,8 @@ pub fn prepare_active_minigame_instance(
                     minigame_data.data = SharedMinigameTypeData::from(
                         stage_config.stage_config.minigame_type(),
                         members,
+                        stage_guid,
+                        stage_group_guid,
                     );
 
                     minigame_data.readiness = MinigameReadiness::InitialPlayersLoading(
@@ -2098,10 +2105,10 @@ fn handle_flash_payload(
             sender,
             game_server,
             &payload.header,
-            |minigame_status, _, _, _, shared_minigame_data, characters_table_read_handle| {
+            |_, _, _, _, shared_minigame_data, characters_table_read_handle| {
                 match &mut shared_minigame_data.data {
                     SharedMinigameTypeData::ForceConnection { game } => {
-                        game.connect(sender, minigame_status, characters_table_read_handle)
+                        game.connect(sender, characters_table_read_handle)
                     }
                     _ => Ok(Vec::new()),
                 }
@@ -2111,11 +2118,8 @@ fn handle_flash_payload(
             sender,
             game_server,
             &payload.header,
-            |minigame_status, _, _, _, shared_minigame_data, _| match &mut shared_minigame_data.data
-            {
-                SharedMinigameTypeData::ForceConnection { game } => {
-                    game.mark_player_ready(sender, minigame_status)
-                }
+            |_, _, _, _, shared_minigame_data, _| match &mut shared_minigame_data.data {
+                SharedMinigameTypeData::ForceConnection { game } => game.mark_player_ready(sender),
                 _ => Ok(Vec::new()),
             },
         ),
@@ -2123,14 +2127,14 @@ fn handle_flash_payload(
             sender,
             game_server,
             &payload.header,
-            |minigame_status, _, shared_minigame_data| {
+            |_, _, shared_minigame_data| {
                 match &shared_minigame_data.data
             {
                 SharedMinigameTypeData::ForceConnection { game } => {
                     if parts.len() == 3 {
                         let col = parts[1].parse()?;
                         let player_index = parts[2].parse()?;
-                        game.select_column(sender, col, player_index, minigame_status)
+                        game.select_column(sender, col, player_index)
                     } else {
                         Err(ProcessPacketError::new(
                             ProcessPacketErrorType::ConstraintViolated,
@@ -2149,13 +2153,12 @@ fn handle_flash_payload(
             sender,
             game_server,
             &payload.header,
-            |minigame_status, _, _, _, shared_minigame_data, _| match &mut shared_minigame_data.data
-            {
+            |_, _, _, _, shared_minigame_data, _| match &mut shared_minigame_data.data {
                 SharedMinigameTypeData::ForceConnection { game } => {
                     if parts.len() == 3 {
                         let col = parts[1].parse()?;
                         let player_index = parts[2].parse()?;
-                        game.drop_piece(sender, col, player_index, minigame_status)
+                        game.drop_piece(sender, col, player_index)
                     } else {
                         Err(ProcessPacketError::new(
                             ProcessPacketErrorType::ConstraintViolated,

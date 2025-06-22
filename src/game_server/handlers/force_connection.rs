@@ -1,19 +1,25 @@
-use std::{fmt::Display, time::Instant};
+use std::{
+    fmt::Display,
+    time::{Duration, Instant},
+};
 
 use rand::Rng;
 use serde::Serializer;
 
-use crate::game_server::{
-    handlers::{
-        character::MinigameStatus, guid::GuidTableIndexer, lock_enforcer::CharacterTableReadHandle,
-        unique_guid::player_guid,
+use crate::{
+    game_server::{
+        handlers::{
+            guid::GuidTableIndexer, lock_enforcer::CharacterTableReadHandle,
+            unique_guid::player_guid,
+        },
+        packets::{
+            minigame::{FlashPayload, MinigameHeader},
+            tunnel::TunneledPacket,
+            GamePacket,
+        },
+        Broadcast, ProcessPacketError, ProcessPacketErrorType,
     },
-    packets::{
-        minigame::{FlashPayload, MinigameHeader},
-        tunnel::TunneledPacket,
-        GamePacket,
-    },
-    Broadcast, ProcessPacketError, ProcessPacketErrorType,
+    info,
 };
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -402,7 +408,6 @@ enum ForceConnectionTurn {
 enum ForceConnectionGameState {
     WaitingForPlayersReady,
     WaitingForMove,
-    PieceDropped,
     Matching,
 }
 
@@ -416,11 +421,13 @@ pub struct ForceConnectionGame {
     turn: ForceConnectionTurn,
     turn_start: Instant,
     state: ForceConnectionGameState,
-    last_tick: Instant,
+    tick_end: Instant,
+    stage_guid: i32,
+    stage_group_guid: i32,
 }
 
 impl ForceConnectionGame {
-    pub fn new(player1: u32, player2: Option<u32>) -> Self {
+    pub fn new(player1: u32, player2: Option<u32>, stage_guid: i32, stage_group_guid: i32) -> Self {
         let turn = if rand::thread_rng().gen_bool(0.5) {
             ForceConnectionTurn::Player1
         } else {
@@ -438,14 +445,15 @@ impl ForceConnectionGame {
             turn,
             turn_start: now,
             state: ForceConnectionGameState::WaitingForPlayersReady,
-            last_tick: now,
+            tick_end: now,
+            stage_guid,
+            stage_group_guid,
         }
     }
 
     pub fn connect(
         &self,
         sender: u32,
-        minigame_status: &MinigameStatus,
         characters_table_read_handle: &CharacterTableReadHandle,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         if self.state != ForceConnectionGameState::WaitingForPlayersReady {
@@ -487,9 +495,9 @@ impl ForceConnectionGame {
                     unknown1: true,
                     inner: FlashPayload {
                         header: MinigameHeader {
-                            stage_guid: minigame_status.group.stage_guid,
+                            stage_guid: self.stage_guid,
                             sub_op_code: -1,
-                            stage_group_guid: minigame_status.group.stage_group_guid,
+                            stage_group_guid: self.stage_group_guid,
                         },
                         payload: "OnServerReadyMsg".to_string(),
                     },
@@ -498,9 +506,9 @@ impl ForceConnectionGame {
                     unknown1: true,
                     inner: FlashPayload {
                         header: MinigameHeader {
-                            stage_guid: minigame_status.group.stage_guid,
+                            stage_guid: self.stage_guid,
                             sub_op_code: -1,
-                            stage_group_guid: minigame_status.group.stage_group_guid,
+                            stage_group_guid: self.stage_group_guid,
                         },
                         payload: format!(
                             "OnLevelDataMsg\t{size},{size},{board}",
@@ -513,9 +521,9 @@ impl ForceConnectionGame {
                     unknown1: true,
                     inner: FlashPayload {
                         header: MinigameHeader {
-                            stage_guid: minigame_status.group.stage_guid,
+                            stage_guid: self.stage_guid,
                             sub_op_code: -1,
-                            stage_group_guid: minigame_status.group.stage_group_guid,
+                            stage_group_guid: self.stage_group_guid,
                         },
                         payload: format!(
                             "OnAssignPlayerIndexMsg\t{}",
@@ -527,9 +535,9 @@ impl ForceConnectionGame {
                     unknown1: true,
                     inner: FlashPayload {
                         header: MinigameHeader {
-                            stage_guid: minigame_status.group.stage_guid,
+                            stage_guid: self.stage_guid,
                             sub_op_code: -1,
-                            stage_group_guid: minigame_status.group.stage_group_guid,
+                            stage_group_guid: self.stage_group_guid,
                         },
                         payload: format!("OnAddPlayerMsg\t0\t{}\t{}\tfalse", name1, self.player1),
                     },
@@ -538,9 +546,9 @@ impl ForceConnectionGame {
                     unknown1: true,
                     inner: FlashPayload {
                         header: MinigameHeader {
-                            stage_guid: minigame_status.group.stage_guid,
+                            stage_guid: self.stage_guid,
                             sub_op_code: -1,
-                            stage_group_guid: minigame_status.group.stage_group_guid,
+                            stage_group_guid: self.stage_group_guid,
                         },
                         payload: format!(
                             "OnAddPlayerMsg\t1\t{}\t{}\t{}",
@@ -554,11 +562,7 @@ impl ForceConnectionGame {
         )])
     }
 
-    pub fn mark_player_ready(
-        &mut self,
-        sender: u32,
-        minigame_status: &MinigameStatus,
-    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    pub fn mark_player_ready(&mut self, sender: u32) -> Result<Vec<Broadcast>, ProcessPacketError> {
         if sender == self.player1 {
             if self.player1_ready {
                 return Ok(Vec::new());
@@ -570,7 +574,7 @@ impl ForceConnectionGame {
             }
             self.player2_ready = true;
         } else {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} sent a ready payload for Force Connection, but they aren't one of the game's players (stage {}, stage group {})", sender, minigame_status.group.stage_guid, minigame_status.group.stage_group_guid)));
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} sent a ready payload for Force Connection, but they aren't one of the game's players (stage {}, stage group {})", sender, self.stage_guid, self.stage_group_guid)));
         }
 
         if !self.player1_ready || !self.player2_ready {
@@ -579,7 +583,7 @@ impl ForceConnectionGame {
 
         let now = Instant::now();
         self.turn_start = now;
-        self.last_tick = now;
+        self.tick_end = now;
         self.state = ForceConnectionGameState::WaitingForMove;
 
         Ok(vec![Broadcast::Multi(
@@ -589,9 +593,9 @@ impl ForceConnectionGame {
                     unknown1: true,
                     inner: FlashPayload {
                         header: MinigameHeader {
-                            stage_guid: minigame_status.group.stage_guid,
+                            stage_guid: self.stage_guid,
                             sub_op_code: -1,
-                            stage_group_guid: minigame_status.group.stage_group_guid,
+                            stage_group_guid: self.stage_group_guid,
                         },
                         payload: "OnStartGameMsg".to_string(),
                     },
@@ -600,9 +604,9 @@ impl ForceConnectionGame {
                     unknown1: true,
                     inner: FlashPayload {
                         header: MinigameHeader {
-                            stage_guid: minigame_status.group.stage_guid,
+                            stage_guid: self.stage_guid,
                             sub_op_code: -1,
-                            stage_group_guid: minigame_status.group.stage_group_guid,
+                            stage_group_guid: self.stage_group_guid,
                         },
                         payload: format!(
                             "OnStartPlayerTurnMsg\t{}\t{}",
@@ -619,7 +623,6 @@ impl ForceConnectionGame {
         sender: u32,
         col: u8,
         player_index: u8,
-        minigame_status: &MinigameStatus,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         self.check_turn(sender, player_index)?;
 
@@ -644,9 +647,9 @@ impl ForceConnectionGame {
                 unknown1: true,
                 inner: FlashPayload {
                     header: MinigameHeader {
-                        stage_guid: minigame_status.group.stage_guid,
+                        stage_guid: self.stage_guid,
                         sub_op_code: -1,
-                        stage_group_guid: minigame_status.group.stage_group_guid,
+                        stage_group_guid: self.stage_group_guid,
                     },
                     payload: format!("OnOtherPlayerSelectNewColumnMsg\t{}", col),
                 },
@@ -659,7 +662,6 @@ impl ForceConnectionGame {
         sender: u32,
         col: u8,
         player_index: u8,
-        minigame_status: &MinigameStatus,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         self.check_turn(sender, player_index)?;
         let row = self.board.drop_piece(
@@ -670,15 +672,21 @@ impl ForceConnectionGame {
             },
         )?;
 
+        self.state = ForceConnectionGameState::Matching;
+        match Instant::now().checked_add(Duration::from_millis(1000)) {
+            Some(tick_end) => self.tick_end = tick_end,
+            None => info!("Overflow while computing Force Connection tick end time after a piece drop. Defaulting to the current time."),
+        }
+
         Ok(vec![Broadcast::Multi(
             self.list_recipients(),
             vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: FlashPayload {
                     header: MinigameHeader {
-                        stage_guid: minigame_status.group.stage_guid,
+                        stage_guid: self.stage_guid,
                         sub_op_code: -1,
-                        stage_group_guid: minigame_status.group.stage_group_guid,
+                        stage_group_guid: self.stage_group_guid,
                     },
                     payload: format!(
                         "OnDropPieceMsg\t{}\t{}\t{}",
@@ -692,7 +700,44 @@ impl ForceConnectionGame {
     }
 
     pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
-        Vec::new()
+        if self.tick_end < now {
+            return Vec::new();
+        }
+
+        match self.state {
+            ForceConnectionGameState::WaitingForPlayersReady => Vec::new(),
+            ForceConnectionGameState::WaitingForMove => Vec::new(),
+            ForceConnectionGameState::Matching => {
+                let (player1_matches, player2_matches, empty_slots) = self.board.process_matches();
+                if empty_slots.is_empty() {
+                    self.state = ForceConnectionGameState::WaitingForMove;
+                    self.turn = match self.turn {
+                        ForceConnectionTurn::Player1 => ForceConnectionTurn::Player2,
+                        ForceConnectionTurn::Player2 => ForceConnectionTurn::Player1,
+                    };
+
+                    vec![Broadcast::Multi(
+                        self.list_recipients(),
+                        vec![GamePacket::serialize(&TunneledPacket {
+                            unknown1: true,
+                            inner: FlashPayload {
+                                header: MinigameHeader {
+                                    stage_guid: self.stage_guid,
+                                    sub_op_code: -1,
+                                    stage_group_guid: self.stage_group_guid,
+                                },
+                                payload: format!(
+                                    "OnStartPlayerTurnMsg\t{}\t{}",
+                                    self.turn as u8, TURN_TIME_SECONDS,
+                                ),
+                            },
+                        })],
+                    )]
+                } else {
+                    Vec::new()
+                }
+            }
+        }
     }
 
     fn list_recipients(&self) -> Vec<u32> {
