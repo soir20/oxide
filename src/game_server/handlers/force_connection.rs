@@ -669,7 +669,9 @@ impl ForceConnectionGame {
         self.state = ForceConnectionGameState::Matching;
         match Instant::now().checked_add(Duration::from_secs(1)) {
             Some(tick_end) => self.tick_end = tick_end,
-            None => info!("Overflow while computing Force Connection tick end time after a piece drop. Defaulting to the current time."),
+            None => {
+                info!("Overflow while computing Force Connection tick end time after a piece drop")
+            }
         }
 
         Ok(vec![Broadcast::Multi(
@@ -706,6 +708,11 @@ impl ForceConnectionGame {
                 if empty_slots.is_empty() {
                     self.switch_turn()
                 } else {
+                    match Instant::now().checked_add(Duration::from_millis(500)) {
+                        Some(tick_end) => self.tick_end = tick_end,
+                        None => info!("Overflow while computing Force Connection tick end time after processing a match"),
+                    }
+
                     vec![Broadcast::Multi(
                         self.list_recipients(),
                         vec![GamePacket::serialize(&TunneledPacket {
@@ -757,7 +764,9 @@ impl ForceConnectionGame {
 
         match Instant::now().checked_add(Duration::from_secs(TURN_TIME_SECONDS as u64)) {
             Some(tick_end) => self.tick_end = tick_end,
-            None => info!("Overflow while computing Force Connection tick end time after starting a turn. Defaulting to the current time."),
+            None => info!(
+                "Overflow while computing Force Connection tick end time after starting a turn"
+            ),
         }
 
         vec![Broadcast::Multi(
