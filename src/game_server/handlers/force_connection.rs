@@ -696,7 +696,7 @@ impl ForceConnectionGame {
     }
 
     pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
-        if self.tick_end < now {
+        if now < self.tick_end {
             return Vec::new();
         }
 
