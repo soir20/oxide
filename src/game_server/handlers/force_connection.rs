@@ -779,7 +779,7 @@ impl ForceConnectionGame {
             turn_duration: time_left_in_turn,
         } = self.state
         {
-            let score_from_turn_time = (time_left_in_turn.as_secs_f32() * 5.0).floor() as u32;
+            let score_from_turn_time = time_left_in_turn.as_secs() as u32 * 5;
             self.score[self.turn as usize] += score_from_turn_time;
             broadcasts.push(Broadcast::Multi(
                 self.list_recipients(),
