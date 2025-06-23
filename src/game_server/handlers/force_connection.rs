@@ -453,7 +453,7 @@ pub struct ForceConnectionGame {
     delete_powerups: [u32; 2],
     turn: ForceConnectionTurn,
     state: ForceConnectionGameState,
-    tick_end: Instant,
+    next_event_time: Instant,
     stage_guid: i32,
     stage_group_guid: i32,
 }
@@ -477,7 +477,7 @@ impl ForceConnectionGame {
             delete_powerups: [2; 2],
             turn,
             state: ForceConnectionGameState::WaitingForPlayersReady,
-            tick_end: Instant::now(),
+            next_event_time: Instant::now(),
             stage_guid,
             stage_group_guid,
         }
@@ -688,9 +688,9 @@ impl ForceConnectionGame {
 
         self.state = ForceConnectionGameState::Matching;
         match Instant::now().checked_add(Duration::from_secs(1)) {
-            Some(tick_end) => self.tick_end = tick_end,
+            Some(delay_end) => self.next_event_time = delay_end,
             None => {
-                info!("Overflow while computing Force Connection tick end time after a piece drop")
+                info!("Overflow while computing Force Connection delay end time after a piece drop")
             }
         }
 
@@ -716,7 +716,7 @@ impl ForceConnectionGame {
     }
 
     pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
-        if now < self.tick_end {
+        if now < self.next_event_time {
             return Vec::new();
         }
 
@@ -766,6 +766,10 @@ impl ForceConnectionGame {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to make a move in Force Connection, but it isn't their turn", sender, player_index)));
         }
 
+        if Instant::now() > self.next_event_time {
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to make a move in Force Connection, but their turn expired", sender, player_index)));
+        }
+
         Ok(())
     }
 
@@ -777,9 +781,9 @@ impl ForceConnectionGame {
         };
 
         match Instant::now().checked_add(Duration::from_secs(TURN_TIME_SECONDS as u64)) {
-            Some(tick_end) => self.tick_end = tick_end,
+            Some(turn_end) => self.next_event_time = turn_end,
             None => info!(
-                "Overflow while computing Force Connection tick end time after starting a turn"
+                "Overflow while computing Force Connection turn end time after starting a turn"
             ),
         }
 
@@ -815,8 +819,8 @@ impl ForceConnectionGame {
             }
 
             match Instant::now().checked_add(Duration::from_millis(500)) {
-                Some(tick_end) => self.tick_end = tick_end,
-                None => info!("Overflow while computing Force Connection tick end time after processing a match"),
+                Some(delay_end) => self.next_event_time = delay_end,
+                None => info!("Overflow while computing Force Connection delay end time after processing a match"),
             }
 
             broadcasts.push(Broadcast::Multi(
