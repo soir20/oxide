@@ -446,8 +446,11 @@ pub struct ForceConnectionGame {
     board: ForceConnectionBoard,
     player1: u32,
     player2: Option<u32>,
-    player1_ready: bool,
-    player2_ready: bool,
+    ready: [bool; 2],
+    matches: [u8; 2],
+    score: [u32; 2],
+    swap_powerups: [u32; 2],
+    delete_powerups: [u32; 2],
     turn: ForceConnectionTurn,
     state: ForceConnectionGameState,
     tick_end: Instant,
@@ -467,8 +470,11 @@ impl ForceConnectionGame {
             board: ForceConnectionBoard::new(),
             player1,
             player2,
-            player1_ready: false,
-            player2_ready: player2.is_none(),
+            ready: [false, player2.is_none()],
+            matches: [0; 2],
+            score: [0; 2],
+            swap_powerups: [1; 2],
+            delete_powerups: [2; 2],
             turn,
             state: ForceConnectionGameState::WaitingForPlayersReady,
             tick_end: Instant::now(),
@@ -590,20 +596,20 @@ impl ForceConnectionGame {
 
     pub fn mark_player_ready(&mut self, sender: u32) -> Result<Vec<Broadcast>, ProcessPacketError> {
         if sender == self.player1 {
-            if self.player1_ready {
+            if self.ready[0] {
                 return Ok(Vec::new());
             }
-            self.player1_ready = true;
+            self.ready[0] = true;
         } else if Some(sender) == self.player2 {
-            if self.player2_ready {
+            if self.ready[1] {
                 return Ok(Vec::new());
             }
-            self.player2_ready = true;
+            self.ready[1] = true;
         } else {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} sent a ready payload for Force Connection, but they aren't one of the game's players (stage {}, stage group {})", sender, self.stage_guid, self.stage_group_guid)));
         }
 
-        if !self.player1_ready || !self.player2_ready {
+        if !self.ready[0] || !self.ready[1] {
             return Ok(Vec::new());
         }
 
@@ -736,32 +742,7 @@ impl ForceConnectionGame {
 
                 broadcasts
             }
-            ForceConnectionGameState::Matching => {
-                let (player1_matches, player2_matches, empty_slots) = self.board.process_matches();
-                if empty_slots.is_empty() {
-                    self.switch_turn()
-                } else {
-                    match Instant::now().checked_add(Duration::from_millis(500)) {
-                        Some(tick_end) => self.tick_end = tick_end,
-                        None => info!("Overflow while computing Force Connection tick end time after processing a match"),
-                    }
-
-                    vec![Broadcast::Multi(
-                        self.list_recipients(),
-                        vec![GamePacket::serialize(&TunneledPacket {
-                            unknown1: true,
-                            inner: FlashPayload {
-                                header: MinigameHeader {
-                                    stage_guid: self.stage_guid,
-                                    sub_op_code: -1,
-                                    stage_group_guid: self.stage_group_guid,
-                                },
-                                payload: format!("OnSlotsToClearMsg\t{}", EmptySlots(empty_slots)),
-                            },
-                        })],
-                    )]
-                }
-            }
+            ForceConnectionGameState::Matching => self.process_matches(),
         }
     }
 
@@ -815,6 +796,81 @@ impl ForceConnectionGame {
                     payload: format!("OnStartPlayerTurnMsg\t{}\t{}", self.turn, TURN_TIME_SECONDS,),
                 },
             })],
+        )]
+    }
+
+    fn process_matches(&mut self) -> Vec<Broadcast> {
+        let (player1_matches, player2_matches, empty_slots) = self.board.process_matches();
+        if empty_slots.is_empty() {
+            self.switch_turn()
+        } else {
+            let mut broadcasts = Vec::new();
+
+            for player1_match_len in player1_matches {
+                broadcasts.append(&mut self.process_match(player1_match_len, 0));
+            }
+
+            for player2_match_len in player2_matches {
+                broadcasts.append(&mut self.process_match(player2_match_len, 1));
+            }
+
+            match Instant::now().checked_add(Duration::from_millis(500)) {
+                Some(tick_end) => self.tick_end = tick_end,
+                None => info!("Overflow while computing Force Connection tick end time after processing a match"),
+            }
+
+            broadcasts.push(Broadcast::Multi(
+                self.list_recipients(),
+                vec![GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: FlashPayload {
+                        header: MinigameHeader {
+                            stage_guid: self.stage_guid,
+                            sub_op_code: -1,
+                            stage_group_guid: self.stage_group_guid,
+                        },
+                        payload: format!("OnSlotsToClearMsg\t{}", EmptySlots(empty_slots)),
+                    },
+                })],
+            ));
+
+            broadcasts
+        }
+    }
+
+    fn process_match(&mut self, match_length: u8, player_index: u8) -> Vec<Broadcast> {
+        self.matches[player_index as usize] += 1;
+
+        let value_per_space = 100 + (match_length - MIN_MATCH_LENGTH) as u32 * 50;
+        let score_from_match = value_per_space * match_length as u32;
+        self.score[player_index as usize] += score_from_match;
+
+        vec![Broadcast::Multi(
+            self.list_recipients(),
+            vec![
+                GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: FlashPayload {
+                        header: MinigameHeader {
+                            stage_guid: self.stage_guid,
+                            sub_op_code: -1,
+                            stage_group_guid: self.stage_group_guid,
+                        },
+                        payload: format!("OnAddScoreMsg\t{}\t{}", player_index, score_from_match),
+                    },
+                }),
+                GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: FlashPayload {
+                        header: MinigameHeader {
+                            stage_guid: self.stage_guid,
+                            sub_op_code: -1,
+                            stage_group_guid: self.stage_group_guid,
+                        },
+                        payload: format!("OnAddMatchMsg\t{}", player_index),
+                    },
+                }),
+            ],
         )]
     }
 }
