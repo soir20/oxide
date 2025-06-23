@@ -294,7 +294,7 @@ pub struct MinigameChallengeConfig {
     pub score_to_credits_expression: String,
     #[serde(default = "default_matchmaking_timeout_millis")]
     pub matchmaking_timeout_millis: u32,
-    pub single_player_stage_guid: Option<StageLocator>,
+    pub single_player_stage: Option<StageLocator>,
 }
 
 impl MinigameChallengeConfig {
@@ -391,7 +391,7 @@ pub struct MinigameCampaignStageConfig {
     pub score_to_credits_expression: String,
     #[serde(default = "default_matchmaking_timeout_millis")]
     pub matchmaking_timeout_millis: u32,
-    pub single_player_stage_guid: Option<StageLocator>,
+    pub single_player_stage: Option<StageLocator>,
     #[serde(default)]
     pub challenges: Vec<MinigameChallengeConfig>,
 }
@@ -873,10 +873,10 @@ impl MinigameStageConfig<'_> {
         }
     }
 
-    pub fn single_player_stage_guid(&self) -> Option<StageLocator> {
+    pub fn single_player_stage(&self) -> Option<StageLocator> {
         match self {
-            MinigameStageConfig::CampaignStage(stage) => stage.single_player_stage_guid,
-            MinigameStageConfig::Challenge(challenge, ..) => challenge.single_player_stage_guid,
+            MinigameStageConfig::CampaignStage(stage) => stage.single_player_stage,
+            MinigameStageConfig::Challenge(challenge, ..) => challenge.single_player_stage,
         }
     }
 

@@ -4288,10 +4288,11 @@
         stage_icon_id: 3922
         members_only: true
         stage_select_map_name: ''
+        default_stage_instance: 22002
         stages:
           - !Stage
             guid: 22001
-            name_id: 19815
+            name_id: 44433
             description_id: 33612
             stage_icon_id: 4041
             start_screen_icon_id: 4187
@@ -4309,6 +4310,29 @@
               game_type: ForceConnection
             zone_template_guid: 200
             score_to_credits_expression: x / 18.55
+          - !Stage
+            guid: 22002
+            name_id: 19815
+            description_id: 33612
+            stage_icon_id: 4041
+            start_screen_icon_id: 4187
+            min_players: 2
+            max_players: 2
+            difficulty: 1
+            start_sound_id: 5258
+            members_only: true
+            require_previous_completed: false
+            link_name: stage
+            short_name: ''
+            minigame_type:
+              !Flash
+              game_swf_name: ForceConnection.swf
+              game_type: ForceConnection
+            zone_template_guid: 201
+            score_to_credits_expression: x / 18.55
+            single_player_stage:
+              stage_group_guid: 22000
+              stage_guid: 22001
     - guid: 23000
       name_id: 50473
       description_id: 50472
