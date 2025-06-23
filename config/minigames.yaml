@@ -4297,7 +4297,7 @@
             stage_icon_id: 4041
             start_screen_icon_id: 4187
             min_players: 1
-            max_players: 2
+            max_players: 1
             difficulty: 1
             start_sound_id: 5258
             members_only: true
