@@ -422,7 +422,7 @@ impl Display for ForceConnectionTurn {
 enum ForceConnectionGameState {
     WaitingForPlayersReady,
     WaitingForMove,
-    Matching,
+    Matching { turn_duration: Duration },
 }
 
 struct EmptySlots(Vec<(u8, u8)>);
@@ -638,7 +638,7 @@ impl ForceConnectionGame {
         col: u8,
         player_index: u8,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        self.check_turn(sender, player_index)?;
+        self.check_turn(sender, player_index, Instant::now())?;
 
         if col >= BOARD_SIZE {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to select column {} in Force Connection, but it isn't a valid column", sender, player_index, col)));
@@ -677,7 +677,8 @@ impl ForceConnectionGame {
         col: u8,
         player_index: u8,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        self.check_turn(sender, player_index)?;
+        let turn_time = Instant::now();
+        self.check_turn(sender, player_index, turn_time)?;
         let row = self.board.drop_piece(
             col,
             match self.turn {
@@ -686,13 +687,7 @@ impl ForceConnectionGame {
             },
         )?;
 
-        self.state = ForceConnectionGameState::Matching;
-        match Instant::now().checked_add(Duration::from_secs(1)) {
-            Some(delay_end) => self.next_event_time = delay_end,
-            None => {
-                info!("Overflow while computing Force Connection delay end time after a piece drop")
-            }
-        }
+        self.handle_move(turn_time, Duration::from_secs(1));
 
         Ok(vec![Broadcast::Multi(
             self.list_recipients(),
@@ -742,7 +737,7 @@ impl ForceConnectionGame {
 
                 broadcasts
             }
-            ForceConnectionGameState::Matching => self.process_matches(),
+            ForceConnectionGameState::Matching { .. } => self.process_matches(),
         }
     }
 
@@ -755,7 +750,12 @@ impl ForceConnectionGame {
         recipients
     }
 
-    fn check_turn(&self, sender: u32, player_index: u8) -> Result<(), ProcessPacketError> {
+    fn check_turn(
+        &self,
+        sender: u32,
+        player_index: u8,
+        now: Instant,
+    ) -> Result<(), ProcessPacketError> {
         let is_valid_for_player = match player_index {
             0 => self.turn == ForceConnectionTurn::Player1 && sender == self.player1,
             1 => self.turn == ForceConnectionTurn::Player2 && ((sender == self.player1 && self.player2.is_none()) || (Some(sender) == self.player2)),
@@ -766,7 +766,7 @@ impl ForceConnectionGame {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to make a move in Force Connection, but it isn't their turn", sender, player_index)));
         }
 
-        if Instant::now() > self.next_event_time {
+        if now > self.next_event_time {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to make a move in Force Connection, but their turn expired", sender, player_index)));
         }
 
@@ -774,6 +774,32 @@ impl ForceConnectionGame {
     }
 
     fn switch_turn(&mut self) -> Vec<Broadcast> {
+        let mut broadcasts = Vec::new();
+        if let ForceConnectionGameState::Matching {
+            turn_duration: time_left_in_turn,
+        } = self.state
+        {
+            let score_from_turn_time = (time_left_in_turn.as_secs_f32() * 5.0).floor() as u32;
+            self.score[self.turn as usize] += score_from_turn_time;
+            broadcasts.push(Broadcast::Multi(
+                self.list_recipients(),
+                vec![GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: FlashPayload {
+                        header: MinigameHeader {
+                            stage_guid: self.stage_guid,
+                            sub_op_code: -1,
+                            stage_group_guid: self.stage_group_guid,
+                        },
+                        payload: format!(
+                            "OnScoreFromTimeMsg\t{}\t{}",
+                            self.turn, score_from_turn_time
+                        ),
+                    },
+                })],
+            ));
+        }
+
         self.state = ForceConnectionGameState::WaitingForMove;
         self.turn = match self.turn {
             ForceConnectionTurn::Player1 => ForceConnectionTurn::Player2,
@@ -787,7 +813,7 @@ impl ForceConnectionGame {
             ),
         }
 
-        vec![Broadcast::Multi(
+        broadcasts.push(Broadcast::Multi(
             self.list_recipients(),
             vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
@@ -800,7 +826,8 @@ impl ForceConnectionGame {
                     payload: format!("OnStartPlayerTurnMsg\t{}\t{}", self.turn, TURN_TIME_SECONDS,),
                 },
             })],
-        )]
+        ));
+        broadcasts
     }
 
     fn process_matches(&mut self) -> Vec<Broadcast> {
@@ -876,6 +903,19 @@ impl ForceConnectionGame {
                 }),
             ],
         )]
+    }
+
+    fn handle_move(&mut self, turn_time: Instant, sleep_time: Duration) {
+        self.state = ForceConnectionGameState::Matching {
+            turn_duration: self.next_event_time.saturating_duration_since(turn_time),
+        };
+
+        match Instant::now().checked_add(sleep_time) {
+            Some(delay_end) => self.next_event_time = delay_end,
+            None => {
+                info!("Overflow while computing Force Connection delay end time after a piece drop")
+            }
+        }
     }
 }
 

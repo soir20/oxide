@@ -229,7 +229,7 @@ pub enum SharedMinigameTypeData {
         player2: Option<u32>,
     },
     ForceConnection {
-        game: ForceConnectionGame,
+        game: Box<ForceConnectionGame>,
     },
     #[default]
     None,
@@ -252,7 +252,12 @@ impl SharedMinigameTypeData {
                     SharedMinigameTypeData::FleetCommander { player1, player2 }
                 }
                 FlashMinigameType::ForceConnection => SharedMinigameTypeData::ForceConnection {
-                    game: ForceConnectionGame::new(player1, player2, stage_guid, stage_group_guid),
+                    game: Box::new(ForceConnectionGame::new(
+                        player1,
+                        player2,
+                        stage_guid,
+                        stage_group_guid,
+                    )),
                 },
                 FlashMinigameType::Simple => SharedMinigameTypeData::default(),
             },
