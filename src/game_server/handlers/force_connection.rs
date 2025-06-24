@@ -9,11 +9,11 @@ use serde::Serializer;
 use crate::{
     game_server::{
         handlers::{
-            guid::GuidTableIndexer, lock_enforcer::CharacterTableReadHandle,
-            unique_guid::player_guid,
+            character::MinigameStatus, guid::GuidTableIndexer,
+            lock_enforcer::CharacterTableReadHandle, unique_guid::player_guid,
         },
         packets::{
-            minigame::{FlashPayload, MinigameHeader},
+            minigame::{FlashPayload, MinigameHeader, ScoreEntry, ScoreType},
             tunnel::TunneledPacket,
             GamePacket,
         },
@@ -449,7 +449,7 @@ pub struct ForceConnectionGame {
     player2: Option<u32>,
     ready: [bool; 2],
     matches: [u8; 2],
-    score: [u32; 2],
+    score: [i32; 2],
     swap_powerups: [u32; 2],
     delete_powerups: [u32; 2],
     turn: ForceConnectionTurn,
@@ -742,6 +742,33 @@ impl ForceConnectionGame {
         }
     }
 
+    pub fn remove_player(
+        &self,
+        player: u32,
+        minigame_status: &mut MinigameStatus,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let player_index = if player == self.player1 {
+            0
+        } else if Some(player) == self.player2 {
+            1
+        } else {
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to remove player {}, who is not playing this instance of Force Connection", player)));
+        };
+
+        minigame_status.game_won = self.matches[player_index] >= MATCHES_TO_WIN;
+        minigame_status.total_score = self.score[player_index];
+        minigame_status.score_entries.push(ScoreEntry {
+            entry_text: "".to_string(),
+            icon_set_id: 0,
+            score_type: ScoreType::Total,
+            score_count: self.score[player_index],
+            score_max: 0,
+            score_points: 0,
+        });
+
+        Ok(Vec::new())
+    }
+
     fn list_recipients(&self) -> Vec<u32> {
         let mut recipients = vec![self.player1];
         if let Some(player2) = self.player2 {
@@ -780,7 +807,7 @@ impl ForceConnectionGame {
             turn_duration: time_left_in_turn,
         } = self.state
         {
-            let score_from_turn_time = time_left_in_turn.as_secs() as u32 * 5;
+            let score_from_turn_time = time_left_in_turn.as_secs() as i32 * 5;
             self.score[self.turn as usize] += score_from_turn_time;
             broadcasts.push(Broadcast::Multi(
                 self.list_recipients(),
@@ -874,8 +901,8 @@ impl ForceConnectionGame {
     fn process_match(&mut self, match_length: u8, player_index: u8) -> Vec<Broadcast> {
         self.matches[player_index as usize] = self.matches[player_index as usize].saturating_add(1);
 
-        let value_per_space = 100 + (match_length - MIN_MATCH_LENGTH) as u32 * 50;
-        let score_from_match = value_per_space * match_length as u32;
+        let value_per_space = 100 + (match_length - MIN_MATCH_LENGTH) as i32 * 50;
+        let score_from_match = value_per_space * match_length as i32;
         self.score[player_index as usize] += score_from_match;
 
         vec![Broadcast::Multi(

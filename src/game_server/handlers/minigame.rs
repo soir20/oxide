@@ -185,6 +185,14 @@ impl SharedMinigameData {
     pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
         self.data.tick(now)
     }
+
+    pub fn remove_player(
+        &mut self,
+        player: u32,
+        minigame_status: &mut MinigameStatus,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        self.data.remove_player(player, minigame_status)
+    }
 }
 
 impl
@@ -269,6 +277,19 @@ impl SharedMinigameTypeData {
         match self {
             SharedMinigameTypeData::ForceConnection { game } => game.tick(now),
             _ => Vec::new(),
+        }
+    }
+
+    pub fn remove_player(
+        &mut self,
+        player: u32,
+        minigame_status: &mut MinigameStatus,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        match self {
+            SharedMinigameTypeData::ForceConnection { game } => {
+                game.remove_player(player, minigame_status)
+            }
+            _ => Ok(Vec::new()),
         }
     }
 }
@@ -2317,6 +2338,7 @@ fn leave_active_minigame_single_player_if_any(
     sender: u32,
     characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
     zones_table_write_handle: &mut ZoneTableWriteHandle<'_>,
+    shared_minigame_data: &mut SharedMinigameData,
     stage_config: &MinigameStageConfig,
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
@@ -2346,19 +2368,27 @@ fn leave_active_minigame_single_player_if_any(
                 return Ok((Vec::new(), previous_location, true));
             };
 
+            let mut broadcasts = Vec::new();
+
+            broadcasts.append(
+                &mut shared_minigame_data
+                    .data
+                    .remove_player(sender, minigame_status)?,
+            );
+
             // If we've already awarded credits after a round, don't grant those credits again
-            let mut broadcasts = if minigame_status.awarded_credits > 0 {
-                Vec::new()
-            } else {
-                award_credits(
-                    sender,
-                    &mut player.credits,
-                    minigame_status,
-                    stage_config,
-                    minigame_status.total_score,
-                )?
-                .0
-            };
+            if minigame_status.awarded_credits == 0 {
+                broadcasts.append(
+                    &mut award_credits(
+                        sender,
+                        &mut player.credits,
+                        minigame_status,
+                        stage_config,
+                        minigame_status.total_score,
+                    )?
+                    .0,
+                );
+            }
 
             let last_broadcast = Broadcast::Single(
                 sender,
@@ -2607,6 +2637,7 @@ fn leave_or_remove_single_player_from_matchmaking(
     sender: u32,
     characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
     zones_table_write_handle: &mut ZoneTableWriteHandle<'_>,
+    shared_minigame_data: &mut SharedMinigameData,
     stage_group_guid: i32,
     stage_config: &MinigameStageConfig,
     is_matchmaking: bool,
@@ -2628,6 +2659,7 @@ fn leave_or_remove_single_player_from_matchmaking(
             sender,
             characters_table_write_handle,
             zones_table_write_handle,
+            shared_minigame_data,
             stage_config,
             game_server,
         )
@@ -2673,8 +2705,8 @@ pub fn leave_active_minigame_if_any(
     let Some(shared_minigame_data) = minigame_data_table_write_handle.get(group) else {
         return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to end target {:?}'s active minigame with shared minigame data {} (stage group {}) that does not exist", target, group.stage_guid, group.stage_group_guid)));
     };
-    let minigame_data_read_handle = shared_minigame_data.read();
-    let is_matchmaking = minigame_data_read_handle.readiness == MinigameReadiness::Matchmaking;
+    let mut minigame_data_write_handle = shared_minigame_data.write();
+    let is_matchmaking = minigame_data_write_handle.readiness == MinigameReadiness::Matchmaking;
 
     // Wait for the end signal from the Flash payload because those games send additional score data
     if skip_if_flash && matches!(stage_config.minigame_type(), MinigameType::Flash { .. }) {
@@ -2688,6 +2720,7 @@ pub fn leave_active_minigame_if_any(
             sender,
             characters_table_write_handle,
             zones_table_write_handle,
+            &mut minigame_data_write_handle,
             group.stage_group_guid,
             &stage_config,
             is_matchmaking,
@@ -2717,6 +2750,7 @@ pub fn leave_active_minigame_if_any(
                         short_member_guid,
                         characters_table_write_handle,
                         zones_table_write_handle,
+                        &mut minigame_data_write_handle,
                         group.stage_group_guid,
                         &stage_config,
                         is_matchmaking,
@@ -2732,7 +2766,7 @@ pub fn leave_active_minigame_if_any(
             }
         }
 
-        drop(minigame_data_read_handle);
+        drop(minigame_data_write_handle);
         minigame_data_table_write_handle.remove(group);
     }
 
