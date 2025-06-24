@@ -40,6 +40,7 @@ impl Display for ForceConnectionPiece {
 const BOARD_SIZE: u8 = 10;
 const MIN_MATCH_LENGTH: u8 = 4;
 const TURN_TIME_SECONDS: u8 = 20;
+const MATCHES_TO_WIN: u8 = 5;
 
 #[derive(Clone)]
 struct ForceConnectionBoard {
@@ -833,7 +834,8 @@ impl ForceConnectionGame {
     fn process_matches(&mut self) -> Vec<Broadcast> {
         let (player1_matches, player2_matches, empty_slots) = self.board.process_matches();
         if empty_slots.is_empty() {
-            self.switch_turn()
+            self.check_for_winner()
+                .unwrap_or_else(|| self.switch_turn())
         } else {
             let mut broadcasts = Vec::new();
 
@@ -870,7 +872,7 @@ impl ForceConnectionGame {
     }
 
     fn process_match(&mut self, match_length: u8, player_index: u8) -> Vec<Broadcast> {
-        self.matches[player_index as usize] += 1;
+        self.matches[player_index as usize] = self.matches[player_index as usize].saturating_add(1);
 
         let value_per_space = 100 + (match_length - MIN_MATCH_LENGTH) as u32 * 50;
         let score_from_match = value_per_space * match_length as u32;
@@ -915,6 +917,57 @@ impl ForceConnectionGame {
             None => {
                 info!("Overflow while computing Force Connection delay end time after a piece drop")
             }
+        }
+    }
+
+    fn check_for_winner(&self) -> Option<Vec<Broadcast>> {
+        let player1_won = self.matches[0] >= MATCHES_TO_WIN;
+        let player2_won = self.matches[1] >= MATCHES_TO_WIN;
+
+        if !player1_won && !player2_won {
+            return None;
+        }
+
+        let mut broadcasts = Vec::new();
+        broadcasts.append(&mut self.broadcast_game_result(self.player1, player1_won));
+        if let Some(player2) = self.player2 {
+            broadcasts.append(&mut self.broadcast_game_result(player2, player2_won));
+        }
+
+        Some(broadcasts)
+    }
+
+    fn broadcast_game_result(&self, player: u32, won: bool) -> Vec<Broadcast> {
+        if won {
+            vec![Broadcast::Single(
+                player,
+                vec![GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: FlashPayload {
+                        header: MinigameHeader {
+                            stage_guid: self.stage_guid,
+                            sub_op_code: -1,
+                            stage_group_guid: self.stage_group_guid,
+                        },
+                        payload: "OnGameWonMsg".to_string(),
+                    },
+                })],
+            )]
+        } else {
+            vec![Broadcast::Single(
+                player,
+                vec![GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: FlashPayload {
+                        header: MinigameHeader {
+                            stage_guid: self.stage_guid,
+                            sub_op_code: -1,
+                            stage_group_guid: self.stage_group_guid,
+                        },
+                        payload: "OnGameLostMsg".to_string(),
+                    },
+                })],
+            )]
         }
     }
 }
