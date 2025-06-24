@@ -239,8 +239,8 @@ impl SharedMinigameTypeData {
     pub fn from(
         minigame_type: &MinigameType,
         members: &[u32],
-        stage_guid: i32,
         stage_group_guid: i32,
+        stage_guid: i32,
     ) -> Self {
         // We can't have a game without at least one player
         let player1 = members[0];
@@ -1451,6 +1451,43 @@ pub fn prepare_active_minigame_instance(
 
     let mut broadcasts = Vec::new();
 
+    let shared_data_result = minigame_data_table_write_handle.update_value_indices(
+        matchmaking_group,
+        |possible_minigame_data, _| {
+            let Some(minigame_data) = possible_minigame_data else {
+                return Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Unable to find shared minigame data for group {:?}",
+                        matchmaking_group
+                    ),
+                ));
+            };
+
+            minigame_data.guid.stage_group_guid = stage_group_guid;
+            minigame_data.guid.stage_guid = stage_guid;
+
+            minigame_data.data = SharedMinigameTypeData::from(
+                stage_config.stage_config.minigame_type(),
+                members,
+                stage_group_guid,
+                stage_guid,
+            );
+
+            minigame_data.readiness = MinigameReadiness::InitialPlayersLoading(
+                BTreeSet::from_iter(members.iter().copied()),
+                None,
+            );
+
+            Ok(())
+        },
+    );
+
+    if let Err(err) = shared_data_result {
+        info!("Unable to update shared minigame data: {}", err);
+        return broadcasts;
+    }
+
     let teleport_result: Result<Vec<Broadcast>, ProcessPacketError> = (|| {
         let new_instance_guid = game_server.get_or_create_instance(
             characters_table_write_handle,
@@ -1461,37 +1498,40 @@ pub fn prepare_active_minigame_instance(
 
         let mut teleport_broadcasts = Vec::new();
         for member_guid in members {
-            let Some(character) = characters_table_write_handle.get(player_guid(*member_guid))
-            else {
-                return Err(ProcessPacketError::new(
-                    ProcessPacketErrorType::ConstraintViolated,
-                    format!(
-                        "Unknown player {} tried to create an active minigame",
-                        member_guid
-                    ),
-                ));
-            };
+            characters_table_write_handle.update_value_indices(player_guid(*member_guid), |possible_character_write_handle, _| {
+                let Some(character_write_handle) = possible_character_write_handle
+                else {
+                    return Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::ConstraintViolated,
+                        format!(
+                            "Unknown player {} tried to create an active minigame",
+                            member_guid
+                        ),
+                    ));
+                };
 
-            let mut character_write_handle = character.write();
+                let CharacterType::Player(player) = &mut character_write_handle.stats.character_type
+                else {
+                    return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to create an active minigame, but their character isn't a player", member_guid)));
+                };
 
-            let CharacterType::Player(player) = &mut character_write_handle.stats.character_type
-            else {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to create an active minigame, but their character isn't a player", member_guid)));
-            };
+                if !game_server
+                    .minigames()
+                    .stage_unlocked(stage_group_guid, stage_guid, player)
+                {
+                    return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to create an active minigame for a stage {} they haven't unlocked", member_guid, stage_guid)));
+                }
 
-            if !game_server
-                .minigames()
-                .stage_unlocked(stage_group_guid, stage_guid, player)
-            {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to create an active minigame for a stage {} they haven't unlocked", member_guid, stage_guid)));
-            }
+                let Some(minigame_status) = &mut player.minigame_status else {
+                    return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to create an active minigame, but their minigame status is not set", member_guid)));
+                };
 
-            let Some(minigame_status) = &mut player.minigame_status else {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to create an active minigame, but their minigame status is not set", member_guid)));
-            };
+                minigame_status.type_data = stage_config.stage_config.minigame_type().into();
+                minigame_status.group.stage_group_guid = stage_group_guid;
+                minigame_status.group.stage_guid = stage_guid;
 
-            minigame_status.type_data = stage_config.stage_config.minigame_type().into();
-            drop(character_write_handle);
+                Ok(())
+            })?;
 
             if let Some(message) = message_id {
                 teleport_broadcasts.push(Broadcast::Single(
@@ -1570,33 +1610,7 @@ pub fn prepare_active_minigame_instance(
     })();
 
     match teleport_result {
-        Ok(mut teleport_broadcasts) => {
-            broadcasts.append(&mut teleport_broadcasts);
-            minigame_data_table_write_handle.update_value_indices(
-                matchmaking_group,
-                |possible_minigame_data, _| {
-                    let Some(minigame_data) = possible_minigame_data else {
-                        info!(
-                            "Unable to find shared minigame data for group {:?}",
-                            matchmaking_group
-                        );
-                        return;
-                    };
-
-                    minigame_data.data = SharedMinigameTypeData::from(
-                        stage_config.stage_config.minigame_type(),
-                        members,
-                        stage_guid,
-                        stage_group_guid,
-                    );
-
-                    minigame_data.readiness = MinigameReadiness::InitialPlayersLoading(
-                        BTreeSet::from_iter(members.iter().copied()),
-                        None,
-                    );
-                },
-            );
-        }
+        Ok(mut teleport_broadcasts) => broadcasts.append(&mut teleport_broadcasts),
         Err(err) => {
             // Teleportation out of the minigame zone should clean it up if it is empty. If there is some error, the next game that starts
             // can use the zone

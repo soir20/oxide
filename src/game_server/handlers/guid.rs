@@ -535,6 +535,7 @@ impl<
 
             let result = f(Some(&mut value_write_handle), self);
 
+            let guid = value_write_handle.guid();
             let index1 = value_write_handle.index1();
             let index2 = value_write_handle.index2();
             let index3 = value_write_handle.index3();
