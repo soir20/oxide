@@ -96,7 +96,7 @@ fn handle_saber_strike_game_over(
         sender,
         game_server,
         header,
-        |minigame_status, minigame_stats, _, stage_config, _, _| {
+        |minigame_status, _, _, _, _, _| {
             let MinigameTypeData::SaberStrike { obfuscated_score } = minigame_status.type_data
             else {
                 return Err(ProcessPacketError::new(

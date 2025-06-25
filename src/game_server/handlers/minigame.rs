@@ -1947,7 +1947,7 @@ fn handle_flash_payload_game_result(
         sender,
         game_server,
         &payload.header,
-        |minigame_status, minigame_stats, _, _, shared_minigame_data, _| {
+        |minigame_status, _, _, _, shared_minigame_data, _| {
             if parts.len() != 2 {
                 return Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
