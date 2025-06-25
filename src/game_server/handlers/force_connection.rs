@@ -457,6 +457,7 @@ pub struct ForceConnectionGame {
     next_event_time: Instant,
     stage_guid: i32,
     stage_group_guid: i32,
+    game_over: bool,
 }
 
 impl ForceConnectionGame {
@@ -481,6 +482,7 @@ impl ForceConnectionGame {
             next_event_time: Instant::now(),
             stage_guid,
             stage_group_guid,
+            game_over: false,
         }
     }
 
@@ -712,7 +714,7 @@ impl ForceConnectionGame {
     }
 
     pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
-        if now < self.next_event_time {
+        if now < self.next_event_time || self.game_over {
             return Vec::new();
         }
 
@@ -784,6 +786,10 @@ impl ForceConnectionGame {
         player_index: u8,
         now: Instant,
     ) -> Result<(), ProcessPacketError> {
+        if self.game_over {
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to make a move in Force Connection, but the game is over", sender, player_index)));
+        }
+
         let is_valid_for_player = match player_index {
             0 => self.turn == ForceConnectionTurn::Player1 && sender == self.player1,
             1 => self.turn == ForceConnectionTurn::Player2 && ((sender == self.player1 && self.player2.is_none()) || (Some(sender) == self.player2)),
@@ -947,7 +953,7 @@ impl ForceConnectionGame {
         }
     }
 
-    fn check_for_winner(&self) -> Option<Vec<Broadcast>> {
+    fn check_for_winner(&mut self) -> Option<Vec<Broadcast>> {
         let player1_won = self.matches[0] >= MATCHES_TO_WIN;
         let player2_won = self.matches[1] >= MATCHES_TO_WIN;
 
@@ -956,6 +962,7 @@ impl ForceConnectionGame {
         }
 
         let mut broadcasts = Vec::new();
+        self.game_over = true;
         broadcasts.append(&mut self.broadcast_game_result(self.player1, player1_won));
         if let Some(player2) = self.player2 {
             broadcasts.append(&mut self.broadcast_game_result(player2, player2_won));
