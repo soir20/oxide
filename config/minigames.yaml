@@ -4287,14 +4287,13 @@
         icon_id: 3922
         stage_icon_id: 3922
         members_only: true
-        stage_select_map_name: ''
-        default_stage_instance: 22002
+        stage_select_map_name: FleetCommanderPortal
         stages:
           - !Stage
             guid: 22001
             name_id: 44433
             description_id: 33612
-            stage_icon_id: 4041
+            stage_icon_id: 4621
             start_screen_icon_id: 4187
             min_players: 1
             max_players: 1
@@ -4303,7 +4302,7 @@
             members_only: true
             require_previous_completed: false
             link_name: stage
-            short_name: ''
+            short_name: sp
             minigame_type:
               !Flash
               game_swf_name: ForceConnection.swf
@@ -4314,7 +4313,7 @@
             guid: 22002
             name_id: 19815
             description_id: 33612
-            stage_icon_id: 4041
+            stage_icon_id: 1413
             start_screen_icon_id: 4187
             min_players: 2
             max_players: 2
@@ -4323,7 +4322,7 @@
             members_only: true
             require_previous_completed: false
             link_name: stage
-            short_name: ''
+            short_name: mp
             minigame_type:
               !Flash
               game_swf_name: ForceConnection.swf
