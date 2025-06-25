@@ -723,6 +723,86 @@ impl ForceConnectionGame {
         )])
     }
 
+    pub fn use_swap_powerup(
+        &mut self,
+        sender: u32,
+        row1: u8,
+        col1: u8,
+        row2: u8,
+        col2: u8,
+        player_index: u8,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let turn_time = Instant::now();
+        self.check_turn(sender, player_index, turn_time)?;
+
+        if self.powerups[player_index as usize][ForceConnectionPowerup::Swap as usize] == 0 {
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to swap pieces ({}, {}) and ({}, {}) in Force Connection, but they have no swap powersups", sender, player_index, row1, col1, row2, col2)));
+        }
+
+        self.board.swap_pieces(row1, col1, row2, col2)?;
+
+        self.handle_move(turn_time, Duration::from_millis(500));
+
+        Ok(vec![Broadcast::Multi(
+            self.list_recipients(),
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: FlashPayload {
+                    header: MinigameHeader {
+                        stage_guid: self.stage_guid,
+                        sub_op_code: -1,
+                        stage_group_guid: self.stage_group_guid,
+                    },
+                    payload: format!(
+                        "OnUseLightPowerUpMsg\t{}\t{}\t{}\t{}\t{}",
+                        player_index, row1, col1, row2, col2
+                    ),
+                },
+            })],
+        )])
+    }
+
+    pub fn use_delete_powerup(
+        &mut self,
+        sender: u32,
+        row: u8,
+        col: u8,
+        player_index: u8,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let turn_time = Instant::now();
+        self.check_turn(sender, player_index, turn_time)?;
+
+        if self.powerups[player_index as usize][ForceConnectionPowerup::Delete as usize] == 0 {
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to delete piece ({}, {}) in Force Connection, but they have no delete powersups", sender, player_index, row, col)));
+        }
+
+        self.board.delete_piece_if_matches(
+            row,
+            col,
+            match self.turn {
+                ForceConnectionTurn::Player1 => ForceConnectionPiece::Player1,
+                ForceConnectionTurn::Player2 => ForceConnectionPiece::Player2,
+            },
+        )?;
+
+        self.handle_move(turn_time, Duration::from_millis(500));
+
+        Ok(vec![Broadcast::Multi(
+            self.list_recipients(),
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: FlashPayload {
+                    header: MinigameHeader {
+                        stage_guid: self.stage_guid,
+                        sub_op_code: -1,
+                        stage_group_guid: self.stage_group_guid,
+                    },
+                    payload: format!("OnUseDarkPowerUpMsg\t{}\t{}\t{}", player_index, row, col),
+                },
+            })],
+        )])
+    }
+
     pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
         if now < self.next_event_time || self.game_over {
             return Vec::new();

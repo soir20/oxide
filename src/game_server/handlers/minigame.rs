@@ -2208,6 +2208,56 @@ fn handle_flash_payload(
                 _ => Ok(Vec::new()),
             },
         ),
+        "OnRequestUseLightPowerUpMsg" => handle_minigame_packet_write(
+            sender,
+            game_server,
+            &payload.header,
+            |_, _, _, _, shared_minigame_data, _| match &mut shared_minigame_data.data {
+                SharedMinigameTypeData::ForceConnection { game } => {
+                    if parts.len() == 6 {
+                        let row1 = parts[1].parse()?;
+                        let col1 = parts[2].parse()?;
+                        let row2 = parts[3].parse()?;
+                        let col2 = parts[4].parse()?;
+                        let player_index = parts[5].parse()?;
+                        game.use_swap_powerup(sender, row1, col1, row2, col2, player_index)
+                    } else {
+                        Err(ProcessPacketError::new(
+                            ProcessPacketErrorType::ConstraintViolated,
+                            format!(
+                                "Expected 5 parameters in swap piece payload, but only found {}",
+                                parts.len().saturating_sub(1)
+                            ),
+                        ))
+                    }
+                }
+                _ => Ok(Vec::new()),
+            },
+        ),
+        "OnRequestUseDarkPowerUpMsg" => handle_minigame_packet_write(
+            sender,
+            game_server,
+            &payload.header,
+            |_, _, _, _, shared_minigame_data, _| match &mut shared_minigame_data.data {
+                SharedMinigameTypeData::ForceConnection { game } => {
+                    if parts.len() == 4 {
+                        let row = parts[1].parse()?;
+                        let col = parts[2].parse()?;
+                        let player_index = parts[3].parse()?;
+                        game.use_delete_powerup(sender, row, col, player_index)
+                    } else {
+                        Err(ProcessPacketError::new(
+                            ProcessPacketErrorType::ConstraintViolated,
+                            format!(
+                                "Expected 3 parameters in delete piece payload, but only found {}",
+                                parts.len().saturating_sub(1)
+                            ),
+                        ))
+                    }
+                }
+                _ => Ok(Vec::new()),
+            },
+        ),
         _ => Err(ProcessPacketError::new(
             ProcessPacketErrorType::ConstraintViolated,
             format!(
