@@ -3,7 +3,7 @@ use std::{
     time::{Duration, Instant},
 };
 
-use rand::Rng;
+use rand::{thread_rng, Rng};
 use serde::Serializer;
 
 use crate::{
@@ -442,6 +442,18 @@ impl Display for EmptySlots {
     }
 }
 
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum ForceConnectionPowerup {
+    Swap = 0,
+    Delete = 1,
+}
+
+impl Display for ForceConnectionPowerup {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.serialize_u8(*self as u8)
+    }
+}
+
 #[derive(Clone)]
 pub struct ForceConnectionGame {
     board: ForceConnectionBoard,
@@ -450,8 +462,7 @@ pub struct ForceConnectionGame {
     ready: [bool; 2],
     matches: [u8; 2],
     score: [i32; 2],
-    swap_powerups: [u32; 2],
-    delete_powerups: [u32; 2],
+    powerups: [[u32; 2]; 2],
     turn: ForceConnectionTurn,
     state: ForceConnectionGameState,
     next_event_time: Instant,
@@ -475,8 +486,7 @@ impl ForceConnectionGame {
             ready: [false, player2.is_none()],
             matches: [0; 2],
             score: [0; 2],
-            swap_powerups: [1; 2],
-            delete_powerups: [2; 2],
+            powerups: [[1, 2]; 2],
             turn,
             state: ForceConnectionGameState::WaitingForPlayersReady,
             next_event_time: Instant::now(),
@@ -814,7 +824,8 @@ impl ForceConnectionGame {
         } = self.state
         {
             let score_from_turn_time = time_left_in_turn.as_secs() as i32 * 5;
-            self.score[self.turn as usize] += score_from_turn_time;
+            self.score[self.turn as usize] =
+                self.score[self.turn as usize].saturating_add(score_from_turn_time);
             broadcasts.push(Broadcast::Multi(
                 self.list_recipients(),
                 vec![GamePacket::serialize(&TunneledPacket {
@@ -847,6 +858,7 @@ impl ForceConnectionGame {
             ),
         }
 
+        broadcasts.append(&mut self.broadcast_powerup_quantity(self.turn as u8));
         broadcasts.push(Broadcast::Multi(
             self.list_recipients(),
             vec![GamePacket::serialize(&TunneledPacket {
@@ -857,7 +869,7 @@ impl ForceConnectionGame {
                         sub_op_code: -1,
                         stage_group_guid: self.stage_group_guid,
                     },
-                    payload: format!("OnStartPlayerTurnMsg\t{}\t{}", self.turn, TURN_TIME_SECONDS,),
+                    payload: format!("OnStartPlayerTurnMsg\t{}\t{}", self.turn, TURN_TIME_SECONDS),
                 },
             })],
         ));
@@ -909,9 +921,39 @@ impl ForceConnectionGame {
 
         let value_per_space = 100 + (match_length - MIN_MATCH_LENGTH) as i32 * 50;
         let score_from_match = value_per_space * match_length as i32;
-        self.score[player_index as usize] += score_from_match;
+        self.score[player_index as usize] =
+            self.score[player_index as usize].saturating_add(score_from_match);
 
-        vec![Broadcast::Multi(
+        let mut broadcasts = Vec::new();
+
+        if match_length > MIN_MATCH_LENGTH {
+            let new_powerup = if thread_rng().gen_range(0.0..=1.0) > 0.66 {
+                ForceConnectionPowerup::Swap
+            } else {
+                ForceConnectionPowerup::Delete
+            };
+
+            self.powerups[player_index as usize][new_powerup as usize] =
+                self.powerups[player_index as usize][new_powerup as usize].saturating_add(1);
+
+            broadcasts.push(Broadcast::Multi(
+                self.list_recipients(),
+                vec![GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: FlashPayload {
+                        header: MinigameHeader {
+                            stage_guid: self.stage_guid,
+                            sub_op_code: -1,
+                            stage_group_guid: self.stage_group_guid,
+                        },
+                        payload: format!("OnPowerUpAddedMsg\t{}\t{}", player_index, new_powerup),
+                    },
+                })],
+            ));
+            broadcasts.append(&mut self.broadcast_powerup_quantity(player_index));
+        }
+
+        broadcasts.push(Broadcast::Multi(
             self.list_recipients(),
             vec![
                 GamePacket::serialize(&TunneledPacket {
@@ -937,7 +979,9 @@ impl ForceConnectionGame {
                     },
                 }),
             ],
-        )]
+        ));
+
+        broadcasts
     }
 
     fn handle_move(&mut self, turn_time: Instant, sleep_time: Duration) {
@@ -1003,6 +1047,29 @@ impl ForceConnectionGame {
                 })],
             )]
         }
+    }
+
+    fn broadcast_powerup_quantity(&self, player_index: u8) -> Vec<Broadcast> {
+        vec![Broadcast::Multi(
+            self.list_recipients(),
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: FlashPayload {
+                    header: MinigameHeader {
+                        stage_guid: self.stage_guid,
+                        sub_op_code: -1,
+                        stage_group_guid: self.stage_group_guid,
+                    },
+                    payload: format!(
+                        "OnPowerUpRemainingMsg\t{}\t{},{}",
+                        player_index,
+                        self.powerups[player_index as usize][ForceConnectionPowerup::Swap as usize],
+                        self.powerups[player_index as usize]
+                            [ForceConnectionPowerup::Delete as usize]
+                    ),
+                },
+            })],
+        )]
     }
 }
 
