@@ -1974,10 +1974,6 @@ fn handle_flash_payload_game_result(
             });
             minigame_status.game_won = won;
 
-            if won {
-                minigame_stats.complete(minigame_status.group.stage_guid, total_score);
-            }
-
             Ok(vec![Broadcast::Single(
                 sender,
                 vec![GamePacket::serialize(&TunneledPacket {
@@ -2387,6 +2383,13 @@ fn leave_active_minigame_single_player_if_any(
                         minigame_status.total_score,
                     )?
                     .0,
+                );
+            }
+
+            if minigame_status.game_won {
+                player.minigame_stats.complete(
+                    minigame_status.group.stage_guid,
+                    minigame_status.total_score,
                 );
             }
 
