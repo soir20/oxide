@@ -432,7 +432,7 @@ impl Display for EmptySlots {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         for index in 0..self.0.len() {
             let (row, col) = self.0[index];
-            f.serialize_u8((BOARD_SIZE - row - 1) * BOARD_SIZE + col)?;
+            f.serialize_u8(internal_row_to_external_row(row) * BOARD_SIZE + col)?;
             if index < self.0.len() - 1 {
                 f.write_char(',')?;
             }
@@ -452,6 +452,21 @@ impl Display for ForceConnectionPowerup {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.serialize_u8(*self as u8)
     }
+}
+
+fn internal_row_to_external_row(internal_row: u8) -> u8 {
+    BOARD_SIZE - internal_row - 1
+}
+
+fn try_external_row_to_internal_row(external_row: u8) -> Result<u8, ProcessPacketError> {
+    if external_row >= BOARD_SIZE {
+        return Err(ProcessPacketError::new(
+            ProcessPacketErrorType::ConstraintViolated,
+            format!("External row {} is outside the board", external_row),
+        ));
+    }
+
+    Ok(BOARD_SIZE - external_row - 1)
 }
 
 #[derive(Clone)]
@@ -715,7 +730,7 @@ impl ForceConnectionGame {
                     payload: format!(
                         "OnDropPieceMsg\t{}\t{}\t{}",
                         player_index,
-                        BOARD_SIZE - row - 1,
+                        internal_row_to_external_row(row),
                         col
                     ),
                 },
@@ -734,6 +749,9 @@ impl ForceConnectionGame {
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let turn_time = Instant::now();
         self.check_turn(sender, player_index, turn_time)?;
+
+        let row1 = try_external_row_to_internal_row(row1)?;
+        let row2 = try_external_row_to_internal_row(row2)?;
 
         if self.powerups[player_index as usize][ForceConnectionPowerup::Swap as usize] == 0 {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to swap pieces ({}, {}) and ({}, {}) in Force Connection, but they have no swap powersups", sender, player_index, row1, col1, row2, col2)));
@@ -772,6 +790,8 @@ impl ForceConnectionGame {
         let turn_time = Instant::now();
         self.check_turn(sender, player_index, turn_time)?;
 
+        let row = try_external_row_to_internal_row(row)?;
+
         if self.powerups[player_index as usize][ForceConnectionPowerup::Delete as usize] == 0 {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to delete piece ({}, {}) in Force Connection, but they have no delete powersups", sender, player_index, row, col)));
         }
@@ -780,8 +800,8 @@ impl ForceConnectionGame {
             row,
             col,
             match self.turn {
-                ForceConnectionTurn::Player1 => ForceConnectionPiece::Player1,
-                ForceConnectionTurn::Player2 => ForceConnectionPiece::Player2,
+                ForceConnectionTurn::Player1 => ForceConnectionPiece::Player2,
+                ForceConnectionTurn::Player2 => ForceConnectionPiece::Player1,
             },
         )?;
 
