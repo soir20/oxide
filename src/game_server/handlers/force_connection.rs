@@ -810,17 +810,33 @@ impl ForceConnectionGame {
 
         Ok(vec![Broadcast::Multi(
             self.list_recipients(),
-            vec![GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: FlashPayload {
-                    header: MinigameHeader {
-                        stage_guid: self.stage_guid,
-                        sub_op_code: -1,
-                        stage_group_guid: self.stage_group_guid,
+            vec![
+                GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: FlashPayload {
+                        header: MinigameHeader {
+                            stage_guid: self.stage_guid,
+                            sub_op_code: -1,
+                            stage_group_guid: self.stage_group_guid,
+                        },
+                        payload: format!("OnUseDarkPowerUpMsg\t{}\t{}\t{}", player_index, row, col),
                     },
-                    payload: format!("OnUseDarkPowerUpMsg\t{}\t{}\t{}", player_index, row, col),
-                },
-            })],
+                }),
+                GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: FlashPayload {
+                        header: MinigameHeader {
+                            stage_guid: self.stage_guid,
+                            sub_op_code: -1,
+                            stage_group_guid: self.stage_group_guid,
+                        },
+                        payload: format!(
+                            "OnSlotsToClearMsg\t{}",
+                            EmptySlots(vec![(internal_row, col)])
+                        ),
+                    },
+                }),
+            ],
         )])
     }
 
