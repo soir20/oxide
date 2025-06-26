@@ -750,14 +750,15 @@ impl ForceConnectionGame {
         let turn_time = Instant::now();
         self.check_turn(sender, player_index, turn_time)?;
 
-        let row1 = try_external_row_to_internal_row(row1)?;
-        let row2 = try_external_row_to_internal_row(row2)?;
+        let internal_row1 = try_external_row_to_internal_row(row1)?;
+        let internal_row2 = try_external_row_to_internal_row(row2)?;
 
         if self.powerups[player_index as usize][ForceConnectionPowerup::Swap as usize] == 0 {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to swap pieces ({}, {}) and ({}, {}) in Force Connection, but they have no swap powersups", sender, player_index, row1, col1, row2, col2)));
         }
 
-        self.board.swap_pieces(row1, col1, row2, col2)?;
+        self.board
+            .swap_pieces(internal_row1, col1, internal_row2, col2)?;
 
         self.handle_move(turn_time, Duration::from_millis(500));
 
@@ -790,14 +791,14 @@ impl ForceConnectionGame {
         let turn_time = Instant::now();
         self.check_turn(sender, player_index, turn_time)?;
 
-        let row = try_external_row_to_internal_row(row)?;
+        let internal_row = try_external_row_to_internal_row(row)?;
 
         if self.powerups[player_index as usize][ForceConnectionPowerup::Delete as usize] == 0 {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to delete piece ({}, {}) in Force Connection, but they have no delete powersups", sender, player_index, row, col)));
         }
 
         self.board.delete_piece_if_matches(
-            row,
+            internal_row,
             col,
             match self.turn {
                 ForceConnectionTurn::Player1 => ForceConnectionPiece::Player2,
