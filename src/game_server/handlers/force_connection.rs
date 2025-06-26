@@ -520,8 +520,9 @@ impl ForceConnectionGame {
             return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
                 format!(
-                    "Player {} tried to connect to Force Connection, but the game has already started",
-                    sender
+                    "Player {} tried to connect to Force Connection, but the game has already started (AI: {})",
+                    sender,
+                    self.is_ai_match()
                 ),
             ));
         }
@@ -530,8 +531,9 @@ impl ForceConnectionGame {
             return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
                 format!(
-                    "Force Connection player 1 with GUID {} is missing or has no name",
-                    self.player1
+                    "Force Connection player 1 with GUID {} is missing or has no name (AI: {})",
+                    self.player1,
+                    self.is_ai_match()
                 ),
             ));
         };
@@ -634,7 +636,7 @@ impl ForceConnectionGame {
             }
             self.ready[1] = true;
         } else {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} sent a ready payload for Force Connection, but they aren't one of the game's players (stage {}, stage group {})", sender, self.stage_guid, self.stage_group_guid)));
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} sent a ready payload for Force Connection, but they aren't one of the game's players (stage {}, stage group {}, AI: {})", sender, self.stage_guid, self.stage_group_guid, self.is_ai_match())));
         }
 
         if !self.ready[0] || !self.ready[1] {
@@ -674,7 +676,7 @@ impl ForceConnectionGame {
         }
 
         if col as i16 >= BOARD_SIZE as i16 {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to select column {} in Force Connection, but it isn't a valid column", sender, player_index, col)));
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to select column {} in Force Connection, but it isn't a valid column (AI: {})", sender, player_index, col, self.is_ai_match())));
         }
 
         let col = col as u8;
@@ -762,7 +764,7 @@ impl ForceConnectionGame {
         let internal_row2 = try_external_row_to_internal_row(row2)?;
 
         if self.powerups[player_index as usize][ForceConnectionPowerup::Swap as usize] == 0 {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to swap pieces ({}, {}) and ({}, {}) in Force Connection, but they have no swap powersups", sender, player_index, row1, col1, row2, col2)));
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to swap pieces ({}, {}) and ({}, {}) in Force Connection, but they have no swap powersups (AI: {})", sender, player_index, row1, col1, row2, col2, self.is_ai_match())));
         }
 
         self.board
@@ -803,7 +805,7 @@ impl ForceConnectionGame {
         let internal_row = try_external_row_to_internal_row(row)?;
 
         if self.powerups[player_index as usize][ForceConnectionPowerup::Delete as usize] == 0 {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to delete piece ({}, {}) in Force Connection, but they have no delete powersups", sender, player_index, row, col)));
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to delete piece ({}, {}) in Force Connection, but they have no delete powersups (AI: {})", sender, player_index, row, col, self.is_ai_match())));
         }
 
         self.board.delete_piece_if_matches(
@@ -889,7 +891,7 @@ impl ForceConnectionGame {
         pause: bool,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         if player != self.player1 && Some(player) != self.player2 {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to pause or resume (pause: {}) the game for player {}, who is not playing this instance of Force Connection", pause, player)));
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to pause or resume (pause: {}) the game for player {}, who is not playing this instance of Force Connection (AI: {})", pause, player, self.is_ai_match())));
         };
 
         if self.is_ai_match() {
@@ -911,7 +913,7 @@ impl ForceConnectionGame {
         } else if Some(player) == self.player2 {
             1
         } else {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to remove player {}, who is not playing this instance of Force Connection", player)));
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to remove player {}, who is not playing this instance of Force Connection (AI: {})", player, self.is_ai_match())));
         };
 
         minigame_status.game_won = self.matches[player_index] >= MATCHES_TO_WIN;
@@ -964,21 +966,21 @@ impl ForceConnectionGame {
         turn_time: Instant,
     ) -> Result<(), ProcessPacketError> {
         if self.state != ForceConnectionGameState::WaitingForMove {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to make a move in Force Connection, but the state is {:?} instead of waiting for a move", sender, player_index, self.state)));
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to make a move in Force Connection, but the state is {:?} instead of waiting for a move (AI: {})", sender, player_index, self.state, self.is_ai_match())));
         }
 
         let is_valid_for_player = match player_index {
             0 => self.turn == ForceConnectionTurn::Player1 && sender == self.player1,
             1 => self.turn == ForceConnectionTurn::Player2 && ((sender == self.player1 && self.is_ai_match()) || (Some(sender) == self.player2)),
-            _ => return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to make a move in Force Connection, but the player index {} isn't valid", sender, player_index)))
+            _ => return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to make a move in Force Connection, but the player index {} isn't valid (AI: {})", sender, player_index, self.is_ai_match())))
         };
 
         if !is_valid_for_player {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to make a move in Force Connection, but it isn't their turn", sender, player_index)));
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to make a move in Force Connection, but it isn't their turn (AI: {})", sender, player_index, self.is_ai_match())));
         }
 
         if self.time_until_next_event(turn_time).is_zero() {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to make a move in Force Connection, but their turn expired", sender, player_index)));
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to make a move in Force Connection, but their turn expired (AI: {})", sender, player_index, self.is_ai_match())));
         }
 
         Ok(())
