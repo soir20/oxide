@@ -447,7 +447,11 @@ fn process_once(
         if let Some(guid) = channel_manager_read_handle.guid(&src) {
             match game_server.process_packet(guid, packet) {
                 Ok(mut new_broadcasts) => broadcasts.append(&mut new_broadcasts),
-                Err(err) => info!("Unable to process packet for client {}: {}", src, err),
+                Err(err) => {
+                    if !err.silent() {
+                        info!("Unable to process packet for client {}: {}", src, err);
+                    }
+                }
             }
         } else {
             match game_server.authenticate(packet) {

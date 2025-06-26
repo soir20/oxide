@@ -85,6 +85,7 @@ pub struct ProcessPacketError {
     backtrace: Backtrace,
     err_type: ProcessPacketErrorType,
     message: String,
+    silent: bool,
 }
 
 impl ProcessPacketError {
@@ -93,7 +94,25 @@ impl ProcessPacketError {
             backtrace: Backtrace::capture(),
             err_type,
             message,
+            silent: false,
         }
+    }
+
+    pub fn new_with_silence_status(
+        err_type: ProcessPacketErrorType,
+        message: String,
+        silent: bool,
+    ) -> ProcessPacketError {
+        ProcessPacketError {
+            backtrace: Backtrace::capture(),
+            err_type,
+            message,
+            silent,
+        }
+    }
+
+    pub fn silent(&self) -> bool {
+        self.silent
     }
 }
 

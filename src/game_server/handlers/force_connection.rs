@@ -6,17 +6,20 @@ use std::{
 use rand::{thread_rng, Rng};
 use serde::Serializer;
 
-use crate::game_server::{
-    handlers::{
-        character::MinigameStatus, guid::GuidTableIndexer, lock_enforcer::CharacterTableReadHandle,
-        unique_guid::player_guid,
+use crate::{
+    debug,
+    game_server::{
+        handlers::{
+            character::MinigameStatus, guid::GuidTableIndexer,
+            lock_enforcer::CharacterTableReadHandle, unique_guid::player_guid,
+        },
+        packets::{
+            minigame::{FlashPayload, MinigameHeader, ScoreEntry, ScoreType},
+            tunnel::TunneledPacket,
+            GamePacket,
+        },
+        Broadcast, ProcessPacketError, ProcessPacketErrorType,
     },
-    packets::{
-        minigame::{FlashPayload, MinigameHeader, ScoreEntry, ScoreType},
-        tunnel::TunneledPacket,
-        GamePacket,
-    },
-    Broadcast, ProcessPacketError, ProcessPacketErrorType,
 };
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -942,6 +945,10 @@ impl ForceConnectionGame {
         self.player2.is_none()
     }
 
+    fn is_ai_player(&self, player_index: u8) -> bool {
+        player_index == 1 && self.player2.is_some()
+    }
+
     fn list_recipients(&self) -> Vec<u32> {
         let mut recipients = vec![self.player1];
         if let Some(player2) = self.player2 {
@@ -973,10 +980,6 @@ impl ForceConnectionGame {
         player_index: u8,
         turn_time: Instant,
     ) -> Result<(), ProcessPacketError> {
-        if self.state != ForceConnectionGameState::WaitingForMove {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to make a move in Force Connection, but the state is {:?} instead of waiting for a move (AI: {})", sender, player_index, self.state, self.is_ai_match())));
-        }
-
         let is_valid_for_player = match player_index {
             0 => self.turn == ForceConnectionTurn::Player1 && sender == self.player1,
             1 => self.turn == ForceConnectionTurn::Player2 && ((sender == self.player1 && self.is_ai_match()) || (Some(sender) == self.player2)),
@@ -989,6 +992,18 @@ impl ForceConnectionGame {
 
         if self.time_until_next_event(turn_time).is_zero() {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to make a move in Force Connection, but their turn expired (AI: {})", sender, player_index, self.is_ai_match())));
+        }
+
+        if self.state != ForceConnectionGameState::WaitingForMove {
+            let silent = if self.is_ai_player(player_index) {
+                // There's a known issue with the AI player attempting to use a powerup and drop a piece at the same time.
+                // Don't return an error to avoid log spam.
+                debug!("Force Connection AI tried to make a move, but the state is {:?} instead of waiting for a move", self.state);
+                true
+            } else {
+                false
+            };
+            return Err(ProcessPacketError::new_with_silence_status(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to make a move in Force Connection, but the state is {:?} instead of waiting for a move (AI: {})", sender, player_index, self.state, self.is_ai_match()), silent));
         }
 
         Ok(())
