@@ -550,7 +550,7 @@ impl ForceConnectionGame {
                 ))?,
             None => &"".to_string(),
         };
-        Ok(vec![Broadcast::Single(
+        let mut broadcasts = vec![Broadcast::Single(
             sender,
             vec![
                 GamePacket::serialize(&TunneledPacket {
@@ -621,7 +621,13 @@ impl ForceConnectionGame {
                     },
                 }),
             ],
-        )])
+        )];
+
+        for player_index in 0..=1 {
+            broadcasts.append(&mut self.broadcast_powerup_quantity(player_index));
+        }
+
+        Ok(broadcasts)
     }
 
     pub fn mark_player_ready(&mut self, sender: u32) -> Result<Vec<Broadcast>, ProcessPacketError> {
@@ -765,6 +771,8 @@ impl ForceConnectionGame {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to swap pieces ({}, {}) and ({}, {}) in Force Connection, but they have no swap powersups (AI: {})", sender, player_index, row1, col1, row2, col2, self.is_ai_match())));
         }
 
+        self.powerups[player_index as usize][ForceConnectionPowerup::Swap as usize] -= 1;
+
         self.board
             .swap_pieces(internal_row1, col1, internal_row2, col2)?;
 
@@ -805,6 +813,8 @@ impl ForceConnectionGame {
         if self.powerups[player_index as usize][ForceConnectionPowerup::Delete as usize] == 0 {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to delete piece ({}, {}) in Force Connection, but they have no delete powersups (AI: {})", sender, player_index, row, col, self.is_ai_match())));
         }
+
+        self.powerups[player_index as usize][ForceConnectionPowerup::Delete as usize] -= 1;
 
         self.board.delete_piece_if_matches(
             internal_row,
