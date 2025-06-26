@@ -6,20 +6,17 @@ use std::{
 use rand::{thread_rng, Rng};
 use serde::Serializer;
 
-use crate::{
-    game_server::{
-        handlers::{
-            character::MinigameStatus, guid::GuidTableIndexer,
-            lock_enforcer::CharacterTableReadHandle, unique_guid::player_guid,
-        },
-        packets::{
-            minigame::{FlashPayload, MinigameHeader, ScoreEntry, ScoreType},
-            tunnel::TunneledPacket,
-            GamePacket,
-        },
-        Broadcast, ProcessPacketError, ProcessPacketErrorType,
+use crate::game_server::{
+    handlers::{
+        character::MinigameStatus, guid::GuidTableIndexer, lock_enforcer::CharacterTableReadHandle,
+        unique_guid::player_guid,
     },
-    info,
+    packets::{
+        minigame::{FlashPayload, MinigameHeader, ScoreEntry, ScoreType},
+        tunnel::TunneledPacket,
+        GamePacket,
+    },
+    Broadcast, ProcessPacketError, ProcessPacketErrorType,
 };
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
