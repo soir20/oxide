@@ -478,6 +478,7 @@ pub struct ForceConnectionGame {
     powerups: [[u32; 2]; 2],
     turn: ForceConnectionTurn,
     state: ForceConnectionGameState,
+    paused: bool,
     time_until_next_event: Duration,
     last_timer_update: Instant,
     stage_guid: i32,
@@ -502,6 +503,7 @@ impl ForceConnectionGame {
             powerups: [[1, 2]; 2],
             turn,
             state: ForceConnectionGameState::WaitingForPlayersReady,
+            paused: false,
             time_until_next_event: Duration::ZERO,
             last_timer_update: Instant::now(),
             stage_guid,
@@ -839,8 +841,7 @@ impl ForceConnectionGame {
     }
 
     pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
-        self.time_until_next_event = self.time_until_next_event(now);
-        self.last_timer_update = now;
+        self.update_timer(now);
         if !self.time_until_next_event.is_zero() {
             return Vec::new();
         }
@@ -870,6 +871,24 @@ impl ForceConnectionGame {
             ForceConnectionGameState::Matching { .. } => self.process_matches(),
             _ => Vec::new(),
         }
+    }
+
+    pub fn pause_or_resume(
+        &mut self,
+        player: u32,
+        pause: bool,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        if player != self.player1 && Some(player) != self.player2 {
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to pause or resume (pause: {}) the game for player {}, who is not playing this instance of Force Connection", pause, player)));
+        };
+
+        if self.player2.is_none() {
+            return Ok(Vec::new());
+        }
+
+        self.paused = pause;
+        self.update_timer(Instant::now());
+        Ok(Vec::new())
     }
 
     pub fn remove_player(
@@ -917,6 +936,11 @@ impl ForceConnectionGame {
     fn start_event(&mut self, duration: Duration) {
         self.last_timer_update = Instant::now();
         self.time_until_next_event = duration;
+    }
+
+    fn update_timer(&mut self, now: Instant) {
+        self.time_until_next_event = self.time_until_next_event(now);
+        self.last_timer_update = now;
     }
 
     fn check_turn(
