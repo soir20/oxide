@@ -2005,7 +2005,7 @@ fn handle_flash_payload(
         return Ok(vec![]);
     }
 
-    match parts[0] {
+    let result = match parts[0] {
         "FRServer_RequestStageId" => handle_flash_payload_read_only(
             sender,
             game_server,
@@ -2165,24 +2165,24 @@ fn handle_flash_payload(
             &payload.header,
             |_, _, shared_minigame_data| {
                 match &shared_minigame_data.data
-            {
-                SharedMinigameTypeData::ForceConnection { game } => {
-                    if parts.len() == 3 {
-                        let col = parts[1].parse()?;
-                        let player_index = parts[2].parse()?;
-                        game.select_column(sender, col, player_index)
-                    } else {
-                        Err(ProcessPacketError::new(
-                            ProcessPacketErrorType::ConstraintViolated,
-                            format!(
-                                "Expected 2 parameters in select column payload, but only found {}",
-                                parts.len().saturating_sub(1)
-                            ),
-                        ))
+                {
+                    SharedMinigameTypeData::ForceConnection { game } => {
+                        if parts.len() == 3 {
+                            let col = parts[1].parse()?;
+                            let player_index = parts[2].parse()?;
+                            game.select_column(sender, col, player_index)
+                        } else {
+                            Err(ProcessPacketError::new(
+                                ProcessPacketErrorType::ConstraintViolated,
+                                format!(
+                                    "Expected 2 parameters in select column payload, but only found {}",
+                                    parts.len().saturating_sub(1)
+                                ),
+                            ))
+                        }
                     }
+                    _ => Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Received select column message for non-Force Connection game from player {}", sender))),
                 }
-                _ => Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Received select column message for non-Force Connection game from player {}", sender))),
-            }
             },
         ),
         "OnRequestDropPieceMsg" => handle_minigame_packet_write(
@@ -2265,7 +2265,17 @@ fn handle_flash_payload(
                 payload.payload, payload.header.stage_guid, payload.header.stage_group_guid, sender
             ),
         )),
-    }
+    };
+
+    result.map_err(|err| {
+        ProcessPacketError::new(
+            err.err_type,
+            format!(
+                "Error while processing Flash payload ({}) from player {}: {}",
+                payload.payload, sender, err
+            ),
+        )
+    })
 }
 
 pub fn create_active_minigame_if_uncreated(

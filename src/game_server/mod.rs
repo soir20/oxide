@@ -72,7 +72,7 @@ pub enum Broadcast {
 }
 
 #[non_exhaustive]
-#[derive(Debug)]
+#[derive(Clone, Copy, Debug)]
 pub enum ProcessPacketErrorType {
     ConstraintViolated,
     DeserializeError,
