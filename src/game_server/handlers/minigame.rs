@@ -2271,7 +2271,7 @@ fn handle_flash_payload(
         ProcessPacketError::new(
             err.err_type,
             format!(
-                "Error while processing Flash payload ({}) from player {}: {}",
+                "Error while processing Flash payload \"{}\" from player {}: {}",
                 payload.payload, sender, err
             ),
         )
