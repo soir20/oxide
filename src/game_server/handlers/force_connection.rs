@@ -665,21 +665,19 @@ impl ForceConnectionGame {
     pub fn select_column(
         &self,
         sender: u32,
-        col: i8,
-        player_index: u8,
+        col: u8,
+        player_index: i8,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let player_index = if player_index < 0 {
+            1
+        } else {
+            player_index as u8
+        };
         self.check_turn(sender, player_index, Instant::now())?;
 
-        // Ignore negative columns that indicate none was selected
-        if col < 0 {
-            return Ok(Vec::new());
-        }
-
-        if col as i16 >= BOARD_SIZE as i16 {
+        if col >= BOARD_SIZE {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to select column {} in Force Connection, but it isn't a valid column (AI: {})", sender, player_index, col, self.is_ai_match())));
         }
-
-        let col = col as u8;
 
         let recipient = match self.turn {
             ForceConnectionTurn::Player1 => {
