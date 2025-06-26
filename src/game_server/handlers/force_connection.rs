@@ -424,6 +424,7 @@ enum ForceConnectionGameState {
     WaitingForPlayersReady,
     WaitingForMove,
     Matching { turn_duration: Duration },
+    GameOver,
 }
 
 struct EmptySlots(Vec<(u8, u8)>);
@@ -480,10 +481,10 @@ pub struct ForceConnectionGame {
     powerups: [[u32; 2]; 2],
     turn: ForceConnectionTurn,
     state: ForceConnectionGameState,
-    next_event_time: Instant,
+    time_until_next_event: Duration,
+    last_timer_update: Instant,
     stage_guid: i32,
     stage_group_guid: i32,
-    game_over: bool,
 }
 
 impl ForceConnectionGame {
@@ -504,10 +505,10 @@ impl ForceConnectionGame {
             powerups: [[1, 2]; 2],
             turn,
             state: ForceConnectionGameState::WaitingForPlayersReady,
-            next_event_time: Instant::now(),
+            time_until_next_event: Duration::ZERO,
+            last_timer_update: Instant::now(),
             stage_guid,
             stage_group_guid,
-            game_over: false,
         }
     }
 
@@ -841,7 +842,9 @@ impl ForceConnectionGame {
     }
 
     pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
-        if now < self.next_event_time || self.game_over {
+        self.time_until_next_event = self.time_until_next_event(now);
+        self.last_timer_update = now;
+        if !self.time_until_next_event.is_zero() {
             return Vec::new();
         }
 
@@ -868,6 +871,7 @@ impl ForceConnectionGame {
                 broadcasts
             }
             ForceConnectionGameState::Matching { .. } => self.process_matches(),
+            _ => Vec::new(),
         }
     }
 
@@ -907,13 +911,24 @@ impl ForceConnectionGame {
         recipients
     }
 
+    fn time_until_next_event(&self, now: Instant) -> Duration {
+        let time_since_last_tick = now.saturating_duration_since(self.last_timer_update);
+        self.time_until_next_event
+            .saturating_sub(time_since_last_tick)
+    }
+
+    fn start_event(&mut self, duration: Duration) {
+        self.last_timer_update = Instant::now();
+        self.time_until_next_event = duration;
+    }
+
     fn check_turn(
         &self,
         sender: u32,
         player_index: u8,
-        now: Instant,
+        turn_time: Instant,
     ) -> Result<(), ProcessPacketError> {
-        if self.game_over {
+        if self.state == ForceConnectionGameState::GameOver {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to make a move in Force Connection, but the game is over", sender, player_index)));
         }
 
@@ -927,7 +942,7 @@ impl ForceConnectionGame {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to make a move in Force Connection, but it isn't their turn", sender, player_index)));
         }
 
-        if now > self.next_event_time {
+        if self.time_until_next_event(turn_time).is_zero() {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to make a move in Force Connection, but their turn expired", sender, player_index)));
         }
 
@@ -968,12 +983,7 @@ impl ForceConnectionGame {
             ForceConnectionTurn::Player2 => ForceConnectionTurn::Player1,
         };
 
-        match Instant::now().checked_add(Duration::from_secs(TURN_TIME_SECONDS as u64)) {
-            Some(turn_end) => self.next_event_time = turn_end,
-            None => info!(
-                "Overflow while computing Force Connection turn end time after starting a turn"
-            ),
-        }
+        self.start_event(Duration::from_secs(TURN_TIME_SECONDS as u64));
 
         broadcasts.append(&mut self.broadcast_powerup_quantity(self.turn as u8));
         broadcasts.push(Broadcast::Multi(
@@ -1009,10 +1019,7 @@ impl ForceConnectionGame {
                 broadcasts.append(&mut self.process_match(player2_match_len, 1));
             }
 
-            match Instant::now().checked_add(Duration::from_millis(500)) {
-                Some(delay_end) => self.next_event_time = delay_end,
-                None => info!("Overflow while computing Force Connection delay end time after processing a match"),
-            }
+            self.start_event(Duration::from_millis(500));
 
             broadcasts.push(Broadcast::Multi(
                 self.list_recipients(),
@@ -1103,15 +1110,10 @@ impl ForceConnectionGame {
 
     fn handle_move(&mut self, turn_time: Instant, sleep_time: Duration) {
         self.state = ForceConnectionGameState::Matching {
-            turn_duration: self.next_event_time.saturating_duration_since(turn_time),
+            turn_duration: self.time_until_next_event(turn_time),
         };
 
-        match Instant::now().checked_add(sleep_time) {
-            Some(delay_end) => self.next_event_time = delay_end,
-            None => {
-                info!("Overflow while computing Force Connection delay end time after a piece drop")
-            }
-        }
+        self.start_event(sleep_time);
     }
 
     fn check_for_winner(&mut self) -> Option<Vec<Broadcast>> {
@@ -1123,7 +1125,7 @@ impl ForceConnectionGame {
         }
 
         let mut broadcasts = Vec::new();
-        self.game_over = true;
+        self.state = ForceConnectionGameState::GameOver;
         broadcasts.append(&mut self.broadcast_game_result(self.player1, player1_won));
         if let Some(player2) = self.player2 {
             broadcasts.append(&mut self.broadcast_game_result(player2, player2_won));
