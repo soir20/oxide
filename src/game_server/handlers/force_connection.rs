@@ -416,7 +416,7 @@ impl Display for ForceConnectionTurn {
     }
 }
 
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum ForceConnectionGameState {
     WaitingForPlayersReady,
     WaitingForMove,
@@ -614,7 +614,7 @@ impl ForceConnectionGame {
                             "OnAddPlayerMsg\t1\t{}\t{}\t{}",
                             name2,
                             self.player2.unwrap_or(0),
-                            self.player2.is_none()
+                            self.is_ai_match()
                         ),
                     },
                 }),
@@ -715,9 +715,8 @@ impl ForceConnectionGame {
             },
         )?;
 
-        self.handle_move(turn_time, Duration::from_secs(1));
-
-        Ok(vec![Broadcast::Multi(
+        let mut broadcasts = self.handle_move(turn_time, Duration::from_secs(1));
+        broadcasts.push(Broadcast::Multi(
             self.list_recipients(),
             vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
@@ -735,7 +734,9 @@ impl ForceConnectionGame {
                     ),
                 },
             })],
-        )])
+        ));
+
+        Ok(broadcasts)
     }
 
     pub fn use_swap_powerup(
@@ -760,9 +761,8 @@ impl ForceConnectionGame {
         self.board
             .swap_pieces(internal_row1, col1, internal_row2, col2)?;
 
-        self.handle_move(turn_time, Duration::from_millis(500));
-
-        Ok(vec![Broadcast::Multi(
+        let mut broadcasts = self.handle_move(turn_time, Duration::from_millis(500));
+        broadcasts.push(Broadcast::Multi(
             self.list_recipients(),
             vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
@@ -778,7 +778,9 @@ impl ForceConnectionGame {
                     ),
                 },
             })],
-        )])
+        ));
+
+        Ok(broadcasts)
     }
 
     pub fn use_delete_powerup(
@@ -806,9 +808,8 @@ impl ForceConnectionGame {
             },
         )?;
 
-        self.handle_move(turn_time, Duration::from_millis(500));
-
-        Ok(vec![Broadcast::Multi(
+        let mut broadcasts = self.handle_move(turn_time, Duration::from_millis(500));
+        broadcasts.push(Broadcast::Multi(
             self.list_recipients(),
             vec![
                 GamePacket::serialize(&TunneledPacket {
@@ -837,7 +838,9 @@ impl ForceConnectionGame {
                     },
                 }),
             ],
-        )])
+        ));
+
+        Ok(broadcasts)
     }
 
     pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
@@ -882,7 +885,7 @@ impl ForceConnectionGame {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to pause or resume (pause: {}) the game for player {}, who is not playing this instance of Force Connection", pause, player)));
         };
 
-        if self.player2.is_none() {
+        if self.is_ai_match() {
             return Ok(Vec::new());
         }
 
@@ -918,6 +921,10 @@ impl ForceConnectionGame {
         Ok(Vec::new())
     }
 
+    fn is_ai_match(&self) -> bool {
+        self.player2.is_none()
+    }
+
     fn list_recipients(&self) -> Vec<u32> {
         let mut recipients = vec![self.player1];
         if let Some(player2) = self.player2 {
@@ -949,13 +956,13 @@ impl ForceConnectionGame {
         player_index: u8,
         turn_time: Instant,
     ) -> Result<(), ProcessPacketError> {
-        if self.state == ForceConnectionGameState::GameOver {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to make a move in Force Connection, but the game is over", sender, player_index)));
+        if self.state != ForceConnectionGameState::WaitingForMove {
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to make a move in Force Connection, but the state is {:?} instead of waiting for a move", sender, player_index, self.state)));
         }
 
         let is_valid_for_player = match player_index {
             0 => self.turn == ForceConnectionTurn::Player1 && sender == self.player1,
-            1 => self.turn == ForceConnectionTurn::Player2 && ((sender == self.player1 && self.player2.is_none()) || (Some(sender) == self.player2)),
+            1 => self.turn == ForceConnectionTurn::Player2 && ((sender == self.player1 && self.is_ai_match()) || (Some(sender) == self.player2)),
             _ => return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to make a move in Force Connection, but the player index {} isn't valid", sender, player_index)))
         };
 
@@ -1006,7 +1013,6 @@ impl ForceConnectionGame {
 
         self.start_event(Duration::from_secs(TURN_TIME_SECONDS as u64));
 
-        broadcasts.append(&mut self.broadcast_powerup_quantity(self.turn as u8));
         broadcasts.push(Broadcast::Multi(
             self.list_recipients(),
             vec![GamePacket::serialize(&TunneledPacket {
@@ -1129,12 +1135,13 @@ impl ForceConnectionGame {
         broadcasts
     }
 
-    fn handle_move(&mut self, turn_time: Instant, sleep_time: Duration) {
+    fn handle_move(&mut self, turn_time: Instant, sleep_time: Duration) -> Vec<Broadcast> {
         self.state = ForceConnectionGameState::Matching {
             turn_duration: self.time_until_next_event(turn_time),
         };
 
         self.start_event(sleep_time);
+        self.broadcast_powerup_quantity(self.turn as u8)
     }
 
     fn check_for_winner(&mut self) -> Option<Vec<Broadcast>> {
