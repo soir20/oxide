@@ -71,6 +71,12 @@ pub enum Broadcast {
     Multi(Vec<u32>, Vec<Vec<u8>>),
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum LogLevel {
+    Debug,
+    Info,
+}
+
 #[non_exhaustive]
 #[derive(Clone, Copy, Debug)]
 pub enum ProcessPacketErrorType {
@@ -85,7 +91,7 @@ pub struct ProcessPacketError {
     backtrace: Backtrace,
     err_type: ProcessPacketErrorType,
     message: String,
-    silent: bool,
+    log_level: LogLevel,
 }
 
 impl ProcessPacketError {
@@ -94,25 +100,25 @@ impl ProcessPacketError {
             backtrace: Backtrace::capture(),
             err_type,
             message,
-            silent: false,
+            log_level: LogLevel::Info,
         }
     }
 
-    pub fn new_with_silence_status(
+    pub fn new_with_log_level(
         err_type: ProcessPacketErrorType,
         message: String,
-        silent: bool,
+        log_level: LogLevel,
     ) -> ProcessPacketError {
         ProcessPacketError {
             backtrace: Backtrace::capture(),
             err_type,
             message,
-            silent,
+            log_level,
         }
     }
 
-    pub fn silent(&self) -> bool {
-        self.silent
+    pub fn log_level(&self) -> LogLevel {
+        self.log_level
     }
 }
 

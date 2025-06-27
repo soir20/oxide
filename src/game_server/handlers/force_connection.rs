@@ -18,7 +18,7 @@ use crate::{
             tunnel::TunneledPacket,
             GamePacket,
         },
-        Broadcast, ProcessPacketError, ProcessPacketErrorType,
+        Broadcast, LogLevel, ProcessPacketError, ProcessPacketErrorType,
     },
 };
 
@@ -995,15 +995,14 @@ impl ForceConnectionGame {
         }
 
         if self.state != ForceConnectionGameState::WaitingForMove {
-            let silent = if self.is_ai_player(player_index) {
+            let log_level = if self.is_ai_player(player_index) {
                 // There's a known issue with the AI player attempting to use a powerup and drop a piece at the same time.
                 // Don't return an error to avoid log spam.
-                debug!("Force Connection AI tried to make a move, but the state is {:?} instead of waiting for a move", self.state);
-                true
+                LogLevel::Debug
             } else {
-                false
+                LogLevel::Info
             };
-            return Err(ProcessPacketError::new_with_silence_status(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to make a move in Force Connection, but the state is {:?} instead of waiting for a move (AI: {})", sender, player_index, self.state, self.is_ai_match()), silent));
+            return Err(ProcessPacketError::new_with_log_level(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to make a move in Force Connection, but the state is {:?} instead of waiting for a move (AI: {})", sender, player_index, self.state, self.is_ai_match()), log_level));
         }
 
         Ok(())
