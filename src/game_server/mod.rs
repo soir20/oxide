@@ -97,12 +97,7 @@ pub struct ProcessPacketError {
 
 impl ProcessPacketError {
     pub fn new(err_type: ProcessPacketErrorType, message: String) -> ProcessPacketError {
-        ProcessPacketError {
-            backtrace: Backtrace::capture(),
-            err_type,
-            message,
-            log_level: LogLevel::Info,
-        }
+        ProcessPacketError::new_with_log_level(err_type, message, LogLevel::Info)
     }
 
     pub fn new_with_log_level(
