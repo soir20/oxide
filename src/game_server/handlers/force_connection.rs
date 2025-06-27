@@ -951,7 +951,7 @@ impl ForceConnectionGame {
     }
 
     fn is_ai_player(&self, player_index: u8) -> bool {
-        player_index == 1 && self.player2.is_some()
+        player_index == 1 && self.player2.is_none()
     }
 
     fn list_recipients(&self) -> Vec<u32> {
