@@ -520,8 +520,9 @@ impl ForceConnectionGame {
             return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
                 format!(
-                    "Player {} tried to connect to Force Connection, but the game has already started (AI: {})",
+                    "Player {} tried to connect to Force Connection, but the game has already started (state: {:?}, AI: {})",
                     sender,
+                    self.state,
                     self.is_ai_match()
                 ),
             ));
