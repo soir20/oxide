@@ -752,6 +752,49 @@ impl ForceConnectionGame {
         Ok(broadcasts)
     }
 
+    pub fn toggle_powerup(
+        &self,
+        sender: u32,
+        powerup: u8,
+        player_index: u8,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        self.check_turn(sender, player_index, Instant::now())?;
+
+        if powerup > 1 {
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to toggle powerup {} in Force Connection, but it isn't a valid powerup (AI: {})", sender, player_index, powerup, self.is_ai_match())));
+        }
+
+        if self.powerups[player_index as usize][powerup as usize] == 0 {
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to toggle powerup {} in Force Connection, but they don't have any more of that powerup (AI: {})", sender, player_index, powerup, self.is_ai_match())));
+        }
+
+        let recipient = match self.turn {
+            ForceConnectionTurn::Player1 => {
+                let Some(player2) = self.player2 else {
+                    return Ok(Vec::new());
+                };
+
+                player2
+            }
+            ForceConnectionTurn::Player2 => self.player1,
+        };
+
+        Ok(vec![Broadcast::Single(
+            recipient,
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: FlashPayload {
+                    header: MinigameHeader {
+                        stage_guid: self.stage_guid,
+                        sub_op_code: -1,
+                        stage_group_guid: self.stage_group_guid,
+                    },
+                    payload: format!("OnOtherPlayerToggledPowerUpMsg\t{}", powerup),
+                },
+            })],
+        )])
+    }
+
     pub fn use_swap_powerup(
         &mut self,
         sender: u32,
