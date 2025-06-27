@@ -4276,7 +4276,7 @@
       param1: 0
       icon_id: 4041
       background_icon_id: 0
-      is_popular: false
+      is_popular: true
       is_game_of_day: false
       sort_order: 22000
       tutorial_swf: HowtoForceConnection.gfx
