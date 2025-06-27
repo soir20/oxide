@@ -2318,13 +2318,10 @@ fn handle_flash_payload(
     };
 
     result.map_err(|err| {
-        ProcessPacketError::new(
-            err.err_type,
-            format!(
-                "Error while processing Flash payload \"{}\" from player {}: {}",
-                payload.payload, sender, err
-            ),
-        )
+        err.wrap(format!(
+            "Error while processing Flash payload \"{}\" from player {}",
+            payload.payload, sender
+        ))
     })
 }
 

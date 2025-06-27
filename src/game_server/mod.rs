@@ -118,6 +118,15 @@ impl ProcessPacketError {
         }
     }
 
+    pub fn wrap(self, message: String) -> ProcessPacketError {
+        ProcessPacketError {
+            backtrace: self.backtrace,
+            err_type: self.err_type,
+            message: format!("{}: {}", message, self.message),
+            log_level: self.log_level,
+        }
+    }
+
     pub fn log_level(&self) -> LogLevel {
         self.log_level
     }
