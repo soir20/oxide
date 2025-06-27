@@ -2137,6 +2137,30 @@ fn handle_flash_payload(
                 }
             },
         ),
+        "FRServer_Pause" => handle_minigame_packet_write(
+            sender,
+            game_server,
+            &payload.header,
+            |_, _, _, _, shared_minigame_data, _| {
+                if parts.len() == 2 {
+                    let pause = parts[1].parse()?;
+                    match &mut shared_minigame_data.data {
+                        SharedMinigameTypeData::ForceConnection { game } => {
+                            game.pause_or_resume(sender, pause)
+                        }
+                        _ => Ok(Vec::new()),
+                    }
+                } else {
+                    Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::ConstraintViolated,
+                        format!(
+                            "Expected 1 parameter in pause payload, but only found {}",
+                            parts.len().saturating_sub(1)
+                        ),
+                    ))
+                }
+            },
+        ),
         "OnConnectMsg" => handle_minigame_packet_write(
             sender,
             game_server,

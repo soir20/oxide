@@ -6,20 +6,17 @@ use std::{
 use rand::{thread_rng, Rng};
 use serde::Serializer;
 
-use crate::{
-    debug,
-    game_server::{
-        handlers::{
-            character::MinigameStatus, guid::GuidTableIndexer,
-            lock_enforcer::CharacterTableReadHandle, unique_guid::player_guid,
-        },
-        packets::{
-            minigame::{FlashPayload, MinigameHeader, ScoreEntry, ScoreType},
-            tunnel::TunneledPacket,
-            GamePacket,
-        },
-        Broadcast, LogLevel, ProcessPacketError, ProcessPacketErrorType,
+use crate::game_server::{
+    handlers::{
+        character::MinigameStatus, guid::GuidTableIndexer, lock_enforcer::CharacterTableReadHandle,
+        unique_guid::player_guid,
     },
+    packets::{
+        minigame::{FlashPayload, MinigameHeader, ScoreEntry, ScoreType},
+        tunnel::TunneledPacket,
+        GamePacket,
+    },
+    Broadcast, LogLevel, ProcessPacketError, ProcessPacketErrorType,
 };
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -864,6 +861,10 @@ impl ForceConnectionGame {
     }
 
     pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
+        if self.paused {
+            return Vec::new();
+        }
+
         self.update_timer(now);
         if !self.time_until_next_event.is_zero() {
             return Vec::new();
@@ -905,12 +906,16 @@ impl ForceConnectionGame {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to pause or resume (pause: {}) the game for player {}, who is not playing this instance of Force Connection (AI: {})", pause, player, self.is_ai_match())));
         };
 
-        if self.is_ai_match() {
+        if !self.is_ai_match() {
             return Ok(Vec::new());
         }
 
+        let now = Instant::now();
+        if pause {
+            self.time_until_next_event = self.time_until_next_event(now);
+        }
+        self.last_timer_update = now;
         self.paused = pause;
-        self.update_timer(Instant::now());
         Ok(Vec::new())
     }
 
@@ -964,7 +969,7 @@ impl ForceConnectionGame {
             .saturating_sub(time_since_last_tick)
     }
 
-    fn start_event(&mut self, duration: Duration) {
+    fn schedule_event(&mut self, duration: Duration) {
         self.last_timer_update = Instant::now();
         self.time_until_next_event = duration;
     }
@@ -1042,7 +1047,7 @@ impl ForceConnectionGame {
             ForceConnectionTurn::Player2 => ForceConnectionTurn::Player1,
         };
 
-        self.start_event(Duration::from_secs(TURN_TIME_SECONDS as u64));
+        self.schedule_event(Duration::from_secs(TURN_TIME_SECONDS as u64));
 
         broadcasts.push(Broadcast::Multi(
             self.list_recipients(),
@@ -1077,7 +1082,7 @@ impl ForceConnectionGame {
                 broadcasts.append(&mut self.process_match(player2_match_len, 1));
             }
 
-            self.start_event(Duration::from_millis(500));
+            self.schedule_event(Duration::from_millis(500));
 
             broadcasts.push(Broadcast::Multi(
                 self.list_recipients(),
@@ -1171,7 +1176,7 @@ impl ForceConnectionGame {
             turn_duration: self.time_until_next_event(turn_time),
         };
 
-        self.start_event(sleep_time);
+        self.schedule_event(sleep_time);
         self.broadcast_powerup_quantity(self.turn as u8)
     }
 

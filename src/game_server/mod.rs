@@ -4,6 +4,7 @@ use std::fmt::Display;
 use std::io::{Cursor, Error};
 use std::num::ParseIntError;
 use std::path::Path;
+use std::str::ParseBoolError;
 use std::time::Instant;
 use std::vec;
 
@@ -127,6 +128,15 @@ impl From<Error> for ProcessPacketError {
         ProcessPacketError::new(
             ProcessPacketErrorType::DeserializeError,
             format!("IO Error: {}", err),
+        )
+    }
+}
+
+impl From<ParseBoolError> for ProcessPacketError {
+    fn from(err: ParseBoolError) -> Self {
+        ProcessPacketError::new(
+            ProcessPacketErrorType::DeserializeError,
+            format!("Parse bool error: {}", err),
         )
     }
 }
