@@ -2170,7 +2170,13 @@ fn handle_flash_payload(
                     SharedMinigameTypeData::ForceConnection { game } => {
                         game.connect(sender, characters_table_read_handle)
                     }
-                    _ => Ok(Vec::new()),
+                    _ => Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::ConstraintViolated,
+                        format!(
+                            "Received connect message for unexpected game from player {}",
+                            sender
+                        ),
+                    )),
                 }
             },
         ),
@@ -2180,33 +2186,42 @@ fn handle_flash_payload(
             &payload.header,
             |_, _, _, _, shared_minigame_data, _| match &mut shared_minigame_data.data {
                 SharedMinigameTypeData::ForceConnection { game } => game.mark_player_ready(sender),
-                _ => Ok(Vec::new()),
+                _ => Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Received player ready message for unexpected game from player {}",
+                        sender
+                    ),
+                )),
             },
         ),
         "OnSelectNewColumnMsg" => handle_flash_payload_read_only(
             sender,
             game_server,
             &payload.header,
-            |_, _, shared_minigame_data| {
-                match &shared_minigame_data.data
-                {
-                    SharedMinigameTypeData::ForceConnection { game } => {
-                        if parts.len() == 3 {
-                            let col = parts[1].parse()?;
-                            let player_index = parts[2].parse()?;
-                            game.select_column(sender, col, player_index)
-                        } else {
-                            Err(ProcessPacketError::new(
-                                ProcessPacketErrorType::ConstraintViolated,
-                                format!(
-                                    "Expected 2 parameters in select column payload, but only found {}",
-                                    parts.len().saturating_sub(1)
-                                ),
-                            ))
-                        }
+            |_, _, shared_minigame_data| match &shared_minigame_data.data {
+                SharedMinigameTypeData::ForceConnection { game } => {
+                    if parts.len() == 3 {
+                        let col = parts[1].parse()?;
+                        let player_index = parts[2].parse()?;
+                        game.select_column(sender, col, player_index)
+                    } else {
+                        Err(ProcessPacketError::new(
+                            ProcessPacketErrorType::ConstraintViolated,
+                            format!(
+                                "Expected 2 parameters in select column payload, but only found {}",
+                                parts.len().saturating_sub(1)
+                            ),
+                        ))
                     }
-                    _ => Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Received select column message for non-Force Connection game from player {}", sender))),
                 }
+                _ => Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Received select column message for unexpected game from player {}",
+                        sender
+                    ),
+                )),
             },
         ),
         "OnRequestDropPieceMsg" => handle_minigame_packet_write(
@@ -2229,33 +2244,42 @@ fn handle_flash_payload(
                         ))
                     }
                 }
-                _ => Ok(Vec::new()),
+                _ => Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Received drop piece message for unexpected game from player {}",
+                        sender
+                    ),
+                )),
             },
         ),
         "OnTogglePowerUpMsg" => handle_flash_payload_read_only(
             sender,
             game_server,
             &payload.header,
-            |_, _, shared_minigame_data| {
-                match &shared_minigame_data.data
-                {
-                    SharedMinigameTypeData::ForceConnection { game } => {
-                        if parts.len() == 3 {
-                            let powerup = parts[1].parse()?;
-                            let player_index = parts[2].parse()?;
-                            game.toggle_powerup(sender, powerup, player_index)
-                        } else {
-                            Err(ProcessPacketError::new(
+            |_, _, shared_minigame_data| match &shared_minigame_data.data {
+                SharedMinigameTypeData::ForceConnection { game } => {
+                    if parts.len() == 3 {
+                        let powerup = parts[1].parse()?;
+                        let player_index = parts[2].parse()?;
+                        game.toggle_powerup(sender, powerup, player_index)
+                    } else {
+                        Err(ProcessPacketError::new(
                                 ProcessPacketErrorType::ConstraintViolated,
                                 format!(
                                     "Expected 2 parameters in toggle powerup payload, but only found {}",
                                     parts.len().saturating_sub(1)
                                 ),
                             ))
-                        }
                     }
-                    _ => Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Received toggle powerup message for non-Force Connection game from player {}", sender))),
                 }
+                _ => Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Received toggle powerup message for unexpected game from player {}",
+                        sender
+                    ),
+                )),
             },
         ),
         "OnRequestUseLightPowerUpMsg" => handle_minigame_packet_write(
@@ -2281,7 +2305,13 @@ fn handle_flash_payload(
                         ))
                     }
                 }
-                _ => Ok(Vec::new()),
+                _ => Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Received swap powerup request for unexpected game from player {}",
+                        sender
+                    ),
+                )),
             },
         ),
         "OnRequestUseDarkPowerUpMsg" => handle_minigame_packet_write(
@@ -2305,7 +2335,13 @@ fn handle_flash_payload(
                         ))
                     }
                 }
-                _ => Ok(Vec::new()),
+                _ => Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Received delete powerup request for unexpected game from player {}",
+                        sender
+                    ),
+                )),
             },
         ),
         _ => Err(ProcessPacketError::new(
