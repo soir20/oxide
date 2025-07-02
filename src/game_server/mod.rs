@@ -4,6 +4,7 @@ use std::fmt::Display;
 use std::io::{Cursor, Error};
 use std::num::ParseIntError;
 use std::path::Path;
+use std::str::ParseBoolError;
 use std::time::Instant;
 use std::vec;
 
@@ -71,8 +72,14 @@ pub enum Broadcast {
     Multi(Vec<u32>, Vec<Vec<u8>>),
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum LogLevel {
+    Debug,
+    Info,
+}
+
 #[non_exhaustive]
-#[derive(Debug)]
+#[derive(Clone, Copy, Debug)]
 pub enum ProcessPacketErrorType {
     ConstraintViolated,
     DeserializeError,
@@ -80,19 +87,43 @@ pub enum ProcessPacketErrorType {
     UnknownOpCode,
 }
 
+#[derive(Debug)]
 pub struct ProcessPacketError {
     backtrace: Backtrace,
     err_type: ProcessPacketErrorType,
     message: String,
+    log_level: LogLevel,
 }
 
 impl ProcessPacketError {
     pub fn new(err_type: ProcessPacketErrorType, message: String) -> ProcessPacketError {
+        ProcessPacketError::new_with_log_level(err_type, message, LogLevel::Info)
+    }
+
+    pub fn new_with_log_level(
+        err_type: ProcessPacketErrorType,
+        message: String,
+        log_level: LogLevel,
+    ) -> ProcessPacketError {
         ProcessPacketError {
             backtrace: Backtrace::capture(),
             err_type,
             message,
+            log_level,
         }
+    }
+
+    pub fn wrap(self, message: String) -> ProcessPacketError {
+        ProcessPacketError {
+            backtrace: self.backtrace,
+            err_type: self.err_type,
+            message: format!("{}: {}", message, self.message),
+            log_level: self.log_level,
+        }
+    }
+
+    pub fn log_level(&self) -> LogLevel {
+        self.log_level
     }
 }
 
@@ -101,6 +132,15 @@ impl From<Error> for ProcessPacketError {
         ProcessPacketError::new(
             ProcessPacketErrorType::DeserializeError,
             format!("IO Error: {}", err),
+        )
+    }
+}
+
+impl From<ParseBoolError> for ProcessPacketError {
+    fn from(err: ParseBoolError) -> Self {
+        ProcessPacketError::new(
+            ProcessPacketErrorType::DeserializeError,
+            format!("Parse bool error: {}", err),
         )
     }
 }

@@ -175,7 +175,7 @@ pub fn tick_matchmaking_groups(game_server: &GameServer) -> Vec<Broadcast> {
                             }
 
                             if players_in_group.len() == 1 {
-                                if let Some(replacement_stage_locator) = &stage.stage_config.single_player_stage_guid() {
+                                if let Some(replacement_stage_locator) = &stage.stage_config.single_player_stage() {
                                     if let Some(replacement_stage) = game_server
                                         .minigames()
                                         .stage_config(replacement_stage_locator.stage_group_guid, replacement_stage_locator.stage_guid)
