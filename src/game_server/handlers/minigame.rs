@@ -2541,6 +2541,13 @@ fn leave_active_minigame_single_player_if_any(
                 vec![
                     GamePacket::serialize(&TunneledPacket {
                         unknown1: true,
+                        inner: ExecuteScriptWithStringParams {
+                            script_name: "MiniGameFlash.StopAllSounds".to_string(),
+                            params: vec![],
+                        },
+                    }),
+                    GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
                         inner: FlashPayload {
                             header: MinigameHeader {
                                 stage_guid: minigame_status.group.stage_guid,
