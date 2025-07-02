@@ -5,7 +5,7 @@ use std::{
     iter,
     path::Path,
     sync::Arc,
-    time::Instant,
+    time::{Duration, Instant},
 };
 
 use byteorder::ReadBytesExt;
@@ -164,7 +164,7 @@ pub enum MatchmakingGroupStatus {
 pub enum MinigameReadiness {
     Matchmaking,
     InitialPlayersLoading(BTreeSet<u32>, Option<Instant>),
-    Ready(Instant),
+    Ready(Duration, Option<Instant>),
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
@@ -1148,11 +1148,32 @@ pub fn load_all_minigames(config_dir: &Path) -> Result<AllMinigameConfigs, Confi
                         }
                     }
                     MinigameStageGroupChild::Stage(stage) => {
-                        if !stage_guids.insert(stage.guid) {
-                            return Err(ConfigError::ConstraintViolated(format!(
-                                "Two stages have GUID {}",
-                                stage.guid
-                            )));
+                        for stage in iter::once(MinigameStageConfig::CampaignStage(stage)).chain(
+                            stage
+                                .challenges
+                                .iter()
+                                .map(|challenge| MinigameStageConfig::Challenge(challenge, stage)),
+                        ) {
+                            if stage.min_players() == 0 {
+                                return Err(ConfigError::ConstraintViolated(format!(
+                                    "Stage {} must have a minimum of at least 1 player",
+                                    stage.guid()
+                                )));
+                            }
+
+                            if stage.max_players() < stage.min_players() {
+                                return Err(ConfigError::ConstraintViolated(format!(
+                                    "Stage {}'s maximum player count is lower than its minimum player count",
+                                    stage.guid()
+                                )));
+                            }
+
+                            if !stage_guids.insert(stage.guid()) {
+                                return Err(ConfigError::ConstraintViolated(format!(
+                                    "Two stages have GUID {}",
+                                    stage.guid()
+                                )));
+                            }
                         }
                     }
                 }
@@ -1703,7 +1724,7 @@ fn handle_request_start_active_minigame(
                         }
 
                         if players.remove(&sender) && players.is_empty() {
-                            shared_minigame_data.readiness = MinigameReadiness::Ready(first_player_load_time.unwrap_or(now));
+                            shared_minigame_data.readiness = MinigameReadiness::Ready(Duration::ZERO, Some(first_player_load_time.unwrap_or(now)));
                         }
                     }
 
@@ -1958,9 +1979,16 @@ fn handle_flash_payload_game_result(
                 ));
             }
 
-            let MinigameReadiness::Ready(start_time) = shared_minigame_data.readiness else {
+            let MinigameReadiness::Ready(previous_time, possible_resume_time) =
+                shared_minigame_data.readiness
+            else {
                 return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} sent a Flash game result payload (won: {}) for a game that isn't ready yet", sender, won)));
             };
+
+            let now = Instant::now();
+            let total_time = previous_time
+                .saturating_add(now.saturating_duration_since(possible_resume_time.unwrap_or(now)))
+                .as_millis();
 
             let total_score = parts[1].parse()?;
             minigame_status.total_score = total_score;
@@ -1984,10 +2012,7 @@ fn handle_flash_payload_game_result(
                             sub_op_code: -1,
                             stage_group_guid: minigame_status.group.stage_group_guid,
                         },
-                        payload: format!(
-                            "OnGamePlayTimeMsg\t{}",
-                            Instant::now().duration_since(start_time).as_millis()
-                        ),
+                        payload: format!("OnGamePlayTimeMsg\t{}", total_time),
                     },
                 })],
             )])
@@ -2141,9 +2166,28 @@ fn handle_flash_payload(
             sender,
             game_server,
             &payload.header,
-            |_, _, _, _, shared_minigame_data, _| {
+            |_, _, _, stage_config, shared_minigame_data, _| {
                 if parts.len() == 2 {
                     let pause = parts[1].parse()?;
+
+                    if stage_config.stage_config.max_players() == 1 {
+                        if let MinigameReadiness::Ready(previous_time, possible_resume_time) =
+                            &mut shared_minigame_data.readiness
+                        {
+                            let now = Instant::now();
+                            if pause {
+                                if let Some(resume_time) = possible_resume_time {
+                                    *previous_time = previous_time.saturating_add(
+                                        now.saturating_duration_since(*resume_time),
+                                    );
+                                    *possible_resume_time = None;
+                                }
+                            } else {
+                                *possible_resume_time = Some(now);
+                            }
+                        }
+                    }
+
                     match &mut shared_minigame_data.data {
                         SharedMinigameTypeData::ForceConnection { game } => {
                             game.pause_or_resume(sender, pause)
