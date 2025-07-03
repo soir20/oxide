@@ -7346,9 +7346,9 @@
   unknown40: 0
   stats: []
   abilities: []
-- comment: Han Solo's Outfit
+- comment: Smuggler Vest
   guid: 10166
-  name_id: 302
+  name_id: 54608
   description_id: 14
   icon_set_id: 3839
   tint: 0
@@ -8163,9 +8163,9 @@
   unknown40: 0
   stats: []
   abilities: []
-- comment: Lando Calrissian's Suit
+- comment: Scoundrel Suit
   guid: 10185
-  name_id: 1462
+  name_id: 54609
   description_id: 14
   icon_set_id: 3841
   tint: 0
@@ -39890,9 +39890,9 @@
   unknown40: 0
   stats: []
   abilities: []
-- comment: Han Solo's Boots
+- comment: Smuggler Boots
   guid: 40162
-  name_id: 304
+  name_id: 54607
   description_id: 14
   icon_set_id: 3840
   tint: 0
@@ -40879,9 +40879,9 @@
   unknown40: 0
   stats: []
   abilities: []
-- comment: Lando Calrissian's Shoes
+- comment: Scoundrel Shoes
   guid: 40185
-  name_id: 1472
+  name_id: 54610
   description_id: 14
   icon_set_id: 3842
   tint: 0
