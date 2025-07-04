@@ -46272,7 +46272,7 @@
   required_gender: 0
   item_type: 25
   category: 64
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -46444,7 +46444,7 @@
   required_gender: 0
   item_type: 25
   category: 64
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -46530,7 +46530,7 @@
   required_gender: 0
   item_type: 25
   category: 64
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -46573,7 +46573,7 @@
   required_gender: 0
   item_type: 25
   category: 64
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -46702,7 +46702,7 @@
   required_gender: 0
   item_type: 25
   category: 64
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -46917,7 +46917,7 @@
   required_gender: 0
   item_type: 25
   category: 64
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -46960,7 +46960,7 @@
   required_gender: 0
   item_type: 25
   category: 64
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -47218,7 +47218,7 @@
   required_gender: 0
   item_type: 25
   category: 64
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -47433,7 +47433,7 @@
   required_gender: 0
   item_type: 25
   category: 64
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -47519,7 +47519,7 @@
   required_gender: 0
   item_type: 25
   category: 64
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -47562,7 +47562,7 @@
   required_gender: 0
   item_type: 25
   category: 64
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -47605,7 +47605,7 @@
   required_gender: 0
   item_type: 25
   category: 64
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -47691,7 +47691,7 @@
   required_gender: 0
   item_type: 25
   category: 64
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -47949,7 +47949,7 @@
   required_gender: 0
   item_type: 25
   category: 64
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -47992,7 +47992,7 @@
   required_gender: 0
   item_type: 25
   category: 64
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -48121,7 +48121,7 @@
   required_gender: 0
   item_type: 25
   category: 64
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -48164,7 +48164,7 @@
   required_gender: 0
   item_type: 25
   category: 64
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -48379,7 +48379,7 @@
   required_gender: 0
   item_type: 25
   category: 64
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -48465,7 +48465,7 @@
   required_gender: 0
   item_type: 25
   category: 64
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -48551,7 +48551,7 @@
   required_gender: 0
   item_type: 25
   category: 64
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -48723,7 +48723,7 @@
   required_gender: 0
   item_type: 25
   category: 64
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -48766,7 +48766,7 @@
   required_gender: 0
   item_type: 25
   category: 64
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -48852,7 +48852,7 @@
   required_gender: 0
   item_type: 25
   category: 64
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -48895,7 +48895,7 @@
   required_gender: 0
   item_type: 25
   category: 64
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -48981,7 +48981,7 @@
   required_gender: 0
   item_type: 25
   category: 0
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -49196,7 +49196,7 @@
   required_gender: 0
   item_type: 25
   category: 0
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -49239,7 +49239,7 @@
   required_gender: 0
   item_type: 25
   category: 0
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -49497,7 +49497,7 @@
   required_gender: 0
   item_type: 25
   category: 0
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -49712,7 +49712,7 @@
   required_gender: 0
   item_type: 25
   category: 0
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -49798,7 +49798,7 @@
   required_gender: 0
   item_type: 25
   category: 0
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -49841,7 +49841,7 @@
   required_gender: 0
   item_type: 25
   category: 0
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -49884,7 +49884,7 @@
   required_gender: 0
   item_type: 25
   category: 0
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -49970,7 +49970,7 @@
   required_gender: 0
   item_type: 25
   category: 0
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -50228,7 +50228,7 @@
   required_gender: 0
   item_type: 25
   category: 0
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -50271,7 +50271,7 @@
   required_gender: 0
   item_type: 25
   category: 0
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -50400,7 +50400,7 @@
   required_gender: 0
   item_type: 25
   category: 0
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -50443,7 +50443,7 @@
   required_gender: 0
   item_type: 25
   category: 0
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -50658,7 +50658,7 @@
   required_gender: 0
   item_type: 25
   category: 0
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -50744,7 +50744,7 @@
   required_gender: 0
   item_type: 25
   category: 0
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -50830,7 +50830,7 @@
   required_gender: 0
   item_type: 25
   category: 0
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -51002,7 +51002,7 @@
   required_gender: 0
   item_type: 25
   category: 0
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -51045,7 +51045,7 @@
   required_gender: 0
   item_type: 25
   category: 64
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -51131,7 +51131,7 @@
   required_gender: 0
   item_type: 25
   category: 0
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
@@ -51174,7 +51174,7 @@
   required_gender: 0
   item_type: 25
   category: 0
-  members: false
+  members: true
   non_minigame: false
   weapon_trail_effect: 0
   composite_effect: 0
