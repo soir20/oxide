@@ -55150,9 +55150,9 @@
   unknown40: 0
   stats: []
   abilities: []
-- comment: Covert Diplomat Blaster Pistol
+- comment: Royal Hold-out Blaster Pistol
   guid: 110059
-  name_id: 8792
+  name_id: 8791
   description_id: 14
   icon_set_id: 247
   tint: 0
@@ -55451,9 +55451,9 @@
   unknown40: 0
   stats: []
   abilities: []
-- comment: Royal Hold-out Blaster Pistol
+- comment: Covert Diplomat Blaster Pistol
   guid: 110066
-  name_id: 8791
+  name_id: 8792
   description_id: 14
   icon_set_id: 249
   tint: 0
