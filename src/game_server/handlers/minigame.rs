@@ -18,8 +18,8 @@ use serde::{de::IgnoredAny, Deserialize};
 use crate::{
     game_server::{
         handlers::{
-            character::MinigameStatus, force_connection::ForceConnectionGame,
-            lock_enforcer::CharacterTableReadHandle,
+            character::MinigameStatus, fleet_commander::FleetCommanderGame,
+            force_connection::ForceConnectionGame, lock_enforcer::CharacterTableReadHandle,
         },
         packets::{
             chat::{ActionBarTextColor, SendStringId},
@@ -208,6 +208,9 @@ impl
 
     fn index1(&self) -> SharedMinigameDataTickableIndex {
         match self.data {
+            SharedMinigameTypeData::FleetCommander { .. } => {
+                SharedMinigameDataTickableIndex::Tickable
+            }
             SharedMinigameTypeData::ForceConnection { .. } => {
                 SharedMinigameDataTickableIndex::Tickable
             }
@@ -233,8 +236,7 @@ impl
 #[derive(Clone, Default)]
 pub enum SharedMinigameTypeData {
     FleetCommander {
-        player1: u32,
-        player2: Option<u32>,
+        game: Box<FleetCommanderGame>,
     },
     ForceConnection {
         game: Box<ForceConnectionGame>,
@@ -256,9 +258,14 @@ impl SharedMinigameTypeData {
 
         match minigame_type {
             MinigameType::Flash { game_type, .. } => match game_type {
-                FlashMinigameType::FleetCommander => {
-                    SharedMinigameTypeData::FleetCommander { player1, player2 }
-                }
+                FlashMinigameType::FleetCommander => SharedMinigameTypeData::FleetCommander {
+                    game: Box::new(FleetCommanderGame::new(
+                        player1,
+                        player2,
+                        stage_guid,
+                        stage_group_guid,
+                    )),
+                },
                 FlashMinigameType::ForceConnection => SharedMinigameTypeData::ForceConnection {
                     game: Box::new(ForceConnectionGame::new(
                         player1,
@@ -275,6 +282,7 @@ impl SharedMinigameTypeData {
 
     pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
         match self {
+            SharedMinigameTypeData::FleetCommander { game } => game.tick(now),
             SharedMinigameTypeData::ForceConnection { game } => game.tick(now),
             _ => Vec::new(),
         }
@@ -286,6 +294,9 @@ impl SharedMinigameTypeData {
         minigame_status: &mut MinigameStatus,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         match self {
+            SharedMinigameTypeData::FleetCommander { game } => {
+                game.remove_player(player, minigame_status)
+            }
             SharedMinigameTypeData::ForceConnection { game } => {
                 game.remove_player(player, minigame_status)
             }
@@ -2189,6 +2200,9 @@ fn handle_flash_payload(
                     }
 
                     match &mut shared_minigame_data.data {
+                        SharedMinigameTypeData::FleetCommander { game } => {
+                            game.pause_or_resume(sender, pause)
+                        }
                         SharedMinigameTypeData::ForceConnection { game } => {
                             game.pause_or_resume(sender, pause)
                         }
@@ -2211,6 +2225,9 @@ fn handle_flash_payload(
             &payload.header,
             |_, _, _, _, shared_minigame_data, characters_table_read_handle| {
                 match &mut shared_minigame_data.data {
+                    SharedMinigameTypeData::FleetCommander { game } => {
+                        game.connect(sender, characters_table_read_handle)
+                    }
                     SharedMinigameTypeData::ForceConnection { game } => {
                         game.connect(sender, characters_table_read_handle)
                     }
@@ -2229,6 +2246,7 @@ fn handle_flash_payload(
             game_server,
             &payload.header,
             |_, _, _, _, shared_minigame_data, _| match &mut shared_minigame_data.data {
+                SharedMinigameTypeData::FleetCommander { game } => game.mark_player_ready(sender),
                 SharedMinigameTypeData::ForceConnection { game } => game.mark_player_ready(sender),
                 _ => Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
