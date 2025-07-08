@@ -321,6 +321,14 @@ impl MinigameTimer {
         }
     }
 
+    pub fn new_with_event(duration: Duration) -> Self {
+        MinigameTimer {
+            paused: false,
+            time_until_next_event: duration,
+            last_timer_update: Instant::now(),
+        }
+    }
+
     pub fn paused(&self) -> bool {
         self.paused
     }

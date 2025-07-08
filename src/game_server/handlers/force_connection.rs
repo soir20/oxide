@@ -36,7 +36,7 @@ impl Display for ForceConnectionPiece {
 
 const BOARD_SIZE: u8 = 10;
 const MIN_MATCH_LENGTH: u8 = 4;
-const TURN_TIME_SECONDS: u8 = 20;
+const TURN_TIME: Duration = Duration::from_secs(20);
 const MATCHES_TO_WIN: u8 = 5;
 
 #[derive(Clone, Debug)]
@@ -1064,8 +1064,7 @@ impl ForceConnectionGame {
             ForceConnectionTurn::Player2 => ForceConnectionTurn::Player1,
         };
 
-        self.timer
-            .schedule_event(Duration::from_secs(TURN_TIME_SECONDS as u64));
+        self.timer.schedule_event(TURN_TIME);
 
         broadcasts.push(Broadcast::Multi(
             self.list_recipients(),
@@ -1077,7 +1076,11 @@ impl ForceConnectionGame {
                         sub_op_code: -1,
                         stage_group_guid: self.stage_group_guid,
                     },
-                    payload: format!("OnStartPlayerTurnMsg\t{}\t{}", self.turn, TURN_TIME_SECONDS),
+                    payload: format!(
+                        "OnStartPlayerTurnMsg\t{}\t{}",
+                        self.turn,
+                        TURN_TIME.as_secs()
+                    ),
                 },
             })],
         ));
