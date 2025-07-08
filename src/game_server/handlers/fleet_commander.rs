@@ -13,11 +13,11 @@ use crate::game_server::{
         minigame::MinigameTimer, unique_guid::player_guid,
     },
     packets::{
-        minigame::{FlashPayload, MinigameHeader, ScoreType},
+        minigame::{FlashPayload, MinigameHeader},
         tunnel::TunneledPacket,
         GamePacket,
     },
-    Broadcast, LogLevel, ProcessPacketError, ProcessPacketErrorType,
+    Broadcast, ProcessPacketError, ProcessPacketErrorType,
 };
 
 const BOARD_SIZE: u8 = 15;
@@ -26,6 +26,7 @@ const LEN3_SHIPS: u8 = 2;
 const LEN4_SHIPS: u8 = 2;
 const LEN5_SHIPS: u8 = 1;
 const TOTAL_SHIPS: u8 = LEN2_SHIPS + LEN3_SHIPS + LEN4_SHIPS + LEN5_SHIPS;
+const SHIP_PLACEMENT_TIMEOUT: Duration = Duration::from_secs(60);
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum FleetCommanderShipSize {
@@ -99,12 +100,20 @@ impl Display for FleetCommanderTurn {
 }
 
 #[derive(Clone, Debug)]
+enum FleetCommanderPlacementState {
+    WaitingForConnection,
+    WaitingForPlacement { timer: MinigameTimer },
+    Done,
+}
+
+#[derive(Clone, Debug)]
 enum FleetCommanderGameState {
     WaitingForPlayersReady {
-        player1_ship_placement_timer: MinigameTimer,
-        player2_ship_placement_timer: MinigameTimer,
+        ship_placement_timers: [FleetCommanderPlacementState; 2],
     },
-    WaitingForMove,
+    WaitingForMove {
+        timer: MinigameTimer,
+    },
     ProcessingMove {
         turn_duration: Duration,
         animations_complete: [bool; 2],
@@ -119,7 +128,6 @@ pub struct FleetCommanderGame {
     player_states: [FleetCommanderPlayerState; 2],
     turn: FleetCommanderTurn,
     state: FleetCommanderGameState,
-    timer: MinigameTimer,
     stage_guid: i32,
     stage_group_guid: i32,
 }
@@ -138,32 +146,23 @@ impl FleetCommanderGame {
             player_states: Default::default(),
             turn,
             state: FleetCommanderGameState::WaitingForPlayersReady {
-                player1_ship_placement_timer: MinigameTimer::new(),
-                player2_ship_placement_timer: MinigameTimer::new(),
+                ship_placement_timers: [
+                    FleetCommanderPlacementState::WaitingForConnection,
+                    FleetCommanderPlacementState::WaitingForConnection,
+                ],
             },
-            timer: MinigameTimer::new(),
             stage_guid,
             stage_group_guid,
         }
     }
 
     pub fn connect(
-        &self,
+        &mut self,
         sender: u32,
         characters_table_read_handle: &CharacterTableReadHandle,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        if !matches!(
-            self.state,
-            FleetCommanderGameState::WaitingForPlayersReady { .. }
-        ) {
-            return Err(ProcessPacketError::new(
-                ProcessPacketErrorType::ConstraintViolated,
-                format!(
-                    "Player {} tried to connect to Fleet Commander, but the game has already started ({:?})",
-                    sender,
-                    self
-                ),
-            ));
+        if sender != self.player1 && Some(sender) != self.player2 {
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} sent a connect payload for Fleet Commander, but they aren't one of the game's players ({:?})", sender, self)));
         }
 
         let Some(name1) = characters_table_read_handle.index2(player_guid(self.player1)) else {
@@ -188,6 +187,33 @@ impl FleetCommanderGame {
                 ))?,
             None => &"".to_string(),
         };
+
+        let FleetCommanderGameState::WaitingForPlayersReady {
+            ship_placement_timers,
+        } = &mut self.state
+        else {
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!(
+                    "Player {} tried to connect to Fleet Commander, but the game has already started ({:?})",
+                    sender,
+                    self
+                ),
+            ));
+        };
+
+        let player_index = (sender != self.player1) as usize;
+        if !matches!(
+            ship_placement_timers[player_index],
+            FleetCommanderPlacementState::WaitingForConnection
+        ) {
+            return Ok(Vec::new());
+        }
+
+        ship_placement_timers[player_index] = FleetCommanderPlacementState::WaitingForPlacement {
+            timer: MinigameTimer::new_with_event(SHIP_PLACEMENT_TIMEOUT),
+        };
+
         let mut broadcasts = vec![Broadcast::Single(
             sender,
             vec![
@@ -212,7 +238,7 @@ impl FleetCommanderGame {
                         },
                         payload: format!(
                             "OnAssignPlayerIndexMsg\t{}",
-                            (sender != self.player1) as u8
+                            player_index
                         ),
                     },
                 }),
@@ -269,20 +295,9 @@ impl FleetCommanderGame {
                             sub_op_code: -1,
                             stage_group_guid: self.stage_group_guid,
                         },
-                        payload: format!("OnStartShipPlacementMsg\t{}", 60000),
+                        payload: format!("OnStartShipPlacementMsg\t{}", SHIP_PLACEMENT_TIMEOUT.as_millis()),
                     },
                 })
-                /*GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: FlashPayload {
-                        header: MinigameHeader {
-                            stage_guid: self.stage_guid,
-                            sub_op_code: -1,
-                            stage_group_guid: self.stage_group_guid,
-                        },
-                        payload: "OnStartGameMsg".to_string(),
-                    },
-                })*/
             ],
         )];
 
@@ -293,102 +308,34 @@ impl FleetCommanderGame {
         Ok(broadcasts)
     }
 
-    /*pub fn drop_piece(
-        &mut self,
-        sender: u32,
-        col: u8,
-        player_index: u8,
-    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        let turn_time = Instant::now();
-        self.check_turn(sender, player_index, turn_time)?;
-        let row = self.player_states.drop_piece(
-            col,
-            match self.turn {
-                FleetCommanderTurn::Player1 => FleetCommanderPiece::Player1,
-                FleetCommanderTurn::Player2 => FleetCommanderPiece::Player2,
-            },
-        )?;
-
-        let mut broadcasts = self.handle_move(turn_time, Duration::from_secs(1));
-        broadcasts.push(Broadcast::Multi(
-            self.list_recipients(),
-            vec![GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: FlashPayload {
-                    header: MinigameHeader {
-                        stage_guid: self.stage_guid,
-                        sub_op_code: -1,
-                        stage_group_guid: self.stage_group_guid,
-                    },
-                    payload: format!(
-                        "OnDropPieceMsg\t{}\t{}\t{}",
-                        player_index,
-                        internal_row_to_external_row(row),
-                        col
-                    ),
-                },
-            })],
-        ));
-
-        Ok(broadcasts)
-    }
-
-    /*pub fn toggle_powerup(
-        &self,
-        sender: u32,
-        powerup: u8,
-        player_index: u8,
-    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        self.check_turn(sender, player_index, Instant::now())?;
-
-        if powerup > 2 {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to toggle powerup {} in Fleet Commander, but it isn't a valid powerup ({:?})", sender, player_index, powerup, self)));
-        }
-
-        if self.powerups[player_index as usize][powerup as usize] == 0 {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to toggle powerup {} in Fleet Commander, but they don't have any more of that powerup ({:?})", sender, player_index, powerup, self)));
-        }
-
-        let recipient = match self.turn {
-            FleetCommanderTurn::Player1 => {
-                let Some(player2) = self.player2 else {
-                    return Ok(Vec::new());
-                };
-
-                player2
-            }
-            FleetCommanderTurn::Player2 => self.player1,
-        };
-
-        Ok(vec![Broadcast::Single(
-            recipient,
-            vec![GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: FlashPayload {
-                    header: MinigameHeader {
-                        stage_guid: self.stage_guid,
-                        sub_op_code: -1,
-                        stage_group_guid: self.stage_group_guid,
-                    },
-                    payload: format!("OnOtherPlayerToggledPowerUpMsg\t{}", powerup),
-                },
-            })],
-        )])
-    }*/*/
-
     pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
-        if self.timer.paused() {
-            return Vec::new();
-        }
+        match &mut self.state {
+            FleetCommanderGameState::WaitingForPlayersReady {
+                ship_placement_timers,
+            } => {
+                let mut broadcasts = Vec::new();
+                broadcasts.append(&mut FleetCommanderGame::tick_ship_placement_timer(
+                    &mut ship_placement_timers[0],
+                    0,
+                    self.player1,
+                    now,
+                    self.stage_group_guid,
+                    self.stage_guid,
+                ));
+                if let Some(player2) = self.player2 {
+                    broadcasts.append(&mut FleetCommanderGame::tick_ship_placement_timer(
+                        &mut ship_placement_timers[1],
+                        1,
+                        player2,
+                        now,
+                        self.stage_group_guid,
+                        self.stage_guid,
+                    ));
+                }
 
-        self.timer.update_timer(now);
-        if !self.timer.time_until_next_event(now).is_zero() {
-            return Vec::new();
-        }
-
-        match self.state {
-            FleetCommanderGameState::WaitingForPlayersReady { .. } => Vec::new(),
-            FleetCommanderGameState::WaitingForMove => Vec::new(), //self.switch_turn(),
+                broadcasts
+            }
+            FleetCommanderGameState::WaitingForMove { timer } => Vec::new(), //self.switch_turn(),
             _ => Vec::new(),
         }
     }
@@ -406,7 +353,22 @@ impl FleetCommanderGame {
             return Ok(Vec::new());
         }
 
-        self.timer.pause_or_resume(pause);
+        match &mut self.state {
+            FleetCommanderGameState::WaitingForPlayersReady {
+                ship_placement_timers,
+            } => {
+                for placement_state in ship_placement_timers.iter_mut() {
+                    if let FleetCommanderPlacementState::WaitingForPlacement { timer } =
+                        placement_state
+                    {
+                        timer.pause_or_resume(pause);
+                    }
+                }
+            }
+            FleetCommanderGameState::WaitingForMove { timer } => timer.pause_or_resume(pause),
+            _ => (),
+        }
+
         Ok(Vec::new())
     }
 
@@ -452,6 +414,44 @@ impl FleetCommanderGame {
         }
 
         recipients
+    }
+
+    fn tick_ship_placement_timer(
+        placement_state: &mut FleetCommanderPlacementState,
+        player_index: u8,
+        player: u32,
+        now: Instant,
+        stage_group_guid: i32,
+        stage_guid: i32,
+    ) -> Vec<Broadcast> {
+        let FleetCommanderPlacementState::WaitingForPlacement { timer } = placement_state else {
+            return Vec::new();
+        };
+
+        if timer.paused() {
+            return Vec::new();
+        }
+
+        timer.update_timer(now);
+        if timer.time_until_next_event(now).is_zero() {
+            *placement_state = FleetCommanderPlacementState::Done;
+            vec![Broadcast::Single(
+                player,
+                vec![GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: FlashPayload {
+                        header: MinigameHeader {
+                            stage_guid,
+                            sub_op_code: -1,
+                            stage_group_guid,
+                        },
+                        payload: format!("OnTriggerAutoPlaceShipMsg\t{}", player_index),
+                    },
+                })],
+            )]
+        } else {
+            Vec::new()
+        }
     }
 
     /*fn check_turn(
