@@ -2246,7 +2246,6 @@ fn handle_flash_payload(
             game_server,
             &payload.header,
             |_, _, _, _, shared_minigame_data, _| match &mut shared_minigame_data.data {
-                SharedMinigameTypeData::FleetCommander { game } => game.mark_player_ready(sender),
                 SharedMinigameTypeData::ForceConnection { game } => game.mark_player_ready(sender),
                 _ => Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
