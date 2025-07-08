@@ -305,6 +305,56 @@ impl SharedMinigameTypeData {
     }
 }
 
+#[derive(Clone, Debug)]
+pub struct MinigameTimer {
+    paused: bool,
+    time_until_next_event: Duration,
+    last_timer_update: Instant,
+}
+
+impl MinigameTimer {
+    pub fn new() -> Self {
+        MinigameTimer {
+            paused: false,
+            time_until_next_event: Duration::ZERO,
+            last_timer_update: Instant::now(),
+        }
+    }
+
+    pub fn paused(&self) -> bool {
+        self.paused
+    }
+
+    pub fn pause_or_resume(&mut self, pause: bool) {
+        let now = Instant::now();
+        if pause {
+            self.time_until_next_event = self.time_until_next_event(now);
+        }
+        self.last_timer_update = now;
+        self.paused = pause;
+    }
+
+    pub fn schedule_event(&mut self, duration: Duration) {
+        self.last_timer_update = Instant::now();
+        self.time_until_next_event = duration;
+    }
+
+    pub fn update_timer(&mut self, now: Instant) {
+        self.time_until_next_event = self.time_until_next_event(now);
+        self.last_timer_update = now;
+    }
+
+    pub fn time_until_next_event(&self, now: Instant) -> Duration {
+        if self.paused {
+            self.time_until_next_event
+        } else {
+            let time_since_last_tick = now.saturating_duration_since(self.last_timer_update);
+            self.time_until_next_event
+                .saturating_sub(time_since_last_tick)
+        }
+    }
+}
+
 const CHALLENGE_LINK_NAME: &str = "challenge";
 const GROUP_LINK_NAME: &str = "group";
 
