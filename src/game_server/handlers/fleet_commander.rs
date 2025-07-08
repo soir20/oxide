@@ -10,7 +10,7 @@ use serde::Serializer;
 use crate::game_server::{
     handlers::{
         character::MinigameStatus, guid::GuidTableIndexer, lock_enforcer::CharacterTableReadHandle,
-        unique_guid::player_guid,
+        minigame::MinigameTimer, unique_guid::player_guid,
     },
     packets::{
         minigame::{FlashPayload, MinigameHeader, ScoreType},
@@ -98,9 +98,12 @@ impl Display for FleetCommanderTurn {
     }
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug)]
 enum FleetCommanderGameState {
-    WaitingForPlayersReady,
+    WaitingForPlayersReady {
+        player1_ship_placement_timer: MinigameTimer,
+        player2_ship_placement_timer: MinigameTimer,
+    },
     WaitingForMove,
     ProcessingMove {
         turn_duration: Duration,
@@ -113,13 +116,10 @@ enum FleetCommanderGameState {
 pub struct FleetCommanderGame {
     player1: u32,
     player2: Option<u32>,
-    ready: [bool; 2],
     player_states: [FleetCommanderPlayerState; 2],
     turn: FleetCommanderTurn,
     state: FleetCommanderGameState,
-    paused: bool,
-    time_until_next_event: Duration,
-    last_timer_update: Instant,
+    timer: MinigameTimer,
     stage_guid: i32,
     stage_group_guid: i32,
 }
@@ -135,13 +135,13 @@ impl FleetCommanderGame {
         FleetCommanderGame {
             player1,
             player2,
-            ready: [false, player2.is_none()],
             player_states: Default::default(),
             turn,
-            state: FleetCommanderGameState::WaitingForPlayersReady,
-            paused: false,
-            time_until_next_event: Duration::ZERO,
-            last_timer_update: Instant::now(),
+            state: FleetCommanderGameState::WaitingForPlayersReady {
+                player1_ship_placement_timer: MinigameTimer::new(),
+                player2_ship_placement_timer: MinigameTimer::new(),
+            },
+            timer: MinigameTimer::new(),
             stage_guid,
             stage_group_guid,
         }
@@ -152,7 +152,10 @@ impl FleetCommanderGame {
         sender: u32,
         characters_table_read_handle: &CharacterTableReadHandle,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        if self.state != FleetCommanderGameState::WaitingForPlayersReady {
+        if !matches!(
+            self.state,
+            FleetCommanderGameState::WaitingForPlayersReady { .. }
+        ) {
             return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
                 format!(
@@ -208,24 +211,6 @@ impl FleetCommanderGame {
                             stage_group_guid: self.stage_group_guid,
                         },
                         payload: format!(
-                            "OnLevelDataMsg\t{size},{size},{len2_ships},{len3_ships},{len4_ships},{len5_ships}",
-                            size = BOARD_SIZE,
-                            len2_ships = LEN2_SHIPS,
-                            len3_ships = LEN3_SHIPS,
-                            len4_ships = LEN4_SHIPS,
-                            len5_ships = LEN5_SHIPS
-                        ),
-                    },
-                }),
-                GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: FlashPayload {
-                        header: MinigameHeader {
-                            stage_guid: self.stage_guid,
-                            sub_op_code: -1,
-                            stage_group_guid: self.stage_group_guid,
-                        },
-                        payload: format!(
                             "OnAssignPlayerIndexMsg\t{}",
                             (sender != self.player1) as u8
                         ),
@@ -258,6 +243,46 @@ impl FleetCommanderGame {
                         ),
                     },
                 }),
+                GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: FlashPayload {
+                        header: MinigameHeader {
+                            stage_guid: self.stage_guid,
+                            sub_op_code: -1,
+                            stage_group_guid: self.stage_group_guid,
+                        },
+                        payload: format!(
+                            "OnLevelDataMsg\t{size},{size},{len2_ships},{len3_ships},{len4_ships},{len5_ships}",
+                            size = BOARD_SIZE,
+                            len2_ships = LEN2_SHIPS,
+                            len3_ships = LEN3_SHIPS,
+                            len4_ships = LEN4_SHIPS,
+                            len5_ships = LEN5_SHIPS
+                        ),
+                    },
+                }),
+                GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: FlashPayload {
+                        header: MinigameHeader {
+                            stage_guid: self.stage_guid,
+                            sub_op_code: -1,
+                            stage_group_guid: self.stage_group_guid,
+                        },
+                        payload: format!("OnStartShipPlacementMsg\t{}", 60000),
+                    },
+                })
+                /*GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: FlashPayload {
+                        header: MinigameHeader {
+                            stage_guid: self.stage_guid,
+                            sub_op_code: -1,
+                            stage_group_guid: self.stage_group_guid,
+                        },
+                        payload: "OnStartGameMsg".to_string(),
+                    },
+                })*/
             ],
         )];
 
@@ -266,41 +291,6 @@ impl FleetCommanderGame {
         }
 
         Ok(broadcasts)
-    }
-
-    pub fn mark_player_ready(&mut self, sender: u32) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        if sender == self.player1 {
-            if self.ready[0] {
-                return Ok(Vec::new());
-            }
-            self.ready[0] = true;
-        } else if Some(sender) == self.player2 {
-            if self.ready[1] {
-                return Ok(Vec::new());
-            }
-            self.ready[1] = true;
-        } else {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} sent a ready payload for Fleet Commander, but they aren't one of the game's players ({:?})", sender, self)));
-        }
-
-        if !self.ready[0] || !self.ready[1] {
-            return Ok(Vec::new());
-        }
-
-        Ok(vec![Broadcast::Multi(
-            self.list_recipients(),
-            vec![GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: FlashPayload {
-                    header: MinigameHeader {
-                        stage_guid: self.stage_guid,
-                        sub_op_code: -1,
-                        stage_group_guid: self.stage_group_guid,
-                    },
-                    payload: "OnStartGameMsg".to_string(),
-                },
-            })],
-        )])
     }
 
     /*pub fn drop_piece(
@@ -387,17 +377,17 @@ impl FleetCommanderGame {
     }*/*/
 
     pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
-        if self.paused {
+        if self.timer.paused() {
             return Vec::new();
         }
 
-        self.update_timer(now);
-        if !self.time_until_next_event.is_zero() {
+        self.timer.update_timer(now);
+        if !self.timer.time_until_next_event(now).is_zero() {
             return Vec::new();
         }
 
         match self.state {
-            FleetCommanderGameState::WaitingForPlayersReady => Vec::new(),
+            FleetCommanderGameState::WaitingForPlayersReady { .. } => Vec::new(),
             FleetCommanderGameState::WaitingForMove => Vec::new(), //self.switch_turn(),
             _ => Vec::new(),
         }
@@ -416,12 +406,7 @@ impl FleetCommanderGame {
             return Ok(Vec::new());
         }
 
-        let now = Instant::now();
-        if pause {
-            self.time_until_next_event = self.time_until_next_event(now);
-        }
-        self.last_timer_update = now;
-        self.paused = pause;
+        self.timer.pause_or_resume(pause);
         Ok(Vec::new())
     }
 
@@ -467,22 +452,6 @@ impl FleetCommanderGame {
         }
 
         recipients
-    }
-
-    fn time_until_next_event(&self, now: Instant) -> Duration {
-        let time_since_last_tick = now.saturating_duration_since(self.last_timer_update);
-        self.time_until_next_event
-            .saturating_sub(time_since_last_tick)
-    }
-
-    fn schedule_event(&mut self, duration: Duration) {
-        self.last_timer_update = Instant::now();
-        self.time_until_next_event = duration;
-    }
-
-    fn update_timer(&mut self, now: Instant) {
-        self.time_until_next_event = self.time_until_next_event(now);
-        self.last_timer_update = now;
     }
 
     /*fn check_turn(
