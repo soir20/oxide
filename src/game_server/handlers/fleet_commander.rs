@@ -29,15 +29,20 @@ const SHIP_PLACEMENT_TIMEOUT: Duration = Duration::from_secs(60);
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Sequence, TryFromPrimitive)]
 #[repr(u8)]
 enum FleetCommanderShipSize {
-    Two = 2,
-    Three = 3,
-    Four = 4,
-    Five = 5,
+    Two = 0,
+    Three = 1,
+    Four = 2,
+    Five = 3,
 }
 
 impl FleetCommanderShipSize {
     pub const fn value(&self) -> u8 {
-        *self as u8
+        match *self {
+            FleetCommanderShipSize::Two => 2,
+            FleetCommanderShipSize::Three => 3,
+            FleetCommanderShipSize::Four => 4,
+            FleetCommanderShipSize::Five => 5,
+        }
     }
 
     pub const fn max_per_player(&self) -> u8 {
