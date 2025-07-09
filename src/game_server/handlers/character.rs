@@ -813,7 +813,7 @@ impl TickableProcedureTracker {
                             if let Some(procedure) = procedures.get(procedure_key) {
                                 procedure.reference.weight
                             } else {
-                                panic!("Reference to unknown procedure {}", procedure_key);
+                                panic!("Reference to unknown procedure {procedure_key}");
                             }
                         })
                         .collect();
@@ -1487,7 +1487,7 @@ impl NpcTemplate {
                 keys_to_guid
                     .get(key)
                     .copied()
-                    .unwrap_or_else(|| panic!("Tried to synchronize with unknown NPC {}", key))
+                    .unwrap_or_else(|| panic!("Tried to synchronize with unknown NPC {key}"))
             }),
         }
     }

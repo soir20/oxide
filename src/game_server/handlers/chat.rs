@@ -42,7 +42,7 @@ pub fn process_chat_packet(
                                 .ok_or_else(|| {
                                     ProcessPacketError::new(
                                         ProcessPacketErrorType::ConstraintViolated,
-                                        format!("Unknown player {} sent chat message", sender),
+                                        format!("Unknown player {sender} sent chat message"),
                                     )
                                 })?;
                             message.payload.channel_name.last_name = String::default();
@@ -55,8 +55,7 @@ pub fn process_chat_packet(
                                             ProcessPacketError::new(
                                                 ProcessPacketErrorType::ConstraintViolated,
                                                 format!(
-                                                    "Unknown player {} sent world chat message",
-                                                    sender
+                                                    "Unknown player {sender} sent world chat message"
                                                 ),
                                             )
                                         })?;
@@ -156,13 +155,13 @@ pub fn process_chat_packet(
                 cursor.read_to_end(&mut buffer)?;
                 Err(ProcessPacketError::new(
                     ProcessPacketErrorType::UnknownOpCode,
-                    format!("Unimplemented chat op code: {:?}, {:x?}", op_code, buffer),
+                    format!("Unimplemented chat op code: {op_code:?}, {buffer:x?}"),
                 ))
             }
         },
         Err(_) => Err(ProcessPacketError::new(
             ProcessPacketErrorType::UnknownOpCode,
-            format!("Unknown chat op code: {}", raw_op_code),
+            format!("Unknown chat op code: {raw_op_code}"),
         )),
     }
 }

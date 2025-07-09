@@ -33,16 +33,16 @@ thread_local! {
 
 pub fn log_info(message: &str) {
     let client = if let Some(addr) = PROCESSED_CLIENT_ADDR.get() {
-        format!(" [client={}]", addr)
+        format!(" [client={addr}]")
     } else {
         "".to_string()
     };
     let guid = if let Some(guid) = PROCESSED_CLIENT_GUID.get() {
-        format!(" [guid={}]", guid)
+        format!(" [guid={guid}]")
     } else {
         "".to_string()
     };
-    println!("{}{}{}\t{}", Utc::now().to_rfc3339(), client, guid, message);
+    println!("{}{client}{guid}\t{message}", Utc::now().to_rfc3339());
 }
 
 static DEBUG_ENABLED: LazyLock<bool> = LazyLock::new(|| {

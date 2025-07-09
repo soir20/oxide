@@ -363,7 +363,7 @@ pub fn process_housing_packet(
                     write_guids: Vec::new(),
                     character_consumer: |characters_table_read_handle, _, _, minigame_data_lock_enforcer| {
                         let Some((_, instance_guid, _)) = characters_table_read_handle.index1(player_guid(sender)) else {
-                            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Non-existent player {} tried to set edit mode", sender)));
+                            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Non-existent player {sender} tried to set edit mode")));
                         };
 
                         let zones_lock_enforcer: ZoneLockEnforcer = minigame_data_lock_enforcer.into();
@@ -373,22 +373,19 @@ pub fn process_housing_packet(
                             zone_consumer: |_, zones_read, _| {
                                 let Some(zone_read_handle) = zones_read.get(&instance_guid) else {
                                     return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!(
-                                        "Player {} tried to set edit mode but is not in any zone",
-                                        sender
+                                        "Player {sender} tried to set edit mode but is not in any zone"
                                     )));
                                 };
 
                                 let Some(house) = &zone_read_handle.house_data else {
                                     return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!(
-                                        "Player {} tried to set edit mode outside of a house",
-                                        sender
+                                        "Player {sender} tried to set edit mode outside of a house"
                                     )));
                                 };
 
                                 if house.owner != sender {
                                     return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!(
-                                        "Player {} tried to set edit mode in a house they don't own",
-                                        sender
+                                        "Player {sender} tried to set edit mode in a house they don't own"
                                     )));
                                 }
 
@@ -466,8 +463,7 @@ pub fn process_housing_packet(
                                     return Err(ProcessPacketError::new(
                                         ProcessPacketErrorType::ConstraintViolated,
                                         format!(
-                                            "Tried to enter house with unknown template {}",
-                                            template_guid
+                                            "Tried to enter house with unknown template {template_guid}"
                                         ),
                                     ));
                                 };
@@ -507,7 +503,7 @@ pub fn process_housing_packet(
                 cursor.read_to_end(&mut buffer)?;
                 Err(ProcessPacketError::new(
                     ProcessPacketErrorType::UnknownOpCode,
-                    format!("Unimplemented housing packet: {:?}, {:x?}", op_code, buffer),
+                    format!("Unimplemented housing packet: {op_code:?}, {buffer:x?}"),
                 ))
             }
         },
@@ -516,7 +512,7 @@ pub fn process_housing_packet(
             cursor.read_to_end(&mut buffer)?;
             Err(ProcessPacketError::new(
                 ProcessPacketErrorType::UnknownOpCode,
-                format!("Unknown housing packet: {}, {:x?}", raw_op_code, buffer),
+                format!("Unknown housing packet: {raw_op_code}, {buffer:x?}"),
             ))
         }
     }

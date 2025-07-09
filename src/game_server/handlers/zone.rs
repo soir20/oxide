@@ -1000,7 +1000,7 @@ pub fn load_zones(config_dir: &Path) -> Result<LoadedZones, ConfigError> {
             let template_guid = Guid::guid(&template);
 
             if templates.insert(template_guid, template).is_some() {
-                panic!("Two zone templates have ID {}", template_guid);
+                panic!("Two zone templates have ID {template_guid}");
             }
         }
     }
@@ -1233,7 +1233,7 @@ pub fn teleport_anywhere(
                             Some(character) => Ok(character.read().stats.instance_guid),
                             None => Err(ProcessPacketError::new(
                                 ProcessPacketErrorType::ConstraintViolated,
-                                format!("Tried to teleport unknown player {} anywhere", requester),
+                                format!("Tried to teleport unknown player {requester} anywhere"),
                             )),
                         }?;
 
@@ -1303,8 +1303,7 @@ pub fn interact_with_character(
                         return Err(ProcessPacketError::new(
                             ProcessPacketErrorType::ConstraintViolated,
                             format!(
-                                "Received request to interact with unknown NPC {} from {}",
-                                target, requester
+                                "Received request to interact with unknown NPC {target} from {requester}"
                             ),
                         ));
                     };
