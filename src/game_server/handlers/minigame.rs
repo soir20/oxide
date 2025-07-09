@@ -2463,6 +2463,38 @@ fn handle_flash_payload(
                 )),
             },
         ),
+        "OnRequestPlaceShipMsg" => handle_minigame_packet_write(
+            sender,
+            game_server,
+            &payload.header,
+            |_, _, _, _, shared_minigame_data, _| match &mut shared_minigame_data.data {
+                SharedMinigameTypeData::FleetCommander { game } => {
+                    if parts.len() == 6 {
+                        let ship_size = parts[1].parse()?;
+                        let flipped = parts[2].parse::<u8>()? == 1;
+                        let row = parts[3].parse()?;
+                        let col = parts[4].parse()?;
+                        let player_index = parts[5].parse()?;
+                        game.place_ship(sender, ship_size, flipped, row, col, player_index)
+                    } else {
+                        Err(ProcessPacketError::new(
+                            ProcessPacketErrorType::ConstraintViolated,
+                            format!(
+                                "Expected 5 parameters in place ship request, but only found {}",
+                                parts.len().saturating_sub(1)
+                            ),
+                        ))
+                    }
+                }
+                _ => Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Received place ship request for unexpected game from player {}",
+                        sender
+                    ),
+                )),
+            },
+        ),
         _ => Err(ProcessPacketError::new(
             ProcessPacketErrorType::ConstraintViolated,
             format!(

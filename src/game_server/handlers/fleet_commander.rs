@@ -1,8 +1,10 @@
 use std::{
+    collections::BTreeMap,
     fmt::Display,
     time::{Duration, Instant},
 };
 
+use enum_iterator::{all, Sequence};
 use num_enum::TryFromPrimitive;
 use rand::Rng;
 use serde::Serializer;
@@ -21,14 +23,11 @@ use crate::game_server::{
 };
 
 const BOARD_SIZE: u8 = 15;
-const LEN2_SHIPS: u8 = 2;
-const LEN3_SHIPS: u8 = 2;
-const LEN4_SHIPS: u8 = 2;
-const LEN5_SHIPS: u8 = 1;
-const TOTAL_SHIPS: u8 = LEN2_SHIPS + LEN3_SHIPS + LEN4_SHIPS + LEN5_SHIPS;
+
 const SHIP_PLACEMENT_TIMEOUT: Duration = Duration::from_secs(60);
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Sequence, TryFromPrimitive)]
+#[repr(u8)]
 enum FleetCommanderShipSize {
     Two = 2,
     Three = 3,
@@ -37,8 +36,17 @@ enum FleetCommanderShipSize {
 }
 
 impl FleetCommanderShipSize {
-    pub fn value(&self) -> u8 {
+    pub const fn value(&self) -> u8 {
         *self as u8
+    }
+
+    pub const fn max_per_player(&self) -> u8 {
+        match *self {
+            FleetCommanderShipSize::Two => 2,
+            FleetCommanderShipSize::Three => 2,
+            FleetCommanderShipSize::Four => 2,
+            FleetCommanderShipSize::Five => 1,
+        }
     }
 }
 
@@ -79,11 +87,73 @@ impl Display for FleetCommanderPowerup {
     }
 }
 
+#[derive(Copy, Clone, Debug, Default, PartialEq, Eq)]
+enum FleetCommanderPlayerReadiness {
+    Ready,
+    #[default]
+    Unready,
+}
+
 #[derive(Clone, Debug, Default)]
 struct FleetCommanderPlayerState {
+    readiness: FleetCommanderPlayerReadiness,
     ships: Vec<FleetCommanderShip>,
     powerups: [u8; 3],
     score: i32,
+}
+
+impl FleetCommanderPlayerState {
+    pub fn readiness(&self) -> FleetCommanderPlayerReadiness {
+        self.readiness
+    }
+
+    pub fn add_ship(
+        &mut self,
+        sender: u32,
+        player_index: u8,
+        new_ship_size: FleetCommanderShipSize,
+        flipped: bool,
+        row: u8,
+        col: u8,
+    ) -> Result<(), ProcessPacketError> {
+        let max_coord = BOARD_SIZE - new_ship_size.value();
+        if (flipped && row >= max_coord) || (!flipped && col >= max_coord) {
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) sent a place ship payload (size: {:?}, flipped: {}, row: {}, col: {}) for Fleet Commander, but the ship is out of bounds ({:?})", sender, player_index, new_ship_size, flipped, row, col, self)));
+        }
+
+        self.ships.push(FleetCommanderShip {
+            row,
+            col,
+            flipped,
+            size: new_ship_size,
+            hits: 0,
+        });
+
+        let mut counts = BTreeMap::new();
+        for ship in self.ships.iter() {
+            counts
+                .entry(ship.size)
+                .and_modify(|count| *count += 1)
+                .or_insert(1);
+        }
+
+        let mut readiness = FleetCommanderPlayerReadiness::Ready;
+        for size in all::<FleetCommanderShipSize>() {
+            let ships_of_size = counts.get(&size).cloned().unwrap_or(0);
+
+            if ships_of_size < size.max_per_player() {
+                readiness = FleetCommanderPlayerReadiness::Unready;
+            } else if ships_of_size > size.max_per_player() {
+                // Remove the new ship we just added
+                self.ships.pop();
+                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) sent a place ship payload (size: {:?}, flipped: {}, row: {}, col: {}) for Fleet Commander, but they already have the maximum number of ships of that size placed ({:?})", sender, player_index, new_ship_size, flipped, row, col, self)));
+            }
+        }
+
+        self.readiness = readiness;
+
+        Ok(())
+    }
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -280,10 +350,10 @@ impl FleetCommanderGame {
                         payload: format!(
                             "OnLevelDataMsg\t{size},{size},{len2_ships},{len3_ships},{len4_ships},{len5_ships}",
                             size = BOARD_SIZE,
-                            len2_ships = LEN2_SHIPS,
-                            len3_ships = LEN3_SHIPS,
-                            len4_ships = LEN4_SHIPS,
-                            len5_ships = LEN5_SHIPS
+                            len2_ships = FleetCommanderShipSize::Two.max_per_player(),
+                            len3_ships = FleetCommanderShipSize::Three.max_per_player(),
+                            len4_ships = FleetCommanderShipSize::Four.max_per_player(),
+                            len5_ships = FleetCommanderShipSize::Five.max_per_player()
                         ),
                     },
                 }),
@@ -305,6 +375,58 @@ impl FleetCommanderGame {
             broadcasts.append(&mut self.broadcast_powerup_quantity(player_index));
         }
 
+        Ok(broadcasts)
+    }
+
+    pub fn place_ship(
+        &mut self,
+        sender: u32,
+        ship_size: u8,
+        flipped: bool,
+        row: u8,
+        col: u8,
+        player_index: u8,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let ship_size = FleetCommanderShipSize::try_from(ship_size).map_err(|_| ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} sent a place ship payload for Force Connection, but ship size {} isn't valid ({:?})", sender, ship_size, self)))?;
+
+        if (player_index == 0 && sender == self.player1)
+            || (player_index == 1
+                && (Some(sender) == self.player2 || (self.is_ai_match() && sender == self.player1)))
+        {
+            self.player_states[player_index as usize].add_ship(
+                sender,
+                player_index,
+                ship_size,
+                flipped,
+                row,
+                col,
+            )?;
+        } else {
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} sent a place ship payload for Force Connection, but they aren't one of the game's players ({:?})", sender, self)));
+        }
+
+        if self.player_states[0].readiness() == FleetCommanderPlayerReadiness::Unready
+            || self.player_states[1].readiness() == FleetCommanderPlayerReadiness::Unready
+        {
+            return Ok(Vec::new());
+        }
+
+        let mut broadcasts = vec![Broadcast::Multi(
+            self.list_recipients(),
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: FlashPayload {
+                    header: MinigameHeader {
+                        stage_guid: self.stage_guid,
+                        sub_op_code: -1,
+                        stage_group_guid: self.stage_group_guid,
+                    },
+                    payload: "OnStartGameMsg".to_string(),
+                },
+            })],
+        )];
+
+        // TODO: start turn
         Ok(broadcasts)
     }
 
