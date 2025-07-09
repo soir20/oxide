@@ -64,7 +64,7 @@ pub fn load_mounts(config_dir: &Path) -> Result<BTreeMap<u32, MountConfig>, Conf
         let previous = mount_table.insert(guid, mount);
 
         if previous.is_some() {
-            panic!("Two mounts have ID {}", guid);
+            panic!("Two mounts have ID {guid}");
         }
     }
 
@@ -100,10 +100,7 @@ pub fn reply_dismount<'a>(
     let Some(mount) = mounts.get(&mount_id) else {
         return Err(ProcessPacketError::new(
             ProcessPacketErrorType::ConstraintViolated,
-            format!(
-                "Player {} tried to dismount from non-existent mount",
-                sender
-            ),
+            format!("Player {sender} tried to dismount from non-existent mount"),
         ));
     };
 
@@ -191,7 +188,7 @@ fn process_dismount(
                 else {
                     return Err(ProcessPacketError::new(
                         ProcessPacketErrorType::ConstraintViolated,
-                        format!("Non-existent player {} tried to dismount", sender),
+                        format!("Non-existent player {sender} tried to dismount"),
                     ));
                 };
 
@@ -205,7 +202,7 @@ fn process_dismount(
                         else {
                             return Err(ProcessPacketError::new(
                                 ProcessPacketErrorType::ConstraintViolated,
-                                format!("Player {} tried to enter unknown zone", sender),
+                                format!("Player {sender} tried to enter unknown zone"),
                             ));
                         };
 
@@ -234,8 +231,8 @@ fn process_mount_spawn(
         return Err(ProcessPacketError::new(
             ProcessPacketErrorType::ConstraintViolated,
             format!(
-                "Player {} tried to mount on unknown mount ID {}",
-                sender, mount_spawn.mount_id
+                "Player {sender} tried to mount on unknown mount ID {}",
+                mount_spawn.mount_id
             ),
         ));
     };
@@ -253,7 +250,7 @@ fn process_mount_spawn(
                 else {
                     return Err(ProcessPacketError::new(
                         ProcessPacketErrorType::ConstraintViolated,
-                        format!("Non-existent player {} tried to mount", sender),
+                        format!("Non-existent player {sender} tried to mount"),
                     ));
                 };
 
@@ -270,8 +267,7 @@ fn process_mount_spawn(
                             return Err(ProcessPacketError::new(
                                 ProcessPacketErrorType::ConstraintViolated,
                                 format!(
-                                    "Player {} tried to mount but is in a non-existent zone",
-                                    sender
+                                    "Player {sender} tried to mount but is in a non-existent zone"
                                 ),
                             ));
                         };
@@ -305,8 +301,7 @@ fn process_mount_spawn(
                             return Err(ProcessPacketError::new(
                                 ProcessPacketErrorType::ConstraintViolated,
                                 format!(
-                                    "Player {} tried to mount while already mounted on mount ID {}, GUID {}",
-                                    sender, mount_id, mount_guid
+                                    "Player {sender} tried to mount while already mounted on mount ID {mount_id}, GUID {mount_guid}"
                                 ),
                             ));
                         }
@@ -371,12 +366,12 @@ pub fn process_mount_packet(
             MountOpCode::MountSpawn => process_mount_spawn(cursor, sender, game_server),
             _ => Err(ProcessPacketError::new(
                 ProcessPacketErrorType::UnknownOpCode,
-                format!("Unimplemented mount op code: {:?}", op_code),
+                format!("Unimplemented mount op code: {op_code:?}"),
             )),
         },
         Err(_) => Err(ProcessPacketError::new(
             ProcessPacketErrorType::UnknownOpCode,
-            format!("Unknown mount op code: {}", raw_op_code),
+            format!("Unknown mount op code: {raw_op_code}"),
         )),
     }
 }

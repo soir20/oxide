@@ -95,7 +95,7 @@ pub fn make_test_player(
                 last_name: if guid == 1 {
                     String::from("NICESHOT")
                 } else {
-                    format!("NICESHOT {}", guid)
+                    format!("NICESHOT {guid}")
                 },
             },
             credits: 1000000,

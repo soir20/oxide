@@ -28,7 +28,7 @@ pub fn process_command(
                 cursor.read_to_end(&mut buffer)?;
                 Err(ProcessPacketError::new(
                     ProcessPacketErrorType::UnknownOpCode,
-                    format!("Unimplemented command packet: {:?}, {:x?}", op_code, buffer),
+                    format!("Unimplemented command packet: {op_code:?}, {buffer:x?}"),
                 ))
             }
         },
@@ -37,7 +37,7 @@ pub fn process_command(
             cursor.read_to_end(&mut buffer)?;
             Err(ProcessPacketError::new(
                 ProcessPacketErrorType::UnknownOpCode,
-                format!("Unknown command packet: {}, {:x?}", raw_op_code, buffer),
+                format!("Unknown command packet: {raw_op_code}, {buffer:x?}"),
             ))
         }
     }

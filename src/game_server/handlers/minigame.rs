@@ -963,10 +963,7 @@ impl AllMinigameConfigs {
         else {
             return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
-                format!(
-                    "Requested unknown stage group instance {}",
-                    stage_group_guid
-                ),
+                format!("Requested unknown stage group instance {stage_group_guid}"),
             ));
         };
 
@@ -1218,10 +1215,7 @@ pub fn process_minigame_packet(
                 cursor.read_to_end(&mut buffer)?;
                 Err(ProcessPacketError::new(
                     ProcessPacketErrorType::UnknownOpCode,
-                    format!(
-                        "Unimplemented minigame op code: {:?} {:x?}",
-                        op_code, buffer
-                    ),
+                    format!("Unimplemented minigame op code: {op_code:?} {buffer:x?}"),
                 ))
             }
         },
@@ -1230,7 +1224,7 @@ pub fn process_minigame_packet(
             cursor.read_to_end(&mut buffer)?;
             Err(ProcessPacketError::new(
                 ProcessPacketErrorType::UnknownOpCode,
-                format!("Unknown minigame packet: {}, {:x?}", raw_op_code, buffer),
+                format!("Unknown minigame packet: {raw_op_code}, {buffer:x?}"),
             ))
         }
     }
@@ -1251,8 +1245,8 @@ fn handle_request_stage_group_instance(
                     return Err(ProcessPacketError::new(
                         ProcessPacketErrorType::ConstraintViolated,
                         format!(
-                            "Unknown character {} requested a stage group instance {}",
-                            sender, request.header.stage_group_guid
+                            "Unknown character {sender} requested a stage group instance {}",
+                            request.header.stage_group_guid
                         ),
                     ));
                 };
@@ -1262,8 +1256,8 @@ fn handle_request_stage_group_instance(
                     return Err(ProcessPacketError::new(
                         ProcessPacketErrorType::ConstraintViolated,
                         format!(
-                            "Non-player character {} requested a stage group instance {}",
-                            sender, request.header.stage_group_guid
+                            "Non-player character {sender} requested a stage group instance {}",
+                            request.header.stage_group_guid
                         ),
                     ));
                 };
@@ -1381,8 +1375,8 @@ fn handle_request_create_active_minigame(
         return Err(ProcessPacketError::new(
             ProcessPacketErrorType::ConstraintViolated,
             format!(
-                "Player {} requested to join stage {} in stage group {}, but it doesn't exist",
-                sender, request.header.stage_guid, request.header.stage_group_guid
+                "Player {sender} requested to join stage {} in stage group {}, but it doesn't exist",
+                request.header.stage_guid, request.header.stage_group_guid
             ),
         ));
     };
@@ -1499,10 +1493,7 @@ pub fn prepare_active_minigame_instance(
             let Some(minigame_data) = possible_minigame_data else {
                 return Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
-                    format!(
-                        "Unable to find shared minigame data for group {:?}",
-                        matchmaking_group
-                    ),
+                    format!("Unable to find shared minigame data for group {matchmaking_group:?}"),
                 ));
             };
 
@@ -1546,26 +1537,25 @@ pub fn prepare_active_minigame_instance(
                     return Err(ProcessPacketError::new(
                         ProcessPacketErrorType::ConstraintViolated,
                         format!(
-                            "Unknown player {} tried to create an active minigame",
-                            member_guid
+                            "Unknown player {member_guid} tried to create an active minigame"
                         ),
                     ));
                 };
 
                 let CharacterType::Player(player) = &mut character_write_handle.stats.character_type
                 else {
-                    return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to create an active minigame, but their character isn't a player", member_guid)));
+                    return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {member_guid} tried to create an active minigame, but their character isn't a player")));
                 };
 
                 if !game_server
                     .minigames()
                     .stage_unlocked(stage_group_guid, stage_guid, player)
                 {
-                    return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to create an active minigame for a stage {} they haven't unlocked", member_guid, stage_guid)));
+                    return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {member_guid} tried to create an active minigame for a stage {stage_guid} they haven't unlocked")));
                 }
 
                 let Some(minigame_status) = &mut player.minigame_status else {
-                    return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to create an active minigame, but their minigame status is not set", member_guid)));
+                    return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {member_guid} tried to create an active minigame, but their minigame status is not set")));
                 };
 
                 minigame_status.type_data = stage_config.stage_config.minigame_type().into();
@@ -1602,8 +1592,7 @@ pub fn prepare_active_minigame_instance(
                 &zones_table_write_handle
                     .get(new_instance_guid)
                     .unwrap_or_else(|| panic!(
-                        "Zone instance {} should have been created or already exist but is missing",
-                        new_instance_guid
+                        "Zone instance {new_instance_guid} should have been created or already exist but is missing"
                     ))
                     .read(),
                 None,
@@ -1619,8 +1608,7 @@ pub fn prepare_active_minigame_instance(
                 return Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
                     format!(
-                        "Unknown player {} disappeared after being teleported to a minigame",
-                        member_guid
+                        "Unknown player {member_guid} disappeared after being teleported to a minigame"
                     ),
                 ));
             };
@@ -1630,8 +1618,7 @@ pub fn prepare_active_minigame_instance(
                 return Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
                     format!(
-                        "Player {} became a non-player after teleporting them to a minigame",
-                        member_guid
+                        "Player {member_guid} became a non-player after teleporting them to a minigame"
                     ),
                 ));
             };
@@ -1640,8 +1627,7 @@ pub fn prepare_active_minigame_instance(
                 return Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
                     format!(
-                        "Player {} lost their minigame status after being teleported to a minigame",
-                        member_guid
+                        "Player {member_guid} lost their minigame status after being teleported to a minigame"
                     ),
                 ));
             };
@@ -1688,25 +1674,25 @@ fn handle_request_start_active_minigame(
         write_guids: Vec::new(),
         character_consumer: |_, characters_read, _, minigame_data_lock_enforcer| {
             let Some(character_read_handle) = characters_read.get(&player_guid(sender)) else {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} requested to start an active minigame", sender)));
+                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {sender} requested to start an active minigame")));
             };
 
             let CharacterType::Player(player) = &character_read_handle.stats.character_type else {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} requested to start an active minigame, but their character isn't a player", sender)));
+                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} requested to start an active minigame, but their character isn't a player")));
             };
 
             let Some(minigame_status) = &player.minigame_status else {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} requested to start an active minigame (stage {}), but they aren't in an active minigame", sender, request.header.stage_guid)));
+                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} requested to start an active minigame (stage {}), but they aren't in an active minigame", request.header.stage_guid)));
             };
 
             if request.header.stage_guid != minigame_status.group.stage_guid {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} requested to start an active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", sender, request.header.stage_guid, minigame_status.group.stage_group_guid, minigame_status.group.stage_guid)));
+                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} requested to start an active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", request.header.stage_guid, minigame_status.group.stage_group_guid, minigame_status.group.stage_guid)));
             };
 
             let mut packets = Vec::new();
 
             let Some(StageConfigRef {stage_config, ..}) = game_server.minigames().stage_config(minigame_status.group.stage_group_guid, minigame_status.group.stage_guid) else {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} requested to start active minigame with stage config {} (stage group {}) that does not exist", sender, minigame_status.group.stage_guid, minigame_status.group.stage_group_guid)));
+                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} requested to start active minigame with stage config {} (stage group {}) that does not exist", minigame_status.group.stage_guid, minigame_status.group.stage_group_guid)));
             };
 
             minigame_data_lock_enforcer.read_minigame_data(|_| MinigameDataLockRequest {
@@ -1714,7 +1700,7 @@ fn handle_request_start_active_minigame(
                 write_guids: vec![minigame_status.group],
                 minigame_data_consumer: |_, _, mut minigame_data_write, _| {
                     let Some(shared_minigame_data) = minigame_data_write.get_mut(&minigame_status.group) else {
-                        return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unable to find shared minigame data for group {:?} when starting minigame for player {}", minigame_status.group, sender)));
+                        return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unable to find shared minigame data for group {:?} when starting minigame for player {sender}", minigame_status.group)));
                     };
 
                     if let MinigameReadiness::InitialPlayersLoading(players, first_player_load_time) = &mut shared_minigame_data.readiness {
@@ -1854,7 +1840,7 @@ pub fn handle_minigame_packet_write<T: Default>(
             let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) else {
                 return Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
-                    format!("Tried to process packet for unknown player {}'s active minigame", sender),
+                    format!("Tried to process packet for unknown player {sender}'s active minigame"),
                 ));
             };
 
@@ -1862,24 +1848,23 @@ pub fn handle_minigame_packet_write<T: Default>(
                 return Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
                     format!(
-                        "Tried to process packet for {}'s active minigame, but their character isn't a player",
-                        sender
+                        "Tried to process packet for {sender}'s active minigame, but their character isn't a player"
                     ),
                 ));
             };
 
             let Some(minigame_status) = &mut player.minigame_status else {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process packet for {}'s active minigame (stage {}), but they aren't in an active minigame", sender, header.stage_guid)));
+                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process packet for {sender}'s active minigame (stage {}), but they aren't in an active minigame", header.stage_guid)));
             };
 
             if header.stage_guid != minigame_status.group.stage_guid {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process packet for {}'s active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", sender, header.stage_guid, minigame_status.group.stage_group_guid, minigame_status.group.stage_guid)));
+                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process packet for {sender}'s active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", header.stage_guid, minigame_status.group.stage_group_guid, minigame_status.group.stage_guid)));
             };
 
             let Some(stage_config_ref) = game_server
                 .minigames()
                 .stage_config(minigame_status.group.stage_group_guid, minigame_status.group.stage_guid) else {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process packet for {}'s active minigame with stage config {} (stage group {}) that does not exist", sender, minigame_status.group.stage_guid, minigame_status.group.stage_group_guid)));
+                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process packet for {sender}'s active minigame with stage config {} (stage group {}) that does not exist", minigame_status.group.stage_guid, minigame_status.group.stage_group_guid)));
             };
 
             minigame_data_lock_enforcer.read_minigame_data(|_| MinigameDataLockRequest {
@@ -1887,7 +1872,7 @@ pub fn handle_minigame_packet_write<T: Default>(
                 write_guids: vec![minigame_status.group],
                 minigame_data_consumer: |_, _, mut minigame_data_write, _| {
                     let Some(shared_minigame_data) = minigame_data_write.get_mut(&minigame_status.group) else {
-                        return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process packet for {}'s active minigame with stage config {} (stage group {}) that is missing shared minigame data", sender, minigame_status.group.stage_guid, minigame_status.group.stage_group_guid)))
+                        return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process packet for {sender}'s active minigame with stage config {} (stage group {}) that is missing shared minigame data", minigame_status.group.stage_guid, minigame_status.group.stage_group_guid)))
                     };
 
                     func(minigame_status, &mut player.minigame_stats, &mut player.credits, stage_config_ref, shared_minigame_data, characters_table_read_handle)
@@ -1914,7 +1899,7 @@ fn handle_flash_payload_read_only<T: Default>(
             let Some(character_read_handle) = characters_read.get(&player_guid(sender)) else {
                 return Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
-                    format!("Tried to process Flash payload for unknown player {}'s active minigame", sender),
+                    format!("Tried to process Flash payload for unknown player {sender}'s active minigame"),
                 ));
             };
 
@@ -1922,24 +1907,23 @@ fn handle_flash_payload_read_only<T: Default>(
                 return Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
                     format!(
-                        "Tried to process Flash payload for {}'s active minigame, but their character isn't a player",
-                        sender
+                        "Tried to process Flash payload for {sender}'s active minigame, but their character isn't a player"
                     ),
                 ));
             };
 
             let Some(minigame_status) = &player.minigame_status else {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process Flash payload for {}'s active minigame (stage {}), but they aren't in an active minigame", sender, header.stage_guid)));
+                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process Flash payload for {sender}'s active minigame (stage {}), but they aren't in an active minigame", header.stage_guid)));
             };
 
             if header.stage_guid != minigame_status.group.stage_guid {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process Flash payload for {}'s active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", sender, header.stage_guid, minigame_status.group.stage_group_guid, minigame_status.group.stage_guid)));
+                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process Flash payload for {sender}'s active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", header.stage_guid, minigame_status.group.stage_group_guid, minigame_status.group.stage_guid)));
             }
 
             let Some(stage_config_ref) = game_server
                 .minigames()
                 .stage_config(minigame_status.group.stage_group_guid, minigame_status.group.stage_guid) else {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process Flash payload for {}'s active minigame with stage config {} (stage group {}) that does not exist", sender, minigame_status.group.stage_guid, minigame_status.group.stage_group_guid)));
+                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process Flash payload for {sender}'s active minigame with stage config {} (stage group {}) that does not exist", minigame_status.group.stage_guid, minigame_status.group.stage_group_guid)));
             };
 
             minigame_data_lock_enforcer.read_minigame_data(|_| MinigameDataLockRequest {
@@ -1947,7 +1931,7 @@ fn handle_flash_payload_read_only<T: Default>(
                 write_guids: Vec::new(),
                 minigame_data_consumer: |_, minigame_data_read, _, _| {
                     let Some(shared_minigame_data) = minigame_data_read.get(&minigame_status.group) else {
-                        return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process Flash payload for {}'s active minigame with stage config {} (stage group {}) that is missing shared minigame data", sender, minigame_status.group.stage_guid, minigame_status.group.stage_group_guid)))
+                        return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process Flash payload for {sender}'s active minigame with stage config {} (stage group {}) that is missing shared minigame data", minigame_status.group.stage_guid, minigame_status.group.stage_group_guid)))
                     };
 
                     func(minigame_status, stage_config_ref, shared_minigame_data)
@@ -1982,7 +1966,7 @@ fn handle_flash_payload_game_result(
             let MinigameReadiness::Ready(previous_time, possible_resume_time) =
                 shared_minigame_data.readiness
             else {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} sent a Flash game result payload (won: {}) for a game that isn't ready yet", sender, won)));
+                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} sent a Flash game result payload (won: {won}) for a game that isn't ready yet")));
             };
 
             let now = Instant::now();
@@ -2012,7 +1996,7 @@ fn handle_flash_payload_game_result(
                             sub_op_code: -1,
                             stage_group_guid: minigame_status.group.stage_group_guid,
                         },
-                        payload: format!("OnGamePlayTimeMsg\t{}", total_time),
+                        payload: format!("OnGamePlayTimeMsg\t{total_time}"),
                     },
                 })],
             )])
@@ -2117,7 +2101,7 @@ fn handle_flash_payload(
                                     sub_op_code: -1,
                                     stage_group_guid: minigame_status.group.stage_group_guid,
                                 },
-                                payload: format!("OnShowEndRoundScreenMsg\t{}", awarded_credits),
+                                payload: format!("OnShowEndRoundScreenMsg\t{awarded_credits}"),
                             },
                         })],
                     ));
@@ -2217,8 +2201,7 @@ fn handle_flash_payload(
                     _ => Err(ProcessPacketError::new(
                         ProcessPacketErrorType::ConstraintViolated,
                         format!(
-                            "Received connect message for unexpected game from player {}",
-                            sender
+                            "Received connect message for unexpected game from player {sender}"
                         ),
                     )),
                 }
@@ -2233,8 +2216,7 @@ fn handle_flash_payload(
                 _ => Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
                     format!(
-                        "Received player ready message for unexpected game from player {}",
-                        sender
+                        "Received player ready message for unexpected game from player {sender}"
                     ),
                 )),
             },
@@ -2262,8 +2244,7 @@ fn handle_flash_payload(
                 _ => Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
                     format!(
-                        "Received select column message for unexpected game from player {}",
-                        sender
+                        "Received select column message for unexpected game from player {sender}"
                     ),
                 )),
             },
@@ -2291,8 +2272,7 @@ fn handle_flash_payload(
                 _ => Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
                     format!(
-                        "Received drop piece message for unexpected game from player {}",
-                        sender
+                        "Received drop piece message for unexpected game from player {sender}"
                     ),
                 )),
             },
@@ -2320,8 +2300,7 @@ fn handle_flash_payload(
                 _ => Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
                     format!(
-                        "Received toggle powerup message for unexpected game from player {}",
-                        sender
+                        "Received toggle powerup message for unexpected game from player {sender}"
                     ),
                 )),
             },
@@ -2352,8 +2331,7 @@ fn handle_flash_payload(
                 _ => Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
                     format!(
-                        "Received swap powerup request for unexpected game from player {}",
-                        sender
+                        "Received swap powerup request for unexpected game from player {sender}"
                     ),
                 )),
             },
@@ -2382,8 +2360,7 @@ fn handle_flash_payload(
                 _ => Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
                     format!(
-                        "Received delete powerup request for unexpected game from player {}",
-                        sender
+                        "Received delete powerup request for unexpected game from player {sender}"
                     ),
                 )),
             },
@@ -2391,16 +2368,16 @@ fn handle_flash_payload(
         _ => Err(ProcessPacketError::new(
             ProcessPacketErrorType::ConstraintViolated,
             format!(
-                "Received unknown Flash payload {} in stage {}, stage group {} from player {}",
-                payload.payload, payload.header.stage_guid, payload.header.stage_group_guid, sender
+                "Received unknown Flash payload {} in stage {}, stage group {} from player {sender}",
+                payload.payload, payload.header.stage_guid, payload.header.stage_group_guid
             ),
         )),
     };
 
     result.map_err(|err| {
         err.wrap(format!(
-            "Error while processing Flash payload \"{}\" from player {}",
-            payload.payload, sender
+            "Error while processing Flash payload \"{}\" from player {sender}",
+            payload.payload
         ))
     })
 }
@@ -2422,8 +2399,8 @@ pub fn create_active_minigame_if_uncreated(
         return Err(ProcessPacketError::new(
             ProcessPacketErrorType::ConstraintViolated,
             format!(
-                "Player {} requested creation of unknown stage {} (stage group {})",
-                sender, minigame_status.group.stage_guid, minigame_status.group.stage_group_guid
+                "Player {sender} requested creation of unknown stage {} (stage group {})",
+                minigame_status.group.stage_guid, minigame_status.group.stage_group_guid
             ),
         ));
     };
@@ -2530,7 +2507,7 @@ fn leave_active_minigame_single_player_if_any(
             let Some(character_write_handle) = possible_character_write_handle else {
                 return Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
-                    format!("Tried to end unknown player {}'s active minigame", sender),
+                    format!("Tried to end unknown player {sender}'s active minigame"),
                 ));
             };
 
@@ -2539,8 +2516,7 @@ fn leave_active_minigame_single_player_if_any(
                 return Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
                     format!(
-                    "Tried to end player {}'s active minigame, but their character isn't a player",
-                    sender
+                    "Tried to end player {sender}'s active minigame, but their character isn't a player"
                 ),
                 ));
             };
@@ -2710,8 +2686,7 @@ fn leave_active_minigame_single_player_if_any(
         &zones_table_write_handle
             .get(instance_guid)
             .unwrap_or_else(|| panic!(
-                "Zone instance {} should have been created or already exist but is missing",
-                instance_guid
+                "Zone instance {instance_guid} should have been created or already exist but is missing"
             ))
             .read(),
         Some(previous_location.pos),
@@ -2742,7 +2717,7 @@ fn remove_single_player_from_matchmaking(
         let Some(character_write_handle) = possible_character_write_handle else {
             return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
-                format!("Tried to remove unknown player {} from matchmaking", player),
+                format!("Tried to remove unknown player {player} from matchmaking"),
             ));
         };
 
@@ -2750,8 +2725,7 @@ fn remove_single_player_from_matchmaking(
             return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
                 format!(
-                    "Tried to remove player {} from matchmaking, but their character isn't a player",
-                    player
+                    "Tried to remove player {player} from matchmaking, but their character isn't a player"
                 ),
             ));
         };
@@ -2816,8 +2790,7 @@ fn remove_single_player_from_matchmaking(
             &zones_table_write_handle
                 .get(instance_guid)
                 .unwrap_or_else(|| panic!(
-                    "Zone instance {} should have been created or already exist but is missing",
-                    instance_guid
+                    "Zone instance {instance_guid} should have been created or already exist but is missing"
                 ))
                 .read(),
             Some(previous_location.pos),
@@ -2896,11 +2869,11 @@ pub fn leave_active_minigame_if_any(
         .minigames()
         .stage_config(group.stage_group_guid, group.stage_guid)
     else {
-        return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to end target {:?}'s active minigame with stage config {} (stage group {}) that does not exist", target, group.stage_guid, group.stage_group_guid)));
+        return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to end target {target:?}'s active minigame with stage config {} (stage group {}) that does not exist", group.stage_guid, group.stage_group_guid)));
     };
 
     let Some(shared_minigame_data) = minigame_data_table_write_handle.get(group) else {
-        return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to end target {:?}'s active minigame with shared minigame data {} (stage group {}) that does not exist", target, group.stage_guid, group.stage_group_guid)));
+        return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to end target {target:?}'s active minigame with shared minigame data {} (stage group {}) that does not exist", group.stage_guid, group.stage_group_guid)));
     };
     let mut minigame_data_write_handle = shared_minigame_data.write();
     let is_matchmaking = minigame_data_write_handle.readiness == MinigameReadiness::Matchmaking;
@@ -2977,20 +2950,12 @@ fn evaluate_score_to_credits_expression(
     let context = context_map! {
         "x" => evalexpr::Value::Float(score as f64),
     }
-    .unwrap_or_else(|_| {
-        panic!(
-            "Couldn't build expression evaluation context for score {}",
-            score
-        )
-    });
+    .unwrap_or_else(|_| panic!("Couldn't build expression evaluation context for score {score}"));
 
     let result = eval_with_context(score_to_credits_expression, &context).map_err(|err| {
         Error::new(
             ErrorKind::InvalidData,
-            format!(
-                "Unable to evaluate score-to-credits expression for score {}: {}",
-                score, err
-            ),
+            format!("Unable to evaluate score-to-credits expression for score {score}: {err}"),
         )
     })?;
 
@@ -2998,8 +2963,7 @@ fn evaluate_score_to_credits_expression(
         return Err(Error::new(
             ErrorKind::InvalidData,
             format!(
-                "Score-to-credits expression did not return an integer for score {}, returned: {}",
-                score, result
+                "Score-to-credits expression did not return an integer for score {score}, returned: {result}"
             ),
         ));
     };
@@ -3008,10 +2972,7 @@ fn evaluate_score_to_credits_expression(
         Error::new(
             ErrorKind::InvalidData,
             format!(
-                "Score-to-credits expression returned float that could not be converted to an integer for score {}: {}, {}",
-                score,
-                credits,
-                err
+                "Score-to-credits expression returned float that could not be converted to an integer for score {score}: {credits}, {err}"
             ),
         )
     })

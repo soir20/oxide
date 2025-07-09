@@ -147,19 +147,13 @@ fn evaluate_cost_expression(
         "x" => evalexpr::Value::Float(cost as f64),
     }
     .unwrap_or_else(|_| {
-        panic!(
-            "Couldn't build expression evaluation context for item {}",
-            item_guid
-        )
+        panic!("Couldn't build expression evaluation context for item {item_guid}")
     });
 
     let result = eval_with_context(cost_expression, &context).map_err(|err| {
         Error::new(
             ErrorKind::InvalidData,
-            format!(
-                "Unable to evaluate cost expression for item {}: {}",
-                item_guid, err
-            ),
+            format!("Unable to evaluate cost expression for item {item_guid}: {err}"),
         )
     })?;
 
@@ -167,8 +161,7 @@ fn evaluate_cost_expression(
         return Err(Error::new(
             ErrorKind::InvalidData,
             format!(
-                "Cost expression did not return an integer for item {}, returned: {}",
-                item_guid, result
+                "Cost expression did not return an integer for item {item_guid}, returned: {result}"
             ),
         ));
     };
@@ -177,10 +170,7 @@ fn evaluate_cost_expression(
         Error::new(
             ErrorKind::InvalidData,
             format!(
-                "Cost expression returned float that could not be converted to an integer for item {}: {}, {}",
-                item_guid,
-                new_cost,
-                err
+                "Cost expression returned float that could not be converted to an integer for item {item_guid}: {new_cost}, {err}"
             ),
         )
     })
