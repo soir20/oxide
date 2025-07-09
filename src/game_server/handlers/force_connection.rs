@@ -85,7 +85,7 @@ impl ForceConnectionBoard {
         let Some(next_open_row) = self.next_open_row(col) else {
             return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
-                format!("Cannot drop piece in column {} that is already full", col),
+                format!("Cannot drop piece in column {col} that is already full"),
             ));
         };
 
@@ -111,20 +111,14 @@ impl ForceConnectionBoard {
         if piece1 == ForceConnectionPiece::Empty || piece1 == ForceConnectionPiece::Wall {
             return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
-                format!(
-                    "Piece 1 at ({}, {}) must be a player piece but was: {:?}",
-                    row1, col1, piece1
-                ),
+                format!("Piece 1 at ({row1}, {col1}) must be a player piece but was: {piece1:?}"),
             ));
         }
 
         if piece2 == ForceConnectionPiece::Empty || piece2 == ForceConnectionPiece::Wall {
             return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
-                format!(
-                    "Piece 2 at ({}, {}) must be a player piece but was: {:?}",
-                    row2, col2, piece2
-                ),
+                format!("Piece 2 at ({row2}, {col2}) must be a player piece but was: {piece2:?}"),
             ));
         }
 
@@ -132,8 +126,7 @@ impl ForceConnectionBoard {
             return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
                 format!(
-                    "Tried to swap identical pieces at ({}, {}) and ({}, {}): {:?}",
-                    row1, col1, row2, col2, piece1
+                    "Tried to swap identical pieces at ({row1}, {col1}) and ({row2}, {col2}): {piece1:?}"
                 ),
             ));
         }
@@ -142,8 +135,7 @@ impl ForceConnectionBoard {
             return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
                 format!(
-                    "Tried to swap pieces at ({}, {}) and ({}, {}), which are more than 1 row or column apart: {:?}",
-                    row1, col1, row2, col2, piece1
+                    "Tried to swap pieces at ({row1}, {col1}) and ({row2}, {col2}), which are more than 1 row or column apart: {piece1:?}"
                 ),
             ));
         }
@@ -168,8 +160,7 @@ impl ForceConnectionBoard {
             return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
                 format!(
-                    "Piece to remove at ({}, {}) was expected to be {:?}, but was {:?}",
-                    row, col, expected_piece, piece
+                    "Piece to remove at ({row}, {col}) was expected to be {expected_piece:?}, but was {piece:?}",
                 ),
             ));
         }
@@ -201,7 +192,7 @@ impl ForceConnectionBoard {
                 match piece_type {
                     ForceConnectionPiece::Player1 => player1_matches.push(match_len),
                     ForceConnectionPiece::Player2 => player2_matches.push(match_len),
-                    _ => panic!("Found match for non-player piece type {:?}", piece_type),
+                    _ => panic!("Found match for non-player piece type {piece_type:?}"),
                 }
 
                 for (match_row, match_col) in match_pieces.iter() {
@@ -221,7 +212,7 @@ impl ForceConnectionBoard {
         if row >= BOARD_SIZE {
             return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
-                format!("Row {} is outside the board", row),
+                format!("Row {row} is outside the board"),
             ));
         }
 
@@ -232,7 +223,7 @@ impl ForceConnectionBoard {
         if col >= BOARD_SIZE {
             return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
-                format!("Column {} is outside the board", col),
+                format!("Column {col} is outside the board"),
             ));
         }
 
@@ -460,7 +451,7 @@ fn try_external_row_to_internal_row(external_row: u8) -> Result<u8, ProcessPacke
     if external_row >= BOARD_SIZE {
         return Err(ProcessPacketError::new(
             ProcessPacketErrorType::ConstraintViolated,
-            format!("External row {} is outside the board", external_row),
+            format!("External row {external_row} is outside the board"),
         ));
     }
 
@@ -516,9 +507,7 @@ impl ForceConnectionGame {
             return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
                 format!(
-                    "Player {} tried to connect to Force Connection, but the game has already started ({:?})",
-                    sender,
-                    self
+                    "Player {sender} tried to connect to Force Connection, but the game has already started ({self:?})"
                 ),
             ));
         }
@@ -527,8 +516,8 @@ impl ForceConnectionGame {
             return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
                 format!(
-                    "Force Connection player 1 with GUID {} is missing or has no name ({:?})",
-                    self.player1, self
+                    "Force Connection player 1 with GUID {} is missing or has no name ({self:?})",
+                    self.player1
                 ),
             ));
         };
@@ -539,8 +528,7 @@ impl ForceConnectionGame {
                 .ok_or(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
                     format!(
-                        "Force Connection player 2 with GUID {} is missing or has no name ({:?})",
-                        player2_guid, self
+                        "Force Connection player 2 with GUID {player2_guid} is missing or has no name ({self:?})"
                     ),
                 ))?,
             None => &"".to_string(),
@@ -568,9 +556,8 @@ impl ForceConnectionGame {
                             stage_group_guid: self.stage_group_guid,
                         },
                         payload: format!(
-                            "OnLevelDataMsg\t{size},{size},{board}",
-                            size = BOARD_SIZE,
-                            board = self.board
+                            "OnLevelDataMsg\t{BOARD_SIZE},{BOARD_SIZE},{}",
+                            self.board
                         ),
                     },
                 }),
@@ -596,7 +583,7 @@ impl ForceConnectionGame {
                             sub_op_code: -1,
                             stage_group_guid: self.stage_group_guid,
                         },
-                        payload: format!("OnAddPlayerMsg\t0\t{}\t{}\tfalse", name1, self.player1),
+                        payload: format!("OnAddPlayerMsg\t0\t{name1}\t{}\tfalse", self.player1),
                     },
                 }),
                 GamePacket::serialize(&TunneledPacket {
@@ -608,8 +595,7 @@ impl ForceConnectionGame {
                             stage_group_guid: self.stage_group_guid,
                         },
                         payload: format!(
-                            "OnAddPlayerMsg\t1\t{}\t{}\t{}",
-                            name2,
+                            "OnAddPlayerMsg\t1\t{name2}\t{}\t{}",
                             self.player2.unwrap_or(0),
                             self.is_ai_match()
                         ),
@@ -637,7 +623,7 @@ impl ForceConnectionGame {
             }
             self.ready[1] = true;
         } else {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} sent a ready payload for Force Connection, but they aren't one of the game's players ({:?})", sender, self)));
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} sent a ready payload for Force Connection, but they aren't one of the game's players ({self:?})")));
         }
 
         if !self.ready[0] || !self.ready[1] {
@@ -677,7 +663,7 @@ impl ForceConnectionGame {
         self.check_turn(sender, player_index, Instant::now())?;
 
         if col >= BOARD_SIZE {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to select column {} in Force Connection, but it isn't a valid column ({:?})", sender, player_index, col, self)));
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} (index {player_index}) tried to select column {col} in Force Connection, but it isn't a valid column ({self:?})")));
         }
 
         let recipient = match self.turn {
@@ -701,7 +687,7 @@ impl ForceConnectionGame {
                         sub_op_code: -1,
                         stage_group_guid: self.stage_group_guid,
                     },
-                    payload: format!("OnOtherPlayerSelectNewColumnMsg\t{}", col),
+                    payload: format!("OnOtherPlayerSelectNewColumnMsg\t{col}"),
                 },
             })],
         )])
@@ -735,10 +721,8 @@ impl ForceConnectionGame {
                         stage_group_guid: self.stage_group_guid,
                     },
                     payload: format!(
-                        "OnDropPieceMsg\t{}\t{}\t{}",
-                        player_index,
-                        internal_row_to_external_row(row),
-                        col
+                        "OnDropPieceMsg\t{player_index}\t{}\t{col}",
+                        internal_row_to_external_row(row)
                     ),
                 },
             })],
@@ -756,11 +740,11 @@ impl ForceConnectionGame {
         self.check_turn(sender, player_index, Instant::now())?;
 
         if powerup > 1 {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to toggle powerup {} in Force Connection, but it isn't a valid powerup ({:?})", sender, player_index, powerup, self)));
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} (index {player_index}) tried to toggle powerup {powerup} in Force Connection, but it isn't a valid powerup ({self:?})")));
         }
 
         if self.powerups[player_index as usize][powerup as usize] == 0 {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to toggle powerup {} in Force Connection, but they don't have any more of that powerup ({:?})", sender, player_index, powerup, self)));
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} (index {player_index}) tried to toggle powerup {powerup} in Force Connection, but they don't have any more of that powerup ({self:?})")));
         }
 
         let recipient = match self.turn {
@@ -784,7 +768,7 @@ impl ForceConnectionGame {
                         sub_op_code: -1,
                         stage_group_guid: self.stage_group_guid,
                     },
-                    payload: format!("OnOtherPlayerToggledPowerUpMsg\t{}", powerup),
+                    payload: format!("OnOtherPlayerToggledPowerUpMsg\t{powerup}"),
                 },
             })],
         )])
@@ -806,7 +790,7 @@ impl ForceConnectionGame {
         let internal_row2 = try_external_row_to_internal_row(row2)?;
 
         if self.powerups[player_index as usize][ForceConnectionPowerup::Swap as usize] == 0 {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to swap pieces ({}, {}) and ({}, {}) in Force Connection, but they have no swap powersups ({:?})", sender, player_index, row1, col1, row2, col2, self)));
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} (index {player_index}) tried to swap pieces ({row1}, {col1}) and ({row2}, {col2}) in Force Connection, but they have no swap powersups ({self:?})")));
         }
 
         self.powerups[player_index as usize][ForceConnectionPowerup::Swap as usize] -= 1;
@@ -826,8 +810,7 @@ impl ForceConnectionGame {
                         stage_group_guid: self.stage_group_guid,
                     },
                     payload: format!(
-                        "OnUseLightPowerUpMsg\t{}\t{}\t{}\t{}\t{}",
-                        player_index, row1, col1, row2, col2
+                        "OnUseLightPowerUpMsg\t{player_index}\t{row1}\t{col1}\t{row2}\t{col2}"
                     ),
                 },
             })],
@@ -849,7 +832,7 @@ impl ForceConnectionGame {
         let internal_row = try_external_row_to_internal_row(row)?;
 
         if self.powerups[player_index as usize][ForceConnectionPowerup::Delete as usize] == 0 {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to delete piece ({}, {}) in Force Connection, but they have no delete powersups ({:?})", sender, player_index, row, col, self)));
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} (index {player_index}) tried to delete piece ({row}, {col}) in Force Connection, but they have no delete powersups ({self:?})")));
         }
 
         self.powerups[player_index as usize][ForceConnectionPowerup::Delete as usize] -= 1;
@@ -875,7 +858,7 @@ impl ForceConnectionGame {
                             sub_op_code: -1,
                             stage_group_guid: self.stage_group_guid,
                         },
-                        payload: format!("OnUseDarkPowerUpMsg\t{}\t{}\t{}", player_index, row, col),
+                        payload: format!("OnUseDarkPowerUpMsg\t{player_index}\t{row}\t{col}"),
                     },
                 }),
                 GamePacket::serialize(&TunneledPacket {
@@ -941,7 +924,7 @@ impl ForceConnectionGame {
         pause: bool,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         if player != self.player1 && Some(player) != self.player2 {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to pause or resume (pause: {}) the game for player {}, who is not playing this instance of Force Connection ({:?})", pause, player, self)));
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to pause or resume (pause: {pause}) the game for player {player}, who is not playing this instance of Force Connection ({self:?})")));
         };
 
         if !self.is_ai_match() {
@@ -962,7 +945,7 @@ impl ForceConnectionGame {
         } else if Some(player) == self.player2 {
             1
         } else {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to remove player {}, who is not playing this instance of Force Connection ({:?})", player, self)));
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to remove player {player}, who is not playing this instance of Force Connection ({self:?})")));
         };
 
         minigame_status.game_won = self.matches[player_index] >= MATCHES_TO_WIN;
@@ -1005,15 +988,15 @@ impl ForceConnectionGame {
         let is_valid_for_player = match player_index {
             0 => self.turn == ForceConnectionTurn::Player1 && sender == self.player1,
             1 => self.turn == ForceConnectionTurn::Player2 && ((sender == self.player1 && self.is_ai_match()) || (Some(sender) == self.player2)),
-            _ => return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to make a move in Force Connection, but the player index {} isn't valid ({:?})", sender, player_index, self)))
+            _ => return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} tried to make a move in Force Connection, but the player index {player_index} isn't valid ({self:?})")))
         };
 
         if !is_valid_for_player {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to make a move in Force Connection, but it isn't their turn ({:?})", sender, player_index, self)));
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} (index {player_index}) tried to make a move in Force Connection, but it isn't their turn ({self:?})")));
         }
 
         if self.timer.time_until_next_event(turn_time).is_zero() {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to make a move in Force Connection, but their turn expired ({:?})", sender, player_index, self)));
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} (index {player_index}) tried to make a move in Force Connection, but their turn expired ({self:?})")));
         }
 
         if self.state != ForceConnectionGameState::WaitingForMove {
@@ -1024,7 +1007,7 @@ impl ForceConnectionGame {
             } else {
                 LogLevel::Info
             };
-            return Err(ProcessPacketError::new_with_log_level(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to make a move in Force Connection, but the state is {:?} instead of waiting for a move ({:?})", sender, player_index, self.state, self), log_level));
+            return Err(ProcessPacketError::new_with_log_level(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} (index {player_index}) tried to make a move in Force Connection, but the state is {:?} instead of waiting for a move ({self:?})", self.state), log_level));
         }
 
         Ok(())
@@ -1050,8 +1033,8 @@ impl ForceConnectionGame {
                             stage_group_guid: self.stage_group_guid,
                         },
                         payload: format!(
-                            "OnScoreFromTimeMsg\t{}\t{}",
-                            self.turn, score_from_turn_time
+                            "OnScoreFromTimeMsg\t{}\t{score_from_turn_time}",
+                            self.turn
                         ),
                     },
                 })],
@@ -1154,7 +1137,7 @@ impl ForceConnectionGame {
                             sub_op_code: -1,
                             stage_group_guid: self.stage_group_guid,
                         },
-                        payload: format!("OnPowerUpAddedMsg\t{}\t{}", player_index, new_powerup),
+                        payload: format!("OnPowerUpAddedMsg\t{player_index}\t{new_powerup}"),
                     },
                 })],
             ));
@@ -1172,7 +1155,7 @@ impl ForceConnectionGame {
                             sub_op_code: -1,
                             stage_group_guid: self.stage_group_guid,
                         },
-                        payload: format!("OnAddScoreMsg\t{}\t{}", player_index, score_from_match),
+                        payload: format!("OnAddScoreMsg\t{player_index}\t{score_from_match}"),
                     },
                 }),
                 GamePacket::serialize(&TunneledPacket {
@@ -1183,7 +1166,7 @@ impl ForceConnectionGame {
                             sub_op_code: -1,
                             stage_group_guid: self.stage_group_guid,
                         },
-                        payload: format!("OnAddMatchMsg\t{}", player_index),
+                        payload: format!("OnAddMatchMsg\t{player_index}"),
                     },
                 }),
             ],
@@ -1265,8 +1248,7 @@ impl ForceConnectionGame {
                         stage_group_guid: self.stage_group_guid,
                     },
                     payload: format!(
-                        "OnPowerUpRemainingMsg\t{}\t{},{}",
-                        player_index,
+                        "OnPowerUpRemainingMsg\t{player_index}\t{},{}",
                         self.powerups[player_index as usize][ForceConnectionPowerup::Swap as usize],
                         self.powerups[player_index as usize]
                             [ForceConnectionPowerup::Delete as usize]

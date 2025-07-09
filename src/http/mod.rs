@@ -336,7 +336,7 @@ async fn try_start(
     let manifests = read_manifests_config(config_dir).await?;
     let crc_map = prepare_asset_cache(assets_path, &assets_cache_path, &manifests).await?;
 
-    let listener = TcpListener::bind(format!("{}:{}", bind_ip, port)).await?;
+    let listener = TcpListener::bind(format!("{bind_ip}:{port}")).await?;
     let app: Router<()> = Router::new()
         .route("/assets/*asset", get(asset_handler))
         .with_state((Arc::new(assets_cache_path), Arc::new(crc_map)));

@@ -38,7 +38,7 @@ pub fn shorten_player_guid(player_guid: u64) -> Result<u32, ProcessPacketError> 
     if player_guid > u32::MAX as u64 {
         Err(ProcessPacketError::new(
             ProcessPacketErrorType::ConstraintViolated,
-            format!("Player GUID {} must be <= {}", player_guid, u32::MAX),
+            format!("Player GUID {player_guid} must be <= {}", u32::MAX),
         ))
     } else {
         Ok(player_guid as u32)

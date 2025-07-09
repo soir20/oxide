@@ -117,7 +117,7 @@ impl ProcessPacketError {
         ProcessPacketError {
             backtrace: self.backtrace,
             err_type: self.err_type,
-            message: format!("{}: {}", message, self.message),
+            message: format!("{message}: {}", self.message),
             log_level: self.log_level,
         }
     }
@@ -131,7 +131,7 @@ impl From<Error> for ProcessPacketError {
     fn from(err: Error) -> Self {
         ProcessPacketError::new(
             ProcessPacketErrorType::DeserializeError,
-            format!("IO Error: {}", err),
+            format!("IO Error: {err}"),
         )
     }
 }
@@ -140,7 +140,7 @@ impl From<ParseBoolError> for ProcessPacketError {
     fn from(err: ParseBoolError) -> Self {
         ProcessPacketError::new(
             ProcessPacketErrorType::DeserializeError,
-            format!("Parse bool error: {}", err),
+            format!("Parse bool error: {err}"),
         )
     }
 }
@@ -149,7 +149,7 @@ impl From<ParseIntError> for ProcessPacketError {
     fn from(err: ParseIntError) -> Self {
         ProcessPacketError::new(
             ProcessPacketErrorType::DeserializeError,
-            format!("Parse int error: {}", err),
+            format!("Parse int error: {err}"),
         )
     }
 }
@@ -158,7 +158,7 @@ impl From<DeserializePacketError> for ProcessPacketError {
     fn from(err: DeserializePacketError) -> Self {
         ProcessPacketError::new(
             ProcessPacketErrorType::DeserializeError,
-            format!("Deserialize Error: {:?}", err),
+            format!("Deserialize Error: {err:?}"),
         )
     }
 }
@@ -233,15 +233,12 @@ impl GameServer {
                 }
                 _ => Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
-                    format!(
-                        "Client tried to log in without a login request, data: {:x?}",
-                        data
-                    ),
+                    format!("Client tried to log in without a login request, data: {data:x?}"),
                 )),
             },
             Err(_) => Err(ProcessPacketError::new(
                 ProcessPacketErrorType::UnknownOpCode,
-                format!("Unknown op code at login: {}", raw_op_code),
+                format!("Unknown op code at login: {raw_op_code}"),
             )),
         }
     }
@@ -327,8 +324,7 @@ impl GameServer {
                                         return Err(ProcessPacketError::new(
                                             ProcessPacketErrorType::ConstraintViolated,
                                             format!(
-                                                "Player {} sent ready packet but does not exist",
-                                                sender
+                                                "Player {sender} sent ready packet but does not exist"
                                             ),
                                         ));
                                     };
@@ -423,8 +419,7 @@ impl GameServer {
                             write_guids: vec![player_guid(sender)],
                             character_consumer: move |characters_table_read_handle, characters_read, mut characters_write, minigame_data_lock_enforcer| {
                                 let Some((_, instance_guid, chunk)) = possible_index else {
-                                    return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} sent a ready packet but is not in any zone",
-                                        sender)));
+                                    return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} sent a ready packet but is not in any zone")));
                                 };
 
                                 let zones_lock_enforcer: ZoneLockEnforcer = minigame_data_lock_enforcer.into();
@@ -433,8 +428,7 @@ impl GameServer {
                                     write_guids: Vec::new(),
                                     zone_consumer: |_, zones_read, _| {
                                         let Some(zone) = zones_read.get(&instance_guid) else {
-                                            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} sent a ready packet from unknown zone {}",
-                                                sender, instance_guid)));
+                                            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} sent a ready packet from unknown zone {instance_guid}")));
                                         };
 
                                         let mut sender_only_character_packets = zone.send_self_on_client_ready();
@@ -499,7 +493,7 @@ impl GameServer {
                                         let mut character_broadcasts = Vec::new();
 
                                         let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) else {
-                                            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} sent a ready packet", sender)));
+                                            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {sender} sent a ready packet")));
                                         };
 
                                         character_write_handle.stats.speed.base = zone.speed;
@@ -580,7 +574,7 @@ impl GameServer {
                                     else {
                                         return Err(ProcessPacketError::new(
                                             ProcessPacketErrorType::ConstraintViolated,
-                                            format!("Couldn't sync time for player {} because they are not in any zone", sender_guid)
+                                            format!("Couldn't sync time for player {sender_guid} because they are not in any zone")
                                         ));
                                     };
 
@@ -593,7 +587,7 @@ impl GameServer {
                                             let Some(zone_read_handle) = zones_read.get(&instance_guid) else {
                                                 return Err(ProcessPacketError::new(
                                                     ProcessPacketErrorType::ConstraintViolated,
-                                                    format!("Couldn't sync time for player {} because their instance {} does not exist", sender_guid, instance_guid)
+                                                    format!("Couldn't sync time for player {sender_guid} because their instance {instance_guid} does not exist")
                                                 ));
                                             };
 
@@ -656,8 +650,8 @@ impl GameServer {
                         return Err(ProcessPacketError::new(
                             ProcessPacketErrorType::ConstraintViolated,
                             format!(
-                                "Player {} requested to teleport to unknown point of interest {}",
-                                sender, teleport_request.point_of_interest_guid
+                                "Player {sender} requested to teleport to unknown point of interest {}",
+                                teleport_request.point_of_interest_guid
                             ),
                         ));
                     };
@@ -680,7 +674,7 @@ impl GameServer {
                             write_guids: Vec::new(),
                             character_consumer: |characters_table_read_handle, _, _, minigame_data_lock_enforcer| {
                                 let Some((_, instance_guid, _)) = characters_table_read_handle.index1(player_guid(sender)) else {
-                                    return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} tried to teleport to safety", sender)));
+                                    return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {sender} tried to teleport to safety")));
                                 };
 
                                 let zones_lock_enforcer: ZoneLockEnforcer = minigame_data_lock_enforcer.into();
@@ -689,7 +683,7 @@ impl GameServer {
                                     write_guids: Vec::new(),
                                     zone_consumer: |_, zones_read, _| {
                                         let Some(zone) = zones_read.get(&instance_guid) else {
-                                            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} outside zone tried to teleport to safety", sender)));
+                                            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} outside zone tried to teleport to safety")));
                                         };
 
                                         let spawn_pos = zone.default_spawn_pos;
@@ -721,7 +715,7 @@ impl GameServer {
                         write_guids: vec![player_guid(sender)],
                         character_consumer: |characters_table_read_handle, _, mut characters_write, _| {
                             let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) else {
-                                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {} requested to brandish or holster their weapon", sender)));
+                                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {sender} requested to brandish or holster their weapon")));
                             };
 
                             character_write_handle.brandish_or_holster();
@@ -764,14 +758,14 @@ impl GameServer {
                 _ => {
                     return Err(ProcessPacketError::new(
                         ProcessPacketErrorType::UnknownOpCode,
-                        format!("Unimplemented: {:?}, {:x?}", op_code, data),
+                        format!("Unimplemented: {op_code:?}, {data:x?}"),
                     ))
                 }
             },
             Err(_) => {
                 return Err(ProcessPacketError::new(
                     ProcessPacketErrorType::UnknownOpCode,
-                    format!("Unknown op code: {}, {:x?}", raw_op_code, data),
+                    format!("Unknown op code: {raw_op_code}, {data:x?}"),
                 ))
             }
         }
@@ -849,17 +843,14 @@ impl GameServer {
         else {
             return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
-                format!("At capacity for zones for template ID {}", template_guid),
+                format!("At capacity for zones for template ID {template_guid}"),
             ));
         };
 
         let Some(template) = self.zone_templates.get(&template_guid) else {
             return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
-                format!(
-                    "Tried to teleport to unknown zone template {}",
-                    template_guid
-                ),
+                format!("Tried to teleport to unknown zone template {template_guid}"),
             ));
         };
 
@@ -867,8 +858,8 @@ impl GameServer {
             return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
                 format!(
-                    "Zone template {} (capacity {}) does not have the required capacity {}",
-                    template_guid, template.max_players, required_capacity
+                    "Zone template {template_guid} (capacity {}) does not have the required capacity {required_capacity}",
+                    template.max_players
                 ),
             ));
         }
