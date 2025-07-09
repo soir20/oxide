@@ -122,7 +122,7 @@ impl FleetCommanderPlayerState {
         col: u8,
     ) -> Result<(), ProcessPacketError> {
         let max_coord = BOARD_SIZE - new_ship_size.value();
-        if (flipped && row >= max_coord) || (!flipped && col >= max_coord) {
+        if (flipped && row > max_coord) || (!flipped && col > max_coord) {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) sent a place ship payload (size: {:?}, flipped: {}, row: {}, col: {}) for Fleet Commander, but the ship is out of bounds ({:?})", sender, player_index, new_ship_size, flipped, row, col, self)));
         }
 
