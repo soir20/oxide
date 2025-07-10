@@ -395,21 +395,23 @@ impl FleetCommanderGame {
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let ship_size = FleetCommanderShipSize::try_from(ship_size).map_err(|_| ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} sent a place ship payload for Force Connection, but ship size {ship_size} isn't valid ({self:?})")))?;
 
-        if (player_index == 0 && sender == self.player1)
-            || (player_index == 1
-                && (Some(sender) == self.player2 || (self.is_ai_match() && sender == self.player1)))
-        {
-            self.player_states[player_index as usize].add_ship(
-                sender,
-                player_index,
-                ship_size,
-                flipped,
-                row,
-                col,
-            )?;
-        } else {
+        let is_valid_for_player = match player_index {
+            0 => sender == self.player1,
+            1 => (sender == self.player1 && self.is_ai_match()) || Some(sender) == self.player2,
+            _ => return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} tried to place a ship in Fleet Commander, but the player index {player_index} isn't valid ({self:?})")))
+        };
+        if is_valid_for_player {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} sent a place ship payload for Force Connection, but they aren't one of the game's players ({self:?})")));
         }
+
+        self.player_states[player_index as usize].add_ship(
+            sender,
+            player_index,
+            ship_size,
+            flipped,
+            row,
+            col,
+        )?;
 
         if self.player_states[0].readiness() == FleetCommanderPlayerReadiness::Unready
             || self.player_states[1].readiness() == FleetCommanderPlayerReadiness::Unready
@@ -582,7 +584,7 @@ impl FleetCommanderGame {
         }
     }
 
-    /*fn check_turn(
+    fn check_turn(
         &self,
         sender: u32,
         player_index: u8,
@@ -591,30 +593,23 @@ impl FleetCommanderGame {
         let is_valid_for_player = match player_index {
             0 => self.turn == FleetCommanderTurn::Player1 && sender == self.player1,
             1 => self.turn == FleetCommanderTurn::Player2 && ((sender == self.player1 && self.is_ai_match()) || (Some(sender) == self.player2)),
-            _ => return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} tried to make a move in Fleet Commander, but the player index {} isn't valid ({:?})", sender, player_index, self)))
+            _ => return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} tried to make a move in Fleet Commander, but the player index {player_index} isn't valid ({self:?})")))
         };
 
         if !is_valid_for_player {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to make a move in Fleet Commander, but it isn't their turn ({:?})", sender, player_index, self)));
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} (index {player_index}) tried to make a move in Fleet Commander, but it isn't their turn ({self:?})")));
         }
 
-        if self.time_until_next_event(turn_time).is_zero() {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to make a move in Fleet Commander, but their turn expired ({:?})", sender, player_index, self)));
-        }
+        let FleetCommanderGameState::WaitingForMove { timer } = &self.state else {
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} (index {player_index}) tried to make a move in Fleet Commander, but the state is {:?} instead of waiting for a move ({self:?})", self.state)));
+        };
 
-        if self.state != FleetCommanderGameState::WaitingForMove {
-            let log_level = if self.is_ai_player(player_index) {
-                // There's a known issue with the AI player attempting to use a powerup and drop a piece at the same time.
-                // Don't return an error to avoid log spam.
-                LogLevel::Debug
-            } else {
-                LogLevel::Info
-            };
-            return Err(ProcessPacketError::new_with_log_level(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) tried to make a move in Fleet Commander, but the state is {:?} instead of waiting for a move ({:?})", sender, player_index, self.state, self), log_level));
+        if timer.time_until_next_event(turn_time).is_zero() {
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} (index {player_index}) tried to make a move in Fleet Commander, but their turn expired ({self:?})")));
         }
 
         Ok(())
-    }*/
+    }
 
     fn switch_turn(&mut self) -> Vec<Broadcast> {
         let mut broadcasts = Vec::new();
