@@ -558,6 +558,8 @@ impl FleetCommanderGame {
             ));
         }
 
+        broadcasts.append(&mut self.switch_turn());
+
         Ok(broadcasts)
     }
 
