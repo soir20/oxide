@@ -25,6 +25,7 @@ use crate::game_server::{
 const BOARD_SIZE: u8 = 15;
 
 const SHIP_PLACEMENT_TIMEOUT: Duration = Duration::from_secs(60);
+const TURN_TIMEOUT: Duration = Duration::from_secs(15);
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Sequence, TryFromPrimitive)]
 #[repr(u8)]
@@ -158,6 +159,10 @@ impl FleetCommanderPlayerState {
         self.readiness = readiness;
 
         Ok(())
+    }
+
+    pub fn add_score(&mut self, score: i32) {
+        self.score = self.score.saturating_add(score);
     }
 }
 
@@ -427,7 +432,7 @@ impl FleetCommanderGame {
             })],
         )];
 
-        // TODO: start turn
+        broadcasts.append(&mut self.switch_turn());
         Ok(broadcasts)
     }
 
@@ -609,17 +614,17 @@ impl FleetCommanderGame {
         }
 
         Ok(())
-    }
+    }*/
 
     fn switch_turn(&mut self) -> Vec<Broadcast> {
         let mut broadcasts = Vec::new();
-        if let FleetCommanderGameState::Matching {
+        if let FleetCommanderGameState::ProcessingMove {
             turn_duration: time_left_in_turn,
+            ..
         } = self.state
         {
             let score_from_turn_time = time_left_in_turn.as_secs() as i32 * 5;
-            self.score[self.turn as usize] =
-                self.score[self.turn as usize].saturating_add(score_from_turn_time);
+            self.player_states[self.turn as usize].add_score(score_from_turn_time);
             broadcasts.push(Broadcast::Multi(
                 self.list_recipients(),
                 vec![GamePacket::serialize(&TunneledPacket {
@@ -639,13 +644,13 @@ impl FleetCommanderGame {
             ));
         }
 
-        self.state = FleetCommanderGameState::WaitingForMove;
+        self.state = FleetCommanderGameState::WaitingForMove {
+            timer: MinigameTimer::new_with_event(TURN_TIMEOUT),
+        };
         self.turn = match self.turn {
             FleetCommanderTurn::Player1 => FleetCommanderTurn::Player2,
             FleetCommanderTurn::Player2 => FleetCommanderTurn::Player1,
         };
-
-        self.schedule_event(Duration::from_secs(TURN_TIME_SECONDS as u64));
 
         broadcasts.push(Broadcast::Multi(
             self.list_recipients(),
@@ -657,119 +662,18 @@ impl FleetCommanderGame {
                         sub_op_code: -1,
                         stage_group_guid: self.stage_group_guid,
                     },
-                    payload: format!("OnStartPlayerTurnMsg\t{}\t{}", self.turn, TURN_TIME_SECONDS),
+                    payload: format!(
+                        "OnStartPlayerTurnMsg\t{}\t{}",
+                        self.turn,
+                        TURN_TIMEOUT.as_millis()
+                    ),
                 },
             })],
         ));
         broadcasts
     }
 
-    fn process_matches(&mut self) -> Vec<Broadcast> {
-        let (player1_matches, player2_matches, empty_slots) = self.player_states.process_matches();
-        if empty_slots.is_empty() {
-            self.check_for_winner()
-                .unwrap_or_else(|| self.switch_turn())
-        } else {
-            let mut broadcasts = Vec::new();
-
-            for player1_match_len in player1_matches {
-                broadcasts.append(&mut self.process_match(player1_match_len, 0));
-            }
-
-            for player2_match_len in player2_matches {
-                broadcasts.append(&mut self.process_match(player2_match_len, 1));
-            }
-
-            self.schedule_event(Duration::from_millis(500));
-
-            broadcasts.push(Broadcast::Multi(
-                self.list_recipients(),
-                vec![GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: FlashPayload {
-                        header: MinigameHeader {
-                            stage_guid: self.stage_guid,
-                            sub_op_code: -1,
-                            stage_group_guid: self.stage_group_guid,
-                        },
-                        payload: format!("OnSlotsToClearMsg\t{}", EmptySlots(empty_slots)),
-                    },
-                })],
-            ));
-
-            broadcasts
-        }
-    }
-
-    fn process_match(&mut self, match_length: u8, player_index: u8) -> Vec<Broadcast> {
-        self.ships_remaining[player_index as usize] = self.ships_remaining[player_index as usize].saturating_add(1);
-
-        let value_per_space = 100 + (match_length - MIN_MATCH_LENGTH) as i32 * 50;
-        let score_from_match = value_per_space * match_length as i32;
-        self.score[player_index as usize] =
-            self.score[player_index as usize].saturating_add(score_from_match);
-
-        let mut broadcasts = Vec::new();
-
-        if match_length > MIN_MATCH_LENGTH {
-            let new_powerup = if thread_rng().gen_range(0.0..=1.0) > 0.66 {
-                FleetCommanderPowerup::Swap
-            } else {
-                FleetCommanderPowerup::Delete
-            };
-
-            self.powerups[player_index as usize][new_powerup as usize] =
-                self.powerups[player_index as usize][new_powerup as usize].saturating_add(1);
-
-            broadcasts.push(Broadcast::Multi(
-                self.list_recipients(),
-                vec![GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: FlashPayload {
-                        header: MinigameHeader {
-                            stage_guid: self.stage_guid,
-                            sub_op_code: -1,
-                            stage_group_guid: self.stage_group_guid,
-                        },
-                        payload: format!("OnPowerUpAddedMsg\t{}\t{}", player_index, new_powerup),
-                    },
-                })],
-            ));
-            broadcasts.append(&mut self.broadcast_powerup_quantity(player_index));
-        }
-
-        broadcasts.push(Broadcast::Multi(
-            self.list_recipients(),
-            vec![
-                GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: FlashPayload {
-                        header: MinigameHeader {
-                            stage_guid: self.stage_guid,
-                            sub_op_code: -1,
-                            stage_group_guid: self.stage_group_guid,
-                        },
-                        payload: format!("OnAddScoreMsg\t{}\t{}", player_index, score_from_match),
-                    },
-                }),
-                GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: FlashPayload {
-                        header: MinigameHeader {
-                            stage_guid: self.stage_guid,
-                            sub_op_code: -1,
-                            stage_group_guid: self.stage_group_guid,
-                        },
-                        payload: format!("OnAddMatchMsg\t{}", player_index),
-                    },
-                }),
-            ],
-        ));
-
-        broadcasts
-    }
-
-    fn handle_move(&mut self, turn_time: Instant, sleep_time: Duration) -> Vec<Broadcast> {
+    /*fn handle_move(&mut self, turn_time: Instant, sleep_time: Duration) -> Vec<Broadcast> {
         self.state = FleetCommanderGameState::Matching {
             turn_duration: self.time_until_next_event(turn_time),
         };
