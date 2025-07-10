@@ -508,8 +508,13 @@ impl FleetCommanderGame {
         let turn_time = Instant::now();
         self.check_turn(sender, player_index, turn_time)?;
 
+        let target_index = match self.turn {
+            FleetCommanderTurn::Player1 => 1,
+            FleetCommanderTurn::Player2 => 0,
+        };
+
         let (did_damage, destroyed_ship) =
-            match self.player_states[player_index as usize].hit(row, col)? {
+            match self.player_states[target_index as usize].hit(row, col)? {
                 FleetCommanderHitResult::Miss => (false, None),
                 FleetCommanderHitResult::ShipDamaged => (true, None),
                 FleetCommanderHitResult::ShipDestroyed(ship) => (true, Some(ship)),
@@ -527,7 +532,7 @@ impl FleetCommanderGame {
                         stage_group_guid: self.stage_group_guid,
                     },
                     payload: format!(
-                        "OnGridBombedMsg\t{player_index}\t{row}\t{col}\t{did_damage}\t0"
+                        "OnGridBombedMsg\t{target_index}\t{row}\t{col}\t{did_damage}\t0"
                     ),
                 },
             })],
@@ -545,7 +550,7 @@ impl FleetCommanderGame {
                             stage_group_guid: self.stage_group_guid,
                         },
                         payload: format!(
-                            "OnShipDestroyedMsg\t{player_index}\t{}\t{}\t{}\t{}",
+                            "OnShipDestroyedMsg\t{target_index}\t{}\t{}\t{}\t{}",
                             ship.size, ship.row, ship.col, ship.vertical
                         ),
                     },
