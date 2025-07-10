@@ -1351,8 +1351,7 @@ fn set_initial_minigame_status(
                 return Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
                     format!(
-                        "Player {} requested to join a stage {}, but they are already in minigame group {:?}",
-                        sender,
+                        "Player {sender} requested to join a stage {}, but they are already in minigame group {:?}",
                         stage_config.stage_config.guid(),
                         minigame_status.group
                     ),
