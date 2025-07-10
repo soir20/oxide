@@ -1416,6 +1416,17 @@ fn set_initial_minigame_status(
                 ));
             };
 
+            if let Some(minigame_status) = &player.minigame_status {
+                return Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Player {sender} requested to join a stage {}, but they are already in minigame group {:?}",
+                        stage_config.stage_config.guid(),
+                        minigame_status.group
+                    ),
+                ));
+            }
+
             player.minigame_status = Some(MinigameStatus {
                 group,
                 teleported_to_game: false,
