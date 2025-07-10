@@ -2477,8 +2477,7 @@ fn handle_flash_payload(
                 _ => Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
                     format!(
-                        "Received place ship request for unexpected game from player {}",
-                        sender
+                        "Received place ship request for unexpected game from player {sender}"
                     ),
                 )),
             },

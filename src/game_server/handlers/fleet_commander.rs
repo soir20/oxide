@@ -123,7 +123,7 @@ impl FleetCommanderPlayerState {
     ) -> Result<(), ProcessPacketError> {
         let max_coord = BOARD_SIZE - new_ship_size.value();
         if (flipped && row > max_coord) || (!flipped && col > max_coord) {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) sent a place ship payload (size: {:?}, flipped: {}, row: {}, col: {}) for Fleet Commander, but the ship is out of bounds ({:?})", sender, player_index, new_ship_size, flipped, row, col, self)));
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} (index {player_index}) sent a place ship payload (size: {new_ship_size:?}, flipped: {flipped}, row: {row}, col: {col}) for Fleet Commander, but the ship is out of bounds ({self:?})")));
         }
 
         self.ships.push(FleetCommanderShip {
@@ -151,7 +151,7 @@ impl FleetCommanderPlayerState {
             } else if ships_of_size > size.max_per_player() {
                 // Remove the new ship we just added
                 self.ships.pop();
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} (index {}) sent a place ship payload (size: {:?}, flipped: {}, row: {}, col: {}) for Fleet Commander, but they already have the maximum number of ships of that size placed ({:?})", sender, player_index, new_ship_size, flipped, row, col, self)));
+                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} (index {player_index}) sent a place ship payload (size: {new_ship_size:?}, flipped: {flipped}, row: {row}, col: {col}) for Fleet Commander, but they already have the maximum number of ships of that size placed ({self:?})")));
             }
         }
 
@@ -237,7 +237,7 @@ impl FleetCommanderGame {
         characters_table_read_handle: &CharacterTableReadHandle,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         if sender != self.player1 && Some(sender) != self.player2 {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} sent a connect payload for Fleet Commander, but they aren't one of the game's players ({:?})", sender, self)));
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} sent a connect payload for Fleet Commander, but they aren't one of the game's players ({self:?})")));
         }
 
         let Some(name1) = characters_table_read_handle.index2(player_guid(self.player1)) else {
@@ -256,8 +256,7 @@ impl FleetCommanderGame {
                 .ok_or(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
                     format!(
-                        "Fleet Commander player 2 with GUID {} is missing or has no name ({:?})",
-                        player2_guid, self
+                        "Fleet Commander player 2 with GUID {player2_guid} is missing or has no name ({self:?})"
                     ),
                 ))?,
             None => &"".to_string(),
@@ -270,9 +269,7 @@ impl FleetCommanderGame {
             return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
                 format!(
-                    "Player {} tried to connect to Fleet Commander, but the game has already started ({:?})",
-                    sender,
-                    self
+                    "Player {sender} tried to connect to Fleet Commander, but the game has already started ({self:?})"
                 ),
             ));
         };
@@ -312,8 +309,7 @@ impl FleetCommanderGame {
                             stage_group_guid: self.stage_group_guid,
                         },
                         payload: format!(
-                            "OnAssignPlayerIndexMsg\t{}",
-                            player_index
+                            "OnAssignPlayerIndexMsg\t{player_index}"
                         ),
                     },
                 }),
@@ -392,7 +388,7 @@ impl FleetCommanderGame {
         col: u8,
         player_index: u8,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        let ship_size = FleetCommanderShipSize::try_from(ship_size).map_err(|_| ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} sent a place ship payload for Force Connection, but ship size {} isn't valid ({:?})", sender, ship_size, self)))?;
+        let ship_size = FleetCommanderShipSize::try_from(ship_size).map_err(|_| ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} sent a place ship payload for Force Connection, but ship size {ship_size} isn't valid ({self:?})")))?;
 
         if (player_index == 0 && sender == self.player1)
             || (player_index == 1
@@ -407,7 +403,7 @@ impl FleetCommanderGame {
                 col,
             )?;
         } else {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {} sent a place ship payload for Force Connection, but they aren't one of the game's players ({:?})", sender, self)));
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} sent a place ship payload for Force Connection, but they aren't one of the game's players ({self:?})")));
         }
 
         if self.player_states[0].readiness() == FleetCommanderPlayerReadiness::Unready
@@ -473,7 +469,7 @@ impl FleetCommanderGame {
         pause: bool,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         if player != self.player1 && Some(player) != self.player2 {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to pause or resume (pause: {}) the game for player {}, who is not playing this instance of Fleet Commander ({:?})", pause, player, self)));
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to pause or resume (pause: {pause}) the game for player {player}, who is not playing this instance of Fleet Commander ({self:?})")));
         };
 
         if !self.is_ai_match() {
@@ -509,7 +505,7 @@ impl FleetCommanderGame {
         } else if Some(player) == self.player2 {
             1
         } else {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to remove player {}, who is not playing this instance of Fleet Commander ({:?})", player, self)));
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to remove player {player}, who is not playing this instance of Fleet Commander ({self:?})")));
         };
 
         /*minigame_status.game_won = self.ships_remaining[player_index] >= MATCHES_TO_WIN;
@@ -572,7 +568,7 @@ impl FleetCommanderGame {
                             sub_op_code: -1,
                             stage_group_guid,
                         },
-                        payload: format!("OnTriggerAutoPlaceShipMsg\t{}", player_index),
+                        payload: format!("OnTriggerAutoPlaceShipMsg\t{player_index}"),
                     },
                 })],
             )]
