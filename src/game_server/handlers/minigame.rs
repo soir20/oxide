@@ -2482,6 +2482,35 @@ fn handle_flash_payload(
                 )),
             },
         ),
+        "OnRequestBombGridMsg" => handle_minigame_packet_write(
+            sender,
+            game_server,
+            &payload.header,
+            |_, _, _, _, shared_minigame_data, _| match &mut shared_minigame_data.data {
+                SharedMinigameTypeData::FleetCommander { game } => {
+                    if parts.len() == 4 {
+                        let row = parts[1].parse()?;
+                        let col = parts[2].parse()?;
+                        let player_index = parts[3].parse()?;
+                        game.hit(sender, row, col, player_index)
+                    } else {
+                        Err(ProcessPacketError::new(
+                            ProcessPacketErrorType::ConstraintViolated,
+                            format!(
+                                "Expected 3 parameters in bomb grid request, but only found {}",
+                                parts.len().saturating_sub(1)
+                            ),
+                        ))
+                    }
+                }
+                _ => Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Received bomb grid request for unexpected game from player {sender}"
+                    ),
+                )),
+            },
+        ),
         _ => Err(ProcessPacketError::new(
             ProcessPacketErrorType::ConstraintViolated,
             format!(

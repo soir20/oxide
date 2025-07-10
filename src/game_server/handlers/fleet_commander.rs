@@ -56,18 +56,24 @@ impl FleetCommanderShipSize {
     }
 }
 
+impl Display for FleetCommanderShipSize {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.serialize_u8(*self as u8)
+    }
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 struct FleetCommanderShip {
     row: u8,
     col: u8,
-    flipped: bool,
+    vertical: bool,
     size: FleetCommanderShipSize,
     hits: u8,
 }
 
 impl FleetCommanderShip {
     pub fn contains(&self, row: u8, col: u8) -> bool {
-        if self.flipped {
+        if self.vertical {
             col == self.col && row >= self.row && row < row.saturating_add(self.size.value())
         } else {
             row == self.row && col >= self.col && col < col.saturating_add(self.size.value())
@@ -76,6 +82,10 @@ impl FleetCommanderShip {
 
     pub fn hit(&mut self) {
         self.hits = self.hits.saturating_add(1)
+    }
+
+    pub fn destroyed(&self) -> bool {
+        self.hits >= self.size.value()
     }
 }
 
@@ -100,10 +110,21 @@ enum FleetCommanderPlayerReadiness {
     Unready,
 }
 
+#[derive(Clone, Debug, PartialEq, Eq)]
+enum FleetCommanderHitResult {
+    Miss,
+    ShipDamaged,
+    ShipDestroyed(FleetCommanderShip),
+}
+
+type HitArrayItem = u32;
+
 #[derive(Clone, Debug, Default)]
 struct FleetCommanderPlayerState {
     readiness: FleetCommanderPlayerReadiness,
     ships: Vec<FleetCommanderShip>,
+    hits: [HitArrayItem;
+        (BOARD_SIZE as u32 * BOARD_SIZE as u32).div_ceil(HitArrayItem::BITS) as usize],
     powerups: [u8; 3],
     score: i32,
 }
@@ -130,7 +151,7 @@ impl FleetCommanderPlayerState {
         self.ships.push(FleetCommanderShip {
             row,
             col,
-            flipped,
+            vertical: flipped,
             size: new_ship_size,
             hits: 0,
         });
@@ -159,6 +180,45 @@ impl FleetCommanderPlayerState {
         self.readiness = readiness;
 
         Ok(())
+    }
+
+    pub fn hit(&mut self, row: u8, col: u8) -> Result<FleetCommanderHitResult, ProcessPacketError> {
+        if row >= BOARD_SIZE || col >= BOARD_SIZE {
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!("Space ({row}, {col}) is outside the board"),
+            ));
+        }
+
+        let index = row as usize * BOARD_SIZE as usize + col as usize;
+        let hit_section = index / HitArrayItem::BITS as usize;
+        let hit_index_in_section = index % HitArrayItem::BITS as usize;
+
+        let previously_hit = (self.hits[hit_section] >> hit_index_in_section) & 1 != 0;
+        if previously_hit {
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!("Space ({row}, {col}) was already hit"),
+            ));
+        }
+
+        self.hits[hit_section] |= 1 << hit_index_in_section;
+
+        for ship_index in 0..self.ships.len() {
+            let ship = &mut self.ships[ship_index];
+            if ship.contains(row, col) {
+                ship.hit();
+                if ship.destroyed() {
+                    return Ok(FleetCommanderHitResult::ShipDestroyed(
+                        self.ships.swap_remove(ship_index),
+                    ));
+                } else {
+                    return Ok(FleetCommanderHitResult::ShipDamaged);
+                }
+            }
+        }
+
+        Ok(FleetCommanderHitResult::Miss)
     }
 
     pub fn add_score(&mut self, score: i32) {
@@ -400,7 +460,7 @@ impl FleetCommanderGame {
             1 => (sender == self.player1 && self.is_ai_match()) || Some(sender) == self.player2,
             _ => return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} tried to place a ship in Fleet Commander, but the player index {player_index} isn't valid ({self:?})")))
         };
-        if is_valid_for_player {
+        if !is_valid_for_player {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} sent a place ship payload for Force Connection, but they aren't one of the game's players ({self:?})")));
         }
 
@@ -435,6 +495,64 @@ impl FleetCommanderGame {
         )];
 
         broadcasts.append(&mut self.switch_turn());
+        Ok(broadcasts)
+    }
+
+    pub fn hit(
+        &mut self,
+        sender: u32,
+        row: u8,
+        col: u8,
+        player_index: u8,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let turn_time = Instant::now();
+        self.check_turn(sender, player_index, turn_time)?;
+
+        let (did_damage, destroyed_ship) =
+            match self.player_states[player_index as usize].hit(row, col)? {
+                FleetCommanderHitResult::Miss => (false, None),
+                FleetCommanderHitResult::ShipDamaged => (true, None),
+                FleetCommanderHitResult::ShipDestroyed(ship) => (true, Some(ship)),
+            };
+
+        // TODO: add powerup
+        let mut broadcasts = vec![Broadcast::Multi(
+            self.list_recipients(),
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: FlashPayload {
+                    header: MinigameHeader {
+                        stage_guid: self.stage_guid,
+                        sub_op_code: -1,
+                        stage_group_guid: self.stage_group_guid,
+                    },
+                    payload: format!(
+                        "OnGridBombedMsg\t{player_index}\t{row}\t{col}\t{did_damage}\t0"
+                    ),
+                },
+            })],
+        )];
+
+        if let Some(ship) = destroyed_ship {
+            broadcasts.push(Broadcast::Multi(
+                self.list_recipients(),
+                vec![GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: FlashPayload {
+                        header: MinigameHeader {
+                            stage_guid: self.stage_guid,
+                            sub_op_code: -1,
+                            stage_group_guid: self.stage_group_guid,
+                        },
+                        payload: format!(
+                            "OnShipDestroyedMsg\t{player_index}\t{}\t{}\t{}\t{}",
+                            ship.size, ship.row, ship.col, ship.vertical
+                        ),
+                    },
+                })],
+            ));
+        }
+
         Ok(broadcasts)
     }
 
