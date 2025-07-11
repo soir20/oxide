@@ -94,7 +94,7 @@ pub trait GamePacket: SerializePacket {
     }
 }
 
-#[derive(Copy, Clone, SerializePacket, DeserializePacket, Deserialize, Default)]
+#[derive(Copy, Clone, SerializePacket, DeserializePacket, Deserialize, Default, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct Pos {
     pub x: f32,
