@@ -440,7 +440,17 @@ impl TickableStep {
         }
 
         if let Some(model_id) = self.model_id {
-            character.temporary_model_id = model_id;
+            if let Some(temporary_model_id) = character.temporary_model_id {
+                packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: RemoveTemporaryModel {
+                        guid: Guid::guid(character),
+                        model_id: temporary_model_id,
+                    },
+                }));
+            }
+
+            character.temporary_model_id = Some(model_id);
             packets_for_all.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: UpdateTemporaryModel {
@@ -1468,7 +1478,7 @@ impl NpcTemplate {
                 wield_type: (self.wield_type, self.wield_type.holster()),
                 holstered: false,
                 animation_id: self.animation_id,
-                temporary_model_id: 0,
+                temporary_model_id: None,
                 speed: CharacterStat {
                     base: 0.0,
                     mount_multiplier: 1.0,
@@ -1542,7 +1552,7 @@ pub struct CharacterStats {
     pub auto_interact_radius: f32,
     pub move_to_interact_offset: f32,
     pub instance_guid: u64,
-    pub temporary_model_id: u32,
+    pub temporary_model_id: Option<u32>,
     pub animation_id: i32,
     pub speed: CharacterStat,
     pub jump_height_multiplier: CharacterStat,
@@ -1583,13 +1593,16 @@ impl CharacterStats {
     }
 
     pub fn remove_packets(&self, mode: RemovalMode) -> Vec<Vec<u8>> {
-        let mut packets = vec![GamePacket::serialize(&TunneledPacket {
-            unknown1: true,
-            inner: RemoveTemporaryModel {
-                guid: Guid::guid(self),
-                model_id: self.temporary_model_id,
-            },
-        })];
+        let mut packets = Vec::new();
+        if let Some(temporary_model_id) = self.temporary_model_id {
+            packets.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: RemoveTemporaryModel {
+                    guid: Guid::guid(self),
+                    model_id: temporary_model_id,
+                },
+            }));
+        }
 
         packets.push(match mode {
             RemovalMode::Immediate => GamePacket::serialize(&TunneledPacket {
@@ -1768,7 +1781,7 @@ impl Character {
                 wield_type: (wield_type, wield_type.holster()),
                 holstered: false,
                 animation_id,
-                temporary_model_id: 0,
+                temporary_model_id: None,
                 speed: CharacterStat {
                     base: 0.0,
                     mount_multiplier: 1.0,
@@ -1837,7 +1850,7 @@ impl Character {
                 wield_type: (wield_type, wield_type.holster()),
                 holstered: false,
                 animation_id: 0,
-                temporary_model_id: 0,
+                temporary_model_id: None,
                 speed: CharacterStat {
                     base: 0.0,
                     mount_multiplier: 1.0,
