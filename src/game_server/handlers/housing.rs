@@ -192,7 +192,7 @@ pub fn fixture_packets(
                 disable_gravity: true,
                 sub_title_id: 0,
                 one_shot_animation_id: -1,
-                temporary_appearance: 0,
+                temporary_model: 0,
                 effects: vec![],
                 disable_interact_popup: false,
                 unknown33: 0,

@@ -19,8 +19,9 @@ use crate::{
             player_update::{
                 AddNotifications, AddNpc, AddPc, Customization, CustomizationSlot, Hostility, Icon,
                 MoveOnRail, NameplateImage, NotificationData, NpcRelevance, PlayCompositeEffect,
-                QueueAnimation, RemoveGracefully, RemoveStandard, SetAnimation, SingleNotification,
-                SingleNpcRelevance, UpdateSpeed, UpdateTemporaryAppearance,
+                QueueAnimation, RemoveGracefully, RemoveStandard, RemoveTemporaryModel,
+                SetAnimation, SingleNotification, SingleNpcRelevance, UpdateSpeed,
+                UpdateTemporaryModel,
             },
             tunnel::TunneledPacket,
             ui::ExecuteScriptWithStringParams,
@@ -252,7 +253,7 @@ impl BaseNpc {
                 disable_gravity: !self.enable_gravity,
                 sub_title_id: 0,
                 one_shot_animation_id: -1,
-                temporary_appearance: 0,
+                temporary_model: 0,
                 effects: vec![],
                 disable_interact_popup: !self.enable_interact_popup,
                 unknown33: 0,
@@ -439,9 +440,10 @@ impl TickableStep {
         }
 
         if let Some(model_id) = self.model_id {
+            character.temporary_model_id = model_id;
             packets_for_all.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
-                inner: UpdateTemporaryAppearance {
+                inner: UpdateTemporaryModel {
                     model_id,
                     guid: Guid::guid(character),
                 },
@@ -1345,7 +1347,7 @@ impl Player {
                 underage: false,
                 member: self.member,
                 moderator: false,
-                temporary_appearance: 0,
+                temporary_model: 0,
                 squads: Vec::new(),
                 battle_class: self.active_battle_class,
                 title: 0,
@@ -1466,6 +1468,7 @@ impl NpcTemplate {
                 wield_type: (self.wield_type, self.wield_type.holster()),
                 holstered: false,
                 animation_id: self.animation_id,
+                temporary_model_id: 0,
                 speed: CharacterStat {
                     base: 0.0,
                     mount_multiplier: 1.0,
@@ -1539,6 +1542,7 @@ pub struct CharacterStats {
     pub auto_interact_radius: f32,
     pub move_to_interact_offset: f32,
     pub instance_guid: u64,
+    pub temporary_model_id: u32,
     pub animation_id: i32,
     pub speed: CharacterStat,
     pub jump_height_multiplier: CharacterStat,
@@ -1579,7 +1583,15 @@ impl CharacterStats {
     }
 
     pub fn remove_packets(&self, mode: RemovalMode) -> Vec<Vec<u8>> {
-        let mut packets = vec![match mode {
+        let mut packets = vec![GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: RemoveTemporaryModel {
+                guid: Guid::guid(self),
+                model_id: self.temporary_model_id,
+            },
+        })];
+
+        packets.push(match mode {
             RemovalMode::Immediate => GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: RemoveStandard {
@@ -1603,7 +1615,7 @@ impl CharacterStats {
                     fade_duration_millis,
                 },
             }),
-        }];
+        });
 
         if let Some(CharacterMount { mount_guid, .. }) = self.mount {
             packets.push(match mode {
@@ -1756,6 +1768,7 @@ impl Character {
                 wield_type: (wield_type, wield_type.holster()),
                 holstered: false,
                 animation_id,
+                temporary_model_id: 0,
                 speed: CharacterStat {
                     base: 0.0,
                     mount_multiplier: 1.0,
@@ -1824,6 +1837,7 @@ impl Character {
                 wield_type: (wield_type, wield_type.holster()),
                 holstered: false,
                 animation_id: 0,
+                temporary_model_id: 0,
                 speed: CharacterStat {
                     base: 0.0,
                     mount_multiplier: 1.0,
