@@ -146,6 +146,8 @@ pub struct BaseNpcConfig {
     #[serde(default)]
     pub rot: Pos,
     #[serde(default)]
+    pub possible_pos: Vec<Pos>,
+    #[serde(default)]
     pub active_animation_slot: i32,
     #[serde(default)]
     pub name_offset_x: f32,

@@ -7,6 +7,7 @@ use std::{
 
 use enum_iterator::all;
 use parking_lot::RwLockReadGuard;
+use rand::{seq::SliceRandom, thread_rng};
 use serde::{de::IgnoredAny, Deserialize};
 
 use crate::{
@@ -167,7 +168,12 @@ impl From<ZoneConfig> for ZoneTemplate {
                     key: ambient_npc.base_npc.key.clone(),
                     discriminant: AMBIENT_NPC_DISCRIMINANT,
                     index,
-                    pos: ambient_npc.base_npc.pos,
+                    pos: ambient_npc
+                        .base_npc
+                        .possible_pos
+                        .choose(&mut thread_rng())
+                        .cloned()
+                        .unwrap_or(ambient_npc.base_npc.pos),
                     rot: ambient_npc.base_npc.rot,
                     scale: ambient_npc.base_npc.scale,
                     tickable_procedures: ambient_npc.base_npc.tickable_procedures.clone(),
