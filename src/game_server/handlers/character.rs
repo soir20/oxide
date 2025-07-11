@@ -355,18 +355,21 @@ pub struct TickableStep {
     pub new_pos_x: Option<f32>,
     pub new_pos_y: Option<f32>,
     pub new_pos_z: Option<f32>,
-    #[serde(default)]
-    pub new_rot_x: f32,
-    #[serde(default)]
-    pub new_rot_y: f32,
-    #[serde(default)]
-    pub new_rot_z: f32,
+    pub new_rot_x: Option<f32>,
+    pub new_rot_y: Option<f32>,
+    pub new_rot_z: Option<f32>,
     #[serde(default)]
     pub new_pos_offset_x: f32,
     #[serde(default)]
     pub new_pos_offset_y: f32,
     #[serde(default)]
     pub new_pos_offset_z: f32,
+    #[serde(default)]
+    pub new_rot_offset_x: f32,
+    #[serde(default)]
+    pub new_rot_offset_y: f32,
+    #[serde(default)]
+    pub new_rot_offset_z: f32,
     pub animation_id: Option<i32>,
     pub one_shot_animation_id: Option<i32>,
     pub chat_message_id: Option<u32>,
@@ -395,6 +398,15 @@ impl TickableStep {
         }
     }
 
+    pub fn new_rot(&self, current_rot: Pos) -> Pos {
+        Pos {
+            x: self.new_rot_x.unwrap_or(current_rot.x) + self.new_rot_offset_x,
+            y: self.new_rot_y.unwrap_or(current_rot.y) + self.new_rot_offset_y,
+            z: self.new_rot_z.unwrap_or(current_rot.z) + self.new_rot_offset_z,
+            w: current_rot.w,
+        }
+    }
+
     pub fn apply(
         &self,
         character: &mut CharacterStats,
@@ -403,7 +415,7 @@ impl TickableStep {
         mount_configs: &BTreeMap<u32, MountConfig>,
         item_definitions: &BTreeMap<u32, ItemDefinition>,
         customizations: &BTreeMap<u32, Customization>,
-    ) -> Vec<Broadcast> {
+    ) -> (Vec<Broadcast>, Option<UpdatePlayerPosition>) {
         let mut packets_for_all = Vec::new();
 
         match self.spawned_state {
@@ -508,21 +520,22 @@ impl TickableStep {
         }
 
         let new_pos = self.new_pos(character.pos);
-        character.pos = new_pos;
-        packets_for_all.push(GamePacket::serialize(&TunneledPacket {
-            unknown1: true,
-            inner: UpdatePlayerPosition {
+        let new_rot = self.new_rot(character.rot);
+        let update_pos = if new_pos != character.pos || new_rot != character.rot {
+            Some(UpdatePlayerPosition {
                 guid: Guid::guid(character),
                 pos_x: new_pos.x,
                 pos_y: new_pos.y,
                 pos_z: new_pos.z,
-                rot_x: self.new_rot_x,
-                rot_y: self.new_rot_y,
-                rot_z: self.new_rot_z,
+                rot_x: new_rot.x,
+                rot_y: new_rot.y,
+                rot_z: new_rot.z,
                 character_state: 1,
                 unknown: 0,
-            },
-        }));
+            })
+        } else {
+            None
+        };
 
         if let Some(animation_id) = self.animation_id {
             character.animation_id = animation_id;
@@ -620,7 +633,7 @@ impl TickableStep {
             broadcasts.push(Broadcast::Multi(recipients, chat_packets));
         }
 
-        broadcasts
+        (broadcasts, update_pos)
     }
 }
 
@@ -648,7 +661,7 @@ pub struct TickableProcedureConfig {
 }
 
 pub enum TickResult {
-    TickedCurrentProcedure(Vec<Broadcast>),
+    TickedCurrentProcedure(Vec<Broadcast>, Option<UpdatePlayerPosition>),
     MustChangeProcedure(String),
 }
 
@@ -740,17 +753,19 @@ impl TickableProcedure {
                 TickResult::MustChangeProcedure(self.next_procedure())
             } else {
                 self.current_step = Some((new_step_index, now));
-                TickResult::TickedCurrentProcedure(self.steps[new_step_index].apply(
+
+                let (broadcasts, update_pos) = self.steps[new_step_index].apply(
                     character,
                     nearby_player_guids,
                     nearby_players,
                     mount_configs,
                     item_definitions,
                     customizations,
-                ))
+                );
+                TickResult::TickedCurrentProcedure(broadcasts, update_pos)
             }
         } else {
-            TickResult::TickedCurrentProcedure(Vec::new())
+            TickResult::TickedCurrentProcedure(Vec::new(), None)
         }
     }
 
@@ -888,9 +903,9 @@ impl TickableProcedureTracker {
         mount_configs: &BTreeMap<u32, MountConfig>,
         item_definitions: &BTreeMap<u32, ItemDefinition>,
         customizations: &BTreeMap<u32, Customization>,
-    ) -> Vec<Broadcast> {
+    ) -> (Vec<Broadcast>, Option<UpdatePlayerPosition>) {
         if self.procedures.is_empty() {
-            return Vec::new();
+            return (Vec::new(), None);
         }
 
         let mut current_procedure = self
@@ -907,8 +922,8 @@ impl TickableProcedureTracker {
                 item_definitions,
                 customizations,
             );
-            if let TickResult::TickedCurrentProcedure(result) = tick_result {
-                break result;
+            if let TickResult::TickedCurrentProcedure(broadcasts, update_pos) = tick_result {
+                break (broadcasts, update_pos);
             } else if let TickResult::MustChangeProcedure(procedure_key) = tick_result {
                 current_procedure.reset();
                 self.current_procedure_key = procedure_key;
@@ -1889,7 +1904,7 @@ impl Character {
         mount_configs: &BTreeMap<u32, MountConfig>,
         item_definitions: &BTreeMap<u32, ItemDefinition>,
         customizations: &BTreeMap<u32, Customization>,
-    ) -> Vec<Broadcast> {
+    ) -> (Vec<Broadcast>, Option<UpdatePlayerPosition>) {
         self.tickable_procedure_tracker.tick(
             &mut self.stats,
             now,
