@@ -135,6 +135,8 @@ pub struct BaseNpcConfig {
     #[serde(default)]
     pub model_id: u32,
     #[serde(default)]
+    pub possible_model_ids: Vec<u32>,
+    #[serde(default)]
     pub texture_alias: String,
     #[serde(default)]
     pub name_id: u32,
@@ -187,7 +189,6 @@ pub struct BaseNpcConfig {
 
 #[derive(Clone)]
 pub struct BaseNpc {
-    pub model_id: u32,
     pub texture_alias: String,
     pub name_id: u32,
     pub terrain_object_id: u32,
@@ -219,7 +220,7 @@ impl BaseNpc {
             AddNpc {
                 guid: Guid::guid(character),
                 name_id: self.name_id,
-                model_id: self.model_id,
+                model_id: character.model_id,
                 unknown3: true,
                 chat_text_color: Character::DEFAULT_CHAT_TEXT_COLOR,
                 chat_bubble_color: Character::DEFAULT_CHAT_BUBBLE_COLOR,
@@ -327,7 +328,6 @@ impl BaseNpc {
 impl From<BaseNpcConfig> for BaseNpc {
     fn from(value: BaseNpcConfig) -> Self {
         BaseNpc {
-            model_id: value.model_id,
             texture_alias: value.texture_alias,
             name_id: value.name_id,
             terrain_object_id: value.terrain_object_id,
@@ -1449,6 +1449,7 @@ pub struct NpcTemplate {
     pub key: Option<String>,
     pub discriminant: u8,
     pub index: u16,
+    pub model_id: u32,
     pub pos: Pos,
     pub rot: Pos,
     pub scale: f32,
@@ -1480,6 +1481,7 @@ impl NpcTemplate {
         Character {
             stats: CharacterStats {
                 guid,
+                model_id: self.model_id,
                 pos: self.pos,
                 rot: self.rot,
                 scale: self.scale,
@@ -1560,6 +1562,7 @@ pub struct CharacterMount {
 #[derive(Clone)]
 pub struct CharacterStats {
     guid: u64,
+    pub model_id: u32,
     pub pos: Pos,
     pub rot: Pos,
     pub scale: f32,
@@ -1763,6 +1766,7 @@ impl Character {
 
     pub fn new(
         guid: u64,
+        model_id: u32,
         pos: Pos,
         rot: Pos,
         scale: f32,
@@ -1782,6 +1786,7 @@ impl Character {
         Character {
             stats: CharacterStats {
                 guid,
+                model_id,
                 pos,
                 rot,
                 scale,
@@ -1851,6 +1856,7 @@ impl Character {
         Character {
             stats: CharacterStats {
                 guid: player_guid(guid),
+                model_id: 0,
                 pos,
                 rot,
                 scale: 1.0,
