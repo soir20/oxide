@@ -53,6 +53,7 @@
   asset_name: Combat_Ryloth_StartingZone_01
   hide_ui: false
   is_combat: true
+  chunk_size: 70
   default_point_of_interest:
     guid: 15
     pos:
@@ -368,6 +369,7 @@
   asset_name: JediTemple
   hide_ui: false
   is_combat: false
+  chunk_size: 70
   default_point_of_interest:
     guid: 24
     pos:
@@ -1194,6 +1196,7 @@
   asset_name: Members
   hide_ui: false
   is_combat: false
+  chunk_size: 70
   default_point_of_interest:
     guid: 25
     pos:
@@ -1307,6 +1310,7 @@
   asset_name: Starship_Housing
   hide_ui: false
   is_combat: false
+  chunk_size: 1000
   default_point_of_interest:
     guid: 200
     pos:
@@ -1335,6 +1339,7 @@
   asset_name: Starship_Housing
   hide_ui: false
   is_combat: false
+  chunk_size: 1000
   default_point_of_interest:
     guid: 201
     pos:
