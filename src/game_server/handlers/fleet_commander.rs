@@ -72,11 +72,15 @@ struct FleetCommanderShip {
 }
 
 impl FleetCommanderShip {
-    pub fn contains(&self, row: u8, col: u8) -> bool {
+    pub fn contains(&self, hit_row: u8, hit_col: u8) -> bool {
         if self.vertical {
-            col == self.col && row >= self.row && row < row.saturating_add(self.size.value())
+            hit_col == self.col
+                && hit_row >= self.row
+                && hit_row < self.row.saturating_add(self.size.value())
         } else {
-            row == self.row && col >= self.col && col < col.saturating_add(self.size.value())
+            hit_row == self.row
+                && hit_col >= self.col
+                && hit_col < self.col.saturating_add(self.size.value())
         }
     }
 
