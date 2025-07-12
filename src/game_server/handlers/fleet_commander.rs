@@ -594,7 +594,18 @@ impl FleetCommanderGame {
 
                 broadcasts
             }
-            FleetCommanderGameState::WaitingForMove { timer } => Vec::new(), //self.switch_turn(),
+            FleetCommanderGameState::WaitingForMove { timer } => {
+                if timer.paused() {
+                    return Vec::new();
+                }
+
+                timer.update_timer(now);
+                if !timer.time_until_next_event(now).is_zero() {
+                    return Vec::new();
+                }
+
+                self.switch_turn()
+            }
             _ => Vec::new(),
         }
     }
@@ -797,16 +808,7 @@ impl FleetCommanderGame {
         broadcasts
     }
 
-    /*fn handle_move(&mut self, turn_time: Instant, sleep_time: Duration) -> Vec<Broadcast> {
-        self.state = FleetCommanderGameState::Matching {
-            turn_duration: self.time_until_next_event(turn_time),
-        };
-
-        self.schedule_event(sleep_time);
-        self.broadcast_powerup_quantity(self.turn as u8)
-    }
-
-    fn check_for_winner(&mut self) -> Option<Vec<Broadcast>> {
+    /*fn check_for_winner(&mut self) -> Option<Vec<Broadcast>> {
         let player1_won = self.ships_remaining[0] >= MATCHES_TO_WIN;
         let player2_won = self.ships_remaining[1] >= MATCHES_TO_WIN;
 
