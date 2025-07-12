@@ -21,8 +21,8 @@ pub enum PlayerUpdateOpCode {
     AddNotifications = 0xa,
     NpcRelevance = 0xc,
     UpdateScale = 0xd,
-    UpdateTemporaryAppearance = 0xe,
-    RemoveTemporaryAppearance = 0xf,
+    UpdateTemporaryModel = 0xe,
+    RemoveTemporaryModel = 0xf,
     UpdateCharacterState = 0x14,
     QueueAnimation = 0x16,
     UpdateSpeed = 0x17,
@@ -124,7 +124,7 @@ pub struct AddPc {
     pub underage: bool,
     pub member: bool,
     pub moderator: bool,
-    pub temporary_appearance: u32,
+    pub temporary_model: u32,
     pub squads: Vec<Unknown13Array>,
     pub battle_class: u32,
     pub title: u32,
@@ -279,25 +279,25 @@ impl GamePacket for SlotCompositeEffectOverride {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct RemoveTemporaryAppearance {
-    guid: u64,
-    model_id: u32,
+pub struct RemoveTemporaryModel {
+    pub guid: u64,
+    pub model_id: u32,
 }
 
-impl GamePacket for RemoveTemporaryAppearance {
+impl GamePacket for RemoveTemporaryModel {
     type Header = PlayerUpdateOpCode;
-    const HEADER: Self::Header = PlayerUpdateOpCode::RemoveTemporaryAppearance;
+    const HEADER: Self::Header = PlayerUpdateOpCode::RemoveTemporaryModel;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct UpdateTemporaryAppearance {
+pub struct UpdateTemporaryModel {
     pub model_id: u32,
     pub guid: u64,
 }
 
-impl GamePacket for UpdateTemporaryAppearance {
+impl GamePacket for UpdateTemporaryModel {
     type Header = PlayerUpdateOpCode;
-    const HEADER: Self::Header = PlayerUpdateOpCode::UpdateTemporaryAppearance;
+    const HEADER: Self::Header = PlayerUpdateOpCode::UpdateTemporaryModel;
 }
 
 pub struct ItemDefinitionsReply<'a> {
@@ -743,7 +743,7 @@ pub struct AddNpc {
     pub disable_gravity: bool,
     pub sub_title_id: u32,
     pub one_shot_animation_id: i32,
-    pub temporary_appearance: u32,
+    pub temporary_model: u32,
     pub effects: Vec<Effect>,
     pub disable_interact_popup: bool,
     pub unknown33: u32,

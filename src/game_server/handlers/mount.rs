@@ -451,7 +451,7 @@ pub fn spawn_mount_npc(
                 disable_gravity: false,
                 sub_title_id: 0,
                 one_shot_animation_id: -1,
-                temporary_appearance: 0,
+                temporary_model: 0,
                 effects,
                 disable_interact_popup: true,
                 unknown33: 0,
