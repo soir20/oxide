@@ -56,6 +56,10 @@ const fn default_true() -> bool {
     true
 }
 
+const fn default_chunk_size() -> u16 {
+    200
+}
+
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct PointOfInterestConfig {
@@ -84,6 +88,7 @@ struct ZoneConfig {
     asset_name: String,
     hide_ui: bool,
     is_combat: bool,
+    #[serde(default = "default_chunk_size")]
     chunk_size: u16,
     default_point_of_interest: PointOfInterestConfig,
     #[serde(default)]

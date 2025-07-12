@@ -6,7 +6,6 @@
   asset_name: MonCala_Venetor
   hide_ui: false
   is_combat: false
-  chunk_size: 200
   default_point_of_interest:
     guid: 14
     pos:
@@ -155,7 +154,6 @@
   asset_name: Combat_Umbara_South_01
   hide_ui: false
   is_combat: true
-  chunk_size: 200
   default_point_of_interest:
     guid: 19
     pos:
@@ -245,7 +243,6 @@
   asset_name: Combat_Carlac_01
   hide_ui: false
   is_combat: true
-  chunk_size: 200
   default_point_of_interest:
     guid: 34
     pos:
@@ -311,7 +308,6 @@
   asset_name: Combat_Felucia_01
   hide_ui: false
   is_combat: true
-  chunk_size: 200
   default_point_of_interest:
     guid: 36
     pos:
@@ -1268,7 +1264,6 @@
   asset_name: Housing_EmptyLot_Mustafar
   hide_ui: false
   is_combat: false
-  chunk_size: 200
   default_point_of_interest:
     guid: 100
     pos:
