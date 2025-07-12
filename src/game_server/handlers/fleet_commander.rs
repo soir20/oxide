@@ -225,8 +225,9 @@ impl FleetCommanderPlayerState {
         Ok(FleetCommanderHitResult::Miss)
     }
 
-    pub fn add_score(&mut self, score: i32) {
+    pub fn add_score(&mut self, score: i32) -> i32 {
         self.score = self.score.saturating_add(score);
+        self.score
     }
 }
 
@@ -759,7 +760,6 @@ impl FleetCommanderGame {
         } = self.state
         {
             let score_from_turn_time = time_left_in_turn.as_secs() as i32 * 5;
-            self.player_states[self.turn as usize].add_score(score_from_turn_time);
             broadcasts.push(Broadcast::Multi(
                 self.list_recipients(),
                 vec![GamePacket::serialize(&TunneledPacket {
@@ -771,8 +771,9 @@ impl FleetCommanderGame {
                             stage_group_guid: self.stage_group_guid,
                         },
                         payload: format!(
-                            "OnScoreFromTimeMsg\t{}\t{}",
-                            self.turn, score_from_turn_time
+                            "OnScoreUpdateMsg\t{}\t{}",
+                            self.turn,
+                            self.player_states[self.turn as usize].add_score(score_from_turn_time)
                         ),
                     },
                 })],
