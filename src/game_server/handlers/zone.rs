@@ -84,6 +84,7 @@ struct ZoneConfig {
     asset_name: String,
     hide_ui: bool,
     is_combat: bool,
+    chunk_size: u16,
     default_point_of_interest: PointOfInterestConfig,
     #[serde(default)]
     other_points_of_interest: Vec<PointOfInterestConfig>,
@@ -100,7 +101,6 @@ struct ZoneConfig {
     update_previous_location_on_leave: bool,
     #[serde(default)]
     map_id: u32,
-    chunk_size: u16,
 }
 
 #[derive(Clone)]
@@ -110,6 +110,7 @@ pub struct ZoneTemplate {
     pub template_icon: u32,
     pub max_players: u32,
     pub asset_name: String,
+    pub chunk_size: u16,
     pub default_spawn_pos: Pos,
     pub default_spawn_rot: Pos,
     default_spawn_sky: String,
@@ -122,7 +123,6 @@ pub struct ZoneTemplate {
     pub seconds_per_day: u32,
     update_previous_location_on_leave: bool,
     map_id: u32,
-    pub chunk_size: u16,
 }
 
 impl Guid<u8> for ZoneTemplate {
@@ -270,6 +270,7 @@ impl From<ZoneConfig> for ZoneTemplate {
             max_players: value.max_players,
             template_icon: value.template_icon,
             asset_name: value.asset_name.clone(),
+            chunk_size: value.chunk_size,
             default_spawn_pos: value.default_point_of_interest.pos,
             default_spawn_rot: value.default_point_of_interest.rot,
             default_spawn_sky: value.spawn_sky.clone(),
@@ -282,7 +283,6 @@ impl From<ZoneConfig> for ZoneTemplate {
             seconds_per_day: value.seconds_per_day,
             update_previous_location_on_leave: value.update_previous_location_on_leave,
             map_id: value.map_id,
-            chunk_size: value.chunk_size,
         }
     }
 }
@@ -326,6 +326,7 @@ impl ZoneTemplate {
             max_players: self.max_players,
             icon: self.template_icon,
             asset_name: self.asset_name.clone(),
+            chunk_size: self.chunk_size,
             default_spawn_pos: self.default_spawn_pos,
             default_spawn_rot: self.default_spawn_rot,
             default_spawn_sky: self.default_spawn_sky.clone(),
@@ -338,7 +339,6 @@ impl ZoneTemplate {
             seconds_per_day: self.seconds_per_day,
             update_previous_location_on_leave: self.update_previous_location_on_leave,
             map_id: self.map_id,
-            chunk_size: self.chunk_size,
         }
     }
 }
@@ -380,6 +380,7 @@ pub struct ZoneInstance {
     pub max_players: u32,
     pub icon: u32,
     pub asset_name: String,
+    chunk_size: u16,
     pub default_spawn_pos: Pos,
     pub default_spawn_rot: Pos,
     default_spawn_sky: String,
@@ -392,7 +393,6 @@ pub struct ZoneInstance {
     pub seconds_per_day: u32,
     update_previous_location_on_leave: bool,
     map_id: u32,
-    chunk_size: u16,
 }
 
 impl IndexedGuid<u64, u8> for ZoneInstance {
