@@ -871,7 +871,7 @@ impl ZoneInstance {
 
                             let CharacterMovementType::SameChunk {
                                 chunk,
-                                npcs_to_interact_with: npcs_to_interact,
+                                npcs_to_interact_with,
                             } = movement_type
                             else {
                                 return Ok((Vec::new(), movement_type));
@@ -886,8 +886,8 @@ impl ZoneInstance {
                                 .unwrap_or(1.0);
                             full_update_packet.apply_jump_height_multiplier(jump_multiplier);
 
-                            let filtered_npcs_to_interact = ZoneInstance::move_character_with_locks(
-                                &npcs_to_interact,
+                            let filtered_npcs_to_interact_with = ZoneInstance::move_character_with_locks(
+                                &npcs_to_interact_with,
                                 characters_read,
                                 characters_write.get_mut(&moved_character_guid).unwrap(),
                                 new_pos,
@@ -913,7 +913,7 @@ impl ZoneInstance {
                                 broadcasts,
                                 CharacterMovementType::SameChunk {
                                     chunk,
-                                    npcs_to_interact_with: filtered_npcs_to_interact,
+                                    npcs_to_interact_with: filtered_npcs_to_interact_with,
                                 },
                             ))
                         },
