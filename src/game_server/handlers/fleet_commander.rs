@@ -763,7 +763,7 @@ impl FleetCommanderGame {
             time_left_in_turn, ..
         } = self.state
         {
-            let score_from_turn_time = time_left_in_turn.as_secs() as i32 * 5;
+            let score_from_turn_time = time_left_in_turn.as_millis() as i32 * 3 / 1000;
             broadcasts.push(Broadcast::Multi(
                 self.list_recipients(),
                 vec![GamePacket::serialize(&TunneledPacket {
