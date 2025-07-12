@@ -1099,8 +1099,12 @@ pub fn load_zones(config_dir: &Path) -> Result<LoadedZones, ConfigError> {
                 }
             }
 
-            let template = zone_config.into();
+            let template: ZoneTemplate = zone_config.into();
             let template_guid = Guid::guid(&template);
+
+            if template.chunk_size == 0 {
+                panic!("Zone template {template_guid} cannot have a chunk size of 0");
+            }
 
             if templates.insert(template_guid, template).is_some() {
                 panic!("Two zone templates have ID {template_guid}");
