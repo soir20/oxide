@@ -92,6 +92,7 @@ pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, P
 
             characters_table_write_handle.insert(Character::from_player(
                 sender,
+                player.inner.data.body_model,
                 player.inner.data.pos,
                 player.inner.data.rot,
                 instance_guid,

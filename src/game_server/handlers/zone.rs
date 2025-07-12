@@ -7,6 +7,7 @@ use std::{
 
 use enum_iterator::all;
 use parking_lot::RwLockReadGuard;
+use rand::{seq::SliceRandom, thread_rng};
 use serde::{de::IgnoredAny, Deserialize};
 
 use crate::{
@@ -167,7 +168,18 @@ impl From<ZoneConfig> for ZoneTemplate {
                     key: ambient_npc.base_npc.key.clone(),
                     discriminant: AMBIENT_NPC_DISCRIMINANT,
                     index,
-                    pos: ambient_npc.base_npc.pos,
+                    model_id: ambient_npc
+                        .base_npc
+                        .possible_model_ids
+                        .choose(&mut thread_rng())
+                        .copied()
+                        .unwrap_or(ambient_npc.base_npc.model_id),
+                    pos: ambient_npc
+                        .base_npc
+                        .possible_pos
+                        .choose(&mut thread_rng())
+                        .cloned()
+                        .unwrap_or(ambient_npc.base_npc.pos),
                     rot: ambient_npc.base_npc.rot,
                     scale: ambient_npc.base_npc.scale,
                     tickable_procedures: ambient_npc.base_npc.tickable_procedures.clone(),
@@ -194,6 +206,12 @@ impl From<ZoneConfig> for ZoneTemplate {
                     key: door.base_npc.key.clone(),
                     discriminant: AMBIENT_NPC_DISCRIMINANT,
                     index,
+                    model_id: door
+                        .base_npc
+                        .possible_model_ids
+                        .choose(&mut thread_rng())
+                        .copied()
+                        .unwrap_or(door.base_npc.model_id),
                     pos: door.base_npc.pos,
                     rot: door.base_npc.rot,
                     scale: door.base_npc.scale,
@@ -218,6 +236,12 @@ impl From<ZoneConfig> for ZoneTemplate {
                     key: transport.base_npc.key.clone(),
                     discriminant: AMBIENT_NPC_DISCRIMINANT,
                     index,
+                    model_id: transport
+                        .base_npc
+                        .possible_model_ids
+                        .choose(&mut thread_rng())
+                        .copied()
+                        .unwrap_or(transport.base_npc.model_id),
                     pos: transport.base_npc.pos,
                     rot: transport.base_npc.rot,
                     scale: transport.base_npc.scale,
@@ -406,6 +430,7 @@ impl ZoneInstance {
         for (index, fixture) in house.fixtures.iter().enumerate() {
             global_characters_table.insert(Character::new(
                 npc_guid(FIXTURE_DISCRIMINANT, guid, index as u16),
+                fixture.model_id,
                 fixture.pos,
                 fixture.rot,
                 fixture.scale,
