@@ -411,7 +411,7 @@ impl Display for ForceConnectionTurn {
 enum ForceConnectionGameState {
     WaitingForPlayersReady,
     WaitingForMove,
-    Matching { turn_duration: Duration },
+    Matching { time_left_in_turn: Duration },
     GameOver,
 }
 
@@ -1015,10 +1015,7 @@ impl ForceConnectionGame {
 
     fn switch_turn(&mut self) -> Vec<Broadcast> {
         let mut broadcasts = Vec::new();
-        if let ForceConnectionGameState::Matching {
-            turn_duration: time_left_in_turn,
-        } = self.state
-        {
+        if let ForceConnectionGameState::Matching { time_left_in_turn } = self.state {
             let score_from_turn_time = time_left_in_turn.as_secs() as i32 * 5;
             self.score[self.turn as usize] =
                 self.score[self.turn as usize].saturating_add(score_from_turn_time);
@@ -1177,7 +1174,7 @@ impl ForceConnectionGame {
 
     fn handle_move(&mut self, turn_time: Instant, sleep_time: Duration) -> Vec<Broadcast> {
         self.state = ForceConnectionGameState::Matching {
-            turn_duration: self.timer.time_until_next_event(turn_time),
+            time_left_in_turn: self.timer.time_until_next_event(turn_time),
         };
 
         self.timer.schedule_event(sleep_time);

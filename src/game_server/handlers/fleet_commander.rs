@@ -260,7 +260,7 @@ enum FleetCommanderGameState {
         timer: MinigameTimer,
     },
     ProcessingMove {
-        turn_duration: Duration,
+        time_left_in_turn: Duration,
         animations_complete: [bool; 2],
     },
     GameOver,
@@ -511,7 +511,7 @@ impl FleetCommanderGame {
         player_index: u8,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let turn_time = Instant::now();
-        self.check_turn(sender, player_index, turn_time)?;
+        let time_left_in_turn = self.check_turn(sender, player_index, turn_time)?;
 
         let target_index = match self.turn {
             FleetCommanderTurn::Player1 => 1,
@@ -563,6 +563,10 @@ impl FleetCommanderGame {
             ));
         }
 
+        self.state = FleetCommanderGameState::ProcessingMove {
+            time_left_in_turn,
+            animations_complete: [true, true],
+        };
         broadcasts.append(&mut self.switch_turn());
 
         Ok(broadcasts)
@@ -730,7 +734,7 @@ impl FleetCommanderGame {
         sender: u32,
         player_index: u8,
         turn_time: Instant,
-    ) -> Result<(), ProcessPacketError> {
+    ) -> Result<Duration, ProcessPacketError> {
         let is_valid_for_player = match player_index {
             0 => self.turn == FleetCommanderTurn::Player1 && sender == self.player1,
             1 => self.turn == FleetCommanderTurn::Player2 && ((sender == self.player1 && self.is_ai_match()) || (Some(sender) == self.player2)),
@@ -745,18 +749,18 @@ impl FleetCommanderGame {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} (index {player_index}) tried to make a move in Fleet Commander, but the state is {:?} instead of waiting for a move ({self:?})", self.state)));
         };
 
-        if timer.time_until_next_event(turn_time).is_zero() {
+        let time_left_in_turn = timer.time_until_next_event(turn_time);
+        if time_left_in_turn.is_zero() {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} (index {player_index}) tried to make a move in Fleet Commander, but their turn expired ({self:?})")));
         }
 
-        Ok(())
+        Ok(time_left_in_turn)
     }
 
     fn switch_turn(&mut self) -> Vec<Broadcast> {
         let mut broadcasts = Vec::new();
         if let FleetCommanderGameState::ProcessingMove {
-            turn_duration: time_left_in_turn,
-            ..
+            time_left_in_turn, ..
         } = self.state
         {
             let score_from_turn_time = time_left_in_turn.as_secs() as i32 * 5;
