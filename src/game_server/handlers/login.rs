@@ -9,7 +9,7 @@ use crate::{
             tunnel::TunneledPacket,
             GamePacket,
         },
-        Broadcast, GameServer, ProcessPacketError,
+        Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
     info,
 };
@@ -90,11 +90,22 @@ pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, P
             };
             packets.push(GamePacket::serialize(&player));
 
+            let Some(zone_template) = game_server.read_zone_templates().get(&player_zone_template)
+            else {
+                return Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Player {sender} tried to log in at zone template {player_zone_template} that doesn't exist"
+                    ),
+                ));
+            };
+
             characters_table_write_handle.insert(Character::from_player(
                 sender,
                 player.inner.data.body_model,
                 player.inner.data.pos,
                 player.inner.data.rot,
+                zone_template.chunk_size,
                 instance_guid,
                 Player {
                     first_load: true,

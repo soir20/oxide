@@ -1475,6 +1475,7 @@ impl NpcTemplate {
     pub fn to_character(
         &self,
         instance_guid: u64,
+        chunk_size: u16,
         keys_to_guid: &HashMap<&String, u64>,
     ) -> Character {
         let guid = self.guid(instance_guid);
@@ -1484,6 +1485,7 @@ impl NpcTemplate {
                 model_id: self.model_id,
                 pos: self.pos,
                 rot: self.rot,
+                chunk_size,
                 scale: self.scale,
                 character_type: self.character_type.clone(),
                 mount: self.mount_id.map(|mount_id| CharacterMount {
@@ -1525,7 +1527,12 @@ impl NpcTemplate {
     }
 }
 
-pub type Chunk = (i32, i32);
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub struct Chunk {
+    pub x: i32,
+    pub z: i32,
+    pub size: u16,
+}
 pub type CharacterLocationIndex = (CharacterCategory, u64, Chunk);
 pub type CharacterNameIndex = String;
 pub type CharacterSquadIndex = u64;
@@ -1565,6 +1572,7 @@ pub struct CharacterStats {
     pub model_id: u32,
     pub pos: Pos,
     pub rot: Pos,
+    pub chunk_size: u16,
     pub scale: f32,
     pub character_type: CharacterType,
     pub mount: Option<CharacterMount>,
@@ -1731,7 +1739,7 @@ impl
                 },
             },
             self.stats.instance_guid,
-            Character::chunk(self.stats.pos.x, self.stats.pos.z),
+            Character::chunk(self.stats.pos.x, self.stats.pos.z, self.stats.chunk_size),
         )
     }
 
@@ -1758,17 +1766,25 @@ impl
 }
 
 impl Character {
-    pub const MIN_CHUNK: (i32, i32) = (i32::MIN, i32::MIN);
-    pub const MAX_CHUNK: (i32, i32) = (i32::MAX, i32::MAX);
+    pub const MIN_CHUNK: Chunk = Chunk {
+        x: i32::MIN,
+        z: i32::MIN,
+        size: u16::MIN,
+    };
+    pub const MAX_CHUNK: Chunk = Chunk {
+        x: i32::MAX,
+        z: i32::MAX,
+        size: u16::MAX,
+    };
     pub const DEFAULT_CHAT_TEXT_COLOR: Rgba = Rgba::new(255, 255, 255, 255);
     pub const DEFAULT_CHAT_BUBBLE_COLOR: Rgba = Rgba::new(240, 226, 212, 255);
-    const CHUNK_SIZE: f32 = 200.0;
 
     pub fn new(
         guid: u64,
         model_id: u32,
         pos: Pos,
         rot: Pos,
+        chunk_size: u16,
         scale: f32,
         character_type: CharacterType,
         mount_id: Option<CharacterMount>,
@@ -1789,6 +1805,7 @@ impl Character {
                 model_id,
                 pos,
                 rot,
+                chunk_size,
                 scale,
                 character_type,
                 mount: mount_id,
@@ -1826,6 +1843,7 @@ impl Character {
         model_id: u32,
         pos: Pos,
         rot: Pos,
+        chunk_size: u16,
         instance_guid: u64,
         data: Player,
         game_server: &GameServer,
@@ -1860,6 +1878,7 @@ impl Character {
                 model_id,
                 pos,
                 rot,
+                chunk_size,
                 scale: 1.0,
                 name: Some(format!("{}", data.name)),
                 squad_guid: data.squad_guid,
@@ -1889,11 +1908,12 @@ impl Character {
         }
     }
 
-    pub fn chunk(x: f32, z: f32) -> Chunk {
-        (
-            x.div_euclid(Character::CHUNK_SIZE) as i32,
-            z.div_euclid(Character::CHUNK_SIZE) as i32,
-        )
+    pub fn chunk(x: f32, z: f32, chunk_size: u16) -> Chunk {
+        Chunk {
+            x: x.div_euclid(chunk_size as f32) as i32,
+            z: z.div_euclid(chunk_size as f32) as i32,
+            size: chunk_size,
+        }
     }
 
     pub fn set_tickable_procedure_if_exists(
