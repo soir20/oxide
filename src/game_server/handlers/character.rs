@@ -1856,7 +1856,7 @@ impl Character {
         Character {
             stats: CharacterStats {
                 guid: player_guid(guid),
-                model_id: 0,
+                model_id: player.inner.data.body_model,
                 pos,
                 rot,
                 scale: 1.0,
