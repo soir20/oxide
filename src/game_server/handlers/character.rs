@@ -1823,6 +1823,7 @@ impl Character {
 
     pub fn from_player(
         guid: u32,
+        model_id: u32,
         pos: Pos,
         rot: Pos,
         instance_guid: u64,
