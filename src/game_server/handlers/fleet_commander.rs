@@ -129,7 +129,7 @@ impl FleetCommanderPowerup {
     pub fn score_per_hit(&self, difficulty: FleetCommanderDifficulty) -> i32 {
         match *self {
             FleetCommanderPowerup::Square => match difficulty {
-                FleetCommanderDifficulty::Easy => todo!(),
+                FleetCommanderDifficulty::Easy => 450,
                 FleetCommanderDifficulty::Medium => 540,
                 FleetCommanderDifficulty::Hard => todo!(),
             },
