@@ -2495,7 +2495,7 @@ fn handle_flash_payload(
                         let row = parts[1].parse()?;
                         let col = parts[2].parse()?;
                         let player_index = parts[3].parse()?;
-                        game.hit(sender, row, col, player_index, None)
+                        game.hit(sender, row, col, player_index)
                     } else {
                         Err(ProcessPacketError::new(
                             ProcessPacketErrorType::ConstraintViolated,

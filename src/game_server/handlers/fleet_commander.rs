@@ -575,76 +575,8 @@ impl FleetCommanderGame {
         row: u8,
         col: u8,
         player_index: u8,
-        powerup_if_used: Option<FleetCommanderPowerup>,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        let turn_time = Instant::now();
-        let time_left_in_turn = self.check_turn(sender, player_index, turn_time)?;
-
-        let target_index = match self.turn {
-            FleetCommanderTurn::Player1 => 1,
-            FleetCommanderTurn::Player2 => 0,
-        };
-
-        let (did_damage, destroyed_ship) =
-            match self.player_states[target_index as usize].hit(row, col)? {
-                FleetCommanderHitResult::Miss => (false, None),
-                FleetCommanderHitResult::ShipDamaged => (true, None),
-                FleetCommanderHitResult::ShipDestroyed(ship) => (true, Some(ship)),
-            };
-
-        if did_damage {
-            self.player_states[player_index as usize].add_score(
-                powerup_if_used
-                    .map(|powerup| powerup.score_per_hit(self.difficulty))
-                    .unwrap_or(1000),
-            );
-        }
-
-        // TODO: add powerup
-        let mut broadcasts = vec![Broadcast::Multi(
-            self.list_recipients(),
-            vec![GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: FlashPayload {
-                    header: MinigameHeader {
-                        stage_guid: self.stage_guid,
-                        sub_op_code: -1,
-                        stage_group_guid: self.stage_group_guid,
-                    },
-                    payload: format!(
-                        "OnGridBombedMsg\t{target_index}\t{row}\t{col}\t{did_damage}\t-1"
-                    ),
-                },
-            })],
-        )];
-
-        if let Some(ship) = destroyed_ship {
-            broadcasts.push(Broadcast::Multi(
-                self.list_recipients(),
-                vec![GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: FlashPayload {
-                        header: MinigameHeader {
-                            stage_guid: self.stage_guid,
-                            sub_op_code: -1,
-                            stage_group_guid: self.stage_group_guid,
-                        },
-                        payload: format!(
-                            "OnShipDestroyedMsg\t{target_index}\t{}\t{}\t{}\t{}",
-                            ship.size, ship.row, ship.col, ship.vertical
-                        ),
-                    },
-                })],
-            ));
-        }
-
-        self.state = FleetCommanderGameState::ProcessingMove {
-            time_left_in_turn,
-            animations_complete: [true, true],
-        };
-        broadcasts.append(&mut self.switch_turn());
-
-        Ok(broadcasts)
+        self.hit_single_space(sender, row, col, player_index, None)
     }
 
     pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
@@ -765,6 +697,84 @@ impl FleetCommanderGame {
         }
 
         recipients
+    }
+
+    fn hit_single_space(
+        &mut self,
+        sender: u32,
+        row: u8,
+        col: u8,
+        player_index: u8,
+        powerup_if_used: Option<FleetCommanderPowerup>,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let turn_time = Instant::now();
+        let time_left_in_turn = self.check_turn(sender, player_index, turn_time)?;
+
+        let target_index = match self.turn {
+            FleetCommanderTurn::Player1 => 1,
+            FleetCommanderTurn::Player2 => 0,
+        };
+
+        let (did_damage, destroyed_ship) =
+            match self.player_states[target_index as usize].hit(row, col)? {
+                FleetCommanderHitResult::Miss => (false, None),
+                FleetCommanderHitResult::ShipDamaged => (true, None),
+                FleetCommanderHitResult::ShipDestroyed(ship) => (true, Some(ship)),
+            };
+
+        if did_damage {
+            self.player_states[player_index as usize].add_score(
+                powerup_if_used
+                    .map(|powerup| powerup.score_per_hit(self.difficulty))
+                    .unwrap_or(1000),
+            );
+        }
+
+        // TODO: add powerup
+        let mut broadcasts = vec![Broadcast::Multi(
+            self.list_recipients(),
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: FlashPayload {
+                    header: MinigameHeader {
+                        stage_guid: self.stage_guid,
+                        sub_op_code: -1,
+                        stage_group_guid: self.stage_group_guid,
+                    },
+                    payload: format!(
+                        "OnGridBombedMsg\t{target_index}\t{row}\t{col}\t{did_damage}\t-1"
+                    ),
+                },
+            })],
+        )];
+
+        if let Some(ship) = destroyed_ship {
+            broadcasts.push(Broadcast::Multi(
+                self.list_recipients(),
+                vec![GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: FlashPayload {
+                        header: MinigameHeader {
+                            stage_guid: self.stage_guid,
+                            sub_op_code: -1,
+                            stage_group_guid: self.stage_group_guid,
+                        },
+                        payload: format!(
+                            "OnShipDestroyedMsg\t{target_index}\t{}\t{}\t{}\t{}",
+                            ship.size, ship.row, ship.col, ship.vertical
+                        ),
+                    },
+                })],
+            ));
+        }
+
+        self.state = FleetCommanderGameState::ProcessingMove {
+            time_left_in_turn,
+            animations_complete: [true, true],
+        };
+        broadcasts.append(&mut self.switch_turn());
+
+        Ok(broadcasts)
     }
 
     fn tick_ship_placement_timer(
