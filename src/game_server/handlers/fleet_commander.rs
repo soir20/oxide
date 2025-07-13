@@ -50,19 +50,28 @@ impl FleetCommanderDifficulty {
         }
     }
 
-    pub fn score_per_hit(&self, powerup: FleetCommanderPowerup) -> i32 {
+    pub fn score_per_hit(&self, powerup: Option<FleetCommanderPowerup>) -> i32 {
         match powerup {
-            FleetCommanderPowerup::Square => match *self {
+            Some(FleetCommanderPowerup::Square) => match *self {
                 FleetCommanderDifficulty::Easy => 450,
                 FleetCommanderDifficulty::Medium => 540,
                 FleetCommanderDifficulty::Hard => todo!(),
             },
-            FleetCommanderPowerup::Scatter => match *self {
+            Some(FleetCommanderPowerup::Scatter) => match *self {
                 FleetCommanderDifficulty::Easy => 375,
                 FleetCommanderDifficulty::Medium => 450,
                 FleetCommanderDifficulty::Hard => 525,
             },
-            FleetCommanderPowerup::Homing => todo!(),
+            Some(FleetCommanderPowerup::Homing) => todo!(),
+            None => 1000,
+        }
+    }
+
+    pub fn default_powerup_quantity(&self) -> u8 {
+        match *self {
+            FleetCommanderDifficulty::Easy => 3,
+            FleetCommanderDifficulty::Medium => 2,
+            FleetCommanderDifficulty::Hard => 1,
         }
     }
 }
@@ -174,6 +183,16 @@ struct FleetCommanderPlayerState {
 }
 
 impl FleetCommanderPlayerState {
+    pub fn new(difficulty: FleetCommanderDifficulty) -> Self {
+        FleetCommanderPlayerState {
+            readiness: Default::default(),
+            ships: Default::default(),
+            hits: Default::default(),
+            powerups: [difficulty.default_powerup_quantity(); 3],
+            score: 0,
+        }
+    }
+
     pub fn readiness(&self) -> FleetCommanderPlayerReadiness {
         self.readiness
     }
@@ -336,7 +355,7 @@ pub struct FleetCommanderGame {
 
 impl FleetCommanderGame {
     pub fn new(
-        difficulty: u32,
+        raw_difficulty: u32,
         player1: u32,
         player2: Option<u32>,
         stage_guid: i32,
@@ -348,15 +367,20 @@ impl FleetCommanderGame {
             FleetCommanderTurn::Player2
         };
 
+        let difficulty = match raw_difficulty {
+            2 => FleetCommanderDifficulty::Medium,
+            3 => FleetCommanderDifficulty::Hard,
+            _ => FleetCommanderDifficulty::Easy,
+        };
+
         FleetCommanderGame {
-            difficulty: match difficulty {
-                2 => FleetCommanderDifficulty::Medium,
-                3 => FleetCommanderDifficulty::Hard,
-                _ => FleetCommanderDifficulty::Easy,
-            },
+            difficulty,
             player1,
             player2,
-            player_states: Default::default(),
+            player_states: [
+                FleetCommanderPlayerState::new(difficulty),
+                FleetCommanderPlayerState::new(difficulty),
+            ],
             turn,
             state: FleetCommanderGameState::WaitingForPlayersReady {
                 ship_placement_timers: [
@@ -725,11 +749,8 @@ impl FleetCommanderGame {
             };
 
         if did_damage {
-            self.player_states[player_index as usize].add_score(
-                powerup_if_used
-                    .map(|powerup| self.difficulty.score_per_hit(powerup))
-                    .unwrap_or(1000),
-            );
+            self.player_states[player_index as usize]
+                .add_score(self.difficulty.score_per_hit(powerup_if_used));
         }
 
         // TODO: add powerup
