@@ -541,7 +541,7 @@ impl FleetCommanderGame {
                         stage_group_guid: self.stage_group_guid,
                     },
                     payload: format!(
-                        "OnGridBombedMsg\t{target_index}\t{row}\t{col}\t{did_damage}\t0"
+                        "OnGridBombedMsg\t{target_index}\t{row}\t{col}\t{did_damage}\t-1"
                     ),
                 },
             })],
