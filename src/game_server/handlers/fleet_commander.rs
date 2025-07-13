@@ -279,6 +279,10 @@ impl FleetCommanderPlayerState {
     pub fn lost(&self) -> bool {
         self.ships.is_empty()
     }
+
+    pub fn powerups_remaining(&self, powerup: FleetCommanderPowerup) -> u8 {
+        self.powerups[powerup as usize]
+    }
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -944,7 +948,7 @@ impl FleetCommanderGame {
     fn broadcast_powerup_quantity(&self, player_index: u8) -> Vec<Broadcast> {
         vec![Broadcast::Multi(
             self.list_recipients(),
-            vec![/*GamePacket::serialize(&TunneledPacket {
+            vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: FlashPayload {
                     header: MinigameHeader {
@@ -953,14 +957,16 @@ impl FleetCommanderGame {
                         stage_group_guid: self.stage_group_guid,
                     },
                     payload: format!(
-                        "OnPowerUpRemainingMsg\t{}\t{},{}",
-                        player_index,
-                        self.powerups[player_index as usize][FleetCommanderPowerup::Swap as usize],
-                        self.powerups[player_index as usize]
-                            [FleetCommanderPowerup::Delete as usize]
+                        "OnPowerUpRemainingMsg\t{player_index}\t{},{},{}",
+                        self.player_states[player_index as usize]
+                            .powerups_remaining(FleetCommanderPowerup::Square),
+                        self.player_states[player_index as usize]
+                            .powerups_remaining(FleetCommanderPowerup::Scatter),
+                        self.player_states[player_index as usize]
+                            .powerups_remaining(FleetCommanderPowerup::Homing),
                     ),
                 },
-            })*/],
+            })],
         )]
     }
 }
