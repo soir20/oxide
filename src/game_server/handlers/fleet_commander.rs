@@ -229,6 +229,10 @@ impl FleetCommanderPlayerState {
         self.score = self.score.saturating_add(score);
         self.score
     }
+
+    pub fn lost(&self) -> bool {
+        self.ships.is_empty()
+    }
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -784,6 +788,10 @@ impl FleetCommanderGame {
             ));
         }
 
+        if let Some(game_result_broadcasts) = self.check_for_winner() {
+            return game_result_broadcasts;
+        }
+
         self.state = FleetCommanderGameState::WaitingForMove {
             timer: MinigameTimer::new_with_event(TURN_TIMEOUT),
         };
@@ -813,41 +821,26 @@ impl FleetCommanderGame {
         broadcasts
     }
 
-    /*fn check_for_winner(&mut self) -> Option<Vec<Broadcast>> {
-        let player1_won = self.ships_remaining[0] >= MATCHES_TO_WIN;
-        let player2_won = self.ships_remaining[1] >= MATCHES_TO_WIN;
+    fn check_for_winner(&mut self) -> Option<Vec<Broadcast>> {
+        let player1_lost = self.player_states[0].lost();
+        let player2_lost = self.player_states[0].lost();
 
-        if !player1_won && !player2_won {
+        if !player1_lost && !player2_lost {
             return None;
         }
 
         let mut broadcasts = Vec::new();
         self.state = FleetCommanderGameState::GameOver;
-        broadcasts.append(&mut self.broadcast_game_result(self.player1, player1_won));
+        broadcasts.append(&mut self.broadcast_game_result(self.player1, player1_lost));
         if let Some(player2) = self.player2 {
-            broadcasts.append(&mut self.broadcast_game_result(player2, player2_won));
+            broadcasts.append(&mut self.broadcast_game_result(player2, player2_lost));
         }
 
         Some(broadcasts)
     }
 
-    fn broadcast_game_result(&self, player: u32, won: bool) -> Vec<Broadcast> {
-        if won {
-            vec![Broadcast::Single(
-                player,
-                vec![GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: FlashPayload {
-                        header: MinigameHeader {
-                            stage_guid: self.stage_guid,
-                            sub_op_code: -1,
-                            stage_group_guid: self.stage_group_guid,
-                        },
-                        payload: "OnGameWonMsg".to_string(),
-                    },
-                })],
-            )]
-        } else {
+    fn broadcast_game_result(&self, player: u32, lost: bool) -> Vec<Broadcast> {
+        if lost {
             vec![Broadcast::Single(
                 player,
                 vec![GamePacket::serialize(&TunneledPacket {
@@ -862,8 +855,23 @@ impl FleetCommanderGame {
                     },
                 })],
             )]
+        } else {
+            vec![Broadcast::Single(
+                player,
+                vec![GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: FlashPayload {
+                        header: MinigameHeader {
+                            stage_guid: self.stage_guid,
+                            sub_op_code: -1,
+                            stage_group_guid: self.stage_group_guid,
+                        },
+                        payload: "OnGameWonMsg".to_string(),
+                    },
+                })],
+            )]
         }
-    }*/
+    }
 
     fn broadcast_powerup_quantity(&self, player_index: u8) -> Vec<Broadcast> {
         vec![Broadcast::Multi(
