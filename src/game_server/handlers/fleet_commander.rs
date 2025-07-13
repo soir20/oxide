@@ -278,6 +278,10 @@ impl FleetCommanderPlayerState {
         self.ships.is_empty()
     }
 
+    pub fn ships(&self) -> impl Iterator<Item = &FleetCommanderShip> {
+        self.ships.iter()
+    }
+
     pub fn powerups_remaining(&self, powerup: FleetCommanderPowerup) -> u8 {
         self.powerups[powerup as usize]
     }
@@ -912,15 +916,15 @@ impl FleetCommanderGame {
 
         let mut broadcasts = Vec::new();
         self.state = FleetCommanderGameState::GameOver;
-        broadcasts.append(&mut self.broadcast_game_result(self.player1, player1_lost));
+        broadcasts.append(&mut self.broadcast_game_result(self.player1, 0, player1_lost));
         if let Some(player2) = self.player2 {
-            broadcasts.append(&mut self.broadcast_game_result(player2, player2_lost));
+            broadcasts.append(&mut self.broadcast_game_result(player2, 1, player2_lost));
         }
 
         Some(broadcasts)
     }
 
-    fn broadcast_game_result(&self, player: u32, lost: bool) -> Vec<Broadcast> {
+    fn broadcast_game_result(&self, player: u32, player_index: u8, lost: bool) -> Vec<Broadcast> {
         if lost {
             vec![Broadcast::Single(
                 player,
@@ -937,9 +941,9 @@ impl FleetCommanderGame {
                 })],
             )]
         } else {
-            vec![Broadcast::Single(
-                player,
-                vec![GamePacket::serialize(&TunneledPacket {
+            let mut winner_ship_packets = Vec::new();
+            for ship in self.player_states[player_index as usize].ships() {
+                winner_ship_packets.push(GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
                     inner: FlashPayload {
                         header: MinigameHeader {
@@ -947,10 +951,35 @@ impl FleetCommanderGame {
                             sub_op_code: -1,
                             stage_group_guid: self.stage_group_guid,
                         },
-                        payload: "OnGameWonMsg".to_string(),
+                        payload: format!(
+                            "OnWinnerShipsRemaining\t{}\t{}\t{}\t{}\t{}",
+                            (player_index as usize + 1) % 2,
+                            ship.size,
+                            ship.row,
+                            ship.col,
+                            ship.vertical
+                        ),
                     },
-                })],
-            )]
+                }))
+            }
+
+            vec![
+                Broadcast::Single(
+                    player,
+                    vec![GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: FlashPayload {
+                            header: MinigameHeader {
+                                stage_guid: self.stage_guid,
+                                sub_op_code: -1,
+                                stage_group_guid: self.stage_group_guid,
+                            },
+                            payload: "OnGameWonMsg".to_string(),
+                        },
+                    })],
+                ),
+                Broadcast::Multi(self.list_recipients(), winner_ship_packets),
+            ]
         }
     }
 
