@@ -49,6 +49,22 @@ impl FleetCommanderDifficulty {
             FleetCommanderDifficulty::Hard => 10,
         }
     }
+
+    pub fn score_per_hit(&self, powerup: FleetCommanderPowerup) -> i32 {
+        match powerup {
+            FleetCommanderPowerup::Square => match *self {
+                FleetCommanderDifficulty::Easy => 450,
+                FleetCommanderDifficulty::Medium => 540,
+                FleetCommanderDifficulty::Hard => todo!(),
+            },
+            FleetCommanderPowerup::Scatter => match *self {
+                FleetCommanderDifficulty::Easy => 375,
+                FleetCommanderDifficulty::Medium => 450,
+                FleetCommanderDifficulty::Hard => 525,
+            },
+            FleetCommanderPowerup::Homing => todo!(),
+        }
+    }
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Sequence, TryFromPrimitive)]
@@ -123,24 +139,6 @@ pub enum FleetCommanderPowerup {
     Square = 0,
     Scatter = 1,
     Homing = 2,
-}
-
-impl FleetCommanderPowerup {
-    pub fn score_per_hit(&self, difficulty: FleetCommanderDifficulty) -> i32 {
-        match *self {
-            FleetCommanderPowerup::Square => match difficulty {
-                FleetCommanderDifficulty::Easy => 450,
-                FleetCommanderDifficulty::Medium => 540,
-                FleetCommanderDifficulty::Hard => todo!(),
-            },
-            FleetCommanderPowerup::Scatter => match difficulty {
-                FleetCommanderDifficulty::Easy => 375,
-                FleetCommanderDifficulty::Medium => 450,
-                FleetCommanderDifficulty::Hard => 525,
-            },
-            FleetCommanderPowerup::Homing => todo!(),
-        }
-    }
 }
 
 impl Display for FleetCommanderPowerup {
@@ -725,7 +723,7 @@ impl FleetCommanderGame {
         if did_damage {
             self.player_states[player_index as usize].add_score(
                 powerup_if_used
-                    .map(|powerup| powerup.score_per_hit(self.difficulty))
+                    .map(|powerup| self.difficulty.score_per_hit(powerup))
                     .unwrap_or(1000),
             );
         }
@@ -849,7 +847,8 @@ impl FleetCommanderGame {
             time_left_in_turn, ..
         } = self.state
         {
-            let score_from_turn_time = time_left_in_turn.as_secs() as i32 * 3;
+            let score_from_turn_time = time_left_in_turn.as_secs() as i32
+                * self.difficulty.score_per_turn_second_remaining();
             broadcasts.push(Broadcast::Multi(
                 self.list_recipients(),
                 vec![GamePacket::serialize(&TunneledPacket {
