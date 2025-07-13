@@ -823,7 +823,7 @@ impl FleetCommanderGame {
 
     fn check_for_winner(&mut self) -> Option<Vec<Broadcast>> {
         let player1_lost = self.player_states[0].lost();
-        let player2_lost = self.player_states[0].lost();
+        let player2_lost = self.player_states[1].lost();
 
         if !player1_lost && !player2_lost {
             return None;
