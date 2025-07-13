@@ -25,7 +25,31 @@ use crate::game_server::{
 const BOARD_SIZE: u8 = 15;
 
 const SHIP_PLACEMENT_TIMEOUT: Duration = Duration::from_secs(60);
-const TURN_TIMEOUT: Duration = Duration::from_secs(15);
+
+#[derive(Clone, Copy, Debug)]
+pub enum FleetCommanderDifficulty {
+    Easy,
+    Medium,
+    Hard,
+}
+
+impl FleetCommanderDifficulty {
+    pub fn turn_timeout(&self) -> Duration {
+        match *self {
+            FleetCommanderDifficulty::Easy => Duration::from_secs(15),
+            FleetCommanderDifficulty::Medium => Duration::from_secs(12),
+            FleetCommanderDifficulty::Hard => Duration::from_secs(8),
+        }
+    }
+
+    pub fn score_per_turn_second_remaining(&self) -> i32 {
+        match *self {
+            FleetCommanderDifficulty::Easy => 3,
+            FleetCommanderDifficulty::Medium => 5,
+            FleetCommanderDifficulty::Hard => 10,
+        }
+    }
+}
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Sequence, TryFromPrimitive)]
 #[repr(u8)]
@@ -95,10 +119,28 @@ impl FleetCommanderShip {
 
 #[derive(Clone, Copy, PartialEq, Eq, TryFromPrimitive)]
 #[repr(u8)]
-enum FleetCommanderPowerup {
+pub enum FleetCommanderPowerup {
     Square = 0,
     Scatter = 1,
     Homing = 2,
+}
+
+impl FleetCommanderPowerup {
+    pub fn score_per_hit(&self, difficulty: FleetCommanderDifficulty) -> i32 {
+        match *self {
+            FleetCommanderPowerup::Square => match difficulty {
+                FleetCommanderDifficulty::Easy => todo!(),
+                FleetCommanderDifficulty::Medium => 540,
+                FleetCommanderDifficulty::Hard => todo!(),
+            },
+            FleetCommanderPowerup::Scatter => match difficulty {
+                FleetCommanderDifficulty::Easy => 375,
+                FleetCommanderDifficulty::Medium => 450,
+                FleetCommanderDifficulty::Hard => 525,
+            },
+            FleetCommanderPowerup::Homing => todo!(),
+        }
+    }
 }
 
 impl Display for FleetCommanderPowerup {
@@ -272,6 +314,7 @@ enum FleetCommanderGameState {
 
 #[derive(Clone, Debug)]
 pub struct FleetCommanderGame {
+    difficulty: FleetCommanderDifficulty,
     player1: u32,
     player2: Option<u32>,
     player_states: [FleetCommanderPlayerState; 2],
@@ -282,7 +325,13 @@ pub struct FleetCommanderGame {
 }
 
 impl FleetCommanderGame {
-    pub fn new(player1: u32, player2: Option<u32>, stage_guid: i32, stage_group_guid: i32) -> Self {
+    pub fn new(
+        difficulty: u32,
+        player1: u32,
+        player2: Option<u32>,
+        stage_guid: i32,
+        stage_group_guid: i32,
+    ) -> Self {
         let turn = if rand::thread_rng().gen_bool(0.5) {
             FleetCommanderTurn::Player1
         } else {
@@ -290,6 +339,11 @@ impl FleetCommanderGame {
         };
 
         FleetCommanderGame {
+            difficulty: match difficulty {
+                2 => FleetCommanderDifficulty::Medium,
+                3 => FleetCommanderDifficulty::Hard,
+                _ => FleetCommanderDifficulty::Easy,
+            },
             player1,
             player2,
             player_states: Default::default(),
@@ -513,6 +567,7 @@ impl FleetCommanderGame {
         row: u8,
         col: u8,
         player_index: u8,
+        powerup_if_used: Option<FleetCommanderPowerup>,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let turn_time = Instant::now();
         let time_left_in_turn = self.check_turn(sender, player_index, turn_time)?;
@@ -528,6 +583,14 @@ impl FleetCommanderGame {
                 FleetCommanderHitResult::ShipDamaged => (true, None),
                 FleetCommanderHitResult::ShipDestroyed(ship) => (true, Some(ship)),
             };
+
+        if did_damage {
+            self.player_states[player_index as usize].add_score(
+                powerup_if_used
+                    .map(|powerup| powerup.score_per_hit(self.difficulty))
+                    .unwrap_or(1000),
+            );
+        }
 
         // TODO: add powerup
         let mut broadcasts = vec![Broadcast::Multi(
@@ -767,7 +830,7 @@ impl FleetCommanderGame {
             time_left_in_turn, ..
         } = self.state
         {
-            let score_from_turn_time = time_left_in_turn.as_millis() as i32 * 3 / 1000;
+            let score_from_turn_time = time_left_in_turn.as_secs() as i32 * 3;
             broadcasts.push(Broadcast::Multi(
                 self.list_recipients(),
                 vec![GamePacket::serialize(&TunneledPacket {
@@ -793,7 +856,7 @@ impl FleetCommanderGame {
         }
 
         self.state = FleetCommanderGameState::WaitingForMove {
-            timer: MinigameTimer::new_with_event(TURN_TIMEOUT),
+            timer: MinigameTimer::new_with_event(self.difficulty.turn_timeout()),
         };
         self.turn = match self.turn {
             FleetCommanderTurn::Player1 => FleetCommanderTurn::Player2,
@@ -813,7 +876,7 @@ impl FleetCommanderGame {
                     payload: format!(
                         "OnStartPlayerTurnMsg\t{}\t{}",
                         self.turn,
-                        TURN_TIMEOUT.as_millis()
+                        self.difficulty.turn_timeout().as_millis()
                     ),
                 },
             })],

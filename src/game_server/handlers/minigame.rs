@@ -251,6 +251,7 @@ impl SharedMinigameTypeData {
         members: &[u32],
         stage_group_guid: i32,
         stage_guid: i32,
+        difficulty: u32,
     ) -> Self {
         // We can't have a game without at least one player
         let player1 = members[0];
@@ -260,6 +261,7 @@ impl SharedMinigameTypeData {
             MinigameType::Flash { game_type, .. } => match game_type {
                 FlashMinigameType::FleetCommander => SharedMinigameTypeData::FleetCommander {
                     game: Box::new(FleetCommanderGame::new(
+                        difficulty,
                         player1,
                         player2,
                         stage_guid,
@@ -1585,6 +1587,7 @@ pub fn prepare_active_minigame_instance(
                 members,
                 stage_group_guid,
                 stage_guid,
+                stage_config.stage_config.difficulty(),
             );
 
             minigame_data.readiness = MinigameReadiness::InitialPlayersLoading(
@@ -2492,7 +2495,7 @@ fn handle_flash_payload(
                         let row = parts[1].parse()?;
                         let col = parts[2].parse()?;
                         let player_index = parts[3].parse()?;
-                        game.hit(sender, row, col, player_index)
+                        game.hit(sender, row, col, player_index, None)
                     } else {
                         Err(ProcessPacketError::new(
                             ProcessPacketErrorType::ConstraintViolated,
