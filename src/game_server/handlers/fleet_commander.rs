@@ -15,7 +15,7 @@ use crate::game_server::{
         minigame::MinigameTimer, unique_guid::player_guid,
     },
     packets::{
-        minigame::{FlashPayload, MinigameHeader},
+        minigame::{FlashPayload, MinigameHeader, ScoreEntry, ScoreType},
         tunnel::TunneledPacket,
         GamePacket,
     },
@@ -269,6 +269,10 @@ impl FleetCommanderPlayerState {
 
     pub fn add_score(&mut self, score: i32) -> i32 {
         self.score = self.score.saturating_add(score);
+        self.score
+    }
+
+    pub fn score(&self) -> i32 {
         self.score
     }
 
@@ -727,16 +731,17 @@ impl FleetCommanderGame {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to remove player {player}, who is not playing this instance of Fleet Commander ({self:?})")));
         };
 
-        /*minigame_status.game_won = self.ships_remaining[player_index] >= MATCHES_TO_WIN;
-        minigame_status.total_score = self.score[player_index];
+        minigame_status.game_won = !self.player_states[player_index].lost()
+            && self.player_states[(player_index + 1) % 2].lost();
+        minigame_status.total_score = self.player_states[player_index].score();
         minigame_status.score_entries.push(ScoreEntry {
             entry_text: "".to_string(),
             icon_set_id: 0,
             score_type: ScoreType::Total,
-            score_count: self.score[player_index],
+            score_count: self.player_states[player_index].score(),
             score_max: 0,
             score_points: 0,
-        });*/
+        });
 
         Ok(Vec::new())
     }
