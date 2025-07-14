@@ -27,7 +27,7 @@ const BOARD_SIZE: u8 = 15;
 const SHIP_PLACEMENT_TIMEOUT: Duration = Duration::from_secs(60);
 
 #[derive(Clone, Copy, Debug)]
-pub enum FleetCommanderDifficulty {
+enum FleetCommanderDifficulty {
     Easy,
     Medium,
     Hard,
@@ -144,10 +144,20 @@ impl FleetCommanderShip {
 
 #[derive(Clone, Copy, PartialEq, Eq, TryFromPrimitive)]
 #[repr(u8)]
-pub enum FleetCommanderPowerup {
+enum FleetCommanderPowerup {
     Square = 0,
     Scatter = 1,
     Homing = 2,
+}
+
+impl FleetCommanderPowerup {
+    pub fn ship_size(&self) -> FleetCommanderShipSize {
+        match *self {
+            FleetCommanderPowerup::Square => FleetCommanderShipSize::Four,
+            FleetCommanderPowerup::Scatter => FleetCommanderShipSize::Three,
+            FleetCommanderPowerup::Homing => FleetCommanderShipSize::Two,
+        }
+    }
 }
 
 impl Display for FleetCommanderPowerup {
