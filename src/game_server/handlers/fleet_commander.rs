@@ -989,6 +989,7 @@ impl FleetCommanderGame {
         } else {
             let mut winner_ship_packets = Vec::new();
             for ship in self.player_states[player_index as usize].ships() {
+                let other_player_index = (player_index as usize + 1) % 2;
                 winner_ship_packets.push(GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
                     inner: FlashPayload {
@@ -998,12 +999,8 @@ impl FleetCommanderGame {
                             stage_group_guid: self.stage_group_guid,
                         },
                         payload: format!(
-                            "OnWinnerShipsRemaining\t{}\t{}\t{}\t{}\t{}",
-                            (player_index as usize + 1) % 2,
-                            ship.size,
-                            ship.row,
-                            ship.col,
-                            ship.vertical
+                            "OnWinnerShipsRemaining\t{other_player_index}\t{}\t{}\t{}\t{}",
+                            ship.size, ship.row, ship.col, ship.vertical
                         ),
                     },
                 }))
