@@ -284,6 +284,21 @@ impl FleetCommanderPlayerState {
         Ok(FleetCommanderHitResult::Miss)
     }
 
+    pub fn use_powerup(
+        &mut self,
+        powerup: FleetCommanderPowerup,
+    ) -> Result<(), ProcessPacketError> {
+        self.powerups[powerup as usize] = self.powerups[powerup as usize]
+            .checked_sub(1)
+            .ok_or_else(|| {
+                ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!("Player has no more powerups of type {powerup}"),
+                )
+            })?;
+        Ok(())
+    }
+
     pub fn add_score(&mut self, score: i32) -> i32 {
         self.score = self.score.saturating_add(score);
         self.score
