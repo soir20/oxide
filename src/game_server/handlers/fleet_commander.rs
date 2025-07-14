@@ -63,7 +63,11 @@ impl FleetCommanderDifficulty {
                 FleetCommanderDifficulty::Hard => 525,
             },
             Some(FleetCommanderPowerup::Homing) => todo!(),
-            None => 1000,
+            None => match *self {
+                FleetCommanderDifficulty::Easy => 500,
+                FleetCommanderDifficulty::Medium => 600,
+                FleetCommanderDifficulty::Hard => 700,
+            },
         }
     }
 
