@@ -50,28 +50,18 @@ impl FleetCommanderDifficulty {
         }
     }
 
-    pub fn score_per_hit(&self, powerup: Option<FleetCommanderPowerup>) -> i32 {
-        match powerup {
-            Some(FleetCommanderPowerup::Square) => match *self {
-                FleetCommanderDifficulty::Easy => 450,
-                FleetCommanderDifficulty::Medium => 540,
-                FleetCommanderDifficulty::Hard => 630, // unconfirmed
-            },
-            Some(FleetCommanderPowerup::Scatter) => match *self {
-                FleetCommanderDifficulty::Easy => 375,
-                FleetCommanderDifficulty::Medium => 450,
-                FleetCommanderDifficulty::Hard => 525,
-            },
-            Some(FleetCommanderPowerup::Homing) => match *self {
-                FleetCommanderDifficulty::Easy => 250,
-                FleetCommanderDifficulty::Medium => 300,
-                FleetCommanderDifficulty::Hard => 350,
-            },
-            None => match *self {
-                FleetCommanderDifficulty::Easy => 500,
-                FleetCommanderDifficulty::Medium => 600,
-                FleetCommanderDifficulty::Hard => 700,
-            },
+    pub fn score_per_hit(&self, powerup_if_used: Option<FleetCommanderPowerup>) -> i32 {
+        let base_score = match *self {
+            FleetCommanderDifficulty::Easy => 500,
+            FleetCommanderDifficulty::Medium => 600,
+            FleetCommanderDifficulty::Hard => 700,
+        };
+
+        match powerup_if_used {
+            Some(FleetCommanderPowerup::Square) => base_score * 9 / 10,
+            Some(FleetCommanderPowerup::Scatter) => base_score * 3 / 4,
+            Some(FleetCommanderPowerup::Homing) => base_score / 2,
+            None => base_score,
         }
     }
 
@@ -109,6 +99,15 @@ impl FleetCommanderShipSize {
             FleetCommanderShipSize::Three => 2,
             FleetCommanderShipSize::Four => 2,
             FleetCommanderShipSize::Five => 1,
+        }
+    }
+
+    pub fn score_from_destruction(&self) -> i32 {
+        match *self {
+            FleetCommanderShipSize::Two => 500,
+            FleetCommanderShipSize::Three => 400,
+            FleetCommanderShipSize::Four => 300,
+            FleetCommanderShipSize::Five => 250,
         }
     }
 }
