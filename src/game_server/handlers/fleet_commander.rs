@@ -804,6 +804,7 @@ impl FleetCommanderGame {
         )];
 
         if let Some(ship) = destroyed_ship {
+            self.player_states[player_index as usize].add_score(ship.size.score_from_destruction());
             broadcasts.push(Broadcast::Multi(
                 self.list_recipients(),
                 vec![GamePacket::serialize(&TunneledPacket {
