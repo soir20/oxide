@@ -463,6 +463,7 @@ pub struct ForceConnectionGame {
     board: ForceConnectionBoard,
     player1: u32,
     player2: Option<u32>,
+    recipients: Vec<u32>,
     ready: [bool; 2],
     matches: [u8; 2],
     score: [i32; 2],
@@ -482,10 +483,16 @@ impl ForceConnectionGame {
             ForceConnectionTurn::Player2
         };
 
+        let mut recipients = vec![player1];
+        if let Some(player2) = player2 {
+            recipients.push(player2);
+        }
+
         ForceConnectionGame {
             board: ForceConnectionBoard::new(),
             player1,
             player2,
+            recipients,
             ready: [false, player2.is_none()],
             matches: [0; 2],
             score: [0; 2],
@@ -631,7 +638,7 @@ impl ForceConnectionGame {
         }
 
         let mut broadcasts = vec![Broadcast::Multi(
-            self.list_recipients(),
+            self.recipients.clone(),
             vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: FlashPayload {
@@ -711,7 +718,7 @@ impl ForceConnectionGame {
 
         let mut broadcasts = self.handle_move(turn_time, Duration::from_secs(1));
         broadcasts.push(Broadcast::Multi(
-            self.list_recipients(),
+            self.recipients.clone(),
             vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: FlashPayload {
@@ -800,7 +807,7 @@ impl ForceConnectionGame {
 
         let mut broadcasts = self.handle_move(turn_time, Duration::from_millis(500));
         broadcasts.push(Broadcast::Multi(
-            self.list_recipients(),
+            self.recipients.clone(),
             vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: FlashPayload {
@@ -848,7 +855,7 @@ impl ForceConnectionGame {
 
         let mut broadcasts = self.handle_move(turn_time, Duration::from_millis(500));
         broadcasts.push(Broadcast::Multi(
-            self.list_recipients(),
+            self.recipients.clone(),
             vec![
                 GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
@@ -895,7 +902,7 @@ impl ForceConnectionGame {
             ForceConnectionGameState::WaitingForPlayersReady => Vec::new(),
             ForceConnectionGameState::WaitingForMove => {
                 let mut broadcasts = vec![Broadcast::Multi(
-                    self.list_recipients(),
+                    self.recipients.clone(),
                     vec![GamePacket::serialize(&TunneledPacket {
                         unknown1: true,
                         inner: FlashPayload {
@@ -970,15 +977,6 @@ impl ForceConnectionGame {
         player_index == 1 && self.player2.is_none()
     }
 
-    fn list_recipients(&self) -> Vec<u32> {
-        let mut recipients = vec![self.player1];
-        if let Some(player2) = self.player2 {
-            recipients.push(player2);
-        }
-
-        recipients
-    }
-
     fn check_turn(
         &self,
         sender: u32,
@@ -1020,7 +1018,7 @@ impl ForceConnectionGame {
             self.score[self.turn as usize] =
                 self.score[self.turn as usize].saturating_add(score_from_turn_time);
             broadcasts.push(Broadcast::Multi(
-                self.list_recipients(),
+                self.recipients.clone(),
                 vec![GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
                     inner: FlashPayload {
@@ -1047,7 +1045,7 @@ impl ForceConnectionGame {
         self.timer.schedule_event(TURN_TIME);
 
         broadcasts.push(Broadcast::Multi(
-            self.list_recipients(),
+            self.recipients.clone(),
             vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: FlashPayload {
@@ -1086,7 +1084,7 @@ impl ForceConnectionGame {
             self.timer.schedule_event(Duration::from_millis(500));
 
             broadcasts.push(Broadcast::Multi(
-                self.list_recipients(),
+                self.recipients.clone(),
                 vec![GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
                     inner: FlashPayload {
@@ -1125,7 +1123,7 @@ impl ForceConnectionGame {
                 self.powerups[player_index as usize][new_powerup as usize].saturating_add(1);
 
             broadcasts.push(Broadcast::Multi(
-                self.list_recipients(),
+                self.recipients.clone(),
                 vec![GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
                     inner: FlashPayload {
@@ -1142,7 +1140,7 @@ impl ForceConnectionGame {
         }
 
         broadcasts.push(Broadcast::Multi(
-            self.list_recipients(),
+            self.recipients.clone(),
             vec![
                 GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
@@ -1235,7 +1233,7 @@ impl ForceConnectionGame {
 
     fn broadcast_powerup_quantity(&self, player_index: u8) -> Vec<Broadcast> {
         vec![Broadcast::Multi(
-            self.list_recipients(),
+            self.recipients.clone(),
             vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: FlashPayload {

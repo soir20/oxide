@@ -381,6 +381,7 @@ pub struct FleetCommanderGame {
     difficulty: FleetCommanderDifficulty,
     player1: u32,
     player2: Option<u32>,
+    recipients: Vec<u32>,
     player_states: [FleetCommanderPlayerState; 2],
     turn: FleetCommanderTurn,
     state: FleetCommanderGameState,
@@ -408,10 +409,16 @@ impl FleetCommanderGame {
             _ => FleetCommanderDifficulty::Easy,
         };
 
+        let mut recipients = vec![player1];
+        if let Some(player2) = player2 {
+            recipients.push(player2);
+        }
+
         FleetCommanderGame {
             difficulty,
             player1,
             player2,
+            recipients,
             player_states: [
                 FleetCommanderPlayerState::new(difficulty),
                 FleetCommanderPlayerState::new(difficulty),
@@ -612,7 +619,7 @@ impl FleetCommanderGame {
         }
 
         let mut broadcasts = vec![Broadcast::Multi(
-            self.list_recipients(),
+            self.recipients.clone(),
             vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: FlashPayload {
@@ -762,15 +769,6 @@ impl FleetCommanderGame {
         player_index == 1 && self.player2.is_none()
     }
 
-    fn list_recipients(&self) -> Vec<u32> {
-        let mut recipients = vec![self.player1];
-        if let Some(player2) = self.player2 {
-            recipients.push(player2);
-        }
-
-        recipients
-    }
-
     fn hit_single_space(
         &mut self,
         row: u8,
@@ -795,9 +793,8 @@ impl FleetCommanderGame {
         }
 
         // TODO: add powerup
-        let recipients = self.list_recipients();
         let mut broadcasts = vec![Broadcast::Multi(
-            recipients.clone(),
+            self.recipients.clone(),
             vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: FlashPayload {
@@ -823,7 +820,7 @@ impl FleetCommanderGame {
                 if let Some(associated_powerup) = ship.size.powerup() {
                     self.player_states[target_index].disable_powerup(associated_powerup);
                     broadcasts.push(Broadcast::Multi(
-                        recipients.clone(),
+                        self.recipients.clone(),
                         vec![GamePacket::serialize(&TunneledPacket {
                             unknown1: true,
                             inner: FlashPayload {
@@ -842,7 +839,7 @@ impl FleetCommanderGame {
             }
 
             broadcasts.push(Broadcast::Multi(
-                recipients,
+                self.recipients.clone(),
                 vec![GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
                     inner: FlashPayload {
@@ -938,7 +935,7 @@ impl FleetCommanderGame {
             let score_from_turn_time = time_left_in_turn.as_secs() as i32
                 * self.difficulty.score_per_turn_second_remaining();
             broadcasts.push(Broadcast::Multi(
-                self.list_recipients(),
+                self.recipients.clone(),
                 vec![GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
                     inner: FlashPayload {
@@ -970,7 +967,7 @@ impl FleetCommanderGame {
         };
 
         broadcasts.push(Broadcast::Multi(
-            self.list_recipients(),
+            self.recipients.clone(),
             vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: FlashPayload {
@@ -1044,7 +1041,7 @@ impl FleetCommanderGame {
                         },
                     })],
                 ),
-                Broadcast::Multi(self.list_recipients(), winner_ship_packets),
+                Broadcast::Multi(self.recipients.clone(), winner_ship_packets),
             ]
         } else {
             vec![Broadcast::Single(
@@ -1066,7 +1063,7 @@ impl FleetCommanderGame {
 
     fn broadcast_powerup_quantity(&self, player_index: u8) -> Vec<Broadcast> {
         vec![Broadcast::Multi(
-            self.list_recipients(),
+            self.recipients.clone(),
             vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: FlashPayload {
