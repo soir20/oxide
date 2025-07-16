@@ -84,7 +84,7 @@ enum FleetCommanderShipSize {
 }
 
 impl FleetCommanderShipSize {
-    pub const fn value(&self) -> u8 {
+    pub fn value(&self) -> u8 {
         match *self {
             FleetCommanderShipSize::Two => 2,
             FleetCommanderShipSize::Three => 3,
@@ -93,7 +93,7 @@ impl FleetCommanderShipSize {
         }
     }
 
-    pub const fn max_per_player(&self) -> u8 {
+    pub fn max_per_player(&self) -> u8 {
         match *self {
             FleetCommanderShipSize::Two => 2,
             FleetCommanderShipSize::Three => 2,
@@ -108,6 +108,15 @@ impl FleetCommanderShipSize {
             FleetCommanderShipSize::Three => 400,
             FleetCommanderShipSize::Four => 300,
             FleetCommanderShipSize::Five => 250,
+        }
+    }
+
+    pub fn powerup(&self) -> Option<FleetCommanderPowerup> {
+        match *self {
+            FleetCommanderShipSize::Two => Some(FleetCommanderPowerup::Homing),
+            FleetCommanderShipSize::Three => Some(FleetCommanderPowerup::Scatter),
+            FleetCommanderShipSize::Four => Some(FleetCommanderPowerup::Square),
+            FleetCommanderShipSize::Five => None,
         }
     }
 }
@@ -155,16 +164,6 @@ enum FleetCommanderPowerup {
     Square = 0,
     Scatter = 1,
     Homing = 2,
-}
-
-impl FleetCommanderPowerup {
-    pub fn ship_size(&self) -> FleetCommanderShipSize {
-        match *self {
-            FleetCommanderPowerup::Square => FleetCommanderShipSize::Four,
-            FleetCommanderPowerup::Scatter => FleetCommanderShipSize::Three,
-            FleetCommanderPowerup::Homing => FleetCommanderShipSize::Two,
-        }
-    }
 }
 
 impl Display for FleetCommanderPowerup {
@@ -314,6 +313,10 @@ impl FleetCommanderPlayerState {
                 )
             })?;
         Ok(())
+    }
+
+    pub fn disable_powerup(&mut self, powerup: FleetCommanderPowerup) {
+        self.powerups[powerup as usize] = 0;
     }
 
     pub fn add_score(&mut self, score: i32) -> i32 {
@@ -637,7 +640,7 @@ impl FleetCommanderGame {
         let turn_time = Instant::now();
         let time_left_in_turn = self.check_turn(sender, player_index, turn_time)?;
 
-        let mut broadcasts = self.hit_single_space(row, col, player_index, None)?;
+        let mut broadcasts = self.hit_single_space(row, col, None)?;
 
         self.state = FleetCommanderGameState::ProcessingMove {
             time_left_in_turn,
@@ -772,29 +775,29 @@ impl FleetCommanderGame {
         &mut self,
         row: u8,
         col: u8,
-        player_index: u8,
         powerup_if_used: Option<FleetCommanderPowerup>,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let target_index = match self.turn {
             FleetCommanderTurn::Player1 => 1,
             FleetCommanderTurn::Player2 => 0,
         };
+        let attacker_index = self.turn as usize;
 
-        let (did_damage, destroyed_ship) =
-            match self.player_states[target_index as usize].hit(row, col)? {
-                FleetCommanderHitResult::Miss => (false, None),
-                FleetCommanderHitResult::ShipDamaged => (true, None),
-                FleetCommanderHitResult::ShipDestroyed(ship) => (true, Some(ship)),
-            };
+        let (did_damage, destroyed_ship) = match self.player_states[target_index].hit(row, col)? {
+            FleetCommanderHitResult::Miss => (false, None),
+            FleetCommanderHitResult::ShipDamaged => (true, None),
+            FleetCommanderHitResult::ShipDestroyed(ship) => (true, Some(ship)),
+        };
 
         if did_damage {
-            self.player_states[player_index as usize]
+            self.player_states[attacker_index]
                 .add_score(self.difficulty.score_per_hit(powerup_if_used));
         }
 
         // TODO: add powerup
+        let recipients = self.list_recipients();
         let mut broadcasts = vec![Broadcast::Multi(
-            self.list_recipients(),
+            recipients.clone(),
             vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: FlashPayload {
@@ -811,9 +814,35 @@ impl FleetCommanderGame {
         )];
 
         if let Some(ship) = destroyed_ship {
-            self.player_states[player_index as usize].add_score(ship.size.score_from_destruction());
+            self.player_states[attacker_index].add_score(ship.size.score_from_destruction());
+
+            if !self.player_states[target_index]
+                .ships()
+                .any(|live_ship| live_ship.size == ship.size)
+            {
+                if let Some(associated_powerup) = ship.size.powerup() {
+                    self.player_states[target_index].disable_powerup(associated_powerup);
+                    broadcasts.push(Broadcast::Multi(
+                        recipients.clone(),
+                        vec![GamePacket::serialize(&TunneledPacket {
+                            unknown1: true,
+                            inner: FlashPayload {
+                                header: MinigameHeader {
+                                    stage_guid: self.stage_guid,
+                                    sub_op_code: -1,
+                                    stage_group_guid: self.stage_group_guid,
+                                },
+                                payload: format!(
+                                    "OnPowerUpDisabledMsg\t{target_index}\t{associated_powerup}"
+                                ),
+                            },
+                        })],
+                    ));
+                }
+            }
+
             broadcasts.push(Broadcast::Multi(
-                self.list_recipients(),
+                recipients,
                 vec![GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
                     inner: FlashPayload {
