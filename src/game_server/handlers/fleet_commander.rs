@@ -55,7 +55,7 @@ impl FleetCommanderDifficulty {
             Some(FleetCommanderPowerup::Square) => match *self {
                 FleetCommanderDifficulty::Easy => 450,
                 FleetCommanderDifficulty::Medium => 540,
-                FleetCommanderDifficulty::Hard => todo!(),
+                FleetCommanderDifficulty::Hard => 630, // unconfirmed
             },
             Some(FleetCommanderPowerup::Scatter) => match *self {
                 FleetCommanderDifficulty::Easy => 375,
