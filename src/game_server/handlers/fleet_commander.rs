@@ -634,7 +634,18 @@ impl FleetCommanderGame {
         col: u8,
         player_index: u8,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        self.hit_single_space(sender, row, col, player_index, None)
+        let turn_time = Instant::now();
+        let time_left_in_turn = self.check_turn(sender, player_index, turn_time)?;
+
+        let mut broadcasts = self.hit_single_space(row, col, player_index, None)?;
+
+        self.state = FleetCommanderGameState::ProcessingMove {
+            time_left_in_turn,
+            animations_complete: [true, true],
+        };
+        broadcasts.append(&mut self.switch_turn());
+
+        Ok(broadcasts)
     }
 
     pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
@@ -759,15 +770,11 @@ impl FleetCommanderGame {
 
     fn hit_single_space(
         &mut self,
-        sender: u32,
         row: u8,
         col: u8,
         player_index: u8,
         powerup_if_used: Option<FleetCommanderPowerup>,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        let turn_time = Instant::now();
-        let time_left_in_turn = self.check_turn(sender, player_index, turn_time)?;
-
         let target_index = match self.turn {
             FleetCommanderTurn::Player1 => 1,
             FleetCommanderTurn::Player2 => 0,
@@ -823,12 +830,6 @@ impl FleetCommanderGame {
                 })],
             ));
         }
-
-        self.state = FleetCommanderGameState::ProcessingMove {
-            time_left_in_turn,
-            animations_complete: [true, true],
-        };
-        broadcasts.append(&mut self.switch_turn());
 
         Ok(broadcasts)
     }
