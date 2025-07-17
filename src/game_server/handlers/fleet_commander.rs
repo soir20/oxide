@@ -678,35 +678,35 @@ impl FleetCommanderGame {
         let target_index = (attacker_index + 1) % 2;
         let mut broadcasts = vec![Broadcast::Multi(
             self.recipients.clone(),
-            vec![
-                GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: FlashPayload {
-                        header: MinigameHeader {
-                            stage_guid: self.stage_guid,
-                            sub_op_code: -1,
-                            stage_group_guid: self.stage_group_guid,
-                        },
-                        payload: format!("OnTogglePowerUpModeMsg\t{attacker_index}\t1"),
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: FlashPayload {
+                    header: MinigameHeader {
+                        stage_guid: self.stage_guid,
+                        sub_op_code: -1,
+                        stage_group_guid: self.stage_group_guid,
                     },
-                }),
-                GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: FlashPayload {
-                        header: MinigameHeader {
-                            stage_guid: self.stage_guid,
-                            sub_op_code: -1,
-                            stage_group_guid: self.stage_group_guid,
-                        },
-                        payload: format!(
-                            "OnUsePowerUpMsg\t{target_index}\t{powerup}\t{row}\t{col}"
-                        ),
-                    },
-                }),
-            ],
+                    payload: format!("OnTogglePowerUpModeMsg\t{attacker_index}\t1"),
+                },
+            })],
         )];
 
         broadcasts.append(&mut self.hit_single_space(row, col, Some(powerup))?);
+
+        broadcasts.push(Broadcast::Multi(
+            self.recipients.clone(),
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: FlashPayload {
+                    header: MinigameHeader {
+                        stage_guid: self.stage_guid,
+                        sub_op_code: -1,
+                        stage_group_guid: self.stage_group_guid,
+                    },
+                    payload: format!("OnUsePowerUpMsg\t{target_index}\t{powerup}\t{row}\t{col}"),
+                },
+            })],
+        ));
 
         self.player_states[attacker_index as usize].use_powerup(powerup);
 
