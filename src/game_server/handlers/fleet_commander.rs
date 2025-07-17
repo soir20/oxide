@@ -699,7 +699,7 @@ impl FleetCommanderGame {
 
         self.state = FleetCommanderGameState::ProcessingMove {
             time_left_in_turn,
-            animations_complete: [false, self.is_ai_match()],
+            animations_complete: [false; 2],
         };
 
         Ok(broadcasts)
@@ -712,7 +712,7 @@ impl FleetCommanderGame {
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let is_valid_for_player = match player_index {
             0 => sender == self.player1,
-            1 => Some(sender) == self.player2,
+            1 => (sender == self.player1 && self.is_ai_match()) || Some(sender) == self.player2,
             _ => return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} tried to complete a powerup animation in Fleet Commander, but the player index {player_index} isn't valid ({self:?})")))
         };
 
@@ -983,7 +983,7 @@ impl FleetCommanderGame {
     ) -> Result<Duration, ProcessPacketError> {
         let is_valid_for_player = match player_index {
             0 => self.turn == FleetCommanderTurn::Player1 && sender == self.player1,
-            1 => self.turn == FleetCommanderTurn::Player2 && ((sender == self.player1 && self.is_ai_match()) || (Some(sender) == self.player2)),
+            1 => self.turn == FleetCommanderTurn::Player2 && ((sender == self.player1 && self.is_ai_match()) || Some(sender) == self.player2),
             _ => return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} tried to make a move in Fleet Commander, but the player index {player_index} isn't valid ({self:?})")))
         };
 
