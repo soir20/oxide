@@ -678,24 +678,37 @@ impl FleetCommanderGame {
         let target_index = (attacker_index + 1) % 2;
         let mut broadcasts = vec![Broadcast::Multi(
             self.recipients.clone(),
-            vec![GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: FlashPayload {
-                    header: MinigameHeader {
-                        stage_guid: self.stage_guid,
-                        sub_op_code: -1,
-                        stage_group_guid: self.stage_group_guid,
+            vec![
+                GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: FlashPayload {
+                        header: MinigameHeader {
+                            stage_guid: self.stage_guid,
+                            sub_op_code: -1,
+                            stage_group_guid: self.stage_group_guid,
+                        },
+                        payload: format!("OnTogglePowerUpModeMsg\t{attacker_index}\t1"),
                     },
-                    payload: format!("OnUsePowerUpMsg\t{target_index}\t{powerup}\t{row}\t{col}"),
-                },
-            })],
+                }),
+                GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: FlashPayload {
+                        header: MinigameHeader {
+                            stage_guid: self.stage_guid,
+                            sub_op_code: -1,
+                            stage_group_guid: self.stage_group_guid,
+                        },
+                        payload: format!(
+                            "OnUsePowerUpMsg\t{target_index}\t{powerup}\t{row}\t{col}"
+                        ),
+                    },
+                }),
+            ],
         )];
 
         broadcasts.append(&mut self.hit_single_space(row, col, Some(powerup))?);
 
         self.player_states[attacker_index as usize].use_powerup(powerup);
-
-        //broadcasts.append(&mut self.broadcast_powerup_quantity(player_index));
 
         self.state = FleetCommanderGameState::ProcessingMove {
             time_left_in_turn,
@@ -723,13 +736,30 @@ impl FleetCommanderGame {
         let FleetCommanderGameState::ProcessingMove {
             animations_complete,
             ..
-        } = self.state
+        } = &mut self.state
         else {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} tried to complete a powerup animation in Fleet Commander, but no move is being processed ({self:?})")));
         };
 
+        animations_complete[player_index as usize] = true;
+
         if animations_complete.iter().all(|complete| *complete) {
-            Ok(self.switch_turn())
+            let mut broadcasts = vec![Broadcast::Multi(
+                self.recipients.clone(),
+                vec![GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: FlashPayload {
+                        header: MinigameHeader {
+                            stage_guid: self.stage_guid,
+                            sub_op_code: -1,
+                            stage_group_guid: self.stage_group_guid,
+                        },
+                        payload: format!("OnTogglePowerUpModeMsg\t{}\t0", self.turn),
+                    },
+                })],
+            )];
+            broadcasts.append(&mut self.switch_turn());
+            Ok(broadcasts)
         } else {
             Ok(Vec::new())
         }
