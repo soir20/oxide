@@ -872,10 +872,6 @@ impl FleetCommanderGame {
         self.player2.is_none()
     }
 
-    fn is_ai_player(&self, player_index: u8) -> bool {
-        player_index == 1 && self.player2.is_none()
-    }
-
     fn hit_single_space(
         &mut self,
         row: u8,
