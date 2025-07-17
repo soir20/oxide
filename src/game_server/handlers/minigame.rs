@@ -2514,6 +2514,63 @@ fn handle_flash_payload(
                 )),
             },
         ),
+        "OnRequestUsePowerUpMsg" => handle_minigame_packet_write(
+            sender,
+            game_server,
+            &payload.header,
+            |_, _, _, _, shared_minigame_data, _| match &mut shared_minigame_data.data {
+                SharedMinigameTypeData::FleetCommander { game } => {
+                    if parts.len() == 5 {
+                        let powerup = parts[1].parse()?;
+                        let row = parts[2].parse()?;
+                        let col = parts[3].parse()?;
+                        let attacker_index = parts[4].parse()?;
+                        game.use_powerup(sender, row, col, attacker_index, powerup)
+                    } else {
+                        Err(ProcessPacketError::new(
+                            ProcessPacketErrorType::ConstraintViolated,
+                            format!(
+                                "Expected 4 parameters in use powerup request, but only found {}",
+                                parts.len().saturating_sub(1)
+                            ),
+                        ))
+                    }
+                }
+                _ => Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Received use powerup request for unexpected game from player {sender}"
+                    ),
+                )),
+            },
+        ),
+        "OnFinishedPowerUpAnimMsg" => handle_minigame_packet_write(
+            sender,
+            game_server,
+            &payload.header,
+            |_, _, _, _, shared_minigame_data, _| match &mut shared_minigame_data.data {
+                SharedMinigameTypeData::FleetCommander { game } => {
+                    if parts.len() == 2 {
+                        let player_index = parts[1].parse()?;
+                        game.complete_powerup_animation(sender, player_index)
+                    } else {
+                        Err(ProcessPacketError::new(
+                            ProcessPacketErrorType::ConstraintViolated,
+                            format!(
+                                "Expected 1 parameters in complete powerup animation payload, but only found {}",
+                                parts.len().saturating_sub(1)
+                            ),
+                        ))
+                    }
+                }
+                _ => Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Received complete powerup animation payload for unexpected game from player {sender}"
+                    ),
+                )),
+            },
+        ),
         _ => Err(ProcessPacketError::new(
             ProcessPacketErrorType::ConstraintViolated,
             format!(
