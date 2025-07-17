@@ -279,7 +279,11 @@ impl Channel {
             return Ok(0);
         }
 
-        let packets = deserialize_packet(data, &self.session)?;
+        let packets = deserialize_packet(
+            data,
+            &self.session,
+            server_options.max_decompressed_packet_bytes,
+        )?;
         self.last_receive_time = Instant::now();
         Ok(self.enqueue_received_packets(packets, EnqueueDirection::Back, server_options))
     }
