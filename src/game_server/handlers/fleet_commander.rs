@@ -199,6 +199,7 @@ struct FleetCommanderPlayerState {
     hits: [HitArrayItem;
         (BOARD_SIZE as u32 * BOARD_SIZE as u32).div_ceil(HitArrayItem::BITS) as usize],
     powerups: [u8; 3],
+    powerups_enabled: [bool; 3],
     score: i32,
 }
 
@@ -209,6 +210,7 @@ impl FleetCommanderPlayerState {
             ships: Default::default(),
             hits: Default::default(),
             powerups: [difficulty.default_powerup_quantity(); 3],
+            powerups_enabled: [true; 3],
             score: 0,
         }
     }
@@ -303,7 +305,7 @@ impl FleetCommanderPlayerState {
     }
 
     pub fn can_use_powerup(&mut self, powerup: FleetCommanderPowerup) -> bool {
-        self.powerups[powerup as usize] > 0
+        self.powerups[powerup as usize] > 0 && self.powerups_enabled[powerup as usize]
     }
 
     pub fn use_powerup(&mut self, powerup: FleetCommanderPowerup) {
@@ -312,6 +314,7 @@ impl FleetCommanderPlayerState {
 
     pub fn disable_powerup(&mut self, powerup: FleetCommanderPowerup) {
         self.powerups[powerup as usize] = 0;
+        self.powerups_enabled[powerup as usize] = false;
     }
 
     pub fn add_score(&mut self, score: i32) -> i32 {
@@ -938,6 +941,7 @@ impl FleetCommanderGame {
                             },
                         })],
                     ));
+                    broadcasts.append(&mut self.broadcast_powerup_quantity(target_index as u8));
                 }
             }
 
