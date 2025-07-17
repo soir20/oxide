@@ -9,17 +9,21 @@ use num_enum::TryFromPrimitive;
 use rand::Rng;
 use serde::Serializer;
 
-use crate::game_server::{
-    handlers::{
-        character::MinigameStatus, guid::GuidTableIndexer, lock_enforcer::CharacterTableReadHandle,
-        minigame::MinigameTimer, unique_guid::player_guid,
+use crate::{
+    debug,
+    game_server::{
+        handlers::{
+            character::MinigameStatus, guid::GuidTableIndexer,
+            lock_enforcer::CharacterTableReadHandle, minigame::MinigameTimer,
+            unique_guid::player_guid,
+        },
+        packets::{
+            minigame::{FlashPayload, MinigameHeader, ScoreEntry, ScoreType},
+            tunnel::TunneledPacket,
+            GamePacket,
+        },
+        Broadcast, ProcessPacketError, ProcessPacketErrorType,
     },
-    packets::{
-        minigame::{FlashPayload, MinigameHeader, ScoreEntry, ScoreType},
-        tunnel::TunneledPacket,
-        GamePacket,
-    },
-    Broadcast, ProcessPacketError, ProcessPacketErrorType,
 };
 
 const BOARD_SIZE: u8 = 15;
@@ -275,10 +279,8 @@ impl FleetCommanderPlayerState {
 
         let previously_hit = (self.hits[hit_section] >> hit_index_in_section) & 1 != 0;
         if previously_hit {
-            return Err(ProcessPacketError::new(
-                ProcessPacketErrorType::ConstraintViolated,
-                format!("Space ({row}, {col}) was already hit"),
-            ));
+            debug!("Space ({row}, {col}) was already hit");
+            return Ok(FleetCommanderHitResult::Miss);
         }
 
         self.hits[hit_section] |= 1 << hit_index_in_section;
@@ -300,19 +302,12 @@ impl FleetCommanderPlayerState {
         Ok(FleetCommanderHitResult::Miss)
     }
 
-    pub fn use_powerup(
-        &mut self,
-        powerup: FleetCommanderPowerup,
-    ) -> Result<(), ProcessPacketError> {
-        self.powerups[powerup as usize] = self.powerups[powerup as usize]
-            .checked_sub(1)
-            .ok_or_else(|| {
-                ProcessPacketError::new(
-                    ProcessPacketErrorType::ConstraintViolated,
-                    format!("Player has no more powerups of type {powerup}"),
-                )
-            })?;
-        Ok(())
+    pub fn can_use_powerup(&mut self, powerup: FleetCommanderPowerup) -> bool {
+        self.powerups[powerup as usize] > 0
+    }
+
+    pub fn use_powerup(&mut self, powerup: FleetCommanderPowerup) {
+        self.powerups[powerup as usize] = self.powerups[powerup as usize].saturating_sub(1);
     }
 
     pub fn disable_powerup(&mut self, powerup: FleetCommanderPowerup) {
@@ -592,7 +587,7 @@ impl FleetCommanderGame {
         col: u8,
         player_index: u8,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        let ship_size = FleetCommanderShipSize::try_from(ship_size).map_err(|_| ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} sent a place ship payload for Force Connection, but ship size {ship_size} isn't valid ({self:?})")))?;
+        let ship_size = FleetCommanderShipSize::try_from(ship_size).map_err(|_| ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} sent a place ship payload for Fleet Commander, but ship size {ship_size} isn't valid ({self:?})")))?;
 
         let is_valid_for_player = match player_index {
             0 => sender == self.player1,
@@ -600,7 +595,7 @@ impl FleetCommanderGame {
             _ => return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} tried to place a ship in Fleet Commander, but the player index {player_index} isn't valid ({self:?})")))
         };
         if !is_valid_for_player {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} sent a place ship payload for Force Connection, but they aren't one of the game's players ({self:?})")));
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} sent a place ship payload for Fleet Commander, but they aren't one of the game's players ({self:?})")));
         }
 
         self.player_states[player_index as usize].add_ship(
@@ -656,6 +651,88 @@ impl FleetCommanderGame {
         broadcasts.append(&mut self.switch_turn());
 
         Ok(broadcasts)
+    }
+
+    pub fn use_powerup(
+        &mut self,
+        sender: u32,
+        row: u8,
+        col: u8,
+        attacker_index: u8,
+        powerup: u8,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let powerup = FleetCommanderPowerup::try_from(powerup).map_err(|_| ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} use powerup payload for Fleet Commander, but powerup {powerup} isn't valid ({self:?})")))?;
+
+        let turn_time = Instant::now();
+        let time_left_in_turn = self.check_turn(sender, attacker_index, turn_time)?;
+
+        if !self.player_states[attacker_index as usize].can_use_powerup(powerup) {
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!(
+                    "Player {sender} (index {attacker_index}) has no more powerups of type {powerup}"
+                ),
+            ));
+        }
+
+        let target_index = (attacker_index + 1) % 2;
+        let mut broadcasts = vec![Broadcast::Multi(
+            self.recipients.clone(),
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: FlashPayload {
+                    header: MinigameHeader {
+                        stage_guid: self.stage_guid,
+                        sub_op_code: -1,
+                        stage_group_guid: self.stage_group_guid,
+                    },
+                    payload: format!("OnUsePowerUpMsg\t{target_index}\t{powerup}\t{row}\t{col}"),
+                },
+            })],
+        )];
+
+        broadcasts.append(&mut self.hit_single_space(row, col, Some(powerup))?);
+
+        self.player_states[attacker_index as usize].use_powerup(powerup);
+
+        //broadcasts.append(&mut self.broadcast_powerup_quantity(player_index));
+
+        self.state = FleetCommanderGameState::ProcessingMove {
+            time_left_in_turn,
+            animations_complete: [false, self.is_ai_match()],
+        };
+
+        Ok(broadcasts)
+    }
+
+    pub fn complete_powerup_animation(
+        &mut self,
+        sender: u32,
+        player_index: u8,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let is_valid_for_player = match player_index {
+            0 => sender == self.player1,
+            1 => Some(sender) == self.player2,
+            _ => return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} tried to complete a powerup animation in Fleet Commander, but the player index {player_index} isn't valid ({self:?})")))
+        };
+
+        if !is_valid_for_player {
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} (index {player_index}) tried to complete a powerup animation in Fleet Commander, but a different player has that index ({self:?})")));
+        }
+
+        let FleetCommanderGameState::ProcessingMove {
+            animations_complete,
+            ..
+        } = self.state
+        else {
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} tried to complete a powerup animation in Fleet Commander, but no move is being processed ({self:?})")));
+        };
+
+        if animations_complete.iter().all(|complete| *complete) {
+            Ok(self.switch_turn())
+        } else {
+            Ok(Vec::new())
+        }
     }
 
     pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
