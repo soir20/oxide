@@ -989,6 +989,10 @@ impl FleetCommanderGame {
                 .add_score(self.difficulty.score_per_hit(powerup_if_used));
         }
 
+        if let Some(powerup) = powerup_to_add {
+            self.player_states[attacker_index].add_powerup_if_enabled(powerup);
+        }
+
         let mut broadcasts = vec![Broadcast::Multi(
             self.recipients.clone(),
             vec![GamePacket::serialize(&TunneledPacket {
@@ -1000,16 +1004,12 @@ impl FleetCommanderGame {
                         stage_group_guid: self.stage_group_guid,
                     },
                     payload: format!(
-                        "OnGridBombedMsg\t{target_index}\t{row}\t{col}\t{did_damage}\t-1"
+                        "OnGridBombedMsg\t{target_index}\t{row}\t{col}\t{did_damage}\t{}",
+                        powerup_to_add.map(|powerup| powerup as i32).unwrap_or(-1)
                     ),
                 },
             })],
         )];
-
-        if let Some(powerup) = powerup_to_add {
-            self.player_states[attacker_index].add_powerup_if_enabled(powerup);
-            broadcasts.append(&mut self.broadcast_powerup_quantity(attacker_index as u8));
-        }
 
         if let Some(ship) = destroyed_ship {
             self.player_states[attacker_index].add_score(ship.size.score_from_destruction());
