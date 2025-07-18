@@ -1,12 +1,12 @@
 use std::{
-    collections::BTreeMap,
+    collections::{BTreeMap, BTreeSet},
     fmt::Display,
     time::{Duration, Instant},
 };
 
 use enum_iterator::{all, Sequence};
 use num_enum::TryFromPrimitive;
-use rand::Rng;
+use rand::{thread_rng, Rng};
 use serde::Serializer;
 
 use crate::{
@@ -160,9 +160,21 @@ impl FleetCommanderShip {
     pub fn destroyed(&self) -> bool {
         self.hits >= self.size.value()
     }
+
+    pub fn coordinates(&self) -> impl Iterator<Item = (u8, u8)> + use<'_> {
+        let base_value = if self.vertical { self.col } else { self.row };
+
+        (base_value..(base_value.saturating_add(self.size.value()))).map(|value| {
+            if self.vertical {
+                (self.row, value)
+            } else {
+                (value, self.col)
+            }
+        })
+    }
 }
 
-#[derive(Clone, Copy, PartialEq, Eq, TryFromPrimitive)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, TryFromPrimitive)]
 #[repr(u8)]
 enum FleetCommanderPowerup {
     Square = 0,
@@ -198,6 +210,7 @@ struct FleetCommanderPlayerState {
     ships: Vec<FleetCommanderShip>,
     hits: [HitArrayItem;
         (BOARD_SIZE as u32 * BOARD_SIZE as u32).div_ceil(HitArrayItem::BITS) as usize],
+    findable_powerups: Vec<(u8, u8, FleetCommanderPowerup)>,
     powerups: [u8; 3],
     powerups_enabled: [bool; 3],
     score: i32,
@@ -209,6 +222,7 @@ impl FleetCommanderPlayerState {
             readiness: Default::default(),
             ships: Default::default(),
             hits: Default::default(),
+            findable_powerups: Default::default(),
             powerups: [difficulty.default_powerup_quantity(); 3],
             powerups_enabled: [true; 3],
             score: 0,
@@ -263,6 +277,10 @@ impl FleetCommanderPlayerState {
         }
 
         self.readiness = readiness;
+
+        if self.readiness == FleetCommanderPlayerReadiness::Ready {
+            self.findable_powerups = self.generate_findable_powerups();
+        }
 
         Ok(())
     }
@@ -336,6 +354,60 @@ impl FleetCommanderPlayerState {
 
     pub fn powerups_remaining(&self, powerup: FleetCommanderPowerup) -> u8 {
         self.powerups[powerup as usize]
+    }
+
+    fn generate_findable_powerups(&self) -> Vec<(u8, u8, FleetCommanderPowerup)> {
+        let available_powerups = [
+            FleetCommanderPowerup::Square,
+            FleetCommanderPowerup::Square,
+            FleetCommanderPowerup::Square,
+            FleetCommanderPowerup::Scatter,
+            FleetCommanderPowerup::Scatter,
+            FleetCommanderPowerup::Scatter,
+            FleetCommanderPowerup::Homing,
+            FleetCommanderPowerup::Homing,
+        ];
+
+        let total_coords_len = BOARD_SIZE as usize * BOARD_SIZE as usize;
+        let disallowed_coords: BTreeSet<usize> = self
+            .ships()
+            .flat_map(|ship| ship.coordinates())
+            .map(|(row, col)| row as usize * BOARD_SIZE as usize + col as usize)
+            .collect();
+
+        // Every coordinate must either be in the selectable range or outside it, so we need to
+        // replace any disallowed coords that happen to fall in the selectable range with
+        // the allowed coords that must have fallen in the unselectable range.
+        // len(selectable but disallowed coords) = len(unselectable but allowed coords)
+        let selectable_coords_len = total_coords_len - disallowed_coords.len();
+        let mut unselectable_allowed_coords: Vec<usize> = (selectable_coords_len..total_coords_len)
+            .filter(|coord| !disallowed_coords.contains(coord))
+            .collect();
+
+        rand::seq::index::sample(
+            &mut thread_rng(),
+            selectable_coords_len,
+            available_powerups.len(),
+        )
+        .into_iter()
+        .map(|coord| {
+            if disallowed_coords.contains(&coord) {
+                unselectable_allowed_coords
+                    .pop()
+                    .expect("Not enough replacement coordinates in Force Connection")
+            } else {
+                coord
+            }
+        })
+        .zip(available_powerups)
+        .map(|(coord, powerup): (usize, FleetCommanderPowerup)| {
+            (
+                (coord / BOARD_SIZE as usize) as u8,
+                (coord % BOARD_SIZE as usize) as u8,
+                powerup,
+            )
+        })
+        .collect()
     }
 }
 
