@@ -162,13 +162,13 @@ impl FleetCommanderShip {
     }
 
     pub fn coordinates(&self) -> impl Iterator<Item = (u8, u8)> + use<'_> {
-        let base_value = if self.vertical { self.col } else { self.row };
+        let base_value = if self.vertical { self.row } else { self.col };
 
         (base_value..(base_value.saturating_add(self.size.value()))).map(|value| {
             if self.vertical {
-                (self.row, value)
-            } else {
                 (value, self.col)
+            } else {
+                (self.row, value)
             }
         })
     }
