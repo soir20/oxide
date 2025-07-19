@@ -6,7 +6,7 @@ use std::{
 
 use enum_iterator::{all, Sequence};
 use num_enum::TryFromPrimitive;
-use rand::{thread_rng, Rng};
+use rand::{seq::IteratorRandom, thread_rng, Rng};
 use serde::Serializer;
 
 use crate::{
@@ -239,8 +239,20 @@ impl FleetCommanderPowerup {
                 .collect())
             }
             FleetCommanderPowerup::Homing => {
-                // TODO
-                Ok(Vec::new())
+                if target_state
+                    .ships()
+                    .any(|ship| ship.contains(center_row, center_col))
+                {
+                    return Ok(vec![(center_row, center_col)]);
+                }
+
+                Ok(target_state
+                    .ships()
+                    .flat_map(|ship| ship.coordinates())
+                    .filter(|(row, col)| !target_state.was_hit(*row, *col))
+                    .choose(&mut thread_rng())
+                    .map(|possible_item| vec![possible_item])
+                    .unwrap_or_default())
             }
         }
     }
@@ -398,6 +410,14 @@ impl FleetCommanderPlayerState {
         }
 
         Ok(FleetCommanderHitResult::Miss(findable_powerup))
+    }
+
+    pub fn was_hit(&self, row: u8, col: u8) -> bool {
+        let index = row as usize * BOARD_SIZE as usize + col as usize;
+        let hit_section = index / HitArrayItem::BITS as usize;
+        let hit_index_in_section = index % HitArrayItem::BITS as usize;
+
+        (self.hits[hit_section] >> hit_index_in_section) & 1 != 0
     }
 
     pub fn can_use_powerup(&mut self, powerup: FleetCommanderPowerup) -> bool {
