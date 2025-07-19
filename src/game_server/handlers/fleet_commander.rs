@@ -187,7 +187,7 @@ impl FleetCommanderPowerup {
         &self,
         center_row: u8,
         center_col: u8,
-        player_state: &FleetCommanderPlayerState,
+        target_state: &FleetCommanderPlayerState,
     ) -> Result<Vec<(u8, u8)>, ProcessPacketError> {
         match *self {
             FleetCommanderPowerup::Square => {
@@ -238,7 +238,10 @@ impl FleetCommanderPowerup {
                 })
                 .collect())
             }
-            FleetCommanderPowerup::Homing => todo!(),
+            FleetCommanderPowerup::Homing => {
+                // TODO
+                Ok(Vec::new())
+            }
         }
     }
 }
@@ -845,7 +848,11 @@ impl FleetCommanderGame {
             })],
         )];
 
-        broadcasts.append(&mut self.hit_single_space(row, col, Some(powerup))?);
+        let coordinates_to_hit =
+            powerup.coordinates_to_hit(row, col, &self.player_states[target_index as usize])?;
+        for (row, col) in coordinates_to_hit {
+            broadcasts.append(&mut self.hit_single_space(row, col, Some(powerup))?);
+        }
 
         broadcasts.push(Broadcast::Multi(
             self.recipients.clone(),
