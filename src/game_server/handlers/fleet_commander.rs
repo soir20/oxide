@@ -432,7 +432,9 @@ impl FleetCommanderPlayerState {
     pub fn disable_powerup(&mut self, powerup: FleetCommanderPowerup) {
         self.powerups[powerup as usize] = 0;
         for index in (0..self.findable_powerups.len()).rev() {
-            self.findable_powerups.swap_remove(index);
+            if self.findable_powerups[index].2 == powerup {
+                self.findable_powerups.swap_remove(index);
+            }
         }
     }
 
