@@ -273,7 +273,7 @@ enum FleetCommanderPlayerReadiness {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 enum FleetCommanderHitResult {
-    Miss(Option<FleetCommanderPowerup>),
+    Miss,
     ShipDamaged,
     ShipDestroyed(FleetCommanderShip),
 }
@@ -376,7 +376,7 @@ impl FleetCommanderPlayerState {
         let previously_hit = (self.hits[hit_section] >> hit_index_in_section) & 1 != 0;
         if previously_hit {
             debug!("Space ({row}, {col}) was already hit");
-            return Ok(FleetCommanderHitResult::Miss(None));
+            return Ok(FleetCommanderHitResult::Miss);
         }
 
         self.hits[hit_section] |= 1 << hit_index_in_section;
@@ -395,6 +395,18 @@ impl FleetCommanderPlayerState {
             }
         }
 
+        Ok(FleetCommanderHitResult::Miss)
+    }
+
+    pub fn was_hit(&self, row: u8, col: u8) -> bool {
+        let index = row as usize * BOARD_SIZE as usize + col as usize;
+        let hit_section = index / HitArrayItem::BITS as usize;
+        let hit_index_in_section = index % HitArrayItem::BITS as usize;
+
+        (self.hits[hit_section] >> hit_index_in_section) & 1 != 0
+    }
+
+    pub fn find_powerup(&mut self, row: u8, col: u8) -> Option<FleetCommanderPowerup> {
         let mut findable_powerup = None;
         for findable_powerup_index in 0..self.findable_powerups.len() {
             let (powerup_row, powerup_col, powerup) =
@@ -409,15 +421,7 @@ impl FleetCommanderPlayerState {
             }
         }
 
-        Ok(FleetCommanderHitResult::Miss(findable_powerup))
-    }
-
-    pub fn was_hit(&self, row: u8, col: u8) -> bool {
-        let index = row as usize * BOARD_SIZE as usize + col as usize;
-        let hit_section = index / HitArrayItem::BITS as usize;
-        let hit_index_in_section = index % HitArrayItem::BITS as usize;
-
-        (self.hits[hit_section] >> hit_index_in_section) & 1 != 0
+        findable_powerup
     }
 
     pub fn can_use_powerup(&mut self, powerup: FleetCommanderPowerup) -> bool {
@@ -1067,7 +1071,11 @@ impl FleetCommanderGame {
 
         let (did_damage, destroyed_ship, powerup_to_add) =
             match self.player_states[target_index].hit(row, col)? {
-                FleetCommanderHitResult::Miss(powerup_to_add) => (false, None, powerup_to_add),
+                FleetCommanderHitResult::Miss => (
+                    false,
+                    None,
+                    self.player_states[attacker_index].find_powerup(row, col),
+                ),
                 FleetCommanderHitResult::ShipDamaged => (true, None, None),
                 FleetCommanderHitResult::ShipDestroyed(ship) => (true, Some(ship), None),
             };
