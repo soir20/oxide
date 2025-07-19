@@ -182,6 +182,67 @@ enum FleetCommanderPowerup {
     Homing = 2,
 }
 
+impl FleetCommanderPowerup {
+    pub fn coordinates_to_hit(
+        &self,
+        center_row: u8,
+        center_col: u8,
+        player_state: &FleetCommanderPlayerState,
+    ) -> Result<Vec<(u8, u8)>, ProcessPacketError> {
+        match *self {
+            FleetCommanderPowerup::Square => {
+                let diameter = 3;
+                let radius = diameter / 2;
+                if center_row < radius
+                    || center_row >= BOARD_SIZE - radius
+                    || center_col < radius
+                    || center_col >= BOARD_SIZE - radius
+                {
+                    return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Powerup {self:?} would be outside the Fleet Commander board at ({center_row}, {center_col})")));
+                }
+
+                Ok(vec![
+                    (center_row - radius, center_col - radius),
+                    (center_row - radius, center_col),
+                    (center_row - radius, center_col + radius),
+                    (center_row, center_col - radius),
+                    (center_row, center_col),
+                    (center_row, center_col + radius),
+                    (center_row + radius, center_col - radius),
+                    (center_row + radius, center_col),
+                    (center_row + radius, center_col + radius),
+                ])
+            }
+            FleetCommanderPowerup::Scatter => {
+                let diameter = 5;
+                let radius = diameter / 2;
+                if center_row < radius
+                    || center_row >= BOARD_SIZE - radius
+                    || center_col < radius
+                    || center_col >= BOARD_SIZE - radius
+                {
+                    return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Powerup {self:?} would be outside the Fleet Commander board at ({center_row}, {center_col})")));
+                }
+
+                Ok(rand::seq::index::sample(
+                    &mut thread_rng(),
+                    diameter as usize * diameter as usize,
+                    6,
+                )
+                .into_iter()
+                .map(|coord| {
+                    (
+                        center_row - radius + (coord / diameter as usize) as u8,
+                        center_col - radius + (coord % diameter as usize) as u8,
+                    )
+                })
+                .collect())
+            }
+            FleetCommanderPowerup::Homing => todo!(),
+        }
+    }
+}
+
 impl Display for FleetCommanderPowerup {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.serialize_u8(*self as u8)
@@ -418,7 +479,7 @@ impl FleetCommanderPlayerState {
             }
         })
         .zip(available_powerups)
-        .map(|(coord, powerup): (usize, FleetCommanderPowerup)| {
+        .map(|(coord, powerup)| {
             (
                 (coord / BOARD_SIZE as usize) as u8,
                 (coord % BOARD_SIZE as usize) as u8,
