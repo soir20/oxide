@@ -288,7 +288,6 @@ struct FleetCommanderPlayerState {
         (BOARD_SIZE as u32 * BOARD_SIZE as u32).div_ceil(HitArrayItem::BITS) as usize],
     findable_powerups: Vec<(u8, u8, FleetCommanderPowerup)>,
     powerups: [u8; 3],
-    powerups_enabled: [bool; 3],
     score: i32,
 }
 
@@ -300,7 +299,6 @@ impl FleetCommanderPlayerState {
             hits: Default::default(),
             findable_powerups: Default::default(),
             powerups: [difficulty.default_powerup_quantity(); 3],
-            powerups_enabled: [true; 3],
             score: 0,
         }
     }
@@ -413,10 +411,9 @@ impl FleetCommanderPlayerState {
                 self.findable_powerups[findable_powerup_index];
 
             if row == powerup_row && col == powerup_col {
-                if self.powerups_enabled[powerup as usize] {
-                    findable_powerup = Some(powerup);
-                }
+                findable_powerup = Some(powerup);
                 self.findable_powerups.swap_remove(findable_powerup_index);
+                self.powerups[powerup as usize] = self.powerups[powerup as usize].saturating_add(1);
                 break;
             }
         }
@@ -425,7 +422,7 @@ impl FleetCommanderPlayerState {
     }
 
     pub fn can_use_powerup(&mut self, powerup: FleetCommanderPowerup) -> bool {
-        self.powerups[powerup as usize] > 0 && self.powerups_enabled[powerup as usize]
+        self.powerups[powerup as usize] > 0
     }
 
     pub fn use_powerup(&mut self, powerup: FleetCommanderPowerup) {
@@ -434,11 +431,9 @@ impl FleetCommanderPlayerState {
 
     pub fn disable_powerup(&mut self, powerup: FleetCommanderPowerup) {
         self.powerups[powerup as usize] = 0;
-        self.powerups_enabled[powerup as usize] = false;
-    }
-
-    pub fn add_powerup(&mut self, powerup: FleetCommanderPowerup) {
-        self.powerups[powerup as usize] = self.powerups[powerup as usize].saturating_add(1);
+        for index in (0..self.findable_powerups.len()).rev() {
+            self.findable_powerups.swap_remove(index);
+        }
     }
 
     pub fn add_score(&mut self, score: i32) -> i32 {
@@ -1069,24 +1064,17 @@ impl FleetCommanderGame {
         };
         let attacker_index = self.turn as usize;
 
-        let (did_damage, destroyed_ship, powerup_to_add) =
-            match self.player_states[target_index].hit(row, col)? {
-                FleetCommanderHitResult::Miss => (
-                    false,
-                    None,
-                    self.player_states[attacker_index].find_powerup(row, col),
-                ),
-                FleetCommanderHitResult::ShipDamaged => (true, None, None),
-                FleetCommanderHitResult::ShipDestroyed(ship) => (true, Some(ship), None),
-            };
+        let (did_damage, destroyed_ship) = match self.player_states[target_index].hit(row, col)? {
+            FleetCommanderHitResult::Miss => (false, None),
+            FleetCommanderHitResult::ShipDamaged => (true, None),
+            FleetCommanderHitResult::ShipDestroyed(ship) => (true, Some(ship)),
+        };
+
+        let added_powerup = self.player_states[attacker_index].find_powerup(row, col);
 
         if did_damage {
             self.player_states[attacker_index]
                 .add_score(self.difficulty.score_per_hit(powerup_if_used));
-        }
-
-        if let Some(powerup) = powerup_to_add {
-            self.player_states[attacker_index].add_powerup(powerup);
         }
 
         let mut broadcasts = vec![Broadcast::Multi(
@@ -1101,7 +1089,7 @@ impl FleetCommanderGame {
                     },
                     payload: format!(
                         "OnGridBombedMsg\t{target_index}\t{row}\t{col}\t{did_damage}\t{}",
-                        powerup_to_add.map(|powerup| powerup as i32).unwrap_or(-1)
+                        added_powerup.map(|powerup| powerup as i32).unwrap_or(-1)
                     ),
                 },
             })],
