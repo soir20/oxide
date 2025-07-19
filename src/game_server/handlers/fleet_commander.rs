@@ -389,7 +389,9 @@ impl FleetCommanderPlayerState {
                 self.findable_powerups[findable_powerup_index];
 
             if row == powerup_row && col == powerup_col {
-                findable_powerup = Some(powerup);
+                if self.powerups_enabled[powerup as usize] {
+                    findable_powerup = Some(powerup);
+                }
                 self.findable_powerups.swap_remove(findable_powerup_index);
                 break;
             }
@@ -411,10 +413,8 @@ impl FleetCommanderPlayerState {
         self.powerups_enabled[powerup as usize] = false;
     }
 
-    pub fn add_powerup_if_enabled(&mut self, powerup: FleetCommanderPowerup) {
-        if self.powerups_enabled[powerup as usize] {
-            self.powerups[powerup as usize] = self.powerups[powerup as usize].saturating_add(1);
-        }
+    pub fn add_powerup(&mut self, powerup: FleetCommanderPowerup) {
+        self.powerups[powerup as usize] = self.powerups[powerup as usize].saturating_add(1);
     }
 
     pub fn add_score(&mut self, score: i32) -> i32 {
@@ -1058,7 +1058,7 @@ impl FleetCommanderGame {
         }
 
         if let Some(powerup) = powerup_to_add {
-            self.player_states[attacker_index].add_powerup_if_enabled(powerup);
+            self.player_states[attacker_index].add_powerup(powerup);
         }
 
         let mut broadcasts = vec![Broadcast::Multi(
