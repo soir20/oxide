@@ -497,7 +497,7 @@ impl FleetCommanderPlayerState {
             if disallowed_coords.contains(&coord) {
                 unselectable_allowed_coords
                     .pop()
-                    .expect("Not enough replacement coordinates in Force Connection")
+                    .expect("Not enough replacement coordinates in Fleet Commander")
             } else {
                 coord
             }
