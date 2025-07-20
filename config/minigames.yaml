@@ -4217,6 +4217,7 @@
             icon_id: 3922
             stage_icon_id: 4458
             members_only: true
+            require_previous_completed: false
             stage_select_map_name: RepublicGunship
             short_name: sp
             stages:
@@ -4280,29 +4281,38 @@
                   game_type: FleetCommander
                 zone_template_guid: 200
                 score_to_credits_expression: x / 79.5
-          - !Stage
+          - !StageGroup
             guid: 20005
-            name_id: 43675
+            name_id: 43797
             description_id: 43676
+            icon_id: 3922
             stage_icon_id: 4457
-            start_screen_icon_id: 4453
-            min_players: 2
-            max_players: 2
-            difficulty: 1
-            start_sound_id: 5255
             members_only: true
             require_previous_completed: false
-            link_name: stage
+            stage_select_map_name: ''
             short_name: mp
-            minigame_type:
-              !Flash
-              game_swf_name: FleetCommander.swf
-              game_type: FleetCommander
-            zone_template_guid: 201
-            score_to_credits_expression: x / 72.75
-            single_player_stage:
-              stage_group_guid: 20000
-              stage_guid: 20001
+            default_stage_instance: 20006
+            stages:
+              - !Stage
+                guid: 20006
+                name_id: 43675
+                description_id: 43676
+                stage_icon_id: 4457
+                start_screen_icon_id: 4453
+                min_players: 2
+                max_players: 2
+                difficulty: 2
+                start_sound_id: 5255
+                members_only: true
+                require_previous_completed: false
+                link_name: stage
+                short_name: ''
+                minigame_type:
+                  !Flash
+                  game_swf_name: FleetCommander.swf
+                  game_type: FleetCommander
+                zone_template_guid: 201
+                score_to_credits_expression: x / 72.75
     - guid: 21000
       name_id: 14050
       description_id: 14955
