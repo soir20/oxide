@@ -9,7 +9,7 @@ use serde::Serializer;
 use crate::game_server::{
     handlers::{
         character::MinigameStatus, guid::GuidTableIndexer, lock_enforcer::CharacterTableReadHandle,
-        unique_guid::player_guid,
+        minigame::MinigameTimer, unique_guid::player_guid,
     },
     packets::{
         minigame::{FlashPayload, MinigameHeader, ScoreEntry, ScoreType},
@@ -36,7 +36,7 @@ impl Display for ForceConnectionPiece {
 
 const BOARD_SIZE: u8 = 10;
 const MIN_MATCH_LENGTH: u8 = 4;
-const TURN_TIME_SECONDS: u8 = 20;
+const TURN_TIME: Duration = Duration::from_secs(20);
 const MATCHES_TO_WIN: u8 = 5;
 
 #[derive(Clone, Debug)]
@@ -411,7 +411,7 @@ impl Display for ForceConnectionTurn {
 enum ForceConnectionGameState {
     WaitingForPlayersReady,
     WaitingForMove,
-    Matching { turn_duration: Duration },
+    Matching { time_left_in_turn: Duration },
     GameOver,
 }
 
@@ -463,15 +463,14 @@ pub struct ForceConnectionGame {
     board: ForceConnectionBoard,
     player1: u32,
     player2: Option<u32>,
+    recipients: Vec<u32>,
     ready: [bool; 2],
     matches: [u8; 2],
     score: [i32; 2],
     powerups: [[u32; 2]; 2],
     turn: ForceConnectionTurn,
     state: ForceConnectionGameState,
-    paused: bool,
-    time_until_next_event: Duration,
-    last_timer_update: Instant,
+    timer: MinigameTimer,
     stage_guid: i32,
     stage_group_guid: i32,
 }
@@ -484,19 +483,23 @@ impl ForceConnectionGame {
             ForceConnectionTurn::Player2
         };
 
+        let mut recipients = vec![player1];
+        if let Some(player2) = player2 {
+            recipients.push(player2);
+        }
+
         ForceConnectionGame {
             board: ForceConnectionBoard::new(),
             player1,
             player2,
+            recipients,
             ready: [false, player2.is_none()],
             matches: [0; 2],
             score: [0; 2],
             powerups: [[1, 2]; 2],
             turn,
             state: ForceConnectionGameState::WaitingForPlayersReady,
-            paused: false,
-            time_until_next_event: Duration::ZERO,
-            last_timer_update: Instant::now(),
+            timer: MinigameTimer::new(),
             stage_guid,
             stage_group_guid,
         }
@@ -635,7 +638,7 @@ impl ForceConnectionGame {
         }
 
         let mut broadcasts = vec![Broadcast::Multi(
-            self.list_recipients(),
+            self.recipients.clone(),
             vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: FlashPayload {
@@ -715,7 +718,7 @@ impl ForceConnectionGame {
 
         let mut broadcasts = self.handle_move(turn_time, Duration::from_secs(1));
         broadcasts.push(Broadcast::Multi(
-            self.list_recipients(),
+            self.recipients.clone(),
             vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: FlashPayload {
@@ -804,7 +807,7 @@ impl ForceConnectionGame {
 
         let mut broadcasts = self.handle_move(turn_time, Duration::from_millis(500));
         broadcasts.push(Broadcast::Multi(
-            self.list_recipients(),
+            self.recipients.clone(),
             vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: FlashPayload {
@@ -852,7 +855,7 @@ impl ForceConnectionGame {
 
         let mut broadcasts = self.handle_move(turn_time, Duration::from_millis(500));
         broadcasts.push(Broadcast::Multi(
-            self.list_recipients(),
+            self.recipients.clone(),
             vec![
                 GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
@@ -886,12 +889,12 @@ impl ForceConnectionGame {
     }
 
     pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
-        if self.paused {
+        if self.timer.paused() {
             return Vec::new();
         }
 
-        self.update_timer(now);
-        if !self.time_until_next_event.is_zero() {
+        self.timer.update_timer(now);
+        if !self.timer.time_until_next_event(now).is_zero() {
             return Vec::new();
         }
 
@@ -899,7 +902,7 @@ impl ForceConnectionGame {
             ForceConnectionGameState::WaitingForPlayersReady => Vec::new(),
             ForceConnectionGameState::WaitingForMove => {
                 let mut broadcasts = vec![Broadcast::Multi(
-                    self.list_recipients(),
+                    self.recipients.clone(),
                     vec![GamePacket::serialize(&TunneledPacket {
                         unknown1: true,
                         inner: FlashPayload {
@@ -935,12 +938,7 @@ impl ForceConnectionGame {
             return Ok(Vec::new());
         }
 
-        let now = Instant::now();
-        if pause {
-            self.time_until_next_event = self.time_until_next_event(now);
-        }
-        self.last_timer_update = now;
-        self.paused = pause;
+        self.timer.pause_or_resume(pause);
         Ok(Vec::new())
     }
 
@@ -979,31 +977,6 @@ impl ForceConnectionGame {
         player_index == 1 && self.player2.is_none()
     }
 
-    fn list_recipients(&self) -> Vec<u32> {
-        let mut recipients = vec![self.player1];
-        if let Some(player2) = self.player2 {
-            recipients.push(player2);
-        }
-
-        recipients
-    }
-
-    fn time_until_next_event(&self, now: Instant) -> Duration {
-        let time_since_last_tick = now.saturating_duration_since(self.last_timer_update);
-        self.time_until_next_event
-            .saturating_sub(time_since_last_tick)
-    }
-
-    fn schedule_event(&mut self, duration: Duration) {
-        self.last_timer_update = Instant::now();
-        self.time_until_next_event = duration;
-    }
-
-    fn update_timer(&mut self, now: Instant) {
-        self.time_until_next_event = self.time_until_next_event(now);
-        self.last_timer_update = now;
-    }
-
     fn check_turn(
         &self,
         sender: u32,
@@ -1020,7 +993,7 @@ impl ForceConnectionGame {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} (index {player_index}) tried to make a move in Force Connection, but it isn't their turn ({self:?})")));
         }
 
-        if self.time_until_next_event(turn_time).is_zero() {
+        if self.timer.time_until_next_event(turn_time).is_zero() {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} (index {player_index}) tried to make a move in Force Connection, but their turn expired ({self:?})")));
         }
 
@@ -1040,15 +1013,12 @@ impl ForceConnectionGame {
 
     fn switch_turn(&mut self) -> Vec<Broadcast> {
         let mut broadcasts = Vec::new();
-        if let ForceConnectionGameState::Matching {
-            turn_duration: time_left_in_turn,
-        } = self.state
-        {
+        if let ForceConnectionGameState::Matching { time_left_in_turn } = self.state {
             let score_from_turn_time = time_left_in_turn.as_secs() as i32 * 5;
             self.score[self.turn as usize] =
                 self.score[self.turn as usize].saturating_add(score_from_turn_time);
             broadcasts.push(Broadcast::Multi(
-                self.list_recipients(),
+                self.recipients.clone(),
                 vec![GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
                     inner: FlashPayload {
@@ -1072,10 +1042,10 @@ impl ForceConnectionGame {
             ForceConnectionTurn::Player2 => ForceConnectionTurn::Player1,
         };
 
-        self.schedule_event(Duration::from_secs(TURN_TIME_SECONDS as u64));
+        self.timer.schedule_event(TURN_TIME);
 
         broadcasts.push(Broadcast::Multi(
-            self.list_recipients(),
+            self.recipients.clone(),
             vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: FlashPayload {
@@ -1084,7 +1054,11 @@ impl ForceConnectionGame {
                         sub_op_code: -1,
                         stage_group_guid: self.stage_group_guid,
                     },
-                    payload: format!("OnStartPlayerTurnMsg\t{}\t{TURN_TIME_SECONDS}", self.turn),
+                    payload: format!(
+                        "OnStartPlayerTurnMsg\t{}\t{}",
+                        self.turn,
+                        TURN_TIME.as_secs()
+                    ),
                 },
             })],
         ));
@@ -1107,10 +1081,10 @@ impl ForceConnectionGame {
                 broadcasts.append(&mut self.process_match(player2_match_len, 1));
             }
 
-            self.schedule_event(Duration::from_millis(500));
+            self.timer.schedule_event(Duration::from_millis(500));
 
             broadcasts.push(Broadcast::Multi(
-                self.list_recipients(),
+                self.recipients.clone(),
                 vec![GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
                     inner: FlashPayload {
@@ -1149,7 +1123,7 @@ impl ForceConnectionGame {
                 self.powerups[player_index as usize][new_powerup as usize].saturating_add(1);
 
             broadcasts.push(Broadcast::Multi(
-                self.list_recipients(),
+                self.recipients.clone(),
                 vec![GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
                     inner: FlashPayload {
@@ -1166,7 +1140,7 @@ impl ForceConnectionGame {
         }
 
         broadcasts.push(Broadcast::Multi(
-            self.list_recipients(),
+            self.recipients.clone(),
             vec![
                 GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
@@ -1198,10 +1172,10 @@ impl ForceConnectionGame {
 
     fn handle_move(&mut self, turn_time: Instant, sleep_time: Duration) -> Vec<Broadcast> {
         self.state = ForceConnectionGameState::Matching {
-            turn_duration: self.time_until_next_event(turn_time),
+            time_left_in_turn: self.timer.time_until_next_event(turn_time),
         };
 
-        self.schedule_event(sleep_time);
+        self.timer.schedule_event(sleep_time);
         self.broadcast_powerup_quantity(self.turn as u8)
     }
 
@@ -1259,7 +1233,7 @@ impl ForceConnectionGame {
 
     fn broadcast_powerup_quantity(&self, player_index: u8) -> Vec<Broadcast> {
         vec![Broadcast::Multi(
-            self.list_recipients(),
+            self.recipients.clone(),
             vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: FlashPayload {

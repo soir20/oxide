@@ -18,8 +18,8 @@ use serde::{de::IgnoredAny, Deserialize};
 use crate::{
     game_server::{
         handlers::{
-            character::MinigameStatus, force_connection::ForceConnectionGame,
-            lock_enforcer::CharacterTableReadHandle,
+            character::MinigameStatus, fleet_commander::FleetCommanderGame,
+            force_connection::ForceConnectionGame, lock_enforcer::CharacterTableReadHandle,
         },
         packets::{
             chat::{ActionBarTextColor, SendStringId},
@@ -208,6 +208,9 @@ impl
 
     fn index1(&self) -> SharedMinigameDataTickableIndex {
         match self.data {
+            SharedMinigameTypeData::FleetCommander { .. } => {
+                SharedMinigameDataTickableIndex::Tickable
+            }
             SharedMinigameTypeData::ForceConnection { .. } => {
                 SharedMinigameDataTickableIndex::Tickable
             }
@@ -233,8 +236,7 @@ impl
 #[derive(Clone, Default)]
 pub enum SharedMinigameTypeData {
     FleetCommander {
-        player1: u32,
-        player2: Option<u32>,
+        game: Box<FleetCommanderGame>,
     },
     ForceConnection {
         game: Box<ForceConnectionGame>,
@@ -249,6 +251,7 @@ impl SharedMinigameTypeData {
         members: &[u32],
         stage_group_guid: i32,
         stage_guid: i32,
+        difficulty: u32,
     ) -> Self {
         // We can't have a game without at least one player
         let player1 = members[0];
@@ -256,9 +259,15 @@ impl SharedMinigameTypeData {
 
         match minigame_type {
             MinigameType::Flash { game_type, .. } => match game_type {
-                FlashMinigameType::FleetCommander => {
-                    SharedMinigameTypeData::FleetCommander { player1, player2 }
-                }
+                FlashMinigameType::FleetCommander => SharedMinigameTypeData::FleetCommander {
+                    game: Box::new(FleetCommanderGame::new(
+                        difficulty,
+                        player1,
+                        player2,
+                        stage_guid,
+                        stage_group_guid,
+                    )),
+                },
                 FlashMinigameType::ForceConnection => SharedMinigameTypeData::ForceConnection {
                     game: Box::new(ForceConnectionGame::new(
                         player1,
@@ -275,6 +284,7 @@ impl SharedMinigameTypeData {
 
     pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
         match self {
+            SharedMinigameTypeData::FleetCommander { game } => game.tick(now),
             SharedMinigameTypeData::ForceConnection { game } => game.tick(now),
             _ => Vec::new(),
         }
@@ -286,10 +296,71 @@ impl SharedMinigameTypeData {
         minigame_status: &mut MinigameStatus,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         match self {
+            SharedMinigameTypeData::FleetCommander { game } => {
+                game.remove_player(player, minigame_status)
+            }
             SharedMinigameTypeData::ForceConnection { game } => {
                 game.remove_player(player, minigame_status)
             }
             _ => Ok(Vec::new()),
+        }
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct MinigameTimer {
+    paused: bool,
+    time_until_next_event: Duration,
+    last_timer_update: Instant,
+}
+
+impl MinigameTimer {
+    pub fn new() -> Self {
+        MinigameTimer {
+            paused: false,
+            time_until_next_event: Duration::ZERO,
+            last_timer_update: Instant::now(),
+        }
+    }
+
+    pub fn new_with_event(duration: Duration) -> Self {
+        MinigameTimer {
+            paused: false,
+            time_until_next_event: duration,
+            last_timer_update: Instant::now(),
+        }
+    }
+
+    pub fn paused(&self) -> bool {
+        self.paused
+    }
+
+    pub fn pause_or_resume(&mut self, pause: bool) {
+        let now = Instant::now();
+        if pause {
+            self.time_until_next_event = self.time_until_next_event(now);
+        }
+        self.last_timer_update = now;
+        self.paused = pause;
+    }
+
+    pub fn schedule_event(&mut self, duration: Duration) {
+        self.last_timer_update = Instant::now();
+        self.time_until_next_event = duration;
+    }
+
+    pub fn update_timer(&mut self, now: Instant) {
+        self.time_until_next_event = self.time_until_next_event(now);
+        self.last_timer_update = now;
+    }
+
+    pub fn time_until_next_event(&self, now: Instant) -> Duration {
+        if self.paused {
+            self.time_until_next_event
+        } else {
+            let time_since_last_tick = now.saturating_duration_since(self.last_timer_update);
+            self.time_until_next_event
+                .saturating_sub(time_since_last_tick)
         }
     }
 }
@@ -1516,6 +1587,7 @@ pub fn prepare_active_minigame_instance(
                 members,
                 stage_group_guid,
                 stage_guid,
+                stage_config.stage_config.difficulty(),
             );
 
             minigame_data.readiness = MinigameReadiness::InitialPlayersLoading(
@@ -2184,6 +2256,9 @@ fn handle_flash_payload(
                     }
 
                     match &mut shared_minigame_data.data {
+                        SharedMinigameTypeData::FleetCommander { game } => {
+                            game.pause_or_resume(sender, pause)
+                        }
                         SharedMinigameTypeData::ForceConnection { game } => {
                             game.pause_or_resume(sender, pause)
                         }
@@ -2206,6 +2281,9 @@ fn handle_flash_payload(
             &payload.header,
             |_, _, _, _, shared_minigame_data, characters_table_read_handle| {
                 match &mut shared_minigame_data.data {
+                    SharedMinigameTypeData::FleetCommander { game } => {
+                        game.connect(sender, characters_table_read_handle)
+                    }
                     SharedMinigameTypeData::ForceConnection { game } => {
                         game.connect(sender, characters_table_read_handle)
                     }
@@ -2372,6 +2450,123 @@ fn handle_flash_payload(
                     ProcessPacketErrorType::ConstraintViolated,
                     format!(
                         "Received delete powerup request for unexpected game from player {sender}"
+                    ),
+                )),
+            },
+        ),
+        "OnRequestPlaceShipMsg" => handle_minigame_packet_write(
+            sender,
+            game_server,
+            &payload.header,
+            |_, _, _, _, shared_minigame_data, _| match &mut shared_minigame_data.data {
+                SharedMinigameTypeData::FleetCommander { game } => {
+                    if parts.len() == 6 {
+                        let ship_size = parts[1].parse()?;
+                        let flipped = parts[2].parse::<u8>()? == 1;
+                        let row = parts[3].parse()?;
+                        let col = parts[4].parse()?;
+                        let player_index = parts[5].parse()?;
+                        game.place_ship(sender, ship_size, flipped, row, col, player_index)
+                    } else {
+                        Err(ProcessPacketError::new(
+                            ProcessPacketErrorType::ConstraintViolated,
+                            format!(
+                                "Expected 5 parameters in place ship request, but only found {}",
+                                parts.len().saturating_sub(1)
+                            ),
+                        ))
+                    }
+                }
+                _ => Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Received place ship request for unexpected game from player {sender}"
+                    ),
+                )),
+            },
+        ),
+        "OnRequestBombGridMsg" => handle_minigame_packet_write(
+            sender,
+            game_server,
+            &payload.header,
+            |_, _, _, _, shared_minigame_data, _| match &mut shared_minigame_data.data {
+                SharedMinigameTypeData::FleetCommander { game } => {
+                    if parts.len() == 4 {
+                        let row = parts[1].parse()?;
+                        let col = parts[2].parse()?;
+                        let player_index = parts[3].parse()?;
+                        game.hit(sender, row, col, player_index)
+                    } else {
+                        Err(ProcessPacketError::new(
+                            ProcessPacketErrorType::ConstraintViolated,
+                            format!(
+                                "Expected 3 parameters in bomb grid request, but only found {}",
+                                parts.len().saturating_sub(1)
+                            ),
+                        ))
+                    }
+                }
+                _ => Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Received bomb grid request for unexpected game from player {sender}"
+                    ),
+                )),
+            },
+        ),
+        "OnRequestUsePowerUpMsg" => handle_minigame_packet_write(
+            sender,
+            game_server,
+            &payload.header,
+            |_, _, _, _, shared_minigame_data, _| match &mut shared_minigame_data.data {
+                SharedMinigameTypeData::FleetCommander { game } => {
+                    if parts.len() == 5 {
+                        let powerup = parts[1].parse()?;
+                        let row = parts[2].parse()?;
+                        let col = parts[3].parse()?;
+                        let attacker_index = parts[4].parse()?;
+                        game.use_powerup(sender, row, col, attacker_index, powerup)
+                    } else {
+                        Err(ProcessPacketError::new(
+                            ProcessPacketErrorType::ConstraintViolated,
+                            format!(
+                                "Expected 4 parameters in use powerup request, but only found {}",
+                                parts.len().saturating_sub(1)
+                            ),
+                        ))
+                    }
+                }
+                _ => Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Received use powerup request for unexpected game from player {sender}"
+                    ),
+                )),
+            },
+        ),
+        "OnFinishedPowerUpAnimMsg" => handle_minigame_packet_write(
+            sender,
+            game_server,
+            &payload.header,
+            |_, _, _, _, shared_minigame_data, _| match &mut shared_minigame_data.data {
+                SharedMinigameTypeData::FleetCommander { game } => {
+                    if parts.len() == 2 {
+                        let player_index = parts[1].parse()?;
+                        game.complete_powerup_animation(sender, player_index)
+                    } else {
+                        Err(ProcessPacketError::new(
+                            ProcessPacketErrorType::ConstraintViolated,
+                            format!(
+                                "Expected 1 parameters in complete powerup animation payload, but only found {}",
+                                parts.len().saturating_sub(1)
+                            ),
+                        ))
+                    }
+                }
+                _ => Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Received complete powerup animation payload for unexpected game from player {sender}"
                     ),
                 )),
             },
