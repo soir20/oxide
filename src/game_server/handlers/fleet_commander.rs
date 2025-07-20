@@ -321,13 +321,22 @@ impl FleetCommanderPlayerState {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} (index {player_index}) sent a place ship payload (size: {new_ship_size:?}, flipped: {flipped}, row: {row}, col: {col}) for Fleet Commander, but the ship is out of bounds ({self:?})")));
         }
 
-        self.ships.push(FleetCommanderShip {
+        let new_ship = FleetCommanderShip {
             row,
             col,
             vertical: flipped,
             size: new_ship_size,
             hits: 0,
-        });
+        };
+        if self.ships.iter().any(|ship| {
+            new_ship
+                .coordinates()
+                .any(|(row, col)| ship.contains(row, col))
+        }) {
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} (index {player_index}) sent a place ship payload (size: {new_ship_size:?}, flipped: {flipped}, row: {row}, col: {col}) for Fleet Commander, but the ship intersects with another ship ({self:?})")));
+        }
+
+        self.ships.push(new_ship);
 
         let mut counts = BTreeMap::new();
         for ship in self.ships.iter() {
