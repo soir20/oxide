@@ -4205,8 +4205,8 @@
         guid: 20000
         name_id: 32802
         description_id: 43676
-        icon_id: 3922
-        stage_icon_id: 3922
+        icon_id: 4459
+        stage_icon_id: 4459
         members_only: true
         stage_select_map_name: FleetCommanderPortal
         stages:
@@ -4214,7 +4214,7 @@
             guid: 20001
             name_id: 43796
             description_id: 43799
-            icon_id: 3922
+            icon_id: 4459
             stage_icon_id: 4458
             members_only: true
             require_previous_completed: false
@@ -4285,7 +4285,7 @@
             guid: 20005
             name_id: 43797
             description_id: 43799
-            icon_id: 3922
+            icon_id: 4459
             stage_icon_id: 4457
             members_only: true
             require_previous_completed: false
