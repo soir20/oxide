@@ -4210,28 +4210,78 @@
         members_only: true
         stage_select_map_name: FleetCommanderPortal
         stages:
-          - !Stage
+          - !StageGroup
             guid: 20001
-            name_id: 43672
+            name_id: 43796
             description_id: 43676
-            stage_icon_id: 4454
-            start_screen_icon_id: 4450
-            min_players: 1
-            max_players: 1
-            difficulty: 1
-            start_sound_id: 5255
+            icon_id: 3922
+            stage_icon_id: 4458
             members_only: true
-            require_previous_completed: false
-            link_name: stage
+            stage_select_map_name: RepublicGunship
             short_name: sp
-            minigame_type:
-              !Flash
-              game_swf_name: FleetCommander.swf
-              game_type: FleetCommander
-            zone_template_guid: 200
-            score_to_credits_expression: x / 18.55
+            stages:
+              - !Stage
+                guid: 20002
+                name_id: 43672
+                description_id: 43676
+                stage_icon_id: 4454
+                start_screen_icon_id: 4450
+                min_players: 1
+                max_players: 1
+                difficulty: 1
+                start_sound_id: 5255
+                members_only: true
+                require_previous_completed: false
+                link_name: stage
+                short_name: stage01
+                minigame_type:
+                  !Flash
+                  game_swf_name: FleetCommander.swf
+                  game_type: FleetCommander
+                zone_template_guid: 200
+                score_to_credits_expression: x / 80.5
+              - !Stage
+                guid: 20003
+                name_id: 43673
+                description_id: 43676
+                stage_icon_id: 4455
+                start_screen_icon_id: 4451
+                min_players: 1
+                max_players: 1
+                difficulty: 2
+                start_sound_id: 5255
+                members_only: true
+                require_previous_completed: false
+                link_name: stage
+                short_name: stage02
+                minigame_type:
+                  !Flash
+                  game_swf_name: FleetCommander.swf
+                  game_type: FleetCommander
+                zone_template_guid: 200
+                score_to_credits_expression: x / 72.75
+              - !Stage
+                guid: 20004
+                name_id: 43674
+                description_id: 43676
+                stage_icon_id: 4456
+                start_screen_icon_id: 4452
+                min_players: 1
+                max_players: 1
+                difficulty: 3
+                start_sound_id: 5255
+                members_only: true
+                require_previous_completed: false
+                link_name: stage
+                short_name: stage03
+                minigame_type:
+                  !Flash
+                  game_swf_name: FleetCommander.swf
+                  game_type: FleetCommander
+                zone_template_guid: 200
+                score_to_credits_expression: x / 79.5
           - !Stage
-            guid: 20002
+            guid: 20005
             name_id: 43675
             description_id: 43676
             stage_icon_id: 4457
@@ -4249,7 +4299,7 @@
               game_swf_name: FleetCommander.swf
               game_type: FleetCommander
             zone_template_guid: 201
-            score_to_credits_expression: x / 18.55
+            score_to_credits_expression: x / 72.75
             single_player_stage:
               stage_group_guid: 20000
               stage_guid: 20001
