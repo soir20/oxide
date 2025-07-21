@@ -361,10 +361,6 @@ impl FleetCommanderPlayerState {
 
         self.readiness = readiness;
 
-        if self.readiness == FleetCommanderPlayerReadiness::Ready {
-            self.findable_powerups = self.generate_findable_powerups();
-        }
-
         Ok(())
     }
 
@@ -466,6 +462,13 @@ impl FleetCommanderPlayerState {
 
     pub fn powerups_remaining(&self, powerup: FleetCommanderPowerup) -> u8 {
         self.powerups[powerup as usize]
+    }
+
+    pub fn set_findable_powerups(
+        &mut self,
+        findable_powerups: Vec<(u8, u8, FleetCommanderPowerup)>,
+    ) {
+        self.findable_powerups = findable_powerups;
     }
 
     fn generate_findable_powerups(&self) -> Vec<(u8, u8, FleetCommanderPowerup)> {
@@ -799,6 +802,11 @@ impl FleetCommanderGame {
         {
             return Ok(Vec::new());
         }
+
+        self.player_states[0]
+            .set_findable_powerups(self.player_states[1].generate_findable_powerups());
+        self.player_states[1]
+            .set_findable_powerups(self.player_states[0].generate_findable_powerups());
 
         let mut broadcasts = vec![Broadcast::Multi(
             self.recipients.clone(),
