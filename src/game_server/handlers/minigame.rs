@@ -819,7 +819,7 @@ impl MinigamePortalEntryConfig {
                 description_id: self.description_id,
                 members_only: self.members_only,
                 is_flash: self.is_flash,
-                is_micro: false,
+                is_daily: false,
                 is_active: self.is_active,
                 param1: self.param1,
                 icon_id: self.icon_id,
@@ -1828,7 +1828,7 @@ fn handle_request_start_active_minigame(
                                     inner: StartFlashGame {
                                         loader_script_name: "MiniGameFlash".to_string(),
                                         game_swf_name: game_swf_name.clone(),
-                                        is_micro: false,
+                                        is_daily: false,
                                     },
                                 })
                             );

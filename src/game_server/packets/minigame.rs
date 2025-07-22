@@ -96,7 +96,7 @@ pub struct MinigamePortalEntry {
     pub description_id: u32,
     pub members_only: bool,
     pub is_flash: bool, // unconfirmed
-    pub is_micro: bool,
+    pub is_daily: bool,
     pub is_active: bool,
     pub param1: u32, // unconfirmed
     pub icon_id: u32,

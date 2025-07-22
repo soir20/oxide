@@ -115,7 +115,7 @@ impl GamePacket for EnterDialog {
 pub struct StartFlashGame {
     pub loader_script_name: String,
     pub game_swf_name: String,
-    pub is_micro: bool,
+    pub is_daily: bool,
 }
 
 impl GamePacket for StartFlashGame {
