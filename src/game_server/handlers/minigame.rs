@@ -1556,7 +1556,7 @@ fn handle_request_create_active_minigame(
 
 fn prepare_active_minigame_instance_for_player(
     member_guid: u32,
-    new_instance_guid: u64,
+    new_instance_guid_if_created: Option<u64>,
     stage_config: &StageConfigRef,
     message_id: Option<u32>,
     characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
@@ -1566,7 +1566,7 @@ fn prepare_active_minigame_instance_for_player(
     let stage_group_guid = stage_config.stage_group_guid;
     let stage_guid = stage_config.stage_config.guid();
 
-    let mut teleport_broadcasts = Vec::new();
+    let mut broadcasts = Vec::new();
 
     characters_table_write_handle.update_value_indices(player_guid(member_guid), |possible_character_write_handle, _| {
         let Some(character_write_handle) = possible_character_write_handle
@@ -1603,7 +1603,7 @@ fn prepare_active_minigame_instance_for_player(
     })?;
 
     if let Some(message) = message_id {
-        teleport_broadcasts.push(Broadcast::Single(
+        broadcasts.push(Broadcast::Single(
             member_guid,
             vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
@@ -1622,22 +1622,23 @@ fn prepare_active_minigame_instance_for_player(
         ));
     }
 
-    let result: Result<Vec<Broadcast>, ProcessPacketError> = teleport_to_zone!(
-        characters_table_write_handle,
-        member_guid,
-        zones_table_write_handle,
-        &zones_table_write_handle
-            .get(new_instance_guid)
-            .unwrap_or_else(|| panic!(
-                "Zone instance {new_instance_guid} should have been created or already exist but is missing"
-            ))
-            .read(),
-        None,
-        None,
-        game_server.mounts(),
-    );
-    // Only mark player as teleported if the teleportation was successful
-    teleport_broadcasts.append(&mut result?);
+    if let Some(new_instance_guid) = new_instance_guid_if_created {
+        let teleport_result: Result<Vec<Broadcast>, ProcessPacketError> = teleport_to_zone!(
+            characters_table_write_handle,
+            member_guid,
+            zones_table_write_handle,
+            &zones_table_write_handle
+                .get(new_instance_guid)
+                .unwrap_or_else(|| panic!(
+                    "Zone instance {new_instance_guid} should have been created or already exist but is missing"
+                ))
+                .read(),
+            None,
+            None,
+            game_server.mounts(),
+        );
+        broadcasts.append(&mut teleport_result?);
+    }
 
     // Because we hold the characters table write handle, no one else could have written to the character
     let Some(character) = characters_table_write_handle.get(player_guid(member_guid)) else {
@@ -1666,9 +1667,16 @@ fn prepare_active_minigame_instance_for_player(
             ),
         ));
     };
-    minigame_status.teleported_to_game = true;
+    minigame_status.teleported_to_game = new_instance_guid_if_created.is_some();
+    if new_instance_guid_if_created.is_none() {
+        broadcasts.append(&mut create_active_minigame_if_uncreated(
+            member_guid,
+            game_server.minigames(),
+            minigame_status,
+        )?);
+    }
 
-    Ok(teleport_broadcasts)
+    Ok(broadcasts)
 }
 
 pub fn prepare_active_minigame_instance(
@@ -1722,16 +1730,15 @@ pub fn prepare_active_minigame_instance(
     }
 
     let teleport_result: Result<Vec<Broadcast>, ProcessPacketError> = (|| {
-        let Some(zone_template_guid) = stage_config.stage_config.zone_template_guid() else {
-            return Ok(Vec::new());
+        let new_instance_guid = match stage_config.stage_config.zone_template_guid() {
+            Some(zone_template_guid) => Some(game_server.get_or_create_instance(
+                characters_table_write_handle,
+                zones_table_write_handle,
+                zone_template_guid,
+                stage_config.stage_config.max_players(),
+            )?),
+            None => None,
         };
-
-        let new_instance_guid = game_server.get_or_create_instance(
-            characters_table_write_handle,
-            zones_table_write_handle,
-            zone_template_guid,
-            stage_config.stage_config.max_players(),
-        )?;
 
         let mut teleport_broadcasts = Vec::new();
         for member_guid in members {
