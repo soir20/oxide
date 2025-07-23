@@ -1554,6 +1554,123 @@ fn handle_request_create_active_minigame(
     )
 }
 
+fn teleport_player_to_minigame(
+    member_guid: u32,
+    new_instance_guid: u64,
+    stage_config: &StageConfigRef,
+    message_id: Option<u32>,
+    characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
+    zones_table_write_handle: &mut ZoneTableWriteHandle<'_>,
+    game_server: &GameServer,
+) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    let stage_group_guid = stage_config.stage_group_guid;
+    let stage_guid = stage_config.stage_config.guid();
+
+    let mut teleport_broadcasts = Vec::new();
+
+    characters_table_write_handle.update_value_indices(player_guid(member_guid), |possible_character_write_handle, _| {
+        let Some(character_write_handle) = possible_character_write_handle
+        else {
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!(
+                    "Unknown player {member_guid} tried to create an active minigame"
+                ),
+            ));
+        };
+
+        let CharacterType::Player(player) = &mut character_write_handle.stats.character_type
+        else {
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {member_guid} tried to create an active minigame, but their character isn't a player")));
+        };
+
+        if !game_server
+            .minigames()
+            .stage_unlocked(stage_group_guid, stage_guid, player)
+        {
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {member_guid} tried to create an active minigame for a stage {stage_guid} they haven't unlocked")));
+        }
+
+        let Some(minigame_status) = &mut player.minigame_status else {
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {member_guid} tried to create an active minigame, but their minigame status is not set")));
+        };
+
+        minigame_status.type_data = stage_config.stage_config.minigame_type().into();
+        minigame_status.group.stage_group_guid = stage_group_guid;
+        minigame_status.group.stage_guid = stage_guid;
+
+        Ok(())
+    })?;
+
+    if let Some(message) = message_id {
+        teleport_broadcasts.push(Broadcast::Single(
+            member_guid,
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: SendStringId {
+                    sender_guid: player_guid(member_guid),
+                    message_id: message,
+                    is_anonymous: true,
+                    unknown2: false,
+                    is_action_bar_message: true,
+                    action_bar_text_color: ActionBarTextColor::Yellow,
+                    target_guid: 0,
+                    owner_guid: 0,
+                    unknown7: 0,
+                },
+            })],
+        ));
+    }
+
+    let result: Result<Vec<Broadcast>, ProcessPacketError> = teleport_to_zone!(
+        characters_table_write_handle,
+        member_guid,
+        zones_table_write_handle,
+        &zones_table_write_handle
+            .get(new_instance_guid)
+            .unwrap_or_else(|| panic!(
+                "Zone instance {new_instance_guid} should have been created or already exist but is missing"
+            ))
+            .read(),
+        None,
+        None,
+        game_server.mounts(),
+    );
+    // Only mark player as teleported if the teleportation was successful
+    teleport_broadcasts.append(&mut result?);
+
+    // Because we hold the characters table write handle, no one else could have written to the character
+    let Some(character) = characters_table_write_handle.get(player_guid(member_guid)) else {
+        return Err(ProcessPacketError::new(
+            ProcessPacketErrorType::ConstraintViolated,
+            format!(
+                "Unknown player {member_guid} disappeared after being teleported to a minigame"
+            ),
+        ));
+    };
+    let mut character_write_handle = character.write();
+    let CharacterType::Player(player) = &mut character_write_handle.stats.character_type else {
+        return Err(ProcessPacketError::new(
+            ProcessPacketErrorType::ConstraintViolated,
+            format!(
+                "Player {member_guid} became a non-player after teleporting them to a minigame"
+            ),
+        ));
+    };
+
+    let Some(minigame_status) = &mut player.minigame_status else {
+        return Err(ProcessPacketError::new(
+            ProcessPacketErrorType::ConstraintViolated,
+            format!(
+                "Player {member_guid} lost their minigame status after being teleported to a minigame"
+            ),
+        ));
+    };
+    minigame_status.teleported_to_game = true;
+
+    Ok(teleport_broadcasts)
+}
+
 pub fn prepare_active_minigame_instance(
     matchmaking_group: MinigameMatchmakingGroup,
     members: &[u32],
@@ -1618,107 +1735,15 @@ pub fn prepare_active_minigame_instance(
 
         let mut teleport_broadcasts = Vec::new();
         for member_guid in members {
-            characters_table_write_handle.update_value_indices(player_guid(*member_guid), |possible_character_write_handle, _| {
-                let Some(character_write_handle) = possible_character_write_handle
-                else {
-                    return Err(ProcessPacketError::new(
-                        ProcessPacketErrorType::ConstraintViolated,
-                        format!(
-                            "Unknown player {member_guid} tried to create an active minigame"
-                        ),
-                    ));
-                };
-
-                let CharacterType::Player(player) = &mut character_write_handle.stats.character_type
-                else {
-                    return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {member_guid} tried to create an active minigame, but their character isn't a player")));
-                };
-
-                if !game_server
-                    .minigames()
-                    .stage_unlocked(stage_group_guid, stage_guid, player)
-                {
-                    return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {member_guid} tried to create an active minigame for a stage {stage_guid} they haven't unlocked")));
-                }
-
-                let Some(minigame_status) = &mut player.minigame_status else {
-                    return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {member_guid} tried to create an active minigame, but their minigame status is not set")));
-                };
-
-                minigame_status.type_data = stage_config.stage_config.minigame_type().into();
-                minigame_status.group.stage_group_guid = stage_group_guid;
-                minigame_status.group.stage_guid = stage_guid;
-
-                Ok(())
-            })?;
-
-            if let Some(message) = message_id {
-                teleport_broadcasts.push(Broadcast::Single(
-                    *member_guid,
-                    vec![GamePacket::serialize(&TunneledPacket {
-                        unknown1: true,
-                        inner: SendStringId {
-                            sender_guid: player_guid(*member_guid),
-                            message_id: message,
-                            is_anonymous: true,
-                            unknown2: false,
-                            is_action_bar_message: true,
-                            action_bar_text_color: ActionBarTextColor::Yellow,
-                            target_guid: 0,
-                            owner_guid: 0,
-                            unknown7: 0,
-                        },
-                    })],
-                ));
-            }
-
-            let result: Result<Vec<Broadcast>, ProcessPacketError> = teleport_to_zone!(
-                characters_table_write_handle,
+            teleport_broadcasts.append(&mut teleport_player_to_minigame(
                 *member_guid,
+                new_instance_guid,
+                stage_config,
+                message_id,
+                characters_table_write_handle,
                 zones_table_write_handle,
-                &zones_table_write_handle
-                    .get(new_instance_guid)
-                    .unwrap_or_else(|| panic!(
-                        "Zone instance {new_instance_guid} should have been created or already exist but is missing"
-                    ))
-                    .read(),
-                None,
-                None,
-                game_server.mounts(),
-            );
-            // Only mark player as teleported if the teleportation was successful
-            teleport_broadcasts.append(&mut result?);
-
-            // Because we hold the characters table write handle, no one else could have written to the character
-            let Some(character) = characters_table_write_handle.get(player_guid(*member_guid))
-            else {
-                return Err(ProcessPacketError::new(
-                    ProcessPacketErrorType::ConstraintViolated,
-                    format!(
-                        "Unknown player {member_guid} disappeared after being teleported to a minigame"
-                    ),
-                ));
-            };
-            let mut character_write_handle = character.write();
-            let CharacterType::Player(player) = &mut character_write_handle.stats.character_type
-            else {
-                return Err(ProcessPacketError::new(
-                    ProcessPacketErrorType::ConstraintViolated,
-                    format!(
-                        "Player {member_guid} became a non-player after teleporting them to a minigame"
-                    ),
-                ));
-            };
-
-            let Some(minigame_status) = &mut player.minigame_status else {
-                return Err(ProcessPacketError::new(
-                    ProcessPacketErrorType::ConstraintViolated,
-                    format!(
-                        "Player {member_guid} lost their minigame status after being teleported to a minigame"
-                    ),
-                ));
-            };
-            minigame_status.teleported_to_game = true;
+                game_server,
+            )?);
         }
 
         Ok(teleport_broadcasts)
