@@ -382,7 +382,7 @@ pub struct MinigameChallengeConfig {
     pub required_item_guid: Option<u32>,
     pub members_only: bool,
     pub minigame_type: MinigameType,
-    pub zone_template_guid: u8,
+    pub zone_template_guid: Option<u8>,
     pub score_to_credits_expression: String,
     #[serde(default = "default_matchmaking_timeout_millis")]
     pub matchmaking_timeout_millis: u32,
@@ -479,7 +479,7 @@ pub struct MinigameCampaignStageConfig {
     pub link_name: String,
     pub short_name: String,
     pub minigame_type: MinigameType,
-    pub zone_template_guid: u8,
+    pub zone_template_guid: Option<u8>,
     pub score_to_credits_expression: String,
     #[serde(default = "default_matchmaking_timeout_millis")]
     pub matchmaking_timeout_millis: u32,
@@ -944,7 +944,7 @@ impl MinigameStageConfig<'_> {
         }
     }
 
-    pub fn zone_template_guid(&self) -> u8 {
+    pub fn zone_template_guid(&self) -> Option<u8> {
         match self {
             MinigameStageConfig::CampaignStage(stage) => stage.zone_template_guid,
             MinigameStageConfig::Challenge(challenge, ..) => challenge.zone_template_guid,
@@ -1605,10 +1605,14 @@ pub fn prepare_active_minigame_instance(
     }
 
     let teleport_result: Result<Vec<Broadcast>, ProcessPacketError> = (|| {
+        let Some(zone_template_guid) = stage_config.stage_config.zone_template_guid() else {
+            return Ok(Vec::new());
+        };
+
         let new_instance_guid = game_server.get_or_create_instance(
             characters_table_write_handle,
             zones_table_write_handle,
-            stage_config.stage_config.zone_template_guid(),
+            zone_template_guid,
             stage_config.stage_config.max_players(),
         )?;
 
@@ -2700,6 +2704,12 @@ fn award_credits(
     Ok((broadcasts, awarded_credits))
 }
 
+enum MinigameRemovalMode {
+    Skip,
+    NoTeleport,
+    Teleport(PreviousLocation),
+}
+
 fn leave_active_minigame_single_player_if_any(
     sender: u32,
     characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
@@ -2708,7 +2718,7 @@ fn leave_active_minigame_single_player_if_any(
     stage_config: &MinigameStageConfig,
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-    let (mut broadcasts, previous_location, skip) = characters_table_write_handle
+    let status_update_result = characters_table_write_handle
         .update_value_indices(player_guid(sender), |possible_character_write_handle, _| {
             let Some(character_write_handle) = possible_character_write_handle else {
                 return Err(ProcessPacketError::new(
@@ -2727,10 +2737,13 @@ fn leave_active_minigame_single_player_if_any(
                 ));
             };
 
-            let previous_location = player.previous_location.clone();
-
             let Some(minigame_status) = &mut player.minigame_status else {
-                return Ok((Vec::new(), previous_location, true));
+                return Ok(None);
+            };
+
+            let removal_mode = match minigame_status.teleported_to_game {
+                true => MinigameRemovalMode::Teleport(player.previous_location.clone()),
+                false => MinigameRemovalMode::NoTeleport,
             };
 
             let mut broadcasts = Vec::new();
@@ -2872,12 +2885,16 @@ fn leave_active_minigame_single_player_if_any(
 
             player.minigame_status = None;
 
-            Ok((broadcasts, previous_location, false))
+            Ok(Some((broadcasts, removal_mode)))
         })?;
 
-    if skip {
+    let Some((mut broadcasts, removal_move)) = status_update_result else {
         return Ok(Vec::new());
-    }
+    };
+
+    let MinigameRemovalMode::Teleport(previous_location) = removal_move else {
+        return Ok(broadcasts);
+    };
 
     let instance_guid = game_server.get_or_create_instance(
         characters_table_write_handle,
@@ -2902,12 +2919,6 @@ fn leave_active_minigame_single_player_if_any(
     broadcasts.append(&mut teleport_broadcasts?);
 
     Ok(broadcasts)
-}
-
-enum MatchmakingRemovalMode {
-    Skip,
-    NoTeleport,
-    Teleport(PreviousLocation),
 }
 
 fn remove_single_player_from_matchmaking(
@@ -2937,13 +2948,13 @@ fn remove_single_player_from_matchmaking(
         };
 
         let Some(minigame_status) = &player.minigame_status else {
-            return Ok(MatchmakingRemovalMode::Skip);
+            return Ok(MinigameRemovalMode::Skip);
         };
 
         let mode = if minigame_status.teleported_to_game {
-            MatchmakingRemovalMode::Teleport(player.previous_location.clone())
+            MinigameRemovalMode::Teleport(player.previous_location.clone())
         } else {
-            MatchmakingRemovalMode::NoTeleport
+            MinigameRemovalMode::NoTeleport
         };
 
         player.minigame_status = None;
@@ -2981,7 +2992,7 @@ fn remove_single_player_from_matchmaking(
     }
     broadcasts.push(Broadcast::Single(player, result_packets));
 
-    if let MatchmakingRemovalMode::Teleport(previous_location) = removal_mode {
+    if let MinigameRemovalMode::Teleport(previous_location) = removal_mode {
         let instance_guid = game_server.get_or_create_instance(
             characters_table_write_handle,
             zones_table_write_handle,
