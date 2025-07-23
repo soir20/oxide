@@ -1554,7 +1554,7 @@ fn handle_request_create_active_minigame(
     )
 }
 
-fn teleport_player_to_minigame(
+fn prepare_active_minigame_instance_for_player(
     member_guid: u32,
     new_instance_guid: u64,
     stage_config: &StageConfigRef,
@@ -1735,7 +1735,7 @@ pub fn prepare_active_minigame_instance(
 
         let mut teleport_broadcasts = Vec::new();
         for member_guid in members {
-            teleport_broadcasts.append(&mut teleport_player_to_minigame(
+            teleport_broadcasts.append(&mut prepare_active_minigame_instance_for_player(
                 *member_guid,
                 new_instance_guid,
                 stage_config,
