@@ -7,6 +7,8 @@ use super::{GamePacket, OpCode, RewardBundle};
 #[repr(u8)]
 pub enum MinigameOpCode {
     MinigameDefinitions = 0x1,
+    MinigameDefinitionsLocked = 0x2,
+    MinigameDefinitionsUpdate = 0x3,
     RequestCreateActiveMinigame = 0x4,
     RequestStartActiveMinigame = 0x6,
     RequestCancelActiveMinigame = 0x7,
@@ -141,6 +143,31 @@ impl GamePacket for MinigameDefinitions {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::MinigameDefinitions;
+}
+
+#[derive(SerializePacket)]
+pub struct MinigameDefinitionsLocked {
+    pub header: MinigameHeader,
+    pub locked_stage_guids: Vec<i32>,
+    pub locked_stage_group_guids: Vec<i32>,
+    pub locked_portal_entry_guids: Vec<u32>,
+}
+
+impl GamePacket for MinigameDefinitionsLocked {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::MinigameDefinitionsLocked;
+}
+
+#[derive(SerializePacket)]
+pub struct MinigameDefinitionsUpdate {
+    pub defs: MinigameDefinitions,
+}
+
+impl GamePacket for MinigameDefinitionsUpdate {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::MinigameDefinitionsUpdate;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
