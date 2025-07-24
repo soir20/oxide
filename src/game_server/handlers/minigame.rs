@@ -9,11 +9,12 @@ use std::{
 };
 
 use byteorder::ReadBytesExt;
+use chrono::{DateTime, FixedOffset, Utc};
 use evalexpr::{context_map, eval_with_context, Value};
 use num_enum::TryFromPrimitive;
 use packet_serialize::DeserializePacket;
 use rand::{seq::SliceRandom, thread_rng};
-use serde::{de::IgnoredAny, Deserialize};
+use serde::{de::IgnoredAny, Deserialize, Deserializer};
 
 use crate::{
     game_server::{
@@ -61,7 +62,7 @@ use super::{
 
 #[derive(Clone)]
 pub struct PlayerStageStats {
-    pub completed: bool,
+    pub last_completion: Option<DateTime<FixedOffset>>,
     pub high_score: i32,
 }
 
@@ -76,20 +77,23 @@ impl PlayerMinigameStats {
         self.stage_guid_to_stats
             .entry(stage_guid)
             .and_modify(|entry| {
-                entry.completed = true;
+                entry.last_completion = Some(Utc::now().fixed_offset());
                 entry.high_score = score.max(entry.high_score);
             })
             .or_insert_with(|| PlayerStageStats {
-                completed: true,
+                last_completion: Some(Utc::now().fixed_offset()),
                 high_score: score,
             });
     }
 
-    pub fn has_completed(&self, stage_guid: i32) -> bool {
+    pub fn last_completion_time(&self, stage_guid: i32) -> Option<DateTime<FixedOffset>> {
         self.stage_guid_to_stats
             .get(&stage_guid)
-            .map(|stats| stats.completed)
-            .unwrap_or(false)
+            .and_then(|stats| stats.last_completion)
+    }
+
+    pub fn has_completed(&self, stage_guid: i32) -> bool {
+        self.last_completion_time(stage_guid).is_some()
     }
 
     pub fn update_trophy_progress(&mut self, trophy_guid: i32, delta: i32) {
@@ -368,6 +372,40 @@ impl MinigameTimer {
 const CHALLENGE_LINK_NAME: &str = "challenge";
 const GROUP_LINK_NAME: &str = "group";
 
+pub struct DailyResetOffset(FixedOffset);
+
+pub fn can_play_daily_game(
+    daily_reset_if_enabled: Option<&DailyResetOffset>,
+    player: &Player,
+    stage_guid: i32,
+) -> bool {
+    daily_reset_if_enabled
+        .and_then(|daily_reset_offset| {
+            player
+                .minigame_stats
+                .last_completion_time(stage_guid)
+                .map(|last_completion_time| {
+                    Utc::now().with_timezone(&daily_reset_offset.0).timestamp() / 86400
+                        > last_completion_time.timestamp() / 86400
+                })
+        })
+        .unwrap_or(true)
+}
+
+impl<'de> Deserialize<'de> for DailyResetOffset {
+    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        let daily_reset_offset_seconds: i32 = Deserialize::deserialize(deserializer)?;
+
+        FixedOffset::west_opt(daily_reset_offset_seconds)
+            .map(DailyResetOffset)
+            .ok_or_else(|| {
+                serde::de::Error::custom(format!(
+                    "Daily reset offset {daily_reset_offset_seconds} is longer than a day"
+                ))
+            })
+    }
+}
+
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct MinigameChallengeConfig {
@@ -380,6 +418,8 @@ pub struct MinigameChallengeConfig {
     pub max_players: u32,
     pub start_sound_id: u32,
     pub required_item_guid: Option<u32>,
+    #[serde(rename(deserialize = "daily_reset_offset_seconds"))]
+    pub daily_reset_offset: Option<DailyResetOffset>,
     pub members_only: bool,
     pub minigame_type: MinigameType,
     pub zone_template_guid: Option<u8>,
@@ -400,6 +440,7 @@ impl MinigameChallengeConfig {
             .unwrap_or(true)
             && base_stage_completed
             && (!self.members_only || player.member)
+            && can_play_daily_game(self.daily_reset_offset.as_ref(), player, self.guid)
     }
 
     pub fn to_stage_definition(
@@ -473,6 +514,8 @@ pub struct MinigameCampaignStageConfig {
     pub difficulty: u32,
     pub start_sound_id: u32,
     pub required_item_guid: Option<u32>,
+    #[serde(rename(deserialize = "daily_reset_offset_seconds"))]
+    pub daily_reset_offset: Option<DailyResetOffset>,
     pub members_only: bool,
     #[serde(default = "default_true")]
     pub require_previous_completed: bool,
@@ -499,6 +542,7 @@ impl MinigameCampaignStageConfig {
             .unwrap_or(true)
             && (previous_completed || !self.require_previous_completed)
             && (!self.members_only || player.member)
+            && can_play_daily_game(self.daily_reset_offset.as_ref(), player, self.guid)
     }
 
     pub fn to_stage_definition(&self, portal_entry_guid: u32) -> MinigameStageDefinition {
@@ -799,6 +843,7 @@ impl MinigamePortalEntryConfig {
     pub fn to_portal_entry(
         &self,
         portal_category_guid: u32,
+        minigame_stats: &PlayerMinigameStats,
     ) -> (
         MinigamePortalEntry,
         Vec<MinigameStageGroupDefinition>,
@@ -848,22 +893,23 @@ pub struct MinigamePortalCategoryConfig {
     pub portal_entries: Vec<MinigamePortalEntryConfig>,
 }
 
-impl From<&MinigamePortalCategoryConfig>
-    for (
+impl MinigamePortalCategoryConfig {
+    pub fn to_definitions(
+        &self,
+        minigame_stats: &PlayerMinigameStats,
+    ) -> (
         MinigamePortalCategory,
         Vec<MinigamePortalEntry>,
         Vec<MinigameStageGroupDefinition>,
         Vec<MinigameStageDefinition>,
-    )
-{
-    fn from(value: &MinigamePortalCategoryConfig) -> Self {
+    ) {
         let mut entries = Vec::new();
         let mut stage_groups = Vec::new();
         let mut stages = Vec::new();
 
-        for entry in &value.portal_entries {
+        for entry in &self.portal_entries {
             let (entry_definition, mut stage_group_definitions, mut stage_definitions) =
-                entry.to_portal_entry(value.guid);
+                entry.to_portal_entry(self.guid, minigame_stats);
             entries.push(entry_definition);
             stage_groups.append(&mut stage_group_definitions);
             stages.append(&mut stage_definitions);
@@ -871,10 +917,10 @@ impl From<&MinigamePortalCategoryConfig>
 
         (
             MinigamePortalCategory {
-                guid: value.guid,
-                name_id: value.name_id,
-                icon_id: value.icon_id,
-                sort_order: value.sort_order,
+                guid: self.guid,
+                name_id: self.name_id,
+                icon_id: self.icon_id,
+                sort_order: self.sort_order,
             },
             entries,
             stage_groups,
@@ -883,8 +929,11 @@ impl From<&MinigamePortalCategoryConfig>
     }
 }
 
-impl From<&[MinigamePortalCategoryConfig]> for MinigameDefinitions {
-    fn from(value: &[MinigamePortalCategoryConfig]) -> Self {
+impl MinigameDefinitions {
+    pub fn from_portal_category_configs(
+        value: &[MinigamePortalCategoryConfig],
+        minigame_stats: &PlayerMinigameStats,
+    ) -> Self {
         let mut portal_categories = Vec::new();
         let mut portal_entries = Vec::new();
         let mut stage_groups = Vec::new();
@@ -896,7 +945,7 @@ impl From<&[MinigamePortalCategoryConfig]> for MinigameDefinitions {
                 mut entry_definitions,
                 mut stage_group_definitions,
                 mut stage_definitions,
-            ) = category.into();
+            ) = category.to_definitions(minigame_stats);
             portal_categories.push(category_definition);
             portal_entries.append(&mut entry_definitions);
             stage_groups.append(&mut stage_group_definitions);
@@ -1021,8 +1070,8 @@ pub struct AllMinigameConfigs {
 }
 
 impl AllMinigameConfigs {
-    pub fn definitions(&self) -> MinigameDefinitions {
-        (&self.categories[..]).into()
+    pub fn definitions(&self, minigame_stats: &PlayerMinigameStats) -> MinigameDefinitions {
+        MinigameDefinitions::from_portal_category_configs(&self.categories[..], minigame_stats)
     }
 
     pub fn stage_group_instance(

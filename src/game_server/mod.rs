@@ -368,7 +368,7 @@ impl GameServer {
                                         let minigame_definitions = TunneledPacket {
                                             unknown1: true,
                                             inner: GamePacket::serialize(
-                                                &self.minigames.definitions(),
+                                                &self.minigames.definitions(&player.minigame_stats),
                                             ),
                                         };
                                         sender_only_packets
