@@ -403,6 +403,7 @@ pub struct MinigameChallengeConfig {
     pub start_sound_id: u32,
     pub required_item_guid: Option<u32>,
     pub members_only: bool,
+    #[serde(default)]
     pub daily: bool,
     pub minigame_type: MinigameType,
     pub zone_template_guid: Option<u8>,
@@ -504,6 +505,7 @@ pub struct MinigameCampaignStageConfig {
     pub start_sound_id: u32,
     pub required_item_guid: Option<u32>,
     pub members_only: bool,
+    #[serde(default)]
     pub daily: bool,
     #[serde(default = "default_true")]
     pub require_previous_completed: bool,
@@ -1086,7 +1088,7 @@ impl<'de> Deserialize<'de> for DailyResetOffset {
 
 #[derive(Deserialize)]
 struct DeserializableMinigameConfigs {
-    #[serde(rename(deserialize = "minigame_daily_reset_utc_offset_seconds"))]
+    #[serde(rename(deserialize = "daily_reset_utc_offset_seconds"))]
     daily_reset_offset: DailyResetOffset,
     categories: Vec<MinigamePortalCategoryConfig>,
 }

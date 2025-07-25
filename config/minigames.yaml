@@ -1,5 +1,5 @@
 ---
-daily_reset_offset: 0
+daily_reset_utc_offset_seconds: 0
 categories:
   - comment: Popular
     guid: 1
