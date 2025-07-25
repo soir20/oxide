@@ -437,7 +437,7 @@ pub struct MinigameChallengeConfig {
     pub required_item_guid: Option<u32>,
     pub members_only: bool,
     #[serde(default)]
-    pub daily: bool,
+    pub is_daily: bool,
     pub minigame_type: MinigameType,
     pub zone_template_guid: Option<u8>,
     pub score_to_credits_expression: String,
@@ -532,7 +532,7 @@ pub struct MinigameCampaignStageConfig {
     pub required_item_guid: Option<u32>,
     pub members_only: bool,
     #[serde(default)]
-    pub daily: bool,
+    pub is_daily: bool,
     #[serde(default = "default_true")]
     pub require_previous_completed: bool,
     pub link_name: String,
@@ -729,7 +729,7 @@ impl MinigameStageGroupConfig {
                         stage_number,
                         child_stage_group_definition_guid: 0,
                     });
-                    if stage.daily {
+                    if stage.is_daily {
                         group_daily_game_playability =
                             can_play_daily_game(daily_reset_offset, minigame_stats, stage.guid);
                     } else {
@@ -749,7 +749,7 @@ impl MinigameStageGroupConfig {
                             stage_number,
                             child_stage_group_definition_guid: 0,
                         });
-                        if challenge.daily {
+                        if challenge.is_daily {
                             group_daily_game_playability = can_play_daily_game(
                                 daily_reset_offset,
                                 minigame_stats,
@@ -910,7 +910,7 @@ impl MinigamePortalEntryConfig {
                 description_id: self.description_id,
                 members_only: self.members_only,
                 is_flash: self.is_flash,
-                is_daily_game_locked: daily_game_playability.into(),
+                is_daily_game_locked: !Into::<bool>::into(daily_game_playability),
                 is_active: self.is_active,
                 param1: self.param1,
                 icon_id: self.icon_id,
