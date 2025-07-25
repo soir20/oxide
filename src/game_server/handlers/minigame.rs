@@ -9,7 +9,7 @@ use std::{
 };
 
 use byteorder::ReadBytesExt;
-use chrono::{DateTime, FixedOffset, Utc};
+use chrono::{DateTime, FixedOffset, NaiveTime, Utc};
 use evalexpr::{context_map, eval_with_context, Value};
 use num_enum::TryFromPrimitive;
 use packet_serialize::DeserializePacket;
@@ -372,38 +372,22 @@ impl MinigameTimer {
 const CHALLENGE_LINK_NAME: &str = "challenge";
 const GROUP_LINK_NAME: &str = "group";
 
-pub struct DailyResetOffset(FixedOffset);
-
 pub fn can_play_daily_game(
-    daily_reset_if_enabled: Option<&DailyResetOffset>,
+    daily_reset_offset: &DailyResetOffset,
     player: &Player,
     stage_guid: i32,
 ) -> bool {
-    daily_reset_if_enabled
-        .and_then(|daily_reset_offset| {
+    Utc::now()
+        .with_timezone(&daily_reset_offset.0)
+        .with_time(NaiveTime::MIN)
+        .single()
+        .and_then(|day_start| {
             player
                 .minigame_stats
                 .last_completion_time(stage_guid)
-                .map(|last_completion_time| {
-                    Utc::now().with_timezone(&daily_reset_offset.0).timestamp() / 86400
-                        > last_completion_time.timestamp() / 86400
-                })
+                .map(|last_completion_time| day_start > last_completion_time)
         })
         .unwrap_or(true)
-}
-
-impl<'de> Deserialize<'de> for DailyResetOffset {
-    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
-        let daily_reset_offset_seconds: i32 = Deserialize::deserialize(deserializer)?;
-
-        FixedOffset::west_opt(daily_reset_offset_seconds)
-            .map(DailyResetOffset)
-            .ok_or_else(|| {
-                serde::de::Error::custom(format!(
-                    "Daily reset offset {daily_reset_offset_seconds} is longer than a day"
-                ))
-            })
-    }
 }
 
 #[derive(Deserialize)]
@@ -418,9 +402,8 @@ pub struct MinigameChallengeConfig {
     pub max_players: u32,
     pub start_sound_id: u32,
     pub required_item_guid: Option<u32>,
-    #[serde(rename(deserialize = "daily_reset_offset_seconds"))]
-    pub daily_reset_offset: Option<DailyResetOffset>,
     pub members_only: bool,
+    pub daily: bool,
     pub minigame_type: MinigameType,
     pub zone_template_guid: Option<u8>,
     pub score_to_credits_expression: String,
@@ -434,13 +417,18 @@ impl MinigameChallengeConfig {
         player.minigame_stats.has_completed(self.guid)
     }
 
-    pub fn unlocked(&self, player: &Player, base_stage_completed: bool) -> bool {
+    pub fn unlocked(
+        &self,
+        player: &Player,
+        base_stage_completed: bool,
+        daily_reset_offset: &DailyResetOffset,
+    ) -> bool {
         self.required_item_guid
             .map(|item_guid| player.inventory.contains(&item_guid))
             .unwrap_or(true)
             && base_stage_completed
             && (!self.members_only || player.member)
-            && can_play_daily_game(self.daily_reset_offset.as_ref(), player, self.guid)
+            && (!self.daily || can_play_daily_game(daily_reset_offset, player, self.guid))
     }
 
     pub fn to_stage_definition(
@@ -473,13 +461,14 @@ impl MinigameChallengeConfig {
         portal_entry_guid: u32,
         player: &Player,
         base_stage: &MinigameStageInstance,
+        daily_reset_offset: &DailyResetOffset,
     ) -> MinigameStageInstance {
         MinigameStageInstance {
             stage_instance_guid: self.guid,
             portal_entry_guid,
             link_name: CHALLENGE_LINK_NAME.to_string(),
             short_name: "".to_string(),
-            unlocked: self.unlocked(player, base_stage.completed),
+            unlocked: self.unlocked(player, base_stage.completed, daily_reset_offset),
             unknown6: 0,
             name_id: self.name_id,
             description_id: self.description_id,
@@ -514,9 +503,8 @@ pub struct MinigameCampaignStageConfig {
     pub difficulty: u32,
     pub start_sound_id: u32,
     pub required_item_guid: Option<u32>,
-    #[serde(rename(deserialize = "daily_reset_offset_seconds"))]
-    pub daily_reset_offset: Option<DailyResetOffset>,
     pub members_only: bool,
+    pub daily: bool,
     #[serde(default = "default_true")]
     pub require_previous_completed: bool,
     pub link_name: String,
@@ -536,13 +524,18 @@ impl MinigameCampaignStageConfig {
         player.minigame_stats.has_completed(self.guid)
     }
 
-    pub fn unlocked(&self, player: &Player, previous_completed: bool) -> bool {
+    pub fn unlocked(
+        &self,
+        player: &Player,
+        previous_completed: bool,
+        daily_reset_offset: &DailyResetOffset,
+    ) -> bool {
         self.required_item_guid
             .map(|item_guid| player.inventory.contains(&item_guid))
             .unwrap_or(true)
             && (previous_completed || !self.require_previous_completed)
             && (!self.members_only || player.member)
-            && can_play_daily_game(self.daily_reset_offset.as_ref(), player, self.guid)
+            && (!self.daily || can_play_daily_game(daily_reset_offset, player, self.guid))
     }
 
     pub fn to_stage_definition(&self, portal_entry_guid: u32) -> MinigameStageDefinition {
@@ -572,13 +565,14 @@ impl MinigameCampaignStageConfig {
         stage_number: u32,
         player: &Player,
         previous_completed: bool,
+        daily_reset_offset: &DailyResetOffset,
     ) -> MinigameStageInstance {
         MinigameStageInstance {
             stage_instance_guid: self.guid,
             portal_entry_guid,
             link_name: self.link_name.clone(),
             short_name: self.short_name.clone(),
-            unlocked: self.unlocked(player, previous_completed),
+            unlocked: self.unlocked(player, previous_completed, daily_reset_offset),
             unknown6: 0,
             name_id: self.name_id,
             description_id: self.description_id,
@@ -743,6 +737,7 @@ impl MinigameStageGroupConfig {
         &self,
         portal_entry_guid: u32,
         player: &Player,
+        daily_reset_offset: &DailyResetOffset,
     ) -> CreateMinigameStageGroupInstance {
         let mut stage_instances = Vec::new();
         let mut previous_completed = true;
@@ -783,6 +778,7 @@ impl MinigameStageGroupConfig {
                         stage_number,
                         player,
                         previous_completed,
+                        daily_reset_offset,
                     );
                     previous_completed = stage_instance.completed;
 
@@ -791,6 +787,7 @@ impl MinigameStageGroupConfig {
                             portal_entry_guid,
                             player,
                             &stage_instance,
+                            daily_reset_offset,
                         ));
                     }
                     stage_instances.push(stage_instance);
@@ -1064,12 +1061,64 @@ pub struct StageConfigRef<'a> {
     pub portal_entry_guid: u32,
 }
 
+#[derive(Clone)]
+pub struct DailyResetOffset(FixedOffset);
+
+impl Default for DailyResetOffset {
+    fn default() -> Self {
+        Self(FixedOffset::east_opt(0).expect("Couldn't create fixed offset of 0"))
+    }
+}
+
+impl<'de> Deserialize<'de> for DailyResetOffset {
+    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        let daily_reset_offset_seconds: i32 = Deserialize::deserialize(deserializer)?;
+
+        FixedOffset::west_opt(daily_reset_offset_seconds)
+            .map(DailyResetOffset)
+            .ok_or_else(|| {
+                serde::de::Error::custom(format!(
+                    "Daily reset offset {daily_reset_offset_seconds} is longer than a day"
+                ))
+            })
+    }
+}
+
+#[derive(Deserialize)]
+struct DeserializableMinigameConfigs {
+    #[serde(rename(deserialize = "minigame_daily_reset_utc_offset_seconds"))]
+    daily_reset_offset: DailyResetOffset,
+    categories: Vec<MinigamePortalCategoryConfig>,
+}
+
 pub struct AllMinigameConfigs {
+    daily_reset_offset: DailyResetOffset,
     categories: Vec<MinigamePortalCategoryConfig>,
     stage_groups: BTreeMap<i32, (Arc<MinigameStageGroupConfig>, u32)>,
 }
 
+impl From<DeserializableMinigameConfigs> for AllMinigameConfigs {
+    fn from(value: DeserializableMinigameConfigs) -> Self {
+        let mut stage_groups = BTreeMap::new();
+        for category in &value.categories {
+            for entry in &category.portal_entries {
+                insert_stage_groups(entry.guid, &entry.stage_group, &mut stage_groups);
+            }
+        }
+
+        AllMinigameConfigs {
+            daily_reset_offset: value.daily_reset_offset,
+            categories: value.categories,
+            stage_groups,
+        }
+    }
+}
+
 impl AllMinigameConfigs {
+    pub fn daily_reset_offset(&self) -> &DailyResetOffset {
+        &self.daily_reset_offset
+    }
+
     pub fn definitions(&self, minigame_stats: &PlayerMinigameStats) -> MinigameDefinitions {
         MinigameDefinitions::from_portal_category_configs(&self.categories[..], minigame_stats)
     }
@@ -1078,6 +1127,7 @@ impl AllMinigameConfigs {
         &self,
         stage_group_guid: i32,
         player: &Player,
+        daily_reset_offset: &DailyResetOffset,
     ) -> Result<CreateMinigameStageGroupInstance, ProcessPacketError> {
         let Some((stage_group, portal_entry_guid)) = self.stage_groups.get(&stage_group_guid)
         else {
@@ -1087,7 +1137,7 @@ impl AllMinigameConfigs {
             ));
         };
 
-        Ok(stage_group.to_stage_group_instance(*portal_entry_guid, player))
+        Ok(stage_group.to_stage_group_instance(*portal_entry_guid, player, daily_reset_offset))
     }
 
     pub fn stage_configs(&self) -> impl Iterator<Item = StageConfigRef> {
@@ -1161,7 +1211,13 @@ impl AllMinigameConfigs {
             })
     }
 
-    pub fn stage_unlocked(&self, stage_group_guid: i32, stage_guid: i32, player: &Player) -> bool {
+    pub fn stage_unlocked(
+        &self,
+        stage_group_guid: i32,
+        stage_guid: i32,
+        player: &Player,
+        daily_reset_offset: &DailyResetOffset,
+    ) -> bool {
         if let Some((root_stage_group, _)) = self.stage_groups.get(&stage_group_guid) {
             let mut previous_completed = true;
 
@@ -1171,7 +1227,8 @@ impl AllMinigameConfigs {
                         previous_completed = stage_group.has_completed_any(player);
                     }
                     MinigameStageGroupChild::Stage(stage) => {
-                        let unlocked = stage.unlocked(player, previous_completed);
+                        let unlocked =
+                            stage.unlocked(player, previous_completed, daily_reset_offset);
                         previous_completed = stage.has_completed(player);
 
                         if stage_guid == stage.guid {
@@ -1180,7 +1237,11 @@ impl AllMinigameConfigs {
 
                         for challenge in &stage.challenges {
                             if stage_guid == challenge.guid {
-                                return challenge.unlocked(player, previous_completed);
+                                return challenge.unlocked(
+                                    player,
+                                    previous_completed,
+                                    daily_reset_offset,
+                                );
                             }
                         }
                     }
@@ -1206,32 +1267,16 @@ fn insert_stage_groups(
     }
 }
 
-impl From<Vec<MinigamePortalCategoryConfig>> for AllMinigameConfigs {
-    fn from(value: Vec<MinigamePortalCategoryConfig>) -> Self {
-        let mut stage_groups = BTreeMap::new();
-        for category in &value {
-            for entry in &category.portal_entries {
-                insert_stage_groups(entry.guid, &entry.stage_group, &mut stage_groups);
-            }
-        }
-
-        AllMinigameConfigs {
-            categories: value,
-            stage_groups,
-        }
-    }
-}
-
 pub fn load_all_minigames(config_dir: &Path) -> Result<AllMinigameConfigs, ConfigError> {
     let mut file = File::open(config_dir.join("minigames.yaml"))?;
-    let configs: Vec<MinigamePortalCategoryConfig> = serde_yaml::from_reader(&mut file)?;
+    let configs: DeserializableMinigameConfigs = serde_yaml::from_reader(&mut file)?;
 
     let mut portal_category_guids = BTreeSet::new();
     let mut portal_entry_guids = BTreeSet::new();
     let mut stage_group_guids = BTreeSet::new();
     let mut stage_guids = BTreeSet::new();
 
-    for portal_category in configs.iter() {
+    for portal_category in configs.categories.iter() {
         if !portal_category_guids.insert(portal_category.guid) {
             return Err(ConfigError::ConstraintViolated(format!(
                 "Two portal categories have GUID {}",
@@ -1387,9 +1432,11 @@ fn handle_request_stage_group_instance(
                     vec![
                         GamePacket::serialize(&TunneledPacket {
                             unknown1: true,
-                            inner: game_server
-                                .minigames()
-                                .stage_group_instance(request.header.stage_group_guid, player)?,
+                            inner: game_server.minigames().stage_group_instance(
+                                request.header.stage_group_guid,
+                                player,
+                                game_server.minigames().daily_reset_offset(),
+                            )?,
                         }),
                         GamePacket::serialize(&TunneledPacket {
                             unknown1: true,
@@ -1635,7 +1682,7 @@ fn prepare_active_minigame_instance_for_player(
 
         if !game_server
             .minigames()
-            .stage_unlocked(stage_group_guid, stage_guid, player)
+            .stage_unlocked(stage_group_guid, stage_guid, player, game_server.minigames().daily_reset_offset())
         {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {member_guid} tried to create an active minigame for a stage {stage_guid} they haven't unlocked")));
         }
@@ -1883,7 +1930,7 @@ fn handle_request_start_active_minigame(
                     }
 
                     let mut stage_group_instance =
-                    game_server.minigames().stage_group_instance(minigame_status.group.stage_group_guid, player)?;
+                    game_server.minigames().stage_group_instance(minigame_status.group.stage_group_guid, player, game_server.minigames().daily_reset_offset())?;
                     stage_group_instance.header.stage_guid = minigame_status.group.stage_guid;
                     // The default stage instance must be set for the how-to button the options menu to work
                     stage_group_instance.default_stage_instance_guid = minigame_status.group.stage_guid;
@@ -2966,7 +3013,7 @@ fn leave_active_minigame_single_player_if_any(
                     unknown1: true,
                     inner: game_server
                         .minigames()
-                        .stage_group_instance(minigame_status.group.stage_group_guid, player)?,
+                        .stage_group_instance(minigame_status.group.stage_group_guid, player, game_server.minigames().daily_reset_offset())?,
                 })],
             ));
             broadcasts.push(last_broadcast);
