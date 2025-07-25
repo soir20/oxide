@@ -161,7 +161,7 @@ impl GamePacket for MinigameDefinitionsLocked {
 
 #[derive(SerializePacket)]
 pub struct MinigameDefinitionsUpdate {
-    pub defs: MinigameDefinitions,
+    pub definitions: MinigameDefinitions,
 }
 
 impl GamePacket for MinigameDefinitionsUpdate {

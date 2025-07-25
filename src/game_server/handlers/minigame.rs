@@ -30,10 +30,10 @@ use crate::{
             minigame::{
                 ActiveMinigameCreationResult, ActiveMinigameEndScore, CreateActiveMinigame,
                 CreateMinigameStageGroupInstance, EndActiveMinigame, FlashPayload,
-                LeaveActiveMinigame, MinigameDefinitions, MinigameHeader, MinigameOpCode,
-                MinigamePortalCategory, MinigamePortalEntry, MinigameStageDefinition,
-                MinigameStageGroupDefinition, MinigameStageGroupLink, MinigameStageInstance,
-                RequestCancelActiveMinigame, RequestCreateActiveMinigame,
+                LeaveActiveMinigame, MinigameDefinitions, MinigameDefinitionsUpdate,
+                MinigameHeader, MinigameOpCode, MinigamePortalCategory, MinigamePortalEntry,
+                MinigameStageDefinition, MinigameStageGroupDefinition, MinigameStageGroupLink,
+                MinigameStageInstance, RequestCancelActiveMinigame, RequestCreateActiveMinigame,
                 RequestMinigameStageGroupInstance, RequestStartActiveMinigame, ScoreEntry,
                 ScoreType, ShowStageInstanceSelect, StartActiveMinigame,
                 UpdateActiveMinigameRewards,
@@ -1172,6 +1172,40 @@ impl AllMinigameConfigs {
             minigame_stats,
             &self.daily_reset_offset,
         )
+    }
+
+    pub fn portal_entry_config(
+        &self,
+        portal_entry_guid: u32,
+        minigame_stats: &PlayerMinigameStats,
+    ) -> Option<MinigameDefinitions> {
+        self.categories.iter().find_map(|category| {
+            category.portal_entries.iter().find_map(|portal_entry| {
+                if portal_entry.guid == portal_entry_guid {
+                    Some(MinigameDefinitions {
+                        header: MinigameHeader {
+                            stage_guid: -1,
+                            sub_op_code: -1,
+                            stage_group_guid: -1,
+                        },
+                        stages: Vec::new(),
+                        stage_groups: Vec::new(),
+                        portal_entries: vec![
+                            portal_entry
+                                .to_portal_entry(
+                                    category.guid,
+                                    minigame_stats,
+                                    &self.daily_reset_offset,
+                                )
+                                .0,
+                        ],
+                        portal_categories: Vec::new(),
+                    })
+                } else {
+                    None
+                }
+            })
+        })
     }
 
     pub fn stage_group_instance(
@@ -2887,7 +2921,7 @@ fn leave_active_minigame_single_player_if_any(
     characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
     zones_table_write_handle: &mut ZoneTableWriteHandle<'_>,
     shared_minigame_data: &mut SharedMinigameData,
-    stage_config: &MinigameStageConfig,
+    stage_config: &StageConfigRef<'_>,
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let status_update_result = characters_table_write_handle
@@ -2933,7 +2967,7 @@ fn leave_active_minigame_single_player_if_any(
                         sender,
                         &mut player.credits,
                         minigame_status,
-                        stage_config,
+                        &stage_config.stage_config,
                         minigame_status.total_score,
                     )?
                     .0,
@@ -3043,6 +3077,25 @@ fn leave_active_minigame_single_player_if_any(
                     }),
                 ],
             );
+
+            broadcasts.push(Broadcast::Single(sender, vec![
+                GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: MinigameDefinitionsUpdate {
+                        definitions: game_server.minigames()
+                            .portal_entry_config(stage_config.portal_entry_guid, &player.minigame_stats)
+                            .ok_or_else(|| ProcessPacketError::new(
+                                ProcessPacketErrorType::ConstraintViolated,
+                                format!(
+                                    "Tried to find unknown portal entry {} when exiting stage {} for player {}", 
+                                    stage_config.portal_entry_guid,
+                                    stage_config.stage_config.guid(),
+                                    sender
+                                )
+                            ))?
+                    },
+                })
+            ]));
 
             broadcasts.push(Broadcast::Single(
                 sender,
@@ -3198,7 +3251,7 @@ fn leave_or_remove_single_player_from_matchmaking(
     zones_table_write_handle: &mut ZoneTableWriteHandle<'_>,
     shared_minigame_data: &mut SharedMinigameData,
     stage_group_guid: i32,
-    stage_config: &MinigameStageConfig,
+    stage_config: &StageConfigRef<'_>,
     is_matchmaking: bool,
     matchmaking_removal_message_id: Option<u32>,
     game_server: &GameServer,
@@ -3207,7 +3260,7 @@ fn leave_or_remove_single_player_from_matchmaking(
         remove_single_player_from_matchmaking(
             sender,
             stage_group_guid,
-            stage_config.guid(),
+            stage_config.stage_config.guid(),
             characters_table_write_handle,
             zones_table_write_handle,
             matchmaking_removal_message_id,
@@ -3254,7 +3307,7 @@ pub fn leave_active_minigame_if_any(
         LeaveMinigameTarget::Group(group) => group,
     };
 
-    let Some(StageConfigRef { stage_config, .. }) = game_server
+    let Some(stage_config) = game_server
         .minigames()
         .stage_config(group.stage_group_guid, group.stage_guid)
     else {
@@ -3268,7 +3321,12 @@ pub fn leave_active_minigame_if_any(
     let is_matchmaking = minigame_data_write_handle.readiness == MinigameReadiness::Matchmaking;
 
     // Wait for the end signal from the Flash payload because those games send additional score data
-    if skip_if_flash && matches!(stage_config.minigame_type(), MinigameType::Flash { .. }) {
+    if skip_if_flash
+        && matches!(
+            stage_config.stage_config.minigame_type(),
+            MinigameType::Flash { .. }
+        )
+    {
         return Ok(Vec::new());
     }
 
@@ -3298,7 +3356,9 @@ pub fn leave_active_minigame_if_any(
     let remaining_players = characters_table_write_handle.keys_by_index4(&group).count() as u32;
     let is_group_removal = matches!(target, LeaveMinigameTarget::Group { .. });
 
-    if (remaining_players < stage_config.min_players() && !is_matchmaking) || is_group_removal {
+    if (remaining_players < stage_config.stage_config.min_players() && !is_matchmaking)
+        || is_group_removal
+    {
         let member_guids: Vec<u64> = characters_table_write_handle
             .keys_by_index4(&group)
             .collect();
