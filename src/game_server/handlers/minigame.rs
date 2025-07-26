@@ -379,10 +379,10 @@ enum DailyGamePlayability {
 }
 
 impl DailyGamePlayability {
-    pub fn or(self, other: DailyGamePlayability) -> DailyGamePlayability {
+    pub fn and(self, other: DailyGamePlayability) -> DailyGamePlayability {
         match self {
-            DailyGamePlayability::Playable => DailyGamePlayability::Playable,
-            DailyGamePlayability::Unplayable => other,
+            DailyGamePlayability::Playable => other,
+            DailyGamePlayability::Unplayable => DailyGamePlayability::Unplayable,
         }
     }
 }
@@ -436,8 +436,6 @@ pub struct MinigameChallengeConfig {
     pub start_sound_id: u32,
     pub required_item_guid: Option<u32>,
     pub members_only: bool,
-    #[serde(default)]
-    pub is_daily: bool,
     pub minigame_type: MinigameType,
     pub zone_template_guid: Option<u8>,
     pub score_to_credits_expression: String,
@@ -531,8 +529,6 @@ pub struct MinigameCampaignStageConfig {
     pub start_sound_id: u32,
     pub required_item_guid: Option<u32>,
     pub members_only: bool,
-    #[serde(default)]
-    pub is_daily: bool,
     #[serde(default = "default_true")]
     pub require_previous_completed: bool,
     pub link_name: String,
@@ -675,6 +671,7 @@ impl MinigameStageGroupConfig {
         portal_entry_guid: u32,
         minigame_stats: &PlayerMinigameStats,
         daily_reset_offset: &DailyResetOffset,
+        is_portal_entry_daily: bool,
     ) -> (
         Vec<MinigameStageGroupDefinition>,
         Vec<MinigameStageDefinition>,
@@ -683,7 +680,7 @@ impl MinigameStageGroupConfig {
         let mut stage_groups = Vec::new();
         let mut stages = Vec::new();
         let mut group_links = Vec::new();
-        let mut group_daily_game_playability = DailyGamePlayability::Unplayable;
+        let mut group_daily_game_playability = DailyGamePlayability::Playable;
 
         for (index, child) in self.stages.iter().enumerate() {
             let stage_number = index as u32 + 1;
@@ -697,6 +694,7 @@ impl MinigameStageGroupConfig {
                         portal_entry_guid,
                         minigame_stats,
                         daily_reset_offset,
+                        is_portal_entry_daily,
                     );
                     stage_groups.append(&mut stage_group_definitions);
                     stages.append(&mut stage_definitions);
@@ -714,7 +712,7 @@ impl MinigameStageGroupConfig {
                     });
 
                     group_daily_game_playability =
-                        group_daily_game_playability.or(daily_game_playability);
+                        group_daily_game_playability.and(daily_game_playability);
                 }
                 MinigameStageGroupChild::Stage(stage) => {
                     stages.push(stage.to_stage_definition(portal_entry_guid));
@@ -729,7 +727,7 @@ impl MinigameStageGroupConfig {
                         stage_number,
                         child_stage_group_definition_guid: 0,
                     });
-                    if stage.is_daily {
+                    if is_portal_entry_daily {
                         group_daily_game_playability =
                             can_play_daily_game(daily_reset_offset, minigame_stats, stage.guid);
                     } else {
@@ -749,7 +747,7 @@ impl MinigameStageGroupConfig {
                             stage_number,
                             child_stage_group_definition_guid: 0,
                         });
-                        if challenge.is_daily {
+                        if is_portal_entry_daily {
                             group_daily_game_playability = can_play_daily_game(
                                 daily_reset_offset,
                                 minigame_stats,
@@ -878,6 +876,8 @@ struct MinigamePortalEntryConfig {
     pub background_icon_id: u32,
     pub is_popular: bool,
     pub is_game_of_day: bool,
+    #[serde(default)]
+    pub is_daily: bool,
     pub sort_order: u32,
     pub tutorial_swf: String,
     pub stage_group: Arc<MinigameStageGroupConfig>,
@@ -897,9 +897,13 @@ impl MinigamePortalEntryConfig {
         let mut stage_groups = Vec::new();
         let mut stages = Vec::new();
 
-        let (mut stage_group_definitions, mut stage_definitions, daily_game_playability) = self
-            .stage_group
-            .to_stage_group_definition(self.guid, minigame_stats, daily_reset_offset);
+        let (mut stage_group_definitions, mut stage_definitions, daily_game_playability) =
+            self.stage_group.to_stage_group_definition(
+                self.guid,
+                minigame_stats,
+                daily_reset_offset,
+                self.is_daily,
+            );
         stage_groups.append(&mut stage_group_definitions);
         stages.append(&mut stage_definitions);
 
