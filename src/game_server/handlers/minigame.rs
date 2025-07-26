@@ -1766,6 +1766,25 @@ fn prepare_active_minigame_instance_for_player(
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {member_guid} tried to create an active minigame for a stage {stage_guid} they haven't unlocked")));
         }
 
+        let (portal_entry, _) = game_server.minigames()
+            .portal_entry(stage_config.portal_entry_guid, &player.minigame_stats)
+            .ok_or_else(|| ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!(
+                    "Tried to find unknown portal entry {} when creating an active minigame for stage {stage_guid} for player {member_guid}", 
+                    stage_config.portal_entry_guid
+                )
+            ))?;
+
+        if portal_entry.is_daily_game_locked {
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!(
+                    "Player {member_guid}'s tried to create an active minigame for a stage {stage_guid}, but it is a daily game that they already played today"
+                )
+            ));
+        }
+
         let Some(minigame_status) = &mut player.minigame_status else {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {member_guid} tried to create an active minigame, but their minigame status is not set")));
         };
@@ -2961,16 +2980,6 @@ fn leave_active_minigame_single_player_if_any(
                         stage_config.stage_config.guid()
                     )
                 ))?;
-
-            if portal_entry.is_daily_game_locked {
-                return Err(ProcessPacketError::new(
-                    ProcessPacketErrorType::ConstraintViolated,
-                    format!(
-                        "Tried to end player {sender}'s active minigame {}, but it is a daily game that they already played today",
-                        stage_config.stage_config.guid()
-                    )
-                ));
-            }
 
             let Some(minigame_status) = &mut player.minigame_status else {
                 return Ok(None);
