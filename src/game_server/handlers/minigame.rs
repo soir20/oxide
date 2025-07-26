@@ -728,10 +728,9 @@ impl MinigameStageGroupConfig {
                         child_stage_group_definition_guid: 0,
                     });
                     if is_portal_entry_daily {
-                        group_daily_game_playability =
-                            can_play_daily_game(daily_reset_offset, minigame_stats, stage.guid);
-                    } else {
-                        group_daily_game_playability = DailyGamePlayability::Playable;
+                        group_daily_game_playability = group_daily_game_playability.and(
+                            can_play_daily_game(daily_reset_offset, minigame_stats, stage.guid),
+                        );
                     }
 
                     stage.challenges.iter().for_each(|challenge| {
@@ -748,13 +747,12 @@ impl MinigameStageGroupConfig {
                             child_stage_group_definition_guid: 0,
                         });
                         if is_portal_entry_daily {
-                            group_daily_game_playability = can_play_daily_game(
-                                daily_reset_offset,
-                                minigame_stats,
-                                challenge.guid,
-                            );
-                        } else {
-                            group_daily_game_playability = DailyGamePlayability::Playable;
+                            group_daily_game_playability =
+                                group_daily_game_playability.and(can_play_daily_game(
+                                    daily_reset_offset,
+                                    minigame_stats,
+                                    challenge.guid,
+                                ));
                         }
                     });
                 }
@@ -860,6 +858,21 @@ impl MinigameStageGroupConfig {
     }
 }
 
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub enum DailyType {
+    Daily,
+    NotDaily,
+}
+
+impl From<bool> for DailyType {
+    fn from(value: bool) -> Self {
+        match value {
+            true => DailyType::Daily,
+            false => DailyType::NotDaily,
+        }
+    }
+}
+
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 struct MinigamePortalEntryConfig {
@@ -891,6 +904,7 @@ impl MinigamePortalEntryConfig {
         daily_reset_offset: &DailyResetOffset,
     ) -> (
         MinigamePortalEntry,
+        DailyType,
         Vec<MinigameStageGroupDefinition>,
         Vec<MinigameStageDefinition>,
     ) {
@@ -925,6 +939,7 @@ impl MinigamePortalEntryConfig {
                 sort_order: self.sort_order,
                 tutorial_swf: self.tutorial_swf.clone(),
             },
+            self.is_daily.into(),
             stage_groups,
             stages,
         )
@@ -959,7 +974,7 @@ impl MinigamePortalCategoryConfig {
         let mut stages = Vec::new();
 
         for entry in &self.portal_entries {
-            let (entry_definition, mut stage_group_definitions, mut stage_definitions) =
+            let (entry_definition, _, mut stage_group_definitions, mut stage_definitions) =
                 entry.to_portal_entry(self.guid, minigame_stats, daily_reset_offset);
             entries.push(entry_definition);
             stage_groups.append(&mut stage_group_definitions);
@@ -1147,7 +1162,7 @@ struct DeserializableMinigameConfigs {
 }
 
 pub struct AllMinigameConfigs {
-    daily_reset_offset: DailyResetOffset,
+    pub daily_reset_offset: DailyResetOffset,
     categories: Vec<MinigamePortalCategoryConfig>,
     stage_groups: BTreeMap<i32, (Arc<MinigameStageGroupConfig>, u32)>,
 }
@@ -1178,37 +1193,27 @@ impl AllMinigameConfigs {
         )
     }
 
-    pub fn portal_entry_config(
+    pub fn portal_entry(
         &self,
         portal_entry_guid: u32,
         minigame_stats: &PlayerMinigameStats,
-    ) -> Option<MinigameDefinitions> {
+    ) -> Option<(MinigamePortalEntry, DailyType)> {
         self.categories.iter().find_map(|category| {
-            category.portal_entries.iter().find_map(|portal_entry| {
-                if portal_entry.guid == portal_entry_guid {
-                    Some(MinigameDefinitions {
-                        header: MinigameHeader {
-                            stage_guid: -1,
-                            sub_op_code: -1,
-                            stage_group_guid: -1,
-                        },
-                        stages: Vec::new(),
-                        stage_groups: Vec::new(),
-                        portal_entries: vec![
-                            portal_entry
-                                .to_portal_entry(
-                                    category.guid,
-                                    minigame_stats,
-                                    &self.daily_reset_offset,
-                                )
-                                .0,
-                        ],
-                        portal_categories: Vec::new(),
-                    })
-                } else {
-                    None
-                }
-            })
+            category
+                .portal_entries
+                .iter()
+                .find_map(|portal_entry_config| {
+                    if portal_entry_config.guid == portal_entry_guid {
+                        let (portal_entry, daily_type, ..) = portal_entry_config.to_portal_entry(
+                            category.guid,
+                            minigame_stats,
+                            &self.daily_reset_offset,
+                        );
+                        Some((portal_entry, daily_type))
+                    } else {
+                        None
+                    }
+                })
         })
     }
 
@@ -2947,6 +2952,27 @@ fn leave_active_minigame_single_player_if_any(
                 ));
             };
 
+            let (mut portal_entry, daily_type) = game_server.minigames()
+                .portal_entry(stage_config.portal_entry_guid, &player.minigame_stats)
+                .ok_or_else(|| ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Tried to find unknown portal entry {} when exiting stage {} for player {sender}", 
+                        stage_config.portal_entry_guid,
+                        stage_config.stage_config.guid()
+                    )
+                ))?;
+
+            if portal_entry.is_daily_game_locked {
+                return Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Tried to end player {sender}'s active minigame {}, but it is a daily game that they already played today",
+                        stage_config.stage_config.guid()
+                    )
+                ));
+            }
+
             let Some(minigame_status) = &mut player.minigame_status else {
                 return Ok(None);
             };
@@ -2983,6 +3009,13 @@ fn leave_active_minigame_single_player_if_any(
                     minigame_status.group.stage_guid,
                     minigame_status.total_score,
                 );
+                if daily_type == DailyType::Daily {
+                    portal_entry.is_daily_game_locked = !Into::<bool>::into(can_play_daily_game(
+                        &game_server.minigames().daily_reset_offset,
+                        &player.minigame_stats,
+                        minigame_status.group.stage_guid
+                    ));
+                }
             }
 
             let last_broadcast = Broadcast::Single(
@@ -3086,17 +3119,17 @@ fn leave_active_minigame_single_player_if_any(
                 GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
                     inner: MinigameDefinitionsUpdate {
-                        definitions: game_server.minigames()
-                            .portal_entry_config(stage_config.portal_entry_guid, &player.minigame_stats)
-                            .ok_or_else(|| ProcessPacketError::new(
-                                ProcessPacketErrorType::ConstraintViolated,
-                                format!(
-                                    "Tried to find unknown portal entry {} when exiting stage {} for player {}", 
-                                    stage_config.portal_entry_guid,
-                                    stage_config.stage_config.guid(),
-                                    sender
-                                )
-                            ))?
+                        definitions: MinigameDefinitions {
+                            header: MinigameHeader {
+                                stage_guid: -1,
+                                sub_op_code: -1,
+                                stage_group_guid: -1
+                            },
+                            stages: Vec::new(),
+                            stage_groups: Vec::new(),
+                            portal_entries: vec![portal_entry],
+                            portal_categories: Vec::new()
+                        }
                     },
                 })
             ]));
