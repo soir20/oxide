@@ -889,8 +889,7 @@ struct MinigamePortalEntryConfig {
     pub background_icon_id: u32,
     pub is_popular: bool,
     pub is_game_of_day: bool,
-    #[serde(default)]
-    pub is_daily: bool,
+    pub daily_key: Option<String>,
     pub sort_order: u32,
     pub tutorial_swf: String,
     pub stage_group: Arc<MinigameStageGroupConfig>,
@@ -916,7 +915,7 @@ impl MinigamePortalEntryConfig {
                 self.guid,
                 minigame_stats,
                 daily_reset_offset,
-                self.is_daily,
+                self.daily_key.is_some(),
             );
         stage_groups.append(&mut stage_group_definitions);
         stages.append(&mut stage_definitions);
@@ -939,7 +938,7 @@ impl MinigamePortalEntryConfig {
                 sort_order: self.sort_order,
                 tutorial_swf: self.tutorial_swf.clone(),
             },
-            self.is_daily.into(),
+            self.daily_key.is_some().into(),
             stage_groups,
             stages,
         )
