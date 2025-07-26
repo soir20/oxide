@@ -2,6 +2,7 @@ pub mod chat;
 pub mod client_update;
 pub mod combat;
 pub mod command;
+pub mod daily;
 pub mod housing;
 pub mod inventory;
 pub mod item;
