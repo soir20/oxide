@@ -67,6 +67,7 @@ pub enum OpCode {
     Housing = 0x7f,
     Squad = 0x81,
     UpdatePlayerPlatformPosition = 0xb8,
+    DailyMinigame = 0x8e,
     ClientGameSettings = 0x8f,
     Portrait = 0x9b,
     PlayerJump = 0xa3,
