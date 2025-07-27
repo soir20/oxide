@@ -22,7 +22,7 @@ pub struct AddDailyMinigame {
     pub initial_state: UpdateDailyMinigame,
     pub minigame_name: String,
     pub minigame_type: String,
-    pub unknown1: f32,
+    pub multiplier: f32, // unconfirmed
 }
 
 impl GamePacket for AddDailyMinigame {
