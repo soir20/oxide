@@ -2966,7 +2966,6 @@ fn leave_active_minigame_single_player_if_any(
 
             broadcasts.append(
                 &mut shared_minigame_data
-                    .data
                     .remove_player(sender, minigame_status)?,
             );
 
