@@ -35,9 +35,9 @@ impl GamePacket for AddDailyMinigame {
 pub struct UpdateDailyMinigame {
     pub guid: u32,
     pub playthroughs_remaining: u32,
-    pub unknown3: u32,
+    pub consecutive_playthroughs: u32, // unconfirmed
     pub unknown4: u32,
-    pub unknown5: u32,
+    pub seconds_until_reset: u32,
 }
 
 impl GamePacket for UpdateDailyMinigame {
