@@ -34,7 +34,7 @@ impl GamePacket for AddDailyMinigame {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct UpdateDailyMinigame {
     pub guid: u32,
-    pub unknown2: u32,
+    pub playthroughs_remaining: u32,
     pub unknown3: u32,
     pub unknown4: u32,
     pub unknown5: u32,
