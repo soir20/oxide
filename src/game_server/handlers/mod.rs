@@ -3,6 +3,7 @@ use super::{packets::Pos, Broadcast, GameServer, ProcessPacketError};
 pub mod character;
 pub mod chat;
 pub mod command;
+pub mod daily;
 pub mod fleet_commander;
 pub mod force_connection;
 pub mod guid;

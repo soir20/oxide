@@ -7,6 +7,8 @@ use super::{GamePacket, OpCode, RewardBundle};
 #[repr(u8)]
 pub enum MinigameOpCode {
     MinigameDefinitions = 0x1,
+    MinigameDefinitionsLocked = 0x2,
+    MinigameDefinitionsUpdate = 0x3,
     RequestCreateActiveMinigame = 0x4,
     RequestStartActiveMinigame = 0x6,
     RequestCancelActiveMinigame = 0x7,
@@ -96,7 +98,7 @@ pub struct MinigamePortalEntry {
     pub description_id: u32,
     pub members_only: bool,
     pub is_flash: bool, // unconfirmed
-    pub is_micro: bool,
+    pub is_daily_game_locked: bool,
     pub is_active: bool,
     pub param1: u32, // unconfirmed
     pub icon_id: u32,
@@ -141,6 +143,31 @@ impl GamePacket for MinigameDefinitions {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::MinigameDefinitions;
+}
+
+#[derive(SerializePacket)]
+pub struct MinigameDefinitionsLocked {
+    pub header: MinigameHeader,
+    pub locked_stage_guids: Vec<i32>,
+    pub locked_stage_group_guids: Vec<i32>,
+    pub locked_portal_entry_guids: Vec<u32>,
+}
+
+impl GamePacket for MinigameDefinitionsLocked {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::MinigameDefinitionsLocked;
+}
+
+#[derive(SerializePacket)]
+pub struct MinigameDefinitionsUpdate {
+    pub definitions: MinigameDefinitions,
+}
+
+impl GamePacket for MinigameDefinitionsUpdate {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::MinigameDefinitionsUpdate;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
