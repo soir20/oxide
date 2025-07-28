@@ -352,7 +352,7 @@ impl GameServer {
                                     }
 
                                     if player.first_load {
-                                        let welcome_screen = TunneledPacket {
+                                        sender_only_packets .push(GamePacket::serialize(&TunneledPacket {
                                             unknown1: true,
                                             inner: WelcomeScreen {
                                                 show_ui: true,
@@ -361,18 +361,19 @@ impl GameServer {
                                                 unknown3: 0,
                                                 unknown4: 0,
                                             },
-                                        };
-                                        sender_only_packets
-                                            .push(GamePacket::serialize(&welcome_screen));
+                                        }));
 
-                                        let minigame_definitions = TunneledPacket {
+                                        let (minigame_definitions, dailies) = self.minigames.definitions(&player.minigame_stats);
+                                        sender_only_packets.push(GamePacket::serialize(&TunneledPacket {
                                             unknown1: true,
-                                            inner: GamePacket::serialize(
-                                                &self.minigames.definitions(&player.minigame_stats),
-                                            ),
-                                        };
-                                        sender_only_packets
-                                            .push(GamePacket::serialize(&minigame_definitions));
+                                            inner: minigame_definitions,
+                                        }));
+                                        for daily in dailies {
+                                            sender_only_packets.push(GamePacket::serialize(&TunneledPacket {
+                                                unknown1: true,
+                                                inner: daily,
+                                            }));
+                                        }
                                     }
 
                                     player.ready = true;

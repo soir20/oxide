@@ -26,6 +26,7 @@ use crate::{
             chat::{ActionBarTextColor, SendStringId},
             client_update::UpdateCredits,
             command::StartFlashGame,
+            daily::{AddDailyMinigame, UpdateDailyMinigame},
             item::EquipmentSlot,
             minigame::{
                 ActiveMinigameCreationResult, ActiveMinigameEndScore, CreateActiveMinigame,
@@ -888,6 +889,7 @@ impl MinigamePortalEntryConfig {
         daily_reset_offset: &DailyResetOffset,
     ) -> (
         MinigamePortalEntry,
+        Option<AddDailyMinigame>,
         Vec<MinigameStageGroupDefinition>,
         Vec<MinigameStageDefinition>,
     ) {
@@ -922,6 +924,21 @@ impl MinigamePortalEntryConfig {
                 sort_order: self.sort_order,
                 tutorial_swf: self.tutorial_swf.clone(),
             },
+            self.daily_key.as_ref().map(|daily_key| AddDailyMinigame {
+                initial_state: UpdateDailyMinigame {
+                    guid: self.guid,
+                    playthroughs_remaining: match daily_game_playability {
+                        DailyGamePlayability::Playable => 1,
+                        DailyGamePlayability::Unplayable => 0,
+                    },
+                    consecutive_playthroughs_remaining: 0,
+                    seconds_until_next_playthrough: 0,
+                    seconds_until_reset: 0,
+                },
+                minigame_name: daily_key.clone(),
+                minigame_type: daily_key.clone(),
+                multiplier: 1.0,
+            }),
             stage_groups,
             stages,
         )
@@ -950,15 +967,24 @@ impl MinigamePortalCategoryConfig {
         Vec<MinigamePortalEntry>,
         Vec<MinigameStageGroupDefinition>,
         Vec<MinigameStageDefinition>,
+        Vec<AddDailyMinigame>,
     ) {
         let mut entries = Vec::new();
+        let mut dailies = Vec::new();
         let mut stage_groups = Vec::new();
         let mut stages = Vec::new();
 
         for entry in &self.portal_entries {
-            let (entry_definition, mut stage_group_definitions, mut stage_definitions) =
-                entry.to_portal_entry(self.guid, minigame_stats, daily_reset_offset);
+            let (
+                entry_definition,
+                possible_daily,
+                mut stage_group_definitions,
+                mut stage_definitions,
+            ) = entry.to_portal_entry(self.guid, minigame_stats, daily_reset_offset);
             entries.push(entry_definition);
+            if let Some(daily) = possible_daily {
+                dailies.push(daily);
+            }
             stage_groups.append(&mut stage_group_definitions);
             stages.append(&mut stage_definitions);
         }
@@ -973,6 +999,7 @@ impl MinigamePortalCategoryConfig {
             entries,
             stage_groups,
             stages,
+            dailies,
         )
     }
 }
@@ -982,11 +1009,12 @@ impl MinigameDefinitions {
         value: &[MinigamePortalCategoryConfig],
         minigame_stats: &PlayerMinigameStats,
         daily_reset_offset: &DailyResetOffset,
-    ) -> Self {
+    ) -> (Self, Vec<AddDailyMinigame>) {
         let mut portal_categories = Vec::new();
         let mut portal_entries = Vec::new();
         let mut stage_groups = Vec::new();
         let mut stages = Vec::new();
+        let mut all_dailies = Vec::new();
 
         for category in value {
             let (
@@ -994,24 +1022,29 @@ impl MinigameDefinitions {
                 mut entry_definitions,
                 mut stage_group_definitions,
                 mut stage_definitions,
+                mut dailies,
             ) = category.to_definitions(minigame_stats, daily_reset_offset);
             portal_categories.push(category_definition);
             portal_entries.append(&mut entry_definitions);
             stage_groups.append(&mut stage_group_definitions);
             stages.append(&mut stage_definitions);
+            all_dailies.append(&mut dailies);
         }
 
-        MinigameDefinitions {
-            header: MinigameHeader {
-                stage_guid: -1,
-                sub_op_code: -1,
-                stage_group_guid: -1,
+        (
+            MinigameDefinitions {
+                header: MinigameHeader {
+                    stage_guid: -1,
+                    sub_op_code: -1,
+                    stage_group_guid: -1,
+                },
+                stages,
+                stage_groups,
+                portal_entries,
+                portal_categories,
             },
-            stages,
-            stage_groups,
-            portal_entries,
-            portal_categories,
-        }
+            all_dailies,
+        )
     }
 }
 
@@ -1167,7 +1200,10 @@ impl From<DeserializableMinigameConfigs> for AllMinigameConfigs {
 }
 
 impl AllMinigameConfigs {
-    pub fn definitions(&self, minigame_stats: &PlayerMinigameStats) -> MinigameDefinitions {
+    pub fn definitions(
+        &self,
+        minigame_stats: &PlayerMinigameStats,
+    ) -> (MinigameDefinitions, Vec<AddDailyMinigame>) {
         MinigameDefinitions::from_portal_category_configs(
             &self.categories[..],
             minigame_stats,
@@ -1179,19 +1215,19 @@ impl AllMinigameConfigs {
         &self,
         portal_entry_guid: u32,
         minigame_stats: &PlayerMinigameStats,
-    ) -> Option<MinigamePortalEntry> {
+    ) -> Option<(MinigamePortalEntry, Option<AddDailyMinigame>)> {
         self.categories.iter().find_map(|category| {
             category
                 .portal_entries
                 .iter()
                 .find_map(|portal_entry_config| {
                     if portal_entry_config.guid == portal_entry_guid {
-                        let (portal_entry, ..) = portal_entry_config.to_portal_entry(
+                        let (portal_entry, daily, ..) = portal_entry_config.to_portal_entry(
                             category.guid,
                             minigame_stats,
                             &self.daily_reset_offset,
                         );
-                        Some(portal_entry)
+                        Some((portal_entry, daily))
                     } else {
                         None
                     }
@@ -1749,7 +1785,7 @@ fn prepare_active_minigame_instance_for_player(
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {member_guid} tried to create an active minigame for a stage {stage_guid} they haven't unlocked")));
         }
 
-        let portal_entry = game_server.minigames()
+        let (portal_entry, ..) = game_server.minigames()
             .portal_entry(stage_config.portal_entry_guid, &player.minigame_stats)
             .ok_or_else(|| ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
@@ -3087,6 +3123,17 @@ fn leave_active_minigame_single_player_if_any(
                 ],
             );
 
+            let (portal_entry, possible_daily) = game_server.minigames()
+                .portal_entry(stage_config.portal_entry_guid, &player.minigame_stats)
+                .ok_or_else(|| ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Tried to find unknown portal entry {} when exiting stage {} for player {sender}", 
+                        stage_config.portal_entry_guid,
+                        stage_config.stage_config.guid()
+                    )
+                ))?;
+
             broadcasts.push(Broadcast::Single(sender, vec![
                 GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
@@ -3099,21 +3146,21 @@ fn leave_active_minigame_single_player_if_any(
                             },
                             stages: Vec::new(),
                             stage_groups: Vec::new(),
-                            portal_entries: vec![game_server.minigames()
-                                .portal_entry(stage_config.portal_entry_guid, &player.minigame_stats)
-                                .ok_or_else(|| ProcessPacketError::new(
-                                    ProcessPacketErrorType::ConstraintViolated,
-                                    format!(
-                                        "Tried to find unknown portal entry {} when exiting stage {} for player {sender}", 
-                                        stage_config.portal_entry_guid,
-                                        stage_config.stage_config.guid()
-                                    )
-                                ))?],
+                            portal_entries: vec![portal_entry],
                             portal_categories: Vec::new()
                         }
                     },
-                })
+                }),
             ]));
+
+            if let Some(daily) = possible_daily {
+                broadcasts.push(Broadcast::Single(sender, vec![
+                    GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: daily.initial_state,
+                    }),
+                ]));
+            }
 
             broadcasts.push(Broadcast::Single(
                 sender,
