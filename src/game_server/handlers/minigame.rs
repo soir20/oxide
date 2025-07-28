@@ -435,6 +435,8 @@ pub struct MinigameChallengeConfig {
     pub min_players: u32,
     pub max_players: u32,
     pub start_sound_id: u32,
+    #[serde(default = "default_true")]
+    pub show_end_score_screen: bool,
     pub required_item_guid: Option<u32>,
     pub members_only: bool,
     pub minigame_type: MinigameType,
@@ -528,6 +530,8 @@ pub struct MinigameCampaignStageConfig {
     pub max_players: u32,
     pub difficulty: u32,
     pub start_sound_id: u32,
+    #[serde(default = "default_true")]
+    pub show_end_score_screen: bool,
     pub required_item_guid: Option<u32>,
     pub members_only: bool,
     #[serde(default = "default_true")]
@@ -1135,6 +1139,13 @@ impl MinigameStageConfig<'_> {
         match self {
             MinigameStageConfig::CampaignStage(stage) => stage.difficulty,
             MinigameStageConfig::Challenge(_, base_stage) => base_stage.difficulty,
+        }
+    }
+
+    pub fn show_end_score_screen(&self) -> bool {
+        match self {
+            MinigameStageConfig::CampaignStage(stage) => stage.show_end_score_screen,
+            MinigameStageConfig::Challenge(_, base_stage) => base_stage.show_end_score_screen,
         }
     }
 }
@@ -2077,7 +2088,7 @@ fn handle_request_start_active_minigame(
                                     inner: StartFlashGame {
                                         loader_script_name: "MiniGameFlash".to_string(),
                                         game_swf_name: game_swf_name.clone(),
-                                        is_micro: false,
+                                        return_to_portal: !stage_config.show_end_score_screen(),
                                     },
                                 })
                             );
@@ -2903,7 +2914,7 @@ pub fn create_active_minigame_if_uncreated(
                     unknown14: false,
                     unknown15: false,
                     unknown16: false,
-                    show_end_score_screen: true,
+                    show_end_score_screen: stage_config.show_end_score_screen(),
                     unknown18: "".to_string(),
                     unknown19: 0,
                     unknown20: false,
