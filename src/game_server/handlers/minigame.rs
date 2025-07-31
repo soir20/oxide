@@ -664,7 +664,7 @@ impl MinigameCampaignStageConfig {
 #[serde(deny_unknown_fields)]
 enum MinigameStageGroupChild {
     StageGroup(Arc<MinigameStageGroupConfig>),
-    Stage(MinigameCampaignStageConfig),
+    Stage(Box<MinigameCampaignStageConfig>),
 }
 
 const fn default_true() -> bool {
@@ -924,6 +924,7 @@ struct MinigamePortalEntryConfig {
     pub stage_group: Arc<MinigameStageGroupConfig>,
 }
 
+type MinigamePortalEntryDailySettings = (DailyGamePlayability, AddDailyMinigame);
 impl MinigamePortalEntryConfig {
     pub fn to_portal_entry(
         &self,
@@ -932,7 +933,7 @@ impl MinigamePortalEntryConfig {
         daily_reset_offset: &DailyResetOffset,
     ) -> (
         MinigamePortalEntry,
-        Option<(DailyGamePlayability, AddDailyMinigame)>,
+        Option<MinigamePortalEntryDailySettings>,
         Vec<MinigameStageGroupDefinition>,
         Vec<MinigameStageDefinition>,
     ) {
