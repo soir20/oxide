@@ -453,16 +453,6 @@ pub enum DailyGamePlayability {
     Unplayable,
 }
 
-impl From<DailyGamePlayability> for bool {
-    fn from(value: DailyGamePlayability) -> Self {
-        match value {
-            DailyGamePlayability::NotYetPlayed { .. } => true,
-            DailyGamePlayability::OnlyWithBoosts { .. } => true,
-            DailyGamePlayability::Unplayable => false,
-        }
-    }
-}
-
 fn has_played_minigame_today(
     daily_reset_offset: &DailyResetOffset,
     minigame_stats: &PlayerMinigameStats,
@@ -996,7 +986,7 @@ impl MinigamePortalEntryConfig {
                 is_flash: self.is_flash,
                 is_daily_game_locked: daily_settings
                     .as_ref()
-                    .map(|(playability, _)| (*playability).into())
+                    .map(|(playability, _)| *playability == DailyGamePlayability::Unplayable)
                     .unwrap_or(false),
                 is_active: self.is_active,
                 param1: self.param1,
@@ -2498,7 +2488,7 @@ fn handle_flash_payload(
                     let (mut broadcasts, awarded_credits) = award_credits(
                         sender,
                         player_credits,
-                        minigame_status,
+                        &mut minigame_status.awarded_credits,
                         &stage_config.stage_config,
                         round_score,
                     )?;
@@ -2923,12 +2913,15 @@ fn handle_flash_payload(
             sender,
             game_server,
             &payload.header,
-            |minigame_status, minigame_stats, _, _, _, _| {
+            |minigame_status, minigame_stats, player_credits, stage_config, _, _| {
                  match &mut minigame_status.type_data {
                     MinigameTypeData::DailySpin { game } => game.spin(
                         sender,
+                        player_credits,
                         &mut minigame_status.awarded_credits,
-                        &mut minigame_status.game_won, minigame_stats
+                        &mut minigame_status.game_won,
+                        &stage_config.stage_config,
+                        minigame_stats
                     ),
                     _ => Err(ProcessPacketError::new(
                         ProcessPacketErrorType::ConstraintViolated,
@@ -3062,10 +3055,10 @@ pub fn create_active_minigame_if_uncreated(
     )])
 }
 
-fn award_credits(
+pub fn award_credits(
     sender: u32,
     player_credits: &mut u32,
-    minigame_status: &mut MinigameStatus,
+    game_awarded_credits: &mut u32,
     stage_config: &MinigameStageConfig,
     score: i32,
 ) -> Result<(Vec<Broadcast>, u32), ProcessPacketError> {
@@ -3073,9 +3066,7 @@ fn award_credits(
         evaluate_score_to_credits_expression(stage_config.score_to_credits_expression(), score)?
             .max(0) as u32;
 
-    minigame_status.awarded_credits = minigame_status
-        .awarded_credits
-        .saturating_add(awarded_credits);
+    *game_awarded_credits = game_awarded_credits.saturating_add(awarded_credits);
 
     let new_credits = player_credits.saturating_add(awarded_credits);
     *player_credits = new_credits;
@@ -3146,7 +3137,7 @@ fn leave_active_minigame_single_player_if_any(
                     &mut award_credits(
                         sender,
                         &mut player.credits,
-                        minigame_status,
+                        &mut minigame_status.awarded_credits,
                         &stage_config.stage_config,
                         minigame_status.total_score,
                     )?
