@@ -481,8 +481,6 @@ pub struct MinigameChallengeConfig {
     pub min_players: u32,
     pub max_players: u32,
     pub start_sound_id: u32,
-    #[serde(default = "default_true")]
-    pub show_end_score_screen: bool,
     pub required_item_guid: Option<u32>,
     pub members_only: bool,
     pub minigame_type: MinigameType,
