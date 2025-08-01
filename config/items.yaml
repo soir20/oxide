@@ -217,7 +217,7 @@
   tint: 0
   unknown6: 0
   unknown7: 0
-  cost: 0
+  cost: 15
   item_class: -1
   required_battle_class: 0
   slot: None
@@ -227,7 +227,7 @@
   texture_alias: ''
   required_gender: 0
   item_type: 1
-  category: 61
+  category: 0
   members: true
   non_minigame: false
   weapon_trail_effect: 0
