@@ -4628,4 +4628,61 @@ categories:
     name_id: 51600
     icon_id: 5806
     sort_order: 5
-    portal_entries: []
+    portal_entries:
+      - guid: 28000
+        name_id: 14053
+        description_id: 9148
+        members_only: false
+        is_flash: true
+        is_active: true
+        param1: 0
+        icon_id: 1237
+        background_icon_id: 0
+        is_popular: true
+        is_game_of_day: false
+        sort_order: 28000
+        tutorial_swf: HowtoSpin.swf
+        daily_type: Spin
+        stage_group:
+          guid: 17
+          name_id: 14053
+          description_id: 9148
+          icon_id: 877
+          stage_icon_id: 877
+          members_only: false
+          stage_select_map_name: ''
+          stages:
+            - !Stage
+              guid: 28001
+              name_id: 14053
+              description_id: 9148
+              stage_icon_id: 1237
+              start_screen_icon_id: 1903
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3356
+              show_end_score_screen: false
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: ''
+              minigame_type:
+                !Flash
+                game_swf_name: DailyWheel.swf
+                game_type:
+                  !DailySpin
+                  buckets:
+                    - start: 50
+                      end: 100
+                      weight: 3
+                    - start: 100
+                      end: 500
+                      weight: 4
+                    - start: 500
+                      end: 1000
+                      weight: 2
+                    - start: 1000
+                      end: 10000
+                      weight: 1
+              score_to_credits_expression: x
