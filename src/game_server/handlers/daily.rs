@@ -7,7 +7,7 @@ use crate::game_server::{
         award_credits, DailyGamePlayability, MinigameStageConfig, PlayerMinigameStats,
     },
     packets::{
-        minigame::{FlashPayload, MinigameHeader},
+        minigame::{FlashPayload, MinigameHeader, ScoreEntry, ScoreType},
         tunnel::TunneledPacket,
         GamePacket,
     },
@@ -142,6 +142,7 @@ impl DailySpinGame {
         sender: u32,
         game_score: &mut i32,
         game_won: &mut bool,
+        score_entries: &mut Vec<ScoreEntry>,
         minigame_stats: &mut PlayerMinigameStats,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         if !matches!(self.state, DailySpinGameState::WaitingForSpin) {
@@ -183,6 +184,14 @@ impl DailySpinGame {
 
         *game_score = reward as i32;
         *game_won = true;
+        score_entries.push(ScoreEntry {
+            entry_text: "".to_string(),
+            icon_set_id: 0,
+            score_type: ScoreType::Total,
+            score_count: reward as i32,
+            score_max: 0,
+            score_points: 0,
+        });
         self.state = DailySpinGameState::Spinning { reward };
 
         Ok(vec![Broadcast::Single(

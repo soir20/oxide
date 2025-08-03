@@ -2918,6 +2918,7 @@ fn handle_flash_payload(
                         sender,
                         &mut minigame_status.total_score,
                         &mut minigame_status.game_won,
+                        &mut minigame_status.score_entries,
                         minigame_stats
                     ),
                     _ => Err(ProcessPacketError::new(
