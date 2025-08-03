@@ -2947,6 +2947,7 @@ fn handle_flash_payload(
                 }
             }
         ),
+        "OnChangeWheelRequestMsg" => Ok(Vec::new()),
         _ => Err(ProcessPacketError::new(
             ProcessPacketErrorType::ConstraintViolated,
             format!(

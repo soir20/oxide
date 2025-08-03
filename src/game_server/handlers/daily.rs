@@ -96,7 +96,7 @@ impl DailySpinGame {
                             sub_op_code: -1,
                             stage_group_guid: self.stage_group_guid,
                         },
-                        payload: "OnWheelDataMsg\t1\t1\t\t0\t0".to_string(),
+                        payload: "OnWheelDataMsg\t0\t0\t\t0\t0".to_string(),
                     },
                 }),
                 GamePacket::serialize(&TunneledPacket {
@@ -107,7 +107,18 @@ impl DailySpinGame {
                             sub_op_code: -1,
                             stage_group_guid: self.stage_group_guid,
                         },
-                        payload: format!("OnWheelUpdateMsg\t1\t{total_spins}\t0\t0"),
+                        payload: format!("OnWheelUpdateMsg\t0\t{total_spins}\t0\t0"),
+                    },
+                }),
+                GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: FlashPayload {
+                        header: MinigameHeader {
+                            stage_guid: self.stage_guid,
+                            sub_op_code: -1,
+                            stage_group_guid: self.stage_group_guid,
+                        },
+                        payload: "OnServerReadyMsg".to_string(),
                     },
                 }),
             ],
