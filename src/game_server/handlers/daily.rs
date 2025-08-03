@@ -25,10 +25,7 @@ pub struct DailySpinRewardBucket {
 enum DailySpinGameState {
     WaitingForPlayersReady,
     WaitingForSpin,
-    Spinning {
-        reward: u16,
-        credit_broadcasts: Vec<Broadcast>,
-    },
+    Spinning { reward: u16 },
 }
 
 #[derive(Clone, Debug)]
@@ -143,10 +140,8 @@ impl DailySpinGame {
     pub fn spin(
         &mut self,
         sender: u32,
-        player_credits: &mut u32,
-        game_awarded_credits: &mut u32,
+        game_score: &mut i32,
         game_won: &mut bool,
-        stage_config: &MinigameStageConfig,
         minigame_stats: &mut PlayerMinigameStats,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         if !matches!(self.state, DailySpinGameState::WaitingForSpin) {
@@ -186,19 +181,9 @@ impl DailySpinGame {
         let bucket = &self.buckets[bucket_index];
         let reward = rng.gen_range(bucket.start..bucket.end);
 
-        let credit_broadcasts = award_credits(
-            sender,
-            player_credits,
-            game_awarded_credits,
-            stage_config,
-            reward as i32,
-        )?
-        .0;
+        *game_score = reward as i32;
         *game_won = true;
-        self.state = DailySpinGameState::Spinning {
-            reward,
-            credit_broadcasts,
-        };
+        self.state = DailySpinGameState::Spinning { reward };
 
         Ok(vec![Broadcast::Single(
             sender,
@@ -216,12 +201,14 @@ impl DailySpinGame {
         )])
     }
 
-    pub fn stop_spin(&mut self, sender: u32) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        let DailySpinGameState::Spinning {
-            reward,
-            ref mut credit_broadcasts,
-        } = self.state
-        else {
+    pub fn stop_spin(
+        &mut self,
+        sender: u32,
+        player_credits: &mut u32,
+        game_awarded_credits: &mut u32,
+        stage_config: &MinigameStageConfig,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let DailySpinGameState::Spinning { reward } = self.state else {
             return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
                 format!(
@@ -230,7 +217,16 @@ impl DailySpinGame {
             ));
         };
 
-        let mut broadcasts = vec![Broadcast::Single(
+        let mut broadcasts = award_credits(
+            sender,
+            player_credits,
+            game_awarded_credits,
+            stage_config,
+            reward as i32,
+        )?
+        .0;
+
+        broadcasts.push(Broadcast::Single(
             sender,
             vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
@@ -243,9 +239,7 @@ impl DailySpinGame {
                     payload: format!("OnRewardInfoMsg\t0\t0\t{reward}\t0\t0\t0"),
                 },
             })],
-        )];
-
-        broadcasts.append(credit_broadcasts);
+        ));
 
         self.state = DailySpinGameState::WaitingForSpin;
 

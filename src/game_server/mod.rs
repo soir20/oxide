@@ -66,7 +66,7 @@ use packet_serialize::{DeserializePacket, DeserializePacketError};
 mod handlers;
 mod packets;
 
-#[derive(Clone, Debug)]
+#[derive(Debug)]
 pub enum Broadcast {
     Single(u32, Vec<Vec<u8>>),
     Multi(Vec<u32>, Vec<Vec<u8>>),

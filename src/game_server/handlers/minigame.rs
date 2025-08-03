@@ -2912,14 +2912,12 @@ fn handle_flash_payload(
             sender,
             game_server,
             &payload.header,
-            |minigame_status, minigame_stats, player_credits, stage_config, _, _| {
+            |minigame_status, minigame_stats, _, _, _, _| {
                  match &mut minigame_status.type_data {
                     MinigameTypeData::DailySpin { game } => game.spin(
                         sender,
-                        player_credits,
-                        &mut minigame_status.awarded_credits,
+                        &mut minigame_status.total_score,
                         &mut minigame_status.game_won,
-                        &stage_config.stage_config,
                         minigame_stats
                     ),
                     _ => Err(ProcessPacketError::new(
@@ -2935,9 +2933,14 @@ fn handle_flash_payload(
             sender,
             game_server,
             &payload.header,
-            |minigame_status, _, _, _, _, _| {
+            |minigame_status, _, player_credits, stage_config, _, _| {
                  match &mut minigame_status.type_data {
-                    MinigameTypeData::DailySpin { game } => game.stop_spin(sender),
+                    MinigameTypeData::DailySpin { game } => game.stop_spin(
+                        sender,
+                        player_credits,
+                        &mut minigame_status.awarded_credits,
+                        &stage_config.stage_config
+                    ),
                     _ => Err(ProcessPacketError::new(
                         ProcessPacketErrorType::ConstraintViolated,
                         format!(
