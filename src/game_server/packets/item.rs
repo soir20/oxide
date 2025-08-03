@@ -1,7 +1,7 @@
 use byteorder::{LittleEndian, ReadBytesExt};
 use num_enum::TryFromPrimitive;
 use packet_serialize::{DeserializePacket, DeserializePacketError, SerializePacket};
-use serde::{de::IgnoredAny, Deserialize};
+use serde::Deserialize;
 
 use super::{player_update::CustomizationSlot, GamePacket, OpCode};
 
@@ -147,16 +147,11 @@ pub enum MarketData {
 
 #[derive(Clone, Deserialize, SerializePacket)]
 #[serde(deny_unknown_fields)]
-pub struct ItemStat {
-    #[serde(default)]
-    pub comment: IgnoredAny,
-}
+pub struct ItemStat {}
 
 #[derive(Clone, Deserialize, SerializePacket)]
 #[serde(deny_unknown_fields)]
 pub struct ItemAbility {
-    #[serde(default)]
-    pub comment: IgnoredAny,
     unknown1: u32,
     unknown2: u32,
     unknown3: u32,
@@ -169,8 +164,6 @@ pub struct ItemAbility {
 #[derive(Clone, Deserialize, SerializePacket)]
 #[serde(deny_unknown_fields)]
 pub struct ItemDefinition {
-    #[serde(default)]
-    pub comment: IgnoredAny,
     pub guid: u32,
     pub name_id: u32,
     pub description_id: u32,

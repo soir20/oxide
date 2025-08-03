@@ -14,7 +14,7 @@ use evalexpr::{context_map, eval_with_context, Value};
 use num_enum::TryFromPrimitive;
 use packet_serialize::DeserializePacket;
 use rand::{seq::SliceRandom, thread_rng};
-use serde::{de::IgnoredAny, Deserialize, Deserializer};
+use serde::{Deserialize, Deserializer};
 
 use crate::{
     game_server::{
@@ -142,8 +142,6 @@ impl PlayerMinigameStats {
 #[derive(Clone, Copy, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct StageLocator {
-    #[serde(default)]
-    pub comment: IgnoredAny,
     pub stage_group_guid: i32,
     pub stage_guid: i32,
 }
@@ -473,8 +471,6 @@ fn has_played_minigame_today(
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct MinigameChallengeConfig {
-    #[serde(default)]
-    pub comment: IgnoredAny,
     pub guid: i32,
     pub name_id: u32,
     pub description_id: u32,
@@ -563,8 +559,6 @@ impl MinigameChallengeConfig {
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct MinigameCampaignStageConfig {
-    #[serde(default)]
-    pub comment: IgnoredAny,
     pub guid: i32,
     pub name_id: u32,
     pub description_id: u32,
@@ -676,8 +670,6 @@ const fn default_matchmaking_timeout_millis() -> u32 {
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 struct MinigameStageGroupConfig {
-    #[serde(default)]
-    pub comment: IgnoredAny,
     pub guid: i32,
     pub name_id: u32,
     pub description_id: u32,
@@ -903,8 +895,6 @@ impl MinigameStageGroupConfig {
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 struct MinigamePortalEntryConfig {
-    #[serde(default)]
-    pub comment: IgnoredAny,
     pub guid: u32,
     pub name_id: u32,
     pub description_id: u32,
@@ -1007,8 +997,6 @@ impl MinigamePortalEntryConfig {
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 struct MinigamePortalCategoryConfig {
-    #[serde(default)]
-    pub comment: IgnoredAny,
     pub guid: u32,
     pub name_id: u32,
     pub icon_id: u32,

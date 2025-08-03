@@ -1,14 +1,14 @@
 ---
 daily_reset_utc_offset_seconds: 0
 categories:
-  - comment: Popular
-    guid: 1
+  # Popular
+  - guid: 1
     name_id: 51596
     icon_id: 5808
     sort_order: 1
     portal_entries: []
-  - comment: Action
-    guid: 2
+  # Action
+  - guid: 2
     name_id: 51597
     icon_id: 5805
     sort_order: 2
@@ -962,8 +962,8 @@ categories:
                 game_swf_name: AquaticAssault.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 168
-      - comment: Medium and Hard currently use Easy's ratio as a placeholder
-        guid: 11
+      # Medium and Hard currently use Easy's ratio as a placeholder
+      - guid: 11
         name_id: 6237
         description_id: 9755
         members_only: true
@@ -1083,8 +1083,8 @@ categories:
                 game_swf_name: TurretTactics.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 69.5
-  - comment: Puzzle
-    guid: 3
+  # Puzzle
+  - guid: 3
     name_id: 51598
     icon_id: 5809
     sort_order: 3
@@ -1131,8 +1131,8 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 129
               challenges:
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27100
+                # Use base level's credit ratio as a placeholder
+                - guid: 27100
                   name_id: 9050
                   description_id: 9135
                   min_players: 1
@@ -1144,8 +1144,8 @@ categories:
                     saber_strike_stage_id: 54
                   zone_template_guid: 200
                   score_to_credits_expression: x / 129
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27101
+                # Use base level's credit ratio as a placeholder
+                - guid: 27101
                   name_id: 9051
                   description_id: 9136
                   min_players: 1
@@ -1177,8 +1177,8 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 94
               challenges:
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27102
+                # Use base level's credit ratio as a placeholder
+                - guid: 27102
                   name_id: 9052
                   description_id: 9137
                   min_players: 1
@@ -1190,8 +1190,8 @@ categories:
                     saber_strike_stage_id: 56
                   zone_template_guid: 200
                   score_to_credits_expression: x / 94
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27103
+                # Use base level's credit ratio as a placeholder
+                - guid: 27103
                   name_id: 9053
                   description_id: 9138
                   min_players: 1
@@ -1223,8 +1223,8 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 160
               challenges:
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27104
+                # Use base level's credit ratio as a placeholder
+                - guid: 27104
                   name_id: 9054
                   description_id: 9138
                   min_players: 1
@@ -1236,8 +1236,8 @@ categories:
                     saber_strike_stage_id: 58
                   zone_template_guid: 200
                   score_to_credits_expression: x / 160
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27105
+                # Use base level's credit ratio as a placeholder
+                - guid: 27105
                   name_id: 9055
                   description_id: 9135
                   min_players: 1
@@ -1269,8 +1269,8 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 143
               challenges:
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27106
+                # Use base level's credit ratio as a placeholder
+                - guid: 27106
                   name_id: 9056
                   description_id: 9136
                   min_players: 1
@@ -1282,8 +1282,8 @@ categories:
                     saber_strike_stage_id: 60
                   zone_template_guid: 200
                   score_to_credits_expression: x / 143
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27107
+                # Use base level's credit ratio as a placeholder
+                - guid: 27107
                   name_id: 9057
                   description_id: 9138
                   min_players: 1
@@ -1315,8 +1315,8 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 157
               challenges:
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27108
+                # Use base level's credit ratio as a placeholder
+                - guid: 27108
                   name_id: 9058
                   description_id: 9136
                   min_players: 1
@@ -1328,8 +1328,8 @@ categories:
                     saber_strike_stage_id: 62
                   zone_template_guid: 200
                   score_to_credits_expression: x / 157
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27109
+                # Use base level's credit ratio as a placeholder
+                - guid: 27109
                   name_id: 9059
                   description_id: 9139
                   min_players: 1
@@ -1361,8 +1361,8 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 120
               challenges:
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27110
+                # Use base level's credit ratio as a placeholder
+                - guid: 27110
                   name_id: 9060
                   description_id: 9140
                   min_players: 1
@@ -1374,8 +1374,8 @@ categories:
                     saber_strike_stage_id: 64
                   zone_template_guid: 200
                   score_to_credits_expression: x / 120
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27111
+                # Use base level's credit ratio as a placeholder
+                - guid: 27111
                   name_id: 9061
                   description_id: 9135
                   min_players: 1
@@ -1407,8 +1407,8 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 244
               challenges:
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27112
+                # Use base level's credit ratio as a placeholder
+                - guid: 27112
                   name_id: 9062
                   description_id: 9140
                   min_players: 1
@@ -1420,8 +1420,8 @@ categories:
                     saber_strike_stage_id: 66
                   zone_template_guid: 200
                   score_to_credits_expression: x / 244
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27113
+                # Use base level's credit ratio as a placeholder
+                - guid: 27113
                   name_id: 9063
                   description_id: 9138
                   min_players: 1
@@ -1453,8 +1453,8 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 1148
               challenges:
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27114
+                # Use base level's credit ratio as a placeholder
+                - guid: 27114
                   name_id: 9064
                   description_id: 9139
                   min_players: 1
@@ -1466,8 +1466,8 @@ categories:
                     saber_strike_stage_id: 68
                   zone_template_guid: 200
                   score_to_credits_expression: x / 1148
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27115
+                # Use base level's credit ratio as a placeholder
+                - guid: 27115
                   name_id: 9065
                   description_id: 9142
                   min_players: 1
@@ -1499,8 +1499,8 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 1014
               challenges:
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27116
+                # Use base level's credit ratio as a placeholder
+                - guid: 27116
                   name_id: 9066
                   description_id: 9142
                   min_players: 1
@@ -1512,8 +1512,8 @@ categories:
                     saber_strike_stage_id: 134
                   zone_template_guid: 200
                   score_to_credits_expression: x / 1014
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27117
+                # Use base level's credit ratio as a placeholder
+                - guid: 27117
                   name_id: 9067
                   description_id: 9136
                   min_players: 1
@@ -1545,8 +1545,8 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 114
               challenges:
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27118
+                # Use base level's credit ratio as a placeholder
+                - guid: 27118
                   name_id: 9068
                   description_id: 9136
                   min_players: 1
@@ -1558,8 +1558,8 @@ categories:
                     saber_strike_stage_id: 71
                   zone_template_guid: 200
                   score_to_credits_expression: x / 114
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27119
+                # Use base level's credit ratio as a placeholder
+                - guid: 27119
                   name_id: 9069
                   description_id: 9137
                   min_players: 1
@@ -1591,8 +1591,8 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 93
               challenges:
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27120
+                # Use base level's credit ratio as a placeholder
+                - guid: 27120
                   name_id: 9070
                   description_id: 9135
                   min_players: 1
@@ -1604,8 +1604,8 @@ categories:
                     saber_strike_stage_id: 73
                   zone_template_guid: 200
                   score_to_credits_expression: x / 93
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27121
+                # Use base level's credit ratio as a placeholder
+                - guid: 27121
                   name_id: 9071
                   description_id: 9138
                   min_players: 1
@@ -1637,8 +1637,8 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 170
               challenges:
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27122
+                # Use base level's credit ratio as a placeholder
+                - guid: 27122
                   name_id: 9072
                   description_id: 9139
                   min_players: 1
@@ -1650,8 +1650,8 @@ categories:
                     saber_strike_stage_id: 75
                   zone_template_guid: 200
                   score_to_credits_expression: x / 170
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27123
+                # Use base level's credit ratio as a placeholder
+                - guid: 27123
                   name_id: 9073
                   description_id: 9135
                   min_players: 1
@@ -1683,8 +1683,8 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 144
               challenges:
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27124
+                # Use base level's credit ratio as a placeholder
+                - guid: 27124
                   name_id: 9074
                   description_id: 9137
                   min_players: 1
@@ -1696,8 +1696,8 @@ categories:
                     saber_strike_stage_id: 77
                   zone_template_guid: 200
                   score_to_credits_expression: x / 144
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27125
+                # Use base level's credit ratio as a placeholder
+                - guid: 27125
                   name_id: 9075
                   description_id: 9138
                   min_players: 1
@@ -1729,8 +1729,8 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 147
               challenges:
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27126
+                # Use base level's credit ratio as a placeholder
+                - guid: 27126
                   name_id: 9076
                   description_id: 9135
                   min_players: 1
@@ -1742,8 +1742,8 @@ categories:
                     saber_strike_stage_id: 79
                   zone_template_guid: 200
                   score_to_credits_expression: x / 147
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27127
+                # Use base level's credit ratio as a placeholder
+                - guid: 27127
                   name_id: 9077
                   description_id: 9139
                   min_players: 1
@@ -1775,8 +1775,8 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 237
               challenges:
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27128
+                # Use base level's credit ratio as a placeholder
+                - guid: 27128
                   name_id: 9078
                   description_id: 9141
                   min_players: 1
@@ -1788,8 +1788,8 @@ categories:
                     saber_strike_stage_id: 81
                   zone_template_guid: 200
                   score_to_credits_expression: x / 237
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27129
+                # Use base level's credit ratio as a placeholder
+                - guid: 27129
                   name_id: 9079
                   description_id: 9139
                   min_players: 1
@@ -1821,8 +1821,8 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 144
               challenges:
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27130
+                # Use base level's credit ratio as a placeholder
+                - guid: 27130
                   name_id: 9080
                   description_id: 9135
                   min_players: 1
@@ -1834,8 +1834,8 @@ categories:
                     saber_strike_stage_id: 83
                   zone_template_guid: 200
                   score_to_credits_expression: x / 144
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27131
+                # Use base level's credit ratio as a placeholder
+                - guid: 27131
                   name_id: 9081
                   description_id: 9137
                   min_players: 1
@@ -1867,8 +1867,8 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 141
               challenges:
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27132
+                # Use base level's credit ratio as a placeholder
+                - guid: 27132
                   name_id: 9082
                   description_id: 9141
                   min_players: 1
@@ -1880,8 +1880,8 @@ categories:
                     saber_strike_stage_id: 85
                   zone_template_guid: 200
                   score_to_credits_expression: x / 141
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27133
+                # Use base level's credit ratio as a placeholder
+                - guid: 27133
                   name_id: 9083
                   description_id: 9138
                   min_players: 1
@@ -1913,8 +1913,8 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 159
               challenges:
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27134
+                # Use base level's credit ratio as a placeholder
+                - guid: 27134
                   name_id: 9084
                   description_id: 9136
                   min_players: 1
@@ -1926,8 +1926,8 @@ categories:
                     saber_strike_stage_id: 137
                   zone_template_guid: 200
                   score_to_credits_expression: x / 159
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27135
+                # Use base level's credit ratio as a placeholder
+                - guid: 27135
                   name_id: 9085
                   description_id: 9137
                   min_players: 1
@@ -1959,8 +1959,8 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 140
               challenges:
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27136
+                # Use base level's credit ratio as a placeholder
+                - guid: 27136
                   name_id: 9086
                   description_id: 9139
                   min_players: 1
@@ -1972,8 +1972,8 @@ categories:
                     saber_strike_stage_id: 87
                   zone_template_guid: 200
                   score_to_credits_expression: x / 140
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27137
+                # Use base level's credit ratio as a placeholder
+                - guid: 27137
                   name_id: 9087
                   description_id: 9143
                   min_players: 1
@@ -2005,8 +2005,8 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 191
               challenges:
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27138
+                # Use base level's credit ratio as a placeholder
+                - guid: 27138
                   name_id: 9088
                   description_id: 9138
                   min_players: 1
@@ -2018,8 +2018,8 @@ categories:
                     saber_strike_stage_id: 89
                   zone_template_guid: 200
                   score_to_credits_expression: x / 191
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27139
+                # Use base level's credit ratio as a placeholder
+                - guid: 27139
                   name_id: 9089
                   description_id: 9137
                   min_players: 1
@@ -2051,8 +2051,8 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 116
               challenges:
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27140
+                # Use base level's credit ratio as a placeholder
+                - guid: 27140
                   name_id: 9090
                   description_id: 9137
                   min_players: 1
@@ -2064,8 +2064,8 @@ categories:
                     saber_strike_stage_id: 91
                   zone_template_guid: 200
                   score_to_credits_expression: x / 116
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27141
+                # Use base level's credit ratio as a placeholder
+                - guid: 27141
                   name_id: 9091
                   description_id: 9139
                   min_players: 1
@@ -2097,8 +2097,8 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 289
               challenges:
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27142
+                # Use base level's credit ratio as a placeholder
+                - guid: 27142
                   name_id: 9092
                   description_id: 9137
                   min_players: 1
@@ -2110,8 +2110,8 @@ categories:
                     saber_strike_stage_id: 93
                   zone_template_guid: 200
                   score_to_credits_expression: x / 289
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27143
+                # Use base level's credit ratio as a placeholder
+                - guid: 27143
                   name_id: 9093
                   description_id: 9136
                   min_players: 1
@@ -2143,8 +2143,8 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 214
               challenges:
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27144
+                # Use base level's credit ratio as a placeholder
+                - guid: 27144
                   name_id: 9094
                   description_id: 9135
                   min_players: 1
@@ -2156,8 +2156,8 @@ categories:
                     saber_strike_stage_id: 95
                   zone_template_guid: 200
                   score_to_credits_expression: x / 214
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27145
+                # Use base level's credit ratio as a placeholder
+                - guid: 27145
                   name_id: 9095
                   description_id: 9139
                   min_players: 1
@@ -2189,8 +2189,8 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 594
               challenges:
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27146
+                # Use base level's credit ratio as a placeholder
+                - guid: 27146
                   name_id: 9096
                   description_id: 9137
                   min_players: 1
@@ -2202,8 +2202,8 @@ categories:
                     saber_strike_stage_id: 97
                   zone_template_guid: 200
                   score_to_credits_expression: x / 594
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27147
+                # Use base level's credit ratio as a placeholder
+                - guid: 27147
                   name_id: 9097
                   description_id: 9138
                   min_players: 1
@@ -2235,8 +2235,8 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 432
               challenges:
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27148
+                # Use base level's credit ratio as a placeholder
+                - guid: 27148
                   name_id: 9098
                   description_id: 9139
                   min_players: 1
@@ -2248,8 +2248,8 @@ categories:
                     saber_strike_stage_id: 99
                   zone_template_guid: 200
                   score_to_credits_expression: x / 432
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27149
+                # Use base level's credit ratio as a placeholder
+                - guid: 27149
                   name_id: 9099
                   description_id: 9137
                   min_players: 1
@@ -2281,8 +2281,8 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 144
               challenges:
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27150
+                # Use base level's credit ratio as a placeholder
+                - guid: 27150
                   name_id: 9100
                   description_id: 9137
                   min_players: 1
@@ -2294,8 +2294,8 @@ categories:
                     saber_strike_stage_id: 101
                   zone_template_guid: 200
                   score_to_credits_expression: x / 144
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27151
+                # Use base level's credit ratio as a placeholder
+                - guid: 27151
                   name_id: 9101
                   description_id: 9138
                   min_players: 1
@@ -2327,8 +2327,8 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 173
               challenges:
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27152
+                # Use base level's credit ratio as a placeholder
+                - guid: 27152
                   name_id: 9102
                   description_id: 9136
                   min_players: 1
@@ -2340,8 +2340,8 @@ categories:
                     saber_strike_stage_id: 103
                   zone_template_guid: 200
                   score_to_credits_expression: x / 173
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27153
+                # Use base level's credit ratio as a placeholder
+                - guid: 27153
                   name_id: 9103
                   description_id: 9139
                   min_players: 1
@@ -2373,8 +2373,8 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 110
               challenges:
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27154
+                # Use base level's credit ratio as a placeholder
+                - guid: 27154
                   name_id: 9104
                   description_id: 9140
                   min_players: 1
@@ -2386,8 +2386,8 @@ categories:
                     saber_strike_stage_id: 105
                   zone_template_guid: 200
                   score_to_credits_expression: x / 110
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27155
+                # Use base level's credit ratio as a placeholder
+                - guid: 27155
                   name_id: 9105
                   description_id: 9138
                   min_players: 1
@@ -2399,8 +2399,8 @@ categories:
                     saber_strike_stage_id: 106
                   zone_template_guid: 200
                   score_to_credits_expression: x / 110
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27156
+                # Use base level's credit ratio as a placeholder
+                - guid: 27156
                   name_id: 9106
                   description_id: 9137
                   min_players: 1
@@ -2432,8 +2432,8 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 153
               challenges:
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27157
+                # Use base level's credit ratio as a placeholder
+                - guid: 27157
                   name_id: 9107
                   description_id: 9137
                   min_players: 1
@@ -2445,8 +2445,8 @@ categories:
                     saber_strike_stage_id: 108
                   zone_template_guid: 200
                   score_to_credits_expression: x / 153
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27158
+                # Use base level's credit ratio as a placeholder
+                - guid: 27158
                   name_id: 9108
                   description_id: 9135
                   min_players: 1
@@ -2458,8 +2458,8 @@ categories:
                     saber_strike_stage_id: 109
                   zone_template_guid: 200
                   score_to_credits_expression: x / 153
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27159
+                # Use base level's credit ratio as a placeholder
+                - guid: 27159
                   name_id: 9109
                   description_id: 9139
                   min_players: 1
@@ -2491,8 +2491,8 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 244
               challenges:
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27160
+                # Use base level's credit ratio as a placeholder
+                - guid: 27160
                   name_id: 9110
                   description_id: 9138
                   min_players: 1
@@ -2504,8 +2504,8 @@ categories:
                     saber_strike_stage_id: 111
                   zone_template_guid: 200
                   score_to_credits_expression: x / 244
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27161
+                # Use base level's credit ratio as a placeholder
+                - guid: 27161
                   name_id: 9111
                   description_id: 9139
                   min_players: 1
@@ -2517,8 +2517,8 @@ categories:
                     saber_strike_stage_id: 112
                   zone_template_guid: 200
                   score_to_credits_expression: x / 244
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27162
+                # Use base level's credit ratio as a placeholder
+                - guid: 27162
                   name_id: 9112
                   description_id: 9143
                   min_players: 1
@@ -2550,8 +2550,8 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 221
               challenges:
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27163
+                # Use base level's credit ratio as a placeholder
+                - guid: 27163
                   name_id: 9128
                   description_id: 9142
                   min_players: 1
@@ -2563,8 +2563,8 @@ categories:
                     saber_strike_stage_id: 142
                   zone_template_guid: 200
                   score_to_credits_expression: x / 221
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27164
+                # Use base level's credit ratio as a placeholder
+                - guid: 27164
                   name_id: 9114
                   description_id: 9139
                   min_players: 1
@@ -2576,8 +2576,8 @@ categories:
                     saber_strike_stage_id: 143
                   zone_template_guid: 200
                   score_to_credits_expression: x / 221
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27165
+                # Use base level's credit ratio as a placeholder
+                - guid: 27165
                   name_id: 9130
                   description_id: 9137
                   min_players: 1
@@ -2609,8 +2609,8 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 170
               challenges:
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27166
+                # Use base level's credit ratio as a placeholder
+                - guid: 27166
                   name_id: 9116
                   description_id: 9139
                   min_players: 1
@@ -2622,8 +2622,8 @@ categories:
                     saber_strike_stage_id: 117
                   zone_template_guid: 200
                   score_to_credits_expression: x / 170
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27167
+                # Use base level's credit ratio as a placeholder
+                - guid: 27167
                   name_id: 9117
                   description_id: 9135
                   min_players: 1
@@ -2635,8 +2635,8 @@ categories:
                     saber_strike_stage_id: 118
                   zone_template_guid: 200
                   score_to_credits_expression: x / 170
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27168
+                # Use base level's credit ratio as a placeholder
+                - guid: 27168
                   name_id: 9118
                   description_id: 9138
                   min_players: 1
@@ -2668,8 +2668,8 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 147
               challenges:
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27169
+                # Use base level's credit ratio as a placeholder
+                - guid: 27169
                   name_id: 9119
                   description_id: 9137
                   min_players: 1
@@ -2681,8 +2681,8 @@ categories:
                     saber_strike_stage_id: 120
                   zone_template_guid: 200
                   score_to_credits_expression: x / 147
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27170
+                # Use base level's credit ratio as a placeholder
+                - guid: 27170
                   name_id: 9120
                   description_id: 9143
                   min_players: 1
@@ -2694,8 +2694,8 @@ categories:
                     saber_strike_stage_id: 121
                   zone_template_guid: 200
                   score_to_credits_expression: x / 147
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27171
+                # Use base level's credit ratio as a placeholder
+                - guid: 27171
                   name_id: 9121
                   description_id: 9139
                   min_players: 1
@@ -2727,8 +2727,8 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 126
               challenges:
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27172
+                # Use base level's credit ratio as a placeholder
+                - guid: 27172
                   name_id: 9122
                   description_id: 9137
                   min_players: 1
@@ -2740,8 +2740,8 @@ categories:
                     saber_strike_stage_id: 123
                   zone_template_guid: 200
                   score_to_credits_expression: x / 126
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27173
+                # Use base level's credit ratio as a placeholder
+                - guid: 27173
                   name_id: 9123
                   description_id: 9138
                   min_players: 1
@@ -2753,8 +2753,8 @@ categories:
                     saber_strike_stage_id: 124
                   zone_template_guid: 200
                   score_to_credits_expression: x / 126
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27174
+                # Use base level's credit ratio as a placeholder
+                - guid: 27174
                   name_id: 9124
                   description_id: 9139
                   min_players: 1
@@ -2786,8 +2786,8 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 152
               challenges:
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27175
+                # Use base level's credit ratio as a placeholder
+                - guid: 27175
                   name_id: 9125
                   description_id: 9139
                   min_players: 1
@@ -2799,8 +2799,8 @@ categories:
                     saber_strike_stage_id: 126
                   zone_template_guid: 200
                   score_to_credits_expression: x / 152
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27176
+                # Use base level's credit ratio as a placeholder
+                - guid: 27176
                   name_id: 9126
                   description_id: 9137
                   min_players: 1
@@ -2812,8 +2812,8 @@ categories:
                     saber_strike_stage_id: 127
                   zone_template_guid: 200
                   score_to_credits_expression: x / 152
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27177
+                # Use base level's credit ratio as a placeholder
+                - guid: 27177
                   name_id: 9127
                   description_id: 9143
                   min_players: 1
@@ -2845,8 +2845,8 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 153
               challenges:
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27178
+                # Use base level's credit ratio as a placeholder
+                - guid: 27178
                   name_id: 9128
                   description_id: 9142
                   min_players: 1
@@ -2858,8 +2858,8 @@ categories:
                     saber_strike_stage_id: 129
                   zone_template_guid: 200
                   score_to_credits_expression: x / 153
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27179
+                # Use base level's credit ratio as a placeholder
+                - guid: 27179
                   name_id: 9129
                   description_id: 9138
                   min_players: 1
@@ -2871,8 +2871,8 @@ categories:
                     saber_strike_stage_id: 130
                   zone_template_guid: 200
                   score_to_credits_expression: x / 153
-                - comment: Use base level's credit ratio as a placeholder
-                  guid: 27180
+                # Use base level's credit ratio as a placeholder
+                - guid: 27180
                   name_id: 9130
                   description_id: 9137
                   min_players: 1
@@ -2977,7 +2977,7 @@ categories:
         sort_order: 17000
         tutorial_swf: HowtoInfiltration.swf
         stage_group:
-          comment: Levels 23-28 use level 22's credit ratio as a placeholder
+          # Levels 23-28 use level 22's credit ratio as a placeholder
           guid: 8
           name_id: 5557
           description_id: 14128
@@ -3611,7 +3611,7 @@ categories:
         sort_order: 19000
         tutorial_swf: HowtoDroidProgramming.swf
         stage_group:
-          comment: Levels 26-30 use level 25's credit ratio as a placeholder
+          # Levels 26-30 use level 25's credit ratio as a placeholder
           guid: 15
           name_id: 7133
           description_id: 11468
@@ -4617,14 +4617,14 @@ categories:
                 game_swf_name: startyper.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 81
-  - comment: Campaigns
-    guid: 4
+  # Campaigns
+  - guid: 4
     name_id: 51599
     icon_id: 5804
     sort_order: 4
     portal_entries: []
-  - comment: Dailies
-    guid: 5
+  # Dailies
+  - guid: 5
     name_id: 51600
     icon_id: 5806
     sort_order: 5

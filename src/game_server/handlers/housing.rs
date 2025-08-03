@@ -73,6 +73,7 @@ fn placed_fixture(
     }
 }
 
+#[allow(dead_code)]
 fn fixture_item_list(fixtures: &[PreviousFixture], house_guid: u64) -> Vec<u8> {
     let mut unknown1 = Vec::new();
     let mut unknown2 = Vec::new();

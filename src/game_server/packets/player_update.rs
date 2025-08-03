@@ -1,13 +1,14 @@
 use std::collections::BTreeMap;
 
 use packet_serialize::{DeserializePacket, SerializePacket};
-use serde::{de::IgnoredAny, Deserialize};
+use serde::Deserialize;
 
 use super::{
     item::{Attachment, BaseAttachmentGroup, ItemDefinition, WieldType},
     Effect, GamePacket, Name, OpCode, Pos, Rgba, Target,
 };
 
+#[allow(dead_code)]
 #[derive(Copy, Clone, Debug)]
 pub enum PlayerUpdateOpCode {
     AddPc = 0x1,
@@ -168,6 +169,7 @@ impl GamePacket for UpdateScale {
     const HEADER: Self::Header = PlayerUpdateOpCode::UpdateScale;
 }
 
+#[allow(dead_code)]
 #[derive(Copy, Clone, Debug)]
 pub enum NameplateImage {
     None = 0,
@@ -340,8 +342,6 @@ impl SerializePacket for CustomizationSlot {
 #[derive(Clone, Deserialize, SerializePacket)]
 #[serde(deny_unknown_fields)]
 pub struct Customization {
-    #[serde(default)]
-    pub comment: IgnoredAny,
     pub customization_slot: CustomizationSlot,
     pub customization_param1: String,
     pub customization_param2: u32,
@@ -689,6 +689,7 @@ pub struct Variable {
     pub unknown3: u32,
 }
 
+#[allow(dead_code)]
 #[derive(Copy, Clone, Debug)]
 pub enum Icon {
     None = 0,

@@ -141,6 +141,7 @@ fn write_ability_end(
     unknown12.serialize(buffer);
 }
 
+#[allow(dead_code)]
 #[derive(Clone)]
 pub enum BattleClassUnknown10 {
     None,

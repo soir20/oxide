@@ -1,6 +1,6 @@
 ---
-- comment: Primary Hilts
-  guid: 3
+# Primary Hilts
+- guid: 3
   unknown2: 0
   name_id: 0
   description_id: 0
@@ -143,8 +143,8 @@
       unknown: 0
     - guid: 70063
       unknown: 0
-- comment: Secondary Hilts
-  guid: 8
+# Secondary Hilts
+- guid: 8
   unknown2: 0
   name_id: 0
   description_id: 0
@@ -267,8 +267,8 @@
       unknown: 0
     - guid: 80063
       unknown: 0
-- comment: Primary Colors
-  guid: 4
+# Primary Colors
+- guid: 4
   unknown2: 0
   name_id: 0
   description_id: 0
@@ -311,8 +311,8 @@
       unknown: 0
     - guid: 60012
       unknown: 0
-- comment: Secondary Colors
-  guid: 149
+# Secondary Colors
+- guid: 149
   unknown2: 0
   name_id: 0
   description_id: 0
@@ -355,8 +355,8 @@
       unknown: 0
     - guid: 100012
       unknown: 0
-- comment: Primary Shapes
-  guid: 5
+# Primary Shapes
+- guid: 5
   unknown2: 0
   name_id: 0
   description_id: 0
@@ -413,8 +413,8 @@
       unknown: 0
     - guid: 50019
       unknown: 0
-- comment: Secondary Shapes
-  guid: 9
+# Secondary Shapes
+- guid: 9
   unknown2: 0
   name_id: 0
   description_id: 0
@@ -471,8 +471,8 @@
       unknown: 0
     - guid: 90019
       unknown: 0
-- comment: Hair Style
-  guid: 122
+# Hair Style
+- guid: 122
   unknown2: 0
   name_id: 0
   description_id: 0
@@ -727,8 +727,8 @@
       unknown: 0
     - guid: 130000
       unknown: 0
-- comment: Hair Color
-  guid: 123
+# Hair Color
+- guid: 123
   unknown2: 0
   name_id: 0
   description_id: 0
@@ -789,8 +789,8 @@
       unknown: 0
     - guid: 140000
       unknown: 0
-- comment: Eye Color
-  guid: 124
+# Eye Color
+- guid: 124
   unknown2: 0
   name_id: 0
   description_id: 0
@@ -833,8 +833,8 @@
       unknown: 0
     - guid: 150000
       unknown: 0
-- comment: Skin Tone
-  guid: 125
+# Skin Tone
+- guid: 125
   unknown2: 0
   name_id: 0
   description_id: 0
@@ -911,8 +911,8 @@
       unknown: 0
     - guid: 120000
       unknown: 0
-- comment: Face Design
-  guid: 126
+# Face Design
+- guid: 126
   unknown2: 0
   name_id: 0
   description_id: 0
@@ -1055,8 +1055,8 @@
       unknown: 0
     - guid: 170000
       unknown: 0
-- comment: Facial Hair
-  guid: 139
+# Facial Hair
+- guid: 139
   unknown2: 0
   name_id: 0
   description_id: 0
@@ -1103,8 +1103,8 @@
       unknown: 0
     - guid: 160000
       unknown: 0
-- comment: Species
-  guid: 127
+# Species
+- guid: 127
   unknown2: 0
   name_id: 0
   description_id: 0
@@ -1147,8 +1147,8 @@
       unknown: 0
     - guid: 180000
       unknown: 0
-- comment: Boosts
-  guid: 10000
+# Boosts
+- guid: 10000
   unknown2: 0
   name_id: 0
   description_id: 0

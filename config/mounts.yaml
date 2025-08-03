@@ -1,6 +1,6 @@
 ---
-- comment: AT-RT
-  id: 1
+# AT-RT
+- id: 1
   speed_multiplier: 1.5625
   jump_height_multiplier: 1
   gravity_multiplier: 1
@@ -10,8 +10,8 @@
   icon_set_id: 2487
   mount_composite_effect: 2696
   dismount_composite_effect: 2697
-- comment: AT-RT Snow Camo
-  id: 2
+# AT-RT Snow Camo
+- id: 2
   speed_multiplier: 1.5625
   jump_height_multiplier: 1
   gravity_multiplier: 1
@@ -21,8 +21,8 @@
   icon_set_id: 3041
   mount_composite_effect: 2696
   dismount_composite_effect: 2697
-- comment: BARC Green
-  id: 3
+# BARC Green
+- id: 3
   speed_multiplier: 1.5625
   jump_height_multiplier: 1
   gravity_multiplier: 1
@@ -32,8 +32,8 @@
   icon_set_id: 2695
   mount_composite_effect: 2755
   dismount_composite_effect: 2756
-- comment: BARC Red
-  id: 4
+# BARC Red
+- id: 4
   speed_multiplier: 1.5625
   jump_height_multiplier: 1
   gravity_multiplier: 1
@@ -43,8 +43,8 @@
   icon_set_id: 2696
   mount_composite_effect: 2755
   dismount_composite_effect: 2756
-- comment: BARC Blue
-  id: 5
+# BARC Blue
+- id: 5
   speed_multiplier: 1.5625
   jump_height_multiplier: 1
   gravity_multiplier: 1
@@ -54,8 +54,8 @@
   icon_set_id: 2697
   mount_composite_effect: 2755
   dismount_composite_effect: 2756
-- comment: Mando White
-  id: 6
+# Mando White
+- id: 6
   speed_multiplier: 1.5625
   jump_height_multiplier: 1
   gravity_multiplier: 1
@@ -65,8 +65,8 @@
   icon_set_id: 2920
   mount_composite_effect: 2797
   dismount_composite_effect: 2798
-- comment: Mando Purple
-  id: 7
+# Mando Purple
+- id: 7
   speed_multiplier: 1.5625
   jump_height_multiplier: 1
   gravity_multiplier: 1
@@ -76,8 +76,8 @@
   icon_set_id: 3068
   mount_composite_effect: 2797
   dismount_composite_effect: 2798
-- comment: Mando Camo
-  id: 8
+# Mando Camo
+- id: 8
   speed_multiplier: 1.5625
   jump_height_multiplier: 1
   gravity_multiplier: 1
@@ -87,8 +87,8 @@
   icon_set_id: 2954
   mount_composite_effect: 2797
   dismount_composite_effect: 2798
-- comment: Mando Blue
-  id: 9
+# Mando Blue
+- id: 9
   speed_multiplier: 1.5625
   jump_height_multiplier: 1
   gravity_multiplier: 1
@@ -98,8 +98,8 @@
   icon_set_id: 2920
   mount_composite_effect: 2797
   dismount_composite_effect: 2798
-- comment: FC20 Blood
-  id: 10
+# FC20 Blood
+- id: 10
   speed_multiplier: 1.5625
   jump_height_multiplier: 1
   gravity_multiplier: 1
@@ -109,8 +109,8 @@
   icon_set_id: 3043
   mount_composite_effect: 2815
   dismount_composite_effect: 2816
-- comment: FC20 Sith
-  id: 11
+# FC20 Sith
+- id: 11
   speed_multiplier: 1.5625
   jump_height_multiplier: 1
   gravity_multiplier: 1
@@ -120,8 +120,8 @@
   icon_set_id: 3039
   mount_composite_effect: 2815
   dismount_composite_effect: 2816
-- comment: Tauntaun
-  id: 12
+# Tauntaun
+- id: 12
   speed_multiplier: 1.5625
   jump_height_multiplier: 1
   gravity_multiplier: 1
@@ -131,8 +131,8 @@
   icon_set_id: 3040
   mount_composite_effect: 2820
   dismount_composite_effect: 2821
-- comment: Bantha
-  id: 13
+# Bantha
+- id: 13
   speed_multiplier: 0.5
   jump_height_multiplier: 1
   gravity_multiplier: 1
@@ -142,8 +142,8 @@
   icon_set_id: 3042
   mount_composite_effect: 2832
   dismount_composite_effect: 2833
-- comment: Narglatch Blue
-  id: 14
+# Narglatch Blue
+- id: 14
   speed_multiplier: 1.5625
   jump_height_multiplier: 1
   gravity_multiplier: 1
@@ -153,8 +153,8 @@
   icon_set_id: 3080
   mount_composite_effect: 2996
   dismount_composite_effect: 2997
-- comment: Narglatch Maroon
-  id: 15
+# Narglatch Maroon
+- id: 15
   speed_multiplier: 1.5625
   jump_height_multiplier: 1
   gravity_multiplier: 1
@@ -164,8 +164,8 @@
   icon_set_id: 3844
   mount_composite_effect: 2996
   dismount_composite_effect: 2997
-- comment: Narglatch Brown (Red Icon)
-  id: 16
+# Narglatch Brown (Red Icon)
+- id: 16
   speed_multiplier: 1.5625
   jump_height_multiplier: 1
   gravity_multiplier: 1
@@ -175,8 +175,8 @@
   icon_set_id: 2952
   mount_composite_effect: 2996
   dismount_composite_effect: 2997
-- comment: Narglatch Green
-  id: 17
+# Narglatch Green
+- id: 17
   speed_multiplier: 1.5625
   jump_height_multiplier: 1
   gravity_multiplier: 1
@@ -186,8 +186,8 @@
   icon_set_id: 3132
   mount_composite_effect: 2996
   dismount_composite_effect: 2997
-- comment: 74-Z Blue
-  id: 18
+# 74-Z Blue
+- id: 18
   speed_multiplier: 1.5625
   jump_height_multiplier: 1
   gravity_multiplier: 1
@@ -197,8 +197,8 @@
   icon_set_id: 3201
   mount_composite_effect: 2857
   dismount_composite_effect: 2858
-- comment: 74-Z Tan
-  id: 19
+# 74-Z Tan
+- id: 19
   speed_multiplier: 1.5625
   jump_height_multiplier: 1
   gravity_multiplier: 1
@@ -208,8 +208,8 @@
   icon_set_id: 3200
   mount_composite_effect: 2857
   dismount_composite_effect: 2858
-- comment: 74-Z White
-  id: 20
+# 74-Z White
+- id: 20
   speed_multiplier: 1.5625
   jump_height_multiplier: 1
   gravity_multiplier: 1
@@ -219,8 +219,8 @@
   icon_set_id: 3199
   mount_composite_effect: 2857
   dismount_composite_effect: 2858
-- comment: Zephyr Green
-  id: 21
+# Zephyr Green
+- id: 21
   speed_multiplier: 1.5625
   jump_height_multiplier: 1
   gravity_multiplier: 1
@@ -230,8 +230,8 @@
   icon_set_id: 3263
   mount_composite_effect: 2847
   dismount_composite_effect: 2848
-- comment: Zephyr Flame
-  id: 22
+# Zephyr Flame
+- id: 22
   speed_multiplier: 1.5625
   jump_height_multiplier: 1
   gravity_multiplier: 1
@@ -241,8 +241,8 @@
   icon_set_id: 3262
   mount_composite_effect: 2847
   dismount_composite_effect: 2848
-- comment: Zephyr Rust
-  id: 23
+# Zephyr Rust
+- id: 23
   speed_multiplier: 1.5625
   jump_height_multiplier: 1
   gravity_multiplier: 1
@@ -252,8 +252,8 @@
   icon_set_id: 3261
   mount_composite_effect: 2847
   dismount_composite_effect: 2848
-- comment: Starhawk Black
-  id: 24
+# Starhawk Black
+- id: 24
   speed_multiplier: 1.5625
   jump_height_multiplier: 1
   gravity_multiplier: 1
@@ -263,8 +263,8 @@
   icon_set_id: 3308
   mount_composite_effect: 2880
   dismount_composite_effect: 2882
-- comment: Starhawk Blue
-  id: 25
+# Starhawk Blue
+- id: 25
   speed_multiplier: 1.5625
   jump_height_multiplier: 1
   gravity_multiplier: 1
@@ -274,8 +274,8 @@
   icon_set_id: 3309
   mount_composite_effect: 2880
   dismount_composite_effect: 2882
-- comment: Starhawk Brown
-  id: 26
+# Starhawk Brown
+- id: 26
   speed_multiplier: 1.5625
   jump_height_multiplier: 1
   gravity_multiplier: 1
@@ -285,8 +285,8 @@
   icon_set_id: 3310
   mount_composite_effect: 2880
   dismount_composite_effect: 2882
-- comment: Tauntaun Holiday
-  id: 27
+# Tauntaun Holiday
+- id: 27
   speed_multiplier: 1.5625
   jump_height_multiplier: 1
   gravity_multiplier: 1
@@ -296,8 +296,8 @@
   icon_set_id: 3312
   mount_composite_effect: 2820
   dismount_composite_effect: 2821
-- comment: Rancor Brown
-  id: 28
+# Rancor Brown
+- id: 28
   speed_multiplier: 1.5625
   jump_height_multiplier: 1
   gravity_multiplier: 1
@@ -307,8 +307,8 @@
   icon_set_id: 2587
   mount_composite_effect: 2888
   dismount_composite_effect: 2889
-- comment: Rancor Zanbar
-  id: 29
+# Rancor Zanbar
+- id: 29
   speed_multiplier: 1.5625
   jump_height_multiplier: 1
   gravity_multiplier: 1
@@ -318,8 +318,8 @@
   icon_set_id: 3654
   mount_composite_effect: 2888
   dismount_composite_effect: 2889
-- comment: Grievous Speeder
-  id: 30
+# Grievous Speeder
+- id: 30
   speed_multiplier: 1.5625
   jump_height_multiplier: 1
   gravity_multiplier: 1
@@ -329,8 +329,8 @@
   icon_set_id: 3704
   mount_composite_effect: 2994
   dismount_composite_effect: 2995
-- comment: Brezak
-  id: 31
+# Brezak
+- id: 31
   speed_multiplier: 1.5625
   jump_height_multiplier: 2
   gravity_multiplier: 0.25
@@ -340,8 +340,8 @@
   icon_set_id: 3789
   mount_composite_effect: 3008
   dismount_composite_effect: 3009
-- comment: Brezak Green
-  id: 32
+# Brezak Green
+- id: 32
   speed_multiplier: 1.5625
   jump_height_multiplier: 2
   gravity_multiplier: 0.25
@@ -351,8 +351,8 @@
   icon_set_id: 3860
   mount_composite_effect: 3008
   dismount_composite_effect: 3009
-- comment: STAP
-  id: 33
+# STAP
+- id: 33
   speed_multiplier: 1.5625
   jump_height_multiplier: 1
   gravity_multiplier: 1
@@ -362,8 +362,8 @@
   icon_set_id: 3826
   mount_composite_effect: 3011
   dismount_composite_effect: 3012
-- comment: Fambaa
-  id: 34
+# Fambaa
+- id: 34
   speed_multiplier: 0.5
   jump_height_multiplier: 1
   gravity_multiplier: 1
