@@ -33,7 +33,7 @@ impl SerializePacket for MinigameOpCode {
     }
 }
 
-#[derive(Clone, SerializePacket, DeserializePacket)]
+#[derive(SerializePacket, DeserializePacket)]
 pub struct MinigameHeader {
     pub stage_guid: i32,
     pub sub_op_code: i32,
