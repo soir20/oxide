@@ -3036,13 +3036,6 @@ pub fn create_active_minigame_if_uncreated(
                     unknown27: 0,
                 },
             }),
-            GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: ExecuteScriptWithStringParams {
-                    script_name: "MinigameHowtoHandler.handleLoadingDone".to_string(),
-                    params: Vec::new(),
-                },
-            }),
         ],
     )])
 }
