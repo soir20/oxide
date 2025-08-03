@@ -3,7 +3,7 @@ use std::{collections::BTreeMap, fs::File, io::Cursor, path::Path};
 use byteorder::ReadBytesExt;
 use packet_serialize::DeserializePacket;
 use parking_lot::{RwLockReadGuard, RwLockWriteGuard};
-use serde::{de::IgnoredAny, Deserialize};
+use serde::Deserialize;
 
 use crate::{
     game_server::{
@@ -34,8 +34,6 @@ use super::{
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct MountConfig {
-    #[serde(default)]
-    pub comment: IgnoredAny,
     id: u32,
     speed_multiplier: f32,
     jump_height_multiplier: f32,

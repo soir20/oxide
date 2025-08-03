@@ -6,7 +6,7 @@ use std::{
 use enum_iterator::Sequence;
 use rand::thread_rng;
 use rand_distr::{Distribution, WeightedAliasIndex};
-use serde::{de::IgnoredAny, Deserialize};
+use serde::Deserialize;
 
 use crate::{
     game_server::{
@@ -129,8 +129,6 @@ pub enum SpawnedState {
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct BaseNpcConfig {
-    #[serde(default)]
-    pub comment: IgnoredAny,
     pub key: Option<String>,
     #[serde(default)]
     pub model_id: u32,
@@ -196,8 +194,6 @@ pub struct BaseNpc {
     pub name_offset_y: f32,
     pub name_offset_z: f32,
     pub enable_interact_popup: bool,
-    pub interact_radius: f32,
-    pub auto_interact_radius: Option<f32>,
     pub interact_popup_radius: Option<f32>,
     pub show_name: bool,
     pub visible: bool,
@@ -335,8 +331,6 @@ impl From<BaseNpcConfig> for BaseNpc {
             name_offset_y: value.name_offset_y,
             name_offset_z: value.name_offset_z,
             enable_interact_popup: value.enable_interact_popup,
-            interact_radius: value.interact_radius,
-            auto_interact_radius: value.auto_interact_radius,
             interact_popup_radius: value.interact_popup_radius,
             show_name: value.show_name,
             visible: value.visible,
@@ -351,8 +345,6 @@ impl From<BaseNpcConfig> for BaseNpc {
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct TickableStep {
-    #[serde(default)]
-    pub comment: IgnoredAny,
     pub speed: Option<f32>,
     pub new_pos_x: Option<f32>,
     pub new_pos_y: Option<f32>,
@@ -651,8 +643,6 @@ pub struct TickableProcedureReference {
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct TickableProcedureConfig {
-    #[serde(default)]
-    pub comment: IgnoredAny,
     #[serde(flatten)]
     pub reference: TickableProcedureReference,
     pub steps: Vec<TickableStep>,
@@ -946,8 +936,6 @@ impl TickableProcedureTracker {
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct AmbientNpcConfig {
-    #[serde(default)]
-    pub comment: IgnoredAny,
     #[serde(flatten)]
     pub base_npc: BaseNpcConfig,
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
@@ -1023,16 +1011,12 @@ impl From<AmbientNpcConfig> for AmbientNpc {
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct DoorConfig {
-    #[serde(default)]
-    pub comment: IgnoredAny,
     #[serde(flatten)]
     pub base_npc: BaseNpcConfig,
     pub destination_pos: Pos,
     pub destination_rot: Pos,
     #[serde(default)]
     pub destination_zone: DestinationZoneInstance,
-    #[serde(default = "default_true")]
-    pub update_previous_location_on_leave: bool,
 }
 
 #[derive(Clone)]
@@ -1041,7 +1025,6 @@ pub struct Door {
     pub destination_pos: Pos,
     pub destination_rot: Pos,
     pub destination_zone: DestinationZoneInstance,
-    pub update_previous_location_on_leave: bool,
 }
 
 impl Door {
@@ -1090,7 +1073,6 @@ impl From<DoorConfig> for Door {
             destination_pos: value.destination_pos,
             destination_rot: value.destination_rot,
             destination_zone: value.destination_zone,
-            update_previous_location_on_leave: value.update_previous_location_on_leave,
         }
     }
 }
@@ -1098,8 +1080,6 @@ impl From<DoorConfig> for Door {
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct TransportConfig {
-    #[serde(default)]
-    pub comment: IgnoredAny,
     #[serde(flatten)]
     pub base_npc: BaseNpcConfig,
     pub show_icon: bool,

@@ -83,7 +83,6 @@ pub enum LogLevel {
 pub enum ProcessPacketErrorType {
     ConstraintViolated,
     DeserializeError,
-    SerializeError,
     UnknownOpCode,
 }
 

@@ -351,7 +351,6 @@ impl GamePacket for UpdateActiveMinigameRewards {
     const HEADER: Self::Header = MinigameOpCode::UpdateActiveMinigameRewards;
 }
 
-#[allow(dead_code)]
 #[repr(i32)]
 #[derive(Copy, Clone, Default, Eq, PartialEq, TryFromPrimitive)]
 pub enum ScoreType {

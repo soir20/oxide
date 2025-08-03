@@ -135,18 +135,22 @@ pub trait GuidTableIndexer<'a, K, V: 'a, I1, I2: 'a = (), I3: 'a = (), I4: 'a = 
         self.keys_by_index1_range(range).next().is_some()
     }
 
+    #[allow(dead_code)]
     fn any_by_index2_range(&'a self, range: impl RangeBounds<I2>) -> bool {
         self.keys_by_index2_range(range).next().is_some()
     }
 
+    #[allow(dead_code)]
     fn any_by_index3_range(&'a self, range: impl RangeBounds<I3>) -> bool {
         self.keys_by_index3_range(range).next().is_some()
     }
 
+    #[allow(dead_code)]
     fn any_by_index4_range(&'a self, range: impl RangeBounds<I4>) -> bool {
         self.keys_by_index4_range(range).next().is_some()
     }
 
+    #[allow(dead_code)]
     fn any_by_index5_range(&'a self, range: impl RangeBounds<I5>) -> bool {
         self.keys_by_index5_range(range).next().is_some()
     }

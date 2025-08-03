@@ -8,7 +8,7 @@ use std::{
 use enum_iterator::all;
 use parking_lot::RwLockReadGuard;
 use rand::{seq::SliceRandom, thread_rng};
-use serde::{de::IgnoredAny, Deserialize};
+use serde::Deserialize;
 
 use crate::{
     game_server::{
@@ -63,8 +63,6 @@ const fn default_chunk_size() -> u16 {
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct PointOfInterestConfig {
-    #[serde(default)]
-    pub comment: IgnoredAny,
     pub guid: u32,
     pub pos: Pos,
     pub rot: Pos,
@@ -77,9 +75,6 @@ pub struct PointOfInterestConfig {
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 struct ZoneConfig {
-    #[serde(default)]
-    #[allow(dead_code)]
-    pub comment: IgnoredAny,
     guid: u8,
     max_players: u32,
     template_name: u32,

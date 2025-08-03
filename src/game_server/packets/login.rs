@@ -4,6 +4,7 @@ use crate::game_server::handlers::zone::PointOfInterestConfig;
 
 use super::{GamePacket, OpCode, Pos};
 
+#[allow(dead_code)]
 #[derive(DeserializePacket)]
 pub struct LoginRequest {
     pub ticket: String,
