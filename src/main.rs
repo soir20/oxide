@@ -708,13 +708,14 @@ fn spawn_minigame_daily_reset_thread(
     let game_server = game_server.clone();
 
     thread::spawn(move || loop {
+        thread::sleep(Duration::from_secs(
+            game_server.minigames().seconds_until_minigame_daily_reset() as u64,
+        ));
+
         let broadcasts = game_server.reset_daily_minigames();
         channel_manager
             .read()
             .broadcast(client_enqueue.clone(), broadcasts, &server_options);
-        thread::sleep(Duration::from_secs(
-            game_server.minigames().seconds_until_minigame_daily_reset() as u64,
-        ));
     });
 }
 

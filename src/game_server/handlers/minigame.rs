@@ -1209,7 +1209,7 @@ impl<'de> Deserialize<'de> for DailyResetOffset {
     fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
         let daily_reset_offset_seconds: i32 = Deserialize::deserialize(deserializer)?;
 
-        FixedOffset::west_opt(daily_reset_offset_seconds)
+        FixedOffset::east_opt(daily_reset_offset_seconds)
             .map(DailyResetOffset)
             .ok_or_else(|| {
                 serde::de::Error::custom(format!(
