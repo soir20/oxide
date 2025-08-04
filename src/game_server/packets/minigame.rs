@@ -40,6 +40,16 @@ pub struct MinigameHeader {
     pub stage_group_guid: i32,
 }
 
+impl Default for MinigameHeader {
+    fn default() -> Self {
+        Self {
+            stage_guid: -1,
+            sub_op_code: -1,
+            stage_group_guid: -1,
+        }
+    }
+}
+
 #[derive(SerializePacket, DeserializePacket)]
 pub struct MinigameStageDefinition {
     pub guid: i32,

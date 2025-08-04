@@ -9,7 +9,7 @@ use std::{
 };
 
 use byteorder::ReadBytesExt;
-use chrono::{DateTime, FixedOffset, NaiveTime, Utc};
+use chrono::{DateTime, FixedOffset, NaiveTime, Timelike, Utc};
 use evalexpr::{context_map, eval_with_context, Value};
 use num_enum::TryFromPrimitive;
 use packet_serialize::DeserializePacket;
@@ -1080,11 +1080,7 @@ impl MinigameDefinitions {
 
         (
             MinigameDefinitions {
-                header: MinigameHeader {
-                    stage_guid: -1,
-                    sub_op_code: -1,
-                    stage_group_guid: -1,
-                },
+                header: MinigameHeader::default(),
                 stages,
                 stage_groups,
                 portal_entries,
@@ -1201,7 +1197,7 @@ pub struct StageConfigRef<'a> {
 }
 
 #[derive(Clone)]
-pub struct DailyResetOffset(FixedOffset);
+pub struct DailyResetOffset(pub FixedOffset);
 
 impl Default for DailyResetOffset {
     fn default() -> Self {
@@ -1254,6 +1250,13 @@ impl From<DeserializableMinigameConfigs> for AllMinigameConfigs {
 }
 
 impl AllMinigameConfigs {
+    pub fn seconds_until_minigame_daily_reset(&self) -> u32 {
+        86400
+            - Utc::now()
+                .with_timezone(&self.daily_reset_offset.0)
+                .num_seconds_from_midnight()
+    }
+
     pub fn definitions(
         &self,
         minigame_stats: &PlayerMinigameStats,
@@ -1263,6 +1266,33 @@ impl AllMinigameConfigs {
             minigame_stats,
             &self.daily_reset_offset,
         )
+    }
+
+    pub fn update_dailies_for_player(
+        &self,
+        minigame_stats: &PlayerMinigameStats,
+    ) -> (Vec<MinigamePortalEntry>, Vec<UpdateDailyMinigame>) {
+        self.categories
+            .iter()
+            .flat_map(|category| {
+                category
+                    .portal_entries
+                    .iter()
+                    .filter_map(|portal_entry_config| {
+                        if portal_entry_config.daily_type.is_some() {
+                            let (portal_entry, daily, ..) = portal_entry_config.to_portal_entry(
+                                category.guid,
+                                minigame_stats,
+                                &self.daily_reset_offset,
+                            );
+
+                            daily.map(|(_, add_daily)| (portal_entry, add_daily.initial_state))
+                        } else {
+                            None
+                        }
+                    })
+            })
+            .collect()
     }
 
     pub fn portal_entry(
@@ -3250,11 +3280,7 @@ fn leave_active_minigame_single_player_if_any(
                     unknown1: true,
                     inner: MinigameDefinitionsUpdate {
                         definitions: MinigameDefinitions {
-                            header: MinigameHeader {
-                                stage_guid: -1,
-                                sub_op_code: -1,
-                                stage_group_guid: -1
-                            },
+                            header: MinigameHeader::default(),
                             stages: Vec::new(),
                             stage_groups: Vec::new(),
                             portal_entries: vec![portal_entry],

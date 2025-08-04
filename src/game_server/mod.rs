@@ -60,6 +60,7 @@ use packets::zone::PointOfInterestTeleportRequest;
 use packets::{GamePacket, OpCode};
 use rand::Rng;
 
+use crate::game_server::handlers::tick::reset_daily_minigames;
 use crate::ConfigError;
 use packet_serialize::{DeserializePacket, DeserializePacketError};
 
@@ -285,6 +286,10 @@ impl GameServer {
         minigame_group: MinigameMatchmakingGroup,
     ) -> Vec<Broadcast> {
         tick_minigame(self, now, minigame_group)
+    }
+
+    pub fn reset_daily_minigames(&self) -> Vec<Broadcast> {
+        reset_daily_minigames(self)
     }
 
     pub fn process_packet(
