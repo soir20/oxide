@@ -3,7 +3,15 @@ use std::time::{Duration, Instant};
 use crossbeam_channel::Sender;
 
 use crate::{
-    game_server::{handlers::guid::IndexedGuid, Broadcast, GameServer, TickableNpcSynchronization},
+    game_server::{
+        handlers::{character::CharacterType, guid::IndexedGuid},
+        packets::{
+            minigame::{MinigameDefinitions, MinigameDefinitionsUpdate, MinigameHeader},
+            tunnel::TunneledPacket,
+            GamePacket,
+        },
+        Broadcast, GameServer, TickableNpcSynchronization,
+    },
     info,
 };
 
@@ -289,4 +297,73 @@ pub fn tick_minigame(
             broadcasts
         },
     })
+}
+
+pub fn reset_daily_minigames(game_server: &GameServer) -> Vec<Broadcast> {
+    game_server
+        .lock_enforcer()
+        .read_characters(|characters_table_read_handle| {
+            let range = (
+                CharacterCategory::PlayerReady,
+                u64::MIN,
+                Character::MIN_CHUNK,
+            )
+                ..=(
+                    CharacterCategory::PlayerReady,
+                    u64::MAX,
+                    Character::MAX_CHUNK,
+                );
+            let ready_players: Vec<u64> = characters_table_read_handle
+                .keys_by_index1_range(range)
+                .collect();
+
+            CharacterLockRequest {
+                read_guids: ready_players,
+                write_guids: Vec::new(),
+                character_consumer: |_, characters_read, _, _| {
+                    let mut broadcasts = Vec::new();
+
+                    for (guid, character_read_handle) in characters_read.iter() {
+                        let CharacterType::Player(player) = &character_read_handle.stats.character_type else {
+                            info!("Tried to reset daily minigames for character {guid}, but they aren't a player");
+                            continue;
+                        };
+
+                        let player_guid = match shorten_player_guid(*guid) {
+                            Ok(player_guid) => player_guid,
+                            Err(err) => {
+                                info!("Tried to reset daily minigames for character {guid}, but their GUID couldn't be shortened: {err}");
+                                continue;
+                            },
+                        };
+
+                        let (portal_entries, daily_updates) = game_server.minigames().update_dailies_for_player(&player.minigame_stats);
+
+                        let mut packets = vec![GamePacket::serialize(&TunneledPacket {
+                            unknown1: true,
+                            inner: MinigameDefinitionsUpdate {
+                                definitions: MinigameDefinitions {
+                                    header: MinigameHeader::default(),
+                                    stages: Vec::new(),
+                                    stage_groups: Vec::new(),
+                                    portal_entries,
+                                    portal_categories: Vec::new()
+                                }
+                            },
+                        })];
+
+                        for daily_update in daily_updates {
+                            packets.push(GamePacket::serialize(&TunneledPacket {
+                                unknown1: true,
+                                inner: daily_update,
+                            }));
+                        }
+
+                        broadcasts.push(Broadcast::Single(player_guid, packets));
+                    }
+
+                    broadcasts
+                },
+            }
+        })
 }

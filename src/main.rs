@@ -182,6 +182,13 @@ async fn main() {
         &game_server_arc,
     );
 
+    spawn_minigame_daily_reset_thread(
+        &channel_manager_arc,
+        client_enqueue.clone(),
+        &server_options,
+        &game_server_arc,
+    );
+
     let cleanup_tick_dequeue = tick(Duration::from_millis(
         server_options.channel_cleanup_period_millis,
     ));
@@ -686,6 +693,29 @@ fn spawn_minigame_tick_threads(
                 .expect("Minigame tick done channel disconnected");
             done_signals += 1;
         }
+    });
+}
+
+fn spawn_minigame_daily_reset_thread(
+    channel_manager: &Arc<RwLock<ChannelManager>>,
+    client_enqueue: Sender<SocketAddr>,
+    server_options: &Arc<ServerOptions>,
+    game_server: &Arc<GameServer>,
+) {
+    let channel_manager = channel_manager.clone();
+    let client_enqueue = client_enqueue.clone();
+    let server_options = server_options.clone();
+    let game_server = game_server.clone();
+
+    thread::spawn(move || loop {
+        thread::sleep(Duration::from_secs(
+            game_server.minigames().seconds_until_minigame_daily_reset() as u64,
+        ));
+
+        let broadcasts = game_server.reset_daily_minigames();
+        channel_manager
+            .read()
+            .broadcast(client_enqueue.clone(), broadcasts, &server_options);
     });
 }
 
