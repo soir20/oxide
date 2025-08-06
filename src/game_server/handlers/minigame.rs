@@ -9,7 +9,7 @@ use std::{
 };
 
 use byteorder::ReadBytesExt;
-use chrono::{DateTime, FixedOffset, NaiveTime, Timelike, Utc};
+use chrono::{DateTime, Datelike, FixedOffset, IsoWeek, NaiveTime, Timelike, Utc};
 use evalexpr::{context_map, eval_with_context, Value};
 use num_enum::TryFromPrimitive;
 use packet_serialize::DeserializePacket;
@@ -71,8 +71,9 @@ pub enum MinigameBoost {
 
 #[derive(Clone)]
 pub struct PlayerStageStats {
-    pub last_completion: Option<DateTime<FixedOffset>>,
-    pub high_score: i32,
+    last_completion: Option<DateTime<FixedOffset>>,
+    completions_this_week: [u8; 7],
+    high_score: i32,
 }
 
 #[derive(Clone, Default)]
@@ -106,16 +107,37 @@ impl PlayerMinigameStats {
         Ok(*boosts_remaining)
     }
 
-    pub fn complete(&mut self, stage_guid: i32, score: i32) {
+    pub fn complete(&mut self, stage_guid: i32, score: i32, daily_reset_offset: &DailyResetOffset) {
+        // Storing a count for each day of the week is more space-efficient than storing a list of times.
+        // It could make the list slightly inaccurate if the reset time is changed, but that should be
+        // rare enough to be an acceptable tradeoff.
+        let now = Utc::now()
+            .fixed_offset()
+            .with_timezone(&daily_reset_offset.0);
+        let day_of_week = now.weekday().num_days_from_sunday() as usize;
         self.stage_guid_to_stats
             .entry(stage_guid)
             .and_modify(|entry| {
-                entry.last_completion = Some(Utc::now().fixed_offset());
+                if let Some(last_completion) = entry.last_completion {
+                    if last_completion.iso_week() != now.iso_week() {
+                        entry.completions_this_week = [0; 7];
+                    }
+                }
+
+                entry.last_completion = Some(now);
+                entry.completions_this_week[day_of_week] =
+                    entry.completions_this_week[day_of_week].saturating_add(1);
                 entry.high_score = score.max(entry.high_score);
             })
-            .or_insert_with(|| PlayerStageStats {
-                last_completion: Some(Utc::now().fixed_offset()),
-                high_score: score,
+            .or_insert_with(|| {
+                let mut completions_this_week = [0; 7];
+                completions_this_week[day_of_week] = 1;
+
+                PlayerStageStats {
+                    last_completion: Some(now),
+                    completions_this_week,
+                    high_score: score,
+                }
             });
     }
 
@@ -3164,6 +3186,7 @@ fn leave_active_minigame_single_player_if_any(
                 player.minigame_stats.complete(
                     minigame_status.group.stage_guid,
                     minigame_status.total_score,
+                    &game_server.minigames().daily_reset_offset
                 );
             }
 
