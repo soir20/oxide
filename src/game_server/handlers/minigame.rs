@@ -9,7 +9,7 @@ use std::{
 };
 
 use byteorder::ReadBytesExt;
-use chrono::{DateTime, Datelike, FixedOffset, IsoWeek, NaiveTime, Timelike, Utc};
+use chrono::{DateTime, Datelike, FixedOffset, NaiveTime, Timelike, Utc};
 use evalexpr::{context_map, eval_with_context, Value};
 use num_enum::TryFromPrimitive;
 use packet_serialize::DeserializePacket;
