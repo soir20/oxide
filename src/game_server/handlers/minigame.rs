@@ -3066,7 +3066,6 @@ fn handle_flash_payload(
             |minigame_status, _, _, _, _, _| {
                  match &mut minigame_status.type_data {
                     MinigameTypeData::DailySpin { game } => game.mark_player_ready(sender),
-                    MinigameTypeData::DailyHolocron { game } => game.mark_player_ready(sender),
                     _ => Err(ProcessPacketError::new(
                         ProcessPacketErrorType::ConstraintViolated,
                         format!(

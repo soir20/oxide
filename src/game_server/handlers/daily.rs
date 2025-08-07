@@ -261,10 +261,6 @@ impl DailySpinGame {
 #[derive(Clone, Debug)]
 enum DailyHolocronGameState {
     WaitingForConnection,
-    WaitingForPlayersReady {
-        completions_this_week: [u8; 7],
-        start_time: DateTime<FixedOffset>,
-    },
     WaitingForSelection {
         completions_this_week: [u8; 7],
         start_time: DateTime<FixedOffset>,
@@ -308,7 +304,7 @@ impl DailyHolocronGame {
 
         let completions_this_week = minigame_stats.completions_this_week(self.stage_guid);
         let now = Utc::now().with_timezone(&daily_reset_offset.0);
-        self.state = DailyHolocronGameState::WaitingForPlayersReady {
+        self.state = DailyHolocronGameState::WaitingForSelection {
             completions_this_week,
             start_time: now,
         };
@@ -375,28 +371,6 @@ impl DailyHolocronGame {
         }));
 
         Ok(vec![Broadcast::Single(sender, packets)])
-    }
-
-    pub fn mark_player_ready(&mut self, sender: u32) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        let DailyHolocronGameState::WaitingForPlayersReady {
-            completions_this_week,
-            start_time,
-        } = self.state
-        else {
-            return Err(ProcessPacketError::new(
-                ProcessPacketErrorType::ConstraintViolated,
-                format!(
-                    "Player {sender} sent a ready payload for Daily Holocron, but the game has already started ({self:?})"
-                ),
-            ));
-        };
-
-        self.state = DailyHolocronGameState::WaitingForSelection {
-            completions_this_week,
-            start_time,
-        };
-
-        Ok(Vec::new())
     }
 
     /*pub fn holocron(
