@@ -265,7 +265,10 @@ enum DailyHolocronGameState {
         completions_this_week: [u8; 7],
         start_time: DateTime<FixedOffset>,
     },
-    WaitingForSelection,
+    WaitingForSelection {
+        completions_this_week: [u8; 7],
+        start_time: DateTime<FixedOffset>,
+    },
     OpeningHolocron {
         reward: u16,
     },
@@ -375,19 +378,23 @@ impl DailyHolocronGame {
     }
 
     pub fn mark_player_ready(&mut self, sender: u32) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        if !matches!(
-            self.state,
-            DailyHolocronGameState::WaitingForPlayersReady { .. }
-        ) {
+        let DailyHolocronGameState::WaitingForPlayersReady {
+            completions_this_week,
+            start_time,
+        } = self.state
+        else {
             return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
                 format!(
                     "Player {sender} sent a ready payload for Daily Holocron, but the game has already started ({self:?})"
                 ),
             ));
-        }
+        };
 
-        self.state = DailyHolocronGameState::WaitingForSelection;
+        self.state = DailyHolocronGameState::WaitingForSelection {
+            completions_this_week,
+            start_time,
+        };
 
         Ok(Vec::new())
     }
