@@ -1,4 +1,4 @@
-use chrono::{Datelike, FixedOffset, Utc};
+use chrono::{DateTime, Datelike, FixedOffset, Utc};
 use rand::Rng;
 use rand_distr::{Distribution, WeightedAliasIndex};
 use serde::Deserialize;
@@ -263,7 +263,7 @@ enum DailyHolocronGameState {
     WaitingForConnection,
     WaitingForPlayersReady {
         completions_this_week: [u8; 7],
-        start_time: FixedOffset,
+        start_time: DateTime<FixedOffset>,
     },
     WaitingForSelection,
     OpeningHolocron {
@@ -289,7 +289,7 @@ impl DailyHolocronGame {
     }
 
     pub fn connect(
-        &self,
+        &mut self,
         sender: u32,
         minigame_stats: &PlayerMinigameStats,
         daily_reset_offset: &DailyResetOffset,
@@ -303,8 +303,13 @@ impl DailyHolocronGame {
             ));
         }
 
-        let now = Utc::now().with_timezone(&daily_reset_offset.0);
         let completions_this_week = minigame_stats.completions_this_week(self.stage_guid);
+        let now = Utc::now().with_timezone(&daily_reset_offset.0);
+        self.state = DailyHolocronGameState::WaitingForPlayersReady {
+            completions_this_week,
+            start_time: now,
+        };
+
         let current_day = now.weekday().num_days_from_sunday();
 
         let mut packets = vec![

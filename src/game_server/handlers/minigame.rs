@@ -67,6 +67,7 @@ use super::{
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum MinigameBoost {
     Spin,
+    Holocron,
 }
 
 #[derive(Clone)]
@@ -463,18 +464,21 @@ const GROUP_LINK_NAME: &str = "group";
 #[derive(Clone, Copy, Deserialize)]
 enum DailyGameType {
     Spin,
+    Holocron,
 }
 
 impl DailyGameType {
     pub fn key(&self) -> &str {
         match *self {
             DailyGameType::Spin => "Daily Wheel",
+            DailyGameType::Holocron => "Daily Holocron",
         }
     }
 
     pub fn boost(&self) -> MinigameBoost {
         match *self {
             DailyGameType::Spin => MinigameBoost::Spin,
+            DailyGameType::Holocron => MinigameBoost::Holocron,
         }
     }
 }
@@ -2763,7 +2767,7 @@ fn handle_flash_payload(
                     SharedMinigameTypeData::ForceConnection { game } => {
                         game.connect(sender, characters_table_read_handle)
                     }
-                    _ => match &minigame_status.type_data {
+                    _ => match &mut minigame_status.type_data {
                         MinigameTypeData::DailySpin { game } => game.connect(sender, minigame_stats),
                         MinigameTypeData::DailyHolocron { game } => game.connect(
                             sender,
