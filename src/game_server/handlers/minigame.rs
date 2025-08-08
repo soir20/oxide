@@ -3049,7 +3049,7 @@ fn handle_flash_payload(
                         Err(ProcessPacketError::new(
                             ProcessPacketErrorType::ConstraintViolated,
                             format!(
-                                "Expected 1 parameters in complete powerup animation payload, but only found {}",
+                                "Expected 1 parameter in complete powerup animation payload, but only found {}",
                                 parts.len().saturating_sub(1)
                             ),
                         ))
@@ -3128,17 +3128,28 @@ fn handle_flash_payload(
             game_server,
             &payload.header,
             |minigame_status, _, _, _, _, _| {
-                 match &mut minigame_status.type_data {
-                    MinigameTypeData::DailyHolocron { game } => game.select_holocron(
-                        sender,
-                        &mut minigame_status.total_score,
-                        &mut minigame_status.win_status,
-                        &mut minigame_status.score_entries,
-                    ),
-                    _ => Err(ProcessPacketError::new(
+                if parts.len() == 2 {
+                    let _: u8 = parts[1].parse()?;
+                    match &mut minigame_status.type_data {
+                        MinigameTypeData::DailyHolocron { game } => game.select_holocron(
+                            sender,
+                            &mut minigame_status.total_score,
+                            &mut minigame_status.win_status,
+                            &mut minigame_status.score_entries,
+                        ),
+                        _ => Err(ProcessPacketError::new(
+                            ProcessPacketErrorType::ConstraintViolated,
+                            format!(
+                                "Received pick holocron request for unexpected game from player {sender}"
+                            ),
+                        ))
+                    }
+                } else {
+                    Err(ProcessPacketError::new(
                         ProcessPacketErrorType::ConstraintViolated,
                         format!(
-                            "Received pick holocron request for unexpected game from player {sender}"
+                            "Expected 1 parameter in pick holocron request payload, but only found {}",
+                            parts.len().saturating_sub(1)
                         ),
                     ))
                 }
