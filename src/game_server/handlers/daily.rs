@@ -450,23 +450,23 @@ impl DailyHolocronGame {
         )])
     }
 
-    /*pub fn stop_holocron(
+    pub fn display_reward(
         &mut self,
         sender: u32,
         player_credits: &mut u32,
         game_awarded_credits: &mut u32,
         stage_config: &MinigameStageConfig,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        let DailyHolocronGameState::Holocronning { reward } = self.state else {
+        let DailyHolocronGameState::OpeningHolocron { reward } = self.state else {
             return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
                 format!(
-                    "Player {sender} sent a stop holocron request for Daily Holocron, but the game isn't holocronning ({self:?})"
+                    "Player {sender} sent a display reward for Daily Holocron, but they haven't picked a holocron ({self:?})"
                 ),
             ));
         };
 
-        let mut broadcasts = award_credits(
+        let broadcasts = award_credits(
             sender,
             player_credits,
             game_awarded_credits,
@@ -475,23 +475,8 @@ impl DailyHolocronGame {
         )?
         .0;
 
-        broadcasts.push(Broadcast::Single(
-            sender,
-            vec![GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: FlashPayload {
-                    header: MinigameHeader {
-                        stage_guid: self.stage_guid,
-                        sub_op_code: -1,
-                        stage_group_guid: self.stage_group_guid,
-                    },
-                    payload: format!("OnRewardInfoMsg\t0\t0\t{reward}\t0\t0\t0"),
-                },
-            })],
-        ));
-
-        self.state = DailyHolocronGameState::WaitingForHolocron;
+        self.state = DailyHolocronGameState::GameOver;
 
         Ok(broadcasts)
-    }*/
+    }
 }

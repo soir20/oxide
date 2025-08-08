@@ -3155,6 +3155,27 @@ fn handle_flash_payload(
                 }
             }
         ),
+        "OnRewardRequest" => handle_minigame_packet_write(
+            sender,
+            game_server,
+            &payload.header,
+            |minigame_status, _, player_credits, stage_config, _, _| {
+                 match &mut minigame_status.type_data {
+                    MinigameTypeData::DailyHolocron { game } => game.display_reward(
+                        sender,
+                        player_credits,
+                        &mut minigame_status.awarded_credits,
+                        &stage_config.stage_config
+                    ),
+                    _ => Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::ConstraintViolated,
+                        format!(
+                            "Received reward request for unexpected game from player {sender}"
+                        ),
+                    ))
+                }
+            }
+        ),
         _ => Err(ProcessPacketError::new(
             ProcessPacketErrorType::ConstraintViolated,
             format!(
