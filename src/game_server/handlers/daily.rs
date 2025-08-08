@@ -157,18 +157,18 @@ impl DailySpinGame {
         }
 
         match self.daily_game_playability {
-            DailyGamePlayability::NotYetPlayed { boost, time } => {
+            DailyGamePlayability::NotYetPlayed { boost, timestamp: time } => {
                 if minigame_stats.boosts_remaining(boost) == 0 {
-                    self.daily_game_playability = DailyGamePlayability::Unplayable { time };
+                    self.daily_game_playability = DailyGamePlayability::Unplayable { timestamp: time };
                 } else {
-                    self.daily_game_playability = DailyGamePlayability::OnlyWithBoosts { boost, time };
+                    self.daily_game_playability = DailyGamePlayability::OnlyWithBoosts { boost, timestamp: time };
                 }
             },
-            DailyGamePlayability::OnlyWithBoosts { boost, time } => {
+            DailyGamePlayability::OnlyWithBoosts { boost, timestamp: time } => {
                 if minigame_stats.use_boost(boost)? == 0 {
-                    self.daily_game_playability = DailyGamePlayability::Unplayable { time };
+                    self.daily_game_playability = DailyGamePlayability::Unplayable { timestamp: time };
                 } else {
-                    self.daily_game_playability = DailyGamePlayability::OnlyWithBoosts { boost, time };
+                    self.daily_game_playability = DailyGamePlayability::OnlyWithBoosts { boost, timestamp: time };
                 }
             },
             DailyGamePlayability::Unplayable { .. } => return Err(ProcessPacketError::new(
@@ -272,7 +272,7 @@ enum DailyHolocronGameState {
 #[derive(Clone, Debug)]
 pub struct DailyHolocronGame {
     state: DailyHolocronGameState,
-    time: DateTime<FixedOffset>,
+    timestamp: DateTime<FixedOffset>,
     stage_guid: i32,
     stage_group_guid: i32,
 }
@@ -285,7 +285,7 @@ impl DailyHolocronGame {
     ) -> Self {
         DailyHolocronGame {
             state: DailyHolocronGameState::WaitingForConnection,
-            time: daily_game_playability.time(),
+            timestamp: daily_game_playability.time(),
             stage_guid,
             stage_group_guid,
         }
@@ -310,7 +310,7 @@ impl DailyHolocronGame {
             completions_this_week,
         };
 
-        let current_day = self.time.weekday().num_days_from_sunday();
+        let current_day = self.timestamp.weekday().num_days_from_sunday();
 
         let mut packets = vec![
             GamePacket::serialize(&TunneledPacket {
@@ -411,13 +411,13 @@ impl DailyHolocronGame {
                 .into_iter()
                 .enumerate()
                 .take_while(|(index, _)| {
-                    *index < self.time.weekday().num_days_from_sunday() as usize
+                    *index < self.timestamp.weekday().num_days_from_sunday() as usize
                 })
                 .map(|(_, completions)| completions.min(4) as u16 * HOLOCRON_DAILY_BONUS)
                 .sum::<u16>();
 
         *game_score = reward as i32;
-        win_status.set_win_time(self.time);
+        win_status.set_win_time(self.timestamp);
         score_entries.push(ScoreEntry {
             entry_text: "".to_string(),
             icon_set_id: 0,

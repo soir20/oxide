@@ -495,23 +495,23 @@ impl DailyGameType {
 pub enum DailyGamePlayability {
     NotYetPlayed {
         boost: MinigameBoost,
-        time: DateTime<FixedOffset>,
+        timestamp: DateTime<FixedOffset>,
     },
     OnlyWithBoosts {
         boost: MinigameBoost,
-        time: DateTime<FixedOffset>,
+        timestamp: DateTime<FixedOffset>,
     },
     Unplayable {
-        time: DateTime<FixedOffset>,
+        timestamp: DateTime<FixedOffset>,
     },
 }
 
 impl DailyGamePlayability {
     pub fn time(&self) -> DateTime<FixedOffset> {
         match *self {
-            DailyGamePlayability::NotYetPlayed { time, .. } => time,
-            DailyGamePlayability::OnlyWithBoosts { time, .. } => time,
-            DailyGamePlayability::Unplayable { time, .. } => time,
+            DailyGamePlayability::NotYetPlayed { timestamp, .. } => timestamp,
+            DailyGamePlayability::OnlyWithBoosts { timestamp, .. } => timestamp,
+            DailyGamePlayability::Unplayable { timestamp, .. } => timestamp,
         }
     }
 }
@@ -993,15 +993,15 @@ impl MinigamePortalEntryConfig {
             let daily_game_playability = if !played_today {
                 DailyGamePlayability::NotYetPlayed {
                     boost: daily_type.boost(),
-                    time: now,
+                    timestamp: now,
                 }
             } else if minigame_stats.boosts_remaining(daily_type.boost()) > 0 {
                 DailyGamePlayability::OnlyWithBoosts {
                     boost: daily_type.boost(),
-                    time: now,
+                    timestamp: now,
                 }
             } else {
-                DailyGamePlayability::Unplayable { time: now }
+                DailyGamePlayability::Unplayable { timestamp: now }
             };
 
             let add_packet = AddDailyMinigame {
@@ -1968,7 +1968,7 @@ fn prepare_active_minigame_instance_for_player(
 
         let daily_game_playability = daily_settings.map(|(daily_game_playability, _)| daily_game_playability)
             .unwrap_or(DailyGamePlayability::Unplayable {
-                time: Utc::now().with_timezone(&game_server.minigames().daily_reset_offset.0),
+                timestamp: Utc::now().with_timezone(&game_server.minigames().daily_reset_offset.0),
             });
 
         minigame_status.type_data = stage_config.stage_config.minigame_type().to_type_data(
