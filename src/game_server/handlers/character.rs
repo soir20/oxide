@@ -3,7 +3,7 @@ use std::{
     time::{Duration, Instant},
 };
 
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, FixedOffset, Utc};
 use enum_iterator::Sequence;
 use rand::thread_rng;
 use rand_distr::{Distribution, WeightedAliasIndex};
@@ -1180,13 +1180,17 @@ pub struct BattleClass {
 }
 
 #[derive(Clone, Default)]
-pub struct MinigameWinStatus(Option<DateTime<Utc>>);
+pub struct MinigameWinStatus(pub Option<DateTime<FixedOffset>>);
 
 impl MinigameWinStatus {
     pub fn set_won(&mut self, won: bool) {
         if won {
-            self.0 = Some(Utc::now());
+            self.0 = Some(Utc::now().fixed_offset());
         }
+    }
+
+    pub fn set_win_time(&mut self, won_time: DateTime<FixedOffset>) {
+        self.0 = Some(won_time);
     }
 
     pub fn won(&self) -> bool {
