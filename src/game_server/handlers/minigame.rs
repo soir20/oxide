@@ -211,20 +211,24 @@ impl MinigameType {
         &self,
         stage_guid: i32,
         stage_group_guid: i32,
-        daily_game_playability: Option<DailyGamePlayability>,
+        daily_game_playability: DailyGamePlayability,
     ) -> MinigameTypeData {
         match self {
             MinigameType::Flash { game_type, .. } => match game_type {
                 FlashMinigameType::DailySpin { buckets: rewards } => MinigameTypeData::DailySpin {
                     game: Box::new(DailySpinGame::new(
                         rewards,
-                        daily_game_playability.unwrap_or(DailyGamePlayability::Unplayable),
+                        daily_game_playability,
                         stage_guid,
                         stage_group_guid,
                     )),
                 },
                 FlashMinigameType::DailyHolocron => MinigameTypeData::DailyHolocron {
-                    game: Box::new(DailyHolocronGame::new(stage_guid, stage_group_guid)),
+                    game: Box::new(DailyHolocronGame::new(
+                        daily_game_playability,
+                        stage_guid,
+                        stage_group_guid,
+                    )),
                 },
                 _ => MinigameTypeData::default(),
             },
@@ -489,19 +493,35 @@ impl DailyGameType {
 
 #[derive(Clone, Copy, Debug, PartialEq, PartialOrd)]
 pub enum DailyGamePlayability {
-    NotYetPlayed { boost: MinigameBoost },
-    OnlyWithBoosts { boost: MinigameBoost },
-    Unplayable,
+    NotYetPlayed {
+        boost: MinigameBoost,
+        time: DateTime<FixedOffset>,
+    },
+    OnlyWithBoosts {
+        boost: MinigameBoost,
+        time: DateTime<FixedOffset>,
+    },
+    Unplayable {
+        time: DateTime<FixedOffset>,
+    },
+}
+
+impl DailyGamePlayability {
+    pub fn time(&self) -> DateTime<FixedOffset> {
+        match *self {
+            DailyGamePlayability::NotYetPlayed { time, .. } => time,
+            DailyGamePlayability::OnlyWithBoosts { time, .. } => time,
+            DailyGamePlayability::Unplayable { time, .. } => time,
+        }
+    }
 }
 
 fn has_played_minigame_today(
-    daily_reset_offset: &DailyResetOffset,
+    now: DateTime<FixedOffset>,
     minigame_stats: &PlayerMinigameStats,
     stage_guid: i32,
 ) -> bool {
-    Utc::now()
-        .with_timezone(&daily_reset_offset.0)
-        .with_time(NaiveTime::MIN)
+    now.with_time(NaiveTime::MIN)
         .single()
         .and_then(|day_start| {
             minigame_stats
@@ -754,7 +774,7 @@ impl MinigameStageGroupConfig {
         &self,
         portal_entry_guid: u32,
         minigame_stats: &PlayerMinigameStats,
-        daily_reset_offset: &DailyResetOffset,
+        now: DateTime<FixedOffset>,
     ) -> (
         Vec<MinigameStageGroupDefinition>,
         Vec<MinigameStageDefinition>,
@@ -773,7 +793,7 @@ impl MinigameStageGroupConfig {
                         stage_group.to_stage_group_definition(
                             portal_entry_guid,
                             minigame_stats,
-                            daily_reset_offset,
+                            now,
                         );
                     stage_groups.append(&mut stage_group_definitions);
                     stages.append(&mut stage_definitions);
@@ -806,11 +826,7 @@ impl MinigameStageGroupConfig {
                         child_stage_group_definition_guid: 0,
                     });
                     group_played_today = group_played_today
-                        || has_played_minigame_today(
-                            daily_reset_offset,
-                            minigame_stats,
-                            stage.guid,
-                        );
+                        || has_played_minigame_today(now, minigame_stats, stage.guid);
 
                     stage.challenges.iter().for_each(|challenge| {
                         stages.push(challenge.to_stage_definition(portal_entry_guid, stage));
@@ -826,11 +842,7 @@ impl MinigameStageGroupConfig {
                             child_stage_group_definition_guid: 0,
                         });
                         group_played_today = group_played_today
-                            || has_played_minigame_today(
-                                daily_reset_offset,
-                                minigame_stats,
-                                challenge.guid,
-                            );
+                            || has_played_minigame_today(now, minigame_stats, challenge.guid);
                     });
                 }
             }
@@ -961,7 +973,7 @@ impl MinigamePortalEntryConfig {
         &self,
         portal_category_guid: u32,
         minigame_stats: &PlayerMinigameStats,
-        daily_reset_offset: &DailyResetOffset,
+        now: DateTime<FixedOffset>,
     ) -> (
         MinigamePortalEntry,
         Option<MinigamePortalEntryDailySettings>,
@@ -973,7 +985,7 @@ impl MinigamePortalEntryConfig {
 
         let (mut stage_group_definitions, mut stage_definitions, played_today) = self
             .stage_group
-            .to_stage_group_definition(self.guid, minigame_stats, daily_reset_offset);
+            .to_stage_group_definition(self.guid, minigame_stats, now);
         stage_groups.append(&mut stage_group_definitions);
         stages.append(&mut stage_definitions);
 
@@ -981,20 +993,22 @@ impl MinigamePortalEntryConfig {
             let daily_game_playability = if !played_today {
                 DailyGamePlayability::NotYetPlayed {
                     boost: daily_type.boost(),
+                    time: now,
                 }
             } else if minigame_stats.boosts_remaining(daily_type.boost()) > 0 {
                 DailyGamePlayability::OnlyWithBoosts {
                     boost: daily_type.boost(),
+                    time: now,
                 }
             } else {
-                DailyGamePlayability::Unplayable
+                DailyGamePlayability::Unplayable { time: now }
             };
 
             let add_packet = AddDailyMinigame {
                 initial_state: UpdateDailyMinigame {
                     guid: self.guid,
                     playthroughs_remaining: match daily_game_playability {
-                        DailyGamePlayability::Unplayable => 0,
+                        DailyGamePlayability::Unplayable { .. } => 0,
                         _ => 1,
                     },
                     consecutive_playthroughs_remaining: 0,
@@ -1018,7 +1032,9 @@ impl MinigamePortalEntryConfig {
                 is_flash: self.is_flash,
                 is_daily_game_locked: daily_settings
                     .as_ref()
-                    .map(|(playability, _)| *playability == DailyGamePlayability::Unplayable)
+                    .map(|(playability, _)| {
+                        matches!(playability, DailyGamePlayability::Unplayable { .. })
+                    })
                     .unwrap_or(false),
                 is_active: self.is_active,
                 param1: self.param1,
@@ -1064,13 +1080,15 @@ impl MinigamePortalCategoryConfig {
         let mut stage_groups = Vec::new();
         let mut stages = Vec::new();
 
+        let now = Utc::now().with_timezone(&daily_reset_offset.0);
+
         for entry in &self.portal_entries {
             let (
                 entry_definition,
                 possible_daily,
                 mut stage_group_definitions,
                 mut stage_definitions,
-            ) = entry.to_portal_entry(self.guid, minigame_stats, daily_reset_offset);
+            ) = entry.to_portal_entry(self.guid, minigame_stats, now);
             entries.push(entry_definition);
             if let Some((_, daily)) = possible_daily {
                 dailies.push(daily);
@@ -1315,6 +1333,8 @@ impl AllMinigameConfigs {
         &self,
         minigame_stats: &PlayerMinigameStats,
     ) -> (Vec<MinigamePortalEntry>, Vec<UpdateDailyMinigame>) {
+        let now = Utc::now().with_timezone(&self.daily_reset_offset.0);
+
         self.categories
             .iter()
             .flat_map(|category| {
@@ -1326,7 +1346,7 @@ impl AllMinigameConfigs {
                             let (portal_entry, daily, ..) = portal_entry_config.to_portal_entry(
                                 category.guid,
                                 minigame_stats,
-                                &self.daily_reset_offset,
+                                now,
                             );
 
                             daily.map(|(_, add_daily)| (portal_entry, add_daily.initial_state))
@@ -1346,17 +1366,16 @@ impl AllMinigameConfigs {
         MinigamePortalEntry,
         Option<(DailyGamePlayability, AddDailyMinigame)>,
     )> {
+        let now = Utc::now().with_timezone(&self.daily_reset_offset.0);
+
         self.categories.iter().find_map(|category| {
             category
                 .portal_entries
                 .iter()
                 .find_map(|portal_entry_config| {
                     if portal_entry_config.guid == portal_entry_guid {
-                        let (portal_entry, daily, ..) = portal_entry_config.to_portal_entry(
-                            category.guid,
-                            minigame_stats,
-                            &self.daily_reset_offset,
-                        );
+                        let (portal_entry, daily, ..) =
+                            portal_entry_config.to_portal_entry(category.guid, minigame_stats, now);
                         Some((portal_entry, daily))
                     } else {
                         None
@@ -1947,10 +1966,15 @@ fn prepare_active_minigame_instance_for_player(
             ));
         };
 
+        let daily_game_playability = daily_settings.map(|(daily_game_playability, _)| daily_game_playability)
+            .unwrap_or(DailyGamePlayability::Unplayable {
+                time: Utc::now().with_timezone(&game_server.minigames().daily_reset_offset.0),
+            });
+
         minigame_status.type_data = stage_config.stage_config.minigame_type().to_type_data(
             stage_guid,
             stage_group_guid,
-            daily_settings.map(|(daily_game_playability, _)| daily_game_playability)
+            daily_game_playability,
         );
         minigame_status.group.stage_group_guid = stage_group_guid;
         minigame_status.group.stage_guid = stage_guid;
@@ -2776,7 +2800,6 @@ fn handle_flash_payload(
                         MinigameTypeData::DailyHolocron { game } => game.connect(
                             sender,
                             minigame_stats,
-                            &game_server.minigames().daily_reset_offset
                         ),
                         _ => Err(ProcessPacketError::new(
                             ProcessPacketErrorType::ConstraintViolated,

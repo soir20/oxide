@@ -1,4 +1,4 @@
-use chrono::{DateTime, Datelike, FixedOffset, Utc};
+use chrono::{DateTime, Datelike, FixedOffset};
 use rand::Rng;
 use rand_distr::{Distribution, WeightedAliasIndex};
 use serde::Deserialize;
@@ -6,10 +6,7 @@ use serde::Deserialize;
 use crate::game_server::{
     handlers::{
         character::MinigameWinStatus,
-        minigame::{
-            award_credits, DailyGamePlayability, DailyResetOffset, MinigameStageConfig,
-            PlayerMinigameStats,
-        },
+        minigame::{award_credits, DailyGamePlayability, MinigameStageConfig, PlayerMinigameStats},
     },
     packets::{
         minigame::{FlashPayload, MinigameHeader, ScoreEntry, ScoreType},
@@ -78,13 +75,13 @@ impl DailySpinGame {
         }
 
         let total_spins = match self.daily_game_playability {
-            DailyGamePlayability::NotYetPlayed { boost } => {
+            DailyGamePlayability::NotYetPlayed { boost, .. } => {
                 minigame_stats.boosts_remaining(boost).saturating_add(1)
             }
-            DailyGamePlayability::OnlyWithBoosts { boost } => {
+            DailyGamePlayability::OnlyWithBoosts { boost, .. } => {
                 minigame_stats.boosts_remaining(boost)
             }
-            DailyGamePlayability::Unplayable => 0,
+            DailyGamePlayability::Unplayable { .. } => 0,
         };
 
         Ok(vec![Broadcast::Single(
@@ -160,21 +157,21 @@ impl DailySpinGame {
         }
 
         match self.daily_game_playability {
-            DailyGamePlayability::NotYetPlayed { boost } => {
+            DailyGamePlayability::NotYetPlayed { boost, time } => {
                 if minigame_stats.boosts_remaining(boost) == 0 {
-                    self.daily_game_playability = DailyGamePlayability::Unplayable;
+                    self.daily_game_playability = DailyGamePlayability::Unplayable { time };
                 } else {
-                    self.daily_game_playability = DailyGamePlayability::OnlyWithBoosts { boost };
+                    self.daily_game_playability = DailyGamePlayability::OnlyWithBoosts { boost, time };
                 }
             },
-            DailyGamePlayability::OnlyWithBoosts { boost } => {
+            DailyGamePlayability::OnlyWithBoosts { boost, time } => {
                 if minigame_stats.use_boost(boost)? == 0 {
-                    self.daily_game_playability = DailyGamePlayability::Unplayable;
+                    self.daily_game_playability = DailyGamePlayability::Unplayable { time };
                 } else {
-                    self.daily_game_playability = DailyGamePlayability::OnlyWithBoosts { boost };
+                    self.daily_game_playability = DailyGamePlayability::OnlyWithBoosts { boost, time };
                 }
             },
-            DailyGamePlayability::Unplayable => return Err(ProcessPacketError::new(
+            DailyGamePlayability::Unplayable { .. } => return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
                 format!(
                     "Player {sender} sent a spin request for Daily Spin, but it isn't playable as a daily game ({self:?})"
@@ -188,7 +185,7 @@ impl DailySpinGame {
         let reward = rng.gen_range(bucket.start..bucket.end);
 
         *game_score = reward as i32;
-        win_status.set_won(true);
+        win_status.set_win_time(self.daily_game_playability.time());
         score_entries.push(ScoreEntry {
             entry_text: "".to_string(),
             icon_set_id: 0,
@@ -267,27 +264,28 @@ const HOLOCRON_REWARDS: [u16; 6] = [100, 150, 200, 250, 300, 600];
 #[derive(Clone, Debug)]
 enum DailyHolocronGameState {
     WaitingForConnection,
-    WaitingForSelection {
-        completions_this_week: [u8; 7],
-        start_time: DateTime<FixedOffset>,
-    },
-    OpeningHolocron {
-        reward: u16,
-    },
+    WaitingForSelection { completions_this_week: [u8; 7] },
+    OpeningHolocron { reward: u16 },
     GameOver,
 }
 
 #[derive(Clone, Debug)]
 pub struct DailyHolocronGame {
     state: DailyHolocronGameState,
+    time: DateTime<FixedOffset>,
     stage_guid: i32,
     stage_group_guid: i32,
 }
 
 impl DailyHolocronGame {
-    pub fn new(stage_guid: i32, stage_group_guid: i32) -> Self {
+    pub fn new(
+        daily_game_playability: DailyGamePlayability,
+        stage_guid: i32,
+        stage_group_guid: i32,
+    ) -> Self {
         DailyHolocronGame {
             state: DailyHolocronGameState::WaitingForConnection,
+            time: daily_game_playability.time(),
             stage_guid,
             stage_group_guid,
         }
@@ -297,7 +295,6 @@ impl DailyHolocronGame {
         &mut self,
         sender: u32,
         minigame_stats: &PlayerMinigameStats,
-        daily_reset_offset: &DailyResetOffset,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         if !matches!(self.state, DailyHolocronGameState::WaitingForConnection) {
             return Err(ProcessPacketError::new(
@@ -309,13 +306,11 @@ impl DailyHolocronGame {
         }
 
         let completions_this_week = minigame_stats.completions_this_week(self.stage_guid);
-        let now = Utc::now().with_timezone(&daily_reset_offset.0);
         self.state = DailyHolocronGameState::WaitingForSelection {
             completions_this_week,
-            start_time: now,
         };
 
-        let current_day = now.weekday().num_days_from_sunday();
+        let current_day = self.time.weekday().num_days_from_sunday();
 
         let mut packets = vec![
             GamePacket::serialize(&TunneledPacket {
@@ -396,7 +391,6 @@ impl DailyHolocronGame {
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let DailyHolocronGameState::WaitingForSelection {
             completions_this_week,
-            start_time,
         } = self.state
         else {
             return Err(ProcessPacketError::new(
@@ -417,13 +411,13 @@ impl DailyHolocronGame {
                 .into_iter()
                 .enumerate()
                 .take_while(|(index, _)| {
-                    *index < start_time.weekday().num_days_from_sunday() as usize
+                    *index < self.time.weekday().num_days_from_sunday() as usize
                 })
                 .map(|(_, completions)| completions.min(4) as u16 * HOLOCRON_DAILY_BONUS)
                 .sum::<u16>();
 
         *game_score = reward as i32;
-        win_status.set_win_time(start_time);
+        win_status.set_win_time(self.time);
         score_entries.push(ScoreEntry {
             entry_text: "".to_string(),
             icon_set_id: 0,
