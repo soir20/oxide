@@ -1052,8 +1052,10 @@ impl FleetCommanderGame {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to remove player {player}, who is not playing this instance of Fleet Commander ({self:?})")));
         };
 
-        minigame_status.game_won = !self.player_states[player_index].lost()
-            && self.player_states[(player_index + 1) % 2].lost();
+        minigame_status.win_status.set_won(
+            !self.player_states[player_index].lost()
+                && self.player_states[(player_index + 1) % 2].lost(),
+        );
         minigame_status.total_score = self.player_states[player_index].score();
         minigame_status.score_entries.push(ScoreEntry {
             entry_text: "".to_string(),

@@ -3,6 +3,7 @@ use std::{
     time::{Duration, Instant},
 };
 
+use chrono::{DateTime, Utc};
 use enum_iterator::Sequence;
 use rand::thread_rng;
 use rand_distr::{Distribution, WeightedAliasIndex};
@@ -1178,12 +1179,27 @@ pub struct BattleClass {
     pub items: BTreeMap<EquipmentSlot, EquippedItem>,
 }
 
+#[derive(Clone, Default)]
+pub struct MinigameWinStatus(Option<DateTime<Utc>>);
+
+impl MinigameWinStatus {
+    pub fn set_won(&mut self, won: bool) {
+        if won {
+            self.0 = Some(Utc::now());
+        }
+    }
+
+    pub fn won(&self) -> bool {
+        self.0.is_some()
+    }
+}
+
 #[derive(Clone)]
 pub struct MinigameStatus {
     pub group: MinigameMatchmakingGroup,
     pub teleported_to_game: bool,
     pub game_created: bool,
-    pub game_won: bool,
+    pub win_status: MinigameWinStatus,
     pub score_entries: Vec<ScoreEntry>,
     pub total_score: i32,
     pub awarded_credits: u32,

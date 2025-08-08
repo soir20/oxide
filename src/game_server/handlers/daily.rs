@@ -4,9 +4,12 @@ use rand_distr::{Distribution, WeightedAliasIndex};
 use serde::Deserialize;
 
 use crate::game_server::{
-    handlers::minigame::{
-        award_credits, DailyGamePlayability, DailyResetOffset, MinigameStageConfig,
-        PlayerMinigameStats,
+    handlers::{
+        character::MinigameWinStatus,
+        minigame::{
+            award_credits, DailyGamePlayability, DailyResetOffset, MinigameStageConfig,
+            PlayerMinigameStats,
+        },
     },
     packets::{
         minigame::{FlashPayload, MinigameHeader, ScoreEntry, ScoreType},
@@ -143,7 +146,7 @@ impl DailySpinGame {
         &mut self,
         sender: u32,
         game_score: &mut i32,
-        game_won: &mut bool,
+        game_won: &mut MinigameWinStatus,
         score_entries: &mut Vec<ScoreEntry>,
         minigame_stats: &mut PlayerMinigameStats,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
@@ -185,7 +188,7 @@ impl DailySpinGame {
         let reward = rng.gen_range(bucket.start..bucket.end);
 
         *game_score = reward as i32;
-        *game_won = true;
+        game_won.set_won(true);
         score_entries.push(ScoreEntry {
             entry_text: "".to_string(),
             icon_set_id: 0,

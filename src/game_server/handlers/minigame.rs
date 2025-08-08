@@ -19,7 +19,7 @@ use serde::{Deserialize, Deserializer};
 use crate::{
     game_server::{
         handlers::{
-            character::MinigameStatus,
+            character::{MinigameStatus, MinigameWinStatus},
             daily::{DailyHolocronGame, DailySpinGame, DailySpinRewardBucket},
             fleet_commander::FleetCommanderGame,
             force_connection::ForceConnectionGame,
@@ -1753,7 +1753,7 @@ fn set_initial_minigame_status(
                 group,
                 teleported_to_game: false,
                 game_created: false,
-                game_won: false,
+                win_status: MinigameWinStatus::default(),
                 score_entries: Vec::new(),
                 total_score: 0,
                 awarded_credits: 0,
@@ -2547,7 +2547,7 @@ fn handle_flash_payload_game_result(
                 score_max: 0,
                 score_points: 0,
             });
-            minigame_status.game_won = won;
+            minigame_status.win_status.set_won(won);
 
             Ok(vec![Broadcast::Single(
                 sender,
@@ -3084,7 +3084,7 @@ fn handle_flash_payload(
                     MinigameTypeData::DailySpin { game } => game.spin(
                         sender,
                         &mut minigame_status.total_score,
-                        &mut minigame_status.game_won,
+                        &mut minigame_status.win_status,
                         &mut minigame_status.score_entries,
                         minigame_stats
                     ),
@@ -3309,7 +3309,7 @@ fn leave_active_minigame_single_player_if_any(
                 );
             }
 
-            if minigame_status.game_won {
+            if minigame_status.win_status.won() {
                 player.minigame_stats.complete(
                     minigame_status.group.stage_guid,
                     minigame_status.total_score,
@@ -3335,7 +3335,7 @@ fn leave_active_minigame_single_player_if_any(
                                 sub_op_code: -1,
                                 stage_group_guid: minigame_status.group.stage_group_guid,
                             },
-                            payload: if minigame_status.game_won {
+                            payload: if minigame_status.win_status.won() {
                                 "OnGameWonMsg".to_string()
                             } else {
                                 "OnGameLostMsg".to_string()
@@ -3395,7 +3395,7 @@ fn leave_active_minigame_single_player_if_any(
                                 sub_op_code: -1,
                                 stage_group_guid: minigame_status.group.stage_group_guid,
                             },
-                            won: minigame_status.game_won,
+                            won: minigame_status.win_status.won(),
                             unknown2: 0,
                             unknown3: 0,
                             unknown4: 0,
