@@ -3123,6 +3123,27 @@ fn handle_flash_payload(
             }
         ),
         "OnChangeWheelRequestMsg" => Ok(Vec::new()),
+        "OnPickHolocronRequest" => handle_minigame_packet_write(
+            sender,
+            game_server,
+            &payload.header,
+            |minigame_status, _, _, _, _, _| {
+                 match &mut minigame_status.type_data {
+                    MinigameTypeData::DailyHolocron { game } => game.select_holocron(
+                        sender,
+                        &mut minigame_status.total_score,
+                        &mut minigame_status.win_status,
+                        &mut minigame_status.score_entries,
+                    ),
+                    _ => Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::ConstraintViolated,
+                        format!(
+                            "Received pick holocron request for unexpected game from player {sender}"
+                        ),
+                    ))
+                }
+            }
+        ),
         _ => Err(ProcessPacketError::new(
             ProcessPacketErrorType::ConstraintViolated,
             format!(
