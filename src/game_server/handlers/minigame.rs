@@ -9,7 +9,7 @@ use std::{
 };
 
 use byteorder::ReadBytesExt;
-use chrono::{DateTime, FixedOffset, NaiveTime, Timelike, Utc};
+use chrono::{DateTime, Datelike, FixedOffset, NaiveTime, Timelike, Utc};
 use evalexpr::{context_map, eval_with_context, Value};
 use num_enum::TryFromPrimitive;
 use packet_serialize::DeserializePacket;
@@ -19,8 +19,8 @@ use serde::{Deserialize, Deserializer};
 use crate::{
     game_server::{
         handlers::{
-            character::MinigameStatus,
-            daily::{DailySpinGame, DailySpinRewardBucket},
+            character::{MinigameStatus, MinigameWinStatus},
+            daily::{DailyHolocronGame, DailySpinGame, DailySpinRewardBucket},
             fleet_commander::FleetCommanderGame,
             force_connection::ForceConnectionGame,
             lock_enforcer::CharacterTableReadHandle,
@@ -67,12 +67,14 @@ use super::{
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum MinigameBoost {
     Spin,
+    Holocron,
 }
 
 #[derive(Clone)]
 pub struct PlayerStageStats {
-    pub last_completion: Option<DateTime<FixedOffset>>,
-    pub high_score: i32,
+    last_completion: Option<DateTime<FixedOffset>>,
+    completions_this_week: [u8; 7],
+    high_score: i32,
 }
 
 #[derive(Clone, Default)]
@@ -106,17 +108,49 @@ impl PlayerMinigameStats {
         Ok(*boosts_remaining)
     }
 
-    pub fn complete(&mut self, stage_guid: i32, score: i32) {
+    pub fn complete(
+        &mut self,
+        stage_guid: i32,
+        score: i32,
+        win_time: DateTime<FixedOffset>,
+        daily_reset_offset: &DailyResetOffset,
+    ) {
+        // Storing a count for each day of the week is more space-efficient than storing a list of times.
+        // It could make the list slightly inaccurate if the reset time is changed, but that should be
+        // rare enough to be an acceptable tradeoff.
+        let win_time = win_time.with_timezone(&daily_reset_offset.0);
+        let day_of_week = win_time.weekday().num_days_from_sunday() as usize;
         self.stage_guid_to_stats
             .entry(stage_guid)
             .and_modify(|entry| {
-                entry.last_completion = Some(Utc::now().fixed_offset());
+                if let Some(last_completion) = entry.last_completion {
+                    if last_completion.iso_week() != win_time.iso_week() {
+                        entry.completions_this_week = [0; 7];
+                    }
+                }
+
+                entry.last_completion = Some(win_time);
+                entry.completions_this_week[day_of_week] =
+                    entry.completions_this_week[day_of_week].saturating_add(1);
                 entry.high_score = score.max(entry.high_score);
             })
-            .or_insert_with(|| PlayerStageStats {
-                last_completion: Some(Utc::now().fixed_offset()),
-                high_score: score,
+            .or_insert_with(|| {
+                let mut completions_this_week = [0; 7];
+                completions_this_week[day_of_week] = 1;
+
+                PlayerStageStats {
+                    last_completion: Some(win_time),
+                    completions_this_week,
+                    high_score: score,
+                }
             });
+    }
+
+    pub fn completions_this_week(&self, stage_guid: i32) -> [u8; 7] {
+        self.stage_guid_to_stats
+            .get(&stage_guid)
+            .map(|stats| stats.completions_this_week)
+            .unwrap_or_default()
     }
 
     pub fn last_completion_time(&self, stage_guid: i32) -> Option<DateTime<FixedOffset>> {
@@ -154,6 +188,7 @@ pub enum FlashMinigameType {
     DailySpin {
         buckets: Vec<DailySpinRewardBucket>,
     },
+    DailyHolocron,
     #[default]
     Simple,
 }
@@ -176,14 +211,21 @@ impl MinigameType {
         &self,
         stage_guid: i32,
         stage_group_guid: i32,
-        daily_game_playability: Option<DailyGamePlayability>,
+        daily_game_playability: DailyGamePlayability,
     ) -> MinigameTypeData {
         match self {
             MinigameType::Flash { game_type, .. } => match game_type {
                 FlashMinigameType::DailySpin { buckets: rewards } => MinigameTypeData::DailySpin {
                     game: Box::new(DailySpinGame::new(
                         rewards,
-                        daily_game_playability.unwrap_or(DailyGamePlayability::Unplayable),
+                        daily_game_playability,
+                        stage_guid,
+                        stage_group_guid,
+                    )),
+                },
+                FlashMinigameType::DailyHolocron => MinigameTypeData::DailyHolocron {
+                    game: Box::new(DailyHolocronGame::new(
+                        daily_game_playability,
                         stage_guid,
                         stage_group_guid,
                     )),
@@ -207,6 +249,9 @@ pub enum MinigameTypeData {
     },
     DailySpin {
         game: Box<DailySpinGame>,
+    },
+    DailyHolocron {
+        game: Box<DailyHolocronGame>,
     },
 }
 
@@ -332,8 +377,7 @@ impl SharedMinigameTypeData {
                         stage_group_guid,
                     )),
                 },
-                FlashMinigameType::DailySpin { .. } => SharedMinigameTypeData::default(),
-                FlashMinigameType::Simple => SharedMinigameTypeData::default(),
+                _ => SharedMinigameTypeData::default(),
             },
             MinigameType::SaberStrike { .. } => SharedMinigameTypeData::default(),
         }
@@ -428,37 +472,56 @@ const GROUP_LINK_NAME: &str = "group";
 #[derive(Clone, Copy, Deserialize)]
 enum DailyGameType {
     Spin,
+    Holocron,
 }
 
 impl DailyGameType {
     pub fn key(&self) -> &str {
         match *self {
             DailyGameType::Spin => "Daily Wheel",
+            DailyGameType::Holocron => "Daily Holocron",
         }
     }
 
     pub fn boost(&self) -> MinigameBoost {
         match *self {
             DailyGameType::Spin => MinigameBoost::Spin,
+            DailyGameType::Holocron => MinigameBoost::Holocron,
         }
     }
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, PartialOrd)]
 pub enum DailyGamePlayability {
-    NotYetPlayed { boost: MinigameBoost },
-    OnlyWithBoosts { boost: MinigameBoost },
-    Unplayable,
+    NotYetPlayed {
+        boost: MinigameBoost,
+        timestamp: DateTime<FixedOffset>,
+    },
+    OnlyWithBoosts {
+        boost: MinigameBoost,
+        timestamp: DateTime<FixedOffset>,
+    },
+    Unplayable {
+        timestamp: DateTime<FixedOffset>,
+    },
+}
+
+impl DailyGamePlayability {
+    pub fn time(&self) -> DateTime<FixedOffset> {
+        match *self {
+            DailyGamePlayability::NotYetPlayed { timestamp, .. } => timestamp,
+            DailyGamePlayability::OnlyWithBoosts { timestamp, .. } => timestamp,
+            DailyGamePlayability::Unplayable { timestamp, .. } => timestamp,
+        }
+    }
 }
 
 fn has_played_minigame_today(
-    daily_reset_offset: &DailyResetOffset,
+    now: DateTime<FixedOffset>,
     minigame_stats: &PlayerMinigameStats,
     stage_guid: i32,
 ) -> bool {
-    Utc::now()
-        .with_timezone(&daily_reset_offset.0)
-        .with_time(NaiveTime::MIN)
+    now.with_time(NaiveTime::MIN)
         .single()
         .and_then(|day_start| {
             minigame_stats
@@ -711,7 +774,7 @@ impl MinigameStageGroupConfig {
         &self,
         portal_entry_guid: u32,
         minigame_stats: &PlayerMinigameStats,
-        daily_reset_offset: &DailyResetOffset,
+        now: DateTime<FixedOffset>,
     ) -> (
         Vec<MinigameStageGroupDefinition>,
         Vec<MinigameStageDefinition>,
@@ -730,7 +793,7 @@ impl MinigameStageGroupConfig {
                         stage_group.to_stage_group_definition(
                             portal_entry_guid,
                             minigame_stats,
-                            daily_reset_offset,
+                            now,
                         );
                     stage_groups.append(&mut stage_group_definitions);
                     stages.append(&mut stage_definitions);
@@ -763,11 +826,7 @@ impl MinigameStageGroupConfig {
                         child_stage_group_definition_guid: 0,
                     });
                     group_played_today = group_played_today
-                        || has_played_minigame_today(
-                            daily_reset_offset,
-                            minigame_stats,
-                            stage.guid,
-                        );
+                        || has_played_minigame_today(now, minigame_stats, stage.guid);
 
                     stage.challenges.iter().for_each(|challenge| {
                         stages.push(challenge.to_stage_definition(portal_entry_guid, stage));
@@ -783,11 +842,7 @@ impl MinigameStageGroupConfig {
                             child_stage_group_definition_guid: 0,
                         });
                         group_played_today = group_played_today
-                            || has_played_minigame_today(
-                                daily_reset_offset,
-                                minigame_stats,
-                                challenge.guid,
-                            );
+                            || has_played_minigame_today(now, minigame_stats, challenge.guid);
                     });
                 }
             }
@@ -918,7 +973,7 @@ impl MinigamePortalEntryConfig {
         &self,
         portal_category_guid: u32,
         minigame_stats: &PlayerMinigameStats,
-        daily_reset_offset: &DailyResetOffset,
+        now: DateTime<FixedOffset>,
     ) -> (
         MinigamePortalEntry,
         Option<MinigamePortalEntryDailySettings>,
@@ -930,7 +985,7 @@ impl MinigamePortalEntryConfig {
 
         let (mut stage_group_definitions, mut stage_definitions, played_today) = self
             .stage_group
-            .to_stage_group_definition(self.guid, minigame_stats, daily_reset_offset);
+            .to_stage_group_definition(self.guid, minigame_stats, now);
         stage_groups.append(&mut stage_group_definitions);
         stages.append(&mut stage_definitions);
 
@@ -938,20 +993,22 @@ impl MinigamePortalEntryConfig {
             let daily_game_playability = if !played_today {
                 DailyGamePlayability::NotYetPlayed {
                     boost: daily_type.boost(),
+                    timestamp: now,
                 }
             } else if minigame_stats.boosts_remaining(daily_type.boost()) > 0 {
                 DailyGamePlayability::OnlyWithBoosts {
                     boost: daily_type.boost(),
+                    timestamp: now,
                 }
             } else {
-                DailyGamePlayability::Unplayable
+                DailyGamePlayability::Unplayable { timestamp: now }
             };
 
             let add_packet = AddDailyMinigame {
                 initial_state: UpdateDailyMinigame {
                     guid: self.guid,
                     playthroughs_remaining: match daily_game_playability {
-                        DailyGamePlayability::Unplayable => 0,
+                        DailyGamePlayability::Unplayable { .. } => 0,
                         _ => 1,
                     },
                     consecutive_playthroughs_remaining: 0,
@@ -975,7 +1032,9 @@ impl MinigamePortalEntryConfig {
                 is_flash: self.is_flash,
                 is_daily_game_locked: daily_settings
                     .as_ref()
-                    .map(|(playability, _)| *playability == DailyGamePlayability::Unplayable)
+                    .map(|(playability, _)| {
+                        matches!(playability, DailyGamePlayability::Unplayable { .. })
+                    })
                     .unwrap_or(false),
                 is_active: self.is_active,
                 param1: self.param1,
@@ -1021,13 +1080,15 @@ impl MinigamePortalCategoryConfig {
         let mut stage_groups = Vec::new();
         let mut stages = Vec::new();
 
+        let now = Utc::now().with_timezone(&daily_reset_offset.0);
+
         for entry in &self.portal_entries {
             let (
                 entry_definition,
                 possible_daily,
                 mut stage_group_definitions,
                 mut stage_definitions,
-            ) = entry.to_portal_entry(self.guid, minigame_stats, daily_reset_offset);
+            ) = entry.to_portal_entry(self.guid, minigame_stats, now);
             entries.push(entry_definition);
             if let Some((_, daily)) = possible_daily {
                 dailies.push(daily);
@@ -1272,6 +1333,8 @@ impl AllMinigameConfigs {
         &self,
         minigame_stats: &PlayerMinigameStats,
     ) -> (Vec<MinigamePortalEntry>, Vec<UpdateDailyMinigame>) {
+        let now = Utc::now().with_timezone(&self.daily_reset_offset.0);
+
         self.categories
             .iter()
             .flat_map(|category| {
@@ -1283,7 +1346,7 @@ impl AllMinigameConfigs {
                             let (portal_entry, daily, ..) = portal_entry_config.to_portal_entry(
                                 category.guid,
                                 minigame_stats,
-                                &self.daily_reset_offset,
+                                now,
                             );
 
                             daily.map(|(_, add_daily)| (portal_entry, add_daily.initial_state))
@@ -1303,17 +1366,16 @@ impl AllMinigameConfigs {
         MinigamePortalEntry,
         Option<(DailyGamePlayability, AddDailyMinigame)>,
     )> {
+        let now = Utc::now().with_timezone(&self.daily_reset_offset.0);
+
         self.categories.iter().find_map(|category| {
             category
                 .portal_entries
                 .iter()
                 .find_map(|portal_entry_config| {
                     if portal_entry_config.guid == portal_entry_guid {
-                        let (portal_entry, daily, ..) = portal_entry_config.to_portal_entry(
-                            category.guid,
-                            minigame_stats,
-                            &self.daily_reset_offset,
-                        );
+                        let (portal_entry, daily, ..) =
+                            portal_entry_config.to_portal_entry(category.guid, minigame_stats, now);
                         Some((portal_entry, daily))
                     } else {
                         None
@@ -1714,7 +1776,7 @@ fn set_initial_minigame_status(
                 group,
                 teleported_to_game: false,
                 game_created: false,
-                game_won: false,
+                win_status: MinigameWinStatus::default(),
                 score_entries: Vec::new(),
                 total_score: 0,
                 awarded_credits: 0,
@@ -1862,14 +1924,20 @@ fn prepare_active_minigame_instance_for_player(
 
         let CharacterType::Player(player) = &mut character_write_handle.stats.character_type
         else {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {member_guid} tried to create an active minigame, but their character isn't a player")));
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!("Player {member_guid} tried to create an active minigame, but their character isn't a player")
+            ));
         };
 
         if !game_server
             .minigames()
             .stage_unlocked(stage_group_guid, stage_guid, player)
         {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {member_guid} tried to create an active minigame for a stage {stage_guid} they haven't unlocked")));
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!("Player {member_guid} tried to create an active minigame for a stage {stage_guid} they haven't unlocked")
+            ));
         }
 
         let (portal_entry, daily_settings) = game_server.minigames()
@@ -1892,10 +1960,22 @@ fn prepare_active_minigame_instance_for_player(
         }
 
         let Some(minigame_status) = &mut player.minigame_status else {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {member_guid} tried to create an active minigame, but their minigame status is not set")));
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!("Player {member_guid} tried to create an active minigame, but their minigame status is not set")
+            ));
         };
 
-        minigame_status.type_data = stage_config.stage_config.minigame_type().to_type_data(stage_guid, stage_group_guid, daily_settings.map(|(daily_game_playability, _)| daily_game_playability));
+        let daily_game_playability = daily_settings.map(|(daily_game_playability, _)| daily_game_playability)
+            .unwrap_or(DailyGamePlayability::Unplayable {
+                timestamp: Utc::now().with_timezone(&game_server.minigames().daily_reset_offset.0),
+            });
+
+        minigame_status.type_data = stage_config.stage_config.minigame_type().to_type_data(
+            stage_guid,
+            stage_group_guid,
+            daily_game_playability,
+        );
         minigame_status.group.stage_group_guid = stage_group_guid;
         minigame_status.group.stage_guid = stage_guid;
 
@@ -2093,25 +2173,52 @@ fn handle_request_start_active_minigame(
         write_guids: Vec::new(),
         character_consumer: |_, characters_read, _, minigame_data_lock_enforcer| {
             let Some(character_read_handle) = characters_read.get(&player_guid(sender)) else {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {sender} requested to start an active minigame")));
+                return Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!("Unknown player {sender} requested to start an active minigame")
+                ));
             };
 
             let CharacterType::Player(player) = &character_read_handle.stats.character_type else {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} requested to start an active minigame, but their character isn't a player")));
+                return Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!("Player {sender} requested to start an active minigame, but their character isn't a player")
+                ));
             };
 
             let Some(minigame_status) = &player.minigame_status else {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} requested to start an active minigame (stage {}), but they aren't in an active minigame", request.header.stage_guid)));
+                return Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Player {sender} requested to start an active minigame (stage {}), but they aren't in an active minigame",
+                        request.header.stage_guid
+                    )
+                ));
             };
 
             if request.header.stage_guid != minigame_status.group.stage_guid {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} requested to start an active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", request.header.stage_guid, minigame_status.group.stage_group_guid, minigame_status.group.stage_guid)));
+                return Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Player {sender} requested to start an active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})",
+                        request.header.stage_guid,
+                        minigame_status.group.stage_group_guid,
+                        minigame_status.group.stage_guid
+                    )
+                ));
             };
 
             let mut packets = Vec::new();
 
             let Some(StageConfigRef {stage_config, ..}) = game_server.minigames().stage_config(minigame_status.group.stage_group_guid, minigame_status.group.stage_guid) else {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} requested to start active minigame with stage config {} (stage group {}) that does not exist", minigame_status.group.stage_guid, minigame_status.group.stage_group_guid)));
+                return Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Player {sender} requested to start active minigame with stage config {} (stage group {}) that does not exist",
+                        minigame_status.group.stage_guid,
+                        minigame_status.group.stage_group_guid
+                    )
+                ));
             };
 
             minigame_data_lock_enforcer.read_minigame_data(|_| MinigameDataLockRequest {
@@ -2119,7 +2226,13 @@ fn handle_request_start_active_minigame(
                 write_guids: vec![minigame_status.group],
                 minigame_data_consumer: |_, _, mut minigame_data_write, _| {
                     let Some(shared_minigame_data) = minigame_data_write.get_mut(&minigame_status.group) else {
-                        return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unable to find shared minigame data for group {:?} when starting minigame for player {sender}", minigame_status.group)));
+                        return Err(ProcessPacketError::new(
+                            ProcessPacketErrorType::ConstraintViolated,
+                            format!(
+                                "Unable to find shared minigame data for group {:?} when starting minigame for player {sender}",
+                                minigame_status.group
+                            )
+                        ));
                     };
 
                     if let MinigameReadiness::InitialPlayersLoading(players, first_player_load_time) = &mut shared_minigame_data.readiness {
@@ -2273,17 +2386,38 @@ pub fn handle_minigame_packet_write<T: Default>(
             };
 
             let Some(minigame_status) = &mut player.minigame_status else {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process packet for {sender}'s active minigame (stage {}), but they aren't in an active minigame", header.stage_guid)));
+                return Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Tried to process packet for {sender}'s active minigame (stage {}), but they aren't in an active minigame",
+                        header.stage_guid
+                    )
+                ));
             };
 
             if header.stage_guid != minigame_status.group.stage_guid {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process packet for {sender}'s active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", header.stage_guid, minigame_status.group.stage_group_guid, minigame_status.group.stage_guid)));
+                return Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Tried to process packet for {sender}'s active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})",
+                        header.stage_guid,
+                        minigame_status.group.stage_group_guid,
+                        minigame_status.group.stage_guid
+                    )
+                ));
             };
 
             let Some(stage_config_ref) = game_server
                 .minigames()
                 .stage_config(minigame_status.group.stage_group_guid, minigame_status.group.stage_guid) else {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process packet for {sender}'s active minigame with stage config {} (stage group {}) that does not exist", minigame_status.group.stage_guid, minigame_status.group.stage_group_guid)));
+                return Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Tried to process packet for {sender}'s active minigame with stage config {} (stage group {}) that does not exist",
+                        minigame_status.group.stage_guid,
+                        minigame_status.group.stage_group_guid
+                    )
+                ));
             };
 
             minigame_data_lock_enforcer.read_minigame_data(|_| MinigameDataLockRequest {
@@ -2291,7 +2425,14 @@ pub fn handle_minigame_packet_write<T: Default>(
                 write_guids: vec![minigame_status.group],
                 minigame_data_consumer: |_, _, mut minigame_data_write, _| {
                     let Some(shared_minigame_data) = minigame_data_write.get_mut(&minigame_status.group) else {
-                        return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process packet for {sender}'s active minigame with stage config {} (stage group {}) that is missing shared minigame data", minigame_status.group.stage_guid, minigame_status.group.stage_group_guid)))
+                        return Err(ProcessPacketError::new(
+                            ProcessPacketErrorType::ConstraintViolated,
+                            format!(
+                                "Tried to process packet for {sender}'s active minigame with stage config {} (stage group {}) that is missing shared minigame data",
+                                minigame_status.group.stage_guid,
+                                minigame_status.group.stage_group_guid
+                            )
+                        ));
                     };
 
                     func(minigame_status, &mut player.minigame_stats, &mut player.credits, stage_config_ref, shared_minigame_data, characters_table_read_handle)
@@ -2332,17 +2473,38 @@ fn handle_flash_payload_read_only<T: Default>(
             };
 
             let Some(minigame_status) = &player.minigame_status else {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process Flash payload for {sender}'s active minigame (stage {}), but they aren't in an active minigame", header.stage_guid)));
+                return Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Tried to process Flash payload for {sender}'s active minigame (stage {}), but they aren't in an active minigame",
+                        header.stage_guid
+                    )
+                ));
             };
 
             if header.stage_guid != minigame_status.group.stage_guid {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process Flash payload for {sender}'s active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})", header.stage_guid, minigame_status.group.stage_group_guid, minigame_status.group.stage_guid)));
+                return Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Tried to process Flash payload for {sender}'s active minigame (stage {}), but they're in a different minigame (stage group {}, stage {})",
+                        header.stage_guid,
+                        minigame_status.group.stage_group_guid,
+                        minigame_status.group.stage_guid
+                    )
+                ));
             }
 
             let Some(stage_config_ref) = game_server
                 .minigames()
                 .stage_config(minigame_status.group.stage_group_guid, minigame_status.group.stage_guid) else {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process Flash payload for {sender}'s active minigame with stage config {} (stage group {}) that does not exist", minigame_status.group.stage_guid, minigame_status.group.stage_group_guid)));
+                return Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Tried to process Flash payload for {sender}'s active minigame with stage config {} (stage group {}) that does not exist",
+                        minigame_status.group.stage_guid,
+                        minigame_status.group.stage_group_guid
+                    )
+                ));
             };
 
             minigame_data_lock_enforcer.read_minigame_data(|_| MinigameDataLockRequest {
@@ -2350,7 +2512,14 @@ fn handle_flash_payload_read_only<T: Default>(
                 write_guids: Vec::new(),
                 minigame_data_consumer: |_, minigame_data_read, _, _| {
                     let Some(shared_minigame_data) = minigame_data_read.get(&minigame_status.group) else {
-                        return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to process Flash payload for {sender}'s active minigame with stage config {} (stage group {}) that is missing shared minigame data", minigame_status.group.stage_guid, minigame_status.group.stage_group_guid)))
+                        return Err(ProcessPacketError::new(
+                            ProcessPacketErrorType::ConstraintViolated,
+                            format!(
+                                "Tried to process Flash payload for {sender}'s active minigame with stage config {} (stage group {}) that is missing shared minigame data",
+                                minigame_status.group.stage_guid,
+                                minigame_status.group.stage_group_guid
+                            )
+                        ));
                     };
 
                     func(minigame_status, stage_config_ref, shared_minigame_data)
@@ -2385,7 +2554,10 @@ fn handle_flash_payload_game_result(
             let MinigameReadiness::Ready(previous_time, possible_resume_time) =
                 shared_minigame_data.readiness
             else {
-                return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} sent a Flash game result payload (won: {won}) for a game that isn't ready yet")));
+                return Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!("Player {sender} sent a Flash game result payload (won: {won}) for a game that isn't ready yet")
+                ));
             };
 
             let now = Instant::now();
@@ -2403,7 +2575,7 @@ fn handle_flash_payload_game_result(
                 score_max: 0,
                 score_points: 0,
             });
-            minigame_status.game_won = won;
+            minigame_status.win_status.set_won(won);
 
             Ok(vec![Broadcast::Single(
                 sender,
@@ -2623,8 +2795,12 @@ fn handle_flash_payload(
                     SharedMinigameTypeData::ForceConnection { game } => {
                         game.connect(sender, characters_table_read_handle)
                     }
-                    _ => match &minigame_status.type_data {
+                    _ => match &mut minigame_status.type_data {
                         MinigameTypeData::DailySpin { game } => game.connect(sender, minigame_stats),
+                        MinigameTypeData::DailyHolocron { game } => game.connect(
+                            sender,
+                            minigame_stats,
+                        ),
                         _ => Err(ProcessPacketError::new(
                             ProcessPacketErrorType::ConstraintViolated,
                             format!(
@@ -2896,7 +3072,7 @@ fn handle_flash_payload(
                         Err(ProcessPacketError::new(
                             ProcessPacketErrorType::ConstraintViolated,
                             format!(
-                                "Expected 1 parameters in complete powerup animation payload, but only found {}",
+                                "Expected 1 parameter in complete powerup animation payload, but only found {}",
                                 parts.len().saturating_sub(1)
                             ),
                         ))
@@ -2935,7 +3111,7 @@ fn handle_flash_payload(
                     MinigameTypeData::DailySpin { game } => game.spin(
                         sender,
                         &mut minigame_status.total_score,
-                        &mut minigame_status.game_won,
+                        &mut minigame_status.win_status,
                         &mut minigame_status.score_entries,
                         minigame_stats
                     ),
@@ -2970,6 +3146,59 @@ fn handle_flash_payload(
             }
         ),
         "OnChangeWheelRequestMsg" => Ok(Vec::new()),
+        "OnPickHolocronRequest" => handle_minigame_packet_write(
+            sender,
+            game_server,
+            &payload.header,
+            |minigame_status, _, _, _, _, _| {
+                if parts.len() == 2 {
+                    let _: u8 = parts[1].parse()?;
+                    match &mut minigame_status.type_data {
+                        MinigameTypeData::DailyHolocron { game } => game.select_holocron(
+                            sender,
+                            &mut minigame_status.total_score,
+                            &mut minigame_status.win_status,
+                            &mut minigame_status.score_entries,
+                        ),
+                        _ => Err(ProcessPacketError::new(
+                            ProcessPacketErrorType::ConstraintViolated,
+                            format!(
+                                "Received pick holocron request for unexpected game from player {sender}"
+                            ),
+                        ))
+                    }
+                } else {
+                    Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::ConstraintViolated,
+                        format!(
+                            "Expected 1 parameter in pick holocron request payload, but only found {}",
+                            parts.len().saturating_sub(1)
+                        ),
+                    ))
+                }
+            }
+        ),
+        "OnRewardRequest" => handle_minigame_packet_write(
+            sender,
+            game_server,
+            &payload.header,
+            |minigame_status, _, player_credits, stage_config, _, _| {
+                 match &mut minigame_status.type_data {
+                    MinigameTypeData::DailyHolocron { game } => game.display_reward(
+                        sender,
+                        player_credits,
+                        &mut minigame_status.awarded_credits,
+                        &stage_config.stage_config
+                    ),
+                    _ => Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::ConstraintViolated,
+                        format!(
+                            "Received reward request for unexpected game from player {sender}"
+                        ),
+                    ))
+                }
+            }
+        ),
         _ => Err(ProcessPacketError::new(
             ProcessPacketErrorType::ConstraintViolated,
             format!(
@@ -3160,10 +3389,12 @@ fn leave_active_minigame_single_player_if_any(
                 );
             }
 
-            if minigame_status.game_won {
+            if let Some(win_time) = minigame_status.win_status.0 {
                 player.minigame_stats.complete(
                     minigame_status.group.stage_guid,
                     minigame_status.total_score,
+                    win_time,
+                    &game_server.minigames().daily_reset_offset
                 );
             }
 
@@ -3185,7 +3416,7 @@ fn leave_active_minigame_single_player_if_any(
                                 sub_op_code: -1,
                                 stage_group_guid: minigame_status.group.stage_group_guid,
                             },
-                            payload: if minigame_status.game_won {
+                            payload: if minigame_status.win_status.won() {
                                 "OnGameWonMsg".to_string()
                             } else {
                                 "OnGameLostMsg".to_string()
@@ -3245,7 +3476,7 @@ fn leave_active_minigame_single_player_if_any(
                                 sub_op_code: -1,
                                 stage_group_guid: minigame_status.group.stage_group_guid,
                             },
-                            won: minigame_status.game_won,
+                            won: minigame_status.win_status.won(),
                             unknown2: 0,
                             unknown3: 0,
                             unknown4: 0,
@@ -3513,11 +3744,25 @@ pub fn leave_active_minigame_if_any(
         .minigames()
         .stage_config(group.stage_group_guid, group.stage_guid)
     else {
-        return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to end target {target:?}'s active minigame with stage config {} (stage group {}) that does not exist", group.stage_guid, group.stage_group_guid)));
+        return Err(ProcessPacketError::new(
+            ProcessPacketErrorType::ConstraintViolated,
+            format!(
+                "Tried to end target {target:?}'s active minigame with stage config {} (stage group {}) that does not exist",
+                group.stage_guid,
+                group.stage_group_guid
+            )
+        ));
     };
 
     let Some(shared_minigame_data) = minigame_data_table_write_handle.get(group) else {
-        return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to end target {target:?}'s active minigame with shared minigame data {} (stage group {}) that does not exist", group.stage_guid, group.stage_group_guid)));
+        return Err(ProcessPacketError::new(
+            ProcessPacketErrorType::ConstraintViolated,
+            format!(
+                "Tried to end target {target:?}'s active minigame with shared minigame data {} (stage group {}) that does not exist",
+                group.stage_guid,
+                group.stage_group_guid
+            )
+        ));
     };
     let mut minigame_data_write_handle = shared_minigame_data.write();
     let is_matchmaking = minigame_data_write_handle.readiness == MinigameReadiness::Matchmaking;
@@ -3583,7 +3828,11 @@ pub fn leave_active_minigame_if_any(
             // Don't error for this player if there's an issue with another player
             match other_player_leave_result {
                 Ok(mut leave_broadcasts) => broadcasts.append(&mut leave_broadcasts),
-                Err(err) => info!("Unable to remove other player {} from minigame (stage group {}, stage {}) that does not have enough players: {}", member_guid, group.stage_group_guid, group.stage_guid, err),
+                Err(err) => info!(
+                    "Unable to remove other player {member_guid} from minigame (stage group {}, stage {}) that does not have enough players: {err}",
+                    group.stage_group_guid,
+                    group.stage_guid
+                ),
             }
         }
 

@@ -955,7 +955,9 @@ impl ForceConnectionGame {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to remove player {player}, who is not playing this instance of Force Connection ({self:?})")));
         };
 
-        minigame_status.game_won = self.matches[player_index] >= MATCHES_TO_WIN;
+        minigame_status
+            .win_status
+            .set_won(self.matches[player_index] >= MATCHES_TO_WIN);
         minigame_status.total_score = self.score[player_index];
         minigame_status.score_entries.push(ScoreEntry {
             entry_text: "".to_string(),

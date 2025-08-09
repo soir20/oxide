@@ -1,10 +1,12 @@
+use chrono::{DateTime, Datelike, FixedOffset};
 use rand::Rng;
 use rand_distr::{Distribution, WeightedAliasIndex};
 use serde::Deserialize;
 
 use crate::game_server::{
-    handlers::minigame::{
-        award_credits, DailyGamePlayability, MinigameStageConfig, PlayerMinigameStats,
+    handlers::{
+        character::MinigameWinStatus,
+        minigame::{award_credits, DailyGamePlayability, MinigameStageConfig, PlayerMinigameStats},
     },
     packets::{
         minigame::{FlashPayload, MinigameHeader, ScoreEntry, ScoreType},
@@ -73,13 +75,13 @@ impl DailySpinGame {
         }
 
         let total_spins = match self.daily_game_playability {
-            DailyGamePlayability::NotYetPlayed { boost } => {
+            DailyGamePlayability::NotYetPlayed { boost, .. } => {
                 minigame_stats.boosts_remaining(boost).saturating_add(1)
             }
-            DailyGamePlayability::OnlyWithBoosts { boost } => {
+            DailyGamePlayability::OnlyWithBoosts { boost, .. } => {
                 minigame_stats.boosts_remaining(boost)
             }
-            DailyGamePlayability::Unplayable => 0,
+            DailyGamePlayability::Unplayable { .. } => 0,
         };
 
         Ok(vec![Broadcast::Single(
@@ -141,7 +143,7 @@ impl DailySpinGame {
         &mut self,
         sender: u32,
         game_score: &mut i32,
-        game_won: &mut bool,
+        win_status: &mut MinigameWinStatus,
         score_entries: &mut Vec<ScoreEntry>,
         minigame_stats: &mut PlayerMinigameStats,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
@@ -155,21 +157,21 @@ impl DailySpinGame {
         }
 
         match self.daily_game_playability {
-            DailyGamePlayability::NotYetPlayed { boost } => {
+            DailyGamePlayability::NotYetPlayed { boost, timestamp } => {
                 if minigame_stats.boosts_remaining(boost) == 0 {
-                    self.daily_game_playability = DailyGamePlayability::Unplayable;
+                    self.daily_game_playability = DailyGamePlayability::Unplayable { timestamp };
                 } else {
-                    self.daily_game_playability = DailyGamePlayability::OnlyWithBoosts { boost };
+                    self.daily_game_playability = DailyGamePlayability::OnlyWithBoosts { boost, timestamp };
                 }
             },
-            DailyGamePlayability::OnlyWithBoosts { boost } => {
+            DailyGamePlayability::OnlyWithBoosts { boost, timestamp } => {
                 if minigame_stats.use_boost(boost)? == 0 {
-                    self.daily_game_playability = DailyGamePlayability::Unplayable;
+                    self.daily_game_playability = DailyGamePlayability::Unplayable { timestamp };
                 } else {
-                    self.daily_game_playability = DailyGamePlayability::OnlyWithBoosts { boost };
+                    self.daily_game_playability = DailyGamePlayability::OnlyWithBoosts { boost, timestamp };
                 }
             },
-            DailyGamePlayability::Unplayable => return Err(ProcessPacketError::new(
+            DailyGamePlayability::Unplayable { .. } => return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
                 format!(
                     "Player {sender} sent a spin request for Daily Spin, but it isn't playable as a daily game ({self:?})"
@@ -183,7 +185,7 @@ impl DailySpinGame {
         let reward = rng.gen_range(bucket.start..bucket.end);
 
         *game_score = reward as i32;
-        *game_won = true;
+        win_status.set_win_time(self.daily_game_playability.time());
         score_entries.push(ScoreEntry {
             entry_text: "".to_string(),
             icon_set_id: 0,
@@ -251,6 +253,223 @@ impl DailySpinGame {
         ));
 
         self.state = DailySpinGameState::WaitingForSpin;
+
+        Ok(broadcasts)
+    }
+}
+
+const HOLOCRON_DAILY_BONUS: u16 = 50;
+const HOLOCRON_REWARDS: [u16; 6] = [100, 150, 200, 250, 300, 600];
+
+#[derive(Clone, Debug)]
+enum DailyHolocronGameState {
+    WaitingForConnection,
+    WaitingForSelection { completions_this_week: [u8; 7] },
+    OpeningHolocron { reward: u16 },
+    GameOver,
+}
+
+#[derive(Clone, Debug)]
+pub struct DailyHolocronGame {
+    state: DailyHolocronGameState,
+    timestamp: DateTime<FixedOffset>,
+    stage_guid: i32,
+    stage_group_guid: i32,
+}
+
+impl DailyHolocronGame {
+    pub fn new(
+        daily_game_playability: DailyGamePlayability,
+        stage_guid: i32,
+        stage_group_guid: i32,
+    ) -> Self {
+        DailyHolocronGame {
+            state: DailyHolocronGameState::WaitingForConnection,
+            timestamp: daily_game_playability.time(),
+            stage_guid,
+            stage_group_guid,
+        }
+    }
+
+    pub fn connect(
+        &mut self,
+        sender: u32,
+        minigame_stats: &PlayerMinigameStats,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        if !matches!(self.state, DailyHolocronGameState::WaitingForConnection) {
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!(
+                    "Player {sender} tried to connect to Daily Holocron, but the game has already started ({self:?})"
+                ),
+            ));
+        }
+
+        let completions_this_week = minigame_stats.completions_this_week(self.stage_guid);
+        self.state = DailyHolocronGameState::WaitingForSelection {
+            completions_this_week,
+        };
+
+        let current_day = self.timestamp.weekday().num_days_from_sunday();
+
+        let mut packets = vec![
+            GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: FlashPayload {
+                    header: MinigameHeader {
+                        stage_guid: self.stage_guid,
+                        sub_op_code: -1,
+                        stage_group_guid: self.stage_group_guid,
+                    },
+                    payload: format!(
+                        "OnDailyBonusInfo\t{}",
+                        [HOLOCRON_DAILY_BONUS; 7]
+                            .map(|bonus| bonus.to_string())
+                            .join(" ")
+                    ),
+                },
+            }),
+            GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: FlashPayload {
+                    header: MinigameHeader {
+                        stage_guid: self.stage_guid,
+                        sub_op_code: -1,
+                        stage_group_guid: self.stage_group_guid,
+                    },
+                    payload: format!(
+                        "OnHolocronRewardInfo\t{}",
+                        HOLOCRON_REWARDS.map(|bonus| bonus.to_string()).join(" ")
+                    ),
+                },
+            }),
+        ];
+        for holocron in 1..=4 {
+            packets.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: FlashPayload {
+                    header: MinigameHeader {
+                        stage_guid: self.stage_guid,
+                        sub_op_code: -1,
+                        stage_group_guid: self.stage_group_guid,
+                    },
+                    payload: format!(
+                        "OnCurrentWeekActivityInfo\t{}\t{current_day}",
+                        completions_this_week
+                            .map(|completions| if completions >= holocron {
+                                holocron.to_string()
+                            } else {
+                                "0".to_string()
+                            })
+                            .join(" ")
+                    ),
+                },
+            }));
+        }
+
+        packets.push(GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: FlashPayload {
+                header: MinigameHeader {
+                    stage_guid: self.stage_guid,
+                    sub_op_code: -1,
+                    stage_group_guid: self.stage_group_guid,
+                },
+                payload: "OnServerReadyMsg".to_string(),
+            },
+        }));
+
+        Ok(vec![Broadcast::Single(sender, packets)])
+    }
+
+    pub fn select_holocron(
+        &mut self,
+        sender: u32,
+        game_score: &mut i32,
+        win_status: &mut MinigameWinStatus,
+        score_entries: &mut Vec<ScoreEntry>,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let DailyHolocronGameState::WaitingForSelection {
+            completions_this_week,
+        } = self.state
+        else {
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!(
+                    "Player {sender} sent a holocron request for Daily Holocron, but the game isn't waiting to holocron ({self:?})"
+                ),
+            ));
+        };
+
+        let rng = &mut rand::thread_rng();
+        let is_double = rng.gen_bool(0.25);
+        let side = rng.gen_range(0..HOLOCRON_REWARDS.len());
+
+        let day_factor = if is_double { 2 } else { 1 };
+        let reward = HOLOCRON_REWARDS[side] * day_factor
+            + completions_this_week
+                .into_iter()
+                .enumerate()
+                .take_while(|(index, _)| {
+                    *index < self.timestamp.weekday().num_days_from_sunday() as usize
+                })
+                .map(|(_, completions)| completions.min(4) as u16 * HOLOCRON_DAILY_BONUS)
+                .sum::<u16>();
+
+        *game_score = reward as i32;
+        win_status.set_win_time(self.timestamp);
+        score_entries.push(ScoreEntry {
+            entry_text: "".to_string(),
+            icon_set_id: 0,
+            score_type: ScoreType::Total,
+            score_count: reward as i32,
+            score_max: 0,
+            score_points: 0,
+        });
+        self.state = DailyHolocronGameState::OpeningHolocron { reward };
+
+        Ok(vec![Broadcast::Single(
+            sender,
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: FlashPayload {
+                    header: MinigameHeader {
+                        stage_guid: self.stage_guid,
+                        sub_op_code: -1,
+                        stage_group_guid: self.stage_group_guid,
+                    },
+                    payload: format!("OnHolocronSideToLandOnMsg\t{side}\t{}", is_double as u8),
+                },
+            })],
+        )])
+    }
+
+    pub fn display_reward(
+        &mut self,
+        sender: u32,
+        player_credits: &mut u32,
+        game_awarded_credits: &mut u32,
+        stage_config: &MinigameStageConfig,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let DailyHolocronGameState::OpeningHolocron { reward } = self.state else {
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!(
+                    "Player {sender} sent a display reward for Daily Holocron, but they haven't picked a holocron ({self:?})"
+                ),
+            ));
+        };
+
+        let broadcasts = award_credits(
+            sender,
+            player_credits,
+            game_awarded_credits,
+            stage_config,
+            reward as i32,
+        )?
+        .0;
+
+        self.state = DailyHolocronGameState::GameOver;
 
         Ok(broadcasts)
     }
