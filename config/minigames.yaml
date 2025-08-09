@@ -4638,7 +4638,7 @@ categories:
         param1: 0
         icon_id: 1237
         background_icon_id: 0
-        is_popular: true
+        is_popular: false
         is_game_of_day: false
         sort_order: 28000
         tutorial_swf: HowtoSpin.swf
