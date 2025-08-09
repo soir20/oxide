@@ -157,18 +157,18 @@ impl DailySpinGame {
         }
 
         match self.daily_game_playability {
-            DailyGamePlayability::NotYetPlayed { boost, timestamp: time } => {
+            DailyGamePlayability::NotYetPlayed { boost, timestamp } => {
                 if minigame_stats.boosts_remaining(boost) == 0 {
-                    self.daily_game_playability = DailyGamePlayability::Unplayable { timestamp: time };
+                    self.daily_game_playability = DailyGamePlayability::Unplayable { timestamp };
                 } else {
-                    self.daily_game_playability = DailyGamePlayability::OnlyWithBoosts { boost, timestamp: time };
+                    self.daily_game_playability = DailyGamePlayability::OnlyWithBoosts { boost, timestamp };
                 }
             },
-            DailyGamePlayability::OnlyWithBoosts { boost, timestamp: time } => {
+            DailyGamePlayability::OnlyWithBoosts { boost, timestamp } => {
                 if minigame_stats.use_boost(boost)? == 0 {
-                    self.daily_game_playability = DailyGamePlayability::Unplayable { timestamp: time };
+                    self.daily_game_playability = DailyGamePlayability::Unplayable { timestamp };
                 } else {
-                    self.daily_game_playability = DailyGamePlayability::OnlyWithBoosts { boost, timestamp: time };
+                    self.daily_game_playability = DailyGamePlayability::OnlyWithBoosts { boost, timestamp };
                 }
             },
             DailyGamePlayability::Unplayable { .. } => return Err(ProcessPacketError::new(
