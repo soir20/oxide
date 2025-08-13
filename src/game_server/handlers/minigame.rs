@@ -20,7 +20,10 @@ use crate::{
     game_server::{
         handlers::{
             character::{MinigameStatus, MinigameWinStatus},
-            daily::{DailyHolocronGame, DailySpinGame, DailySpinRewardBucket},
+            daily::{
+                DailyHolocronGame, DailySpinGame, DailySpinRewardBucket, DailyTriviaGame,
+                DailyTriviaQuestionConfig,
+            },
             fleet_commander::FleetCommanderGame,
             force_connection::ForceConnectionGame,
             lock_enforcer::CharacterTableReadHandle,
@@ -68,6 +71,7 @@ use super::{
 pub enum MinigameBoost {
     Spin,
     Holocron,
+    Trivia,
 }
 
 #[derive(Clone)]
@@ -189,6 +193,11 @@ pub enum FlashMinigameType {
         buckets: Vec<DailySpinRewardBucket>,
     },
     DailyHolocron,
+    DailyTrivia {
+        questions_per_game: u8,
+        consecutive_days_for_daily_double: u16,
+        question_bank: Vec<DailyTriviaQuestionConfig>,
+    },
     #[default]
     Simple,
 }
@@ -252,6 +261,9 @@ pub enum MinigameTypeData {
     },
     DailyHolocron {
         game: Box<DailyHolocronGame>,
+    },
+    DailyTrivia {
+        game: Box<DailyTriviaGame>,
     },
 }
 
@@ -473,6 +485,7 @@ const GROUP_LINK_NAME: &str = "group";
 enum DailyGameType {
     Spin,
     Holocron,
+    Trivia,
 }
 
 impl DailyGameType {
@@ -480,6 +493,7 @@ impl DailyGameType {
         match *self {
             DailyGameType::Spin => "Daily Wheel",
             DailyGameType::Holocron => "Daily Holocron",
+            DailyGameType::Trivia => "Daily Trivia",
         }
     }
 
@@ -487,6 +501,7 @@ impl DailyGameType {
         match *self {
             DailyGameType::Spin => MinigameBoost::Spin,
             DailyGameType::Holocron => MinigameBoost::Holocron,
+            DailyGameType::Trivia => MinigameBoost::Trivia,
         }
     }
 }

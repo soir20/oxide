@@ -474,3 +474,34 @@ impl DailyHolocronGame {
         Ok(broadcasts)
     }
 }
+
+#[derive(Clone, Deserialize)]
+pub struct DailyTriviaQuestionConfig {
+    pub question_id: u32,
+    pub correct_answer_id: u32,
+    pub incorrect_answer_ids: [u32; 3],
+    pub sound_id: Option<u32>,
+}
+
+#[derive(Clone, Debug)]
+struct DailyTriviaQuestion {
+    answers: [u32; 4],
+    correct_answer: u8,
+}
+
+#[derive(Clone, Debug)]
+enum DailyTriviaGameState {
+    WaitingForConnection,
+    AnsweringQuestion { question_index: u8 },
+    ReadyForNextQuestion { next_question_index: u8 },
+    GameOver,
+}
+
+#[derive(Clone, Debug)]
+pub struct DailyTriviaGame {
+    questions: Vec<DailyTriviaQuestion>,
+    state: DailyTriviaGameState,
+    timestamp: DateTime<FixedOffset>,
+    stage_guid: i32,
+    stage_group_guid: i32,
+}
