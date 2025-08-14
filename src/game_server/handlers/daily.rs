@@ -497,6 +497,28 @@ struct DailyTriviaQuestion {
     correct_answer: u8,
 }
 
+impl From<&DailyTriviaQuestionConfig> for DailyTriviaQuestion {
+    fn from(value: &DailyTriviaQuestionConfig) -> Self {
+        let mut answers = [
+            value.correct_answer_id,
+            value.incorrect_answer_ids[0],
+            value.incorrect_answer_ids[1],
+            value.incorrect_answer_ids[2],
+        ];
+
+        answers.shuffle(&mut thread_rng());
+
+        DailyTriviaQuestion {
+            answers,
+            correct_answer: answers
+                .iter()
+                .position(|answer| *answer == value.correct_answer_id)
+                .expect("Correct answer disappeared from answers array")
+                as u8,
+        }
+    }
+}
+
 #[derive(Clone, Debug)]
 enum DailyTriviaGameState {
     WaitingForConnection,
@@ -515,7 +537,7 @@ pub struct DailyTriviaGame {
     stage_group_guid: i32,
 }
 
-/*impl DailyTriviaGame {
+impl DailyTriviaGame {
     pub fn new(
         question_bank: &[DailyTriviaQuestionConfig],
         questions_per_game: u8,
@@ -523,11 +545,14 @@ pub struct DailyTriviaGame {
         stage_guid: i32,
         stage_group_guid: i32,
     ) -> Self {
-        question_bank.choose_multiple(&mut thread_rng(), questions_per_game as usize)
+        let questions = question_bank
+            .choose_multiple(&mut thread_rng(), questions_per_game as usize)
+            .map(|question| question.into())
+            .collect();
 
         DailyTriviaGame {
             daily_double: false,
-            questions: Vec::new(),
+            questions,
             state: DailyTriviaGameState::WaitingForConnection,
             timestamp: daily_game_playability.time(),
             stage_guid,
@@ -539,6 +564,7 @@ pub struct DailyTriviaGame {
         &mut self,
         sender: u32,
         minigame_stats: &PlayerMinigameStats,
+        daily_reset_offset: &DailyResetOffset,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         if !matches!(self.state, DailyTriviaGameState::WaitingForConnection) {
             return Err(ProcessPacketError::new(
@@ -549,9 +575,13 @@ pub struct DailyTriviaGame {
             ));
         }
 
-        let completions_this_week = minigame_stats.completions_this_week(self.stage_guid);
-        self.state = DailyHolocronGameState::WaitingForSelection {
-            completions_this_week,
+        let completions_this_week = minigame_stats.completions_this_week(
+            self.stage_guid,
+            self.timestamp,
+            daily_reset_offset,
+        );
+        self.state = DailyTriviaGameState::ReadyForNextQuestion {
+            next_question_index: 0,
         };
 
         let current_day = self.timestamp.weekday().num_days_from_sunday();
@@ -625,5 +655,4 @@ pub struct DailyTriviaGame {
 
         Ok(vec![Broadcast::Single(sender, packets)])
     }
-
-}*/
+}

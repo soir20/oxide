@@ -79,6 +79,7 @@ pub enum MinigameBoost {
 pub struct PlayerStageStats {
     last_completion: Option<DateTime<FixedOffset>>,
     completions_this_week: [u8; 7],
+    consecutive_days_completed: u16,
     high_score: i32,
 }
 
@@ -131,6 +132,15 @@ impl PlayerMinigameStats {
                     if !are_dates_in_same_week(&last_completion, &win_time, &daily_reset_offset.0) {
                         entry.completions_this_week = [0; 7];
                     }
+
+                    let was_completed_yesterday = win_time.num_days_from_ce()
+                        == last_completion.num_days_from_ce().saturating_add(1);
+                    entry.consecutive_days_completed = match was_completed_yesterday {
+                        true => entry.consecutive_days_completed.saturating_add(1),
+                        false => 1,
+                    };
+                } else {
+                    entry.consecutive_days_completed = 1;
                 }
 
                 entry.last_completion = Some(win_time);
@@ -145,6 +155,7 @@ impl PlayerMinigameStats {
                 PlayerStageStats {
                     last_completion: Some(win_time),
                     completions_this_week,
+                    consecutive_days_completed: 1,
                     high_score: score,
                 }
             });
@@ -178,6 +189,13 @@ impl PlayerMinigameStats {
 
     pub fn has_completed(&self, stage_guid: i32) -> bool {
         self.last_completion_time(stage_guid).is_some()
+    }
+
+    pub fn consecutive_days_completed(&self, stage_guid: i32) -> u16 {
+        self.stage_guid_to_stats
+            .get(&stage_guid)
+            .map(|stats| stats.consecutive_days_completed)
+            .unwrap_or(0)
     }
 
     pub fn update_trophy_progress(&mut self, trophy_guid: i32, delta: i32) {
