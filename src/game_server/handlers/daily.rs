@@ -1,12 +1,15 @@
 use chrono::{DateTime, Datelike, FixedOffset};
-use rand::Rng;
+use rand::{seq::SliceRandom, thread_rng, Rng};
 use rand_distr::{Distribution, WeightedAliasIndex};
 use serde::Deserialize;
 
 use crate::game_server::{
     handlers::{
         character::MinigameWinStatus,
-        minigame::{award_credits, DailyGamePlayability, MinigameStageConfig, PlayerMinigameStats},
+        minigame::{
+            award_credits, DailyGamePlayability, DailyResetOffset, MinigameStageConfig,
+            PlayerMinigameStats,
+        },
     },
     packets::{
         minigame::{FlashPayload, MinigameHeader, ScoreEntry, ScoreType},
@@ -295,6 +298,7 @@ impl DailyHolocronGame {
         &mut self,
         sender: u32,
         minigame_stats: &PlayerMinigameStats,
+        daily_reset_offset: &DailyResetOffset,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         if !matches!(self.state, DailyHolocronGameState::WaitingForConnection) {
             return Err(ProcessPacketError::new(
@@ -305,7 +309,11 @@ impl DailyHolocronGame {
             ));
         }
 
-        let completions_this_week = minigame_stats.completions_this_week(self.stage_guid);
+        let completions_this_week = minigame_stats.completions_this_week(
+            self.stage_guid,
+            self.timestamp,
+            daily_reset_offset,
+        );
         self.state = DailyHolocronGameState::WaitingForSelection {
             completions_this_week,
         };
@@ -499,9 +507,123 @@ enum DailyTriviaGameState {
 
 #[derive(Clone, Debug)]
 pub struct DailyTriviaGame {
+    daily_double: bool,
     questions: Vec<DailyTriviaQuestion>,
     state: DailyTriviaGameState,
     timestamp: DateTime<FixedOffset>,
     stage_guid: i32,
     stage_group_guid: i32,
 }
+
+/*impl DailyTriviaGame {
+    pub fn new(
+        question_bank: &[DailyTriviaQuestionConfig],
+        questions_per_game: u8,
+        daily_game_playability: DailyGamePlayability,
+        stage_guid: i32,
+        stage_group_guid: i32,
+    ) -> Self {
+        question_bank.choose_multiple(&mut thread_rng(), questions_per_game as usize)
+
+        DailyTriviaGame {
+            daily_double: false,
+            questions: Vec::new(),
+            state: DailyTriviaGameState::WaitingForConnection,
+            timestamp: daily_game_playability.time(),
+            stage_guid,
+            stage_group_guid,
+        }
+    }
+
+    pub fn connect(
+        &mut self,
+        sender: u32,
+        minigame_stats: &PlayerMinigameStats,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        if !matches!(self.state, DailyTriviaGameState::WaitingForConnection) {
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!(
+                    "Player {sender} tried to connect to Daily Trivia, but the game has already started ({self:?})"
+                ),
+            ));
+        }
+
+        let completions_this_week = minigame_stats.completions_this_week(self.stage_guid);
+        self.state = DailyHolocronGameState::WaitingForSelection {
+            completions_this_week,
+        };
+
+        let current_day = self.timestamp.weekday().num_days_from_sunday();
+
+        let mut packets = vec![
+            GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: FlashPayload {
+                    header: MinigameHeader {
+                        stage_guid: self.stage_guid,
+                        sub_op_code: -1,
+                        stage_group_guid: self.stage_group_guid,
+                    },
+                    payload: format!(
+                        "OnDailyBonusInfo\t{}",
+                        [HOLOCRON_DAILY_BONUS; 7]
+                            .map(|bonus| bonus.to_string())
+                            .join(" ")
+                    ),
+                },
+            }),
+            GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: FlashPayload {
+                    header: MinigameHeader {
+                        stage_guid: self.stage_guid,
+                        sub_op_code: -1,
+                        stage_group_guid: self.stage_group_guid,
+                    },
+                    payload: format!(
+                        "OnHolocronRewardInfo\t{}",
+                        HOLOCRON_REWARDS.map(|bonus| bonus.to_string()).join(" ")
+                    ),
+                },
+            }),
+        ];
+        for holocron in 1..=4 {
+            packets.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: FlashPayload {
+                    header: MinigameHeader {
+                        stage_guid: self.stage_guid,
+                        sub_op_code: -1,
+                        stage_group_guid: self.stage_group_guid,
+                    },
+                    payload: format!(
+                        "OnCurrentWeekActivityInfo\t{}\t{current_day}",
+                        completions_this_week
+                            .map(|completions| if completions >= holocron {
+                                holocron.to_string()
+                            } else {
+                                "0".to_string()
+                            })
+                            .join(" ")
+                    ),
+                },
+            }));
+        }
+
+        packets.push(GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: FlashPayload {
+                header: MinigameHeader {
+                    stage_guid: self.stage_guid,
+                    sub_op_code: -1,
+                    stage_group_guid: self.stage_group_guid,
+                },
+                payload: "OnServerReadyMsg".to_string(),
+            },
+        }));
+
+        Ok(vec![Broadcast::Single(sender, packets)])
+    }
+
+}*/

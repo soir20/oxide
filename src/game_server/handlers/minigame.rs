@@ -19,6 +19,7 @@ use serde::{Deserialize, Deserializer};
 use crate::{
     game_server::{
         handlers::{
+            are_dates_in_same_week,
             character::{MinigameStatus, MinigameWinStatus},
             daily::{
                 DailyHolocronGame, DailySpinGame, DailySpinRewardBucket, DailyTriviaGame,
@@ -122,13 +123,12 @@ impl PlayerMinigameStats {
         // Storing a count for each day of the week is more space-efficient than storing a list of times.
         // It could make the list slightly inaccurate if the reset time is changed, but that should be
         // rare enough to be an acceptable tradeoff.
-        let win_time = win_time.with_timezone(&daily_reset_offset.0);
         let day_of_week = win_time.weekday().num_days_from_sunday() as usize;
         self.stage_guid_to_stats
             .entry(stage_guid)
             .and_modify(|entry| {
                 if let Some(last_completion) = entry.last_completion {
-                    if last_completion.iso_week() != win_time.iso_week() {
+                    if !are_dates_in_same_week(&last_completion, &win_time, &daily_reset_offset.0) {
                         entry.completions_this_week = [0; 7];
                     }
                 }
@@ -150,10 +150,23 @@ impl PlayerMinigameStats {
             });
     }
 
-    pub fn completions_this_week(&self, stage_guid: i32) -> [u8; 7] {
+    pub fn completions_this_week(
+        &self,
+        stage_guid: i32,
+        now: DateTime<FixedOffset>,
+        daily_reset_offset: &DailyResetOffset,
+    ) -> [u8; 7] {
         self.stage_guid_to_stats
             .get(&stage_guid)
-            .map(|stats| stats.completions_this_week)
+            .map(|stats| {
+                if let Some(last_completion) = stats.last_completion {
+                    if !are_dates_in_same_week(&last_completion, &now, &daily_reset_offset.0) {
+                        return [0; 7];
+                    }
+                }
+
+                stats.completions_this_week
+            })
             .unwrap_or_default()
     }
 
@@ -2815,6 +2828,7 @@ fn handle_flash_payload(
                         MinigameTypeData::DailyHolocron { game } => game.connect(
                             sender,
                             minigame_stats,
+                            &game_server.minigames().daily_reset_offset
                         ),
                         _ => Err(ProcessPacketError::new(
                             ProcessPacketErrorType::ConstraintViolated,
