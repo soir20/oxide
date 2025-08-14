@@ -54,14 +54,14 @@ pub fn are_dates_in_same_week(
     // the week on Sunday
     let week1 = match date1.weekday() {
         Weekday::Sun => date1
-            .checked_sub_days(Days::new(1))
+            .checked_add_days(Days::new(1))
             .map(|date| date.iso_week()),
         _ => Some(date1.iso_week()),
     };
 
     let week2 = match date2.weekday() {
         Weekday::Sun => date2
-            .checked_sub_days(Days::new(1))
+            .checked_add_days(Days::new(1))
             .map(|date| date.iso_week()),
         _ => Some(date2.iso_week()),
     };
