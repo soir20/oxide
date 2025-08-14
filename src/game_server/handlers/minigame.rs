@@ -79,7 +79,7 @@ pub enum MinigameBoost {
 pub struct PlayerStageStats {
     last_completion: Option<DateTime<FixedOffset>>,
     completions_this_week: [u8; 7],
-    consecutive_days_completed: u16,
+    consecutive_days_completed: u32,
     high_score: i32,
 }
 
@@ -191,7 +191,7 @@ impl PlayerMinigameStats {
         self.last_completion_time(stage_guid).is_some()
     }
 
-    pub fn consecutive_days_completed(&self, stage_guid: i32) -> u16 {
+    pub fn consecutive_days_completed(&self, stage_guid: i32) -> u32 {
         self.stage_guid_to_stats
             .get(&stage_guid)
             .map(|stats| stats.consecutive_days_completed)
