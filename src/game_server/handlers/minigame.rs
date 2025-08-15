@@ -3164,7 +3164,7 @@ fn handle_flash_payload(
             |minigame_status, _, _, _, _, _| {
                  match &mut minigame_status.type_data {
                     MinigameTypeData::DailySpin { game } => game.mark_player_ready(sender),
-                    MinigameTypeData::DailyTrivia { game } => game.next_question(sender),
+                    MinigameTypeData::DailyTrivia { .. } => Ok(Vec::new()),
                     _ => Err(ProcessPacketError::new(
                         ProcessPacketErrorType::ConstraintViolated,
                         format!(
@@ -3266,6 +3266,23 @@ fn handle_flash_payload(
                         ProcessPacketErrorType::ConstraintViolated,
                         format!(
                             "Received reward request for unexpected game from player {sender}"
+                        ),
+                    ))
+                }
+            }
+        ),
+        "OnRequestNewQuestion" => handle_minigame_packet_write(
+            sender,
+            game_server,
+            &payload.header,
+            |minigame_status, _, _, _, _, _| {
+                 match &mut minigame_status.type_data {
+                    MinigameTypeData::DailySpin { game } => game.mark_player_ready(sender),
+                    MinigameTypeData::DailyTrivia { game } => game.next_question(sender),
+                    _ => Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::ConstraintViolated,
+                        format!(
+                            "Received start game request for unexpected game from player {sender}"
                         ),
                     ))
                 }

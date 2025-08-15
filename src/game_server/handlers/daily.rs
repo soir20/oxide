@@ -671,7 +671,7 @@ impl DailyTriviaGame {
                         stage_group_guid: self.stage_group_guid,
                     },
                     payload: format!(
-                        "OnDailyTriviaQuestionData\t{}^{}^{}^{}^{}\t{}\t{}\t{}",
+                        "OnDailyTriviaQuestionData\t{}^{}^{}^{}^{}^{}\t{}\t{}",
                         question.question_id,
                         question.answer_ids[0],
                         question.answer_ids[1],
@@ -679,7 +679,7 @@ impl DailyTriviaGame {
                         question.answer_ids[3],
                         question.sound_id.unwrap_or(0),
                         self.score_per_question,
-                        next_question_index,
+                        next_question_index.saturating_add(1),
                     ),
                 },
             })],
