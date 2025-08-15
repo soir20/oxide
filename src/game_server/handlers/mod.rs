@@ -69,6 +69,17 @@ pub fn are_dates_in_same_week(
     week1 == week2
 }
 
+pub fn are_dates_consecutive(
+    date1: &DateTime<FixedOffset>,
+    date2: &DateTime<FixedOffset>,
+    timezone: &FixedOffset,
+) -> bool {
+    let date1 = date1.with_timezone(timezone);
+    let date2 = date2.with_timezone(timezone);
+
+    date1.num_days_from_ce().abs_diff(date2.num_days_from_ce()) == 1
+}
+
 #[cfg(test)]
 mod tests {
     use chrono::{Offset, TimeZone, Utc};
@@ -212,6 +223,61 @@ mod tests {
         let date1 = Utc.timestamp_opt(1483228799, 1_000_000_000).unwrap();
         let date2 = Utc.with_ymd_and_hms(2016, 12, 25, 0, 0, 0).unwrap();
         assert!(are_dates_in_same_week(
+            &date1.fixed_offset(),
+            &date2.fixed_offset(),
+            &Utc.fix()
+        ));
+    }
+
+    #[test]
+    fn test_same_day_are_not_consecutive() {
+        let date1 = Utc.with_ymd_and_hms(2025, 8, 14, 23, 59, 59).unwrap();
+        let date2 = Utc.with_ymd_and_hms(2025, 8, 14, 0, 0, 0).unwrap();
+        assert!(!are_dates_consecutive(
+            &date1.fixed_offset(),
+            &date2.fixed_offset(),
+            &Utc.fix()
+        ));
+    }
+
+    #[test]
+    fn test_consecutive_days_are_consecutive() {
+        let date1 = Utc.with_ymd_and_hms(2025, 8, 14, 0, 0, 0).unwrap();
+        let date2 = Utc.with_ymd_and_hms(2025, 8, 15, 23, 59, 59).unwrap();
+        assert!(are_dates_consecutive(
+            &date1.fixed_offset(),
+            &date2.fixed_offset(),
+            &Utc.fix()
+        ));
+    }
+
+    #[test]
+    fn test_non_consecutive_days_are_not_consecutive() {
+        let date1 = Utc.with_ymd_and_hms(2025, 8, 14, 5, 17, 24).unwrap();
+        let date2 = Utc.with_ymd_and_hms(2025, 8, 16, 16, 8, 45).unwrap();
+        assert!(!are_dates_consecutive(
+            &date1.fixed_offset(),
+            &date2.fixed_offset(),
+            &Utc.fix()
+        ));
+    }
+
+    #[test]
+    fn test_non_consecutive_days_diff_months_are_not_consecutive() {
+        let date1 = Utc.with_ymd_and_hms(2025, 7, 15, 5, 17, 24).unwrap();
+        let date2 = Utc.with_ymd_and_hms(2025, 8, 16, 16, 8, 45).unwrap();
+        assert!(!are_dates_consecutive(
+            &date1.fixed_offset(),
+            &date2.fixed_offset(),
+            &Utc.fix()
+        ));
+    }
+
+    #[test]
+    fn test_non_consecutive_days_diff_years_are_not_consecutive() {
+        let date1 = Utc.with_ymd_and_hms(2024, 8, 15, 5, 17, 24).unwrap();
+        let date2 = Utc.with_ymd_and_hms(2025, 8, 16, 16, 8, 45).unwrap();
+        assert!(!are_dates_consecutive(
             &date1.fixed_offset(),
             &date2.fixed_offset(),
             &Utc.fix()

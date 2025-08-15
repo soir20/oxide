@@ -19,7 +19,7 @@ use serde::{Deserialize, Deserializer};
 use crate::{
     game_server::{
         handlers::{
-            are_dates_in_same_week,
+            are_dates_consecutive, are_dates_in_same_week,
             character::{MinigameStatus, MinigameWinStatus},
             daily::{
                 DailyHolocronGame, DailySpinGame, DailySpinRewardBucket, DailyTriviaGame,
@@ -133,8 +133,8 @@ impl PlayerMinigameStats {
                         entry.completions_this_week = [0; 7];
                     }
 
-                    let was_completed_yesterday = win_time.num_days_from_ce()
-                        == last_completion.num_days_from_ce().saturating_add(1);
+                    let was_completed_yesterday =
+                        are_dates_consecutive(&last_completion, &win_time, &daily_reset_offset.0);
                     entry.consecutive_days_completed = match was_completed_yesterday {
                         true => entry.consecutive_days_completed.saturating_add(1),
                         false => 1,
