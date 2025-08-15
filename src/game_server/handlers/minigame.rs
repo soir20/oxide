@@ -3288,6 +3288,36 @@ fn handle_flash_payload(
                 }
             }
         ),
+        "OnAnswerPicked" => handle_minigame_packet_write(
+            sender,
+            game_server,
+            &payload.header,
+            |minigame_status, _, _, _, _, _| {
+                if parts.len() == 2 {
+                    let selected_answer_index: u8 = parts[1].parse()?;
+                    match &mut minigame_status.type_data {
+                        MinigameTypeData::DailyTrivia { game } => game.answer_question(
+                            sender,
+                            selected_answer_index
+                        ),
+                        _ => Err(ProcessPacketError::new(
+                            ProcessPacketErrorType::ConstraintViolated,
+                            format!(
+                                "Received trivia answer request for unexpected game from player {sender}"
+                            ),
+                        ))
+                    }
+                } else {
+                    Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::ConstraintViolated,
+                        format!(
+                            "Expected 1 parameter in trivia answer request payload, but only found {}",
+                            parts.len().saturating_sub(1)
+                        ),
+                    ))
+                }
+            }
+        ),
         _ => Err(ProcessPacketError::new(
             ProcessPacketErrorType::ConstraintViolated,
             format!(

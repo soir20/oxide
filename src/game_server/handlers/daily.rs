@@ -1,4 +1,4 @@
-use std::time::Duration;
+use std::time::{Duration, Instant};
 
 use chrono::{DateTime, Datelike, FixedOffset};
 use rand::{seq::SliceRandom, thread_rng, Rng};
@@ -485,20 +485,23 @@ impl DailyHolocronGame {
     }
 }
 
+const TRIVIA_ANSWERS_PER_QUESTION: u8 = 4;
+
 #[derive(Clone, Deserialize)]
 pub struct DailyTriviaQuestionConfig {
     pub question_id: u32,
     pub correct_answer_id: u32,
-    pub incorrect_answer_ids: [u32; 3],
+    pub incorrect_answer_ids: [u32; TRIVIA_ANSWERS_PER_QUESTION as usize - 1],
     pub sound_id: Option<u32>,
 }
 
 #[derive(Clone, Debug)]
 struct DailyTriviaQuestion {
     question_id: u32,
-    answer_ids: [u32; 4],
-    correct_answer: u8,
+    answer_ids: [u32; TRIVIA_ANSWERS_PER_QUESTION as usize],
+    correct_answer_index: u8,
     sound_id: Option<u32>,
+    selected_answers: [bool; TRIVIA_ANSWERS_PER_QUESTION as usize],
 }
 
 impl From<&DailyTriviaQuestionConfig> for DailyTriviaQuestion {
@@ -515,12 +518,13 @@ impl From<&DailyTriviaQuestionConfig> for DailyTriviaQuestion {
         DailyTriviaQuestion {
             question_id: value.question_id,
             answer_ids,
-            correct_answer: answer_ids
+            correct_answer_index: answer_ids
                 .iter()
                 .position(|answer| *answer == value.correct_answer_id)
                 .expect("Correct answer disappeared from answers array")
                 as u8,
             sound_id: value.sound_id,
+            selected_answers: [false; TRIVIA_ANSWERS_PER_QUESTION as usize],
         }
     }
 }
@@ -684,5 +688,103 @@ impl DailyTriviaGame {
                 },
             })],
         )])
+    }
+
+    pub fn answer_question(
+        &mut self,
+        sender: u32,
+        selected_answer_index: u8,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        if selected_answer_index >= TRIVIA_ANSWERS_PER_QUESTION {
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!(
+                    "Player {sender} sent an answer request for Daily Trivia, but the answer index {selected_answer_index} isn't valid ({self:?})"
+                ),
+            ));
+        }
+
+        let DailyTriviaGameState::AnsweringQuestion {
+            question_index,
+            timer,
+        } = &mut self.state
+        else {
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!(
+                    "Player {sender} sent an answer request for Daily Trivia, but the game isn't ready for an answer ({self:?})"
+                ),
+            ));
+        };
+        timer.pause_or_resume(true);
+
+        let question = &mut self.questions[*question_index as usize];
+        question.selected_answers[selected_answer_index as usize] = true;
+
+        let incorrect_selections = (0..TRIVIA_ANSWERS_PER_QUESTION)
+            .filter(|index| {
+                *index != question.correct_answer_index
+                    && question.selected_answers[*index as usize]
+            })
+            .count() as u8;
+        let new_score_for_question =
+            match incorrect_selections >= TRIVIA_ANSWERS_PER_QUESTION.saturating_sub(1) {
+                true => 0,
+                false => {
+                    let score_lost = self
+                        .score_per_question
+                        .saturating_mul(incorrect_selections as i32)
+                        / TRIVIA_ANSWERS_PER_QUESTION as i32;
+                    self.score_per_question - score_lost
+                }
+            };
+
+        if question.correct_answer_index == selected_answer_index {
+            let seconds_remaining = timer.time_until_next_event(Instant::now()).as_secs();
+
+            let next_question_index = question_index.saturating_add(1);
+            if next_question_index as usize == self.questions.len() {
+                self.state = DailyTriviaGameState::GameOver;
+            } else {
+                self.state = DailyTriviaGameState::ReadyForNextQuestion {
+                    next_question_index,
+                };
+            }
+
+            Ok(vec![Broadcast::Single(
+                sender,
+                vec![GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: FlashPayload {
+                        header: MinigameHeader {
+                            stage_guid: self.stage_guid,
+                            sub_op_code: -1,
+                            stage_group_guid: self.stage_group_guid,
+                        },
+                        payload: format!(
+                            "OnDailyTriviaPickedAnswerCorrect\t{new_score_for_question}\t{seconds_remaining}",
+                        ),
+                    },
+                })],
+            )])
+        } else {
+            timer.pause_or_resume(false);
+            Ok(vec![Broadcast::Single(
+                sender,
+                vec![GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: FlashPayload {
+                        header: MinigameHeader {
+                            stage_guid: self.stage_guid,
+                            sub_op_code: -1,
+                            stage_group_guid: self.stage_group_guid,
+                        },
+                        payload: format!(
+                            "OnDailyTriviaPickedAnswerWrong\t{new_score_for_question}"
+                        ),
+                    },
+                })],
+            )])
+        }
     }
 }
