@@ -327,6 +327,22 @@ mod tests {
     }
 
     #[test]
+    fn test_consecutive_days_are_consecutive_for_timezone() {
+        let date1 = Utc.with_ymd_and_hms(2025, 8, 13, 0, 0, 0).unwrap();
+        let date2 = Utc.with_ymd_and_hms(2025, 8, 13, 23, 0, 0).unwrap();
+        assert!(are_dates_consecutive(
+            &date1.fixed_offset(),
+            &date2.fixed_offset(),
+            &FixedOffset::east_opt(3600).unwrap()
+        ));
+        assert!(are_dates_consecutive(
+            &date2.fixed_offset(),
+            &date1.fixed_offset(),
+            &FixedOffset::east_opt(3600).unwrap()
+        ));
+    }
+
+    #[test]
     fn test_non_consecutive_days_are_not_consecutive() {
         let date1 = Utc.with_ymd_and_hms(2025, 8, 14, 5, 17, 24).unwrap();
         let date2 = Utc.with_ymd_and_hms(2025, 8, 16, 16, 8, 45).unwrap();
@@ -339,6 +355,22 @@ mod tests {
             &date2.fixed_offset(),
             &date1.fixed_offset(),
             &Utc.fix()
+        ));
+    }
+
+    #[test]
+    fn test_non_consecutive_days_are_not_consecutive_for_timezone() {
+        let date1 = Utc.with_ymd_and_hms(2025, 8, 13, 0, 0, 0).unwrap();
+        let date2 = Utc.with_ymd_and_hms(2025, 8, 14, 23, 0, 0).unwrap();
+        assert!(!are_dates_consecutive(
+            &date1.fixed_offset(),
+            &date2.fixed_offset(),
+            &FixedOffset::east_opt(3600).unwrap()
+        ));
+        assert!(!are_dates_consecutive(
+            &date2.fixed_offset(),
+            &date1.fixed_offset(),
+            &FixedOffset::east_opt(3600).unwrap()
         ));
     }
 
