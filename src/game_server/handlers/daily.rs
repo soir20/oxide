@@ -694,6 +694,9 @@ impl DailyTriviaGame {
         &mut self,
         sender: u32,
         selected_answer_index: u8,
+        game_score: &mut i32,
+        win_status: &mut MinigameWinStatus,
+        score_entries: &mut Vec<ScoreEntry>,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         if selected_answer_index >= TRIVIA_ANSWERS_PER_QUESTION {
             return Err(ProcessPacketError::new(
@@ -727,7 +730,7 @@ impl DailyTriviaGame {
                     && question.selected_answers[*index as usize]
             })
             .count() as u8;
-        let new_score_for_question =
+        let base_question_score =
             match incorrect_selections >= TRIVIA_ANSWERS_PER_QUESTION.saturating_sub(1) {
                 true => 0,
                 false => {
@@ -739,8 +742,11 @@ impl DailyTriviaGame {
                 }
             };
 
-        if question.correct_answer_index == selected_answer_index {
-            let seconds_remaining = timer.time_until_next_event(Instant::now()).as_secs();
+        let broadcasts = if question.correct_answer_index == selected_answer_index {
+            let seconds_remaining = timer.time_until_next_event(Instant::now()).as_secs() as i32;
+            let question_score = base_question_score
+                .saturating_add(seconds_remaining.saturating_mul(self.score_per_second_remaining));
+            *game_score = game_score.saturating_add(question_score);
 
             let next_question_index = question_index.saturating_add(1);
             if next_question_index as usize == self.questions.len() {
@@ -751,7 +757,7 @@ impl DailyTriviaGame {
                 };
             }
 
-            Ok(vec![Broadcast::Single(
+            vec![Broadcast::Single(
                 sender,
                 vec![GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
@@ -762,14 +768,14 @@ impl DailyTriviaGame {
                             stage_group_guid: self.stage_group_guid,
                         },
                         payload: format!(
-                            "OnDailyTriviaPickedAnswerCorrect\t{new_score_for_question}\t{seconds_remaining}",
+                            "OnDailyTriviaPickedAnswerCorrect\t{base_question_score}\t{seconds_remaining}",
                         ),
                     },
                 })],
-            )])
+            )]
         } else {
             timer.pause_or_resume(false);
-            Ok(vec![Broadcast::Single(
+            vec![Broadcast::Single(
                 sender,
                 vec![GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
@@ -779,12 +785,24 @@ impl DailyTriviaGame {
                             sub_op_code: -1,
                             stage_group_guid: self.stage_group_guid,
                         },
-                        payload: format!(
-                            "OnDailyTriviaPickedAnswerWrong\t{new_score_for_question}"
-                        ),
+                        payload: format!("OnDailyTriviaPickedAnswerWrong\t{base_question_score}"),
                     },
                 })],
-            )])
-        }
+            )]
+        };
+
+        // Set the win status upon answering any question so that players can't keep restarting it
+        win_status.set_win_time(self.timestamp);
+        score_entries.clear();
+        score_entries.push(ScoreEntry {
+            entry_text: "".to_string(),
+            icon_set_id: 0,
+            score_type: ScoreType::Total,
+            score_count: *game_score,
+            score_max: 0,
+            score_points: 0,
+        });
+
+        Ok(broadcasts)
     }
 }

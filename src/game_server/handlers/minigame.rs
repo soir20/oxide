@@ -3298,7 +3298,10 @@ fn handle_flash_payload(
                     match &mut minigame_status.type_data {
                         MinigameTypeData::DailyTrivia { game } => game.answer_question(
                             sender,
-                            selected_answer_index
+                            selected_answer_index,
+                            &mut minigame_status.total_score,
+                            &mut minigame_status.win_status,
+                            &mut minigame_status.score_entries,
                         ),
                         _ => Err(ProcessPacketError::new(
                             ProcessPacketErrorType::ConstraintViolated,
