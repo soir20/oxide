@@ -530,6 +530,9 @@ enum DailyTriviaGameState {
 #[derive(Clone, Debug)]
 pub struct DailyTriviaGame {
     daily_double: bool,
+    consecutive_days_for_daily_double: u32,
+    seconds_per_question: u16,
+    score_per_second_remaining: i32,
     questions: Vec<DailyTriviaQuestion>,
     state: DailyTriviaGameState,
     timestamp: DateTime<FixedOffset>,
@@ -541,6 +544,9 @@ impl DailyTriviaGame {
     pub fn new(
         question_bank: &[DailyTriviaQuestionConfig],
         questions_per_game: u8,
+        consecutive_days_for_daily_double: u32,
+        seconds_per_question: u16,
+        score_per_second_remaining: i32,
         daily_game_playability: DailyGamePlayability,
         stage_guid: i32,
         stage_group_guid: i32,
@@ -552,6 +558,9 @@ impl DailyTriviaGame {
 
         DailyTriviaGame {
             daily_double: false,
+            consecutive_days_for_daily_double,
+            seconds_per_question,
+            score_per_second_remaining,
             questions,
             state: DailyTriviaGameState::WaitingForConnection,
             timestamp: daily_game_playability.time(),
@@ -564,7 +573,6 @@ impl DailyTriviaGame {
         &mut self,
         sender: u32,
         minigame_stats: &PlayerMinigameStats,
-        daily_reset_offset: &DailyResetOffset,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         if !matches!(self.state, DailyTriviaGameState::WaitingForConnection) {
             return Err(ProcessPacketError::new(
@@ -575,84 +583,44 @@ impl DailyTriviaGame {
             ));
         }
 
-        let completions_this_week = minigame_stats.completions_this_week(
-            self.stage_guid,
-            self.timestamp,
-            daily_reset_offset,
-        );
+        let consecutive_completions = minigame_stats.consecutive_days_completed(self.stage_guid);
+        self.daily_double = consecutive_completions > 0 && consecutive_completions % 4 == 0;
         self.state = DailyTriviaGameState::ReadyForNextQuestion {
             next_question_index: 0,
         };
 
-        let current_day = self.timestamp.weekday().num_days_from_sunday();
-
-        let mut packets = vec![
-            GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: FlashPayload {
-                    header: MinigameHeader {
-                        stage_guid: self.stage_guid,
-                        sub_op_code: -1,
-                        stage_group_guid: self.stage_group_guid,
+        Ok(vec![Broadcast::Single(
+            sender,
+            vec![
+                GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: FlashPayload {
+                        header: MinigameHeader {
+                            stage_guid: self.stage_guid,
+                            sub_op_code: -1,
+                            stage_group_guid: self.stage_group_guid,
+                        },
+                        payload: format!(
+                            "OnDailyTriviaGameData\t{}\t{}\t{}\t{}",
+                            self.seconds_per_question,
+                            self.questions.len(),
+                            self.score_per_second_remaining,
+                            self.daily_double,
+                        ),
                     },
-                    payload: format!(
-                        "OnDailyBonusInfo\t{}",
-                        [HOLOCRON_DAILY_BONUS; 7]
-                            .map(|bonus| bonus.to_string())
-                            .join(" ")
-                    ),
-                },
-            }),
-            GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: FlashPayload {
-                    header: MinigameHeader {
-                        stage_guid: self.stage_guid,
-                        sub_op_code: -1,
-                        stage_group_guid: self.stage_group_guid,
+                }),
+                GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: FlashPayload {
+                        header: MinigameHeader {
+                            stage_guid: self.stage_guid,
+                            sub_op_code: -1,
+                            stage_group_guid: self.stage_group_guid,
+                        },
+                        payload: "OnServerReadyMsg".to_string(),
                     },
-                    payload: format!(
-                        "OnHolocronRewardInfo\t{}",
-                        HOLOCRON_REWARDS.map(|bonus| bonus.to_string()).join(" ")
-                    ),
-                },
-            }),
-        ];
-        for holocron in 1..=4 {
-            packets.push(GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: FlashPayload {
-                    header: MinigameHeader {
-                        stage_guid: self.stage_guid,
-                        sub_op_code: -1,
-                        stage_group_guid: self.stage_group_guid,
-                    },
-                    payload: format!(
-                        "OnCurrentWeekActivityInfo\t{}\t{current_day}",
-                        completions_this_week
-                            .map(|completions| if completions >= holocron {
-                                holocron.to_string()
-                            } else {
-                                "0".to_string()
-                            })
-                            .join(" ")
-                    ),
-                },
-            }));
-        }
-
-        packets.push(GamePacket::serialize(&TunneledPacket {
-            unknown1: true,
-            inner: FlashPayload {
-                header: MinigameHeader {
-                    stage_guid: self.stage_guid,
-                    sub_op_code: -1,
-                    stage_group_guid: self.stage_group_guid,
-                },
-                payload: "OnServerReadyMsg".to_string(),
-            },
-        }));
-
-        Ok(vec![Broadcast::Single(sender, packets)])
+                }),
+            ],
+        )])
     }
 }
