@@ -584,7 +584,8 @@ impl DailyTriviaGame {
         }
 
         let consecutive_completions = minigame_stats.consecutive_days_completed(self.stage_guid);
-        self.daily_double = consecutive_completions > 0 && consecutive_completions % 4 == 0;
+        self.daily_double = consecutive_completions > 0
+            && consecutive_completions % self.consecutive_days_for_daily_double == 0;
         self.state = DailyTriviaGameState::ReadyForNextQuestion {
             next_question_index: 0,
         };
