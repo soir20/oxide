@@ -98,6 +98,39 @@ mod tests {
     }
 
     #[test]
+    fn test_diff_days_in_same_week_for_timezone() {
+        let date1 = Utc.with_ymd_and_hms(2025, 8, 9, 23, 0, 0).unwrap();
+        let date2 = Utc.with_ymd_and_hms(2025, 8, 16, 22, 59, 59).unwrap();
+        assert!(are_dates_in_same_week(
+            &date1.fixed_offset(),
+            &date2.fixed_offset(),
+            &FixedOffset::east_opt(3600).unwrap()
+        ));
+    }
+
+    #[test]
+    fn test_diff_months_in_same_week() {
+        let date1 = Utc.with_ymd_and_hms(2025, 7, 30, 5, 17, 24).unwrap();
+        let date2 = Utc.with_ymd_and_hms(2025, 8, 2, 16, 8, 45).unwrap();
+        assert!(are_dates_in_same_week(
+            &date1.fixed_offset(),
+            &date2.fixed_offset(),
+            &Utc.fix()
+        ));
+    }
+
+    #[test]
+    fn test_diff_years_in_same_week() {
+        let date1 = Utc.with_ymd_and_hms(2024, 12, 30, 5, 17, 24).unwrap();
+        let date2 = Utc.with_ymd_and_hms(2025, 1, 2, 16, 8, 45).unwrap();
+        assert!(are_dates_in_same_week(
+            &date1.fixed_offset(),
+            &date2.fixed_offset(),
+            &Utc.fix()
+        ));
+    }
+
+    #[test]
     fn test_sunday_and_diff_day_in_same_week() {
         let date1 = Utc.with_ymd_and_hms(2025, 8, 10, 5, 17, 24).unwrap();
         let date2 = Utc.with_ymd_and_hms(2025, 8, 14, 16, 8, 45).unwrap();
@@ -142,6 +175,17 @@ mod tests {
     }
 
     #[test]
+    fn test_diff_days_in_diff_week_for_timezone() {
+        let date1 = Utc.with_ymd_and_hms(2025, 8, 10, 0, 0, 0).unwrap();
+        let date2 = Utc.with_ymd_and_hms(2025, 8, 16, 23, 0, 0).unwrap();
+        assert!(!are_dates_in_same_week(
+            &date1.fixed_offset(),
+            &date2.fixed_offset(),
+            &FixedOffset::east_opt(3600).unwrap()
+        ));
+    }
+
+    #[test]
     fn test_sunday_and_diff_day_in_diff_weeks() {
         let date1 = Utc.with_ymd_and_hms(2025, 8, 17, 5, 17, 24).unwrap();
         let date2 = Utc.with_ymd_and_hms(2025, 8, 14, 16, 8, 45).unwrap();
@@ -167,28 +211,6 @@ mod tests {
     fn test_diff_days_in_same_week_leap_second() {
         let date1 = Utc.timestamp_opt(1483228799, 1_000_000_000).unwrap();
         let date2 = Utc.with_ymd_and_hms(2016, 12, 25, 0, 0, 0).unwrap();
-        assert!(are_dates_in_same_week(
-            &date1.fixed_offset(),
-            &date2.fixed_offset(),
-            &Utc.fix()
-        ));
-    }
-
-    #[test]
-    fn test_diff_days_in_same_week_diff_months() {
-        let date1 = Utc.with_ymd_and_hms(2025, 7, 30, 5, 17, 24).unwrap();
-        let date2 = Utc.with_ymd_and_hms(2025, 8, 2, 16, 8, 45).unwrap();
-        assert!(are_dates_in_same_week(
-            &date1.fixed_offset(),
-            &date2.fixed_offset(),
-            &Utc.fix()
-        ));
-    }
-
-    #[test]
-    fn test_diff_days_in_same_week_diff_years() {
-        let date1 = Utc.with_ymd_and_hms(2024, 12, 30, 5, 17, 24).unwrap();
-        let date2 = Utc.with_ymd_and_hms(2025, 1, 2, 16, 8, 45).unwrap();
         assert!(are_dates_in_same_week(
             &date1.fixed_offset(),
             &date2.fixed_offset(),
