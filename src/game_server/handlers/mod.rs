@@ -1,4 +1,4 @@
-use chrono::{DateTime, Datelike, Days, FixedOffset, TimeDelta, Weekday};
+use chrono::{DateTime, Datelike, Days, FixedOffset, Weekday};
 
 use super::{packets::Pos, Broadcast, GameServer, ProcessPacketError};
 
@@ -67,4 +67,74 @@ pub fn are_dates_in_same_week(
     };
 
     week1 == week2
+}
+
+#[cfg(test)]
+mod tests {
+    use chrono::{Offset, TimeZone, Utc};
+
+    use super::*;
+
+    #[test]
+    fn test_same_day_in_same_week() {
+        let date1 = Utc.with_ymd_and_hms(2025, 8, 14, 23, 59, 59).unwrap();
+        let date2 = Utc.with_ymd_and_hms(2025, 8, 14, 0, 0, 0).unwrap();
+        assert!(are_dates_in_same_week(&date1.fixed_offset(), &date2.fixed_offset(), &Utc.fix()));
+    }
+
+    #[test]
+    fn test_diff_days_in_same_week() {
+        let date1 = Utc.with_ymd_and_hms(2025, 8, 11, 5, 17, 24).unwrap();
+        let date2 = Utc.with_ymd_and_hms(2025, 8, 14, 16, 8, 45).unwrap();
+        assert!(are_dates_in_same_week(&date1.fixed_offset(), &date2.fixed_offset(), &Utc.fix()));
+    }
+
+    #[test]
+    fn test_sunday_and_diff_day_in_same_week() {
+        let date1 = Utc.with_ymd_and_hms(2025, 8, 10, 5, 17, 24).unwrap();
+        let date2 = Utc.with_ymd_and_hms(2025, 8, 14, 16, 8, 45).unwrap();
+        assert!(are_dates_in_same_week(&date1.fixed_offset(), &date2.fixed_offset(), &Utc.fix()));
+    }
+
+    #[test]
+    fn test_saturday_and_diff_day_in_same_week() {
+        let date1 = Utc.with_ymd_and_hms(2025, 8, 16, 5, 17, 24).unwrap();
+        let date2 = Utc.with_ymd_and_hms(2025, 8, 14, 16, 8, 45).unwrap();
+        assert!(are_dates_in_same_week(&date1.fixed_offset(), &date2.fixed_offset(), &Utc.fix()));
+    }
+
+    #[test]
+    fn test_same_day_in_diff_weeks() {
+        let date1 = Utc.with_ymd_and_hms(2025, 8, 7, 23, 59, 59).unwrap();
+        let date2 = Utc.with_ymd_and_hms(2025, 8, 14, 0, 0, 0).unwrap();
+        assert!(!are_dates_in_same_week(&date1.fixed_offset(), &date2.fixed_offset(), &Utc.fix()));
+    }
+
+    #[test]
+    fn test_diff_days_in_diff_weeks() {
+        let date1 = Utc.with_ymd_and_hms(2025, 8, 4, 5, 17, 24).unwrap();
+        let date2 = Utc.with_ymd_and_hms(2025, 8, 14, 16, 8, 45).unwrap();
+        assert!(!are_dates_in_same_week(&date1.fixed_offset(), &date2.fixed_offset(), &Utc.fix()));
+    }
+
+    #[test]
+    fn test_sunday_and_diff_day_in_diff_weeks() {
+        let date1 = Utc.with_ymd_and_hms(2025, 8, 17, 5, 17, 24).unwrap();
+        let date2 = Utc.with_ymd_and_hms(2025, 8, 14, 16, 8, 45).unwrap();
+        assert!(!are_dates_in_same_week(&date1.fixed_offset(), &date2.fixed_offset(), &Utc.fix()));
+    }
+
+    #[test]
+    fn test_saturday_and_diff_day_in_diff_weeks() {
+        let date1 = Utc.with_ymd_and_hms(2025, 8, 9, 5, 17, 24).unwrap();
+        let date2 = Utc.with_ymd_and_hms(2025, 8, 14, 16, 8, 45).unwrap();
+        assert!(!are_dates_in_same_week(&date1.fixed_offset(), &date2.fixed_offset(), &Utc.fix()));
+    }
+
+    #[test]
+    fn test_diff_days_in_same_week_leap_second() {
+        let date1 = Utc.timestamp_opt(1483228799, 1_000_000_000).unwrap();
+        let date2 = Utc.with_ymd_and_hms(2016, 12, 25, 0, 0, 0).unwrap();
+        assert!(are_dates_in_same_week(&date1.fixed_offset(), &date2.fixed_offset(), &Utc.fix()));
+    }
 }
