@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use chrono::{DateTime, Datelike, FixedOffset};
 use rand::{seq::SliceRandom, thread_rng, Rng};
 use rand_distr::{Distribution, WeightedAliasIndex};
@@ -8,7 +10,7 @@ use crate::game_server::{
         character::MinigameWinStatus,
         minigame::{
             award_credits, DailyGamePlayability, DailyResetOffset, MinigameStageConfig,
-            PlayerMinigameStats,
+            MinigameTimer, PlayerMinigameStats,
         },
     },
     packets::{
@@ -404,7 +406,7 @@ impl DailyHolocronGame {
             return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
                 format!(
-                    "Player {sender} sent a holocron request for Daily Holocron, but the game isn't waiting to holocron ({self:?})"
+                    "Player {sender} sent a holocron request for Daily Holocron, but the game isn't waiting for holocron selection ({self:?})"
                 ),
             ));
         };
@@ -493,28 +495,32 @@ pub struct DailyTriviaQuestionConfig {
 
 #[derive(Clone, Debug)]
 struct DailyTriviaQuestion {
-    answers: [u32; 4],
+    question_id: u32,
+    answer_ids: [u32; 4],
     correct_answer: u8,
+    sound_id: Option<u32>,
 }
 
 impl From<&DailyTriviaQuestionConfig> for DailyTriviaQuestion {
     fn from(value: &DailyTriviaQuestionConfig) -> Self {
-        let mut answers = [
+        let mut answer_ids = [
             value.correct_answer_id,
             value.incorrect_answer_ids[0],
             value.incorrect_answer_ids[1],
             value.incorrect_answer_ids[2],
         ];
 
-        answers.shuffle(&mut thread_rng());
+        answer_ids.shuffle(&mut thread_rng());
 
         DailyTriviaQuestion {
-            answers,
-            correct_answer: answers
+            question_id: value.question_id,
+            answer_ids,
+            correct_answer: answer_ids
                 .iter()
                 .position(|answer| *answer == value.correct_answer_id)
                 .expect("Correct answer disappeared from answers array")
                 as u8,
+            sound_id: value.sound_id,
         }
     }
 }
@@ -522,8 +528,13 @@ impl From<&DailyTriviaQuestionConfig> for DailyTriviaQuestion {
 #[derive(Clone, Debug)]
 enum DailyTriviaGameState {
     WaitingForConnection,
-    AnsweringQuestion { question_index: u8 },
-    ReadyForNextQuestion { next_question_index: u8 },
+    AnsweringQuestion {
+        question_index: u8,
+        timer: MinigameTimer,
+    },
+    ReadyForNextQuestion {
+        next_question_index: u8,
+    },
     GameOver,
 }
 
@@ -531,6 +542,7 @@ enum DailyTriviaGameState {
 pub struct DailyTriviaGame {
     daily_double: bool,
     consecutive_days_for_daily_double: u32,
+    score_per_question: i32,
     seconds_per_question: u16,
     score_per_second_remaining: i32,
     questions: Vec<DailyTriviaQuestion>,
@@ -545,6 +557,7 @@ impl DailyTriviaGame {
         question_bank: &[DailyTriviaQuestionConfig],
         questions_per_game: u8,
         consecutive_days_for_daily_double: u32,
+        score_per_question: i32,
         seconds_per_question: u16,
         score_per_second_remaining: i32,
         daily_game_playability: DailyGamePlayability,
@@ -559,6 +572,7 @@ impl DailyTriviaGame {
         DailyTriviaGame {
             daily_double: false,
             consecutive_days_for_daily_double,
+            score_per_question,
             seconds_per_question,
             score_per_second_remaining,
             questions,
@@ -606,7 +620,7 @@ impl DailyTriviaGame {
                             self.seconds_per_question,
                             self.questions.len(),
                             self.score_per_second_remaining,
-                            self.daily_double,
+                            self.daily_double as u8,
                         ),
                     },
                 }),
@@ -622,6 +636,53 @@ impl DailyTriviaGame {
                     },
                 }),
             ],
+        )])
+    }
+
+    pub fn next_question(&mut self, sender: u32) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let DailyTriviaGameState::ReadyForNextQuestion {
+            next_question_index,
+        } = self.state
+        else {
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!(
+                    "Player {sender} sent a question request for Daily Trivia, but the game isn't ready for a question ({self:?})"
+                ),
+            ));
+        };
+
+        let question = &self.questions[next_question_index as usize];
+        self.state = DailyTriviaGameState::AnsweringQuestion {
+            question_index: next_question_index,
+            timer: MinigameTimer::new_with_event(Duration::from_secs(
+                self.seconds_per_question as u64,
+            )),
+        };
+
+        Ok(vec![Broadcast::Single(
+            sender,
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: FlashPayload {
+                    header: MinigameHeader {
+                        stage_guid: self.stage_guid,
+                        sub_op_code: -1,
+                        stage_group_guid: self.stage_group_guid,
+                    },
+                    payload: format!(
+                        "OnDailyTriviaQuestionData\t{}^{}^{}^{}^{}\t{}\t{}\t{}",
+                        question.question_id,
+                        question.answer_ids[0],
+                        question.answer_ids[1],
+                        question.answer_ids[2],
+                        question.answer_ids[3],
+                        question.sound_id.unwrap_or(0),
+                        self.score_per_question,
+                        next_question_index,
+                    ),
+                },
+            })],
         )])
     }
 }

@@ -226,6 +226,7 @@ pub enum FlashMinigameType {
     DailyHolocron,
     DailyTrivia {
         questions_per_game: u8,
+        score_per_question: i32,
         seconds_per_question: u16,
         score_per_second_remaining: i32,
         consecutive_days_for_daily_double: u32,
@@ -274,6 +275,7 @@ impl MinigameType {
                 },
                 FlashMinigameType::DailyTrivia {
                     questions_per_game,
+                    score_per_question,
                     seconds_per_question,
                     score_per_second_remaining,
                     consecutive_days_for_daily_double,
@@ -283,6 +285,7 @@ impl MinigameType {
                         question_bank,
                         *questions_per_game,
                         *consecutive_days_for_daily_double,
+                        *score_per_question,
                         *seconds_per_question,
                         *score_per_second_remaining,
                         daily_game_playability,
@@ -3161,6 +3164,7 @@ fn handle_flash_payload(
             |minigame_status, _, _, _, _, _| {
                  match &mut minigame_status.type_data {
                     MinigameTypeData::DailySpin { game } => game.mark_player_ready(sender),
+                    MinigameTypeData::DailyTrivia { game } => game.next_question(sender),
                     _ => Err(ProcessPacketError::new(
                         ProcessPacketErrorType::ConstraintViolated,
                         format!(
