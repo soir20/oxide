@@ -95,6 +95,11 @@ mod tests {
             &date2.fixed_offset(),
             &Utc.fix()
         ));
+        assert!(are_dates_in_same_week(
+            &date2.fixed_offset(),
+            &date1.fixed_offset(),
+            &Utc.fix()
+        ));
     }
 
     #[test]
@@ -104,6 +109,11 @@ mod tests {
         assert!(are_dates_in_same_week(
             &date1.fixed_offset(),
             &date2.fixed_offset(),
+            &Utc.fix()
+        ));
+        assert!(are_dates_in_same_week(
+            &date2.fixed_offset(),
+            &date1.fixed_offset(),
             &Utc.fix()
         ));
     }
@@ -117,6 +127,11 @@ mod tests {
             &date2.fixed_offset(),
             &FixedOffset::east_opt(3600).unwrap()
         ));
+        assert!(are_dates_in_same_week(
+            &date2.fixed_offset(),
+            &date1.fixed_offset(),
+            &FixedOffset::east_opt(3600).unwrap()
+        ));
     }
 
     #[test]
@@ -126,6 +141,11 @@ mod tests {
         assert!(are_dates_in_same_week(
             &date1.fixed_offset(),
             &date2.fixed_offset(),
+            &Utc.fix()
+        ));
+        assert!(are_dates_in_same_week(
+            &date2.fixed_offset(),
+            &date1.fixed_offset(),
             &Utc.fix()
         ));
     }
@@ -139,6 +159,11 @@ mod tests {
             &date2.fixed_offset(),
             &Utc.fix()
         ));
+        assert!(are_dates_in_same_week(
+            &date2.fixed_offset(),
+            &date1.fixed_offset(),
+            &Utc.fix()
+        ));
     }
 
     #[test]
@@ -148,6 +173,11 @@ mod tests {
         assert!(are_dates_in_same_week(
             &date1.fixed_offset(),
             &date2.fixed_offset(),
+            &Utc.fix()
+        ));
+        assert!(are_dates_in_same_week(
+            &date2.fixed_offset(),
+            &date1.fixed_offset(),
             &Utc.fix()
         ));
     }
@@ -161,6 +191,11 @@ mod tests {
             &date2.fixed_offset(),
             &Utc.fix()
         ));
+        assert!(are_dates_in_same_week(
+            &date2.fixed_offset(),
+            &date1.fixed_offset(),
+            &Utc.fix()
+        ));
     }
 
     #[test]
@@ -170,6 +205,11 @@ mod tests {
         assert!(!are_dates_in_same_week(
             &date1.fixed_offset(),
             &date2.fixed_offset(),
+            &Utc.fix()
+        ));
+        assert!(!are_dates_in_same_week(
+            &date2.fixed_offset(),
+            &date1.fixed_offset(),
             &Utc.fix()
         ));
     }
@@ -183,6 +223,11 @@ mod tests {
             &date2.fixed_offset(),
             &Utc.fix()
         ));
+        assert!(!are_dates_in_same_week(
+            &date2.fixed_offset(),
+            &date1.fixed_offset(),
+            &Utc.fix()
+        ));
     }
 
     #[test]
@@ -192,6 +237,11 @@ mod tests {
         assert!(!are_dates_in_same_week(
             &date1.fixed_offset(),
             &date2.fixed_offset(),
+            &FixedOffset::east_opt(3600).unwrap()
+        ));
+        assert!(!are_dates_in_same_week(
+            &date2.fixed_offset(),
+            &date1.fixed_offset(),
             &FixedOffset::east_opt(3600).unwrap()
         ));
     }
@@ -205,6 +255,11 @@ mod tests {
             &date2.fixed_offset(),
             &Utc.fix()
         ));
+        assert!(!are_dates_in_same_week(
+            &date2.fixed_offset(),
+            &date1.fixed_offset(),
+            &Utc.fix()
+        ));
     }
 
     #[test]
@@ -214,6 +269,11 @@ mod tests {
         assert!(!are_dates_in_same_week(
             &date1.fixed_offset(),
             &date2.fixed_offset(),
+            &Utc.fix()
+        ));
+        assert!(!are_dates_in_same_week(
+            &date2.fixed_offset(),
+            &date1.fixed_offset(),
             &Utc.fix()
         ));
     }
@@ -227,6 +287,11 @@ mod tests {
             &date2.fixed_offset(),
             &Utc.fix()
         ));
+        assert!(are_dates_in_same_week(
+            &date2.fixed_offset(),
+            &date1.fixed_offset(),
+            &Utc.fix()
+        ));
     }
 
     #[test]
@@ -236,6 +301,11 @@ mod tests {
         assert!(!are_dates_consecutive(
             &date1.fixed_offset(),
             &date2.fixed_offset(),
+            &Utc.fix()
+        ));
+        assert!(!are_dates_consecutive(
+            &date2.fixed_offset(),
+            &date1.fixed_offset(),
             &Utc.fix()
         ));
     }
@@ -249,6 +319,11 @@ mod tests {
             &date2.fixed_offset(),
             &Utc.fix()
         ));
+        assert!(are_dates_consecutive(
+            &date2.fixed_offset(),
+            &date1.fixed_offset(),
+            &Utc.fix()
+        ));
     }
 
     #[test]
@@ -258,6 +333,11 @@ mod tests {
         assert!(!are_dates_consecutive(
             &date1.fixed_offset(),
             &date2.fixed_offset(),
+            &Utc.fix()
+        ));
+        assert!(!are_dates_consecutive(
+            &date2.fixed_offset(),
+            &date1.fixed_offset(),
             &Utc.fix()
         ));
     }
@@ -271,6 +351,11 @@ mod tests {
             &date2.fixed_offset(),
             &Utc.fix()
         ));
+        assert!(!are_dates_consecutive(
+            &date2.fixed_offset(),
+            &date1.fixed_offset(),
+            &Utc.fix()
+        ));
     }
 
     #[test]
@@ -280,6 +365,11 @@ mod tests {
         assert!(!are_dates_consecutive(
             &date1.fixed_offset(),
             &date2.fixed_offset(),
+            &Utc.fix()
+        ));
+        assert!(!are_dates_consecutive(
+            &date2.fixed_offset(),
+            &date1.fixed_offset(),
             &Utc.fix()
         ));
     }
