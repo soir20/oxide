@@ -4687,49 +4687,6 @@ categories:
                       weight: 1
               score_to_credits_expression: x
       - guid: 29000
-        name_id: 14054
-        description_id: 14161
-        members_only: true
-        is_flash: true
-        is_active: true
-        param1: 0
-        icon_id: 1236
-        background_icon_id: 0
-        is_popular: false
-        is_game_of_day: false
-        sort_order: 29000
-        tutorial_swf: 'HowtoHolocron.swf'
-        daily_type: Holocron
-        stage_group:
-          guid: 18
-          name_id: 14054
-          description_id: 14161
-          icon_id: 875
-          stage_icon_id: 875
-          members_only: true
-          stage_select_map_name: ''
-          stages:
-            - !Stage
-              guid: 29001
-              name_id: 14054
-              description_id: 14161
-              stage_icon_id: 1236
-              start_screen_icon_id: 1901
-              min_players: 1
-              max_players: 1
-              difficulty: 1
-              start_sound_id: 3355
-              show_end_score_screen: false
-              members_only: true
-              require_previous_completed: false
-              link_name: stage
-              short_name: ''
-              minigame_type:
-                !Flash
-                game_swf_name: DailyHolocron.swf
-                game_type: DailyHolocron
-              score_to_credits_expression: x
-      - guid: 30000
         name_id: 14055
         description_id: 14163
         members_only: true
@@ -4740,7 +4697,7 @@ categories:
         background_icon_id: 0
         is_popular: false
         is_game_of_day: false
-        sort_order: 30000
+        sort_order: 29000
         tutorial_swf: HowtoQuiz.swf
         daily_type: Trivia
         stage_group:
@@ -4753,7 +4710,7 @@ categories:
           stage_select_map_name: ''
           stages:
             - !Stage
-              guid: 30001
+              guid: 29001
               name_id: 14055
               description_id: 14163
               stage_icon_id: 1238
@@ -4799,4 +4756,47 @@ categories:
                       correct_answer_id: 10221
                       incorrect_answer_ids: [10438, 10655, 10872]
                       sound_id: 3803
+              score_to_credits_expression: x
+      - guid: 30000
+        name_id: 14054
+        description_id: 14161
+        members_only: true
+        is_flash: true
+        is_active: true
+        param1: 0
+        icon_id: 1236
+        background_icon_id: 0
+        is_popular: false
+        is_game_of_day: false
+        sort_order: 30000
+        tutorial_swf: 'HowtoHolocron.swf'
+        daily_type: Holocron
+        stage_group:
+          guid: 18
+          name_id: 14054
+          description_id: 14161
+          icon_id: 875
+          stage_icon_id: 875
+          members_only: true
+          stage_select_map_name: ''
+          stages:
+            - !Stage
+              guid: 30001
+              name_id: 14054
+              description_id: 14161
+              stage_icon_id: 1236
+              start_screen_icon_id: 1901
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3355
+              show_end_score_screen: false
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: ''
+              minigame_type:
+                !Flash
+                game_swf_name: DailyHolocron.swf
+                game_type: DailyHolocron
               score_to_credits_expression: x
