@@ -749,7 +749,9 @@ impl DailyTriviaGame {
                 bonus_timer.time_until_next_event(Instant::now()).as_secs() as i32;
             let question_score = base_question_score
                 .saturating_add(seconds_remaining.saturating_mul(self.score_per_second_remaining));
-            *game_score = game_score.saturating_add(question_score);
+            *game_score = game_score
+                .saturating_add(question_score)
+                .saturating_mul(if self.daily_double { 2 } else { 1 });
 
             let next_question_index = question_index.saturating_add(1);
             if next_question_index as usize == self.questions.len() {
