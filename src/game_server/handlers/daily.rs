@@ -534,7 +534,7 @@ enum DailyTriviaGameState {
     WaitingForConnection,
     AnsweringQuestion {
         question_index: u8,
-        timer: MinigameTimer,
+        bonus_timer: MinigameTimer,
     },
     ReadyForNextQuestion {
         next_question_index: u8,
@@ -601,7 +601,9 @@ impl DailyTriviaGame {
             ));
         }
 
-        let consecutive_completions = minigame_stats.consecutive_days_completed(self.stage_guid);
+        let consecutive_completions = minigame_stats
+            .consecutive_days_completed(self.stage_guid)
+            .saturating_add(1);
         self.daily_double = consecutive_completions > 0
             && consecutive_completions % self.consecutive_days_for_daily_double == 0;
         self.state = DailyTriviaGameState::ReadyForNextQuestion {
@@ -659,7 +661,7 @@ impl DailyTriviaGame {
         let question = &self.questions[next_question_index as usize];
         self.state = DailyTriviaGameState::AnsweringQuestion {
             question_index: next_question_index,
-            timer: MinigameTimer::new_with_event(Duration::from_secs(
+            bonus_timer: MinigameTimer::new_with_event(Duration::from_secs(
                 self.seconds_per_question as u64,
             )),
         };
@@ -709,7 +711,7 @@ impl DailyTriviaGame {
 
         let DailyTriviaGameState::AnsweringQuestion {
             question_index,
-            timer,
+            bonus_timer,
         } = &mut self.state
         else {
             return Err(ProcessPacketError::new(
@@ -719,7 +721,7 @@ impl DailyTriviaGame {
                 ),
             ));
         };
-        timer.pause_or_resume(true);
+        bonus_timer.pause_or_resume(true);
 
         let question = &mut self.questions[*question_index as usize];
         question.selected_answers[selected_answer_index as usize] = true;
@@ -743,7 +745,8 @@ impl DailyTriviaGame {
             };
 
         let broadcasts = if question.correct_answer_index == selected_answer_index {
-            let seconds_remaining = timer.time_until_next_event(Instant::now()).as_secs() as i32;
+            let seconds_remaining =
+                bonus_timer.time_until_next_event(Instant::now()).as_secs() as i32;
             let question_score = base_question_score
                 .saturating_add(seconds_remaining.saturating_mul(self.score_per_second_remaining));
             *game_score = game_score.saturating_add(question_score);
@@ -774,7 +777,7 @@ impl DailyTriviaGame {
                 })],
             )]
         } else {
-            timer.pause_or_resume(false);
+            bonus_timer.pause_or_resume(false);
             vec![Broadcast::Single(
                 sender,
                 vec![GamePacket::serialize(&TunneledPacket {
