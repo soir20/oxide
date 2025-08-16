@@ -4874,9 +4874,6 @@ categories:
                     - question_id: 10045
                       correct_answer_id: 10262
                       incorrect_answer_ids: [10479, 10696, 10913]
-                    - question_id: 10046
-                      correct_answer_id: 10263
-                      incorrect_answer_ids: [10480, 10697, 10914]
                     - question_id: 10047
                       correct_answer_id: 10264
                       incorrect_answer_ids: [10481, 10698, 10915]
