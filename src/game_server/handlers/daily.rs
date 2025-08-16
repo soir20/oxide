@@ -547,8 +547,9 @@ pub struct DailyTriviaGame {
     daily_double: bool,
     consecutive_days_for_daily_double: u32,
     score_per_question: i32,
-    seconds_per_question: u16,
-    score_per_second_remaining: i32,
+    bonus_timer_start_delay_seconds: u16,
+    bonus_seconds_per_question: u16,
+    score_per_bonus_second_remaining: i32,
     questions: Vec<DailyTriviaQuestion>,
     state: DailyTriviaGameState,
     timestamp: DateTime<FixedOffset>,
@@ -562,8 +563,9 @@ impl DailyTriviaGame {
         questions_per_game: u8,
         consecutive_days_for_daily_double: u32,
         score_per_question: i32,
-        seconds_per_question: u16,
-        score_per_second_remaining: i32,
+        bonus_timer_start_delay_seconds: u16,
+        bonus_seconds_per_question: u16,
+        score_per_bonus_second_remaining: i32,
         daily_game_playability: DailyGamePlayability,
         stage_guid: i32,
         stage_group_guid: i32,
@@ -577,8 +579,9 @@ impl DailyTriviaGame {
             daily_double: false,
             consecutive_days_for_daily_double,
             score_per_question,
-            seconds_per_question,
-            score_per_second_remaining,
+            bonus_timer_start_delay_seconds,
+            bonus_seconds_per_question,
+            score_per_bonus_second_remaining,
             questions,
             state: DailyTriviaGameState::WaitingForConnection,
             timestamp: daily_game_playability.time(),
@@ -623,9 +626,9 @@ impl DailyTriviaGame {
                         },
                         payload: format!(
                             "OnDailyTriviaGameData\t{}\t{}\t{}\t{}",
-                            self.seconds_per_question,
+                            self.bonus_seconds_per_question,
                             self.questions.len(),
-                            self.score_per_second_remaining,
+                            self.score_per_bonus_second_remaining,
                             self.daily_double as u8,
                         ),
                     },
@@ -662,7 +665,8 @@ impl DailyTriviaGame {
         self.state = DailyTriviaGameState::AnsweringQuestion {
             question_index: next_question_index,
             bonus_timer: MinigameTimer::new_with_event(Duration::from_secs(
-                self.seconds_per_question as u64,
+                self.bonus_seconds_per_question
+                    .saturating_add(self.bonus_timer_start_delay_seconds) as u64,
             )),
         };
 
@@ -748,10 +752,11 @@ impl DailyTriviaGame {
             let seconds_remaining =
                 bonus_timer.time_until_next_event(Instant::now()).as_secs() as i32;
             let question_score = base_question_score
-                .saturating_add(seconds_remaining.saturating_mul(self.score_per_second_remaining));
-            *game_score = game_score
-                .saturating_add(question_score)
+                .saturating_add(
+                    seconds_remaining.saturating_mul(self.score_per_bonus_second_remaining),
+                )
                 .saturating_mul(if self.daily_double { 2 } else { 1 });
+            *game_score = game_score.saturating_add(question_score);
 
             let next_question_index = question_index.saturating_add(1);
             if next_question_index as usize == self.questions.len() {
