@@ -822,7 +822,7 @@ impl GameServer {
         self.start_time
     }
 
-    pub fn lock_enforcer(&self) -> CharacterLockEnforcer {
+    pub fn lock_enforcer(&self) -> CharacterLockEnforcer<'_> {
         self.lock_enforcer_source.lock_enforcer()
     }
 

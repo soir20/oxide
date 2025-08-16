@@ -1472,7 +1472,7 @@ impl AllMinigameConfigs {
         Ok(stage_group.to_stage_group_instance(*portal_entry_guid, player))
     }
 
-    pub fn stage_configs(&self) -> impl Iterator<Item = StageConfigRef> {
+    pub fn stage_configs(&self) -> impl Iterator<Item = StageConfigRef<'_>> {
         self.stage_groups
             .values()
             .flat_map(|(stage_group, portal_entry_guid)| {
@@ -1504,7 +1504,11 @@ impl AllMinigameConfigs {
             })
     }
 
-    pub fn stage_config(&self, stage_group_guid: i32, stage_guid: i32) -> Option<StageConfigRef> {
+    pub fn stage_config(
+        &self,
+        stage_group_guid: i32,
+        stage_guid: i32,
+    ) -> Option<StageConfigRef<'_>> {
         self.stage_groups
             .get(&stage_group_guid)
             .and_then(|(stage_group, portal_entry_guid)| {

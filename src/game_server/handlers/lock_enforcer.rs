@@ -613,7 +613,7 @@ impl LockEnforcerSource {
         }
     }
 
-    pub fn lock_enforcer(&self) -> CharacterLockEnforcer {
+    pub fn lock_enforcer(&self) -> CharacterLockEnforcer<'_> {
         CharacterLockEnforcer {
             enforcer: LockEnforcer {
                 table: &self.characters,
