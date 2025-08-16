@@ -4729,3 +4729,74 @@ categories:
                 game_swf_name: DailyHolocron.swf
                 game_type: DailyHolocron
               score_to_credits_expression: x
+      - guid: 30000
+        name_id: 14055
+        description_id: 14163
+        members_only: true
+        is_flash: true
+        is_active: true
+        param1: 0
+        icon_id: 1238
+        background_icon_id: 0
+        is_popular: false
+        is_game_of_day: false
+        sort_order: 30000
+        tutorial_swf: HowtoQuiz.swf
+        daily_type: Trivia
+        stage_group:
+          guid: 19
+          name_id: 14055
+          description_id: 14163
+          icon_id: 367
+          stage_icon_id: 367
+          members_only: true
+          stage_select_map_name: ''
+          stages:
+            - !Stage
+              guid: 30001
+              name_id: 14055
+              description_id: 14163
+              stage_icon_id: 1238
+              start_screen_icon_id: 1902
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3357
+              show_end_score_screen: false
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: ''
+              minigame_type:
+                !Flash
+                game_swf_name: DailyTrivia.swf
+                game_type:
+                  !DailyTrivia
+                  questions_per_game: 5
+                  score_per_question: 100
+                  bonus_timer_start_delay_seconds: 1
+                  bonus_seconds_per_question: 30
+                  score_per_bonus_second_remaining: 1
+                  consecutive_days_for_daily_double: 5
+                  question_bank:
+                    - question_id: 10000
+                      correct_answer_id: 10217
+                      incorrect_answer_ids: [10434, 10651, 10868]
+                      sound_id: 3799
+                    - question_id: 10001
+                      correct_answer_id: 10218
+                      incorrect_answer_ids: [10435, 10652, 10869]
+                      sound_id: 3800
+                    - question_id: 10002
+                      correct_answer_id: 10219
+                      incorrect_answer_ids: [10436, 10653, 10870]
+                      sound_id: 3801
+                    - question_id: 10003
+                      correct_answer_id: 10220
+                      incorrect_answer_ids: [10437, 10654, 10871]
+                      sound_id: 3802
+                    - question_id: 10004
+                      correct_answer_id: 10221
+                      incorrect_answer_ids: [10438, 10655, 10872]
+                      sound_id: 3803
+              score_to_credits_expression: x
