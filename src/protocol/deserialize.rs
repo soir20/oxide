@@ -1,7 +1,7 @@
 use crate::protocol::hash::{compute_crc, CrcHash};
 use crate::protocol::{DisconnectReason, Packet, ProtocolOpCode, Session};
 use byteorder::{BigEndian, ReadBytesExt};
-use miniz_oxide::inflate::{decompress_to_vec_zlib, DecompressError};
+use miniz_oxide::inflate::{decompress_to_vec_zlib_with_limit, DecompressError};
 use std::io::{Cursor, Error, Read};
 use std::mem::size_of;
 
@@ -265,6 +265,7 @@ fn deserialize_packet_data(
 pub fn deserialize_packet(
     data: &[u8],
     possible_session: &Option<Session>,
+    max_decompressed_packet_bytes: usize,
 ) -> Result<Vec<Packet>, DeserializeError> {
     let mut cursor = Cursor::new(data);
     let op_code = check_op_code(cursor.read_u16::<BigEndian>()?)?;
@@ -293,7 +294,8 @@ pub fn deserialize_packet(
 
         packet_data = data[data_offset..crc_offset].to_vec();
         if compressed {
-            packet_data = decompress_to_vec_zlib(&packet_data)?;
+            packet_data =
+                decompress_to_vec_zlib_with_limit(&packet_data, max_decompressed_packet_bytes)?;
         }
         let actual_hash = compute_crc(&data[0..crc_offset], session.crc_seed, session.crc_length);
 

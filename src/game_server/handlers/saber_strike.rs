@@ -154,7 +154,7 @@ fn handle_saber_strike_game_over(
                 score_points: 0,
             });
             minigame_status.total_score = game_over.total_score;
-            minigame_status.game_won = game_over.won;
+            minigame_status.win_status.set_won(game_over.won);
             Ok(())
         },
     )?;

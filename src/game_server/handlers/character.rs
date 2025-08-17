@@ -3,10 +3,11 @@ use std::{
     time::{Duration, Instant},
 };
 
+use chrono::{DateTime, FixedOffset, Utc};
 use enum_iterator::Sequence;
 use rand::thread_rng;
 use rand_distr::{Distribution, WeightedAliasIndex};
-use serde::{de::IgnoredAny, Deserialize};
+use serde::Deserialize;
 
 use crate::{
     game_server::{
@@ -129,11 +130,11 @@ pub enum SpawnedState {
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct BaseNpcConfig {
-    #[serde(default)]
-    pub comment: IgnoredAny,
     pub key: Option<String>,
     #[serde(default)]
     pub model_id: u32,
+    #[serde(default)]
+    pub possible_model_ids: Vec<u32>,
     #[serde(default)]
     pub texture_alias: String,
     #[serde(default)]
@@ -145,6 +146,8 @@ pub struct BaseNpcConfig {
     pub pos: Pos,
     #[serde(default)]
     pub rot: Pos,
+    #[serde(default)]
+    pub possible_pos: Vec<Pos>,
     #[serde(default)]
     pub active_animation_slot: i32,
     #[serde(default)]
@@ -185,7 +188,6 @@ pub struct BaseNpcConfig {
 
 #[derive(Clone)]
 pub struct BaseNpc {
-    pub model_id: u32,
     pub texture_alias: String,
     pub name_id: u32,
     pub terrain_object_id: u32,
@@ -193,8 +195,6 @@ pub struct BaseNpc {
     pub name_offset_y: f32,
     pub name_offset_z: f32,
     pub enable_interact_popup: bool,
-    pub interact_radius: f32,
-    pub auto_interact_radius: Option<f32>,
     pub interact_popup_radius: Option<f32>,
     pub show_name: bool,
     pub visible: bool,
@@ -217,7 +217,7 @@ impl BaseNpc {
             AddNpc {
                 guid: Guid::guid(character),
                 name_id: self.name_id,
-                model_id: self.model_id,
+                model_id: character.model_id,
                 unknown3: true,
                 chat_text_color: Character::DEFAULT_CHAT_TEXT_COLOR,
                 chat_bubble_color: Character::DEFAULT_CHAT_BUBBLE_COLOR,
@@ -325,7 +325,6 @@ impl BaseNpc {
 impl From<BaseNpcConfig> for BaseNpc {
     fn from(value: BaseNpcConfig) -> Self {
         BaseNpc {
-            model_id: value.model_id,
             texture_alias: value.texture_alias,
             name_id: value.name_id,
             terrain_object_id: value.terrain_object_id,
@@ -333,8 +332,6 @@ impl From<BaseNpcConfig> for BaseNpc {
             name_offset_y: value.name_offset_y,
             name_offset_z: value.name_offset_z,
             enable_interact_popup: value.enable_interact_popup,
-            interact_radius: value.interact_radius,
-            auto_interact_radius: value.auto_interact_radius,
             interact_popup_radius: value.interact_popup_radius,
             show_name: value.show_name,
             visible: value.visible,
@@ -349,24 +346,25 @@ impl From<BaseNpcConfig> for BaseNpc {
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct TickableStep {
-    #[serde(default)]
-    pub comment: IgnoredAny,
     pub speed: Option<f32>,
     pub new_pos_x: Option<f32>,
     pub new_pos_y: Option<f32>,
     pub new_pos_z: Option<f32>,
-    #[serde(default)]
-    pub new_rot_x: f32,
-    #[serde(default)]
-    pub new_rot_y: f32,
-    #[serde(default)]
-    pub new_rot_z: f32,
+    pub new_rot_x: Option<f32>,
+    pub new_rot_y: Option<f32>,
+    pub new_rot_z: Option<f32>,
     #[serde(default)]
     pub new_pos_offset_x: f32,
     #[serde(default)]
     pub new_pos_offset_y: f32,
     #[serde(default)]
     pub new_pos_offset_z: f32,
+    #[serde(default)]
+    pub new_rot_offset_x: f32,
+    #[serde(default)]
+    pub new_rot_offset_y: f32,
+    #[serde(default)]
+    pub new_rot_offset_z: f32,
     pub animation_id: Option<i32>,
     pub one_shot_animation_id: Option<i32>,
     pub chat_message_id: Option<u32>,
@@ -395,6 +393,15 @@ impl TickableStep {
         }
     }
 
+    pub fn new_rot(&self, current_rot: Pos) -> Pos {
+        Pos {
+            x: self.new_rot_x.unwrap_or(current_rot.x) + self.new_rot_offset_x,
+            y: self.new_rot_y.unwrap_or(current_rot.y) + self.new_rot_offset_y,
+            z: self.new_rot_z.unwrap_or(current_rot.z) + self.new_rot_offset_z,
+            w: current_rot.w,
+        }
+    }
+
     pub fn apply(
         &self,
         character: &mut CharacterStats,
@@ -403,7 +410,7 @@ impl TickableStep {
         mount_configs: &BTreeMap<u32, MountConfig>,
         item_definitions: &BTreeMap<u32, ItemDefinition>,
         customizations: &BTreeMap<u32, Customization>,
-    ) -> Vec<Broadcast> {
+    ) -> (Vec<Broadcast>, Option<UpdatePlayerPosition>) {
         let mut packets_for_all = Vec::new();
 
         match self.spawned_state {
@@ -508,21 +515,22 @@ impl TickableStep {
         }
 
         let new_pos = self.new_pos(character.pos);
-        character.pos = new_pos;
-        packets_for_all.push(GamePacket::serialize(&TunneledPacket {
-            unknown1: true,
-            inner: UpdatePlayerPosition {
+        let new_rot = self.new_rot(character.rot);
+        let update_pos = if new_pos != character.pos || new_rot != character.rot {
+            Some(UpdatePlayerPosition {
                 guid: Guid::guid(character),
                 pos_x: new_pos.x,
                 pos_y: new_pos.y,
                 pos_z: new_pos.z,
-                rot_x: self.new_rot_x,
-                rot_y: self.new_rot_y,
-                rot_z: self.new_rot_z,
+                rot_x: new_rot.x,
+                rot_y: new_rot.y,
+                rot_z: new_rot.z,
                 character_state: 1,
                 unknown: 0,
-            },
-        }));
+            })
+        } else {
+            None
+        };
 
         if let Some(animation_id) = self.animation_id {
             character.animation_id = animation_id;
@@ -620,7 +628,7 @@ impl TickableStep {
             broadcasts.push(Broadcast::Multi(recipients, chat_packets));
         }
 
-        broadcasts
+        (broadcasts, update_pos)
     }
 }
 
@@ -636,8 +644,6 @@ pub struct TickableProcedureReference {
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct TickableProcedureConfig {
-    #[serde(default)]
-    pub comment: IgnoredAny,
     #[serde(flatten)]
     pub reference: TickableProcedureReference,
     pub steps: Vec<TickableStep>,
@@ -648,7 +654,7 @@ pub struct TickableProcedureConfig {
 }
 
 pub enum TickResult {
-    TickedCurrentProcedure(Vec<Broadcast>),
+    TickedCurrentProcedure(Vec<Broadcast>, Option<UpdatePlayerPosition>),
     MustChangeProcedure(String),
 }
 
@@ -740,17 +746,19 @@ impl TickableProcedure {
                 TickResult::MustChangeProcedure(self.next_procedure())
             } else {
                 self.current_step = Some((new_step_index, now));
-                TickResult::TickedCurrentProcedure(self.steps[new_step_index].apply(
+
+                let (broadcasts, update_pos) = self.steps[new_step_index].apply(
                     character,
                     nearby_player_guids,
                     nearby_players,
                     mount_configs,
                     item_definitions,
                     customizations,
-                ))
+                );
+                TickResult::TickedCurrentProcedure(broadcasts, update_pos)
             }
         } else {
-            TickResult::TickedCurrentProcedure(Vec::new())
+            TickResult::TickedCurrentProcedure(Vec::new(), None)
         }
     }
 
@@ -888,9 +896,9 @@ impl TickableProcedureTracker {
         mount_configs: &BTreeMap<u32, MountConfig>,
         item_definitions: &BTreeMap<u32, ItemDefinition>,
         customizations: &BTreeMap<u32, Customization>,
-    ) -> Vec<Broadcast> {
+    ) -> (Vec<Broadcast>, Option<UpdatePlayerPosition>) {
         if self.procedures.is_empty() {
-            return Vec::new();
+            return (Vec::new(), None);
         }
 
         let mut current_procedure = self
@@ -907,8 +915,8 @@ impl TickableProcedureTracker {
                 item_definitions,
                 customizations,
             );
-            if let TickResult::TickedCurrentProcedure(result) = tick_result {
-                break result;
+            if let TickResult::TickedCurrentProcedure(broadcasts, update_pos) = tick_result {
+                break (broadcasts, update_pos);
             } else if let TickResult::MustChangeProcedure(procedure_key) = tick_result {
                 current_procedure.reset();
                 self.current_procedure_key = procedure_key;
@@ -929,8 +937,6 @@ impl TickableProcedureTracker {
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct AmbientNpcConfig {
-    #[serde(default)]
-    pub comment: IgnoredAny,
     #[serde(flatten)]
     pub base_npc: BaseNpcConfig,
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
@@ -1006,16 +1012,12 @@ impl From<AmbientNpcConfig> for AmbientNpc {
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct DoorConfig {
-    #[serde(default)]
-    pub comment: IgnoredAny,
     #[serde(flatten)]
     pub base_npc: BaseNpcConfig,
     pub destination_pos: Pos,
     pub destination_rot: Pos,
     #[serde(default)]
     pub destination_zone: DestinationZoneInstance,
-    #[serde(default = "default_true")]
-    pub update_previous_location_on_leave: bool,
 }
 
 #[derive(Clone)]
@@ -1024,7 +1026,6 @@ pub struct Door {
     pub destination_pos: Pos,
     pub destination_rot: Pos,
     pub destination_zone: DestinationZoneInstance,
-    pub update_previous_location_on_leave: bool,
 }
 
 impl Door {
@@ -1073,7 +1074,6 @@ impl From<DoorConfig> for Door {
             destination_pos: value.destination_pos,
             destination_rot: value.destination_rot,
             destination_zone: value.destination_zone,
-            update_previous_location_on_leave: value.update_previous_location_on_leave,
         }
     }
 }
@@ -1081,8 +1081,6 @@ impl From<DoorConfig> for Door {
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct TransportConfig {
-    #[serde(default)]
-    pub comment: IgnoredAny,
     #[serde(flatten)]
     pub base_npc: BaseNpcConfig,
     pub show_icon: bool,
@@ -1181,12 +1179,31 @@ pub struct BattleClass {
     pub items: BTreeMap<EquipmentSlot, EquippedItem>,
 }
 
+#[derive(Clone, Default)]
+pub struct MinigameWinStatus(pub Option<DateTime<FixedOffset>>);
+
+impl MinigameWinStatus {
+    pub fn set_won(&mut self, won: bool) {
+        if won {
+            self.0 = Some(Utc::now().fixed_offset());
+        }
+    }
+
+    pub fn set_win_time(&mut self, won_time: DateTime<FixedOffset>) {
+        self.0 = Some(won_time);
+    }
+
+    pub fn won(&self) -> bool {
+        self.0.is_some()
+    }
+}
+
 #[derive(Clone)]
 pub struct MinigameStatus {
     pub group: MinigameMatchmakingGroup,
     pub teleported_to_game: bool,
     pub game_created: bool,
-    pub game_won: bool,
+    pub win_status: MinigameWinStatus,
     pub score_entries: Vec<ScoreEntry>,
     pub total_score: i32,
     pub awarded_credits: u32,
@@ -1432,6 +1449,7 @@ pub struct NpcTemplate {
     pub key: Option<String>,
     pub discriminant: u8,
     pub index: u16,
+    pub model_id: u32,
     pub pos: Pos,
     pub rot: Pos,
     pub scale: f32,
@@ -1457,14 +1475,17 @@ impl NpcTemplate {
     pub fn to_character(
         &self,
         instance_guid: u64,
+        chunk_size: u16,
         keys_to_guid: &HashMap<&String, u64>,
     ) -> Character {
         let guid = self.guid(instance_guid);
         Character {
             stats: CharacterStats {
                 guid,
+                model_id: self.model_id,
                 pos: self.pos,
                 rot: self.rot,
+                chunk_size,
                 scale: self.scale,
                 character_type: self.character_type.clone(),
                 mount: self.mount_id.map(|mount_id| CharacterMount {
@@ -1506,7 +1527,12 @@ impl NpcTemplate {
     }
 }
 
-pub type Chunk = (i32, i32);
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub struct Chunk {
+    pub x: i32,
+    pub z: i32,
+    pub size: u16,
+}
 pub type CharacterLocationIndex = (CharacterCategory, u64, Chunk);
 pub type CharacterNameIndex = String;
 pub type CharacterSquadIndex = u64;
@@ -1543,8 +1569,10 @@ pub struct CharacterMount {
 #[derive(Clone)]
 pub struct CharacterStats {
     guid: u64,
+    pub model_id: u32,
     pub pos: Pos,
     pub rot: Pos,
+    pub chunk_size: u16,
     pub scale: f32,
     pub character_type: CharacterType,
     pub mount: Option<CharacterMount>,
@@ -1711,7 +1739,7 @@ impl
                 },
             },
             self.stats.instance_guid,
-            Character::chunk(self.stats.pos.x, self.stats.pos.z),
+            Character::chunk(self.stats.pos.x, self.stats.pos.z, self.stats.chunk_size),
         )
     }
 
@@ -1738,16 +1766,25 @@ impl
 }
 
 impl Character {
-    pub const MIN_CHUNK: (i32, i32) = (i32::MIN, i32::MIN);
-    pub const MAX_CHUNK: (i32, i32) = (i32::MAX, i32::MAX);
+    pub const MIN_CHUNK: Chunk = Chunk {
+        x: i32::MIN,
+        z: i32::MIN,
+        size: u16::MIN,
+    };
+    pub const MAX_CHUNK: Chunk = Chunk {
+        x: i32::MAX,
+        z: i32::MAX,
+        size: u16::MAX,
+    };
     pub const DEFAULT_CHAT_TEXT_COLOR: Rgba = Rgba::new(255, 255, 255, 255);
     pub const DEFAULT_CHAT_BUBBLE_COLOR: Rgba = Rgba::new(240, 226, 212, 255);
-    const CHUNK_SIZE: f32 = 200.0;
 
     pub fn new(
         guid: u64,
+        model_id: u32,
         pos: Pos,
         rot: Pos,
+        chunk_size: u16,
         scale: f32,
         character_type: CharacterType,
         mount_id: Option<CharacterMount>,
@@ -1765,8 +1802,10 @@ impl Character {
         Character {
             stats: CharacterStats {
                 guid,
+                model_id,
                 pos,
                 rot,
+                chunk_size,
                 scale,
                 character_type,
                 mount: mount_id,
@@ -1801,8 +1840,10 @@ impl Character {
 
     pub fn from_player(
         guid: u32,
+        model_id: u32,
         pos: Pos,
         rot: Pos,
+        chunk_size: u16,
         instance_guid: u64,
         data: Player,
         game_server: &GameServer,
@@ -1834,8 +1875,10 @@ impl Character {
         Character {
             stats: CharacterStats {
                 guid: player_guid(guid),
+                model_id,
                 pos,
                 rot,
+                chunk_size,
                 scale: 1.0,
                 name: Some(format!("{}", data.name)),
                 squad_guid: data.squad_guid,
@@ -1865,11 +1908,12 @@ impl Character {
         }
     }
 
-    pub fn chunk(x: f32, z: f32) -> Chunk {
-        (
-            x.div_euclid(Character::CHUNK_SIZE) as i32,
-            z.div_euclid(Character::CHUNK_SIZE) as i32,
-        )
+    pub fn chunk(x: f32, z: f32, chunk_size: u16) -> Chunk {
+        Chunk {
+            x: x.div_euclid(chunk_size as f32) as i32,
+            z: z.div_euclid(chunk_size as f32) as i32,
+            size: chunk_size,
+        }
     }
 
     pub fn set_tickable_procedure_if_exists(
@@ -1889,7 +1933,7 @@ impl Character {
         mount_configs: &BTreeMap<u32, MountConfig>,
         item_definitions: &BTreeMap<u32, ItemDefinition>,
         customizations: &BTreeMap<u32, Customization>,
-    ) -> Vec<Broadcast> {
+    ) -> (Vec<Broadcast>, Option<UpdatePlayerPosition>) {
         self.tickable_procedure_tracker.tick(
             &mut self.stats,
             now,

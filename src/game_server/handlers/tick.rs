@@ -3,7 +3,15 @@ use std::time::{Duration, Instant};
 use crossbeam_channel::Sender;
 
 use crate::{
-    game_server::{handlers::guid::IndexedGuid, Broadcast, GameServer, TickableNpcSynchronization},
+    game_server::{
+        handlers::{character::CharacterType, guid::IndexedGuid},
+        packets::{
+            minigame::{MinigameDefinitions, MinigameDefinitionsUpdate, MinigameHeader},
+            tunnel::TunneledPacket,
+            GamePacket,
+        },
+        Broadcast, GameServer, TickableNpcSynchronization,
+    },
     info,
 };
 
@@ -65,7 +73,7 @@ pub fn tick_single_chunk(
     chunk: Chunk,
     synchronization: TickableNpcSynchronization,
 ) -> Vec<Broadcast> {
-    game_server.lock_enforcer().read_characters(|characters_table_read_handle| {
+    let (mut broadcasts, pos_updates) = game_server.lock_enforcer().read_characters(|characters_table_read_handle| {
         let tickable_characters: Vec<u64> = tickable_categories(synchronization)
             .into_iter()
             .flat_map(|category| characters_table_read_handle.keys_by_index1((category, instance_guid, chunk)))
@@ -90,6 +98,7 @@ pub fn tick_single_chunk(
             mut characters_write,
             _| {
                 let mut broadcasts = Vec::new();
+                let mut pos_updates = Vec::new();
 
                 for guid in tickable_characters.iter() {
                     let tickable_character = characters_write.get_mut(guid).unwrap();
@@ -117,15 +126,27 @@ pub fn tick_single_chunk(
                         }
                     }
 
-                    broadcasts.append(
-                        &mut tickable_character.tick(now, &nearby_player_guids, &characters_read, game_server.mounts(), game_server.items(), game_server.customizations()),
-                    );
+                    let (mut character_broadcasts, character_pos_update) = tickable_character.tick(now, &nearby_player_guids, &characters_read, game_server.mounts(), game_server.items(), game_server.customizations());
+                    broadcasts.append(&mut character_broadcasts);
+                    if let Some(pos_update) = character_pos_update {
+                        pos_updates.push((*guid, pos_update));
+                    }
                 }
 
-                broadcasts
+                (broadcasts, pos_updates)
             },
         }
-    })
+    });
+
+    for (guid, pos_update) in pos_updates {
+        let move_result = ZoneInstance::move_character(pos_update, false, game_server);
+        match move_result {
+            Ok(mut move_broadcasts) => broadcasts.append(&mut move_broadcasts),
+            Err(err) => info!("Couldn't move tickable NPC {guid}: {err}"),
+        }
+    }
+
+    broadcasts
 }
 
 pub fn tick_matchmaking_groups(game_server: &GameServer) -> Vec<Broadcast> {
@@ -276,4 +297,73 @@ pub fn tick_minigame(
             broadcasts
         },
     })
+}
+
+pub fn reset_daily_minigames(game_server: &GameServer) -> Vec<Broadcast> {
+    game_server
+        .lock_enforcer()
+        .read_characters(|characters_table_read_handle| {
+            let range = (
+                CharacterCategory::PlayerReady,
+                u64::MIN,
+                Character::MIN_CHUNK,
+            )
+                ..=(
+                    CharacterCategory::PlayerReady,
+                    u64::MAX,
+                    Character::MAX_CHUNK,
+                );
+            let ready_players: Vec<u64> = characters_table_read_handle
+                .keys_by_index1_range(range)
+                .collect();
+
+            CharacterLockRequest {
+                read_guids: ready_players,
+                write_guids: Vec::new(),
+                character_consumer: |_, characters_read, _, _| {
+                    let mut broadcasts = Vec::new();
+
+                    for (guid, character_read_handle) in characters_read.iter() {
+                        let CharacterType::Player(player) = &character_read_handle.stats.character_type else {
+                            info!("Tried to reset daily minigames for character {guid}, but they aren't a player");
+                            continue;
+                        };
+
+                        let player_guid = match shorten_player_guid(*guid) {
+                            Ok(player_guid) => player_guid,
+                            Err(err) => {
+                                info!("Tried to reset daily minigames for character {guid}, but their GUID couldn't be shortened: {err}");
+                                continue;
+                            },
+                        };
+
+                        let (portal_entries, daily_updates) = game_server.minigames().update_dailies_for_player(&player.minigame_stats);
+
+                        let mut packets = vec![GamePacket::serialize(&TunneledPacket {
+                            unknown1: true,
+                            inner: MinigameDefinitionsUpdate {
+                                definitions: MinigameDefinitions {
+                                    header: MinigameHeader::default(),
+                                    stages: Vec::new(),
+                                    stage_groups: Vec::new(),
+                                    portal_entries,
+                                    portal_categories: Vec::new()
+                                }
+                            },
+                        })];
+
+                        for daily_update in daily_updates {
+                            packets.push(GamePacket::serialize(&TunneledPacket {
+                                unknown1: true,
+                                inner: daily_update,
+                            }));
+                        }
+
+                        broadcasts.push(Broadcast::Single(player_guid, packets));
+                    }
+
+                    broadcasts
+                },
+            }
+        })
 }

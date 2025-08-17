@@ -60,6 +60,7 @@ use packets::zone::PointOfInterestTeleportRequest;
 use packets::{GamePacket, OpCode};
 use rand::Rng;
 
+use crate::game_server::handlers::tick::reset_daily_minigames;
 use crate::ConfigError;
 use packet_serialize::{DeserializePacket, DeserializePacketError};
 
@@ -83,7 +84,6 @@ pub enum LogLevel {
 pub enum ProcessPacketErrorType {
     ConstraintViolated,
     DeserializeError,
-    SerializeError,
     UnknownOpCode,
 }
 
@@ -288,6 +288,10 @@ impl GameServer {
         tick_minigame(self, now, minigame_group)
     }
 
+    pub fn reset_daily_minigames(&self) -> Vec<Broadcast> {
+        reset_daily_minigames(self)
+    }
+
     pub fn process_packet(
         &self,
         sender: u32,
@@ -352,7 +356,7 @@ impl GameServer {
                                     }
 
                                     if player.first_load {
-                                        let welcome_screen = TunneledPacket {
+                                        sender_only_packets .push(GamePacket::serialize(&TunneledPacket {
                                             unknown1: true,
                                             inner: WelcomeScreen {
                                                 show_ui: true,
@@ -361,18 +365,19 @@ impl GameServer {
                                                 unknown3: 0,
                                                 unknown4: 0,
                                             },
-                                        };
-                                        sender_only_packets
-                                            .push(GamePacket::serialize(&welcome_screen));
+                                        }));
 
-                                        let minigame_definitions = TunneledPacket {
+                                        let (minigame_definitions, dailies) = self.minigames.definitions(&player.minigame_stats);
+                                        sender_only_packets.push(GamePacket::serialize(&TunneledPacket {
                                             unknown1: true,
-                                            inner: GamePacket::serialize(
-                                                &self.minigames.definitions(),
-                                            ),
-                                        };
-                                        sender_only_packets
-                                            .push(GamePacket::serialize(&minigame_definitions));
+                                            inner: minigame_definitions,
+                                        }));
+                                        for daily in dailies {
+                                            sender_only_packets.push(GamePacket::serialize(&TunneledPacket {
+                                                unknown1: true,
+                                                inner: daily,
+                                            }));
+                                        }
                                     }
 
                                     player.ready = true;
@@ -817,7 +822,7 @@ impl GameServer {
         self.start_time
     }
 
-    pub fn lock_enforcer(&self) -> CharacterLockEnforcer {
+    pub fn lock_enforcer(&self) -> CharacterLockEnforcer<'_> {
         self.lock_enforcer_source.lock_enforcer()
     }
 

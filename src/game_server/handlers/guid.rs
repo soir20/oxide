@@ -15,11 +15,11 @@ impl<T> Lock<T> {
         }
     }
 
-    pub fn read(&self) -> RwLockReadGuard<T> {
+    pub fn read(&self) -> RwLockReadGuard<'_, T> {
         self.inner.read()
     }
 
-    pub fn write(&self) -> RwLockWriteGuard<T> {
+    pub fn write(&self) -> RwLockWriteGuard<'_, T> {
         self.inner.write()
     }
 }
@@ -83,6 +83,7 @@ impl<K, V, I1, I2, I3, I4, I5> GuidTableData<K, V, I1, I2, I3, I4, I5> {
     }
 }
 
+#[allow(dead_code)]
 pub trait GuidTableIndexer<'a, K, V: 'a, I1, I2: 'a = (), I3: 'a = (), I4: 'a = (), I5: 'a = ()> {
     fn index1(&self, guid: K) -> Option<I1>;
 
@@ -135,18 +136,22 @@ pub trait GuidTableIndexer<'a, K, V: 'a, I1, I2: 'a = (), I3: 'a = (), I4: 'a = 
         self.keys_by_index1_range(range).next().is_some()
     }
 
+    #[allow(dead_code)]
     fn any_by_index2_range(&'a self, range: impl RangeBounds<I2>) -> bool {
         self.keys_by_index2_range(range).next().is_some()
     }
 
+    #[allow(dead_code)]
     fn any_by_index3_range(&'a self, range: impl RangeBounds<I3>) -> bool {
         self.keys_by_index3_range(range).next().is_some()
     }
 
+    #[allow(dead_code)]
     fn any_by_index4_range(&'a self, range: impl RangeBounds<I4>) -> bool {
         self.keys_by_index4_range(range).next().is_some()
     }
 
+    #[allow(dead_code)]
     fn any_by_index5_range(&'a self, range: impl RangeBounds<I5>) -> bool {
         self.keys_by_index5_range(range).next().is_some()
     }
@@ -789,13 +794,13 @@ impl<K, I1, I2, I3, I4, I5, V: IndexedGuid<K, I1, I2, I3, I4, I5>>
         }
     }
 
-    pub fn read(&self) -> GuidTableReadHandle<K, V, I1, I2, I3, I4, I5> {
+    pub fn read(&self) -> GuidTableReadHandle<'_, K, V, I1, I2, I3, I4, I5> {
         GuidTableReadHandle {
             guard: self.data.read(),
         }
     }
 
-    pub fn write(&self) -> GuidTableWriteHandle<K, V, I1, I2, I3, I4, I5> {
+    pub fn write(&self) -> GuidTableWriteHandle<'_, K, V, I1, I2, I3, I4, I5> {
         GuidTableWriteHandle {
             guard: self.data.write(),
         }

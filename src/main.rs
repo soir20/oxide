@@ -4,7 +4,6 @@ use defer_lite::defer;
 use game_server::{Broadcast, TickableNpcSynchronization};
 use parking_lot::{Mutex, MutexGuard, RwLock, RwLockReadGuard};
 use protocol::{BufferSize, DisconnectReason, MAX_BUFFER_SIZE};
-use serde::de::IgnoredAny;
 use serde::Deserialize;
 use std::cell::Cell;
 use std::fs::File;
@@ -183,6 +182,13 @@ async fn main() {
         &game_server_arc,
     );
 
+    spawn_minigame_daily_reset_thread(
+        &channel_manager_arc,
+        client_enqueue.clone(),
+        &server_options,
+        &game_server_arc,
+    );
+
     let cleanup_tick_dequeue = tick(Duration::from_millis(
         server_options.channel_cleanup_period_millis,
     ));
@@ -203,8 +209,6 @@ async fn main() {
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ServerOptions {
-    #[serde(default)]
-    pub comment: IgnoredAny,
     pub bind_ip: IpAddr,
     pub udp_port: u16,
     pub https_port: u16,
@@ -219,6 +223,7 @@ pub struct ServerOptions {
     pub max_received_packets_queued: usize,
     pub max_unacknowledged_packets_queued: usize,
     pub max_defragmented_packet_bytes: u32,
+    pub max_decompressed_packet_bytes: usize,
     pub default_millis_until_resend: u64,
     pub max_round_trip_entries: usize,
     pub desired_resend_pct: u8,
@@ -688,6 +693,29 @@ fn spawn_minigame_tick_threads(
                 .expect("Minigame tick done channel disconnected");
             done_signals += 1;
         }
+    });
+}
+
+fn spawn_minigame_daily_reset_thread(
+    channel_manager: &Arc<RwLock<ChannelManager>>,
+    client_enqueue: Sender<SocketAddr>,
+    server_options: &Arc<ServerOptions>,
+    game_server: &Arc<GameServer>,
+) {
+    let channel_manager = channel_manager.clone();
+    let client_enqueue = client_enqueue.clone();
+    let server_options = server_options.clone();
+    let game_server = game_server.clone();
+
+    thread::spawn(move || loop {
+        thread::sleep(Duration::from_secs(
+            game_server.minigames().seconds_until_minigame_daily_reset() as u64,
+        ));
+
+        let broadcasts = game_server.reset_daily_minigames();
+        channel_manager
+            .read()
+            .broadcast(client_enqueue.clone(), broadcasts, &server_options);
     });
 }
 

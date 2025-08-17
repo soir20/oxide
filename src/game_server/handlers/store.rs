@@ -6,7 +6,7 @@ use std::{
 };
 
 use evalexpr::{context_map, eval_with_context, Value};
-use serde::{de::IgnoredAny, Deserialize};
+use serde::Deserialize;
 
 use crate::{
     game_server::packets::{
@@ -26,9 +26,6 @@ fn default_cost_expression() -> String {
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 struct Sale {
-    #[serde(default)]
-    #[allow(dead_code)]
-    pub comment: IgnoredAny,
     item_group_guid: i32,
     #[serde(default = "default_cost_expression")]
     base_cost_expression: String,

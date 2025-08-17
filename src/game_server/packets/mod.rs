@@ -2,6 +2,7 @@ pub mod chat;
 pub mod client_update;
 pub mod combat;
 pub mod command;
+pub mod daily;
 pub mod housing;
 pub mod inventory;
 pub mod item;
@@ -67,6 +68,7 @@ pub enum OpCode {
     Housing = 0x7f,
     Squad = 0x81,
     UpdatePlayerPlatformPosition = 0xb8,
+    DailyMinigame = 0x8e,
     ClientGameSettings = 0x8f,
     Portrait = 0x9b,
     PlayerJump = 0xa3,
@@ -95,7 +97,7 @@ pub trait GamePacket: SerializePacket {
     }
 }
 
-#[derive(Copy, Clone, SerializePacket, DeserializePacket, Deserialize, Default)]
+#[derive(Copy, Clone, SerializePacket, DeserializePacket, Deserialize, Default, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct Pos {
     pub x: f32,

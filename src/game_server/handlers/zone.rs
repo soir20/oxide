@@ -7,7 +7,8 @@ use std::{
 
 use enum_iterator::all;
 use parking_lot::RwLockReadGuard;
-use serde::{de::IgnoredAny, Deserialize};
+use rand::{seq::SliceRandom, thread_rng};
+use serde::Deserialize;
 
 use crate::{
     game_server::{
@@ -22,7 +23,7 @@ use crate::{
             ui::{ExecuteScriptWithIntParams, ExecuteScriptWithStringParams},
             GamePacket, Pos,
         },
-        Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
+        Broadcast, GameServer, LogLevel, ProcessPacketError, ProcessPacketErrorType,
         TickableNpcSynchronization,
     },
     info, ConfigError,
@@ -55,11 +56,13 @@ const fn default_true() -> bool {
     true
 }
 
+const fn default_chunk_size() -> u16 {
+    200
+}
+
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct PointOfInterestConfig {
-    #[serde(default)]
-    pub comment: IgnoredAny,
     pub guid: u32,
     pub pos: Pos,
     pub rot: Pos,
@@ -72,9 +75,6 @@ pub struct PointOfInterestConfig {
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 struct ZoneConfig {
-    #[serde(default)]
-    #[allow(dead_code)]
-    pub comment: IgnoredAny,
     guid: u8,
     max_players: u32,
     template_name: u32,
@@ -83,6 +83,8 @@ struct ZoneConfig {
     asset_name: String,
     hide_ui: bool,
     is_combat: bool,
+    #[serde(default = "default_chunk_size")]
+    chunk_size: u16,
     default_point_of_interest: PointOfInterestConfig,
     #[serde(default)]
     other_points_of_interest: Vec<PointOfInterestConfig>,
@@ -108,6 +110,7 @@ pub struct ZoneTemplate {
     pub template_icon: u32,
     pub max_players: u32,
     pub asset_name: String,
+    pub chunk_size: u16,
     pub default_spawn_pos: Pos,
     pub default_spawn_rot: Pos,
     default_spawn_sky: String,
@@ -167,7 +170,18 @@ impl From<ZoneConfig> for ZoneTemplate {
                     key: ambient_npc.base_npc.key.clone(),
                     discriminant: AMBIENT_NPC_DISCRIMINANT,
                     index,
-                    pos: ambient_npc.base_npc.pos,
+                    model_id: ambient_npc
+                        .base_npc
+                        .possible_model_ids
+                        .choose(&mut thread_rng())
+                        .copied()
+                        .unwrap_or(ambient_npc.base_npc.model_id),
+                    pos: ambient_npc
+                        .base_npc
+                        .possible_pos
+                        .choose(&mut thread_rng())
+                        .cloned()
+                        .unwrap_or(ambient_npc.base_npc.pos),
                     rot: ambient_npc.base_npc.rot,
                     scale: ambient_npc.base_npc.scale,
                     tickable_procedures: ambient_npc.base_npc.tickable_procedures.clone(),
@@ -194,6 +208,12 @@ impl From<ZoneConfig> for ZoneTemplate {
                     key: door.base_npc.key.clone(),
                     discriminant: AMBIENT_NPC_DISCRIMINANT,
                     index,
+                    model_id: door
+                        .base_npc
+                        .possible_model_ids
+                        .choose(&mut thread_rng())
+                        .copied()
+                        .unwrap_or(door.base_npc.model_id),
                     pos: door.base_npc.pos,
                     rot: door.base_npc.rot,
                     scale: door.base_npc.scale,
@@ -218,6 +238,12 @@ impl From<ZoneConfig> for ZoneTemplate {
                     key: transport.base_npc.key.clone(),
                     discriminant: AMBIENT_NPC_DISCRIMINANT,
                     index,
+                    model_id: transport
+                        .base_npc
+                        .possible_model_ids
+                        .choose(&mut thread_rng())
+                        .copied()
+                        .unwrap_or(transport.base_npc.model_id),
                     pos: transport.base_npc.pos,
                     rot: transport.base_npc.rot,
                     scale: transport.base_npc.scale,
@@ -244,6 +270,7 @@ impl From<ZoneConfig> for ZoneTemplate {
             max_players: value.max_players,
             template_icon: value.template_icon,
             asset_name: value.asset_name.clone(),
+            chunk_size: value.chunk_size,
             default_spawn_pos: value.default_point_of_interest.pos,
             default_spawn_rot: value.default_point_of_interest.rot,
             default_spawn_sky: value.spawn_sky.clone(),
@@ -287,7 +314,8 @@ impl ZoneTemplate {
             .collect();
 
         for character_template in self.characters.iter() {
-            let character = character_template.to_character(instance_guid, &keys_to_guid);
+            let character =
+                character_template.to_character(instance_guid, self.chunk_size, &keys_to_guid);
             global_characters_table.insert(character);
         }
 
@@ -298,6 +326,7 @@ impl ZoneTemplate {
             max_players: self.max_players,
             icon: self.template_icon,
             asset_name: self.asset_name.clone(),
+            chunk_size: self.chunk_size,
             default_spawn_pos: self.default_spawn_pos,
             default_spawn_rot: self.default_spawn_rot,
             default_spawn_sky: self.default_spawn_sky.clone(),
@@ -334,6 +363,16 @@ pub struct CharacterDiffResult {
     pub new_players_close_to_moved_character: Vec<u32>,
 }
 
+enum CharacterMovementType {
+    SameChunk {
+        chunk: Chunk,
+        npcs_to_interact_with: Vec<u64>,
+    },
+    DifferentChunk {
+        new_chunk: Chunk,
+    },
+}
+
 pub struct ZoneInstance {
     guid: u64,
     pub template_guid: u8,
@@ -341,6 +380,7 @@ pub struct ZoneInstance {
     pub max_players: u32,
     pub icon: u32,
     pub asset_name: String,
+    chunk_size: u16,
     pub default_spawn_pos: Pos,
     pub default_spawn_rot: Pos,
     default_spawn_sky: String,
@@ -406,8 +446,10 @@ impl ZoneInstance {
         for (index, fixture) in house.fixtures.iter().enumerate() {
             global_characters_table.insert(Character::new(
                 npc_guid(FIXTURE_DISCRIMINANT, guid, index as u16),
+                fixture.model_id,
                 fixture.pos,
                 fixture.rot,
+                template.chunk_size,
                 fixture.scale,
                 CharacterType::Fixture(guid, fixture.as_current_fixture()),
                 None,
@@ -471,17 +513,57 @@ impl ZoneInstance {
     }
 
     fn nearby_chunks(center: Chunk) -> BTreeSet<Chunk> {
-        let (center_x, center_z) = center;
+        let Chunk {
+            x: center_x,
+            z: center_z,
+            size,
+        } = center;
         BTreeSet::from_iter(vec![
-            (center_x.saturating_sub(1), center_z.saturating_sub(1)),
-            (center_x.saturating_sub(1), center_z),
-            (center_x.saturating_sub(1), center_z.saturating_add(1)),
-            (center_x, center_z.saturating_sub(1)),
-            (center_x, center_z),
-            (center_x, center_z.saturating_add(1)),
-            (center_x.saturating_add(1), center_z.saturating_sub(1)),
-            (center_x.saturating_add(1), center_z),
-            (center_x.saturating_add(1), center_z.saturating_add(1)),
+            Chunk {
+                x: center_x.saturating_sub(1),
+                z: center_z.saturating_sub(1),
+                size,
+            },
+            Chunk {
+                x: center_x.saturating_sub(1),
+                z: center_z,
+                size,
+            },
+            Chunk {
+                x: center_x.saturating_sub(1),
+                z: center_z.saturating_add(1),
+                size,
+            },
+            Chunk {
+                x: center_x,
+                z: center_z.saturating_sub(1),
+                size,
+            },
+            Chunk {
+                x: center_x,
+                z: center_z,
+                size,
+            },
+            Chunk {
+                x: center_x,
+                z: center_z.saturating_add(1),
+                size,
+            },
+            Chunk {
+                x: center_x.saturating_add(1),
+                z: center_z.saturating_sub(1),
+                size,
+            },
+            Chunk {
+                x: center_x.saturating_add(1),
+                z: center_z,
+                size,
+            },
+            Chunk {
+                x: center_x.saturating_add(1),
+                z: center_z.saturating_add(1),
+                size,
+            },
         ])
     }
 
@@ -715,16 +797,17 @@ impl ZoneInstance {
         let moved_character_guid = full_update_packet.guid();
         let new_pos = full_update_packet.pos();
         let new_rot = full_update_packet.rot();
-        let new_chunk = Character::chunk(new_pos.x, new_pos.z);
 
-        let (character_exists, same_chunk, mut broadcasts, npcs_to_interact_if_same_chunk) =
+        let movement_result: Result<(Vec<Broadcast>, CharacterMovementType), ProcessPacketError> =
             game_server
                 .lock_enforcer()
                 .read_characters(|characters_table_read_handle| {
-                    let (instance_guid_if_exists, same_chunk, auto_interact_npcs, write_guids) =
-                        if let Some((_, instance_guid, old_chunk)) =
-                            characters_table_read_handle.index1(moved_character_guid)
-                        {
+                    let chunk_test_result = characters_table_read_handle
+                        .index1(moved_character_guid)
+                        .ok_or_else(|| ProcessPacketError::new_with_log_level(ProcessPacketErrorType::ConstraintViolated, format!("Tried to move character {moved_character_guid} who does not exist"), LogLevel::Debug))
+                        .map(|(_, instance_guid, old_chunk)| {
+                            let new_chunk = Character::chunk(new_pos.x, new_pos.z, old_chunk.size);
+
                             let same_chunk = old_chunk == new_chunk;
                             if same_chunk {
                                 let auto_interactable_npcs: Vec<u64> = characters_table_read_handle
@@ -750,32 +833,44 @@ impl ZoneInstance {
                                     .collect();
 
                                 (
-                                    Some(instance_guid),
-                                    true,
-                                    auto_interactable_npcs,
-                                    vec![moved_character_guid],
+                                    instance_guid,
+                                    CharacterMovementType::SameChunk {
+                                        chunk: new_chunk,
+                                        npcs_to_interact_with: auto_interactable_npcs,
+                                    },
                                 )
                             } else {
-                                (Some(instance_guid), false, Vec::new(), Vec::new())
+                                (instance_guid, CharacterMovementType::DifferentChunk { new_chunk })
                             }
-                        } else {
-                            (None, false, Vec::new(), Vec::new())
-                        };
+                        });
+
+                    let (read_guids, write_guids) = match &chunk_test_result {
+                        Ok((_, movement_type)) => match movement_type {
+                            CharacterMovementType::SameChunk {
+                                npcs_to_interact_with,
+                                ..
+                            } => (npcs_to_interact_with.clone(), vec![moved_character_guid]),
+                            CharacterMovementType::DifferentChunk { .. } => (Vec::new(), Vec::new()),
+                        },
+                        Err(_) => (Vec::new(), Vec::new()),
+                    };
 
                     CharacterLockRequest {
-                        read_guids: auto_interact_npcs.clone(),
+                        read_guids,
                         write_guids,
                         character_consumer: move |characters_table_read_handle,
                                                   characters_read,
                                                   mut characters_write,
                                                   _| {
-                            let Some(instance_guid) = instance_guid_if_exists else {
-                                return (false, same_chunk, Vec::new(), Vec::new());
-                            };
+                            let (instance_guid, movement_type) = chunk_test_result?;
 
-                            if !same_chunk {
-                                return (true, same_chunk, Vec::new(), Vec::new());
-                            }
+                            let CharacterMovementType::SameChunk {
+                                chunk,
+                                npcs_to_interact_with,
+                            } = movement_type
+                            else {
+                                return Ok((Vec::new(), movement_type));
+                            };
 
                             let mut broadcasts = Vec::new();
                             let jump_multiplier = characters_write
@@ -786,8 +881,8 @@ impl ZoneInstance {
                                 .unwrap_or(1.0);
                             full_update_packet.apply_jump_height_multiplier(jump_multiplier);
 
-                            let filtered_npcs_to_interact = ZoneInstance::move_character_with_locks(
-                                &auto_interact_npcs,
+                            let filtered_npcs_to_interact_with = ZoneInstance::move_character_with_locks(
+                                &npcs_to_interact_with,
                                 characters_read,
                                 characters_write.get_mut(&moved_character_guid).unwrap(),
                                 new_pos,
@@ -798,7 +893,7 @@ impl ZoneInstance {
                             // we release the read lock and acquire the write lock
                             let other_players_nearby = ZoneInstance::other_players_nearby(
                                 shorten_player_guid(moved_character_guid).ok(),
-                                new_chunk,
+                                chunk,
                                 instance_guid,
                                 characters_table_read_handle,
                             );
@@ -809,130 +904,138 @@ impl ZoneInstance {
                                     inner: full_update_packet,
                                 })],
                             ));
-                            (true, same_chunk, broadcasts, filtered_npcs_to_interact)
+                            Ok((
+                                broadcasts,
+                                CharacterMovementType::SameChunk {
+                                    chunk,
+                                    npcs_to_interact_with: filtered_npcs_to_interact_with,
+                                },
+                            ))
                         },
                     }
                 });
 
-        if !character_exists {
-            return Ok(broadcasts);
-        }
+        let (mut broadcasts, movement_type) = movement_result?;
 
-        let npcs_to_interact_with = if same_chunk {
-            npcs_to_interact_if_same_chunk
-        } else {
-            game_server
-                .lock_enforcer()
-                .write_characters(|characters_table_write_handle, _| {
-                    characters_table_write_handle.update_value_indices(
-                        moved_character_guid,
-                        |possible_character_write_handle, characters_table_write_handle| {
-                            let Some(moved_character_write_handle) =
-                                possible_character_write_handle
-                            else {
-                                return Vec::new();
-                            };
+        let npcs_to_interact_with = match movement_type {
+            CharacterMovementType::SameChunk {
+                npcs_to_interact_with,
+                ..
+            } => npcs_to_interact_with,
+            CharacterMovementType::DifferentChunk { new_chunk } => {
+                game_server
+                    .lock_enforcer()
+                    .write_characters(|characters_table_write_handle, _| {
+                        characters_table_write_handle.update_value_indices(
+                            moved_character_guid,
+                            |possible_character_write_handle, characters_table_write_handle| {
+                                let Some(moved_character_write_handle) =
+                                    possible_character_write_handle
+                                else {
+                                    return Vec::new();
+                                };
 
-                            let (_, instance_guid, old_chunk) =
-                                moved_character_write_handle.index1();
+                                let (_, instance_guid, old_chunk) =
+                                    moved_character_write_handle.index1();
 
-                            let (character_diffs, mut characters_read) = diff_character_handles!(
-                                instance_guid,
-                                old_chunk,
-                                new_chunk,
-                                characters_table_write_handle,
-                                moved_character_guid
-                            );
-
-                            let auto_interactable_npcs: Vec<u64> = characters_table_write_handle
-                                .keys_by_index1((
-                                    CharacterCategory::NpcAutoInteractable,
+                                let (character_diffs, mut characters_read) = diff_character_handles!(
                                     instance_guid,
+                                    old_chunk,
                                     new_chunk,
-                                ))
-                                .chain(characters_table_write_handle.keys_by_index1((
-                                    CharacterCategory::NpcAutoInteractableTickable(
-                                        TickableNpcSynchronization::Synchronized,
-                                    ),
-                                    instance_guid,
-                                    new_chunk,
-                                )))
-                                .chain(characters_table_write_handle.keys_by_index1((
-                                    CharacterCategory::NpcAutoInteractableTickable(
-                                        TickableNpcSynchronization::Unsynchronized,
-                                    ),
-                                    instance_guid,
-                                    new_chunk,
-                                )))
-                                .collect();
-                            for npc_guid in auto_interactable_npcs {
-                                if let Some(npc) = characters_table_write_handle.get(npc_guid) {
-                                    characters_read.insert(npc_guid, npc.read());
+                                    characters_table_write_handle,
+                                    moved_character_guid
+                                );
+
+                                let auto_interactable_npcs: Vec<u64> = characters_table_write_handle
+                                    .keys_by_index1((
+                                        CharacterCategory::NpcAutoInteractable,
+                                        instance_guid,
+                                        new_chunk,
+                                    ))
+                                    .chain(characters_table_write_handle.keys_by_index1((
+                                        CharacterCategory::NpcAutoInteractableTickable(
+                                            TickableNpcSynchronization::Synchronized,
+                                        ),
+                                        instance_guid,
+                                        new_chunk,
+                                    )))
+                                    .chain(characters_table_write_handle.keys_by_index1((
+                                        CharacterCategory::NpcAutoInteractableTickable(
+                                            TickableNpcSynchronization::Unsynchronized,
+                                        ),
+                                        instance_guid,
+                                        new_chunk,
+                                    )))
+                                    .collect();
+                                for npc_guid in auto_interactable_npcs.iter() {
+                                    if let Some(npc) = characters_table_write_handle.get(*npc_guid) {
+                                        characters_read.insert(*npc_guid, npc.read());
+                                    }
                                 }
-                            }
 
-                            broadcasts.append(&mut ZoneInstance::diff_character_broadcasts(
-                                moved_character_guid,
-                                character_diffs,
-                                &characters_read,
-                                game_server.mounts(),
-                                game_server.items(),
-                                game_server.customizations(),
-                            ));
-
-                            // Remove the moved character when they change chunks
-                            let previous_other_players_nearby = ZoneInstance::other_players_nearby(
-                                shorten_player_guid(moved_character_guid).ok(),
-                                old_chunk,
-                                instance_guid,
-                                characters_table_write_handle,
-                            );
-                            broadcasts.push(Broadcast::Multi(
-                                previous_other_players_nearby,
-                                moved_character_write_handle
-                                    .stats
-                                    .remove_packets(RemovalMode::default()),
-                            ));
-
-                            // Move the character
-                            let characters_to_interact = ZoneInstance::move_character_with_locks(
-                                &npcs_to_interact_if_same_chunk,
-                                characters_read,
-                                moved_character_write_handle,
-                                new_pos,
-                                new_rot,
-                            );
-
-                            let jump_multiplier = moved_character_write_handle
-                                .stats
-                                .jump_height_multiplier
-                                .total();
-                            full_update_packet.apply_jump_height_multiplier(jump_multiplier);
-
-                            let other_players_nearby = ZoneInstance::other_players_nearby(
-                                shorten_player_guid(moved_character_guid).ok(),
-                                new_chunk,
-                                instance_guid,
-                                characters_table_write_handle,
-                            );
-                            let mut new_chunk_packets =
-                                moved_character_write_handle.stats.add_packets(
-                                    false,
+                                broadcasts.append(&mut ZoneInstance::diff_character_broadcasts(
+                                    moved_character_guid,
+                                    character_diffs,
+                                    &characters_read,
                                     game_server.mounts(),
                                     game_server.items(),
                                     game_server.customizations(),
-                                );
-                            new_chunk_packets.push(GamePacket::serialize(&TunneledPacket {
-                                unknown1: true,
-                                inner: full_update_packet,
-                            }));
-                            broadcasts
-                                .push(Broadcast::Multi(other_players_nearby, new_chunk_packets));
+                                ));
 
-                            characters_to_interact
-                        },
-                    )
-                })
+                                // Remove the moved character when they change chunks
+                                let previous_other_players_nearby = ZoneInstance::other_players_nearby(
+                                    shorten_player_guid(moved_character_guid).ok(),
+                                    old_chunk,
+                                    instance_guid,
+                                    characters_table_write_handle,
+                                );
+                                broadcasts.push(Broadcast::Multi(
+                                    previous_other_players_nearby,
+                                    moved_character_write_handle
+                                        .stats
+                                        .remove_packets(RemovalMode::default()),
+                                ));
+
+                                // Move the character
+                                let characters_to_interact = ZoneInstance::move_character_with_locks(
+                                    &auto_interactable_npcs,
+                                    characters_read,
+                                    moved_character_write_handle,
+                                    new_pos,
+                                    new_rot,
+                                );
+
+                                let jump_multiplier = moved_character_write_handle
+                                    .stats
+                                    .jump_height_multiplier
+                                    .total();
+                                full_update_packet.apply_jump_height_multiplier(jump_multiplier);
+
+                                let other_players_nearby = ZoneInstance::other_players_nearby(
+                                    shorten_player_guid(moved_character_guid).ok(),
+                                    new_chunk,
+                                    instance_guid,
+                                    characters_table_write_handle,
+                                );
+                                let mut new_chunk_packets =
+                                    moved_character_write_handle.stats.add_packets(
+                                        false,
+                                        game_server.mounts(),
+                                        game_server.items(),
+                                        game_server.customizations(),
+                                    );
+                                new_chunk_packets.push(GamePacket::serialize(&TunneledPacket {
+                                    unknown1: true,
+                                    inner: full_update_packet,
+                                }));
+                                broadcasts
+                                    .push(Broadcast::Multi(other_players_nearby, new_chunk_packets));
+
+                                characters_to_interact
+                            },
+                        )
+                    })
+            }
         };
 
         for character_guid in npcs_to_interact_with {
@@ -996,8 +1099,12 @@ pub fn load_zones(config_dir: &Path) -> Result<LoadedZones, ConfigError> {
                 }
             }
 
-            let template = zone_config.into();
+            let template: ZoneTemplate = zone_config.into();
             let template_guid = Guid::guid(&template);
+
+            if template.chunk_size == 0 {
+                panic!("Zone template {template_guid} cannot have a chunk size of 0");
+            }
 
             if templates.insert(template_guid, template).is_some() {
                 panic!("Two zone templates have ID {template_guid}");
@@ -1067,6 +1174,7 @@ pub fn enter_zone(
                 character_write_handle.stats.instance_guid = destination_read_handle.guid;
                 character_write_handle.stats.pos = destination_pos;
                 character_write_handle.stats.rot = destination_rot;
+                character_write_handle.stats.chunk_size = destination_read_handle.chunk_size;
             }
         },
     );

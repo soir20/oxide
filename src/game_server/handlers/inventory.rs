@@ -3,7 +3,7 @@ use std::{collections::BTreeMap, fs::File, io::Cursor, iter, path::Path};
 use byteorder::{LittleEndian, ReadBytesExt};
 use packet_serialize::DeserializePacket;
 use parking_lot::RwLockWriteGuard;
-use serde::{de::IgnoredAny, Deserialize};
+use serde::Deserialize;
 
 use crate::{
     game_server::{
@@ -40,8 +40,6 @@ use super::{
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct DefaultSaber {
-    #[serde(default)]
-    pub comment: IgnoredAny,
     hilt_item_guid: u32,
     shape_item_guid: u32,
     color_item_guid: u32,
