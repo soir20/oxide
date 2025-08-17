@@ -3269,6 +3269,13 @@ fn handle_flash_payload(
                         &mut minigame_status.awarded_credits,
                         &stage_config.stage_config
                     ),
+                    MinigameTypeData::DailyTrivia { game } => game.display_reward(
+                        sender,
+                        player_credits,
+                        &mut minigame_status.awarded_credits,
+                        minigame_status.total_score,
+                        &stage_config.stage_config
+                    ),
                     _ => Err(ProcessPacketError::new(
                         ProcessPacketErrorType::ConstraintViolated,
                         format!(
