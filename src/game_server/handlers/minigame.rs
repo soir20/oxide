@@ -19,8 +19,12 @@ use serde::{Deserialize, Deserializer};
 use crate::{
     game_server::{
         handlers::{
+            are_dates_consecutive, are_dates_in_same_week,
             character::{MinigameStatus, MinigameWinStatus},
-            daily::{DailyHolocronGame, DailySpinGame, DailySpinRewardBucket},
+            daily::{
+                DailyHolocronGame, DailySpinGame, DailySpinRewardBucket, DailyTriviaGame,
+                DailyTriviaQuestionConfig,
+            },
             fleet_commander::FleetCommanderGame,
             force_connection::ForceConnectionGame,
             lock_enforcer::CharacterTableReadHandle,
@@ -68,12 +72,14 @@ use super::{
 pub enum MinigameBoost {
     Spin,
     Holocron,
+    Trivia,
 }
 
 #[derive(Clone)]
 pub struct PlayerStageStats {
     last_completion: Option<DateTime<FixedOffset>>,
     completions_this_week: [u8; 7],
+    consecutive_days_completed: u32,
     high_score: i32,
 }
 
@@ -118,15 +124,23 @@ impl PlayerMinigameStats {
         // Storing a count for each day of the week is more space-efficient than storing a list of times.
         // It could make the list slightly inaccurate if the reset time is changed, but that should be
         // rare enough to be an acceptable tradeoff.
-        let win_time = win_time.with_timezone(&daily_reset_offset.0);
         let day_of_week = win_time.weekday().num_days_from_sunday() as usize;
         self.stage_guid_to_stats
             .entry(stage_guid)
             .and_modify(|entry| {
                 if let Some(last_completion) = entry.last_completion {
-                    if last_completion.iso_week() != win_time.iso_week() {
+                    if !are_dates_in_same_week(&last_completion, &win_time, &daily_reset_offset.0) {
                         entry.completions_this_week = [0; 7];
                     }
+
+                    let was_completed_yesterday =
+                        are_dates_consecutive(&last_completion, &win_time, &daily_reset_offset.0);
+                    entry.consecutive_days_completed = match was_completed_yesterday {
+                        true => entry.consecutive_days_completed.saturating_add(1),
+                        false => 1,
+                    };
+                } else {
+                    entry.consecutive_days_completed = 1;
                 }
 
                 entry.last_completion = Some(win_time);
@@ -141,15 +155,29 @@ impl PlayerMinigameStats {
                 PlayerStageStats {
                     last_completion: Some(win_time),
                     completions_this_week,
+                    consecutive_days_completed: 1,
                     high_score: score,
                 }
             });
     }
 
-    pub fn completions_this_week(&self, stage_guid: i32) -> [u8; 7] {
+    pub fn completions_this_week(
+        &self,
+        stage_guid: i32,
+        now: DateTime<FixedOffset>,
+        daily_reset_offset: &DailyResetOffset,
+    ) -> [u8; 7] {
         self.stage_guid_to_stats
             .get(&stage_guid)
-            .map(|stats| stats.completions_this_week)
+            .map(|stats| {
+                if let Some(last_completion) = stats.last_completion {
+                    if !are_dates_in_same_week(&last_completion, &now, &daily_reset_offset.0) {
+                        return [0; 7];
+                    }
+                }
+
+                stats.completions_this_week
+            })
             .unwrap_or_default()
     }
 
@@ -161,6 +189,13 @@ impl PlayerMinigameStats {
 
     pub fn has_completed(&self, stage_guid: i32) -> bool {
         self.last_completion_time(stage_guid).is_some()
+    }
+
+    pub fn consecutive_days_completed(&self, stage_guid: i32) -> u32 {
+        self.stage_guid_to_stats
+            .get(&stage_guid)
+            .map(|stats| stats.consecutive_days_completed)
+            .unwrap_or(0)
     }
 
     pub fn update_trophy_progress(&mut self, trophy_guid: i32, delta: i32) {
@@ -189,6 +224,15 @@ pub enum FlashMinigameType {
         buckets: Vec<DailySpinRewardBucket>,
     },
     DailyHolocron,
+    DailyTrivia {
+        questions_per_game: u8,
+        score_per_question: i32,
+        bonus_timer_start_delay_seconds: u16,
+        bonus_seconds_per_question: u16,
+        score_per_bonus_second_remaining: i32,
+        consecutive_days_for_daily_double: u32,
+        question_bank: Vec<DailyTriviaQuestionConfig>,
+    },
     #[default]
     Simple,
 }
@@ -230,6 +274,28 @@ impl MinigameType {
                         stage_group_guid,
                     )),
                 },
+                FlashMinigameType::DailyTrivia {
+                    questions_per_game,
+                    score_per_question,
+                    bonus_timer_start_delay_seconds,
+                    bonus_seconds_per_question,
+                    score_per_bonus_second_remaining,
+                    consecutive_days_for_daily_double,
+                    question_bank,
+                } => MinigameTypeData::DailyTrivia {
+                    game: Box::new(DailyTriviaGame::new(
+                        question_bank,
+                        *questions_per_game,
+                        *consecutive_days_for_daily_double,
+                        *score_per_question,
+                        *bonus_timer_start_delay_seconds,
+                        *bonus_seconds_per_question,
+                        *score_per_bonus_second_remaining,
+                        daily_game_playability,
+                        stage_guid,
+                        stage_group_guid,
+                    )),
+                },
                 _ => MinigameTypeData::default(),
             },
             MinigameType::SaberStrike { .. } => MinigameTypeData::SaberStrike {
@@ -252,6 +318,9 @@ pub enum MinigameTypeData {
     },
     DailyHolocron {
         game: Box<DailyHolocronGame>,
+    },
+    DailyTrivia {
+        game: Box<DailyTriviaGame>,
     },
 }
 
@@ -473,6 +542,7 @@ const GROUP_LINK_NAME: &str = "group";
 enum DailyGameType {
     Spin,
     Holocron,
+    Trivia,
 }
 
 impl DailyGameType {
@@ -480,6 +550,7 @@ impl DailyGameType {
         match *self {
             DailyGameType::Spin => "Daily Wheel",
             DailyGameType::Holocron => "Daily Holocron",
+            DailyGameType::Trivia => "Daily Trivia",
         }
     }
 
@@ -487,6 +558,7 @@ impl DailyGameType {
         match *self {
             DailyGameType::Spin => MinigameBoost::Spin,
             DailyGameType::Holocron => MinigameBoost::Holocron,
+            DailyGameType::Trivia => MinigameBoost::Trivia,
         }
     }
 }
@@ -1400,7 +1472,7 @@ impl AllMinigameConfigs {
         Ok(stage_group.to_stage_group_instance(*portal_entry_guid, player))
     }
 
-    pub fn stage_configs(&self) -> impl Iterator<Item = StageConfigRef> {
+    pub fn stage_configs(&self) -> impl Iterator<Item = StageConfigRef<'_>> {
         self.stage_groups
             .values()
             .flat_map(|(stage_group, portal_entry_guid)| {
@@ -1432,7 +1504,11 @@ impl AllMinigameConfigs {
             })
     }
 
-    pub fn stage_config(&self, stage_group_guid: i32, stage_guid: i32) -> Option<StageConfigRef> {
+    pub fn stage_config(
+        &self,
+        stage_group_guid: i32,
+        stage_guid: i32,
+    ) -> Option<StageConfigRef<'_>> {
         self.stage_groups
             .get(&stage_group_guid)
             .and_then(|(stage_group, portal_entry_guid)| {
@@ -2800,7 +2876,9 @@ fn handle_flash_payload(
                         MinigameTypeData::DailyHolocron { game } => game.connect(
                             sender,
                             minigame_stats,
+                            &game_server.minigames().daily_reset_offset
                         ),
+                        MinigameTypeData::DailyTrivia { game } => game.connect(sender, minigame_stats),
                         _ => Err(ProcessPacketError::new(
                             ProcessPacketErrorType::ConstraintViolated,
                             format!(
@@ -3093,6 +3171,7 @@ fn handle_flash_payload(
             |minigame_status, _, _, _, _, _| {
                  match &mut minigame_status.type_data {
                     MinigameTypeData::DailySpin { game } => game.mark_player_ready(sender),
+                    MinigameTypeData::DailyTrivia { .. } => Ok(Vec::new()),
                     _ => Err(ProcessPacketError::new(
                         ProcessPacketErrorType::ConstraintViolated,
                         format!(
@@ -3194,6 +3273,56 @@ fn handle_flash_payload(
                         ProcessPacketErrorType::ConstraintViolated,
                         format!(
                             "Received reward request for unexpected game from player {sender}"
+                        ),
+                    ))
+                }
+            }
+        ),
+        "OnRequestNewQuestion" => handle_minigame_packet_write(
+            sender,
+            game_server,
+            &payload.header,
+            |minigame_status, _, _, _, _, _| {
+                 match &mut minigame_status.type_data {
+                    MinigameTypeData::DailySpin { game } => game.mark_player_ready(sender),
+                    MinigameTypeData::DailyTrivia { game } => game.next_question(sender),
+                    _ => Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::ConstraintViolated,
+                        format!(
+                            "Received start game request for unexpected game from player {sender}"
+                        ),
+                    ))
+                }
+            }
+        ),
+        "OnAnswerPicked" => handle_minigame_packet_write(
+            sender,
+            game_server,
+            &payload.header,
+            |minigame_status, _, _, _, _, _| {
+                if parts.len() == 2 {
+                    let selected_answer_index: u8 = parts[1].parse()?;
+                    match &mut minigame_status.type_data {
+                        MinigameTypeData::DailyTrivia { game } => game.answer_question(
+                            sender,
+                            selected_answer_index,
+                            &mut minigame_status.total_score,
+                            &mut minigame_status.win_status,
+                            &mut minigame_status.score_entries,
+                        ),
+                        _ => Err(ProcessPacketError::new(
+                            ProcessPacketErrorType::ConstraintViolated,
+                            format!(
+                                "Received trivia answer request for unexpected game from player {sender}"
+                            ),
+                        ))
+                    }
+                } else {
+                    Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::ConstraintViolated,
+                        format!(
+                            "Expected 1 parameter in trivia answer request payload, but only found {}",
+                            parts.len().saturating_sub(1)
                         ),
                     ))
                 }
