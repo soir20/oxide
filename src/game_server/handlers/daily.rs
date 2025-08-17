@@ -465,7 +465,7 @@ impl DailyHolocronGame {
             return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
                 format!(
-                    "Player {sender} sent a display reward for Daily Holocron, but they haven't picked a holocron ({self:?})"
+                    "Player {sender} sent a display reward request for Daily Holocron, but they haven't picked a holocron ({self:?})"
                 ),
             ));
         };
@@ -812,6 +812,35 @@ impl DailyTriviaGame {
             score_max: 0,
             score_points: 0,
         });
+
+        Ok(broadcasts)
+    }
+
+    pub fn display_reward(
+        &mut self,
+        sender: u32,
+        player_credits: &mut u32,
+        game_awarded_credits: &mut u32,
+        game_score: i32,
+        stage_config: &MinigameStageConfig,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        if !matches!(self.state, DailyTriviaGameState::GameOver) {
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!(
+                    "Player {sender} sent a display reward request for Daily Trivia, but the game isn't over ({self:?})"
+                ),
+            ));
+        };
+
+        let broadcasts = award_credits(
+            sender,
+            player_credits,
+            game_awarded_credits,
+            stage_config,
+            game_score,
+        )?
+        .0;
 
         Ok(broadcasts)
     }
