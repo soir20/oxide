@@ -465,7 +465,7 @@ impl DailyHolocronGame {
             return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
                 format!(
-                    "Player {sender} sent a display reward for Daily Holocron, but they haven't picked a holocron ({self:?})"
+                    "Player {sender} sent a display reward request for Daily Holocron, but they haven't picked a holocron ({self:?})"
                 ),
             ));
         };
@@ -828,7 +828,7 @@ impl DailyTriviaGame {
             return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
                 format!(
-                    "Player {sender} sent a display reward for Daily Trivia, but the game isn't over ({self:?})"
+                    "Player {sender} sent a display reward request for Daily Trivia, but the game isn't over ({self:?})"
                 ),
             ));
         };
