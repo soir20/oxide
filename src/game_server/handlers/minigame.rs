@@ -2336,7 +2336,7 @@ fn handle_request_start_active_minigame(
                     packets.push(GamePacket::serialize(&TunneledPacket {
                         unknown1: true,
                         inner: ExecuteScriptWithStringParams {
-                            script_name: "UIGlobal.SetStateMain".to_string(),
+                            script_name: "UIGlobal.SetStateNoHud".to_string(),
                             params: vec![],
                         },
                     }));
