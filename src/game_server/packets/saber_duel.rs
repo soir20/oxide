@@ -15,10 +15,10 @@ pub enum SaberDuelOpCode {
     RoundInfo = 0x4,
     RoundStart = 0x8,
     PlayerUpdate = 0x9,
-    PlayerReady = 0x10,
     RoundWon = 0xa,
     SetOver = 0xc,
     GameOver = 0xd,
+    PlayerReady = 0x10,
 }
 
 #[derive(SerializePacket, DeserializePacket)]
