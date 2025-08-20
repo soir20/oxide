@@ -95,8 +95,8 @@ impl GamePacket for RoundInfo {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct RoundStart {
     pub minigame_header: MinigameHeader,
-    pub unknown1: Vec<SaberDuelForcePowerDefinition>,
-    pub unknown2: Vec<SaberDuelForcePowerDefinition>,
+    pub unknown1: Vec<u32>,
+    pub unknown2: Vec<u32>,
 }
 
 impl GamePacket for RoundStart {
