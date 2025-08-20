@@ -22,11 +22,11 @@ pub enum SaberDuelOpCode {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct UnknownStageDataArray {
-    pub unknown1: u32,
-    pub unknown2: u32,
-    pub unknown3: u32,
-    pub unknown4: u32,
+pub struct SaberDuelForcePowerDefinition {
+    pub guid: u32,
+    pub name_id: u32,
+    pub small_icon_set_id: u32,
+    pub icon_set_id: u32,
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -46,7 +46,7 @@ pub struct SaberDuelStageData {
     pub max_force_points: u32,
     pub unknown13: bool,
     pub enable_memory_challenge: bool,
-    pub unknown15: Vec<UnknownStageDataArray>,
+    pub force_powers: Vec<SaberDuelForcePowerDefinition>,
 }
 
 impl GamePacket for SaberDuelStageData {
@@ -83,7 +83,7 @@ pub struct RoundInfo {
     pub minigame_header: MinigameHeader,
     pub unknown1: u32,
     pub unknown2: bool,
-    pub unknown3: Vec<UnknownStageDataArray>,
+    pub unknown3: Vec<SaberDuelForcePowerDefinition>,
 }
 
 impl GamePacket for RoundInfo {
@@ -95,8 +95,8 @@ impl GamePacket for RoundInfo {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct RoundStart {
     pub minigame_header: MinigameHeader,
-    pub unknown1: Vec<UnknownStageDataArray>,
-    pub unknown2: Vec<UnknownStageDataArray>,
+    pub unknown1: Vec<SaberDuelForcePowerDefinition>,
+    pub unknown2: Vec<SaberDuelForcePowerDefinition>,
 }
 
 impl GamePacket for RoundStart {
