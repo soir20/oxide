@@ -32,9 +32,9 @@ pub struct UnknownStageDataArray {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct SaberDuelStageData {
     pub minigame_header: MinigameHeader,
-    pub local_player_guid: u32,
-    pub unknown2: u32,
-    pub unknown3: u32,
+    pub sets_to_win_round: u32,
+    pub total_rounds: u32,
+    pub seconds_remaining: u32,
     pub camera_position: Pos,
     pub camera_rotation: f32,
     pub unknown6: u32,
@@ -43,9 +43,9 @@ pub struct SaberDuelStageData {
     pub opponent_guid: u64,
     pub opponent_entrance_animation_id: i32,
     pub opponent_entrance_sound_id: u32,
-    pub unknown12: u32,
+    pub max_force_points: u32,
     pub unknown13: bool,
-    pub unknown14: bool,
+    pub enable_memory_challenge: bool,
     pub unknown15: Vec<UnknownStageDataArray>,
 }
 
