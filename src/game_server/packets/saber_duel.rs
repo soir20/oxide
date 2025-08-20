@@ -83,7 +83,7 @@ pub struct RoundInfo {
     pub minigame_header: MinigameHeader,
     pub unknown1: u32,
     pub unknown2: bool,
-    pub unknown3: Vec<SaberDuelForcePowerDefinition>,
+    pub force_points_by_player_index: Vec<u32>,
 }
 
 impl GamePacket for RoundInfo {
