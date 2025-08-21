@@ -81,7 +81,7 @@ impl GamePacket for GameStart {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct RoundInfo {
     pub minigame_header: MinigameHeader,
-    pub unknown1: u32,
+    pub max_round_time_millis: u32,
     pub is_combo_round: bool,
     pub force_points_by_player_index: Vec<u32>,
 }
@@ -95,8 +95,8 @@ impl GamePacket for RoundInfo {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct RoundStart {
     pub minigame_header: MinigameHeader,
-    pub unknown1: Vec<u32>,
-    pub unknown2: Vec<u32>,
+    pub player1_keys: Vec<u32>,
+    pub player2_keys: Vec<u32>,
 }
 
 impl GamePacket for RoundStart {
