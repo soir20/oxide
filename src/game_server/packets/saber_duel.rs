@@ -82,7 +82,7 @@ impl GamePacket for GameStart {
 pub struct RoundInfo {
     pub minigame_header: MinigameHeader,
     pub unknown1: u32,
-    pub unknown2: bool,
+    pub is_combo_round: bool,
     pub force_points_by_player_index: Vec<u32>,
 }
 
