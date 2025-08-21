@@ -37,7 +37,7 @@ pub struct SaberDuelStageData {
     pub seconds_remaining: u32,
     pub camera_position: Pos,
     pub camera_rotation: f32,
-    pub unknown6: u32,
+    pub max_combo_points: u32,
     pub establishing_animation_id: i32,
     pub local_player_index: u32,
     pub opponent_guid: u64,
