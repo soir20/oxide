@@ -1,5 +1,5 @@
 use num_enum::TryFromPrimitive;
-use packet_serialize::{DeserializePacket, SerializePacket};
+use packet_serialize::{DeserializePacket, DeserializePacketError, SerializePacket};
 
 use super::{
     minigame::{MinigameHeader, MinigameOpCode},
@@ -92,10 +92,37 @@ impl GamePacket for RoundInfo {
     const HEADER: Self::Header = MinigameOpCode::SaberDuel;
 }
 
+#[derive(Clone, Copy, TryFromPrimitive)]
+#[repr(u32)]
+pub enum SaberDuelKey {
+    Up = 1,
+    Down = 2,
+    Left = 3,
+    Right = 4,
+}
+
+impl SerializePacket for SaberDuelKey {
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        SerializePacket::serialize(&(*self as u32), buffer);
+    }
+}
+
+impl DeserializePacket for SaberDuelKey {
+    fn deserialize(
+        cursor: &mut std::io::Cursor<&[u8]>,
+    ) -> Result<Self, packet_serialize::DeserializePacketError>
+    where
+        Self: Sized,
+    {
+        SaberDuelKey::try_from_primitive(u32::deserialize(cursor)?)
+            .map_err(|_| DeserializePacketError::UnknownDiscriminator)
+    }
+}
+
 #[derive(SerializePacket, DeserializePacket)]
 pub struct RoundStart {
     pub minigame_header: MinigameHeader,
-    pub keys: Vec<u32>,
+    pub keys: Vec<SaberDuelKey>,
     pub num_keys_by_player_index: Vec<u32>,
 }
 
