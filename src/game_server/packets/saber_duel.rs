@@ -108,8 +108,8 @@ impl GamePacket for RoundStart {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct PlayerUpdate {
     pub minigame_header: MinigameHeader,
-    pub unknown1: u32,
-    pub unknown2: u32,
+    pub player_index: u32,
+    pub current_key_index: u32,
 }
 
 impl GamePacket for PlayerUpdate {
