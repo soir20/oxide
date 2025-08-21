@@ -13,6 +13,7 @@ pub enum SaberDuelOpCode {
     OpponentGuid = 0x2,
     GameStart = 0x3,
     RoundInfo = 0x4,
+    ShowForcePowerDialog = 0x5,
     RoundStart = 0x8,
     PlayerUpdate = 0x9,
     RoundWon = 0xa,
@@ -87,6 +88,18 @@ pub struct RoundInfo {
 }
 
 impl GamePacket for RoundInfo {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::SaberDuel;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct ShowForcePowerDialog {
+    pub minigame_header: MinigameHeader,
+    pub unknown1: bool,
+}
+
+impl GamePacket for ShowForcePowerDialog {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::SaberDuel;
