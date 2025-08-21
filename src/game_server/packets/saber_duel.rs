@@ -39,7 +39,7 @@ pub struct SaberDuelStageData {
     pub camera_rotation: f32,
     pub unknown6: u32,
     pub establishing_animation_id: i32,
-    pub local_player_index: u32, // Causes crashes
+    pub local_player_index: u32,
     pub opponent_guid: u64,
     pub opponent_entrance_animation_id: i32,
     pub opponent_entrance_sound_id: u32,
