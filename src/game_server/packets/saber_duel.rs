@@ -179,10 +179,10 @@ impl GamePacket for PlayerUpdate {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct RoundWon {
     pub minigame_header: MinigameHeader,
-    pub unknown1: u32,
-    pub unknown2: u32,
-    pub unknown3: u32,
-    pub unknown4: u32,
+    pub winner_index: u32,
+    pub new_score: u32,
+    pub winner_animation_id: u32,
+    pub loser_animation_id: u32,
 }
 
 impl GamePacket for RoundWon {
