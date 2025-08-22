@@ -14,6 +14,7 @@ pub enum SaberDuelOpCode {
     GameStart = 0x3,
     RoundInfo = 0x4,
     ShowForcePowerDialog = 0x5,
+    ApplyForcePower = 0x6,
     RoundStart = 0x8,
     PlayerUpdate = 0x9,
     RoundWon = 0xa,
@@ -100,6 +101,23 @@ pub struct ShowForcePowerDialog {
 }
 
 impl GamePacket for ShowForcePowerDialog {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::SaberDuel;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct ApplyForcePower {
+    pub minigame_header: MinigameHeader,
+    pub used_by_player_index: u32,
+    pub force_power_index: u32,
+    pub unknown3: u32,
+    pub new_force_points: u32,
+    pub animation_id: u32,
+    pub unknown6: u8,
+}
+
+impl GamePacket for ApplyForcePower {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::SaberDuel;
