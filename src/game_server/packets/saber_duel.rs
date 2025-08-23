@@ -130,7 +130,7 @@ impl GamePacket for ShowForcePowerDialog {
     const HEADER: Self::Header = MinigameOpCode::SaberDuel;
 }
 
-#[derive(SerializePacket, DeserializePacket)]
+#[derive(SerializePacket)]
 pub struct ApplyForcePower {
     pub minigame_header: MinigameHeader,
     pub used_by_player_index: u32,
@@ -138,7 +138,7 @@ pub struct ApplyForcePower {
     pub unknown3: u32,
     pub new_force_points: u32,
     pub animation_id: u32,
-    pub unknown6: u8,
+    pub flags: SaberDuelForcePowerFlags,
 }
 
 impl GamePacket for ApplyForcePower {
