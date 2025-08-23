@@ -96,22 +96,22 @@ impl GamePacket for BoutInfo {
 }
 
 pub struct SaberDuelForcePowerFlags {
-    pub unknown1: bool,
-    pub unknown2: bool,
-    pub unknown3: bool,
+    pub enable_force_power1: bool,
+    pub enable_force_power2: bool,
+    pub enable_force_power3: bool,
 }
 
 impl SerializePacket for SaberDuelForcePowerFlags {
     fn serialize(&self, buffer: &mut Vec<u8>) {
         let mut value: u8 = 0;
-        if self.unknown1 {
-            value |= 0x20;
+        if self.enable_force_power1 {
+            value |= 0x80;
         }
-        if self.unknown2 {
+        if self.enable_force_power2 {
             value |= 0x40;
         }
-        if self.unknown3 {
-            value |= 0x80;
+        if self.enable_force_power3 {
+            value |= 0x20;
         }
 
         value.serialize(buffer);
