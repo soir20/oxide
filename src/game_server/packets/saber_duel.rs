@@ -203,7 +203,6 @@ impl GamePacket for BoutTied {
     const HEADER: Self::Header = MinigameOpCode::SaberDuel;
 }
 
-
 #[derive(SerializePacket, DeserializePacket)]
 pub struct RoundOver {
     pub minigame_header: MinigameHeader,
