@@ -17,8 +17,9 @@ pub enum SaberDuelOpCode {
     ApplyForcePower = 0x6,
     RoundStart = 0x8,
     PlayerUpdate = 0x9,
-    RoundWon = 0xa,
-    SetOver = 0xc,
+    BoutWon = 0xa,
+    BoutTied = 0xb,
+    RoundOver = 0xc,
     GameOver = 0xd,
     PlayerReady = 0x10,
 }
@@ -34,7 +35,7 @@ pub struct SaberDuelForcePowerDefinition {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct SaberDuelStageData {
     pub minigame_header: MinigameHeader,
-    pub sets_to_win_round: u32,
+    pub bouts_to_win_round: u32,
     pub total_rounds: u32,
     pub seconds_remaining: u32,
     pub camera_position: Pos,
@@ -177,7 +178,7 @@ impl GamePacket for PlayerUpdate {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct RoundWon {
+pub struct BoutWon {
     pub minigame_header: MinigameHeader,
     pub winner_index: u32,
     pub new_score: u32,
@@ -185,20 +186,32 @@ pub struct RoundWon {
     pub loser_animation_id: u32,
 }
 
-impl GamePacket for RoundWon {
+impl GamePacket for BoutWon {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::SaberDuel;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct SetOver {
+pub struct BoutTied {
     pub minigame_header: MinigameHeader,
-    pub unknown1: u32,
+}
+
+impl GamePacket for BoutTied {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::SaberDuel;
+}
+
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct RoundOver {
+    pub minigame_header: MinigameHeader,
+    pub winner_index: u32,
     pub unknown2: u32,
 }
 
-impl GamePacket for SetOver {
+impl GamePacket for RoundOver {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::SaberDuel;
