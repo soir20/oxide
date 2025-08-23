@@ -12,10 +12,10 @@ pub enum SaberDuelOpCode {
     StageData = 0x1,
     OpponentGuid = 0x2,
     GameStart = 0x3,
-    RoundInfo = 0x4,
+    BoutInfo = 0x4,
     ShowForcePowerDialog = 0x5,
     ApplyForcePower = 0x6,
-    RoundStart = 0x8,
+    BoutStart = 0x8,
     PlayerUpdate = 0x9,
     BoutWon = 0xa,
     BoutTied = 0xb,
@@ -82,14 +82,14 @@ impl GamePacket for GameStart {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct RoundInfo {
+pub struct BoutInfo {
     pub minigame_header: MinigameHeader,
-    pub max_round_time_millis: u32,
-    pub is_combo_round: bool,
+    pub max_bout_time_millis: u32,
+    pub is_combo_bout: bool,
     pub force_points_by_player_index: Vec<u32>,
 }
 
-impl GamePacket for RoundInfo {
+impl GamePacket for BoutInfo {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::SaberDuel;
@@ -152,13 +152,13 @@ impl DeserializePacket for SaberDuelKey {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct RoundStart {
+pub struct BoutStart {
     pub minigame_header: MinigameHeader,
     pub keys: Vec<SaberDuelKey>,
     pub num_keys_by_player_index: Vec<u32>,
 }
 
-impl GamePacket for RoundStart {
+impl GamePacket for BoutStart {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::SaberDuel;
