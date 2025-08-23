@@ -98,7 +98,7 @@ impl GamePacket for BoutInfo {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct ShowForcePowerDialog {
     pub minigame_header: MinigameHeader,
-    pub unknown1: bool,
+    pub bitflags: u8,
 }
 
 impl GamePacket for ShowForcePowerDialog {
