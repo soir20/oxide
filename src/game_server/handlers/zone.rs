@@ -1392,60 +1392,78 @@ pub fn interact_with_character(
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let requester_guid = shorten_player_guid(requester)?;
-    let broadcast_supplier: WriteLockingBroadcastSupplier =
-        game_server.lock_enforcer().read_characters(|_| {
-            CharacterLockRequest {
-                read_guids: Vec::new(),
-                write_guids: vec![requester, target],
-                character_consumer: move |_, _, mut characters_write, _| {
-                    let Some(requester_read_handle) = characters_write.get(&requester) else {
-                        return coerce_to_broadcast_supplier(|_| Ok(Vec::new()));
+
+    let broadcast_supplier: WriteLockingBroadcastSupplier = game_server
+        .lock_enforcer()
+        .read_characters(|_characters_table_read_handle_| CharacterLockRequest {
+            read_guids: Vec::new(),
+            write_guids: vec![requester, target],
+            character_consumer: move |characters_table_read_handle, _, mut characters_write, _| {
+                let Some(mut requester_handle) = characters_write.remove(&requester) else {
+                    return Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::ConstraintViolated,
+                        format!("Requester {requester} not found"),
+                    ));
+                };
+
+                let requester_pos = requester_handle.stats.pos;
+                let requester_instance = requester_handle.stats.instance_guid;
+                let requester_chunk = requester_handle.index1().2;
+
+                let nearby_player_guids = ZoneInstance::all_players_nearby(
+                    requester_chunk,
+                    requester_instance,
+                    characters_table_read_handle,
+                );
+
+                let requester_credits = match &mut requester_handle.stats.character_type {
+                    CharacterType::Player(player) => Some(&mut player.credits),
+                    _ => None,
+                };
+
+                let Some(target_handle) = characters_write.get_mut(&target) else {
+                    characters_write.insert(requester, requester_handle);
+                    return Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::ConstraintViolated,
+                        format!("Target {target} not found"),
+                    ));
+                };
+
+                if !target_handle.stats.is_spawned {
+                    characters_write.insert(requester, requester_handle);
+                    return Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::ConstraintViolated,
+                        format!("Target {target} is not spawned"),
+                    ));
+                }
+
+                let distance = distance3(
+                    requester_pos.x,
+                    requester_pos.y,
+                    requester_pos.z,
+                    target_handle.stats.pos.x,
+                    target_handle.stats.pos.y,
+                    target_handle.stats.pos.z,
+                );
+
+                if distance > target_handle.stats.interact_radius
+                    || target_handle.stats.instance_guid != requester_instance
+                {
+                    let interaction_angle = (target_handle.stats.pos.z - requester_pos.z)
+                        .atan2(target_handle.stats.pos.x - requester_pos.x);
+
+                    let destination = Pos {
+                        x: target_handle.stats.pos.x
+                            - target_handle.stats.move_to_interact_offset * interaction_angle.cos(),
+                        y: target_handle.stats.pos.y,
+                        z: target_handle.stats.pos.z
+                            - target_handle.stats.move_to_interact_offset * interaction_angle.sin(),
+                        w: 1.0,
                     };
 
-                    let source_zone_guid = requester_read_handle.stats.instance_guid;
-                    let requester_x = requester_read_handle.stats.pos.x;
-                    let requester_y = requester_read_handle.stats.pos.y;
-                    let requester_z = requester_read_handle.stats.pos.z;
-
-                    let Some(target_read_handle) = characters_write.get_mut(&target) else {
-                        return Err(ProcessPacketError::new(
-                            ProcessPacketErrorType::ConstraintViolated,
-                            format!(
-                                "Received request to interact with unknown NPC {target} from {requester}"
-                            ),
-                        ));
-                    };
-
-                    // Ensure the character is close enough to interact
-                    // Otherwise send MoveToInteract
-                    let distance = distance3(
-                        requester_x,
-                        requester_y,
-                        requester_z,
-                        target_read_handle.stats.pos.x,
-                        target_read_handle.stats.pos.y,
-                        target_read_handle.stats.pos.z,
-                    );
-                    if distance > target_read_handle.stats.interact_radius
-                        || target_read_handle.stats.instance_guid != source_zone_guid
-                    {
-                        let mut broadcasts = Vec::new();
-
-                        let interaction_angle = (target_read_handle.stats.pos.z - requester_z)
-                            .atan2(target_read_handle.stats.pos.x - requester_x);
-
-                        let destination = Pos {
-                            x: target_read_handle.stats.pos.x
-                                - target_read_handle.stats.move_to_interact_offset
-                                    * interaction_angle.cos(),
-                            y: target_read_handle.stats.pos.y,
-                            z: target_read_handle.stats.pos.z
-                                - target_read_handle.stats.move_to_interact_offset
-                                    * interaction_angle.sin(),
-                            w: 1.0,
-                        };
-
-                        broadcasts.push(Broadcast::Single(
+                    characters_write.insert(requester, requester_handle);
+                    return coerce_to_broadcast_supplier(move |_| {
+                        Ok(vec![Broadcast::Single(
                             requester_guid,
                             vec![GamePacket::serialize(&TunneledPacket {
                                 unknown1: true,
@@ -1454,13 +1472,17 @@ pub fn interact_with_character(
                                     target,
                                 },
                             })],
-                        ));
-                        return coerce_to_broadcast_supplier(|_| Ok(broadcasts));
-                    }
+                        )])
+                    });
+                }
 
-                    target_read_handle.interact(requester_guid)
-                },
-            }
+                let result =
+                    target_handle.interact(requester_guid, requester_credits, &nearby_player_guids);
+
+                characters_write.insert(requester, requester_handle);
+
+                result
+            },
         });
 
     broadcast_supplier?(game_server)
