@@ -15,12 +15,15 @@ pub enum SaberDuelOpCode {
     BoutInfo = 0x4,
     ShowForcePowerDialog = 0x5,
     ApplyForcePower = 0x6,
+    RemoveForcePower = 0x7,
     BoutStart = 0x8,
     PlayerUpdate = 0x9,
     BoutWon = 0xa,
     BoutTied = 0xb,
     RoundOver = 0xc,
     GameOver = 0xd,
+    TriggerBoost = 0xe,
+    SetMemoryChallenge = 0xf,
     PlayerReady = 0x10,
 }
 
@@ -147,6 +150,19 @@ impl GamePacket for SaberDuelApplyForcePower {
     const HEADER: Self::Header = MinigameOpCode::SaberDuel;
 }
 
+#[derive(SerializePacket, DeserializePacket)]
+pub struct SaberDuelRemoveForcePower {
+    pub minigame_header: MinigameHeader,
+    pub used_by_player_index: u32,
+    pub force_power_index: u32,
+}
+
+impl GamePacket for SaberDuelRemoveForcePower {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::SaberDuel;
+}
+
 #[derive(Clone, Copy, TryFromPrimitive)]
 #[repr(u32)]
 pub enum SaberDuelKey {
@@ -249,6 +265,45 @@ pub struct SaberDuelGameOver {
 }
 
 impl GamePacket for SaberDuelGameOver {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::SaberDuel;
+}
+
+#[derive(Clone, Copy, TryFromPrimitive)]
+#[repr(u32)]
+pub enum SaberDuelBoost {
+    TwoKeys = 0,
+    ForgiveMistake = 1,
+    DoubleScore = 2
+}
+
+impl SerializePacket for SaberDuelBoost {
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        SerializePacket::serialize(&(*self as u32), buffer);
+    }
+}
+
+#[derive(SerializePacket)]
+pub struct SaberDuelTriggerBoost {
+    pub minigame_header: MinigameHeader,
+    pub player_index: u32,
+    pub boost: SaberDuelBoost
+}
+
+impl GamePacket for SaberDuelTriggerBoost {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::SaberDuel;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct SaberDuelSetMemoryChallenge {
+    pub minigame_header: MinigameHeader,
+    pub enabled: bool
+}
+
+impl GamePacket for SaberDuelSetMemoryChallenge {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::SaberDuel;
