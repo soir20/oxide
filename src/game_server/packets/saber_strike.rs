@@ -56,46 +56,46 @@ pub struct SaberStrikeThrowKill {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct ExtraSabersBoost {
+pub struct SaberStrikeExtraSabersBoost {
     pub minigame_header: MinigameHeader,
     pub sabers: u32,
 }
 
-impl GamePacket for ExtraSabersBoost {
+impl GamePacket for SaberStrikeExtraSabersBoost {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::SaberStrike;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct DemagnetizeWallsBoost {
+pub struct SaberStrikeDemagnetizeWallsBoost {
     pub minigame_header: MinigameHeader,
 }
 
-impl GamePacket for DemagnetizeWallsBoost {
+impl GamePacket for SaberStrikeDemagnetizeWallsBoost {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::SaberStrike;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct ReducedGoalBoost {
+pub struct SaberStrikeReducedGoalBoost {
     pub minigame_header: MinigameHeader,
     pub goal_deduction: u32,
 }
 
-impl GamePacket for ReducedGoalBoost {
+impl GamePacket for SaberStrikeReducedGoalBoost {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::SaberStrike;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct EnableTrajectoryBoost {
+pub struct SaberStrikeEnableTrajectoryBoost {
     pub minigame_header: MinigameHeader,
 }
 
-impl GamePacket for EnableTrajectoryBoost {
+impl GamePacket for SaberStrikeEnableTrajectoryBoost {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::SaberStrike;
