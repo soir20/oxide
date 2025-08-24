@@ -2100,33 +2100,33 @@ impl Character {
     }
 
     pub fn interact(
-    &mut self,
-    requester: u32,
-    player_credits: Option<&mut u32>,
-    nearby_player_guids: &[u32],
-) -> WriteLockingBroadcastSupplier {
-    let mut new_procedure = None;
+        &mut self,
+        requester: u32,
+        player_credits: Option<&mut u32>,
+        nearby_player_guids: &[u32],
+    ) -> WriteLockingBroadcastSupplier {
+        let mut new_procedure = None;
 
-    let character_type = self.stats.character_type.clone();
+        let character_type = self.stats.character_type.clone();
 
-    let broadcast_supplier = match character_type {
-        CharacterType::AmbientNpc(ambient_npc) => {
-            let (procedure, one_shot_interact) =
-                ambient_npc.interact(self, nearby_player_guids, requester, player_credits);
-            new_procedure = procedure;
-            one_shot_interact
+        let broadcast_supplier = match character_type {
+            CharacterType::AmbientNpc(ambient_npc) => {
+                let (procedure, one_shot_interact) =
+                    ambient_npc.interact(self, nearby_player_guids, requester, player_credits);
+                new_procedure = procedure;
+                one_shot_interact
+            }
+            CharacterType::Door(door) => door.interact(requester),
+            CharacterType::Transport(transport) => transport.interact(requester),
+            _ => coerce_to_broadcast_supplier(|_| Ok(Vec::new())),
+        };
+
+        if let Some(procedure) = new_procedure {
+            self.set_tickable_procedure_if_exists(procedure, Instant::now());
         }
-        CharacterType::Door(door) => door.interact(requester),
-        CharacterType::Transport(transport) => transport.interact(requester),
-        _ => coerce_to_broadcast_supplier(|_| Ok(Vec::new())),
-    };
 
-    if let Some(procedure) = new_procedure {
-        self.set_tickable_procedure_if_exists(procedure, Instant::now());
+        broadcast_supplier
     }
-
-    broadcast_supplier
-}
 
     fn tickable(&self) -> bool {
         self.tickable_procedure_tracker.tickable()
