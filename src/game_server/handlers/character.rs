@@ -377,7 +377,7 @@ impl OneShotAction {
         let mut packets_for_all = Vec::new();
         let mut packets_for_sender = Vec::new();
 
-        if self.despawn_npc == true {
+        if self.despawn_npc {
             character.is_spawned = false;
             packets_for_all.extend(character.remove_packets(self.removal_mode));
         }
