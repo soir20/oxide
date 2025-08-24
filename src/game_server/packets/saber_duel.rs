@@ -135,7 +135,7 @@ pub struct ApplyForcePower {
     pub minigame_header: MinigameHeader,
     pub used_by_player_index: u32,
     pub force_power_index: u32,
-    pub unknown3: u32,
+    pub num_remaining: u32,
     pub new_force_points: u32,
     pub animation_id: u32,
     pub flags: SaberDuelForcePowerFlags,
