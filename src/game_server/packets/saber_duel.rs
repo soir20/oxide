@@ -230,7 +230,7 @@ impl GamePacket for BoutTied {
 pub struct RoundOver {
     pub minigame_header: MinigameHeader,
     pub winner_index: u32,
-    pub unknown2: u32,
+    pub sound_id: u32,
 }
 
 impl GamePacket for RoundOver {
@@ -243,7 +243,7 @@ impl GamePacket for RoundOver {
 pub struct GameOver {
     pub minigame_header: MinigameHeader,
     pub winner_index: u32,
-    pub unknown2: u32,
+    pub sound_id: u32,
     pub round_won: bool,
     pub challenge_failed: bool,
 }
