@@ -59,37 +59,37 @@ impl GamePacket for SaberDuelStageData {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct OpponentGuid {
+pub struct SaberDuelOpponentGuid {
     pub minigame_header: MinigameHeader,
     pub guid: u64,
 }
 
-impl GamePacket for OpponentGuid {
+impl GamePacket for SaberDuelOpponentGuid {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::SaberDuel;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct GameStart {
+pub struct SaberDuelGameStart {
     pub minigame_header: MinigameHeader,
 }
 
-impl GamePacket for GameStart {
+impl GamePacket for SaberDuelGameStart {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::SaberDuel;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct BoutInfo {
+pub struct SaberDuelBoutInfo {
     pub minigame_header: MinigameHeader,
     pub max_bout_time_millis: u32,
     pub is_combo_bout: bool,
     pub force_points_by_player_index: Vec<u32>,
 }
 
-impl GamePacket for BoutInfo {
+impl GamePacket for SaberDuelBoutInfo {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::SaberDuel;
@@ -119,19 +119,19 @@ impl SerializePacket for SaberDuelForcePowerFlags {
 }
 
 #[derive(SerializePacket)]
-pub struct ShowForcePowerDialog {
+pub struct SaberDuelShowForcePowerDialog {
     pub minigame_header: MinigameHeader,
     pub flags: SaberDuelForcePowerFlags,
 }
 
-impl GamePacket for ShowForcePowerDialog {
+impl GamePacket for SaberDuelShowForcePowerDialog {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::SaberDuel;
 }
 
 #[derive(SerializePacket)]
-pub struct ApplyForcePower {
+pub struct SaberDuelApplyForcePower {
     pub minigame_header: MinigameHeader,
     pub used_by_player_index: u32,
     pub force_power_index: u32,
@@ -141,7 +141,7 @@ pub struct ApplyForcePower {
     pub flags: SaberDuelForcePowerFlags,
 }
 
-impl GamePacket for ApplyForcePower {
+impl GamePacket for SaberDuelApplyForcePower {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::SaberDuel;
@@ -175,33 +175,33 @@ impl DeserializePacket for SaberDuelKey {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct BoutStart {
+pub struct SaberDuelBoutStart {
     pub minigame_header: MinigameHeader,
     pub keys: Vec<SaberDuelKey>,
     pub num_keys_by_player_index: Vec<u32>,
 }
 
-impl GamePacket for BoutStart {
+impl GamePacket for SaberDuelBoutStart {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::SaberDuel;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct PlayerUpdate {
+pub struct SaberDuelPlayerUpdate {
     pub minigame_header: MinigameHeader,
     pub player_index: u32,
     pub current_key_index: u32,
 }
 
-impl GamePacket for PlayerUpdate {
+impl GamePacket for SaberDuelPlayerUpdate {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::SaberDuel;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct BoutWon {
+pub struct SaberDuelBoutWon {
     pub minigame_header: MinigameHeader,
     pub winner_index: u32,
     pub new_score: u32,
@@ -209,38 +209,38 @@ pub struct BoutWon {
     pub loser_animation_id: u32,
 }
 
-impl GamePacket for BoutWon {
+impl GamePacket for SaberDuelBoutWon {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::SaberDuel;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct BoutTied {
+pub struct SaberDuelBoutTied {
     pub minigame_header: MinigameHeader,
 }
 
-impl GamePacket for BoutTied {
+impl GamePacket for SaberDuelBoutTied {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::SaberDuel;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct RoundOver {
+pub struct SaberDuelRoundOver {
     pub minigame_header: MinigameHeader,
     pub winner_index: u32,
     pub sound_id: u32,
 }
 
-impl GamePacket for RoundOver {
+impl GamePacket for SaberDuelRoundOver {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::SaberDuel;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct GameOver {
+pub struct SaberDuelGameOver {
     pub minigame_header: MinigameHeader,
     pub winner_index: u32,
     pub sound_id: u32,
@@ -248,7 +248,7 @@ pub struct GameOver {
     pub challenge_failed: bool,
 }
 
-impl GamePacket for GameOver {
+impl GamePacket for SaberDuelGameOver {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::SaberDuel;
