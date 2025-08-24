@@ -47,7 +47,7 @@ pub struct SaberDuelStageData {
     pub opponent_entrance_animation_id: i32,
     pub opponent_entrance_sound_id: u32,
     pub max_force_points: u32,
-    pub unknown13: bool,
+    pub paused: bool,
     pub enable_memory_challenge: bool,
     pub force_powers: Vec<SaberDuelForcePowerDefinition>,
 }
