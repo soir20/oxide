@@ -25,11 +25,39 @@ pub enum SaberDuelOpCode {
     TriggerBoost = 0xe,
     SetMemoryChallenge = 0xf,
     PlayerReady = 0x10,
+    Keypress = 0x11,
+    RequestApplyForcePower = 0x12,
+}
+
+#[derive(Clone, Copy, TryFromPrimitive)]
+#[repr(u32)]
+pub enum SaberDuelForcePower {
+    ExtraKey = 0,
+    RightToLeft = 1,
+    Opposite = 2,
+}
+
+impl SerializePacket for SaberDuelForcePower {
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        SerializePacket::serialize(&(*self as u32), buffer);
+    }
+}
+
+impl DeserializePacket for SaberDuelForcePower {
+    fn deserialize(
+        cursor: &mut std::io::Cursor<&[u8]>,
+    ) -> Result<Self, packet_serialize::DeserializePacketError>
+    where
+        Self: Sized,
+    {
+        SaberDuelForcePower::try_from_primitive(u32::deserialize(cursor)?)
+            .map_err(|_| DeserializePacketError::UnknownDiscriminator)
+    }
 }
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct SaberDuelForcePowerDefinition {
-    pub guid: u32,
+    pub force_power: SaberDuelForcePower,
     pub name_id: u32,
     pub small_icon_set_id: u32,
     pub icon_set_id: u32,
@@ -99,21 +127,21 @@ impl GamePacket for SaberDuelBoutInfo {
 }
 
 pub struct SaberDuelForcePowerFlags {
-    pub enable_force_power1: bool,
-    pub enable_force_power2: bool,
-    pub enable_force_power3: bool,
+    pub can_use_extra_key: bool,
+    pub can_use_right_to_left: bool,
+    pub can_use_opposite: bool,
 }
 
 impl SerializePacket for SaberDuelForcePowerFlags {
     fn serialize(&self, buffer: &mut Vec<u8>) {
         let mut value: u8 = 0;
-        if self.enable_force_power1 {
+        if self.can_use_extra_key {
             value |= 0x80;
         }
-        if self.enable_force_power2 {
+        if self.can_use_right_to_left {
             value |= 0x40;
         }
-        if self.enable_force_power3 {
+        if self.can_use_opposite {
             value |= 0x20;
         }
 
@@ -137,7 +165,7 @@ impl GamePacket for SaberDuelShowForcePowerDialog {
 pub struct SaberDuelApplyForcePower {
     pub minigame_header: MinigameHeader,
     pub used_by_player_index: u32,
-    pub force_power_index: u32,
+    pub force_power: SaberDuelForcePower,
     pub num_remaining: u32,
     pub new_force_points: u32,
     pub animation_id: u32,
@@ -154,7 +182,7 @@ impl GamePacket for SaberDuelApplyForcePower {
 pub struct SaberDuelRemoveForcePower {
     pub minigame_header: MinigameHeader,
     pub used_by_player_index: u32,
-    pub force_power_index: u32,
+    pub force_power: SaberDuelForcePower,
 }
 
 impl GamePacket for SaberDuelRemoveForcePower {
@@ -275,7 +303,7 @@ impl GamePacket for SaberDuelGameOver {
 pub enum SaberDuelBoost {
     TwoKeys = 0,
     ForgiveMistake = 1,
-    DoubleScore = 2
+    DoubleScore = 2,
 }
 
 impl SerializePacket for SaberDuelBoost {
@@ -288,7 +316,7 @@ impl SerializePacket for SaberDuelBoost {
 pub struct SaberDuelTriggerBoost {
     pub minigame_header: MinigameHeader,
     pub player_index: u32,
-    pub boost: SaberDuelBoost
+    pub boost: SaberDuelBoost,
 }
 
 impl GamePacket for SaberDuelTriggerBoost {
@@ -300,10 +328,22 @@ impl GamePacket for SaberDuelTriggerBoost {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct SaberDuelSetMemoryChallenge {
     pub minigame_header: MinigameHeader,
-    pub enabled: bool
+    pub enabled: bool,
 }
 
 impl GamePacket for SaberDuelSetMemoryChallenge {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::SaberDuel;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct SaberDuelRequestApplyForcePower {
+    pub minigame_header: MinigameHeader,
+    pub force_power: SaberDuelForcePower,
+}
+
+impl GamePacket for SaberDuelRequestApplyForcePower {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::SaberDuel;
