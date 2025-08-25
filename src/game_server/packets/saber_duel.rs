@@ -25,7 +25,7 @@ pub enum SaberDuelOpCode {
     TriggerBoost = 0xe,
     SetMemoryChallenge = 0xf,
     PlayerReady = 0x10,
-    Keypress = 0x11,
+    RequestKeypress = 0x11,
     RequestApplyForcePower = 0x12,
 }
 
@@ -290,6 +290,27 @@ pub struct SaberDuelSetMemoryChallenge {
 }
 
 impl GamePacket for SaberDuelSetMemoryChallenge {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::SaberDuel;
+}
+
+#[derive(Clone, Copy, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket)]
+#[repr(u16)]
+pub enum SaberDuelKeypress {
+    Up = 1,
+    Down = 2,
+    Left = 3,
+    Right = 4,
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct SaberDuelRequestKeypress {
+    pub minigame_header: MinigameHeader,
+    pub keypress: SaberDuelKeypress,
+}
+
+impl GamePacket for SaberDuelRequestKeypress {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::SaberDuel;
