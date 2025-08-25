@@ -2331,8 +2331,10 @@ fn handle_request_start_active_minigame(
                     // Re-send the stage group instance to populate the stage data in the settings menu.
                     // When we enter the Flash or 3D game HUD state, the current minigame group is cleared.
                     // This removes the game name from the options menu. To avoid this, we need to send a 
-                    // script packet to transition the HUD to the main state. Then we re-send the stage 
+                    // script packet to transition the HUD to a non-minigame state. Then we re-send the stage 
                     // group instance data. Then we can load the minigame.
+                    //
+                    // We hide the HUD so that no HUD appears before the minigame HUD loads.
                     packets.push(GamePacket::serialize(&TunneledPacket {
                         unknown1: true,
                         inner: ExecuteScriptWithStringParams {
