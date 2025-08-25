@@ -39,7 +39,7 @@ pub fn assign_struct_fields(data: &DataStruct) -> TokenStream {
 
 pub fn assign_enum_variant() -> TokenStream {
     quote! {
-        let primitive = <Self as num_enum::TryFromPrimitive>::Primitive::deserialize(cursor)?;
+        let primitive = packet_serialize::DeserializePacket::deserialize(cursor)?;
         Self::try_from_primitive(primitive).map_err(|_| packet_serialize::DeserializePacketError::UnknownDiscriminator)
     }
 }
