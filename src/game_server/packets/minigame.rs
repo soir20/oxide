@@ -12,6 +12,8 @@ pub enum MinigameOpCode {
     RequestCreateActiveMinigame = 0x4,
     RequestStartActiveMinigame = 0x6,
     RequestCancelActiveMinigame = 0x7,
+    PauseActiveMinigame = 0x9,
+    UnpauseActiveMinigame = 0xa,
     FlashPayload = 0xf,
     CreateActiveMinigame = 0x11,
     StartActiveMinigame = 0x12,
@@ -23,6 +25,7 @@ pub enum MinigameOpCode {
     CreateMinigameStageGroupInstance = 0x33,
     ShowStageInstanceSelect = 0x34,
     SaberStrike = 0x39,
+    SaberDuel = 0x3a,
     ActiveMinigameCreationResult = 0x44,
 }
 
