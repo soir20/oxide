@@ -1,5 +1,5 @@
-use num_enum::TryFromPrimitive;
-use packet_serialize::{DeserializePacket, DeserializePacketError, SerializePacket};
+use num_enum::{IntoPrimitive, TryFromPrimitive};
+use packet_serialize::{DeserializePacket, SerializePacket};
 
 use super::{
     minigame::{MinigameHeader, MinigameOpCode},
@@ -29,30 +29,12 @@ pub enum SaberDuelOpCode {
     RequestApplyForcePower = 0x12,
 }
 
-#[derive(Clone, Copy, TryFromPrimitive)]
+#[derive(Clone, Copy, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket)]
 #[repr(u32)]
 pub enum SaberDuelForcePower {
     ExtraKey = 0,
     RightToLeft = 1,
     Opposite = 2,
-}
-
-impl SerializePacket for SaberDuelForcePower {
-    fn serialize(&self, buffer: &mut Vec<u8>) {
-        SerializePacket::serialize(&(*self as u32), buffer);
-    }
-}
-
-impl DeserializePacket for SaberDuelForcePower {
-    fn deserialize(
-        cursor: &mut std::io::Cursor<&[u8]>,
-    ) -> Result<Self, packet_serialize::DeserializePacketError>
-    where
-        Self: Sized,
-    {
-        SaberDuelForcePower::try_from_primitive(u32::deserialize(cursor)?)
-            .map_err(|_| DeserializePacketError::UnknownDiscriminator)
-    }
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -191,31 +173,13 @@ impl GamePacket for SaberDuelRemoveForcePower {
     const HEADER: Self::Header = MinigameOpCode::SaberDuel;
 }
 
-#[derive(Clone, Copy, TryFromPrimitive)]
+#[derive(Clone, Copy, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket)]
 #[repr(u32)]
 pub enum SaberDuelKey {
     Up = 1,
     Down = 2,
     Left = 3,
     Right = 4,
-}
-
-impl SerializePacket for SaberDuelKey {
-    fn serialize(&self, buffer: &mut Vec<u8>) {
-        SerializePacket::serialize(&(*self as u32), buffer);
-    }
-}
-
-impl DeserializePacket for SaberDuelKey {
-    fn deserialize(
-        cursor: &mut std::io::Cursor<&[u8]>,
-    ) -> Result<Self, packet_serialize::DeserializePacketError>
-    where
-        Self: Sized,
-    {
-        SaberDuelKey::try_from_primitive(u32::deserialize(cursor)?)
-            .map_err(|_| DeserializePacketError::UnknownDiscriminator)
-    }
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -298,7 +262,7 @@ impl GamePacket for SaberDuelGameOver {
     const HEADER: Self::Header = MinigameOpCode::SaberDuel;
 }
 
-#[derive(Clone, Copy, TryFromPrimitive)]
+#[derive(Clone, Copy, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket)]
 #[repr(u32)]
 pub enum SaberDuelBoost {
     TwoKeys = 0,
@@ -306,13 +270,7 @@ pub enum SaberDuelBoost {
     DoubleScore = 2,
 }
 
-impl SerializePacket for SaberDuelBoost {
-    fn serialize(&self, buffer: &mut Vec<u8>) {
-        SerializePacket::serialize(&(*self as u32), buffer);
-    }
-}
-
-#[derive(SerializePacket)]
+#[derive(SerializePacket, DeserializePacket)]
 pub struct SaberDuelTriggerBoost {
     pub minigame_header: MinigameHeader,
     pub player_index: u32,
