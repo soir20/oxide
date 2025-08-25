@@ -1,6 +1,5 @@
 use std::io::{Cursor, Read};
 
-use byteorder::{LittleEndian, ReadBytesExt};
 use packet_serialize::DeserializePacket;
 
 use crate::game_server::{
@@ -15,7 +14,7 @@ pub fn process_command(
     sender: u32,
     cursor: &mut Cursor<&[u8]>,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-    let raw_op_code = cursor.read_u16::<LittleEndian>()?;
+    let raw_op_code: u16 = DeserializePacket::deserialize(cursor)?;
     match CommandOpCode::try_from(raw_op_code) {
         Ok(op_code) => match op_code {
             CommandOpCode::SelectPlayer => Ok(Vec::new()),

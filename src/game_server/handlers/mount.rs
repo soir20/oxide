@@ -1,6 +1,5 @@
 use std::{collections::BTreeMap, fs::File, io::Cursor, path::Path};
 
-use byteorder::ReadBytesExt;
 use packet_serialize::DeserializePacket;
 use parking_lot::{RwLockReadGuard, RwLockWriteGuard};
 use serde::Deserialize;
@@ -357,7 +356,7 @@ pub fn process_mount_packet(
     sender: u32,
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-    let raw_op_code = cursor.read_u8()?;
+    let raw_op_code: u8 = DeserializePacket::deserialize(cursor)?;
     match MountOpCode::try_from(raw_op_code) {
         Ok(op_code) => match op_code {
             MountOpCode::DismountRequest => process_dismount(sender, game_server),

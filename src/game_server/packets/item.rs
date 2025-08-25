@@ -1,11 +1,23 @@
-use byteorder::{LittleEndian, ReadBytesExt};
-use num_enum::TryFromPrimitive;
-use packet_serialize::{DeserializePacket, DeserializePacketError, SerializePacket};
+use num_enum::{IntoPrimitive, TryFromPrimitive};
+use packet_serialize::{DeserializePacket, SerializePacket};
 use serde::Deserialize;
 
 use super::{player_update::CustomizationSlot, GamePacket, OpCode};
 
-#[derive(Copy, Clone, Debug, Deserialize, PartialEq, Eq, PartialOrd, Ord, TryFromPrimitive)]
+#[derive(
+    Copy,
+    Clone,
+    Debug,
+    Deserialize,
+    PartialEq,
+    Eq,
+    PartialOrd,
+    Ord,
+    TryFromPrimitive,
+    IntoPrimitive,
+    SerializePacket,
+    DeserializePacket,
+)]
 #[serde(deny_unknown_fields)]
 #[repr(u32)]
 pub enum EquipmentSlot {
@@ -46,30 +58,20 @@ impl EquipmentSlot {
     }
 }
 
-impl SerializePacket for EquipmentSlot {
-    fn serialize(&self, buffer: &mut Vec<u8>) {
-        (*self as u32).serialize(buffer);
-    }
-}
-
-impl DeserializePacket for EquipmentSlot {
-    fn deserialize(
-        cursor: &mut std::io::Cursor<&[u8]>,
-    ) -> Result<Self, packet_serialize::DeserializePacketError>
-    where
-        Self: Sized,
-    {
-        EquipmentSlot::try_from(
-            cursor
-                .read_u32::<LittleEndian>()
-                .map_err(DeserializePacketError::IoError)?,
-        )
-        .map_err(|_| DeserializePacketError::UnknownDiscriminator)
-    }
-}
-
-#[derive(Copy, Clone, Debug, Deserialize, PartialEq, Eq)]
+#[derive(
+    Copy,
+    Clone,
+    Debug,
+    Deserialize,
+    PartialEq,
+    Eq,
+    TryFromPrimitive,
+    IntoPrimitive,
+    SerializePacket,
+    DeserializePacket,
+)]
 #[serde(deny_unknown_fields)]
+#[repr(u32)]
 pub enum WieldType {
     None = 0,
     SingleSaber = 1,
@@ -87,12 +89,6 @@ pub enum WieldType {
     Bow = 13,
     Sparklers = 14,
     HeavyCannon = 15,
-}
-
-impl SerializePacket for WieldType {
-    fn serialize(&self, buffer: &mut Vec<u8>) {
-        (*self as u32).serialize(buffer);
-    }
 }
 
 impl WieldType {

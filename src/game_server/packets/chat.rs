@@ -1,7 +1,6 @@
 use std::io::Cursor;
 
-use byteorder::{LittleEndian, ReadBytesExt};
-use num_enum::TryFromPrimitive;
+use num_enum::{IntoPrimitive, TryFromPrimitive};
 
 use packet_serialize::{DeserializePacket, DeserializePacketError, SerializePacket};
 
@@ -21,7 +20,9 @@ impl SerializePacket for ChatOpCode {
     }
 }
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(
+    Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
+)]
 #[repr(u16)]
 pub enum MessageType {
     World = 0x0,
@@ -90,7 +91,7 @@ pub struct SendMessage {
 
 impl SerializePacket for SendMessage {
     fn serialize(&self, buffer: &mut Vec<u8>) {
-        (self.message_type_data.message_type() as u16).serialize(buffer);
+        self.message_type_data.message_type().serialize(buffer);
         self.payload.serialize(buffer);
         if let MessageTypeData::Area(area_id) = self.message_type_data {
             area_id.serialize(buffer);
@@ -103,7 +104,7 @@ impl DeserializePacket for SendMessage {
     where
         Self: Sized,
     {
-        let raw_message_type = cursor.read_u16::<LittleEndian>()?;
+        let raw_message_type: u16 = DeserializePacket::deserialize(cursor)?;
         let message_type = MessageType::try_from(raw_message_type)
             .map_err(|_| DeserializePacketError::UnknownDiscriminator)?;
         let payload = MessagePayload::deserialize(cursor)?;
@@ -117,7 +118,7 @@ impl DeserializePacket for SendMessage {
             MessageType::Trade => MessageTypeData::Trade,
             MessageType::LookingForGroup => MessageTypeData::LookingForGroup,
             MessageType::Area => {
-                let area_id = u32::deserialize(cursor)?;
+                let area_id: u32 = DeserializePacket::deserialize(cursor)?;
                 MessageTypeData::Area(area_id)
             }
             MessageType::Squad => MessageTypeData::Squad,
@@ -136,8 +137,10 @@ impl GamePacket for SendMessage {
     const HEADER: Self::Header = ChatOpCode::SendMessage;
 }
 
-#[allow(dead_code)]
-#[derive(Copy, Clone, Default)]
+#[derive(
+    Copy, Clone, Default, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
+)]
+#[repr(u32)]
 pub enum ActionBarTextColor {
     #[default]
     White = 0,
@@ -145,12 +148,6 @@ pub enum ActionBarTextColor {
     Yellow = 2,
     Green = 3,
     Blue = 4,
-}
-
-impl SerializePacket for ActionBarTextColor {
-    fn serialize(&self, buffer: &mut Vec<u8>) {
-        (*self as u32).serialize(buffer);
-    }
 }
 
 #[derive(SerializePacket)]
