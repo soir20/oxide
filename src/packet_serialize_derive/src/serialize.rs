@@ -1,30 +1,7 @@
 use proc_macro2::TokenStream;
 use quote::{quote, quote_spanned};
 use syn::spanned::Spanned;
-use syn::{parse_quote, DataStruct, Fields, GenericParam, Generics, Ident, Index};
-
-pub fn add_struct_trait_bounds(mut generics: Generics) -> Generics {
-    for param in &mut generics.params {
-        if let GenericParam::Type(ref mut type_param) = *param {
-            type_param
-                .bounds
-                .push(parse_quote!(packet_serialize::SerializePacket));
-        }
-    }
-    generics
-}
-
-pub fn add_enum_trait_bounds(mut generics: Generics, repr: &Ident) -> Generics {
-    generics = add_struct_trait_bounds(generics);
-    for param in &mut generics.params {
-        if let GenericParam::Type(ref mut type_param) = *param {
-            type_param
-                .bounds
-                .push(parse_quote!(std::convert::Into<#repr>));
-        }
-    }
-    generics
-}
+use syn::{DataStruct, Fields, Ident, Index};
 
 pub fn write_struct_fields(data: &DataStruct) -> TokenStream {
     match data.fields {

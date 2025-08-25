@@ -62,11 +62,8 @@ pub fn derive_serialize(token_stream: proc_macro::TokenStream) -> proc_macro::To
 
     let name = input.base.ident;
 
-    let (generics, body) = match &input.base.data {
-        syn::Data::Struct(data) => (
-            serialize::add_struct_trait_bounds(input.base.generics),
-            serialize::write_struct_fields(data),
-        ),
+    let body = match &input.base.data {
+        syn::Data::Struct(data) => serialize::write_struct_fields(data),
         syn::Data::Enum(_) => {
             let Some(repr) = input.repr else {
                 let err = syn::Error::new(
@@ -75,15 +72,12 @@ pub fn derive_serialize(token_stream: proc_macro::TokenStream) -> proc_macro::To
                 );
                 return proc_macro::TokenStream::from(err.to_compile_error());
             };
-            (
-                serialize::add_enum_trait_bounds(input.base.generics, &repr),
-                serialize::write_enum(&repr),
-            )
+            serialize::write_enum(&repr)
         }
         syn::Data::Union(_) => unimplemented!(),
     };
 
-    let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
+    let (impl_generics, ty_generics, where_clause) = input.base.generics.split_for_impl();
 
     let expanded = quote! {
         impl #impl_generics packet_serialize::SerializePacket for #name #ty_generics #where_clause {
@@ -102,26 +96,20 @@ pub fn derive_deserialize(token_stream: proc_macro::TokenStream) -> proc_macro::
 
     let name = input.ident;
 
-    let (generics, body) = match &input.data {
+    let body = match &input.data {
         syn::Data::Struct(data) => {
             let assignments = deserialize::assign_struct_fields(data);
-            (
-                deserialize::add_struct_trait_bounds(input.generics),
-                quote! {
-                    Ok(#name {
-                        #assignments
-                    })
-                },
-            )
+            quote! {
+                Ok(#name {
+                    #assignments
+                })
+            }
         }
-        syn::Data::Enum(_) => (
-            deserialize::add_enum_trait_bounds(input.generics),
-            deserialize::assign_enum_variant(),
-        ),
+        syn::Data::Enum(_) => deserialize::assign_enum_variant(),
         syn::Data::Union(_) => unimplemented!(),
     };
 
-    let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
+    let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
 
     let expanded = quote! {
         impl #impl_generics packet_serialize::DeserializePacket for #name #ty_generics #where_clause {
