@@ -2,29 +2,93 @@ mod deserialize;
 mod serialize;
 
 use quote::quote;
+use syn::parse::Parse;
 use syn::parse_macro_input;
+use syn::parse_quote;
 use syn::DeriveInput;
+use syn::Ident;
+use syn::Meta;
 
-use crate::deserialize::add_enum_trait_bounds;
-use crate::deserialize::add_struct_trait_bounds;
-use crate::deserialize::assign_enum_variant;
-use crate::deserialize::assign_struct_fields;
+struct ExtendedDeriveInput {
+    base: DeriveInput,
+    repr: Option<Ident>,
+}
+
+impl ExtendedDeriveInput {
+    fn parse_repr(input: &DeriveInput) -> syn::Result<Option<Ident>> {
+        for attr in &input.attrs {
+            let Meta::List(list) = &attr.meta else {
+                continue;
+            };
+
+            let Some(ident) = list.path.get_ident() else {
+                continue;
+            };
+
+            if ident != "repr" {
+                continue;
+            }
+
+            let mut tokens = list.tokens.clone().into_iter();
+            let token_tree = match (tokens.next(), tokens.next()) {
+                (Some(token_tree), None) => token_tree,
+                _ => {
+                    return Err(syn::Error::new_spanned(
+                        attr,
+                        "Expected exactly one `repr` argument",
+                    ))
+                }
+            };
+
+            return Ok(Some(parse_quote! { #token_tree }));
+        }
+
+        return Ok(None);
+    }
+}
+
+impl Parse for ExtendedDeriveInput {
+    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+        let base: DeriveInput = input.parse()?;
+        let repr = Self::parse_repr(&base)?;
+
+        Ok(ExtendedDeriveInput { base, repr })
+    }
+}
 
 #[proc_macro_derive(SerializePacket)]
-pub fn derive_serialize(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    let input = parse_macro_input!(input as DeriveInput);
+pub fn derive_serialize(token_stream: proc_macro::TokenStream) -> proc_macro::TokenStream {
+    let input = parse_macro_input!(token_stream as ExtendedDeriveInput);
 
-    let name = input.ident;
+    let name = input.base.ident;
 
-    let generics = serialize::add_trait_bounds(input.generics);
+    let (generics, body) = match &input.base.data {
+        syn::Data::Struct(data) => (
+            serialize::add_struct_trait_bounds(input.base.generics),
+            serialize::write_struct_fields(data),
+        ),
+        syn::Data::Enum(_) => {
+            let Some(repr) = input.repr else {
+                let err = syn::Error::new(
+                    proc_macro2::Span::call_site(),
+                    "Missing `repr` argument for enum",
+                );
+                return proc_macro::TokenStream::from(err.to_compile_error());
+            };
+            (
+                serialize::add_enum_trait_bounds(input.base.generics, &repr),
+                serialize::write_enum(&repr),
+            )
+        }
+        syn::Data::Union(_) => unimplemented!(),
+    };
+
     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
-
-    let writes = serialize::write_fields(&input.data);
 
     let expanded = quote! {
         impl #impl_generics packet_serialize::SerializePacket for #name #ty_generics #where_clause {
             fn serialize(&self, buffer: &mut Vec<u8>) {
-                #writes
+                #body
             }
         }
     };
@@ -33,16 +97,16 @@ pub fn derive_serialize(input: proc_macro::TokenStream) -> proc_macro::TokenStre
 }
 
 #[proc_macro_derive(DeserializePacket)]
-pub fn derive_deserialize(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    let input = parse_macro_input!(input as DeriveInput);
+pub fn derive_deserialize(token_stream: proc_macro::TokenStream) -> proc_macro::TokenStream {
+    let input = parse_macro_input!(token_stream as DeriveInput);
 
     let name = input.ident;
 
     let (generics, body) = match &input.data {
         syn::Data::Struct(data) => {
-            let assignments = assign_struct_fields(data);
+            let assignments = deserialize::assign_struct_fields(data);
             (
-                add_struct_trait_bounds(input.generics),
+                deserialize::add_struct_trait_bounds(input.generics),
                 quote! {
                     Ok(#name {
                         #assignments
@@ -50,7 +114,10 @@ pub fn derive_deserialize(input: proc_macro::TokenStream) -> proc_macro::TokenSt
                 },
             )
         }
-        syn::Data::Enum(_) => (add_enum_trait_bounds(input.generics), assign_enum_variant()),
+        syn::Data::Enum(_) => (
+            deserialize::add_enum_trait_bounds(input.generics),
+            deserialize::assign_enum_variant(),
+        ),
         syn::Data::Union(_) => unimplemented!(),
     };
 
