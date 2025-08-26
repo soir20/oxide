@@ -1104,7 +1104,7 @@
             - procedure: empty
               weight: 89700
     # Main Hall Blue Orb One
-    - model_id: 1199
+    - model_id: 1198
       possible_pos:
         - x: 1245.1803
           y: 10.038356
@@ -1177,7 +1177,7 @@
               weight: 89700
       synchronize_with: Main Hall Orb Spawn Timer
     # Main Hall Blue Orb Two
-    - model_id: 1199
+    - model_id: 1198
       possible_pos:
         - x: 1277.8179
           y: 10.065796
@@ -1250,7 +1250,7 @@
               weight: 89700
       synchronize_with: Main Hall Orb Spawn Timer
     # Main Hall Blue Orb Three
-    - model_id: 1199
+    - model_id: 1198
       possible_pos:
         - x: 1270.2139
           y: 10.020651
