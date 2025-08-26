@@ -719,6 +719,342 @@
       large_icon: false
       show_hover_description: false
   ambient_npcs:
+    # Shops Orb Spawn Timer
+    - key: Shops Orb Spawn Timer
+      pos:
+        x: 887.3
+        y: 171.93376
+        z: 1546.956
+        w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0 
+      is_spawned: false
+      tickable_procedures:
+        spawn:
+          weight: 300
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: lifespan
+        lifespan:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful: {
+                  fade_duration_millis: 1000,
+                  removal_delay_millis: 0
+                  }
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+    # Shops Blue Orb One
+    - model_id: 1198
+      possible_pos:
+        - x: 888.297
+          y: 171.93137
+          z: 1509.0748
+          w: 1
+        - x: 913.0639
+          y: 172.44917
+          z: 1558.2773
+          w: 1
+        - x: 909.1837
+          y: 176.67288
+          z: 1561.275
+          w: 1
+        - x: 905.1734
+          y: 172.44917
+          z: 1554.6343
+          w: 1
+        - x: 916.88104
+          y: 178.45146
+          z: 1528.9362
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          award_credits: 25
+          despawn_npc: true
+          removal_mode: !Graceful
+            fade_duration_millis: 1000
+            removal_delay_millis: 0
+          duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: idle
+        idle:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful: {
+                  fade_duration_millis: 1000,
+                  removal_delay_millis: 0
+                  }
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Shops Orb Spawn Timer
+    # Shops Blue Orb Two
+    - model_id: 1198
+      possible_pos:
+        - x: 890.98975
+          y: 171.92809
+          z: 1564.9829
+          w: 1
+        - x: 917.1802
+          y: 178.45145
+          z: 1543.825
+          w: 1
+        - x: 901.1932
+          y: 173.72708
+          z: 1535.9695
+          w: 1
+        - x: 916.6061
+          y: 178.45145
+          z: 1565.1721
+          w: 1
+        - x: 906.0068
+          y: 175.54118
+          z: 1529.2587
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          award_credits: 25
+          despawn_npc: true
+          removal_mode: !Graceful
+            fade_duration_millis: 1000
+            removal_delay_millis: 0
+          duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: idle
+        idle:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful: {
+                  fade_duration_millis: 1000,
+                  removal_delay_millis: 0
+                  }
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Shops Orb Spawn Timer
+    # Shops Blue Orb Three
+    - model_id: 1198
+      possible_pos:
+        - x: 909.2783
+          y: 172.44917
+          z: 1535.788
+          w: 1
+        - x: 890.4689
+          y: 171.93375
+          z: 1564.3689
+          w: 1
+        - x: 892.2159
+          y: 171.90773
+          z: 1521.158
+          w: 1
+        - x: 916.5832
+          y: 178.45145
+          z: 1552.0795
+          w: 1
+        - x: 891.9794
+          y: 171.93376
+          z: 1538.8024
+          w: 1
+        - x: 885.334
+          y: 171.93375
+          z: 1515.7941
+          w: 1
+        - x: 911.56287
+          y: 177.61832
+          z: 1532.4813
+          w: 1
+        - x: 921.1074
+          y: 178.5453
+          z: 1535.2856
+          w: 1
+        - x: 886.096
+          y: 171.93376
+          z: 1558.1489
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          award_credits: 25
+          despawn_npc: true
+          removal_mode: !Graceful
+            fade_duration_millis: 1000
+            removal_delay_millis: 0
+          duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          weight: 300
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: lifespan
+        lifespan:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful: {
+                  fade_duration_millis: 1000,
+                  removal_delay_millis: 0
+                  }
+              duration_millis: 1000
+          next_possible_procedures:
+          - procedure: empty
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+    # Shops Gold Orb
+    - model_id: 1320
+      possible_pos:
+        - x: 920.59796
+          y: 178.53049
+          z: 1555.7014
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          award_credits: 25
+          despawn_npc: true
+          removal_mode: !Graceful
+            fade_duration_millis: 1000
+            removal_delay_millis: 0
+          duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          weight: 150
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: lifespan
+        lifespan:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful: {
+                  fade_duration_millis: 1000,
+                  removal_delay_millis: 0
+                  }
+              duration_millis: 1000
+          next_possible_procedures:
+          - procedure: empty
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 150
+            - procedure: empty
+              weight: 89700
     # Main Hall Orb Spawn Timer
     - key: Main Hall Orb Spawn Timer
       pos:
