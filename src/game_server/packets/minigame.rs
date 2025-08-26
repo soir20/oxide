@@ -1,4 +1,4 @@
-use num_enum::TryFromPrimitive;
+use num_enum::{IntoPrimitive, TryFromPrimitive};
 use packet_serialize::{DeserializePacket, LengthlessSlice, SerializePacket};
 
 use super::{GamePacket, OpCode, RewardBundle};
@@ -364,19 +364,23 @@ impl GamePacket for UpdateActiveMinigameRewards {
     const HEADER: Self::Header = MinigameOpCode::UpdateActiveMinigameRewards;
 }
 
+#[derive(
+    Copy,
+    Clone,
+    Default,
+    Eq,
+    PartialEq,
+    TryFromPrimitive,
+    IntoPrimitive,
+    SerializePacket,
+    DeserializePacket,
+)]
 #[repr(i32)]
-#[derive(Copy, Clone, Default, Eq, PartialEq, TryFromPrimitive)]
 pub enum ScoreType {
     #[default]
     Counter = 0,
     Time = 2,
     Total = 4,
-}
-
-impl SerializePacket for ScoreType {
-    fn serialize(&self, buffer: &mut Vec<u8>) {
-        SerializePacket::serialize(&(*self as i32), buffer);
-    }
 }
 
 #[derive(Clone, SerializePacket)]

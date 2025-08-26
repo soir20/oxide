@@ -1,4 +1,4 @@
-use num_enum::TryFromPrimitive;
+use num_enum::{IntoPrimitive, TryFromPrimitive};
 use packet_serialize::{DeserializePacket, SerializePacket};
 
 use crate::game_server::handlers::unique_guid::player_guid;
@@ -20,7 +20,9 @@ impl SerializePacket for SquadOpCode {
     }
 }
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(
+    Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
+)]
 #[repr(u32)]
 pub enum SquadEvent {
     Joined = 1,
@@ -30,12 +32,6 @@ pub enum SquadEvent {
     Demoted = 5,
     NoMessage = 6,
     NoMessageDuplicate = 7,
-}
-
-impl SerializePacket for SquadEvent {
-    fn serialize(&self, buffer: &mut Vec<u8>) {
-        (*self as u32).serialize(buffer);
-    }
 }
 
 #[derive(SerializePacket)]
@@ -56,18 +52,14 @@ impl GamePacket for SquadMemberStatus {
     const HEADER: Self::Header = SquadOpCode::MemberStatus;
 }
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(
+    Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
+)]
 #[repr(u32)]
 pub enum SquadNameStatus {
     Accepted = 1,
     Rejected = 2,
     Pending = 4,
-}
-
-impl SerializePacket for SquadNameStatus {
-    fn serialize(&self, buffer: &mut Vec<u8>) {
-        (*self as u32).serialize(buffer);
-    }
 }
 
 pub struct SquadMember {
@@ -91,19 +83,15 @@ impl SerializePacket for SquadMember {
     }
 }
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(
+    Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
+)]
 #[repr(u32)]
 pub enum SquadRank {
     Leader = 1,
     General = 2,
     Commander = 3,
     Trooper = 4,
-}
-
-impl SerializePacket for SquadRank {
-    fn serialize(&self, buffer: &mut Vec<u8>) {
-        (*self as u32).serialize(buffer);
-    }
 }
 
 pub struct SquadRankDefinition {

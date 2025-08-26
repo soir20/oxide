@@ -1,4 +1,3 @@
-use byteorder::{LittleEndian, ReadBytesExt};
 use packet_serialize::{DeserializePacket, DeserializePacketError, SerializePacket};
 use std::io::{Cursor, Read};
 
@@ -23,9 +22,9 @@ fn serialize_tunneled_packet_from_bytes(buffer: &mut Vec<u8>, unknown1: bool, in
 fn deserialize_tunneled_packet(
     cursor: &mut Cursor<&[u8]>,
 ) -> Result<(bool, Vec<u8>), DeserializePacketError> {
-    let unknown1 = cursor.read_u8()? != 0;
+    let unknown1: bool = DeserializePacket::deserialize(cursor)?;
 
-    let inner_size = cursor.read_u32::<LittleEndian>()?;
+    let inner_size: u32 = DeserializePacket::deserialize(cursor)?;
     let mut inner = vec![0; inner_size as usize];
     cursor.read_exact(&mut inner)?;
 

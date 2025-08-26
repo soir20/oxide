@@ -8,7 +8,6 @@ use std::{
     time::{Duration, Instant},
 };
 
-use byteorder::ReadBytesExt;
 use chrono::{DateTime, Datelike, FixedOffset, NaiveTime, Timelike, Utc};
 use evalexpr::{context_map, eval_with_context, Value};
 use num_enum::TryFromPrimitive;
@@ -1676,7 +1675,7 @@ pub fn process_minigame_packet(
     sender: u32,
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-    let raw_op_code: u8 = cursor.read_u8()?;
+    let raw_op_code: u8 = DeserializePacket::deserialize(cursor)?;
     match MinigameOpCode::try_from(raw_op_code) {
         Ok(op_code) => match op_code {
             MinigameOpCode::RequestMinigameStageGroupInstance => {

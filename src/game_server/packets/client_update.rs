@@ -1,3 +1,4 @@
+use num_enum::{IntoPrimitive, TryFromPrimitive};
 use packet_serialize::{DeserializePacket, SerializePacket};
 
 use super::{
@@ -108,8 +109,10 @@ impl GamePacket for Power {
     const HEADER: ClientUpdateOpCode = ClientUpdateOpCode::Power;
 }
 
-#[allow(dead_code)]
-#[derive(Copy, Clone, Debug)]
+#[derive(
+    Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
+)]
+#[repr(u32)]
 pub enum StatId {
     MaxHealth = 1,
     Speed = 2,
@@ -147,12 +150,6 @@ pub enum StatId {
     MimicMovementSpeed = 57,
     GravityMultiplier = 58,
     JumpHeightMultiplier = 59,
-}
-
-impl SerializePacket for StatId {
-    fn serialize(&self, buffer: &mut Vec<u8>) {
-        (*self as u32).serialize(buffer);
-    }
 }
 
 #[derive(SerializePacket)]

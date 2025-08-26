@@ -1,5 +1,6 @@
 use std::collections::BTreeMap;
 
+use num_enum::{IntoPrimitive, TryFromPrimitive};
 use packet_serialize::{DeserializePacket, SerializePacket};
 use serde::Deserialize;
 
@@ -169,8 +170,10 @@ impl GamePacket for UpdateScale {
     const HEADER: Self::Header = PlayerUpdateOpCode::UpdateScale;
 }
 
-#[allow(dead_code)]
-#[derive(Copy, Clone, Debug)]
+#[derive(
+    Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
+)]
+#[repr(u32)]
 pub enum NameplateImage {
     None = 0,
     Darkside = 6162,
@@ -179,12 +182,6 @@ pub enum NameplateImage {
     Mercenary = 6165,
     Exile = 7021,
     Enforcer = 2087,
-}
-
-impl SerializePacket for NameplateImage {
-    fn serialize(&self, buffer: &mut Vec<u8>) {
-        (*self as u32).serialize(buffer);
-    }
 }
 
 impl NameplateImage {
@@ -319,8 +316,21 @@ impl GamePacket for ItemDefinitionsReply<'_> {
     const HEADER: Self::Header = PlayerUpdateOpCode::ItemDefinitionsReply;
 }
 
-#[derive(Clone, Copy, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(
+    Clone,
+    Copy,
+    Deserialize,
+    PartialEq,
+    Eq,
+    PartialOrd,
+    Ord,
+    TryFromPrimitive,
+    IntoPrimitive,
+    SerializePacket,
+    DeserializePacket,
+)]
 #[serde(deny_unknown_fields)]
+#[repr(i32)]
 pub enum CustomizationSlot {
     None = -1,
     HeadModel = 0,
@@ -331,12 +341,6 @@ pub enum CustomizationSlot {
     FacialHair = 5,
     FacePattern = 6,
     BodyModel = 8,
-}
-
-impl SerializePacket for CustomizationSlot {
-    fn serialize(&self, buffer: &mut Vec<u8>) {
-        (*self as u32).serialize(buffer);
-    }
 }
 
 #[derive(Clone, Deserialize, SerializePacket)]
@@ -668,18 +672,14 @@ impl GamePacket for NpcRelevance {
     const HEADER: Self::Header = PlayerUpdateOpCode::NpcRelevance;
 }
 
-#[allow(dead_code)]
-#[derive(Copy, Clone, Debug)]
+#[derive(
+    Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
+)]
+#[repr(u32)]
 pub enum Hostility {
     Hostile,
     Neutral,
     Friendly,
-}
-
-impl SerializePacket for Hostility {
-    fn serialize(&self, buffer: &mut Vec<u8>) {
-        (*self as u32).serialize(buffer);
-    }
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -689,19 +689,15 @@ pub struct Variable {
     pub unknown3: u32,
 }
 
-#[allow(dead_code)]
-#[derive(Copy, Clone, Debug)]
+#[derive(
+    Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
+)]
+#[repr(u32)]
 pub enum Icon {
     None = 0,
     Member = 1,
     Enforcer = 2,
     FancyMember = 3,
-}
-
-impl SerializePacket for Icon {
-    fn serialize(&self, buffer: &mut Vec<u8>) {
-        (*self as u32).serialize(buffer);
-    }
 }
 
 #[derive(SerializePacket)]
