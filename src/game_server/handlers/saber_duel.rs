@@ -26,7 +26,7 @@ impl Default for SaberDuelAi {
             millis_per_key: Default::default(),
             mistake_probability: Default::default(),
             force_power_probability: Default::default(),
-            force_powers: Default::default()
+            force_powers: Default::default(),
         }
     }
 }
