@@ -61,7 +61,7 @@ struct SaberDuelAnimationPair {
     weight: u8,
 }
 
-pub struct SaberDuelGame {
+pub struct SaberDuelConfig {
     rounds_to_win: u8,
     bouts_to_win_round: u8,
     keys_per_short_bout: u8,
@@ -73,10 +73,6 @@ pub struct SaberDuelGame {
     long_bout_animations: Vec<SaberDuelAnimationPair>,
     establishing_animation_id: u32,
     player_entrance_animation_id: u32,
-    player1: u32,
-    player2: Option<u32>,
-    player_states: [SaberDuelPlayerState; 2],
-    bout: u8,
     ai: SaberDuelAi,
     max_force_points: u8,
     force_points_per_bout_won: u8,
@@ -86,4 +82,13 @@ pub struct SaberDuelGame {
     right_to_left_ai_mistake_multiplier: f32,
     opposite_ai_mistake_multiplier: f32,
     memory_challenge: bool,
+}
+
+pub struct SaberDuelGame {
+    config: SaberDuelConfig,
+    player1: u32,
+    player2: Option<u32>,
+    player_states: [SaberDuelPlayerState; 2],
+    bout: u8,
+    ai: SaberDuelAi,
 }
