@@ -10,6 +10,11 @@ struct SaberDuelAi {
     model_id: u32,
     wield_type: WieldType,
     entrance_animation_id: u32,
+    entrance_sound_id: u32,
+    bout_won_sound_id: u32,
+    bout_lost_sound_id: u32,
+    game_won_sound_id: u32,
+    game_lost_sound_id: u32,
     millis_per_key: u16,
     mistake_probability: f32,
     force_power_probability: f32,
@@ -23,6 +28,11 @@ impl Default for SaberDuelAi {
             model_id: Default::default(),
             wield_type: WieldType::SingleSaber,
             entrance_animation_id: Default::default(),
+            entrance_sound_id: Default::default(),
+            bout_won_sound_id: Default::default(),
+            bout_lost_sound_id: Default::default(),
+            game_won_sound_id: Default::default(),
+            game_lost_sound_id: Default::default(),
             millis_per_key: Default::default(),
             mistake_probability: Default::default(),
             force_power_probability: Default::default(),
@@ -48,6 +58,7 @@ struct SaberDuelPlayerState {
 struct SaberDuelAnimationPair {
     attack_animation_id: u32,
     defend_animation_id: u32,
+    weight: u8,
 }
 
 pub struct SaberDuelGame {
@@ -60,6 +71,8 @@ pub struct SaberDuelGame {
     bout_max_millis: u32,
     short_bout_animations: Vec<SaberDuelAnimationPair>,
     long_bout_animations: Vec<SaberDuelAnimationPair>,
+    establishing_animation_id: u32,
+    player_entrance_animation_id: u32,
     player1: u32,
     player2: Option<u32>,
     player_states: [SaberDuelPlayerState; 2],
