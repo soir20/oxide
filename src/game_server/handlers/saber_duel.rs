@@ -1,17 +1,34 @@
-use crate::game_server::packets::saber_duel::SaberDuelForcePower;
+use crate::game_server::packets::{item::WieldType, saber_duel::SaberDuelForcePower};
 
 struct SaberDuelAiForcePower {
     force_power: SaberDuelForcePower,
     weight: u8,
 }
 
-#[derive(Default)]
 struct SaberDuelAi {
+    name_id: u32,
+    model_id: u32,
+    wield_type: WieldType,
     entrance_animation_id: u32,
     millis_per_key: u16,
     mistake_probability: f32,
     force_power_probability: f32,
     force_powers: Vec<SaberDuelAiForcePower>,
+}
+
+impl Default for SaberDuelAi {
+    fn default() -> Self {
+        Self {
+            name_id: Default::default(),
+            model_id: Default::default(),
+            wield_type: WieldType::SingleSaber,
+            entrance_animation_id: Default::default(),
+            millis_per_key: Default::default(),
+            mistake_probability: Default::default(),
+            force_power_probability: Default::default(),
+            force_powers: Default::default()
+        }
+    }
 }
 
 struct SaberDuelAppliedForcePower {
