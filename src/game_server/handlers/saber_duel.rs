@@ -4,16 +4,20 @@ use packet_serialize::DeserializePacket;
 use serde::Deserialize;
 
 use crate::game_server::{
-    handlers::unique_guid::{player_guid, saber_duel_opponent_guid},
+    handlers::{
+        character::{Character, MinigameStatus},
+        unique_guid::{player_guid, saber_duel_opponent_guid},
+    },
     packets::{
         client_update::Position,
-        item::WieldType,
+        item::{BaseAttachmentGroup, WieldType},
         minigame::MinigameHeader,
+        player_update::{AddNpc, Hostility, Icon, RemoveStandard},
         saber_duel::{
             SaberDuelForcePower, SaberDuelForcePowerDefinition, SaberDuelOpCode, SaberDuelStageData,
         },
         tunnel::TunneledPacket,
-        GamePacket, Pos,
+        GamePacket, Pos, Target,
     },
     Broadcast, ProcessPacketError, ProcessPacketErrorType,
 };
@@ -164,96 +168,153 @@ impl SaberDuelGame {
     pub fn start(&self, sender: u32) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
         let player_index = self.player_index(sender)?;
 
-        Ok(vec![
-            GamePacket::serialize(&TunneledPacket {
+        let mut packets = vec![GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: Position {
+                player_pos: self.config.pos,
+                rot: Pos::default(),
+                is_teleport: true,
+                unknown2: true,
+            },
+        })];
+
+        if self.player2.is_none() {
+            packets.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
-                inner: Position {
-                    player_pos: self.config.pos,
+                inner: AddNpc {
+                    guid: saber_duel_opponent_guid(self.player1),
+                    name_id: self.config.ai.name_id,
+                    model_id: self.config.ai.model_id,
+                    unknown3: false,
+                    chat_text_color: Character::DEFAULT_CHAT_TEXT_COLOR,
+                    chat_bubble_color: Character::DEFAULT_CHAT_BUBBLE_COLOR,
+                    chat_scale: 1,
+                    scale: 1.0,
+                    pos: self.config.pos,
                     rot: Pos::default(),
-                    is_teleport: true,
-                    unknown2: true,
+                    spawn_animation_id: -1,
+                    attachments: Vec::new(),
+                    hostility: Hostility::Neutral,
+                    unknown10: 0,
+                    texture_alias: "".to_string(),
+                    tint_name: "".to_string(),
+                    tint_id: 0,
+                    unknown11: false,
+                    offset_y: 0.0,
+                    composite_effect: 0,
+                    wield_type: self.config.ai.wield_type,
+                    name_override: "".to_string(),
+                    hide_name: true,
+                    name_offset_x: 0.0,
+                    name_offset_y: 0.0,
+                    name_offset_z: 0.0,
+                    terrain_object_id: 0,
+                    invisible: false,
+                    speed: 0.0,
+                    unknown21: false,
+                    interactable_size_pct: 0,
+                    unknown23: -1,
+                    unknown24: -1,
+                    looping_animation_id: -1,
+                    unknown26: false,
+                    disable_gravity: false,
+                    sub_title_id: 0,
+                    one_shot_animation_id: -1,
+                    temporary_model: 0,
+                    effects: Vec::new(),
+                    disable_interact_popup: true,
+                    unknown33: 0,
+                    unknown34: false,
+                    show_health: false,
+                    hide_despawn_fade: true,
+                    enable_tilt: false,
+                    base_attachment_group: BaseAttachmentGroup {
+                        unknown1: 0,
+                        unknown2: "".to_string(),
+                        unknown3: "".to_string(),
+                        unknown4: 0,
+                        unknown5: "".to_string(),
+                    },
+                    tilt: Pos::default(),
+                    unknown40: 0,
+                    bounce_area_id: -1,
+                    image_set_id: 0,
+                    collision: false,
+                    rider_guid: 0,
+                    npc_type: 2,
+                    interact_popup_radius: 0.0,
+                    target: Target::None,
+                    variables: Vec::new(),
+                    rail_id: 0,
+                    rail_elapsed_seconds: 0.0,
+                    rail_offset: Pos::default(),
+                    unknown54: 0,
+                    rail_unknown1: 0.0,
+                    rail_unknown2: 0.0,
+                    rail_unknown3: 0.0,
+                    pet_customization_model_name1: "".to_string(),
+                    pet_customization_model_name2: "".to_string(),
+                    pet_customization_model_name3: "".to_string(),
+                    override_terrain_model: false,
+                    hover_glow: 0,
+                    hover_description: 0,
+                    fly_over_effect: 0,
+                    unknown65: 0,
+                    unknown66: 0,
+                    unknown67: 0,
+                    disable_move_to_interact: false,
+                    unknown69: 0.0,
+                    unknown70: 0.0,
+                    unknown71: 0,
+                    icon_id: Icon::None,
                 },
-            }),
-            GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: SaberDuelStageData {
-                    minigame_header: MinigameHeader {
-                        stage_guid: self.stage_guid,
-                        sub_op_code: SaberDuelOpCode::StageData as i32,
-                        stage_group_guid: self.stage_group_guid,
-                    },
-                    win_score: self.config.bouts_to_win_round as u32,
-                    total_rounds: self.config.rounds_to_win as u32,
-                    seconds_remaining: 0,
-                    camera_pos: self.config.pos,
-                    camera_rot: self.config.camera_rot,
-                    max_combo_points: 0,
-                    establishing_animation_id: self.config.establishing_animation_id,
-                    local_player_index: player_index,
-                    opponent_guid: match player_index {
-                        0 => match self.player2 {
-                            Some(opponent_guid) => player_guid(opponent_guid),
-                            None => saber_duel_opponent_guid(self.player1),
-                        },
-                        _ => player_guid(self.player1),
-                    },
-                    opponent_entrance_animation_id: self
-                        .player2
-                        .map(|_| self.config.player_entrance_animation_id)
-                        .unwrap_or(self.config.ai.entrance_animation_id),
-                    opponent_entrance_sound_id: self
-                        .player2
-                        .map(|_| 0)
-                        .unwrap_or(self.config.ai.entrance_sound_id),
-                    max_force_points: self.config.max_force_points as u32,
-                    paused: false,
-                    enable_memory_challenge: self.config.memory_challenge,
-                    force_powers: vec![],
+            }));
+        }
+
+        packets.push(GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: SaberDuelStageData {
+                minigame_header: MinigameHeader {
+                    stage_guid: self.stage_guid,
+                    sub_op_code: SaberDuelOpCode::StageData as i32,
+                    stage_group_guid: self.stage_group_guid,
                 },
-            }),
-            GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: SaberDuelStageData {
-                    minigame_header: MinigameHeader {
-                        stage_guid: self.stage_guid,
-                        sub_op_code: SaberDuelOpCode::StageData as i32,
-                        stage_group_guid: self.stage_group_guid,
+                win_score: self.config.bouts_to_win_round as u32,
+                total_rounds: self.config.rounds_to_win as u32,
+                seconds_remaining: 0,
+                camera_pos: self.config.pos,
+                camera_rot: self.config.camera_rot,
+                max_combo_points: 0,
+                establishing_animation_id: self.config.establishing_animation_id,
+                local_player_index: player_index,
+                opponent_guid: match player_index {
+                    0 => match self.player2 {
+                        Some(opponent_guid) => player_guid(opponent_guid),
+                        None => saber_duel_opponent_guid(self.player1),
                     },
-                    win_score: self.config.bouts_to_win_round as u32,
-                    total_rounds: self.config.rounds_to_win as u32,
-                    seconds_remaining: 0,
-                    camera_pos: self.config.pos,
-                    camera_rot: self.config.camera_rot,
-                    max_combo_points: 0,
-                    establishing_animation_id: self.config.establishing_animation_id,
-                    local_player_index: player_index,
-                    opponent_guid: match player_index {
-                        0 => match self.player2 {
-                            Some(opponent_guid) => player_guid(opponent_guid),
-                            None => saber_duel_opponent_guid(self.player1),
-                        },
-                        _ => player_guid(self.player1),
-                    },
-                    opponent_entrance_animation_id: self
-                        .player2
-                        .map(|_| self.config.player_entrance_animation_id)
-                        .unwrap_or(self.config.ai.entrance_animation_id),
-                    opponent_entrance_sound_id: self
-                        .player2
-                        .map(|_| 0)
-                        .unwrap_or(self.config.ai.entrance_sound_id),
-                    max_force_points: self.config.max_force_points as u32,
-                    paused: false,
-                    enable_memory_challenge: self.config.memory_challenge,
-                    force_powers: self
-                        .config
-                        .force_powers
-                        .iter()
-                        .map(|force_power| force_power.definition.clone())
-                        .collect(),
+                    _ => player_guid(self.player1),
                 },
-            }),
-        ])
+                opponent_entrance_animation_id: self
+                    .player2
+                    .map(|_| self.config.player_entrance_animation_id)
+                    .unwrap_or(self.config.ai.entrance_animation_id),
+                opponent_entrance_sound_id: self
+                    .player2
+                    .map(|_| 0)
+                    .unwrap_or(self.config.ai.entrance_sound_id),
+                max_force_points: self.config.max_force_points as u32,
+                paused: false,
+                enable_memory_challenge: self.config.memory_challenge,
+                force_powers: self
+                    .config
+                    .force_powers
+                    .iter()
+                    .map(|force_power| force_power.definition.clone())
+                    .collect(),
+            },
+        }));
+
+        Ok(packets)
     }
 
     pub fn process_packet(
@@ -265,8 +326,8 @@ impl SaberDuelGame {
         match SaberDuelOpCode::try_from(header.sub_op_code) {
             Ok(op_code) => match op_code {
                 SaberDuelOpCode::PlayerReady => self.mark_player_ready(sender),
-                SaberDuelOpCode::Keypress => todo!(),
-                SaberDuelOpCode::RequestApplyForcePower => todo!(),
+                SaberDuelOpCode::Keypress => Ok(Vec::new()),
+                SaberDuelOpCode::RequestApplyForcePower => Ok(Vec::new()),
                 _ => {
                     let mut buffer = Vec::new();
                     cursor.read_to_end(&mut buffer)?;
@@ -287,6 +348,26 @@ impl SaberDuelGame {
                     ),
                 ))
             }
+        }
+    }
+
+    pub fn remove_player(
+        &self,
+        player: u32,
+        minigame_status: &mut MinigameStatus,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        if self.player2.is_none() {
+            Ok(vec![Broadcast::Single(
+                player,
+                vec![GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: RemoveStandard {
+                        guid: saber_duel_opponent_guid(self.player1),
+                    },
+                })],
+            )])
+        } else {
+            Ok(Vec::new())
         }
     }
 

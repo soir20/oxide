@@ -487,6 +487,9 @@ impl SharedMinigameTypeData {
             SharedMinigameTypeData::ForceConnection { game } => {
                 game.remove_player(player, minigame_status)
             }
+            SharedMinigameTypeData::SaberDuel { game } => {
+                game.remove_player(player, minigame_status)
+            }
             _ => Ok(Vec::new()),
         }
     }
