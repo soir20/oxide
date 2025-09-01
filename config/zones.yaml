@@ -719,12 +719,12 @@
       large_icon: false
       show_hover_description: false
   ambient_npcs:
-    # Members Lounge Orb Spawn Timer
-    - key: Members Lounge Orb Spawn Timer
+    # Training Room Orb Spawn Timer
+    - key: Training Room Orb Spawn Timer
       pos:
-        x: 782.875
-        y: 10.030646
-        z: 678.4899
+        x: 165.60043
+        y: 6.8242335
+        z: 379.89743
         w: 1
       rot:
         x: 1
@@ -767,24 +767,24 @@
               weight: 300
             - procedure: empty
               weight: 89700
-    # Members Lounge Blue Orb One
+    # Training Room Blue Orb One
     - model_id: 1198
       possible_pos:
-        - x: 806.87976
-          y: 10.04
-          z: 691.40393
+        - x: 164.0472
+          y: 6.8242326
+          z: 413.34525
           w: 1
-        - x: 777.3352
-          y: 10.005475
-          z: 689.1627
+        - x: 139.34491
+          y: 6.8242445
+          z: 418.08273
           w: 1
-        - x: 778.5885
-          y: 10.037144
-          z: 686.91626
+        - x: 133.10262
+          y: 6.8242345
+          z: 413.761
           w: 1
-        - x: 800.6784
-          y: 10.039862
-          z: 682.1532
+        - x: 164.46803
+          y: 6.824348
+          z: 396.03467
           w: 1
       rot:
         x: 1
@@ -835,25 +835,25 @@
               weight: 300
             - procedure: empty
               weight: 89700
-      synchronize_with: Members Lounge Orb Spawn Timer
-    # Members Lounge Blue Orb Two
+      synchronize_with: Training Room Orb Spawn Timer
+    # Training Room Blue Orb Two
     - model_id: 1198
       possible_pos:
-        - x: 809.09186
-          y: 10.04
-          z: 699.38544
+        - x: 155.43399
+          y: 6.8242645
+          z: 417.108
           w: 1
-        - x: 770.84515
-          y: 10.023203
-          z: 676.5778
+        - x: 144.97305
+          y: 6.8242335
+          z: 339.16656
           w: 1
-        - x: 764.75476
-          y: 10.107643
-          z: 690.2108
+        - x: 136.35791
+          y: 6.824234
+          z: 348.97473
           w: 1
-        - x: 804.6712
-          y: 10.013915
-          z: 682.6862
+        - x: 161.81639
+          y: 6.824228
+          z: 354.55966
           w: 1
       rot:
         x: 1
@@ -904,21 +904,29 @@
               weight: 300
             - procedure: empty
               weight: 89700
-      synchronize_with: Members Lounge Orb Spawn Timer
-    # Members Lounge Blue Orb Three
+      synchronize_with: Training Room Orb Spawn Timer
+    # Training Room Blue Orb Three
     - model_id: 1198
       possible_pos:
-        - x: 802.80817
-          y: 10.761625
-          z: 673.99945
+        - x: 168.61252
+          y: 6.824218
+          z: 349.56528
           w: 1
-        - x: 763.7568
-          y: 10.098467
-          z: 680.9837
+        - x: 157.2812
+          y: 6.7383156
+          z: 343.23923
           w: 1
-        - x: 763.11957
-          y: 10.883924
-          z: 662.7964
+        - x: 134.0225
+          y: 6.7332187
+          z: 421.9841
+          w: 1
+        - x: 140.34906
+          y: 6.8242335
+          z: 425.8982
+          w: 1
+        - x: 158.26646
+          y: 6.824269
+          z: 362.92245
           w: 1
       rot:
         x: 1
@@ -968,12 +976,16 @@
               weight: 300
             - procedure: empty
               weight: 89700
-    # Members Lounge Gold Orb
+    # Training Room Gold Orb
     - model_id: 1320
       possible_pos:
-        - x: 813.63574
-          y: 10.108942
-          z: 692.96484
+        - x: 132.7863
+          y: 6.725761
+          z: 346.08353
+          w: 1
+        - x: 148.66486
+          y: 6.8242464
+          z: 346.5541
           w: 1
       rot:
         x: 1
