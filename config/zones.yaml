@@ -719,6 +719,251 @@
       large_icon: false
       show_hover_description: false
   ambient_npcs:
+    # Lounge Orb Spawn Timer
+    - key: Lounge Orb Spawn Timer
+      pos:
+        x: -112.71024
+        y: 10.04
+        z: 1265.6791
+        w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0 
+      is_spawned: false
+      tickable_procedures:
+        spawn:
+          weight: 300
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: lifespan
+        lifespan:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful: {
+                  fade_duration_millis: 1000,
+                  removal_delay_millis: 0
+                  }
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+    # Lounge Blue Orb One
+    - model_id: 1198
+      possible_pos:
+        - x: -99.1999
+          y: 10.015329
+          z: 1263.517
+          w: 1
+        - x: -126.77958
+          y: 10.04
+          z: 1270.3208
+          w: 1
+        - x: -103.12019
+          y: 10.04
+          z: 1248.9127
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          award_credits: 25
+          despawn_npc: true
+          removal_mode: !Graceful
+            fade_duration_millis: 1000
+            removal_delay_millis: 0
+          duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: idle
+        idle:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful: {
+                  fade_duration_millis: 1000,
+                  removal_delay_millis: 0
+                  }
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Lounge Orb Spawn Timer
+    # Lounge Blue Orb Two
+    - model_id: 1198
+      possible_pos:
+        - x: -130.72836
+          y: 10.04
+          z: 1276.6686
+          w: 1
+        - x: -110.50853
+          y: 10.04
+          z: 1248.9741
+          w: 1
+        - x: -132.98695
+          y: 10.04
+          z: 1281.379
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          award_credits: 25
+          despawn_npc: true
+          removal_mode: !Graceful
+            fade_duration_millis: 1000
+            removal_delay_millis: 0
+          duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: idle
+        idle:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful: {
+                  fade_duration_millis: 1000,
+                  removal_delay_millis: 0
+                  }
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Lounge Orb Spawn Timer
+    # Lounge Blue Orb Three
+    - model_id: 1198
+      possible_pos:
+        - x: -103.90829
+          y: 10.04
+          z: 1267.9337
+          w: 1
+        - x: -134.00188
+          y: 9.040001
+          z: 1256.3679
+          w: 1
+        - x: -124.485245
+          y: 10.04
+          z: 1281.8756
+          w: 1
+        - x: -111.23597
+          y: 10.04
+          z: 1269.8833
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          award_credits: 25
+          despawn_npc: true
+          removal_mode: !Graceful
+            fade_duration_millis: 1000
+            removal_delay_millis: 0
+          duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          weight: 300
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: lifespan
+        lifespan:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful: {
+                  fade_duration_millis: 1000,
+                  removal_delay_millis: 0
+                  }
+              duration_millis: 1000
+          next_possible_procedures:
+          - procedure: empty
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
     # War Room Orb Spawn Timer
     - key: War Room Orb Spawn Timer
       pos:
