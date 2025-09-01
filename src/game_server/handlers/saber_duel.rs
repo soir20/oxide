@@ -6,6 +6,7 @@ use serde::Deserialize;
 use crate::game_server::{
     handlers::{
         character::{Character, MinigameStatus},
+        minigame::{handle_minigame_packet_write, SharedMinigameTypeData},
         unique_guid::{player_guid, saber_duel_opponent_guid},
     },
     packets::{
@@ -19,7 +20,7 @@ use crate::game_server::{
         tunnel::TunneledPacket,
         GamePacket, Pos, Target,
     },
-    Broadcast, ProcessPacketError, ProcessPacketErrorType,
+    Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
 };
 
 #[derive(Clone, Debug, Deserialize)]
@@ -116,6 +117,7 @@ pub struct SaberDuelConfig {
     first_long_bout: u8,
     long_bout_interval: u8,
     bout_max_millis: u32,
+    tie_interval_millis: u32,
     short_bout_animations: Vec<SaberDuelAnimationPair>,
     long_bout_animations: Vec<SaberDuelAnimationPair>,
     establishing_animation_id: i32,
@@ -130,6 +132,59 @@ pub struct SaberDuelConfig {
     right_to_left_ai_mistake_multiplier: f32,
     opposite_ai_mistake_multiplier: f32,
     memory_challenge: bool,
+}
+
+pub fn process_saber_duel_packet(
+    cursor: &mut Cursor<&[u8]>,
+    sender: u32,
+    game_server: &GameServer,
+) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    let header = MinigameHeader::deserialize(cursor)?;
+    handle_minigame_packet_write(
+        sender,
+        game_server,
+        &header,
+        |_, _, _, _, shared_minigame_data, _| {
+            let SharedMinigameTypeData::SaberDuel { game } = &mut shared_minigame_data.data else {
+                let mut buffer = Vec::new();
+                cursor.read_to_end(&mut buffer)?;
+                return Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::UnknownOpCode,
+                    format!(
+                        "Received Saber Duel packet from unexpected game: {}, {buffer:x?}",
+                        header.sub_op_code
+                    ),
+                ));
+            };
+
+            match SaberDuelOpCode::try_from(header.sub_op_code) {
+                Ok(op_code) => match op_code {
+                    SaberDuelOpCode::PlayerReady => game.mark_player_ready(sender),
+                    SaberDuelOpCode::Keypress => Ok(Vec::new()),
+                    SaberDuelOpCode::RequestApplyForcePower => Ok(Vec::new()),
+                    _ => {
+                        let mut buffer = Vec::new();
+                        cursor.read_to_end(&mut buffer)?;
+                        Err(ProcessPacketError::new(
+                            ProcessPacketErrorType::UnknownOpCode,
+                            format!("Unimplemented Saber Duel op code: {op_code:?} {buffer:x?}"),
+                        ))
+                    }
+                },
+                Err(_) => {
+                    let mut buffer = Vec::new();
+                    cursor.read_to_end(&mut buffer)?;
+                    Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::UnknownOpCode,
+                        format!(
+                            "Unknown Saber Duel packet: {}, {buffer:x?}",
+                            header.sub_op_code
+                        ),
+                    ))
+                }
+            }
+        },
+    )
 }
 
 #[derive(Clone, Debug)]
@@ -315,40 +370,6 @@ impl SaberDuelGame {
         }));
 
         Ok(packets)
-    }
-
-    pub fn process_packet(
-        &mut self,
-        cursor: &mut Cursor<&[u8]>,
-        sender: u32,
-    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        let header = MinigameHeader::deserialize(cursor)?;
-        match SaberDuelOpCode::try_from(header.sub_op_code) {
-            Ok(op_code) => match op_code {
-                SaberDuelOpCode::PlayerReady => self.mark_player_ready(sender),
-                SaberDuelOpCode::Keypress => Ok(Vec::new()),
-                SaberDuelOpCode::RequestApplyForcePower => Ok(Vec::new()),
-                _ => {
-                    let mut buffer = Vec::new();
-                    cursor.read_to_end(&mut buffer)?;
-                    Err(ProcessPacketError::new(
-                        ProcessPacketErrorType::UnknownOpCode,
-                        format!("Unimplemented Saber Duel op code: {op_code:?} {buffer:x?}"),
-                    ))
-                }
-            },
-            Err(_) => {
-                let mut buffer = Vec::new();
-                cursor.read_to_end(&mut buffer)?;
-                Err(ProcessPacketError::new(
-                    ProcessPacketErrorType::UnknownOpCode,
-                    format!(
-                        "Unknown Saber Duel packet: {}, {buffer:x?}",
-                        header.sub_op_code
-                    ),
-                ))
-            }
-        }
     }
 
     pub fn remove_player(

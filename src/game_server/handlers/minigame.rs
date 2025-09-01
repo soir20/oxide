@@ -27,7 +27,7 @@ use crate::{
             fleet_commander::FleetCommanderGame,
             force_connection::ForceConnectionGame,
             lock_enforcer::CharacterTableReadHandle,
-            saber_duel::{SaberDuelConfig, SaberDuelGame},
+            saber_duel::{process_saber_duel_packet, SaberDuelConfig, SaberDuelGame},
             saber_strike::start_saber_strike,
         },
         packets::{
@@ -1718,6 +1718,7 @@ pub fn process_minigame_packet(
                 handle_flash_payload(payload, sender, game_server)
             }
             MinigameOpCode::SaberStrike => process_saber_strike_packet(cursor, sender, game_server),
+            MinigameOpCode::SaberDuel => process_saber_duel_packet(cursor, sender, game_server),
             _ => {
                 let mut buffer = Vec::new();
                 cursor.read_to_end(&mut buffer)?;
