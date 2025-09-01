@@ -996,7 +996,7 @@
       is_spawned: false
       enable_interact_popup: false
       one_shot_action_on_interact:
-          award_credits: 25
+          award_credits: 100
           despawn_npc: true
           removal_mode: !Graceful
             fade_duration_millis: 1000
@@ -1822,7 +1822,7 @@
       is_spawned: false
       enable_interact_popup: false
       one_shot_action_on_interact:
-          award_credits: 25
+          award_credits: 100
           despawn_npc: true
           removal_mode: !Graceful
             fade_duration_millis: 1000
@@ -2955,7 +2955,7 @@
       is_spawned: false
       enable_interact_popup: false
       one_shot_action_on_interact:
-          award_credits: 25
+          award_credits: 100
           despawn_npc: true
           removal_mode: !Graceful
             fade_duration_millis: 1000
