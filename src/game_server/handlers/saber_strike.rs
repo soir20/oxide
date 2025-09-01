@@ -3,12 +3,19 @@ use std::io::{Cursor, Read};
 use packet_serialize::DeserializePacket;
 
 use crate::game_server::{
+    handlers::{
+        character::{MinigameStatus, Player},
+        item::SABER_ITEM_TYPE,
+    },
     packets::{
+        item::EquipmentSlot,
         minigame::{MinigameHeader, ScoreEntry, ScoreType},
         saber_strike::{
             SaberStrikeGameOver, SaberStrikeObfuscatedScore, SaberStrikeOpCode,
-            SaberStrikeSingleKill, SaberStrikeThrowKill,
+            SaberStrikeSingleKill, SaberStrikeStageData, SaberStrikeThrowKill,
         },
+        tunnel::TunneledPacket,
+        GamePacket,
     },
     Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
 };
@@ -17,6 +24,36 @@ use super::minigame::{
     handle_minigame_packet_write, leave_active_minigame_if_any, LeaveMinigameTarget,
     MinigameTypeData,
 };
+
+pub fn start_saber_strike(
+    saber_strike_stage_id: u32,
+    player: &Player,
+    minigame_status: &MinigameStatus,
+    game_server: &GameServer,
+) -> Vec<Vec<u8>> {
+    vec![GamePacket::serialize(&TunneledPacket {
+        unknown1: true,
+        inner: SaberStrikeStageData {
+            minigame_header: MinigameHeader {
+                stage_guid: minigame_status.group.stage_guid,
+                sub_op_code: SaberStrikeOpCode::StageData as i32,
+                stage_group_guid: minigame_status.group.stage_group_guid,
+            },
+            saber_strike_stage_id: saber_strike_stage_id,
+            use_player_weapon: player
+                .battle_classes
+                .get(&player.active_battle_class)
+                .and_then(|battle_class| {
+                    battle_class
+                        .items
+                        .get(&EquipmentSlot::PrimaryWeapon)
+                        .and_then(|item| game_server.items().get(&item.guid))
+                })
+                .map(|item| item.item_type == SABER_ITEM_TYPE)
+                .unwrap_or(false),
+        },
+    })]
+}
 
 pub fn process_saber_strike_packet(
     cursor: &mut Cursor<&[u8]>,

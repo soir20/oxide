@@ -27,13 +27,14 @@ use crate::{
             fleet_commander::FleetCommanderGame,
             force_connection::ForceConnectionGame,
             lock_enforcer::CharacterTableReadHandle,
+            saber_duel::{start_saber_duel_game, SaberDuelConfig, SaberDuelGame},
+            saber_strike::start_saber_strike,
         },
         packets::{
             chat::{ActionBarTextColor, SendStringId},
             client_update::UpdateCredits,
             command::StartFlashGame,
             daily::{AddDailyMinigame, UpdateDailyMinigame},
-            item::EquipmentSlot,
             minigame::{
                 ActiveMinigameCreationResult, ActiveMinigameEndScore, CreateActiveMinigame,
                 CreateMinigameStageGroupInstance, EndActiveMinigame, FlashPayload,
@@ -45,7 +46,6 @@ use crate::{
                 ScoreType, ShowStageInstanceSelect, StartActiveMinigame,
                 UpdateActiveMinigameRewards,
             },
-            saber_strike::{SaberStrikeOpCode, SaberStrikeStageData},
             tunnel::TunneledPacket,
             ui::ExecuteScriptWithStringParams,
             GamePacket, RewardBundle,
@@ -58,7 +58,6 @@ use crate::{
 use super::{
     character::{CharacterType, MinigameMatchmakingGroup, Player, PreviousLocation},
     guid::{GuidTableIndexer, IndexedGuid},
-    item::SABER_ITEM_TYPE,
     lock_enforcer::{
         CharacterLockRequest, CharacterTableWriteHandle, MinigameDataLockRequest,
         MinigameDataTableWriteHandle, ZoneTableWriteHandle,
@@ -247,6 +246,10 @@ pub enum MinigameType {
     SaberStrike {
         saber_strike_stage_id: u32,
     },
+    SaberDuel {
+        #[serde(flatten)]
+        config: SaberDuelConfig,
+    },
 }
 
 impl MinigameType {
@@ -300,6 +303,7 @@ impl MinigameType {
             MinigameType::SaberStrike { .. } => MinigameTypeData::SaberStrike {
                 obfuscated_score: 0,
             },
+            _ => MinigameTypeData::default(),
         }
     }
 }
@@ -410,6 +414,9 @@ pub enum SharedMinigameTypeData {
     ForceConnection {
         game: Box<ForceConnectionGame>,
     },
+    SaberDuel {
+        game: Box<SaberDuelGame>,
+    },
     #[default]
     None,
 }
@@ -448,6 +455,15 @@ impl SharedMinigameTypeData {
                 _ => SharedMinigameTypeData::default(),
             },
             MinigameType::SaberStrike { .. } => SharedMinigameTypeData::default(),
+            MinigameType::SaberDuel { config } => SharedMinigameTypeData::SaberDuel {
+                game: Box::new(SaberDuelGame::new(
+                    config.to_owned(),
+                    player1,
+                    player2,
+                    stage_guid,
+                    stage_group_guid,
+                )),
+            },
         }
     }
 
@@ -2360,25 +2376,9 @@ fn handle_request_start_active_minigame(
                             );
                         },
                         MinigameType::SaberStrike { saber_strike_stage_id } => {
-                            packets.push(
-                                GamePacket::serialize(&TunneledPacket {
-                                    unknown1: true,
-                                    inner: SaberStrikeStageData {
-                                        minigame_header: MinigameHeader {
-                                            stage_guid: minigame_status.group.stage_guid,
-                                            sub_op_code: SaberStrikeOpCode::StageData as i32,
-                                            stage_group_guid: minigame_status.group.stage_group_guid,
-                                        },
-                                        saber_strike_stage_id: *saber_strike_stage_id,
-                                        use_player_weapon: player.battle_classes.get(&player.active_battle_class)
-                                            .and_then(|battle_class| battle_class.items.get(&EquipmentSlot::PrimaryWeapon)
-                                            .and_then(|item| game_server.items().get(&item.guid)))
-                                            .map(|item| item.item_type == SABER_ITEM_TYPE)
-                                            .unwrap_or(false),
-                                    }
-                                }),
-                            );
+                            packets.append(&mut start_saber_strike(*saber_strike_stage_id, &player, minigame_status, game_server));
                         },
+                        MinigameType::SaberDuel { config } => packets.append(&mut start_saber_duel_game(config)),
                     }
 
                     packets.push(

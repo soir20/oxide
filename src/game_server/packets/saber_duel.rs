@@ -1,5 +1,6 @@
 use num_enum::{IntoPrimitive, TryFromPrimitive};
 use packet_serialize::{DeserializePacket, SerializePacket};
+use serde::Deserialize;
 
 use super::{
     minigame::{MinigameHeader, MinigameOpCode},
@@ -30,7 +31,14 @@ pub enum SaberDuelOpCode {
 }
 
 #[derive(
-    Clone, Copy, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
+    Clone,
+    Copy,
+    Debug,
+    Deserialize,
+    TryFromPrimitive,
+    IntoPrimitive,
+    SerializePacket,
+    DeserializePacket,
 )]
 #[repr(u32)]
 pub enum SaberDuelForcePower {

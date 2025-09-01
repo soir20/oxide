@@ -1,6 +1,7 @@
 use std::io::{Cursor, Read};
 
 use packet_serialize::DeserializePacket;
+use serde::Deserialize;
 
 use crate::game_server::{
     packets::{
@@ -11,13 +12,13 @@ use crate::game_server::{
     Broadcast, ProcessPacketError, ProcessPacketErrorType,
 };
 
-#[derive(Debug)]
+#[derive(Clone, Debug, Deserialize)]
 struct SaberDuelAiForcePower {
     force_power: SaberDuelForcePower,
     weight: u8,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug, Deserialize)]
 struct SaberDuelAi {
     name_id: u32,
     model_id: u32,
@@ -54,13 +55,13 @@ impl Default for SaberDuelAi {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 struct SaberDuelAppliedForcePower {
     force_power: SaberDuelForcePower,
     bouts_remaining: u8,
 }
 
-#[derive(Debug, Default)]
+#[derive(Clone, Debug, Default)]
 struct SaberDuelPlayerState {
     ready: bool,
     rounds_won: u8,
@@ -80,14 +81,14 @@ impl SaberDuelPlayerState {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug, Deserialize)]
 struct SaberDuelAnimationPair {
     attack_animation_id: u32,
     defend_animation_id: u32,
     weight: u8,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug, Deserialize)]
 pub struct SaberDuelConfig {
     rounds_to_win: u8,
     bouts_to_win_round: u8,
@@ -111,7 +112,11 @@ pub struct SaberDuelConfig {
     memory_challenge: bool,
 }
 
-#[derive(Debug)]
+pub fn start_saber_duel_game(config: &SaberDuelConfig) -> Vec<Vec<u8>> {
+    vec![]
+}
+
+#[derive(Clone, Debug)]
 pub struct SaberDuelGame {
     config: SaberDuelConfig,
     player1: u32,
