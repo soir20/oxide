@@ -47,7 +47,7 @@ pub enum SaberDuelForcePower {
     Opposite = 2,
 }
 
-#[derive(SerializePacket, DeserializePacket)]
+#[derive(Clone, Debug, Deserialize, SerializePacket, DeserializePacket)]
 pub struct SaberDuelForcePowerDefinition {
     pub force_power: SaberDuelForcePower,
     pub name_id: u32,
@@ -61,8 +61,8 @@ pub struct SaberDuelStageData {
     pub win_score: u32,
     pub total_rounds: u32,
     pub seconds_remaining: u32,
-    pub camera_position: Pos,
-    pub camera_rotation: f32,
+    pub camera_pos: Pos,
+    pub camera_rot: f32,
     pub max_combo_points: u32,
     pub establishing_animation_id: i32,
     pub local_player_index: u32,

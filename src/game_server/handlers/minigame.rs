@@ -27,7 +27,7 @@ use crate::{
             fleet_commander::FleetCommanderGame,
             force_connection::ForceConnectionGame,
             lock_enforcer::CharacterTableReadHandle,
-            saber_duel::{start_saber_duel_game, SaberDuelConfig, SaberDuelGame},
+            saber_duel::{SaberDuelConfig, SaberDuelGame},
             saber_strike::start_saber_strike,
         },
         packets::{
@@ -2378,7 +2378,11 @@ fn handle_request_start_active_minigame(
                         MinigameType::SaberStrike { saber_strike_stage_id } => {
                             packets.append(&mut start_saber_strike(*saber_strike_stage_id, player, minigame_status, game_server));
                         },
-                        MinigameType::SaberDuel { config } => packets.append(&mut start_saber_duel_game(config)),
+                        MinigameType::SaberDuel { .. } => {
+                            if let SharedMinigameTypeData::SaberDuel { game } = &shared_minigame_data.data {
+                                packets.append(&mut game.start(sender)?)
+                            }
+                        },
                     }
 
                     packets.push(

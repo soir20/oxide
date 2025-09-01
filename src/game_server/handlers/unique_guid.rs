@@ -25,6 +25,7 @@ pub fn shorten_zone_index(instance_guid: u64) -> u32 {
 pub const AMBIENT_NPC_DISCRIMINANT: u8 = 0x10;
 pub const FIXTURE_DISCRIMINANT: u8 = 0x20;
 pub const MOUNT_DISCRIMINANT: u8 = 0x30;
+pub const SABER_DUEL_DISCRIMINANT: u8 = 0x40;
 
 pub fn npc_guid(discriminant: u8, zone_guid: u64, index: u16) -> u64 {
     ((discriminant as u64) << 56) | ((index as u64) << 40) | zone_guid
@@ -47,4 +48,8 @@ pub fn shorten_player_guid(player_guid: u64) -> Result<u32, ProcessPacketError> 
 
 pub fn mount_guid(rider: u64) -> u64 {
     ((MOUNT_DISCRIMINANT as u64) << 56) | rider
+}
+
+pub fn saber_duel_opponent_guid(player_guid: u32) -> u64 {
+    ((SABER_DUEL_DISCRIMINANT as u64) << 56) | player_guid as u64
 }
