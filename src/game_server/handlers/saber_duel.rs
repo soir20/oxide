@@ -1,10 +1,23 @@
-use crate::game_server::packets::{item::WieldType, saber_duel::SaberDuelForcePower};
+use std::io::{Cursor, Read};
 
+use packet_serialize::DeserializePacket;
+
+use crate::game_server::{
+    packets::{
+        item::WieldType,
+        minigame::MinigameHeader,
+        saber_duel::{SaberDuelForcePower, SaberDuelOpCode},
+    },
+    Broadcast, ProcessPacketError, ProcessPacketErrorType,
+};
+
+#[derive(Debug)]
 struct SaberDuelAiForcePower {
     force_power: SaberDuelForcePower,
     weight: u8,
 }
 
+#[derive(Debug)]
 struct SaberDuelAi {
     name_id: u32,
     model_id: u32,
@@ -41,11 +54,13 @@ impl Default for SaberDuelAi {
     }
 }
 
+#[derive(Debug)]
 struct SaberDuelAppliedForcePower {
     force_power: SaberDuelForcePower,
     bouts_remaining: u8,
 }
 
+#[derive(Debug, Default)]
 struct SaberDuelPlayerState {
     ready: bool,
     rounds_won: u8,
@@ -55,12 +70,24 @@ struct SaberDuelPlayerState {
     saw_force_power_tutorial: bool,
 }
 
+impl SaberDuelPlayerState {
+    pub fn is_ready(&self) -> bool {
+        self.ready
+    }
+
+    pub fn mark_ready(&mut self) {
+        self.ready = true;
+    }
+}
+
+#[derive(Debug)]
 struct SaberDuelAnimationPair {
     attack_animation_id: u32,
     defend_animation_id: u32,
     weight: u8,
 }
 
+#[derive(Debug)]
 pub struct SaberDuelConfig {
     rounds_to_win: u8,
     bouts_to_win_round: u8,
@@ -84,11 +111,92 @@ pub struct SaberDuelConfig {
     memory_challenge: bool,
 }
 
+#[derive(Debug)]
 pub struct SaberDuelGame {
     config: SaberDuelConfig,
     player1: u32,
     player2: Option<u32>,
     player_states: [SaberDuelPlayerState; 2],
     bout: u8,
-    ai: SaberDuelAi,
+    stage_guid: i32,
+    stage_group_guid: i32,
+}
+
+impl SaberDuelGame {
+    pub fn new(
+        config: SaberDuelConfig,
+        player1: u32,
+        player2: Option<u32>,
+        stage_guid: i32,
+        stage_group_guid: i32,
+    ) -> Self {
+        SaberDuelGame {
+            config,
+            player1,
+            player2,
+            player_states: [
+                SaberDuelPlayerState::default(),
+                SaberDuelPlayerState::default(),
+            ],
+            bout: 0,
+            stage_guid,
+            stage_group_guid,
+        }
+    }
+
+    pub fn process_packet(
+        &mut self,
+        cursor: &mut Cursor<&[u8]>,
+        sender: u32,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let header = MinigameHeader::deserialize(cursor)?;
+        match SaberDuelOpCode::try_from(header.sub_op_code) {
+            Ok(op_code) => match op_code {
+                SaberDuelOpCode::PlayerReady => self.mark_player_ready(sender),
+                SaberDuelOpCode::Keypress => todo!(),
+                SaberDuelOpCode::RequestApplyForcePower => todo!(),
+                _ => {
+                    let mut buffer = Vec::new();
+                    cursor.read_to_end(&mut buffer)?;
+                    Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::UnknownOpCode,
+                        format!("Unimplemented Saber Duel op code: {op_code:?} {buffer:x?}"),
+                    ))
+                }
+            },
+            Err(_) => {
+                let mut buffer = Vec::new();
+                cursor.read_to_end(&mut buffer)?;
+                Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::UnknownOpCode,
+                    format!(
+                        "Unknown Saber Duel packet: {}, {buffer:x?}",
+                        header.sub_op_code
+                    ),
+                ))
+            }
+        }
+    }
+
+    fn mark_player_ready(&mut self, sender: u32) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        if sender == self.player1 {
+            if self.player_states[0].is_ready() {
+                return Ok(Vec::new());
+            }
+            self.player_states[0].mark_ready();
+        } else if Some(sender) == self.player2 {
+            if self.player_states[1].is_ready() {
+                return Ok(Vec::new());
+            }
+            self.player_states[1].mark_ready();
+        } else {
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} sent a ready packet for Saber Duel, but they aren't one of the game's players ({self:?})")));
+        }
+
+        if !self.player_states[0].is_ready() || !self.player_states[1].is_ready() {
+            return Ok(Vec::new());
+        }
+
+        Ok(Vec::new())
+    }
 }

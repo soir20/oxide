@@ -29,7 +29,9 @@ pub enum SaberDuelOpCode {
     RequestApplyForcePower = 0x12,
 }
 
-#[derive(Clone, Copy, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket)]
+#[derive(
+    Clone, Copy, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
+)]
 #[repr(u32)]
 pub enum SaberDuelForcePower {
     ExtraKey = 0,
