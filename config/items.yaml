@@ -54463,8 +54463,9 @@
   unknown40: 0
   stats: []
   abilities: []
+# Mandalorian Shatterer Battle Rifle
 - guid: 110039
-  name_id: 0
+  name_id: 8780
   description_id: 14
   icon_set_id: 241
   tint: 0
