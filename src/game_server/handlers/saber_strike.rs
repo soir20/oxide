@@ -39,7 +39,7 @@ pub fn start_saber_strike(
                 sub_op_code: SaberStrikeOpCode::StageData as i32,
                 stage_group_guid: minigame_status.group.stage_group_guid,
             },
-            saber_strike_stage_id: saber_strike_stage_id,
+            saber_strike_stage_id,
             use_player_weapon: player
                 .battle_classes
                 .get(&player.active_battle_class)

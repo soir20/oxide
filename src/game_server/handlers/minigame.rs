@@ -2376,7 +2376,7 @@ fn handle_request_start_active_minigame(
                             );
                         },
                         MinigameType::SaberStrike { saber_strike_stage_id } => {
-                            packets.append(&mut start_saber_strike(*saber_strike_stage_id, &player, minigame_status, game_server));
+                            packets.append(&mut start_saber_strike(*saber_strike_stage_id, player, minigame_status, game_server));
                         },
                         MinigameType::SaberDuel { config } => packets.append(&mut start_saber_duel_game(config)),
                     }
