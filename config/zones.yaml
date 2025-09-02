@@ -719,6 +719,247 @@
       large_icon: false
       show_hover_description: false
   ambient_npcs:
+    # Archives Orb Spawn Timer
+    - key: Archives Orb Spawn Timer
+      pos:
+        x: 1730.1881
+        y: 10.040001
+        z: 1693.5281
+        w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0 
+      is_spawned: false
+      tickable_procedures:
+        spawn:
+          weight: 300
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: lifespan
+        lifespan:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful: {
+                  fade_duration_millis: 1000,
+                  removal_delay_millis: 0
+                  }
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+    # Archives Blue Orb One
+    - model_id: 1198
+      possible_pos:
+        - x: 1695.8995
+          y: 10.040001
+          z: 1686.3807
+          w: 1
+        - x: 1757.3896
+          y: 10.040001
+          z: 1685.5592
+          w: 1
+        - x: 1699.1101
+          y: 10.040001
+          z: 1703.1289
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          award_credits: 25
+          despawn_npc: true
+          removal_mode: !Graceful
+            fade_duration_millis: 1000
+            removal_delay_millis: 0
+          duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: idle
+        idle:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful: {
+                  fade_duration_millis: 1000,
+                  removal_delay_millis: 0
+                  }
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Archives Orb Spawn Timer
+    # Archives Blue Orb Two
+    - model_id: 1198
+      possible_pos:
+        - x: 1755.757
+          y: 10.040001
+          z: 1702.793
+          w: 1
+        - x: 1748.7863
+          y: 10.040001
+          z: 1690.8744
+          w: 1
+        - x: 1727.4562
+          y: 10.040001
+          z: 1702.5524
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          award_credits: 25
+          despawn_npc: true
+          removal_mode: !Graceful
+            fade_duration_millis: 1000
+            removal_delay_millis: 0
+          duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: idle
+        idle:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful: {
+                  fade_duration_millis: 1000,
+                  removal_delay_millis: 0
+                  }
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Archives Orb Spawn Timer
+    # Archives Blue Orb Three
+    - model_id: 1198
+      possible_pos:
+        - x: 1713.411
+          y: 10.040001
+          z: 1692.591
+          w: 1
+        - x: 1705.6677
+          y: 10.040001
+          z: 1693.7737
+          w: 1
+        - x: 1745.8124
+          y: 10.040001
+          z: 1700.9398
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          award_credits: 25
+          despawn_npc: true
+          removal_mode: !Graceful
+            fade_duration_millis: 1000
+            removal_delay_millis: 0
+          duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          weight: 300
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: lifespan
+        lifespan:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful: {
+                  fade_duration_millis: 1000,
+                  removal_delay_millis: 0
+                  }
+              duration_millis: 1000
+          next_possible_procedures:
+          - procedure: empty
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
     # Workshop Orb Spawn Timer
     - key: Workshop Orb Spawn Timer
       pos:
