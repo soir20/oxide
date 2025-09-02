@@ -13,6 +13,86 @@ categories:
     icon_id: 5805
     sort_order: 2
     portal_entries:
+      - guid: 1005
+        name_id: 45187
+        description_id: 45193
+        members_only: true
+        is_flash: false
+        is_active: true
+        param1: 0
+        icon_id: 1244
+        background_icon_id: 0
+        is_popular: true
+        is_game_of_day: false
+        sort_order: 8000
+        tutorial_swf: HowtoDueling.swf
+        stage_group:
+          guid: 31000
+          name_id: 45187
+          description_id: 45193
+          icon_id: 4905
+          stage_icon_id: 4905
+          members_only: true
+          stage_select_map_name: RepublicGunship
+          stages:
+            - !Stage
+              guid: 31001
+              name_id: 45254
+              description_id: 45193
+              stage_icon_id: 4906
+              start_screen_icon_id: 4849
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 5502
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage01
+              minigame_type:
+                !SaberDuel
+                pos:
+                  x: 244.0913
+                  y: 10
+                  z: 455
+                  w: 1
+                camera_rot: 0.0
+                rounds_to_win: 2
+                bouts_to_win_round: 10
+                keys_per_short_bout: 6
+                keys_per_long_bout: 8
+                first_long_bout: 2
+                long_bout_interval: 3
+                bout_max_millis: 10000
+                tie_interval_millis: 100
+                short_bout_animations: []
+                long_bout_animations: []
+                establishing_animation_id: 6005
+                player_entrance_animation_id: 6004
+                ai:
+                  name_id: 1134
+                  model_id: 183
+                  wield_type: SingleSaber
+                  entrance_animation_id: 6204
+                  entrance_sound_id: 2142
+                  bout_won_sound_id: 2143
+                  bout_lost_sound_id: 2144
+                  game_won_sound_id: 2143
+                  game_lost_sound_id: 2144
+                  millis_per_key: 250
+                  mistake_probability: 0.01
+                  force_power_probability: 0
+                  force_powers: []
+                max_force_points: 15
+                force_points_per_bout_won: 1
+                force_points_per_bout_tied: 1
+                force_points_per_bout_lost: 2
+                force_powers: []
+                right_to_left_ai_mistake_multiplier: 2.0
+                opposite_ai_mistake_multiplier: 2.0
+                memory_challenge: false
+              zone_template_guid: 201
+              score_to_credits_expression: x / 177
       - guid: 9000
         name_id: 45187
         description_id: 45193
