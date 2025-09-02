@@ -719,6 +719,362 @@
       large_icon: false
       show_hover_description: false
   ambient_npcs:
+    # Workshop Orb Spawn Timer
+    - key: Workshop Orb Spawn Timer
+      pos:
+        x: -112.71024
+        y: 10.04
+        z: 1265.6791
+        w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0 
+      is_spawned: false
+      tickable_procedures:
+        spawn:
+          weight: 300
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: lifespan
+        lifespan:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful: {
+                  fade_duration_millis: 1000,
+                  removal_delay_millis: 0
+                  }
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+    # Workshop Blue Orb One
+    - model_id: 1198
+      possible_pos:
+        - x: -342.66266
+          y: 10.117764
+          z: 1774.634
+          w: 1
+        - x: -335.88687
+          y: 10.245553
+          z: 1779.7084
+          w: 1
+        - x: -339.3965
+          y: 10.117638
+          z: 1771.2377
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          award_credits: 25
+          despawn_npc: true
+          removal_mode: !Graceful
+            fade_duration_millis: 1000
+            removal_delay_millis: 0
+          duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: idle
+        idle:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful: {
+                  fade_duration_millis: 1000,
+                  removal_delay_millis: 0
+                  }
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Workshop Orb Spawn Timer
+    # Workshop Blue Orb Two
+    - model_id: 1198
+      possible_pos:
+        - x: -328.52924
+          y: 10.122791
+          z: 1775.8739
+          w: 1
+        - x: -336.72003
+          y: 10.119262
+          z: 1773.4607
+          w: 1
+        - x: -332.5144
+          y: 10.245615
+          z: 1780.9937
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          award_credits: 25
+          despawn_npc: true
+          removal_mode: !Graceful
+            fade_duration_millis: 1000
+            removal_delay_millis: 0
+          duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: idle
+        idle:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful: {
+                  fade_duration_millis: 1000,
+                  removal_delay_millis: 0
+                  }
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Workshop Orb Spawn Timer
+    # Workshop Orb Spawn Timer Two
+    - key: Workshop Orb Spawn Timer Two
+      pos:
+        x: -112.71024
+        y: 10.04
+        z: 1265.6791
+        w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0 
+      is_spawned: false
+      tickable_procedures:
+        spawn:
+          weight: 300
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: lifespan
+        lifespan:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful: {
+                  fade_duration_millis: 1000,
+                  removal_delay_millis: 0
+                  }
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+    # Workshop Blue Orb Three
+    - model_id: 1198
+      possible_pos:
+        - x: -333.05035
+          y: 10.2457695
+          z: 1785.784
+          w: 1
+        - x: -340.09808
+          y: 10.245736
+          z: 1783.2749
+          w: 1
+        - x: -334.08017
+          y: 10.12735
+          z: 1791.5868
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          award_credits: 25
+          despawn_npc: true
+          removal_mode: !Graceful
+            fade_duration_millis: 1000
+            removal_delay_millis: 0
+          duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: idle
+        idle:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful: {
+                  fade_duration_millis: 1000,
+                  removal_delay_millis: 0
+                  }
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Workshop Orb Spawn Timer Two
+    # Workshop Blue Orb Four
+    - model_id: 1198
+      possible_pos:
+        - x: -334.2602
+          y: 10.117851
+          z: 1771.29
+          w: 1
+        - x: -359.8455
+          y: 10.127345
+          z: 1787.6785
+          w: 1
+        - x: -331.07822
+          y: 10.12735
+          z: 1790.2317
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          award_credits: 25
+          despawn_npc: true
+          removal_mode: !Graceful
+            fade_duration_millis: 1000
+            removal_delay_millis: 0
+          duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: idle
+        idle:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful: {
+                  fade_duration_millis: 1000,
+                  removal_delay_millis: 0
+                  }
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Workshop Orb Spawn Timer Two
     # Training Room Orb Spawn Timer
     - key: Training Room Orb Spawn Timer
       pos:
