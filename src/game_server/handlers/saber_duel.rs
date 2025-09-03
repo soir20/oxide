@@ -15,7 +15,8 @@ use crate::game_server::{
         minigame::MinigameHeader,
         player_update::{AddNpc, Hostility, Icon, RemoveStandard},
         saber_duel::{
-            SaberDuelForcePower, SaberDuelForcePowerDefinition, SaberDuelOpCode, SaberDuelStageData,
+            SaberDuelForcePower, SaberDuelForcePowerDefinition, SaberDuelGameStart, SaberDuelKey,
+            SaberDuelOpCode, SaberDuelStageData,
         },
         tunnel::TunneledPacket,
         GamePacket, Pos, Target,
@@ -106,6 +107,12 @@ struct SaberDuelAvailableForcePower {
     cost: u8,
 }
 
+enum SaberDuelGameState {
+    WaitingForPlayersReady,
+    BoutActive { keys: Vec<SaberDuelKey> },
+    BoutEnded,
+}
+
 #[derive(Clone, Debug, Deserialize)]
 pub struct SaberDuelConfig {
     pos: Pos,
@@ -194,6 +201,7 @@ pub struct SaberDuelGame {
     player2: Option<u32>,
     player_states: [SaberDuelPlayerState; 2],
     bout: u8,
+    recipients: Vec<u32>,
     stage_guid: i32,
     stage_group_guid: i32,
 }
@@ -206,15 +214,23 @@ impl SaberDuelGame {
         stage_guid: i32,
         stage_group_guid: i32,
     ) -> Self {
+        let mut player2_state = SaberDuelPlayerState::default();
+        if player2.is_none() {
+            player2_state.mark_ready();
+        }
+
+        let mut recipients = vec![player1];
+        if let Some(player2) = player2 {
+            recipients.push(player2);
+        }
+
         SaberDuelGame {
             config,
             player1,
             player2,
-            player_states: [
-                SaberDuelPlayerState::default(),
-                SaberDuelPlayerState::default(),
-            ],
+            player_states: [SaberDuelPlayerState::default(), player2_state],
             bout: 0,
+            recipients,
             stage_guid,
             stage_group_guid,
         }
@@ -404,7 +420,19 @@ impl SaberDuelGame {
             return Ok(Vec::new());
         }
 
-        Ok(Vec::new())
+        Ok(vec![Broadcast::Multi(
+            self.recipients.clone(),
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: SaberDuelGameStart {
+                    minigame_header: MinigameHeader {
+                        stage_guid: self.stage_guid,
+                        sub_op_code: SaberDuelOpCode::GameStart as i32,
+                        stage_group_guid: self.stage_group_guid,
+                    },
+                },
+            })],
+        )])
     }
 
     fn player_index(&self, sender: u32) -> Result<u32, ProcessPacketError> {
@@ -413,7 +441,20 @@ impl SaberDuelGame {
         } else if Some(sender) == self.player2 {
             Ok(1)
         } else {
-            Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} sent a ready packet for Saber Duel, but they aren't one of the game's players ({self:?})")))
+            Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!("Player {sender} sent a ready packet for Saber Duel, but they aren't one of the game's players ({self:?})")
+            ))
         }
+    }
+
+    fn start_round(&mut self) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        self.bout = 0;
+        self.start_bout()
+    }
+
+    fn start_bout(&mut self) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        self.bout = self.bout.saturating_add(1);
+        Ok(Vec::new())
     }
 }
