@@ -3053,6 +3053,7 @@
               weight: 89700
     # Veranda Fountain
     - terrain_object_id: 1278971305
+      model_id: 907
       pos:
         x: 897.7858
         y: 172.44917
@@ -3065,6 +3066,9 @@
         w: 0
       cursor: 54
       enable_interact_popup: false
+      use_terrain_object_id: false
+      enable_gravity: false
+      move_to_interact_offset: 3.3
       one_shot_action_on_interact:
            one_shot_action_animation_id: 3006
            one_shot_action_composite_effect_id: 1959
