@@ -1399,16 +1399,13 @@ pub fn interact_with_character(
             read_guids: Vec::new(),
             write_guids: vec![requester, target],
             character_consumer: move |characters_table_read_handle, _, mut characters_write, _| {
-                let Some(mut requester_handle) = characters_write.remove(&requester) else {
-                    return Err(ProcessPacketError::new(
-                        ProcessPacketErrorType::ConstraintViolated,
-                        format!("Requester {requester} not found"),
-                    ));
+                let Some(mut requester_read_handle) = characters_write.remove(&requester) else {
+                        return coerce_to_broadcast_supplier(|_| Ok(Vec::new()));
                 };
 
-                let requester_pos = requester_handle.stats.pos;
-                let requester_instance = requester_handle.stats.instance_guid;
-                let requester_chunk = requester_handle.index1().2;
+                let requester_pos = requester_read_handle.stats.pos;
+                let requester_instance = requester_read_handle.stats.instance_guid;
+                let requester_chunk = requester_read_handle.index1().2;
 
                 let nearby_player_guids = ZoneInstance::all_players_nearby(
                     requester_chunk,
@@ -1416,24 +1413,24 @@ pub fn interact_with_character(
                     characters_table_read_handle,
                 );
 
-                let requester_credits = match &mut requester_handle.stats.character_type {
+                let requester_credits = match &mut requester_read_handle.stats.character_type {
                     CharacterType::Player(player) => Some(&mut player.credits),
                     _ => None,
                 };
 
-                let Some(target_handle) = characters_write.get_mut(&target) else {
-                    characters_write.insert(requester, requester_handle);
+                let Some(target_read_handle) = characters_write.get_mut(&target) else {
+                    characters_write.insert(requester, requester_read_handle);
                     return Err(ProcessPacketError::new(
                         ProcessPacketErrorType::ConstraintViolated,
-                        format!("Target {target} not found"),
+                        format!("Received request to interact with unknown NPC {target} from {requester}"),
                     ));
                 };
 
-                if !target_handle.stats.is_spawned {
-                    characters_write.insert(requester, requester_handle);
+                if !target_read_handle.stats.is_spawned {
+                    characters_write.insert(requester, requester_read_handle);
                     return Err(ProcessPacketError::new(
                         ProcessPacketErrorType::ConstraintViolated,
-                        format!("Target {target} is not spawned"),
+                        format!("Received request to interact with inactive NPC {target} from {requester}"),
                     ));
                 }
 
@@ -1441,27 +1438,27 @@ pub fn interact_with_character(
                     requester_pos.x,
                     requester_pos.y,
                     requester_pos.z,
-                    target_handle.stats.pos.x,
-                    target_handle.stats.pos.y,
-                    target_handle.stats.pos.z,
+                    target_read_handle.stats.pos.x,
+                    target_read_handle.stats.pos.y,
+                    target_read_handle.stats.pos.z,
                 );
 
-                if distance > target_handle.stats.interact_radius
-                    || target_handle.stats.instance_guid != requester_instance
+                if distance > target_read_handle.stats.interact_radius
+                    || target_read_handle.stats.instance_guid != requester_instance
                 {
-                    let interaction_angle = (target_handle.stats.pos.z - requester_pos.z)
-                        .atan2(target_handle.stats.pos.x - requester_pos.x);
+                    let interaction_angle = (target_read_handle.stats.pos.z - requester_pos.z)
+                        .atan2(target_read_handle.stats.pos.x - requester_pos.x);
 
                     let destination = Pos {
-                        x: target_handle.stats.pos.x
-                            - target_handle.stats.move_to_interact_offset * interaction_angle.cos(),
-                        y: target_handle.stats.pos.y,
-                        z: target_handle.stats.pos.z
-                            - target_handle.stats.move_to_interact_offset * interaction_angle.sin(),
+                        x: target_read_handle.stats.pos.x
+                            - target_read_handle.stats.move_to_interact_offset * interaction_angle.cos(),
+                        y: target_read_handle.stats.pos.y,
+                        z: target_read_handle.stats.pos.z
+                            - target_read_handle.stats.move_to_interact_offset * interaction_angle.sin(),
                         w: 1.0,
                     };
 
-                    characters_write.insert(requester, requester_handle);
+                    characters_write.insert(requester, requester_read_handle);
                     return coerce_to_broadcast_supplier(move |_| {
                         Ok(vec![Broadcast::Single(
                             requester_guid,
@@ -1477,9 +1474,9 @@ pub fn interact_with_character(
                 }
 
                 let result =
-                    target_handle.interact(requester_guid, requester_credits, &nearby_player_guids);
+                    target_read_handle.interact(requester_guid, requester_credits, &nearby_player_guids);
 
-                characters_write.insert(requester, requester_handle);
+                characters_write.insert(requester, requester_read_handle);
 
                 result
             },
