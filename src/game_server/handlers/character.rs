@@ -5,7 +5,7 @@ use std::{
 
 use chrono::{DateTime, FixedOffset, Utc};
 use enum_iterator::Sequence;
-use rand::thread_rng;
+use rand::{seq::SliceRandom, thread_rng};
 use rand_distr::{Distribution, WeightedAliasIndex};
 use serde::Deserialize;
 
@@ -546,10 +546,16 @@ impl TickableStep {
                 }
             }
             SpawnedState::Despawn => {
-                character.is_spawned = false;
                 // Skip checking if the character is spawned before despawning it and instead check if
                 // its state needs updating as OnFirstStepTick doesn't maintain states
+                character.is_spawned = false;
                 packets_for_all.extend(character.remove_packets(self.removal_mode));
+                // Reassign position on despawn to ensure varied spawn location on next spawn
+                if !character.possible_pos.is_empty() {
+                    if let Some(new_pos) = character.possible_pos.choose(&mut thread_rng()) {
+                        character.pos = *new_pos;
+                    }
+                }
             }
             SpawnedState::Keep => {}
         }
@@ -1583,6 +1589,7 @@ pub struct NpcTemplate {
     pub model_id: u32,
     pub pos: Pos,
     pub rot: Pos,
+    pub possible_pos: Vec<Pos>,
     pub scale: f32,
     pub animation_id: i32,
     pub character_type: CharacterType,
@@ -1616,6 +1623,7 @@ impl NpcTemplate {
                 model_id: self.model_id,
                 pos: self.pos,
                 rot: self.rot,
+                possible_pos: self.possible_pos.clone(),
                 chunk_size,
                 scale: self.scale,
                 character_type: self.character_type.clone(),
@@ -1703,6 +1711,7 @@ pub struct CharacterStats {
     pub model_id: u32,
     pub pos: Pos,
     pub rot: Pos,
+    pub possible_pos: Vec<Pos>,
     pub chunk_size: u16,
     pub scale: f32,
     pub character_type: CharacterType,
@@ -1936,6 +1945,7 @@ impl Character {
                 model_id,
                 pos,
                 rot,
+                possible_pos: vec![],
                 chunk_size,
                 scale,
                 character_type,
@@ -2009,6 +2019,12 @@ impl Character {
                 model_id,
                 pos,
                 rot,
+                possible_pos: vec![Pos {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 0.0,
+                    w: 0.0,
+                }],
                 chunk_size,
                 scale: 1.0,
                 name: Some(format!("{}", data.name)),

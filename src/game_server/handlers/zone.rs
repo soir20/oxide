@@ -183,6 +183,7 @@ impl From<ZoneConfig> for ZoneTemplate {
                         .cloned()
                         .unwrap_or(ambient_npc.base_npc.pos),
                     rot: ambient_npc.base_npc.rot,
+                    possible_pos: ambient_npc.base_npc.possible_pos.clone(),
                     scale: ambient_npc.base_npc.scale,
                     tickable_procedures: ambient_npc.base_npc.tickable_procedures.clone(),
                     first_possible_procedures: ambient_npc
@@ -216,6 +217,7 @@ impl From<ZoneConfig> for ZoneTemplate {
                         .unwrap_or(door.base_npc.model_id),
                     pos: door.base_npc.pos,
                     rot: door.base_npc.rot,
+                    possible_pos: door.base_npc.possible_pos.clone(),
                     scale: door.base_npc.scale,
                     tickable_procedures: door.base_npc.tickable_procedures.clone(),
                     first_possible_procedures: door.base_npc.first_possible_procedures.clone(),
@@ -246,6 +248,7 @@ impl From<ZoneConfig> for ZoneTemplate {
                         .unwrap_or(transport.base_npc.model_id),
                     pos: transport.base_npc.pos,
                     rot: transport.base_npc.rot,
+                    possible_pos: transport.base_npc.possible_pos.clone(),
                     scale: transport.base_npc.scale,
                     tickable_procedures: transport.base_npc.tickable_procedures.clone(),
                     first_possible_procedures: transport.base_npc.first_possible_procedures.clone(),
