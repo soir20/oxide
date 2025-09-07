@@ -1,5 +1,6 @@
 use num_enum::{IntoPrimitive, TryFromPrimitive};
 use packet_serialize::{DeserializePacket, SerializePacket};
+use rand_distr::{Distribution, Standard};
 use serde::Deserialize;
 
 use super::{
@@ -183,13 +184,21 @@ impl GamePacket for SaberDuelRemoveForcePower {
     const HEADER: Self::Header = MinigameOpCode::SaberDuel;
 }
 
-#[derive(Clone, Copy, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket)]
+#[derive(
+    Clone, Copy, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
+)]
 #[repr(u32)]
 pub enum SaberDuelKey {
     Up = 1,
     Down = 2,
     Left = 3,
     Right = 4,
+}
+
+impl Distribution<SaberDuelKey> for Standard {
+    fn sample<R: rand::Rng + ?Sized>(&self, rng: &mut R) -> SaberDuelKey {
+        SaberDuelKey::try_from_primitive(rng.gen_range(1..=4)).unwrap()
+    }
 }
 
 #[derive(SerializePacket, DeserializePacket)]

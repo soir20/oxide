@@ -1,6 +1,7 @@
 use std::io::{Cursor, Read};
 
 use packet_serialize::DeserializePacket;
+use rand::{thread_rng, Rng};
 use serde::Deserialize;
 
 use crate::game_server::{
@@ -15,8 +16,8 @@ use crate::game_server::{
         minigame::MinigameHeader,
         player_update::{AddNpc, Hostility, Icon, RemoveStandard},
         saber_duel::{
-            SaberDuelForcePower, SaberDuelForcePowerDefinition, SaberDuelGameStart, SaberDuelKey,
-            SaberDuelOpCode, SaberDuelStageData,
+            SaberDuelBoutInfo, SaberDuelForcePower, SaberDuelForcePowerDefinition,
+            SaberDuelGameStart, SaberDuelKey, SaberDuelOpCode, SaberDuelStageData,
         },
         tunnel::TunneledPacket,
         GamePacket, Pos, Target,
@@ -107,9 +108,13 @@ struct SaberDuelAvailableForcePower {
     cost: u8,
 }
 
+#[derive(Clone, Debug)]
 enum SaberDuelGameState {
     WaitingForPlayersReady,
-    BoutActive { keys: Vec<SaberDuelKey> },
+    BoutActive {
+        keys: Vec<SaberDuelKey>,
+        base_sequence_len: u8,
+    },
     BoutEnded,
 }
 
@@ -201,6 +206,7 @@ pub struct SaberDuelGame {
     player2: Option<u32>,
     player_states: [SaberDuelPlayerState; 2],
     bout: u8,
+    state: SaberDuelGameState,
     recipients: Vec<u32>,
     stage_guid: i32,
     stage_group_guid: i32,
@@ -230,6 +236,7 @@ impl SaberDuelGame {
             player2,
             player_states: [SaberDuelPlayerState::default(), player2_state],
             bout: 0,
+            state: SaberDuelGameState::WaitingForPlayersReady,
             recipients,
             stage_guid,
             stage_group_guid,
@@ -455,6 +462,39 @@ impl SaberDuelGame {
 
     fn start_bout(&mut self) -> Result<Vec<Broadcast>, ProcessPacketError> {
         self.bout = self.bout.saturating_add(1);
-        Ok(Vec::new())
+        let is_long_bout = self.bout >= self.config.first_long_bout
+            && (self.bout - self.config.first_long_bout) % self.config.long_bout_interval == 0;
+
+        let base_sequence_len = if is_long_bout {
+            self.config.keys_per_long_bout
+        } else {
+            self.config.keys_per_short_bout
+        };
+
+        // Add a key for the extra key force power
+        let extra_key_sequence_len = base_sequence_len.saturating_add(1);
+
+        let mut keys: Vec<SaberDuelKey> = Vec::new();
+        for _ in 0..extra_key_sequence_len {
+            keys.push(thread_rng().gen());
+        }
+
+        self.state = SaberDuelGameState::BoutActive {
+            keys,
+            base_sequence_len,
+        };
+
+        Ok(vec![Broadcast::Multi(
+            self.recipients.clone(),
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: SaberDuelBoutInfo {
+                    minigame_header: todo!(),
+                    max_bout_time_millis: todo!(),
+                    is_combo_bout: todo!(),
+                    force_points_by_player_index: todo!(),
+                },
+            })],
+        )])
     }
 }
