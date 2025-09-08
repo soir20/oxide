@@ -490,7 +490,7 @@ impl SaberDuelGame {
 
     fn start_round(&mut self) -> Result<Vec<Broadcast>, ProcessPacketError> {
         self.bout = 0;
-        self.start_bout()
+        self.prepare_bout()
     }
 
     fn prepare_bout(&mut self) -> Result<Vec<Broadcast>, ProcessPacketError> {
