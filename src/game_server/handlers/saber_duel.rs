@@ -16,8 +16,9 @@ use crate::game_server::{
         minigame::MinigameHeader,
         player_update::{AddNpc, Hostility, Icon, RemoveStandard},
         saber_duel::{
-            SaberDuelBoutInfo, SaberDuelForcePower, SaberDuelForcePowerDefinition,
-            SaberDuelGameStart, SaberDuelKey, SaberDuelOpCode, SaberDuelStageData,
+            SaberDuelBoutInfo, SaberDuelBoutStart, SaberDuelForcePower,
+            SaberDuelForcePowerDefinition, SaberDuelGameStart, SaberDuelKey, SaberDuelOpCode,
+            SaberDuelStageData,
         },
         tunnel::TunneledPacket,
         GamePacket, Pos, Target,
@@ -76,21 +77,20 @@ struct SaberDuelAppliedForcePower {
 
 #[derive(Clone, Debug, Default)]
 struct SaberDuelPlayerState {
-    ready: bool,
-    rounds_won: u8,
-    bouts_won: u8,
-    progress: u8,
-    affected_by_force_powers: Vec<SaberDuelAppliedForcePower>,
-    saw_force_power_tutorial: bool,
+    pub ready: bool,
+    pub rounds_won: u8,
+    pub bouts_won: u8,
+    pub progress: u8,
+    pub affected_by_force_powers: Vec<SaberDuelAppliedForcePower>,
+    pub saw_force_power_tutorial: bool,
+    pub force_points: u8,
 }
 
 impl SaberDuelPlayerState {
-    pub fn is_ready(&self) -> bool {
-        self.ready
-    }
-
-    pub fn mark_ready(&mut self) {
-        self.ready = true;
+    pub fn is_affected_by(&self, power: SaberDuelForcePower) -> bool {
+        self.affected_by_force_powers.iter().any(|applied_power| {
+            applied_power.force_power == power && applied_power.bouts_remaining > 0
+        })
     }
 }
 
@@ -222,7 +222,7 @@ impl SaberDuelGame {
     ) -> Self {
         let mut player2_state = SaberDuelPlayerState::default();
         if player2.is_none() {
-            player2_state.mark_ready();
+            player2_state.ready = true;
         }
 
         let mut recipients = vec![player1];
@@ -357,8 +357,8 @@ impl SaberDuelGame {
                     sub_op_code: SaberDuelOpCode::StageData as i32,
                     stage_group_guid: self.stage_group_guid,
                 },
-                win_score: self.config.bouts_to_win_round as u32,
-                total_rounds: self.config.rounds_to_win as u32,
+                win_score: self.config.bouts_to_win_round.into(),
+                total_rounds: self.config.rounds_to_win.into(),
                 seconds_remaining: 0,
                 camera_pos: self.config.pos,
                 camera_rot: self.config.camera_rot,
@@ -380,7 +380,7 @@ impl SaberDuelGame {
                     .player2
                     .map(|_| 0)
                     .unwrap_or(self.config.ai.entrance_sound_id),
-                max_force_points: self.config.max_force_points as u32,
+                max_force_points: self.config.max_force_points.into(),
                 paused: false,
                 enable_memory_challenge: self.config.memory_challenge,
                 force_powers: self
@@ -418,12 +418,12 @@ impl SaberDuelGame {
     fn mark_player_ready(&mut self, sender: u32) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let player_index = self.player_index(sender)? as usize;
 
-        if self.player_states[player_index].is_ready() {
+        if self.player_states[player_index].ready {
             return Ok(Vec::new());
         }
-        self.player_states[player_index].mark_ready();
+        self.player_states[player_index].ready = true;
 
-        if !self.player_states[0].is_ready() || !self.player_states[1].is_ready() {
+        if !self.player_states[0].ready || !self.player_states[1].ready {
             return Ok(Vec::new());
         }
 
@@ -460,6 +460,28 @@ impl SaberDuelGame {
         self.start_bout()
     }
 
+    fn prepare_bout(&mut self) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        Ok(vec![Broadcast::Multi(
+            self.recipients.clone(),
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: SaberDuelBoutInfo {
+                    minigame_header: MinigameHeader {
+                        stage_guid: self.stage_guid,
+                        sub_op_code: SaberDuelOpCode::BoutInfo as i32,
+                        stage_group_guid: self.stage_group_guid,
+                    },
+                    max_bout_time_millis: self.config.bout_max_millis,
+                    is_combo_bout: false,
+                    force_points_by_player_index: vec![
+                        self.player_states[0].force_points.into(),
+                        self.player_states[1].force_points.into(),
+                    ],
+                },
+            })],
+        )])
+    }
+
     fn start_bout(&mut self) -> Result<Vec<Broadcast>, ProcessPacketError> {
         self.bout = self.bout.saturating_add(1);
         let is_long_bout = self.bout >= self.config.first_long_bout
@@ -480,19 +502,33 @@ impl SaberDuelGame {
         }
 
         self.state = SaberDuelGameState::BoutActive {
-            keys,
+            keys: keys.clone(),
             base_sequence_len,
+        };
+
+        let player1_keys = match self.player_states[0].is_affected_by(SaberDuelForcePower::ExtraKey)
+        {
+            true => extra_key_sequence_len,
+            false => base_sequence_len,
+        };
+        let player2_keys = match self.player_states[1].is_affected_by(SaberDuelForcePower::ExtraKey)
+        {
+            true => extra_key_sequence_len,
+            false => base_sequence_len,
         };
 
         Ok(vec![Broadcast::Multi(
             self.recipients.clone(),
             vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
-                inner: SaberDuelBoutInfo {
-                    minigame_header: todo!(),
-                    max_bout_time_millis: todo!(),
-                    is_combo_bout: todo!(),
-                    force_points_by_player_index: todo!(),
+                inner: SaberDuelBoutStart {
+                    minigame_header: MinigameHeader {
+                        stage_guid: self.stage_guid,
+                        sub_op_code: SaberDuelOpCode::BoutStart as i32,
+                        stage_group_guid: self.stage_group_guid,
+                    },
+                    keys,
+                    num_keys_by_player_index: vec![player1_keys.into(), player2_keys.into()],
                 },
             })],
         )])
