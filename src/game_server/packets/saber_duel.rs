@@ -1,3 +1,4 @@
+use enum_iterator::Sequence;
 use num_enum::{IntoPrimitive, TryFromPrimitive};
 use packet_serialize::{DeserializePacket, SerializePacket};
 use rand_distr::{Distribution, Standard};
@@ -42,6 +43,7 @@ pub enum SaberDuelOpCode {
     IntoPrimitive,
     SerializePacket,
     DeserializePacket,
+    Sequence,
 )]
 #[repr(u32)]
 pub enum SaberDuelForcePower {
@@ -125,6 +127,12 @@ pub struct SaberDuelForcePowerFlags {
     pub can_use_extra_key: bool,
     pub can_use_right_to_left: bool,
     pub can_use_opposite: bool,
+}
+
+impl SaberDuelForcePowerFlags {
+    pub fn can_use_any(&self) -> bool {
+        self.can_use_extra_key || self.can_use_right_to_left || self.can_use_opposite
+    }
 }
 
 impl SerializePacket for SaberDuelForcePowerFlags {

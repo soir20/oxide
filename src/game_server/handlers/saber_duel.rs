@@ -1,5 +1,9 @@
-use std::io::{Cursor, Read};
+use std::{
+    io::{Cursor, Read},
+    time::Duration,
+};
 
+use enum_iterator::all;
 use packet_serialize::DeserializePacket;
 use rand::{thread_rng, Rng};
 use serde::Deserialize;
@@ -7,7 +11,7 @@ use serde::Deserialize;
 use crate::game_server::{
     handlers::{
         character::{Character, MinigameStatus},
-        minigame::{handle_minigame_packet_write, SharedMinigameTypeData},
+        minigame::{handle_minigame_packet_write, MinigameTimer, SharedMinigameTypeData},
         unique_guid::{player_guid, saber_duel_opponent_guid},
     },
     packets::{
@@ -17,8 +21,8 @@ use crate::game_server::{
         player_update::{AddNpc, Hostility, Icon, RemoveStandard},
         saber_duel::{
             SaberDuelBoutInfo, SaberDuelBoutStart, SaberDuelForcePower,
-            SaberDuelForcePowerDefinition, SaberDuelGameStart, SaberDuelKey, SaberDuelOpCode,
-            SaberDuelStageData,
+            SaberDuelForcePowerDefinition, SaberDuelForcePowerFlags, SaberDuelGameStart,
+            SaberDuelKey, SaberDuelOpCode, SaberDuelShowForcePowerDialog, SaberDuelStageData,
         },
         tunnel::TunneledPacket,
         GamePacket, Pos, Target,
@@ -87,10 +91,34 @@ struct SaberDuelPlayerState {
 }
 
 impl SaberDuelPlayerState {
-    pub fn is_affected_by(&self, power: SaberDuelForcePower) -> bool {
+    pub fn is_affected_by(&self, force_power: SaberDuelForcePower) -> bool {
         self.affected_by_force_powers.iter().any(|applied_power| {
-            applied_power.force_power == power && applied_power.bouts_remaining > 0
+            applied_power.force_power == force_power && applied_power.bouts_remaining > 0
         })
+    }
+
+    pub fn can_afford(
+        &self,
+        force_power: SaberDuelForcePower,
+        available_force_powers: &[SaberDuelAvailableForcePower],
+    ) -> bool {
+        available_force_powers.iter().any(|power| {
+            self.force_points >= power.cost && power.definition.force_power == force_power
+        })
+    }
+
+    pub fn force_power_flags(
+        &self,
+        available_force_powers: &[SaberDuelAvailableForcePower],
+    ) -> SaberDuelForcePowerFlags {
+        SaberDuelForcePowerFlags {
+            can_use_extra_key: self
+                .can_afford(SaberDuelForcePower::ExtraKey, available_force_powers),
+            can_use_right_to_left: self
+                .can_afford(SaberDuelForcePower::RightToLeft, available_force_powers),
+            can_use_opposite: self
+                .can_afford(SaberDuelForcePower::Opposite, available_force_powers),
+        }
     }
 }
 
@@ -111,7 +139,11 @@ struct SaberDuelAvailableForcePower {
 #[derive(Clone, Debug)]
 enum SaberDuelGameState {
     WaitingForPlayersReady,
+    WaitingForForcePowers {
+        timer: MinigameTimer,
+    },
     BoutActive {
+        timer: MinigameTimer,
         keys: Vec<SaberDuelKey>,
         base_sequence_len: u8,
     },
@@ -136,6 +168,7 @@ pub struct SaberDuelConfig {
     player_entrance_animation_id: i32,
     ai: SaberDuelAi,
     max_force_points: u8,
+    force_power_selection_millis: u32,
     force_points_per_bout_won: u8,
     force_points_per_bout_tied: u8,
     force_points_per_bout_lost: u8,
@@ -461,7 +494,7 @@ impl SaberDuelGame {
     }
 
     fn prepare_bout(&mut self) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        Ok(vec![Broadcast::Multi(
+        let mut broadcasts = vec![Broadcast::Multi(
             self.recipients.clone(),
             vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
@@ -479,7 +512,71 @@ impl SaberDuelGame {
                     ],
                 },
             })],
-        )])
+        )];
+
+        let mut show_force_power_dialog = false;
+
+        let player1_flags = self.player_states[0].force_power_flags(&self.config.force_powers);
+        show_force_power_dialog |= player1_flags.can_use_any();
+
+        let player2_flags = self.player_states[1].force_power_flags(&self.config.force_powers);
+        show_force_power_dialog |= player2_flags.can_use_any();
+
+        if show_force_power_dialog {
+            broadcasts.append(&mut self.show_force_power_dialog(player1_flags, player2_flags)?);
+        } else {
+            broadcasts.append(&mut self.start_bout()?);
+        }
+
+        Ok(broadcasts)
+    }
+
+    fn show_force_power_dialog(
+        &mut self,
+        player1_flags: SaberDuelForcePowerFlags,
+        player2_flags: SaberDuelForcePowerFlags,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let mut broadcasts = Vec::new();
+
+        broadcasts.push(Broadcast::Single(
+            self.player1,
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: SaberDuelShowForcePowerDialog {
+                    minigame_header: MinigameHeader {
+                        stage_guid: self.stage_guid,
+                        sub_op_code: SaberDuelOpCode::ShowForcePowerDialog as i32,
+                        stage_group_guid: self.stage_group_guid,
+                    },
+                    flags: player1_flags,
+                },
+            })],
+        ));
+
+        if let Some(player2) = self.player2 {
+            broadcasts.push(Broadcast::Single(
+                player2,
+                vec![GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: SaberDuelShowForcePowerDialog {
+                        minigame_header: MinigameHeader {
+                            stage_guid: self.stage_guid,
+                            sub_op_code: SaberDuelOpCode::ShowForcePowerDialog as i32,
+                            stage_group_guid: self.stage_group_guid,
+                        },
+                        flags: player2_flags,
+                    },
+                })],
+            ));
+        }
+
+        self.state = SaberDuelGameState::WaitingForForcePowers {
+            timer: MinigameTimer::new_with_event(Duration::from_millis(
+                self.config.force_power_selection_millis.into(),
+            )),
+        };
+
+        Ok(broadcasts)
     }
 
     fn start_bout(&mut self) -> Result<Vec<Broadcast>, ProcessPacketError> {
@@ -502,6 +599,9 @@ impl SaberDuelGame {
         }
 
         self.state = SaberDuelGameState::BoutActive {
+            timer: MinigameTimer::new_with_event(Duration::from_millis(
+                self.config.bout_max_millis.into(),
+            )),
             keys: keys.clone(),
             base_sequence_len,
         };
