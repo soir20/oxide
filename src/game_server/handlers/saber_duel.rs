@@ -168,7 +168,7 @@ pub struct SaberDuelConfig {
     player_entrance_animation_id: i32,
     ai: SaberDuelAi,
     max_force_points: u8,
-    force_power_selection_millis: u32,
+    force_power_selection_max_millis: u32,
     force_points_per_bout_won: u8,
     force_points_per_bout_tied: u8,
     force_points_per_bout_lost: u8,
@@ -572,7 +572,7 @@ impl SaberDuelGame {
 
         self.state = SaberDuelGameState::WaitingForForcePowers {
             timer: MinigameTimer::new_with_event(Duration::from_millis(
-                self.config.force_power_selection_millis.into(),
+                self.config.force_power_selection_max_millis.into(),
             )),
         };
 
