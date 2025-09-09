@@ -449,13 +449,13 @@ impl SaberDuelGame {
                 }
             }
             SaberDuelGameState::BoutActive {
-                bout_time_remaining: timer,
+                bout_time_remaining,
                 keys,
                 ai_next_key,
                 player1_completed_time,
                 player2_completed_time,
             } => {
-                if timer.time_until_next_event(now).is_zero() {
+                if bout_time_remaining.time_until_next_event(now).is_zero() {
                     return self.tie();
                 }
 
@@ -464,6 +464,7 @@ impl SaberDuelGame {
                     if self.player_states[1].increment_progress() {
                         *player2_completed_time = Some(now);
                     }
+                    ai_next_key.schedule_event(Duration::from_millis(self.config.ai.millis_per_key.into()));
 
                     self.update_progress(1);
                 }
