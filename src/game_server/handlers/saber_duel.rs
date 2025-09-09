@@ -243,6 +243,18 @@ pub fn process_saber_duel_packet(
     )
 }
 
+enum SaberDuelBoutCompletion {
+    NeitherPlayer,
+    OnePlayer {
+        time_since_completion: Duration,
+        player_index: u8,
+    },
+    BothPlayers {
+        time_between_completions: Duration,
+        fastest_player_index: u8,
+    },
+}
+
 #[derive(Clone, Debug)]
 pub struct SaberDuelGame {
     config: SaberDuelConfig,
@@ -457,6 +469,55 @@ impl SaberDuelGame {
             } => {
                 if bout_time_remaining.time_until_next_event(now).is_zero() {
                     return self.tie();
+                }
+
+                let bout_completion = match (&player1_completed_time, &player2_completed_time) {
+                    (None, None) => SaberDuelBoutCompletion::NeitherPlayer,
+                    (None, Some(player2_time)) => SaberDuelBoutCompletion::OnePlayer {
+                        time_since_completion: now.saturating_duration_since(*player2_time),
+                        player_index: 1,
+                    },
+                    (Some(player1_time), None) => SaberDuelBoutCompletion::OnePlayer {
+                        time_since_completion: now.saturating_duration_since(*player1_time),
+                        player_index: 0,
+                    },
+                    (Some(player1_time), Some(player2_time)) => {
+                        let (min, max, fastest_player_index) = match player1_time < player2_time {
+                            true => (player1_time, player2_time, 0),
+                            false => (player2_time, player1_time, 1),
+                        };
+
+                        SaberDuelBoutCompletion::BothPlayers {
+                            time_between_completions: max.saturating_duration_since(*min),
+                            fastest_player_index,
+                        }
+                    }
+                };
+
+                match bout_completion {
+                    SaberDuelBoutCompletion::NeitherPlayer => {}
+                    SaberDuelBoutCompletion::OnePlayer {
+                        time_since_completion,
+                        player_index,
+                    } => {
+                        if time_since_completion
+                            > Duration::from_millis(self.config.tie_interval_millis.into())
+                        {
+                            // handle player win
+                        }
+                    }
+                    SaberDuelBoutCompletion::BothPlayers {
+                        time_between_completions,
+                        fastest_player_index,
+                    } => {
+                        if time_between_completions
+                            > Duration::from_millis(self.config.tie_interval_millis.into())
+                        {
+                            // handle player win
+                        }
+
+                        return self.tie();
+                    }
                 }
 
                 if self.player2.is_none() && ai_next_key.time_until_next_event(now).is_zero() {
