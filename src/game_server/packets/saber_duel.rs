@@ -242,8 +242,8 @@ pub struct SaberDuelBoutWon {
     pub minigame_header: MinigameHeader,
     pub winner_index: u32,
     pub new_score: u32,
-    pub winner_animation_id: u32,
-    pub loser_animation_id: u32,
+    pub winner_animation_id: i32,
+    pub loser_animation_id: i32,
 }
 
 impl GamePacket for SaberDuelBoutWon {

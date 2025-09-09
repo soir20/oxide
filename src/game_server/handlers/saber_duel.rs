@@ -3,9 +3,9 @@ use std::{
     time::{Duration, Instant},
 };
 
-use enum_iterator::all;
 use packet_serialize::DeserializePacket;
 use rand::{thread_rng, Rng};
+use rand_distr::{Distribution, WeightedAliasIndex};
 use serde::Deserialize;
 
 use crate::game_server::{
@@ -259,6 +259,8 @@ enum SaberDuelBoutCompletion {
 #[derive(Clone, Debug)]
 pub struct SaberDuelGame {
     config: SaberDuelConfig,
+    short_bout_animation_distribution: WeightedAliasIndex<u8>,
+    long_bout_animation_distribution: WeightedAliasIndex<u8>,
     player1: u32,
     player2: Option<u32>,
     player_states: [SaberDuelPlayerState; 2],
@@ -287,8 +289,27 @@ impl SaberDuelGame {
             recipients.push(player2);
         }
 
+        let short_bout_animation_distribution = WeightedAliasIndex::new(
+            config
+                .short_bout_animations
+                .iter()
+                .map(|animation| animation.weight)
+                .collect(),
+        )
+        .expect("Couldn't create weighted alias index");
+        let long_bout_animation_distribution = WeightedAliasIndex::new(
+            config
+                .long_bout_animations
+                .iter()
+                .map(|animation| animation.weight)
+                .collect(),
+        )
+        .expect("Couldn't create weighted alias index");
+
         SaberDuelGame {
             config,
+            short_bout_animation_distribution,
+            long_bout_animation_distribution,
             player1,
             player2,
             player_states: [SaberDuelPlayerState::default(), player2_state],
@@ -781,7 +802,17 @@ impl SaberDuelGame {
         let player_state = &mut self.player_states[winner_index as usize];
         player_state.bouts_won = player_state.bouts_won.saturating_add(1);
 
-        // TODO: pick random animation
+        let rng = &mut thread_rng();
+        let animation_pair = match is_long_bout {
+            true => {
+                &self.config.long_bout_animations[self.long_bout_animation_distribution.sample(rng)]
+            }
+            false => {
+                &self.config.short_bout_animations
+                    [self.short_bout_animation_distribution.sample(rng)]
+            }
+        };
+
         let mut broadcasts = vec![Broadcast::Multi(
             self.recipients.clone(),
             vec![GamePacket::serialize(&TunneledPacket {
@@ -794,8 +825,8 @@ impl SaberDuelGame {
                     },
                     winner_index: winner_index.into(),
                     new_score: player_state.bouts_won.into(),
-                    winner_animation_id: 0,
-                    loser_animation_id: 0,
+                    winner_animation_id: animation_pair.attack_animation_id,
+                    loser_animation_id: animation_pair.defend_animation_id,
                 },
             })],
         )];
