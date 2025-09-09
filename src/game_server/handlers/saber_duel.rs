@@ -1,6 +1,6 @@
 use std::{
     io::{Cursor, Read},
-    time::Duration,
+    time::{Duration, Instant},
 };
 
 use enum_iterator::all;
@@ -428,6 +428,24 @@ impl SaberDuelGame {
         Ok(packets)
     }
 
+    pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
+        match &self.state {
+            SaberDuelGameState::WaitingForForcePowers { timer } => {
+                if timer.time_until_next_event(now).is_zero() {
+                    self.start_bout()
+                } else {
+                    Vec::new()
+                }
+            }
+            SaberDuelGameState::BoutActive {
+                timer,
+                keys,
+                base_sequence_len,
+            } => Vec::new(),
+            _ => Vec::new(),
+        }
+    }
+
     pub fn remove_player(
         &self,
         player: u32,
@@ -460,7 +478,7 @@ impl SaberDuelGame {
             return Ok(Vec::new());
         }
 
-        Ok(vec![Broadcast::Multi(
+        let mut broadcasts = vec![Broadcast::Multi(
             self.recipients.clone(),
             vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
@@ -472,7 +490,11 @@ impl SaberDuelGame {
                     },
                 },
             })],
-        )])
+        )];
+
+        broadcasts.append(&mut self.prepare_bout());
+
+        Ok(broadcasts)
     }
 
     fn player_index(&self, sender: u32) -> Result<u32, ProcessPacketError> {
@@ -488,12 +510,12 @@ impl SaberDuelGame {
         }
     }
 
-    fn start_round(&mut self) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    fn start_round(&mut self) -> Vec<Broadcast> {
         self.bout = 0;
         self.prepare_bout()
     }
 
-    fn prepare_bout(&mut self) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    fn prepare_bout(&mut self) -> Vec<Broadcast> {
         let mut broadcasts = vec![Broadcast::Multi(
             self.recipients.clone(),
             vec![GamePacket::serialize(&TunneledPacket {
@@ -523,19 +545,19 @@ impl SaberDuelGame {
         show_force_power_dialog |= player2_flags.can_use_any();
 
         if show_force_power_dialog {
-            broadcasts.append(&mut self.show_force_power_dialog(player1_flags, player2_flags)?);
+            broadcasts.append(&mut self.show_force_power_dialog(player1_flags, player2_flags));
         } else {
-            broadcasts.append(&mut self.start_bout()?);
+            broadcasts.append(&mut self.start_bout());
         }
 
-        Ok(broadcasts)
+        broadcasts
     }
 
     fn show_force_power_dialog(
         &mut self,
         player1_flags: SaberDuelForcePowerFlags,
         player2_flags: SaberDuelForcePowerFlags,
-    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    ) -> Vec<Broadcast> {
         let mut broadcasts = Vec::new();
 
         broadcasts.push(Broadcast::Single(
@@ -576,10 +598,10 @@ impl SaberDuelGame {
             )),
         };
 
-        Ok(broadcasts)
+        broadcasts
     }
 
-    fn start_bout(&mut self) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    fn start_bout(&mut self) -> Vec<Broadcast> {
         self.bout = self.bout.saturating_add(1);
         let is_long_bout = self.bout >= self.config.first_long_bout
             && (self.bout - self.config.first_long_bout) % self.config.long_bout_interval == 0;
@@ -617,7 +639,7 @@ impl SaberDuelGame {
             false => base_sequence_len,
         };
 
-        Ok(vec![Broadcast::Multi(
+        vec![Broadcast::Multi(
             self.recipients.clone(),
             vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
@@ -631,6 +653,6 @@ impl SaberDuelGame {
                     num_keys_by_player_index: vec![player1_keys.into(), player2_keys.into()],
                 },
             })],
-        )])
+        )]
     }
 }

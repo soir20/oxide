@@ -471,6 +471,7 @@ impl SharedMinigameTypeData {
         match self {
             SharedMinigameTypeData::FleetCommander { game } => game.tick(now),
             SharedMinigameTypeData::ForceConnection { game } => game.tick(now),
+            SharedMinigameTypeData::SaberDuel { game } => game.tick(now),
             _ => Vec::new(),
         }
     }
