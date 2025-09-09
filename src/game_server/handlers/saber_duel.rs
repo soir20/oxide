@@ -20,10 +20,10 @@ use crate::game_server::{
         minigame::MinigameHeader,
         player_update::{AddNpc, Hostility, Icon, RemoveStandard},
         saber_duel::{
-            SaberDuelBoutInfo, SaberDuelBoutStart, SaberDuelBoutTied, SaberDuelForcePower,
-            SaberDuelForcePowerDefinition, SaberDuelForcePowerFlags, SaberDuelGameStart,
-            SaberDuelKey, SaberDuelOpCode, SaberDuelPlayerUpdate, SaberDuelShowForcePowerDialog,
-            SaberDuelStageData,
+            SaberDuelBoutInfo, SaberDuelBoutStart, SaberDuelBoutTied, SaberDuelBoutWon,
+            SaberDuelForcePower, SaberDuelForcePowerDefinition, SaberDuelForcePowerFlags,
+            SaberDuelGameStart, SaberDuelKey, SaberDuelOpCode, SaberDuelPlayerUpdate,
+            SaberDuelRoundOver, SaberDuelShowForcePowerDialog, SaberDuelStageData,
         },
         tunnel::TunneledPacket,
         GamePacket, Pos, Target,
@@ -177,6 +177,8 @@ pub struct SaberDuelConfig {
     long_bout_animations: Vec<SaberDuelAnimationPair>,
     establishing_animation_id: i32,
     player_entrance_animation_id: i32,
+    bout_won_animation_id: u32,
+    bout_lost_animation_id: u32,
     ai: SaberDuelAi,
     max_force_points: u8,
     force_power_selection_max_millis: u32,
@@ -462,13 +464,13 @@ impl SaberDuelGame {
             }
             SaberDuelGameState::BoutActive {
                 bout_time_remaining,
-                keys,
                 ai_next_key,
                 player1_completed_time,
                 player2_completed_time,
+                ..
             } => {
                 if bout_time_remaining.time_until_next_event(now).is_zero() {
-                    return self.tie();
+                    return self.tie_bout();
                 }
 
                 let bout_completion = match (&player1_completed_time, &player2_completed_time) {
@@ -503,7 +505,7 @@ impl SaberDuelGame {
                         if time_since_completion
                             > Duration::from_millis(self.config.tie_interval_millis.into())
                         {
-                            // handle player win
+                            return self.win_bout(player_index);
                         }
                     }
                     SaberDuelBoutCompletion::BothPlayers {
@@ -513,10 +515,10 @@ impl SaberDuelGame {
                         if time_between_completions
                             > Duration::from_millis(self.config.tie_interval_millis.into())
                         {
-                            // handle player win
+                            return self.win_bout(fastest_player_index);
                         }
 
-                        return self.tie();
+                        return self.tie_bout();
                     }
                 }
 
@@ -600,11 +602,6 @@ impl SaberDuelGame {
                 format!("Player {sender} sent a ready packet for Saber Duel, but they aren't one of the game's players ({self:?})")
             ))
         }
-    }
-
-    fn start_round(&mut self) -> Vec<Broadcast> {
-        self.bout = 0;
-        self.prepare_bout()
     }
 
     fn prepare_bout(&mut self) -> Vec<Broadcast> {
@@ -775,7 +772,65 @@ impl SaberDuelGame {
         )]
     }
 
-    fn tie(&mut self) -> Vec<Broadcast> {
+    fn win_bout(&mut self, winner_index: u8) -> Vec<Broadcast> {
+        self.state = SaberDuelGameState::BoutEnded;
+
+        let player_state = &mut self.player_states[winner_index as usize];
+        player_state.bouts_won = player_state.bouts_won.saturating_add(1);
+
+        let mut broadcasts = vec![Broadcast::Multi(
+            self.recipients.clone(),
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: SaberDuelBoutWon {
+                    minigame_header: MinigameHeader {
+                        stage_guid: self.stage_guid,
+                        sub_op_code: SaberDuelOpCode::BoutWon as i32,
+                        stage_group_guid: self.stage_group_guid,
+                    },
+                    winner_index: winner_index.into(),
+                    new_score: player_state.bouts_won.into(),
+                    winner_animation_id: self.config.bout_won_animation_id,
+                    loser_animation_id: self.config.bout_lost_animation_id,
+                },
+            })],
+        )];
+
+        if player_state.bouts_won >= self.config.bouts_to_win_round {
+            player_state.rounds_won = player_state.rounds_won.saturating_add(1);
+            self.bout = 0;
+
+            broadcasts.push(Broadcast::Multi(
+                self.recipients.clone(),
+                vec![GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: SaberDuelRoundOver {
+                        minigame_header: MinigameHeader {
+                            stage_guid: self.stage_guid,
+                            sub_op_code: SaberDuelOpCode::BoutWon as i32,
+                            stage_group_guid: self.stage_group_guid,
+                        },
+                        winner_index: winner_index.into(),
+                        sound_id: match self.player2.is_none() {
+                            true => match winner_index == 0 {
+                                true => self.config.ai.bout_lost_sound_id,
+                                false => self.config.ai.bout_won_sound_id,
+                            },
+                            false => 0,
+                        },
+                    },
+                })],
+            ));
+        }
+
+        if player_state.rounds_won == self.config.rounds_to_win {
+            // TODO: handle player won game
+        }
+
+        broadcasts
+    }
+
+    fn tie_bout(&mut self) -> Vec<Broadcast> {
         self.state = SaberDuelGameState::BoutEnded;
         vec![Broadcast::Multi(
             self.recipients.clone(),
