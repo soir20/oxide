@@ -548,13 +548,11 @@ impl SaberDuelGame {
             if player_state.increment_progress() {
                 *completion_time = Some(now);
             }
-
-            return Ok(self.update_progress(player_index));
         } else {
-            // TODO: reset progress
+            player_state.progress = 0;
         }
 
-        Ok(Vec::new())
+        Ok(self.update_progress(player_index))
     }
 
     pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
