@@ -22,7 +22,7 @@ use crate::game_server::{
         saber_duel::{
             SaberDuelBoutInfo, SaberDuelBoutStart, SaberDuelBoutTied, SaberDuelBoutWon,
             SaberDuelForcePower, SaberDuelForcePowerDefinition, SaberDuelForcePowerFlags,
-            SaberDuelGameStart, SaberDuelKey, SaberDuelKeypress, SaberDuelOpCode,
+            SaberDuelGameStart, SaberDuelKey, SaberDuelKeypressEvent, SaberDuelOpCode,
             SaberDuelPlayerUpdate, SaberDuelRoundOver, SaberDuelShowForcePowerDialog,
             SaberDuelStageData,
         },
@@ -242,7 +242,7 @@ pub fn process_saber_duel_packet(
                 Ok(op_code) => match op_code {
                     SaberDuelOpCode::PlayerReady => game.mark_player_ready(sender),
                     SaberDuelOpCode::Keypress => {
-                        let event = SaberDuelKeypress::deserialize(cursor)?;
+                        let event = SaberDuelKeypressEvent::deserialize(cursor)?;
                         game.handle_keypress(sender, event)
                     }
                     SaberDuelOpCode::RequestApplyForcePower => Ok(Vec::new()),
@@ -503,7 +503,7 @@ impl SaberDuelGame {
     pub fn handle_keypress(
         &mut self,
         sender: u32,
-        event: SaberDuelKeypress,
+        event: SaberDuelKeypressEvent,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let player_index = self.player_index(sender)?;
         let SaberDuelGameState::BoutActive {
@@ -544,7 +544,7 @@ impl SaberDuelGame {
         }
         .max(keys.len() - 1);
 
-        if keys[key_index] == keypress {
+        if keys[key_index] == keypress.into() {
             if player_state.increment_progress() {
                 *completion_time = Some(now);
             }
