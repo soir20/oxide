@@ -205,7 +205,7 @@ impl GamePacket for SaberDuelRemoveForcePower {
     SerializePacket,
     DeserializePacket,
 )]
-#[repr(u16)]
+#[repr(u32)]
 pub enum SaberDuelKey {
     Up = 1,
     Down = 2,
