@@ -84,6 +84,7 @@ categories:
                   force_power_probability: 0
                   force_powers: []
                 max_force_points: 15
+                force_power_selection_max_millis: 5000
                 force_points_per_bout_won: 1
                 force_points_per_bout_tied: 1
                 force_points_per_bout_lost: 2
