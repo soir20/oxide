@@ -20,9 +20,10 @@ use crate::game_server::{
         minigame::MinigameHeader,
         player_update::{AddNpc, Hostility, Icon, RemoveStandard},
         saber_duel::{
-            SaberDuelBoutInfo, SaberDuelBoutStart, SaberDuelForcePower,
+            SaberDuelBoutInfo, SaberDuelBoutStart, SaberDuelBoutTied, SaberDuelForcePower,
             SaberDuelForcePowerDefinition, SaberDuelForcePowerFlags, SaberDuelGameStart,
-            SaberDuelKey, SaberDuelOpCode, SaberDuelShowForcePowerDialog, SaberDuelStageData,
+            SaberDuelKey, SaberDuelOpCode, SaberDuelPlayerUpdate, SaberDuelShowForcePowerDialog,
+            SaberDuelStageData,
         },
         tunnel::TunneledPacket,
         GamePacket, Pos, Target,
@@ -85,6 +86,7 @@ struct SaberDuelPlayerState {
     pub rounds_won: u8,
     pub bouts_won: u8,
     pub progress: u8,
+    pub required_progress: u8,
     pub affected_by_force_powers: Vec<SaberDuelAppliedForcePower>,
     pub saw_force_power_tutorial: bool,
     pub force_points: u8,
@@ -120,6 +122,13 @@ impl SaberDuelPlayerState {
                 .can_afford(SaberDuelForcePower::Opposite, available_force_powers),
         }
     }
+
+    pub fn increment_progress(&mut self) -> bool {
+        let new_progress = self.progress.saturating_add(1).min(self.required_progress);
+        self.progress = new_progress;
+
+        new_progress >= self.required_progress
+    }
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -143,9 +152,9 @@ enum SaberDuelGameState {
         timer: MinigameTimer,
     },
     BoutActive {
-        timer: MinigameTimer,
+        bout_time_remaining: MinigameTimer,
         keys: Vec<SaberDuelKey>,
-        base_sequence_len: u8,
+        ai_next_key: MinigameTimer,
         player1_completed_time: Option<Instant>,
         player2_completed_time: Option<Instant>,
     },
@@ -431,7 +440,7 @@ impl SaberDuelGame {
     }
 
     pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
-        match &self.state {
+        match &mut self.state {
             SaberDuelGameState::WaitingForForcePowers { timer } => {
                 if timer.time_until_next_event(now).is_zero() {
                     self.start_bout()
@@ -440,12 +449,27 @@ impl SaberDuelGame {
                 }
             }
             SaberDuelGameState::BoutActive {
-                timer,
+                bout_time_remaining: timer,
                 keys,
-                base_sequence_len,
+                ai_next_key,
                 player1_completed_time,
                 player2_completed_time,
-            } => Vec::new(),
+            } => {
+                if timer.time_until_next_event(now).is_zero() {
+                    return self.tie();
+                }
+
+                if self.player2.is_none() && ai_next_key.time_until_next_event(now).is_zero() {
+                    // TODO: handle mistakes
+                    if self.player_states[1].increment_progress() {
+                        *player2_completed_time = Some(now);
+                    }
+
+                    self.update_progress(1);
+                }
+
+                Vec::new()
+            }
             _ => Vec::new(),
         }
     }
@@ -625,11 +649,13 @@ impl SaberDuelGame {
         }
 
         self.state = SaberDuelGameState::BoutActive {
-            timer: MinigameTimer::new_with_event(Duration::from_millis(
+            bout_time_remaining: MinigameTimer::new_with_event(Duration::from_millis(
                 self.config.bout_max_millis.into(),
             )),
             keys: keys.clone(),
-            base_sequence_len,
+            ai_next_key: MinigameTimer::new_with_event(Duration::from_millis(
+                self.config.ai.millis_per_key.into(),
+            )),
             player1_completed_time: None,
             player2_completed_time: None,
         };
@@ -645,6 +671,9 @@ impl SaberDuelGame {
             false => base_sequence_len,
         };
 
+        self.player_states[0].required_progress = player1_keys;
+        self.player_states[1].required_progress = player2_keys;
+
         vec![Broadcast::Multi(
             self.recipients.clone(),
             vec![GamePacket::serialize(&TunneledPacket {
@@ -657,6 +686,43 @@ impl SaberDuelGame {
                     },
                     keys,
                     num_keys_by_player_index: vec![player1_keys.into(), player2_keys.into()],
+                },
+            })],
+        )]
+    }
+
+    fn update_progress(&self, player_index: u8) -> Vec<Broadcast> {
+        let player_state = &self.player_states[player_index as usize];
+
+        vec![Broadcast::Multi(
+            self.recipients.clone(),
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: SaberDuelPlayerUpdate {
+                    minigame_header: MinigameHeader {
+                        stage_guid: self.stage_guid,
+                        sub_op_code: SaberDuelOpCode::PlayerUpdate as i32,
+                        stage_group_guid: self.stage_group_guid,
+                    },
+                    player_index: player_index.into(),
+                    progress: player_state.progress.into(),
+                },
+            })],
+        )]
+    }
+
+    fn tie(&mut self) -> Vec<Broadcast> {
+        self.state = SaberDuelGameState::BoutEnded;
+        vec![Broadcast::Multi(
+            self.recipients.clone(),
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: SaberDuelBoutTied {
+                    minigame_header: MinigameHeader {
+                        stage_guid: self.stage_guid,
+                        sub_op_code: SaberDuelOpCode::BoutTied as i32,
+                        stage_group_guid: self.stage_group_guid,
+                    },
                 },
             })],
         )]

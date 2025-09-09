@@ -228,7 +228,7 @@ impl GamePacket for SaberDuelBoutStart {
 pub struct SaberDuelPlayerUpdate {
     pub minigame_header: MinigameHeader,
     pub player_index: u32,
-    pub current_key_index: u32,
+    pub progress: u32,
 }
 
 impl GamePacket for SaberDuelPlayerUpdate {
