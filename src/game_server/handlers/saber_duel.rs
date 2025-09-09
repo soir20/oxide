@@ -131,10 +131,15 @@ impl SaberDuelPlayerState {
     }
 }
 
+const fn default_weight() -> u8 {
+    1
+}
+
 #[derive(Clone, Debug, Deserialize)]
 struct SaberDuelAnimationPair {
     attack_animation_id: i32,
     defend_animation_id: i32,
+    #[serde(default = "default_weight")]
     weight: u8,
 }
 

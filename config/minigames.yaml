@@ -65,8 +65,12 @@ categories:
                 long_bout_interval: 3
                 bout_max_millis: 10000
                 tie_interval_millis: 100
-                short_bout_animations: []
-                long_bout_animations: []
+                short_bout_animations:
+                - attack_animation_id: 5031
+                  defend_animation_id: 5032
+                long_bout_animations:
+                - attack_animation_id: 5039
+                  defend_animation_id: 5040
                 establishing_animation_id: 6005
                 player_entrance_animation_id: 6004
                 ai:
