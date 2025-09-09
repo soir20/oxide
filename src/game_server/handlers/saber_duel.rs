@@ -542,7 +542,7 @@ impl SaberDuelGame {
                 .saturating_sub(player_state.progress) as usize,
             false => player_state.progress as usize,
         }
-        .max(keys.len() - 1);
+        .min(keys.len() - 1);
 
         if keys[key_index] == keypress.into() {
             if player_state.increment_progress() {
