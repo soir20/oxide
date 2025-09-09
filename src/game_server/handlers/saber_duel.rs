@@ -146,6 +146,8 @@ enum SaberDuelGameState {
         timer: MinigameTimer,
         keys: Vec<SaberDuelKey>,
         base_sequence_len: u8,
+        player1_completed_time: Option<Instant>,
+        player2_completed_time: Option<Instant>,
     },
     BoutEnded,
 }
@@ -441,6 +443,8 @@ impl SaberDuelGame {
                 timer,
                 keys,
                 base_sequence_len,
+                player1_completed_time,
+                player2_completed_time,
             } => Vec::new(),
             _ => Vec::new(),
         }
@@ -626,6 +630,8 @@ impl SaberDuelGame {
             )),
             keys: keys.clone(),
             base_sequence_len,
+            player1_completed_time: None,
+            player2_completed_time: None,
         };
 
         let player1_keys = match self.player_states[0].is_affected_by(SaberDuelForcePower::ExtraKey)
