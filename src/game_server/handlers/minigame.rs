@@ -387,9 +387,7 @@ impl
             SharedMinigameTypeData::ForceConnection { .. } => {
                 SharedMinigameDataTickableIndex::Tickable
             }
-            SharedMinigameTypeData::SaberDuel { .. } => {
-                SharedMinigameDataTickableIndex::Tickable
-            }
+            SharedMinigameTypeData::SaberDuel { .. } => SharedMinigameDataTickableIndex::Tickable,
             _ => SharedMinigameDataTickableIndex::NotTickable,
         }
     }

@@ -464,7 +464,9 @@ impl SaberDuelGame {
                     if self.player_states[1].increment_progress() {
                         *player2_completed_time = Some(now);
                     }
-                    ai_next_key.schedule_event(Duration::from_millis(self.config.ai.millis_per_key.into()));
+                    ai_next_key.schedule_event(Duration::from_millis(
+                        self.config.ai.millis_per_key.into(),
+                    ));
 
                     return self.update_progress(1);
                 }
