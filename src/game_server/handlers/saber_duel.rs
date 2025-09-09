@@ -153,6 +153,7 @@ enum SaberDuelGameState {
     },
     BoutActive {
         bout_time_remaining: MinigameTimer,
+        is_long_bout: bool,
         keys: Vec<SaberDuelKey>,
         ai_next_key: MinigameTimer,
         player1_completed_time: Option<Instant>,
@@ -177,8 +178,6 @@ pub struct SaberDuelConfig {
     long_bout_animations: Vec<SaberDuelAnimationPair>,
     establishing_animation_id: i32,
     player_entrance_animation_id: i32,
-    bout_won_animation_id: u32,
-    bout_lost_animation_id: u32,
     ai: SaberDuelAi,
     max_force_points: u8,
     force_power_selection_max_millis: u32,
@@ -464,6 +463,7 @@ impl SaberDuelGame {
             }
             SaberDuelGameState::BoutActive {
                 bout_time_remaining,
+                is_long_bout,
                 ai_next_key,
                 player1_completed_time,
                 player2_completed_time,
@@ -472,6 +472,8 @@ impl SaberDuelGame {
                 if bout_time_remaining.time_until_next_event(now).is_zero() {
                     return self.tie_bout();
                 }
+
+                let is_long_bout = *is_long_bout;
 
                 let bout_completion = match (&player1_completed_time, &player2_completed_time) {
                     (None, None) => SaberDuelBoutCompletion::NeitherPlayer,
@@ -505,7 +507,7 @@ impl SaberDuelGame {
                         if time_since_completion
                             > Duration::from_millis(self.config.tie_interval_millis.into())
                         {
-                            return self.win_bout(player_index);
+                            return self.win_bout(player_index, is_long_bout);
                         }
                     }
                     SaberDuelBoutCompletion::BothPlayers {
@@ -515,7 +517,7 @@ impl SaberDuelGame {
                         if time_between_completions
                             > Duration::from_millis(self.config.tie_interval_millis.into())
                         {
-                            return self.win_bout(fastest_player_index);
+                            return self.win_bout(fastest_player_index, is_long_bout);
                         }
 
                         return self.tie_bout();
@@ -713,6 +715,7 @@ impl SaberDuelGame {
             bout_time_remaining: MinigameTimer::new_with_event(Duration::from_millis(
                 self.config.bout_max_millis.into(),
             )),
+            is_long_bout,
             keys: keys.clone(),
             ai_next_key: MinigameTimer::new_with_event(Duration::from_millis(
                 self.config.ai.millis_per_key.into(),
@@ -772,12 +775,13 @@ impl SaberDuelGame {
         )]
     }
 
-    fn win_bout(&mut self, winner_index: u8) -> Vec<Broadcast> {
+    fn win_bout(&mut self, winner_index: u8, is_long_bout: bool) -> Vec<Broadcast> {
         self.state = SaberDuelGameState::BoutEnded;
 
         let player_state = &mut self.player_states[winner_index as usize];
         player_state.bouts_won = player_state.bouts_won.saturating_add(1);
 
+        // TODO: pick random animation
         let mut broadcasts = vec![Broadcast::Multi(
             self.recipients.clone(),
             vec![GamePacket::serialize(&TunneledPacket {
@@ -790,8 +794,8 @@ impl SaberDuelGame {
                     },
                     winner_index: winner_index.into(),
                     new_score: player_state.bouts_won.into(),
-                    winner_animation_id: self.config.bout_won_animation_id,
-                    loser_animation_id: self.config.bout_lost_animation_id,
+                    winner_animation_id: 0,
+                    loser_animation_id: 0,
                 },
             })],
         )];

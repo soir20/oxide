@@ -69,8 +69,6 @@ categories:
                 long_bout_animations: []
                 establishing_animation_id: 6005
                 player_entrance_animation_id: 6004
-                bout_won_animation_id: 6002
-                bout_lost_animation_id: 6003
                 ai:
                   name_id: 1134
                   model_id: 183
