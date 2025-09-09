@@ -6,7 +6,7 @@ use std::{
 use packet_serialize::DeserializePacket;
 use rand::{thread_rng, Rng};
 use rand_distr::{Distribution, WeightedAliasIndex};
-use serde::Deserialize;
+use serde::{Deserialize, Deserializer};
 
 use crate::game_server::{
     handlers::{
@@ -162,6 +162,21 @@ enum SaberDuelGameState {
     BoutEnded,
 }
 
+fn deserialize_bout_animations<'de, D, T>(deserializer: D) -> Result<Vec<T>, D::Error>
+where
+    D: Deserializer<'de>,
+    T: Deserialize<'de>,
+{
+    let animations = <Vec<T>>::deserialize(deserializer)?;
+    if animations.is_empty() {
+        Err(serde::de::Error::custom(
+            "Bout animations must be non-empty",
+        ))
+    } else {
+        Ok(animations)
+    }
+}
+
 #[derive(Clone, Debug, Deserialize)]
 pub struct SaberDuelConfig {
     pos: Pos,
@@ -174,7 +189,9 @@ pub struct SaberDuelConfig {
     long_bout_interval: u8,
     bout_max_millis: u32,
     tie_interval_millis: u32,
+    #[serde(deserialize_with = "deserialize_bout_animations")]
     short_bout_animations: Vec<SaberDuelAnimationPair>,
+    #[serde(deserialize_with = "deserialize_bout_animations")]
     long_bout_animations: Vec<SaberDuelAnimationPair>,
     establishing_animation_id: i32,
     player_entrance_animation_id: i32,
