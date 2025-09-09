@@ -466,7 +466,7 @@ impl SaberDuelGame {
                     }
                     ai_next_key.schedule_event(Duration::from_millis(self.config.ai.millis_per_key.into()));
 
-                    self.update_progress(1);
+                    return self.update_progress(1);
                 }
 
                 Vec::new()
