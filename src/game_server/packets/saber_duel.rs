@@ -195,9 +195,17 @@ impl GamePacket for SaberDuelRemoveForcePower {
 }
 
 #[derive(
-    Clone, Copy, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
+    Clone,
+    Copy,
+    Debug,
+    PartialEq,
+    Eq,
+    TryFromPrimitive,
+    IntoPrimitive,
+    SerializePacket,
+    DeserializePacket,
 )]
-#[repr(u32)]
+#[repr(u16)]
 pub enum SaberDuelKey {
     Up = 1,
     Down = 2,

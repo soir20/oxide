@@ -22,8 +22,9 @@ use crate::game_server::{
         saber_duel::{
             SaberDuelBoutInfo, SaberDuelBoutStart, SaberDuelBoutTied, SaberDuelBoutWon,
             SaberDuelForcePower, SaberDuelForcePowerDefinition, SaberDuelForcePowerFlags,
-            SaberDuelGameStart, SaberDuelKey, SaberDuelOpCode, SaberDuelPlayerUpdate,
-            SaberDuelRoundOver, SaberDuelShowForcePowerDialog, SaberDuelStageData,
+            SaberDuelGameStart, SaberDuelKey, SaberDuelKeypress, SaberDuelOpCode,
+            SaberDuelPlayerUpdate, SaberDuelRoundOver, SaberDuelShowForcePowerDialog,
+            SaberDuelStageData,
         },
         tunnel::TunneledPacket,
         GamePacket, Pos, Target,
@@ -123,6 +124,7 @@ impl SaberDuelPlayerState {
         }
     }
 
+    #[must_use]
     pub fn increment_progress(&mut self) -> bool {
         let new_progress = self.progress.saturating_add(1).min(self.required_progress);
         self.progress = new_progress;
@@ -239,7 +241,10 @@ pub fn process_saber_duel_packet(
             match SaberDuelOpCode::try_from(header.sub_op_code) {
                 Ok(op_code) => match op_code {
                     SaberDuelOpCode::PlayerReady => game.mark_player_ready(sender),
-                    SaberDuelOpCode::Keypress => Ok(Vec::new()),
+                    SaberDuelOpCode::Keypress => {
+                        let event = SaberDuelKeypress::deserialize(cursor)?;
+                        game.handle_keypress(sender, event)
+                    }
                     SaberDuelOpCode::RequestApplyForcePower => Ok(Vec::new()),
                     _ => {
                         let mut buffer = Vec::new();
@@ -464,7 +469,7 @@ impl SaberDuelGame {
                 camera_rot: self.config.camera_rot,
                 max_combo_points: 0,
                 establishing_animation_id: self.config.establishing_animation_id,
-                local_player_index: player_index,
+                local_player_index: player_index.into(),
                 opponent_guid: match player_index {
                     0 => match self.player2 {
                         Some(opponent_guid) => player_guid(opponent_guid),
@@ -493,6 +498,63 @@ impl SaberDuelGame {
         }));
 
         Ok(packets)
+    }
+
+    pub fn handle_keypress(
+        &mut self,
+        sender: u32,
+        event: SaberDuelKeypress,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let player_index = self.player_index(sender)?;
+        let SaberDuelGameState::BoutActive {
+            bout_time_remaining,
+            keys,
+            player1_completed_time,
+            player2_completed_time,
+            ..
+        } = &mut self.state
+        else {
+            return Ok(Vec::new());
+        };
+
+        if keys.is_empty() {
+            return Ok(Vec::new());
+        }
+
+        let completion_time = match player_index == 0 {
+            true => player1_completed_time,
+            false => player2_completed_time,
+        };
+
+        let now = Instant::now();
+
+        if completion_time.is_some() || bout_time_remaining.time_until_next_event(now).is_zero() {
+            return Ok(Vec::new());
+        }
+
+        let keypress = event.keypress;
+        let player_state = &mut self.player_states[player_index as usize];
+
+        let is_reverse = player_state.is_affected_by(SaberDuelForcePower::RightToLeft);
+        let key_index = match is_reverse {
+            true => player_state
+                .required_progress
+                .saturating_sub(player_state.progress) as usize,
+            false => player_state.progress as usize,
+        }
+        .max(keys.len() - 1);
+
+        if keys[key_index] == keypress {
+            if player_state.increment_progress() {
+                *completion_time = Some(now);
+            }
+
+            return Ok(self.update_progress(player_index));
+        } else {
+            // TODO: reset progress
+        }
+
+        Ok(Vec::new())
     }
 
     pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
@@ -636,7 +698,7 @@ impl SaberDuelGame {
         Ok(broadcasts)
     }
 
-    fn player_index(&self, sender: u32) -> Result<u32, ProcessPacketError> {
+    fn player_index(&self, sender: u32) -> Result<u8, ProcessPacketError> {
         if sender == self.player1 {
             Ok(0)
         } else if Some(sender) == self.player2 {
