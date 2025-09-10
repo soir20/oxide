@@ -50,7 +50,9 @@ struct SaberDuelAi {
     game_won_sound_id: u32,
     game_lost_sound_id: u32,
     millis_per_key: u16,
+    #[serde(deserialize_with = "deserialize_probability")]
     mistake_probability: f32,
+    #[serde(deserialize_with = "deserialize_probability")]
     force_power_probability: f32,
     force_powers: Vec<SaberDuelAiForcePower>,
 }
@@ -91,6 +93,8 @@ struct SaberDuelPlayerState {
     pub affected_by_force_powers: Vec<SaberDuelAppliedForcePower>,
     pub saw_force_power_tutorial: bool,
     pub force_points: u8,
+    pub total_correct: u32,
+    pub total_mistakes: u32,
 }
 
 impl SaberDuelPlayerState {
@@ -128,8 +132,14 @@ impl SaberDuelPlayerState {
     pub fn increment_progress(&mut self) -> bool {
         let new_progress = self.progress.saturating_add(1).min(self.required_progress);
         self.progress = new_progress;
+        self.total_correct = self.total_correct.saturating_add(1);
 
         new_progress >= self.required_progress
+    }
+
+    pub fn make_mistake(&mut self) {
+        self.progress = 0;
+        self.total_mistakes = self.total_mistakes.saturating_add(1);
     }
 }
 
@@ -174,13 +184,27 @@ where
     D: Deserializer<'de>,
     T: Deserialize<'de>,
 {
-    let animations = <Vec<T>>::deserialize(deserializer)?;
+    let animations: Vec<T> = Deserialize::deserialize(deserializer)?;
     if animations.is_empty() {
         Err(serde::de::Error::custom(
             "Bout animations must be non-empty",
         ))
     } else {
         Ok(animations)
+    }
+}
+
+fn deserialize_probability<'de, D>(deserializer: D) -> Result<f32, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let probability: f32 = Deserialize::deserialize(deserializer)?;
+    if (0.0..=1.0).contains(&probability) {
+        Err(serde::de::Error::custom(
+            "Probability must be between 0.0 and 1.0 (inclusive)",
+        ))
+    } else {
+        Ok(probability)
     }
 }
 
@@ -549,7 +573,7 @@ impl SaberDuelGame {
                 *completion_time = Some(now);
             }
         } else {
-            player_state.progress = 0;
+            player_state.make_mistake();
         }
 
         Ok(self.update_progress(player_index))
@@ -628,6 +652,8 @@ impl SaberDuelGame {
                 }
 
                 if self.player2.is_none() && ai_next_key.time_until_next_event(now).is_zero() {
+                    //let mistake_probability = self.config.ai.mistake_probability * ;
+
                     // TODO: handle mistakes
                     if self.player_states[1].increment_progress() {
                         *player2_completed_time = Some(now);
