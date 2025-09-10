@@ -943,8 +943,17 @@ impl SaberDuelGame {
     fn win_bout(&mut self, winner_index: u8, is_long_bout: bool) -> Vec<Broadcast> {
         self.state = SaberDuelGameState::BoutEnded;
 
-        let player_state = &mut self.player_states[winner_index as usize];
-        player_state.bouts_won = player_state.bouts_won.saturating_add(1);
+        let loser_index = (winner_index + 1) % 2;
+        let loser_state = &mut self.player_states[loser_index as usize];
+        loser_state.force_points = loser_state
+            .force_points
+            .saturating_add(self.config.force_points_per_bout_lost);
+
+        let winner_state = &mut self.player_states[winner_index as usize];
+        winner_state.force_points = winner_state
+            .force_points
+            .saturating_add(self.config.force_points_per_bout_won);
+        winner_state.bouts_won = winner_state.bouts_won.saturating_add(1);
 
         let rng = &mut thread_rng();
         let animation_pair = match is_long_bout {
@@ -968,15 +977,15 @@ impl SaberDuelGame {
                         stage_group_guid: self.stage_group_guid,
                     },
                     winner_index: winner_index.into(),
-                    new_score: player_state.bouts_won.into(),
+                    new_score: winner_state.bouts_won.into(),
                     winner_animation_id: animation_pair.attack_animation_id,
                     loser_animation_id: animation_pair.defend_animation_id,
                 },
             })],
         )];
 
-        if player_state.bouts_won >= self.config.bouts_to_win_round {
-            player_state.rounds_won = player_state.rounds_won.saturating_add(1);
+        if winner_state.bouts_won >= self.config.bouts_to_win_round {
+            winner_state.rounds_won = winner_state.rounds_won.saturating_add(1);
             self.bout = 0;
 
             broadcasts.push(Broadcast::Multi(
@@ -1002,7 +1011,7 @@ impl SaberDuelGame {
             ));
         }
 
-        if player_state.rounds_won == self.config.rounds_to_win {
+        if winner_state.rounds_won == self.config.rounds_to_win {
             // TODO: handle player won game
         }
 
@@ -1010,6 +1019,12 @@ impl SaberDuelGame {
     }
 
     fn tie_bout(&mut self) -> Vec<Broadcast> {
+        self.player_states.iter_mut().for_each(|player_state| {
+            player_state.force_points = player_state
+                .force_points
+                .saturating_add(self.config.force_points_per_bout_tied);
+        });
+
         self.state = SaberDuelGameState::BoutEnded;
         vec![Broadcast::Multi(
             self.recipients.clone(),
