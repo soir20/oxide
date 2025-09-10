@@ -890,7 +890,7 @@ impl SaberDuelGame {
         ai_next_key: &mut MinigameTimer,
         bout_completed_time: &mut Option<Instant>,
     ) -> bool {
-        if ai_next_key.time_until_next_event(now).is_zero() {
+        if !ai_next_key.time_until_next_event(now).is_zero() {
             return false;
         }
 
