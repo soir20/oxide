@@ -888,7 +888,7 @@ impl SaberDuelGame {
         config: &SaberDuelConfig,
         player_state: &mut SaberDuelPlayerState,
         ai_next_key: &mut MinigameTimer,
-        player2_completed_time: &mut Option<Instant>,
+        bout_completed_time: &mut Option<Instant>,
     ) -> bool {
         if ai_next_key.time_until_next_event(now).is_zero() {
             return false;
@@ -913,7 +913,7 @@ impl SaberDuelGame {
         if make_mistake {
             player_state.make_mistake();
         } else if player_state.increment_progress() {
-            *player2_completed_time = Some(now);
+            *bout_completed_time = Some(now);
         }
         ai_next_key.schedule_event(Duration::from_millis(config.ai.millis_per_key.into()));
 
