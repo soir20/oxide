@@ -144,6 +144,11 @@ impl SaberDuelPlayerState {
         self.required_progress = new_required_progress;
     }
 
+    pub fn reset_round_progress(&mut self) {
+        self.reset_bout_progress(0);
+        self.bouts_won = 0;
+    }
+
     #[must_use]
     pub fn increment_progress(&mut self) -> bool {
         let new_progress = self.progress.saturating_add(1).min(self.required_progress);
@@ -1013,8 +1018,6 @@ impl SaberDuelGame {
             winner_state.rounds_won = winner_state.rounds_won.saturating_add(1);
             self.bout = 0;
 
-            // TODO: reset bouts won for both players
-
             broadcasts.push(Broadcast::Multi(
                 self.recipients.clone(),
                 vec![GamePacket::serialize(&TunneledPacket {
@@ -1036,10 +1039,12 @@ impl SaberDuelGame {
                     },
                 })],
             ));
-        }
 
-        if winner_state.rounds_won == self.config.rounds_to_win {
-            // TODO: handle player won game
+            if winner_state.rounds_won >= self.config.rounds_to_win {
+                // TODO: handle player won game
+            }
+
+            self.player_states.iter_mut().for_each(|player_state| player_state.reset_round_progress());
         }
 
         broadcasts
