@@ -977,7 +977,8 @@ impl SaberDuelGame {
             self.config.force_points_per_bout_won,
             self.config.max_force_points,
         );
-        winner_state.bouts_won = winner_state.bouts_won.saturating_add(1);
+        let score_per_bout_won = 1;
+        winner_state.bouts_won = winner_state.bouts_won.saturating_add(score_per_bout_won);
 
         let rng = &mut thread_rng();
         let animation_pair = match is_long_bout {
@@ -1001,7 +1002,7 @@ impl SaberDuelGame {
                         stage_group_guid: self.stage_group_guid,
                     },
                     winner_index: winner_index.into(),
-                    new_score: winner_state.bouts_won.into(),
+                    added_score: score_per_bout_won.into(),
                     winner_animation_id: animation_pair.attack_animation_id,
                     loser_animation_id: animation_pair.defend_animation_id,
                 },
