@@ -132,6 +132,11 @@ impl SaberDuelPlayerState {
         }
     }
 
+    pub fn reset_bout_progress(&mut self, new_required_progress: u8) {
+        self.progress = 0;
+        self.required_progress = new_required_progress;
+    }
+
     #[must_use]
     pub fn increment_progress(&mut self) -> bool {
         let new_progress = self.progress.saturating_add(1).min(self.required_progress);
@@ -142,7 +147,7 @@ impl SaberDuelPlayerState {
     }
 
     pub fn make_mistake(&mut self) {
-        self.progress = 0;
+        self.reset_bout_progress(self.required_progress);
         self.total_mistakes = self.total_mistakes.saturating_add(1);
     }
 }
@@ -180,7 +185,6 @@ enum SaberDuelGameState {
         player1_completed_time: Option<Instant>,
         player2_completed_time: Option<Instant>,
     },
-    BoutEnded,
 }
 
 fn deserialize_bout_animations<'de, D, T>(deserializer: D) -> Result<Vec<T>, D::Error>
@@ -332,11 +336,6 @@ impl SaberDuelGame {
         stage_guid: i32,
         stage_group_guid: i32,
     ) -> Self {
-        let mut player2_state = SaberDuelPlayerState::default();
-        if player2.is_none() {
-            player2_state.ready = true;
-        }
-
         let mut recipients = vec![player1];
         if let Some(player2) = player2 {
             recipients.push(player2);
@@ -359,19 +358,22 @@ impl SaberDuelGame {
         )
         .expect("Couldn't create weighted alias index");
 
-        SaberDuelGame {
+        let mut game = SaberDuelGame {
             config,
             short_bout_animation_distribution,
             long_bout_animation_distribution,
             player1,
             player2,
-            player_states: [SaberDuelPlayerState::default(), player2_state],
+            player_states: Default::default(),
             bout: 0,
             state: SaberDuelGameState::WaitingForPlayersReady,
             recipients,
             stage_guid,
             stage_group_guid,
-        }
+        };
+        game.reset_readiness();
+
+        game
     }
 
     pub fn start(&self, sender: u32) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
@@ -862,8 +864,8 @@ impl SaberDuelGame {
             false => base_sequence_len,
         };
 
-        self.player_states[0].required_progress = player1_keys;
-        self.player_states[1].required_progress = player2_keys;
+        self.player_states[0].reset_bout_progress(player1_keys);
+        self.player_states[1].reset_bout_progress(player2_keys);
 
         vec![Broadcast::Multi(
             self.recipients.clone(),
@@ -941,7 +943,7 @@ impl SaberDuelGame {
     }
 
     fn win_bout(&mut self, winner_index: u8, is_long_bout: bool) -> Vec<Broadcast> {
-        self.state = SaberDuelGameState::BoutEnded;
+        self.reset_readiness();
 
         let loser_index = (winner_index + 1) % 2;
         let loser_state = &mut self.player_states[loser_index as usize];
@@ -1019,13 +1021,13 @@ impl SaberDuelGame {
     }
 
     fn tie_bout(&mut self) -> Vec<Broadcast> {
+        self.reset_readiness();
         self.player_states.iter_mut().for_each(|player_state| {
             player_state.force_points = player_state
                 .force_points
                 .saturating_add(self.config.force_points_per_bout_tied);
         });
 
-        self.state = SaberDuelGameState::BoutEnded;
         vec![Broadcast::Multi(
             self.recipients.clone(),
             vec![GamePacket::serialize(&TunneledPacket {
@@ -1039,5 +1041,11 @@ impl SaberDuelGame {
                 },
             })],
         )]
+    }
+
+    fn reset_readiness(&mut self) {
+        self.state = SaberDuelGameState::WaitingForPlayersReady;
+        self.player_states[0].ready = false;
+        self.player_states[1].ready = self.player2.is_none();
     }
 }
