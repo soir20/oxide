@@ -1008,10 +1008,6 @@ impl SaberDuelGame {
             })],
         )];
 
-        println!(
-            "BOUTS WON: {}, BOUTS TO WIN: {}",
-            winner_state.bouts_won, self.config.bouts_to_win_round
-        );
         if winner_state.bouts_won >= self.config.bouts_to_win_round {
             winner_state.rounds_won = winner_state.rounds_won.saturating_add(1);
             self.bout = 0;
