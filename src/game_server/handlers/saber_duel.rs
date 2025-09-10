@@ -742,7 +742,48 @@ impl SaberDuelGame {
             ));
         }
 
-        broadcasts.append(&mut self.prepare_bout());
+        let leader_index = match self.player_states[0].bouts_won > self.player_states[1].bouts_won {
+            true => 0u8,
+            false => 1u8,
+        };
+        let leader_state = &mut self.player_states[leader_index as usize];
+
+        if leader_state.bouts_won >= self.config.bouts_to_win_round {
+            leader_state.rounds_won = leader_state.rounds_won.saturating_add(1);
+            self.bout = 0;
+
+            broadcasts.push(Broadcast::Multi(
+                self.recipients.clone(),
+                vec![GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: SaberDuelRoundOver {
+                        minigame_header: MinigameHeader {
+                            stage_guid: self.stage_guid,
+                            sub_op_code: SaberDuelOpCode::RoundOver as i32,
+                            stage_group_guid: self.stage_group_guid,
+                        },
+                        winner_index: leader_index.into(),
+                        sound_id: match self.player2.is_none() {
+                            true => match leader_index == 0 {
+                                true => self.config.ai.bout_lost_sound_id,
+                                false => self.config.ai.bout_won_sound_id,
+                            },
+                            false => 0,
+                        },
+                    },
+                })],
+            ));
+
+            if leader_state.rounds_won >= self.config.rounds_to_win {
+                // TODO: handle player won game
+            }
+
+            self.player_states
+                .iter_mut()
+                .for_each(|player_state| player_state.reset_round_progress());
+        } else {
+            broadcasts.append(&mut self.prepare_bout());
+        }
 
         Ok(broadcasts)
     }
@@ -996,7 +1037,7 @@ impl SaberDuelGame {
             }
         };
 
-        let mut broadcasts = vec![Broadcast::Multi(
+        vec![Broadcast::Multi(
             self.recipients.clone(),
             vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
@@ -1012,42 +1053,7 @@ impl SaberDuelGame {
                     loser_animation_id: animation_pair.defend_animation_id,
                 },
             })],
-        )];
-
-        if winner_state.bouts_won >= self.config.bouts_to_win_round {
-            winner_state.rounds_won = winner_state.rounds_won.saturating_add(1);
-            self.bout = 0;
-
-            broadcasts.push(Broadcast::Multi(
-                self.recipients.clone(),
-                vec![GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: SaberDuelRoundOver {
-                        minigame_header: MinigameHeader {
-                            stage_guid: self.stage_guid,
-                            sub_op_code: SaberDuelOpCode::RoundOver as i32,
-                            stage_group_guid: self.stage_group_guid,
-                        },
-                        winner_index: winner_index.into(),
-                        sound_id: match self.player2.is_none() {
-                            true => match winner_index == 0 {
-                                true => self.config.ai.bout_lost_sound_id,
-                                false => self.config.ai.bout_won_sound_id,
-                            },
-                            false => 0,
-                        },
-                    },
-                })],
-            ));
-
-            if winner_state.rounds_won >= self.config.rounds_to_win {
-                // TODO: handle player won game
-            }
-
-            self.player_states.iter_mut().for_each(|player_state| player_state.reset_round_progress());
-        }
-
-        broadcasts
+        )]
     }
 
     fn tie_bout(&mut self) -> Vec<Broadcast> {
