@@ -132,6 +132,13 @@ impl SaberDuelPlayerState {
         }
     }
 
+    pub fn add_force_points(&mut self, force_points: u8, max_force_points: u8) {
+        self.force_points = self
+            .force_points
+            .saturating_add(force_points)
+            .min(max_force_points);
+    }
+
     pub fn reset_bout_progress(&mut self, new_required_progress: u8) {
         self.progress = 0;
         self.required_progress = new_required_progress;
@@ -947,14 +954,16 @@ impl SaberDuelGame {
 
         let loser_index = (winner_index + 1) % 2;
         let loser_state = &mut self.player_states[loser_index as usize];
-        loser_state.force_points = loser_state
-            .force_points
-            .saturating_add(self.config.force_points_per_bout_lost);
+        loser_state.add_force_points(
+            self.config.force_points_per_bout_lost,
+            self.config.max_force_points,
+        );
 
         let winner_state = &mut self.player_states[winner_index as usize];
-        winner_state.force_points = winner_state
-            .force_points
-            .saturating_add(self.config.force_points_per_bout_won);
+        winner_state.add_force_points(
+            self.config.force_points_per_bout_won,
+            self.config.max_force_points,
+        );
         winner_state.bouts_won = winner_state.bouts_won.saturating_add(1);
 
         let rng = &mut thread_rng();
@@ -1023,9 +1032,10 @@ impl SaberDuelGame {
     fn tie_bout(&mut self) -> Vec<Broadcast> {
         self.reset_readiness();
         self.player_states.iter_mut().for_each(|player_state| {
-            player_state.force_points = player_state
-                .force_points
-                .saturating_add(self.config.force_points_per_bout_tied);
+            player_state.add_force_points(
+                self.config.force_points_per_bout_tied,
+                self.config.max_force_points,
+            )
         });
 
         vec![Broadcast::Multi(
