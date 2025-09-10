@@ -1022,7 +1022,7 @@ impl SaberDuelGame {
                     inner: SaberDuelRoundOver {
                         minigame_header: MinigameHeader {
                             stage_guid: self.stage_guid,
-                            sub_op_code: SaberDuelOpCode::BoutWon as i32,
+                            sub_op_code: SaberDuelOpCode::RoundOver as i32,
                             stage_group_guid: self.stage_group_guid,
                         },
                         winner_index: winner_index.into(),
