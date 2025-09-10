@@ -52,6 +52,8 @@ struct SaberDuelAi {
     millis_per_key: u16,
     #[serde(deserialize_with = "deserialize_probability")]
     mistake_probability: f32,
+    right_to_left_ai_mistake_multiplier: f32,
+    opposite_ai_mistake_multiplier: f32,
     #[serde(deserialize_with = "deserialize_probability")]
     force_power_probability: f32,
     force_powers: Vec<SaberDuelAiForcePower>,
@@ -71,6 +73,8 @@ impl Default for SaberDuelAi {
             game_lost_sound_id: Default::default(),
             millis_per_key: Default::default(),
             mistake_probability: Default::default(),
+            right_to_left_ai_mistake_multiplier: Default::default(),
+            opposite_ai_mistake_multiplier: Default::default(),
             force_power_probability: Default::default(),
             force_powers: Default::default(),
         }
@@ -200,11 +204,11 @@ where
 {
     let probability: f32 = Deserialize::deserialize(deserializer)?;
     if (0.0..=1.0).contains(&probability) {
-        Err(serde::de::Error::custom(
-            "Probability must be between 0.0 and 1.0 (inclusive)",
-        ))
-    } else {
         Ok(probability)
+    } else {
+        Err(serde::de::Error::custom(format!(
+            "Probability must be between 0.0 and 1.0 (inclusive), but was {probability}"
+        )))
     }
 }
 
@@ -234,8 +238,6 @@ pub struct SaberDuelConfig {
     force_points_per_bout_lost: u8,
     force_powers: Vec<SaberDuelAvailableForcePower>,
     force_power_tutorial: Option<SaberDuelForcePower>,
-    right_to_left_ai_mistake_multiplier: f32,
-    opposite_ai_mistake_multiplier: f32,
     memory_challenge: bool,
 }
 
@@ -651,21 +653,17 @@ impl SaberDuelGame {
                     }
                 }
 
-                if self.player2.is_none() && ai_next_key.time_until_next_event(now).is_zero() {
-                    //let mistake_probability = self.config.ai.mistake_probability * ;
-
-                    // TODO: handle mistakes
-                    if self.player_states[1].increment_progress() {
-                        *player2_completed_time = Some(now);
-                    }
-                    ai_next_key.schedule_event(Duration::from_millis(
-                        self.config.ai.millis_per_key.into(),
-                    ));
-
-                    return self.update_progress(1);
+                if Self::tick_ai(
+                    now,
+                    &self.config,
+                    &mut self.player_states[1],
+                    ai_next_key,
+                    player2_completed_time,
+                ) {
+                    self.update_progress(1)
+                } else {
+                    Vec::new()
                 }
-
-                Vec::new()
             }
             _ => Vec::new(),
         }
@@ -882,6 +880,44 @@ impl SaberDuelGame {
                 },
             })],
         )]
+    }
+
+    #[must_use]
+    fn tick_ai(
+        now: Instant,
+        config: &SaberDuelConfig,
+        player_state: &mut SaberDuelPlayerState,
+        ai_next_key: &mut MinigameTimer,
+        player2_completed_time: &mut Option<Instant>,
+    ) -> bool {
+        if ai_next_key.time_until_next_event(now).is_zero() {
+            return false;
+        }
+
+        let mut mistake_probability: f32 = config.ai.mistake_probability;
+        if player_state.is_affected_by(SaberDuelForcePower::RightToLeft) {
+            mistake_probability *= config.ai.right_to_left_ai_mistake_multiplier;
+        }
+
+        if player_state.is_affected_by(SaberDuelForcePower::Opposite) {
+            mistake_probability *= config.ai.opposite_ai_mistake_multiplier;
+        }
+
+        mistake_probability = mistake_probability.clamp(0.0, 1.0);
+
+        if mistake_probability.is_nan() {
+            mistake_probability = 0.0;
+        }
+
+        let make_mistake = thread_rng().gen_bool(mistake_probability.into());
+        if make_mistake {
+            player_state.make_mistake();
+        } else if player_state.increment_progress() {
+            *player2_completed_time = Some(now);
+        }
+        ai_next_key.schedule_event(Duration::from_millis(config.ai.millis_per_key.into()));
+
+        true
     }
 
     fn update_progress(&self, player_index: u8) -> Vec<Broadcast> {

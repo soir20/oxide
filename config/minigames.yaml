@@ -85,7 +85,9 @@ categories:
                   game_lost_sound_id: 2144
                   millis_per_key: 500
                   mistake_probability: 0.01
-                  force_power_probability: 0
+                  right_to_left_ai_mistake_multiplier: 2.0
+                  opposite_ai_mistake_multiplier: 2.0
+                  force_power_probability: 0.0
                   force_powers: []
                 max_force_points: 15
                 force_power_selection_max_millis: 5000
@@ -93,8 +95,6 @@ categories:
                 force_points_per_bout_tied: 1
                 force_points_per_bout_lost: 2
                 force_powers: []
-                right_to_left_ai_mistake_multiplier: 2.0
-                opposite_ai_mistake_multiplier: 2.0
                 memory_challenge: false
               zone_template_guid: 201
               score_to_credits_expression: x / 177
