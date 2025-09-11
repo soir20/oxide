@@ -22,8 +22,8 @@ use crate::game_server::{
         saber_duel::{
             SaberDuelBoutInfo, SaberDuelBoutStart, SaberDuelBoutTied, SaberDuelBoutWon,
             SaberDuelForcePower, SaberDuelForcePowerDefinition, SaberDuelForcePowerFlags,
-            SaberDuelGameStart, SaberDuelKey, SaberDuelKeypressEvent, SaberDuelOpCode,
-            SaberDuelPlayerUpdate, SaberDuelRoundOver, SaberDuelShowForcePowerDialog,
+            SaberDuelKey, SaberDuelKeypressEvent, SaberDuelOpCode, SaberDuelPlayerUpdate,
+            SaberDuelRoundOver, SaberDuelRoundStart, SaberDuelShowForcePowerDialog,
             SaberDuelStageData,
         },
         tunnel::TunneledPacket,
@@ -186,7 +186,7 @@ struct SaberDuelAvailableForcePower {
 #[derive(Clone, Debug)]
 enum SaberDuelGameState {
     WaitingForPlayersReady {
-        game_start: bool,
+        round_start: bool,
     },
     WaitingForForcePowers {
         timer: MinigameTimer,
@@ -380,7 +380,7 @@ impl SaberDuelGame {
             player2,
             player_states: Default::default(),
             bout: 0,
-            state: SaberDuelGameState::WaitingForPlayersReady { game_start: true },
+            state: SaberDuelGameState::WaitingForPlayersReady { round_start: true },
             recipients,
             stage_guid,
             stage_group_guid,
@@ -708,7 +708,7 @@ impl SaberDuelGame {
     fn mark_player_ready(&mut self, sender: u32) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let player_index = self.player_index(sender)? as usize;
 
-        let SaberDuelGameState::WaitingForPlayersReady { game_start } = &self.state else {
+        let SaberDuelGameState::WaitingForPlayersReady { round_start } = &self.state else {
             return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
                 format!("Player {sender} sent a ready packet for Saber Duel, but the game isn't waiting for readiness ({self:?})")
@@ -726,15 +726,15 @@ impl SaberDuelGame {
 
         let mut broadcasts = Vec::new();
 
-        if *game_start {
+        if *round_start {
             broadcasts.push(Broadcast::Multi(
                 self.recipients.clone(),
                 vec![GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
-                    inner: SaberDuelGameStart {
+                    inner: SaberDuelRoundStart {
                         minigame_header: MinigameHeader {
                             stage_guid: self.stage_guid,
-                            sub_op_code: SaberDuelOpCode::GameStart as i32,
+                            sub_op_code: SaberDuelOpCode::RoundStart as i32,
                             stage_group_guid: self.stage_group_guid,
                         },
                     },
@@ -781,6 +781,7 @@ impl SaberDuelGame {
             self.player_states
                 .iter_mut()
                 .for_each(|player_state| player_state.reset_round_progress());
+            self.reset_readiness(true);
         } else {
             broadcasts.append(&mut self.prepare_bout());
         }
@@ -1080,8 +1081,8 @@ impl SaberDuelGame {
         )]
     }
 
-    fn reset_readiness(&mut self, game_start: bool) {
-        self.state = SaberDuelGameState::WaitingForPlayersReady { game_start };
+    fn reset_readiness(&mut self, round_start: bool) {
+        self.state = SaberDuelGameState::WaitingForPlayersReady { round_start };
         self.player_states[0].ready = false;
         self.player_states[1].ready = self.player2.is_none();
     }

@@ -14,7 +14,7 @@ use super::{
 pub enum SaberDuelOpCode {
     StageData = 0x1,
     OpponentGuid = 0x2,
-    GameStart = 0x3,
+    RoundStart = 0x3,
     BoutInfo = 0x4,
     ShowForcePowerDialog = 0x5,
     ApplyForcePower = 0x6,
@@ -99,11 +99,11 @@ impl GamePacket for SaberDuelOpponentGuid {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct SaberDuelGameStart {
+pub struct SaberDuelRoundStart {
     pub minigame_header: MinigameHeader,
 }
 
-impl GamePacket for SaberDuelGameStart {
+impl GamePacket for SaberDuelRoundStart {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::SaberDuel;
