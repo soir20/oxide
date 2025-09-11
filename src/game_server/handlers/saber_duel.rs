@@ -22,9 +22,9 @@ use crate::game_server::{
         saber_duel::{
             SaberDuelBoutInfo, SaberDuelBoutStart, SaberDuelBoutTied, SaberDuelBoutWon,
             SaberDuelForcePower, SaberDuelForcePowerDefinition, SaberDuelForcePowerFlags,
-            SaberDuelKey, SaberDuelKeypressEvent, SaberDuelOpCode, SaberDuelPlayerUpdate,
-            SaberDuelRoundOver, SaberDuelRoundStart, SaberDuelShowForcePowerDialog,
-            SaberDuelStageData,
+            SaberDuelGameOver, SaberDuelKey, SaberDuelKeypressEvent, SaberDuelOpCode,
+            SaberDuelPlayerUpdate, SaberDuelRoundOver, SaberDuelRoundStart,
+            SaberDuelShowForcePowerDialog, SaberDuelStageData,
         },
         tunnel::TunneledPacket,
         GamePacket, Pos, Target,
@@ -799,35 +799,56 @@ impl SaberDuelGame {
             leader_state.rounds_won = leader_state.rounds_won.saturating_add(1);
             self.bout = 0;
 
-            broadcasts.push(Broadcast::Multi(
-                self.recipients.clone(),
-                vec![GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: SaberDuelRoundOver {
-                        minigame_header: MinigameHeader {
-                            stage_guid: self.stage_guid,
-                            sub_op_code: SaberDuelOpCode::RoundOver as i32,
-                            stage_group_guid: self.stage_group_guid,
-                        },
-                        winner_index: leader_index.into(),
-                        sound_id: match self.player2.is_none() {
-                            true => match leader_index == 0 {
-                                true => self.config.ai.bout_lost_sound_id,
-                                false => self.config.ai.bout_won_sound_id,
-                            },
-                            false => 0,
-                        },
-                    },
-                })],
-            ));
-
             if leader_state.rounds_won >= self.config.rounds_to_win {
-                // TODO: handle player won game
                 self.state = SaberDuelGameState::GameOver;
+                broadcasts.push(Broadcast::Multi(
+                    self.recipients.clone(),
+                    vec![GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: SaberDuelGameOver {
+                            minigame_header: MinigameHeader {
+                                stage_guid: self.stage_guid,
+                                sub_op_code: SaberDuelOpCode::GameOver as i32,
+                                stage_group_guid: self.stage_group_guid,
+                            },
+                            winner_index: leader_index.into(),
+                            sound_id: match self.player2.is_none() {
+                                true => match leader_index == 0 {
+                                    true => self.config.ai.game_lost_sound_id,
+                                    false => self.config.ai.game_won_sound_id,
+                                },
+                                false => 0,
+                            },
+                            round_won: true,
+                            challenge_failed: false,
+                        },
+                    })],
+                ));
             } else {
                 self.state = SaberDuelGameState::WaitingForRoundEnd {
                     timer: MinigameTimer::new_with_event(ROUND_END_DELAY),
                 };
+                broadcasts.push(Broadcast::Multi(
+                    self.recipients.clone(),
+                    vec![GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: SaberDuelRoundOver {
+                            minigame_header: MinigameHeader {
+                                stage_guid: self.stage_guid,
+                                sub_op_code: SaberDuelOpCode::RoundOver as i32,
+                                stage_group_guid: self.stage_group_guid,
+                            },
+                            winner_index: leader_index.into(),
+                            sound_id: match self.player2.is_none() {
+                                true => match leader_index == 0 {
+                                    true => self.config.ai.bout_lost_sound_id,
+                                    false => self.config.ai.bout_won_sound_id,
+                                },
+                                false => 0,
+                            },
+                        },
+                    })],
+                ));
             }
         } else {
             broadcasts.append(&mut self.prepare_bout());
