@@ -32,7 +32,8 @@ use crate::game_server::{
     Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
 };
 
-const ROUND_START_DELAY: Duration = Duration::from_millis(2500);
+const ROUND_END_DELAY: Duration = Duration::from_millis(2500);
+const ROUND_START_DELAY: Duration = Duration::from_millis(500);
 
 #[derive(Clone, Debug, Deserialize)]
 struct SaberDuelAiForcePower {
@@ -201,7 +202,10 @@ enum SaberDuelGameState {
         player1_completed_time: Option<Instant>,
         player2_completed_time: Option<Instant>,
     },
-    WaitingForNextRound {
+    WaitingForRoundEnd {
+        timer: MinigameTimer,
+    },
+    WaitingForRoundStart {
         timer: MinigameTimer,
     },
     GameOver,
@@ -614,13 +618,15 @@ impl SaberDuelGame {
                     Vec::new()
                 }
             }
-            SaberDuelGameState::WaitingForNextRound { timer } => {
+            SaberDuelGameState::WaitingForRoundEnd { timer } => {
                 if timer.time_until_next_event(now).is_zero() {
+                    self.state = SaberDuelGameState::WaitingForRoundStart {
+                        timer: MinigameTimer::new_with_event(ROUND_START_DELAY),
+                    };
                     self.player_states
                         .iter_mut()
                         .for_each(|player_state| player_state.reset_round_progress());
-
-                    let mut broadcasts = vec![Broadcast::Multi(
+                    vec![Broadcast::Multi(
                         self.recipients.clone(),
                         vec![GamePacket::serialize(&TunneledPacket {
                             unknown1: true,
@@ -632,11 +638,14 @@ impl SaberDuelGame {
                                 },
                             },
                         })],
-                    )];
-
-                    broadcasts.append(&mut self.prepare_bout());
-
-                    broadcasts
+                    )]
+                } else {
+                    Vec::new()
+                }
+            }
+            SaberDuelGameState::WaitingForRoundStart { timer } => {
+                if timer.time_until_next_event(now).is_zero() {
+                    self.prepare_bout()
                 } else {
                     Vec::new()
                 }
@@ -816,8 +825,8 @@ impl SaberDuelGame {
                 // TODO: handle player won game
                 self.state = SaberDuelGameState::GameOver;
             } else {
-                self.state = SaberDuelGameState::WaitingForNextRound {
-                    timer: MinigameTimer::new_with_event(ROUND_START_DELAY),
+                self.state = SaberDuelGameState::WaitingForRoundEnd {
+                    timer: MinigameTimer::new_with_event(ROUND_END_DELAY),
                 };
             }
         } else {
