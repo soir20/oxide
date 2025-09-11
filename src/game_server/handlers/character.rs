@@ -11,6 +11,7 @@ use serde::Deserialize;
 
 use crate::{
     game_server::{
+        handlers::item::SABER_ITEM_TYPE,
         packets::{
             chat::{ActionBarTextColor, SendStringId},
             command::PlaySoundIdOnTarget,
@@ -1396,6 +1397,19 @@ impl Player {
         packets.append(&mut mount_packets);
 
         packets
+    }
+
+    pub fn has_saber_equipped(&self, items: &BTreeMap<u32, ItemDefinition>) -> bool {
+        self.battle_classes
+            .get(&self.active_battle_class)
+            .and_then(|battle_class| {
+                battle_class
+                    .items
+                    .get(&EquipmentSlot::PrimaryWeapon)
+                    .and_then(|item| items.get(&item.guid))
+            })
+            .map(|item| item.item_type == SABER_ITEM_TYPE)
+            .unwrap_or(false)
     }
 }
 

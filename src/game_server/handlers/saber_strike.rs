@@ -40,17 +40,7 @@ pub fn start_saber_strike(
                 stage_group_guid: minigame_status.group.stage_group_guid,
             },
             saber_strike_stage_id,
-            use_player_weapon: player
-                .battle_classes
-                .get(&player.active_battle_class)
-                .and_then(|battle_class| {
-                    battle_class
-                        .items
-                        .get(&EquipmentSlot::PrimaryWeapon)
-                        .and_then(|item| game_server.items().get(&item.guid))
-                })
-                .map(|item| item.item_type == SABER_ITEM_TYPE)
-                .unwrap_or(false),
+            use_player_weapon: player.has_saber_equipped(game_server.items()),
         },
     })]
 }
