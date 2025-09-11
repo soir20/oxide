@@ -309,7 +309,7 @@ pub struct SaberDuelGameOver {
     pub minigame_header: MinigameHeader,
     pub winner_index: u32,
     pub sound_id: u32,
-    pub round_won: bool,
+    pub round_lost: bool,
     pub challenge_failed: bool,
 }
 

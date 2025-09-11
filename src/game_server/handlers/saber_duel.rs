@@ -819,7 +819,7 @@ impl SaberDuelGame {
                                 },
                                 false => 0,
                             },
-                            round_won: true,
+                            round_lost: false,
                             challenge_failed: false,
                         },
                     })],
