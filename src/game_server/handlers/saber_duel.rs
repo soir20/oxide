@@ -616,6 +616,10 @@ impl SaberDuelGame {
             }
             SaberDuelGameState::WaitingForNextRound { timer } => {
                 if timer.time_until_next_event(now).is_zero() {
+                    self.player_states
+                        .iter_mut()
+                        .for_each(|player_state| player_state.reset_round_progress());
+
                     let mut broadcasts = vec![Broadcast::Multi(
                         self.recipients.clone(),
                         vec![GamePacket::serialize(&TunneledPacket {
@@ -812,9 +816,6 @@ impl SaberDuelGame {
                 // TODO: handle player won game
                 self.state = SaberDuelGameState::GameOver;
             } else {
-                self.player_states
-                    .iter_mut()
-                    .for_each(|player_state| player_state.reset_round_progress());
                 self.state = SaberDuelGameState::WaitingForNextRound {
                     timer: MinigameTimer::new_with_event(ROUND_START_DELAY),
                 };
