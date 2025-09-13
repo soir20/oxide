@@ -35,7 +35,7 @@ use crate::game_server::{
 
 const ROUND_END_DELAY: Duration = Duration::from_millis(2500);
 const ROUND_START_DELAY: Duration = Duration::from_millis(1200);
-const GAME_END_DELAY: Duration = Duration::from_millis(2000);
+const GAME_END_DELAY: Duration = Duration::from_millis(4000);
 
 #[derive(Clone, Debug, Deserialize)]
 struct SaberDuelAiForcePower {
