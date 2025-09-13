@@ -426,8 +426,7 @@ impl SharedMinigameTypeData {
     pub fn from(
         minigame_type: &MinigameType,
         members: &[u32],
-        stage_group_guid: i32,
-        stage_guid: i32,
+        group: MinigameMatchmakingGroup,
         difficulty: u32,
     ) -> Self {
         // We can't have a game without at least one player
@@ -441,16 +440,16 @@ impl SharedMinigameTypeData {
                         difficulty,
                         player1,
                         player2,
-                        stage_guid,
-                        stage_group_guid,
+                        group.stage_guid,
+                        group.stage_group_guid,
                     )),
                 },
                 FlashMinigameType::ForceConnection => SharedMinigameTypeData::ForceConnection {
                     game: Box::new(ForceConnectionGame::new(
                         player1,
                         player2,
-                        stage_guid,
-                        stage_group_guid,
+                        group.stage_guid,
+                        group.stage_group_guid,
                     )),
                 },
                 _ => SharedMinigameTypeData::default(),
@@ -461,8 +460,7 @@ impl SharedMinigameTypeData {
                     config.to_owned(),
                     player1,
                     player2,
-                    stage_guid,
-                    stage_group_guid,
+                    group,
                 )),
             },
         }
@@ -2187,8 +2185,7 @@ pub fn prepare_active_minigame_instance(
             minigame_data.data = SharedMinigameTypeData::from(
                 stage_config.stage_config.minigame_type(),
                 members,
-                stage_group_guid,
-                stage_guid,
+                matchmaking_group,
                 stage_config.stage_config.difficulty(),
             );
 
@@ -2439,7 +2436,7 @@ fn handle_request_cancel_active_minigame(
     )
 }
 
-pub fn handle_minigame_packet_write<T: Default>(
+pub fn handle_minigame_packet_write<T>(
     sender: u32,
     game_server: &GameServer,
     header: &MinigameHeader,

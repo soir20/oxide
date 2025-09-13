@@ -10,8 +10,11 @@ use serde::{Deserialize, Deserializer};
 
 use crate::game_server::{
     handlers::{
-        character::{Character, MinigameStatus},
-        minigame::{handle_minigame_packet_write, MinigameTimer, SharedMinigameTypeData},
+        character::{Character, MinigameMatchmakingGroup, MinigameStatus},
+        minigame::{
+            handle_minigame_packet_write, leave_active_minigame_if_any, LeaveMinigameTarget,
+            MinigameTimer, SharedMinigameTypeData,
+        },
         unique_guid::{player_guid, saber_duel_opponent_guid},
     },
     packets::{
@@ -275,7 +278,7 @@ pub fn process_saber_duel_packet(
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let header = MinigameHeader::deserialize(cursor)?;
-    handle_minigame_packet_write(
+    let (mut broadcasts, is_game_over, group) = handle_minigame_packet_write(
         sender,
         game_server,
         &header,
@@ -292,7 +295,7 @@ pub fn process_saber_duel_packet(
                 ));
             };
 
-            match SaberDuelOpCode::try_from(header.sub_op_code) {
+            let result = match SaberDuelOpCode::try_from(header.sub_op_code) {
                 Ok(op_code) => match op_code {
                     SaberDuelOpCode::PlayerReady => game.mark_player_ready(sender),
                     SaberDuelOpCode::Keypress => {
@@ -320,9 +323,35 @@ pub fn process_saber_duel_packet(
                         ),
                     ))
                 }
-            }
+            };
+
+            result.map(|broadcasts| (broadcasts, game.is_over(), game.group))
         },
-    )
+    )?;
+
+    /*if is_game_over {
+        broadcasts.append(&mut game_server.lock_enforcer().write_characters(
+            |characters_table_write_handle, minigame_data_lock_enforcer| {
+                minigame_data_lock_enforcer.write_minigame_data(
+                    |minigame_data_table_write_handle, zones_lock_enforcer| {
+                        zones_lock_enforcer.write_zones(|zones_table_write_handle| {
+                            leave_active_minigame_if_any(
+                                LeaveMinigameTarget::Group(group),
+                                characters_table_write_handle,
+                                minigame_data_table_write_handle,
+                                zones_table_write_handle,
+                                None,
+                                false,
+                                game_server,
+                            )
+                        })
+                    },
+                )
+            },
+        )?);
+    }*/
+
+    Ok(broadcasts)
 }
 
 enum SaberDuelBoutCompletion {
@@ -348,8 +377,7 @@ pub struct SaberDuelGame {
     bout: u8,
     state: SaberDuelGameState,
     recipients: Vec<u32>,
-    stage_guid: i32,
-    stage_group_guid: i32,
+    pub group: MinigameMatchmakingGroup,
 }
 
 impl SaberDuelGame {
@@ -357,8 +385,7 @@ impl SaberDuelGame {
         config: SaberDuelConfig,
         player1: u32,
         player2: Option<u32>,
-        stage_guid: i32,
-        stage_group_guid: i32,
+        group: MinigameMatchmakingGroup,
     ) -> Self {
         let mut recipients = vec![player1];
         if let Some(player2) = player2 {
@@ -394,8 +421,7 @@ impl SaberDuelGame {
                 start_round_immediately: true,
             },
             recipients,
-            stage_guid,
-            stage_group_guid,
+            group,
         };
         game.reset_readiness(true);
 
@@ -512,9 +538,9 @@ impl SaberDuelGame {
             unknown1: true,
             inner: SaberDuelStageData {
                 minigame_header: MinigameHeader {
-                    stage_guid: self.stage_guid,
+                    stage_guid: self.group.stage_guid,
                     sub_op_code: SaberDuelOpCode::StageData as i32,
-                    stage_group_guid: self.stage_group_guid,
+                    stage_group_guid: self.group.stage_group_guid,
                 },
                 win_score: self.config.bouts_to_win_round.into(),
                 total_rounds: self.config.rounds_to_win.into(),
@@ -632,9 +658,9 @@ impl SaberDuelGame {
                             unknown1: true,
                             inner: SaberDuelRoundStart {
                                 minigame_header: MinigameHeader {
-                                    stage_guid: self.stage_guid,
+                                    stage_guid: self.group.stage_guid,
                                     sub_op_code: SaberDuelOpCode::RoundStart as i32,
-                                    stage_group_guid: self.stage_group_guid,
+                                    stage_group_guid: self.group.stage_group_guid,
                                 },
                             },
                         })],
@@ -749,7 +775,7 @@ impl SaberDuelGame {
         }
     }
 
-    fn mark_player_ready(&mut self, sender: u32) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    pub fn mark_player_ready(&mut self, sender: u32) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let player_index = self.player_index(sender)? as usize;
 
         let SaberDuelGameState::WaitingForPlayersReady {
@@ -780,9 +806,9 @@ impl SaberDuelGame {
                     unknown1: true,
                     inner: SaberDuelRoundStart {
                         minigame_header: MinigameHeader {
-                            stage_guid: self.stage_guid,
+                            stage_guid: self.group.stage_guid,
                             sub_op_code: SaberDuelOpCode::RoundStart as i32,
-                            stage_group_guid: self.stage_group_guid,
+                            stage_group_guid: self.group.stage_group_guid,
                         },
                     },
                 })],
@@ -807,9 +833,9 @@ impl SaberDuelGame {
                         unknown1: true,
                         inner: SaberDuelGameOver {
                             minigame_header: MinigameHeader {
-                                stage_guid: self.stage_guid,
+                                stage_guid: self.group.stage_guid,
                                 sub_op_code: SaberDuelOpCode::GameOver as i32,
-                                stage_group_guid: self.stage_group_guid,
+                                stage_group_guid: self.group.stage_group_guid,
                             },
                             winner_index: leader_index.into(),
                             sound_id: match self.player2.is_none() {
@@ -834,9 +860,9 @@ impl SaberDuelGame {
                         unknown1: true,
                         inner: SaberDuelRoundOver {
                             minigame_header: MinigameHeader {
-                                stage_guid: self.stage_guid,
+                                stage_guid: self.group.stage_guid,
                                 sub_op_code: SaberDuelOpCode::RoundOver as i32,
-                                stage_group_guid: self.stage_group_guid,
+                                stage_group_guid: self.group.stage_group_guid,
                             },
                             winner_index: leader_index.into(),
                             sound_id: match self.player2.is_none() {
@@ -855,6 +881,10 @@ impl SaberDuelGame {
         }
 
         Ok(broadcasts)
+    }
+
+    pub fn is_over(&self) -> bool {
+        matches!(self.state, SaberDuelGameState::GameOver)
     }
 
     fn player_index(&self, sender: u32) -> Result<u8, ProcessPacketError> {
@@ -877,9 +907,9 @@ impl SaberDuelGame {
                 unknown1: true,
                 inner: SaberDuelBoutInfo {
                     minigame_header: MinigameHeader {
-                        stage_guid: self.stage_guid,
+                        stage_guid: self.group.stage_guid,
                         sub_op_code: SaberDuelOpCode::BoutInfo as i32,
-                        stage_group_guid: self.stage_group_guid,
+                        stage_group_guid: self.group.stage_group_guid,
                     },
                     max_bout_time_millis: self.config.bout_max_millis,
                     is_combo_bout: false,
@@ -921,9 +951,9 @@ impl SaberDuelGame {
                 unknown1: true,
                 inner: SaberDuelShowForcePowerDialog {
                     minigame_header: MinigameHeader {
-                        stage_guid: self.stage_guid,
+                        stage_guid: self.group.stage_guid,
                         sub_op_code: SaberDuelOpCode::ShowForcePowerDialog as i32,
-                        stage_group_guid: self.stage_group_guid,
+                        stage_group_guid: self.group.stage_group_guid,
                     },
                     flags: player1_flags,
                 },
@@ -937,9 +967,9 @@ impl SaberDuelGame {
                     unknown1: true,
                     inner: SaberDuelShowForcePowerDialog {
                         minigame_header: MinigameHeader {
-                            stage_guid: self.stage_guid,
+                            stage_guid: self.group.stage_guid,
                             sub_op_code: SaberDuelOpCode::ShowForcePowerDialog as i32,
-                            stage_group_guid: self.stage_group_guid,
+                            stage_group_guid: self.group.stage_group_guid,
                         },
                         flags: player2_flags,
                     },
@@ -1008,9 +1038,9 @@ impl SaberDuelGame {
                 unknown1: true,
                 inner: SaberDuelBoutStart {
                     minigame_header: MinigameHeader {
-                        stage_guid: self.stage_guid,
+                        stage_guid: self.group.stage_guid,
                         sub_op_code: SaberDuelOpCode::BoutStart as i32,
-                        stage_group_guid: self.stage_group_guid,
+                        stage_group_guid: self.group.stage_group_guid,
                     },
                     keys,
                     num_keys_by_player_index: vec![player1_keys.into(), player2_keys.into()],
@@ -1066,9 +1096,9 @@ impl SaberDuelGame {
                 unknown1: true,
                 inner: SaberDuelPlayerUpdate {
                     minigame_header: MinigameHeader {
-                        stage_guid: self.stage_guid,
+                        stage_guid: self.group.stage_guid,
                         sub_op_code: SaberDuelOpCode::PlayerUpdate as i32,
-                        stage_group_guid: self.stage_group_guid,
+                        stage_group_guid: self.group.stage_group_guid,
                     },
                     player_index: player_index.into(),
                     progress: player_state.progress.into(),
@@ -1112,9 +1142,9 @@ impl SaberDuelGame {
                 unknown1: true,
                 inner: SaberDuelBoutWon {
                     minigame_header: MinigameHeader {
-                        stage_guid: self.stage_guid,
+                        stage_guid: self.group.stage_guid,
                         sub_op_code: SaberDuelOpCode::BoutWon as i32,
-                        stage_group_guid: self.stage_group_guid,
+                        stage_group_guid: self.group.stage_group_guid,
                     },
                     winner_index: winner_index.into(),
                     added_score: score_per_bout_won.into(),
@@ -1140,9 +1170,9 @@ impl SaberDuelGame {
                 unknown1: true,
                 inner: SaberDuelBoutTied {
                     minigame_header: MinigameHeader {
-                        stage_guid: self.stage_guid,
+                        stage_guid: self.group.stage_guid,
                         sub_op_code: SaberDuelOpCode::BoutTied as i32,
-                        stage_group_guid: self.stage_group_guid,
+                        stage_group_guid: self.group.stage_group_guid,
                     },
                 },
             })],
