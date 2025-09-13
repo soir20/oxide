@@ -11,10 +11,7 @@ use serde::{Deserialize, Deserializer};
 use crate::game_server::{
     handlers::{
         character::{Character, MinigameMatchmakingGroup, MinigameStatus},
-        minigame::{
-            handle_minigame_packet_write, leave_active_minigame_if_any, LeaveMinigameTarget,
-            MinigameTimer, SharedMinigameTypeData,
-        },
+        minigame::{handle_minigame_packet_write, MinigameTimer, SharedMinigameTypeData},
         unique_guid::{player_guid, saber_duel_opponent_guid},
     },
     packets::{
@@ -30,6 +27,7 @@ use crate::game_server::{
             SaberDuelShowForcePowerDialog, SaberDuelStageData,
         },
         tunnel::TunneledPacket,
+        ui::ExecuteScriptWithStringParams,
         GamePacket, Pos, Target,
     },
     Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
@@ -37,6 +35,7 @@ use crate::game_server::{
 
 const ROUND_END_DELAY: Duration = Duration::from_millis(2500);
 const ROUND_START_DELAY: Duration = Duration::from_millis(1200);
+const GAME_END_DELAY: Duration = Duration::from_millis(2000);
 
 #[derive(Clone, Debug, Deserialize)]
 struct SaberDuelAiForcePower {
@@ -211,6 +210,9 @@ enum SaberDuelGameState {
     WaitingForRoundStart {
         timer: MinigameTimer,
     },
+    WaitingForGameOver {
+        timer: MinigameTimer,
+    },
     GameOver,
 }
 
@@ -278,7 +280,7 @@ pub fn process_saber_duel_packet(
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let header = MinigameHeader::deserialize(cursor)?;
-    let (mut broadcasts, is_game_over, group) = handle_minigame_packet_write(
+    handle_minigame_packet_write(
         sender,
         game_server,
         &header,
@@ -295,7 +297,7 @@ pub fn process_saber_duel_packet(
                 ));
             };
 
-            let result = match SaberDuelOpCode::try_from(header.sub_op_code) {
+            match SaberDuelOpCode::try_from(header.sub_op_code) {
                 Ok(op_code) => match op_code {
                     SaberDuelOpCode::PlayerReady => game.mark_player_ready(sender),
                     SaberDuelOpCode::Keypress => {
@@ -323,35 +325,9 @@ pub fn process_saber_duel_packet(
                         ),
                     ))
                 }
-            };
-
-            result.map(|broadcasts| (broadcasts, game.is_over(), game.group))
+            }
         },
-    )?;
-
-    /*if is_game_over {
-        broadcasts.append(&mut game_server.lock_enforcer().write_characters(
-            |characters_table_write_handle, minigame_data_lock_enforcer| {
-                minigame_data_lock_enforcer.write_minigame_data(
-                    |minigame_data_table_write_handle, zones_lock_enforcer| {
-                        zones_lock_enforcer.write_zones(|zones_table_write_handle| {
-                            leave_active_minigame_if_any(
-                                LeaveMinigameTarget::Group(group),
-                                characters_table_write_handle,
-                                minigame_data_table_write_handle,
-                                zones_table_write_handle,
-                                None,
-                                false,
-                                game_server,
-                            )
-                        })
-                    },
-                )
-            },
-        )?);
-    }*/
-
-    Ok(broadcasts)
+    )
 }
 
 enum SaberDuelBoutCompletion {
@@ -676,6 +652,23 @@ impl SaberDuelGame {
                     Vec::new()
                 }
             }
+            SaberDuelGameState::WaitingForGameOver { timer } => {
+                if timer.time_until_next_event(now).is_zero() {
+                    self.state = SaberDuelGameState::GameOver;
+                    vec![Broadcast::Multi(
+                        self.recipients.clone(),
+                        vec![GamePacket::serialize(&TunneledPacket {
+                            unknown1: true,
+                            inner: ExecuteScriptWithStringParams {
+                                script_name: "Ui.QuitMiniGame".to_string(),
+                                params: Vec::new(),
+                            },
+                        })],
+                    )]
+                } else {
+                    Vec::new()
+                }
+            }
             SaberDuelGameState::BoutActive {
                 bout_time_remaining,
                 is_long_bout,
@@ -826,7 +819,9 @@ impl SaberDuelGame {
             self.bout = 0;
 
             if leader_state.rounds_won >= self.config.rounds_to_win {
-                self.state = SaberDuelGameState::GameOver;
+                self.state = SaberDuelGameState::WaitingForGameOver {
+                    timer: MinigameTimer::new_with_event(GAME_END_DELAY),
+                };
                 broadcasts.push(Broadcast::Multi(
                     self.recipients.clone(),
                     vec![GamePacket::serialize(&TunneledPacket {
@@ -881,10 +876,6 @@ impl SaberDuelGame {
         }
 
         Ok(broadcasts)
-    }
-
-    pub fn is_over(&self) -> bool {
-        matches!(self.state, SaberDuelGameState::GameOver)
     }
 
     fn player_index(&self, sender: u32) -> Result<u8, ProcessPacketError> {
