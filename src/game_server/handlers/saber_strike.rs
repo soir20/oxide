@@ -3,27 +3,21 @@ use std::io::{Cursor, Read};
 use packet_serialize::DeserializePacket;
 
 use crate::game_server::{
-    handlers::{
-        character::{MinigameStatus, Player},
-        item::SABER_ITEM_TYPE,
-    },
+    handlers::character::{MinigameStatus, Player},
     packets::{
-        item::EquipmentSlot,
         minigame::{MinigameHeader, ScoreEntry, ScoreType},
         saber_strike::{
             SaberStrikeGameOver, SaberStrikeObfuscatedScore, SaberStrikeOpCode,
             SaberStrikeSingleKill, SaberStrikeStageData, SaberStrikeThrowKill,
         },
         tunnel::TunneledPacket,
+        ui::ExecuteScriptWithStringParams,
         GamePacket,
     },
     Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
 };
 
-use super::minigame::{
-    handle_minigame_packet_write, leave_active_minigame_if_any, LeaveMinigameTarget,
-    MinigameTypeData,
-};
+use super::minigame::{handle_minigame_packet_write, MinigameTypeData};
 
 pub fn start_saber_strike(
     saber_strike_stage_id: u32,
@@ -182,27 +176,16 @@ fn handle_saber_strike_game_over(
             });
             minigame_status.total_score = game_over.total_score;
             minigame_status.win_status.set_won(game_over.won);
-            Ok(())
-        },
-    )?;
-
-    game_server.lock_enforcer().write_characters(
-        |characters_table_write_handle, minigame_data_lock_enforcer| {
-            minigame_data_lock_enforcer.write_minigame_data(
-                |minigame_data_table_write_handle, zones_lock_enforcer| {
-                    zones_lock_enforcer.write_zones(|zones_table_write_handle| {
-                        leave_active_minigame_if_any(
-                            LeaveMinigameTarget::Single(sender),
-                            characters_table_write_handle,
-                            minigame_data_table_write_handle,
-                            zones_table_write_handle,
-                            None,
-                            false,
-                            game_server,
-                        )
-                    })
-                },
-            )
+            Ok(vec![Broadcast::Single(
+                sender,
+                vec![GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: ExecuteScriptWithStringParams {
+                        script_name: "Ui.QuitMiniGame".to_string(),
+                        params: Vec::new(),
+                    },
+                })],
+            )])
         },
     )
 }
