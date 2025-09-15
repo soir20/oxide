@@ -95,10 +95,12 @@ pub fn process_inventory_packet(
 
 pub fn wield_type_from_slot(
     items: &BTreeMap<EquipmentSlot, u32>,
+    temporary_items: &BTreeMap<EquipmentSlot, u32>,
     slot: EquipmentSlot,
     game_server: &GameServer,
 ) -> WieldType {
-    item_def_from_slot(items, slot, game_server)
+    item_def_from_slot(temporary_items, slot, game_server)
+        .or(item_def_from_slot(items, slot, game_server))
         .and_then(|item_def| {
             game_server
                 .item_classes()
@@ -198,7 +200,7 @@ fn process_unequip_slot(
                 // You can only unequip the secondary slot or unequip both slots after you equip both slots. Therefore, after 
                 // an item is unequipped, only the primary slot can influence the wield type.
                 if unequip_slot.slot.is_weapon() {
-                    brandished_wield_type = Some(wield_type_from_slot(&battle_class.items, EquipmentSlot::PrimaryWeapon, game_server));
+                    brandished_wield_type = Some(wield_type_from_slot(&battle_class.items, &player_data.temporary_items, EquipmentSlot::PrimaryWeapon, game_server));
                 }
 
                 let mut broadcasts = vec![
@@ -780,8 +782,12 @@ fn equip_item_in_slot<'a>(
             // Some weapons, like bows, can be equipped in the secondary slot without
             // a primary weapon, so check the opposite slot instead of the primary slot.
             let other_weapon_slot = other_weapon_slot(equip_guid.slot);
-            let other_wield_type =
-                wield_type_from_slot(&battle_class.items, other_weapon_slot, game_server);
+            let other_wield_type = wield_type_from_slot(
+                &battle_class.items,
+                &player_data.temporary_items,
+                other_weapon_slot,
+                game_server,
+            );
             if item_class.wield_type != other_wield_type {
                 sender_only_packets.push(GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
