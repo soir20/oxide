@@ -1,3 +1,5 @@
+use std::collections::BTreeMap;
+
 use packet_serialize::NullTerminatedString;
 
 use crate::{
@@ -123,12 +125,15 @@ pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, P
                             (
                                 battle_class_guid,
                                 BattleClass {
-                                    items: battle_class.items,
+                                    items: battle_class.items.into_iter()
+                                        .map(|(slot, item)| (slot, item.guid))
+                                        .collect(),
                                 },
                             )
                         })
                         .collect(),
                     active_battle_class: player.inner.data.active_battle_class,
+                    temporary_items: BTreeMap::new(),
                     inventory: player.inner.data.inventory.into_keys().collect(),
                     customizations: make_test_customizations(),
                     minigame_stats: PlayerMinigameStats::default(),
