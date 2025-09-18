@@ -1227,7 +1227,6 @@ pub struct Player {
     pub credits: u32,
     pub battle_classes: BTreeMap<u32, BattleClass>,
     pub active_battle_class: u32,
-    pub temporary_items: BTreeMap<EquipmentSlot, u32>,
     pub inventory: BTreeSet<u32>,
     pub customizations: BTreeMap<CustomizationSlot, u32>,
     pub minigame_stats: PlayerMinigameStats,
