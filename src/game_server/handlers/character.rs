@@ -1868,13 +1868,11 @@ impl Character {
             .map(|battle_class| {
                 let primary_wield_type = wield_type_from_slot(
                     &battle_class.items,
-                    &data.temporary_items,
                     EquipmentSlot::PrimaryWeapon,
                     game_server,
                 );
                 let secondary_wield_type = wield_type_from_slot(
                     &battle_class.items,
-                    &data.temporary_items,
                     EquipmentSlot::SecondaryWeapon,
                     game_server,
                 );
