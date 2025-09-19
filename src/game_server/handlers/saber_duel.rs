@@ -40,6 +40,7 @@ const GAME_END_DELAY: Duration = Duration::from_millis(4000);
 #[derive(Clone, Debug, Deserialize)]
 struct SaberDuelAiForcePower {
     force_power: SaberDuelForcePower,
+    #[serde(default = "default_weight")]
     weight: u8,
 }
 

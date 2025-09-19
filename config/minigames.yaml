@@ -88,13 +88,31 @@ categories:
                   right_to_left_ai_mistake_multiplier: 2.0
                   opposite_ai_mistake_multiplier: 2.0
                   force_power_probability: 0.0
-                  force_powers: []
+                  force_powers:
+                  - force_power: ExtraKey
+                  - force_power: RightToLeft
+                  - force_power: Opposite
                 max_force_points: 15
                 force_power_selection_max_millis: 5000
                 force_points_per_bout_won: 1
                 force_points_per_bout_tied: 1
                 force_points_per_bout_lost: 2
-                force_powers: []
+                force_powers:
+                - force_power: ExtraKey
+                  name_id: 1888
+                  small_icon_set_id: 2706
+                  icon_set_id: 2706
+                  cost: 3
+                - force_power: RightToLeft
+                  name_id: 1889
+                  small_icon_set_id: 2706
+                  icon_set_id: 2706
+                  cost: 4
+                - force_power: Opposite
+                  name_id: 1890
+                  small_icon_set_id: 2706
+                  icon_set_id: 2706
+                  cost: 5
                 memory_challenge: false
               zone_template_guid: 201
               score_to_credits_expression: x / 177
