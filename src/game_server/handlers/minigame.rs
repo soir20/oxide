@@ -1751,6 +1751,14 @@ pub fn process_minigame_packet(
                 RequestCancelActiveMinigame::deserialize(cursor)?;
                 handle_request_cancel_active_minigame(true, sender, game_server)
             }
+            MinigameOpCode::PauseActiveMinigame => {
+                let header = MinigameHeader::deserialize(cursor)?;
+                handle_pause_or_resume_active_minigame(sender, game_server, &header, true)
+            }
+            MinigameOpCode::ResumeActiveMinigame => {
+                let header = MinigameHeader::deserialize(cursor)?;
+                handle_pause_or_resume_active_minigame(sender, game_server, &header, false)
+            }
             MinigameOpCode::FlashPayload => {
                 let payload = FlashPayload::deserialize(cursor)?;
                 handle_flash_payload(payload, sender, game_server)
@@ -2470,6 +2478,22 @@ fn handle_request_cancel_active_minigame(
                     })
                 },
             )
+        },
+    )
+}
+
+fn handle_pause_or_resume_active_minigame(
+    sender: u32,
+    game_server: &GameServer,
+    header: &MinigameHeader,
+    pause: bool,
+) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    handle_minigame_packet_write(
+        sender,
+        game_server,
+        &header,
+        |_, _, _, stage_config, shared_minigame_data, _| {
+            shared_minigame_data.pause_or_resume(sender, pause, &stage_config.stage_config)
         },
     )
 }
