@@ -2491,7 +2491,7 @@ fn handle_pause_or_resume_active_minigame(
     handle_minigame_packet_write(
         sender,
         game_server,
-        &header,
+        header,
         |_, _, _, stage_config, shared_minigame_data, _| {
             shared_minigame_data.pause_or_resume(sender, pause, &stage_config.stage_config)
         },
