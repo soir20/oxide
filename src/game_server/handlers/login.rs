@@ -1,5 +1,3 @@
-use std::collections::BTreeMap;
-
 use packet_serialize::NullTerminatedString;
 
 use crate::{
