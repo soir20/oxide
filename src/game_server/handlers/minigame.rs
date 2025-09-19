@@ -355,6 +355,32 @@ pub struct SharedMinigameData {
 }
 
 impl SharedMinigameData {
+    pub fn pause_or_resume(
+        &mut self,
+        sender: u32,
+        pause: bool,
+        stage_config: &MinigameStageConfig,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        if stage_config.max_players() == 1 {
+            if let MinigameReadiness::Ready(previous_time, possible_resume_time) =
+                &mut self.readiness
+            {
+                let now = Instant::now();
+                if pause {
+                    if let Some(resume_time) = possible_resume_time {
+                        *previous_time = previous_time
+                            .saturating_add(now.saturating_duration_since(*resume_time));
+                        *possible_resume_time = None;
+                    }
+                } else {
+                    *possible_resume_time = Some(now);
+                }
+            }
+        }
+
+        self.data.pause_or_resume(sender, pause)
+    }
+
     pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
         self.data.tick(now)
     }
@@ -463,6 +489,18 @@ impl SharedMinigameTypeData {
                     group,
                 )),
             },
+        }
+    }
+
+    pub fn pause_or_resume(
+        &mut self,
+        sender: u32,
+        pause: bool,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        match self {
+            SharedMinigameTypeData::FleetCommander { game } => game.pause_or_resume(sender, pause),
+            SharedMinigameTypeData::ForceConnection { game } => game.pause_or_resume(sender, pause),
+            _ => Ok(Vec::new()),
         }
     }
 
@@ -2828,34 +2866,7 @@ fn handle_flash_payload(
             |_, _, _, stage_config, shared_minigame_data, _| {
                 if parts.len() == 2 {
                     let pause = parts[1].parse()?;
-
-                    if stage_config.stage_config.max_players() == 1 {
-                        if let MinigameReadiness::Ready(previous_time, possible_resume_time) =
-                            &mut shared_minigame_data.readiness
-                        {
-                            let now = Instant::now();
-                            if pause {
-                                if let Some(resume_time) = possible_resume_time {
-                                    *previous_time = previous_time.saturating_add(
-                                        now.saturating_duration_since(*resume_time),
-                                    );
-                                    *possible_resume_time = None;
-                                }
-                            } else {
-                                *possible_resume_time = Some(now);
-                            }
-                        }
-                    }
-
-                    match &mut shared_minigame_data.data {
-                        SharedMinigameTypeData::FleetCommander { game } => {
-                            game.pause_or_resume(sender, pause)
-                        }
-                        SharedMinigameTypeData::ForceConnection { game } => {
-                            game.pause_or_resume(sender, pause)
-                        }
-                        _ => Ok(Vec::new()),
-                    }
+                    shared_minigame_data.pause_or_resume(sender, pause, &stage_config.stage_config)
                 } else {
                     Err(ProcessPacketError::new(
                         ProcessPacketErrorType::ConstraintViolated,
