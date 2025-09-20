@@ -578,6 +578,10 @@ impl SaberDuelGame {
             return Ok(Vec::new());
         }
 
+        if bout_time_remaining.paused() {
+            return Ok(Vec::new());
+        }
+
         let completion_time = match player_index == 0 {
             true => player1_completed_time,
             false => player2_completed_time,
