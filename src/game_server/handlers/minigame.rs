@@ -500,6 +500,7 @@ impl SharedMinigameTypeData {
         match self {
             SharedMinigameTypeData::FleetCommander { game } => game.pause_or_resume(sender, pause),
             SharedMinigameTypeData::ForceConnection { game } => game.pause_or_resume(sender, pause),
+            SharedMinigameTypeData::SaberDuel { game } => game.pause_or_resume(sender, pause),
             _ => Ok(Vec::new()),
         }
     }

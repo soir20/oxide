@@ -202,8 +202,8 @@ enum SaberDuelGameState {
         is_long_bout: bool,
         keys: Vec<SaberDuelKey>,
         ai_next_key: MinigameTimer,
-        player1_completed_time: Option<Instant>,
-        player2_completed_time: Option<Instant>,
+        player1_completed_time: Option<Duration>,
+        player2_completed_time: Option<Duration>,
     },
     WaitingForRoundEnd {
         timer: MinigameTimer,
@@ -418,7 +418,7 @@ impl SaberDuelGame {
             },
         })];
 
-        if self.player2.is_none() {
+        if self.is_ai_match() {
             packets.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: AddNpc {
@@ -584,8 +584,9 @@ impl SaberDuelGame {
         };
 
         let now = Instant::now();
+        let time_until_bout_end = bout_time_remaining.time_until_next_event(now);
 
-        if completion_time.is_some() || bout_time_remaining.time_until_next_event(now).is_zero() {
+        if completion_time.is_some() || time_until_bout_end.is_zero() {
             return Ok(Vec::new());
         }
 
@@ -603,7 +604,7 @@ impl SaberDuelGame {
 
         if keys[key_index] == keypress.into() {
             if player_state.increment_progress() {
-                *completion_time = Some(now);
+                *completion_time = Some(time_until_bout_end);
             }
         } else {
             player_state.make_mistake();
@@ -687,21 +688,22 @@ impl SaberDuelGame {
                 let bout_completion = match (&player1_completed_time, &player2_completed_time) {
                     (None, None) => SaberDuelBoutCompletion::NeitherPlayer,
                     (None, Some(player2_time)) => SaberDuelBoutCompletion::OnePlayer {
-                        time_since_completion: now.saturating_duration_since(*player2_time),
+                        time_since_completion: *player2_time,
                         player_index: 1,
                     },
                     (Some(player1_time), None) => SaberDuelBoutCompletion::OnePlayer {
-                        time_since_completion: now.saturating_duration_since(*player1_time),
+                        time_since_completion: *player1_time,
                         player_index: 0,
                     },
                     (Some(player1_time), Some(player2_time)) => {
-                        let (min, max, fastest_player_index) = match player1_time < player2_time {
-                            true => (player1_time, player2_time, 0),
-                            false => (player2_time, player1_time, 1),
+                        // The player who finished with the most time until the bout's end is the winner
+                        let fastest_player_index = match player1_time > player2_time {
+                            true => 0,
+                            false => 1,
                         };
 
                         SaberDuelBoutCompletion::BothPlayers {
-                            time_between_completions: max.saturating_duration_since(*min),
+                            time_between_completions: player1_time.abs_diff(*player2_time),
                             fastest_player_index,
                         }
                     }
@@ -713,6 +715,7 @@ impl SaberDuelGame {
                         time_since_completion,
                         player_index,
                     } => {
+                        // TODO: handle pause
                         if time_since_completion
                             > Duration::from_millis(self.config.tie_interval_millis.into())
                         {
@@ -738,6 +741,7 @@ impl SaberDuelGame {
                     &self.config,
                     &mut self.player_states[1],
                     ai_next_key,
+                    bout_time_remaining,
                     player2_completed_time,
                 ) {
                     self.update_progress(1)
@@ -749,12 +753,44 @@ impl SaberDuelGame {
         }
     }
 
+    pub fn pause_or_resume(
+        &mut self,
+        player: u32,
+        pause: bool,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        if player != self.player1 && Some(player) != self.player2 {
+            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to pause or resume (pause: {pause}) the game for player {player}, who is not playing this instance of Saber Duel ({self:?})")));
+        };
+
+        if !self.is_ai_match() {
+            return Ok(Vec::new());
+        }
+
+        match &mut self.state {
+            SaberDuelGameState::WaitingForForcePowers { timer } => timer.pause_or_resume(pause),
+            SaberDuelGameState::BoutActive {
+                bout_time_remaining,
+                ai_next_key,
+                ..
+            } => {
+                bout_time_remaining.pause_or_resume(pause);
+                ai_next_key.pause_or_resume(pause);
+            }
+            SaberDuelGameState::WaitingForRoundEnd { timer } => timer.pause_or_resume(pause),
+            SaberDuelGameState::WaitingForRoundStart { timer } => timer.pause_or_resume(pause),
+            SaberDuelGameState::WaitingForGameOver { timer } => timer.pause_or_resume(pause),
+            _ => {}
+        }
+
+        Ok(Vec::new())
+    }
+
     pub fn remove_player(
         &self,
         player: u32,
         minigame_status: &mut MinigameStatus,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        if self.player2.is_none() {
+        if self.is_ai_match() {
             Ok(vec![Broadcast::Single(
                 player,
                 vec![GamePacket::serialize(&TunneledPacket {
@@ -834,7 +870,7 @@ impl SaberDuelGame {
                                 stage_group_guid: self.group.stage_group_guid,
                             },
                             winner_index: leader_index.into(),
-                            sound_id: match self.player2.is_none() {
+                            sound_id: match self.is_ai_match() {
                                 true => match leader_index == 0 {
                                     true => self.config.ai.game_lost_sound_id,
                                     false => self.config.ai.game_won_sound_id,
@@ -861,7 +897,7 @@ impl SaberDuelGame {
                                 stage_group_guid: self.group.stage_group_guid,
                             },
                             winner_index: leader_index.into(),
-                            sound_id: match self.player2.is_none() {
+                            sound_id: match self.is_ai_match() {
                                 true => match leader_index == 0 {
                                     true => self.config.ai.bout_lost_sound_id,
                                     false => self.config.ai.bout_won_sound_id,
@@ -877,6 +913,10 @@ impl SaberDuelGame {
         }
 
         Ok(broadcasts)
+    }
+
+    fn is_ai_match(&self) -> bool {
+        self.player2.is_none()
     }
 
     fn player_index(&self, sender: u32) -> Result<u8, ProcessPacketError> {
@@ -1047,7 +1087,8 @@ impl SaberDuelGame {
         config: &SaberDuelConfig,
         player_state: &mut SaberDuelPlayerState,
         ai_next_key: &mut MinigameTimer,
-        bout_completed_time: &mut Option<Instant>,
+        bout_time_remaining: &mut MinigameTimer,
+        bout_completed_time: &mut Option<Duration>,
     ) -> bool {
         if ai_next_key.time_until_next_event(now) > Duration::ZERO {
             return false;
@@ -1072,7 +1113,7 @@ impl SaberDuelGame {
         if make_mistake {
             player_state.make_mistake();
         } else if player_state.increment_progress() {
-            *bout_completed_time = Some(now);
+            *bout_completed_time = Some(bout_time_remaining.time_until_next_event(now));
         }
         ai_next_key.schedule_event(Duration::from_millis(config.ai.millis_per_key.into()));
 
@@ -1176,6 +1217,6 @@ impl SaberDuelGame {
             start_round_immediately,
         };
         self.player_states[0].ready = false;
-        self.player_states[1].ready = self.player2.is_none();
+        self.player_states[1].ready = self.is_ai_match();
     }
 }
