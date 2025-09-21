@@ -199,7 +199,7 @@ enum SaberDuelGameState {
     },
     BoutActive {
         bout_time_remaining: MinigameTimer,
-        is_long_bout: bool,
+        is_special_bout: bool,
         keys: Vec<SaberDuelKey>,
         ai_next_key: MinigameTimer,
         player1_completed_time: Option<Duration>,
@@ -252,16 +252,16 @@ pub struct SaberDuelConfig {
     camera_rot: f32,
     rounds_to_win: u8,
     bouts_to_win_round: u8,
-    keys_per_short_bout: u8,
-    keys_per_long_bout: u8,
-    first_long_bout: u8,
-    long_bout_interval: u8,
+    keys_per_basic_bout: u8,
+    keys_per_special_bout: u8,
+    first_special_bout: u8,
+    special_bout_interval: u8,
     bout_max_millis: u32,
     tie_interval_millis: u32,
     #[serde(deserialize_with = "deserialize_bout_animations")]
-    short_bout_animations: Vec<SaberDuelAnimationPair>,
+    basic_bout_animations: Vec<SaberDuelAnimationPair>,
     #[serde(deserialize_with = "deserialize_bout_animations")]
-    long_bout_animations: Vec<SaberDuelAnimationPair>,
+    special_bout_animations: Vec<SaberDuelAnimationPair>,
     establishing_animation_id: i32,
     player_entrance_animation_id: i32,
     ai: SaberDuelAi,
@@ -346,8 +346,8 @@ enum SaberDuelBoutCompletion {
 #[derive(Clone, Debug)]
 pub struct SaberDuelGame {
     config: SaberDuelConfig,
-    short_bout_animation_distribution: WeightedAliasIndex<u8>,
-    long_bout_animation_distribution: WeightedAliasIndex<u8>,
+    basic_bout_animation_distribution: WeightedAliasIndex<u8>,
+    special_bout_animation_distribution: WeightedAliasIndex<u8>,
     player1: u32,
     player2: Option<u32>,
     player_states: [SaberDuelPlayerState; 2],
@@ -369,17 +369,17 @@ impl SaberDuelGame {
             recipients.push(player2);
         }
 
-        let short_bout_animation_distribution = WeightedAliasIndex::new(
+        let basic_bout_animation_distribution = WeightedAliasIndex::new(
             config
-                .short_bout_animations
+                .basic_bout_animations
                 .iter()
                 .map(|animation| animation.weight)
                 .collect(),
         )
         .expect("Couldn't create weighted alias index");
-        let long_bout_animation_distribution = WeightedAliasIndex::new(
+        let special_bout_animation_distribution = WeightedAliasIndex::new(
             config
-                .long_bout_animations
+                .special_bout_animations
                 .iter()
                 .map(|animation| animation.weight)
                 .collect(),
@@ -388,8 +388,8 @@ impl SaberDuelGame {
 
         let mut game = SaberDuelGame {
             config,
-            short_bout_animation_distribution,
-            long_bout_animation_distribution,
+            basic_bout_animation_distribution,
+            special_bout_animation_distribution,
             player1,
             player2,
             player_states: Default::default(),
@@ -677,7 +677,7 @@ impl SaberDuelGame {
             }
             SaberDuelGameState::BoutActive {
                 bout_time_remaining,
-                is_long_bout,
+                is_special_bout,
                 ai_next_key,
                 player1_completed_time,
                 player2_completed_time,
@@ -687,7 +687,7 @@ impl SaberDuelGame {
                     return self.tie_bout();
                 }
 
-                let is_long_bout = *is_long_bout;
+                let is_special_bout = *is_special_bout;
 
                 let bout_completion = match (&player1_completed_time, &player2_completed_time) {
                     (None, None) => SaberDuelBoutCompletion::NeitherPlayer,
@@ -723,7 +723,7 @@ impl SaberDuelGame {
                         if time_since_completion
                             > Duration::from_millis(self.config.tie_interval_millis.into())
                         {
-                            return self.win_bout(player_index, is_long_bout);
+                            return self.win_bout(player_index, is_special_bout);
                         }
                     }
                     SaberDuelBoutCompletion::BothPlayers {
@@ -733,7 +733,7 @@ impl SaberDuelGame {
                         if time_between_completions
                             > Duration::from_millis(self.config.tie_interval_millis.into())
                         {
-                            return self.win_bout(fastest_player_index, is_long_bout);
+                            return self.win_bout(fastest_player_index, is_special_bout);
                         }
 
                         return self.tie_bout();
@@ -1024,13 +1024,13 @@ impl SaberDuelGame {
 
     fn start_bout(&mut self) -> Vec<Broadcast> {
         self.bout = self.bout.saturating_add(1);
-        let is_long_bout = self.bout >= self.config.first_long_bout
-            && (self.bout - self.config.first_long_bout) % self.config.long_bout_interval == 0;
+        let is_special_bout = self.bout >= self.config.first_special_bout
+            && (self.bout - self.config.first_special_bout) % self.config.special_bout_interval == 0;
 
-        let base_sequence_len = if is_long_bout {
-            self.config.keys_per_long_bout
+        let base_sequence_len = if is_special_bout {
+            self.config.keys_per_special_bout
         } else {
-            self.config.keys_per_short_bout
+            self.config.keys_per_basic_bout
         };
 
         // Add a key for the extra key force power
@@ -1045,7 +1045,7 @@ impl SaberDuelGame {
             bout_time_remaining: MinigameTimer::new_with_event(Duration::from_millis(
                 self.config.bout_max_millis.into(),
             )),
-            is_long_bout,
+            is_special_bout,
             keys: keys.clone(),
             ai_next_key: MinigameTimer::new_with_event(Duration::from_millis(
                 self.config.ai.millis_per_key.into(),
@@ -1144,7 +1144,7 @@ impl SaberDuelGame {
         )]
     }
 
-    fn win_bout(&mut self, winner_index: u8, is_long_bout: bool) -> Vec<Broadcast> {
+    fn win_bout(&mut self, winner_index: u8, is_special_bout: bool) -> Vec<Broadcast> {
         self.reset_readiness(false);
 
         let loser_index = (winner_index + 1) % 2;
@@ -1163,13 +1163,13 @@ impl SaberDuelGame {
         winner_state.bouts_won = winner_state.bouts_won.saturating_add(score_per_bout_won);
 
         let rng = &mut thread_rng();
-        let animation_pair = match is_long_bout {
+        let animation_pair = match is_special_bout {
             true => {
-                &self.config.long_bout_animations[self.long_bout_animation_distribution.sample(rng)]
+                &self.config.special_bout_animations[self.special_bout_animation_distribution.sample(rng)]
             }
             false => {
-                &self.config.short_bout_animations
-                    [self.short_bout_animation_distribution.sample(rng)]
+                &self.config.basic_bout_animations
+                    [self.basic_bout_animation_distribution.sample(rng)]
             }
         };
 
