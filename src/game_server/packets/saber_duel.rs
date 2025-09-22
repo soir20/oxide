@@ -39,6 +39,8 @@ pub enum SaberDuelOpCode {
     Deserialize,
     PartialEq,
     Eq,
+    PartialOrd,
+    Ord,
     TryFromPrimitive,
     IntoPrimitive,
     SerializePacket,

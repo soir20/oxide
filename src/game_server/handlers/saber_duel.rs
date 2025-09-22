@@ -1,4 +1,5 @@
 use std::{
+    collections::BTreeSet,
     io::{Cursor, Read},
     time::{Duration, Instant},
 };
@@ -101,7 +102,7 @@ struct SaberDuelPlayerState {
     pub progress: u8,
     pub required_progress: u8,
     pub affected_by_force_powers: Vec<SaberDuelAppliedForcePower>,
-    pub saw_force_power_tutorial: bool,
+    pub seen_force_power_tutorials: BTreeSet<SaberDuelForcePower>,
     pub force_points: u8,
     pub total_correct: u32,
     pub total_mistakes: u32,
@@ -271,7 +272,7 @@ pub struct SaberDuelConfig {
     force_points_per_bout_tied: u8,
     force_points_per_bout_lost: u8,
     force_powers: Vec<SaberDuelAvailableForcePower>,
-    force_power_tutorial: Option<SaberDuelForcePower>,
+    force_power_tutorials: BTreeSet<SaberDuelForcePower>,
     memory_challenge: bool,
 }
 
