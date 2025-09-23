@@ -12,7 +12,7 @@ use serde::{Deserialize, Deserializer};
 use crate::game_server::{
     handlers::{
         character::{Character, MinigameMatchmakingGroup, MinigameStatus},
-        minigame::{handle_minigame_packet_write, MinigameTimer, SharedMinigameTypeData},
+        minigame::{handle_minigame_packet_write, MinigameCountdown, SharedMinigameTypeData},
         unique_guid::{player_guid, saber_duel_opponent_guid},
     },
     packets::{
@@ -196,24 +196,24 @@ enum SaberDuelGameState {
         start_round_immediately: bool,
     },
     WaitingForForcePowers {
-        timer: MinigameTimer,
+        timer: MinigameCountdown,
     },
     BoutActive {
-        bout_time_remaining: MinigameTimer,
+        bout_time_remaining: MinigameCountdown,
         is_special_bout: bool,
         keys: Vec<SaberDuelKey>,
-        ai_next_key: MinigameTimer,
+        ai_next_key: MinigameCountdown,
         player1_completed_time: Option<Duration>,
         player2_completed_time: Option<Duration>,
     },
     WaitingForRoundEnd {
-        timer: MinigameTimer,
+        timer: MinigameCountdown,
     },
     WaitingForRoundStart {
-        timer: MinigameTimer,
+        timer: MinigameCountdown,
     },
     WaitingForGameOver {
-        timer: MinigameTimer,
+        timer: MinigameCountdown,
     },
     GameOver,
 }
@@ -632,7 +632,7 @@ impl SaberDuelGame {
             SaberDuelGameState::WaitingForRoundEnd { timer } => {
                 if timer.time_until_next_event(now).is_zero() {
                     self.state = SaberDuelGameState::WaitingForRoundStart {
-                        timer: MinigameTimer::new_with_event(ROUND_START_DELAY),
+                        timer: MinigameCountdown::new_with_event(ROUND_START_DELAY),
                     };
                     self.player_states
                         .iter_mut()
@@ -864,7 +864,7 @@ impl SaberDuelGame {
 
             if leader_state.rounds_won >= self.config.rounds_to_win {
                 self.state = SaberDuelGameState::WaitingForGameOver {
-                    timer: MinigameTimer::new_with_event(GAME_END_DELAY),
+                    timer: MinigameCountdown::new_with_event(GAME_END_DELAY),
                 };
                 broadcasts.push(Broadcast::Multi(
                     self.recipients.clone(),
@@ -891,7 +891,7 @@ impl SaberDuelGame {
                 ));
             } else {
                 self.state = SaberDuelGameState::WaitingForRoundEnd {
-                    timer: MinigameTimer::new_with_event(ROUND_END_DELAY),
+                    timer: MinigameCountdown::new_with_event(ROUND_END_DELAY),
                 };
                 broadcasts.push(Broadcast::Multi(
                     self.recipients.clone(),
@@ -1017,7 +1017,7 @@ impl SaberDuelGame {
         }
 
         self.state = SaberDuelGameState::WaitingForForcePowers {
-            timer: MinigameTimer::new_with_event(Duration::from_millis(
+            timer: MinigameCountdown::new_with_event(Duration::from_millis(
                 self.config.force_power_selection_max_millis.into(),
             )),
         };
@@ -1046,12 +1046,12 @@ impl SaberDuelGame {
         }
 
         self.state = SaberDuelGameState::BoutActive {
-            bout_time_remaining: MinigameTimer::new_with_event(Duration::from_millis(
+            bout_time_remaining: MinigameCountdown::new_with_event(Duration::from_millis(
                 self.config.bout_max_millis.into(),
             )),
             is_special_bout,
             keys: keys.clone(),
-            ai_next_key: MinigameTimer::new_with_event(Duration::from_millis(
+            ai_next_key: MinigameCountdown::new_with_event(Duration::from_millis(
                 self.config.ai.millis_per_key.into(),
             )),
             player1_completed_time: None,
@@ -1094,8 +1094,8 @@ impl SaberDuelGame {
         now: Instant,
         config: &SaberDuelConfig,
         player_state: &mut SaberDuelPlayerState,
-        ai_next_key: &mut MinigameTimer,
-        bout_time_remaining: &mut MinigameTimer,
+        ai_next_key: &mut MinigameCountdown,
+        bout_time_remaining: &mut MinigameCountdown,
         bout_completed_time: &mut Option<Duration>,
     ) -> bool {
         if ai_next_key.time_until_next_event(now) > Duration::ZERO {

@@ -9,7 +9,7 @@ use serde::Serializer;
 use crate::game_server::{
     handlers::{
         character::MinigameStatus, guid::GuidTableIndexer, lock_enforcer::CharacterTableReadHandle,
-        minigame::MinigameTimer, unique_guid::player_guid,
+        minigame::MinigameCountdown, unique_guid::player_guid,
     },
     packets::{
         minigame::{FlashPayload, MinigameHeader, ScoreEntry, ScoreType},
@@ -470,7 +470,7 @@ pub struct ForceConnectionGame {
     powerups: [[u32; 2]; 2],
     turn: ForceConnectionTurn,
     state: ForceConnectionGameState,
-    timer: MinigameTimer,
+    timer: MinigameCountdown,
     stage_guid: i32,
     stage_group_guid: i32,
 }
@@ -499,7 +499,7 @@ impl ForceConnectionGame {
             powerups: [[1, 2]; 2],
             turn,
             state: ForceConnectionGameState::WaitingForPlayersReady,
-            timer: MinigameTimer::new(),
+            timer: MinigameCountdown::new(),
             stage_guid,
             stage_group_guid,
         }

@@ -535,15 +535,15 @@ impl SharedMinigameTypeData {
 }
 
 #[derive(Clone, Debug)]
-pub struct MinigameTimer {
+pub struct MinigameCountdown {
     paused: bool,
     time_until_next_event: Duration,
     last_timer_update: Instant,
 }
 
-impl MinigameTimer {
+impl MinigameCountdown {
     pub fn new() -> Self {
-        MinigameTimer {
+        MinigameCountdown {
             paused: false,
             time_until_next_event: Duration::ZERO,
             last_timer_update: Instant::now(),
@@ -551,7 +551,7 @@ impl MinigameTimer {
     }
 
     pub fn new_with_event(duration: Duration) -> Self {
-        MinigameTimer {
+        MinigameCountdown {
             paused: false,
             time_until_next_event: duration,
             last_timer_update: Instant::now(),

@@ -14,7 +14,7 @@ use crate::{
     game_server::{
         handlers::{
             character::MinigameStatus, guid::GuidTableIndexer,
-            lock_enforcer::CharacterTableReadHandle, minigame::MinigameTimer,
+            lock_enforcer::CharacterTableReadHandle, minigame::MinigameCountdown,
             unique_guid::player_guid,
         },
         packets::{
@@ -542,7 +542,7 @@ impl Display for FleetCommanderTurn {
 #[derive(Clone, Debug)]
 enum FleetCommanderPlacementState {
     WaitingForConnection,
-    WaitingForPlacement { timer: MinigameTimer },
+    WaitingForPlacement { timer: MinigameCountdown },
     Done,
 }
 
@@ -552,7 +552,7 @@ enum FleetCommanderGameState {
         ship_placement_timers: [FleetCommanderPlacementState; 2],
     },
     WaitingForMove {
-        timer: MinigameTimer,
+        timer: MinigameCountdown,
     },
     ProcessingMove {
         time_left_in_turn: Duration,
@@ -672,7 +672,7 @@ impl FleetCommanderGame {
         }
 
         ship_placement_timers[player_index] = FleetCommanderPlacementState::WaitingForPlacement {
-            timer: MinigameTimer::new_with_event(SHIP_PLACEMENT_TIMEOUT),
+            timer: MinigameCountdown::new_with_event(SHIP_PLACEMENT_TIMEOUT),
         };
 
         let mut broadcasts = vec![Broadcast::Single(
@@ -1266,7 +1266,7 @@ impl FleetCommanderGame {
         }
 
         self.state = FleetCommanderGameState::WaitingForMove {
-            timer: MinigameTimer::new_with_event(self.difficulty.turn_timeout()),
+            timer: MinigameCountdown::new_with_event(self.difficulty.turn_timeout()),
         };
         self.turn = match self.turn {
             FleetCommanderTurn::Player1 => FleetCommanderTurn::Player2,
