@@ -609,11 +609,6 @@ impl MinigameStopwatch {
         }
     }
 
-    pub fn reset(&mut self, start_time: Option<Instant>) {
-        self.previous_total_time = Duration::ZERO;
-        self.possible_resume_time = start_time;
-    }
-
     pub fn elapsed(&self, now: Instant) -> Duration {
         self.previous_total_time
             .saturating_add(now.saturating_duration_since(self.possible_resume_time.unwrap_or(now)))
