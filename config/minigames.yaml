@@ -92,6 +92,8 @@ categories:
                   - force_power: ExtraKey
                   - force_power: RightToLeft
                   - force_power: Opposite
+                score_penalty_per_second: 5.5
+                max_time_score_bonus: 1450
                 max_force_points: 15
                 force_power_selection_max_millis: 5000
                 force_points_per_bout_won: 1
