@@ -266,6 +266,8 @@ pub struct SaberDuelConfig {
     establishing_animation_id: i32,
     player_entrance_animation_id: i32,
     ai: SaberDuelAi,
+    score_penalty_per_second: f32,
+    max_time_score_bonus: i32,
     max_force_points: u8,
     force_power_selection_max_millis: u32,
     force_points_per_bout_won: u8,
@@ -355,7 +357,7 @@ pub struct SaberDuelGame {
     bout: u8,
     state: SaberDuelGameState,
     recipients: Vec<u32>,
-    pub group: MinigameMatchmakingGroup,
+    group: MinigameMatchmakingGroup,
 }
 
 impl SaberDuelGame {
