@@ -333,11 +333,11 @@ pub enum MatchmakingGroupStatus {
     Closed,
 }
 
-#[derive(Clone, PartialEq, Eq)]
+#[derive(Clone)]
 pub enum MinigameReadiness {
     Matchmaking,
     InitialPlayersLoading(BTreeSet<u32>, Option<Instant>),
-    Ready(Duration, Option<Instant>),
+    Ready(MinigameStopwatch),
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
@@ -362,19 +362,8 @@ impl SharedMinigameData {
         stage_config: &MinigameStageConfig,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         if stage_config.max_players() == 1 {
-            if let MinigameReadiness::Ready(previous_time, possible_resume_time) =
-                &mut self.readiness
-            {
-                let now = Instant::now();
-                if pause {
-                    if let Some(resume_time) = possible_resume_time {
-                        *previous_time = previous_time
-                            .saturating_add(now.saturating_duration_since(*resume_time));
-                        *possible_resume_time = None;
-                    }
-                } else {
-                    *possible_resume_time = Some(now);
-                }
+            if let MinigameReadiness::Ready(timer) = &mut self.readiness {
+                timer.pause_or_resume(pause);
             }
         }
 
@@ -589,6 +578,45 @@ impl MinigameCountdown {
             self.time_until_next_event
                 .saturating_sub(time_since_last_tick)
         }
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct MinigameStopwatch {
+    previous_total_time: Duration,
+    possible_resume_time: Option<Instant>,
+}
+
+impl MinigameStopwatch {
+    pub fn new(start_time: Option<Instant>) -> Self {
+        MinigameStopwatch {
+            previous_total_time: Duration::ZERO,
+            possible_resume_time: start_time,
+        }
+    }
+
+    pub fn pause_or_resume(&mut self, pause: bool) {
+        let now = Instant::now();
+        if pause {
+            if let Some(resume_time) = self.possible_resume_time {
+                self.previous_total_time = self
+                    .previous_total_time
+                    .saturating_add(now.saturating_duration_since(resume_time));
+                self.possible_resume_time = None;
+            }
+        } else {
+            self.possible_resume_time = Some(now);
+        }
+    }
+
+    pub fn reset(&mut self, start_time: Option<Instant>) {
+        self.previous_total_time = Duration::ZERO;
+        self.possible_resume_time = start_time;
+    }
+
+    pub fn elapsed(&self, now: Instant) -> Duration {
+        self.previous_total_time
+            .saturating_add(now.saturating_duration_since(self.possible_resume_time.unwrap_or(now)))
     }
 }
 
@@ -2383,7 +2411,7 @@ fn handle_request_start_active_minigame(
                         }
 
                         if players.remove(&sender) && players.is_empty() {
-                            shared_minigame_data.readiness = MinigameReadiness::Ready(Duration::ZERO, Some(first_player_load_time.unwrap_or(now)));
+                            shared_minigame_data.readiness = MinigameReadiness::Ready(MinigameStopwatch::new(Some(first_player_load_time.unwrap_or(now))));
                         }
                     }
 
@@ -2698,9 +2726,7 @@ fn handle_flash_payload_game_result(
                 ));
             }
 
-            let MinigameReadiness::Ready(previous_time, possible_resume_time) =
-                shared_minigame_data.readiness
-            else {
+            let MinigameReadiness::Ready(timer) = &shared_minigame_data.readiness else {
                 return Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
                     format!("Player {sender} sent a Flash game result payload (won: {won}) for a game that isn't ready yet")
@@ -2708,9 +2734,7 @@ fn handle_flash_payload_game_result(
             };
 
             let now = Instant::now();
-            let total_time = previous_time
-                .saturating_add(now.saturating_duration_since(possible_resume_time.unwrap_or(now)))
-                .as_millis();
+            let total_time = timer.elapsed(now).as_millis();
 
             let total_score = parts[1].parse()?;
             minigame_status.total_score = total_score;
@@ -3945,7 +3969,10 @@ pub fn leave_active_minigame_if_any(
         ));
     };
     let mut minigame_data_write_handle = shared_minigame_data.write();
-    let is_matchmaking = minigame_data_write_handle.readiness == MinigameReadiness::Matchmaking;
+    let is_matchmaking = matches!(
+        minigame_data_write_handle.readiness,
+        MinigameReadiness::Matchmaking
+    );
 
     // Wait for the end signal from the Flash payload because those games send additional score data
     if skip_if_flash
