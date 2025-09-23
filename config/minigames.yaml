@@ -115,6 +115,7 @@ categories:
                   small_icon_set_id: 2706
                   icon_set_id: 2706
                   cost: 5
+                force_power_tutorials: []
                 memory_challenge: false
               zone_template_guid: 201
               score_to_credits_expression: x / 177
