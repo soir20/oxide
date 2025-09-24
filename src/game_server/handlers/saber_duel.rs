@@ -102,6 +102,8 @@ struct SaberDuelPlayerState {
     pub ready: bool,
     pub rounds_won: u8,
     pub bouts_won: u8,
+    pub bout_win_streak: u16,
+    pub longest_bout_win_streak: u16,
     pub progress: u8,
     pub required_progress: u8,
     pub affected_by_force_powers: Vec<SaberDuelAppliedForcePower>,
@@ -147,6 +149,20 @@ impl SaberDuelPlayerState {
             .force_points
             .saturating_add(force_points)
             .min(max_force_points);
+    }
+
+    pub fn win_bout(&mut self, added_score: u8) {
+        self.bouts_won = self.bouts_won.saturating_add(added_score);
+        self.bout_win_streak = self.bout_win_streak.saturating_add(1);
+        self.longest_bout_win_streak = self.longest_bout_win_streak.max(self.bout_win_streak);
+    }
+
+    pub fn lose_bout(&mut self) {
+        self.bout_win_streak = 0;
+    }
+
+    pub fn win_round(&mut self) {
+        self.rounds_won = self.rounds_won.saturating_add(1);
     }
 
     pub fn reset_bout_progress(&mut self, new_required_progress: u8) {
@@ -865,6 +881,26 @@ impl SaberDuelGame {
             score_points: 0,
         });
 
+        // Win streak
+        let win_streak = self.player_states[player_index].longest_bout_win_streak as i32;
+        let win_streak_bonus = win_streak.saturating_mul(100);
+        minigame_status.score_entries.push(ScoreEntry {
+            entry_text: "ld_longestWinStreak".to_string(),
+            icon_set_id: 0,
+            score_type: ScoreType::Counter,
+            score_count: win_streak,
+            score_max: 0,
+            score_points: 0,
+        });
+        minigame_status.score_entries.push(ScoreEntry {
+            entry_text: "ld_streakBonus".to_string(),
+            icon_set_id: 0,
+            score_type: ScoreType::Counter,
+            score_count: win_streak_bonus,
+            score_max: 0,
+            score_points: 0,
+        });
+
         //minigame_status.total_score = self.score[player_index];
         minigame_status.score_entries.push(ScoreEntry {
             entry_text: "".to_string(),
@@ -935,7 +971,7 @@ impl SaberDuelGame {
         let leader_state = &mut self.player_states[leader_index as usize];
 
         if leader_state.bouts_won >= self.config.bouts_to_win_round {
-            leader_state.rounds_won = leader_state.rounds_won.saturating_add(1);
+            leader_state.win_round();
             self.bout = 0;
 
             if leader_state.rounds_won >= self.config.rounds_to_win {
@@ -1234,6 +1270,7 @@ impl SaberDuelGame {
             self.config.force_points_per_bout_lost,
             self.config.max_force_points,
         );
+        loser_state.lose_bout();
 
         let winner_state = &mut self.player_states[winner_index as usize];
         winner_state.add_force_points(
@@ -1241,7 +1278,7 @@ impl SaberDuelGame {
             self.config.max_force_points,
         );
         let score_per_bout_won = 1;
-        winner_state.bouts_won = winner_state.bouts_won.saturating_add(score_per_bout_won);
+        winner_state.win_bout(score_per_bout_won);
 
         let rng = &mut thread_rng();
         let animation_pair = match is_special_bout {
