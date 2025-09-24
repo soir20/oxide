@@ -137,8 +137,7 @@ fn handle_saber_strike_game_over(
                 entry_text: "lt_TotalTime".to_string(),
                 icon_set_id: 0,
                 score_type: ScoreType::Time,
-                score_count: i32::try_from(game_over.duration_seconds.round() as i64)
-                    .unwrap_or_default(),
+                score_count: game_over.duration_seconds.round() as i32,
                 score_max: 0,
                 score_points: 0,
             });

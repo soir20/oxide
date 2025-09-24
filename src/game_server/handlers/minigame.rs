@@ -609,7 +609,8 @@ impl MinigameStopwatch {
         }
     }
 
-    pub fn elapsed(&self, now: Instant) -> Duration {
+    pub fn elapsed(&self) -> Duration {
+        let now = Instant::now();
         self.previous_total_time
             .saturating_add(now.saturating_duration_since(self.possible_resume_time.unwrap_or(now)))
     }
@@ -2728,8 +2729,7 @@ fn handle_flash_payload_game_result(
                 ));
             };
 
-            let now = Instant::now();
-            let total_time = timer.elapsed(now).as_millis();
+            let total_time = timer.elapsed().as_millis();
 
             let total_score = parts[1].parse()?;
             minigame_status.total_score = total_score;

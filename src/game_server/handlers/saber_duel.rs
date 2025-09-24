@@ -21,7 +21,7 @@ use crate::game_server::{
     packets::{
         client_update::Position,
         item::{BaseAttachmentGroup, WieldType},
-        minigame::MinigameHeader,
+        minigame::{MinigameHeader, ScoreEntry, ScoreType},
         player_update::{AddNpc, Hostility, Icon, RemoveStandard},
         saber_duel::{
             SaberDuelBoutInfo, SaberDuelBoutStart, SaberDuelBoutTied, SaberDuelBoutWon,
@@ -107,8 +107,8 @@ struct SaberDuelPlayerState {
     pub affected_by_force_powers: Vec<SaberDuelAppliedForcePower>,
     pub seen_force_power_tutorials: BTreeSet<SaberDuelForcePower>,
     pub force_points: u8,
-    pub total_correct: u32,
-    pub total_mistakes: u32,
+    pub total_correct: u16,
+    pub total_mistakes: u16,
 }
 
 impl SaberDuelPlayerState {
@@ -171,6 +171,13 @@ impl SaberDuelPlayerState {
     pub fn make_mistake(&mut self) {
         self.reset_bout_progress(self.required_progress);
         self.total_mistakes = self.total_mistakes.saturating_add(1);
+    }
+
+    pub fn accuracy(&self) -> f32 {
+        let mistakes = Into::<f32>::into(self.total_mistakes);
+        let correct = Into::<f32>::into(self.total_correct);
+        let total = mistakes + correct;
+        correct / total
     }
 }
 
@@ -270,7 +277,7 @@ pub struct SaberDuelConfig {
     player_entrance_animation_id: i32,
     ai: SaberDuelAi,
     score_penalty_per_second: f32,
-    max_time_score_bonus: i32,
+    max_time_score_bonus: f32,
     max_force_points: u8,
     force_power_selection_max_millis: u32,
     force_points_per_bout_won: u8,
@@ -810,6 +817,64 @@ impl SaberDuelGame {
         player: u32,
         minigame_status: &mut MinigameStatus,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let player_index = self.player_index(player)? as usize;
+
+        minigame_status
+            .win_status
+            .set_won(self.player_states[player_index].rounds_won >= self.config.rounds_to_win);
+
+        // Time
+        let duel_seconds = i16::try_from(self.stopwatch.elapsed().as_secs()).unwrap_or(i16::MAX);
+        let time_bonus = (self.config.max_time_score_bonus
+            - Into::<f32>::into(duel_seconds) * self.config.score_penalty_per_second)
+            .round() as i32;
+        minigame_status.score_entries.push(ScoreEntry {
+            entry_text: "ld_TimeMod".to_string(),
+            icon_set_id: 0,
+            score_type: ScoreType::Time,
+            score_count: duel_seconds as i32,
+            score_max: 0,
+            score_points: 0,
+        });
+        minigame_status.score_entries.push(ScoreEntry {
+            entry_text: "ld_timeBonus".to_string(),
+            icon_set_id: 0,
+            score_type: ScoreType::Counter,
+            score_count: time_bonus,
+            score_max: 0,
+            score_points: 0,
+        });
+
+        // Accuracy
+        let accuracy = self.player_states[player_index].accuracy();
+        let accuracy_bonus = (1000.0 - 100.0 * (1.0 - accuracy)).round() as i32;
+        minigame_status.score_entries.push(ScoreEntry {
+            entry_text: "ld_accuracy".to_string(),
+            icon_set_id: 0,
+            score_type: ScoreType::Counter,
+            score_count: accuracy.floor() as i32,
+            score_max: 0,
+            score_points: 0,
+        });
+        minigame_status.score_entries.push(ScoreEntry {
+            entry_text: "ld_accuracyBonus".to_string(),
+            icon_set_id: 0,
+            score_type: ScoreType::Counter,
+            score_count: accuracy_bonus,
+            score_max: 0,
+            score_points: 0,
+        });
+
+        //minigame_status.total_score = self.score[player_index];
+        minigame_status.score_entries.push(ScoreEntry {
+            entry_text: "".to_string(),
+            icon_set_id: 0,
+            score_type: ScoreType::Total,
+            score_count: minigame_status.total_score,
+            score_max: 0,
+            score_points: 0,
+        });
+
         if self.is_ai_match() {
             Ok(vec![Broadcast::Single(
                 player,
