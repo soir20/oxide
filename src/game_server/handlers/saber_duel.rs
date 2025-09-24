@@ -846,8 +846,8 @@ impl SaberDuelGame {
         });
 
         // Accuracy
-        let accuracy = self.player_states[player_index].accuracy();
-        let accuracy_bonus = (1000.0 - 100.0 * (1.0 - accuracy)).round() as i32;
+        let accuracy = self.player_states[player_index].accuracy() * 100.0;
+        let accuracy_bonus = (1000.0 - 100.0 * (100.0 - accuracy)).round() as i32;
         minigame_status.score_entries.push(ScoreEntry {
             entry_text: "ld_accuracy".to_string(),
             icon_set_id: 0,
