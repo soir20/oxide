@@ -12,7 +12,10 @@ use serde::{Deserialize, Deserializer};
 use crate::game_server::{
     handlers::{
         character::{Character, MinigameMatchmakingGroup, MinigameStatus},
-        minigame::{handle_minigame_packet_write, MinigameCountdown, SharedMinigameTypeData},
+        minigame::{
+            handle_minigame_packet_write, MinigameCountdown, MinigameStopwatch,
+            SharedMinigameTypeData,
+        },
         unique_guid::{player_guid, saber_duel_opponent_guid},
     },
     packets::{
@@ -193,7 +196,7 @@ struct SaberDuelAvailableForcePower {
 #[derive(Clone, Debug)]
 enum SaberDuelGameState {
     WaitingForPlayersReady {
-        start_round_immediately: bool,
+        game_start: bool,
     },
     WaitingForForcePowers {
         timer: MinigameCountdown,
@@ -356,6 +359,7 @@ pub struct SaberDuelGame {
     player_states: [SaberDuelPlayerState; 2],
     bout: u8,
     state: SaberDuelGameState,
+    stopwatch: MinigameStopwatch,
     recipients: Vec<u32>,
     group: MinigameMatchmakingGroup,
 }
@@ -397,9 +401,8 @@ impl SaberDuelGame {
             player2,
             player_states: Default::default(),
             bout: 0,
-            state: SaberDuelGameState::WaitingForPlayersReady {
-                start_round_immediately: true,
-            },
+            state: SaberDuelGameState::WaitingForPlayersReady { game_start: true },
+            stopwatch: MinigameStopwatch::new(None),
             recipients,
             group,
         };
@@ -789,6 +792,16 @@ impl SaberDuelGame {
             _ => {}
         }
 
+        // We don't want to unpause the stopwatch if we've paused it at the start or end of the duel
+        if !matches!(
+            self.state,
+            SaberDuelGameState::WaitingForPlayersReady { game_start: true }
+                | SaberDuelGameState::WaitingForGameOver { .. }
+                | SaberDuelGameState::GameOver
+        ) {
+            self.stopwatch.pause_or_resume(pause);
+        }
+
         Ok(Vec::new())
     }
 
@@ -815,10 +828,7 @@ impl SaberDuelGame {
     pub fn mark_player_ready(&mut self, sender: u32) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let player_index = self.player_index(sender)? as usize;
 
-        let SaberDuelGameState::WaitingForPlayersReady {
-            start_round_immediately,
-        } = &self.state
-        else {
+        let SaberDuelGameState::WaitingForPlayersReady { game_start } = &self.state else {
             return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
                 format!("Player {sender} sent a ready packet for Saber Duel, but the game isn't waiting for readiness ({self:?})")
@@ -836,7 +846,8 @@ impl SaberDuelGame {
 
         let mut broadcasts = Vec::new();
 
-        if *start_round_immediately {
+        if *game_start {
+            self.stopwatch.pause_or_resume(false);
             broadcasts.push(Broadcast::Multi(
                 self.recipients.clone(),
                 vec![GamePacket::serialize(&TunneledPacket {
@@ -866,6 +877,7 @@ impl SaberDuelGame {
                 self.state = SaberDuelGameState::WaitingForGameOver {
                     timer: MinigameCountdown::new_with_event(GAME_END_DELAY),
                 };
+                self.stopwatch.pause_or_resume(true);
                 broadcasts.push(Broadcast::Multi(
                     self.recipients.clone(),
                     vec![GamePacket::serialize(&TunneledPacket {
@@ -1221,10 +1233,8 @@ impl SaberDuelGame {
         )]
     }
 
-    fn reset_readiness(&mut self, start_round_immediately: bool) {
-        self.state = SaberDuelGameState::WaitingForPlayersReady {
-            start_round_immediately,
-        };
+    fn reset_readiness(&mut self, game_start: bool) {
+        self.state = SaberDuelGameState::WaitingForPlayersReady { game_start };
         self.player_states[0].ready = false;
         self.player_states[1].ready = self.is_ai_match();
     }
