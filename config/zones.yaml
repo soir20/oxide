@@ -92,6 +92,8 @@
       show_icon: false
       large_icon: false
       show_hover_description: false
+      interact_radius: 3.3
+      move_to_interact_offset: 3.2
       tickable_procedures: &holotable_procedures
         arc_troopers_hologram:
           steps:
@@ -191,7 +193,10 @@
       show_name: false
       show_icon: false
       large_icon: false
-      show_hover_description: false
+      show_hover_description: true
+      interact_radius: 3.3
+      move_to_interact_offset: 3.2
+      interact_popup_radius: 7
     # fighter
     - name_id: 32914
       terrain_object_id: 1319570319
@@ -281,6 +286,9 @@
       show_icon: false
       large_icon: false
       show_hover_description: false
+      interact_radius: 3.3
+      move_to_interact_offset: 3.2
+      interact_popup_radius: 7
     # fighter
     - name_id: 32914
       terrain_object_id: 1341008324
@@ -346,6 +354,9 @@
       show_icon: false
       large_icon: false
       show_hover_description: false
+      interact_radius: 3.3
+      move_to_interact_offset: 3.2
+      interact_popup_radius: 7
   ambient_npcs:
     # Sarlacc bouncer
     - model_id: 178
@@ -404,6 +415,7 @@
         y: 0
         z: 0
         w: 0
+      interact_radius: 7
     # Archives -> Veranda
     - pos:
         x: 1760.083
@@ -421,6 +433,7 @@
         y: 0
         z: 1.5
         w: 0
+      interact_radius: 7
     # Veranda -> Workshop
     - pos:
         x: 898.6971
@@ -438,6 +451,7 @@
         y: 0
         z: 0
         w: 0
+      interact_radius: 7
     # Workshop -> Veranda
     - pos:
         x: -359.4902
@@ -455,6 +469,7 @@
         y: 0
         z: -1.5
         w: 0
+      interact_radius: 7
     # Veranda -> Main Hall (left)
     - pos:
         x: 922.5864
@@ -472,6 +487,7 @@
         y: 0
         z: -1
         w: 0
+      interact_radius: 7
     # Main Hall (left) -> Veranda
     - pos:
         x: 1256.403
@@ -489,6 +505,7 @@
         y: 0
         z: 0
         w: 0
+      interact_radius: 7
     # Veranda -> Main Hall (right)
     - pos:
         x: 922.5864
@@ -506,6 +523,7 @@
         y: 0
         z: -1
         w: 0
+      interact_radius: 7
     # Main Hall (right) -> Veranda
     - pos:
         x: 1305.649
@@ -523,6 +541,7 @@
         y: 0
         z: 0
         w: 0
+      interact_radius: 7
     # Main Hall -> Training Room
     - pos:
         x: 1242.232
@@ -540,6 +559,7 @@
         y: 0
         z: -1.5
         w: 0
+      interact_radius: 7
     # Training Room -> Main Hall
     - pos:
         x: 160.4435
@@ -557,6 +577,7 @@
         y: 0
         z: 0
         w: 0
+      interact_radius: 7
     # Main Hall -> Hangar
     - pos:
         x: 1242.241
@@ -574,6 +595,7 @@
         y: 0
         z: 0
         w: 0
+      interact_radius: 7
     # Hangar -> Main Hall
     - pos:
         x: 133.3168
@@ -591,6 +613,7 @@
         y: 0
         z: 0
         w: 0
+      interact_radius: 7
     # Main Hall -> Lounge
     - pos:
         x: 1319.713
@@ -608,6 +631,7 @@
         y: 0
         z: 0
         w: 0
+      interact_radius: 7
     # Lounge -> Main Hall
     - pos:
         x: -136.2943
@@ -625,6 +649,7 @@
         y: 0
         z: 0
         w: 0
+      interact_radius: 7
     # Main Hall -> War Room
     - pos:
         x: 1319.77
@@ -642,6 +667,7 @@
         y: 0
         z: 0
         w: 0
+      interact_radius: 7
     # War Room -> Main Hall
     - pos:
         x: 690.7585
@@ -659,6 +685,7 @@
         y: 0
         z: 0
         w: 0
+      interact_radius: 7
     # Veranda -> Construction Chamber
     - pos:
         x: 922.5898
@@ -679,6 +706,7 @@
       destination_zone:
         !Any
         template_guid: 25
+      interact_radius: 7
     # Lounge -> Club
     - pos:
         x: -106.5555
@@ -699,6 +727,7 @@
       destination_zone:
         !Any
         template_guid: 25
+      interact_radius: 7
   transports:
     # Breaker
     - model_id: 1207
@@ -2838,7 +2867,8 @@
       enable_interact_popup: false
       use_terrain_object_id: false
       enable_gravity: false
-      move_to_interact_offset: 3.3
+      interact_radius: 3.3
+      move_to_interact_offset: 3.2
       one_shot_action_on_interact:
            one_shot_action_animation_id: 3006
            one_shot_action_composite_effect_id: 1959
@@ -3359,6 +3389,7 @@
       destination_zone:
         !Any
         template_guid: 24
+      interact_radius: 7
     # Club -> Lounge
     - pos:
         x: 761.51
@@ -3379,6 +3410,7 @@
       destination_zone:
         !Any
         template_guid: 24
+      interact_radius: 7
   transports: []
   ambient_npcs:
     # Members Blue Orb Double Spawn Timer
