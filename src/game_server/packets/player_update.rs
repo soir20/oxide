@@ -709,6 +709,29 @@ impl GamePacket for NpcRelevance {
 }
 
 #[derive(
+    Copy,
+    Clone,
+    Debug,
+    Deserialize,
+    TryFromPrimitive,
+    IntoPrimitive,
+    PartialEq,
+    SerializePacket,
+    DeserializePacket,
+)]
+#[repr(u32)]
+pub enum Physics {
+    PhysicsDisabled = 1,
+    PhysicsEnabled = 2,
+}
+
+impl Default for Physics {
+    fn default() -> Self {
+        Physics::PhysicsEnabled
+    }
+}
+
+#[derive(
     Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
 )]
 #[repr(u32)]
@@ -791,7 +814,7 @@ pub struct AddNpc {
     pub image_set_id: u32,
     pub collision: bool,
     pub rider_guid: u64,
-    pub npc_type: u32,
+    pub physics: Physics,
     pub interact_popup_radius: f32,
     pub target: Target,
     pub variables: Vec<Variable>,

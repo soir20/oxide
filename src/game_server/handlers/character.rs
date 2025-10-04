@@ -19,10 +19,10 @@ use crate::{
             player_data::EquippedItem,
             player_update::{
                 AddNotifications, AddNpc, AddPc, Customization, CustomizationSlot, Hostility, Icon,
-                MoveOnRail, NameplateImage, NotificationData, NpcRelevance, PlayCompositeEffect,
-                QueueAnimation, RemoveGracefully, RemoveStandard, RemoveTemporaryModel,
-                SetAnimation, SingleNotification, SingleNpcRelevance, UpdateIdleAnimation,
-                UpdateSpeed, UpdateTemporaryModel,
+                MoveOnRail, NameplateImage, NotificationData, NpcRelevance, Physics,
+                PlayCompositeEffect, QueueAnimation, RemoveGracefully, RemoveStandard,
+                RemoveTemporaryModel, SetAnimation, SingleNotification, SingleNpcRelevance,
+                UpdateIdleAnimation, UpdateSpeed, UpdateTemporaryModel,
             },
             tunnel::TunneledPacket,
             ui::ExecuteScriptWithStringParams,
@@ -81,10 +81,6 @@ const fn default_scale() -> f32 {
 
 const fn default_true() -> bool {
     true
-}
-
-const fn default_npc_type() -> u32 {
-    2
 }
 
 const fn default_weight() -> u32 {
@@ -175,8 +171,8 @@ pub struct BaseNpcConfig {
     pub visible: bool,
     #[serde(default)]
     pub bounce_area_id: i32,
-    #[serde(default = "default_npc_type")]
-    pub npc_type: u32,
+    #[serde(default)]
+    pub physics: Physics,
     #[serde(default = "default_true")]
     pub enable_gravity: bool,
     #[serde(default)]
@@ -203,7 +199,6 @@ pub struct BaseNpc {
     pub show_name: bool,
     pub visible: bool,
     pub bounce_area_id: i32,
-    pub npc_type: u32,
     pub enable_gravity: bool,
     pub enable_tilt: bool,
 }
@@ -283,7 +278,7 @@ impl BaseNpc {
                 image_set_id: 0,
                 collision: true,
                 rider_guid: 0,
-                npc_type: self.npc_type,
+                physics: character.physics,
                 interact_popup_radius: self
                     .interact_popup_radius
                     .unwrap_or(character.interact_radius),
@@ -340,7 +335,6 @@ impl From<BaseNpcConfig> for BaseNpc {
             show_name: value.show_name,
             visible: value.visible,
             bounce_area_id: value.bounce_area_id,
-            npc_type: value.npc_type,
             enable_gravity: value.enable_gravity,
             enable_tilt: value.enable_tilt,
         }
@@ -517,7 +511,7 @@ impl TickableStep {
                 },
             }));
 
-            if speed == 0.0 {
+            if speed == 0.0 && character.physics == Physics::PhysicsEnabled {
                 packets_for_all.push(GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
                     inner: UpdateIdleAnimation {
@@ -1479,6 +1473,7 @@ pub struct NpcTemplate {
     pub first_possible_procedures: Vec<String>,
     pub synchronize_with: Option<String>,
     pub is_spawned: bool,
+    pub physics: Physics,
 }
 
 impl NpcTemplate {
@@ -1524,6 +1519,7 @@ impl NpcTemplate {
                 },
                 cursor: self.cursor,
                 is_spawned: self.is_spawned,
+                physics: self.physics,
                 name: None,
                 squad_guid: None,
             },
@@ -1600,6 +1596,7 @@ pub struct CharacterStats {
     pub jump_height_multiplier: CharacterStat,
     pub cursor: Option<u8>,
     pub is_spawned: bool,
+    pub physics: Physics,
     pub name: Option<String>,
     pub squad_guid: Option<u64>,
     wield_type: (WieldType, WieldType),
@@ -1825,6 +1822,7 @@ impl Character {
                 mount: mount_id,
                 cursor,
                 is_spawned: true,
+                physics: Physics::default(),
                 name: None,
                 squad_guid: None,
                 interact_radius,
@@ -1900,6 +1898,7 @@ impl Character {
                 mount: None,
                 cursor: None,
                 is_spawned: true,
+                physics: Physics::default(),
                 interact_radius: 0.0,
                 auto_interact_radius: 0.0,
                 move_to_interact_offset: 2.2,
