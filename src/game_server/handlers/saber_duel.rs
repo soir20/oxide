@@ -1190,8 +1190,8 @@ impl SaberDuelGame {
     fn start_bout(&mut self) -> Vec<Broadcast> {
         self.bout = self.bout.saturating_add(1);
         let is_special_bout = self.bout >= self.config.first_special_bout
-            && (self.bout - self.config.first_special_bout) % self.config.special_bout_interval
-                == 0;
+            && (self.bout - self.config.first_special_bout)
+                .is_multiple_of(self.config.special_bout_interval);
 
         let base_sequence_len = if is_special_bout {
             self.config.keys_per_special_bout
