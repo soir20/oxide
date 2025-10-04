@@ -295,6 +295,8 @@ pub struct SaberDuelConfig {
     keys_per_special_bout: u8,
     first_special_bout: u8,
     special_bout_interval: u8,
+    points_per_basic_bout: u8,
+    points_per_special_bout: u8,
     bout_max_millis: u32,
     tie_interval_millis: u32,
     #[serde(deserialize_with = "deserialize_bout_animations")]
@@ -1329,7 +1331,10 @@ impl SaberDuelGame {
             self.config.force_points_per_bout_won,
             self.config.max_force_points,
         );
-        let points_per_bout_won = 1;
+        let points_per_bout_won = match is_special_bout {
+            true => self.config.points_per_special_bout,
+            false => self.config.points_per_basic_bout,
+        };
         winner_state.win_bout(points_per_bout_won);
 
         let rng = &mut thread_rng();
