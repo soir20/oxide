@@ -957,12 +957,12 @@ impl SaberDuelGame {
             });
         }
 
-        minigame_status.total_score = total_score;
+        minigame_status.total_score = total_score.max(0);
         minigame_status.score_entries.push(ScoreEntry {
             entry_text: "".to_string(),
             icon_set_id: 0,
             score_type: ScoreType::Total,
-            score_count: total_score,
+            score_count: minigame_status.total_score,
             score_max: 0,
             score_points: 0,
         });
