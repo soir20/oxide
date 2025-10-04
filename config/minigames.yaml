@@ -58,11 +58,13 @@ categories:
                   w: 1
                 camera_rot: 0.0
                 rounds_to_win: 2
-                bouts_to_win_round: 2
+                points_to_win_round: 2
                 keys_per_basic_bout: 6
                 keys_per_special_bout: 8
                 first_special_bout: 2
                 special_bout_interval: 3
+                points_per_basic_bout: 1
+                points_per_special_bout: 2
                 bout_max_millis: 10000
                 tie_interval_millis: 100
                 basic_bout_animations:
@@ -94,6 +96,13 @@ categories:
                   - force_power: Opposite
                 score_penalty_per_second: 5.5
                 max_time_score_bonus: 1450
+                score_penalty_per_accuracy_pct: 100
+                max_accuracy_score_bonus: 1000
+                score_per_win_streak: 100
+                score_per_point: 500
+                score_per_margin_of_victory: 500
+                game_win_bonus_score: 5000
+                no_bouts_lost_bonus_score: 5000
                 max_force_points: 15
                 force_power_selection_max_millis: 5000
                 force_points_per_bout_won: 1
