@@ -65,7 +65,7 @@ pub struct SaberDuelForcePowerDefinition {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct SaberDuelStageData {
     pub minigame_header: MinigameHeader,
-    pub win_score: u32,
+    pub points_to_win_round: u32,
     pub total_rounds: u32,
     pub seconds_remaining: u32,
     pub camera_pos: Pos,
@@ -271,7 +271,7 @@ impl GamePacket for SaberDuelPlayerUpdate {
 pub struct SaberDuelBoutWon {
     pub minigame_header: MinigameHeader,
     pub winner_index: u32,
-    pub added_score: u32,
+    pub added_points: u32,
     pub winner_animation_id: i32,
     pub loser_animation_id: i32,
 }
