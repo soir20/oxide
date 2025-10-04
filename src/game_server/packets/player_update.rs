@@ -712,6 +712,7 @@ impl GamePacket for NpcRelevance {
     Copy,
     Clone,
     Debug,
+    Default,
     Deserialize,
     TryFromPrimitive,
     IntoPrimitive,
@@ -722,13 +723,8 @@ impl GamePacket for NpcRelevance {
 #[repr(u32)]
 pub enum Physics {
     PhysicsDisabled = 1,
+    #[default]
     PhysicsEnabled = 2,
-}
-
-impl Default for Physics {
-    fn default() -> Self {
-        Physics::PhysicsEnabled
-    }
 }
 
 #[derive(
