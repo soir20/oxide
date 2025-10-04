@@ -22,7 +22,7 @@ use crate::{
                 MoveOnRail, NameplateImage, NotificationData, NpcRelevance, PlayCompositeEffect,
                 QueueAnimation, RemoveGracefully, RemoveStandard, RemoveTemporaryModel,
                 SetAnimation, SingleNotification, SingleNpcRelevance, UpdateIdleAnimation,
-                UpdateSpeed, UpdateTemporaryModel, UpdateRunAnimation,
+                UpdateSpeed, UpdateTemporaryModel,
             },
             tunnel::TunneledPacket,
             ui::ExecuteScriptWithStringParams,
