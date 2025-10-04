@@ -511,7 +511,7 @@ impl TickableStep {
                 },
             }));
 
-            if speed == 0.0 && character.physics_state == PhysicsState::PhysicsEnabled {
+            if speed == 0.0 && character.physics_state == PhysicsState::Enabled {
                 packets_for_all.push(GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
                     inner: UpdateIdleAnimation {

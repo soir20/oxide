@@ -722,9 +722,9 @@ impl GamePacket for NpcRelevance {
 )]
 #[repr(u32)]
 pub enum PhysicsState {
-    PhysicsDisabled = 1,
+    Disabled = 1,
     #[default]
-    PhysicsEnabled = 2,
+    Enabled = 2,
 }
 
 #[derive(
