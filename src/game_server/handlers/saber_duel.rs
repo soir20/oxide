@@ -102,8 +102,8 @@ struct SaberDuelPlayerState {
     pub ready: bool,
     pub rounds_won: u8,
     pub round_points: u8,
-    pub game_points: u16,
-    pub game_bouts_lost: u16,
+    pub game_points_won: u16,
+    pub game_points_lost: u16,
     pub win_streak: u16,
     pub longest_win_streak: u16,
     pub progress: u8,
@@ -153,10 +153,10 @@ impl SaberDuelPlayerState {
             .min(max_force_points);
     }
 
-    pub fn win_bout(&mut self, added_points: u8) {
-        self.round_points = self.round_points.saturating_add(added_points);
-        self.game_points = self.game_points.saturating_add(added_points.into());
-        self.win_streak = self.win_streak.saturating_add(added_points.into());
+    pub fn win_bout(&mut self, points_won: u8) {
+        self.round_points = self.round_points.saturating_add(points_won);
+        self.game_points_won = self.game_points_won.saturating_add(points_won.into());
+        self.win_streak = self.win_streak.saturating_add(points_won.into());
         self.longest_win_streak = self.longest_win_streak.max(self.win_streak);
     }
 
@@ -164,8 +164,8 @@ impl SaberDuelPlayerState {
         self.win_streak = 0;
     }
 
-    pub fn lose_bout(&mut self) {
-        self.game_bouts_lost = self.game_bouts_lost.saturating_add(1);
+    pub fn lose_bout(&mut self, points_lost: u8) {
+        self.game_points_lost = self.game_points_lost.saturating_add(points_lost.into());
         self.win_streak = 0;
     }
 
@@ -184,7 +184,7 @@ impl SaberDuelPlayerState {
     }
 
     pub fn margin_of_victory(&self) -> i32 {
-        (self.game_points as i32).saturating_sub(self.game_bouts_lost as i32)
+        (self.game_points_won as i32).saturating_sub(self.game_points_lost as i32)
     }
 
     #[must_use]
@@ -866,7 +866,7 @@ impl SaberDuelGame {
             total_score = total_score.saturating_add(self.config.game_win_bonus_score);
         }
 
-        if player_state.game_bouts_lost == 0 {
+        if player_state.game_points_lost == 0 {
             total_score = total_score.saturating_add(self.config.no_bouts_lost_bonus_score);
         }
 
@@ -876,7 +876,7 @@ impl SaberDuelGame {
                 .saturating_mul(self.config.score_per_margin_of_victory),
         );
         total_score = total_score.saturating_add(
-            (player_state.game_points as i32).saturating_mul(self.config.score_per_point),
+            (player_state.game_points_won as i32).saturating_mul(self.config.score_per_point),
         );
 
         // Time
@@ -1320,6 +1320,10 @@ impl SaberDuelGame {
 
     fn win_bout(&mut self, winner_index: u8, is_special_bout: bool) -> Vec<Broadcast> {
         self.reset_readiness(false);
+        let points_won = match is_special_bout {
+            true => self.config.points_per_special_bout,
+            false => self.config.points_per_basic_bout,
+        };
 
         let loser_index = (winner_index + 1) % 2;
         let loser_state = &mut self.player_states[loser_index as usize];
@@ -1327,18 +1331,14 @@ impl SaberDuelGame {
             self.config.force_points_per_bout_lost,
             self.config.max_force_points,
         );
-        loser_state.lose_bout();
+        loser_state.lose_bout(points_won);
 
         let winner_state = &mut self.player_states[winner_index as usize];
         winner_state.add_force_points(
             self.config.force_points_per_bout_won,
             self.config.max_force_points,
         );
-        let points_per_bout_won = match is_special_bout {
-            true => self.config.points_per_special_bout,
-            false => self.config.points_per_basic_bout,
-        };
-        winner_state.win_bout(points_per_bout_won);
+        winner_state.win_bout(points_won);
 
         let rng = &mut thread_rng();
         let animation_pair = match is_special_bout {
@@ -1363,7 +1363,7 @@ impl SaberDuelGame {
                         stage_group_guid: self.group.stage_group_guid,
                     },
                     winner_index: winner_index.into(),
-                    added_points: points_per_bout_won.into(),
+                    points_won: points_won.into(),
                     winner_animation_id: animation_pair.attack_animation_id,
                     loser_animation_id: animation_pair.defend_animation_id,
                 },
