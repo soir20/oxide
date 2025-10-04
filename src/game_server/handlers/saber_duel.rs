@@ -104,8 +104,8 @@ struct SaberDuelPlayerState {
     pub round_points: u8,
     pub game_points: u16,
     pub game_bouts_lost: u16,
-    pub bout_win_streak: u16,
-    pub longest_bout_win_streak: u16,
+    pub win_streak: u16,
+    pub longest_win_streak: u16,
     pub progress: u8,
     pub required_progress: u8,
     pub affected_by_force_powers: Vec<SaberDuelAppliedForcePower>,
@@ -156,17 +156,17 @@ impl SaberDuelPlayerState {
     pub fn win_bout(&mut self, added_points: u8) {
         self.round_points = self.round_points.saturating_add(added_points);
         self.game_points = self.game_points.saturating_add(added_points.into());
-        self.bout_win_streak = self.bout_win_streak.saturating_add(1);
-        self.longest_bout_win_streak = self.longest_bout_win_streak.max(self.bout_win_streak);
+        self.win_streak = self.win_streak.saturating_add(added_points.into());
+        self.longest_win_streak = self.longest_win_streak.max(self.win_streak);
     }
 
     pub fn tie_bout(&mut self) {
-        self.bout_win_streak = 0;
+        self.win_streak = 0;
     }
 
     pub fn lose_bout(&mut self) {
         self.game_bouts_lost = self.game_bouts_lost.saturating_add(1);
-        self.bout_win_streak = 0;
+        self.win_streak = 0;
     }
 
     pub fn win_round(&mut self) {
@@ -308,8 +308,8 @@ pub struct SaberDuelConfig {
     max_time_score_bonus: f32,
     score_penalty_per_accuracy_pct: f32,
     max_accuracy_score_bonus: f32,
-    score_per_bout_win_streak: i32,
-    score_per_bout_won: i32,
+    score_per_win_streak: i32,
+    score_per_point: i32,
     score_per_margin_of_victory: i32,
     game_win_bonus_score: i32,
     no_bouts_lost_bonus_score: i32,
@@ -873,6 +873,9 @@ impl SaberDuelGame {
                 .margin_of_victory()
                 .saturating_mul(self.config.score_per_margin_of_victory),
         );
+        total_score = total_score.saturating_add(
+            (player_state.game_points as i32).saturating_mul(self.config.score_per_point),
+        );
 
         // Time
         let duel_seconds = i16::try_from(self.stopwatch.elapsed().as_secs()).unwrap_or(i16::MAX);
@@ -928,8 +931,8 @@ impl SaberDuelGame {
         }
 
         // Win streak
-        let win_streak = self.player_states[player_index].longest_bout_win_streak as i32;
-        let win_streak_bonus = win_streak.saturating_mul(100);
+        let win_streak = self.player_states[player_index].longest_win_streak as i32;
+        let win_streak_bonus = win_streak.saturating_mul(self.config.score_per_win_streak);
         minigame_status.score_entries.push(ScoreEntry {
             entry_text: "ld_longestWinStreak".to_string(),
             icon_set_id: 0,
