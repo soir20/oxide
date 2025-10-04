@@ -888,6 +888,7 @@ impl SaberDuelGame {
                 .max(0.0) as i32,
             false => 0,
         };
+        total_score = total_score.saturating_add(time_bonus);
         minigame_status.score_entries.push(ScoreEntry {
             entry_text: "ld_TimeMod".to_string(),
             icon_set_id: 0,
@@ -913,6 +914,7 @@ impl SaberDuelGame {
             - self.config.score_penalty_per_accuracy_pct * (100.0 - accuracy))
             .round()
             .max(0.0) as i32;
+        total_score = total_score.saturating_add(accuracy_bonus);
         minigame_status.score_entries.push(ScoreEntry {
             entry_text: "ld_accuracy".to_string(),
             icon_set_id: 0,
@@ -935,6 +937,7 @@ impl SaberDuelGame {
         // Win streak
         let win_streak = self.player_states[player_index].longest_win_streak as i32;
         let win_streak_bonus = win_streak.saturating_mul(self.config.score_per_win_streak);
+        total_score = total_score.saturating_add(win_streak_bonus);
         minigame_status.score_entries.push(ScoreEntry {
             entry_text: "ld_longestWinStreak".to_string(),
             icon_set_id: 0,
