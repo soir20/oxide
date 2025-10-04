@@ -608,7 +608,7 @@ impl DailyTriviaGame {
             .consecutive_days_completed(self.stage_guid)
             .saturating_add(1);
         self.daily_double = consecutive_completions > 0
-            && consecutive_completions % self.consecutive_days_for_daily_double == 0;
+            && consecutive_completions.is_multiple_of(self.consecutive_days_for_daily_double);
         self.state = DailyTriviaGameState::ReadyForNextQuestion {
             next_question_index: 0,
         };
