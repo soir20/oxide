@@ -26,11 +26,14 @@ pub enum PlayerUpdateOpCode {
     UpdateTemporaryModel = 0xe,
     RemoveTemporaryModel = 0xf,
     UpdateCharacterState = 0x14,
+    UpdateWalkAnimation = 0x15,
     QueueAnimation = 0x16,
     UpdateSpeed = 0x17,
+    UpdateIdleAnimation = 0x1a,
     LootEvent = 0x1d,
     ProgressiveHeadScale = 0x1e,
     SlotCompositeEffectOverride = 0x1f,
+    UpdateRunAnimation = 0x19,
     Freeze = 0x20,
     ItemDefinitionsRequest = 0x22,
     ItemDefinitionsReply = 0x25,
@@ -146,6 +149,39 @@ impl GamePacket for AddPc {
     type Header = PlayerUpdateOpCode;
 
     const HEADER: Self::Header = PlayerUpdateOpCode::AddPc;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct UpdateIdleAnimation {
+    pub guid: u64,
+    pub animation_id: i32,
+}
+
+impl GamePacket for UpdateIdleAnimation {
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::UpdateIdleAnimation;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct UpdateRunAnimation {
+    pub guid: u64,
+    pub animation_id: i32,
+}
+
+impl GamePacket for UpdateRunAnimation {
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::UpdateRunAnimation;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct UpdateWalkAnimation {
+    pub guid: u64,
+    pub animation_id: i32,
+}
+
+impl GamePacket for UpdateWalkAnimation {
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::UpdateWalkAnimation;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -733,9 +769,9 @@ pub struct AddNpc {
     pub speed: f32,
     pub unknown21: bool,
     pub interactable_size_pct: u32,
-    pub unknown23: i32,
-    pub unknown24: i32,
-    pub looping_animation_id: i32,
+    pub walk_animation_id: i32,
+    pub sprint_animation_id: i32,
+    pub stand_animation_id: i32,
     pub unknown26: bool,
     pub disable_gravity: bool,
     pub sub_title_id: u32,
