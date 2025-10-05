@@ -489,7 +489,7 @@ pub fn spawn_mount_npc(
                 unknown54: 0,
                 rail_unknown1: 0.0,
                 rail_unknown2: 0.0,
-                rail_unknown3: 0.0,
+                auto_interact_radius: 0.0,
                 head_customization_override: "".to_string(),
                 hair_customization_override: "".to_string(),
                 body_customization_override: "".to_string(),

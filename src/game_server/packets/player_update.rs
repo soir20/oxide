@@ -820,7 +820,7 @@ pub struct AddNpc {
     pub unknown54: u32,
     pub rail_unknown1: f32,
     pub rail_unknown2: f32,
-    pub rail_unknown3: f32,
+    pub auto_interact_radius: f32,
     pub head_customization_override: String,
     pub hair_customization_override: String,
     pub body_customization_override: String,
