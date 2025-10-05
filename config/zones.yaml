@@ -816,7 +816,7 @@
               weight: 1259
     # Training Room Main Platform Lift
     - model_id: 1438
-      physics_state: Disabled
+      physics_state: Enabled
       pos:
         x: 148.8
         y: -3.6210175
@@ -830,11 +830,11 @@
       tickable_procedures:
         lift:
           steps:
-            - speed: 2
-              new_pos_offset_y: 10
+            - new_pos_offset_z: 10
+              speed: 3
               duration_millis: 10000
-            - speed: 2
-              new_pos_offset_y: -10
+            - new_pos_offset_z: -10
+              speed: 3
               duration_millis: 10000
     # Training Room Dueling Platform Lift
     - model_id: 1438
