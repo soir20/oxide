@@ -656,7 +656,12 @@ impl SaberDuelGame {
         }
         .min(keys.len() - 1);
 
-        if keys[key_index] == keypress.into() {
+        let mut expected_key = keys[key_index];
+        if player_state.is_affected_by(SaberDuelForcePower::Opposite) {
+            expected_key = expected_key.opposite();
+        }
+
+        if expected_key == keypress.into() {
             if player_state.increment_progress() {
                 *completion_time = Some(time_until_bout_end);
             }

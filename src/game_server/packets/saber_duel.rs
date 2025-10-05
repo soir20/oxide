@@ -221,6 +221,17 @@ impl Distribution<SaberDuelKey> for Standard {
     }
 }
 
+impl SaberDuelKey {
+    pub fn opposite(&self) -> SaberDuelKey {
+        match *self {
+            SaberDuelKey::Up => SaberDuelKey::Down,
+            SaberDuelKey::Down => SaberDuelKey::Up,
+            SaberDuelKey::Left => SaberDuelKey::Right,
+            SaberDuelKey::Right => SaberDuelKey::Left,
+        }
+    }
+}
+
 #[derive(Clone, Copy, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket)]
 #[repr(u16)]
 pub enum SaberDuelKeypress {
