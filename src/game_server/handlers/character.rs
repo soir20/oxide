@@ -172,7 +172,7 @@ pub struct BaseNpcConfig {
     #[serde(default)]
     pub bounce_area_id: i32,
     #[serde(default)]
-    pub physics_state: PhysicsState,
+    pub physics: PhysicsState,
     #[serde(default = "default_true")]
     pub enable_gravity: bool,
     #[serde(default)]
@@ -278,7 +278,7 @@ impl BaseNpc {
                 image_set_id: 0,
                 collision: true,
                 rider_guid: 0,
-                physics_state: character.physics_state,
+                physics: character.physics,
                 interact_popup_radius: self
                     .interact_popup_radius
                     .unwrap_or(character.interact_radius),
@@ -1463,7 +1463,7 @@ pub struct NpcTemplate {
     pub first_possible_procedures: Vec<String>,
     pub synchronize_with: Option<String>,
     pub is_spawned: bool,
-    pub physics_state: PhysicsState,
+    pub physics: PhysicsState,
 }
 
 impl NpcTemplate {
@@ -1509,7 +1509,7 @@ impl NpcTemplate {
                 },
                 cursor: self.cursor,
                 is_spawned: self.is_spawned,
-                physics_state: self.physics_state,
+                physics: self.physics,
                 name: None,
                 squad_guid: None,
             },
@@ -1586,7 +1586,7 @@ pub struct CharacterStats {
     pub jump_height_multiplier: CharacterStat,
     pub cursor: Option<u8>,
     pub is_spawned: bool,
-    pub physics_state: PhysicsState,
+    pub physics: PhysicsState,
     pub name: Option<String>,
     pub squad_guid: Option<u64>,
     wield_type: (WieldType, WieldType),
@@ -1812,7 +1812,7 @@ impl Character {
                 mount: mount_id,
                 cursor,
                 is_spawned: true,
-                physics_state: PhysicsState::default(),
+                physics: PhysicsState::default(),
                 name: None,
                 squad_guid: None,
                 interact_radius,
@@ -1888,7 +1888,7 @@ impl Character {
                 mount: None,
                 cursor: None,
                 is_spawned: true,
-                physics_state: PhysicsState::default(),
+                physics: PhysicsState::default(),
                 interact_radius: 0.0,
                 auto_interact_radius: 0.0,
                 move_to_interact_offset: 2.2,

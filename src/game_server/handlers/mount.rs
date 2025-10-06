@@ -474,7 +474,7 @@ pub fn spawn_mount_npc(
                 image_set_id: 0,
                 collision: true,
                 rider_guid: 0,
-                physics_state: PhysicsState::default(),
+                physics: PhysicsState::default(),
                 interact_popup_radius: 0.0,
                 target: Target::default(),
                 variables: vec![],

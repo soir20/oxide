@@ -810,7 +810,7 @@ pub struct AddNpc {
     pub image_set_id: u32,
     pub collision: bool,
     pub rider_guid: u64,
-    pub physics_state: PhysicsState,
+    pub physics: PhysicsState,
     pub interact_popup_radius: f32,
     pub target: Target,
     pub variables: Vec<Variable>,
