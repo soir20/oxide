@@ -815,7 +815,7 @@
             - procedure: empty
               weight: 1259
     # Training Room Main Platform Lift
-    - model_id: 1438
+    - model_id: 180
       physics_state: Enabled
       pos:
         x: 148.8
@@ -831,7 +831,7 @@
         lift:
           steps:
             - new_pos_offset_z: 10
-              speed: 3
+              speed: 6
               duration_millis: 10000
             - new_pos_offset_z: -10
               speed: 3

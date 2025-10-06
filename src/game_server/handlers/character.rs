@@ -224,7 +224,7 @@ impl BaseNpc {
                 scale: character.scale,
                 pos: character.pos,
                 rot: character.rot,
-                spawn_animation_id: -1,
+                spawn_animation_id: 1,
                 attachments: vec![],
                 hostility: Hostility::Neutral,
                 unknown10: 1,
@@ -251,7 +251,7 @@ impl BaseNpc {
                 unknown26: false,
                 disable_gravity: !self.enable_gravity,
                 sub_title_id: 0,
-                one_shot_animation_id: -1,
+                one_shot_animation_id: 0,
                 temporary_model: 0,
                 effects: vec![],
                 disable_interact_popup: !self.enable_interact_popup,
@@ -511,7 +511,7 @@ impl TickableStep {
                 },
             }));
 
-            if speed == 0.0 {
+            /*if speed == 0.0 {
                 packets_for_all.push(GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
                     inner: UpdateIdleAnimation {
@@ -519,7 +519,7 @@ impl TickableStep {
                         animation_id: character.stand_animation_id,
                     },
                 }));
-            }
+            }*/
         }
 
         let new_pos = self.new_pos(character.pos);
@@ -533,7 +533,7 @@ impl TickableStep {
                 rot_x: new_rot.x,
                 rot_y: new_rot.y,
                 rot_z: new_rot.z,
-                character_state: 0,
+                character_state: 4,
                 unknown: 0,
             })
         } else {
