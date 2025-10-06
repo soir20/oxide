@@ -122,27 +122,37 @@ impl SaberDuelPlayerState {
         })
     }
 
-    pub fn can_afford(
+    pub fn can_use(
         &self,
         force_power: SaberDuelForcePower,
         available_force_powers: &[SaberDuelAvailableForcePower],
+        other_player_state: &SaberDuelPlayerState,
     ) -> bool {
-        available_force_powers.iter().any(|power| {
-            self.force_points >= power.cost && power.definition.force_power == force_power
-        })
+        other_player_state.is_affected_by(force_power)
+            && self.can_afford(force_power, available_force_powers)
     }
 
     pub fn force_power_flags(
         &self,
         available_force_powers: &[SaberDuelAvailableForcePower],
+        other_player_state: &SaberDuelPlayerState,
     ) -> SaberDuelForcePowerFlags {
         SaberDuelForcePowerFlags {
-            can_use_extra_key: self
-                .can_afford(SaberDuelForcePower::ExtraKey, available_force_powers),
-            can_use_right_to_left: self
-                .can_afford(SaberDuelForcePower::RightToLeft, available_force_powers),
-            can_use_opposite: self
-                .can_afford(SaberDuelForcePower::Opposite, available_force_powers),
+            can_use_extra_key: self.can_use(
+                SaberDuelForcePower::ExtraKey,
+                available_force_powers,
+                other_player_state,
+            ),
+            can_use_right_to_left: self.can_use(
+                SaberDuelForcePower::RightToLeft,
+                available_force_powers,
+                other_player_state,
+            ),
+            can_use_opposite: self.can_use(
+                SaberDuelForcePower::Opposite,
+                available_force_powers,
+                other_player_state,
+            ),
         }
     }
 
@@ -216,6 +226,16 @@ impl SaberDuelPlayerState {
             power.bouts_remaining = power.bouts_remaining.saturating_sub(1);
             power.bouts_remaining > 0
         });
+    }
+
+    fn can_afford(
+        &self,
+        force_power: SaberDuelForcePower,
+        available_force_powers: &[SaberDuelAvailableForcePower],
+    ) -> bool {
+        available_force_powers.iter().any(|power| {
+            self.force_points >= power.cost && power.definition.force_power == force_power
+        })
     }
 }
 
@@ -1147,10 +1167,12 @@ impl SaberDuelGame {
 
         let mut show_force_power_dialog = false;
 
-        let player1_flags = self.player_states[0].force_power_flags(&self.config.force_powers);
+        let player1_flags = self.player_states[0]
+            .force_power_flags(&self.config.force_powers, &self.player_states[1]);
         show_force_power_dialog |= player1_flags.can_use_any();
 
-        let player2_flags = self.player_states[1].force_power_flags(&self.config.force_powers);
+        let player2_flags = self.player_states[1]
+            .force_power_flags(&self.config.force_powers, &self.player_states[0]);
         show_force_power_dialog |= player2_flags.can_use_any();
 
         if show_force_power_dialog {
