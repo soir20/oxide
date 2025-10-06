@@ -158,15 +158,18 @@ impl SaberDuelPlayerState {
         self.game_points_won = self.game_points_won.saturating_add(points_won.into());
         self.win_streak = self.win_streak.saturating_add(points_won.into());
         self.longest_win_streak = self.longest_win_streak.max(self.win_streak);
+        self.end_bout();
     }
 
     pub fn tie_bout(&mut self) {
         self.win_streak = 0;
+        self.end_bout();
     }
 
     pub fn lose_bout(&mut self, points_lost: u8) {
         self.game_points_lost = self.game_points_lost.saturating_add(points_lost.into());
         self.win_streak = 0;
+        self.end_bout();
     }
 
     pub fn win_round(&mut self) {
@@ -206,6 +209,13 @@ impl SaberDuelPlayerState {
         let correct = Into::<f32>::into(self.total_correct);
         let total = mistakes + correct;
         correct / total
+    }
+
+    fn end_bout(&mut self) {
+        self.affected_by_force_powers.retain_mut(|power| {
+            power.bouts_remaining = power.bouts_remaining.saturating_sub(1);
+            power.bouts_remaining > 0
+        });
     }
 }
 
