@@ -815,7 +815,7 @@
             - procedure: empty
               weight: 1259
     # Training Room Main Platform Lift
-    - model_id: 180
+    - model_id: 1886
       physics_state: Enabled
       pos:
         x: 148.8
@@ -830,12 +830,12 @@
       tickable_procedures:
         lift:
           steps:
-            - new_pos_offset_z: 10
-              speed: 6
-              duration_millis: 10000
-            - new_pos_offset_z: -10
-              speed: 3
-              duration_millis: 10000
+            - speed: 1.5
+              new_pos_offset_z: 2
+              duration_millis: 4000
+            - speed: 1.5
+              new_pos_offset_z: -2
+              duration_millis: 4000
     # Training Room Dueling Platform Lift
     - model_id: 1438
       physics_state: Disabled

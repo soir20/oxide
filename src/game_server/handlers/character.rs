@@ -303,13 +303,13 @@ impl BaseNpc {
                 hover_glow: 0,
                 hover_description: 0,
                 fly_over_effect: 0,
-                unknown65: 8,
-                unknown66: 8,
-                unknown67: 8,
+                unknown65: 0,
+                unknown66: 0,
+                unknown67: 0,
                 disable_move_to_interact: false,
                 unknown69: 0.0,
                 unknown70: 0.0,
-                unknown71: 3442,
+                unknown71: 0,
                 icon_id: Icon::None,
             },
             SingleNpcRelevance {
@@ -533,7 +533,7 @@ impl TickableStep {
                 rot_x: new_rot.x,
                 rot_y: new_rot.y,
                 rot_z: new_rot.z,
-                character_state: 4,
+                character_state: 1,
                 unknown: 0,
             })
         } else {
