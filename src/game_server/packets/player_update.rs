@@ -26,8 +26,11 @@ pub enum PlayerUpdateOpCode {
     UpdateTemporaryModel = 0xe,
     RemoveTemporaryModel = 0xf,
     UpdateCharacterState = 0x14,
+    UpdateWalkAnimation = 0x15,
     QueueAnimation = 0x16,
     UpdateSpeed = 0x17,
+    UpdateRunAnimation = 0x19,
+    UpdateIdleAnimation = 0x1a,
     LootEvent = 0x1d,
     ProgressiveHeadScale = 0x1e,
     SlotCompositeEffectOverride = 0x1f,
@@ -146,6 +149,39 @@ impl GamePacket for AddPc {
     type Header = PlayerUpdateOpCode;
 
     const HEADER: Self::Header = PlayerUpdateOpCode::AddPc;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct UpdateIdleAnimation {
+    pub guid: u64,
+    pub animation_id: i32,
+}
+
+impl GamePacket for UpdateIdleAnimation {
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::UpdateIdleAnimation;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct UpdateRunAnimation {
+    pub guid: u64,
+    pub animation_id: i32,
+}
+
+impl GamePacket for UpdateRunAnimation {
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::UpdateRunAnimation;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct UpdateWalkAnimation {
+    pub guid: u64,
+    pub animation_id: i32,
+}
+
+impl GamePacket for UpdateWalkAnimation {
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::UpdateWalkAnimation;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -673,6 +709,25 @@ impl GamePacket for NpcRelevance {
 }
 
 #[derive(
+    Copy,
+    Clone,
+    Debug,
+    Default,
+    Deserialize,
+    TryFromPrimitive,
+    IntoPrimitive,
+    PartialEq,
+    SerializePacket,
+    DeserializePacket,
+)]
+#[repr(u32)]
+pub enum PhysicsState {
+    Disabled = 1,
+    #[default]
+    Enabled = 2,
+}
+
+#[derive(
     Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
 )]
 #[repr(u32)]
@@ -733,9 +788,9 @@ pub struct AddNpc {
     pub speed: f32,
     pub unknown21: bool,
     pub interactable_size_pct: u32,
-    pub unknown23: i32,
-    pub unknown24: i32,
-    pub looping_animation_id: i32,
+    pub walk_animation_id: i32,
+    pub sprint_animation_id: i32,
+    pub stand_animation_id: i32,
     pub unknown26: bool,
     pub disable_gravity: bool,
     pub sub_title_id: u32,
@@ -755,7 +810,7 @@ pub struct AddNpc {
     pub image_set_id: u32,
     pub collision: bool,
     pub rider_guid: u64,
-    pub npc_type: u32,
+    pub physics: PhysicsState,
     pub interact_popup_radius: f32,
     pub target: Target,
     pub variables: Vec<Variable>,
@@ -765,10 +820,10 @@ pub struct AddNpc {
     pub unknown54: u32,
     pub rail_unknown1: f32,
     pub rail_unknown2: f32,
-    pub rail_unknown3: f32,
-    pub pet_customization_model_name1: String,
-    pub pet_customization_model_name2: String,
-    pub pet_customization_model_name3: String,
+    pub auto_interact_radius: f32,
+    pub head_customization_override: String,
+    pub hair_customization_override: String,
+    pub body_customization_override: String,
     pub override_terrain_model: bool,
     pub hover_glow: u32,
     pub hover_description: u32,
