@@ -22,7 +22,7 @@ use crate::{
                 MoveOnRail, NameplateImage, NotificationData, NpcRelevance, PhysicsState,
                 PlayCompositeEffect, QueueAnimation, RemoveGracefully, RemoveStandard,
                 RemoveTemporaryModel, SetAnimation, SingleNotification, SingleNpcRelevance,
-                UpdateIdleAnimation, UpdateSpeed, UpdateTemporaryModel,
+                UpdateSpeed, UpdateTemporaryModel,
             },
             tunnel::TunneledPacket,
             ui::ExecuteScriptWithStringParams,
@@ -510,16 +510,6 @@ impl TickableStep {
                     speed,
                 },
             }));
-
-            /*if speed == 0.0 {
-                packets_for_all.push(GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: UpdateIdleAnimation {
-                        guid: Guid::guid(character),
-                        animation_id: character.stand_animation_id,
-                    },
-                }));
-            }*/
         }
 
         let new_pos = self.new_pos(character.pos);
