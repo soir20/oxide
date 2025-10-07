@@ -734,7 +734,6 @@
       tickable_procedures: *holotable_procedures
     # Green Starfighter
     - model_id: 721
-      npc_type: 2
       pos:
         x: 103.105900
         y: 24.367970
@@ -776,7 +775,6 @@
               weight: 1259
     # Purple Starfighter
     - model_id: 723
-      npc_type: 2
       pos:
         x: 119.735400
         y: 24.688350
@@ -818,7 +816,7 @@
               weight: 1259
     # Training Room Main Platform Lift
     - model_id: 1438
-      npc_type: 1
+      physics: Disabled
       pos:
         x: 148.8
         y: -3.6210175
@@ -834,13 +832,13 @@
           steps:
             - speed: 2
               new_pos_offset_y: 10
-              duration_millis: 10000
+              duration_millis: 12000
             - speed: 2
               new_pos_offset_y: -10
-              duration_millis: 10000
+              duration_millis: 12000
     # Training Room Dueling Platform Lift
     - model_id: 1438
-      npc_type: 1
+      physics: Disabled
       pos:
         x: 130.9
         y: -3.6210175
