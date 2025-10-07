@@ -256,6 +256,7 @@ struct SaberDuelAvailableForcePower {
     #[serde(flatten)]
     definition: SaberDuelForcePowerDefinition,
     cost: u8,
+    bouts_applied: u8,
 }
 
 #[derive(Clone, Debug)]

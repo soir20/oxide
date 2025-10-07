@@ -114,16 +114,19 @@ categories:
                   small_icon_set_id: 2706
                   icon_set_id: 2706
                   cost: 3
+                  bouts_applied: 3
                 - force_power: RightToLeft
                   name_id: 1889
                   small_icon_set_id: 2706
                   icon_set_id: 2706
                   cost: 4
+                  bouts_applied: 3
                 - force_power: Opposite
                   name_id: 1890
                   small_icon_set_id: 2706
                   icon_set_id: 2706
                   cost: 5
+                  bouts_applied: 3
                 force_power_tutorials: []
                 memory_challenge: false
               zone_template_guid: 201
