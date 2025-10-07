@@ -1416,8 +1416,8 @@ pub fn interact_with_character(
                     characters_table_read_handle,
                 );
 
-                let requester_credits = match &mut requester_read_handle.stats.character_type {
-                    CharacterType::Player(player) => Some(&mut player.credits),
+                let player_stats = match &mut requester_read_handle.stats.character_type {
+                    CharacterType::Player(player) => Some(player.as_mut()),
                     _ => None,
                 };
 
@@ -1477,7 +1477,7 @@ pub fn interact_with_character(
                 }
 
                 let result =
-                    target_read_handle.interact(requester_guid, requester_credits, &nearby_player_guids);
+                    target_read_handle.interact(requester_guid, player_stats, &nearby_player_guids);
 
                 characters_write.insert(requester, requester_read_handle);
 

@@ -376,7 +376,7 @@ impl OneShotAction {
         character: &mut CharacterStats,
         nearby_player_guids: &[u32],
         requester: u32,
-        player_credits: Option<&mut u32>,
+        player_stats: Option<&mut Player>,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let mut packets_for_all = Vec::new();
         let mut packets_for_sender = Vec::new();
@@ -432,12 +432,13 @@ impl OneShotAction {
         }
 
         if let Some(awarded_credits) = self.award_credits {
-            if let Some(credits) = player_credits {
-                let new_credits = credits.saturating_add(awarded_credits);
-                *credits = new_credits;
+            if let Some(player) = player_stats {
+                player.credits = player.credits.saturating_add(awarded_credits);
                 packets_for_sender.push(GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
-                    inner: UpdateCredits { new_credits },
+                    inner: UpdateCredits {
+                        new_credits: player.credits,
+                    },
                 }));
             }
         }
@@ -1096,7 +1097,7 @@ impl AmbientNpc {
         character: &mut Character,
         nearby_player_guids: &[u32],
         requester: u32,
-        player_credits: Option<&mut u32>,
+        player_stats: Option<&mut Player>,
     ) -> (Option<String>, WriteLockingBroadcastSupplier) {
         if let Some(active_procedure_key) = character.current_tickable_procedure() {
             if let Some(active_procedure) = character
@@ -1127,7 +1128,7 @@ impl AmbientNpc {
                     &mut character.stats,
                     nearby_player_guids,
                     requester,
-                    player_credits,
+                    player_stats,
                 )
             });
 
@@ -2122,7 +2123,7 @@ impl Character {
     pub fn interact(
         &mut self,
         requester: u32,
-        player_credits: Option<&mut u32>,
+        player_stats: Option<&mut Player>,
         nearby_player_guids: &[u32],
     ) -> WriteLockingBroadcastSupplier {
         let mut new_procedure = None;
@@ -2132,7 +2133,7 @@ impl Character {
         let broadcast_supplier = match character_type {
             CharacterType::AmbientNpc(ambient_npc) => {
                 let (procedure, one_shot_interact) =
-                    ambient_npc.interact(self, nearby_player_guids, requester, player_credits);
+                    ambient_npc.interact(self, nearby_player_guids, requester, player_stats);
                 new_procedure = procedure;
                 one_shot_interact
             }
