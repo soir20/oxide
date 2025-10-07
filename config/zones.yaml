@@ -942,6 +942,7 @@
               weight: 89700
     # Hangar Blue Orb One
     - model_id: 1198
+      name_id: 16929
       possible_pos:
         - x: 103.50595
           y: 9.974041
@@ -967,6 +968,7 @@
       cursor: 54
       is_spawned: false
       enable_interact_popup: false
+      show_name: false
       one_shot_action_on_interact:
           award_credits: 25
           despawn_npc: true
@@ -1011,6 +1013,7 @@
       synchronize_with: Blue Orb Double Spawn Timer One
     # Hangar Blue Orb Two
     - model_id: 1198
+      name_id: 16929
       possible_pos:
         - x: 98.916985
           y: 9.967964
@@ -1036,6 +1039,7 @@
       cursor: 54
       is_spawned: false
       enable_interact_popup: false
+      show_name: false
       one_shot_action_on_interact:
           award_credits: 25
           despawn_npc: true
@@ -1080,6 +1084,7 @@
       synchronize_with: Blue Orb Double Spawn Timer One
     # Hangar Blue Orb Three
     - model_id: 1198
+      name_id: 16929
       possible_pos:
         - x: 102.41723
           y: 9.967758
@@ -1117,6 +1122,7 @@
       cursor: 54
       is_spawned: false
       enable_interact_popup: false
+      show_name: false
       one_shot_action_on_interact:
           award_credits: 25
           despawn_npc: true
@@ -1160,6 +1166,7 @@
       synchronize_with: Blue Orb Single Spawn Timer
     # Hangar Gold Orb
     - model_id: 1320
+      name_id: 16929
       possible_pos:
         - x: 107.779564
           y: 9.973999
@@ -1173,6 +1180,7 @@
       cursor: 54
       is_spawned: false
       enable_interact_popup: false
+      show_name: false
       one_shot_action_on_interact:
           award_credits: 100
           despawn_npc: true
@@ -1216,6 +1224,7 @@
       synchronize_with: Gold Orb Spawn Timer
     # Archives Blue Orb One
     - model_id: 1198
+      name_id: 16929
       possible_pos:
         - x: 1695.8995
           y: 10.040001
@@ -1237,6 +1246,7 @@
       cursor: 54
       is_spawned: false
       enable_interact_popup: false
+      show_name: false
       one_shot_action_on_interact:
           award_credits: 25
           despawn_npc: true
@@ -1281,6 +1291,7 @@
       synchronize_with: Blue Orb Double Spawn Timer One
     # Archives Blue Orb Two
     - model_id: 1198
+      name_id: 16929
       possible_pos:
         - x: 1755.757
           y: 10.040001
@@ -1302,6 +1313,7 @@
       cursor: 54
       is_spawned: false
       enable_interact_popup: false
+      show_name: false
       one_shot_action_on_interact:
           award_credits: 25
           despawn_npc: true
@@ -1346,6 +1358,7 @@
       synchronize_with: Blue Orb Double Spawn Timer One
     # Archives Blue Orb Three
     - model_id: 1198
+      name_id: 16929
       possible_pos:
         - x: 1713.411
           y: 10.040001
@@ -1367,6 +1380,7 @@
       cursor: 54
       is_spawned: false
       enable_interact_popup: false
+      show_name: false
       one_shot_action_on_interact:
           award_credits: 25
           despawn_npc: true
@@ -1410,6 +1424,7 @@
       synchronize_with: Blue Orb Single Spawn Timer
     # Workshop Blue Orb One
     - model_id: 1198
+      name_id: 16929
       possible_pos:
         - x: -342.66266
           y: 10.117764
@@ -1431,6 +1446,7 @@
       cursor: 54
       is_spawned: false
       enable_interact_popup: false
+      show_name: false
       one_shot_action_on_interact:
           award_credits: 25
           despawn_npc: true
@@ -1475,6 +1491,7 @@
       synchronize_with: Blue Orb Double Spawn Timer One
     # Workshop Blue Orb Two
     - model_id: 1198
+      name_id: 16929
       possible_pos:
         - x: -328.52924
           y: 10.122791
@@ -1496,6 +1513,7 @@
       cursor: 54
       is_spawned: false
       enable_interact_popup: false
+      show_name: false
       one_shot_action_on_interact:
           award_credits: 25
           despawn_npc: true
@@ -1540,6 +1558,7 @@
       synchronize_with: Blue Orb Double Spawn Timer One
     # Workshop Blue Orb Three
     - model_id: 1198
+      name_id: 16929
       possible_pos:
         - x: -333.05035
           y: 10.2457695
@@ -1561,6 +1580,7 @@
       cursor: 54
       is_spawned: false
       enable_interact_popup: false
+      show_name: false
       one_shot_action_on_interact:
           award_credits: 25
           despawn_npc: true
@@ -1605,6 +1625,7 @@
       synchronize_with: Blue Orb Double Spawn Timer Two
     # Workshop Blue Orb Four
     - model_id: 1198
+      name_id: 16929
       possible_pos:
         - x: -334.2602
           y: 10.117851
@@ -1626,6 +1647,7 @@
       cursor: 54
       is_spawned: false
       enable_interact_popup: false
+      show_name: false
       one_shot_action_on_interact:
           award_credits: 25
           despawn_npc: true
@@ -1670,6 +1692,7 @@
       synchronize_with: Blue Orb Double Spawn Timer Two
     # Training Room Blue Orb One
     - model_id: 1198
+      name_id: 16929
       possible_pos:
         - x: 164.0472
           y: 6.8242326
@@ -1695,6 +1718,7 @@
       cursor: 54
       is_spawned: false
       enable_interact_popup: false
+      show_name: false
       one_shot_action_on_interact:
           award_credits: 25
           despawn_npc: true
@@ -1739,6 +1763,7 @@
       synchronize_with: Blue Orb Double Spawn Timer One
     # Training Room Blue Orb Two
     - model_id: 1198
+      name_id: 16929
       possible_pos:
         - x: 155.43399
           y: 6.8242645
@@ -1764,6 +1789,7 @@
       cursor: 54
       is_spawned: false
       enable_interact_popup: false
+      show_name: false
       one_shot_action_on_interact:
           award_credits: 25
           despawn_npc: true
@@ -1808,6 +1834,7 @@
       synchronize_with: Blue Orb Double Spawn Timer One
     # Training Room Blue Orb Three
     - model_id: 1198
+      name_id: 16929
       possible_pos:
         - x: 168.61252
           y: 6.824218
@@ -1837,6 +1864,7 @@
       cursor: 54
       is_spawned: false
       enable_interact_popup: false
+      show_name: false
       one_shot_action_on_interact:
           award_credits: 25
           despawn_npc: true
@@ -1880,6 +1908,7 @@
       synchronize_with: Blue Orb Single Spawn Timer
     # Training Room Gold Orb
     - model_id: 1320
+      name_id: 16929
       possible_pos:
         - x: 132.7863
           y: 6.725761
@@ -1897,6 +1926,7 @@
       cursor: 54
       is_spawned: false
       enable_interact_popup: false
+      show_name: false
       one_shot_action_on_interact:
           award_credits: 100
           despawn_npc: true
@@ -1940,6 +1970,7 @@
       synchronize_with: Gold Orb Spawn Timer
     # Lounge Blue Orb One
     - model_id: 1198
+      name_id: 16929
       possible_pos:
         - x: -99.1999
           y: 10.015329
@@ -1961,6 +1992,7 @@
       cursor: 54
       is_spawned: false
       enable_interact_popup: false
+      show_name: false
       one_shot_action_on_interact:
           award_credits: 25
           despawn_npc: true
@@ -2005,6 +2037,7 @@
       synchronize_with: Blue Orb Double Spawn Timer One
     # Lounge Blue Orb Two
     - model_id: 1198
+      name_id: 16929
       possible_pos:
         - x: -130.72836
           y: 10.04
@@ -2026,6 +2059,7 @@
       cursor: 54
       is_spawned: false
       enable_interact_popup: false
+      show_name: false
       one_shot_action_on_interact:
           award_credits: 25
           despawn_npc: true
@@ -2070,6 +2104,7 @@
       synchronize_with: Blue Orb Double Spawn Timer One
     # Lounge Blue Orb Three
     - model_id: 1198
+      name_id: 16929
       possible_pos:
         - x: -103.90829
           y: 10.04
@@ -2095,6 +2130,7 @@
       cursor: 54
       is_spawned: false
       enable_interact_popup: false
+      show_name: false
       one_shot_action_on_interact:
           award_credits: 25
           despawn_npc: true
@@ -2138,6 +2174,7 @@
       synchronize_with: Blue Orb Single Spawn Timer
     # War Room Blue Orb One
     - model_id: 1198
+      name_id: 16929
       possible_pos:
         - x: 707.4525
           y: 9.856772
@@ -2159,6 +2196,7 @@
       cursor: 54
       is_spawned: false
       enable_interact_popup: false
+      show_name: false
       one_shot_action_on_interact:
           award_credits: 25
           despawn_npc: true
@@ -2203,6 +2241,7 @@
       synchronize_with: Blue Orb Double Spawn Timer One
     # War Room Blue Orb Two
     - model_id: 1198
+      name_id: 16929
       possible_pos:
         - x: 716.6275
           y: 9.881826
@@ -2224,6 +2263,7 @@
       cursor: 54
       is_spawned: false
       enable_interact_popup: false
+      show_name: false
       one_shot_action_on_interact:
           award_credits: 25
           despawn_npc: true
@@ -2268,6 +2308,7 @@
       synchronize_with: Blue Orb Double Spawn Timer One
     # War Room Blue Orb Three
     - model_id: 1198
+      name_id: 16929
       possible_pos:
         - x: 699.7767
           y: 9.881886
@@ -2289,6 +2330,7 @@
       cursor: 54
       is_spawned: false
       enable_interact_popup: false
+      show_name: false
       one_shot_action_on_interact:
           award_credits: 25
           despawn_npc: true
@@ -2332,6 +2374,7 @@
       synchronize_with: Blue Orb Single Spawn Timer
     # Shops Blue Orb One
     - model_id: 1198
+      name_id: 16929
       possible_pos:
         - x: 888.297
           y: 171.93137
@@ -2361,6 +2404,7 @@
       cursor: 54
       is_spawned: false
       enable_interact_popup: false
+      show_name: false
       one_shot_action_on_interact:
           award_credits: 25
           despawn_npc: true
@@ -2405,6 +2449,7 @@
       synchronize_with: Blue Orb Double Spawn Timer One
     # Shops Blue Orb Two
     - model_id: 1198
+      name_id: 16929
       possible_pos:
         - x: 890.98975
           y: 171.92809
@@ -2434,6 +2479,7 @@
       cursor: 54
       is_spawned: false
       enable_interact_popup: false
+      show_name: false
       one_shot_action_on_interact:
           award_credits: 25
           despawn_npc: true
@@ -2478,6 +2524,7 @@
       synchronize_with: Blue Orb Double Spawn Timer One
     # Shops Blue Orb Three
     - model_id: 1198
+      name_id: 16929
       possible_pos:
         - x: 909.2783
           y: 172.44917
@@ -2523,6 +2570,7 @@
       cursor: 54
       is_spawned: false
       enable_interact_popup: false
+      show_name: false
       one_shot_action_on_interact:
           award_credits: 25
           despawn_npc: true
@@ -2566,6 +2614,7 @@
       synchronize_with: Blue Orb Single Spawn Timer
     # Shops Gold Orb
     - model_id: 1320
+      name_id: 16929
       possible_pos:
         - x: 920.59796
           y: 178.53049
@@ -2583,6 +2632,7 @@
       cursor: 54
       is_spawned: false
       enable_interact_popup: false
+      show_name: false
       one_shot_action_on_interact:
           award_credits: 100
           despawn_npc: true
@@ -2626,6 +2676,7 @@
       synchronize_with: Gold Orb Spawn Timer
     # Main Hall Blue Orb One
     - model_id: 1198
+      name_id: 16929
       possible_pos:
         - x: 1245.1803
           y: 10.038356
@@ -2655,6 +2706,7 @@
       cursor: 54
       is_spawned: false
       enable_interact_popup: false
+      show_name: false
       one_shot_action_on_interact:
           award_credits: 25
           despawn_npc: true
@@ -2699,6 +2751,7 @@
       synchronize_with: Blue Orb Double Spawn Timer One
     # Main Hall Blue Orb Two
     - model_id: 1198
+      name_id: 16929
       possible_pos:
         - x: 1277.8179
           y: 10.065796
@@ -2728,6 +2781,7 @@
       cursor: 54
       is_spawned: false
       enable_interact_popup: false
+      show_name: false
       one_shot_action_on_interact:
           award_credits: 25
           despawn_npc: true
@@ -2772,6 +2826,7 @@
       synchronize_with: Blue Orb Double Spawn Timer One
     # Main Hall Blue Orb Three
     - model_id: 1198
+      name_id: 16929
       possible_pos:
         - x: 1270.2139
           y: 10.020651
@@ -2808,6 +2863,7 @@
         w: 0
       cursor: 54
       is_spawned: false
+      show_name: false
       enable_interact_popup: false
       one_shot_action_on_interact:
           award_credits: 25
@@ -2853,6 +2909,7 @@
     # Veranda Fountain
     - terrain_object_id: 1278971305
       model_id: 907
+      name_id: 16957
       pos:
         x: 897.7858
         y: 172.44917
@@ -2866,6 +2923,7 @@
       cursor: 54
       enable_interact_popup: false
       use_terrain_model: false
+      show_name: false
       enable_gravity: false
       interact_radius: 3.3
       move_to_interact_offset: 3.2
@@ -3556,6 +3614,7 @@
               weight: 89700
     # Construction Chamber Blue Orb One
     - model_id: 1198
+      name_id: 16929
       possible_pos:
         - x: 1487.568
           y: 70.1668
@@ -3577,6 +3636,7 @@
       cursor: 54
       is_spawned: false
       enable_interact_popup: false
+      show_name: false
       one_shot_action_on_interact:
           award_credits: 25
           despawn_npc: true
@@ -3621,6 +3681,7 @@
       synchronize_with: Members Blue Orb Double Spawn Timer
     # Construction Chamber Blue Orb Two
     - model_id: 1198
+      name_id: 16929
       possible_pos:
         - x: 1467.3618
           y: 70.20179
@@ -3642,6 +3703,7 @@
       cursor: 54
       is_spawned: false
       enable_interact_popup: false
+      show_name: false
       one_shot_action_on_interact:
           award_credits: 25
           despawn_npc: true
@@ -3686,6 +3748,7 @@
       synchronize_with: Members Blue Orb Double Spawn Timer
     # Construction Chamber Blue Orb Three
     - model_id: 1198
+      name_id: 16929
       possible_pos:
         - x: 1485.1572
           y: 70.09637
@@ -3715,6 +3778,7 @@
       cursor: 54
       is_spawned: false
       enable_interact_popup: false
+      show_name: false
       one_shot_action_on_interact:
           award_credits: 25
           despawn_npc: true
@@ -3758,6 +3822,7 @@
       synchronize_with: Members Blue Orb Single Spawn Timer
     # Construction Chamber Gold Orb
     - model_id: 1320
+      name_id: 16929
       possible_pos:
         - x: 1491.2592
           y: 71.88129
@@ -3779,6 +3844,7 @@
       cursor: 54
       is_spawned: false
       enable_interact_popup: false
+      show_name: false
       one_shot_action_on_interact:
           award_credits: 100
           despawn_npc: true
@@ -3822,6 +3888,7 @@
       synchronize_with: Members Gold Orb Spawn Timer
     # Members Lounge Blue Orb One
     - model_id: 1198
+      name_id: 16929
       possible_pos:
         - x: 806.87976
           y: 10.04
@@ -3847,6 +3914,7 @@
       cursor: 54
       is_spawned: false
       enable_interact_popup: false
+      show_name: false
       one_shot_action_on_interact:
           award_credits: 25
           despawn_npc: true
@@ -3891,6 +3959,7 @@
       synchronize_with: Members Blue Orb Double Spawn Timer
     # Members Lounge Blue Orb Two
     - model_id: 1198
+      name_id: 16929
       possible_pos:
         - x: 809.09186
           y: 10.04
@@ -3916,6 +3985,7 @@
       cursor: 54
       is_spawned: false
       enable_interact_popup: false
+      show_name: false
       one_shot_action_on_interact:
           award_credits: 25
           despawn_npc: true
@@ -3960,6 +4030,7 @@
       synchronize_with: Members Blue Orb Double Spawn Timer
     # Members Lounge Blue Orb Three
     - model_id: 1198
+      name_id: 16929
       possible_pos:
         - x: 802.80817
           y: 10.761625
@@ -3981,6 +4052,7 @@
       cursor: 54
       is_spawned: false
       enable_interact_popup: false
+      show_name: false
       one_shot_action_on_interact:
           award_credits: 25
           despawn_npc: true
@@ -4024,6 +4096,7 @@
       synchronize_with: Members Blue Orb Single Spawn Timer
     # Members Lounge Gold Orb
     - model_id: 1320
+      name_id: 16929
       possible_pos:
         - x: 813.63574
           y: 10.108942
@@ -4037,6 +4110,7 @@
       cursor: 54
       is_spawned: false
       enable_interact_popup: false
+      show_name: false
       one_shot_action_on_interact:
           award_credits: 100
           despawn_npc: true
