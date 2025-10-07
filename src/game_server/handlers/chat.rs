@@ -1,6 +1,5 @@
 use std::io::{Cursor, Read};
 
-use byteorder::{LittleEndian, ReadBytesExt};
 use packet_serialize::DeserializePacket;
 
 use crate::game_server::{
@@ -24,7 +23,7 @@ pub fn process_chat_packet(
     sender: u32,
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-    let raw_op_code = cursor.read_u16::<LittleEndian>()?;
+    let raw_op_code: u16 = DeserializePacket::deserialize(cursor)?;
     match ChatOpCode::try_from(raw_op_code) {
         Ok(op_code) => match op_code {
             ChatOpCode::SendMessage => {

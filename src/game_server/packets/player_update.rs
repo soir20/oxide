@@ -1,5 +1,6 @@
 use std::collections::BTreeMap;
 
+use num_enum::{IntoPrimitive, TryFromPrimitive};
 use packet_serialize::{DeserializePacket, SerializePacket};
 use serde::Deserialize;
 
@@ -25,8 +26,11 @@ pub enum PlayerUpdateOpCode {
     UpdateTemporaryModel = 0xe,
     RemoveTemporaryModel = 0xf,
     UpdateCharacterState = 0x14,
+    UpdateWalkAnimation = 0x15,
     QueueAnimation = 0x16,
     UpdateSpeed = 0x17,
+    UpdateRunAnimation = 0x19,
+    UpdateIdleAnimation = 0x1a,
     LootEvent = 0x1d,
     ProgressiveHeadScale = 0x1e,
     SlotCompositeEffectOverride = 0x1f,
@@ -148,6 +152,39 @@ impl GamePacket for AddPc {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
+pub struct UpdateIdleAnimation {
+    pub guid: u64,
+    pub animation_id: i32,
+}
+
+impl GamePacket for UpdateIdleAnimation {
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::UpdateIdleAnimation;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct UpdateRunAnimation {
+    pub guid: u64,
+    pub animation_id: i32,
+}
+
+impl GamePacket for UpdateRunAnimation {
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::UpdateRunAnimation;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct UpdateWalkAnimation {
+    pub guid: u64,
+    pub animation_id: i32,
+}
+
+impl GamePacket for UpdateWalkAnimation {
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::UpdateWalkAnimation;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
 pub struct ProgressiveHeadScale {
     pub guid: u64,
     pub scale: f32,
@@ -169,8 +206,10 @@ impl GamePacket for UpdateScale {
     const HEADER: Self::Header = PlayerUpdateOpCode::UpdateScale;
 }
 
-#[allow(dead_code)]
-#[derive(Copy, Clone, Debug)]
+#[derive(
+    Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
+)]
+#[repr(u32)]
 pub enum NameplateImage {
     None = 0,
     Darkside = 6162,
@@ -179,12 +218,6 @@ pub enum NameplateImage {
     Mercenary = 6165,
     Exile = 7021,
     Enforcer = 2087,
-}
-
-impl SerializePacket for NameplateImage {
-    fn serialize(&self, buffer: &mut Vec<u8>) {
-        (*self as u32).serialize(buffer);
-    }
 }
 
 impl NameplateImage {
@@ -319,8 +352,21 @@ impl GamePacket for ItemDefinitionsReply<'_> {
     const HEADER: Self::Header = PlayerUpdateOpCode::ItemDefinitionsReply;
 }
 
-#[derive(Clone, Copy, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(
+    Clone,
+    Copy,
+    Deserialize,
+    PartialEq,
+    Eq,
+    PartialOrd,
+    Ord,
+    TryFromPrimitive,
+    IntoPrimitive,
+    SerializePacket,
+    DeserializePacket,
+)]
 #[serde(deny_unknown_fields)]
+#[repr(i32)]
 pub enum CustomizationSlot {
     None = -1,
     HeadModel = 0,
@@ -331,12 +377,6 @@ pub enum CustomizationSlot {
     FacialHair = 5,
     FacePattern = 6,
     BodyModel = 8,
-}
-
-impl SerializePacket for CustomizationSlot {
-    fn serialize(&self, buffer: &mut Vec<u8>) {
-        (*self as u32).serialize(buffer);
-    }
 }
 
 #[derive(Clone, Deserialize, SerializePacket)]
@@ -668,18 +708,33 @@ impl GamePacket for NpcRelevance {
     const HEADER: Self::Header = PlayerUpdateOpCode::NpcRelevance;
 }
 
-#[allow(dead_code)]
-#[derive(Copy, Clone, Debug)]
+#[derive(
+    Copy,
+    Clone,
+    Debug,
+    Default,
+    Deserialize,
+    TryFromPrimitive,
+    IntoPrimitive,
+    PartialEq,
+    SerializePacket,
+    DeserializePacket,
+)]
+#[repr(u32)]
+pub enum PhysicsState {
+    Disabled = 1,
+    #[default]
+    Enabled = 2,
+}
+
+#[derive(
+    Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
+)]
+#[repr(u32)]
 pub enum Hostility {
     Hostile,
     Neutral,
     Friendly,
-}
-
-impl SerializePacket for Hostility {
-    fn serialize(&self, buffer: &mut Vec<u8>) {
-        (*self as u32).serialize(buffer);
-    }
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -689,19 +744,15 @@ pub struct Variable {
     pub unknown3: u32,
 }
 
-#[allow(dead_code)]
-#[derive(Copy, Clone, Debug)]
+#[derive(
+    Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
+)]
+#[repr(u32)]
 pub enum Icon {
     None = 0,
     Member = 1,
     Enforcer = 2,
     FancyMember = 3,
-}
-
-impl SerializePacket for Icon {
-    fn serialize(&self, buffer: &mut Vec<u8>) {
-        (*self as u32).serialize(buffer);
-    }
 }
 
 #[derive(SerializePacket)]
@@ -737,9 +788,9 @@ pub struct AddNpc {
     pub speed: f32,
     pub unknown21: bool,
     pub interactable_size_pct: u32,
-    pub unknown23: i32,
-    pub unknown24: i32,
-    pub looping_animation_id: i32,
+    pub walk_animation_id: i32,
+    pub sprint_animation_id: i32,
+    pub stand_animation_id: i32,
     pub unknown26: bool,
     pub disable_gravity: bool,
     pub sub_title_id: u32,
@@ -759,7 +810,7 @@ pub struct AddNpc {
     pub image_set_id: u32,
     pub collision: bool,
     pub rider_guid: u64,
-    pub npc_type: u32,
+    pub physics: PhysicsState,
     pub interact_popup_radius: f32,
     pub target: Target,
     pub variables: Vec<Variable>,
@@ -769,10 +820,10 @@ pub struct AddNpc {
     pub unknown54: u32,
     pub rail_unknown1: f32,
     pub rail_unknown2: f32,
-    pub rail_unknown3: f32,
-    pub pet_customization_model_name1: String,
-    pub pet_customization_model_name2: String,
-    pub pet_customization_model_name3: String,
+    pub auto_interact_radius: f32,
+    pub head_customization_override: String,
+    pub hair_customization_override: String,
+    pub body_customization_override: String,
     pub override_terrain_model: bool,
     pub hover_glow: u32,
     pub hover_description: u32,

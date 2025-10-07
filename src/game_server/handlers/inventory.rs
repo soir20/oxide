@@ -1,6 +1,5 @@
 use std::{collections::BTreeMap, fs::File, io::Cursor, iter, path::Path};
 
-use byteorder::{LittleEndian, ReadBytesExt};
 use packet_serialize::DeserializePacket;
 use parking_lot::RwLockWriteGuard;
 use serde::Deserialize;
@@ -75,7 +74,7 @@ pub fn process_inventory_packet(
     cursor: &mut Cursor<&[u8]>,
     sender: u32,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-    let raw_op_code = cursor.read_u16::<LittleEndian>()?;
+    let raw_op_code: u16 = DeserializePacket::deserialize(cursor)?;
     match InventoryOpCode::try_from(raw_op_code) {
         Ok(op_code) => match op_code {
             InventoryOpCode::UnequipSlot => process_unequip_slot(game_server, cursor, sender),

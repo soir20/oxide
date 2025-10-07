@@ -1,6 +1,5 @@
 use std::{collections::BTreeMap, fs::File, io::Cursor, path::Path};
 
-use byteorder::ReadBytesExt;
 use packet_serialize::DeserializePacket;
 use parking_lot::{RwLockReadGuard, RwLockWriteGuard};
 use serde::Deserialize;
@@ -11,7 +10,7 @@ use crate::{
             client_update::{Stat, StatId, Stats},
             item::{BaseAttachmentGroup, WieldType},
             mount::{DismountReply, MountOpCode, MountReply, MountSpawn},
-            player_update::{AddNpc, Hostility, Icon, RemoveGracefully, UpdateSpeed},
+            player_update::{AddNpc, Hostility, Icon, PhysicsState, RemoveGracefully, UpdateSpeed},
             tunnel::TunneledPacket,
             Effect, GamePacket, Pos, Target,
         },
@@ -357,7 +356,7 @@ pub fn process_mount_packet(
     sender: u32,
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-    let raw_op_code = cursor.read_u8()?;
+    let raw_op_code: u8 = DeserializePacket::deserialize(cursor)?;
     match MountOpCode::try_from(raw_op_code) {
         Ok(op_code) => match op_code {
             MountOpCode::DismountRequest => process_dismount(sender, game_server),
@@ -442,9 +441,9 @@ pub fn spawn_mount_npc(
                 speed: 0.0,
                 unknown21: false,
                 interactable_size_pct: 0,
-                unknown23: -1,
-                unknown24: -1,
-                looping_animation_id: -1,
+                walk_animation_id: -1,
+                sprint_animation_id: -1,
+                stand_animation_id: -1,
                 unknown26: false,
                 disable_gravity: false,
                 sub_title_id: 0,
@@ -475,7 +474,7 @@ pub fn spawn_mount_npc(
                 image_set_id: 0,
                 collision: true,
                 rider_guid: 0,
-                npc_type: 2,
+                physics: PhysicsState::default(),
                 interact_popup_radius: 0.0,
                 target: Target::default(),
                 variables: vec![],
@@ -490,10 +489,10 @@ pub fn spawn_mount_npc(
                 unknown54: 0,
                 rail_unknown1: 0.0,
                 rail_unknown2: 0.0,
-                rail_unknown3: 0.0,
-                pet_customization_model_name1: "".to_string(),
-                pet_customization_model_name2: "".to_string(),
-                pet_customization_model_name3: "".to_string(),
+                auto_interact_radius: 0.0,
+                head_customization_override: "".to_string(),
+                hair_customization_override: "".to_string(),
+                body_customization_override: "".to_string(),
                 override_terrain_model: false,
                 hover_glow: 0,
                 hover_description: 0,

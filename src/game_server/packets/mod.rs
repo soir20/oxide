@@ -13,6 +13,7 @@ pub mod player_data;
 pub mod player_update;
 pub mod purchase;
 pub mod reference_data;
+pub mod saber_duel;
 pub mod saber_strike;
 pub mod squad;
 pub mod store;
@@ -24,11 +25,13 @@ pub mod zone;
 
 use std::fmt::Display;
 
-use num_enum::TryFromPrimitive;
+use num_enum::{IntoPrimitive, TryFromPrimitive};
 use packet_serialize::{DeserializePacket, SerializePacket};
 use serde::Deserialize;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(
+    Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
+)]
 #[repr(u16)]
 pub enum OpCode {
     LoginRequest = 0x1,
@@ -76,12 +79,6 @@ pub enum OpCode {
     DeploymentEnv = 0xa5,
     BrandishHolster = 0xb4,
     UiInteractions = 0xbd,
-}
-
-impl SerializePacket for OpCode {
-    fn serialize(&self, buffer: &mut Vec<u8>) {
-        (*self as u16).serialize(buffer);
-    }
 }
 
 pub trait GamePacket: SerializePacket {

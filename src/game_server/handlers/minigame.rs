@@ -8,7 +8,6 @@ use std::{
     time::{Duration, Instant},
 };
 
-use byteorder::ReadBytesExt;
 use chrono::{DateTime, Datelike, FixedOffset, NaiveTime, Timelike, Utc};
 use evalexpr::{context_map, eval_with_context, Value};
 use num_enum::TryFromPrimitive;
@@ -1676,7 +1675,7 @@ pub fn process_minigame_packet(
     sender: u32,
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-    let raw_op_code: u8 = cursor.read_u8()?;
+    let raw_op_code: u8 = DeserializePacket::deserialize(cursor)?;
     match MinigameOpCode::try_from(raw_op_code) {
         Ok(op_code) => match op_code {
             MinigameOpCode::RequestMinigameStageGroupInstance => {
@@ -2331,12 +2330,14 @@ fn handle_request_start_active_minigame(
                     // Re-send the stage group instance to populate the stage data in the settings menu.
                     // When we enter the Flash or 3D game HUD state, the current minigame group is cleared.
                     // This removes the game name from the options menu. To avoid this, we need to send a 
-                    // script packet to transition the HUD to the main state. Then we re-send the stage 
+                    // script packet to transition the HUD to a non-minigame state. Then we re-send the stage 
                     // group instance data. Then we can load the minigame.
+                    //
+                    // We hide the HUD so that no HUD appears before the minigame HUD loads.
                     packets.push(GamePacket::serialize(&TunneledPacket {
                         unknown1: true,
                         inner: ExecuteScriptWithStringParams {
-                            script_name: "UIGlobal.SetStateMain".to_string(),
+                            script_name: "UIGlobal.SetStateNoHud".to_string(),
                             params: vec![],
                         },
                     }));

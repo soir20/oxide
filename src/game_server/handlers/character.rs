@@ -20,10 +20,10 @@ use crate::{
             player_data::EquippedItem,
             player_update::{
                 AddNotifications, AddNpc, AddPc, Customization, CustomizationSlot, Hostility, Icon,
-                MoveOnRail, NameplateImage, NotificationData, NpcRelevance, PlayCompositeEffect,
-                QueueAnimation, RemoveGracefully, RemoveStandard, RemoveTemporaryModel,
-                SetAnimation, SingleNotification, SingleNpcRelevance, UpdateSpeed,
-                UpdateTemporaryModel,
+                MoveOnRail, NameplateImage, NotificationData, NpcRelevance, PhysicsState,
+                PlayCompositeEffect, QueueAnimation, RemoveGracefully, RemoveStandard,
+                RemoveTemporaryModel, SetAnimation, SingleNotification, SingleNpcRelevance,
+                UpdateSpeed, UpdateTemporaryModel,
             },
             tunnel::TunneledPacket,
             ui::ExecuteScriptWithStringParams,
@@ -56,6 +56,10 @@ pub fn coerce_to_broadcast_supplier(
 
 pub const CHAT_BUBBLE_VISIBLE_RADIUS: f32 = 32.0;
 
+const fn default_movement_animation_id() -> i32 {
+    -1
+}
+
 const fn default_fade_millis() -> u32 {
     1000
 }
@@ -78,10 +82,6 @@ const fn default_scale() -> f32 {
 
 const fn default_true() -> bool {
     true
-}
-
-const fn default_npc_type() -> u32 {
-    2
 }
 
 const fn default_weight() -> u32 {
@@ -150,8 +150,8 @@ pub struct BaseNpcConfig {
     pub rot: Pos,
     #[serde(default)]
     pub possible_pos: Vec<Pos>,
-    #[serde(default)]
-    pub active_animation_slot: i32,
+    #[serde(default = "default_movement_animation_id")]
+    pub stand_animation_id: i32,
     #[serde(default)]
     pub name_offset_x: f32,
     #[serde(default)]
@@ -173,8 +173,8 @@ pub struct BaseNpcConfig {
     pub visible: bool,
     #[serde(default)]
     pub bounce_area_id: i32,
-    #[serde(default = "default_npc_type")]
-    pub npc_type: u32,
+    #[serde(default)]
+    pub physics: PhysicsState,
     #[serde(default = "default_true")]
     pub enable_gravity: bool,
     #[serde(default)]
@@ -203,7 +203,6 @@ pub struct BaseNpc {
     pub show_name: bool,
     pub visible: bool,
     pub bounce_area_id: i32,
-    pub npc_type: u32,
     pub enable_gravity: bool,
     pub enable_tilt: bool,
     pub use_terrain_object_id: bool,
@@ -223,14 +222,14 @@ impl BaseNpc {
                 guid: Guid::guid(character),
                 name_id: self.name_id,
                 model_id: character.model_id,
-                unknown3: true,
+                unknown3: false,
                 chat_text_color: Character::DEFAULT_CHAT_TEXT_COLOR,
                 chat_bubble_color: Character::DEFAULT_CHAT_BUBBLE_COLOR,
                 chat_scale: 1,
                 scale: character.scale,
                 pos: character.pos,
                 rot: character.rot,
-                spawn_animation_id: -1,
+                spawn_animation_id: 1,
                 attachments: vec![],
                 hostility: Hostility::Neutral,
                 unknown10: 1,
@@ -251,13 +250,13 @@ impl BaseNpc {
                 speed: character.speed.total(),
                 unknown21: false,
                 interactable_size_pct: 100,
-                unknown23: -1,
-                unknown24: -1,
-                looping_animation_id: character.animation_id,
+                walk_animation_id: -1,
+                sprint_animation_id: -1,
+                stand_animation_id: character.stand_animation_id,
                 unknown26: false,
                 disable_gravity: !self.enable_gravity,
                 sub_title_id: 0,
-                one_shot_animation_id: -1,
+                one_shot_animation_id: 0,
                 temporary_model: 0,
                 effects: vec![],
                 disable_interact_popup: !self.enable_interact_popup,
@@ -284,7 +283,7 @@ impl BaseNpc {
                 image_set_id: 0,
                 collision: true,
                 rider_guid: 0,
-                npc_type: self.npc_type,
+                physics: character.physics,
                 interact_popup_radius: self
                     .interact_popup_radius
                     .unwrap_or(character.interact_radius),
@@ -301,11 +300,11 @@ impl BaseNpc {
                 unknown54: 0,
                 rail_unknown1: 0.0,
                 rail_unknown2: 0.0,
-                rail_unknown3: 0.0,
-                pet_customization_model_name1: "".to_string(),
-                pet_customization_model_name2: "".to_string(),
-                pet_customization_model_name3: "".to_string(),
-                override_terrain_model: !self.use_terrain_object_id,
+                auto_interact_radius: 0.0,
+                head_customization_override: "".to_string(),
+                hair_customization_override: "".to_string(),
+                body_customization_override: "".to_string(),
+                override_terrain_model: false,
                 hover_glow: 0,
                 hover_description: 0,
                 fly_over_effect: 0,
@@ -341,7 +340,6 @@ impl From<BaseNpcConfig> for BaseNpc {
             show_name: value.show_name,
             visible: value.visible,
             bounce_area_id: value.bounce_area_id,
-            npc_type: value.npc_type,
             enable_gravity: value.enable_gravity,
             enable_tilt: value.enable_tilt,
             use_terrain_object_id: value.use_terrain_object_id,
@@ -648,7 +646,7 @@ impl TickableStep {
         };
 
         if let Some(animation_id) = self.animation_id {
-            character.animation_id = animation_id;
+            character.stand_animation_id = animation_id;
             packets_for_all.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: SetAnimation {
@@ -1592,7 +1590,7 @@ pub struct NpcTemplate {
     pub rot: Pos,
     pub possible_pos: Vec<Pos>,
     pub scale: f32,
-    pub animation_id: i32,
+    pub stand_animation_id: i32,
     pub character_type: CharacterType,
     pub mount_id: Option<u32>,
     pub cursor: Option<u8>,
@@ -1604,6 +1602,7 @@ pub struct NpcTemplate {
     pub first_possible_procedures: Vec<String>,
     pub synchronize_with: Option<String>,
     pub is_spawned: bool,
+    pub physics: PhysicsState,
 }
 
 impl NpcTemplate {
@@ -1638,7 +1637,7 @@ impl NpcTemplate {
                 instance_guid,
                 wield_type: (self.wield_type, self.wield_type.holster()),
                 holstered: false,
-                animation_id: self.animation_id,
+                stand_animation_id: self.stand_animation_id,
                 temporary_model_id: None,
                 speed: CharacterStat {
                     base: 0.0,
@@ -1650,6 +1649,7 @@ impl NpcTemplate {
                 },
                 cursor: self.cursor,
                 is_spawned: self.is_spawned,
+                physics: self.physics,
                 name: None,
                 squad_guid: None,
             },
@@ -1722,11 +1722,12 @@ pub struct CharacterStats {
     pub move_to_interact_offset: f32,
     pub instance_guid: u64,
     pub temporary_model_id: Option<u32>,
-    pub animation_id: i32,
+    pub stand_animation_id: i32,
     pub speed: CharacterStat,
     pub jump_height_multiplier: CharacterStat,
     pub cursor: Option<u8>,
     pub is_spawned: bool,
+    pub physics: PhysicsState,
     pub name: Option<String>,
     pub squad_guid: Option<u64>,
     wield_type: (WieldType, WieldType),
@@ -1935,7 +1936,7 @@ impl Character {
         move_to_interact_offset: f32,
         instance_guid: u64,
         wield_type: WieldType,
-        animation_id: i32,
+        stand_animation_id: i32,
         tickable_procedures: HashMap<String, TickableProcedureConfig>,
         first_possible_procedures: Vec<String>,
         synchronize_with: Option<u64>,
@@ -1953,6 +1954,7 @@ impl Character {
                 mount: mount_id,
                 cursor,
                 is_spawned: true,
+                physics: PhysicsState::default(),
                 name: None,
                 squad_guid: None,
                 interact_radius,
@@ -1961,7 +1963,7 @@ impl Character {
                 instance_guid,
                 wield_type: (wield_type, wield_type.holster()),
                 holstered: false,
-                animation_id,
+                stand_animation_id,
                 temporary_model_id: None,
                 speed: CharacterStat {
                     base: 0.0,
@@ -2034,13 +2036,14 @@ impl Character {
                 mount: None,
                 cursor: None,
                 is_spawned: true,
+                physics: PhysicsState::default(),
                 interact_radius: 0.0,
                 auto_interact_radius: 0.0,
                 move_to_interact_offset: 2.2,
                 instance_guid,
                 wield_type: (wield_type, wield_type.holster()),
                 holstered: false,
-                animation_id: 0,
+                stand_animation_id: 0,
                 temporary_model_id: None,
                 speed: CharacterStat {
                     base: 0.0,

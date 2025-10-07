@@ -8,7 +8,6 @@ use std::str::ParseBoolError;
 use std::time::Instant;
 use std::vec;
 
-use byteorder::{LittleEndian, ReadBytesExt};
 use crossbeam_channel::Sender;
 use enum_iterator::Sequence;
 use handlers::character::{
@@ -223,7 +222,7 @@ impl GameServer {
 
     pub fn authenticate(&self, data: Vec<u8>) -> Result<(u32, String), ProcessPacketError> {
         let mut cursor = Cursor::new(&data[..]);
-        let raw_op_code = cursor.read_u16::<LittleEndian>()?;
+        let raw_op_code: u16 = DeserializePacket::deserialize(&mut cursor)?;
 
         match OpCode::try_from(raw_op_code) {
             Ok(op_code) => match op_code {
@@ -299,7 +298,7 @@ impl GameServer {
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let mut broadcasts = Vec::new();
         let mut cursor = Cursor::new(&data[..]);
-        let raw_op_code = cursor.read_u16::<LittleEndian>()?;
+        let raw_op_code: u16 = DeserializePacket::deserialize(&mut cursor)?;
 
         match OpCode::try_from(raw_op_code) {
             Ok(op_code) => match op_code {
