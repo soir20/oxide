@@ -2865,7 +2865,7 @@
         w: 0
       cursor: 54
       enable_interact_popup: false
-      use_terrain_object_id: false
+      use_terrain_model: false
       enable_gravity: false
       interact_radius: 3.3
       move_to_interact_offset: 3.2
