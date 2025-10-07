@@ -68,7 +68,7 @@ const fn default_interact_radius() -> f32 {
     2.3
 }
 
-const fn default_move_to_interact_radius() -> f32 {
+const fn default_move_to_interact_offset() -> f32 {
     2.2
 }
 
@@ -165,7 +165,7 @@ pub struct BaseNpcConfig {
     pub interact_radius: f32,
     pub auto_interact_radius: Option<f32>,
     pub interact_popup_radius: Option<f32>,
-    #[serde(default = "default_move_to_interact_radius")]
+    #[serde(default = "default_move_to_interact_offset")]
     pub move_to_interact_offset: f32,
     #[serde(default = "default_true")]
     pub show_name: bool,
