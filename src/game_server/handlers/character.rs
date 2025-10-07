@@ -178,7 +178,7 @@ pub struct BaseNpcConfig {
     #[serde(default)]
     pub enable_tilt: bool,
     #[serde(default = "default_true")]
-    pub use_terrain_object_id: bool,
+    pub use_terrain_model: bool,
     #[serde(default)]
     pub tickable_procedures: HashMap<String, TickableProcedureConfig>,
     #[serde(default)]
@@ -203,7 +203,7 @@ pub struct BaseNpc {
     pub bounce_area_id: i32,
     pub enable_gravity: bool,
     pub enable_tilt: bool,
-    pub use_terrain_object_id: bool,
+    pub use_terrain_model: bool,
 }
 
 impl BaseNpc {
@@ -302,7 +302,7 @@ impl BaseNpc {
                 head_customization_override: "".to_string(),
                 hair_customization_override: "".to_string(),
                 body_customization_override: "".to_string(),
-                override_terrain_model: !self.use_terrain_object_id,
+                override_terrain_model: !self.use_terrain_model,
                 hover_glow: 0,
                 hover_description: 0,
                 fly_over_effect: 0,
@@ -340,7 +340,7 @@ impl From<BaseNpcConfig> for BaseNpc {
             bounce_area_id: value.bounce_area_id,
             enable_gravity: value.enable_gravity,
             enable_tilt: value.enable_tilt,
-            use_terrain_object_id: value.use_terrain_object_id,
+            use_terrain_model: value.use_terrain_model,
         }
     }
 }
