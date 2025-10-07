@@ -349,6 +349,109 @@ impl From<BaseNpcConfig> for BaseNpc {
 
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
+pub struct PlayerOneShotAction {
+    pub player_one_shot_animation_id: Option<i32>,
+}
+
+#[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct OneShotAction {
+    #[serde(default, flatten)]
+    pub player_action: PlayerOneShotAction,
+    pub one_shot_action_composite_effect_id: Option<u32>,
+    pub one_shot_action_animation_id: Option<i32>,
+    pub award_credits: Option<u32>,
+    #[serde(default)]
+    pub removal_mode: RemovalMode,
+    #[serde(default)]
+    pub despawn_npc: bool,
+    pub duration_millis: u64,
+}
+
+impl OneShotAction {
+    pub fn apply(
+        &self,
+        character: &mut CharacterStats,
+        nearby_player_guids: &[u32],
+        requester: u32,
+        player_stats: Option<&mut Player>,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let mut packets_for_all = Vec::new();
+        let mut packets_for_sender = Vec::new();
+
+        if self.despawn_npc {
+            character.is_spawned = false;
+            packets_for_all.extend(character.remove_packets(self.removal_mode));
+        }
+
+        if let Some(animation_id) = self.one_shot_action_animation_id {
+            packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: QueueAnimation {
+                    character_guid: Guid::guid(character),
+                    animation_id,
+                    queue_pos: 0,
+                    delay_seconds: 0.0,
+                    duration_seconds: self.duration_millis as f32 / 1000.0,
+                },
+            }));
+        }
+
+        if let Some(composite_effect_id) = self.one_shot_action_composite_effect_id {
+            packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: PlayCompositeEffect {
+                    guid: Guid::guid(character),
+                    triggered_by_guid: 0,
+                    composite_effect: composite_effect_id,
+                    delay_millis: 0,
+                    duration_millis: self.duration_millis as u32,
+                    pos: Pos {
+                        x: 0.0,
+                        y: 0.0,
+                        z: 0.0,
+                        w: 0.0,
+                    },
+                },
+            }));
+        }
+
+        if let Some(animation_id) = self.player_action.player_one_shot_animation_id {
+            packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: QueueAnimation {
+                    character_guid: player_guid(requester),
+                    animation_id,
+                    queue_pos: 0,
+                    delay_seconds: 0.0,
+                    duration_seconds: self.duration_millis as f32 / 1000.0,
+                },
+            }));
+        }
+
+        if let Some(awarded_credits) = self.award_credits {
+            if let Some(player) = player_stats {
+                player.credits = player.credits.saturating_add(awarded_credits);
+                packets_for_sender.push(GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: UpdateCredits {
+                        new_credits: player.credits,
+                    },
+                }));
+            }
+        }
+
+        let broadcasts = vec![
+            Broadcast::Multi(nearby_player_guids.to_vec(), packets_for_all),
+            Broadcast::Single(requester, packets_for_sender),
+        ];
+
+        Ok(broadcasts)
+    }
+}
+
+#[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct TickableStep {
     pub speed: Option<f32>,
     pub new_pos_x: Option<f32>,
