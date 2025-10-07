@@ -1,5 +1,5 @@
 use std::{
-    collections::BTreeSet,
+    collections::{BTreeMap, BTreeSet},
     io::{Cursor, Read},
     time::{Duration, Instant},
 };
@@ -27,8 +27,8 @@ use crate::game_server::{
             SaberDuelBoutInfo, SaberDuelBoutStart, SaberDuelBoutTied, SaberDuelBoutWon,
             SaberDuelForcePower, SaberDuelForcePowerDefinition, SaberDuelForcePowerFlags,
             SaberDuelGameOver, SaberDuelKey, SaberDuelKeypressEvent, SaberDuelOpCode,
-            SaberDuelPlayerUpdate, SaberDuelRoundOver, SaberDuelRoundStart,
-            SaberDuelShowForcePowerDialog, SaberDuelStageData,
+            SaberDuelPlayerUpdate, SaberDuelRequestApplyForcePower, SaberDuelRoundOver,
+            SaberDuelRoundStart, SaberDuelShowForcePowerDialog, SaberDuelStageData,
         },
         tunnel::TunneledPacket,
         ui::ExecuteScriptWithStringParams,
@@ -122,37 +122,46 @@ impl SaberDuelPlayerState {
         })
     }
 
-    pub fn can_use(
+    pub fn usable_force_power<'a>(
         &self,
         force_power: SaberDuelForcePower,
-        available_force_powers: &[SaberDuelAvailableForcePower],
+        available_force_powers: &'a BTreeMap<SaberDuelForcePower, SaberDuelAvailableForcePower>,
         other_player_state: &SaberDuelPlayerState,
-    ) -> bool {
-        other_player_state.is_affected_by(force_power)
-            && self.can_afford(force_power, available_force_powers)
+    ) -> Option<&'a SaberDuelAvailableForcePower> {
+        if other_player_state.is_affected_by(force_power) {
+            return None;
+        }
+
+        self.affordable_force_power(force_power, available_force_powers)
     }
 
     pub fn force_power_flags(
         &self,
-        available_force_powers: &[SaberDuelAvailableForcePower],
+        available_force_powers: &BTreeMap<SaberDuelForcePower, SaberDuelAvailableForcePower>,
         other_player_state: &SaberDuelPlayerState,
     ) -> SaberDuelForcePowerFlags {
         SaberDuelForcePowerFlags {
-            can_use_extra_key: self.can_use(
-                SaberDuelForcePower::ExtraKey,
-                available_force_powers,
-                other_player_state,
-            ),
-            can_use_right_to_left: self.can_use(
-                SaberDuelForcePower::RightToLeft,
-                available_force_powers,
-                other_player_state,
-            ),
-            can_use_opposite: self.can_use(
-                SaberDuelForcePower::Opposite,
-                available_force_powers,
-                other_player_state,
-            ),
+            can_use_extra_key: self
+                .usable_force_power(
+                    SaberDuelForcePower::ExtraKey,
+                    available_force_powers,
+                    other_player_state,
+                )
+                .is_some(),
+            can_use_right_to_left: self
+                .usable_force_power(
+                    SaberDuelForcePower::RightToLeft,
+                    available_force_powers,
+                    other_player_state,
+                )
+                .is_some(),
+            can_use_opposite: self
+                .usable_force_power(
+                    SaberDuelForcePower::Opposite,
+                    available_force_powers,
+                    other_player_state,
+                )
+                .is_some(),
         }
     }
 
@@ -221,6 +230,14 @@ impl SaberDuelPlayerState {
         correct / total
     }
 
+    pub fn apply_force_power(&mut self, force_power: SaberDuelForcePower, bouts_applied: u8) {
+        self.affected_by_force_powers
+            .push(SaberDuelAppliedForcePower {
+                force_power,
+                bouts_remaining: bouts_applied,
+            });
+    }
+
     fn end_bout(&mut self) {
         self.affected_by_force_powers.retain_mut(|power| {
             power.bouts_remaining = power.bouts_remaining.saturating_sub(1);
@@ -228,14 +245,17 @@ impl SaberDuelPlayerState {
         });
     }
 
-    fn can_afford(
+    fn affordable_force_power<'a>(
         &self,
         force_power: SaberDuelForcePower,
-        available_force_powers: &[SaberDuelAvailableForcePower],
-    ) -> bool {
-        available_force_powers.iter().any(|power| {
-            self.force_points >= power.cost && power.definition.force_power == force_power
-        })
+        available_force_powers: &'a BTreeMap<SaberDuelForcePower, SaberDuelAvailableForcePower>,
+    ) -> Option<&'a SaberDuelAvailableForcePower> {
+        available_force_powers
+            .get(&force_power)
+            .and_then(|definition| match self.force_points >= definition.cost {
+                true => Some(definition),
+                false => None,
+            })
     }
 }
 
@@ -253,8 +273,9 @@ struct SaberDuelAnimationPair {
 
 #[derive(Clone, Debug, Deserialize)]
 struct SaberDuelAvailableForcePower {
-    #[serde(flatten)]
-    definition: SaberDuelForcePowerDefinition,
+    name_id: u32,
+    small_icon_set_id: u32,
+    icon_set_id: u32,
     cost: u8,
     bouts_applied: u8,
 }
@@ -351,7 +372,7 @@ pub struct SaberDuelConfig {
     force_points_per_bout_won: u8,
     force_points_per_bout_tied: u8,
     force_points_per_bout_lost: u8,
-    force_powers: Vec<SaberDuelAvailableForcePower>,
+    force_powers: BTreeMap<SaberDuelForcePower, SaberDuelAvailableForcePower>,
     force_power_tutorials: BTreeSet<SaberDuelForcePower>,
     memory_challenge: bool,
 }
@@ -386,7 +407,10 @@ pub fn process_saber_duel_packet(
                         let event = SaberDuelKeypressEvent::deserialize(cursor)?;
                         game.handle_keypress(sender, event)
                     }
-                    SaberDuelOpCode::RequestApplyForcePower => Ok(Vec::new()),
+                    SaberDuelOpCode::RequestApplyForcePower => {
+                        let request = SaberDuelRequestApplyForcePower::deserialize(cursor)?;
+                        game.apply_force_power(sender, request)
+                    }
                     _ => {
                         let mut buffer = Vec::new();
                         cursor.read_to_end(&mut buffer)?;
@@ -630,7 +654,12 @@ impl SaberDuelGame {
                     .config
                     .force_powers
                     .iter()
-                    .map(|force_power| force_power.definition.clone())
+                    .map(|(force_power, definition)| SaberDuelForcePowerDefinition {
+                        force_power: *force_power,
+                        name_id: definition.name_id,
+                        small_icon_set_id: definition.small_icon_set_id,
+                        icon_set_id: definition.icon_set_id,
+                    })
                     .collect(),
             },
         }));
@@ -701,6 +730,37 @@ impl SaberDuelGame {
         }
 
         Ok(self.update_progress(player_index))
+    }
+
+    pub fn apply_force_power(
+        &mut self,
+        sender: u32,
+        request: SaberDuelRequestApplyForcePower,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let player_index = self.player_index(sender)?;
+        let player_state = &self.player_states[player_index as usize];
+
+        let other_player_index = (player_index as usize + 1) % 2;
+        let other_player_state = &self.player_states[other_player_index];
+
+        let Some(definition) = player_state.usable_force_power(
+            request.force_power,
+            &self.config.force_powers,
+            other_player_state,
+        ) else {
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!(
+                    "Player {sender} (index {player_index}) tried to apply power {:?} Saber Duel, but they can't use it ({self:?})", 
+                    request.force_power
+                )
+            ));
+        };
+
+        let other_player_state = &mut self.player_states[other_player_index];
+        other_player_state.apply_force_power(request.force_power, definition.bouts_applied);
+
+        Ok(Vec::new())
     }
 
     pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
