@@ -173,7 +173,7 @@ pub struct SaberDuelApplyForcePower {
     pub force_power: SaberDuelForcePower,
     pub bouts_remaining: u32,
     pub new_force_points: u32,
-    pub animation_id: u32,
+    pub animation_id: i32,
     pub flags: SaberDuelForcePowerFlags,
 }
 

@@ -24,11 +24,12 @@ use crate::game_server::{
         minigame::{MinigameHeader, ScoreEntry, ScoreType},
         player_update::{AddNpc, Hostility, Icon, PhysicsState, RemoveStandard},
         saber_duel::{
-            SaberDuelBoutInfo, SaberDuelBoutStart, SaberDuelBoutTied, SaberDuelBoutWon,
-            SaberDuelForcePower, SaberDuelForcePowerDefinition, SaberDuelForcePowerFlags,
-            SaberDuelGameOver, SaberDuelKey, SaberDuelKeypressEvent, SaberDuelOpCode,
-            SaberDuelPlayerUpdate, SaberDuelRequestApplyForcePower, SaberDuelRoundOver,
-            SaberDuelRoundStart, SaberDuelShowForcePowerDialog, SaberDuelStageData,
+            SaberDuelApplyForcePower, SaberDuelBoutInfo, SaberDuelBoutStart, SaberDuelBoutTied,
+            SaberDuelBoutWon, SaberDuelForcePower, SaberDuelForcePowerDefinition,
+            SaberDuelForcePowerFlags, SaberDuelGameOver, SaberDuelKey, SaberDuelKeypressEvent,
+            SaberDuelOpCode, SaberDuelPlayerUpdate, SaberDuelRequestApplyForcePower,
+            SaberDuelRoundOver, SaberDuelRoundStart, SaberDuelShowForcePowerDialog,
+            SaberDuelStageData,
         },
         tunnel::TunneledPacket,
         ui::ExecuteScriptWithStringParams,
@@ -172,6 +173,18 @@ impl SaberDuelPlayerState {
             .min(max_force_points);
     }
 
+    pub fn use_force_power(&mut self, force_points: u8) {
+        self.force_points = self.force_points.saturating_sub(force_points);
+    }
+
+    pub fn apply_force_power(&mut self, force_power: SaberDuelForcePower, bouts_applied: u8) {
+        self.affected_by_force_powers
+            .push(SaberDuelAppliedForcePower {
+                force_power,
+                bouts_remaining: bouts_applied,
+            });
+    }
+
     pub fn win_bout(&mut self, points_won: u8) {
         self.round_points = self.round_points.saturating_add(points_won);
         self.game_points_won = self.game_points_won.saturating_add(points_won.into());
@@ -230,14 +243,6 @@ impl SaberDuelPlayerState {
         correct / total
     }
 
-    pub fn apply_force_power(&mut self, force_power: SaberDuelForcePower, bouts_applied: u8) {
-        self.affected_by_force_powers
-            .push(SaberDuelAppliedForcePower {
-                force_power,
-                bouts_remaining: bouts_applied,
-            });
-    }
-
     fn end_bout(&mut self) {
         self.affected_by_force_powers.retain_mut(|power| {
             power.bouts_remaining = power.bouts_remaining.saturating_sub(1);
@@ -278,6 +283,7 @@ struct SaberDuelAvailableForcePower {
     icon_set_id: u32,
     cost: u8,
     bouts_applied: u8,
+    apply_animation_id: i32,
 }
 
 #[derive(Clone, Debug)]
@@ -409,7 +415,7 @@ pub fn process_saber_duel_packet(
                     }
                     SaberDuelOpCode::RequestApplyForcePower => {
                         let request = SaberDuelRequestApplyForcePower::deserialize(cursor)?;
-                        game.apply_force_power(sender, request)
+                        game.apply_force_power(sender, request.force_power)
                     }
                     _ => {
                         let mut buffer = Vec::new();
@@ -735,7 +741,7 @@ impl SaberDuelGame {
     pub fn apply_force_power(
         &mut self,
         sender: u32,
-        request: SaberDuelRequestApplyForcePower,
+        force_power: SaberDuelForcePower,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let player_index = self.player_index(sender)?;
         let player_state = &self.player_states[player_index as usize];
@@ -744,7 +750,7 @@ impl SaberDuelGame {
         let other_player_state = &self.player_states[other_player_index];
 
         let Some(definition) = player_state.usable_force_power(
-            request.force_power,
+            force_power,
             &self.config.force_powers,
             other_player_state,
         ) else {
@@ -752,15 +758,40 @@ impl SaberDuelGame {
                 ProcessPacketErrorType::ConstraintViolated,
                 format!(
                     "Player {sender} (index {player_index}) tried to apply power {:?} Saber Duel, but they can't use it ({self:?})", 
-                    request.force_power
+                    force_power
                 )
             ));
         };
 
         let other_player_state = &mut self.player_states[other_player_index];
-        other_player_state.apply_force_power(request.force_power, definition.bouts_applied);
+        other_player_state.apply_force_power(force_power, definition.bouts_applied);
 
-        Ok(Vec::new())
+        let player_state = &mut self.player_states[player_index as usize];
+        player_state.use_force_power(definition.cost);
+
+        let player_state = &self.player_states[player_index as usize];
+        let other_player_state = &self.player_states[other_player_index];
+        let flags = player_state.force_power_flags(&self.config.force_powers, other_player_state);
+
+        Ok(vec![Broadcast::Multi(
+            self.recipients.clone(),
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: SaberDuelApplyForcePower {
+                    minigame_header: MinigameHeader {
+                        stage_guid: self.group.stage_guid,
+                        sub_op_code: SaberDuelOpCode::ApplyForcePower as i32,
+                        stage_group_guid: self.group.stage_group_guid,
+                    },
+                    used_by_player_index: player_index.into(),
+                    force_power,
+                    bouts_remaining: definition.bouts_applied.into(),
+                    new_force_points: player_state.force_points.into(),
+                    animation_id: definition.apply_animation_id,
+                    flags,
+                },
+            })],
+        )])
     }
 
     pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
