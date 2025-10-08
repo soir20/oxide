@@ -524,6 +524,12 @@ impl TickableStep {
             SpawnedState::Always => {
                 if !character.is_spawned {
                     character.is_spawned = true;
+                    // Reassign position on spawn to ensure varied spawn location each time the NPC spawns
+                    if !character.possible_pos.is_empty() {
+                        if let Some(new_pos) = character.possible_pos.choose(&mut thread_rng()) {
+                            character.pos = *new_pos;
+                        }
+                    }
                     packets_for_all.extend(character.add_packets(
                         false,
                         mount_configs,
@@ -549,12 +555,6 @@ impl TickableStep {
                 // its state needs updating as OnFirstStepTick doesn't maintain states
                 character.is_spawned = false;
                 packets_for_all.extend(character.remove_packets(self.removal_mode));
-                // Reassign position on despawn to ensure varied spawn location on next spawn
-                if !character.possible_pos.is_empty() {
-                    if let Some(new_pos) = character.possible_pos.choose(&mut thread_rng()) {
-                        character.pos = *new_pos;
-                    }
-                }
             }
             SpawnedState::Keep => {}
         }
