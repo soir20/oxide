@@ -1,5 +1,5 @@
 use std::{
-    collections::{BTreeMap, BTreeSet},
+    collections::{BTreeMap, BTreeSet, VecDeque},
     io::{Cursor, Read},
     time::{Duration, Instant},
 };
@@ -112,6 +112,7 @@ struct SaberDuelPlayerState {
     pub progress: u8,
     pub required_progress: u8,
     pub affected_by_force_powers: Vec<SaberDuelAppliedForcePower>,
+    pub pending_force_power_tutorials: VecDeque<SaberDuelForcePower>,
     pub seen_force_power_tutorials: BTreeSet<SaberDuelForcePower>,
     pub force_points: u8,
     pub total_correct: u16,
@@ -185,6 +186,13 @@ impl SaberDuelPlayerState {
                 force_power,
                 bouts_remaining: bouts_applied,
             });
+        if self.seen_force_power_tutorials.insert(force_power) {
+            self.pending_force_power_tutorials.push_back(force_power);
+        }
+    }
+
+    pub fn next_force_power_tutorial(&mut self) -> Option<SaberDuelForcePower> {
+        self.pending_force_power_tutorials.pop_front()
     }
 
     pub fn win_bout(&mut self, points_won: u8) {
@@ -776,31 +784,22 @@ impl SaberDuelGame {
 
         Ok(vec![Broadcast::Multi(
             self.recipients.clone(),
-            vec![
-                GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: SaberDuelApplyForcePower {
-                        minigame_header: MinigameHeader {
-                            stage_guid: self.group.stage_guid,
-                            sub_op_code: SaberDuelOpCode::ApplyForcePower as i32,
-                            stage_group_guid: self.group.stage_group_guid,
-                        },
-                        used_by_player_index: player_index.into(),
-                        force_power,
-                        bouts_remaining: definition.bouts_applied.into(),
-                        new_force_points: player_state.force_points.into(),
-                        animation_id: definition.apply_animation_id,
-                        flags,
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: SaberDuelApplyForcePower {
+                    minigame_header: MinigameHeader {
+                        stage_guid: self.group.stage_guid,
+                        sub_op_code: SaberDuelOpCode::ApplyForcePower as i32,
+                        stage_group_guid: self.group.stage_group_guid,
                     },
-                }),
-                GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: ExecuteScriptWithIntParams {
-                        script_name: "UIGlobal.LightsaberDuelShowForcePowerTutorial".to_string(),
-                        params: vec![force_power.into()],
-                    },
-                }),
-            ],
+                    used_by_player_index: player_index.into(),
+                    force_power,
+                    bouts_remaining: definition.bouts_applied.into(),
+                    new_force_points: player_state.force_points.into(),
+                    animation_id: definition.apply_animation_id,
+                    flags,
+                },
+            })],
         )])
     }
 
@@ -810,7 +809,11 @@ impl SaberDuelGame {
                 if timer.time_until_next_event(now).is_zero() {
                     self.start_bout()
                 } else {
-                    Vec::new()
+                    let mut broadcasts = self.show_next_force_tutorial(self.player1, 0);
+                    if let Some(player2) = self.player2 {
+                        broadcasts.append(&mut self.show_next_force_tutorial(player2, 1));
+                    }
+                    broadcasts
                 }
             }
             SaberDuelGameState::WaitingForRoundEnd { timer } => {
@@ -949,9 +952,7 @@ impl SaberDuelGame {
         player: u32,
         pause: bool,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        if player != self.player1 && Some(player) != self.player2 {
-            return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to pause or resume (pause: {pause}) the game for player {player}, who is not playing this instance of Saber Duel ({self:?})")));
-        };
+        let player_index = self.player_index(player)?;
 
         if !self.is_ai_match() {
             return Ok(Vec::new());
@@ -983,7 +984,12 @@ impl SaberDuelGame {
             self.stopwatch.pause_or_resume(pause);
         }
 
-        Ok(Vec::new())
+        // Force power tutorials send a resume packet when they are closed,
+        // so send the next tutorial on resume.
+        match pause {
+            true => Ok(Vec::new()),
+            false => Ok(self.show_next_force_tutorial(player, player_index.into())),
+        }
     }
 
     pub fn remove_player(
@@ -1539,5 +1545,21 @@ impl SaberDuelGame {
         self.state = SaberDuelGameState::WaitingForPlayersReady { game_start };
         self.player_states[0].ready = false;
         self.player_states[1].ready = self.is_ai_match();
+    }
+
+    fn show_next_force_tutorial(&mut self, player: u32, player_index: usize) -> Vec<Broadcast> {
+        match self.player_states[player_index].next_force_power_tutorial() {
+            Some(force_power) => vec![Broadcast::Single(
+                player,
+                vec![GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: ExecuteScriptWithIntParams {
+                        script_name: "UIGlobal.LightsaberDuelShowForcePowerTutorial".to_string(),
+                        params: vec![force_power.into()],
+                    },
+                })],
+            )],
+            None => Vec::new(),
+        }
     }
 }

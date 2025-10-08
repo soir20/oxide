@@ -94,6 +94,7 @@ categories:
                   - force_power: ExtraKey
                   - force_power: RightToLeft
                   - force_power: Opposite
+                  force_power_tutorials: []
                 score_penalty_per_second: 5.5
                 max_time_score_bonus: 1450
                 score_penalty_per_accuracy_pct: 100
@@ -130,7 +131,6 @@ categories:
                     cost: 5
                     bouts_applied: 3
                     apply_animation_id: 5007
-                force_power_tutorials: []
                 memory_challenge: false
               zone_template_guid: 201
               score_to_credits_expression: x / 177
