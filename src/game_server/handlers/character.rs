@@ -519,6 +519,7 @@ impl TickableStep {
         customizations: &BTreeMap<u32, Customization>,
     ) -> (Vec<Broadcast>, Option<UpdatePlayerPosition>) {
         let mut packets_for_all = Vec::new();
+        let mut update_pos: Option<UpdatePlayerPosition> = None;
 
         match self.spawned_state {
             SpawnedState::Always => {
@@ -528,6 +529,18 @@ impl TickableStep {
                     if !character.possible_pos.is_empty() {
                         if let Some(new_pos) = character.possible_pos.choose(&mut thread_rng()) {
                             character.pos = *new_pos;
+                            // Return position update to update the NPCs chunk in the GUID table
+                            update_pos = Some(UpdatePlayerPosition {
+                                guid: Guid::guid(character),
+                                pos_x: character.pos.x,
+                                pos_y: character.pos.y,
+                                pos_z: character.pos.z,
+                                rot_x: character.rot.x,
+                                rot_y: character.rot.y,
+                                rot_z: character.rot.z,
+                                character_state: 1,
+                                unknown: 0,
+                            });
                         }
                     }
                     packets_for_all.extend(character.add_packets(
@@ -629,8 +642,8 @@ impl TickableStep {
 
         let new_pos = self.new_pos(character.pos);
         let new_rot = self.new_rot(character.rot);
-        let update_pos = if new_pos != character.pos || new_rot != character.rot {
-            Some(UpdatePlayerPosition {
+        if new_pos != character.pos || new_rot != character.rot {
+            update_pos = Some(UpdatePlayerPosition {
                 guid: Guid::guid(character),
                 pos_x: new_pos.x,
                 pos_y: new_pos.y,
@@ -640,10 +653,8 @@ impl TickableStep {
                 rot_z: new_rot.z,
                 character_state: 1,
                 unknown: 0,
-            })
-        } else {
-            None
-        };
+            });
+        }
 
         if let Some(animation_id) = self.animation_id {
             character.stand_animation_id = animation_id;
