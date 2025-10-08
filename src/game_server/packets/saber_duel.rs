@@ -47,7 +47,7 @@ pub enum SaberDuelOpCode {
     DeserializePacket,
     Sequence,
 )]
-#[repr(u32)]
+#[repr(i32)]
 pub enum SaberDuelForcePower {
     ExtraKey = 0,
     RightToLeft = 1,

@@ -32,7 +32,7 @@ use crate::game_server::{
             SaberDuelStageData,
         },
         tunnel::TunneledPacket,
-        ui::ExecuteScriptWithStringParams,
+        ui::{ExecuteScriptWithIntParams, ExecuteScriptWithStringParams},
         GamePacket, Pos, Target,
     },
     Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
@@ -68,6 +68,7 @@ struct SaberDuelAi {
     #[serde(deserialize_with = "deserialize_probability")]
     force_power_probability: f32,
     force_powers: Vec<SaberDuelAiForcePower>,
+    force_power_tutorials: BTreeSet<SaberDuelForcePower>,
 }
 
 impl Default for SaberDuelAi {
@@ -88,6 +89,7 @@ impl Default for SaberDuelAi {
             opposite_ai_mistake_multiplier: Default::default(),
             force_power_probability: Default::default(),
             force_powers: Default::default(),
+            force_power_tutorials: Default::default(),
         }
     }
 }
@@ -379,7 +381,6 @@ pub struct SaberDuelConfig {
     force_points_per_bout_tied: u8,
     force_points_per_bout_lost: u8,
     force_powers: BTreeMap<SaberDuelForcePower, SaberDuelAvailableForcePower>,
-    force_power_tutorials: BTreeSet<SaberDuelForcePower>,
     memory_challenge: bool,
 }
 
@@ -775,22 +776,31 @@ impl SaberDuelGame {
 
         Ok(vec![Broadcast::Multi(
             self.recipients.clone(),
-            vec![GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: SaberDuelApplyForcePower {
-                    minigame_header: MinigameHeader {
-                        stage_guid: self.group.stage_guid,
-                        sub_op_code: SaberDuelOpCode::ApplyForcePower as i32,
-                        stage_group_guid: self.group.stage_group_guid,
+            vec![
+                GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: SaberDuelApplyForcePower {
+                        minigame_header: MinigameHeader {
+                            stage_guid: self.group.stage_guid,
+                            sub_op_code: SaberDuelOpCode::ApplyForcePower as i32,
+                            stage_group_guid: self.group.stage_group_guid,
+                        },
+                        used_by_player_index: player_index.into(),
+                        force_power,
+                        bouts_remaining: definition.bouts_applied.into(),
+                        new_force_points: player_state.force_points.into(),
+                        animation_id: definition.apply_animation_id,
+                        flags,
                     },
-                    used_by_player_index: player_index.into(),
-                    force_power,
-                    bouts_remaining: definition.bouts_applied.into(),
-                    new_force_points: player_state.force_points.into(),
-                    animation_id: definition.apply_animation_id,
-                    flags,
-                },
-            })],
+                }),
+                GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: ExecuteScriptWithIntParams {
+                        script_name: "UIGlobal.LightsaberDuelShowForcePowerTutorial".to_string(),
+                        params: vec![force_power.into()],
+                    },
+                }),
+            ],
         )])
     }
 
