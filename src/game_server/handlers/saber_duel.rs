@@ -47,6 +47,7 @@ struct SaberDuelAiForcePower {
     force_power: SaberDuelForcePower,
     #[serde(default = "default_weight")]
     weight: u8,
+    tutorial_enabled: bool,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -68,7 +69,6 @@ struct SaberDuelAi {
     #[serde(deserialize_with = "deserialize_probability")]
     force_power_probability: f32,
     force_powers: Vec<SaberDuelAiForcePower>,
-    force_power_tutorials: BTreeSet<SaberDuelForcePower>,
 }
 
 impl Default for SaberDuelAi {
@@ -89,7 +89,6 @@ impl Default for SaberDuelAi {
             opposite_ai_mistake_multiplier: Default::default(),
             force_power_probability: Default::default(),
             force_powers: Default::default(),
-            force_power_tutorials: Default::default(),
         }
     }
 }
@@ -180,13 +179,18 @@ impl SaberDuelPlayerState {
         self.force_points = self.force_points.saturating_sub(force_points);
     }
 
-    pub fn apply_force_power(&mut self, force_power: SaberDuelForcePower, bouts_applied: u8) {
+    pub fn apply_force_power(
+        &mut self,
+        force_power: SaberDuelForcePower,
+        bouts_applied: u8,
+        tutorial_enabled: bool,
+    ) {
         self.affected_by_force_powers
             .push(SaberDuelAppliedForcePower {
                 force_power,
                 bouts_remaining: bouts_applied,
             });
-        if self.seen_force_power_tutorials.insert(force_power) {
+        if tutorial_enabled && self.seen_force_power_tutorials.insert(force_power) {
             self.pending_force_power_tutorials.push_back(force_power);
         }
     }
@@ -773,7 +777,7 @@ impl SaberDuelGame {
         };
 
         let other_player_state = &mut self.player_states[other_player_index];
-        other_player_state.apply_force_power(force_power, definition.bouts_applied);
+        other_player_state.apply_force_power(force_power, definition.bouts_applied, false);
 
         let player_state = &mut self.player_states[player_index as usize];
         player_state.use_force_power(definition.cost);
