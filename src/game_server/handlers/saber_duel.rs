@@ -307,8 +307,8 @@ struct SaberDuelAnimationPair {
 #[derive(Clone, Debug, Deserialize)]
 struct SaberDuelAvailableForcePower {
     name_id: u32,
-    small_icon_set_id: u32,
-    icon_set_id: u32,
+    small_icon_id: u32,
+    icon_id: u32,
     cost: u8,
     bouts_applied: u8,
     apply_animation_id: i32,
@@ -691,8 +691,8 @@ impl SaberDuelGame {
                     .map(|(force_power, definition)| SaberDuelForcePowerDefinition {
                         force_power: *force_power,
                         name_id: definition.name_id,
-                        small_icon_set_id: definition.small_icon_set_id,
-                        icon_set_id: definition.icon_set_id,
+                        small_icon_id: definition.small_icon_id,
+                        icon_id: definition.icon_id,
                     })
                     .collect(),
             },

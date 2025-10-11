@@ -58,8 +58,8 @@ pub enum SaberDuelForcePower {
 pub struct SaberDuelForcePowerDefinition {
     pub force_power: SaberDuelForcePower,
     pub name_id: u32,
-    pub small_icon_set_id: u32,
-    pub icon_set_id: u32,
+    pub small_icon_id: u32,
+    pub icon_id: u32,
 }
 
 #[derive(SerializePacket, DeserializePacket)]
