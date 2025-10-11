@@ -1016,10 +1016,10 @@ impl SaberDuelGame {
         let mut total_score: i32 = 0;
         if won {
             total_score = total_score.saturating_add(self.config.game_win_bonus_score);
-        }
 
-        if player_state.game_points_lost == 0 {
-            total_score = total_score.saturating_add(self.config.no_bouts_lost_bonus_score);
+            if player_state.game_points_lost == 0 {
+                total_score = total_score.saturating_add(self.config.no_bouts_lost_bonus_score);
+            }
         }
 
         total_score = total_score.saturating_add(
