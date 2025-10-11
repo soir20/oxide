@@ -88,6 +88,7 @@ impl GamePacket for SaberDuelStageData {
     const HEADER: Self::Header = MinigameOpCode::SaberDuel;
 }
 
+#[allow(dead_code)]
 #[derive(SerializePacket, DeserializePacket)]
 pub struct SaberDuelOpponentGuid {
     pub minigame_header: MinigameHeader,
@@ -353,6 +354,7 @@ impl GamePacket for SaberDuelTriggerBoost {
     const HEADER: Self::Header = MinigameOpCode::SaberDuel;
 }
 
+#[allow(dead_code)]
 #[derive(SerializePacket, DeserializePacket)]
 pub struct SaberDuelSetMemoryChallenge {
     pub minigame_header: MinigameHeader,

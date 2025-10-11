@@ -28,9 +28,9 @@ use crate::game_server::{
             SaberDuelApplyForcePower, SaberDuelBoutInfo, SaberDuelBoutStart, SaberDuelBoutTied,
             SaberDuelBoutWon, SaberDuelForcePower, SaberDuelForcePowerDefinition,
             SaberDuelForcePowerFlags, SaberDuelGameOver, SaberDuelKey, SaberDuelKeypressEvent,
-            SaberDuelOpCode, SaberDuelPlayerUpdate, SaberDuelRequestApplyForcePower,
-            SaberDuelRoundOver, SaberDuelRoundStart, SaberDuelShowForcePowerDialog,
-            SaberDuelStageData,
+            SaberDuelOpCode, SaberDuelPlayerUpdate, SaberDuelRemoveForcePower,
+            SaberDuelRequestApplyForcePower, SaberDuelRoundOver, SaberDuelRoundStart,
+            SaberDuelShowForcePowerDialog, SaberDuelStageData,
         },
         tunnel::TunneledPacket,
         ui::{ExecuteScriptWithIntParams, ExecuteScriptWithStringParams},
@@ -202,23 +202,26 @@ impl SaberDuelPlayerState {
         self.pending_force_power_tutorials.pop_front()
     }
 
-    pub fn win_bout(&mut self, points_won: u8) {
+    #[must_use]
+    pub fn win_bout(&mut self, points_won: u8) -> Vec<SaberDuelForcePower> {
         self.round_points = self.round_points.saturating_add(points_won);
         self.game_points_won = self.game_points_won.saturating_add(points_won.into());
         self.win_streak = self.win_streak.saturating_add(points_won.into());
         self.longest_win_streak = self.longest_win_streak.max(self.win_streak);
-        self.end_bout();
+        self.end_bout()
     }
 
-    pub fn tie_bout(&mut self) {
+    #[must_use]
+    pub fn tie_bout(&mut self) -> Vec<SaberDuelForcePower> {
         self.win_streak = 0;
-        self.end_bout();
+        self.end_bout()
     }
 
-    pub fn lose_bout(&mut self, points_lost: u8) {
+    #[must_use]
+    pub fn lose_bout(&mut self, points_lost: u8) -> Vec<SaberDuelForcePower> {
         self.game_points_lost = self.game_points_lost.saturating_add(points_lost.into());
         self.win_streak = 0;
-        self.end_bout();
+        self.end_bout()
     }
 
     pub fn win_round(&mut self) {
@@ -260,11 +263,19 @@ impl SaberDuelPlayerState {
         correct / total
     }
 
-    fn end_bout(&mut self) {
+    fn end_bout(&mut self) -> Vec<SaberDuelForcePower> {
+        let mut expired_powers = Vec::new();
         self.affected_by_force_powers.retain_mut(|power| {
             power.bouts_remaining = power.bouts_remaining.saturating_sub(1);
-            power.bouts_remaining > 0
+            let expired = power.bouts_remaining == 0;
+            if expired {
+                expired_powers.push(power.force_power);
+            }
+
+            !expired
         });
+
+        expired_powers
     }
 
     fn affordable_force_power<'a>(
@@ -1477,14 +1488,16 @@ impl SaberDuelGame {
             self.config.force_points_per_bout_lost,
             self.config.max_force_points,
         );
-        loser_state.lose_bout(points_won);
+        let loser_cleared_powers = loser_state.lose_bout(points_won);
+        let mut broadcasts = self.clear_force_powers(winner_index, loser_cleared_powers);
 
         let winner_state = &mut self.player_states[winner_index as usize];
         winner_state.add_force_points(
             self.config.force_points_per_bout_won,
             self.config.max_force_points,
         );
-        winner_state.win_bout(points_won);
+        let winner_cleared_powers = winner_state.win_bout(points_won);
+        broadcasts.append(&mut self.clear_force_powers(loser_index, winner_cleared_powers));
 
         let rng = &mut thread_rng();
         let animation_pair = match is_special_bout {
@@ -1498,7 +1511,7 @@ impl SaberDuelGame {
             }
         };
 
-        vec![Broadcast::Multi(
+        broadcasts.push(Broadcast::Multi(
             self.recipients.clone(),
             vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
@@ -1514,20 +1527,26 @@ impl SaberDuelGame {
                     loser_animation_id: animation_pair.defend_animation_id,
                 },
             })],
-        )]
+        ));
+
+        broadcasts
     }
 
     fn tie_bout(&mut self) -> Vec<Broadcast> {
         self.reset_readiness(false);
-        self.player_states.iter_mut().for_each(|player_state| {
-            player_state.tie_bout();
+
+        let mut broadcasts = Vec::new();
+        for player_index in 0..2 {
+            let player_state = &mut self.player_states[player_index as usize];
+            let cleared_powers = player_state.tie_bout();
             player_state.add_force_points(
                 self.config.force_points_per_bout_tied,
                 self.config.max_force_points,
             );
-        });
+            broadcasts.append(&mut self.clear_force_powers((player_index + 1) % 2, cleared_powers));
+        }
 
-        vec![Broadcast::Multi(
+        broadcasts.push(Broadcast::Multi(
             self.recipients.clone(),
             vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
@@ -1539,7 +1558,9 @@ impl SaberDuelGame {
                     },
                 },
             })],
-        )]
+        ));
+
+        broadcasts
     }
 
     fn reset_readiness(&mut self, game_start: bool) {
@@ -1623,7 +1644,6 @@ impl SaberDuelGame {
         }
     }
 
-    #[must_use]
     fn tick_ai_force_power(
         now: Instant,
         config: &SaberDuelConfig,
@@ -1671,5 +1691,29 @@ impl SaberDuelGame {
 
         let index = weighted_index.sample(&mut rng);
         Some((weights[index].0, weights[index].2))
+    }
+
+    fn clear_force_powers(
+        &self,
+        used_by_player_index: u8,
+        force_powers: Vec<SaberDuelForcePower>,
+    ) -> Vec<Broadcast> {
+        let mut packets = Vec::new();
+        for force_power in force_powers.into_iter() {
+            packets.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: SaberDuelRemoveForcePower {
+                    minigame_header: MinigameHeader {
+                        stage_guid: self.group.stage_guid,
+                        sub_op_code: SaberDuelOpCode::RemoveForcePower as i32,
+                        stage_group_guid: self.group.stage_group_guid,
+                    },
+                    used_by_player_index: used_by_player_index.into(),
+                    force_power,
+                },
+            }));
+        }
+
+        vec![Broadcast::Multi(self.recipients.clone(), packets)]
     }
 }

@@ -58,7 +58,7 @@ categories:
                   w: 1
                 camera_rot: 0.0
                 rounds_to_win: 2
-                points_to_win_round: 2
+                points_to_win_round: 10
                 keys_per_basic_bout: 6
                 keys_per_special_bout: 8
                 first_special_bout: 2
