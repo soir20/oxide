@@ -745,10 +745,10 @@ impl SaberDuelGame {
         let key_index = match is_reverse {
             true => player_state
                 .required_progress
-                .saturating_sub(player_state.progress) as usize,
+                .saturating_sub(player_state.progress)
+                .saturating_sub(1) as usize,
             false => player_state.progress as usize,
-        }
-        .min(keys.len() - 1);
+        };
 
         let mut expected_key = keys[key_index];
         if player_state.is_affected_by(SaberDuelForcePower::Opposite) {
