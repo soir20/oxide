@@ -560,8 +560,8 @@ impl MinigameCountdown {
         self.paused = pause;
     }
 
-    pub fn schedule_event(&mut self, duration: Duration) {
-        self.last_timer_update = Instant::now();
+    pub fn schedule_event(&mut self, duration: Duration, now: Instant) {
+        self.last_timer_update = now;
         self.time_until_next_event = duration;
     }
 

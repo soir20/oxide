@@ -4,9 +4,10 @@ use std::{
     time::{Duration, Instant},
 };
 
+use enum_iterator::all;
 use packet_serialize::DeserializePacket;
 use rand::{thread_rng, Rng};
-use rand_distr::{Distribution, WeightedAliasIndex};
+use rand_distr::{Distribution, WeightedAliasIndex, WeightedIndex};
 use serde::{Deserialize, Deserializer};
 
 use crate::game_server::{
@@ -44,9 +45,9 @@ const GAME_END_DELAY: Duration = Duration::from_millis(4000);
 
 #[derive(Clone, Debug, Deserialize)]
 struct SaberDuelAiForcePower {
-    force_power: SaberDuelForcePower,
     #[serde(default = "default_weight")]
     weight: u8,
+    #[serde(default)]
     tutorial_enabled: bool,
 }
 
@@ -68,7 +69,8 @@ struct SaberDuelAi {
     opposite_ai_mistake_multiplier: f32,
     #[serde(deserialize_with = "deserialize_probability")]
     force_power_probability: f32,
-    force_powers: Vec<SaberDuelAiForcePower>,
+    force_powers: BTreeMap<SaberDuelForcePower, SaberDuelAiForcePower>,
+    force_power_delay_millis: u32,
 }
 
 impl Default for SaberDuelAi {
@@ -89,6 +91,7 @@ impl Default for SaberDuelAi {
             opposite_ai_mistake_multiplier: Default::default(),
             force_power_probability: Default::default(),
             force_powers: Default::default(),
+            force_power_delay_millis: Default::default(),
         }
     }
 }
@@ -307,6 +310,7 @@ enum SaberDuelGameState {
     },
     WaitingForForcePowers {
         timer: MinigameCountdown,
+        ai_next_force_power: MinigameCountdown,
     },
     BoutActive {
         bout_time_remaining: MinigameCountdown,
@@ -757,66 +761,45 @@ impl SaberDuelGame {
         force_power: SaberDuelForcePower,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let player_index = self.player_index(sender)?;
-        let player_state = &self.player_states[player_index as usize];
-
         let other_player_index = (player_index as usize + 1) % 2;
-        let other_player_state = &self.player_states[other_player_index];
 
-        let Some(definition) = player_state.usable_force_power(
-            force_power,
-            &self.config.force_powers,
-            other_player_state,
-        ) else {
-            return Err(ProcessPacketError::new(
-                ProcessPacketErrorType::ConstraintViolated,
-                format!(
-                    "Player {sender} (index {player_index}) tried to apply power {:?} Saber Duel, but they can't use it ({self:?})", 
-                    force_power
-                )
-            ));
-        };
-
-        let other_player_state = &mut self.player_states[other_player_index];
-        other_player_state.apply_force_power(force_power, definition.bouts_applied, false);
-
-        let player_state = &mut self.player_states[player_index as usize];
-        player_state.use_force_power(definition.cost);
-
-        let player_state = &self.player_states[player_index as usize];
-        let other_player_state = &self.player_states[other_player_index];
-        let flags = player_state.force_power_flags(&self.config.force_powers, other_player_state);
-
-        Ok(vec![Broadcast::Multi(
-            self.recipients.clone(),
-            vec![GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: SaberDuelApplyForcePower {
-                    minigame_header: MinigameHeader {
-                        stage_guid: self.group.stage_guid,
-                        sub_op_code: SaberDuelOpCode::ApplyForcePower as i32,
-                        stage_group_guid: self.group.stage_group_guid,
-                    },
-                    used_by_player_index: player_index.into(),
-                    force_power,
-                    bouts_remaining: definition.bouts_applied.into(),
-                    new_force_points: player_state.force_points.into(),
-                    animation_id: definition.apply_animation_id,
-                    flags,
-                },
-            })],
-        )])
+        self.apply_force_power_from_index(force_power, player_index, other_player_index)
     }
 
     pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
         match &mut self.state {
-            SaberDuelGameState::WaitingForForcePowers { timer } => {
+            SaberDuelGameState::WaitingForForcePowers {
+                timer,
+                ai_next_force_power,
+            } => {
                 if timer.time_until_next_event(now).is_zero() {
                     self.start_bout()
                 } else {
-                    let mut broadcasts = self.show_next_force_tutorial(self.player1, 0);
+                    let mut broadcasts = Vec::new();
+
+                    if self.player2.is_none() {
+                        let ai_player_state = &self.player_states[1];
+                        let other_player_state = &self.player_states[0];
+                        if let Some(force_power) = Self::tick_ai_force_power(
+                            now,
+                            &self.config,
+                            ai_player_state,
+                            other_player_state,
+                            ai_next_force_power,
+                        ) {
+                            broadcasts.append(
+                                &mut self
+                                    .apply_force_power(1, force_power)
+                                    .expect("Chose force power that Saber Duel AI can't use"),
+                            );
+                        }
+                    }
+
+                    broadcasts.append(&mut self.show_next_force_tutorial(self.player1, 0));
                     if let Some(player2) = self.player2 {
                         broadcasts.append(&mut self.show_next_force_tutorial(player2, 1));
                     }
+
                     broadcasts
                 }
             }
@@ -934,7 +917,7 @@ impl SaberDuelGame {
                     }
                 }
 
-                if Self::tick_ai(
+                if Self::tick_ai_keypress(
                     now,
                     &self.config,
                     &mut self.player_states[1],
@@ -963,7 +946,13 @@ impl SaberDuelGame {
         }
 
         match &mut self.state {
-            SaberDuelGameState::WaitingForForcePowers { timer } => timer.pause_or_resume(pause),
+            SaberDuelGameState::WaitingForForcePowers {
+                timer,
+                ai_next_force_power,
+            } => {
+                timer.pause_or_resume(pause);
+                ai_next_force_power.pause_or_resume(pause);
+            }
             SaberDuelGameState::BoutActive {
                 bout_time_remaining,
                 ai_next_key,
@@ -1339,6 +1328,9 @@ impl SaberDuelGame {
             timer: MinigameCountdown::new_with_event(Duration::from_millis(
                 self.config.force_power_selection_max_millis.into(),
             )),
+            ai_next_force_power: MinigameCountdown::new_with_event(Duration::from_millis(
+                self.config.ai.force_power_delay_millis.into(),
+            )),
         };
 
         broadcasts
@@ -1409,7 +1401,7 @@ impl SaberDuelGame {
     }
 
     #[must_use]
-    fn tick_ai(
+    fn tick_ai_keypress(
         now: Instant,
         config: &SaberDuelConfig,
         player_state: &mut SaberDuelPlayerState,
@@ -1442,7 +1434,7 @@ impl SaberDuelGame {
         } else if player_state.increment_progress() {
             *bout_completed_time = Some(bout_time_remaining.time_until_next_event(now));
         }
-        ai_next_key.schedule_event(Duration::from_millis(config.ai.millis_per_key.into()));
+        ai_next_key.schedule_event(Duration::from_millis(config.ai.millis_per_key.into()), now);
 
         true
     }
@@ -1551,6 +1543,60 @@ impl SaberDuelGame {
         self.player_states[1].ready = self.is_ai_match();
     }
 
+    fn apply_force_power_from_index(
+        &mut self,
+        force_power: SaberDuelForcePower,
+        player_index: u8,
+        other_player_index: usize,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let player_state = &self.player_states[player_index as usize];
+        let other_player_state = &self.player_states[other_player_index];
+
+        let Some(definition) = player_state.usable_force_power(
+            force_power,
+            &self.config.force_powers,
+            other_player_state,
+        ) else {
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!(
+                    "Player index {player_index} tried to apply power {:?} Saber Duel, but they can't use it ({self:?})", 
+                    force_power
+                )
+            ));
+        };
+
+        let other_player_state = &mut self.player_states[other_player_index];
+        other_player_state.apply_force_power(force_power, definition.bouts_applied, false);
+
+        let player_state = &mut self.player_states[player_index as usize];
+        player_state.use_force_power(definition.cost);
+
+        let player_state = &self.player_states[player_index as usize];
+        let other_player_state = &self.player_states[other_player_index];
+        let flags = player_state.force_power_flags(&self.config.force_powers, other_player_state);
+
+        Ok(vec![Broadcast::Multi(
+            self.recipients.clone(),
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: SaberDuelApplyForcePower {
+                    minigame_header: MinigameHeader {
+                        stage_guid: self.group.stage_guid,
+                        sub_op_code: SaberDuelOpCode::ApplyForcePower as i32,
+                        stage_group_guid: self.group.stage_group_guid,
+                    },
+                    used_by_player_index: player_index.into(),
+                    force_power,
+                    bouts_remaining: definition.bouts_applied.into(),
+                    new_force_points: player_state.force_points.into(),
+                    animation_id: definition.apply_animation_id,
+                    flags,
+                },
+            })],
+        )])
+    }
+
     fn show_next_force_tutorial(&mut self, player: u32, player_index: usize) -> Vec<Broadcast> {
         match self.player_states[player_index].next_force_power_tutorial() {
             Some(force_power) => vec![Broadcast::Single(
@@ -1565,5 +1611,56 @@ impl SaberDuelGame {
             )],
             None => Vec::new(),
         }
+    }
+
+    #[must_use]
+    fn tick_ai_force_power(
+        now: Instant,
+        config: &SaberDuelConfig,
+        ai_player_state: &SaberDuelPlayerState,
+        other_player_state: &SaberDuelPlayerState,
+        ai_next_force_power: &mut MinigameCountdown,
+    ) -> Option<SaberDuelForcePower> {
+        if ai_next_force_power.time_until_next_event(now) > Duration::ZERO {
+            return None;
+        }
+
+        ai_next_force_power.schedule_event(
+            Duration::from_millis(config.ai.force_power_delay_millis.into()),
+            now,
+        );
+
+        let mut rng = thread_rng();
+        if !rng.gen_bool(config.ai.force_power_probability.into()) {
+            return None;
+        }
+
+        let weights: Vec<(SaberDuelForcePower, u8)> = all::<SaberDuelForcePower>()
+            .map(|force_power| {
+                (
+                    force_power,
+                    match ai_player_state.usable_force_power(
+                        force_power,
+                        &config.force_powers,
+                        other_player_state,
+                    ) {
+                        Some(_) => config
+                            .ai
+                            .force_powers
+                            .get(&force_power)
+                            .map(|definition| definition.weight)
+                            .unwrap_or(0),
+                        None => 0,
+                    },
+                )
+            })
+            .collect();
+
+        let Ok(weighted_index) = WeightedIndex::new(weights.iter().map(|weight| weight.1)) else {
+            return None;
+        };
+
+        let index = weighted_index.sample(&mut rng);
+        Some(weights[index].0)
     }
 }

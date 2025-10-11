@@ -91,10 +91,10 @@ categories:
                   opposite_ai_mistake_multiplier: 2.0
                   force_power_probability: 0.0
                   force_powers:
-                  - force_power: ExtraKey
-                  - force_power: RightToLeft
-                  - force_power: Opposite
-                  force_power_tutorials: []
+                    ExtraKey: {}
+                    RightToLeft: {}
+                    Opposite: {}
+                  force_power_delay_millis: 2000
                 score_penalty_per_second: 5.5
                 max_time_score_bonus: 1450
                 score_penalty_per_accuracy_pct: 100
