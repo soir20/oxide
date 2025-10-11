@@ -763,7 +763,7 @@ impl SaberDuelGame {
         let player_index = self.player_index(sender)?;
         let other_player_index = (player_index as usize + 1) % 2;
 
-        self.apply_force_power_from_index(force_power, player_index, other_player_index)
+        self.apply_force_power_from_index(player_index, other_player_index, force_power, false)
     }
 
     pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
@@ -780,7 +780,7 @@ impl SaberDuelGame {
                     if self.player2.is_none() {
                         let ai_player_state = &self.player_states[1];
                         let other_player_state = &self.player_states[0];
-                        if let Some(force_power) = Self::tick_ai_force_power(
+                        if let Some((force_power, tutorial_enabled)) = Self::tick_ai_force_power(
                             now,
                             &self.config,
                             ai_player_state,
@@ -789,7 +789,12 @@ impl SaberDuelGame {
                         ) {
                             broadcasts.append(
                                 &mut self
-                                    .apply_force_power(1, force_power)
+                                    .apply_force_power_from_index(
+                                        1,
+                                        0,
+                                        force_power,
+                                        tutorial_enabled,
+                                    )
                                     .expect("Chose force power that Saber Duel AI can't use"),
                             );
                         }
@@ -1545,9 +1550,10 @@ impl SaberDuelGame {
 
     fn apply_force_power_from_index(
         &mut self,
-        force_power: SaberDuelForcePower,
         player_index: u8,
         other_player_index: usize,
+        force_power: SaberDuelForcePower,
+        tutorial_enabled: bool,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let player_state = &self.player_states[player_index as usize];
         let other_player_state = &self.player_states[other_player_index];
@@ -1567,7 +1573,11 @@ impl SaberDuelGame {
         };
 
         let other_player_state = &mut self.player_states[other_player_index];
-        other_player_state.apply_force_power(force_power, definition.bouts_applied, false);
+        other_player_state.apply_force_power(
+            force_power,
+            definition.bouts_applied,
+            tutorial_enabled,
+        );
 
         let player_state = &mut self.player_states[player_index as usize];
         player_state.use_force_power(definition.cost);
@@ -1620,7 +1630,7 @@ impl SaberDuelGame {
         ai_player_state: &SaberDuelPlayerState,
         other_player_state: &SaberDuelPlayerState,
         ai_next_force_power: &mut MinigameCountdown,
-    ) -> Option<SaberDuelForcePower> {
+    ) -> Option<(SaberDuelForcePower, bool)> {
         if ai_next_force_power.time_until_next_event(now) > Duration::ZERO {
             return None;
         }
@@ -1635,24 +1645,23 @@ impl SaberDuelGame {
             return None;
         }
 
-        let weights: Vec<(SaberDuelForcePower, u8)> = all::<SaberDuelForcePower>()
+        let weights: Vec<(SaberDuelForcePower, u8, bool)> = all::<SaberDuelForcePower>()
             .map(|force_power| {
-                (
+                let (weight, tutorial_enabled) = match ai_player_state.usable_force_power(
                     force_power,
-                    match ai_player_state.usable_force_power(
-                        force_power,
-                        &config.force_powers,
-                        other_player_state,
-                    ) {
-                        Some(_) => config
-                            .ai
-                            .force_powers
-                            .get(&force_power)
-                            .map(|definition| definition.weight)
-                            .unwrap_or(0),
-                        None => 0,
-                    },
-                )
+                    &config.force_powers,
+                    other_player_state,
+                ) {
+                    Some(_) => config
+                        .ai
+                        .force_powers
+                        .get(&force_power)
+                        .map(|definition| (definition.weight, definition.tutorial_enabled))
+                        .unwrap_or((0, false)),
+                    None => (0, false),
+                };
+
+                (force_power, weight, tutorial_enabled)
             })
             .collect();
 
@@ -1661,6 +1670,6 @@ impl SaberDuelGame {
         };
 
         let index = weighted_index.sample(&mut rng);
-        Some(weights[index].0)
+        Some((weights[index].0, weights[index].2))
     }
 }
