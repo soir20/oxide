@@ -89,7 +89,7 @@ categories:
                   mistake_probability: 0.01
                   right_to_left_ai_mistake_multiplier: 2.0
                   opposite_ai_mistake_multiplier: 2.0
-                  force_power_probability: 0.0
+                  force_power_probability: 1.0
                   force_powers:
                     ExtraKey: {}
                     RightToLeft: {}
@@ -112,23 +112,23 @@ categories:
                 force_powers:
                   ExtraKey:
                     name_id: 1888
-                    small_icon_set_id: 2706
-                    icon_set_id: 2706
-                    cost: 3
-                    bouts_applied: 3
+                    small_icon_id: 2714
+                    icon_id: 2714
+                    cost: 1
+                    bouts_applied: 1
                     apply_animation_id: 5007
                   RightToLeft:
                     name_id: 1889
-                    small_icon_set_id: 2706
-                    icon_set_id: 2706
-                    cost: 4
-                    bouts_applied: 3
+                    small_icon_id: 2710
+                    icon_id: 2710
+                    cost: 2
+                    bouts_applied: 2
                     apply_animation_id: 5007
                   Opposite:
                     name_id: 1890
-                    small_icon_set_id: 2706
-                    icon_set_id: 2706
-                    cost: 5
+                    small_icon_id: 2706
+                    icon_id: 2706
+                    cost: 3
                     bouts_applied: 3
                     apply_animation_id: 5007
                 memory_challenge: false
