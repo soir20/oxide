@@ -1399,7 +1399,7 @@ impl SaberDuelGame {
         let make_mistake = thread_rng().gen_bool(mistake_probability.into());
         if make_mistake {
             player_state.make_mistake();
-        } else if player_state.increment_progress() {
+        } else if player_state.increment_progress() && bout_completed_time.is_none() {
             *bout_completed_time = Some(bout_time_remaining.time_until_next_event(now));
         }
         ai_next_key.schedule_event(Duration::from_millis(config.ai.millis_per_key.into()), now);
