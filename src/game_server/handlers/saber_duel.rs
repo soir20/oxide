@@ -1184,58 +1184,9 @@ impl SaberDuelGame {
             self.bout = 0;
 
             if leader_state.rounds_won >= self.config.rounds_to_win {
-                self.state = SaberDuelGameState::WaitingForGameOver {
-                    timer: MinigameCountdown::new_with_event(GAME_END_DELAY),
-                };
-                self.stopwatch.pause_or_resume(true);
-                broadcasts.push(Broadcast::Multi(
-                    self.recipients.clone(),
-                    vec![GamePacket::serialize(&TunneledPacket {
-                        unknown1: true,
-                        inner: SaberDuelGameOver {
-                            minigame_header: MinigameHeader {
-                                stage_guid: self.group.stage_guid,
-                                sub_op_code: SaberDuelOpCode::GameOver as i32,
-                                stage_group_guid: self.group.stage_group_guid,
-                            },
-                            winner_index: leader_index.into(),
-                            sound_id: match self.is_ai_match() {
-                                true => match leader_index == 0 {
-                                    true => self.config.ai.game_lost_sound_id,
-                                    false => self.config.ai.game_won_sound_id,
-                                },
-                                false => 0,
-                            },
-                            round_lost: false,
-                            challenge_failed: false,
-                        },
-                    })],
-                ));
+                broadcasts.append(&mut self.prepare_game_end(leader_index));
             } else {
-                self.state = SaberDuelGameState::WaitingForRoundEnd {
-                    timer: MinigameCountdown::new_with_event(ROUND_END_DELAY),
-                };
-                broadcasts.push(Broadcast::Multi(
-                    self.recipients.clone(),
-                    vec![GamePacket::serialize(&TunneledPacket {
-                        unknown1: true,
-                        inner: SaberDuelRoundOver {
-                            minigame_header: MinigameHeader {
-                                stage_guid: self.group.stage_guid,
-                                sub_op_code: SaberDuelOpCode::RoundOver as i32,
-                                stage_group_guid: self.group.stage_group_guid,
-                            },
-                            winner_index: leader_index.into(),
-                            sound_id: match self.is_ai_match() {
-                                true => match leader_index == 0 {
-                                    true => self.config.ai.bout_lost_sound_id,
-                                    false => self.config.ai.bout_won_sound_id,
-                                },
-                                false => 0,
-                            },
-                        },
-                    })],
-                ));
+                broadcasts.append(&mut self.prepare_round_end(leader_index));
             }
         } else {
             broadcasts.append(&mut self.prepare_bout());
@@ -1567,6 +1518,63 @@ impl SaberDuelGame {
         self.state = SaberDuelGameState::WaitingForPlayersReady { game_start };
         self.player_states[0].ready = false;
         self.player_states[1].ready = self.is_ai_match();
+    }
+
+    fn prepare_round_end(&mut self, leader_index: u8) -> Vec<Broadcast> {
+        self.state = SaberDuelGameState::WaitingForRoundEnd {
+            timer: MinigameCountdown::new_with_event(ROUND_END_DELAY),
+        };
+        vec![Broadcast::Multi(
+            self.recipients.clone(),
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: SaberDuelRoundOver {
+                    minigame_header: MinigameHeader {
+                        stage_guid: self.group.stage_guid,
+                        sub_op_code: SaberDuelOpCode::RoundOver as i32,
+                        stage_group_guid: self.group.stage_group_guid,
+                    },
+                    winner_index: leader_index.into(),
+                    sound_id: match self.is_ai_match() {
+                        true => match leader_index == 0 {
+                            true => self.config.ai.bout_lost_sound_id,
+                            false => self.config.ai.bout_won_sound_id,
+                        },
+                        false => 0,
+                    },
+                },
+            })],
+        )]
+    }
+
+    fn prepare_game_end(&mut self, leader_index: u8) -> Vec<Broadcast> {
+        self.state = SaberDuelGameState::WaitingForGameOver {
+            timer: MinigameCountdown::new_with_event(GAME_END_DELAY),
+        };
+        self.stopwatch.pause_or_resume(true);
+        vec![Broadcast::Multi(
+            self.recipients.clone(),
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: SaberDuelGameOver {
+                    minigame_header: MinigameHeader {
+                        stage_guid: self.group.stage_guid,
+                        sub_op_code: SaberDuelOpCode::GameOver as i32,
+                        stage_group_guid: self.group.stage_group_guid,
+                    },
+                    winner_index: leader_index.into(),
+                    sound_id: match self.is_ai_match() {
+                        true => match leader_index == 0 {
+                            true => self.config.ai.game_lost_sound_id,
+                            false => self.config.ai.game_won_sound_id,
+                        },
+                        false => 0,
+                    },
+                    round_lost: false,
+                    challenge_failed: false,
+                },
+            })],
+        )]
     }
 
     fn apply_force_power_from_index(
