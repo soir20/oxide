@@ -903,6 +903,8 @@ impl SaberDuelGame {
                     }
                 };
 
+                let tie_interval = Duration::from_millis(self.config.tie_interval_millis.into());
+
                 match bout_completion {
                     SaberDuelBoutCompletion::NeitherPlayer => {
                         if bout_time_remaining_now.is_zero() {
@@ -913,8 +915,9 @@ impl SaberDuelGame {
                         bout_time_remaining_at_completion,
                         player_index,
                     } => {
-                        if bout_time_remaining_at_completion.saturating_sub(bout_time_remaining_now)
-                            > Duration::from_millis(self.config.tie_interval_millis.into())
+                        let time_since_completion = bout_time_remaining_at_completion
+                            .saturating_sub(bout_time_remaining_now);
+                        if time_since_completion > tie_interval || bout_time_remaining_now.is_zero()
                         {
                             return self.win_bout(player_index, is_special_bout);
                         }
@@ -923,9 +926,7 @@ impl SaberDuelGame {
                         time_between_completions,
                         fastest_player_index,
                     } => {
-                        if time_between_completions
-                            > Duration::from_millis(self.config.tie_interval_millis.into())
-                        {
+                        if time_between_completions > tie_interval {
                             return self.win_bout(fastest_player_index, is_special_bout);
                         }
 
