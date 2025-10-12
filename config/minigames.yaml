@@ -59,8 +59,8 @@ categories:
                 camera_rot: 0.0
                 rounds_to_win: 2
                 points_to_win_round: 10
-                keys_per_basic_bout: 6
-                keys_per_special_bout: 8
+                keys_per_basic_bout: 4
+                keys_per_special_bout: 6
                 first_special_bout: 2
                 special_bout_interval: 3
                 points_per_basic_bout: 1
@@ -87,8 +87,8 @@ categories:
                   game_lost_sound_id: 2143
                   millis_per_key: 500
                   mistake_probability: 0.01
-                  right_to_left_ai_mistake_multiplier: 2.0
-                  opposite_ai_mistake_multiplier: 2.0
+                  right_to_left_ai_mistake_multiplier: 30.0
+                  opposite_ai_mistake_multiplier: 50.0
                   force_power_probability: 1.0
                   force_powers:
                     ExtraKey: {}
