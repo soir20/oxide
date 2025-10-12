@@ -473,7 +473,7 @@ pub fn process_saber_duel_packet(
 enum SaberDuelBoutCompletion {
     NeitherPlayer,
     OnePlayer {
-        time_since_completion: Duration,
+        bout_time_remaining_at_completion: Duration,
         player_index: u8,
     },
     BothPlayers {
@@ -876,20 +876,17 @@ impl SaberDuelGame {
                 player2_completed_time,
                 ..
             } => {
-                if bout_time_remaining.time_until_next_event(now).is_zero() {
-                    return self.tie_bout();
-                }
-
+                let bout_time_remaining_now = bout_time_remaining.time_until_next_event(now);
                 let is_special_bout = *is_special_bout;
 
                 let bout_completion = match (&player1_completed_time, &player2_completed_time) {
                     (None, None) => SaberDuelBoutCompletion::NeitherPlayer,
                     (None, Some(player2_time)) => SaberDuelBoutCompletion::OnePlayer {
-                        time_since_completion: *player2_time,
+                        bout_time_remaining_at_completion: *player2_time,
                         player_index: 1,
                     },
                     (Some(player1_time), None) => SaberDuelBoutCompletion::OnePlayer {
-                        time_since_completion: *player1_time,
+                        bout_time_remaining_at_completion: *player1_time,
                         player_index: 0,
                     },
                     (Some(player1_time), Some(player2_time)) => {
@@ -907,13 +904,16 @@ impl SaberDuelGame {
                 };
 
                 match bout_completion {
-                    SaberDuelBoutCompletion::NeitherPlayer => {}
+                    SaberDuelBoutCompletion::NeitherPlayer => {
+                        if bout_time_remaining_now.is_zero() {
+                            return self.tie_bout();
+                        }
+                    }
                     SaberDuelBoutCompletion::OnePlayer {
-                        time_since_completion,
+                        bout_time_remaining_at_completion,
                         player_index,
                     } => {
-                        // TODO: handle pause
-                        if time_since_completion
+                        if bout_time_remaining_at_completion.saturating_sub(bout_time_remaining_now)
                             > Duration::from_millis(self.config.tie_interval_millis.into())
                         {
                             return self.win_bout(player_index, is_special_bout);
