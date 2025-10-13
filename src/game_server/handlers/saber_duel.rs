@@ -42,6 +42,7 @@ use crate::game_server::{
 const ROUND_END_DELAY: Duration = Duration::from_millis(2500);
 const ROUND_START_DELAY: Duration = Duration::from_millis(1200);
 const GAME_END_DELAY: Duration = Duration::from_millis(4000);
+const MEMORY_CHALLENGE_AI_DELAY: Duration = Duration::from_millis(2000);
 
 #[derive(Clone, Debug, Deserialize)]
 struct SaberDuelAiForcePower {
@@ -1324,15 +1325,20 @@ impl SaberDuelGame {
             keys.push(thread_rng().gen());
         }
 
+        let mut time_until_first_ai_key =
+            Duration::from_millis(self.config.ai.millis_per_key.into());
+        if self.config.memory_challenge {
+            time_until_first_ai_key =
+                time_until_first_ai_key.saturating_add(MEMORY_CHALLENGE_AI_DELAY);
+        }
+
         self.state = SaberDuelGameState::BoutActive {
             bout_time_remaining: MinigameCountdown::new_with_event(Duration::from_millis(
                 self.config.bout_max_millis.into(),
             )),
             is_special_bout,
             keys: keys.clone(),
-            ai_next_key: MinigameCountdown::new_with_event(Duration::from_millis(
-                self.config.ai.millis_per_key.into(),
-            )),
+            ai_next_key: MinigameCountdown::new_with_event(time_until_first_ai_key),
             player1_completed_time: None,
             player2_completed_time: None,
         };
