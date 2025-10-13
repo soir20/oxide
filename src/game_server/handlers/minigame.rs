@@ -27,13 +27,14 @@ use crate::{
             fleet_commander::FleetCommanderGame,
             force_connection::ForceConnectionGame,
             lock_enforcer::CharacterTableReadHandle,
+            saber_duel::{process_saber_duel_packet, SaberDuelConfig, SaberDuelGame},
+            saber_strike::start_saber_strike,
         },
         packets::{
             chat::{ActionBarTextColor, SendStringId},
             client_update::UpdateCredits,
             command::StartFlashGame,
             daily::{AddDailyMinigame, UpdateDailyMinigame},
-            item::EquipmentSlot,
             minigame::{
                 ActiveMinigameCreationResult, ActiveMinigameEndScore, CreateActiveMinigame,
                 CreateMinigameStageGroupInstance, EndActiveMinigame, FlashPayload,
@@ -45,7 +46,6 @@ use crate::{
                 ScoreType, ShowStageInstanceSelect, StartActiveMinigame,
                 UpdateActiveMinigameRewards,
             },
-            saber_strike::{SaberStrikeOpCode, SaberStrikeStageData},
             tunnel::TunneledPacket,
             ui::ExecuteScriptWithStringParams,
             GamePacket, RewardBundle,
@@ -58,7 +58,6 @@ use crate::{
 use super::{
     character::{CharacterType, MinigameMatchmakingGroup, Player, PreviousLocation},
     guid::{GuidTableIndexer, IndexedGuid},
-    item::SABER_ITEM_TYPE,
     lock_enforcer::{
         CharacterLockRequest, CharacterTableWriteHandle, MinigameDataLockRequest,
         MinigameDataTableWriteHandle, ZoneTableWriteHandle,
@@ -247,6 +246,10 @@ pub enum MinigameType {
     SaberStrike {
         saber_strike_stage_id: u32,
     },
+    SaberDuel {
+        #[serde(flatten)]
+        config: SaberDuelConfig,
+    },
 }
 
 impl MinigameType {
@@ -300,6 +303,7 @@ impl MinigameType {
             MinigameType::SaberStrike { .. } => MinigameTypeData::SaberStrike {
                 obfuscated_score: 0,
             },
+            _ => MinigameTypeData::default(),
         }
     }
 }
@@ -329,11 +333,11 @@ pub enum MatchmakingGroupStatus {
     Closed,
 }
 
-#[derive(Clone, PartialEq, Eq)]
+#[derive(Clone)]
 pub enum MinigameReadiness {
     Matchmaking,
     InitialPlayersLoading(BTreeSet<u32>, Option<Instant>),
-    Ready(Duration, Option<Instant>),
+    Ready(MinigameStopwatch),
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
@@ -351,6 +355,21 @@ pub struct SharedMinigameData {
 }
 
 impl SharedMinigameData {
+    pub fn pause_or_resume(
+        &mut self,
+        sender: u32,
+        pause: bool,
+        stage_config: &MinigameStageConfig,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        if stage_config.max_players() == 1 {
+            if let MinigameReadiness::Ready(timer) = &mut self.readiness {
+                timer.pause_or_resume(pause);
+            }
+        }
+
+        self.data.pause_or_resume(sender, pause)
+    }
+
     pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
         self.data.tick(now)
     }
@@ -383,6 +402,7 @@ impl
             SharedMinigameTypeData::ForceConnection { .. } => {
                 SharedMinigameDataTickableIndex::Tickable
             }
+            SharedMinigameTypeData::SaberDuel { .. } => SharedMinigameDataTickableIndex::Tickable,
             _ => SharedMinigameDataTickableIndex::NotTickable,
         }
     }
@@ -410,6 +430,9 @@ pub enum SharedMinigameTypeData {
     ForceConnection {
         game: Box<ForceConnectionGame>,
     },
+    SaberDuel {
+        game: Box<SaberDuelGame>,
+    },
     #[default]
     None,
 }
@@ -418,8 +441,7 @@ impl SharedMinigameTypeData {
     pub fn from(
         minigame_type: &MinigameType,
         members: &[u32],
-        stage_group_guid: i32,
-        stage_guid: i32,
+        group: MinigameMatchmakingGroup,
         difficulty: u32,
     ) -> Self {
         // We can't have a game without at least one player
@@ -433,21 +455,42 @@ impl SharedMinigameTypeData {
                         difficulty,
                         player1,
                         player2,
-                        stage_guid,
-                        stage_group_guid,
+                        group.stage_guid,
+                        group.stage_group_guid,
                     )),
                 },
                 FlashMinigameType::ForceConnection => SharedMinigameTypeData::ForceConnection {
                     game: Box::new(ForceConnectionGame::new(
                         player1,
                         player2,
-                        stage_guid,
-                        stage_group_guid,
+                        group.stage_guid,
+                        group.stage_group_guid,
                     )),
                 },
                 _ => SharedMinigameTypeData::default(),
             },
             MinigameType::SaberStrike { .. } => SharedMinigameTypeData::default(),
+            MinigameType::SaberDuel { config } => SharedMinigameTypeData::SaberDuel {
+                game: Box::new(SaberDuelGame::new(
+                    config.to_owned(),
+                    player1,
+                    player2,
+                    group,
+                )),
+            },
+        }
+    }
+
+    pub fn pause_or_resume(
+        &mut self,
+        sender: u32,
+        pause: bool,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        match self {
+            SharedMinigameTypeData::FleetCommander { game } => game.pause_or_resume(sender, pause),
+            SharedMinigameTypeData::ForceConnection { game } => game.pause_or_resume(sender, pause),
+            SharedMinigameTypeData::SaberDuel { game } => game.pause_or_resume(sender, pause),
+            _ => Ok(Vec::new()),
         }
     }
 
@@ -455,6 +498,7 @@ impl SharedMinigameTypeData {
         match self {
             SharedMinigameTypeData::FleetCommander { game } => game.tick(now),
             SharedMinigameTypeData::ForceConnection { game } => game.tick(now),
+            SharedMinigameTypeData::SaberDuel { game } => game.tick(now),
             _ => Vec::new(),
         }
     }
@@ -471,21 +515,24 @@ impl SharedMinigameTypeData {
             SharedMinigameTypeData::ForceConnection { game } => {
                 game.remove_player(player, minigame_status)
             }
+            SharedMinigameTypeData::SaberDuel { game } => {
+                game.remove_player(player, minigame_status)
+            }
             _ => Ok(Vec::new()),
         }
     }
 }
 
 #[derive(Clone, Debug)]
-pub struct MinigameTimer {
+pub struct MinigameCountdown {
     paused: bool,
     time_until_next_event: Duration,
     last_timer_update: Instant,
 }
 
-impl MinigameTimer {
+impl MinigameCountdown {
     pub fn new() -> Self {
-        MinigameTimer {
+        MinigameCountdown {
             paused: false,
             time_until_next_event: Duration::ZERO,
             last_timer_update: Instant::now(),
@@ -493,7 +540,7 @@ impl MinigameTimer {
     }
 
     pub fn new_with_event(duration: Duration) -> Self {
-        MinigameTimer {
+        MinigameCountdown {
             paused: false,
             time_until_next_event: duration,
             last_timer_update: Instant::now(),
@@ -513,8 +560,8 @@ impl MinigameTimer {
         self.paused = pause;
     }
 
-    pub fn schedule_event(&mut self, duration: Duration) {
-        self.last_timer_update = Instant::now();
+    pub fn schedule_event(&mut self, duration: Duration, now: Instant) {
+        self.last_timer_update = now;
         self.time_until_next_event = duration;
     }
 
@@ -531,6 +578,41 @@ impl MinigameTimer {
             self.time_until_next_event
                 .saturating_sub(time_since_last_tick)
         }
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct MinigameStopwatch {
+    previous_total_time: Duration,
+    possible_resume_time: Option<Instant>,
+}
+
+impl MinigameStopwatch {
+    pub fn new(start_time: Option<Instant>) -> Self {
+        MinigameStopwatch {
+            previous_total_time: Duration::ZERO,
+            possible_resume_time: start_time,
+        }
+    }
+
+    pub fn pause_or_resume(&mut self, pause: bool) {
+        let now = Instant::now();
+        if pause {
+            if let Some(resume_time) = self.possible_resume_time {
+                self.previous_total_time = self
+                    .previous_total_time
+                    .saturating_add(now.saturating_duration_since(resume_time));
+                self.possible_resume_time = None;
+            }
+        } else {
+            self.possible_resume_time = Some(now);
+        }
+    }
+
+    pub fn elapsed(&self) -> Duration {
+        let now = Instant::now();
+        self.previous_total_time
+            .saturating_add(now.saturating_duration_since(self.possible_resume_time.unwrap_or(now)))
     }
 }
 
@@ -1694,11 +1776,20 @@ pub fn process_minigame_packet(
                 RequestCancelActiveMinigame::deserialize(cursor)?;
                 handle_request_cancel_active_minigame(true, sender, game_server)
             }
+            MinigameOpCode::PauseActiveMinigame => {
+                let header = MinigameHeader::deserialize(cursor)?;
+                handle_pause_or_resume_active_minigame(sender, game_server, &header, true)
+            }
+            MinigameOpCode::ResumeActiveMinigame => {
+                let header = MinigameHeader::deserialize(cursor)?;
+                handle_pause_or_resume_active_minigame(sender, game_server, &header, false)
+            }
             MinigameOpCode::FlashPayload => {
                 let payload = FlashPayload::deserialize(cursor)?;
                 handle_flash_payload(payload, sender, game_server)
             }
             MinigameOpCode::SaberStrike => process_saber_strike_packet(cursor, sender, game_server),
+            MinigameOpCode::SaberDuel => process_saber_duel_packet(cursor, sender, game_server),
             _ => {
                 let mut buffer = Vec::new();
                 cursor.read_to_end(&mut buffer)?;
@@ -2165,8 +2256,7 @@ pub fn prepare_active_minigame_instance(
             minigame_data.data = SharedMinigameTypeData::from(
                 stage_config.stage_config.minigame_type(),
                 members,
-                stage_group_guid,
-                stage_guid,
+                matchmaking_group,
                 stage_config.stage_config.difficulty(),
             );
 
@@ -2317,7 +2407,7 @@ fn handle_request_start_active_minigame(
                         }
 
                         if players.remove(&sender) && players.is_empty() {
-                            shared_minigame_data.readiness = MinigameReadiness::Ready(Duration::ZERO, Some(first_player_load_time.unwrap_or(now)));
+                            shared_minigame_data.readiness = MinigameReadiness::Ready(MinigameStopwatch::new(Some(first_player_load_time.unwrap_or(now))));
                         }
                     }
 
@@ -2360,24 +2450,12 @@ fn handle_request_start_active_minigame(
                             );
                         },
                         MinigameType::SaberStrike { saber_strike_stage_id } => {
-                            packets.push(
-                                GamePacket::serialize(&TunneledPacket {
-                                    unknown1: true,
-                                    inner: SaberStrikeStageData {
-                                        minigame_header: MinigameHeader {
-                                            stage_guid: minigame_status.group.stage_guid,
-                                            sub_op_code: SaberStrikeOpCode::StageData as i32,
-                                            stage_group_guid: minigame_status.group.stage_group_guid,
-                                        },
-                                        saber_strike_stage_id: *saber_strike_stage_id,
-                                        use_player_weapon: player.battle_classes.get(&player.active_battle_class)
-                                            .and_then(|battle_class| battle_class.items.get(&EquipmentSlot::PrimaryWeapon)
-                                            .and_then(|item| game_server.items().get(&item.guid)))
-                                            .map(|item| item.item_type == SABER_ITEM_TYPE)
-                                            .unwrap_or(false),
-                                    }
-                                }),
-                            );
+                            packets.append(&mut start_saber_strike(*saber_strike_stage_id, player, minigame_status, game_server));
+                        },
+                        MinigameType::SaberDuel { .. } => {
+                            if let SharedMinigameTypeData::SaberDuel { game } = &shared_minigame_data.data {
+                                packets.append(&mut game.start(sender)?)
+                            }
                         },
                     }
 
@@ -2429,7 +2507,23 @@ fn handle_request_cancel_active_minigame(
     )
 }
 
-pub fn handle_minigame_packet_write<T: Default>(
+fn handle_pause_or_resume_active_minigame(
+    sender: u32,
+    game_server: &GameServer,
+    header: &MinigameHeader,
+    pause: bool,
+) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    handle_minigame_packet_write(
+        sender,
+        game_server,
+        header,
+        |_, _, _, stage_config, shared_minigame_data, _| {
+            shared_minigame_data.pause_or_resume(sender, pause, &stage_config.stage_config)
+        },
+    )
+}
+
+pub fn handle_minigame_packet_write<T>(
     sender: u32,
     game_server: &GameServer,
     header: &MinigameHeader,
@@ -2628,19 +2722,14 @@ fn handle_flash_payload_game_result(
                 ));
             }
 
-            let MinigameReadiness::Ready(previous_time, possible_resume_time) =
-                shared_minigame_data.readiness
-            else {
+            let MinigameReadiness::Ready(timer) = &shared_minigame_data.readiness else {
                 return Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
                     format!("Player {sender} sent a Flash game result payload (won: {won}) for a game that isn't ready yet")
                 ));
             };
 
-            let now = Instant::now();
-            let total_time = previous_time
-                .saturating_add(now.saturating_duration_since(possible_resume_time.unwrap_or(now)))
-                .as_millis();
+            let total_time = timer.elapsed().as_millis();
 
             let total_score = parts[1].parse()?;
             minigame_status.total_score = total_score;
@@ -2821,34 +2910,7 @@ fn handle_flash_payload(
             |_, _, _, stage_config, shared_minigame_data, _| {
                 if parts.len() == 2 {
                     let pause = parts[1].parse()?;
-
-                    if stage_config.stage_config.max_players() == 1 {
-                        if let MinigameReadiness::Ready(previous_time, possible_resume_time) =
-                            &mut shared_minigame_data.readiness
-                        {
-                            let now = Instant::now();
-                            if pause {
-                                if let Some(resume_time) = possible_resume_time {
-                                    *previous_time = previous_time.saturating_add(
-                                        now.saturating_duration_since(*resume_time),
-                                    );
-                                    *possible_resume_time = None;
-                                }
-                            } else {
-                                *possible_resume_time = Some(now);
-                            }
-                        }
-                    }
-
-                    match &mut shared_minigame_data.data {
-                        SharedMinigameTypeData::FleetCommander { game } => {
-                            game.pause_or_resume(sender, pause)
-                        }
-                        SharedMinigameTypeData::ForceConnection { game } => {
-                            game.pause_or_resume(sender, pause)
-                        }
-                        _ => Ok(Vec::new()),
-                    }
+                    shared_minigame_data.pause_or_resume(sender, pause, &stage_config.stage_config)
                 } else {
                     Err(ProcessPacketError::new(
                         ProcessPacketErrorType::ConstraintViolated,
@@ -3902,7 +3964,10 @@ pub fn leave_active_minigame_if_any(
         ));
     };
     let mut minigame_data_write_handle = shared_minigame_data.write();
-    let is_matchmaking = minigame_data_write_handle.readiness == MinigameReadiness::Matchmaking;
+    let is_matchmaking = matches!(
+        minigame_data_write_handle.readiness,
+        MinigameReadiness::Matchmaking
+    );
 
     // Wait for the end signal from the Flash payload because those games send additional score data
     if skip_if_flash

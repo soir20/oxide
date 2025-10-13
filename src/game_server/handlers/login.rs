@@ -123,7 +123,9 @@ pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, P
                             (
                                 battle_class_guid,
                                 BattleClass {
-                                    items: battle_class.items,
+                                    items: battle_class.items.into_iter()
+                                        .map(|(slot, item)| (slot, item.guid))
+                                        .collect(),
                                 },
                             )
                         })

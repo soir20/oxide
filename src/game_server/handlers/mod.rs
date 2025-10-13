@@ -17,6 +17,7 @@ pub mod login;
 pub mod minigame;
 pub mod mount;
 pub mod reference_data;
+pub mod saber_duel;
 pub mod saber_strike;
 pub mod store;
 pub mod test_data;

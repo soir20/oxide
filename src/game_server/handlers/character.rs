@@ -11,12 +11,12 @@ use serde::Deserialize;
 
 use crate::{
     game_server::{
+        handlers::item::SABER_ITEM_TYPE,
         packets::{
             chat::{ActionBarTextColor, SendStringId},
             command::PlaySoundIdOnTarget,
             item::{Attachment, BaseAttachmentGroup, EquipmentSlot, ItemDefinition, WieldType},
             minigame::ScoreEntry,
-            player_data::EquippedItem,
             player_update::{
                 AddNotifications, AddNpc, AddPc, Customization, CustomizationSlot, Hostility, Icon,
                 MoveOnRail, NameplateImage, NotificationData, NpcRelevance, PhysicsState,
@@ -1178,7 +1178,7 @@ impl From<TransportConfig> for Transport {
 
 #[derive(Clone)]
 pub struct BattleClass {
-    pub items: BTreeMap<EquipmentSlot, EquippedItem>,
+    pub items: BTreeMap<EquipmentSlot, u32>,
 }
 
 #[derive(Clone, Default)]
@@ -1282,23 +1282,23 @@ impl Player {
                 battle_class
                     .items
                     .iter()
-                    .filter_map(|(slot, item)| {
+                    .filter_map(|(slot, item_guid)| {
                         let tint_override = match slot {
                             EquipmentSlot::PrimarySaberShape => battle_class
                                 .items
                                 .get(&EquipmentSlot::PrimarySaberColor)
-                                .and_then(|item| item_definitions.get(&item.guid))
+                                .and_then(|item_guid| item_definitions.get(item_guid))
                                 .map(|item_def| item_def.tint),
                             EquipmentSlot::SecondarySaberShape => battle_class
                                 .items
                                 .get(&EquipmentSlot::SecondarySaberColor)
-                                .and_then(|item| item_definitions.get(&item.guid))
+                                .and_then(|item_guid| item_definitions.get(item_guid))
                                 .map(|item_def| item_def.tint),
                             _ => None,
                         };
 
                         item_definitions
-                            .get(&item.guid)
+                            .get(item_guid)
                             .map(|item_definition| Attachment {
                                 model_name: item_definition.model_name.clone(),
                                 texture_alias: item_definition.texture_alias.clone(),
@@ -1398,6 +1398,19 @@ impl Player {
         packets.append(&mut mount_packets);
 
         packets
+    }
+
+    pub fn has_saber_equipped(&self, items: &BTreeMap<u32, ItemDefinition>) -> bool {
+        self.battle_classes
+            .get(&self.active_battle_class)
+            .and_then(|battle_class| {
+                battle_class
+                    .items
+                    .get(&EquipmentSlot::PrimaryWeapon)
+                    .and_then(|item_guid| items.get(item_guid))
+            })
+            .map(|item| item.item_type == SABER_ITEM_TYPE)
+            .unwrap_or(false)
     }
 }
 

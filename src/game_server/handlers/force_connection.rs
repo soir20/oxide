@@ -9,7 +9,7 @@ use serde::Serializer;
 use crate::game_server::{
     handlers::{
         character::MinigameStatus, guid::GuidTableIndexer, lock_enforcer::CharacterTableReadHandle,
-        minigame::MinigameTimer, unique_guid::player_guid,
+        minigame::MinigameCountdown, unique_guid::player_guid,
     },
     packets::{
         minigame::{FlashPayload, MinigameHeader, ScoreEntry, ScoreType},
@@ -470,7 +470,7 @@ pub struct ForceConnectionGame {
     powerups: [[u32; 2]; 2],
     turn: ForceConnectionTurn,
     state: ForceConnectionGameState,
-    timer: MinigameTimer,
+    timer: MinigameCountdown,
     stage_guid: i32,
     stage_group_guid: i32,
 }
@@ -499,7 +499,7 @@ impl ForceConnectionGame {
             powerups: [[1, 2]; 2],
             turn,
             state: ForceConnectionGameState::WaitingForPlayersReady,
-            timer: MinigameTimer::new(),
+            timer: MinigameCountdown::new(),
             stage_guid,
             stage_group_guid,
         }
@@ -1044,7 +1044,7 @@ impl ForceConnectionGame {
             ForceConnectionTurn::Player2 => ForceConnectionTurn::Player1,
         };
 
-        self.timer.schedule_event(TURN_TIME);
+        self.timer.schedule_event(TURN_TIME, Instant::now());
 
         broadcasts.push(Broadcast::Multi(
             self.recipients.clone(),
@@ -1083,7 +1083,8 @@ impl ForceConnectionGame {
                 broadcasts.append(&mut self.process_match(player2_match_len, 1));
             }
 
-            self.timer.schedule_event(Duration::from_millis(500));
+            self.timer
+                .schedule_event(Duration::from_millis(500), Instant::now());
 
             broadcasts.push(Broadcast::Multi(
                 self.recipients.clone(),
@@ -1177,7 +1178,7 @@ impl ForceConnectionGame {
             time_left_in_turn: self.timer.time_until_next_event(turn_time),
         };
 
-        self.timer.schedule_event(sleep_time);
+        self.timer.schedule_event(sleep_time, turn_time);
         self.broadcast_powerup_quantity(self.turn as u8)
     }
 
