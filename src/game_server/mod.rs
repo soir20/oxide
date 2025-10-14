@@ -621,10 +621,6 @@ impl GameServer {
                         DeserializePacket::deserialize(&mut cursor)?;
                     // Don't allow players to update another player's position
                     pos_update.guid = player_guid(sender);
-                    println!(
-                        "(X: ({})), (Y: ({})), (Z: ({}))",
-                        pos_update.pos_x, pos_update.pos_y, pos_update.pos_z,
-                    );
                     broadcasts.append(&mut ZoneInstance::move_character(pos_update, false, self)?);
                 }
                 OpCode::PlayerJump => {
