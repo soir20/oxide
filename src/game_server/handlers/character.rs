@@ -532,9 +532,9 @@ impl TickableStep {
                             // Return position update to update the NPCs chunk in the GUID table
                             update_pos = Some(UpdatePlayerPosition {
                                 guid: Guid::guid(character),
-                                pos_x: character.pos.x,
-                                pos_y: character.pos.y,
-                                pos_z: character.pos.z,
+                                pos_x: new_pos.x,
+                                pos_y: new_pos.y,
+                                pos_z: new_pos.z,
                                 rot_x: character.rot.x,
                                 rot_y: character.rot.y,
                                 rot_z: character.rot.z,
