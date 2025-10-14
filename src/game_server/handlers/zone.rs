@@ -7,7 +7,6 @@ use std::{
 
 use enum_iterator::all;
 use parking_lot::RwLockReadGuard;
-use rand::{seq::SliceRandom, thread_rng};
 use serde::Deserialize;
 
 use crate::{
@@ -45,8 +44,7 @@ use super::{
     },
     mount::MountConfig,
     unique_guid::{
-        npc_guid, player_guid, shorten_player_guid, zone_template_guid, AMBIENT_NPC_DISCRIMINANT,
-        FIXTURE_DISCRIMINANT,
+        npc_guid, player_guid, shorten_player_guid, zone_template_guid, FIXTURE_DISCRIMINANT,
     },
     update_position::UpdatePositionPacket,
     WriteLockingBroadcastSupplier,
