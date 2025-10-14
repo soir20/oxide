@@ -1406,7 +1406,7 @@ pub fn interact_with_character(
             write_guids: vec![requester, target],
             character_consumer: move |characters_table_read_handle, _, mut characters_write, _| {
                 let Some(mut requester_read_handle) = characters_write.remove(&requester) else {
-                        return coerce_to_broadcast_supplier(|_| Ok(Vec::new()));
+                    return coerce_to_broadcast_supplier(|_| Ok(Vec::new()));
                 };
 
                 let requester_pos = requester_read_handle.stats.pos;
@@ -1424,67 +1424,64 @@ pub fn interact_with_character(
                     _ => None,
                 };
 
-                let Some(target_read_handle) = characters_write.get_mut(&target) else {
-                    characters_write.insert(requester, requester_read_handle);
-                    return Err(ProcessPacketError::new(
-                        ProcessPacketErrorType::ConstraintViolated,
-                        format!("Received request to interact with unknown NPC {target} from {requester}"),
-                    ));
-                };
-
-                if !target_read_handle.stats.is_spawned {
-                    characters_write.insert(requester, requester_read_handle);
-                    return Err(ProcessPacketError::new(
-                        ProcessPacketErrorType::ConstraintViolated,
-                        format!("Received request to interact with inactive NPC {target} from {requester}"),
-                    ));
-                }
-
-                let distance = distance3(
-                    requester_pos.x,
-                    requester_pos.y,
-                    requester_pos.z,
-                    target_read_handle.stats.pos.x,
-                    target_read_handle.stats.pos.y,
-                    target_read_handle.stats.pos.z,
-                );
-
-                // Interact if player is within range; otherwise, send MoveToInteract
-                if distance > target_read_handle.stats.interact_radius
-                    || target_read_handle.stats.instance_guid != requester_instance
-                {
-                    let interaction_angle = (target_read_handle.stats.pos.z - requester_pos.z)
-                        .atan2(target_read_handle.stats.pos.x - requester_pos.x);
-
-                    let destination = Pos {
-                        x: target_read_handle.stats.pos.x
-                            - target_read_handle.stats.move_to_interact_offset * interaction_angle.cos(),
-                        y: target_read_handle.stats.pos.y,
-                        z: target_read_handle.stats.pos.z
-                            - target_read_handle.stats.move_to_interact_offset * interaction_angle.sin(),
-                        w: 1.0,
+                let result = {
+                    let Some(target_read_handle) = characters_write.get_mut(&target) else {
+                        return Err(ProcessPacketError::new(
+                            ProcessPacketErrorType::ConstraintViolated,
+                            format!("Received request to interact with unknown NPC {target} from {requester}"),
+                        ));
                     };
 
-                    characters_write.insert(requester, requester_read_handle);
-                    return coerce_to_broadcast_supplier(move |_| {
-                        Ok(vec![Broadcast::Single(
-                            requester_guid,
-                            vec![GamePacket::serialize(&TunneledPacket {
-                                unknown1: true,
-                                inner: MoveToInteract {
-                                    destination,
-                                    target,
-                                },
-                            })],
-                        )])
-                    });
-                }
+                    if !target_read_handle.stats.is_spawned {
+                        return Err(ProcessPacketError::new(
+                            ProcessPacketErrorType::ConstraintViolated,
+                            format!("Received request to interact with inactive NPC {target} from {requester}"),
+                        ));
+                    }
 
-                let result =
-                    target_read_handle.interact(requester_guid, player_stats, &nearby_player_guids);
+                    let distance = distance3(
+                        requester_pos.x,
+                        requester_pos.y,
+                        requester_pos.z,
+                        target_read_handle.stats.pos.x,
+                        target_read_handle.stats.pos.y,
+                        target_read_handle.stats.pos.z,
+                    );
+
+                    // Interact if player is within range; otherwise, send MoveToInteract
+                    if distance > target_read_handle.stats.interact_radius
+                        || target_read_handle.stats.instance_guid != requester_instance
+                    {
+                        let interaction_angle = (target_read_handle.stats.pos.z - requester_pos.z)
+                            .atan2(target_read_handle.stats.pos.x - requester_pos.x);
+
+                        let destination = Pos {
+                            x: target_read_handle.stats.pos.x
+                                - target_read_handle.stats.move_to_interact_offset * interaction_angle.cos(),
+                            y: target_read_handle.stats.pos.y,
+                            z: target_read_handle.stats.pos.z
+                                - target_read_handle.stats.move_to_interact_offset * interaction_angle.sin(),
+                            w: 1.0,
+                        };
+
+                        return coerce_to_broadcast_supplier(move |_| {
+                            Ok(vec![Broadcast::Single(
+                                requester_guid,
+                                vec![GamePacket::serialize(&TunneledPacket {
+                                    unknown1: true,
+                                    inner: MoveToInteract {
+                                        destination,
+                                        target,
+                                    },
+                                })],
+                            )])
+                        });
+                    }
+
+                    target_read_handle.interact(requester_guid, player_stats, &nearby_player_guids)
+                };
 
                 characters_write.insert(requester, requester_read_handle);
-
                 result
             },
         });
