@@ -528,7 +528,6 @@ impl TickableStep {
                     // Reassign position on spawn to ensure varied spawn location each time the NPC spawns
                     if !character.possible_pos.is_empty() {
                         if let Some(new_pos) = character.possible_pos.choose(&mut thread_rng()) {
-                            character.pos = *new_pos;
                             // Return position update to update the NPCs chunk in the GUID table
                             update_pos = Some(UpdatePlayerPosition {
                                 guid: Guid::guid(character),
