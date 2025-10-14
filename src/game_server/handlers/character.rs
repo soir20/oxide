@@ -5,13 +5,13 @@ use std::{
 
 use chrono::{DateTime, FixedOffset, Utc};
 use enum_iterator::Sequence;
-use rand::thread_rng;
+use rand::{seq::SliceRandom, thread_rng};
 use rand_distr::{Distribution, WeightedAliasIndex};
 use serde::Deserialize;
 
 use crate::{
     game_server::{
-        handlers::item::SABER_ITEM_TYPE,
+        handlers::{item::SABER_ITEM_TYPE, unique_guid::AMBIENT_NPC_DISCRIMINANT},
         packets::{
             chat::{ActionBarTextColor, SendStringId},
             command::PlaySoundIdOnTarget,
@@ -936,12 +936,32 @@ impl TickableProcedureTracker {
     }
 }
 
+pub trait NpcConfig: Into<CharacterType> {
+    const DISCRIMINANT: u8;
+
+    fn base_config(&self) -> &BaseNpcConfig;
+}
+
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct AmbientNpcConfig {
     #[serde(flatten)]
     pub base_npc: BaseNpcConfig,
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
+}
+
+impl NpcConfig for AmbientNpcConfig {
+    const DISCRIMINANT: u8 = AMBIENT_NPC_DISCRIMINANT;
+
+    fn base_config(&self) -> &BaseNpcConfig {
+        &self.base_npc
+    }
+}
+
+impl From<AmbientNpcConfig> for CharacterType {
+    fn from(value: AmbientNpcConfig) -> Self {
+        CharacterType::AmbientNpc(value.into())
+    }
 }
 
 #[derive(Clone)]
@@ -1022,6 +1042,20 @@ pub struct DoorConfig {
     pub destination_zone: DestinationZoneInstance,
 }
 
+impl NpcConfig for DoorConfig {
+    const DISCRIMINANT: u8 = AMBIENT_NPC_DISCRIMINANT;
+
+    fn base_config(&self) -> &BaseNpcConfig {
+        &self.base_npc
+    }
+}
+
+impl From<DoorConfig> for CharacterType {
+    fn from(value: DoorConfig) -> Self {
+        CharacterType::Door(value.into())
+    }
+}
+
 #[derive(Clone)]
 pub struct Door {
     pub base_npc: BaseNpc,
@@ -1088,6 +1122,20 @@ pub struct TransportConfig {
     pub show_icon: bool,
     pub large_icon: bool,
     pub show_hover_description: bool,
+}
+
+impl NpcConfig for TransportConfig {
+    const DISCRIMINANT: u8 = AMBIENT_NPC_DISCRIMINANT;
+
+    fn base_config(&self) -> &BaseNpcConfig {
+        &self.base_npc
+    }
+}
+
+impl From<TransportConfig> for CharacterType {
+    fn from(value: TransportConfig) -> Self {
+        CharacterType::Transport(value.into())
+    }
 }
 
 #[derive(Clone)]
@@ -1484,6 +1532,42 @@ pub struct NpcTemplate {
 }
 
 impl NpcTemplate {
+    pub fn from_config<T: NpcConfig>(config: T, index: u16) -> Self {
+        let mut rng = thread_rng();
+        NpcTemplate {
+            key: config.base_config().key.clone(),
+            discriminant: T::DISCRIMINANT,
+            index,
+            model_id: config
+                .base_config()
+                .possible_model_ids
+                .choose(&mut rng)
+                .copied()
+                .unwrap_or(config.base_config().model_id),
+            pos: config
+                .base_config()
+                .possible_pos
+                .choose(&mut rng)
+                .cloned()
+                .unwrap_or(config.base_config().pos),
+            rot: config.base_config().rot,
+            scale: config.base_config().scale,
+            tickable_procedures: config.base_config().tickable_procedures.clone(),
+            first_possible_procedures: config.base_config().first_possible_procedures.clone(),
+            synchronize_with: config.base_config().synchronize_with.clone(),
+            stand_animation_id: config.base_config().stand_animation_id,
+            cursor: config.base_config().cursor,
+            interact_radius: config.base_config().interact_radius,
+            auto_interact_radius: config.base_config().auto_interact_radius.unwrap_or(0.0),
+            move_to_interact_offset: config.base_config().move_to_interact_offset,
+            is_spawned: config.base_config().is_spawned,
+            physics: config.base_config().physics,
+            character_type: config.into(),
+            mount_id: None,
+            wield_type: WieldType::None,
+        }
+    }
+
     pub fn guid(&self, instance_guid: u64) -> u64 {
         npc_guid(self.discriminant, instance_guid, self.index)
     }
