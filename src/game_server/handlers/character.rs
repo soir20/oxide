@@ -360,7 +360,8 @@ pub struct OneShotAction {
     pub player_action: PlayerOneShotAction,
     pub one_shot_action_composite_effect_id: Option<u32>,
     pub one_shot_action_animation_id: Option<i32>,
-    pub award_credits: Option<u32>,
+    #[serde(default)]
+    pub award_credits: u32,
     #[serde(default)]
     pub removal_mode: RemovalMode,
     #[serde(default)]
@@ -429,9 +430,9 @@ impl OneShotAction {
             }));
         }
 
-        if let Some(awarded_credits) = self.award_credits {
+        if self.award_credits > 0 {
             if let Some(player) = player_stats {
-                player.credits = player.credits.saturating_add(awarded_credits);
+                player.credits = player.credits.saturating_add(self.award_credits);
                 packets_for_sender.push(GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
                     inner: UpdateCredits {
