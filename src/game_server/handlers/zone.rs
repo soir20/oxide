@@ -295,7 +295,7 @@ pub struct ZoneInstance {
     pub max_players: u32,
     pub icon: u32,
     pub asset_name: String,
-    chunk_size: u16,
+    pub chunk_size: u16,
     pub default_spawn_pos: Pos,
     pub default_spawn_rot: Pos,
     default_spawn_sky: String,

@@ -1,5 +1,5 @@
 use std::{
-    collections::{BTreeMap, BTreeSet, VecDeque},
+    collections::{BTreeMap, BTreeSet, HashMap, VecDeque},
     io::{Cursor, Read},
     time::{Duration, Instant},
 };
@@ -12,7 +12,10 @@ use serde::{Deserialize, Deserializer};
 
 use crate::game_server::{
     handlers::{
-        character::{Character, MinigameMatchmakingGroup, MinigameStatus},
+        character::{
+            AmbientNpc, BaseNpc, Character, CharacterType, MinigameMatchmakingGroup, MinigameStatus,
+        },
+        inventory::wield_type_from_inventory,
         minigame::{
             handle_minigame_packet_write, MinigameCountdown, MinigameStopwatch,
             SharedMinigameTypeData,
@@ -21,9 +24,9 @@ use crate::game_server::{
     },
     packets::{
         client_update::Position,
-        item::{BaseAttachmentGroup, WieldType},
+        item::{Attachment, EquipmentSlot, ItemDefinition},
         minigame::{MinigameHeader, ScoreEntry, ScoreType},
-        player_update::{AddNpc, Hostility, Icon, PhysicsState, RemoveStandard},
+        player_update::RemoveStandard,
         saber_duel::{
             SaberDuelApplyForcePower, SaberDuelBoutInfo, SaberDuelBoutStart, SaberDuelBoutTied,
             SaberDuelBoutWon, SaberDuelForcePower, SaberDuelForcePowerDefinition,
@@ -34,7 +37,7 @@ use crate::game_server::{
         },
         tunnel::TunneledPacket,
         ui::{ExecuteScriptWithIntParams, ExecuteScriptWithStringParams},
-        GamePacket, Pos, Target,
+        GamePacket, Pos,
     },
     Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
 };
@@ -52,11 +55,19 @@ struct SaberDuelAiForcePower {
     tutorial_enabled: bool,
 }
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug, Default, Deserialize)]
+struct SaberDuelAiSaber {
+    hilt_item_guid: u32,
+    shape_item_guid: u32,
+    color_item_guid: u32,
+}
+
+#[derive(Clone, Debug, Default, Deserialize)]
 struct SaberDuelAi {
     name_id: u32,
     model_id: u32,
-    wield_type: WieldType,
+    primary_saber: SaberDuelAiSaber,
+    secondary_saber: Option<SaberDuelAiSaber>,
     entrance_animation_id: i32,
     entrance_sound_id: u32,
     bout_won_sound_id: u32,
@@ -72,29 +83,6 @@ struct SaberDuelAi {
     force_power_probability: f32,
     force_powers: BTreeMap<SaberDuelForcePower, SaberDuelAiForcePower>,
     force_power_delay_millis: u32,
-}
-
-impl Default for SaberDuelAi {
-    fn default() -> Self {
-        Self {
-            name_id: Default::default(),
-            model_id: Default::default(),
-            wield_type: WieldType::SingleSaber,
-            entrance_animation_id: Default::default(),
-            entrance_sound_id: Default::default(),
-            bout_won_sound_id: Default::default(),
-            bout_lost_sound_id: Default::default(),
-            game_won_sound_id: Default::default(),
-            game_lost_sound_id: Default::default(),
-            millis_per_key: Default::default(),
-            mistake_probability: Default::default(),
-            right_to_left_ai_mistake_multiplier: Default::default(),
-            opposite_ai_mistake_multiplier: Default::default(),
-            force_power_probability: Default::default(),
-            force_powers: Default::default(),
-            force_power_delay_millis: Default::default(),
-        }
-    }
 }
 
 #[derive(Clone, Debug)]
@@ -545,6 +533,70 @@ impl SaberDuelGame {
         game
     }
 
+    pub fn characters(
+        &self,
+        instance_guid: u64,
+        chunk_size: u16,
+        game_server: &GameServer,
+    ) -> Result<Vec<Character>, ProcessPacketError> {
+        if !self.is_ai_match() {
+            return Ok(Vec::new());
+        }
+
+        let (mut attachments, mut items) =
+            self.attachments_from_saber(&self.config.ai.primary_saber, game_server)?;
+        if let Some(secondary_saber) = &self.config.ai.secondary_saber {
+            let (mut secondary_attachments, mut secondary_items) =
+                self.attachments_from_saber(secondary_saber, game_server)?;
+            attachments.append(&mut secondary_attachments);
+            items.append(&mut secondary_items);
+        }
+
+        let wield_type = wield_type_from_inventory(&items, game_server);
+
+        let opponent = Character::new(
+            saber_duel_opponent_guid(self.player1),
+            self.config.ai.model_id,
+            self.config.pos,
+            Pos::default(),
+            chunk_size,
+            1.0,
+            CharacterType::AmbientNpc(AmbientNpc {
+                base_npc: BaseNpc {
+                    texture_alias: "".to_string(),
+                    name_id: self.config.ai.name_id,
+                    terrain_object_id: 0,
+                    name_offset_x: 0.0,
+                    name_offset_y: 0.0,
+                    name_offset_z: 0.0,
+                    enable_interact_popup: false,
+                    interact_popup_radius: None,
+                    show_name: false,
+                    visible: true,
+                    bounce_area_id: -1,
+                    enable_gravity: true,
+                    enable_tilt: false,
+                    use_terrain_model: false,
+                    attachments,
+                },
+                procedure_on_interact: None,
+            }),
+            None,
+            None,
+            0.0,
+            0.0,
+            0.0,
+            instance_guid,
+            wield_type,
+            -1,
+            HashMap::new(),
+            Vec::new(),
+            None,
+        );
+
+        Ok(vec![opponent])
+    }
+
     pub fn start(&self, sender: u32) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
         let player_index = self.player_index(sender)?;
 
@@ -557,99 +609,6 @@ impl SaberDuelGame {
                 unknown2: true,
             },
         })];
-
-        if self.is_ai_match() {
-            packets.push(GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: AddNpc {
-                    guid: saber_duel_opponent_guid(self.player1),
-                    name_id: self.config.ai.name_id,
-                    model_id: self.config.ai.model_id,
-                    unknown3: false,
-                    chat_text_color: Character::DEFAULT_CHAT_TEXT_COLOR,
-                    chat_bubble_color: Character::DEFAULT_CHAT_BUBBLE_COLOR,
-                    chat_scale: 1,
-                    scale: 1.0,
-                    pos: self.config.pos,
-                    rot: Pos::default(),
-                    spawn_animation_id: -1,
-                    attachments: Vec::new(),
-                    hostility: Hostility::Neutral,
-                    unknown10: 0,
-                    texture_alias: "".to_string(),
-                    tint_name: "".to_string(),
-                    tint_id: 0,
-                    unknown11: false,
-                    offset_y: 0.0,
-                    composite_effect: 0,
-                    wield_type: self.config.ai.wield_type,
-                    name_override: "".to_string(),
-                    hide_name: true,
-                    name_offset_x: 0.0,
-                    name_offset_y: 0.0,
-                    name_offset_z: 0.0,
-                    terrain_object_id: 0,
-                    invisible: false,
-                    speed: 0.0,
-                    unknown21: false,
-                    interactable_size_pct: 0,
-                    walk_animation_id: -1,
-                    sprint_animation_id: -1,
-                    stand_animation_id: -1,
-                    unknown26: false,
-                    disable_gravity: false,
-                    sub_title_id: 0,
-                    one_shot_animation_id: -1,
-                    temporary_model: 0,
-                    effects: Vec::new(),
-                    disable_interact_popup: true,
-                    unknown33: 0,
-                    unknown34: false,
-                    show_health: false,
-                    hide_despawn_fade: true,
-                    enable_tilt: false,
-                    base_attachment_group: BaseAttachmentGroup {
-                        unknown1: 0,
-                        unknown2: "".to_string(),
-                        unknown3: "".to_string(),
-                        unknown4: 0,
-                        unknown5: "".to_string(),
-                    },
-                    tilt: Pos::default(),
-                    unknown40: 0,
-                    bounce_area_id: -1,
-                    image_set_id: 0,
-                    collision: false,
-                    rider_guid: 0,
-                    physics: PhysicsState::Enabled,
-                    interact_popup_radius: 0.0,
-                    target: Target::None,
-                    variables: Vec::new(),
-                    rail_id: 0,
-                    rail_elapsed_seconds: 0.0,
-                    rail_offset: Pos::default(),
-                    unknown54: 0,
-                    rail_unknown1: 0.0,
-                    rail_unknown2: 0.0,
-                    auto_interact_radius: 0.0,
-                    head_customization_override: "".to_string(),
-                    hair_customization_override: "".to_string(),
-                    body_customization_override: "".to_string(),
-                    override_terrain_model: false,
-                    hover_glow: 0,
-                    hover_description: 0,
-                    fly_over_effect: 0,
-                    unknown65: 0,
-                    unknown66: 0,
-                    unknown67: 0,
-                    disable_move_to_interact: false,
-                    unknown69: 0.0,
-                    unknown70: 0.0,
-                    unknown71: 0,
-                    icon_id: Icon::None,
-                },
-            }));
-        }
 
         packets.push(GamePacket::serialize(&TunneledPacket {
             unknown1: true,
@@ -1195,6 +1154,62 @@ impl SaberDuelGame {
         }
 
         Ok(broadcasts)
+    }
+
+    fn get_item<'a>(
+        &self,
+        game_server: &'a GameServer,
+        item_guid: u32,
+    ) -> Result<&'a ItemDefinition, ProcessPacketError> {
+        game_server.items().get(&item_guid).ok_or_else(|| ProcessPacketError::new(
+            ProcessPacketErrorType::ConstraintViolated,
+            format!("Tried to equip item {item_guid} in Saber Duel, but it doesn't exist ({self:?})")
+        ))
+    }
+
+    fn attachments_from_saber(
+        &self,
+        saber: &SaberDuelAiSaber,
+        game_server: &GameServer,
+    ) -> Result<(Vec<Attachment>, BTreeMap<EquipmentSlot, u32>), ProcessPacketError> {
+        let primary_hilt = self.get_item(game_server, saber.hilt_item_guid)?;
+        let primary_shape = self.get_item(game_server, saber.shape_item_guid)?;
+        let primary_color = self.get_item(game_server, saber.color_item_guid)?;
+
+        let mut items = BTreeMap::new();
+        items.insert(primary_hilt.slot, primary_hilt.guid);
+        items.insert(primary_shape.slot, primary_shape.guid);
+        items.insert(primary_color.slot, primary_color.guid);
+
+        Ok((
+            vec![
+                Attachment {
+                    model_name: primary_hilt.model_name.clone(),
+                    texture_alias: primary_hilt.texture_alias.clone(),
+                    tint_alias: primary_hilt.tint_alias.clone(),
+                    tint: primary_hilt.tint,
+                    composite_effect: primary_hilt.composite_effect,
+                    slot: primary_hilt.slot,
+                },
+                Attachment {
+                    model_name: primary_shape.model_name.clone(),
+                    texture_alias: primary_shape.texture_alias.clone(),
+                    tint_alias: primary_shape.tint_alias.clone(),
+                    tint: primary_color.tint,
+                    composite_effect: primary_shape.composite_effect,
+                    slot: primary_shape.slot,
+                },
+                Attachment {
+                    model_name: primary_color.model_name.clone(),
+                    texture_alias: primary_color.texture_alias.clone(),
+                    tint_alias: primary_color.tint_alias.clone(),
+                    tint: primary_color.tint,
+                    composite_effect: primary_color.composite_effect,
+                    slot: primary_color.slot,
+                },
+            ],
+            items,
+        ))
     }
 
     fn is_ai_match(&self) -> bool {

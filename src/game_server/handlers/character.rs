@@ -11,7 +11,10 @@ use serde::Deserialize;
 
 use crate::{
     game_server::{
-        handlers::{item::SABER_ITEM_TYPE, unique_guid::AMBIENT_NPC_DISCRIMINANT},
+        handlers::{
+            inventory::wield_type_from_inventory, item::SABER_ITEM_TYPE,
+            unique_guid::AMBIENT_NPC_DISCRIMINANT,
+        },
         packets::{
             chat::{ActionBarTextColor, SendStringId},
             command::PlaySoundIdOnTarget,
@@ -38,7 +41,6 @@ use super::{
     distance3_pos,
     guid::{Guid, IndexedGuid},
     housing::fixture_packets,
-    inventory::wield_type_from_slot,
     lock_enforcer::CharacterReadGuard,
     minigame::{MinigameTypeData, PlayerMinigameStats},
     mount::{spawn_mount_npc, MountConfig},
@@ -186,6 +188,8 @@ pub struct BaseNpcConfig {
     pub synchronize_with: Option<String>,
     #[serde(default = "default_true")]
     pub is_spawned: bool,
+    #[serde(default)]
+    pub attachments: Vec<Attachment>,
 }
 
 #[derive(Clone)]
@@ -204,6 +208,7 @@ pub struct BaseNpc {
     pub enable_gravity: bool,
     pub enable_tilt: bool,
     pub use_terrain_model: bool,
+    pub attachments: Vec<Attachment>,
 }
 
 impl BaseNpc {
@@ -341,6 +346,7 @@ impl From<BaseNpcConfig> for BaseNpc {
             enable_gravity: value.enable_gravity,
             enable_tilt: value.enable_tilt,
             use_terrain_model: value.use_terrain_model,
+            attachments: value.attachments.clone(),
         }
     }
 }
@@ -1954,26 +1960,7 @@ impl Character {
         let wield_type = data
             .battle_classes
             .get(&data.active_battle_class)
-            .map(|battle_class| {
-                let primary_wield_type = wield_type_from_slot(
-                    &battle_class.items,
-                    EquipmentSlot::PrimaryWeapon,
-                    game_server,
-                );
-                let secondary_wield_type = wield_type_from_slot(
-                    &battle_class.items,
-                    EquipmentSlot::SecondaryWeapon,
-                    game_server,
-                );
-                match (primary_wield_type, secondary_wield_type) {
-                    (WieldType::SingleSaber, WieldType::None) => WieldType::SingleSaber,
-                    (WieldType::SingleSaber, WieldType::SingleSaber) => WieldType::DualSaber,
-                    (WieldType::SinglePistol, WieldType::None) => WieldType::SinglePistol,
-                    (WieldType::SinglePistol, WieldType::SinglePistol) => WieldType::DualPistol,
-                    (WieldType::None, _) => secondary_wield_type,
-                    _ => primary_wield_type,
-                }
-            })
+            .map(|battle_class| wield_type_from_inventory(&battle_class.items, game_server))
             .unwrap_or(WieldType::None);
         Character {
             stats: CharacterStats {

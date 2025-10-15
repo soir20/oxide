@@ -19,7 +19,7 @@ use crate::{
     game_server::{
         handlers::{
             are_dates_consecutive, are_dates_in_same_week,
-            character::{MinigameStatus, MinigameWinStatus},
+            character::{Character, MinigameStatus, MinigameWinStatus},
             daily::{
                 DailyHolocronGame, DailySpinGame, DailySpinRewardBucket, DailyTriviaGame,
                 DailyTriviaQuestionConfig,
@@ -248,7 +248,7 @@ pub enum MinigameType {
     },
     SaberDuel {
         #[serde(flatten)]
-        config: SaberDuelConfig,
+        config: Box<SaberDuelConfig>,
     },
 }
 
@@ -381,6 +381,15 @@ impl SharedMinigameData {
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         self.data.remove_player(player, minigame_status)
     }
+
+    pub fn characters(
+        &self,
+        instance_guid: u64,
+        chunk_size: u16,
+        game_server: &GameServer,
+    ) -> Result<Vec<Character>, ProcessPacketError> {
+        self.data.characters(instance_guid, chunk_size, game_server)
+    }
 }
 
 impl
@@ -472,7 +481,7 @@ impl SharedMinigameTypeData {
             MinigameType::SaberStrike { .. } => SharedMinigameTypeData::default(),
             MinigameType::SaberDuel { config } => SharedMinigameTypeData::SaberDuel {
                 game: Box::new(SaberDuelGame::new(
-                    config.to_owned(),
+                    *config.to_owned(),
                     player1,
                     player2,
                     group,
@@ -517,6 +526,20 @@ impl SharedMinigameTypeData {
             }
             SharedMinigameTypeData::SaberDuel { game } => {
                 game.remove_player(player, minigame_status)
+            }
+            _ => Ok(Vec::new()),
+        }
+    }
+
+    pub fn characters(
+        &self,
+        instance_guid: u64,
+        chunk_size: u16,
+        game_server: &GameServer,
+    ) -> Result<Vec<Character>, ProcessPacketError> {
+        match self {
+            SharedMinigameTypeData::SaberDuel { game } => {
+                game.characters(instance_guid, chunk_size, game_server)
             }
             _ => Ok(Vec::new()),
         }
@@ -2276,12 +2299,49 @@ pub fn prepare_active_minigame_instance(
 
     let teleport_result: Result<Vec<Broadcast>, ProcessPacketError> = (|| {
         let new_instance_guid = match stage_config.stage_config.zone_template_guid() {
-            Some(zone_template_guid) => Some(game_server.get_or_create_instance(
-                characters_table_write_handle,
-                zones_table_write_handle,
-                zone_template_guid,
-                stage_config.stage_config.max_players(),
-            )?),
+            Some(zone_template_guid) => {
+                let instance_guid = game_server.get_or_create_instance(
+                    characters_table_write_handle,
+                    zones_table_write_handle,
+                    zone_template_guid,
+                    stage_config.stage_config.max_players(),
+                )?;
+
+                let instance = zones_table_write_handle.get(instance_guid).unwrap_or_else(|| panic!(
+                    "Zone instance {instance_guid} should have been created or already exist but is missing"
+                ));
+                let zone_read_handle = instance.read();
+
+                let shared_minigame_data = minigame_data_table_write_handle
+                    .get(matchmaking_group)
+                    .expect("Existence of minigame data should have already been checked");
+                let minigame_data_write_handle = shared_minigame_data.write();
+
+                let characters = minigame_data_write_handle.characters(
+                    instance_guid,
+                    zone_read_handle.chunk_size,
+                    game_server,
+                )?;
+
+                if let Some(duplicate_character) = characters.iter().find(|character| {
+                    characters_table_write_handle
+                        .get(character.guid())
+                        .is_some()
+                }) {
+                    return Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::ConstraintViolated,
+                        format!(
+                            "Tried to insert a character {} for minigame {matchmaking_group:?} that already exists", 
+                            duplicate_character.guid()
+                        ),
+                    ));
+                }
+                characters.into_iter().for_each(|character| {
+                    characters_table_write_handle.insert(character);
+                });
+
+                Some(instance_guid)
+            }
             None => None,
         };
 
