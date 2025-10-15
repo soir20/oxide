@@ -1424,7 +1424,7 @@ pub fn interact_with_character(
                     _ => None,
                 };
 
-                let result = {
+                let result = (|| {
                     let Some(target_read_handle) = characters_write.get_mut(&target) else {
                         return Err(ProcessPacketError::new(
                             ProcessPacketErrorType::ConstraintViolated,
@@ -1448,7 +1448,6 @@ pub fn interact_with_character(
                         target_read_handle.stats.pos.z,
                     );
 
-                    // Interact if player is within range; otherwise, send MoveToInteract
                     if distance > target_read_handle.stats.interact_radius
                         || target_read_handle.stats.instance_guid != requester_instance
                     {
@@ -1479,7 +1478,7 @@ pub fn interact_with_character(
                     }
 
                     target_read_handle.interact(requester_guid, player_stats, &nearby_player_guids)
-                };
+                })();
 
                 characters_write.insert(requester, requester_read_handle);
                 result
