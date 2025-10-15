@@ -492,22 +492,28 @@ pub struct TickableStep {
 }
 
 impl TickableStep {
-    pub fn reselect_possible_pos(&self, character: &CharacterStats) -> Option<UpdatePlayerPosition> {
+    pub fn reselect_possible_pos(
+        &self,
+        character: &CharacterStats,
+    ) -> Option<UpdatePlayerPosition> {
         if character.possible_pos.is_empty() {
             return None;
         }
 
-        character.possible_pos.choose(&mut thread_rng()).map(|pos| UpdatePlayerPosition {
-            guid: Guid::guid(character),
-            pos_x: pos.x,
-            pos_y: pos.y,
-            pos_z: pos.z,
-            rot_x: character.rot.x,
-            rot_y: character.rot.y,
-            rot_z: character.rot.z,
-            character_state: 1,
-            unknown: 0,
-        })
+        character
+            .possible_pos
+            .choose(&mut thread_rng())
+            .map(|pos| UpdatePlayerPosition {
+                guid: Guid::guid(character),
+                pos_x: pos.x,
+                pos_y: pos.y,
+                pos_z: pos.z,
+                rot_x: character.rot.x,
+                rot_y: character.rot.y,
+                rot_z: character.rot.z,
+                character_state: 1,
+                unknown: 0,
+            })
     }
 
     pub fn new_pos(&self, current_pos: Pos) -> Pos {
