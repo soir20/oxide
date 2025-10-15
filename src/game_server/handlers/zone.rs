@@ -1447,7 +1447,8 @@ pub fn interact_with_character(
                         target_read_handle.stats.pos.y,
                         target_read_handle.stats.pos.z,
                     );
-
+                    
+                    // Interact if player is within range; otherwise, send MoveToInteract
                     if distance > target_read_handle.stats.interact_radius
                         || target_read_handle.stats.instance_guid != requester_instance
                     {
