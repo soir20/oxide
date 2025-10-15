@@ -492,6 +492,24 @@ pub struct TickableStep {
 }
 
 impl TickableStep {
+    pub fn reselect_possible_pos(&self, character: &CharacterStats) -> Option<UpdatePlayerPosition> {
+        if character.possible_pos.is_empty() {
+            return None;
+        }
+
+        character.possible_pos.choose(&mut thread_rng()).map(|pos| UpdatePlayerPosition {
+            guid: Guid::guid(character),
+            pos_x: pos.x,
+            pos_y: pos.y,
+            pos_z: pos.z,
+            rot_x: character.rot.x,
+            rot_y: character.rot.y,
+            rot_z: character.rot.z,
+            character_state: 1,
+            unknown: 0,
+        })
+    }
+
     pub fn new_pos(&self, current_pos: Pos) -> Pos {
         Pos {
             x: self.new_pos_x.unwrap_or(current_pos.x) + self.new_pos_offset_x,
@@ -526,23 +544,7 @@ impl TickableStep {
             SpawnedState::Always => {
                 if !character.is_spawned {
                     character.is_spawned = true;
-                    // Reassign position on spawn to ensure varied spawn location each time the NPC spawns
-                    if !character.possible_pos.is_empty() {
-                        if let Some(new_pos) = character.possible_pos.choose(&mut thread_rng()) {
-                            // Return position update to update the NPCs chunk in the GUID table
-                            update_pos = Some(UpdatePlayerPosition {
-                                guid: Guid::guid(character),
-                                pos_x: new_pos.x,
-                                pos_y: new_pos.y,
-                                pos_z: new_pos.z,
-                                rot_x: character.rot.x,
-                                rot_y: character.rot.y,
-                                rot_z: character.rot.z,
-                                character_state: 1,
-                                unknown: 0,
-                            });
-                        }
-                    }
+                    update_pos = self.reselect_possible_pos(character);
                     packets_for_all.extend(character.add_packets(
                         false,
                         mount_configs,
@@ -555,6 +557,7 @@ impl TickableStep {
                 if !character.is_spawned {
                     // Spawn the character without updating its state to prevent it from being visible
                     // to players joining the room mid-step
+                    update_pos = self.reselect_possible_pos(character);
                     packets_for_all.extend(character.add_packets(
                         true, // Override is_spawned
                         mount_configs,
