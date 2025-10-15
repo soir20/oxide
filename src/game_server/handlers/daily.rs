@@ -9,8 +9,8 @@ use crate::game_server::{
     handlers::{
         character::MinigameWinStatus,
         minigame::{
-            award_credits, DailyGamePlayability, DailyResetOffset, MinigameStageConfig,
-            MinigameTimer, PlayerMinigameStats,
+            award_credits, DailyGamePlayability, DailyResetOffset, MinigameCountdown,
+            MinigameStageConfig, PlayerMinigameStats,
         },
     },
     packets::{
@@ -534,7 +534,7 @@ enum DailyTriviaGameState {
     WaitingForConnection,
     AnsweringQuestion {
         question_index: u8,
-        bonus_timer: MinigameTimer,
+        bonus_timer: MinigameCountdown,
     },
     ReadyForNextQuestion {
         next_question_index: u8,
@@ -664,7 +664,7 @@ impl DailyTriviaGame {
         let question = &self.questions[next_question_index as usize];
         self.state = DailyTriviaGameState::AnsweringQuestion {
             question_index: next_question_index,
-            bonus_timer: MinigameTimer::new_with_event(Duration::from_secs(
+            bonus_timer: MinigameCountdown::new_with_event(Duration::from_secs(
                 self.bonus_seconds_per_question
                     .saturating_add(self.bonus_timer_start_delay_seconds) as u64,
             )),

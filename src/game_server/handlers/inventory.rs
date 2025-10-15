@@ -12,7 +12,6 @@ use crate::{
                 EquipCustomization, EquipGuid, InventoryOpCode, PreviewCustomization, UnequipSlot,
             },
             item::{Attachment, EquipmentSlot, ItemDefinition, WieldType},
-            player_data::EquippedItem,
             player_update::{
                 Customization, UpdateCustomizations, UpdateEquippedItem, UpdateWieldType,
             },
@@ -95,7 +94,7 @@ pub fn process_inventory_packet(
 }
 
 pub fn wield_type_from_slot(
-    items: &BTreeMap<EquipmentSlot, EquippedItem>,
+    items: &BTreeMap<EquipmentSlot, u32>,
     slot: EquipmentSlot,
     game_server: &GameServer,
 ) -> WieldType {
@@ -528,13 +527,13 @@ fn process_equip_customization(
 }
 
 fn item_def_from_slot<'a>(
-    items: &BTreeMap<EquipmentSlot, EquippedItem>,
+    items: &BTreeMap<EquipmentSlot, u32>,
     slot: EquipmentSlot,
     game_server: &'a GameServer,
 ) -> Option<&'a ItemDefinition> {
     items
         .get(&slot)
-        .and_then(|item_guid| game_server.items().get(&item_guid.guid))
+        .and_then(|item_guid| game_server.items().get(item_guid))
 }
 
 pub fn update_saber_tints<'a>(
@@ -551,7 +550,7 @@ pub fn update_saber_tints<'a>(
     >,
     instance_guid: u64,
     chunk: Chunk,
-    items: &BTreeMap<EquipmentSlot, EquippedItem>,
+    items: &BTreeMap<EquipmentSlot, u32>,
     battle_class: u32,
     wield_type: WieldType,
     game_server: &GameServer,
@@ -841,14 +840,9 @@ fn equip_item_in_slot<'a>(
         }
     }
 
-    battle_class.items.insert(
-        equip_guid.slot,
-        EquippedItem {
-            slot: equip_guid.slot,
-            guid: equip_guid.item_guid,
-            category: item_def.category,
-        },
-    );
+    battle_class
+        .items
+        .insert(equip_guid.slot, equip_guid.item_guid);
 
     let (_, instance_guid, chunk) = character_write_handle.index1();
     let mut nearby_players = ZoneInstance::other_players_nearby(

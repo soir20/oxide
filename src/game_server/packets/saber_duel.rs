@@ -1,5 +1,8 @@
+use enum_iterator::Sequence;
 use num_enum::{IntoPrimitive, TryFromPrimitive};
 use packet_serialize::{DeserializePacket, SerializePacket};
+use rand_distr::{Distribution, Standard};
+use serde::Deserialize;
 
 use super::{
     minigame::{MinigameHeader, MinigameOpCode},
@@ -11,7 +14,7 @@ use super::{
 pub enum SaberDuelOpCode {
     StageData = 0x1,
     OpponentGuid = 0x2,
-    GameStart = 0x3,
+    RoundStart = 0x3,
     BoutInfo = 0x4,
     ShowForcePowerDialog = 0x5,
     ApplyForcePower = 0x6,
@@ -29,30 +32,44 @@ pub enum SaberDuelOpCode {
     RequestApplyForcePower = 0x12,
 }
 
-#[derive(Clone, Copy, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket)]
-#[repr(u32)]
+#[derive(
+    Clone,
+    Copy,
+    Debug,
+    Deserialize,
+    PartialEq,
+    Eq,
+    PartialOrd,
+    Ord,
+    TryFromPrimitive,
+    IntoPrimitive,
+    SerializePacket,
+    DeserializePacket,
+    Sequence,
+)]
+#[repr(i32)]
 pub enum SaberDuelForcePower {
     ExtraKey = 0,
     RightToLeft = 1,
     Opposite = 2,
 }
 
-#[derive(SerializePacket, DeserializePacket)]
+#[derive(Clone, Debug, Deserialize, SerializePacket, DeserializePacket)]
 pub struct SaberDuelForcePowerDefinition {
     pub force_power: SaberDuelForcePower,
     pub name_id: u32,
-    pub small_icon_set_id: u32,
-    pub icon_set_id: u32,
+    pub small_icon_id: u32,
+    pub icon_id: u32,
 }
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct SaberDuelStageData {
     pub minigame_header: MinigameHeader,
-    pub win_score: u32,
+    pub points_to_win_round: u32,
     pub total_rounds: u32,
     pub seconds_remaining: u32,
-    pub camera_position: Pos,
-    pub camera_rotation: f32,
+    pub camera_pos: Pos,
+    pub camera_rot: f32,
     pub max_combo_points: u32,
     pub establishing_animation_id: i32,
     pub local_player_index: u32,
@@ -71,6 +88,7 @@ impl GamePacket for SaberDuelStageData {
     const HEADER: Self::Header = MinigameOpCode::SaberDuel;
 }
 
+#[allow(dead_code)]
 #[derive(SerializePacket, DeserializePacket)]
 pub struct SaberDuelOpponentGuid {
     pub minigame_header: MinigameHeader,
@@ -84,11 +102,11 @@ impl GamePacket for SaberDuelOpponentGuid {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct SaberDuelGameStart {
+pub struct SaberDuelRoundStart {
     pub minigame_header: MinigameHeader,
 }
 
-impl GamePacket for SaberDuelGameStart {
+impl GamePacket for SaberDuelRoundStart {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::SaberDuel;
@@ -112,6 +130,12 @@ pub struct SaberDuelForcePowerFlags {
     pub can_use_extra_key: bool,
     pub can_use_right_to_left: bool,
     pub can_use_opposite: bool,
+}
+
+impl SaberDuelForcePowerFlags {
+    pub fn can_use_any(&self) -> bool {
+        self.can_use_extra_key || self.can_use_right_to_left || self.can_use_opposite
+    }
 }
 
 impl SerializePacket for SaberDuelForcePowerFlags {
@@ -148,9 +172,9 @@ pub struct SaberDuelApplyForcePower {
     pub minigame_header: MinigameHeader,
     pub used_by_player_index: u32,
     pub force_power: SaberDuelForcePower,
-    pub num_remaining: u32,
+    pub bouts_remaining: u32,
     pub new_force_points: u32,
-    pub animation_id: u32,
+    pub animation_id: i32,
     pub flags: SaberDuelForcePowerFlags,
 }
 
@@ -173,13 +197,60 @@ impl GamePacket for SaberDuelRemoveForcePower {
     const HEADER: Self::Header = MinigameOpCode::SaberDuel;
 }
 
-#[derive(Clone, Copy, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket)]
+#[derive(
+    Clone,
+    Copy,
+    Debug,
+    PartialEq,
+    Eq,
+    TryFromPrimitive,
+    IntoPrimitive,
+    SerializePacket,
+    DeserializePacket,
+)]
 #[repr(u32)]
 pub enum SaberDuelKey {
     Up = 1,
     Down = 2,
     Left = 3,
     Right = 4,
+}
+
+impl Distribution<SaberDuelKey> for Standard {
+    fn sample<R: rand::Rng + ?Sized>(&self, rng: &mut R) -> SaberDuelKey {
+        SaberDuelKey::try_from_primitive(rng.gen_range(1..=4)).unwrap()
+    }
+}
+
+impl SaberDuelKey {
+    pub fn opposite(&self) -> SaberDuelKey {
+        match *self {
+            SaberDuelKey::Up => SaberDuelKey::Down,
+            SaberDuelKey::Down => SaberDuelKey::Up,
+            SaberDuelKey::Left => SaberDuelKey::Right,
+            SaberDuelKey::Right => SaberDuelKey::Left,
+        }
+    }
+}
+
+#[derive(Clone, Copy, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket)]
+#[repr(u16)]
+pub enum SaberDuelKeypress {
+    Up = 1,
+    Down = 2,
+    Left = 3,
+    Right = 4,
+}
+
+impl From<SaberDuelKeypress> for SaberDuelKey {
+    fn from(value: SaberDuelKeypress) -> Self {
+        match value {
+            SaberDuelKeypress::Up => SaberDuelKey::Up,
+            SaberDuelKeypress::Down => SaberDuelKey::Down,
+            SaberDuelKeypress::Left => SaberDuelKey::Left,
+            SaberDuelKeypress::Right => SaberDuelKey::Right,
+        }
+    }
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -199,7 +270,7 @@ impl GamePacket for SaberDuelBoutStart {
 pub struct SaberDuelPlayerUpdate {
     pub minigame_header: MinigameHeader,
     pub player_index: u32,
-    pub current_key_index: u32,
+    pub progress: u32,
 }
 
 impl GamePacket for SaberDuelPlayerUpdate {
@@ -212,9 +283,9 @@ impl GamePacket for SaberDuelPlayerUpdate {
 pub struct SaberDuelBoutWon {
     pub minigame_header: MinigameHeader,
     pub winner_index: u32,
-    pub new_score: u32,
-    pub winner_animation_id: u32,
-    pub loser_animation_id: u32,
+    pub points_won: u32,
+    pub winner_animation_id: i32,
+    pub loser_animation_id: i32,
 }
 
 impl GamePacket for SaberDuelBoutWon {
@@ -252,7 +323,7 @@ pub struct SaberDuelGameOver {
     pub minigame_header: MinigameHeader,
     pub winner_index: u32,
     pub sound_id: u32,
-    pub round_won: bool,
+    pub round_lost: bool,
     pub challenge_failed: bool,
 }
 
@@ -283,6 +354,7 @@ impl GamePacket for SaberDuelTriggerBoost {
     const HEADER: Self::Header = MinigameOpCode::SaberDuel;
 }
 
+#[allow(dead_code)]
 #[derive(SerializePacket, DeserializePacket)]
 pub struct SaberDuelSetMemoryChallenge {
     pub minigame_header: MinigameHeader,
@@ -296,12 +368,11 @@ impl GamePacket for SaberDuelSetMemoryChallenge {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct SaberDuelKeypress {
-    pub minigame_header: MinigameHeader,
-    pub keypress: SaberDuelKey,
+pub struct SaberDuelKeypressEvent {
+    pub keypress: SaberDuelKeypress,
 }
 
-impl GamePacket for SaberDuelKeypress {
+impl GamePacket for SaberDuelKeypressEvent {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::SaberDuel;
@@ -309,7 +380,6 @@ impl GamePacket for SaberDuelKeypress {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct SaberDuelRequestApplyForcePower {
-    pub minigame_header: MinigameHeader,
     pub force_power: SaberDuelForcePower,
 }
 
