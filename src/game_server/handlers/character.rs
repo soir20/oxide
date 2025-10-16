@@ -233,7 +233,7 @@ impl BaseNpc {
                 pos: character.pos,
                 rot: character.rot,
                 spawn_animation_id: 1,
-                attachments: vec![],
+                attachments: self.attachments.clone(),
                 hostility: Hostility::Neutral,
                 unknown10: 1,
                 texture_alias: self.texture_alias.clone(),
