@@ -26,7 +26,7 @@ use crate::{
                 UpdateSpeed, UpdateTemporaryModel,
             },
             tunnel::TunneledPacket,
-            ui::ExecuteScriptWithStringParams,
+            ui::{ExecuteScriptWithStringParams, ExecuteScriptWithIntParams},
             update_position::UpdatePlayerPosition,
             GamePacket, GuidTarget, Name, Pos, Rgba, Target,
         },
@@ -366,6 +366,8 @@ pub struct OneShotAction {
     pub removal_mode: RemovalMode,
     #[serde(default)]
     pub despawn_npc: bool,
+    #[serde(default)]
+    pub minigame_stage_group_guid: i32,
     pub duration_millis: u64,
 }
 
@@ -440,6 +442,16 @@ impl OneShotAction {
                     },
                 }));
             }
+        }
+
+        if self.minigame_stage_group_guid > 0 {
+            packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: ExecuteScriptWithIntParams {
+                    script_name: "MiniGameWrapper.CreateMiniGameGroup".to_string(),
+                    params: vec![self.minigame_stage_group_guid],
+                },
+            }));
         }
 
         let broadcasts = vec![
