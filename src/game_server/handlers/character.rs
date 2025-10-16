@@ -17,6 +17,7 @@ use crate::{
         },
         packets::{
             chat::{ActionBarTextColor, SendStringId},
+            client_update::UpdateCredits,
             command::PlaySoundIdOnTarget,
             item::{Attachment, BaseAttachmentGroup, EquipmentSlot, ItemDefinition, WieldType},
             minigame::ScoreEntry,
@@ -66,7 +67,7 @@ const fn default_fade_millis() -> u32 {
 }
 
 const fn default_interact_radius() -> f32 {
-    7.0
+    2.3
 }
 
 const fn default_move_to_interact_offset() -> f32 {
@@ -145,6 +146,7 @@ pub struct BaseNpcConfig {
     pub terrain_object_id: u32,
     #[serde(default = "default_scale")]
     pub scale: f32,
+    #[serde(default)]
     pub pos: Pos,
     #[serde(default)]
     pub rot: Pos,
@@ -353,6 +355,110 @@ impl From<BaseNpcConfig> for BaseNpc {
 
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
+pub struct PlayerOneShotAction {
+    pub player_one_shot_animation_id: Option<i32>,
+}
+
+#[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct OneShotAction {
+    #[serde(default, flatten)]
+    pub player_action: PlayerOneShotAction,
+    pub one_shot_action_composite_effect_id: Option<u32>,
+    pub one_shot_action_animation_id: Option<i32>,
+    #[serde(default)]
+    pub award_credits: u32,
+    #[serde(default)]
+    pub removal_mode: RemovalMode,
+    #[serde(default)]
+    pub despawn_npc: bool,
+    pub duration_millis: u64,
+}
+
+impl OneShotAction {
+    pub fn apply(
+        &self,
+        character: &mut CharacterStats,
+        nearby_player_guids: &[u32],
+        requester: u32,
+        player_stats: Option<&mut Player>,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let mut packets_for_all = Vec::new();
+        let mut packets_for_sender = Vec::new();
+
+        if self.despawn_npc {
+            character.is_spawned = false;
+            packets_for_all.extend(character.remove_packets(self.removal_mode));
+        }
+
+        if let Some(animation_id) = self.one_shot_action_animation_id {
+            packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: QueueAnimation {
+                    character_guid: Guid::guid(character),
+                    animation_id,
+                    queue_pos: 0,
+                    delay_seconds: 0.0,
+                    duration_seconds: self.duration_millis as f32 / 1000.0,
+                },
+            }));
+        }
+
+        if let Some(composite_effect_id) = self.one_shot_action_composite_effect_id {
+            packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: PlayCompositeEffect {
+                    guid: Guid::guid(character),
+                    triggered_by_guid: 0,
+                    composite_effect: composite_effect_id,
+                    delay_millis: 0,
+                    duration_millis: self.duration_millis as u32,
+                    pos: Pos {
+                        x: 0.0,
+                        y: 0.0,
+                        z: 0.0,
+                        w: 0.0,
+                    },
+                },
+            }));
+        }
+
+        if let Some(animation_id) = self.player_action.player_one_shot_animation_id {
+            packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: QueueAnimation {
+                    character_guid: player_guid(requester),
+                    animation_id,
+                    queue_pos: 0,
+                    delay_seconds: 0.0,
+                    duration_seconds: self.duration_millis as f32 / 1000.0,
+                },
+            }));
+        }
+
+        if self.award_credits > 0 {
+            if let Some(player) = player_stats {
+                player.credits = player.credits.saturating_add(self.award_credits);
+                packets_for_sender.push(GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: UpdateCredits {
+                        new_credits: player.credits,
+                    },
+                }));
+            }
+        }
+
+        let broadcasts = vec![
+            Broadcast::Multi(nearby_player_guids.to_vec(), packets_for_all),
+            Broadcast::Single(requester, packets_for_sender),
+        ];
+
+        Ok(broadcasts)
+    }
+}
+
+#[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct TickableStep {
     pub speed: Option<f32>,
     pub new_pos_x: Option<f32>,
@@ -392,6 +498,30 @@ pub struct TickableStep {
 }
 
 impl TickableStep {
+    pub fn reselect_possible_pos(
+        &self,
+        character: &CharacterStats,
+    ) -> Option<UpdatePlayerPosition> {
+        if character.possible_pos.is_empty() {
+            return None;
+        }
+
+        character
+            .possible_pos
+            .choose(&mut thread_rng())
+            .map(|pos| UpdatePlayerPosition {
+                guid: Guid::guid(character),
+                pos_x: pos.x,
+                pos_y: pos.y,
+                pos_z: pos.z,
+                rot_x: character.rot.x,
+                rot_y: character.rot.y,
+                rot_z: character.rot.z,
+                character_state: 1,
+                unknown: 0,
+            })
+    }
+
     pub fn new_pos(&self, current_pos: Pos) -> Pos {
         Pos {
             x: self.new_pos_x.unwrap_or(current_pos.x) + self.new_pos_offset_x,
@@ -420,11 +550,13 @@ impl TickableStep {
         customizations: &BTreeMap<u32, Customization>,
     ) -> (Vec<Broadcast>, Option<UpdatePlayerPosition>) {
         let mut packets_for_all = Vec::new();
+        let mut update_pos: Option<UpdatePlayerPosition> = None;
 
         match self.spawned_state {
             SpawnedState::Always => {
                 if !character.is_spawned {
                     character.is_spawned = true;
+                    update_pos = self.reselect_possible_pos(character);
                     packets_for_all.extend(character.add_packets(
                         false,
                         mount_configs,
@@ -437,6 +569,7 @@ impl TickableStep {
                 if !character.is_spawned {
                     // Spawn the character without updating its state to prevent it from being visible
                     // to players joining the room mid-step
+                    update_pos = self.reselect_possible_pos(character);
                     packets_for_all.extend(character.add_packets(
                         true, // Override is_spawned
                         mount_configs,
@@ -446,9 +579,9 @@ impl TickableStep {
                 }
             }
             SpawnedState::Despawn => {
-                character.is_spawned = false;
                 // Skip checking if the character is spawned before despawning it and instead check if
                 // its state needs updating as OnFirstStepTick doesn't maintain states
+                character.is_spawned = false;
                 packets_for_all.extend(character.remove_packets(self.removal_mode));
             }
             SpawnedState::Keep => {}
@@ -524,8 +657,8 @@ impl TickableStep {
 
         let new_pos = self.new_pos(character.pos);
         let new_rot = self.new_rot(character.rot);
-        let update_pos = if new_pos != character.pos || new_rot != character.rot {
-            Some(UpdatePlayerPosition {
+        if new_pos != character.pos || new_rot != character.rot {
+            update_pos = Some(UpdatePlayerPosition {
                 guid: Guid::guid(character),
                 pos_x: new_pos.x,
                 pos_y: new_pos.y,
@@ -535,10 +668,8 @@ impl TickableStep {
                 rot_z: new_rot.z,
                 character_state: 1,
                 unknown: 0,
-            })
-        } else {
-            None
-        };
+            });
+        }
 
         if let Some(animation_id) = self.animation_id {
             character.stand_animation_id = animation_id;
@@ -954,6 +1085,7 @@ pub struct AmbientNpcConfig {
     #[serde(flatten)]
     pub base_npc: BaseNpcConfig,
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
+    pub one_shot_action_on_interact: Option<OneShotAction>,
 }
 
 impl NpcConfig for AmbientNpcConfig {
@@ -974,6 +1106,7 @@ impl From<AmbientNpcConfig> for CharacterType {
 pub struct AmbientNpc {
     pub base_npc: BaseNpc,
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
+    pub one_shot_action_on_interact: Option<OneShotAction>,
 }
 
 impl AmbientNpc {
@@ -1003,7 +1136,13 @@ impl AmbientNpc {
         packets
     }
 
-    pub fn interact(&self, character: &Character) -> Option<String> {
+    pub fn interact(
+        &self,
+        character: &mut Character,
+        nearby_player_guids: &[u32],
+        requester: u32,
+        player_stats: Option<&mut Player>,
+    ) -> (Option<String>, WriteLockingBroadcastSupplier) {
         if let Some(active_procedure_key) = character.current_tickable_procedure() {
             if let Some(active_procedure) = character
                 .tickable_procedure_tracker
@@ -1011,20 +1150,34 @@ impl AmbientNpc {
                 .get(active_procedure_key)
             {
                 if !active_procedure.is_interruptible() {
-                    return None;
+                    let empty_supplier = coerce_to_broadcast_supplier(|_| Ok(Vec::new()));
+                    return (None, empty_supplier);
                 }
             }
         }
 
-        if let Some(new_procedure) = &self.procedure_on_interact {
-            let weights: Vec<u32> = new_procedure.iter().map(|p| p.weight).collect();
+        let procedure = self.procedure_on_interact.as_ref().map(|options| {
+            let weights: Vec<u32> = options.iter().map(|p| p.weight).collect();
             let distribution =
-                WeightedAliasIndex::new(weights).expect("Couldn't create weighted alias index");
-            let chosen_index = distribution.sample(&mut thread_rng());
-            return Some(new_procedure[chosen_index].procedure.clone());
-        }
+                WeightedAliasIndex::new(weights).expect("Failed to build alias index");
+            let index = distribution.sample(&mut thread_rng());
+            options[index].procedure.clone()
+        });
 
-        None
+        let packets = self
+            .one_shot_action_on_interact
+            .as_ref()
+            .map_or(Ok(Vec::new()), |action| {
+                action.apply(
+                    &mut character.stats,
+                    nearby_player_guids,
+                    requester,
+                    player_stats,
+                )
+            });
+
+        let broadcast_supplier = coerce_to_broadcast_supplier(move |_| packets);
+        (procedure, broadcast_supplier)
     }
 }
 
@@ -1033,6 +1186,7 @@ impl From<AmbientNpcConfig> for AmbientNpc {
         AmbientNpc {
             base_npc: value.base_npc.into(),
             procedure_on_interact: value.procedure_on_interact,
+            one_shot_action_on_interact: value.one_shot_action_on_interact,
         }
     }
 }
@@ -1521,6 +1675,7 @@ pub struct NpcTemplate {
     pub model_id: u32,
     pub pos: Pos,
     pub rot: Pos,
+    pub possible_pos: Vec<Pos>,
     pub scale: f32,
     pub stand_animation_id: i32,
     pub character_type: CharacterType,
@@ -1557,6 +1712,7 @@ impl NpcTemplate {
                 .cloned()
                 .unwrap_or(config.base_config().pos),
             rot: config.base_config().rot,
+            possible_pos: config.base_config().possible_pos.clone(),
             scale: config.base_config().scale,
             tickable_procedures: config.base_config().tickable_procedures.clone(),
             first_possible_procedures: config.base_config().first_possible_procedures.clone(),
@@ -1591,6 +1747,7 @@ impl NpcTemplate {
                 model_id: self.model_id,
                 pos: self.pos,
                 rot: self.rot,
+                possible_pos: self.possible_pos.clone(),
                 chunk_size,
                 scale: self.scale,
                 character_type: self.character_type.clone(),
@@ -1679,6 +1836,7 @@ pub struct CharacterStats {
     pub model_id: u32,
     pub pos: Pos,
     pub rot: Pos,
+    pub possible_pos: Vec<Pos>,
     pub chunk_size: u16,
     pub scale: f32,
     pub character_type: CharacterType,
@@ -1913,6 +2071,7 @@ impl Character {
                 model_id,
                 pos,
                 rot,
+                possible_pos: vec![],
                 chunk_size,
                 scale,
                 character_type,
@@ -1968,6 +2127,7 @@ impl Character {
                 model_id,
                 pos,
                 rot,
+                possible_pos: vec![],
                 chunk_size,
                 scale: 1.0,
                 name: Some(format!("{}", data.name)),
@@ -2063,13 +2223,22 @@ impl Character {
         self.stats.holstered = !self.stats.holstered;
     }
 
-    pub fn interact(&mut self, requester: u32) -> WriteLockingBroadcastSupplier {
+    pub fn interact(
+        &mut self,
+        requester: u32,
+        player_stats: Option<&mut Player>,
+        nearby_player_guids: &[u32],
+    ) -> WriteLockingBroadcastSupplier {
         let mut new_procedure = None;
 
-        let broadcast_supplier = match &self.stats.character_type {
+        let character_type = self.stats.character_type.clone();
+
+        let broadcast_supplier = match character_type {
             CharacterType::AmbientNpc(ambient_npc) => {
-                new_procedure = ambient_npc.interact(self);
-                coerce_to_broadcast_supplier(|_| Ok(Vec::new()))
+                let (procedure, one_shot_interact) =
+                    ambient_npc.interact(self, nearby_player_guids, requester, player_stats);
+                new_procedure = procedure;
+                one_shot_interact
             }
             CharacterType::Door(door) => door.interact(requester),
             CharacterType::Transport(transport) => transport.interact(requester),
