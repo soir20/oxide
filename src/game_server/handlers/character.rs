@@ -242,7 +242,7 @@ impl BaseNpc {
                 unknown11: true,
                 offset_y: 0.0,
                 composite_effect: 0,
-                wield_type: WieldType::None,
+                wield_type: character.wield_type(),
                 name_override: "".to_string(),
                 hide_name: !self.show_name,
                 name_offset_x: self.name_offset_x,
