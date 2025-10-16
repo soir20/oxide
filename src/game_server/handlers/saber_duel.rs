@@ -572,7 +572,6 @@ impl SaberDuelGame {
                     enable_interact_popup: false,
                     interact_popup_radius: None,
                     show_name: false,
-                    visible: true,
                     bounce_area_id: -1,
                     enable_gravity: true,
                     enable_tilt: false,
