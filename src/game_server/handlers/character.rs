@@ -171,6 +171,8 @@ pub struct BaseNpcConfig {
     pub move_to_interact_offset: f32,
     #[serde(default = "default_true")]
     pub show_name: bool,
+    #[serde(default = "default_true")]
+    pub visible: bool,
     #[serde(default)]
     pub bounce_area_id: i32,
     #[serde(default)]
@@ -203,6 +205,7 @@ pub struct BaseNpc {
     pub enable_interact_popup: bool,
     pub interact_popup_radius: Option<f32>,
     pub show_name: bool,
+    pub visible: bool,
     pub bounce_area_id: i32,
     pub enable_gravity: bool,
     pub enable_tilt: bool,
@@ -340,6 +343,7 @@ impl From<BaseNpcConfig> for BaseNpc {
             enable_interact_popup: value.enable_interact_popup,
             interact_popup_radius: value.interact_popup_radius,
             show_name: value.show_name,
+            visible: value.visible,
             bounce_area_id: value.bounce_area_id,
             enable_gravity: value.enable_gravity,
             enable_tilt: value.enable_tilt,
