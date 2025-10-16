@@ -744,7 +744,14 @@ impl SaberDuelGame {
                 ai_next_force_power,
             } => {
                 if timer.time_until_next_event(now).is_zero() {
-                    self.start_bout()
+                    let mut broadcasts = self.start_bout();
+
+                    broadcasts.append(&mut self.show_next_force_tutorial(self.player1, 0));
+                    if let Some(player2) = self.player2 {
+                        broadcasts.append(&mut self.show_next_force_tutorial(player2, 1));
+                    }
+
+                    broadcasts
                 } else {
                     let mut broadcasts = Vec::new();
 
@@ -769,11 +776,6 @@ impl SaberDuelGame {
                                     .expect("Chose force power that Saber Duel AI can't use"),
                             );
                         }
-                    }
-
-                    broadcasts.append(&mut self.show_next_force_tutorial(self.player1, 0));
-                    if let Some(player2) = self.player2 {
-                        broadcasts.append(&mut self.show_next_force_tutorial(player2, 1));
                     }
 
                     broadcasts
