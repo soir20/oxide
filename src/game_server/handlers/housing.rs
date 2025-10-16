@@ -181,7 +181,7 @@ pub fn fixture_packets(
                 name_offset_y: 0.0,
                 name_offset_z: 0.0,
                 terrain_object_id: 0,
-                invisible: false,
+                has_attachments: false,
                 speed: 0.0,
                 unknown21: false,
                 interactable_size_pct: 100,
