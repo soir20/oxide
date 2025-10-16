@@ -750,14 +750,7 @@ impl SaberDuelGame {
                 ai_next_force_power,
             } => {
                 if timer.time_until_next_event(now).is_zero() {
-                    let mut broadcasts = self.start_bout();
-
-                    broadcasts.append(&mut self.show_next_force_tutorial(self.player1, 0));
-                    if let Some(player2) = self.player2 {
-                        broadcasts.append(&mut self.show_next_force_tutorial(player2, 1));
-                    }
-
-                    broadcasts
+                    self.start_bout()
                 } else {
                     let mut broadcasts = Vec::new();
 
@@ -962,12 +955,7 @@ impl SaberDuelGame {
             self.stopwatch.pause_or_resume(pause);
         }
 
-        // Force power tutorials send a resume packet when they are closed,
-        // so send the next tutorial on resume.
-        match pause {
-            true => Ok(Vec::new()),
-            false => Ok(self.show_next_force_tutorial(player, player_index.into())),
-        }
+        Ok(Vec::new())
     }
 
     pub fn remove_player(
@@ -1380,7 +1368,7 @@ impl SaberDuelGame {
         self.player_states[0].reset_bout_progress(player1_keys);
         self.player_states[1].reset_bout_progress(player2_keys);
 
-        vec![Broadcast::Multi(
+        let mut broadcasts = vec![Broadcast::Multi(
             self.recipients.clone(),
             vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
@@ -1394,7 +1382,14 @@ impl SaberDuelGame {
                     num_keys_by_player_index: vec![player1_keys.into(), player2_keys.into()],
                 },
             })],
-        )]
+        )];
+
+        broadcasts.append(&mut self.show_next_force_tutorial(self.player1, 0));
+        if let Some(player2) = self.player2 {
+            broadcasts.append(&mut self.show_next_force_tutorial(player2, 1));
+        }
+
+        broadcasts
     }
 
     #[must_use]
