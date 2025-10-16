@@ -2055,12 +2055,7 @@ impl Character {
                 model_id,
                 pos,
                 rot,
-                possible_pos: vec![Pos {
-                    x: 0.0,
-                    y: 0.0,
-                    z: 0.0,
-                    w: 0.0,
-                }],
+                possible_pos: vec![],
                 chunk_size,
                 scale: 1.0,
                 name: Some(format!("{}", data.name)),
