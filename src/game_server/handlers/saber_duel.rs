@@ -48,6 +48,7 @@ const GAME_END_DELAY: Duration = Duration::from_millis(4000);
 const MEMORY_CHALLENGE_AI_DELAY: Duration = Duration::from_millis(2000);
 
 #[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct SaberDuelAiForcePower {
     #[serde(default = "default_weight")]
     weight: u8,
@@ -56,6 +57,7 @@ struct SaberDuelAiForcePower {
 }
 
 #[derive(Clone, Debug, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct SaberDuelAiSaber {
     hilt_item_guid: u32,
     shape_item_guid: u32,
@@ -63,6 +65,7 @@ struct SaberDuelAiSaber {
 }
 
 #[derive(Clone, Debug, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct SaberDuelAi {
     name_id: u32,
     model_id: u32,
@@ -286,6 +289,7 @@ const fn default_weight() -> u8 {
 }
 
 #[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct SaberDuelAnimationPair {
     attack_animation_id: i32,
     defend_animation_id: i32,
@@ -294,6 +298,7 @@ struct SaberDuelAnimationPair {
 }
 
 #[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct SaberDuelAvailableForcePower {
     name_id: u32,
     small_icon_id: u32,
@@ -362,6 +367,7 @@ where
 }
 
 #[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct SaberDuelConfig {
     pos: Pos,
     camera_rot: f32,
