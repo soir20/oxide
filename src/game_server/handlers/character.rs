@@ -248,7 +248,7 @@ impl BaseNpc {
                 name_offset_y: self.name_offset_y,
                 name_offset_z: self.name_offset_z,
                 terrain_object_id: self.terrain_object_id,
-                has_attachments: !self.attachments.is_empty(),
+                enable_attachments: !self.attachments.is_empty(),
                 speed: character.speed.total(),
                 unknown21: false,
                 interactable_size_pct: 100,

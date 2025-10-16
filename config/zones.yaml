@@ -371,7 +371,6 @@
         y: 1.1
         z: 0
         w: 0
-      visible: false
       bounce_area_id: 5003
 # Coruscant
 - guid: 24
