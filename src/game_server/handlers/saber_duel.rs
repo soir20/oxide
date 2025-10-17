@@ -743,6 +743,7 @@ impl SaberDuelGame {
     }
 
     pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
+        let is_ai_match = self.is_ai_match();
         match &mut self.state {
             SaberDuelGameState::WaitingForForcePowers {
                 timer,
@@ -753,7 +754,7 @@ impl SaberDuelGame {
                 } else {
                     let mut broadcasts = Vec::new();
 
-                    if self.player2.is_none() {
+                    if is_ai_match {
                         let ai_player_state = &self.player_states[1];
                         let other_player_state = &self.player_states[0];
                         if let Some((force_power, tutorial_enabled)) = Self::tick_ai_force_power(
@@ -894,14 +895,16 @@ impl SaberDuelGame {
                     }
                 }
 
-                if Self::tick_ai_keypress(
-                    now,
-                    &self.config,
-                    &mut self.player_states[1],
-                    ai_next_key,
-                    bout_time_remaining,
-                    player2_completed_time,
-                ) {
+                if is_ai_match
+                    && Self::tick_ai_keypress(
+                        now,
+                        &self.config,
+                        &mut self.player_states[1],
+                        ai_next_key,
+                        bout_time_remaining,
+                        player2_completed_time,
+                    )
+                {
                     self.update_progress(1)
                 } else {
                     Vec::new()
