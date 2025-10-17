@@ -1071,6 +1071,7 @@ impl TickableProcedureTracker {
 
 pub trait NpcConfig: Into<CharacterType> {
     const DISCRIMINANT: u8;
+    const DEFAULT_AUTO_INTERACT_RADIUS: f32;
 
     fn base_config(&self) -> &BaseNpcConfig;
 }
@@ -1086,6 +1087,7 @@ pub struct AmbientNpcConfig {
 
 impl NpcConfig for AmbientNpcConfig {
     const DISCRIMINANT: u8 = AMBIENT_NPC_DISCRIMINANT;
+    const DEFAULT_AUTO_INTERACT_RADIUS: f32 = 0.0;
 
     fn base_config(&self) -> &BaseNpcConfig {
         &self.base_npc
@@ -1200,6 +1202,7 @@ pub struct DoorConfig {
 
 impl NpcConfig for DoorConfig {
     const DISCRIMINANT: u8 = AMBIENT_NPC_DISCRIMINANT;
+    const DEFAULT_AUTO_INTERACT_RADIUS: f32 = 1.5;
 
     fn base_config(&self) -> &BaseNpcConfig {
         &self.base_npc
@@ -1282,6 +1285,7 @@ pub struct TransportConfig {
 
 impl NpcConfig for TransportConfig {
     const DISCRIMINANT: u8 = AMBIENT_NPC_DISCRIMINANT;
+    const DEFAULT_AUTO_INTERACT_RADIUS: f32 = 0.0;
 
     fn base_config(&self) -> &BaseNpcConfig {
         &self.base_npc
@@ -1716,7 +1720,10 @@ impl NpcTemplate {
             stand_animation_id: config.base_config().stand_animation_id,
             cursor: config.base_config().cursor,
             interact_radius: config.base_config().interact_radius,
-            auto_interact_radius: config.base_config().auto_interact_radius.unwrap_or(0.0),
+            auto_interact_radius: config
+                .base_config()
+                .auto_interact_radius
+                .unwrap_or(T::DEFAULT_AUTO_INTERACT_RADIUS),
             move_to_interact_offset: config.base_config().move_to_interact_offset,
             is_spawned: config.base_config().is_spawned,
             physics: config.base_config().physics,
