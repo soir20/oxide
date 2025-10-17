@@ -19,7 +19,7 @@ use crate::{
     game_server::{
         handlers::{
             are_dates_consecutive, are_dates_in_same_week,
-            character::{Character, MinigameStatus, MinigameWinStatus},
+            character::{Character, MinigameStatus, MinigameWinStatus, RemovalMode},
             daily::{
                 DailyHolocronGame, DailySpinGame, DailySpinRewardBucket, DailyTriviaGame,
                 DailyTriviaQuestionConfig,
@@ -29,6 +29,7 @@ use crate::{
             lock_enforcer::CharacterTableReadHandle,
             saber_duel::{process_saber_duel_packet, SaberDuelConfig, SaberDuelGame},
             saber_strike::start_saber_strike,
+            zone::ZoneInstance,
         },
         packets::{
             chat::{ActionBarTextColor, SendStringId},
@@ -378,12 +379,12 @@ impl SharedMinigameData {
         &mut self,
         player: u32,
         minigame_status: &mut MinigameStatus,
-    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    ) -> Result<(Vec<Broadcast>, Vec<u64>), ProcessPacketError> {
         self.data.remove_player(player, minigame_status)
     }
 
     pub fn characters(
-        &self,
+        &mut self,
         instance_guid: u64,
         chunk_size: u16,
         game_server: &GameServer,
@@ -516,7 +517,7 @@ impl SharedMinigameTypeData {
         &mut self,
         player: u32,
         minigame_status: &mut MinigameStatus,
-    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    ) -> Result<(Vec<Broadcast>, Vec<u64>), ProcessPacketError> {
         match self {
             SharedMinigameTypeData::FleetCommander { game } => {
                 game.remove_player(player, minigame_status)
@@ -527,12 +528,12 @@ impl SharedMinigameTypeData {
             SharedMinigameTypeData::SaberDuel { game } => {
                 game.remove_player(player, minigame_status)
             }
-            _ => Ok(Vec::new()),
+            _ => Ok((Vec::new(), Vec::new())),
         }
     }
 
     pub fn characters(
-        &self,
+        &mut self,
         instance_guid: u64,
         chunk_size: u16,
         game_server: &GameServer,
@@ -2315,7 +2316,7 @@ pub fn prepare_active_minigame_instance(
                 let shared_minigame_data = minigame_data_table_write_handle
                     .get(matchmaking_group)
                     .expect("Existence of minigame data should have already been checked");
-                let minigame_data_write_handle = shared_minigame_data.write();
+                let mut minigame_data_write_handle = shared_minigame_data.write();
 
                 let characters = minigame_data_write_handle.characters(
                     instance_guid,
@@ -3627,12 +3628,8 @@ fn leave_active_minigame_single_player_if_any(
                 false => MinigameRemovalMode::NoTeleport,
             };
 
-            let mut broadcasts = Vec::new();
-
-            broadcasts.append(
-                &mut shared_minigame_data
-                    .remove_player(sender, minigame_status)?,
-            );
+            let (mut broadcasts, characters_to_remove) = shared_minigame_data
+                .remove_player(sender, minigame_status)?;
 
             // If we've already awarded credits after a round, don't grant those credits again
             if minigame_status.awarded_credits == 0 {
@@ -3802,12 +3799,32 @@ fn leave_active_minigame_single_player_if_any(
 
             player.minigame_status = None;
 
-            Ok(Some((broadcasts, removal_mode)))
+            Ok(Some((broadcasts, characters_to_remove, removal_mode)))
         })?;
 
-    let Some((mut broadcasts, removal_move)) = status_update_result else {
+    let Some((mut broadcasts, characters_to_remove, removal_move)) = status_update_result else {
         return Ok(Vec::new());
     };
+
+    for guid_to_remove in characters_to_remove.into_iter() {
+        if let Some((character, (_, instance_guid, chunk), ..)) =
+            characters_table_write_handle.remove(guid_to_remove)
+        {
+            let nearby_players = ZoneInstance::other_players_nearby(
+                Some(sender),
+                chunk,
+                instance_guid,
+                characters_table_write_handle,
+            );
+            broadcasts.push(Broadcast::Multi(
+                nearby_players,
+                character
+                    .read()
+                    .stats
+                    .remove_packets(RemovalMode::Immediate),
+            ));
+        }
+    }
 
     let MinigameRemovalMode::Teleport(previous_location) = removal_move else {
         return Ok(broadcasts);

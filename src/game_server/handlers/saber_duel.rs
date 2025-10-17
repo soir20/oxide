@@ -26,7 +26,6 @@ use crate::game_server::{
         client_update::Position,
         item::{Attachment, EquipmentSlot, ItemDefinition},
         minigame::{MinigameHeader, ScoreEntry, ScoreType},
-        player_update::RemoveStandard,
         saber_duel::{
             SaberDuelApplyForcePower, SaberDuelBoutInfo, SaberDuelBoutStart, SaberDuelBoutTied,
             SaberDuelBoutWon, SaberDuelForcePower, SaberDuelForcePowerDefinition,
@@ -962,7 +961,7 @@ impl SaberDuelGame {
         &self,
         player: u32,
         minigame_status: &mut MinigameStatus,
-    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    ) -> Result<(Vec<Broadcast>, Vec<u64>), ProcessPacketError> {
         let player_index = self.player_index(player)? as usize;
 
         let player_state = &self.player_states[player_index];
@@ -1077,17 +1076,9 @@ impl SaberDuelGame {
         });
 
         if self.is_ai_match() {
-            Ok(vec![Broadcast::Single(
-                player,
-                vec![GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: RemoveStandard {
-                        guid: saber_duel_opponent_guid(self.player1),
-                    },
-                })],
-            )])
+            Ok((Vec::new(), vec![saber_duel_opponent_guid(self.player1)]))
         } else {
-            Ok(Vec::new())
+            Ok((Vec::new(), Vec::new()))
         }
     }
 
