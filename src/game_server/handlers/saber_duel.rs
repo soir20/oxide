@@ -917,7 +917,7 @@ impl SaberDuelGame {
         player: u32,
         pause: bool,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        let player_index = self.player_index(player)?;
+        self.player_index(player)?;
 
         if !self.is_ai_match() {
             return Ok(Vec::new());
