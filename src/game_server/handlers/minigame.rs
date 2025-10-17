@@ -352,6 +352,7 @@ pub struct SharedMinigameData {
     pub guid: MinigameMatchmakingGroup,
     pub readiness: MinigameReadiness,
     pub data: SharedMinigameTypeData,
+    pub characters_added: Vec<u64>,
 }
 
 impl SharedMinigameData {
@@ -383,12 +384,19 @@ impl SharedMinigameData {
     }
 
     pub fn characters(
-        &self,
+        &mut self,
         instance_guid: u64,
         chunk_size: u16,
         game_server: &GameServer,
     ) -> Result<Vec<Character>, ProcessPacketError> {
-        self.data.characters(instance_guid, chunk_size, game_server)
+        let characters = self
+            .data
+            .characters(instance_guid, chunk_size, game_server)?;
+        self.characters_added = characters
+            .iter()
+            .map(|character| character.guid())
+            .collect();
+        Ok(characters)
     }
 }
 
@@ -2037,6 +2045,7 @@ fn handle_request_create_active_minigame(
                                 guid: open_group,
                                 readiness: MinigameReadiness::Matchmaking,
                                 data: SharedMinigameTypeData::None,
+                                characters_added: Vec::new(),
                             });
                         }
 
@@ -2315,7 +2324,7 @@ pub fn prepare_active_minigame_instance(
                 let shared_minigame_data = minigame_data_table_write_handle
                     .get(matchmaking_group)
                     .expect("Existence of minigame data should have already been checked");
-                let minigame_data_write_handle = shared_minigame_data.write();
+                let mut minigame_data_write_handle = shared_minigame_data.write();
 
                 let characters = minigame_data_write_handle.characters(
                     instance_guid,
@@ -4096,6 +4105,10 @@ pub fn leave_active_minigame_if_any(
                     group.stage_guid
                 ),
             }
+        }
+
+        for guid in minigame_data_write_handle.characters_added.iter() {
+            characters_table_write_handle.remove(*guid);
         }
 
         drop(minigame_data_write_handle);
