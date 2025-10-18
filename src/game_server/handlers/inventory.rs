@@ -109,6 +109,23 @@ pub fn wield_type_from_slot(
         .unwrap_or(WieldType::None)
 }
 
+pub fn wield_type_from_inventory(
+    items: &BTreeMap<EquipmentSlot, u32>,
+    game_server: &GameServer,
+) -> WieldType {
+    let primary_wield_type = wield_type_from_slot(items, EquipmentSlot::PrimaryWeapon, game_server);
+    let secondary_wield_type =
+        wield_type_from_slot(items, EquipmentSlot::SecondaryWeapon, game_server);
+    match (primary_wield_type, secondary_wield_type) {
+        (WieldType::SingleSaber, WieldType::None) => WieldType::SingleSaber,
+        (WieldType::SingleSaber, WieldType::SingleSaber) => WieldType::DualSaber,
+        (WieldType::SinglePistol, WieldType::None) => WieldType::SinglePistol,
+        (WieldType::SinglePistol, WieldType::SinglePistol) => WieldType::DualPistol,
+        (WieldType::None, _) => secondary_wield_type,
+        _ => primary_wield_type,
+    }
+}
+
 pub fn customizations_from_guids(
     applied_customizations: impl Iterator<Item = u32>,
     customizations: &BTreeMap<u32, Customization>,

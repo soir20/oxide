@@ -7,7 +7,6 @@ use std::{
 
 use enum_iterator::all;
 use parking_lot::RwLockReadGuard;
-use rand::{seq::SliceRandom, thread_rng};
 use serde::Deserialize;
 
 use crate::{
@@ -45,8 +44,7 @@ use super::{
     },
     mount::MountConfig,
     unique_guid::{
-        npc_guid, player_guid, shorten_player_guid, zone_template_guid, AMBIENT_NPC_DISCRIMINANT,
-        FIXTURE_DISCRIMINANT,
+        npc_guid, player_guid, shorten_player_guid, zone_template_guid, FIXTURE_DISCRIMINANT,
     },
     update_position::UpdatePositionPacket,
     WriteLockingBroadcastSupplier,
@@ -166,106 +164,17 @@ impl From<ZoneConfig> for ZoneTemplate {
 
         {
             for ambient_npc in value.ambient_npcs {
-                characters.push(NpcTemplate {
-                    key: ambient_npc.base_npc.key.clone(),
-                    discriminant: AMBIENT_NPC_DISCRIMINANT,
-                    index,
-                    model_id: ambient_npc
-                        .base_npc
-                        .possible_model_ids
-                        .choose(&mut thread_rng())
-                        .copied()
-                        .unwrap_or(ambient_npc.base_npc.model_id),
-                    pos: ambient_npc
-                        .base_npc
-                        .possible_pos
-                        .choose(&mut thread_rng())
-                        .cloned()
-                        .unwrap_or(ambient_npc.base_npc.pos),
-                    rot: ambient_npc.base_npc.rot,
-                    possible_pos: ambient_npc.base_npc.possible_pos.clone(),
-                    scale: ambient_npc.base_npc.scale,
-                    tickable_procedures: ambient_npc.base_npc.tickable_procedures.clone(),
-                    first_possible_procedures: ambient_npc
-                        .base_npc
-                        .first_possible_procedures
-                        .clone(),
-                    synchronize_with: ambient_npc.base_npc.synchronize_with.clone(),
-                    stand_animation_id: ambient_npc.base_npc.stand_animation_id,
-                    cursor: ambient_npc.base_npc.cursor,
-                    interact_radius: ambient_npc.base_npc.interact_radius,
-                    auto_interact_radius: ambient_npc.base_npc.auto_interact_radius.unwrap_or(0.0),
-                    move_to_interact_offset: ambient_npc.base_npc.move_to_interact_offset,
-                    is_spawned: ambient_npc.base_npc.is_spawned,
-                    physics: ambient_npc.base_npc.physics,
-                    character_type: CharacterType::AmbientNpc(ambient_npc.into()),
-                    mount_id: None,
-                    wield_type: WieldType::None,
-                });
+                characters.push(NpcTemplate::from_config(ambient_npc, index));
                 index += 1;
             }
 
             for door in value.doors {
-                characters.push(NpcTemplate {
-                    key: door.base_npc.key.clone(),
-                    discriminant: AMBIENT_NPC_DISCRIMINANT,
-                    index,
-                    model_id: door
-                        .base_npc
-                        .possible_model_ids
-                        .choose(&mut thread_rng())
-                        .copied()
-                        .unwrap_or(door.base_npc.model_id),
-                    pos: door.base_npc.pos,
-                    rot: door.base_npc.rot,
-                    possible_pos: door.base_npc.possible_pos.clone(),
-                    scale: door.base_npc.scale,
-                    tickable_procedures: door.base_npc.tickable_procedures.clone(),
-                    first_possible_procedures: door.base_npc.first_possible_procedures.clone(),
-                    synchronize_with: door.base_npc.synchronize_with.clone(),
-                    stand_animation_id: door.base_npc.stand_animation_id,
-                    cursor: door.base_npc.cursor,
-                    interact_radius: door.base_npc.interact_radius,
-                    auto_interact_radius: door.base_npc.auto_interact_radius.unwrap_or(1.5),
-                    is_spawned: door.base_npc.is_spawned,
-                    physics: door.base_npc.physics,
-                    character_type: CharacterType::Door(door.into()),
-                    mount_id: None,
-                    move_to_interact_offset: 0.0,
-                    wield_type: WieldType::None,
-                });
+                characters.push(NpcTemplate::from_config(door, index));
                 index += 1;
             }
 
             for transport in value.transports {
-                characters.push(NpcTemplate {
-                    key: transport.base_npc.key.clone(),
-                    discriminant: AMBIENT_NPC_DISCRIMINANT,
-                    index,
-                    model_id: transport
-                        .base_npc
-                        .possible_model_ids
-                        .choose(&mut thread_rng())
-                        .copied()
-                        .unwrap_or(transport.base_npc.model_id),
-                    pos: transport.base_npc.pos,
-                    rot: transport.base_npc.rot,
-                    possible_pos: transport.base_npc.possible_pos.clone(),
-                    scale: transport.base_npc.scale,
-                    tickable_procedures: transport.base_npc.tickable_procedures.clone(),
-                    first_possible_procedures: transport.base_npc.first_possible_procedures.clone(),
-                    synchronize_with: transport.base_npc.synchronize_with.clone(),
-                    stand_animation_id: transport.base_npc.stand_animation_id,
-                    cursor: transport.base_npc.cursor,
-                    interact_radius: transport.base_npc.interact_radius,
-                    auto_interact_radius: transport.base_npc.auto_interact_radius.unwrap_or(0.0),
-                    move_to_interact_offset: transport.base_npc.move_to_interact_offset,
-                    is_spawned: transport.base_npc.is_spawned,
-                    physics: transport.base_npc.physics,
-                    character_type: CharacterType::Transport(transport.into()),
-                    mount_id: None,
-                    wield_type: WieldType::None,
-                });
+                characters.push(NpcTemplate::from_config(transport, index));
                 index += 1;
             }
         }
@@ -386,7 +295,7 @@ pub struct ZoneInstance {
     pub max_players: u32,
     pub icon: u32,
     pub asset_name: String,
-    chunk_size: u16,
+    pub chunk_size: u16,
     pub default_spawn_pos: Pos,
     pub default_spawn_rot: Pos,
     default_spawn_sky: String,

@@ -19,7 +19,7 @@ use crate::{
     game_server::{
         handlers::{
             are_dates_consecutive, are_dates_in_same_week,
-            character::{MinigameStatus, MinigameWinStatus},
+            character::{Character, MinigameStatus, MinigameWinStatus, RemovalMode},
             daily::{
                 DailyHolocronGame, DailySpinGame, DailySpinRewardBucket, DailyTriviaGame,
                 DailyTriviaQuestionConfig,
@@ -29,6 +29,7 @@ use crate::{
             lock_enforcer::CharacterTableReadHandle,
             saber_duel::{process_saber_duel_packet, SaberDuelConfig, SaberDuelGame},
             saber_strike::start_saber_strike,
+            zone::ZoneInstance,
         },
         packets::{
             chat::{ActionBarTextColor, SendStringId},
@@ -248,7 +249,7 @@ pub enum MinigameType {
     },
     SaberDuel {
         #[serde(flatten)]
-        config: SaberDuelConfig,
+        config: Box<SaberDuelConfig>,
     },
 }
 
@@ -378,8 +379,17 @@ impl SharedMinigameData {
         &mut self,
         player: u32,
         minigame_status: &mut MinigameStatus,
-    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    ) -> Result<(Vec<Broadcast>, Vec<u64>), ProcessPacketError> {
         self.data.remove_player(player, minigame_status)
+    }
+
+    pub fn characters(
+        &mut self,
+        instance_guid: u64,
+        chunk_size: u16,
+        game_server: &GameServer,
+    ) -> Result<Vec<Character>, ProcessPacketError> {
+        self.data.characters(instance_guid, chunk_size, game_server)
     }
 }
 
@@ -472,7 +482,7 @@ impl SharedMinigameTypeData {
             MinigameType::SaberStrike { .. } => SharedMinigameTypeData::default(),
             MinigameType::SaberDuel { config } => SharedMinigameTypeData::SaberDuel {
                 game: Box::new(SaberDuelGame::new(
-                    config.to_owned(),
+                    *config.to_owned(),
                     player1,
                     player2,
                     group,
@@ -507,7 +517,7 @@ impl SharedMinigameTypeData {
         &mut self,
         player: u32,
         minigame_status: &mut MinigameStatus,
-    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    ) -> Result<(Vec<Broadcast>, Vec<u64>), ProcessPacketError> {
         match self {
             SharedMinigameTypeData::FleetCommander { game } => {
                 game.remove_player(player, minigame_status)
@@ -517,6 +527,20 @@ impl SharedMinigameTypeData {
             }
             SharedMinigameTypeData::SaberDuel { game } => {
                 game.remove_player(player, minigame_status)
+            }
+            _ => Ok((Vec::new(), Vec::new())),
+        }
+    }
+
+    pub fn characters(
+        &mut self,
+        instance_guid: u64,
+        chunk_size: u16,
+        game_server: &GameServer,
+    ) -> Result<Vec<Character>, ProcessPacketError> {
+        match self {
+            SharedMinigameTypeData::SaberDuel { game } => {
+                game.characters(instance_guid, chunk_size, game_server)
             }
             _ => Ok(Vec::new()),
         }
@@ -2276,12 +2300,49 @@ pub fn prepare_active_minigame_instance(
 
     let teleport_result: Result<Vec<Broadcast>, ProcessPacketError> = (|| {
         let new_instance_guid = match stage_config.stage_config.zone_template_guid() {
-            Some(zone_template_guid) => Some(game_server.get_or_create_instance(
-                characters_table_write_handle,
-                zones_table_write_handle,
-                zone_template_guid,
-                stage_config.stage_config.max_players(),
-            )?),
+            Some(zone_template_guid) => {
+                let instance_guid = game_server.get_or_create_instance(
+                    characters_table_write_handle,
+                    zones_table_write_handle,
+                    zone_template_guid,
+                    stage_config.stage_config.max_players(),
+                )?;
+
+                let instance = zones_table_write_handle.get(instance_guid).unwrap_or_else(|| panic!(
+                    "Zone instance {instance_guid} should have been created or already exist but is missing"
+                ));
+                let zone_read_handle = instance.read();
+
+                let shared_minigame_data = minigame_data_table_write_handle
+                    .get(matchmaking_group)
+                    .expect("Existence of minigame data should have already been checked");
+                let mut minigame_data_write_handle = shared_minigame_data.write();
+
+                let characters = minigame_data_write_handle.characters(
+                    instance_guid,
+                    zone_read_handle.chunk_size,
+                    game_server,
+                )?;
+
+                if let Some(duplicate_character) = characters.iter().find(|character| {
+                    characters_table_write_handle
+                        .get(character.guid())
+                        .is_some()
+                }) {
+                    return Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::ConstraintViolated,
+                        format!(
+                            "Tried to insert a character {} for minigame {matchmaking_group:?} that already exists", 
+                            duplicate_character.guid()
+                        ),
+                    ));
+                }
+                characters.into_iter().for_each(|character| {
+                    characters_table_write_handle.insert(character);
+                });
+
+                Some(instance_guid)
+            }
             None => None,
         };
 
@@ -3567,12 +3628,8 @@ fn leave_active_minigame_single_player_if_any(
                 false => MinigameRemovalMode::NoTeleport,
             };
 
-            let mut broadcasts = Vec::new();
-
-            broadcasts.append(
-                &mut shared_minigame_data
-                    .remove_player(sender, minigame_status)?,
-            );
+            let (mut broadcasts, characters_to_remove) = shared_minigame_data
+                .remove_player(sender, minigame_status)?;
 
             // If we've already awarded credits after a round, don't grant those credits again
             if minigame_status.awarded_credits == 0 {
@@ -3742,12 +3799,32 @@ fn leave_active_minigame_single_player_if_any(
 
             player.minigame_status = None;
 
-            Ok(Some((broadcasts, removal_mode)))
+            Ok(Some((broadcasts, characters_to_remove, removal_mode)))
         })?;
 
-    let Some((mut broadcasts, removal_move)) = status_update_result else {
+    let Some((mut broadcasts, characters_to_remove, removal_move)) = status_update_result else {
         return Ok(Vec::new());
     };
+
+    for guid_to_remove in characters_to_remove.into_iter() {
+        if let Some((character, (_, instance_guid, chunk), ..)) =
+            characters_table_write_handle.remove(guid_to_remove)
+        {
+            let nearby_players = ZoneInstance::other_players_nearby(
+                Some(sender),
+                chunk,
+                instance_guid,
+                characters_table_write_handle,
+            );
+            broadcasts.push(Broadcast::Multi(
+                nearby_players,
+                character
+                    .read()
+                    .stats
+                    .remove_packets(RemovalMode::Immediate),
+            ));
+        }
+    }
 
     let MinigameRemovalMode::Teleport(previous_location) = removal_move else {
         return Ok(broadcasts);

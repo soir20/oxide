@@ -103,7 +103,7 @@ impl WieldType {
     }
 }
 
-#[derive(SerializePacket)]
+#[derive(Clone, Deserialize, SerializePacket)]
 pub struct Attachment {
     pub model_name: String,
     pub texture_alias: String,

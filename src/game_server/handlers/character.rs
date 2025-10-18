@@ -11,7 +11,10 @@ use serde::Deserialize;
 
 use crate::{
     game_server::{
-        handlers::item::SABER_ITEM_TYPE,
+        handlers::{
+            inventory::wield_type_from_inventory, item::SABER_ITEM_TYPE,
+            unique_guid::AMBIENT_NPC_DISCRIMINANT,
+        },
         packets::{
             chat::{ActionBarTextColor, SendStringId},
             client_update::UpdateCredits,
@@ -39,7 +42,6 @@ use super::{
     distance3_pos,
     guid::{Guid, IndexedGuid},
     housing::fixture_packets,
-    inventory::wield_type_from_slot,
     lock_enforcer::CharacterReadGuard,
     minigame::{MinigameTypeData, PlayerMinigameStats},
     mount::{spawn_mount_npc, MountConfig},
@@ -169,8 +171,6 @@ pub struct BaseNpcConfig {
     pub move_to_interact_offset: f32,
     #[serde(default = "default_true")]
     pub show_name: bool,
-    #[serde(default = "default_true")]
-    pub visible: bool,
     #[serde(default)]
     pub bounce_area_id: i32,
     #[serde(default)]
@@ -201,11 +201,11 @@ pub struct BaseNpc {
     pub enable_interact_popup: bool,
     pub interact_popup_radius: Option<f32>,
     pub show_name: bool,
-    pub visible: bool,
     pub bounce_area_id: i32,
     pub enable_gravity: bool,
     pub enable_tilt: bool,
     pub use_terrain_model: bool,
+    pub attachments: Vec<Attachment>,
 }
 
 impl BaseNpc {
@@ -230,7 +230,7 @@ impl BaseNpc {
                 pos: character.pos,
                 rot: character.rot,
                 spawn_animation_id: 1,
-                attachments: vec![],
+                attachments: self.attachments.clone(),
                 hostility: Hostility::Neutral,
                 unknown10: 1,
                 texture_alias: self.texture_alias.clone(),
@@ -239,14 +239,14 @@ impl BaseNpc {
                 unknown11: true,
                 offset_y: 0.0,
                 composite_effect: 0,
-                wield_type: WieldType::None,
+                wield_type: character.wield_type(),
                 name_override: "".to_string(),
                 hide_name: !self.show_name,
                 name_offset_x: self.name_offset_x,
                 name_offset_y: self.name_offset_y,
                 name_offset_z: self.name_offset_z,
                 terrain_object_id: self.terrain_object_id,
-                invisible: !self.visible,
+                enable_attachments: !self.attachments.is_empty(),
                 speed: character.speed.total(),
                 unknown21: false,
                 interactable_size_pct: 100,
@@ -338,11 +338,11 @@ impl From<BaseNpcConfig> for BaseNpc {
             enable_interact_popup: value.enable_interact_popup,
             interact_popup_radius: value.interact_popup_radius,
             show_name: value.show_name,
-            visible: value.visible,
             bounce_area_id: value.bounce_area_id,
             enable_gravity: value.enable_gravity,
             enable_tilt: value.enable_tilt,
             use_terrain_model: value.use_terrain_model,
+            attachments: Vec::new(),
         }
     }
 }
@@ -1067,6 +1067,13 @@ impl TickableProcedureTracker {
     }
 }
 
+pub trait NpcConfig: Into<CharacterType> {
+    const DISCRIMINANT: u8;
+    const DEFAULT_AUTO_INTERACT_RADIUS: f32;
+
+    fn base_config(&self) -> &BaseNpcConfig;
+}
+
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct AmbientNpcConfig {
@@ -1074,6 +1081,21 @@ pub struct AmbientNpcConfig {
     pub base_npc: BaseNpcConfig,
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
     pub one_shot_action_on_interact: Option<OneShotAction>,
+}
+
+impl NpcConfig for AmbientNpcConfig {
+    const DISCRIMINANT: u8 = AMBIENT_NPC_DISCRIMINANT;
+    const DEFAULT_AUTO_INTERACT_RADIUS: f32 = 0.0;
+
+    fn base_config(&self) -> &BaseNpcConfig {
+        &self.base_npc
+    }
+}
+
+impl From<AmbientNpcConfig> for CharacterType {
+    fn from(value: AmbientNpcConfig) -> Self {
+        CharacterType::AmbientNpc(value.into())
+    }
 }
 
 #[derive(Clone)]
@@ -1176,6 +1198,21 @@ pub struct DoorConfig {
     pub destination_zone: DestinationZoneInstance,
 }
 
+impl NpcConfig for DoorConfig {
+    const DISCRIMINANT: u8 = AMBIENT_NPC_DISCRIMINANT;
+    const DEFAULT_AUTO_INTERACT_RADIUS: f32 = 1.5;
+
+    fn base_config(&self) -> &BaseNpcConfig {
+        &self.base_npc
+    }
+}
+
+impl From<DoorConfig> for CharacterType {
+    fn from(value: DoorConfig) -> Self {
+        CharacterType::Door(value.into())
+    }
+}
+
 #[derive(Clone)]
 pub struct Door {
     pub base_npc: BaseNpc,
@@ -1242,6 +1279,21 @@ pub struct TransportConfig {
     pub show_icon: bool,
     pub large_icon: bool,
     pub show_hover_description: bool,
+}
+
+impl NpcConfig for TransportConfig {
+    const DISCRIMINANT: u8 = AMBIENT_NPC_DISCRIMINANT;
+    const DEFAULT_AUTO_INTERACT_RADIUS: f32 = 0.0;
+
+    fn base_config(&self) -> &BaseNpcConfig {
+        &self.base_npc
+    }
+}
+
+impl From<TransportConfig> for CharacterType {
+    fn from(value: TransportConfig) -> Self {
+        CharacterType::Transport(value.into())
+    }
 }
 
 #[derive(Clone)]
@@ -1639,6 +1691,46 @@ pub struct NpcTemplate {
 }
 
 impl NpcTemplate {
+    pub fn from_config<T: NpcConfig>(config: T, index: u16) -> Self {
+        let mut rng = thread_rng();
+        NpcTemplate {
+            key: config.base_config().key.clone(),
+            discriminant: T::DISCRIMINANT,
+            index,
+            model_id: config
+                .base_config()
+                .possible_model_ids
+                .choose(&mut rng)
+                .copied()
+                .unwrap_or(config.base_config().model_id),
+            pos: config
+                .base_config()
+                .possible_pos
+                .choose(&mut rng)
+                .cloned()
+                .unwrap_or(config.base_config().pos),
+            rot: config.base_config().rot,
+            possible_pos: config.base_config().possible_pos.clone(),
+            scale: config.base_config().scale,
+            tickable_procedures: config.base_config().tickable_procedures.clone(),
+            first_possible_procedures: config.base_config().first_possible_procedures.clone(),
+            synchronize_with: config.base_config().synchronize_with.clone(),
+            stand_animation_id: config.base_config().stand_animation_id,
+            cursor: config.base_config().cursor,
+            interact_radius: config.base_config().interact_radius,
+            auto_interact_radius: config
+                .base_config()
+                .auto_interact_radius
+                .unwrap_or(T::DEFAULT_AUTO_INTERACT_RADIUS),
+            move_to_interact_offset: config.base_config().move_to_interact_offset,
+            is_spawned: config.base_config().is_spawned,
+            physics: config.base_config().physics,
+            character_type: config.into(),
+            mount_id: None,
+            wield_type: WieldType::None,
+        }
+    }
+
     pub fn guid(&self, instance_guid: u64) -> u64 {
         npc_guid(self.discriminant, instance_guid, self.index)
     }
@@ -2028,26 +2120,7 @@ impl Character {
         let wield_type = data
             .battle_classes
             .get(&data.active_battle_class)
-            .map(|battle_class| {
-                let primary_wield_type = wield_type_from_slot(
-                    &battle_class.items,
-                    EquipmentSlot::PrimaryWeapon,
-                    game_server,
-                );
-                let secondary_wield_type = wield_type_from_slot(
-                    &battle_class.items,
-                    EquipmentSlot::SecondaryWeapon,
-                    game_server,
-                );
-                match (primary_wield_type, secondary_wield_type) {
-                    (WieldType::SingleSaber, WieldType::None) => WieldType::SingleSaber,
-                    (WieldType::SingleSaber, WieldType::SingleSaber) => WieldType::DualSaber,
-                    (WieldType::SinglePistol, WieldType::None) => WieldType::SinglePistol,
-                    (WieldType::SinglePistol, WieldType::SinglePistol) => WieldType::DualPistol,
-                    (WieldType::None, _) => secondary_wield_type,
-                    _ => primary_wield_type,
-                }
-            })
+            .map(|battle_class| wield_type_from_inventory(&battle_class.items, game_server))
             .unwrap_or(WieldType::None);
         Character {
             stats: CharacterStats {
