@@ -188,8 +188,6 @@ pub struct BaseNpcConfig {
     pub synchronize_with: Option<String>,
     #[serde(default = "default_true")]
     pub is_spawned: bool,
-    #[serde(default)]
-    pub attachments: Vec<Attachment>,
 }
 
 #[derive(Clone)]
@@ -344,7 +342,7 @@ impl From<BaseNpcConfig> for BaseNpc {
             enable_gravity: value.enable_gravity,
             enable_tilt: value.enable_tilt,
             use_terrain_model: value.use_terrain_model,
-            attachments: value.attachments.clone(),
+            attachments: Vec::new(),
         }
     }
 }
