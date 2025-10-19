@@ -49,7 +49,7 @@ use crate::{
             },
             tunnel::TunneledPacket,
             ui::ExecuteScriptWithStringParams,
-            GamePacket, RewardBundle,
+            GamePacket, Pos, RewardBundle,
         },
         Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
@@ -453,6 +453,7 @@ impl SharedMinigameTypeData {
         members: &[u32],
         group: MinigameMatchmakingGroup,
         difficulty: u32,
+        start_pos: Option<Pos>,
     ) -> Self {
         // We can't have a game without at least one player
         let player1 = members[0];
@@ -486,6 +487,7 @@ impl SharedMinigameTypeData {
                     player1,
                     player2,
                     group,
+                    start_pos,
                 )),
             },
         }
@@ -721,6 +723,8 @@ pub struct MinigameChallengeConfig {
     pub members_only: bool,
     pub minigame_type: MinigameType,
     pub zone_template_guid: Option<u8>,
+    pub start_pos: Option<Pos>,
+    pub start_rot: Option<Pos>,
     pub score_to_credits_expression: String,
     #[serde(default = "default_matchmaking_timeout_millis")]
     pub matchmaking_timeout_millis: u32,
@@ -818,6 +822,8 @@ pub struct MinigameCampaignStageConfig {
     pub short_name: String,
     pub minigame_type: MinigameType,
     pub zone_template_guid: Option<u8>,
+    pub start_pos: Option<Pos>,
+    pub start_rot: Option<Pos>,
     pub score_to_credits_expression: String,
     #[serde(default = "default_matchmaking_timeout_millis")]
     pub matchmaking_timeout_millis: u32,
@@ -1360,6 +1366,20 @@ impl MinigameStageConfig<'_> {
         match self {
             MinigameStageConfig::CampaignStage(stage) => stage.zone_template_guid,
             MinigameStageConfig::Challenge(challenge, ..) => challenge.zone_template_guid,
+        }
+    }
+
+    pub fn start_pos(&self) -> Option<Pos> {
+        match self {
+            MinigameStageConfig::CampaignStage(stage) => stage.start_pos,
+            MinigameStageConfig::Challenge(challenge, ..) => challenge.start_pos,
+        }
+    }
+
+    pub fn start_rot(&self) -> Option<Pos> {
+        match self {
+            MinigameStageConfig::CampaignStage(stage) => stage.start_rot,
+            MinigameStageConfig::Challenge(challenge, ..) => challenge.start_rot,
         }
     }
 
@@ -2090,6 +2110,8 @@ fn handle_request_create_active_minigame(
 fn prepare_active_minigame_instance_for_player(
     member_guid: u32,
     new_instance_guid_if_created: Option<u64>,
+    new_pos: Option<Pos>,
+    new_rot: Option<Pos>,
     stage_config: &StageConfigRef,
     message_id: Option<u32>,
     characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
@@ -2203,8 +2225,8 @@ fn prepare_active_minigame_instance_for_player(
                     "Zone instance {new_instance_guid} should have been created or already exist but is missing"
                 ))
                 .read(),
-            None,
-            None,
+            new_pos,
+            new_rot,
             game_server.mounts(),
         );
         broadcasts.append(&mut teleport_result?);
@@ -2264,6 +2286,19 @@ pub fn prepare_active_minigame_instance(
 
     let mut broadcasts = Vec::new();
 
+    let zone_template = stage_config
+        .stage_config
+        .zone_template_guid()
+        .and_then(|zone_template_guid| game_server.read_zone_templates().get(&zone_template_guid));
+    let start_pos = stage_config
+        .stage_config
+        .start_pos()
+        .or(zone_template.map(|template| template.default_spawn_pos));
+    let start_rot = stage_config
+        .stage_config
+        .start_rot()
+        .or(zone_template.map(|template| template.default_spawn_rot));
+
     let shared_data_result = minigame_data_table_write_handle.update_value_indices(
         matchmaking_group,
         |possible_minigame_data, _| {
@@ -2282,6 +2317,7 @@ pub fn prepare_active_minigame_instance(
                 members,
                 matchmaking_group,
                 stage_config.stage_config.difficulty(),
+                start_pos,
             );
 
             minigame_data.readiness = MinigameReadiness::InitialPlayersLoading(
@@ -2351,6 +2387,8 @@ pub fn prepare_active_minigame_instance(
             teleport_broadcasts.append(&mut prepare_active_minigame_instance_for_player(
                 *member_guid,
                 new_instance_guid,
+                start_pos,
+                start_rot,
                 stage_config,
                 message_id,
                 characters_table_write_handle,
