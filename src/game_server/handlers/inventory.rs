@@ -481,6 +481,16 @@ fn process_equip_customization(
                     ));
                 };
 
+                if !player.inventory.owns_item(equip_customization.item_guid) {
+                    return Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::ConstraintViolated,
+                        format!(
+                            "Player {sender} tried to equip customization that they don't own {}",
+                            equip_customization.item_guid
+                        ),
+                    ));
+                }
+
                 let cost = if let Some(cost_entry) =
                     game_server.costs().get(&equip_customization.item_guid)
                 {
@@ -496,8 +506,6 @@ fn process_equip_customization(
                 if cost > player.credits {
                     return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} tried to purchase customization {} for {cost} but only has {} credits", equip_customization.item_guid, player.credits)));
                 }
-                player.credits -= cost;
-                let new_credits = player.credits;
 
                 let customizations_to_apply = customizations_from_item_guids(
                     sender,
@@ -511,6 +519,9 @@ fn process_equip_customization(
                         .customizations
                         .insert(customization.customization_slot, customization.guid);
                 }
+
+                player.credits -= cost;
+                let new_credits = player.credits;
 
                 let (_, instance_guid, chunk) = character_write_handle.index1();
                 let nearby_players = ZoneInstance::all_players_nearby(
