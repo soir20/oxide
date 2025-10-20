@@ -834,7 +834,7 @@ fn equip_item_in_slot<'a>(
                 }));
                 player_data
                     .inventory
-                    .unequip_item(equip_guid.battle_class, equip_guid.slot)?;
+                    .unequip_item(equip_guid.battle_class, other_weapon_slot)?;
             }
 
             let is_secondary_equipped = player_data
