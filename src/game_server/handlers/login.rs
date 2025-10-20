@@ -2,7 +2,10 @@ use packet_serialize::NullTerminatedString;
 
 use crate::{
     game_server::{
-        handlers::minigame::{leave_active_minigame_if_any, LeaveMinigameTarget},
+        handlers::{
+            character::{BattleClass, PlayerInventory},
+            minigame::{leave_active_minigame_if_any, LeaveMinigameTarget},
+        },
         packets::{
             login::{DefinePointsOfInterest, DeploymentEnv, GameSettings, LoginReply},
             player_update::ItemDefinitionsReply,
@@ -15,7 +18,7 @@ use crate::{
 };
 
 use super::{
-    character::{BattleClass, Character, Player, PreviousLocation, RemovalMode},
+    character::{Character, Player, PreviousLocation, RemovalMode},
     guid::IndexedGuid,
     lock_enforcer::ZoneLockEnforcer,
     minigame::PlayerMinigameStats,
@@ -114,7 +117,8 @@ pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, P
                     squad_guid: None,
                     member: player.inner.data.membership_unknown1,
                     credits: player.inner.data.credits,
-                    battle_classes: player
+                    inventory: PlayerInventory::new(
+                        player
                         .inner
                         .data
                         .battle_classes
@@ -130,8 +134,9 @@ pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, P
                             )
                         })
                         .collect(),
-                    active_battle_class: player.inner.data.active_battle_class,
-                    inventory: player.inner.data.inventory.into_keys().collect(),
+                        player.inner.data.active_battle_class,
+                        player.inner.data.inventory.into_keys().collect(),
+                    ),
                     customizations: make_test_customizations(),
                     minigame_stats: PlayerMinigameStats::default(),
                     minigame_status: None,
