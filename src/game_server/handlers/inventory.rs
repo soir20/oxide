@@ -204,7 +204,7 @@ fn process_unequip_slot(
                     ));
                 };
 
-                let CharacterType::Player(ref mut player_data) =
+                let CharacterType::Player(ref mut player) =
                     character_write_handle.stats.character_type
                 else {
                     return Err(ProcessPacketError::new(
@@ -213,7 +213,7 @@ fn process_unequip_slot(
                     ));
                 };
 
-                let gear_changed = player_data
+                let gear_changed = player
                     .inventory
                     .unequip_item(unequip_slot.battle_class, unequip_slot.slot)?;
                 if !gear_changed {
@@ -227,9 +227,7 @@ fn process_unequip_slot(
                 // an item is unequipped, only the primary slot can influence the wield type.
                 if unequip_slot.slot.is_weapon() {
                     let wield_type = wield_type_from_slot(
-                        &player_data
-                            .inventory
-                            .equipped_items(unequip_slot.battle_class),
+                        &player.inventory.equipped_items(unequip_slot.battle_class),
                         EquipmentSlot::PrimaryWeapon,
                         game_server,
                     );
@@ -731,8 +729,7 @@ fn equip_item_in_slot<'a>(
         None
     };
 
-    let CharacterType::Player(ref mut player_data) = character_write_handle.stats.character_type
-    else {
+    let CharacterType::Player(ref mut player) = character_write_handle.stats.character_type else {
         return Err(ProcessPacketError::new(
             ProcessPacketErrorType::ConstraintViolated,
             format!("Non-player character {sender} tried to equip item"),
@@ -749,7 +746,7 @@ fn equip_item_in_slot<'a>(
         ));
     };
 
-    let gear_changed = player_data.inventory.equip_item(
+    let gear_changed = player.inventory.equip_item(
         equip_guid.battle_class,
         equip_guid.slot,
         equip_guid.item_guid,
@@ -801,12 +798,10 @@ fn equip_item_in_slot<'a>(
         let main_hand_slot = item_class.wield_type.primary_slot();
         let offhand_slot = main_hand_slot.opposite_slot();
 
-        let equipped_items = player_data
+        let is_main_hand_equipped = player
             .inventory
-            .equipped_items(equip_guid.battle_class);
-
-        let is_main_hand_equipped = equipped_items.contains_key(&main_hand_slot);
-        let is_offhand_equipped = equipped_items.contains_key(&offhand_slot);
+            .equipped_item(equip_guid.battle_class, main_hand_slot)
+            .is_some();
 
         if equip_guid.slot == offhand_slot && !is_main_hand_equipped {
             return Ok((Vec::new(), 0));
@@ -817,9 +812,7 @@ fn equip_item_in_slot<'a>(
             // a primary weapon, so check the opposite slot instead of the primary slot.
             let other_weapon_slot = equip_guid.slot.opposite_slot();
             let other_wield_type = wield_type_from_slot(
-                &player_data
-                    .inventory
-                    .equipped_items(equip_guid.battle_class),
+                &player.inventory.equipped_items(equip_guid.battle_class),
                 other_weapon_slot,
                 game_server,
             );
@@ -848,11 +841,15 @@ fn equip_item_in_slot<'a>(
                         wield_type: current_wield_type,
                     },
                 }));
-                player_data
+                player
                     .inventory
                     .unequip_item(equip_guid.battle_class, other_weapon_slot)?;
             }
 
+            let is_offhand_equipped = player
+                .inventory
+                .equipped_item(equip_guid.battle_class, offhand_slot)
+                .is_some();
             let wield_type = match (equip_guid.slot, item_class.wield_type, is_offhand_equipped) {
                 (EquipmentSlot::PrimaryWeapon, WieldType::SingleSaber, false) => {
                     WieldType::SingleSaber
