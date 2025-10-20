@@ -732,7 +732,7 @@ fn equip_item_in_slot<'a>(
         && player_data
             .inventory
             .equipped_item(equip_guid.battle_class, EquipmentSlot::PrimaryWeapon)
-            .is_some()
+            .is_none()
     {
         return Ok((Vec::new(), 0));
     }
