@@ -728,15 +728,6 @@ fn equip_item_in_slot<'a>(
         ));
     };
 
-    if equip_guid.slot == EquipmentSlot::SecondaryWeapon
-        && player_data
-            .inventory
-            .equipped_item(equip_guid.battle_class, EquipmentSlot::PrimaryWeapon)
-            .is_none()
-    {
-        return Ok((Vec::new(), 0));
-    }
-
     let Some(item_def) = game_server.items().get(&equip_guid.item_guid) else {
         return Err(ProcessPacketError::new(
             ProcessPacketErrorType::ConstraintViolated,
@@ -796,10 +787,24 @@ fn equip_item_in_slot<'a>(
         .definitions
         .get(&item_def.item_class)
     {
+        let main_hand_slot = item_class.wield_type.primary_slot();
+        let offhand_slot = main_hand_slot.opposite_slot();
+
+        let equipped_items = player_data
+            .inventory
+            .equipped_items(equip_guid.battle_class);
+
+        let is_main_hand_equipped = equipped_items.contains_key(&main_hand_slot);
+        let is_offhand_equipped = equipped_items.contains_key(&offhand_slot);
+
+        if equip_guid.slot == offhand_slot && !is_main_hand_equipped {
+            return Ok((Vec::new(), 0));
+        }
+
         if equip_guid.slot.is_weapon() {
             // Some weapons, like bows, can be equipped in the secondary slot without
             // a primary weapon, so check the opposite slot instead of the primary slot.
-            let other_weapon_slot = other_weapon_slot(equip_guid.slot);
+            let other_weapon_slot = equip_guid.slot.opposite_slot();
             let other_wield_type = wield_type_from_slot(
                 &player_data
                     .inventory
@@ -837,15 +842,7 @@ fn equip_item_in_slot<'a>(
                     .unequip_item(equip_guid.battle_class, other_weapon_slot)?;
             }
 
-            let is_secondary_equipped = player_data
-                .inventory
-                .equipped_item(equip_guid.battle_class, EquipmentSlot::SecondaryWeapon)
-                .is_some();
-            let wield_type = match (
-                equip_guid.slot,
-                item_class.wield_type,
-                is_secondary_equipped,
-            ) {
+            let wield_type = match (equip_guid.slot, item_class.wield_type, is_offhand_equipped) {
                 (EquipmentSlot::PrimaryWeapon, WieldType::SingleSaber, false) => {
                     WieldType::SingleSaber
                 }
@@ -897,12 +894,4 @@ fn equip_item_in_slot<'a>(
     }
 
     Ok((broadcasts, item_def.tint))
-}
-
-fn other_weapon_slot(slot: EquipmentSlot) -> EquipmentSlot {
-    match slot {
-        EquipmentSlot::PrimaryWeapon => EquipmentSlot::SecondaryWeapon,
-        EquipmentSlot::SecondaryWeapon => EquipmentSlot::PrimaryWeapon,
-        _ => EquipmentSlot::None,
-    }
 }
