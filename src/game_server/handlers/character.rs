@@ -33,7 +33,8 @@ use crate::{
             update_position::UpdatePlayerPosition,
             GamePacket, GuidTarget, Name, Pos, Rgba, Target,
         },
-        Broadcast, GameServer, ProcessPacketError, TickableNpcSynchronization,
+        Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
+        TickableNpcSynchronization,
     },
     info,
 };
@@ -1382,9 +1383,126 @@ impl From<TransportConfig> for Transport {
     }
 }
 
+pub type EquippedItemMap = BTreeMap<EquipmentSlot, u32>;
+
 #[derive(Clone)]
 pub struct BattleClass {
-    pub items: BTreeMap<EquipmentSlot, u32>,
+    pub items: EquippedItemMap,
+}
+
+#[derive(Clone)]
+pub struct PlayerInventory {
+    battle_classes: BTreeMap<u32, BattleClass>,
+    pub active_battle_class: u32,
+    temporary_items: BTreeMap<EquipmentSlot, Option<u32>>,
+    inventory: BTreeSet<u32>,
+}
+
+impl PlayerInventory {
+    pub fn new(
+        battle_classes: BTreeMap<u32, BattleClass>,
+        active_battle_class: u32,
+        inventory: BTreeSet<u32>,
+    ) -> Self {
+        PlayerInventory {
+            battle_classes,
+            active_battle_class,
+            temporary_items: BTreeMap::new(),
+            inventory,
+        }
+    }
+
+    pub fn equipped_items(&self, battle_class: u32) -> EquippedItemMap {
+        let mut items = self
+            .battle_classes
+            .get(&battle_class)
+            .map(|battle_class| &battle_class.items)
+            .cloned()
+            .unwrap_or_default();
+        self.temporary_items
+            .iter()
+            .for_each(|(slot, item_guid_if_any)| {
+                match item_guid_if_any {
+                    Some(item_guid) => items.insert(*slot, *item_guid),
+                    None => items.remove(slot),
+                };
+            });
+        items
+    }
+
+    pub fn equipped_item(&self, battle_class: u32, slot: EquipmentSlot) -> Option<u32> {
+        self.temporary_items
+            .get(&slot)
+            .copied()
+            .or_else(|| {
+                Some(
+                    self.battle_classes
+                        .get(&battle_class)
+                        .and_then(|battle_class| battle_class.items.get(&slot).copied()),
+                )
+            })
+            .unwrap_or_default()
+    }
+
+    pub fn equip_item(
+        &mut self,
+        battle_class_guid: u32,
+        slot: EquipmentSlot,
+        item_guid: u32,
+    ) -> Result<bool, ProcessPacketError> {
+        if !self.inventory.contains(&item_guid) {
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!(
+                    "Player doesn't own item {item_guid} and can't equip it in slot {slot:?} of battle class {battle_class_guid}",
+                ),
+            ));
+        }
+
+        let Some(battle_class) = self.battle_classes.get_mut(&battle_class_guid) else {
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!(
+                    "Player doesn't own battle class {battle_class_guid} and can't equip item {item_guid} in slot {slot:?}"
+                ),
+            ));
+        };
+
+        battle_class.items.insert(slot, item_guid);
+        Ok(battle_class_guid == self.active_battle_class
+            && !self.temporary_items.contains_key(&slot))
+    }
+
+    pub fn unequip_item(
+        &mut self,
+        battle_class_guid: u32,
+        slot: EquipmentSlot,
+    ) -> Result<bool, ProcessPacketError> {
+        let Some(battle_class) = self.battle_classes.get_mut(&battle_class_guid) else {
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!(
+                    "Player doesn't own battle class {battle_class_guid} and can't unequip slot {slot:?}"
+                ),
+            ));
+        };
+
+        Ok(battle_class_guid == self.active_battle_class
+            && battle_class.items.remove(&slot).is_some()
+            && !self.temporary_items.contains_key(&slot))
+    }
+
+    pub fn equip_item_temporarily(&mut self, slot: EquipmentSlot, item_guid: Option<u32>) {
+        self.temporary_items.insert(slot, item_guid);
+    }
+
+    pub fn clear_temporary_items(&mut self) {
+        self.temporary_items.clear();
+    }
+
+    pub fn owns_item(&self, item_guid: u32) -> bool {
+        self.inventory.contains(&item_guid)
+    }
 }
 
 #[derive(Clone, Default)]
@@ -1433,9 +1551,7 @@ pub struct Player {
     pub squad_guid: Option<u64>,
     pub member: bool,
     pub credits: u32,
-    pub battle_classes: BTreeMap<u32, BattleClass>,
-    pub active_battle_class: u32,
-    pub inventory: BTreeSet<u32>,
+    pub inventory: PlayerInventory,
     pub customizations: BTreeMap<CustomizationSlot, u32>,
     pub minigame_stats: PlayerMinigameStats,
     pub minigame_status: Option<MinigameStatus>,
@@ -1482,41 +1598,42 @@ impl Player {
         }
 
         let attachments: Vec<Attachment> = self
-            .battle_classes
-            .get(&self.active_battle_class)
-            .map(|battle_class| {
-                battle_class
-                    .items
-                    .iter()
-                    .filter_map(|(slot, item_guid)| {
-                        let tint_override = match slot {
-                            EquipmentSlot::PrimarySaberShape => battle_class
-                                .items
-                                .get(&EquipmentSlot::PrimarySaberColor)
-                                .and_then(|item_guid| item_definitions.get(item_guid))
-                                .map(|item_def| item_def.tint),
-                            EquipmentSlot::SecondarySaberShape => battle_class
-                                .items
-                                .get(&EquipmentSlot::SecondarySaberColor)
-                                .and_then(|item_guid| item_definitions.get(item_guid))
-                                .map(|item_def| item_def.tint),
-                            _ => None,
-                        };
+            .inventory
+            .equipped_items(self.inventory.active_battle_class)
+            .into_iter()
+            .filter_map(|(slot, item_guid)| {
+                let tint_override = match slot {
+                    EquipmentSlot::PrimarySaberShape => self
+                        .inventory
+                        .equipped_item(
+                            self.inventory.active_battle_class,
+                            EquipmentSlot::PrimarySaberColor,
+                        )
+                        .and_then(|item_guid| item_definitions.get(&item_guid))
+                        .map(|item_def| item_def.tint),
+                    EquipmentSlot::SecondarySaberShape => self
+                        .inventory
+                        .equipped_item(
+                            self.inventory.active_battle_class,
+                            EquipmentSlot::SecondarySaberColor,
+                        )
+                        .and_then(|item_guid| item_definitions.get(&item_guid))
+                        .map(|item_def| item_def.tint),
+                    _ => None,
+                };
 
-                        item_definitions
-                            .get(item_guid)
-                            .map(|item_definition| Attachment {
-                                model_name: item_definition.model_name.clone(),
-                                texture_alias: item_definition.texture_alias.clone(),
-                                tint_alias: item_definition.tint_alias.clone(),
-                                tint: tint_override.unwrap_or(item_definition.tint),
-                                composite_effect: item_definition.composite_effect,
-                                slot: *slot,
-                            })
+                item_definitions
+                    .get(&item_guid)
+                    .map(|item_definition| Attachment {
+                        model_name: item_definition.model_name.clone(),
+                        texture_alias: item_definition.texture_alias.clone(),
+                        tint_alias: item_definition.tint_alias.clone(),
+                        tint: tint_override.unwrap_or(item_definition.tint),
+                        composite_effect: item_definition.composite_effect,
+                        slot,
                     })
-                    .collect()
             })
-            .unwrap_or_default();
+            .collect();
 
         let mut packets = vec![GamePacket::serialize(&TunneledPacket {
             unknown1: true,
@@ -1584,7 +1701,7 @@ impl Player {
                 moderator: false,
                 temporary_model: 0,
                 squads: Vec::new(),
-                battle_class: self.active_battle_class,
+                battle_class: self.inventory.active_battle_class,
                 title: 0,
                 unknown16: 0,
                 unknown17: 0,
@@ -1596,7 +1713,7 @@ impl Player {
                 unknown22: 0.0,
                 unknown23: 0,
                 nameplate_image_id: NameplateImage::from_battle_class_guid(
-                    self.active_battle_class,
+                    self.inventory.active_battle_class,
                 ),
             },
         })];
@@ -1607,14 +1724,12 @@ impl Player {
     }
 
     pub fn has_saber_equipped(&self, items: &BTreeMap<u32, ItemDefinition>) -> bool {
-        self.battle_classes
-            .get(&self.active_battle_class)
-            .and_then(|battle_class| {
-                battle_class
-                    .items
-                    .get(&EquipmentSlot::PrimaryWeapon)
-                    .and_then(|item_guid| items.get(item_guid))
-            })
+        self.inventory
+            .equipped_item(
+                self.inventory.active_battle_class,
+                EquipmentSlot::PrimaryWeapon,
+            )
+            .and_then(|item_guid| items.get(&item_guid))
             .map(|item| item.item_type == SABER_ITEM_TYPE)
             .unwrap_or(false)
     }
@@ -2117,11 +2232,12 @@ impl Character {
         data: Player,
         game_server: &GameServer,
     ) -> Self {
-        let wield_type = data
-            .battle_classes
-            .get(&data.active_battle_class)
-            .map(|battle_class| wield_type_from_inventory(&battle_class.items, game_server))
-            .unwrap_or(WieldType::None);
+        let wield_type = wield_type_from_inventory(
+            &data
+                .inventory
+                .equipped_items(data.inventory.active_battle_class),
+            game_server,
+        );
         Character {
             stats: CharacterStats {
                 guid: player_guid(guid),

@@ -56,6 +56,14 @@ impl EquipmentSlot {
                 | EquipmentSlot::SecondarySaberColor
         )
     }
+
+    pub fn opposite_slot(self) -> EquipmentSlot {
+        match self {
+            EquipmentSlot::PrimaryWeapon => EquipmentSlot::SecondaryWeapon,
+            EquipmentSlot::SecondaryWeapon => EquipmentSlot::PrimaryWeapon,
+            _ => EquipmentSlot::None,
+        }
+    }
 }
 
 #[derive(
@@ -99,6 +107,13 @@ impl WieldType {
             | WieldType::StaffSaber
             | WieldType::ReverseSingleSaber => WieldType::None,
             _ => *self,
+        }
+    }
+
+    pub fn primary_slot(&self) -> EquipmentSlot {
+        match self {
+            WieldType::Bow => EquipmentSlot::SecondaryWeapon,
+            _ => EquipmentSlot::PrimaryWeapon,
         }
     }
 }

@@ -738,7 +738,7 @@ impl MinigameChallengeConfig {
 
     pub fn unlocked(&self, player: &Player, base_stage_completed: bool) -> bool {
         self.required_item_guid
-            .map(|item_guid| player.inventory.contains(&item_guid))
+            .map(|item_guid| player.inventory.owns_item(item_guid))
             .unwrap_or(true)
             && base_stage_completed
             && (!self.members_only || player.member)
@@ -839,7 +839,7 @@ impl MinigameCampaignStageConfig {
 
     pub fn unlocked(&self, player: &Player, previous_completed: bool) -> bool {
         self.required_item_guid
-            .map(|item_guid| player.inventory.contains(&item_guid))
+            .map(|item_guid| player.inventory.owns_item(item_guid))
             .unwrap_or(true)
             && (previous_completed || !self.require_previous_completed)
             && (!self.members_only || player.member)
@@ -947,7 +947,7 @@ impl MinigameStageGroupConfig {
 
     pub fn unlocked(&self, player: &Player, previous_completed: bool) -> bool {
         self.required_item_guid
-            .map(|item_guid| player.inventory.contains(&item_guid))
+            .map(|item_guid| player.inventory.owns_item(item_guid))
             .unwrap_or(true)
             && (previous_completed || !self.require_previous_completed)
             && (!self.members_only || player.member)

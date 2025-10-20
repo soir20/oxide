@@ -521,18 +521,17 @@ impl GameServer {
                                                 },
                                             }));
 
-                                            if let Some(battle_class) = player.battle_classes.get(&player.active_battle_class) {
-                                                character_broadcasts.append(&mut update_saber_tints(
-                                                    sender,
-                                                    characters_table_read_handle,
-                                                    instance_guid,
-                                                    chunk,
-                                                    &battle_class.items,
-                                                    player.active_battle_class,
-                                                    character_write_handle.stats.wield_type(),
-                                                    self
-                                                ));
-                                            }
+                                            let items = player.inventory.equipped_items(player.inventory.active_battle_class);
+                                            character_broadcasts.append(&mut update_saber_tints(
+                                                sender,
+                                                characters_table_read_handle,
+                                                instance_guid,
+                                                chunk,
+                                                &items,
+                                                player.inventory.active_battle_class,
+                                                character_write_handle.stats.wield_type(),
+                                                self
+                                            ));
                                         }
 
                                         let all_players_nearby = ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_read_handle);
