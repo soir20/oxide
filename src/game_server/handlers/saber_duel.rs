@@ -23,7 +23,6 @@ use crate::game_server::{
         unique_guid::{player_guid, saber_duel_opponent_guid},
     },
     packets::{
-        client_update::Position,
         item::{Attachment, EquipmentSlot, ItemDefinition},
         minigame::{MinigameHeader, ScoreEntry, ScoreType},
         saber_duel::{
@@ -368,7 +367,6 @@ where
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct SaberDuelConfig {
-    pos: Pos,
     camera_rot: f32,
     rounds_to_win: u8,
     points_to_win_round: u8,
@@ -479,6 +477,7 @@ enum SaberDuelBoutCompletion {
 #[derive(Clone, Debug)]
 pub struct SaberDuelGame {
     config: SaberDuelConfig,
+    pos: Pos,
     basic_bout_animation_distribution: WeightedAliasIndex<u8>,
     special_bout_animation_distribution: WeightedAliasIndex<u8>,
     player1: u32,
@@ -497,6 +496,7 @@ impl SaberDuelGame {
         player1: u32,
         player2: Option<u32>,
         group: MinigameMatchmakingGroup,
+        start_pos: Option<Pos>,
     ) -> Self {
         let mut recipients = vec![player1];
         if let Some(player2) = player2 {
@@ -522,6 +522,7 @@ impl SaberDuelGame {
 
         let mut game = SaberDuelGame {
             config,
+            pos: start_pos.unwrap_or_default(),
             basic_bout_animation_distribution,
             special_bout_animation_distribution,
             player1,
@@ -562,7 +563,7 @@ impl SaberDuelGame {
         let opponent = Character::new(
             saber_duel_opponent_guid(self.player1),
             self.config.ai.model_id,
-            self.config.pos,
+            self.pos,
             Pos::default(),
             chunk_size,
             1.0,
@@ -605,17 +606,7 @@ impl SaberDuelGame {
     pub fn start(&self, sender: u32) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
         let player_index = self.player_index(sender)?;
 
-        let mut packets = vec![GamePacket::serialize(&TunneledPacket {
-            unknown1: true,
-            inner: Position {
-                player_pos: self.config.pos,
-                rot: Pos::default(),
-                is_teleport: true,
-                unknown2: true,
-            },
-        })];
-
-        packets.push(GamePacket::serialize(&TunneledPacket {
+        Ok(vec![GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: SaberDuelStageData {
                 minigame_header: MinigameHeader {
@@ -626,7 +617,7 @@ impl SaberDuelGame {
                 points_to_win_round: self.config.points_to_win_round.into(),
                 total_rounds: self.config.rounds_to_win.into(),
                 seconds_remaining: 0,
-                camera_pos: self.config.pos,
+                camera_pos: self.pos,
                 camera_rot: self.config.camera_rot,
                 max_combo_points: 0,
                 establishing_animation_id: self.config.establishing_animation_id,
@@ -661,9 +652,7 @@ impl SaberDuelGame {
                     })
                     .collect(),
             },
-        }));
-
-        Ok(packets)
+        })])
     }
 
     pub fn handle_keypress(
