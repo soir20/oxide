@@ -1394,7 +1394,7 @@ pub struct BattleClass {
 pub struct PlayerInventory {
     battle_classes: BTreeMap<u32, BattleClass>,
     pub active_battle_class: u32,
-    temporary_items: EquippedItemMap,
+    temporary_items: BTreeMap<EquipmentSlot, Option<u32>>,
     inventory: BTreeSet<u32>,
 }
 
@@ -1419,19 +1419,29 @@ impl PlayerInventory {
             .map(|battle_class| &battle_class.items)
             .cloned()
             .unwrap_or_default();
-        items.extend(&self.temporary_items);
+        self.temporary_items
+            .iter()
+            .for_each(|(slot, item_guid_if_any)| {
+                match item_guid_if_any {
+                    Some(item_guid) => items.insert(*slot, *item_guid),
+                    None => items.remove(slot),
+                };
+            });
         items
     }
 
     pub fn equipped_item(&self, battle_class: u32, slot: EquipmentSlot) -> Option<u32> {
         self.temporary_items
             .get(&slot)
-            .or_else(|| {
-                self.battle_classes
-                    .get(&battle_class)
-                    .and_then(|battle_class| battle_class.items.get(&slot))
-            })
             .copied()
+            .or_else(|| {
+                Some(
+                    self.battle_classes
+                        .get(&battle_class)
+                        .and_then(|battle_class| battle_class.items.get(&slot).copied()),
+                )
+            })
+            .unwrap_or_default()
     }
 
     pub fn equip_item(
@@ -1482,7 +1492,7 @@ impl PlayerInventory {
             && !self.temporary_items.contains_key(&slot))
     }
 
-    pub fn equip_item_temporarily(&mut self, slot: EquipmentSlot, item_guid: u32) {
+    pub fn equip_item_temporarily(&mut self, slot: EquipmentSlot, item_guid: Option<u32>) {
         self.temporary_items.insert(slot, item_guid);
     }
 
