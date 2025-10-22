@@ -3682,13 +3682,15 @@ fn leave_active_minigame_single_player_if_any(
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let status_update_result = characters_table_write_handle
-        .update_value_indices(player_guid(sender), |possible_character_write_handle, _| {
+        .update_value_indices(player_guid(sender), |possible_character_write_handle, characters_table_handle| {
             let Some(character_write_handle) = possible_character_write_handle else {
                 return Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
                     format!("Tried to end unknown player {sender}'s active minigame"),
                 ));
             };
+
+            let (_, instance_guid, chunk) = character_write_handle.index1();
 
             let CharacterType::Player(player) = &mut character_write_handle.stats.character_type
             else {
@@ -3876,9 +3878,21 @@ fn leave_active_minigame_single_player_if_any(
                         .stage_group_instance(minigame_status.group.stage_group_guid, player)?,
                 })],
             ));
+
+            let other_players_nearby = ZoneInstance::other_players_nearby(
+                Some(sender),
+                chunk,
+                instance_guid,
+                characters_table_handle,
+            );
+            player.inventory.clear_temporary_items();
+            let (mut equipment_broadcasts, wield_type) = update_player_equipped_items(sender, &player.inventory, other_players_nearby, game_server);
+            broadcasts.append(&mut equipment_broadcasts);
+
             broadcasts.push(last_broadcast);
 
             player.minigame_status = None;
+            character_write_handle.set_brandished_wield_type(wield_type);
 
             Ok(Some((broadcasts, characters_to_remove, removal_mode)))
         })?;
