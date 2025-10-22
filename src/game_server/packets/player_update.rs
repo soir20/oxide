@@ -355,6 +355,7 @@ impl GamePacket for ItemDefinitionsReply<'_> {
 #[derive(
     Clone,
     Copy,
+    Debug,
     Deserialize,
     PartialEq,
     Eq,

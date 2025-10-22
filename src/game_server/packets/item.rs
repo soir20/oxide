@@ -5,6 +5,22 @@ use serde::Deserialize;
 
 use super::{player_update::CustomizationSlot, GamePacket, OpCode};
 
+#[derive(Copy, Clone, Debug, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+#[serde(deny_unknown_fields)]
+pub enum ItemType {
+    Equipment(EquipmentSlot),
+    Customization(CustomizationSlot),
+}
+
+impl SerializePacket for ItemType {
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        match self {
+            ItemType::Equipment(equipment_slot) => equipment_slot.serialize(buffer),
+            ItemType::Customization(customization_slot) => customization_slot.serialize(buffer),
+        }
+    }
+}
+
 #[derive(
     Copy,
     Clone,
@@ -28,18 +44,12 @@ pub enum EquipmentSlot {
     Hands = 2,
     Body = 3,
     Feet = 4,
-    Shoulders = 5,
-    FacePattern = 6,
     PrimaryWeapon = 7,
     SecondaryWeapon = 8,
     PrimarySaberShape = 10,
     PrimarySaberColor = 11,
     SecondarySaberShape = 12,
     SecondarySaberColor = 13,
-    CustomHead = 15,
-    CustomHair = 16,
-    CustomModel = 17,
-    CustomBeard = 18,
 }
 
 impl EquipmentSlot {
@@ -64,6 +74,24 @@ impl EquipmentSlot {
             EquipmentSlot::PrimaryWeapon => EquipmentSlot::SecondaryWeapon,
             EquipmentSlot::SecondaryWeapon => EquipmentSlot::PrimaryWeapon,
             _ => EquipmentSlot::None,
+        }
+    }
+}
+
+impl From<ItemType> for EquipmentSlot {
+    fn from(value: ItemType) -> Self {
+        match value {
+            ItemType::Equipment(equipment_slot) => equipment_slot,
+            ItemType::Customization(_) => EquipmentSlot::None,
+        }
+    }
+}
+
+impl From<ItemType> for CustomizationSlot {
+    fn from(value: ItemType) -> Self {
+        match value {
+            ItemType::Equipment(_) => CustomizationSlot::None,
+            ItemType::Customization(customization_slot) => customization_slot,
         }
     }
 }
@@ -187,7 +215,7 @@ pub struct ItemDefinition {
     pub cost: u32,
     pub item_class: i32,
     pub required_battle_class: u32,
-    pub slot: EquipmentSlot,
+    pub slot: ItemType,
     pub disable_trade: bool,
     pub disable_sale: bool,
     pub model_name: String,

@@ -56623,7 +56623,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Head
+  slot: !Customization SkinTone
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -56666,7 +56666,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Head
+  slot: !Customization SkinTone
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -56709,7 +56709,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Head
+  slot: !Customization SkinTone
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -56752,7 +56752,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Head
+  slot: !Customization SkinTone
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -56795,7 +56795,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Head
+  slot: !Customization SkinTone
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -56838,7 +56838,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Head
+  slot: !Customization SkinTone
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -56881,7 +56881,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Head
+  slot: !Customization SkinTone
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -56924,7 +56924,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Head
+  slot: !Customization SkinTone
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -56967,7 +56967,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Head
+  slot: !Customization SkinTone
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -57010,7 +57010,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Head
+  slot: !Customization SkinTone
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -57053,7 +57053,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Head
+  slot: !Customization SkinTone
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -57096,7 +57096,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Head
+  slot: !Customization SkinTone
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -57139,7 +57139,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Head
+  slot: !Customization SkinTone
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -57182,7 +57182,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Head
+  slot: !Customization SkinTone
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -57225,7 +57225,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Head
+  slot: !Customization SkinTone
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -57268,7 +57268,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Head
+  slot: !Customization SkinTone
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -57311,7 +57311,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Head
+  slot: !Customization SkinTone
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -57354,7 +57354,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Head
+  slot: !Customization SkinTone
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -57397,7 +57397,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Head
+  slot: !Customization SkinTone
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -57440,7 +57440,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Head
+  slot: !Customization SkinTone
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -57483,7 +57483,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Head
+  slot: !Customization SkinTone
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -57526,7 +57526,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Head
+  slot: !Customization SkinTone
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -57569,7 +57569,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Head
+  slot: !Customization SkinTone
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -57612,7 +57612,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Head
+  slot: !Customization SkinTone
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -57655,7 +57655,7 @@
   cost: 0
   item_class: -1
   required_battle_class: 0
-  slot: Head
+  slot: !Customization SkinTone
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -57698,7 +57698,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Head
+  slot: !Customization SkinTone
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -57741,7 +57741,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Head
+  slot: !Customization SkinTone
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -57784,7 +57784,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Head
+  slot: !Customization SkinTone
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -57827,7 +57827,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Head
+  slot: !Customization SkinTone
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -57870,7 +57870,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Head
+  slot: !Customization SkinTone
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -57913,7 +57913,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -57956,7 +57956,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -57999,7 +57999,7 @@
   cost: 20
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -58042,7 +58042,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -58085,7 +58085,7 @@
   cost: 200
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -58128,7 +58128,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -58171,7 +58171,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -58214,7 +58214,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -58257,7 +58257,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -58300,7 +58300,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -58343,7 +58343,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -58386,7 +58386,7 @@
   cost: 200
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -58429,7 +58429,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -58472,7 +58472,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -58515,7 +58515,7 @@
   cost: 200
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -58558,7 +58558,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -58601,7 +58601,7 @@
   cost: 20
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -58644,7 +58644,7 @@
   cost: 200
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -58687,7 +58687,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -58730,7 +58730,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -58773,7 +58773,7 @@
   cost: 200
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -58816,7 +58816,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -58859,7 +58859,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -58902,7 +58902,7 @@
   cost: 200
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -58945,7 +58945,7 @@
   cost: 200
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -58988,7 +58988,7 @@
   cost: 200
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -59031,7 +59031,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -59074,7 +59074,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -59117,7 +59117,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -59160,7 +59160,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -59203,7 +59203,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -59246,7 +59246,7 @@
   cost: 20
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -59289,7 +59289,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -59332,7 +59332,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -59375,7 +59375,7 @@
   cost: 30
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -59418,7 +59418,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -59461,7 +59461,7 @@
   cost: 30
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -59504,7 +59504,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -59547,7 +59547,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -59590,7 +59590,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -59633,7 +59633,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -59676,7 +59676,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -59719,7 +59719,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -59762,7 +59762,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -59805,7 +59805,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -59848,7 +59848,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -59891,7 +59891,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -59934,7 +59934,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -59977,7 +59977,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -60020,7 +60020,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -60063,7 +60063,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -60106,7 +60106,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -60149,7 +60149,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -60192,7 +60192,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -60235,7 +60235,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -60278,7 +60278,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -60321,7 +60321,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -60364,7 +60364,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -60407,7 +60407,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -60450,7 +60450,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -60493,7 +60493,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -60536,7 +60536,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -60579,7 +60579,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -60622,7 +60622,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -60665,7 +60665,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -60708,7 +60708,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -60751,7 +60751,7 @@
   cost: 300
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -60794,7 +60794,7 @@
   cost: 300
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -60837,7 +60837,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -60880,7 +60880,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -60923,7 +60923,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -60966,7 +60966,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -61009,7 +61009,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -61052,7 +61052,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -61095,7 +61095,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -61138,7 +61138,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -61181,7 +61181,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -61224,7 +61224,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -61267,7 +61267,7 @@
   cost: 250
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -61310,7 +61310,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -61353,7 +61353,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -61396,7 +61396,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -61439,7 +61439,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -61482,7 +61482,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -61525,7 +61525,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -61568,7 +61568,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -61611,7 +61611,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -61654,7 +61654,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -61697,7 +61697,7 @@
   cost: 20
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -61740,7 +61740,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -61783,7 +61783,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -61826,7 +61826,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -61869,7 +61869,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -61912,7 +61912,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -61955,7 +61955,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -61998,7 +61998,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -62041,7 +62041,7 @@
   cost: 20
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -62084,7 +62084,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -62127,7 +62127,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -62170,7 +62170,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -62213,7 +62213,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -62256,7 +62256,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -62299,7 +62299,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -62342,7 +62342,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -62385,7 +62385,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -62428,7 +62428,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -62471,7 +62471,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -62514,7 +62514,7 @@
   cost: 20
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -62557,7 +62557,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -62600,7 +62600,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -62643,7 +62643,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -62686,7 +62686,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -62729,7 +62729,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -62772,7 +62772,7 @@
   cost: 20
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -62815,7 +62815,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -62858,7 +62858,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -62901,7 +62901,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -62944,7 +62944,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -62987,7 +62987,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Hands
+  slot: !Customization HairStyle
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -63030,7 +63030,7 @@
   cost: 200
   item_class: -1
   required_battle_class: 0
-  slot: Body
+  slot: !Customization HairColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -63073,7 +63073,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Body
+  slot: !Customization HairColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -63116,7 +63116,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Body
+  slot: !Customization HairColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -63159,7 +63159,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Body
+  slot: !Customization HairColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -63202,7 +63202,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Body
+  slot: !Customization HairColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -63245,7 +63245,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Body
+  slot: !Customization HairColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -63288,7 +63288,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Body
+  slot: !Customization HairColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -63331,7 +63331,7 @@
   cost: 200
   item_class: -1
   required_battle_class: 0
-  slot: Body
+  slot: !Customization HairColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -63374,7 +63374,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Body
+  slot: !Customization HairColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -63417,7 +63417,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Body
+  slot: !Customization HairColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -63460,7 +63460,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Body
+  slot: !Customization HairColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -63503,7 +63503,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Body
+  slot: !Customization HairColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -63546,7 +63546,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Body
+  slot: !Customization HairColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -63589,7 +63589,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Body
+  slot: !Customization HairColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -63632,7 +63632,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Body
+  slot: !Customization HairColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -63675,7 +63675,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Body
+  slot: !Customization HairColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -63718,7 +63718,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Body
+  slot: !Customization HairColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -63761,7 +63761,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Body
+  slot: !Customization HairColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -63804,7 +63804,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Body
+  slot: !Customization HairColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -63847,7 +63847,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Body
+  slot: !Customization HairColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -63890,7 +63890,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Body
+  slot: !Customization HairColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -63933,7 +63933,7 @@
   cost: 200
   item_class: -1
   required_battle_class: 0
-  slot: Body
+  slot: !Customization HairColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -63976,7 +63976,7 @@
   cost: 200
   item_class: -1
   required_battle_class: 0
-  slot: Feet
+  slot: !Customization EyeColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -64019,7 +64019,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Feet
+  slot: !Customization EyeColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -64062,7 +64062,7 @@
   cost: 200
   item_class: -1
   required_battle_class: 0
-  slot: Feet
+  slot: !Customization EyeColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -64105,7 +64105,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Feet
+  slot: !Customization EyeColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -64148,7 +64148,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Feet
+  slot: !Customization EyeColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -64191,7 +64191,7 @@
   cost: 150
   item_class: -1
   required_battle_class: 0
-  slot: Feet
+  slot: !Customization EyeColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -64234,7 +64234,7 @@
   cost: 400
   item_class: -1
   required_battle_class: 0
-  slot: Feet
+  slot: !Customization EyeColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -64277,7 +64277,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Feet
+  slot: !Customization EyeColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -64320,7 +64320,7 @@
   cost: 200
   item_class: -1
   required_battle_class: 0
-  slot: Feet
+  slot: !Customization EyeColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -64363,7 +64363,7 @@
   cost: 400
   item_class: -1
   required_battle_class: 0
-  slot: Feet
+  slot: !Customization EyeColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -64406,7 +64406,7 @@
   cost: 200
   item_class: -1
   required_battle_class: 0
-  slot: Feet
+  slot: !Customization EyeColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -64449,7 +64449,7 @@
   cost: 300
   item_class: -1
   required_battle_class: 0
-  slot: Feet
+  slot: !Customization EyeColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -64492,7 +64492,7 @@
   cost: 300
   item_class: -1
   required_battle_class: 0
-  slot: Feet
+  slot: !Customization EyeColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -64535,7 +64535,7 @@
   cost: 200
   item_class: -1
   required_battle_class: 0
-  slot: Shoulders
+  slot: !Customization FacialHair
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -64578,7 +64578,7 @@
   cost: 150
   item_class: -1
   required_battle_class: 0
-  slot: Shoulders
+  slot: !Customization FacialHair
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -64621,7 +64621,7 @@
   cost: 10
   item_class: -1
   required_battle_class: 0
-  slot: Shoulders
+  slot: !Customization FacialHair
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -64664,7 +64664,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Shoulders
+  slot: !Customization FacialHair
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -64707,7 +64707,7 @@
   cost: 10
   item_class: -1
   required_battle_class: 0
-  slot: Shoulders
+  slot: !Customization FacialHair
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -64750,7 +64750,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Shoulders
+  slot: !Customization FacialHair
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -64792,7 +64792,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Shoulders
+  slot: !Customization FacialHair
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -64835,7 +64835,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Shoulders
+  slot: !Customization FacialHair
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -64878,7 +64878,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Shoulders
+  slot: !Customization FacialHair
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -64921,7 +64921,7 @@
   cost: 20
   item_class: -1
   required_battle_class: 0
-  slot: Shoulders
+  slot: !Customization FacialHair
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -64964,7 +64964,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Shoulders
+  slot: !Customization FacialHair
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -65007,7 +65007,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Shoulders
+  slot: !Customization FacialHair
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -65050,7 +65050,7 @@
   cost: 200
   item_class: -1
   required_battle_class: 0
-  slot: Shoulders
+  slot: !Customization FacialHair
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -65093,7 +65093,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: Shoulders
+  slot: !Customization FacialHair
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -65136,7 +65136,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: Shoulders
+  slot: !Customization FacialHair
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -65179,7 +65179,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -65222,7 +65222,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -65265,7 +65265,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -65308,7 +65308,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -65351,7 +65351,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -65394,7 +65394,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -65437,7 +65437,7 @@
   cost: 20
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -65480,7 +65480,7 @@
   cost: 200
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -65523,7 +65523,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -65566,7 +65566,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -65609,7 +65609,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -65652,7 +65652,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -65694,7 +65694,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -65737,7 +65737,7 @@
   cost: 150
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -65780,7 +65780,7 @@
   cost: 300
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -65823,7 +65823,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -65866,7 +65866,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -65909,7 +65909,7 @@
   cost: 150
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -65952,7 +65952,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -65995,7 +65995,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -66038,7 +66038,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -66081,7 +66081,7 @@
   cost: 20
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -66124,7 +66124,7 @@
   cost: 500
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -66167,7 +66167,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -66210,7 +66210,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -66253,7 +66253,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -66296,7 +66296,7 @@
   cost: 200
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -66339,7 +66339,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -66382,7 +66382,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -66425,7 +66425,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -66468,7 +66468,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -66511,7 +66511,7 @@
   cost: 200
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -66554,7 +66554,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -66597,7 +66597,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -66640,7 +66640,7 @@
   cost: 600
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -66683,7 +66683,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -66726,7 +66726,7 @@
   cost: 600
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -66769,7 +66769,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -66812,7 +66812,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -66855,7 +66855,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -66898,7 +66898,7 @@
   cost: 150
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -66941,7 +66941,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -66984,7 +66984,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -67027,7 +67027,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -67070,7 +67070,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -67113,7 +67113,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -67156,7 +67156,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -67199,7 +67199,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -67242,7 +67242,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -67285,7 +67285,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -67328,7 +67328,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -67371,7 +67371,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -67414,7 +67414,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -67457,7 +67457,7 @@
   cost: 200
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -67500,7 +67500,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -67543,7 +67543,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -67586,7 +67586,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -67629,7 +67629,7 @@
   cost: 500
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -67672,7 +67672,7 @@
   cost: 200
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -67715,7 +67715,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -67758,7 +67758,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -67801,7 +67801,7 @@
   cost: 50
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -67844,7 +67844,7 @@
   cost: 100
   item_class: -1
   required_battle_class: 0
-  slot: FacePattern
+  slot: !Customization FacePattern
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -67887,7 +67887,7 @@
   cost: 600
   item_class: -1
   required_battle_class: 0
-  slot: Body
+  slot: !Customization HairColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -67930,7 +67930,7 @@
   cost: 600
   item_class: -1
   required_battle_class: 0
-  slot: Body
+  slot: !Customization HairColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -67973,7 +67973,7 @@
   cost: 600
   item_class: -1
   required_battle_class: 0
-  slot: Body
+  slot: !Customization HairColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -68016,7 +68016,7 @@
   cost: 600
   item_class: -1
   required_battle_class: 0
-  slot: Body
+  slot: !Customization HairColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -68059,7 +68059,7 @@
   cost: 600
   item_class: -1
   required_battle_class: 0
-  slot: Body
+  slot: !Customization HairColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -68102,7 +68102,7 @@
   cost: 600
   item_class: -1
   required_battle_class: 0
-  slot: Body
+  slot: !Customization HairColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -68145,7 +68145,7 @@
   cost: 600
   item_class: -1
   required_battle_class: 0
-  slot: Body
+  slot: !Customization HairColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -68188,7 +68188,7 @@
   cost: 600
   item_class: -1
   required_battle_class: 0
-  slot: Body
+  slot: !Customization HairColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -68231,7 +68231,7 @@
   cost: 600
   item_class: -1
   required_battle_class: 0
-  slot: Body
+  slot: !Customization HairColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -68274,7 +68274,7 @@
   cost: 600
   item_class: -1
   required_battle_class: 0
-  slot: Body
+  slot: !Customization HairColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -68317,7 +68317,7 @@
   cost: 600
   item_class: -1
   required_battle_class: 0
-  slot: Body
+  slot: !Customization HairColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -68360,7 +68360,7 @@
   cost: 600
   item_class: -1
   required_battle_class: 0
-  slot: Body
+  slot: !Customization HairColor
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -68403,7 +68403,7 @@
   cost: 600
   item_class: -1
   required_battle_class: 0
-  slot: Body
+  slot: !Customization HairColor
   disable_trade: false
   disable_sale: false
   model_name: ''
