@@ -67887,7 +67887,7 @@
   cost: 600
   item_class: -1
   required_battle_class: 0
-  slot: !Customization HairColor
+  slot: !Customization BodyModel
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -67930,7 +67930,7 @@
   cost: 600
   item_class: -1
   required_battle_class: 0
-  slot: !Customization HairColor
+  slot: !Customization BodyModel
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -67973,7 +67973,7 @@
   cost: 600
   item_class: -1
   required_battle_class: 0
-  slot: !Customization HairColor
+  slot: !Customization BodyModel
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -68016,7 +68016,7 @@
   cost: 600
   item_class: -1
   required_battle_class: 0
-  slot: !Customization HairColor
+  slot: !Customization BodyModel
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -68059,7 +68059,7 @@
   cost: 600
   item_class: -1
   required_battle_class: 0
-  slot: !Customization HairColor
+  slot: !Customization BodyModel
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -68102,7 +68102,7 @@
   cost: 600
   item_class: -1
   required_battle_class: 0
-  slot: !Customization HairColor
+  slot: !Customization BodyModel
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -68145,7 +68145,7 @@
   cost: 600
   item_class: -1
   required_battle_class: 0
-  slot: !Customization HairColor
+  slot: !Customization BodyModel
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -68188,7 +68188,7 @@
   cost: 600
   item_class: -1
   required_battle_class: 0
-  slot: !Customization HairColor
+  slot: !Customization BodyModel
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -68231,7 +68231,7 @@
   cost: 600
   item_class: -1
   required_battle_class: 0
-  slot: !Customization HairColor
+  slot: !Customization BodyModel
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -68274,7 +68274,7 @@
   cost: 600
   item_class: -1
   required_battle_class: 0
-  slot: !Customization HairColor
+  slot: !Customization BodyModel
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -68317,7 +68317,7 @@
   cost: 600
   item_class: -1
   required_battle_class: 0
-  slot: !Customization HairColor
+  slot: !Customization BodyModel
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -68360,7 +68360,7 @@
   cost: 600
   item_class: -1
   required_battle_class: 0
-  slot: !Customization HairColor
+  slot: !Customization BodyModel
   disable_trade: false
   disable_sale: false
   model_name: ''
@@ -68403,7 +68403,7 @@
   cost: 600
   item_class: -1
   required_battle_class: 0
-  slot: !Customization HairColor
+  slot: !Customization BodyModel
   disable_trade: false
   disable_sale: false
   model_name: ''
