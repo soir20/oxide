@@ -19,7 +19,9 @@ use crate::{
     game_server::{
         handlers::{
             are_dates_consecutive, are_dates_in_same_week,
-            character::{Character, MinigameStatus, MinigameWinStatus, RemovalMode},
+            character::{
+                Character, MinigameStatus, MinigameWinStatus, PlayerInventory, RemovalMode,
+            },
             daily::{
                 DailyHolocronGame, DailySpinGame, DailySpinRewardBucket, DailyTriviaGame,
                 DailyTriviaQuestionConfig,
@@ -391,6 +393,14 @@ impl SharedMinigameData {
     ) -> Result<Vec<Character>, ProcessPacketError> {
         self.data.characters(instance_guid, chunk_size, game_server)
     }
+
+    pub fn update_gear(
+        &self,
+        player_inventory: &mut PlayerInventory,
+        game_server: &GameServer,
+    ) -> Result<(), ProcessPacketError> {
+        self.data.update_gear(player_inventory, game_server)
+    }
 }
 
 impl
@@ -545,6 +555,19 @@ impl SharedMinigameTypeData {
                 game.characters(instance_guid, chunk_size, game_server)
             }
             _ => Ok(Vec::new()),
+        }
+    }
+
+    pub fn update_gear(
+        &self,
+        player_inventory: &mut PlayerInventory,
+        game_server: &GameServer,
+    ) -> Result<(), ProcessPacketError> {
+        match self {
+            SharedMinigameTypeData::SaberDuel { game } => {
+                game.update_gear(player_inventory, game_server)
+            }
+            _ => Ok(()),
         }
     }
 }
@@ -2116,6 +2139,7 @@ fn prepare_active_minigame_instance_for_player(
     message_id: Option<u32>,
     characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
     zones_table_write_handle: &mut ZoneTableWriteHandle<'_>,
+    shared_minigame_data: &SharedMinigameData,
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let stage_group_guid = stage_config.stage_group_guid;
@@ -2335,6 +2359,11 @@ pub fn prepare_active_minigame_instance(
     }
 
     let teleport_result: Result<Vec<Broadcast>, ProcessPacketError> = (|| {
+        let shared_minigame_data = minigame_data_table_write_handle
+            .get(matchmaking_group)
+            .expect("Existence of minigame data should have already been checked");
+        let mut minigame_data_write_handle = shared_minigame_data.write();
+
         let new_instance_guid = match stage_config.stage_config.zone_template_guid() {
             Some(zone_template_guid) => {
                 let instance_guid = game_server.get_or_create_instance(
@@ -2348,11 +2377,6 @@ pub fn prepare_active_minigame_instance(
                     "Zone instance {instance_guid} should have been created or already exist but is missing"
                 ));
                 let zone_read_handle = instance.read();
-
-                let shared_minigame_data = minigame_data_table_write_handle
-                    .get(matchmaking_group)
-                    .expect("Existence of minigame data should have already been checked");
-                let mut minigame_data_write_handle = shared_minigame_data.write();
 
                 let characters = minigame_data_write_handle.characters(
                     instance_guid,
@@ -2393,6 +2417,7 @@ pub fn prepare_active_minigame_instance(
                 message_id,
                 characters_table_write_handle,
                 zones_table_write_handle,
+                &minigame_data_write_handle,
                 game_server,
             )?);
         }

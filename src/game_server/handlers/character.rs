@@ -12,7 +12,7 @@ use serde::Deserialize;
 use crate::{
     game_server::{
         handlers::{
-            inventory::wield_type_from_inventory, item::SABER_ITEM_TYPE,
+            inventory::{attachments_from_equipped_items, wield_type_from_inventory},
             unique_guid::AMBIENT_NPC_DISCRIMINANT,
         },
         packets::{
@@ -1597,44 +1597,6 @@ impl Player {
             }
         }
 
-        let attachments: Vec<Attachment> = self
-            .inventory
-            .equipped_items(self.inventory.active_battle_class)
-            .into_iter()
-            .filter_map(|(slot, item_guid)| {
-                let tint_override = match slot {
-                    EquipmentSlot::PrimarySaberShape => self
-                        .inventory
-                        .equipped_item(
-                            self.inventory.active_battle_class,
-                            EquipmentSlot::PrimarySaberColor,
-                        )
-                        .and_then(|item_guid| item_definitions.get(&item_guid))
-                        .map(|item_def| item_def.tint),
-                    EquipmentSlot::SecondarySaberShape => self
-                        .inventory
-                        .equipped_item(
-                            self.inventory.active_battle_class,
-                            EquipmentSlot::SecondarySaberColor,
-                        )
-                        .and_then(|item_guid| item_definitions.get(&item_guid))
-                        .map(|item_def| item_def.tint),
-                    _ => None,
-                };
-
-                item_definitions
-                    .get(&item_guid)
-                    .map(|item_definition| Attachment {
-                        model_name: item_definition.model_name.clone(),
-                        texture_alias: item_definition.texture_alias.clone(),
-                        tint_alias: item_definition.tint_alias.clone(),
-                        tint: tint_override.unwrap_or(item_definition.tint),
-                        composite_effect: item_definition.composite_effect,
-                        slot,
-                    })
-            })
-            .collect();
-
         let mut packets = vec![GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: AddPc {
@@ -1651,7 +1613,15 @@ impl Player {
                 chat_scale: 1,
                 pos: character.pos,
                 rot: character.rot,
-                attachments,
+                attachments: attachments_from_equipped_items(
+                    &self
+                        .inventory
+                        .equipped_items(self.inventory.active_battle_class),
+                    item_definitions,
+                )
+                .into_iter()
+                .map(|attachment| attachment.into())
+                .collect(),
                 head_model: self
                     .customizations
                     .get(&CustomizationSlot::HeadModel)
@@ -1721,17 +1691,6 @@ impl Player {
         packets.append(&mut mount_packets);
 
         packets
-    }
-
-    pub fn has_saber_equipped(&self, items: &BTreeMap<u32, ItemDefinition>) -> bool {
-        self.inventory
-            .equipped_item(
-                self.inventory.active_battle_class,
-                EquipmentSlot::PrimaryWeapon,
-            )
-            .and_then(|item_guid| items.get(&item_guid))
-            .map(|item| item.item_type == SABER_ITEM_TYPE)
-            .unwrap_or(false)
     }
 }
 

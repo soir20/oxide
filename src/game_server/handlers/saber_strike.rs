@@ -3,7 +3,10 @@ use std::io::{Cursor, Read};
 use packet_serialize::DeserializePacket;
 
 use crate::game_server::{
-    handlers::character::{MinigameStatus, Player},
+    handlers::{
+        character::{MinigameStatus, Player},
+        inventory::player_has_saber_equipped,
+    },
     packets::{
         minigame::{MinigameHeader, ScoreEntry, ScoreType},
         saber_strike::{
@@ -34,7 +37,11 @@ pub fn start_saber_strike(
                 stage_group_guid: minigame_status.group.stage_group_guid,
             },
             saber_strike_stage_id,
-            use_player_weapon: player.has_saber_equipped(game_server.items()),
+            use_player_weapon: player_has_saber_equipped(
+                &player.inventory,
+                player.inventory.active_battle_class,
+                game_server.items(),
+            ),
         },
     })]
 }

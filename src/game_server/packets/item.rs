@@ -1,3 +1,4 @@
+use enum_iterator::Sequence;
 use num_enum::{IntoPrimitive, TryFromPrimitive};
 use packet_serialize::{DeserializePacket, SerializePacket};
 use serde::Deserialize;
@@ -17,6 +18,7 @@ use super::{player_update::CustomizationSlot, GamePacket, OpCode};
     IntoPrimitive,
     SerializePacket,
     DeserializePacket,
+    Sequence,
 )]
 #[serde(deny_unknown_fields)]
 #[repr(u32)]

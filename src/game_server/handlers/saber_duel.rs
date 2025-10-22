@@ -13,9 +13,10 @@ use serde::{Deserialize, Deserializer};
 use crate::game_server::{
     handlers::{
         character::{
-            AmbientNpc, BaseNpc, Character, CharacterType, MinigameMatchmakingGroup, MinigameStatus,
+            AmbientNpc, BaseNpc, Character, CharacterType, MinigameMatchmakingGroup,
+            MinigameStatus, PlayerInventory,
         },
-        inventory::wield_type_from_inventory,
+        inventory::{player_has_saber_equipped, wield_type_from_inventory},
         minigame::{
             handle_minigame_packet_write, MinigameCountdown, MinigameStopwatch,
             SharedMinigameTypeData,
@@ -601,6 +602,21 @@ impl SaberDuelGame {
         );
 
         Ok(vec![opponent])
+    }
+
+    pub fn update_gear(
+        &self,
+        player_inventory: &mut PlayerInventory,
+        game_server: &GameServer,
+    ) -> Result<(), ProcessPacketError> {
+        if !player_has_saber_equipped(
+            player_inventory,
+            player_inventory.active_battle_class,
+            game_server.items(),
+        ) {
+            // TODO
+        }
+        Ok(())
     }
 
     pub fn start(&self, sender: u32) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
