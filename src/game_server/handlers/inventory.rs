@@ -778,11 +778,10 @@ pub fn attachments_from_equipped_items(
 
 pub fn update_player_equipped_items(
     player: u32,
-    character: &mut Character,
     inventory: &PlayerInventory,
     mut other_players_nearby: Vec<u32>,
     game_server: &GameServer,
-) -> Vec<Broadcast> {
+) -> (Vec<Broadcast>, WieldType) {
     let battle_class = inventory.active_battle_class;
     let equipped_items = inventory.equipped_items(battle_class);
 
@@ -791,8 +790,6 @@ pub fn update_player_equipped_items(
         .filter(|slot| !equipped_items.contains_key(slot))
         .collect();
     let wield_type = wield_type_from_inventory(&equipped_items, game_server);
-
-    character.set_brandished_wield_type(wield_type);
 
     let mut target_only_packets = Vec::new();
     let mut nearby_player_packets = Vec::new();
@@ -878,7 +875,7 @@ pub fn update_player_equipped_items(
         })],
     ));
 
-    broadcasts
+    (broadcasts, wield_type)
 }
 
 fn equip_item_in_slot<'a>(

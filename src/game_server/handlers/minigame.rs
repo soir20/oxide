@@ -28,6 +28,7 @@ use crate::{
             },
             fleet_commander::FleetCommanderGame,
             force_connection::ForceConnectionGame,
+            inventory::update_player_equipped_items,
             lock_enforcer::CharacterTableReadHandle,
             saber_duel::{process_saber_duel_packet, SaberDuelConfig, SaberDuelGame},
             saber_strike::start_saber_strike,
@@ -2266,6 +2267,7 @@ fn prepare_active_minigame_instance_for_player(
         ));
     };
     let mut character_write_handle = character.write();
+    let (_, instance_guid, chunk) = character_write_handle.index1();
     let CharacterType::Player(player) = &mut character_write_handle.stats.character_type else {
         return Err(ProcessPacketError::new(
             ProcessPacketErrorType::ConstraintViolated,
@@ -2291,6 +2293,22 @@ fn prepare_active_minigame_instance_for_player(
             minigame_status,
         )?);
     }
+
+    shared_minigame_data.update_gear(&mut player.inventory, game_server)?;
+    let other_players_nearby = ZoneInstance::other_players_nearby(
+        Some(member_guid),
+        chunk,
+        instance_guid,
+        characters_table_write_handle,
+    );
+    let (mut equipment_broadcasts, wield_type) = update_player_equipped_items(
+        member_guid,
+        &player.inventory,
+        other_players_nearby,
+        game_server,
+    );
+    broadcasts.append(&mut equipment_broadcasts);
+    character_write_handle.set_brandished_wield_type(wield_type);
 
     Ok(broadcasts)
 }
