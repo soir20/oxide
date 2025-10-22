@@ -1172,9 +1172,9 @@ impl SaberDuelGame {
         let primary_color = self.get_item(game_server, saber.color_item_guid)?;
 
         let mut items = BTreeMap::new();
-        items.insert(primary_hilt.slot, primary_hilt.guid);
-        items.insert(primary_shape.slot, primary_shape.guid);
-        items.insert(primary_color.slot, primary_color.guid);
+        items.insert(primary_hilt.slot.into(), primary_hilt.guid);
+        items.insert(primary_shape.slot.into(), primary_shape.guid);
+        items.insert(primary_color.slot.into(), primary_color.guid);
 
         Ok((
             vec![
@@ -1184,7 +1184,7 @@ impl SaberDuelGame {
                     tint_alias: primary_hilt.tint_alias.clone(),
                     tint: primary_hilt.tint,
                     composite_effect: primary_hilt.composite_effect,
-                    slot: primary_hilt.slot,
+                    slot: primary_hilt.slot.into(),
                 },
                 Attachment {
                     model_name: primary_shape.model_name.clone(),
@@ -1192,7 +1192,7 @@ impl SaberDuelGame {
                     tint_alias: primary_shape.tint_alias.clone(),
                     tint: primary_color.tint,
                     composite_effect: primary_shape.composite_effect,
-                    slot: primary_shape.slot,
+                    slot: primary_shape.slot.into(),
                 },
                 Attachment {
                     model_name: primary_color.model_name.clone(),
@@ -1200,7 +1200,7 @@ impl SaberDuelGame {
                     tint_alias: primary_color.tint_alias.clone(),
                     tint: primary_color.tint,
                     composite_effect: primary_color.composite_effect,
-                    slot: primary_color.slot,
+                    slot: primary_color.slot.into(),
                 },
             ],
             items,
