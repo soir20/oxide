@@ -57,7 +57,7 @@ struct SaberDuelAiForcePower {
 
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
-struct SaberDuelAiSaber {
+struct SaberDuelEquippableSaber {
     hilt_item_guid: u32,
     shape_item_guid: u32,
     color_item_guid: u32,
@@ -68,8 +68,8 @@ struct SaberDuelAiSaber {
 struct SaberDuelAi {
     name_id: u32,
     model_id: u32,
-    primary_saber: SaberDuelAiSaber,
-    secondary_saber: Option<SaberDuelAiSaber>,
+    primary_saber: SaberDuelEquippableSaber,
+    secondary_saber: Option<SaberDuelEquippableSaber>,
     entrance_animation_id: i32,
     entrance_sound_id: u32,
     bout_won_sound_id: u32,
@@ -395,6 +395,8 @@ pub struct SaberDuelConfig {
     score_per_margin_of_victory: i32,
     game_win_bonus_score: i32,
     no_bouts_lost_bonus_score: i32,
+    default_primary_saber: SaberDuelEquippableSaber,
+    default_secondary_saber: Option<SaberDuelEquippableSaber>,
     max_force_points: u8,
     force_power_selection_max_millis: u32,
     force_points_per_bout_won: u8,
@@ -614,7 +616,39 @@ impl SaberDuelGame {
             player_inventory.active_battle_class,
             game_server.items(),
         ) {
-            // TODO
+            player_inventory.equip_item_temporarily(
+                EquipmentSlot::PrimaryWeapon,
+                Some(self.config.default_primary_saber.hilt_item_guid),
+            );
+            player_inventory.equip_item_temporarily(
+                EquipmentSlot::PrimarySaberShape,
+                Some(self.config.default_primary_saber.shape_item_guid),
+            );
+            player_inventory.equip_item_temporarily(
+                EquipmentSlot::PrimarySaberColor,
+                Some(self.config.default_primary_saber.color_item_guid),
+            );
+            player_inventory.equip_item_temporarily(
+                EquipmentSlot::SecondaryWeapon,
+                self.config
+                    .default_secondary_saber
+                    .as_ref()
+                    .map(|saber| saber.hilt_item_guid),
+            );
+            player_inventory.equip_item_temporarily(
+                EquipmentSlot::SecondarySaberShape,
+                self.config
+                    .default_secondary_saber
+                    .as_ref()
+                    .map(|saber| saber.shape_item_guid),
+            );
+            player_inventory.equip_item_temporarily(
+                EquipmentSlot::SecondarySaberColor,
+                self.config
+                    .default_secondary_saber
+                    .as_ref()
+                    .map(|saber| saber.color_item_guid),
+            );
         }
         Ok(())
     }
@@ -1164,7 +1198,7 @@ impl SaberDuelGame {
 
     fn attachments_from_saber(
         &self,
-        saber: &SaberDuelAiSaber,
+        saber: &SaberDuelEquippableSaber,
         game_server: &GameServer,
     ) -> Result<(Vec<Attachment>, BTreeMap<EquipmentSlot, u32>), ProcessPacketError> {
         let primary_hilt = self.get_item(game_server, saber.hilt_item_guid)?;
