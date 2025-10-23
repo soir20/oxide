@@ -2416,6 +2416,25 @@ pub fn prepare_active_minigame_instance(
                     ));
                 }
                 characters.into_iter().for_each(|character| {
+                    let chunk = Character::chunk(
+                        character.stats.pos.x,
+                        character.stats.pos.z,
+                        character.stats.chunk_size,
+                    );
+                    let nearby_players = ZoneInstance::all_players_nearby(
+                        chunk,
+                        character.stats.instance_guid,
+                        characters_table_write_handle,
+                    );
+                    broadcasts.push(Broadcast::Multi(
+                        nearby_players,
+                        character.stats.add_packets(
+                            false,
+                            game_server.mounts(),
+                            game_server.items(),
+                            game_server.customizations(),
+                        ),
+                    ));
                     characters_table_write_handle.insert(character);
                 });
 
