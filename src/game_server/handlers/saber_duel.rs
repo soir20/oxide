@@ -1201,40 +1201,40 @@ impl SaberDuelGame {
         saber: &SaberDuelEquippableSaber,
         game_server: &GameServer,
     ) -> Result<(Vec<Attachment>, BTreeMap<EquipmentSlot, u32>), ProcessPacketError> {
-        let primary_hilt = self.get_item(game_server, saber.hilt_item_guid)?;
-        let primary_shape = self.get_item(game_server, saber.shape_item_guid)?;
-        let primary_color = self.get_item(game_server, saber.color_item_guid)?;
+        let hilt = self.get_item(game_server, saber.hilt_item_guid)?;
+        let shape = self.get_item(game_server, saber.shape_item_guid)?;
+        let color = self.get_item(game_server, saber.color_item_guid)?;
 
         let mut items = BTreeMap::new();
-        items.insert(primary_hilt.slot.into(), primary_hilt.guid);
-        items.insert(primary_shape.slot.into(), primary_shape.guid);
-        items.insert(primary_color.slot.into(), primary_color.guid);
+        items.insert(hilt.slot.into(), hilt.guid);
+        items.insert(shape.slot.into(), shape.guid);
+        items.insert(color.slot.into(), color.guid);
 
         Ok((
             vec![
                 Attachment {
-                    model_name: primary_hilt.model_name.clone(),
-                    texture_alias: primary_hilt.texture_alias.clone(),
-                    tint_alias: primary_hilt.tint_alias.clone(),
-                    tint: primary_hilt.tint,
-                    composite_effect: primary_hilt.composite_effect,
-                    slot: primary_hilt.slot.into(),
+                    model_name: hilt.model_name.clone(),
+                    texture_alias: hilt.texture_alias.clone(),
+                    tint_alias: hilt.tint_alias.clone(),
+                    tint: hilt.tint,
+                    composite_effect: hilt.composite_effect,
+                    slot: hilt.slot.into(),
                 },
                 Attachment {
-                    model_name: primary_shape.model_name.clone(),
-                    texture_alias: primary_shape.texture_alias.clone(),
-                    tint_alias: primary_shape.tint_alias.clone(),
-                    tint: primary_color.tint,
-                    composite_effect: primary_shape.composite_effect,
-                    slot: primary_shape.slot.into(),
+                    model_name: shape.model_name.clone(),
+                    texture_alias: shape.texture_alias.clone(),
+                    tint_alias: shape.tint_alias.clone(),
+                    tint: color.tint,
+                    composite_effect: shape.composite_effect,
+                    slot: shape.slot.into(),
                 },
                 Attachment {
-                    model_name: primary_color.model_name.clone(),
-                    texture_alias: primary_color.texture_alias.clone(),
-                    tint_alias: primary_color.tint_alias.clone(),
-                    tint: primary_color.tint,
-                    composite_effect: primary_color.composite_effect,
-                    slot: primary_color.slot.into(),
+                    model_name: color.model_name.clone(),
+                    texture_alias: color.texture_alias.clone(),
+                    tint_alias: color.tint_alias.clone(),
+                    tint: color.tint,
+                    composite_effect: color.composite_effect,
+                    slot: color.slot.into(),
                 },
             ],
             items,
