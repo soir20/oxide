@@ -19,13 +19,16 @@ use crate::{
     game_server::{
         handlers::{
             are_dates_consecutive, are_dates_in_same_week,
-            character::{Character, MinigameStatus, MinigameWinStatus, RemovalMode},
+            character::{
+                Character, MinigameStatus, MinigameWinStatus, PlayerInventory, RemovalMode,
+            },
             daily::{
                 DailyHolocronGame, DailySpinGame, DailySpinRewardBucket, DailyTriviaGame,
                 DailyTriviaQuestionConfig,
             },
             fleet_commander::FleetCommanderGame,
             force_connection::ForceConnectionGame,
+            inventory::update_player_equipped_items,
             lock_enforcer::CharacterTableReadHandle,
             saber_duel::{process_saber_duel_packet, SaberDuelConfig, SaberDuelGame},
             saber_strike::start_saber_strike,
@@ -391,6 +394,14 @@ impl SharedMinigameData {
     ) -> Result<Vec<Character>, ProcessPacketError> {
         self.data.characters(instance_guid, chunk_size, game_server)
     }
+
+    pub fn update_gear(
+        &self,
+        player_inventory: &mut PlayerInventory,
+        game_server: &GameServer,
+    ) -> Result<(), ProcessPacketError> {
+        self.data.update_gear(player_inventory, game_server)
+    }
 }
 
 impl
@@ -545,6 +556,19 @@ impl SharedMinigameTypeData {
                 game.characters(instance_guid, chunk_size, game_server)
             }
             _ => Ok(Vec::new()),
+        }
+    }
+
+    pub fn update_gear(
+        &self,
+        player_inventory: &mut PlayerInventory,
+        game_server: &GameServer,
+    ) -> Result<(), ProcessPacketError> {
+        match self {
+            SharedMinigameTypeData::SaberDuel { game } => {
+                game.update_gear(player_inventory, game_server)
+            }
+            _ => Ok(()),
         }
     }
 }
@@ -2116,6 +2140,7 @@ fn prepare_active_minigame_instance_for_player(
     message_id: Option<u32>,
     characters_table_write_handle: &mut CharacterTableWriteHandle<'_>,
     zones_table_write_handle: &mut ZoneTableWriteHandle<'_>,
+    shared_minigame_data: &SharedMinigameData,
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let stage_group_guid = stage_config.stage_group_guid;
@@ -2242,6 +2267,7 @@ fn prepare_active_minigame_instance_for_player(
         ));
     };
     let mut character_write_handle = character.write();
+    let (_, instance_guid, chunk) = character_write_handle.index1();
     let CharacterType::Player(player) = &mut character_write_handle.stats.character_type else {
         return Err(ProcessPacketError::new(
             ProcessPacketErrorType::ConstraintViolated,
@@ -2267,6 +2293,22 @@ fn prepare_active_minigame_instance_for_player(
             minigame_status,
         )?);
     }
+
+    shared_minigame_data.update_gear(&mut player.inventory, game_server)?;
+    let other_players_nearby = ZoneInstance::other_players_nearby(
+        Some(member_guid),
+        chunk,
+        instance_guid,
+        characters_table_write_handle,
+    );
+    let (mut equipment_broadcasts, wield_type) = update_player_equipped_items(
+        member_guid,
+        &player.inventory,
+        other_players_nearby,
+        game_server,
+    );
+    broadcasts.append(&mut equipment_broadcasts);
+    character_write_handle.set_brandished_wield_type(wield_type);
 
     Ok(broadcasts)
 }
@@ -2335,6 +2377,11 @@ pub fn prepare_active_minigame_instance(
     }
 
     let teleport_result: Result<Vec<Broadcast>, ProcessPacketError> = (|| {
+        let shared_minigame_data = minigame_data_table_write_handle
+            .get(matchmaking_group)
+            .expect("Existence of minigame data should have already been checked");
+        let mut minigame_data_write_handle = shared_minigame_data.write();
+
         let new_instance_guid = match stage_config.stage_config.zone_template_guid() {
             Some(zone_template_guid) => {
                 let instance_guid = game_server.get_or_create_instance(
@@ -2348,11 +2395,6 @@ pub fn prepare_active_minigame_instance(
                     "Zone instance {instance_guid} should have been created or already exist but is missing"
                 ));
                 let zone_read_handle = instance.read();
-
-                let shared_minigame_data = minigame_data_table_write_handle
-                    .get(matchmaking_group)
-                    .expect("Existence of minigame data should have already been checked");
-                let mut minigame_data_write_handle = shared_minigame_data.write();
 
                 let characters = minigame_data_write_handle.characters(
                     instance_guid,
@@ -2374,6 +2416,25 @@ pub fn prepare_active_minigame_instance(
                     ));
                 }
                 characters.into_iter().for_each(|character| {
+                    let chunk = Character::chunk(
+                        character.stats.pos.x,
+                        character.stats.pos.z,
+                        character.stats.chunk_size,
+                    );
+                    let nearby_players = ZoneInstance::all_players_nearby(
+                        chunk,
+                        character.stats.instance_guid,
+                        characters_table_write_handle,
+                    );
+                    broadcasts.push(Broadcast::Multi(
+                        nearby_players,
+                        character.stats.add_packets(
+                            false,
+                            game_server.mounts(),
+                            game_server.items(),
+                            game_server.customizations(),
+                        ),
+                    ));
                     characters_table_write_handle.insert(character);
                 });
 
@@ -2393,6 +2454,7 @@ pub fn prepare_active_minigame_instance(
                 message_id,
                 characters_table_write_handle,
                 zones_table_write_handle,
+                &minigame_data_write_handle,
                 game_server,
             )?);
         }
@@ -3639,13 +3701,15 @@ fn leave_active_minigame_single_player_if_any(
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let status_update_result = characters_table_write_handle
-        .update_value_indices(player_guid(sender), |possible_character_write_handle, _| {
+        .update_value_indices(player_guid(sender), |possible_character_write_handle, characters_table_handle| {
             let Some(character_write_handle) = possible_character_write_handle else {
                 return Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
                     format!("Tried to end unknown player {sender}'s active minigame"),
                 ));
             };
+
+            let (_, instance_guid, chunk) = character_write_handle.index1();
 
             let CharacterType::Player(player) = &mut character_write_handle.stats.character_type
             else {
@@ -3833,9 +3897,21 @@ fn leave_active_minigame_single_player_if_any(
                         .stage_group_instance(minigame_status.group.stage_group_guid, player)?,
                 })],
             ));
+
+            let other_players_nearby = ZoneInstance::other_players_nearby(
+                Some(sender),
+                chunk,
+                instance_guid,
+                characters_table_handle,
+            );
+            player.inventory.clear_temporary_items();
+            let (mut equipment_broadcasts, wield_type) = update_player_equipped_items(sender, &player.inventory, other_players_nearby, game_server);
+            broadcasts.append(&mut equipment_broadcasts);
+
             broadcasts.push(last_broadcast);
 
             player.minigame_status = None;
+            character_write_handle.set_brandished_wield_type(wield_type);
 
             Ok(Some((broadcasts, characters_to_remove, removal_mode)))
         })?;
