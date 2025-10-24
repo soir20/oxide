@@ -29,11 +29,8 @@ use super::{
 
 const fn tickable_categories(
     synchronization: TickableNpcSynchronization,
-) -> [CharacterCategory; 2] {
-    [
-        CharacterCategory::NpcTickable(synchronization),
-        CharacterCategory::NpcAutoInteractableTickable(synchronization),
-    ]
+) -> [CharacterCategory; 1] {
+    [CharacterCategory::NpcTickable(synchronization)]
 }
 
 pub fn enqueue_tickable_chunks(

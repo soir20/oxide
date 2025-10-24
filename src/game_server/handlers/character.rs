@@ -301,7 +301,7 @@ impl BaseNpc {
                 unknown54: 0,
                 rail_unknown1: 0.0,
                 rail_unknown2: 0.0,
-                auto_interact_radius: 0.0,
+                auto_interact_radius: character.auto_interact_radius,
                 head_customization_override: "".to_string(),
                 hair_customization_override: "".to_string(),
                 body_customization_override: "".to_string(),
@@ -1733,8 +1733,6 @@ pub enum CharacterType {
 pub enum CharacterCategory {
     PlayerReady,
     PlayerUnready,
-    NpcAutoInteractable,
-    NpcAutoInteractableTickable(TickableNpcSynchronization),
     NpcTickable(TickableNpcSynchronization),
     NpcBasic,
 }
@@ -2070,13 +2068,9 @@ impl
                     true => CharacterCategory::PlayerReady,
                     false => CharacterCategory::PlayerUnready,
                 },
-                _ => match (self.stats.auto_interact_radius > 0.0, self.tickable()) {
-                    (true, true) => {
-                        CharacterCategory::NpcAutoInteractableTickable(tickable_synchronization)
-                    }
-                    (true, false) => CharacterCategory::NpcAutoInteractable,
-                    (false, true) => CharacterCategory::NpcTickable(tickable_synchronization),
-                    (false, false) => CharacterCategory::NpcBasic,
+                _ => match self.tickable() {
+                    true => CharacterCategory::NpcTickable(tickable_synchronization),
+                    false => CharacterCategory::NpcBasic,
                 },
             },
             self.stats.instance_guid,
