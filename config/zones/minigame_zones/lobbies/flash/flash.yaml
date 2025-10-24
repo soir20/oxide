@@ -1,4 +1,4 @@
-non_world_singleplayer_minigame:
+singleplayer_flash_lobby:
   guid: 200
   max_players: 1
   template_name: 9
@@ -24,7 +24,7 @@ non_world_singleplayer_minigame:
   gravity_multiplier: 1
   seconds_per_day: 10800
   update_previous_location_on_leave: false
-non_world_two_player_minigame:
+multiplayer_flash_lobby:
   guid: 201
   max_players: 2
   template_name: 9
