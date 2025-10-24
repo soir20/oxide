@@ -913,13 +913,20 @@ pub fn load_zones(config_dir: &Path) -> Result<LoadedZones, ConfigError> {
                 let parsed_yaml: BTreeMap<String, Value> = serde_yaml::from_reader(file)?;
 
                 for (zone_name, fragment) in parsed_yaml {
-                    all_fragments.push((zone_name, fragment));
+                    if let Value::Mapping(map) = fragment {
+                        all_fragments.push((zone_name, map));
+                    } else {
+                        return Err(ConfigError::ConstraintViolated(format!(
+                            "Zone fragment in (File path: {:?}) for (Zone: {:?}) must be a mapping",
+                            file_path, zone_name
+                        )));
+                    }
                 }
             }
         }
     }
 
-    let mut zone_fragments: BTreeMap<String, Vec<Value>> = BTreeMap::new();
+    let mut zone_fragments: BTreeMap<String, Vec<Mapping>> = BTreeMap::new();
     for (zone_name, fragment) in all_fragments {
         zone_fragments.entry(zone_name).or_default().push(fragment);
     }
@@ -963,70 +970,43 @@ pub fn load_zones(config_dir: &Path) -> Result<LoadedZones, ConfigError> {
     Ok((templates, zones, points_of_interest))
 }
 
-fn merge_zone_fragments(zone_name: &str, fragments: Vec<Value>) -> Result<Value, ConfigError> {
-    let mut merged = Value::Mapping(Default::default());
+fn merge_zone_fragments(zone_name: &str, fragments: Vec<Mapping>) -> Result<Value, ConfigError> {
+    let mut merged = Mapping::new();
 
     for fragment in fragments {
         merged = merge_yaml_values(zone_name, merged, fragment)?;
     }
 
-    Ok(merged)
+    Ok(Value::Mapping(merged))
 }
 
 fn merge_yaml_values(
     zone_name: &str,
-    accumulated_value: Value,
-    new_fragment: Value,
-) -> Result<Value, ConfigError> {
-    fn has_duplicate_key<'a>(
-        existing_map: &'a Mapping,
-        incoming_map: &'a Mapping,
-    ) -> Option<&'a Value> {
-        incoming_map
-            .keys()
-            .find(|key| existing_map.contains_key(*key))
-    }
-
-    match (accumulated_value, new_fragment) {
-        (Value::Mapping(mut accumulated_map), Value::Mapping(incoming_map)) => {
-            for (key, incoming_value) in incoming_map {
-                match accumulated_map.get(&key) {
-                    Some(existing_value) => match (existing_value, &incoming_value) {
-                        (Value::Mapping(existing_inner), Value::Mapping(incoming_inner)) => {
-                            if let Some(duplicate_key) =
-                                has_duplicate_key(existing_inner, incoming_inner)
-                            {
-                                return Err(ConfigError::ConstraintViolated(format!(
-                                    "Duplicate (Key: {:?}) in (Zone: {:?})",
-                                    duplicate_key, zone_name,
-                                )));
-                            }
-
-                            let merged = merge_yaml_values(
-                                zone_name,
-                                existing_value.clone(),
-                                incoming_value,
-                            )?;
-                            accumulated_map.insert(key, merged);
-                        }
-                        _ => {
-                            accumulated_map.insert(key, incoming_value);
-                        }
-                    },
-                    None => {
-                        accumulated_map.insert(key, incoming_value);
-                    }
+    mut accumulated_map: Mapping,
+    incoming_map: Mapping,
+) -> Result<Mapping, ConfigError> {
+    for (key, incoming_value) in incoming_map {
+        match accumulated_map.get(&key) {
+            Some(existing_value) => match (existing_value, &incoming_value) {
+                (Value::Mapping(existing_map), Value::Mapping(incoming_map)) => {
+                    let merged =
+                        merge_yaml_values(zone_name, existing_map.clone(), incoming_map.clone())?;
+                    accumulated_map.insert(key.clone(), Value::Mapping(merged));
                 }
+                _ => {
+                    return Err(ConfigError::ConstraintViolated(format!(
+                        "Merge conflict at (Key: {:?}) in (Zone: {:?}) non-mapping values cannot be combined",
+                        key, zone_name
+                    )));
+                }
+            },
+            None => {
+                accumulated_map.insert(key.clone(), incoming_value.clone());
             }
-
-            Ok(Value::Mapping(accumulated_map))
         }
-
-        _ => Err(ConfigError::ConstraintViolated(format!(
-            "Cannot merge non-mapping YAML values in zone '{}'. All fragments must be mappings.",
-            zone_name
-        ))),
     }
+
+    Ok(accumulated_map)
 }
 
 pub fn enter_zone(
