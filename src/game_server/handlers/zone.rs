@@ -1,13 +1,15 @@
 use std::{
     collections::{BTreeMap, BTreeSet, HashMap},
+    fs,
     fs::File,
     iter,
-    path::Path,
+    path::{Path, PathBuf},
 };
 
 use enum_iterator::all;
 use parking_lot::RwLockReadGuard;
 use serde::Deserialize;
+use serde_yaml::{Value, Mapping};
 
 use crate::{
     game_server::{
@@ -72,7 +74,7 @@ pub struct PointOfInterestConfig {
 
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
-struct ZoneConfig {
+pub struct ZoneConfig {
     guid: u8,
     max_players: u32,
     template_name: u32,
@@ -91,9 +93,12 @@ struct ZoneConfig {
     speed: f32,
     jump_height_multiplier: f32,
     gravity_multiplier: f32,
-    doors: Vec<DoorConfig>,
-    transports: Vec<TransportConfig>,
-    ambient_npcs: Vec<AmbientNpcConfig>,
+    #[serde(default)]
+    doors: BTreeMap<String, DoorConfig>,
+    #[serde(default)]
+    transports: BTreeMap<String, TransportConfig>,
+    #[serde(default)]
+    ambient_npcs: BTreeMap<String, AmbientNpcConfig>,
     seconds_per_day: u32,
     #[serde(default = "default_true")]
     update_previous_location_on_leave: bool,
@@ -163,18 +168,18 @@ impl From<ZoneConfig> for ZoneTemplate {
         let mut index = 0;
 
         {
-            for ambient_npc in value.ambient_npcs {
-                characters.push(NpcTemplate::from_config(ambient_npc, index));
+            for ambient_npc in value.ambient_npcs.values() {
+                characters.push(NpcTemplate::from_config(ambient_npc.clone(), index));
                 index += 1;
             }
 
-            for door in value.doors {
-                characters.push(NpcTemplate::from_config(door, index));
+            for door in value.doors.values() {
+                characters.push(NpcTemplate::from_config(door.clone(), index));
                 index += 1;
             }
 
-            for transport in value.transports {
-                characters.push(NpcTemplate::from_config(transport, index));
+            for transport in value.transports.values() {
+                characters.push(NpcTemplate::from_config(transport.clone(), index));
                 index += 1;
             }
         }
@@ -990,44 +995,138 @@ type LoadedZones = (
     PointOfInterestMap,
 );
 pub fn load_zones(config_dir: &Path) -> Result<LoadedZones, ConfigError> {
-    let mut file = File::open(config_dir.join("zones.yaml"))?;
-    let zone_configs: Vec<ZoneConfig> = serde_yaml::from_reader(&mut file)?;
+    fn find_zone_folders(root: &Path) -> Result<Vec<PathBuf>, ConfigError> {
+        let mut folders_with_yaml = Vec::new();
 
-    let mut templates = BTreeMap::new();
-    let zones = GuidTable::new();
-    let mut points_of_interest = BTreeMap::new();
-    {
-        for zone_config in zone_configs {
-            let iter = zone_config
-                .other_points_of_interest
-                .iter()
-                .chain(iter::once(&zone_config.default_point_of_interest));
-            for point_of_interest in iter {
-                if points_of_interest
-                    .insert(
-                        point_of_interest.guid,
-                        (zone_config.guid, point_of_interest.clone()),
-                    )
-                    .is_some()
-                {
-                    panic!("Two points of interest have ID {}", point_of_interest.guid);
+        for entry in fs::read_dir(root)? {
+            let entry_path = entry?.path();
+            if entry_path.is_dir() {
+                let contains_yaml = fs::read_dir(&entry_path)?.any(|file_entry| {
+                    file_entry.as_ref().ok().map_or(false, |file| {
+                        file.path().extension().map_or(false, |ext| ext == "yaml")
+                    })
+                });
+
+                if contains_yaml {
+                    folders_with_yaml.push(entry_path.clone());
                 }
+
+                folders_with_yaml.extend(find_zone_folders(&entry_path)?);
+            }
+        }
+
+        Ok(folders_with_yaml)
+    }
+
+    let zones_dir = config_dir.join("zones");
+    let zone_folders = find_zone_folders(&zones_dir)?;
+    let mut zone_fragments: BTreeMap<String, Vec<Value>> = BTreeMap::new();
+
+    for zone_path in zone_folders {
+        for entry in fs::read_dir(&zone_path)? {
+            let file_path = entry?.path();
+            let is_yaml = file_path.extension().map_or(false, |ext| ext == "yaml");
+            if !is_yaml {
+                continue;
             }
 
-            let template: ZoneTemplate = zone_config.into();
-            let template_guid = Guid::guid(&template);
+            let file = File::open(&file_path)?;
+            let parsed_yaml: BTreeMap<String, Value> = serde_yaml::from_reader(file)?;
 
-            if template.chunk_size == 0 {
-                panic!("Zone template {template_guid} cannot have a chunk size of 0");
-            }
-
-            if templates.insert(template_guid, template).is_some() {
-                panic!("Two zone templates have ID {template_guid}");
+            for (zone_name, fragment) in parsed_yaml {
+                zone_fragments.entry(zone_name).or_default().push(fragment);
             }
         }
     }
 
+    let mut templates = BTreeMap::new();
+    let zones = GuidTable::new();
+    let mut points_of_interest = BTreeMap::new();
+
+    for (zone_name, fragments) in zone_fragments {
+        let merged_value = merge_zone_fragments(&zone_name, fragments)?;
+        let zone_config: ZoneConfig = serde_yaml::from_value(merged_value)?;
+
+        for point_of_interest in zone_config
+            .other_points_of_interest
+            .iter()
+            .chain(iter::once(&zone_config.default_point_of_interest))
+        {
+            if points_of_interest
+                .insert(
+                    point_of_interest.guid,
+                    (zone_config.guid, point_of_interest.clone()),
+                )
+                .is_some()
+            {
+                panic!("Two points of interest have ID {}", point_of_interest.guid);
+            }
+        }
+
+        let template: ZoneTemplate = zone_config.into();
+        let template_guid = Guid::guid(&template);
+
+        if template.chunk_size == 0 {
+            panic!("Zone template {template_guid} cannot have a chunk size of 0");
+        }
+
+        if templates.insert(template_guid, template).is_some() {
+            panic!("Two zone templates have ID {template_guid}");
+        }
+    }
+
     Ok((templates, zones, points_of_interest))
+}
+
+fn merge_zone_fragments(zone_name: &str, fragments: Vec<Value>) -> Result<Value, ConfigError> {
+    let mut merged = Value::Mapping(Default::default());
+
+    for fragment in fragments {
+        merged = merge_yaml_values(zone_name, merged, fragment)?;
+    }
+
+    Ok(merged)
+}
+
+fn merge_yaml_values(zone_name: &str, accumulated_value: Value, new_fragment: Value) -> Result<Value, ConfigError> {
+    fn has_duplicate_key<'a>(existing_map: &'a Mapping, incoming_map: &'a Mapping) -> Option<&'a Value> {
+        incoming_map.keys().find(|key| existing_map.contains_key(*key))
+    }
+
+    match (accumulated_value, new_fragment) {
+        (Value::Mapping(mut accumulated_map), Value::Mapping(incoming_map)) => {
+            for (key, incoming_value) in incoming_map {
+                match accumulated_map.get(&key) {
+                    Some(existing_value) => match (existing_value, &incoming_value) {
+                        (Value::Mapping(existing_inner), Value::Mapping(incoming_inner)) => {
+                            if let Some(duplicate_key) = has_duplicate_key(existing_inner, incoming_inner) {
+                                return Err(ConfigError::ConstraintViolated(format!(
+                                    "Duplicate (Key: {:?}) in (Zone: {:?})",
+                                    duplicate_key, zone_name,
+                                )));
+                            }
+
+                            let merged = merge_yaml_values(zone_name, existing_value.clone(), incoming_value)?;
+                            accumulated_map.insert(key, merged);
+                        }
+                        _ => {
+                            accumulated_map.insert(key, incoming_value);
+                        }
+                    },
+                    None => {
+                        accumulated_map.insert(key, incoming_value);
+                    }
+                }
+            }
+
+            Ok(Value::Mapping(accumulated_map))
+        }
+
+        _ => Err(ConfigError::ConstraintViolated(format!(
+            "Invalid structure in zone '{}'",
+            zone_name
+        ))),
+    }
 }
 
 pub fn enter_zone(

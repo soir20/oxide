@@ -1,0 +1,330 @@
+jedi_temple:
+  doors:
+    veranda_to_archives:
+      pos:
+        x: 898.7137
+        y: 172.44917
+        z: 1527.221
+        w: 1
+      terrain_object_id: 1278971264
+      destination_pos:
+        x: 1757.083
+        y: 10
+        z: 1694
+        w: 1
+      destination_rot:
+          x: -1.5
+          y: 0
+          z: 0
+          w: 0
+      interact_radius: 7
+    archives_to_veranda:
+        pos:
+          x: 1760.083
+          y: 10
+          z: 1694
+          w: 1
+        terrain_object_id: 1278971880
+        destination_pos:
+          x: 898.7137
+          y: 172.44917
+          z: 1529.221
+          w: 1
+        destination_rot:
+          x: 0
+          y: 0
+          z: 1.5
+          w: 0
+        interact_radius: 7
+    veranda_to_workshop:
+       pos:
+         x: 898.6971
+         y: 172.44917
+         z: 1566.624
+         w: 1
+       terrain_object_id: 1278971325
+       destination_pos:
+         x: -356.4902
+         y: 10
+         z: 1780.211
+         w: 1
+       destination_rot:
+         x: 1.5
+         y: 0
+         z: 0
+         w: 0
+       interact_radius: 7
+    workshop_to_veranda:
+       pos:
+         x: -359.4902
+         y: 10
+         z: 1780.211
+         w: 1
+       terrain_object_id: 1278971932
+       destination_pos:
+         x: 898.6971
+         y: 172.44917
+         z: 1564.624
+         w: 1
+       destination_rot:
+         x: 0
+         y: 0
+         z: -1.5
+         w: 0
+       interact_radius: 7
+    veranda_to_main_hall_left:
+       pos:
+         x: 922.5864
+         y: 178.51657
+         z: 1530.958
+         w: 1
+       terrain_object_id: 1278971263
+       destination_pos:
+         x: 1256.403
+         y: 10
+         z: 291.7501
+         w: 1
+       destination_rot:
+         x: 0
+         y: 0
+         z: -1
+         w: 0
+       interact_radius: 7
+    main_hall_to_veranda_left:
+       pos:
+         x: 1256.403
+         y: 10
+         z: 294.7501
+         w: 1
+       terrain_object_id: 1278972312
+       destination_pos:
+         x: 919.5864
+         y: 178.51657
+         z: 1530.958
+         w: 1
+       destination_rot:
+         x: -1.5
+         y: 0
+         z: 0
+         w: 0
+       interact_radius: 7
+    veranda_to_main_hall_right:
+       pos:
+         x: 922.5864
+         y: 178.51657
+         z: 1562.8
+         w: 1
+       terrain_object_id: 1278971324
+       destination_pos:
+         x: 1305.649
+         y: 10
+         z: 291.7528
+         w: 1
+       destination_rot:
+         x: 0
+         y: 0
+         z: -1
+         w: 0
+       interact_radius: 7
+    main_hall_to_veranda_right:
+       pos:
+         x: 1305.649
+         y: 10
+         z: 294.7528
+         w: 1
+       terrain_object_id: 1278972383
+       destination_pos:
+         x: 919.5864
+         y: 178.51657
+         z: 1562.8
+         w: 1
+       destination_rot:
+         x: -1.5
+         y: 0
+         z: 0
+         w: 0
+       interact_radius: 7
+    main_hall_to_training_room:
+       pos:
+         x: 1242.232
+         y: 10
+         z: 275.1337
+         w: 1
+       terrain_object_id: 1278972313
+       destination_pos:
+         x: 160.4435
+         y: 6.8242483
+         z: 415.3869
+         w: 1
+       destination_rot:
+         x: 0
+         y: 0
+         z: -1.5
+         w: 0
+       interact_radius: 7
+    training_room_to_main_hall:
+       pos:
+         x: 160.4435
+         y: 6.8242483
+         z: 418.3869
+         w: 1
+       terrain_object_id: 1265074699
+       destination_pos:
+         x: 1245.232
+         y: 10
+         z: 275.1337
+         w: 1
+       destination_rot:
+         x: 1.5
+         y: 0
+         z: 0
+         w: 0
+       interact_radius: 7
+    main_hall_to_hangar:
+       pos:
+         x: 1242.241
+         y: 10
+         z: 253.2976
+         w: 1
+       terrain_object_id: 1278972223
+       destination_pos:
+         x: 130.3168
+         y: 10
+         z: -181.1351
+         w: 1
+       destination_rot:
+         x: -1.5
+         y: 0
+         z: 0
+         w: 0
+       interact_radius: 7
+    hangar_to_main_hall:
+       pos:
+         x: 133.3168
+         y: 10
+         z: -181.1351
+         w: 1
+       terrain_object_id: 1278977468
+       destination_pos:
+         x: 1245.241
+         y: 10
+         z: 253.2976
+         w: 1
+       destination_rot:
+         x: 1.5
+         y: 0
+         z: 0
+         w: 0
+       interact_radius: 7
+    main_hall_to_lounge:
+       pos:
+         x: 1319.713
+         y: 10
+         z: 275.1354
+         w: 1
+       terrain_object_id: 1278972382
+       destination_pos:
+         x: -133.2943
+         y: 10
+         z: 1270.001
+         w: 1
+       destination_rot:
+         x: 1.5
+         y: 0
+         z: 0
+         w: 0
+       interact_radius: 7
+    lounge_to_main_hall:
+       pos:
+         x: -136.2943
+         y: 10
+         z: 1270.001
+         w: 1
+       terrain_object_id: 1278976521
+       destination_pos:
+         x: 1316.713
+         y: 10
+         z: 275.1354
+         w: 1
+       destination_rot:
+         x: -1.5
+         y: 0
+         z: 0
+         w: 0
+       interact_radius: 7
+    main_hall_to_war_room:
+       pos:
+         x: 1319.77
+         y: 10
+         z: 253.2967
+         w: 1
+       terrain_object_id: 1278972261
+       destination_pos:
+         x: 693.7585
+         y: 10
+         z: -2.675201
+         w: 1
+       destination_rot:
+         x: 1.5
+         y: 0
+         z: 0
+         w: 0
+       interact_radius: 7
+    war_room_to_main_hall:
+       pos:
+         x: 690.7585
+         y: 10
+         z: -2.675201
+         w: 1
+       terrain_object_id: 1278976738
+       destination_pos:
+         x: 1316.77
+         y: 10
+         z: 253.2967
+         w: 1
+       destination_rot:
+         x: -1.5
+         y: 0
+         z: 0
+         w: 0
+       interact_radius: 7
+    veranda_to_construction_chamber:
+       pos:
+         x: 922.5898
+         y: 178.51657
+         z: 1546.969
+         w: 1
+       terrain_object_id: 1359076121
+       destination_pos:
+         x: 1487.53
+         y: 70
+         z: 890.248076
+         w: 1
+       destination_rot:
+         x: 0
+         y: 0
+         z: 1.5
+         w: 0
+       destination_zone: !Any
+         template_guid: 25
+       interact_radius: 7
+    lounge_to_club:
+       pos:
+         x: -106.5555
+         y: 10
+         z: 1247.071
+         w: 1
+       terrain_object_id: 1359076115
+       destination_pos:
+         x: 764.51
+         y: 10
+         z: 683.99
+         w: 1
+       destination_rot:
+         x: 1.5
+         y: 0
+         z: 0
+         w: 0
+       destination_zone: !Any
+         template_guid: 25
+       interact_radius: 7

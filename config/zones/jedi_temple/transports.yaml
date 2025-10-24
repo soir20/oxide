@@ -1,0 +1,20 @@
+jedi_temple:
+  transports:
+    breaker:
+      model_id: 1207
+      name_id: 19237
+      pos:
+        x: 72.97756
+        y: 10.049025
+        z: -181.1351
+        w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 53
+      show_name: true
+      show_icon: true
+      large_icon: false
+      show_hover_description: false

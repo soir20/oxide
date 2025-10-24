@@ -1,0 +1,25 @@
+jedi_temple:
+  guid: 24
+  max_players: 4294967295
+  template_name: 52297
+  asset_name: JediTemple
+  hide_ui: false
+  is_combat: false
+  chunk_size: 70
+  default_point_of_interest:
+    guid: 24
+    pos:
+      x: 101.9832
+      y: 10
+      z: -181.1351
+      w: 1
+    rot:
+      x: -1.5
+      y: 0
+      z: 0
+      w: 0
+  speed: 8
+  jump_height_multiplier: 1
+  gravity_multiplier: 1
+  seconds_per_day: 10800
+  

@@ -1,0 +1,45 @@
+mustafar:
+  guid: 100
+  max_players: 4294967295
+  template_name: 1987
+  template_icon: 4209
+  asset_name: Housing_EmptyLot_Mustafar
+  hide_ui: false
+  is_combat: false
+  default_point_of_interest:
+    guid: 100
+    pos:
+      x: 515
+      y: 0.03999996
+      z: 481.5
+      w: 1
+    rot:
+      x: -1
+      y: 0
+      z: 0
+      w: 0
+  speed: 8
+  jump_height_multiplier: 1
+  gravity_multiplier: 1
+  seconds_per_day: 10800
+  update_previous_location_on_leave: false
+  transports:
+    fighter:
+      name_id: 32914
+      terrain_object_id: 1297277377
+      pos:
+        x: 520.9936
+        y: 1.2
+        z: 482.5715
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      name_offset_x: -0.5
+      cursor: 0
+      show_name: false
+      show_icon: true
+      large_icon: false
+      show_hover_description: true

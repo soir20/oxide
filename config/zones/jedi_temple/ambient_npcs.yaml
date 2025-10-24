@@ -1,0 +1,532 @@
+jedi_temple:
+  ambient_npcs:
+    veranda_fountain:
+      terrain_object_id: 1278971305
+      model_id: 907
+      name_id: 16957
+      pos:
+        x: 897.7858
+        y: 172.44917
+        z: 1547.0056
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: false
+      use_terrain_model: false
+      show_name: false
+      enable_gravity: false
+      interact_radius: 3.3
+      move_to_interact_offset: 3.2
+      one_shot_action_on_interact:
+        one_shot_action_composite_effect_id: 1959
+        player_one_shot_animation_id: 3014
+        duration_millis: 5000
+    war_room_holotable_holograms:
+      name_id: 32914
+      model_id: 44
+      pos:
+        x: 593.89545
+        y: 10
+        z: 672.5175
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      show_name: false
+      tickable_procedures:
+        arc_troopers_hologram:
+          steps:
+            - model_id: 354
+              duration_millis: 10000
+          next_possible_procedures:
+            - procedure: invisible
+        battle_droid_hologram:
+          steps:
+            - model_id: 352
+              duration_millis: 10000
+          next_possible_procedures:
+            - procedure: invisible
+        super_battle_droid_hologram:
+          steps:
+            - model_id: 351
+              duration_millis: 10000
+          next_possible_procedures:
+            - procedure: invisible
+        droideka_hologram:
+          steps:
+            - animation_id: 9002
+              model_id: 350
+              duration_millis: 10000
+          next_possible_procedures:
+            - procedure: invisible
+        invisible:
+          steps:
+            - model_id: 44
+              duration_millis: 5000
+          next_possible_procedures:
+            - procedure: arc_troopers_hologram
+            - procedure: battle_droid_hologram
+            - procedure: super_battle_droid_hologram
+            - procedure: droideka_hologram
+    hangar_purple_jedi_starfighter:
+      model_id: 723
+      pos:
+        x: 119.7354
+        y: 24.68835
+        z: -159.5449
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      is_spawned: false
+      enable_gravity: false
+      tickable_procedures:
+        spawn:
+          weight: 36
+          steps:
+            - spawned_state: OnFirstStepTick
+              rail_id: 37
+              composite_effect_id: 1021
+              duration_millis: 12500
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 1259
+        empty:
+          weight: 1259
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 36
+            - procedure: empty
+              weight: 1259
+    hangar_green_jedi_starfighter:
+      model_id: 721
+      pos:
+        x: 103.1059
+        y: 24.36797
+        z: -206.494
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      is_spawned: false
+      enable_gravity: false
+      tickable_procedures:
+        spawn:
+          weight: 36
+          steps:
+            - spawned_state: OnFirstStepTick
+              rail_id: 36
+              composite_effect_id: 1021
+              duration_millis: 11500
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 1259
+        empty:
+          weight: 1259
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 36
+            - procedure: empty
+              weight: 1259
+    training_room_main_platform_lift:
+      model_id: 1438
+      physics: Disabled
+      pos:
+        x: 148.8
+        y: -3.6210175
+        z: 379.9795
+        w: 1
+      rot:
+        x: 1.5708
+        y: 0
+        z: 0
+        w: 0
+      tickable_procedures:
+        lift:
+          steps:
+            - speed: 2
+              new_pos_offset_y: 10
+              duration_millis: 12000
+            - speed: 2
+              new_pos_offset_y: -10
+              duration_millis: 12000
+    training_room_dueling_platform_lift:
+      model_id: 1438
+      physics: Disabled
+      pos:
+        x: 130.9
+        y: -3.6210175
+        z: 379.9795
+        w: 1
+      rot:
+        x: -1.5708
+        y: 0
+        z: 0
+        w: 0
+      tickable_procedures:
+        lift:
+          steps:
+            - speed: 2
+              new_pos_offset_y: 12
+              duration_millis: 12000
+            - speed: 2
+              new_pos_offset_y: -12
+              duration_millis: 12000
+    joker:
+      key: joker
+      model_id: 1580
+      name_id: 3967
+      show_name: false
+      pos:
+        x: 128.93307
+        y: 10.146215
+        z: -188.32434
+        w: 1
+      rot:
+        x: 0.64425725
+        y: 0
+        z: 0.7648088
+        w: 0
+      cursor: 53
+      enable_interact_popup: false
+      procedure_on_interact:
+        - procedure: naboo
+        - procedure: dooku
+        - procedure: yoda_music
+        - procedure: manufacturing_droid
+        - procedure: windu
+        - procedure: r2
+        - procedure: no_more
+        - procedure: yoda_birthday
+        - procedure: twilek_coin_flip
+        - procedure: medics_jedi
+        - procedure: commander_trouble
+        - procedure: yoda_short
+      tickable_procedures:
+        naboo:
+          is_interruptible: false
+          steps:
+            - chat_message_id: 17300
+              sound_id: 3580
+              duration_millis: 2000
+            - duration_millis: 2000
+            - chat_message_id: 17302
+              sound_id: 3582
+              duration_millis: 1000
+            - duration_millis: 1000
+            - chat_message_id: 17304
+              sound_id: 3584
+              one_shot_animation_id: 3006
+              duration_millis: 7000
+            - duration_millis: 5000
+        dooku:
+          is_interruptible: false
+          steps:
+            - chat_message_id: 17300
+              sound_id: 3580
+              duration_millis: 2000
+            - duration_millis: 2000
+            - chat_message_id: 17305
+              sound_id: 3585
+              duration_millis: 1000
+            - duration_millis: 1000
+            - chat_message_id: 17307
+              sound_id: 3587
+              one_shot_animation_id: 3006
+              duration_millis: 6000
+            - duration_millis: 6000
+        yoda_music:
+          is_interruptible: false
+          steps:
+            - chat_message_id: 17309
+              sound_id: 3589
+              duration_millis: 3000
+            - duration_millis: 3000
+            - chat_message_id: 17311
+              sound_id: 3591
+              one_shot_animation_id: 3006
+              duration_millis: 7000
+            - duration_millis: 5000
+        manufacturing_droid:
+          is_interruptible: false
+          steps:
+            - chat_message_id: 17313
+              sound_id: 3593
+              duration_millis: 5000
+            - duration_millis: 5000
+            - chat_message_id: 17315
+              sound_id: 3595
+              one_shot_animation_id: 3006
+              duration_millis: 10000
+            - duration_millis: 5000
+        windu:
+          is_interruptible: false
+          steps:
+            - chat_message_id: 17300
+              sound_id: 3580
+              duration_millis: 2000
+            - duration_millis: 2000
+            - chat_message_id: 17317
+              sound_id: 3597
+              duration_millis: 1000
+            - duration_millis: 1000
+            - chat_message_id: 17319
+              sound_id: 3599
+              one_shot_animation_id: 3006
+              duration_millis: 7000
+            - duration_millis: 7000
+        r2:
+          is_interruptible: false
+          steps:
+            - chat_message_id: 17320
+              sound_id: 3600
+              duration_millis: 1000
+            - duration_millis: 1000
+            - chat_message_id: 17322
+              sound_id: 3602
+              one_shot_animation_id: 3006
+              duration_millis: 6000
+            - duration_millis: 7000
+        no_more:
+          is_interruptible: false
+          steps:
+            - duration_millis: 5000
+            - chat_message_id: 17325
+              sound_id: 3605
+              duration_millis: 2000
+            - duration_millis: 9000
+        yoda_birthday:
+          is_interruptible: false
+          steps:
+            - chat_message_id: 17327
+              sound_id: 3607
+              duration_millis: 5000
+            - duration_millis: 3000
+            - chat_message_id: 17329
+              sound_id: 3609
+              one_shot_animation_id: 3006
+              duration_millis: 8000
+        twilek_coin_flip:
+          is_interruptible: false
+          steps:
+            - chat_message_id: 17330
+              sound_id: 3610
+              duration_millis: 4000
+            - duration_millis: 4000
+            - chat_message_id: 17332
+              sound_id: 3612
+              one_shot_animation_id: 3006
+              duration_millis: 6000
+            - duration_millis: 6000
+        medics_jedi:
+          is_interruptible: false
+          steps:
+            - chat_message_id: 17335
+              sound_id: 3615
+              duration_millis: 3000
+            - duration_millis: 3000
+            - chat_message_id: 17337
+              sound_id: 3617
+              one_shot_animation_id: 3006
+              duration_millis: 6000
+        commander_trouble:
+          is_interruptible: false
+          steps:
+            - chat_message_id: 17338
+              sound_id: 3618
+              duration_millis: 3000
+            - duration_millis: 2000
+            - chat_message_id: 17340
+              sound_id: 3620
+              one_shot_animation_id: 3006
+              duration_millis: 10000
+        yoda_short:
+          is_interruptible: false
+          steps:
+            - chat_message_id: 17342
+              sound_id: 3622
+              one_shot_animation_id: 3006
+              duration_millis: 10000
+            - duration_millis: 7000
+        empty:
+          weight: 588
+          steps:
+            - duration_millis: 1000
+    spanner:
+      model_id: 708
+      name_id: 3968
+      show_name: false
+      pos:
+        x: 129.79893
+        y: 10.146215
+        z: -186.46703
+        w: 1
+      rot:
+        x: -0.55723685
+        y: 0
+        z: -0.83035356
+        w: 0
+      enable_interact_popup: false
+      tickable_procedures:
+        naboo:
+          steps:
+            - duration_millis: 2000
+            - chat_message_id: 17301
+              sound_id: 3581
+              duration_millis: 2000
+            - duration_millis: 1000
+            - chat_message_id: 17303
+              sound_id: 3583
+              duration_millis: 1000
+            - one_shot_animation_id: 3004
+              duration_millis: 7000
+            - chat_message_id: 17334
+              sound_id: 3614
+              duration_millis: 5000
+        dooku:
+          steps:
+            - duration_millis: 2000
+            - chat_message_id: 17301
+              sound_id: 3581
+              duration_millis: 2000
+            - duration_millis: 1000
+            - chat_message_id: 17306
+              sound_id: 3586
+              duration_millis: 2000
+            - one_shot_animation_id: 3004
+              duration_millis: 6000
+            - chat_message_id: 17308
+              sound_id: 3588
+              duration_millis: 6000
+        yoda_music:
+          steps:
+            - duration_millis: 3000
+            - chat_message_id: 17310
+              sound_id: 3590
+              duration_millis: 3000
+            - one_shot_animation_id: 3004
+              duration_millis: 7000
+            - chat_message_id: 17312
+              sound_id: 3592
+              duration_millis: 5000
+        manufacturing_droid:
+          steps:
+            - duration_millis: 5000
+            - chat_message_id: 17314
+              sound_id: 3594
+              duration_millis: 5000
+            - one_shot_animation_id: 3004
+              duration_millis: 10000
+            - chat_message_id: 17316
+              sound_id: 3596
+              duration_millis: 5000
+        windu:
+          steps:
+            - duration_millis: 2000
+            - chat_message_id: 17301
+              sound_id: 3581
+              duration_millis: 2000
+            - duration_millis: 1000
+            - chat_message_id: 17318
+              sound_id: 3598
+              duration_millis: 1000
+            - one_shot_animation_id: 3004
+              duration_millis: 7000
+            - chat_message_id: 17341
+              sound_id: 3621
+              duration_millis: 7000
+        r2:
+          steps:
+            - duration_millis: 1000
+            - chat_message_id: 17321
+              sound_id: 3601
+              duration_millis: 1000
+            - one_shot_animation_id: 3004
+              duration_millis: 6000
+            - chat_message_id: 17323
+              sound_id: 3603
+              duration_millis: 7000
+        no_more:
+          steps:
+            - chat_message_id: 17324
+              sound_id: 3604
+              duration_millis: 5000
+            - duration_millis: 2000
+            - chat_message_id: 17326
+              sound_id: 3606
+              duration_millis: 9000
+        yoda_birthday:
+          steps:
+            - duration_millis: 5000
+            - chat_message_id: 17328
+              sound_id: 3608
+              duration_millis: 3000
+            - one_shot_animation_id: 3004
+              duration_millis: 8000
+        twilek_coin_flip:
+          steps:
+            - duration_millis: 4000
+            - chat_message_id: 17331
+              sound_id: 3611
+              duration_millis: 4000
+            - one_shot_animation_id: 3004
+              duration_millis: 6000
+            - chat_message_id: 17333
+              sound_id: 3613
+              duration_millis: 6000
+        medics_jedi:
+          steps:
+            - duration_millis: 3000
+            - chat_message_id: 17336
+              sound_id: 3616
+              duration_millis: 3000
+            - one_shot_animation_id: 3004
+              duration_millis: 6000
+        commander_trouble:
+          steps:
+            - duration_millis: 3000
+            - chat_message_id: 17339
+              sound_id: 3619
+              duration_millis: 2000
+            - one_shot_animation_id: 3004
+              duration_millis: 10000
+        yoda_short:
+          steps:
+            - one_shot_animation_id: 3004
+              duration_millis: 10000
+            - chat_message_id: 17343
+              sound_id: 3623
+              duration_millis: 7000
+        empty:
+          weight: 588
+          steps:
+            - duration_millis: 1000
+      synchronize_with: joker

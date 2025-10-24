@@ -1,0 +1,42 @@
+carlac:
+  transports:
+    holo_table:
+      name_id: 32914
+      model_id: 1603
+      pos:
+        x: 42.08351
+        y: 0.954847
+        z: 25.374752
+        w: 1
+      rot:
+        x: 0.67
+        y: 0
+        z: 0.75
+        w: 0
+      cursor: 54
+      show_name: false
+      show_icon: false
+      large_icon: false
+      show_hover_description: false
+      interact_radius: 3.3
+      move_to_interact_offset: 3.2
+      interact_popup_radius: 7
+    fighter:
+      name_id: 32914
+      terrain_object_id: 1341008324
+      pos:
+        x: 70.51049
+        y: 2.02564
+        z: 88.98817
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      name_offset_x: -0.5
+      cursor: 0
+      show_name: false
+      show_icon: true
+      large_icon: false
+      show_hover_description: true
