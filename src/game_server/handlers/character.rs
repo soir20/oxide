@@ -301,7 +301,7 @@ impl BaseNpc {
                 unknown54: 0,
                 rail_unknown1: 0.0,
                 rail_unknown2: 0.0,
-                auto_interact_radius: 0.0,
+                auto_interact_radius: character.auto_interact_radius,
                 head_customization_override: "".to_string(),
                 hair_customization_override: "".to_string(),
                 body_customization_override: "".to_string(),
@@ -1201,7 +1201,7 @@ pub struct DoorConfig {
 
 impl NpcConfig for DoorConfig {
     const DISCRIMINANT: u8 = AMBIENT_NPC_DISCRIMINANT;
-    const DEFAULT_AUTO_INTERACT_RADIUS: f32 = 1.5;
+    const DEFAULT_AUTO_INTERACT_RADIUS: f32 = 2.0;
 
     fn base_config(&self) -> &BaseNpcConfig {
         &self.base_npc
