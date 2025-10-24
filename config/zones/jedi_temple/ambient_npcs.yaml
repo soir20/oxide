@@ -174,10 +174,10 @@ jedi_temple:
           steps:
             - speed: 2
               new_pos_offset_y: 10
-              duration_millis: 12000
+              duration_millis: 10000
             - speed: 2
               new_pos_offset_y: -10
-              duration_millis: 12000
+              duration_millis: 10000
     training_room_dueling_platform_lift:
       model_id: 1438
       physics: Disabled
