@@ -1201,7 +1201,7 @@ pub struct DoorConfig {
 
 impl NpcConfig for DoorConfig {
     const DISCRIMINANT: u8 = AMBIENT_NPC_DISCRIMINANT;
-    const DEFAULT_AUTO_INTERACT_RADIUS: f32 = 2.0;
+    const DEFAULT_AUTO_INTERACT_RADIUS: f32 = 1.5;
 
     fn base_config(&self) -> &BaseNpcConfig {
         &self.base_npc
