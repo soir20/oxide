@@ -903,7 +903,7 @@ pub fn load_zones(config_dir: &Path) -> Result<LoadedZones, ConfigError> {
 
     let zones_dir = config_dir.join("zones");
     let zone_folders = find_zone_folders(&zones_dir)?;
-    let mut all_fragments: Vec<(String, Value)> = Vec::new();
+    let mut all_fragments = Vec::new();
 
     for zone_path in zone_folders {
         for entry in fs::read_dir(&zone_path)? {
@@ -912,15 +912,9 @@ pub fn load_zones(config_dir: &Path) -> Result<LoadedZones, ConfigError> {
                 let file = File::open(&file_path)?;
                 let parsed_yaml: BTreeMap<String, Value> = serde_yaml::from_reader(file)?;
 
-                if parsed_yaml.len() != 1 {
-                    return Err(ConfigError::ConstraintViolated(format!(
-                        "YAML file {:?} must contain exactly one top-level zone key",
-                        file_path
-                    )));
+                for (zone_name, fragment) in parsed_yaml {
+                    all_fragments.push((zone_name, fragment));
                 }
-
-                let (zone_name, fragment) = parsed_yaml.into_iter().next().unwrap();
-                all_fragments.push((zone_name, fragment));
             }
         }
     }
