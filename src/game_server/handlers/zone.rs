@@ -1002,8 +1002,8 @@ pub fn load_zones(config_dir: &Path) -> Result<LoadedZones, ConfigError> {
             let entry_path = entry?.path();
             if entry_path.is_dir() {
                 let contains_yaml = fs::read_dir(&entry_path)?.any(|file_entry| {
-                    file_entry.as_ref().ok().map_or(false, |file| {
-                        file.path().extension().map_or(false, |ext| ext == "yaml")
+                    file_entry.as_ref().ok().is_some_and(|file| {
+                        file.path().extension().is_some_and(|ext| ext == "yaml")
                     })
                 });
 
@@ -1025,7 +1025,7 @@ pub fn load_zones(config_dir: &Path) -> Result<LoadedZones, ConfigError> {
     for zone_path in zone_folders {
         for entry in fs::read_dir(&zone_path)? {
             let file_path = entry?.path();
-            let is_yaml = file_path.extension().map_or(false, |ext| ext == "yaml");
+            let is_yaml = file_path.extension().is_some_and(|ext| ext == "yaml");
             if !is_yaml {
                 continue;
             }
