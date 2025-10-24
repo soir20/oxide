@@ -39,7 +39,7 @@ categories:
               guid: 31001
               name_id: 19814
               description_id: 43799
-              icon_id: 4459
+              icon_id: 368
               stage_icon_id: 1409
               members_only: false
               require_previous_completed: false
@@ -50,7 +50,7 @@ categories:
               guid: 31002
               name_id: 19815
               description_id: 43799
-              icon_id: 4459
+              icon_id: 368
               stage_icon_id: 1413
               members_only: false
               require_previous_completed: false
