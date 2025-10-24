@@ -13,9 +13,10 @@ use serde::{Deserialize, Deserializer};
 use crate::game_server::{
     handlers::{
         character::{
-            AmbientNpc, BaseNpc, Character, CharacterType, MinigameMatchmakingGroup, MinigameStatus,
+            AmbientNpc, BaseNpc, Character, CharacterType, MinigameMatchmakingGroup,
+            MinigameStatus, PlayerInventory,
         },
-        inventory::wield_type_from_inventory,
+        inventory::{player_has_saber_equipped, wield_type_from_inventory},
         minigame::{
             handle_minigame_packet_write, MinigameCountdown, MinigameStopwatch,
             SharedMinigameTypeData,
@@ -56,7 +57,7 @@ struct SaberDuelAiForcePower {
 
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
-struct SaberDuelAiSaber {
+struct SaberDuelEquippableSaber {
     hilt_item_guid: u32,
     shape_item_guid: u32,
     color_item_guid: u32,
@@ -67,8 +68,8 @@ struct SaberDuelAiSaber {
 struct SaberDuelAi {
     name_id: u32,
     model_id: u32,
-    primary_saber: SaberDuelAiSaber,
-    secondary_saber: Option<SaberDuelAiSaber>,
+    primary_saber: SaberDuelEquippableSaber,
+    secondary_saber: Option<SaberDuelEquippableSaber>,
     entrance_animation_id: i32,
     entrance_sound_id: u32,
     bout_won_sound_id: u32,
@@ -394,6 +395,8 @@ pub struct SaberDuelConfig {
     score_per_margin_of_victory: i32,
     game_win_bonus_score: i32,
     no_bouts_lost_bonus_score: i32,
+    default_primary_saber: SaberDuelEquippableSaber,
+    default_secondary_saber: Option<SaberDuelEquippableSaber>,
     max_force_points: u8,
     force_power_selection_max_millis: u32,
     force_points_per_bout_won: u8,
@@ -601,6 +604,53 @@ impl SaberDuelGame {
         );
 
         Ok(vec![opponent])
+    }
+
+    pub fn update_gear(
+        &self,
+        player_inventory: &mut PlayerInventory,
+        game_server: &GameServer,
+    ) -> Result<(), ProcessPacketError> {
+        if !player_has_saber_equipped(
+            player_inventory,
+            player_inventory.active_battle_class,
+            game_server.items(),
+        ) {
+            player_inventory.equip_item_temporarily(
+                EquipmentSlot::PrimaryWeapon,
+                Some(self.config.default_primary_saber.hilt_item_guid),
+            );
+            player_inventory.equip_item_temporarily(
+                EquipmentSlot::PrimarySaberShape,
+                Some(self.config.default_primary_saber.shape_item_guid),
+            );
+            player_inventory.equip_item_temporarily(
+                EquipmentSlot::PrimarySaberColor,
+                Some(self.config.default_primary_saber.color_item_guid),
+            );
+            player_inventory.equip_item_temporarily(
+                EquipmentSlot::SecondaryWeapon,
+                self.config
+                    .default_secondary_saber
+                    .as_ref()
+                    .map(|saber| saber.hilt_item_guid),
+            );
+            player_inventory.equip_item_temporarily(
+                EquipmentSlot::SecondarySaberShape,
+                self.config
+                    .default_secondary_saber
+                    .as_ref()
+                    .map(|saber| saber.shape_item_guid),
+            );
+            player_inventory.equip_item_temporarily(
+                EquipmentSlot::SecondarySaberColor,
+                self.config
+                    .default_secondary_saber
+                    .as_ref()
+                    .map(|saber| saber.color_item_guid),
+            );
+        }
+        Ok(())
     }
 
     pub fn start(&self, sender: u32) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
@@ -1148,43 +1198,43 @@ impl SaberDuelGame {
 
     fn attachments_from_saber(
         &self,
-        saber: &SaberDuelAiSaber,
+        saber: &SaberDuelEquippableSaber,
         game_server: &GameServer,
     ) -> Result<(Vec<Attachment>, BTreeMap<EquipmentSlot, u32>), ProcessPacketError> {
-        let primary_hilt = self.get_item(game_server, saber.hilt_item_guid)?;
-        let primary_shape = self.get_item(game_server, saber.shape_item_guid)?;
-        let primary_color = self.get_item(game_server, saber.color_item_guid)?;
+        let hilt = self.get_item(game_server, saber.hilt_item_guid)?;
+        let shape = self.get_item(game_server, saber.shape_item_guid)?;
+        let color = self.get_item(game_server, saber.color_item_guid)?;
 
         let mut items = BTreeMap::new();
-        items.insert(primary_hilt.slot, primary_hilt.guid);
-        items.insert(primary_shape.slot, primary_shape.guid);
-        items.insert(primary_color.slot, primary_color.guid);
+        items.insert(hilt.slot.into(), hilt.guid);
+        items.insert(shape.slot.into(), shape.guid);
+        items.insert(color.slot.into(), color.guid);
 
         Ok((
             vec![
                 Attachment {
-                    model_name: primary_hilt.model_name.clone(),
-                    texture_alias: primary_hilt.texture_alias.clone(),
-                    tint_alias: primary_hilt.tint_alias.clone(),
-                    tint: primary_hilt.tint,
-                    composite_effect: primary_hilt.composite_effect,
-                    slot: primary_hilt.slot,
+                    model_name: hilt.model_name.clone(),
+                    texture_alias: hilt.texture_alias.clone(),
+                    tint_alias: hilt.tint_alias.clone(),
+                    tint: hilt.tint,
+                    composite_effect: hilt.composite_effect,
+                    slot: hilt.slot.into(),
                 },
                 Attachment {
-                    model_name: primary_shape.model_name.clone(),
-                    texture_alias: primary_shape.texture_alias.clone(),
-                    tint_alias: primary_shape.tint_alias.clone(),
-                    tint: primary_color.tint,
-                    composite_effect: primary_shape.composite_effect,
-                    slot: primary_shape.slot,
+                    model_name: shape.model_name.clone(),
+                    texture_alias: shape.texture_alias.clone(),
+                    tint_alias: shape.tint_alias.clone(),
+                    tint: color.tint,
+                    composite_effect: shape.composite_effect,
+                    slot: shape.slot.into(),
                 },
                 Attachment {
-                    model_name: primary_color.model_name.clone(),
-                    texture_alias: primary_color.texture_alias.clone(),
-                    tint_alias: primary_color.tint_alias.clone(),
-                    tint: primary_color.tint,
-                    composite_effect: primary_color.composite_effect,
-                    slot: primary_color.slot,
+                    model_name: color.model_name.clone(),
+                    texture_alias: color.texture_alias.clone(),
+                    tint_alias: color.tint_alias.clone(),
+                    tint: color.tint,
+                    composite_effect: color.composite_effect,
+                    slot: color.slot.into(),
                 },
             ],
             items,

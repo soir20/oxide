@@ -72,6 +72,7 @@ jedi_temple:
          z: -1.5
          w: 0
        interact_radius: 7
+       auto_interact_radius: 2.5
     veranda_to_main_hall_left:
        pos:
          x: 922.5864
