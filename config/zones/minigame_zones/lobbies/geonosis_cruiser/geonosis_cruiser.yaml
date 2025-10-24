@@ -38,6 +38,7 @@ geonosis_cruiser:
         z: 0
         w: 0
       cursor: 54
+      auto_interact_radius: 1.5
       move_to_interact_offset: 0
       show_name: false
       show_icon: false
