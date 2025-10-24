@@ -13,6 +13,50 @@ categories:
     icon_id: 5805
     sort_order: 2
     portal_entries:
+      - guid: 1005
+        name_id: 6393
+        description_id: 6394
+        members_only: false
+        is_flash: false
+        is_active: true
+        param1: 0
+        icon_id: 1244
+        background_icon_id: 0
+        is_popular: true
+        is_game_of_day: false
+        sort_order: 8000
+        tutorial_swf: HowtoDueling.swf
+        stage_group:
+          guid: 31000
+          name_id: 6393
+          description_id: 6394
+          icon_id: 368
+          stage_icon_id: 368
+          members_only: false
+          stage_select_map_name: lsDuelPortal
+          stages:
+            - !StageGroup
+              guid: 31001
+              name_id: 19814
+              description_id: 43799
+              icon_id: 4459
+              stage_icon_id: 1409
+              members_only: false
+              require_previous_completed: false
+              stage_select_map_name: lsDuel
+              short_name: sp
+              stages: []
+            - !StageGroup
+              guid: 31002
+              name_id: 19815
+              description_id: 43799
+              icon_id: 4459
+              stage_icon_id: 1413
+              members_only: false
+              require_previous_completed: false
+              stage_select_map_name: RepublicGunship
+              short_name: mp
+              stages: []
       - guid: 9000
         name_id: 45187
         description_id: 45193
