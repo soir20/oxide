@@ -903,23 +903,31 @@ pub fn load_zones(config_dir: &Path) -> Result<LoadedZones, ConfigError> {
 
     let zones_dir = config_dir.join("zones");
     let zone_folders = find_zone_folders(&zones_dir)?;
-    let mut zone_fragments: BTreeMap<String, Vec<Value>> = BTreeMap::new();
+    let mut all_fragments: Vec<(String, Value)> = Vec::new();
 
     for zone_path in zone_folders {
         for entry in fs::read_dir(&zone_path)? {
             let file_path = entry?.path();
-            let is_yaml = file_path.extension().is_some_and(|ext| ext == "yaml");
-            if !is_yaml {
-                continue;
-            }
+            if file_path.extension().is_some_and(|ext| ext == "yaml") {
+                let file = File::open(&file_path)?;
+                let parsed_yaml: BTreeMap<String, Value> = serde_yaml::from_reader(file)?;
 
-            let file = File::open(&file_path)?;
-            let parsed_yaml: BTreeMap<String, Value> = serde_yaml::from_reader(file)?;
+                if parsed_yaml.len() != 1 {
+                    return Err(ConfigError::ConstraintViolated(format!(
+                        "YAML file {:?} must contain exactly one top-level zone key",
+                        file_path
+                    )));
+                }
 
-            for (zone_name, fragment) in parsed_yaml {
-                zone_fragments.entry(zone_name).or_default().push(fragment);
+                let (zone_name, fragment) = parsed_yaml.into_iter().next().unwrap();
+                all_fragments.push((zone_name, fragment));
             }
         }
+    }
+
+    let mut zone_fragments: BTreeMap<String, Vec<Value>> = BTreeMap::new();
+    for (zone_name, fragment) in all_fragments {
+        zone_fragments.entry(zone_name).or_default().push(fragment);
     }
 
     let mut templates = BTreeMap::new();
@@ -1021,7 +1029,7 @@ fn merge_yaml_values(
         }
 
         _ => Err(ConfigError::ConstraintViolated(format!(
-            "Invalid structure in zone '{}'",
+            "Cannot merge non-mapping YAML values in zone '{}'. All fragments must be mappings.",
             zone_name
         ))),
     }
