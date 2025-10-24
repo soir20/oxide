@@ -9,7 +9,7 @@ use std::{
 use enum_iterator::all;
 use parking_lot::RwLockReadGuard;
 use serde::Deserialize;
-use serde_yaml::{Value, Mapping};
+use serde_yaml::{Mapping, Value};
 
 use crate::{
     game_server::{
@@ -1088,9 +1088,18 @@ fn merge_zone_fragments(zone_name: &str, fragments: Vec<Value>) -> Result<Value,
     Ok(merged)
 }
 
-fn merge_yaml_values(zone_name: &str, accumulated_value: Value, new_fragment: Value) -> Result<Value, ConfigError> {
-    fn has_duplicate_key<'a>(existing_map: &'a Mapping, incoming_map: &'a Mapping) -> Option<&'a Value> {
-        incoming_map.keys().find(|key| existing_map.contains_key(*key))
+fn merge_yaml_values(
+    zone_name: &str,
+    accumulated_value: Value,
+    new_fragment: Value,
+) -> Result<Value, ConfigError> {
+    fn has_duplicate_key<'a>(
+        existing_map: &'a Mapping,
+        incoming_map: &'a Mapping,
+    ) -> Option<&'a Value> {
+        incoming_map
+            .keys()
+            .find(|key| existing_map.contains_key(*key))
     }
 
     match (accumulated_value, new_fragment) {
@@ -1099,14 +1108,20 @@ fn merge_yaml_values(zone_name: &str, accumulated_value: Value, new_fragment: Va
                 match accumulated_map.get(&key) {
                     Some(existing_value) => match (existing_value, &incoming_value) {
                         (Value::Mapping(existing_inner), Value::Mapping(incoming_inner)) => {
-                            if let Some(duplicate_key) = has_duplicate_key(existing_inner, incoming_inner) {
+                            if let Some(duplicate_key) =
+                                has_duplicate_key(existing_inner, incoming_inner)
+                            {
                                 return Err(ConfigError::ConstraintViolated(format!(
                                     "Duplicate (Key: {:?}) in (Zone: {:?})",
                                     duplicate_key, zone_name,
                                 )));
                             }
 
-                            let merged = merge_yaml_values(zone_name, existing_value.clone(), incoming_value)?;
+                            let merged = merge_yaml_values(
+                                zone_name,
+                                existing_value.clone(),
+                                incoming_value,
+                            )?;
                             accumulated_map.insert(key, merged);
                         }
                         _ => {
