@@ -2319,7 +2319,22 @@ impl Character {
             self.set_tickable_procedure_if_exists(procedure, Instant::now());
         }
 
-        broadcast_supplier
+        // Clear the client's closest interaction target
+        coerce_to_broadcast_supplier(move |game_server| {
+            let mut broadcasts = broadcast_supplier?(game_server)?;
+            broadcasts.push(Broadcast::Single(
+                requester,
+                vec![GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: ExecuteScriptWithStringParams {
+                        script_name: "Ui.RadialMenuClosed".to_string(),
+                        params: vec![],
+                    },
+                })],
+            ));
+
+            Ok(broadcasts)
+        })
     }
 
     fn tickable(&self) -> bool {
