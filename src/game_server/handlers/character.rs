@@ -2319,7 +2319,7 @@ impl Character {
             self.set_tickable_procedure_if_exists(procedure, Instant::now());
         }
 
-        // Clear the client's closest interaction target
+        // Clear the client's closest interaction target after processing the interaction
         coerce_to_broadcast_supplier(move |game_server| {
             let mut broadcasts = broadcast_supplier?(game_server)?;
             broadcasts.push(Broadcast::Single(
