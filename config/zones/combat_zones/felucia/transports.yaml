@@ -1,0 +1,23 @@
+felucia:
+  transports:
+    holo_table:
+      name_id: 32914
+      model_id: 1603
+      pos:
+        x: 495.00208
+        y: 0.9538704
+        z: 278.28928
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 1
+        w: 0
+      cursor: 54
+      show_name: false
+      show_icon: false
+      large_icon: false
+      show_hover_description: false
+      interact_radius: 3.3
+      move_to_interact_offset: 3.2
+      interact_popup_radius: 7

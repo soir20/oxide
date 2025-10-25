@@ -1,5 +1,5 @@
 use std::{
-    collections::{BTreeMap, BTreeSet, VecDeque},
+    collections::{BTreeMap, BTreeSet, HashMap, VecDeque},
     io::{Cursor, Read},
     time::{Duration, Instant},
 };
@@ -12,7 +12,11 @@ use serde::{Deserialize, Deserializer};
 
 use crate::game_server::{
     handlers::{
-        character::{Character, MinigameMatchmakingGroup, MinigameStatus},
+        character::{
+            AmbientNpc, BaseNpc, Character, CharacterType, MinigameMatchmakingGroup,
+            MinigameStatus, PlayerInventory,
+        },
+        inventory::{player_has_saber_equipped, wield_type_from_inventory},
         minigame::{
             handle_minigame_packet_write, MinigameCountdown, MinigameStopwatch,
             SharedMinigameTypeData,
@@ -20,10 +24,8 @@ use crate::game_server::{
         unique_guid::{player_guid, saber_duel_opponent_guid},
     },
     packets::{
-        client_update::Position,
-        item::{BaseAttachmentGroup, WieldType},
+        item::{Attachment, EquipmentSlot, ItemDefinition},
         minigame::{MinigameHeader, ScoreEntry, ScoreType},
-        player_update::{AddNpc, Hostility, Icon, PhysicsState, RemoveStandard},
         saber_duel::{
             SaberDuelApplyForcePower, SaberDuelBoutInfo, SaberDuelBoutStart, SaberDuelBoutTied,
             SaberDuelBoutWon, SaberDuelForcePower, SaberDuelForcePowerDefinition,
@@ -34,7 +36,7 @@ use crate::game_server::{
         },
         tunnel::TunneledPacket,
         ui::{ExecuteScriptWithIntParams, ExecuteScriptWithStringParams},
-        GamePacket, Pos, Target,
+        GamePacket, Pos,
     },
     Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
 };
@@ -45,6 +47,7 @@ const GAME_END_DELAY: Duration = Duration::from_millis(4000);
 const MEMORY_CHALLENGE_AI_DELAY: Duration = Duration::from_millis(2000);
 
 #[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct SaberDuelAiForcePower {
     #[serde(default = "default_weight")]
     weight: u8,
@@ -52,11 +55,21 @@ struct SaberDuelAiForcePower {
     tutorial_enabled: bool,
 }
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct SaberDuelEquippableSaber {
+    hilt_item_guid: u32,
+    shape_item_guid: u32,
+    color_item_guid: u32,
+}
+
+#[derive(Clone, Debug, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct SaberDuelAi {
     name_id: u32,
     model_id: u32,
-    wield_type: WieldType,
+    primary_saber: SaberDuelEquippableSaber,
+    secondary_saber: Option<SaberDuelEquippableSaber>,
     entrance_animation_id: i32,
     entrance_sound_id: u32,
     bout_won_sound_id: u32,
@@ -72,29 +85,6 @@ struct SaberDuelAi {
     force_power_probability: f32,
     force_powers: BTreeMap<SaberDuelForcePower, SaberDuelAiForcePower>,
     force_power_delay_millis: u32,
-}
-
-impl Default for SaberDuelAi {
-    fn default() -> Self {
-        Self {
-            name_id: Default::default(),
-            model_id: Default::default(),
-            wield_type: WieldType::SingleSaber,
-            entrance_animation_id: Default::default(),
-            entrance_sound_id: Default::default(),
-            bout_won_sound_id: Default::default(),
-            bout_lost_sound_id: Default::default(),
-            game_won_sound_id: Default::default(),
-            game_lost_sound_id: Default::default(),
-            millis_per_key: Default::default(),
-            mistake_probability: Default::default(),
-            right_to_left_ai_mistake_multiplier: Default::default(),
-            opposite_ai_mistake_multiplier: Default::default(),
-            force_power_probability: Default::default(),
-            force_powers: Default::default(),
-            force_power_delay_millis: Default::default(),
-        }
-    }
 }
 
 #[derive(Clone, Debug)]
@@ -298,6 +288,7 @@ const fn default_weight() -> u8 {
 }
 
 #[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct SaberDuelAnimationPair {
     attack_animation_id: i32,
     defend_animation_id: i32,
@@ -306,6 +297,7 @@ struct SaberDuelAnimationPair {
 }
 
 #[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct SaberDuelAvailableForcePower {
     name_id: u32,
     small_icon_id: u32,
@@ -374,8 +366,8 @@ where
 }
 
 #[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct SaberDuelConfig {
-    pos: Pos,
     camera_rot: f32,
     rounds_to_win: u8,
     points_to_win_round: u8,
@@ -403,6 +395,8 @@ pub struct SaberDuelConfig {
     score_per_margin_of_victory: i32,
     game_win_bonus_score: i32,
     no_bouts_lost_bonus_score: i32,
+    default_primary_saber: SaberDuelEquippableSaber,
+    default_secondary_saber: Option<SaberDuelEquippableSaber>,
     max_force_points: u8,
     force_power_selection_max_millis: u32,
     force_points_per_bout_won: u8,
@@ -486,6 +480,7 @@ enum SaberDuelBoutCompletion {
 #[derive(Clone, Debug)]
 pub struct SaberDuelGame {
     config: SaberDuelConfig,
+    pos: Pos,
     basic_bout_animation_distribution: WeightedAliasIndex<u8>,
     special_bout_animation_distribution: WeightedAliasIndex<u8>,
     player1: u32,
@@ -504,6 +499,7 @@ impl SaberDuelGame {
         player1: u32,
         player2: Option<u32>,
         group: MinigameMatchmakingGroup,
+        start_pos: Option<Pos>,
     ) -> Self {
         let mut recipients = vec![player1];
         if let Some(player2) = player2 {
@@ -529,6 +525,7 @@ impl SaberDuelGame {
 
         let mut game = SaberDuelGame {
             config,
+            pos: start_pos.unwrap_or_default(),
             basic_bout_animation_distribution,
             special_bout_animation_distribution,
             player1,
@@ -545,113 +542,121 @@ impl SaberDuelGame {
         game
     }
 
-    pub fn start(&self, sender: u32) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
-        let player_index = self.player_index(sender)?;
+    pub fn characters(
+        &self,
+        instance_guid: u64,
+        chunk_size: u16,
+        game_server: &GameServer,
+    ) -> Result<Vec<Character>, ProcessPacketError> {
+        if !self.is_ai_match() {
+            return Ok(Vec::new());
+        }
 
-        let mut packets = vec![GamePacket::serialize(&TunneledPacket {
-            unknown1: true,
-            inner: Position {
-                player_pos: self.config.pos,
-                rot: Pos::default(),
-                is_teleport: true,
-                unknown2: true,
-            },
-        })];
+        let (mut attachments, mut items) =
+            self.attachments_from_saber(&self.config.ai.primary_saber, game_server)?;
+        if let Some(secondary_saber) = &self.config.ai.secondary_saber {
+            let (mut secondary_attachments, mut secondary_items) =
+                self.attachments_from_saber(secondary_saber, game_server)?;
+            attachments.append(&mut secondary_attachments);
+            items.append(&mut secondary_items);
+        }
 
-        if self.is_ai_match() {
-            packets.push(GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: AddNpc {
-                    guid: saber_duel_opponent_guid(self.player1),
-                    name_id: self.config.ai.name_id,
-                    model_id: self.config.ai.model_id,
-                    unknown3: false,
-                    chat_text_color: Character::DEFAULT_CHAT_TEXT_COLOR,
-                    chat_bubble_color: Character::DEFAULT_CHAT_BUBBLE_COLOR,
-                    chat_scale: 1,
-                    scale: 1.0,
-                    pos: self.config.pos,
-                    rot: Pos::default(),
-                    spawn_animation_id: -1,
-                    attachments: Vec::new(),
-                    hostility: Hostility::Neutral,
-                    unknown10: 0,
+        let wield_type = wield_type_from_inventory(&items, game_server);
+
+        let opponent = Character::new(
+            saber_duel_opponent_guid(self.player1),
+            self.config.ai.model_id,
+            self.pos,
+            Pos::default(),
+            chunk_size,
+            1.0,
+            CharacterType::AmbientNpc(AmbientNpc {
+                base_npc: BaseNpc {
                     texture_alias: "".to_string(),
-                    tint_name: "".to_string(),
-                    tint_id: 0,
-                    unknown11: false,
-                    offset_y: 0.0,
-                    composite_effect: 0,
-                    wield_type: self.config.ai.wield_type,
-                    name_override: "".to_string(),
-                    hide_name: true,
+                    name_id: self.config.ai.name_id,
+                    terrain_object_id: 0,
                     name_offset_x: 0.0,
                     name_offset_y: 0.0,
                     name_offset_z: 0.0,
-                    terrain_object_id: 0,
-                    invisible: false,
-                    speed: 0.0,
-                    unknown21: false,
-                    interactable_size_pct: 0,
-                    walk_animation_id: -1,
-                    sprint_animation_id: -1,
-                    stand_animation_id: -1,
-                    unknown26: false,
-                    disable_gravity: false,
-                    sub_title_id: 0,
-                    one_shot_animation_id: -1,
-                    temporary_model: 0,
-                    effects: Vec::new(),
-                    disable_interact_popup: true,
-                    unknown33: 0,
-                    unknown34: false,
-                    show_health: false,
-                    hide_despawn_fade: true,
-                    enable_tilt: false,
-                    base_attachment_group: BaseAttachmentGroup {
-                        unknown1: 0,
-                        unknown2: "".to_string(),
-                        unknown3: "".to_string(),
-                        unknown4: 0,
-                        unknown5: "".to_string(),
-                    },
-                    tilt: Pos::default(),
-                    unknown40: 0,
+                    enable_interact_popup: false,
+                    interact_popup_radius: None,
+                    show_name: false,
                     bounce_area_id: -1,
-                    image_set_id: 0,
-                    collision: false,
-                    rider_guid: 0,
-                    physics: PhysicsState::Enabled,
-                    interact_popup_radius: 0.0,
-                    target: Target::None,
-                    variables: Vec::new(),
-                    rail_id: 0,
-                    rail_elapsed_seconds: 0.0,
-                    rail_offset: Pos::default(),
-                    unknown54: 0,
-                    rail_unknown1: 0.0,
-                    rail_unknown2: 0.0,
-                    auto_interact_radius: 0.0,
-                    head_customization_override: "".to_string(),
-                    hair_customization_override: "".to_string(),
-                    body_customization_override: "".to_string(),
-                    override_terrain_model: false,
-                    hover_glow: 0,
-                    hover_description: 0,
-                    fly_over_effect: 0,
-                    unknown65: 0,
-                    unknown66: 0,
-                    unknown67: 0,
-                    disable_move_to_interact: false,
-                    unknown69: 0.0,
-                    unknown70: 0.0,
-                    unknown71: 0,
-                    icon_id: Icon::None,
+                    enable_gravity: true,
+                    enable_tilt: false,
+                    use_terrain_model: false,
+                    attachments,
                 },
-            }));
-        }
+                procedure_on_interact: None,
+                one_shot_action_on_interact: None,
+            }),
+            None,
+            None,
+            0.0,
+            0.0,
+            0.0,
+            instance_guid,
+            wield_type,
+            -1,
+            HashMap::new(),
+            Vec::new(),
+            None,
+        );
 
-        packets.push(GamePacket::serialize(&TunneledPacket {
+        Ok(vec![opponent])
+    }
+
+    pub fn update_gear(
+        &self,
+        player_inventory: &mut PlayerInventory,
+        game_server: &GameServer,
+    ) -> Result<(), ProcessPacketError> {
+        if !player_has_saber_equipped(
+            player_inventory,
+            player_inventory.active_battle_class,
+            game_server.items(),
+        ) {
+            player_inventory.equip_item_temporarily(
+                EquipmentSlot::PrimaryWeapon,
+                Some(self.config.default_primary_saber.hilt_item_guid),
+            );
+            player_inventory.equip_item_temporarily(
+                EquipmentSlot::PrimarySaberShape,
+                Some(self.config.default_primary_saber.shape_item_guid),
+            );
+            player_inventory.equip_item_temporarily(
+                EquipmentSlot::PrimarySaberColor,
+                Some(self.config.default_primary_saber.color_item_guid),
+            );
+            player_inventory.equip_item_temporarily(
+                EquipmentSlot::SecondaryWeapon,
+                self.config
+                    .default_secondary_saber
+                    .as_ref()
+                    .map(|saber| saber.hilt_item_guid),
+            );
+            player_inventory.equip_item_temporarily(
+                EquipmentSlot::SecondarySaberShape,
+                self.config
+                    .default_secondary_saber
+                    .as_ref()
+                    .map(|saber| saber.shape_item_guid),
+            );
+            player_inventory.equip_item_temporarily(
+                EquipmentSlot::SecondarySaberColor,
+                self.config
+                    .default_secondary_saber
+                    .as_ref()
+                    .map(|saber| saber.color_item_guid),
+            );
+        }
+        Ok(())
+    }
+
+    pub fn start(&self, sender: u32) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+        let player_index = self.player_index(sender)?;
+
+        Ok(vec![GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: SaberDuelStageData {
                 minigame_header: MinigameHeader {
@@ -662,7 +667,7 @@ impl SaberDuelGame {
                 points_to_win_round: self.config.points_to_win_round.into(),
                 total_rounds: self.config.rounds_to_win.into(),
                 seconds_remaining: 0,
-                camera_pos: self.config.pos,
+                camera_pos: self.pos,
                 camera_rot: self.config.camera_rot,
                 max_combo_points: 0,
                 establishing_animation_id: self.config.establishing_animation_id,
@@ -697,9 +702,7 @@ impl SaberDuelGame {
                     })
                     .collect(),
             },
-        }));
-
-        Ok(packets)
+        })])
     }
 
     pub fn handle_keypress(
@@ -779,6 +782,7 @@ impl SaberDuelGame {
     }
 
     pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
+        let is_ai_match = self.is_ai_match();
         match &mut self.state {
             SaberDuelGameState::WaitingForForcePowers {
                 timer,
@@ -789,7 +793,7 @@ impl SaberDuelGame {
                 } else {
                     let mut broadcasts = Vec::new();
 
-                    if self.player2.is_none() {
+                    if is_ai_match {
                         let ai_player_state = &self.player_states[1];
                         let other_player_state = &self.player_states[0];
                         if let Some((force_power, tutorial_enabled)) = Self::tick_ai_force_power(
@@ -810,11 +814,6 @@ impl SaberDuelGame {
                                     .expect("Chose force power that Saber Duel AI can't use"),
                             );
                         }
-                    }
-
-                    broadcasts.append(&mut self.show_next_force_tutorial(self.player1, 0));
-                    if let Some(player2) = self.player2 {
-                        broadcasts.append(&mut self.show_next_force_tutorial(player2, 1));
                     }
 
                     broadcasts
@@ -935,14 +934,16 @@ impl SaberDuelGame {
                     }
                 }
 
-                if Self::tick_ai_keypress(
-                    now,
-                    &self.config,
-                    &mut self.player_states[1],
-                    ai_next_key,
-                    bout_time_remaining,
-                    player2_completed_time,
-                ) {
+                if is_ai_match
+                    && Self::tick_ai_keypress(
+                        now,
+                        &self.config,
+                        &mut self.player_states[1],
+                        ai_next_key,
+                        bout_time_remaining,
+                        player2_completed_time,
+                    )
+                {
                     self.update_progress(1)
                 } else {
                     Vec::new()
@@ -957,7 +958,7 @@ impl SaberDuelGame {
         player: u32,
         pause: bool,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        let player_index = self.player_index(player)?;
+        self.player_index(player)?;
 
         if !self.is_ai_match() {
             return Ok(Vec::new());
@@ -995,19 +996,14 @@ impl SaberDuelGame {
             self.stopwatch.pause_or_resume(pause);
         }
 
-        // Force power tutorials send a resume packet when they are closed,
-        // so send the next tutorial on resume.
-        match pause {
-            true => Ok(Vec::new()),
-            false => Ok(self.show_next_force_tutorial(player, player_index.into())),
-        }
+        Ok(Vec::new())
     }
 
     pub fn remove_player(
         &self,
         player: u32,
         minigame_status: &mut MinigameStatus,
-    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    ) -> Result<(Vec<Broadcast>, Vec<u64>), ProcessPacketError> {
         let player_index = self.player_index(player)? as usize;
 
         let player_state = &self.player_states[player_index];
@@ -1122,17 +1118,9 @@ impl SaberDuelGame {
         });
 
         if self.is_ai_match() {
-            Ok(vec![Broadcast::Single(
-                player,
-                vec![GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: RemoveStandard {
-                        guid: saber_duel_opponent_guid(self.player1),
-                    },
-                })],
-            )])
+            Ok((Vec::new(), vec![saber_duel_opponent_guid(self.player1)]))
         } else {
-            Ok(Vec::new())
+            Ok((Vec::new(), Vec::new()))
         }
     }
 
@@ -1195,6 +1183,62 @@ impl SaberDuelGame {
         }
 
         Ok(broadcasts)
+    }
+
+    fn get_item<'a>(
+        &self,
+        game_server: &'a GameServer,
+        item_guid: u32,
+    ) -> Result<&'a ItemDefinition, ProcessPacketError> {
+        game_server.items().get(&item_guid).ok_or_else(|| ProcessPacketError::new(
+            ProcessPacketErrorType::ConstraintViolated,
+            format!("Tried to equip item {item_guid} in Saber Duel, but it doesn't exist ({self:?})")
+        ))
+    }
+
+    fn attachments_from_saber(
+        &self,
+        saber: &SaberDuelEquippableSaber,
+        game_server: &GameServer,
+    ) -> Result<(Vec<Attachment>, BTreeMap<EquipmentSlot, u32>), ProcessPacketError> {
+        let hilt = self.get_item(game_server, saber.hilt_item_guid)?;
+        let shape = self.get_item(game_server, saber.shape_item_guid)?;
+        let color = self.get_item(game_server, saber.color_item_guid)?;
+
+        let mut items = BTreeMap::new();
+        items.insert(hilt.slot.into(), hilt.guid);
+        items.insert(shape.slot.into(), shape.guid);
+        items.insert(color.slot.into(), color.guid);
+
+        Ok((
+            vec![
+                Attachment {
+                    model_name: hilt.model_name.clone(),
+                    texture_alias: hilt.texture_alias.clone(),
+                    tint_alias: hilt.tint_alias.clone(),
+                    tint: hilt.tint,
+                    composite_effect: hilt.composite_effect,
+                    slot: hilt.slot.into(),
+                },
+                Attachment {
+                    model_name: shape.model_name.clone(),
+                    texture_alias: shape.texture_alias.clone(),
+                    tint_alias: shape.tint_alias.clone(),
+                    tint: color.tint,
+                    composite_effect: shape.composite_effect,
+                    slot: shape.slot.into(),
+                },
+                Attachment {
+                    model_name: color.model_name.clone(),
+                    texture_alias: color.texture_alias.clone(),
+                    tint_alias: color.tint_alias.clone(),
+                    tint: color.tint,
+                    composite_effect: color.composite_effect,
+                    slot: color.slot.into(),
+                },
+            ],
+            items,
+        ))
     }
 
     fn is_ai_match(&self) -> bool {
@@ -1357,7 +1401,7 @@ impl SaberDuelGame {
         self.player_states[0].reset_bout_progress(player1_keys);
         self.player_states[1].reset_bout_progress(player2_keys);
 
-        vec![Broadcast::Multi(
+        let mut broadcasts = vec![Broadcast::Multi(
             self.recipients.clone(),
             vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
@@ -1371,7 +1415,14 @@ impl SaberDuelGame {
                     num_keys_by_player_index: vec![player1_keys.into(), player2_keys.into()],
                 },
             })],
-        )]
+        )];
+
+        broadcasts.append(&mut self.show_next_force_tutorial(self.player1, 0));
+        if let Some(player2) = self.player2 {
+            broadcasts.append(&mut self.show_next_force_tutorial(player2, 1));
+        }
+
+        broadcasts
     }
 
     #[must_use]

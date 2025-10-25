@@ -355,6 +355,7 @@ impl GamePacket for ItemDefinitionsReply<'_> {
 #[derive(
     Clone,
     Copy,
+    Debug,
     Deserialize,
     PartialEq,
     Eq,
@@ -784,7 +785,7 @@ pub struct AddNpc {
     pub name_offset_y: f32,
     pub name_offset_z: f32,
     pub terrain_object_id: u32,
-    pub invisible: bool,
+    pub enable_attachments: bool,
     pub speed: f32,
     pub unknown21: bool,
     pub interactable_size_pct: u32,

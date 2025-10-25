@@ -1,0 +1,46 @@
+geonosis_cruiser:
+  guid: 14
+  max_players: 4294967295
+  template_name: 7203
+  template_icon: 4209
+  asset_name: MonCala_Venetor
+  hide_ui: false
+  is_combat: false
+  default_point_of_interest:
+    guid: 14
+    pos:
+      x: 179.8072
+      y: 10
+      z: 115.0493
+      w: 1
+    rot:
+      x: 0
+      y: 0
+      z: 1.5
+      w: 0
+  spawn_sky: sky_starship_geonosis.xml
+  speed: 8
+  jump_height_multiplier: 1
+  gravity_multiplier: 1
+  seconds_per_day: 10800
+  transports:
+    door:
+      name_id: 32914
+      terrain_object_id: 1304118562
+      pos:
+        x: 180.1113
+        y: 10
+        z: 110.6422
+        w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      auto_interact_radius: 1.5
+      move_to_interact_offset: 0
+      show_name: false
+      show_icon: false
+      large_icon: false
+      show_hover_description: true

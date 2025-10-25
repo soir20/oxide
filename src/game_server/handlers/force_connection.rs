@@ -946,7 +946,7 @@ impl ForceConnectionGame {
         &self,
         player: u32,
         minigame_status: &mut MinigameStatus,
-    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    ) -> Result<(Vec<Broadcast>, Vec<u64>), ProcessPacketError> {
         let player_index = if player == self.player1 {
             0
         } else if Some(player) == self.player2 {
@@ -968,7 +968,7 @@ impl ForceConnectionGame {
             score_points: 0,
         });
 
-        Ok(Vec::new())
+        Ok((Vec::new(), Vec::new()))
     }
 
     fn is_ai_match(&self) -> bool {
