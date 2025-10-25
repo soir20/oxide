@@ -1,0 +1,2129 @@
+jedi_temple:
+  ambient_npcs:
+    blue_orb_single_spawn_timer:
+      key: Blue Orb Single Spawn Timer
+      pos:
+        x: -112.71024
+        y: 10.04
+        z: 1265.6791
+        w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      is_spawned: false
+      tickable_procedures:
+        spawn:
+          weight: 300
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: lifespan
+        lifespan:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful:
+                  fade_duration_millis: 1000
+                  removal_delay_millis: 0
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+    blue_orb_double_spawn_timer:
+      key: Blue Orb Double Spawn Timer One
+      pos:
+        x: -112.71024
+        y: 10.04
+        z: 1265.6791
+        w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      is_spawned: false
+      tickable_procedures:
+        spawn:
+          weight: 300
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: lifespan
+        lifespan:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful:
+                  fade_duration_millis: 1000
+                  removal_delay_millis: 0
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+    blue_orb_double_spawn_timer_two:
+      key: Blue Orb Double Spawn Timer Two
+      pos:
+        x: -112.71024
+        y: 10.04
+        z: 1265.6791
+        w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      is_spawned: false
+      tickable_procedures:
+        spawn:
+          weight: 300
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: lifespan
+        lifespan:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful:
+                  fade_duration_millis: 1000
+                  removal_delay_millis: 0
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+    gold_orb_spawn_timer:
+      key: Gold Orb Spawn Timer
+      pos:
+        x: 103.22819
+        y: 10.146223
+        z: -181.17633
+        w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      is_spawned: false
+      tickable_procedures:
+        spawn:
+          weight: 150
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: lifespan
+        lifespan:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful:
+                  fade_duration_millis: 1000
+                  removal_delay_millis: 0
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 150
+            - procedure: empty
+              weight: 89700
+    hangar_blue_orb_one:
+      model_id: 1198
+      name_id: 16929
+      possible_pos:
+        - x: 103.50595
+          y: 9.974041
+          z: -200.0213
+          w: 1
+        - x: 73.66967
+          y: 10.021377
+          z: -175.72214
+          w: 1
+        - x: 124.79159
+          y: 9.967758
+          z: -198.47116
+          w: 1
+        - x: 109.971146
+          y: 9.969916
+          z: -189.04732
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      show_name: false
+      one_shot_action_on_interact:
+        award_credits: 25
+        despawn_npc: true
+        removal_mode: !Graceful
+          fade_duration_millis: 1000
+          removal_delay_millis: 0
+        duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: idle
+        idle:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful:
+                  fade_duration_millis: 1000
+                  removal_delay_millis: 0
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Blue Orb Double Spawn Timer One
+    
+    hangar_blue_orb_two:
+      model_id: 1198
+      name_id: 16929
+      possible_pos:
+        - x: 98.916985
+          y: 9.967964
+          z: -185.16345
+          w: 1
+        - x: 130.55121
+          y: 10.146215
+          z: -190.77068
+          w: 1
+        - x: 128.66016
+          y: 10.146215
+          z: -173.8551
+          w: 1
+        - x: 73.97704
+          y: 10.021265
+          z: -186.7934
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      show_name: false
+      one_shot_action_on_interact:
+        award_credits: 25
+        despawn_npc: true
+        removal_mode: !Graceful
+          fade_duration_millis: 1000
+          removal_delay_millis: 0
+        duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: idle
+        idle:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful:
+                  fade_duration_millis: 1000
+                  removal_delay_millis: 0
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Blue Orb Double Spawn Timer One
+    hangar_blue_orb_three:
+      model_id: 1198
+      name_id: 16929
+      possible_pos:
+        - x: 102.41723
+          y: 9.967758
+          z: -172.54819
+          w: 1
+        - x: 90.98324
+          y: 9.967758
+          z: -156.8313
+          w: 1
+        - x: 89.77628
+          y: 9.967758
+          z: -172.33359
+          w: 1
+        - x: 86.868324
+          y: 9.967758
+          z: -173.91064
+          w: 1
+        - x: 91.443825
+          y: 9.988608
+          z: -185.2926
+          w: 1
+        - x: 91.34898
+          y: 9.967758
+          z: -199.15213
+          w: 1
+        - x: 109.971146
+          y: 9.969916
+          z: -189.04732
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      show_name: false
+      one_shot_action_on_interact:
+        award_credits: 25
+        despawn_npc: true
+        removal_mode: !Graceful
+          fade_duration_millis: 1000
+          removal_delay_millis: 0
+        duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          weight: 300
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: lifespan
+        lifespan:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful:
+                  fade_duration_millis: 1000
+                  removal_delay_millis: 0
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: empty
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Blue Orb Single Spawn Timer
+    hangar_gold_orb:
+      model_id: 1320
+      name_id: 16929
+      possible_pos:
+        - x: 107.779564
+          y: 9.973999
+          z: -199.9093
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      show_name: false
+      one_shot_action_on_interact:
+        award_credits: 100
+        despawn_npc: true
+        removal_mode: !Graceful
+          fade_duration_millis: 1000
+          removal_delay_millis: 0
+        duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          weight: 150
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: lifespan
+        lifespan:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful:
+                  fade_duration_millis: 1000
+                  removal_delay_millis: 0
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: empty
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 150
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Gold Orb Spawn Timer
+    archives_blue_orb_one:
+      model_id: 1198
+      name_id: 16929
+      possible_pos:
+        - x: 1695.8995
+          y: 10.040001
+          z: 1686.3807
+          w: 1
+        - x: 1757.3896
+          y: 10.040001
+          z: 1685.5592
+          w: 1
+        - x: 1699.1101
+          y: 10.040001
+          z: 1703.1289
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      show_name: false
+      one_shot_action_on_interact:
+        award_credits: 25
+        despawn_npc: true
+        removal_mode: !Graceful
+          fade_duration_millis: 1000
+          removal_delay_millis: 0
+        duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: idle
+        idle:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful:
+                  fade_duration_millis: 1000
+                  removal_delay_millis: 0
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Blue Orb Double Spawn Timer One
+    archives_blue_orb_two:
+      model_id: 1198
+      name_id: 16929
+      possible_pos:
+        - x: 1755.757
+          y: 10.040001
+          z: 1702.793
+          w: 1
+        - x: 1748.7863
+          y: 10.040001
+          z: 1690.8744
+          w: 1
+        - x: 1727.4562
+          y: 10.040001
+          z: 1702.5524
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      show_name: false
+      one_shot_action_on_interact:
+        award_credits: 25
+        despawn_npc: true
+        removal_mode: !Graceful
+          fade_duration_millis: 1000
+          removal_delay_millis: 0
+        duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: idle
+        idle:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful:
+                  fade_duration_millis: 1000
+                  removal_delay_millis: 0
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Blue Orb Double Spawn Timer One
+    archives_blue_orb_three:
+      model_id: 1198
+      name_id: 16929
+      possible_pos:
+        - x: 1713.411
+          y: 10.040001
+          z: 1692.591
+          w: 1
+        - x: 1705.6677
+          y: 10.040001
+          z: 1693.7737
+          w: 1
+        - x: 1745.8124
+          y: 10.040001
+          z: 1700.9398
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      show_name: false
+      one_shot_action_on_interact:
+        award_credits: 25
+        despawn_npc: true
+        removal_mode: !Graceful
+          fade_duration_millis: 1000
+          removal_delay_millis: 0
+        duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          weight: 300
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: lifespan
+        lifespan:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful:
+                  fade_duration_millis: 1000
+                  removal_delay_millis: 0
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: empty
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Blue Orb Single Spawn Timer
+    workshop_blue_orb_one:
+      model_id: 1198
+      name_id: 16929
+      possible_pos:
+        - x: -342.66266
+          y: 10.117764
+          z: 1774.634
+          w: 1
+        - x: -335.88687
+          y: 10.245553
+          z: 1779.7084
+          w: 1
+        - x: -339.3965
+          y: 10.117638
+          z: 1771.2377
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      show_name: false
+      one_shot_action_on_interact:
+        award_credits: 25
+        despawn_npc: true
+        removal_mode: !Graceful
+          fade_duration_millis: 1000
+          removal_delay_millis: 0
+        duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: idle
+        idle:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful:
+                  fade_duration_millis: 1000
+                  removal_delay_millis: 0
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Blue Orb Double Spawn Timer One
+    workshop_blue_orb_two:
+      model_id: 1198
+      name_id: 16929
+      possible_pos:
+        - x: -328.52924
+          y: 10.122791
+          z: 1775.8739
+          w: 1
+        - x: -336.72003
+          y: 10.119262
+          z: 1773.4607
+          w: 1
+        - x: -332.5144
+          y: 10.245615
+          z: 1780.9937
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      show_name: false
+      one_shot_action_on_interact:
+        award_credits: 25
+        despawn_npc: true
+        removal_mode: !Graceful
+          fade_duration_millis: 1000
+          removal_delay_millis: 0
+        duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: idle
+        idle:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful:
+                  fade_duration_millis: 1000
+                  removal_delay_millis: 0
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Blue Orb Double Spawn Timer One
+    workshop_blue_orb_three:
+      model_id: 1198
+      name_id: 16929
+      possible_pos:
+        - x: -333.05035
+          y: 10.2457695
+          z: 1785.784
+          w: 1
+        - x: -340.09808
+          y: 10.245736
+          z: 1783.2749
+          w: 1
+        - x: -334.08017
+          y: 10.12735
+          z: 1791.5868
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      show_name: false
+      one_shot_action_on_interact:
+        award_credits: 25
+        despawn_npc: true
+        removal_mode: !Graceful
+          fade_duration_millis: 1000
+          removal_delay_millis: 0
+        duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: idle
+        idle:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful:
+                  fade_duration_millis: 1000
+                  removal_delay_millis: 0
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Blue Orb Double Spawn Timer Two
+    workshop_blue_orb_four:
+      model_id: 1198
+      name_id: 16929
+      possible_pos:
+        - x: -334.2602
+          y: 10.117851
+          z: 1771.29
+          w: 1
+        - x: -359.8455
+          y: 10.127345
+          z: 1787.6785
+          w: 1
+        - x: -331.07822
+          y: 10.12735
+          z: 1790.2317
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      show_name: false
+      one_shot_action_on_interact:
+        award_credits: 25
+        despawn_npc: true
+        removal_mode: !Graceful
+          fade_duration_millis: 1000
+          removal_delay_millis: 0
+        duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: idle
+        idle:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful:
+                  fade_duration_millis: 1000
+                  removal_delay_millis: 0
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Blue Orb Double Spawn Timer Two
+    training_room_blue_orb_one:
+      model_id: 1198
+      name_id: 16929
+      possible_pos:
+        - x: 164.0472
+          y: 6.8242326
+          z: 413.34525
+          w: 1
+        - x: 139.34491
+          y: 6.8242445
+          z: 418.08273
+          w: 1
+        - x: 133.10262
+          y: 6.8242345
+          z: 413.761
+          w: 1
+        - x: 164.46803
+          y: 6.824348
+          z: 396.03467
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      show_name: false
+      one_shot_action_on_interact:
+        award_credits: 25
+        despawn_npc: true
+        removal_mode: !Graceful
+          fade_duration_millis: 1000
+          removal_delay_millis: 0
+        duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: idle
+        idle:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful:
+                  fade_duration_millis: 1000
+                  removal_delay_millis: 0
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Blue Orb Double Spawn Timer One
+    training_room_blue_orb_two:
+      model_id: 1198
+      name_id: 16929
+      possible_pos:
+        - x: 155.43399
+          y: 6.8242645
+          z: 417.108
+          w: 1
+        - x: 144.97305
+          y: 6.8242335
+          z: 339.16656
+          w: 1
+        - x: 136.35791
+          y: 6.824234
+          z: 348.97473
+          w: 1
+        - x: 161.81639
+          y: 6.824228
+          z: 354.55966
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      show_name: false
+      one_shot_action_on_interact:
+        award_credits: 25
+        despawn_npc: true
+        removal_mode: !Graceful
+          fade_duration_millis: 1000
+          removal_delay_millis: 0
+        duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: idle
+        idle:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful:
+                  fade_duration_millis: 1000
+                  removal_delay_millis: 0
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Blue Orb Double Spawn Timer One
+    training_room_blue_orb_three:
+      model_id: 1198
+      name_id: 16929
+      possible_pos:
+        - x: 168.61252
+          y: 6.824218
+          z: 349.56528
+          w: 1
+        - x: 157.2812
+          y: 6.7383156
+          z: 343.23923
+          w: 1
+        - x: 134.0225
+          y: 6.7332187
+          z: 421.9841
+          w: 1
+        - x: 140.34906
+          y: 6.8242335
+          z: 425.8982
+          w: 1
+        - x: 158.26646
+          y: 6.824269
+          z: 362.92245
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      show_name: false
+      one_shot_action_on_interact:
+        award_credits: 25
+        despawn_npc: true
+        removal_mode: !Graceful
+          fade_duration_millis: 1000
+          removal_delay_millis: 0
+        duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          weight: 300
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: lifespan
+        lifespan:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful:
+                  fade_duration_millis: 1000
+                  removal_delay_millis: 0
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: empty
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Blue Orb Single Spawn Timer
+    training_room_gold_orb:
+      model_id: 1320
+      name_id: 16929
+      possible_pos:
+        - x: 132.7863
+          y: 6.725761
+          z: 346.08353
+          w: 1
+        - x: 148.66486
+          y: 6.8242464
+          z: 346.5541
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      show_name: false
+      one_shot_action_on_interact:
+        award_credits: 100
+        despawn_npc: true
+        removal_mode: !Graceful
+          fade_duration_millis: 1000
+          removal_delay_millis: 0
+        duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          weight: 150
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: lifespan
+        lifespan:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful:
+                  fade_duration_millis: 1000
+                  removal_delay_millis: 0
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: empty
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 150
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Gold Orb Spawn Timer
+    lounge_blue_orb_one:
+      model_id: 1198
+      name_id: 16929
+      possible_pos:
+        - x: -99.1999
+          y: 10.015329
+          z: 1263.517
+          w: 1
+        - x: -126.77958
+          y: 10.04
+          z: 1270.3208
+          w: 1
+        - x: -103.12019
+          y: 10.04
+          z: 1248.9127
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      show_name: false
+      one_shot_action_on_interact:
+        award_credits: 25
+        despawn_npc: true
+        removal_mode: !Graceful
+          fade_duration_millis: 1000
+          removal_delay_millis: 0
+        duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: idle
+        idle:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful:
+                  fade_duration_millis: 1000
+                  removal_delay_millis: 0
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Blue Orb Double Spawn Timer One
+    lounge_blue_orb_two:
+      model_id: 1198
+      name_id: 16929
+      possible_pos:
+        - x: -130.72836
+          y: 10.04
+          z: 1276.6686
+          w: 1
+        - x: -110.50853
+          y: 10.04
+          z: 1248.9741
+          w: 1
+        - x: -132.98695
+          y: 10.04
+          z: 1281.379
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      show_name: false
+      one_shot_action_on_interact:
+        award_credits: 25
+        despawn_npc: true
+        removal_mode: !Graceful
+          fade_duration_millis: 1000
+          removal_delay_millis: 0
+        duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: idle
+        idle:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful:
+                  fade_duration_millis: 1000
+                  removal_delay_millis: 0
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Blue Orb Double Spawn Timer One
+    lounge_blue_orb_three:
+      model_id: 1198
+      name_id: 16929
+      possible_pos:
+        - x: -103.90829
+          y: 10.04
+          z: 1267.9337
+          w: 1
+        - x: -134.00188
+          y: 9.040001
+          z: 1256.3679
+          w: 1
+        - x: -124.485245
+          y: 10.04
+          z: 1281.8756
+          w: 1
+        - x: -111.23597
+          y: 10.04
+          z: 1269.8833
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      show_name: false
+      one_shot_action_on_interact:
+        award_credits: 25
+        despawn_npc: true
+        removal_mode: !Graceful
+          fade_duration_millis: 1000
+          removal_delay_millis: 0
+        duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          weight: 300
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: lifespan
+        lifespan:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful:
+                  fade_duration_millis: 1000
+                  removal_delay_millis: 0
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: empty
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Blue Orb Single Spawn Timer
+    war_room_blue_orb_one:
+      model_id: 1198
+      name_id: 16929
+      possible_pos:
+        - x: 707.4525
+          y: 9.856772
+          z: -2.2175117
+          w: 1
+        - x: 720.1724
+          y: 10.098241
+          z: 6.219733
+          w: 1
+        - x: 725.0797
+          y: 10.098242
+          z: 10.086607
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      show_name: false
+      one_shot_action_on_interact:
+        award_credits: 25
+        despawn_npc: true
+        removal_mode: !Graceful
+          fade_duration_millis: 1000
+          removal_delay_millis: 0
+        duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: idle
+        idle:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful:
+                  fade_duration_millis: 1000
+                  removal_delay_millis: 0
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Blue Orb Double Spawn Timer One
+    war_room_blue_orb_two:
+      model_id: 1198
+      name_id: 16929
+      possible_pos:
+        - x: 716.6275
+          y: 9.881826
+          z: -2.1226842
+          w: 1
+        - x: 692.6214
+          y: 9.881819
+          z: -7.421132
+          w: 1
+        - x: 704.66315
+          y: 9.857584
+          z: -10.843196
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      show_name: false
+      one_shot_action_on_interact:
+        award_credits: 25
+        despawn_npc: true
+        removal_mode: !Graceful
+          fade_duration_millis: 1000
+          removal_delay_millis: 0
+        duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: idle
+        idle:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful:
+                  fade_duration_millis: 1000
+                  removal_delay_millis: 0
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Blue Orb Double Spawn Timer One
+    war_room_blue_orb_three:
+      model_id: 1198
+      name_id: 16929
+      possible_pos:
+        - x: 699.7767
+          y: 9.881886
+          z: -10.127391
+          w: 1
+        - x: 708.10266
+          y: 9.957629
+          z: 7.229828
+          w: 1
+        - x: 704.13086
+          y: 9.842265
+          z: 3.1196246
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      show_name: false
+      one_shot_action_on_interact:
+        award_credits: 25
+        despawn_npc: true
+        removal_mode: !Graceful
+          fade_duration_millis: 1000
+          removal_delay_millis: 0
+        duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          weight: 300
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: lifespan
+        lifespan:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful:
+                  fade_duration_millis: 1000
+                  removal_delay_millis: 0
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: empty
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Blue Orb Single Spawn Timer
+    shops_blue_orb_one:
+      model_id: 1198
+      name_id: 16929
+      possible_pos:
+        - x: 888.297
+          y: 171.93137
+          z: 1509.0748
+          w: 1
+        - x: 913.0639
+          y: 172.44917
+          z: 1558.2773
+          w: 1
+        - x: 909.1837
+          y: 176.67288
+          z: 1561.275
+          w: 1
+        - x: 905.1734
+          y: 172.44917
+          z: 1554.6343
+          w: 1
+        - x: 916.88104
+          y: 178.45146
+          z: 1528.9362
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      show_name: false
+      one_shot_action_on_interact:
+        award_credits: 25
+        despawn_npc: true
+        removal_mode: !Graceful
+          fade_duration_millis: 1000
+          removal_delay_millis: 0
+        duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: idle
+        idle:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful:
+                  fade_duration_millis: 1000
+                  removal_delay_millis: 0
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Blue Orb Double Spawn Timer One
+    shops_blue_orb_two:
+      model_id: 1198
+      name_id: 16929
+      possible_pos:
+        - x: 890.98975
+          y: 171.92809
+          z: 1564.9829
+          w: 1
+        - x: 890.4689
+          y: 171.93375
+          z: 1564.3689
+          w: 1
+        - x: 917.1802
+          y: 178.45145
+          z: 1543.825
+          w: 1
+        - x: 901.1932
+          y: 173.72708
+          z: 1535.9695
+          w: 1
+        - x: 916.6061
+          y: 178.45145
+          z: 1565.1721
+          w: 1
+        - x: 906.0068
+          y: 175.54118
+          z: 1529.2587
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      show_name: false
+      one_shot_action_on_interact:
+        award_credits: 25
+        despawn_npc: true
+        removal_mode: !Graceful
+          fade_duration_millis: 1000
+          removal_delay_millis: 0
+        duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: idle
+        idle:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful:
+                  fade_duration_millis: 1000
+                  removal_delay_millis: 0
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Blue Orb Double Spawn Timer One
+    shops_blue_orb_three:
+      model_id: 1198
+      name_id: 16929
+      possible_pos:
+        - x: 909.2783
+          y: 172.44917
+          z: 1535.788
+          w: 1
+        - x: 892.2159
+          y: 171.90773
+          z: 1521.158
+          w: 1
+        - x: 916.5832
+          y: 178.45145
+          z: 1552.0795
+          w: 1
+        - x: 891.9794
+          y: 171.93376
+          z: 1538.8024
+          w: 1
+        - x: 885.334
+          y: 171.93375
+          z: 1515.7941
+          w: 1
+        - x: 911.56287
+          y: 177.61832
+          z: 1532.4813
+          w: 1
+        - x: 921.1074
+          y: 178.5453
+          z: 1535.2856
+          w: 1
+        - x: 886.096
+          y: 171.93376
+          z: 1558.1489
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      show_name: false
+      one_shot_action_on_interact:
+        award_credits: 25
+        despawn_npc: true
+        removal_mode: !Graceful
+          fade_duration_millis: 1000
+          removal_delay_millis: 0
+        duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          weight: 300
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: lifespan
+        lifespan:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful:
+                  fade_duration_millis: 1000
+                  removal_delay_millis: 0
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: empty
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Blue Orb Single Spawn Timer
+    shops_gold_orb:
+      model_id: 1320
+      name_id: 16929
+      possible_pos:
+        - x: 920.59796
+          y: 178.53049
+          z: 1555.7014
+          w: 1
+        - x: 908.8172
+          y: 172.44917
+          z: 1540.0723
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      show_name: false
+      one_shot_action_on_interact:
+        award_credits: 100
+        despawn_npc: true
+        removal_mode: !Graceful
+          fade_duration_millis: 1000
+          removal_delay_millis: 0
+        duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          weight: 150
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: lifespan
+        lifespan:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful:
+                  fade_duration_millis: 1000
+                  removal_delay_millis: 0
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: empty
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 150
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Gold Orb Spawn Timer
+    main_hall_blue_orb_one:
+      model_id: 1198
+      name_id: 16929
+      possible_pos:
+        - x: 1245.1803
+          y: 10.038356
+          z: 288.36722
+          w: 1
+        - x: 1293.7625
+          y: 10.039652
+          z: 263.6236
+          w: 1
+        - x: 1291.8003
+          y: 10.039786
+          z: 241.94025
+          w: 1
+        - x: 1275.729
+          y: 9.9457855
+          z: 266.1894
+          w: 1
+        - x: 1262.6526
+          y: 10.029784
+          z: 289.2573
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      show_name: false
+      one_shot_action_on_interact:
+        award_credits: 25
+        despawn_npc: true
+        removal_mode: !Graceful
+          fade_duration_millis: 1000
+          removal_delay_millis: 0
+        duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: idle
+        idle:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful:
+                  fade_duration_millis: 1000
+                  removal_delay_millis: 0
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Blue Orb Double Spawn Timer One
+    main_hall_blue_orb_two:
+      model_id: 1198
+      name_id: 16929
+      possible_pos:
+        - x: 1277.8179
+          y: 10.065796
+          z: 257.60693
+          w: 1
+        - x: 1297.7836
+          y: 10.038356
+          z: 245.88348
+          w: 1
+        - x: 1296.7898
+          y: 10.005678
+          z: 289.90384
+          w: 1
+        - x: 1308.4006
+          y: 10.077163
+          z: 270.90396
+          w: 1
+        - x: 1303.5353
+          y: 10.085399
+          z: 284.19827
+          w: 1
+        - x: 1296.7787
+          y: 10.068002
+          z: 292.70782
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      enable_interact_popup: false
+      show_name: false
+      one_shot_action_on_interact:
+        award_credits: 25
+        despawn_npc: true
+        removal_mode: !Graceful
+          fade_duration_millis: 1000
+          removal_delay_millis: 0
+        duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: idle
+        idle:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful:
+                  fade_duration_millis: 1000
+                  removal_delay_millis: 0
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 89700
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Blue Orb Double Spawn Timer One
+    main_hall_blue_orb_three:
+      model_id: 1198
+      name_id: 16929
+      possible_pos:
+        - x: 1270.2139
+          y: 10.020651
+          z: 242.33751
+          w: 1
+        - x: 1258.7727
+          y: 10.077163
+          z: 279.08734
+          w: 1
+        - x: 1246.4397
+          y: 10.077163
+          z: 250.48357
+          w: 1
+        - x: 1270.784
+          y: 10.013283
+          z: 251.37112
+          w: 1
+        - x: 1254.0964
+          y: 10.0434065
+          z: 247.03496
+          w: 1
+        - x: 1265.2877
+          y: 10.038472
+          z: 292.35446
+          w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      is_spawned: false
+      show_name: false
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+        award_credits: 25
+        despawn_npc: true
+        removal_mode: !Graceful
+          fade_duration_millis: 1000
+          removal_delay_millis: 0
+        duration_millis: 1000
+      tickable_procedures:
+        spawn:
+          weight: 300
+          steps:
+            - spawned_state: Always
+              duration_millis: 1
+          next_possible_procedures:
+            - procedure: lifespan
+        lifespan:
+          steps:
+            - duration_millis: 1200000
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              removal_mode:
+                Graceful:
+                  fade_duration_millis: 1000
+                  removal_delay_millis: 0
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: empty
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 300
+            - procedure: empty
+              weight: 89700
+      synchronize_with: Blue Orb Single Spawn Timer

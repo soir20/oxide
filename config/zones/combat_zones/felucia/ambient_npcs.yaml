@@ -1,0 +1,16 @@
+felucia:
+  ambient_npcs:
+    sarlacc_bouncer:
+      model_id: 178
+      scale: 5
+      pos:
+        x: 147.5
+        y: -99
+        z: 505
+        w: 1
+      rot:
+        x: 0
+        y: 1.1
+        z: 0
+        w: 0
+      bounce_area_id: 5003

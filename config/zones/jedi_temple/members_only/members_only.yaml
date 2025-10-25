@@ -1,0 +1,24 @@
+members_only:
+  guid: 25
+  max_players: 4294967295
+  template_name: 52297
+  asset_name: Members
+  hide_ui: false
+  is_combat: false
+  chunk_size: 70
+  default_point_of_interest:
+    guid: 25
+    pos:
+      x: 1487.53
+      y: 70
+      z: 890.248076
+      w: 1
+    rot:
+      x: 0
+      y: 0
+      z: 1.5
+      w: 0
+  speed: 8
+  jump_height_multiplier: 1
+  gravity_multiplier: 1
+  seconds_per_day: 10800
