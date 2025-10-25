@@ -29,7 +29,7 @@ use crate::{
                 UpdateSpeed, UpdateTemporaryModel,
             },
             tunnel::TunneledPacket,
-            ui::{ExecuteScriptWithStringParams, ExecuteScriptWithIntParams},
+            ui::{ExecuteScriptWithIntParams, ExecuteScriptWithStringParams},
             update_position::UpdatePlayerPosition,
             GamePacket, GuidTarget, Name, Pos, Rgba, Target,
         },
