@@ -1,0 +1,25 @@
+carlac:
+  guid: 11
+  max_players: 4294967295
+  template_name: 52057
+  asset_name: Combat_Carlac_01
+  hide_ui: false
+  is_combat: true
+  default_point_of_interest:
+    guid: 34
+    pos:
+      x: 37
+      y: 0.954847
+      z: 29
+      w: 1
+    rot:
+      x: 0.67
+      y: 0
+      z: 0.75
+      w: 0
+    name_id: 50654
+  speed: 8
+  jump_height_multiplier: 1
+  gravity_multiplier: 1
+  seconds_per_day: 10800
+  map_id: 113
