@@ -76,7 +76,8 @@ struct SaberDuelAi {
     bout_lost_sound_id: u32,
     game_won_sound_id: u32,
     game_lost_sound_id: u32,
-    millis_per_key: u16,
+    min_millis_per_key: u16,
+    max_millis_per_key: u16,
     #[serde(deserialize_with = "deserialize_probability")]
     mistake_probability: f32,
     right_to_left_ai_mistake_multiplier: f32,
@@ -1369,8 +1370,7 @@ impl SaberDuelGame {
             keys.push(thread_rng().gen());
         }
 
-        let mut time_until_first_ai_key =
-            Duration::from_millis(self.config.ai.millis_per_key.into());
+        let mut time_until_first_ai_key = SaberDuelGame::next_ai_key_duration(&self.config);
         if self.config.memory_challenge {
             time_until_first_ai_key =
                 time_until_first_ai_key.saturating_add(MEMORY_CHALLENGE_AI_DELAY);
@@ -1425,6 +1425,12 @@ impl SaberDuelGame {
         broadcasts
     }
 
+    fn next_ai_key_duration(config: &SaberDuelConfig) -> Duration {
+        let millis =
+            thread_rng().gen_range(config.ai.min_millis_per_key..config.ai.max_millis_per_key);
+        Duration::from_millis(millis.into())
+    }
+
     #[must_use]
     fn tick_ai_keypress(
         now: Instant,
@@ -1459,7 +1465,7 @@ impl SaberDuelGame {
         } else if player_state.increment_progress() && bout_completed_time.is_none() {
             *bout_completed_time = Some(bout_time_remaining.time_until_next_event(now));
         }
-        ai_next_key.schedule_event(Duration::from_millis(config.ai.millis_per_key.into()), now);
+        ai_next_key.schedule_event(SaberDuelGame::next_ai_key_duration(config), now);
 
         true
     }
