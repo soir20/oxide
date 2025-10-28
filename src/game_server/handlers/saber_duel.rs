@@ -80,11 +80,15 @@ struct SaberDuelAi {
     max_millis_per_key: u16,
     #[serde(deserialize_with = "deserialize_probability")]
     mistake_probability: f32,
+    #[serde(default)]
     right_to_left_ai_mistake_multiplier: f32,
+    #[serde(default)]
     opposite_ai_mistake_multiplier: f32,
-    #[serde(deserialize_with = "deserialize_probability")]
+    #[serde(deserialize_with = "deserialize_probability", default)]
     force_power_probability: f32,
+    #[serde(default)]
     force_powers: BTreeMap<SaberDuelForcePower, SaberDuelAiForcePower>,
+    #[serde(default)]
     force_power_delay_millis: u32,
 }
 
