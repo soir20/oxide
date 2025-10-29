@@ -402,12 +402,19 @@ pub struct SaberDuelConfig {
     no_bouts_lost_bonus_score: i32,
     default_primary_saber: SaberDuelEquippableSaber,
     default_secondary_saber: Option<SaberDuelEquippableSaber>,
+    #[serde(default)]
     max_force_points: u8,
+    #[serde(default)]
     force_power_selection_max_millis: u32,
+    #[serde(default)]
     force_points_per_bout_won: u8,
+    #[serde(default)]
     force_points_per_bout_tied: u8,
+    #[serde(default)]
     force_points_per_bout_lost: u8,
+    #[serde(default)]
     force_powers: BTreeMap<SaberDuelForcePower, SaberDuelAvailableForcePower>,
+    #[serde(default)]
     memory_challenge: bool,
 }
 
