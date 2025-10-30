@@ -6,6 +6,7 @@ pub mod character;
 pub mod chat;
 pub mod command;
 pub mod daily;
+pub mod dialog;
 pub mod fleet_commander;
 pub mod force_connection;
 pub mod guid;

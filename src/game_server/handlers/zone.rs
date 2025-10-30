@@ -36,6 +36,7 @@ use super::{
         CharacterSquadIndex, CharacterSynchronizationIndex, CharacterType, Chunk, DoorConfig,
         NpcTemplate, PreviousFixture, PreviousLocation, RemovalMode, TransportConfig,
     },
+    dialog::{DialogOptions, DialogOptionsTemplate},
     distance3,
     guid::{Guid, GuidTable, GuidTableIndexer, GuidTableWriteHandle, IndexedGuid},
     housing::prepare_init_house_packets,
@@ -103,6 +104,8 @@ pub struct ZoneConfig {
     update_previous_location_on_leave: bool,
     #[serde(default)]
     map_id: u32,
+    #[serde(default)]
+    dialog_options: Vec<DialogOptions>,
 }
 
 #[derive(Clone)]
@@ -125,6 +128,7 @@ pub struct ZoneTemplate {
     pub seconds_per_day: u32,
     update_previous_location_on_leave: bool,
     map_id: u32,
+    pub dialog_options: Vec<DialogOptionsTemplate>,
 }
 
 impl Guid<u8> for ZoneTemplate {
@@ -183,6 +187,12 @@ impl From<ZoneConfig> for ZoneTemplate {
             }
         }
 
+        let dialog_options = value
+            .dialog_options
+            .iter()
+            .map(|options| DialogOptionsTemplate::from_config(options, value.guid, &characters))
+            .collect();
+
         ZoneTemplate {
             guid: value.guid,
             template_name: value.template_name,
@@ -202,6 +212,7 @@ impl From<ZoneConfig> for ZoneTemplate {
             seconds_per_day: value.seconds_per_day,
             update_previous_location_on_leave: value.update_previous_location_on_leave,
             map_id: value.map_id,
+            dialog_options,
         }
     }
 }
@@ -1219,6 +1230,13 @@ pub enum DestinationZoneInstance {
     },
 }
 
+#[derive(Clone, Deserialize)]
+pub struct Destination {
+    pub destination_pos: Pos,
+    pub destination_rot: Pos,
+    pub destination_zone: DestinationZoneInstance,
+}
+
 pub fn teleport_anywhere(
     destination_pos: Pos,
     destination_rot: Pos,
@@ -1308,8 +1326,15 @@ pub fn interact_with_character(
                 );
 
                 let player_stats = match &mut requester_read_handle.stats.character_type {
-                    CharacterType::Player(player) => Some(player.as_mut()),
-                    _ => None,
+                    CharacterType::Player(player) => player.as_mut(),
+                    _ => {
+                        return Err(ProcessPacketError::new(
+                            ProcessPacketErrorType::ConstraintViolated,
+                            format!(
+                                "Received request to interact with NPC {target} from {requester} but they were not a player"
+                            ),
+                        ));
+                    }
                 };
 
                 let result = (|| {

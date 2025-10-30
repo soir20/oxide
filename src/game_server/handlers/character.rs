@@ -12,13 +12,14 @@ use serde::Deserialize;
 use crate::{
     game_server::{
         handlers::{
+            dialog::DialogConfig,
             inventory::{attachments_from_equipped_items, wield_type_from_inventory},
             unique_guid::AMBIENT_NPC_DISCRIMINANT,
         },
         packets::{
             chat::{ActionBarTextColor, SendStringId},
             client_update::UpdateCredits,
-            command::PlaySoundIdOnTarget,
+            command::{DialogChoice, EnterDialog, PlaySoundIdOnTarget},
             item::{Attachment, BaseAttachmentGroup, EquipmentSlot, ItemDefinition, WieldType},
             minigame::ScoreEntry,
             player_update::{
@@ -369,6 +370,7 @@ pub struct OneShotAction {
     pub despawn_npc: bool,
     #[serde(default)]
     pub minigame_stage_group_guid: i32,
+    pub dialog_config: Option<DialogConfig>,
     pub duration_millis: u64,
 }
 
@@ -378,7 +380,7 @@ impl OneShotAction {
         character: &mut CharacterStats,
         nearby_player_guids: &[u32],
         requester: u32,
-        player_stats: Option<&mut Player>,
+        player_stats: &mut Player,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let mut packets_for_all = Vec::new();
         let mut packets_for_sender = Vec::new();
@@ -434,15 +436,12 @@ impl OneShotAction {
         }
 
         if self.award_credits > 0 {
-            if let Some(player) = player_stats {
-                player.credits = player.credits.saturating_add(self.award_credits);
-                packets_for_sender.push(GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: UpdateCredits {
-                        new_credits: player.credits,
-                    },
-                }));
-            }
+            let new_credits = player_stats.credits.saturating_add(self.award_credits);
+            player_stats.credits = new_credits;
+            packets_for_sender.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: UpdateCredits { new_credits },
+            }));
         }
 
         if self.minigame_stage_group_guid > 0 {
@@ -451,6 +450,42 @@ impl OneShotAction {
                 inner: ExecuteScriptWithIntParams {
                     script_name: "MiniGameWrapper.CreateMiniGameGroup".to_string(),
                     params: vec![self.minigame_stage_group_guid],
+                },
+            }));
+        }
+
+        if let Some(dialog) = &self.dialog_config {
+            packets_for_sender.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: EnterDialog {
+                    dialog_message_id: dialog.dialog_message_id,
+                    speaker_animation_id: dialog.speaker_animation_id,
+                    speaker_guid: Guid::guid(character),
+                    enable_escape: true,
+                    unknown4: 10.0,
+                    dialog_choices: dialog
+                        .choices
+                        .as_ref()
+                        .unwrap_or(&vec![])
+                        .iter()
+                        .map(|choice| DialogChoice {
+                            button_id: choice.button_id,
+                            unknown2: 0,
+                            button_text_id: choice.button_text_id,
+                            unknown4: 0,
+                            unknown5: 0,
+                        })
+                        .collect(),
+                    camera_placement: dialog.camera_placement,
+                    look_at: dialog.look_at,
+                    change_player_pos: false,
+                    new_player_pos: Pos::default(),
+                    unknown8: 10.0,
+                    hide_players: !dialog.show_players,
+                    unknown10: true,
+                    unknown11: true,
+                    zoom: dialog.zoom,
+                    speaker_sound_id: dialog.speaker_sound_id,
                 },
             }));
         }
@@ -1150,7 +1185,7 @@ impl AmbientNpc {
         character: &mut Character,
         nearby_player_guids: &[u32],
         requester: u32,
-        player_stats: Option<&mut Player>,
+        player_stats: &mut Player,
     ) -> (Option<String>, WriteLockingBroadcastSupplier) {
         if let Some(active_procedure_key) = character.current_tickable_procedure() {
             if let Some(active_procedure) = character
@@ -2308,7 +2343,7 @@ impl Character {
     pub fn interact(
         &mut self,
         requester: u32,
-        player_stats: Option<&mut Player>,
+        player_stats: &mut Player,
         nearby_player_guids: &[u32],
     ) -> WriteLockingBroadcastSupplier {
         let mut new_procedure = None;

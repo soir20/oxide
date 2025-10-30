@@ -3,11 +3,13 @@ use std::io::{Cursor, Read};
 use packet_serialize::DeserializePacket;
 
 use crate::game_server::{
-    packets::command::{CommandOpCode, InteractRequest},
+    packets::command::{AdvanceDialog, CommandOpCode, InteractRequest},
     Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
 };
 
-use super::{unique_guid::player_guid, zone::interact_with_character};
+use super::{
+    dialog::handle_dialog_buttons, unique_guid::player_guid, zone::interact_with_character,
+};
 
 pub fn process_command(
     game_server: &GameServer,
@@ -22,6 +24,12 @@ pub fn process_command(
                 let req = InteractRequest::deserialize(cursor)?;
                 interact_with_character(player_guid(sender), req.target, game_server)
             }
+            CommandOpCode::AdvanceDialog => {
+                let advancement = AdvanceDialog::deserialize(cursor)?;
+                handle_dialog_buttons(sender, advancement.button_id, game_server)
+            }
+            // Ignore this packet to reduce log spam
+            CommandOpCode::ExitDialog => Ok(Vec::new()),
             _ => {
                 let mut buffer = Vec::new();
                 cursor.read_to_end(&mut buffer)?;
