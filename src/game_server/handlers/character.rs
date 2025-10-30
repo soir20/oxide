@@ -24,10 +24,10 @@ use crate::{
             minigame::ScoreEntry,
             player_update::{
                 AddNotifications, AddNpc, AddPc, Customization, CustomizationSlot, Hostility, Icon,
-                MoveOnRail, NameplateImage, NotificationData, NpcRelevance, PhysicsState,
-                PlayCompositeEffect, QueueAnimation, RemoveGracefully, RemoveStandard,
-                RemoveTemporaryModel, SetAnimation, SingleNotification, SingleNpcRelevance,
-                UpdateSpeed, UpdateTemporaryModel,
+                MoveOnRail, NameplateImage, NotificationData, NotificationIconId, NpcRelevance,
+                PhysicsState, PlayCompositeEffect, QueueAnimation, RemoveGracefully,
+                RemoveStandard, RemoveTemporaryModel, SetAnimation, SingleNotification,
+                SingleNpcRelevance, UpdateSpeed, UpdateTemporaryModel,
             },
             tunnel::TunneledPacket,
             ui::{ExecuteScriptWithIntParams, ExecuteScriptWithStringParams},
@@ -1129,6 +1129,7 @@ pub struct AmbientNpcConfig {
     pub base_npc: BaseNpcConfig,
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
     pub one_shot_action_on_interact: Option<OneShotAction>,
+    pub notification_icon: Option<NotificationIconId>,
 }
 
 impl NpcConfig for AmbientNpcConfig {
@@ -1151,6 +1152,7 @@ pub struct AmbientNpc {
     pub base_npc: BaseNpc,
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
     pub one_shot_action_on_interact: Option<OneShotAction>,
+    pub notification_icon: Option<NotificationIconId>,
 }
 
 impl AmbientNpc {
@@ -1164,18 +1166,42 @@ impl AmbientNpc {
         else {
             return Vec::new();
         };
-        let packets = vec![
-            GamePacket::serialize(&TunneledPacket {
+
+        let mut packets = Vec::new();
+
+        packets.push(GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: add_npc,
+        }));
+
+        packets.push(GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: NpcRelevance {
+                new_states: vec![enable_interaction],
+            },
+        }));
+
+        if let Some(icon_id) = self.notification_icon {
+            packets.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
-                inner: add_npc,
-            }),
-            GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: NpcRelevance {
-                    new_states: vec![enable_interaction],
+                inner: AddNotifications {
+                    notifications: vec![SingleNotification {
+                        guid: Guid::guid(character),
+                        unknown1: 0,
+                        notification: Some(NotificationData {
+                            unknown1: 0,
+                            icon_id,
+                            unknown3: 0,
+                            name_id: 0,
+                            unknown4: 0,
+                            hide_icon: false,
+                            unknown6: 0,
+                        }),
+                        unknown2: false,
+                    }],
                 },
-            }),
-        ];
+            }));
+        }
 
         packets
     }
@@ -1231,6 +1257,7 @@ impl From<AmbientNpcConfig> for AmbientNpc {
             base_npc: value.base_npc.into(),
             procedure_on_interact: value.procedure_on_interact,
             one_shot_action_on_interact: value.one_shot_action_on_interact,
+            notification_icon: value.notification_icon,
         }
     }
 }
@@ -1380,7 +1407,11 @@ impl Transport {
                         unknown1: 0,
                         notification: Some(NotificationData {
                             unknown1: 0,
-                            icon_id: if self.large_icon { 46 } else { 37 },
+                            icon_id: if self.large_icon {
+                                NotificationIconId::LargeTransport
+                            } else {
+                                NotificationIconId::Transport
+                            },
                             unknown3: 0,
                             name_id: 0,
                             unknown4: 0,
