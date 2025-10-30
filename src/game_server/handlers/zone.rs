@@ -1234,6 +1234,7 @@ pub enum DestinationZoneInstance {
 pub struct Destination {
     pub destination_pos: Pos,
     pub destination_rot: Pos,
+    #[serde(default)]
     pub destination_zone: DestinationZoneInstance,
 }
 

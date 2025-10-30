@@ -48,7 +48,7 @@ use super::{
     minigame::{MinigameTypeData, PlayerMinigameStats},
     mount::{spawn_mount_npc, MountConfig},
     unique_guid::{mount_guid, npc_guid, player_guid},
-    zone::{teleport_anywhere, DestinationZoneInstance},
+    zone::{teleport_anywhere, Destination},
     WriteLockingBroadcastSupplier,
 };
 
@@ -1240,10 +1240,7 @@ impl From<AmbientNpcConfig> for AmbientNpc {
 pub struct DoorConfig {
     #[serde(flatten)]
     pub base_npc: BaseNpcConfig,
-    pub destination_pos: Pos,
-    pub destination_rot: Pos,
-    #[serde(default)]
-    pub destination_zone: DestinationZoneInstance,
+    pub destination: Destination,
 }
 
 impl NpcConfig for DoorConfig {
@@ -1264,9 +1261,7 @@ impl From<DoorConfig> for CharacterType {
 #[derive(Clone)]
 pub struct Door {
     pub base_npc: BaseNpc,
-    pub destination_pos: Pos,
-    pub destination_rot: Pos,
-    pub destination_zone: DestinationZoneInstance,
+    pub destination: Destination,
 }
 
 impl Door {
@@ -1300,9 +1295,9 @@ impl Door {
 
     pub fn interact(&self, requester: u32) -> WriteLockingBroadcastSupplier {
         teleport_anywhere(
-            self.destination_pos,
-            self.destination_rot,
-            self.destination_zone,
+            self.destination.destination_pos,
+            self.destination.destination_rot,
+            self.destination.destination_zone,
             requester,
         )
     }
@@ -1312,9 +1307,7 @@ impl From<DoorConfig> for Door {
     fn from(value: DoorConfig) -> Self {
         Door {
             base_npc: value.base_npc.into(),
-            destination_pos: value.destination_pos,
-            destination_rot: value.destination_rot,
-            destination_zone: value.destination_zone,
+            destination: value.destination,
         }
     }
 }
