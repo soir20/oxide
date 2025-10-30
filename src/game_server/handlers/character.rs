@@ -448,7 +448,7 @@ impl OneShotAction {
             packets_for_all.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: ExecuteScriptWithIntParams {
-                    script_name: "MiniGameWrapper.CreateMiniGameGroup".to_string(),
+                    script_name: "MiniGameFlow.CreateMiniGameGroup".to_string(),
                     params: vec![self.minigame_stage_group_guid],
                 },
             }));
