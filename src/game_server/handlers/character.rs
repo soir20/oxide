@@ -462,7 +462,7 @@ impl OneShotAction {
                     speaker_animation_id: dialog.speaker_animation_id,
                     speaker_guid: Guid::guid(character),
                     enable_escape: true,
-                    unknown4: 10.0,
+                    unknown4: 0.0,
                     dialog_choices: dialog
                         .choices
                         .as_ref()
@@ -480,7 +480,7 @@ impl OneShotAction {
                     look_at: dialog.look_at,
                     change_player_pos: false,
                     new_player_pos: Pos::default(),
-                    unknown8: 10.0,
+                    unknown8: 0.0,
                     hide_players: !dialog.show_players,
                     unknown10: true,
                     unknown11: true,
