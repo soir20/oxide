@@ -1,0 +1,5 @@
+jedi_temple:
+  dialog_options:
+    - button_id: 1
+      script_name: UIGlobal.ShowGalaxyMap
+      close_dialog: true

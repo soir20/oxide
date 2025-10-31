@@ -1,5 +1,39 @@
 jedi_temple:
   ambient_npcs:
+    breaker:
+      model_id: 1207
+      name_id: 19237
+      pos:
+        x: 72.97756
+        y: 10.049025
+        z: -181.06
+        w: 1
+      rot:
+        x: 1
+        y: 0
+        z: -0.13887587
+        w: 0
+      cursor: 53
+      notification_icon: Transport
+      one_shot_action_on_interact:
+        dialog_config:
+          dialog_message_id: 32911
+          speaker_animation_id: 2207
+          speaker_sound_id: 5400
+          camera_placement:
+            x: 75.37756
+            y: 11.99025
+            z: -180.7
+            w: 1.0
+          look_at:
+            x: 72.97756
+            y: 11.99025
+            z: -180.7
+            w: 1
+          choices:
+            - button_id: 1
+              button_text_id: 5300
+        duration_millis: 1
     veranda_fountain:
       terrain_object_id: 1278971305
       model_id: 907
