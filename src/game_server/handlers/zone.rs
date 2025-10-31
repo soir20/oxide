@@ -1,5 +1,5 @@
 use std::{
-    collections::{BTreeMap, BTreeSet, HashMap},
+    collections::{BTreeMap, BTreeSet, HashMap, HashSet},
     fs,
     fs::File,
     iter,
@@ -184,6 +184,17 @@ impl From<ZoneConfig> for ZoneTemplate {
             for transport in value.transports.values() {
                 characters.push(NpcTemplate::from_config(transport.clone(), index));
                 index += 1;
+            }
+        }
+
+        let mut seen_button_ids = HashSet::new();
+
+        for options in &value.dialog_options {
+            if !seen_button_ids.insert(options.button_id) {
+                panic!(
+                    "Duplicate (Button ID: {}) found in (Zone Template GUID: {})",
+                    options.button_id, value.guid
+                );
             }
         }
 
