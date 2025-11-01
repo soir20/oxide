@@ -589,6 +589,7 @@ impl SaberDuelGame {
                 },
                 procedure_on_interact: None,
                 one_shot_action_on_interact: None,
+                notification_icon: None,
             }),
             None,
             None,

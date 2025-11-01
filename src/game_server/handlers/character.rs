@@ -12,24 +12,25 @@ use serde::Deserialize;
 use crate::{
     game_server::{
         handlers::{
+            dialog::DialogConfig,
             inventory::{attachments_from_equipped_items, wield_type_from_inventory},
             unique_guid::AMBIENT_NPC_DISCRIMINANT,
         },
         packets::{
             chat::{ActionBarTextColor, SendStringId},
             client_update::UpdateCredits,
-            command::PlaySoundIdOnTarget,
+            command::{DialogChoice, EnterDialog, PlaySoundIdOnTarget},
             item::{Attachment, BaseAttachmentGroup, EquipmentSlot, ItemDefinition, WieldType},
             minigame::ScoreEntry,
             player_update::{
                 AddNotifications, AddNpc, AddPc, Customization, CustomizationSlot, Hostility, Icon,
-                MoveOnRail, NameplateImage, NotificationData, NpcRelevance, PhysicsState,
-                PlayCompositeEffect, QueueAnimation, RemoveGracefully, RemoveStandard,
-                RemoveTemporaryModel, SetAnimation, SingleNotification, SingleNpcRelevance,
-                UpdateSpeed, UpdateTemporaryModel,
+                MoveOnRail, NameplateImage, NotificationData, NotificationIconId, NpcRelevance,
+                PhysicsState, PlayCompositeEffect, QueueAnimation, RemoveGracefully,
+                RemoveStandard, RemoveTemporaryModel, SetAnimation, SingleNotification,
+                SingleNpcRelevance, UpdateSpeed, UpdateTemporaryModel,
             },
             tunnel::TunneledPacket,
-            ui::ExecuteScriptWithStringParams,
+            ui::{ExecuteScriptWithIntParams, ExecuteScriptWithStringParams},
             update_position::UpdatePlayerPosition,
             GamePacket, GuidTarget, Name, Pos, Rgba, Target,
         },
@@ -47,7 +48,7 @@ use super::{
     minigame::{MinigameTypeData, PlayerMinigameStats},
     mount::{spawn_mount_npc, MountConfig},
     unique_guid::{mount_guid, npc_guid, player_guid},
-    zone::{teleport_anywhere, DestinationZoneInstance},
+    zone::{teleport_anywhere, Destination},
     WriteLockingBroadcastSupplier,
 };
 
@@ -367,6 +368,9 @@ pub struct OneShotAction {
     pub removal_mode: RemovalMode,
     #[serde(default)]
     pub despawn_npc: bool,
+    #[serde(default)]
+    pub minigame_stage_group_guid: i32,
+    pub dialog_config: Option<DialogConfig>,
     pub duration_millis: u64,
 }
 
@@ -376,7 +380,7 @@ impl OneShotAction {
         character: &mut CharacterStats,
         nearby_player_guids: &[u32],
         requester: u32,
-        player_stats: Option<&mut Player>,
+        player_stats: &mut Player,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let mut packets_for_all = Vec::new();
         let mut packets_for_sender = Vec::new();
@@ -432,15 +436,58 @@ impl OneShotAction {
         }
 
         if self.award_credits > 0 {
-            if let Some(player) = player_stats {
-                player.credits = player.credits.saturating_add(self.award_credits);
-                packets_for_sender.push(GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: UpdateCredits {
-                        new_credits: player.credits,
-                    },
-                }));
-            }
+            let new_credits = player_stats.credits.saturating_add(self.award_credits);
+            player_stats.credits = new_credits;
+            packets_for_sender.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: UpdateCredits { new_credits },
+            }));
+        }
+
+        if self.minigame_stage_group_guid > 0 {
+            packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: ExecuteScriptWithIntParams {
+                    script_name: "MiniGameFlow.CreateMiniGameGroup".to_string(),
+                    params: vec![self.minigame_stage_group_guid],
+                },
+            }));
+        }
+
+        if let Some(dialog) = &self.dialog_config {
+            packets_for_sender.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: EnterDialog {
+                    dialog_message_id: dialog.dialog_message_id,
+                    speaker_animation_id: dialog.speaker_animation_id,
+                    speaker_guid: Guid::guid(character),
+                    enable_escape: true,
+                    unknown4: 0.0,
+                    dialog_choices: dialog
+                        .choices
+                        .as_ref()
+                        .unwrap_or(&vec![])
+                        .iter()
+                        .map(|choice| DialogChoice {
+                            button_id: choice.button_id,
+                            unknown2: 0,
+                            button_text_id: choice.button_text_id,
+                            unknown4: 0,
+                            unknown5: 0,
+                        })
+                        .collect(),
+                    camera_placement: dialog.camera_placement,
+                    look_at: dialog.look_at,
+                    change_player_pos: false,
+                    new_player_pos: Pos::default(),
+                    unknown8: 0.0,
+                    hide_players: !dialog.show_players,
+                    unknown10: true,
+                    unknown11: true,
+                    zoom: dialog.zoom,
+                    speaker_sound_id: dialog.speaker_sound_id,
+                },
+            }));
         }
 
         let broadcasts = vec![
@@ -1082,6 +1129,7 @@ pub struct AmbientNpcConfig {
     pub base_npc: BaseNpcConfig,
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
     pub one_shot_action_on_interact: Option<OneShotAction>,
+    pub notification_icon: Option<NotificationIconId>,
 }
 
 impl NpcConfig for AmbientNpcConfig {
@@ -1104,6 +1152,7 @@ pub struct AmbientNpc {
     pub base_npc: BaseNpc,
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
     pub one_shot_action_on_interact: Option<OneShotAction>,
+    pub notification_icon: Option<NotificationIconId>,
 }
 
 impl AmbientNpc {
@@ -1117,18 +1166,42 @@ impl AmbientNpc {
         else {
             return Vec::new();
         };
-        let packets = vec![
-            GamePacket::serialize(&TunneledPacket {
+
+        let mut packets = Vec::new();
+
+        packets.push(GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: add_npc,
+        }));
+
+        packets.push(GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: NpcRelevance {
+                new_states: vec![enable_interaction],
+            },
+        }));
+
+        if let Some(icon_id) = self.notification_icon {
+            packets.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
-                inner: add_npc,
-            }),
-            GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: NpcRelevance {
-                    new_states: vec![enable_interaction],
+                inner: AddNotifications {
+                    notifications: vec![SingleNotification {
+                        guid: Guid::guid(character),
+                        unknown1: 0,
+                        notification: Some(NotificationData {
+                            unknown1: 0,
+                            icon_id,
+                            unknown3: 0,
+                            name_id: 0,
+                            unknown4: 0,
+                            hide_icon: false,
+                            unknown6: 0,
+                        }),
+                        unknown2: false,
+                    }],
                 },
-            }),
-        ];
+            }));
+        }
 
         packets
     }
@@ -1138,7 +1211,7 @@ impl AmbientNpc {
         character: &mut Character,
         nearby_player_guids: &[u32],
         requester: u32,
-        player_stats: Option<&mut Player>,
+        player_stats: &mut Player,
     ) -> (Option<String>, WriteLockingBroadcastSupplier) {
         if let Some(active_procedure_key) = character.current_tickable_procedure() {
             if let Some(active_procedure) = character
@@ -1184,6 +1257,7 @@ impl From<AmbientNpcConfig> for AmbientNpc {
             base_npc: value.base_npc.into(),
             procedure_on_interact: value.procedure_on_interact,
             one_shot_action_on_interact: value.one_shot_action_on_interact,
+            notification_icon: value.notification_icon,
         }
     }
 }
@@ -1193,10 +1267,7 @@ impl From<AmbientNpcConfig> for AmbientNpc {
 pub struct DoorConfig {
     #[serde(flatten)]
     pub base_npc: BaseNpcConfig,
-    pub destination_pos: Pos,
-    pub destination_rot: Pos,
-    #[serde(default)]
-    pub destination_zone: DestinationZoneInstance,
+    pub destination: Destination,
 }
 
 impl NpcConfig for DoorConfig {
@@ -1217,9 +1288,7 @@ impl From<DoorConfig> for CharacterType {
 #[derive(Clone)]
 pub struct Door {
     pub base_npc: BaseNpc,
-    pub destination_pos: Pos,
-    pub destination_rot: Pos,
-    pub destination_zone: DestinationZoneInstance,
+    pub destination: Destination,
 }
 
 impl Door {
@@ -1253,9 +1322,9 @@ impl Door {
 
     pub fn interact(&self, requester: u32) -> WriteLockingBroadcastSupplier {
         teleport_anywhere(
-            self.destination_pos,
-            self.destination_rot,
-            self.destination_zone,
+            self.destination.destination_pos,
+            self.destination.destination_rot,
+            self.destination.destination_zone,
             requester,
         )
     }
@@ -1265,9 +1334,7 @@ impl From<DoorConfig> for Door {
     fn from(value: DoorConfig) -> Self {
         Door {
             base_npc: value.base_npc.into(),
-            destination_pos: value.destination_pos,
-            destination_rot: value.destination_rot,
-            destination_zone: value.destination_zone,
+            destination: value.destination,
         }
     }
 }
@@ -1340,7 +1407,11 @@ impl Transport {
                         unknown1: 0,
                         notification: Some(NotificationData {
                             unknown1: 0,
-                            icon_id: if self.large_icon { 46 } else { 37 },
+                            icon_id: if self.large_icon {
+                                NotificationIconId::LargeTransport
+                            } else {
+                                NotificationIconId::Transport
+                            },
                             unknown3: 0,
                             name_id: 0,
                             unknown4: 0,
@@ -2296,7 +2367,7 @@ impl Character {
     pub fn interact(
         &mut self,
         requester: u32,
-        player_stats: Option<&mut Player>,
+        player_stats: &mut Player,
         nearby_player_guids: &[u32],
     ) -> WriteLockingBroadcastSupplier {
         let mut new_procedure = None;
