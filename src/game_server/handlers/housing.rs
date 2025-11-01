@@ -195,7 +195,7 @@ pub fn fixture_packets(
                 temporary_model: 0,
                 effects: vec![],
                 disable_interact_popup: false,
-                unknown33: 0,
+                unused_death_animation_id: 0,
                 unknown34: false,
                 show_health: false,
                 hide_despawn_fade: false,

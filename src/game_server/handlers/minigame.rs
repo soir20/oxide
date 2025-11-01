@@ -3935,7 +3935,7 @@ fn leave_active_minigame_single_player_if_any(
                 character
                     .read()
                     .stats
-                    .remove_packets(RemovalMode::Immediate),
+                    .remove_packets(RemovalMode::default()),
             ));
         }
     }

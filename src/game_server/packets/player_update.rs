@@ -799,7 +799,7 @@ pub struct AddNpc {
     pub temporary_model: u32,
     pub effects: Vec<Effect>,
     pub disable_interact_popup: bool,
-    pub unknown33: u32,
+    pub unused_death_animation_id: u32,
     pub unknown34: bool,
     pub show_health: bool,
     pub hide_despawn_fade: bool,
