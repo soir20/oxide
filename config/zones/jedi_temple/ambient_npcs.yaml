@@ -1,205 +1,196 @@
 jedi_temple:
   ambient_npcs:
-    veranda_fountain:
-      terrain_object_id: 1278971305
-      model_id: 907
-      name_id: 16957
+    #
+    # Archives
+    #
+    Clone_Guard_Archives_1:
+      model_id: 1936
       pos:
-        x: 897.7858
-        y: 172.44917
-        z: 1547.0056
+        x: 1687.0
+        y: 19.00174
+        z: 1700.40
         w: 1
       rot:
-        x: 0
+        x: 1
         y: 0
         z: 0
         w: 0
+      stand_animation_id: 2505
+    Clone_Guard_Archives_2:
+      model_id: 1936
+      pos:
+        x: 1687.0
+        y: 19.000898
+        z: 1687.75
+        w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2505
+    Clone_Guard_Archives_3:
+      model_id: 1936
+      pos:
+        x: 1689.5
+        y: 10.040001
+        z: 1697.8173
+        w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2505
       cursor: 54
       enable_interact_popup: false
-      use_terrain_model: false
-      show_name: false
-      enable_gravity: false
-      interact_radius: 3.3
-      move_to_interact_offset: 3.2
       one_shot_action_on_interact:
-        one_shot_action_composite_effect_id: 1959
-        player_one_shot_animation_id: 3014
-        duration_millis: 5000
-    war_room_holotable_holograms:
-      name_id: 32914
-      model_id: 44
+          one_shot_action_animation_id: 2506
+          duration_millis: 1000
+      interact_radius: 6
+      auto_interact_radius: 5
+    Clone_Guard_Archives_4:
+      model_id: 1936
       pos:
-        x: 707.52936
-        y: 10.979759
-        z: -5.1
+        x: 1689.5
+        y: 10.040001
+        z: 1690.27
         w: 1
       rot:
-        x: 0
+        x: 1
         y: 0
         z: 0
         w: 0
-      show_name: false
+      stand_animation_id: 2505
+      cursor: 54
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          one_shot_action_animation_id: 2506
+          duration_millis: 1000
+      interact_radius: 6
+      auto_interact_radius: 5
+    Clone_Guard_Archives_5:
+      model_id: 1936
+      pos:
+        x: 1760.18
+        y: 18.948153
+        z: 1701.4
+        w: 1
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2505
+    Clone_Guard_Archives_6:
+      model_id: 1936
+      pos:
+        x: 1760.18
+        y: 18.948153
+        z: 1686.67
+        w: 1
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2505
+    # Gonk Droid on second floor
+    Archives_NPC_1:
+      model_id: 233
+      pos:
+        x: 1756.5
+        y: 18.948153
+        z: 1682.5162
+        w: 1
+      rot:
+        x: -0.5
+        y: 0
+        z: 1
+        w: 0
+    # Droid next to Jocasta Nu
+    Daily_Holocron_Door_NPC_1:
+      model_id: 300
+      pos:
+        x: 1692.8328
+        y: 10.040001
+        z: 1695.3916
+        w: 1.0
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 1.0
       tickable_procedures:
-        arc_troopers_hologram:
+        daily_holocron_holo:
+          weight: 588
           steps:
-            - model_id: 354
-              duration_millis: 10000
-          next_possible_procedures:
-            - procedure: invisible
-        battle_droid_hologram:
+            - composite_effect_id: 2053
+              duration_millis: 0
+    Daily_Trivia_Terminal_NPC_1:
+      model_id: 219
+      enable_gravity: false
+      pos:
+        x: 1723.835
+        y: 10.040001
+        z: 1694.052
+        w: 1.0
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 1.0
+      stand_animation_id: 2545
+    Force_Perception_Terminal_NPC_1:
+      model_id: 2033
+      enable_gravity: false
+      pos:
+        x: 1743.925
+        y: 10.070001
+        z: 1694.052
+        w: 1.0
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 1.0
+      stand_animation_id: 2543
+      tickable_procedures:
+        wake:
+          is_interruptible: false
           steps:
-            - model_id: 352
-              duration_millis: 10000
-          next_possible_procedures:
-            - procedure: invisible
-        super_battle_droid_hologram:
-          steps:
-            - model_id: 351
-              duration_millis: 10000
-          next_possible_procedures:
-            - procedure: invisible
-        droideka_hologram:
-          steps:
-            - animation_id: 9002
-              model_id: 350
-              duration_millis: 10000
-          next_possible_procedures:
-            - procedure: invisible
-        invisible:
-          steps:
-            - model_id: 44
+            - one_shot_animation_id: 2544
               duration_millis: 5000
-          next_possible_procedures:
-            - procedure: arc_troopers_hologram
-            - procedure: battle_droid_hologram
-            - procedure: super_battle_droid_hologram
-            - procedure: droideka_hologram
-    hangar_purple_jedi_starfighter:
-      model_id: 723
-      pos:
-        x: 119.7354
-        y: 24.68835
-        z: -159.5449
-        w: 1
-      rot:
-        x: 0
-        y: 0
-        z: 0
-        w: 0
-      is_spawned: false
-      enable_gravity: false
-      tickable_procedures:
-        spawn:
-          weight: 36
-          steps:
-            - spawned_state: OnFirstStepTick
-              rail_id: 37
-              composite_effect_id: 1021
-              duration_millis: 12500
-          next_possible_procedures:
-            - procedure: remove
-        remove:
-          steps:
-            - spawned_state: Despawn
-              duration_millis: 1000
-          next_possible_procedures:
-            - procedure: spawn
-            - procedure: empty
-              weight: 1259
         empty:
-          weight: 1259
+          weight: 588
           steps:
             - duration_millis: 1000
-          next_possible_procedures:
-            - procedure: spawn
-              weight: 36
-            - procedure: empty
-              weight: 1259
-    hangar_green_jedi_starfighter:
-      model_id: 721
+    Jedi_Archives_Bust_06:
+      model_id: 1007
+      terrain_object_id: 1283389222
+      use_terrain_model: false
+      enable_gravity: false
       pos:
-        x: 103.1059
-        y: 24.36797
-        z: -206.494
-        w: 1
+        x: 1696.775
+        y: 11.63229
+        z: 1684.887
+        w: 1.0
       rot:
         x: 0
-        y: 0
+        y: 90
         z: 0
-        w: 0
-      is_spawned: false
-      enable_gravity: false
-      tickable_procedures:
-        spawn:
-          weight: 36
-          steps:
-            - spawned_state: OnFirstStepTick
-              rail_id: 36
-              composite_effect_id: 1021
-              duration_millis: 11500
-          next_possible_procedures:
-            - procedure: remove
-        remove:
-          steps:
-            - spawned_state: Despawn
-              duration_millis: 1000
-          next_possible_procedures:
-            - procedure: spawn
-            - procedure: empty
-              weight: 1259
-        empty:
-          weight: 1259
-          steps:
-            - duration_millis: 1000
-          next_possible_procedures:
-            - procedure: spawn
-              weight: 36
-            - procedure: empty
-              weight: 1259
-    training_room_main_platform_lift:
-      model_id: 1438
-      physics: Disabled
-      pos:
-        x: 148.8
-        y: -3.6210175
-        z: 379.9795
-        w: 1
-      rot:
-        x: 1.5708
-        y: 0
-        z: 0
-        w: 0
-      tickable_procedures:
-        lift:
-          steps:
-            - speed: 2
-              new_pos_offset_y: 10
-              duration_millis: 10000
-            - speed: 2
-              new_pos_offset_y: -10
-              duration_millis: 10000
-    training_room_dueling_platform_lift:
-      model_id: 1438
-      physics: Disabled
-      pos:
-        x: 130.9
-        y: -3.6210175
-        z: 379.9795
-        w: 1
-      rot:
-        x: -1.5708
-        y: 0
-        z: 0
-        w: 0
-      tickable_procedures:
-        lift:
-          steps:
-            - speed: 2
-              new_pos_offset_y: 12
-              duration_millis: 12000
-            - speed: 2
-              new_pos_offset_y: -12
-              duration_millis: 12000
+        w: 1.0
+      stand_animation_id: 2547
+      cursor: 54
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          player_one_shot_animation_id: 3014
+          one_shot_action_animation_id: 2548
+          duration_millis: 1000
+
+    #
+    # Hanger
+    #
     joker:
       key: joker
       model_id: 1580
@@ -530,3 +521,1152 @@ jedi_temple:
           steps:
             - duration_millis: 1000
       synchronize_with: joker
+    hangar_purple_jedi_starfighter:
+      model_id: 723
+      pos:
+        x: 119.7354
+        y: 24.68835
+        z: -159.5449
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      is_spawned: false
+      enable_gravity: false
+      tickable_procedures:
+        spawn:
+          weight: 36
+          steps:
+            - spawned_state: OnFirstStepTick
+              rail_id: 37
+              composite_effect_id: 1021
+              duration_millis: 12500
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 1259
+        empty:
+          weight: 1259
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 36
+            - procedure: empty
+              weight: 1259
+    hangar_green_jedi_starfighter:
+      model_id: 721
+      pos:
+        x: 103.1059
+        y: 24.36797
+        z: -206.494
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      is_spawned: false
+      enable_gravity: false
+      tickable_procedures:
+        spawn:
+          weight: 36
+          steps:
+            - spawned_state: OnFirstStepTick
+              rail_id: 36
+              composite_effect_id: 1021
+              duration_millis: 11500
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 1259
+        empty:
+          weight: 1259
+          steps:
+            - duration_millis: 1000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 36
+            - procedure: empty
+              weight: 1259
+    Clone_Guard_Hanger_1:
+      model_id: 1936
+      pos:
+        x: 72.97756
+        y: 10.024778
+        z: -178.88186
+        w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2505
+      cursor: 54
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          one_shot_action_animation_id: 2506
+          duration_millis: 1000
+      interact_radius: 6
+      auto_interact_radius: 5
+    Clone_Guard_Hanger_2:
+      model_id: 1936
+      pos:
+        x: 72.97756
+        y: 10.024778
+        z: -183.58834
+        w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2505
+      cursor: 54
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          one_shot_action_animation_id: 2506
+          duration_millis: 1000
+      interact_radius: 6
+      auto_interact_radius: 5
+    # Dianoga Barrel
+    Hanger_NPC_1:
+      model_id: 1089
+      pos:
+        x: 97.0
+        y: 9.975351
+        z: -204.5
+        w: 1.0
+      rot:
+        x: 1
+        y: 0
+        z: 0.75
+        w: 0
+      stand_animation_id: 2301
+      cursor: 54
+      enable_interact_popup: false
+      interact_radius: 4
+      move_to_interact_offset: 4
+      one_shot_action_on_interact:
+          player_one_shot_animation_id: 3014
+          one_shot_action_animation_id: 2302
+          duration_millis: 1000
+    # Clone with Missile Rack
+    Hanger_NPC_2:
+      model_id: 968
+      pos:
+        x: 106.64343
+        y: 9.97293
+        z: -197.51973
+        w: 1.0
+      rot:
+        x: 0.5162447
+        y: 0
+        z: -0.8564411
+        w: 0
+      stand_animation_id: 2554
+      cursor: 54
+      enable_interact_popup: false
+      interact_radius: 4
+      move_to_interact_offset: 4
+      one_shot_action_on_interact:
+          player_one_shot_animation_id: 3014
+          one_shot_action_animation_id: 2555
+          duration_millis: 1000
+
+    #
+    # Main Hall
+    #
+    # Guard Left of Warroom Door
+    Clone_Guard_Main_Hall_1:
+      model_id: 1936
+      pos:
+        x: 1316.5754
+        y: 10.038356
+        z: 248.66127
+        w: 1
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2505
+      cursor: 54
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          one_shot_action_animation_id: 2506
+          duration_millis: 1000
+      interact_radius: 6
+      auto_interact_radius: 5
+    # Guard Right of Warroom Door
+    Clone_Guard_Main_Hall_2:
+      model_id: 1936
+      pos:
+        x: 1316.5754
+        y: 10.038356
+        z: 258.17294
+        w: 1
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2505
+      cursor: 54
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          one_shot_action_animation_id: 2506
+          duration_millis: 1000
+      interact_radius: 6
+      auto_interact_radius: 5
+    # Guard Left of Lounge Door
+    Clone_Guard_Main_Hall_3:
+      model_id: 1936
+      pos:
+        x: 1316.5754
+        y: 10.038356
+        z: 270.4659
+        w: 1
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2505
+      cursor: 54
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          one_shot_action_animation_id: 2506
+          duration_millis: 1000
+      interact_radius: 6
+      auto_interact_radius: 5
+    # Guard Right of Lounge Door
+    Clone_Guard_Main_Hall_4:
+      model_id: 1936
+      pos:
+        x: 1316.5754
+        y: 10.038356
+        z: 279.80606
+        w: 1
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2505
+      cursor: 54
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          one_shot_action_animation_id: 2506
+          duration_millis: 1000
+      interact_radius: 6
+      auto_interact_radius: 5
+    # Guard Left of Training Room Door
+    Clone_Guard_Main_Hall_5:
+      model_id: 1936
+      pos:
+        x: 1245.4246
+        y: 10.038356
+        z: 270.4659
+        w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2505
+      cursor: 54
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          one_shot_action_animation_id: 2506
+          duration_millis: 1000
+      interact_radius: 6
+      auto_interact_radius: 5
+    # Guard Right of Training Room Door
+    Clone_Guard_Main_Hall_6:
+      model_id: 1936
+      pos:
+        x: 1245.4246
+        y: 10.038356
+        z: 279.80606
+        w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2505
+      cursor: 54
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          one_shot_action_animation_id: 2506
+          duration_millis: 1000
+      interact_radius: 6
+      auto_interact_radius: 5
+    # Guard Left of Hanger Door
+    Clone_Guard_Main_Hall_7:
+      model_id: 1936
+      pos:
+        x: 1245.4246
+        y: 10.038356
+        z: 248.66127
+        w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2505
+      cursor: 54
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          one_shot_action_animation_id: 2506
+          duration_millis: 1000
+      interact_radius: 6
+      auto_interact_radius: 5
+    # Guard Right of Hanger Door
+    Clone_Guard_Main_Hall_8:
+      model_id: 1936
+      pos:
+        x: 1245.4246
+        y: 10.038356
+        z: 258.17294
+        w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2505
+      cursor: 54
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          one_shot_action_animation_id: 2506
+          duration_millis: 1000
+      interact_radius: 6
+      auto_interact_radius: 5
+    # Guard Left Side Left of Shops Door
+    Clone_Guard_Main_Hall_9:
+      model_id: 1936
+      pos:
+        x: 1310.2212
+        y: 10.038356
+        z: 291.12292
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: -1
+        w: 0
+      stand_animation_id: 2505
+      cursor: 54
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          one_shot_action_animation_id: 2506
+          duration_millis: 1000
+      interact_radius: 6
+      auto_interact_radius: 5
+    # Guard Left Side Right of Shops Door
+    Clone_Guard_Main_Hall_10:
+      model_id: 1936
+      pos:
+        x: 1300.8906
+        y: 10.038356
+        z: 291.12292
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: -1
+        w: 0
+      stand_animation_id: 2505
+      cursor: 54
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          one_shot_action_animation_id: 2506
+          duration_millis: 1000
+      interact_radius: 6
+      auto_interact_radius: 5
+    # Guard Right Side Left of Shops Door
+    Clone_Guard_Main_Hall_11:
+      model_id: 1936
+      pos:
+        x: 1261.1245
+        y: 10.038356
+        z: 291.12292
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: -1
+        w: 0
+      stand_animation_id: 2505
+      cursor: 54
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          one_shot_action_animation_id: 2506
+          duration_millis: 1000
+      interact_radius: 6
+      auto_interact_radius: 5
+    # Guard Right Side Right of Shops Door
+    Clone_Guard_Main_Hall_12:
+      model_id: 1936
+      pos:
+        x: 1251.7163
+        y: 10.038356
+        z: 291.12292
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: -1
+        w: 0
+      stand_animation_id: 2505
+      cursor: 54
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          one_shot_action_animation_id: 2506
+          duration_millis: 1000
+      interact_radius: 6
+      auto_interact_radius: 5
+
+    #
+    # Lounge
+    #
+    Clone_Guard_Lounge_1:
+      model_id: 1936
+      pos:
+        x: -109.8
+        y: 10.04
+        z: 1247.5
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 1
+        w: 0
+      stand_animation_id: 2505
+      cursor: 54
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          one_shot_action_animation_id: 2506
+          duration_millis: 1000
+      interact_radius: 6
+      auto_interact_radius: 5
+    Clone_Guard_Lounge_2:
+      model_id: 1936
+      pos:
+        x: -103.56
+        y: 10.04
+        z: 1247.5
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 1
+        w: 0
+      stand_animation_id: 2505
+      cursor: 54
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          one_shot_action_animation_id: 2506
+          duration_millis: 1000
+      interact_radius: 6
+      auto_interact_radius: 5
+
+    #
+    # Shops
+    #
+    veranda_fountain:
+      terrain_object_id: 1278971305
+      model_id: 907
+      name_id: 16957
+      pos:
+        x: 897.7858
+        y: 172.44917
+        z: 1547.0056
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: false
+      use_terrain_model: false
+      show_name: false
+      enable_gravity: false
+      interact_radius: 3.3
+      move_to_interact_offset: 3.2
+      one_shot_action_on_interact:
+        one_shot_action_composite_effect_id: 1959
+        player_one_shot_animation_id: 3014
+        duration_millis: 5000
+    # Guard Top Right Main Hall Door
+    Clone_Guard_Shops_1:
+      model_id: 1936
+      pos:
+        x: 917.18353
+        y: 178.45145
+        z: 1566.1334
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: -1
+        w: 0
+      stand_animation_id: 2505
+      cursor: 54
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          one_shot_action_animation_id: 2506
+          duration_millis: 1000
+      interact_radius: 6
+      auto_interact_radius: 5
+    # Guard Next to Workshop Door
+    Clone_Guard_Shops_2:
+      model_id: 1936
+      pos:
+        x: 898.0
+        y: 172.44919
+        z: 1561.6
+        w: 1.0
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2505
+      cursor: 54
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          one_shot_action_animation_id: 2506
+          duration_millis: 1000
+      interact_radius: 6
+      auto_interact_radius: 5
+    # Guard Top Left Main Hall Door
+    Clone_Guard_Shops_3:
+      model_id: 1936
+      pos:
+        x: 917.18353
+        y: 178.45145
+        z: 1527.4415
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 1
+        w: 0
+      stand_animation_id: 2505
+      cursor: 54
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          one_shot_action_animation_id: 2506
+          duration_millis: 1000
+      interact_radius: 6
+      auto_interact_radius: 5
+    # Guard Next to Archives Door
+    Clone_Guard_Shops_4:
+      model_id: 1936
+      pos:
+        x: 898.0
+        y: 172.44919
+        z: 1532.5
+        w: 1.0
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2505
+      cursor: 54
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          one_shot_action_animation_id: 2506
+          duration_millis: 1000
+      interact_radius: 6
+      auto_interact_radius: 5
+
+    #
+    # Training Room
+    #
+    # Spinning Lightsaber Front Jedi
+    training_room_main_platform_lift:
+      model_id: 1438
+      physics: Disabled
+      pos:
+        x: 148.8
+        y: -3.6210175
+        z: 379.9795
+        w: 1
+      rot:
+        x: 1.5708
+        y: 0
+        z: 0
+        w: 0
+      tickable_procedures:
+        lift:
+          steps:
+            - speed: 2
+              new_pos_offset_y: 10
+              duration_millis: 10000
+            - speed: 2
+              new_pos_offset_y: -10
+              duration_millis: 10000
+    training_room_dueling_platform_lift:
+      model_id: 1438
+      physics: Disabled
+      pos:
+        x: 130.9
+        y: -3.6210175
+        z: 379.9795
+        w: 1
+      rot:
+        x: -1.5708
+        y: 0
+        z: 0
+        w: 0
+      tickable_procedures:
+        lift:
+          steps:
+            - speed: 2
+              new_pos_offset_y: 12
+              duration_millis: 12000
+            - speed: 2
+              new_pos_offset_y: -12
+              duration_millis: 12000
+    Saber_Strike_NPC_1:
+      model_id: 146
+      pos:
+        x: 139.95262
+        y: 6.8242335
+        z: 339.0148
+        w: 1.0
+      rot:
+        x: 0.43124008
+        y: 0
+        z: 0.9022371
+        w: 0
+      stand_animation_id: 2504
+    # Spinning Lightsaber Jump Jedi
+    Saber_Strike_NPC_2:
+      model_id: 147
+      pos:
+        x: 144.97792
+        y: 6.8242335
+        z: 334.98163
+        w: 1.0
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2529
+    # Horizontal Spinning Lightsaber Jedi
+    Saber_Strike_NPC_3:
+      model_id: 223
+      pos:
+        x: 141.74367
+        y: 7.0
+        z: 326.64008
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 1
+        w: 0
+      stand_animation_id: 2503
+    # Drill Sergeant for push-up clones
+    Clone_Push-ups_NPC_1:
+      model_id: 60
+      pos:
+        x: 106.5
+        y: -3.6210203
+        z: 390.5
+        w: 1.0
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2505
+    # Rest of these are clones doing push-ups
+    Clone_Push-ups_NPC_2:
+      model_id: 48
+      pos:
+        x: 101.0
+        y: -3.6210194
+        z: 394.5
+        w: 1.0
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2524
+    Clone_Push-ups_NPC_3:
+      model_id: 48
+      pos:
+        x: 101.02
+        y: -3.6210194
+        z: 392.25
+        w: 1.0
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2524
+    Clone_Push-ups_NPC_4:
+      model_id: 48
+      pos:
+        x: 101.04
+        y: -3.6210194
+        z: 390.0
+        w: 1.0
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2524
+    Clone_Push-ups_NPC_5:
+      model_id: 48
+      pos:
+        x: 101.06
+        y: -3.6210194
+        z: 387.75
+        w: 1.0
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2524
+    Clone_Push-ups_NPC_6:
+      model_id: 48
+      pos:
+        x: 97.38
+        y: -3.6210198
+        z: 394.25
+        w: 1.0
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2524
+    Clone_Push-ups_NPC_7:
+      model_id: 48
+      pos:
+        x: 97.36
+        y: -3.6210198
+        z: 392.0
+        w: 1.0
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2524
+    Clone_Push-ups_NPC_8:
+      model_id: 48
+      pos:
+        x: 97.34
+        y: -3.6210198
+        z: 389.75
+        w: 1.0
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2524
+    # Clone climbing wall
+    Wall_Climb_NPC_1:
+      model_id: 1948
+      scale: 0.83
+      pos:
+        x: 135.8
+        y: 9.95
+        z: 379.9
+        w: 1
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2511
+    # Clone climbing wall
+    Wall_Climb_NPC_2:
+      model_id: 1949
+      scale: 0.83
+      pos:
+        x: 135.8
+        y: 9.95
+        z: 379.9
+        w: 1
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2512
+    # Jedi climbing wall
+    Wall_Climb_NPC_3:
+      model_id: 41
+      scale: 0.83
+      pos:
+        x: 135.8
+        y: 9.95
+        z: 379.9
+        w: 1
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2516
+    # Clone climbing wall
+    Wall_Climb_NPC_4:
+      model_id: 1950
+      scale: 0.83
+      pos:
+        x: 135.8
+        y: 9.95
+        z: 379.9
+        w: 1
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2513
+    # Clone climbing wall
+    Wall_Climb_NPC_5:
+      model_id: 1951
+      scale: 0.83
+      pos:
+        x: 135.8
+        y: 9.95
+        z: 379.9
+        w: 1
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2514
+    # Clone climbing wall
+    Wall_Climb_NPC_6:
+      model_id: 48
+      scale: 0.83
+      pos:
+        x: 135.8
+        y: 9.95
+        z: 379.9
+        w: 1
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2515
+    # Clone obstacles
+    Obstacles_NPC_1:
+      model_id: 48
+      scale: 0.83
+      pos:
+        x: 135.8
+        y: 9.95
+        z: 379.9
+        w: 1
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2507
+    # Clone obstacles
+    Obstacles_NPC_2:
+      model_id: 1947
+      scale: 0.83
+      pos:
+        x: 135.8
+        y: 9.95
+        z: 379.9
+        w: 1
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2508
+    # Jedi obstacles
+    Obstacles_NPC_3:
+      model_id: 412
+      scale: 0.83
+      pos:
+        x: 135.8
+        y: 9.95
+        z: 379.9
+        w: 1
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2509
+    # Jedi obstacles
+    Obstacles_NPC_4:
+      model_id: 42
+      scale: 0.83
+      pos:
+        x: 135.8
+        y: 9.95
+        z: 379.9
+        w: 1
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2510
+    # Jedi Pillars
+    Pillars_NPC_1:
+      model_id: 42
+      scale: 0.83
+      pos:
+        x: 135.9
+        y: 9.95
+        z: 380.15
+        w: 1.0
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2536
+    # Clone Pillars
+    Pillars_NPC_2:
+      model_id: 1947
+      scale: 0.83
+      pos:
+        x: 135.9
+        y: 9.95
+        z: 380.15
+        w: 1.0
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2537
+    # Clone Pillars
+    Pillars_NPC_3:
+      model_id: 1946
+      scale: 0.83
+      pos:
+        x: 135.9
+        y: 9.95
+        z: 380.15
+        w: 1.0
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2538
+    #
+    # War Room
+    #
+    war_room_holotable_holograms:
+      name_id: 32914
+      model_id: 44
+      pos:
+        x: 707.52936
+        y: 10.979759
+        z: -5.1
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      show_name: false
+      tickable_procedures:
+        arc_troopers_hologram:
+          steps:
+            - model_id: 354
+              duration_millis: 10000
+          next_possible_procedures:
+            - procedure: invisible
+        battle_droid_hologram:
+          steps:
+            - model_id: 352
+              duration_millis: 10000
+          next_possible_procedures:
+            - procedure: invisible
+        super_battle_droid_hologram:
+          steps:
+            - model_id: 351
+              duration_millis: 10000
+          next_possible_procedures:
+            - procedure: invisible
+        droideka_hologram:
+          steps:
+            - animation_id: 9002
+              model_id: 350
+              duration_millis: 10000
+          next_possible_procedures:
+            - procedure: invisible
+        invisible:
+          steps:
+            - model_id: 44
+              duration_millis: 5000
+          next_possible_procedures:
+            - procedure: arc_troopers_hologram
+            - procedure: battle_droid_hologram
+            - procedure: super_battle_droid_hologram
+            - procedure: droideka_hologram
+
+    #
+    # Workshop
+    #
+    # Droid Pile
+    Workshop_NPC_1:
+      model_id: 1009
+      pos:
+        x: -337.12753
+        y: 10.175473
+        z: 1771.0919
+        w: 1.0
+      rot:
+        x: 0.6814254
+        y: 0
+        z: -0.7318875
+        w: 0
+      stand_animation_id: 2560
+      cursor: 54
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          player_one_shot_animation_id: 3014
+          one_shot_action_animation_id: 2561
+          duration_millis: 1000
+    # Zombie Droid
+    Workshop_NPC_2:
+      model_id: 1027
+      pos:
+        x: -331.35208
+        y: 10.191933
+        z: 1771.8655
+        w: 1.0
+      rot:
+        x: -0.2867432
+        y: 0
+        z: 0.9580074
+        w: 0
+      stand_animation_id: 2558
+      cursor: 54
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          one_shot_action_animation_id: 2559
+          duration_millis: 1000
+    # Pink Astromech Droid
+    Workshop_NPC_3:
+      model_id: 2220
+      pos:
+        x: -337.6852
+        y: 10.242787
+        z: 1778.0006
+        w: 1.0
+      rot:
+        x: 0.43641397
+        y: 0
+        z: 0.89974594
+        w: 1.0
+    # Running Gonk Droid
+    Workshop_NPC_4:
+      model_id: 233
+      pos:
+        x: -347.34412
+        y: 11.888292
+        z: 1792.9979
+        w: 1.0
+      rot:
+        x: 0.010594733
+        y: 0
+        z: 0.9999439
+        w: 0
+      stand_animation_id: 3
+    # Astromech Droid next to Commander Gree
+    Workshop_NPC_5:
+      model_id: 642
+      name_id: 12797
+      show_name: false
+      pos:
+        x: -330.9994
+        y: 10.185185
+        z: 1791.6196
+        w: 1.0
+      rot:
+        x: -0.7430571
+        y: 0
+        z: -0.6692279
+        w: 1.0
+      tickable_procedures:
+        infiltration_holo:
+          weight: 588
+          steps:
+            - composite_effect_id: 2044
+              duration_millis: 0
+    # Battle Droid on Table
+    Workshop_NPC_6:
+      model_id: 1065
+      pos:
+        x: -336.9498
+        y: 11.457644
+        z: 1781.624
+        w: 1.0
+      rot:
+        x: -1
+        y: 0
+        z: 0.05
+        w: 1.0
+      stand_animation_id: 2562
+      cursor: 54
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          one_shot_action_animation_id: 2563
+          duration_millis: 1000
+      interact_radius: 4
+      move_to_interact_offset: 4
+    # Hidden Monkey Lizard
+    Workshop_NPC_7:
+      model_id: 1612
+      texture_alias: Green
+      pos:
+        x: -349.7
+        y: 16.736858
+        z: 1775.4
+        w: 1.0
+      rot:
+        x: 0.65553665
+        y: 0
+        z: 0.7551633
+        w: 1.0
+      stand_animation_id: 661
