@@ -1322,8 +1322,8 @@ impl Door {
 
     pub fn interact(&self, requester: u32) -> WriteLockingBroadcastSupplier {
         teleport_anywhere(
-            self.destination.destination_pos,
-            self.destination.destination_rot,
+            self.destination.pos,
+            self.destination.rot,
             self.destination.destination_zone,
             requester,
         )

@@ -1273,8 +1273,8 @@ pub enum DestinationZoneInstance {
 
 #[derive(Clone, Deserialize)]
 pub struct Destination {
-    pub destination_pos: Pos,
-    pub destination_rot: Pos,
+    pub pos: Pos,
+    pub rot: Pos,
     #[serde(default)]
     pub destination_zone: DestinationZoneInstance,
 }

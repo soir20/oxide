@@ -8,12 +8,12 @@ members_only:
         w: 1
       terrain_object_id: 1281994173
       destination:
-        destination_pos:
+        pos:
           x: 919.5898
           y: 178.51657
           z: 1546.969
           w: 1
-        destination_rot:
+        rot:
           x: -1.5
           y: 0
           z: 0
@@ -29,12 +29,12 @@ members_only:
         w: 1
       terrain_object_id: 1281995677
       destination:
-        destination_pos:
+        pos:
           x: -106.5555
           y: 10
           z: 1250.071
           w: 1
-        destination_rot:
+        rot:
           x: 0
           y: 0
           z: 1.5

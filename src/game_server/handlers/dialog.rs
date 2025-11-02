@@ -173,8 +173,8 @@ pub fn handle_dialog_buttons(
 
                 if let Some(destination) = &config.player_destination {
                     packets.extend((teleport_anywhere(
-                        destination.destination_pos,
-                        destination.destination_rot,
+                        destination.pos,
+                        destination.rot,
                         destination.destination_zone,
                         sender,
                     )?)(game_server)?);

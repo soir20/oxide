@@ -8,12 +8,12 @@ jedi_temple:
         w: 1
       terrain_object_id: 1278971264
       destination:
-        destination_pos:
+        pos:
           x: 1757.083
           y: 10
           z: 1694
           w: 1
-        destination_rot:
+        rot:
             x: -1.5
             y: 0
             z: 0
@@ -27,12 +27,12 @@ jedi_temple:
           w: 1
         terrain_object_id: 1278971880
         destination:
-          destination_pos:
+          pos:
             x: 898.7137
             y: 172.44917
             z: 1529.221
             w: 1
-          destination_rot:
+          rot:
             x: 0
             y: 0
             z: 1.5
@@ -46,12 +46,12 @@ jedi_temple:
          w: 1
        terrain_object_id: 1278971325
        destination:
-         destination_pos:
+         pos:
            x: -356.4902
            y: 10
            z: 1780.211
            w: 1
-         destination_rot:
+         rot:
            x: 1.5
            y: 0
            z: 0
@@ -65,12 +65,12 @@ jedi_temple:
          w: 1
        terrain_object_id: 1278971932
        destination:
-         destination_pos:
+         pos:
            x: 898.6971
            y: 172.44917
            z: 1564.624
            w: 1
-         destination_rot:
+         rot:
            x: 0
            y: 0
            z: -1.5
@@ -85,12 +85,12 @@ jedi_temple:
          w: 1
        terrain_object_id: 1278971263
        destination:
-         destination_pos:
+         pos:
            x: 1256.403
            y: 10
            z: 291.7501
            w: 1
-         destination_rot:
+         rot:
            x: 0
            y: 0
            z: -1
@@ -104,12 +104,12 @@ jedi_temple:
          w: 1
        terrain_object_id: 1278972312
        destination:
-         destination_pos:
+         pos:
            x: 919.5864
            y: 178.51657
            z: 1530.958
            w: 1
-         destination_rot:
+         rot:
            x: -1.5
            y: 0
            z: 0
@@ -123,12 +123,12 @@ jedi_temple:
          w: 1
        terrain_object_id: 1278971324
        destination:
-         destination_pos:
+         pos:
            x: 1305.649
            y: 10
            z: 291.7528
            w: 1
-         destination_rot:
+         rot:
            x: 0
            y: 0
            z: -1
@@ -142,12 +142,12 @@ jedi_temple:
          w: 1
        terrain_object_id: 1278972383
        destination:
-         destination_pos:
+         pos:
            x: 919.5864
            y: 178.51657
            z: 1562.8
            w: 1
-         destination_rot:
+         rot:
            x: -1.5
            y: 0
            z: 0
@@ -161,12 +161,12 @@ jedi_temple:
          w: 1
        terrain_object_id: 1278972313
        destination:
-         destination_pos:
+         pos:
            x: 160.4435
            y: 6.8242483
            z: 415.3869
            w: 1
-         destination_rot:
+         rot:
            x: 0
            y: 0
            z: -1.5
@@ -180,12 +180,12 @@ jedi_temple:
          w: 1
        terrain_object_id: 1265074699
        destination:
-         destination_pos:
+         pos:
            x: 1245.232
            y: 10
            z: 275.1337
            w: 1
-         destination_rot:
+         rot:
            x: 1.5
            y: 0
            z: 0
@@ -199,12 +199,12 @@ jedi_temple:
          w: 1
        terrain_object_id: 1278972223
        destination:
-         destination_pos:
+         pos:
            x: 130.3168
            y: 10
            z: -181.1351
            w: 1
-         destination_rot:
+         rot:
            x: -1.5
            y: 0
            z: 0
@@ -218,12 +218,12 @@ jedi_temple:
          w: 1
        terrain_object_id: 1278977468
        destination:
-         destination_pos:
+         pos:
            x: 1245.241
            y: 10
            z: 253.2976
            w: 1
-         destination_rot:
+         rot:
            x: 1.5
            y: 0
            z: 0
@@ -237,12 +237,12 @@ jedi_temple:
          w: 1
        terrain_object_id: 1278972382
        destination:
-         destination_pos:
+         pos:
            x: -133.2943
            y: 10
            z: 1270.001
            w: 1
-         destination_rot:
+         rot:
            x: 1.5
            y: 0
            z: 0
@@ -256,12 +256,12 @@ jedi_temple:
          w: 1
        terrain_object_id: 1278976521
        destination:
-         destination_pos:
+         pos:
            x: 1316.713
            y: 10
            z: 275.1354
            w: 1
-         destination_rot:
+         rot:
            x: -1.5
            y: 0
            z: 0
@@ -275,12 +275,12 @@ jedi_temple:
          w: 1
        terrain_object_id: 1278972261
        destination:
-         destination_pos:
+         pos:
            x: 693.7585
            y: 10
            z: -2.675201
            w: 1
-         destination_rot:
+         rot:
            x: 1.5
            y: 0
            z: 0
@@ -294,12 +294,12 @@ jedi_temple:
          w: 1
        terrain_object_id: 1278976738
        destination:
-         destination_pos:
+         pos:
            x: 1316.77
            y: 10
            z: 253.2967
            w: 1
-         destination_rot:
+         rot:
            x: -1.5
            y: 0
            z: 0
@@ -313,12 +313,12 @@ jedi_temple:
          w: 1
        terrain_object_id: 1359076121
        destination:
-         destination_pos:
+         pos:
            x: 1487.53
            y: 70
            z: 890.248076
            w: 1
-         destination_rot:
+         rot:
            x: 0
            y: 0
            z: 1.5
@@ -334,12 +334,12 @@ jedi_temple:
          w: 1
        terrain_object_id: 1359076115
        destination:
-         destination_pos:
+         pos:
            x: 764.51
            y: 10
            z: 683.99
            w: 1
-         destination_rot:
+         rot:
            x: 1.5
            y: 0
            z: 0
