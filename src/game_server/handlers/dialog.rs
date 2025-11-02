@@ -22,8 +22,10 @@ use super::{
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct DialogChoices {
-    pub button_id: u32,
+    pub button_key: String,
     pub button_text_id: u32,
+    #[serde(skip)]
+    pub button_id: u32,
 }
 
 #[derive(Clone, Deserialize)]
@@ -54,7 +56,7 @@ pub struct NewDialog {
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct DialogOptions {
-    pub button_id: u32,
+    pub button_key: String,
     #[serde(flatten)]
     pub new_dialog: Option<NewDialog>,
     pub script_name: Option<String>,
@@ -85,27 +87,25 @@ pub fn handle_dialog_buttons(
                 let instance_guid = player_handle.stats.instance_guid;
                 let template_guid = zone_template_guid(instance_guid);
 
-                let zone_template =
-                    game_server
-                        .zone_templates
-                        .get(&template_guid)
-                        .ok_or_else(|| {
-                            ProcessPacketError::new(
-                                ProcessPacketErrorType::ConstraintViolated,
-                                format!("(Requester: {}) tried to select (Button ID: {}) but (Zone Template: {}) was not found", requester_guid, button_id, template_guid),
-                            )
-                        })?;
+                let zone_template = game_server.zone_templates.get(&template_guid).ok_or_else(|| {
+                    ProcessPacketError::new(
+                        ProcessPacketErrorType::ConstraintViolated,
+                        format!(
+                            "(Requester: {}) tried to select (Button ID: {}) but (Zone Template: {}) was not found",
+                            requester_guid, button_id, template_guid
+                        ),
+                    )
+                })?;
 
-                let config = zone_template
-                    .dialog_options
-                    .iter()
-                    .find(|opt| opt.button_id == button_id)
-                    .ok_or_else(|| {
-                        ProcessPacketError::new(
-                            ProcessPacketErrorType::ConstraintViolated,
-                            format!("(Requester: {}) tried to select (Button ID: {}) but it was not found in (Zone Template ID: {})", requester_guid, button_id, template_guid),
-                        )
-                    })?;
+                let config = zone_template.dialog_options.iter().find(|opt| opt.button_id == button_id).ok_or_else(|| {
+                    ProcessPacketError::new(
+                        ProcessPacketErrorType::ConstraintViolated,
+                        format!(
+                            "(Requester: {}) tried to select (Button ID: {}) but it was not found in (Zone Template ID: {})",
+                            requester_guid, button_id, template_guid
+                        ),
+                    )
+                })?;
 
                 let mut packets = Vec::new();
 
@@ -228,8 +228,18 @@ impl DialogOptionsTemplate {
         options: &DialogOptions,
         template_guid: u8,
         characters: &[NpcTemplate],
+        button_keys_to_id: &HashMap<String, u32>,
     ) -> Self {
-        let keys_to_guid: HashMap<&String, u64> = characters
+        let button_id = *button_keys_to_id
+            .get(&options.button_key)
+            .unwrap_or_else(|| {
+                panic!(
+                    "Unknown (Dialog Button Key: {}) in (Zone Template GUID: {})",
+                    options.button_key, template_guid
+                )
+            });
+
+        let npc_keys_to_guid: HashMap<&String, u64> = characters
             .iter()
             .filter_map(|template| {
                 template
@@ -240,32 +250,44 @@ impl DialogOptionsTemplate {
             .collect();
 
         let new_dialog = options.new_dialog.as_ref().map(|new_dialog| {
-    let config = &new_dialog.new_dialog;
+            let config = &new_dialog.new_dialog;
 
-    let npc_guid = new_dialog.npc_key.as_ref().map(|alias| {
-        *keys_to_guid
-            .get(alias)
-            .unwrap_or_else(|| panic!(
-                "Unknown (NPC Key: {}) in (Zone Template GUID: {}) referenced in (Dialog Button ID: {})",
-                template_guid, options.button_id, alias
-            ))
-    });
+            let npc_guid = new_dialog.npc_key.as_ref().map(|alias| {
+                *npc_keys_to_guid.get(alias).unwrap_or_else(|| {
+                    panic!(
+                        "Unknown (NPC Key: {}) in (Zone Template GUID: {}) referenced in (Dialog Button Key: {})",
+                        alias, template_guid, options.button_key
+                    )
+                })
+            });
 
-    DialogConfigTemplate {
-        camera_placement: config.camera_placement,
-        look_at: config.look_at,
-        dialog_message_id: config.dialog_message_id,
-        speaker_animation_id: config.speaker_animation_id,
-        speaker_sound_id: config.speaker_sound_id,
-        zoom: config.zoom,
-        show_players: config.show_players,
-        choices: config.choices.clone(),
-        npc_guid,
-    }
-});
+            let choices = config.choices.clone().map(|mut choices| {
+                for choice in choices.iter_mut() {
+                    choice.button_id = *button_keys_to_id.get(&choice.button_key).unwrap_or_else(|| {
+                        panic!(
+                            "Unknown (Choice Button Key: {}) in (Dialog Button Key: {})",
+                            choice.button_key, options.button_key
+                        )
+                    });
+                }
+                choices
+            });
+
+            DialogConfigTemplate {
+                camera_placement: config.camera_placement,
+                look_at: config.look_at,
+                dialog_message_id: config.dialog_message_id,
+                speaker_animation_id: config.speaker_animation_id,
+                speaker_sound_id: config.speaker_sound_id,
+                zoom: config.zoom,
+                show_players: config.show_players,
+                choices,
+                npc_guid,
+            }
+        });
 
         DialogOptionsTemplate {
-            button_id: options.button_id,
+            button_id,
             new_dialog,
             script_name: options.script_name.clone(),
             close_dialog: options.close_dialog,

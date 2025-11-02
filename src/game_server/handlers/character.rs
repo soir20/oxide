@@ -1834,41 +1834,66 @@ pub struct NpcTemplate {
 }
 
 impl NpcTemplate {
-    pub fn from_config<T: NpcConfig>(config: T, index: u16) -> Self {
+    pub fn from_config<T: NpcConfig + Clone>(
+        config: T,
+        index: u16,
+        button_keys_to_id: &HashMap<String, u32>,
+        zone_template: u8,
+        npc_name: &str,
+    ) -> Self {
         let mut rng = thread_rng();
+        let config_clone = config.clone();
+        let mut character_type = config.into();
+
+        if let CharacterType::AmbientNpc(ref mut ambient_npc) = character_type {
+            if let Some(ref mut action) = ambient_npc.one_shot_action_on_interact {
+                if let Some(dialog) = &mut action.dialog_config {
+                    if let Some(choices) = &mut dialog.choices {
+                        for choice in choices.iter_mut() {
+                            choice.button_id = *button_keys_to_id
+                                .get(&choice.button_key)
+                                .unwrap_or_else(|| {
+                                    panic!("Unknown (Button Key: {}) referenced in (Zone Template GUID: {}) for (NPC: {})", choice.button_key, zone_template, npc_name,);
+                                });
+                        }
+                    }
+                }
+            }
+        }
+
         NpcTemplate {
-            key: config.base_config().key.clone(),
+            key: config_clone.base_config().key.clone(),
             discriminant: T::DISCRIMINANT,
             index,
-            model_id: config
+            model_id: config_clone
                 .base_config()
                 .possible_model_ids
                 .choose(&mut rng)
                 .copied()
-                .unwrap_or(config.base_config().model_id),
-            pos: config
+                .unwrap_or(config_clone.base_config().model_id),
+            pos: config_clone
                 .base_config()
                 .possible_pos
                 .choose(&mut rng)
                 .cloned()
-                .unwrap_or(config.base_config().pos),
-            rot: config.base_config().rot,
-            possible_pos: config.base_config().possible_pos.clone(),
-            scale: config.base_config().scale,
-            tickable_procedures: config.base_config().tickable_procedures.clone(),
-            first_possible_procedures: config.base_config().first_possible_procedures.clone(),
-            synchronize_with: config.base_config().synchronize_with.clone(),
-            stand_animation_id: config.base_config().stand_animation_id,
-            cursor: config.base_config().cursor,
-            interact_radius: config.base_config().interact_radius,
-            auto_interact_radius: config
+                .unwrap_or(config_clone.base_config().pos),
+            rot: config_clone.base_config().rot,
+            possible_pos: config_clone.base_config().possible_pos.clone(),
+            scale: config_clone.base_config().scale,
+            tickable_procedures: config_clone.base_config().tickable_procedures.clone(),
+            first_possible_procedures: config_clone.base_config().first_possible_procedures.clone(),
+            synchronize_with: config_clone.base_config().synchronize_with.clone(),
+            stand_animation_id: config_clone.base_config().stand_animation_id,
+            cursor: config_clone.base_config().cursor,
+            interact_radius: config_clone.base_config().interact_radius,
+            auto_interact_radius: config_clone
                 .base_config()
                 .auto_interact_radius
                 .unwrap_or(T::DEFAULT_AUTO_INTERACT_RADIUS),
-            move_to_interact_offset: config.base_config().move_to_interact_offset,
-            is_spawned: config.base_config().is_spawned,
-            physics: config.base_config().physics,
-            character_type: config.into(),
+            move_to_interact_offset: config_clone.base_config().move_to_interact_offset,
+            is_spawned: config_clone.base_config().is_spawned,
+            physics: config_clone.base_config().physics,
+            character_type,
             mount_id: None,
             wield_type: WieldType::None,
         }

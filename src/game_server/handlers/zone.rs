@@ -166,42 +166,72 @@ impl From<&Vec<Character>>
 
 impl From<ZoneConfig> for ZoneTemplate {
     fn from(value: ZoneConfig) -> Self {
+        let mut button_keys_to_id = HashMap::new();
+        let mut seen_keys = HashSet::new();
+        let mut next_id = 1;
+
+        for options in &value.dialog_options {
+            if !seen_keys.insert(options.button_key.clone()) {
+                panic!(
+                    "Duplicate (Button Key: '{}') found in (Zone Template GUID: {})",
+                    options.button_key, value.guid
+                );
+            }
+
+            button_keys_to_id.insert(options.button_key.clone(), next_id);
+            next_id += 1;
+        }
+
         let mut characters = Vec::new();
 
         let mut index = 0;
 
         {
-            for ambient_npc in value.ambient_npcs.values() {
-                characters.push(NpcTemplate::from_config(ambient_npc.clone(), index));
+            for (name, ambient_npc) in value.ambient_npcs {
+                characters.push(NpcTemplate::from_config(
+                    ambient_npc.clone(),
+                    index,
+                    &button_keys_to_id,
+                    value.guid,
+                    &name,
+                ));
                 index += 1;
             }
 
-            for door in value.doors.values() {
-                characters.push(NpcTemplate::from_config(door.clone(), index));
+            for (name, door) in value.doors {
+                characters.push(NpcTemplate::from_config(
+                    door.clone(),
+                    index,
+                    &button_keys_to_id,
+                    value.guid,
+                    &name,
+                ));
                 index += 1;
             }
 
-            for transport in value.transports.values() {
-                characters.push(NpcTemplate::from_config(transport.clone(), index));
+            for (name, transport) in value.transports {
+                characters.push(NpcTemplate::from_config(
+                    transport.clone(),
+                    index,
+                    &button_keys_to_id,
+                    value.guid,
+                    &name,
+                ));
                 index += 1;
-            }
-        }
-
-        let mut seen_button_ids = HashSet::new();
-
-        for options in &value.dialog_options {
-            if !seen_button_ids.insert(options.button_id) {
-                panic!(
-                    "Duplicate (Button ID: {}) found in (Zone Template GUID: {})",
-                    options.button_id, value.guid
-                );
             }
         }
 
         let dialog_options = value
             .dialog_options
             .iter()
-            .map(|options| DialogOptionsTemplate::from_config(options, value.guid, &characters))
+            .map(|options| {
+                DialogOptionsTemplate::from_config(
+                    options,
+                    value.guid,
+                    &characters,
+                    &button_keys_to_id,
+                )
+            })
             .collect();
 
         ZoneTemplate {
