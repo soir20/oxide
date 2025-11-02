@@ -100,7 +100,7 @@ impl From<serde_yaml::Error> for ConfigError {
 #[command(about, long_about = None)]
 struct Args {
     /// If true, the server exits immediately with a success code if all configuration is valid
-    #[arg(short, long)]
+    #[arg(long)]
     validate: bool,
 }
 
