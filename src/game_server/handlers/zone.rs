@@ -1,5 +1,5 @@
 use std::{
-    collections::{BTreeMap, BTreeSet, HashMap},
+    collections::{BTreeMap, BTreeSet, HashMap, HashSet},
     fs,
     fs::File,
     iter,
@@ -36,6 +36,7 @@ use super::{
         CharacterSquadIndex, CharacterSynchronizationIndex, CharacterType, Chunk, DoorConfig,
         NpcTemplate, PreviousFixture, PreviousLocation, RemovalMode, TransportConfig,
     },
+    dialog::{DialogOptions, DialogOptionsTemplate},
     distance3,
     guid::{Guid, GuidTable, GuidTableIndexer, GuidTableWriteHandle, IndexedGuid},
     housing::prepare_init_house_packets,
@@ -103,6 +104,8 @@ pub struct ZoneConfig {
     update_previous_location_on_leave: bool,
     #[serde(default)]
     map_id: u32,
+    #[serde(default)]
+    dialog_options: Vec<DialogOptions>,
 }
 
 #[derive(Clone)]
@@ -125,6 +128,7 @@ pub struct ZoneTemplate {
     pub seconds_per_day: u32,
     update_previous_location_on_leave: bool,
     map_id: u32,
+    pub dialog_options: Vec<DialogOptionsTemplate>,
 }
 
 impl Guid<u8> for ZoneTemplate {
@@ -162,26 +166,73 @@ impl From<&Vec<Character>>
 
 impl From<ZoneConfig> for ZoneTemplate {
     fn from(value: ZoneConfig) -> Self {
+        let mut button_keys_to_id = HashMap::new();
+        let mut seen_keys = HashSet::new();
+        let mut next_id = 1;
+
+        for options in &value.dialog_options {
+            if !seen_keys.insert(options.button_key.clone()) {
+                panic!(
+                    "Duplicate (Button Key: '{}') found in (Zone Template GUID: {})",
+                    options.button_key, value.guid
+                );
+            }
+
+            button_keys_to_id.insert(options.button_key.clone(), next_id);
+            next_id += 1;
+        }
+
         let mut characters = Vec::new();
 
         let mut index = 0;
 
         {
-            for ambient_npc in value.ambient_npcs.values() {
-                characters.push(NpcTemplate::from_config(ambient_npc.clone(), index));
+            for (name, ambient_npc) in value.ambient_npcs {
+                characters.push(NpcTemplate::from_config(
+                    ambient_npc.clone(),
+                    index,
+                    &button_keys_to_id,
+                    value.guid,
+                    &name,
+                ));
                 index += 1;
             }
 
-            for door in value.doors.values() {
-                characters.push(NpcTemplate::from_config(door.clone(), index));
+            for (name, door) in value.doors {
+                characters.push(NpcTemplate::from_config(
+                    door.clone(),
+                    index,
+                    &button_keys_to_id,
+                    value.guid,
+                    &name,
+                ));
                 index += 1;
             }
 
-            for transport in value.transports.values() {
-                characters.push(NpcTemplate::from_config(transport.clone(), index));
+            for (name, transport) in value.transports {
+                characters.push(NpcTemplate::from_config(
+                    transport.clone(),
+                    index,
+                    &button_keys_to_id,
+                    value.guid,
+                    &name,
+                ));
                 index += 1;
             }
         }
+
+        let dialog_options = value
+            .dialog_options
+            .iter()
+            .map(|options| {
+                DialogOptionsTemplate::from_config(
+                    options,
+                    value.guid,
+                    &characters,
+                    &button_keys_to_id,
+                )
+            })
+            .collect();
 
         ZoneTemplate {
             guid: value.guid,
@@ -202,6 +253,7 @@ impl From<ZoneConfig> for ZoneTemplate {
             seconds_per_day: value.seconds_per_day,
             update_previous_location_on_leave: value.update_previous_location_on_leave,
             map_id: value.map_id,
+            dialog_options,
         }
     }
 }
@@ -1219,6 +1271,14 @@ pub enum DestinationZoneInstance {
     },
 }
 
+#[derive(Clone, Deserialize)]
+pub struct Destination {
+    pub pos: Pos,
+    pub rot: Pos,
+    #[serde(default)]
+    pub destination_zone: DestinationZoneInstance,
+}
+
 pub fn teleport_anywhere(
     destination_pos: Pos,
     destination_rot: Pos,
@@ -1308,8 +1368,15 @@ pub fn interact_with_character(
                 );
 
                 let player_stats = match &mut requester_read_handle.stats.character_type {
-                    CharacterType::Player(player) => Some(player.as_mut()),
-                    _ => None,
+                    CharacterType::Player(player) => player.as_mut(),
+                    _ => {
+                        return Err(ProcessPacketError::new(
+                            ProcessPacketErrorType::ConstraintViolated,
+                            format!(
+                                "Received request to interact with NPC {target} from {requester} but they were not a player"
+                            ),
+                        ));
+                    }
                 };
 
                 let result = (|| {
