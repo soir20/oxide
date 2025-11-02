@@ -261,7 +261,7 @@ impl BaseNpc {
                 temporary_model: 0,
                 effects: vec![],
                 disable_interact_popup: !self.enable_interact_popup,
-                unknown33: 0,
+                unused_death_animation_id: 0, // can cause crashes when death anim is enabled upon removal, but has no visual effect
                 unknown34: false,
                 show_health: false,
                 hide_despawn_fade: false,

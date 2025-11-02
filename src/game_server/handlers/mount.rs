@@ -451,7 +451,7 @@ pub fn spawn_mount_npc(
                 temporary_model: 0,
                 effects,
                 disable_interact_popup: true,
-                unknown33: 0,
+                unused_death_animation_id: 0,
                 unknown34: false,
                 show_health: false,
                 hide_despawn_fade: false,
