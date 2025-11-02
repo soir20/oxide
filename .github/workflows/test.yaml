@@ -18,5 +18,7 @@ jobs:
         run: cargo test
       - name: Lint
         run: cargo clippy -- -Dwarnings -A unused -A clippy::too_many_arguments
-      - name: Check style
+      - name: Check style (Rust)
         run: cargo fmt --all --check
+      - name: Check style (YAML)
+        run: yamllint --strict config/
