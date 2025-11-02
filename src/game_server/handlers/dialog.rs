@@ -63,8 +63,7 @@ pub struct DialogOptions {
     #[serde(default)]
     pub close_dialog: bool,
     pub player_destination: Option<Destination>,
-    #[serde(default)]
-    pub minigame_stage_group_guid: i32,
+    pub minigame_stage_group_guid: Option<i32>,
 }
 
 pub fn handle_dialog_buttons(
@@ -180,14 +179,14 @@ pub fn handle_dialog_buttons(
                     )?)(game_server)?);
                 }
 
-                if config.minigame_stage_group_guid > 0 {
+                if let Some(minigame_stage_group_guid) = config.minigame_stage_group_guid {
                     packets.push(Broadcast::Single(
                         sender,
                         vec![GamePacket::serialize(&TunneledPacket {
                             unknown1: true,
                             inner: ExecuteScriptWithIntParams {
                                 script_name: "MiniGameFlow.CreateMiniGameGroup".to_string(),
-                                params: vec![config.minigame_stage_group_guid],
+                                params: vec![minigame_stage_group_guid],
                             },
                         })],
                     ));
@@ -220,7 +219,7 @@ pub struct DialogOptionsTemplate {
     pub script_name: Option<String>,
     pub close_dialog: bool,
     pub player_destination: Option<Destination>,
-    pub minigame_stage_group_guid: i32,
+    pub minigame_stage_group_guid: Option<i32>,
 }
 
 impl DialogOptionsTemplate {

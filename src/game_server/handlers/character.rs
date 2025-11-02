@@ -368,8 +368,7 @@ pub struct OneShotAction {
     pub removal_mode: RemovalMode,
     #[serde(default)]
     pub despawn_npc: bool,
-    #[serde(default)]
-    pub minigame_stage_group_guid: i32,
+    pub minigame_stage_group_guid: Option<i32>,
     pub dialog_config: Option<DialogConfig>,
     pub duration_millis: u64,
 }
@@ -444,12 +443,12 @@ impl OneShotAction {
             }));
         }
 
-        if self.minigame_stage_group_guid > 0 {
+        if let Some(stage_group_guid) = self.minigame_stage_group_guid {
             packets_for_all.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: ExecuteScriptWithIntParams {
                     script_name: "MiniGameFlow.CreateMiniGameGroup".to_string(),
-                    params: vec![self.minigame_stage_group_guid],
+                    params: vec![stage_group_guid],
                 },
             }));
         }
