@@ -14,10 +14,10 @@ jedi_temple:
         z: 1694
         w: 1
       destination_rot:
-          x: -1.5
-          y: 0
-          z: 0
-          w: 0
+        x: -1.5
+        y: 0
+        z: 0
+        w: 0
       interact_radius: 7
     archives_to_veranda:
       pos:

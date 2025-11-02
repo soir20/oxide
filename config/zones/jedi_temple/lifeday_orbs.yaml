@@ -259,7 +259,7 @@ jedi_temple:
             - procedure: empty
               weight: 89700
       synchronize_with: Blue Orb Double Spawn Timer One
-    
+
     hangar_blue_orb_two:
       model_id: 1198
       name_id: 16929
