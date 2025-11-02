@@ -21,4 +21,4 @@ jobs:
       - name: Check style (Rust)
         run: cargo fmt --all --check
       - name: Check style (YAML)
-        run: yamlint config/
+        run: yamllint config/
