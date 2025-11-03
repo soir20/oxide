@@ -62,18 +62,18 @@ categories:
                   short_name: ld1obiwan
                   minigame_type:
                     !SaberDuel
-                    camera_rot: 3.14
-                    rounds_to_win: 2
+                    camera_rot: &saber_duel_camera_rot 3.14
+                    rounds_to_win: &saber_duel_rounds_to_win 2
                     points_to_win_round: 4
                     keys_per_basic_bout: 3
                     keys_per_special_bout: 5
                     first_special_bout: 3
                     special_bout_interval: 4  # unconfirmed
-                    points_per_basic_bout: 1
-                    points_per_special_bout: 1
-                    bout_max_millis: 10000
-                    tie_interval_millis: 100
-                    basic_bout_animations:
+                    points_per_basic_bout: &saber_duel_points_per_basic_bout 1
+                    points_per_special_bout: &saber_duel_points_per_special_bout 1
+                    bout_max_millis: &saber_duel_bout_max_millis 10000
+                    tie_interval_millis: &saber_duel_tie_interval_millis 100
+                    basic_bout_animations: &saber_duel_basic_bout_animations
                       - attack_animation_id: 5033
                         defend_animation_id: 5034
                       - attack_animation_id: 5037
@@ -96,7 +96,7 @@ categories:
                         defend_animation_id: 5064
                       - attack_animation_id: 5067
                         defend_animation_id: 5068
-                    special_bout_animations:
+                    special_bout_animations: &saber_duel_special_bout_animations
                       - attack_animation_id: 5035
                         defend_animation_id: 5036
                       - attack_animation_id: 5039
@@ -115,8 +115,8 @@ categories:
                         defend_animation_id: 5070
                       - attack_animation_id: 5071
                         defend_animation_id: 5072
-                    establishing_animation_id: 6005
-                    player_entrance_animation_id: 6004
+                    establishing_animation_id: &saber_duel_establishing_animation_id 6005
+                    player_entrance_animation_id: &saber_duel_player_entrance_animation_id 6004
                     ai:
                       name_id: 1132
                       model_id: 158
@@ -130,24 +130,83 @@ categories:
                       round_lost_sound_id: 1836
                       game_won_sound_id: 1835
                       game_lost_sound_id: 1836
-                      min_millis_per_key: 10000
-                      max_millis_per_key: 10000
+                      min_millis_per_key: *saber_duel_bout_max_millis
+                      max_millis_per_key: *saber_duel_bout_max_millis
                       mistake_probability: 0.01
-                    score_penalty_per_second: 7.5
-                    max_time_score_bonus: 1450
-                    score_penalty_per_accuracy_pct: 100
-                    max_accuracy_score_bonus: 1000
-                    score_per_win_streak: 100
-                    score_per_point: 500
-                    score_per_margin_of_victory: 500
-                    game_win_bonus_score: 5000
-                    no_bouts_lost_bonus_score: 5000
-                    default_primary_saber:
+                    score_penalty_per_second: &saber_duel_easy_score_penalty_per_second 7.5
+                    max_time_score_bonus: &saber_duel_max_time_score_bonus 1450
+                    score_penalty_per_accuracy_pct: &saber_duel_score_penalty_per_accuracy_pct 100
+                    max_accuracy_score_bonus: &saber_duel_max_accuracy_score_bonus 1000
+                    score_per_win_streak: &saber_duel_score_per_win_streak 100
+                    score_per_point: &saber_duel_score_per_point 500
+                    score_per_margin_of_victory: &saber_duel_score_per_margin_of_victory 500
+                    game_win_bonus_score: &saber_duel_game_win_bonus_score 5000
+                    no_bouts_lost_bonus_score: &saber_duel_no_bouts_lost_bonus_score 5000
+                    default_primary_saber: &saber_duel_default_primary_saber
                       hilt_item_guid: 70057
                       shape_item_guid: 50000
                       color_item_guid: 60001
                   zone_template_guid: 202
                   score_to_credits_expression: x / 168
+                - !Stage
+                  guid: 31004
+                  name_id: 6372
+                  description_id: 6382
+                  stage_icon_id: 123
+                  start_screen_icon_id: 639
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 2198
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: ld2ahsoka
+                  minigame_type:
+                    !SaberDuel
+                    camera_rot: *saber_duel_camera_rot
+                    rounds_to_win: *saber_duel_rounds_to_win
+                    points_to_win_round: 8
+                    keys_per_basic_bout: 4
+                    keys_per_special_bout: 6
+                    first_special_bout: 3
+                    special_bout_interval: 6  # unconfirmed
+                    points_per_basic_bout: *saber_duel_points_per_basic_bout
+                    points_per_special_bout: *saber_duel_points_per_special_bout
+                    bout_max_millis: *saber_duel_bout_max_millis
+                    tie_interval_millis: *saber_duel_tie_interval_millis
+                    basic_bout_animations: *saber_duel_basic_bout_animations
+                    special_bout_animations: *saber_duel_special_bout_animations
+                    establishing_animation_id: *saber_duel_establishing_animation_id
+                    player_entrance_animation_id: *saber_duel_player_entrance_animation_id
+                    ai:
+                      name_id: 1137
+                      model_id: 182
+                      primary_saber:
+                        hilt_item_guid: 70005
+                        shape_item_guid: 50000
+                        color_item_guid: 60001
+                      entrance_animation_id: 6203
+                      entrance_sound_id: 1815
+                      round_won_sound_id: 1816
+                      round_lost_sound_id: 1817
+                      game_won_sound_id: 1816
+                      game_lost_sound_id: 1817
+                      min_millis_per_key: 500
+                      max_millis_per_key: 1500
+                      mistake_probability: 0.01
+                    score_penalty_per_second: *saber_duel_easy_score_penalty_per_second
+                    max_time_score_bonus: *saber_duel_max_time_score_bonus
+                    score_penalty_per_accuracy_pct: *saber_duel_score_penalty_per_accuracy_pct
+                    max_accuracy_score_bonus: *saber_duel_max_accuracy_score_bonus
+                    score_per_win_streak: *saber_duel_score_per_win_streak
+                    score_per_point: *saber_duel_score_per_point
+                    score_per_margin_of_victory: *saber_duel_score_per_margin_of_victory
+                    game_win_bonus_score: *saber_duel_game_win_bonus_score
+                    no_bouts_lost_bonus_score: *saber_duel_no_bouts_lost_bonus_score
+                    default_primary_saber: *saber_duel_default_primary_saber
+                  zone_template_guid: 202
+                  score_to_credits_expression: x / 117.5
             - !StageGroup
               guid: 31002
               name_id: 19815
