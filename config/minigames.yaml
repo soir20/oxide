@@ -45,7 +45,109 @@ categories:
               require_previous_completed: false
               stage_select_map_name: lsDuel
               short_name: sp
-              stages: []
+              stages:
+                - !Stage
+                  guid: 31003
+                  name_id: 6370
+                  description_id: 6371
+                  stage_icon_id: 130
+                  start_screen_icon_id: 647
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 1503
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: ld1obiwan
+                  minigame_type:
+                    !SaberDuel
+                    camera_rot: 3.14
+                    rounds_to_win: 2
+                    points_to_win_round: 4
+                    keys_per_basic_bout: 3
+                    keys_per_special_bout: 5
+                    first_special_bout: 3
+                    special_bout_interval: 4 # unconfirmed
+                    points_per_basic_bout: 1
+                    points_per_special_bout: 1
+                    bout_max_millis: 10000
+                    tie_interval_millis: 100
+                    basic_bout_animations:
+                    - attack_animation_id: 5033
+                      defend_animation_id: 5034
+                    - attack_animation_id: 5037
+                      defend_animation_id: 5038
+                    - attack_animation_id: 5041
+                      defend_animation_id: 5042
+                    - attack_animation_id: 5045
+                      defend_animation_id: 5046
+                    - attack_animation_id: 5047
+                      defend_animation_id: 5048
+                    - attack_animation_id: 5049
+                      defend_animation_id: 5050
+                    - attack_animation_id: 5055
+                      defend_animation_id: 5056
+                    - attack_animation_id: 5057
+                      defend_animation_id: 5058
+                    - attack_animation_id: 5059
+                      defend_animation_id: 5060
+                    - attack_animation_id: 5063
+                      defend_animation_id: 5064
+                    - attack_animation_id: 5067
+                      defend_animation_id: 5068
+                    special_bout_animations:
+                    - attack_animation_id: 5035
+                      defend_animation_id: 5036
+                    - attack_animation_id: 5039
+                      defend_animation_id: 5040
+                    - attack_animation_id: 5043
+                      defend_animation_id: 5044
+                    - attack_animation_id: 5051
+                      defend_animation_id: 5052
+                    - attack_animation_id: 5053
+                      defend_animation_id: 5054
+                    - attack_animation_id: 5061
+                      defend_animation_id: 5062
+                    - attack_animation_id: 5065
+                      defend_animation_id: 5066
+                    - attack_animation_id: 5069
+                      defend_animation_id: 5070
+                    - attack_animation_id: 5071
+                      defend_animation_id: 5072
+                    establishing_animation_id: 6005
+                    player_entrance_animation_id: 6004
+                    ai:
+                      name_id: 1132
+                      model_id: 158
+                      primary_saber:
+                        hilt_item_guid: 70045
+                        shape_item_guid: 50000
+                        color_item_guid: 60000
+                      entrance_animation_id: 6211
+                      entrance_sound_id: 1834
+                      round_won_sound_id: 1835
+                      round_lost_sound_id: 1836
+                      game_won_sound_id: 1835
+                      game_lost_sound_id: 1836
+                      min_millis_per_key: 10000
+                      max_millis_per_key: 10000
+                      mistake_probability: 0.01
+                    score_penalty_per_second: 7.5
+                    max_time_score_bonus: 1450
+                    score_penalty_per_accuracy_pct: 100
+                    max_accuracy_score_bonus: 1000
+                    score_per_win_streak: 100
+                    score_per_point: 500
+                    score_per_margin_of_victory: 500
+                    game_win_bonus_score: 5000
+                    no_bouts_lost_bonus_score: 5000
+                    default_primary_saber:
+                      hilt_item_guid: 70057
+                      shape_item_guid: 50000
+                      color_item_guid: 60001
+                  zone_template_guid: 202
+                  score_to_credits_expression: x / 168
             - !StageGroup
               guid: 31002
               name_id: 19815
