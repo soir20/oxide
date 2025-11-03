@@ -1438,7 +1438,7 @@ impl SaberDuelGame {
 
     fn next_ai_key_duration(config: &SaberDuelConfig) -> Duration {
         let millis =
-            thread_rng().gen_range(config.ai.min_millis_per_key..config.ai.max_millis_per_key);
+            thread_rng().gen_range(config.ai.min_millis_per_key..=config.ai.max_millis_per_key);
         Duration::from_millis(millis.into())
     }
 
