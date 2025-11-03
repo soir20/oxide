@@ -188,6 +188,7 @@ jedi_temple:
           player_one_shot_animation_id: 3014
           one_shot_action_animation_id: 2548
           duration_millis: 1000
+      interact_radius: 4
 
     #
     # Hanger
@@ -1492,6 +1493,7 @@ jedi_temple:
         z: 0
         w: 0
       stand_animation_id: 2538
+
     #
     # War Room
     #
