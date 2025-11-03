@@ -72,8 +72,8 @@ struct SaberDuelAi {
     secondary_saber: Option<SaberDuelEquippableSaber>,
     entrance_animation_id: i32,
     entrance_sound_id: u32,
-    bout_won_sound_id: u32,
-    bout_lost_sound_id: u32,
+    round_won_sound_id: u32,
+    round_lost_sound_id: u32,
     game_won_sound_id: u32,
     game_lost_sound_id: u32,
     min_millis_per_key: u16,
@@ -1612,8 +1612,8 @@ impl SaberDuelGame {
                     winner_index: leader_index.into(),
                     sound_id: match self.is_ai_match() {
                         true => match leader_index == 0 {
-                            true => self.config.ai.bout_lost_sound_id,
-                            false => self.config.ai.bout_won_sound_id,
+                            true => self.config.ai.round_won_sound_id,
+                            false => self.config.ai.round_lost_sound_id,
                         },
                         false => 0,
                     },
@@ -1640,8 +1640,8 @@ impl SaberDuelGame {
                     winner_index: leader_index.into(),
                     sound_id: match self.is_ai_match() {
                         true => match leader_index == 0 {
-                            true => self.config.ai.game_lost_sound_id,
-                            false => self.config.ai.game_won_sound_id,
+                            true => self.config.ai.game_won_sound_id,
+                            false => self.config.ai.game_lost_sound_id,
                         },
                         false => 0,
                     },
