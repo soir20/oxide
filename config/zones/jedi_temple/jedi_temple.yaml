@@ -1,3 +1,4 @@
+---
 jedi_temple:
   guid: 24
   max_players: 4294967295
@@ -22,4 +23,3 @@ jedi_temple:
   jump_height_multiplier: 1
   gravity_multiplier: 1
   seconds_per_day: 10800
-  
