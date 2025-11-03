@@ -464,8 +464,6 @@ impl OneShotAction {
                     unknown4: 0.0,
                     dialog_choices: dialog
                         .choices
-                        .as_ref()
-                        .unwrap_or(&vec![])
                         .iter()
                         .map(|choice| DialogChoice {
                             button_id: choice.button_id,

@@ -12,7 +12,7 @@ use crate::game_server::{
 };
 
 use super::{
-    character::{coerce_to_broadcast_supplier, NpcTemplate},
+    character::coerce_to_broadcast_supplier,
     lock_enforcer::CharacterLockRequest,
     unique_guid::{player_guid, zone_template_guid},
     zone::{teleport_anywhere, Destination},
@@ -21,11 +21,9 @@ use super::{
 
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub struct DialogChoices {
+pub struct DialogChoiceReferenceConfig {
     pub button_key: String,
     pub button_text_id: u32,
-    #[serde(skip)]
-    pub button_id: u32,
 }
 
 #[derive(Clone, Deserialize)]
@@ -43,22 +41,22 @@ pub struct DialogConfig {
     pub zoom: f32,
     #[serde(default)]
     pub show_players: bool,
-    pub choices: Option<Vec<DialogChoices>>,
+    pub choices: Vec<DialogChoiceReferenceConfig>,
 }
 
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub struct NewDialog {
+pub struct NewDialogConfig {
     pub npc_key: Option<String>,
     pub new_dialog: DialogConfig,
 }
 
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub struct DialogOptions {
+pub struct DialogChoiceConfig {
     pub button_key: String,
     #[serde(flatten)]
-    pub new_dialog: Option<NewDialog>,
+    pub new_dialog: Option<NewDialogConfig>,
     pub script_name: Option<String>,
     #[serde(default)]
     pub close_dialog: bool,
@@ -96,7 +94,7 @@ pub fn handle_dialog_buttons(
                     )
                 })?;
 
-                let config = zone_template.dialog_options.iter().find(|opt| opt.button_id == button_id).ok_or_else(|| {
+                let config = zone_template.dialog_choices.get(&button_id).ok_or_else(|| {
                     ProcessPacketError::new(
                         ProcessPacketErrorType::ConstraintViolated,
                         format!(
@@ -121,8 +119,6 @@ pub fn handle_dialog_buttons(
                                 unknown4: 10.0,
                                 dialog_choices: dialog
                                     .choices
-                                    .as_ref()
-                                    .unwrap_or(&vec![])
                                     .iter()
                                     .map(|choice| DialogChoice {
                                         button_id: choice.button_id,
@@ -200,7 +196,13 @@ pub fn handle_dialog_buttons(
 }
 
 #[derive(Clone)]
-pub struct DialogConfigTemplate {
+pub struct DialogChoiceReference {
+    pub button_id: u32,
+    pub button_text_id: u32,
+}
+
+#[derive(Clone)]
+pub struct DialogTemplate {
     pub camera_placement: Pos,
     pub look_at: Pos,
     pub dialog_message_id: u32,
@@ -208,71 +210,60 @@ pub struct DialogConfigTemplate {
     pub speaker_sound_id: u32,
     pub zoom: f32,
     pub show_players: bool,
-    pub choices: Option<Vec<DialogChoices>>,
-    pub npc_guid: Option<u64>,
+    pub choices: Vec<DialogChoiceReference>,
+    pub npc_key: Option<String>,
 }
 
 #[derive(Clone)]
-pub struct DialogOptionsTemplate {
+pub struct DialogChoiceTemplate {
     pub button_id: u32,
-    pub new_dialog: Option<DialogConfigTemplate>,
+    pub new_dialog: Option<DialogTemplate>,
     pub script_name: Option<String>,
     pub close_dialog: bool,
     pub player_destination: Option<Destination>,
     pub minigame_stage_group_guid: Option<i32>,
 }
 
-impl DialogOptionsTemplate {
+impl DialogChoiceTemplate {
     pub fn from_config(
-        options: &DialogOptions,
+        choice: &DialogChoiceConfig,
         template_guid: u8,
-        characters: &[NpcTemplate],
         button_keys_to_id: &HashMap<String, u32>,
     ) -> Self {
         let button_id = *button_keys_to_id
-            .get(&options.button_key)
+            .get(&choice.button_key)
             .unwrap_or_else(|| {
                 panic!(
                     "Unknown (Dialog Button Key: {}) in (Zone Template GUID: {})",
-                    options.button_key, template_guid
+                    choice.button_key, template_guid
                 )
             });
 
-        let npc_keys_to_guid: HashMap<&String, u64> = characters
-            .iter()
-            .filter_map(|template| {
-                template
-                    .key
-                    .as_ref()
-                    .map(|key| (key, template.guid(template_guid as u64)))
-            })
-            .collect();
-
-        let new_dialog = options.new_dialog.as_ref().map(|new_dialog| {
+        let new_dialog = choice.new_dialog.as_ref().map(|new_dialog| {
             let config = &new_dialog.new_dialog;
 
-            let npc_guid = new_dialog.npc_key.as_ref().map(|alias| {
-                *npc_keys_to_guid.get(alias).unwrap_or_else(|| {
-                    panic!(
-                        "Unknown (NPC Key: {}) in (Zone Template GUID: {}) referenced in (Dialog Button Key: {})",
-                        alias, template_guid, options.button_key
-                    )
+            let choices = config
+                .choices
+                .iter()
+                .map(|choice| {
+                    let button_id =
+                        *button_keys_to_id
+                            .get(&choice.button_key)
+                            .unwrap_or_else(|| {
+                                panic!(
+                                    "Unknown (Choice Button Key: {}) in (Dialog Button Key: {})",
+                                    choice.button_key, choice.button_key
+                                )
+                            });
+
+                    DialogChoiceReference {
+                        button_id,
+                        button_text_id: choice.button_text_id,
+                    }
                 })
-            });
+                .collect();
 
-            let choices = config.choices.clone().map(|mut choices| {
-                for choice in choices.iter_mut() {
-                    choice.button_id = *button_keys_to_id.get(&choice.button_key).unwrap_or_else(|| {
-                        panic!(
-                            "Unknown (Choice Button Key: {}) in (Dialog Button Key: {})",
-                            choice.button_key, options.button_key
-                        )
-                    });
-                }
-                choices
-            });
-
-            DialogConfigTemplate {
+            DialogTemplate {
                 camera_placement: config.camera_placement,
                 look_at: config.look_at,
                 dialog_message_id: config.dialog_message_id,
@@ -281,17 +272,79 @@ impl DialogOptionsTemplate {
                 zoom: config.zoom,
                 show_players: config.show_players,
                 choices,
-                npc_guid,
+                npc_key: new_dialog.npc_key.clone(),
             }
         });
 
-        DialogOptionsTemplate {
+        DialogChoiceTemplate {
             button_id,
             new_dialog,
-            script_name: options.script_name.clone(),
-            close_dialog: options.close_dialog,
-            player_destination: options.player_destination.clone(),
-            minigame_stage_group_guid: options.minigame_stage_group_guid,
+            script_name: choice.script_name.clone(),
+            close_dialog: choice.close_dialog,
+            player_destination: choice.player_destination.clone(),
+            minigame_stage_group_guid: choice.minigame_stage_group_guid,
+        }
+    }
+}
+
+pub struct DialogInstance {
+    pub camera_placement: Pos,
+    pub look_at: Pos,
+    pub dialog_message_id: u32,
+    pub speaker_animation_id: i32,
+    pub speaker_sound_id: u32,
+    pub zoom: f32,
+    pub show_players: bool,
+    pub choices: Vec<DialogChoiceReference>,
+    pub npc_guid: Option<u64>,
+}
+
+impl DialogInstance {
+    pub fn from_template(
+        template: &DialogTemplate,
+        character_keys_to_guid: &HashMap<&String, u64>,
+    ) -> DialogInstance {
+        DialogInstance {
+            camera_placement: template.camera_placement,
+            look_at: template.look_at,
+            dialog_message_id: template.dialog_message_id,
+            speaker_animation_id: template.speaker_animation_id,
+            speaker_sound_id: template.speaker_sound_id,
+            zoom: template.zoom,
+            show_players: template.show_players,
+            choices: template.choices.clone(),
+            npc_guid: template
+                .npc_key
+                .as_ref()
+                .and_then(|key| character_keys_to_guid.get(key))
+                .copied(),
+        }
+    }
+}
+
+pub struct DialogChoiceInstance {
+    pub button_id: u32,
+    pub new_dialog: Option<DialogInstance>,
+    pub script_name: Option<String>,
+    pub close_dialog: bool,
+    pub player_destination: Option<Destination>,
+    pub minigame_stage_group_guid: Option<i32>,
+}
+
+impl DialogChoiceInstance {
+    pub fn from_template(
+        template: &DialogChoiceTemplate,
+        character_keys_to_guid: &HashMap<&String, u64>,
+    ) -> DialogChoiceInstance {
+        DialogChoiceInstance {
+            button_id: template.button_id,
+            new_dialog: template.new_dialog.as_ref().map(|dialog_template| {
+                DialogInstance::from_template(dialog_template, character_keys_to_guid)
+            }),
+            script_name: template.script_name.clone(),
+            close_dialog: template.close_dialog,
+            player_destination: template.player_destination,
+            minigame_stage_group_guid: template.minigame_stage_group_guid,
         }
     }
 }

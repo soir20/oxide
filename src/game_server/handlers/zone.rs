@@ -13,6 +13,7 @@ use serde_yaml::{Mapping, Value};
 
 use crate::{
     game_server::{
+        handlers::dialog::{DialogChoiceConfig, DialogChoiceInstance, DialogChoiceTemplate},
         packets::{
             client_update::Position,
             command::MoveToInteract,
@@ -36,7 +37,6 @@ use super::{
         CharacterSquadIndex, CharacterSynchronizationIndex, CharacterType, Chunk, DoorConfig,
         NpcTemplate, PreviousFixture, PreviousLocation, RemovalMode, TransportConfig,
     },
-    dialog::{DialogOptions, DialogOptionsTemplate},
     distance3,
     guid::{Guid, GuidTable, GuidTableIndexer, GuidTableWriteHandle, IndexedGuid},
     housing::prepare_init_house_packets,
@@ -105,7 +105,7 @@ pub struct ZoneConfig {
     #[serde(default)]
     map_id: u32,
     #[serde(default)]
-    dialog_options: Vec<DialogOptions>,
+    dialog_choices: Vec<DialogChoiceConfig>,
 }
 
 #[derive(Clone)]
@@ -128,7 +128,7 @@ pub struct ZoneTemplate {
     pub seconds_per_day: u32,
     update_previous_location_on_leave: bool,
     map_id: u32,
-    pub dialog_options: Vec<DialogOptionsTemplate>,
+    pub dialog_choices: BTreeMap<u32, DialogChoiceTemplate>,
 }
 
 impl Guid<u8> for ZoneTemplate {
@@ -170,15 +170,15 @@ impl From<ZoneConfig> for ZoneTemplate {
         let mut seen_keys = HashSet::new();
         let mut next_id = 1;
 
-        for options in &value.dialog_options {
-            if !seen_keys.insert(options.button_key.clone()) {
+        for choice in &value.dialog_choices {
+            if !seen_keys.insert(choice.button_key.clone()) {
                 panic!(
                     "Duplicate (Button Key: '{}') found in (Zone Template GUID: {})",
-                    options.button_key, value.guid
+                    choice.button_key, value.guid
                 );
             }
 
-            button_keys_to_id.insert(options.button_key.clone(), next_id);
+            button_keys_to_id.insert(choice.button_key.clone(), next_id);
             next_id += 1;
         }
 
@@ -221,16 +221,14 @@ impl From<ZoneConfig> for ZoneTemplate {
             }
         }
 
-        let dialog_options = value
-            .dialog_options
+        let dialog_choices = value
+            .dialog_choices
             .iter()
-            .map(|options| {
-                DialogOptionsTemplate::from_config(
-                    options,
-                    value.guid,
-                    &characters,
-                    &button_keys_to_id,
-                )
+            .map(|choice| {
+                let choice_template =
+                    DialogChoiceTemplate::from_config(choice, value.guid, &button_keys_to_id);
+
+                (choice_template.button_id, choice_template)
             })
             .collect();
 
@@ -253,7 +251,7 @@ impl From<ZoneConfig> for ZoneTemplate {
             seconds_per_day: value.seconds_per_day,
             update_previous_location_on_leave: value.update_previous_location_on_leave,
             map_id: value.map_id,
-            dialog_options,
+            dialog_choices,
         }
     }
 }
@@ -310,6 +308,11 @@ impl ZoneTemplate {
             seconds_per_day: self.seconds_per_day,
             update_previous_location_on_leave: self.update_previous_location_on_leave,
             map_id: self.map_id,
+            dialog_choices: self
+                .dialog_choices
+                .values()
+                .map(|template| DialogChoiceInstance::from_template(template, &keys_to_guid))
+                .collect(),
         }
     }
 }
@@ -359,6 +362,7 @@ pub struct ZoneInstance {
     pub seconds_per_day: u32,
     update_previous_location_on_leave: bool,
     map_id: u32,
+    dialog_choices: Vec<DialogChoiceInstance>,
 }
 
 impl IndexedGuid<u64, u8> for ZoneInstance {

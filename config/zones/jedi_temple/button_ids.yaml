@@ -1,5 +1,5 @@
 jedi_temple:
-  dialog_options:
+  dialog_choices:
     - button_key: Galaxy Map
       script_name: UIGlobal.ShowGalaxyMap
       close_dialog: true
