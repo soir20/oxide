@@ -132,7 +132,7 @@ categories:
                       game_lost_sound_id: 1836
                       min_millis_per_key: *saber_duel_bout_max_millis
                       max_millis_per_key: *saber_duel_bout_max_millis
-                      mistake_probability: 0.01
+                      mistake_probability: 1
                     score_penalty_per_second: &saber_duel_easy_score_penalty_per_second 7.5
                     max_time_score_bonus: &saber_duel_max_time_score_bonus 1450
                     score_penalty_per_accuracy_pct: &saber_duel_score_penalty_per_accuracy_pct 100
@@ -194,7 +194,7 @@ categories:
                       game_lost_sound_id: 1817
                       min_millis_per_key: 500
                       max_millis_per_key: 1500
-                      mistake_probability: 0.01
+                      mistake_probability: 0.01  # unconfirmed
                     score_penalty_per_second: *saber_duel_easy_score_penalty_per_second
                     max_time_score_bonus: *saber_duel_max_time_score_bonus
                     score_penalty_per_accuracy_pct: *saber_duel_score_penalty_per_accuracy_pct
@@ -207,6 +207,65 @@ categories:
                     default_primary_saber: *saber_duel_default_primary_saber
                   zone_template_guid: 202
                   score_to_credits_expression: x / 117.5
+                - !Stage
+                  guid: 31005
+                  name_id: 6373
+                  description_id: 6383
+                  stage_icon_id: 125
+                  start_screen_icon_id: 641
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 2199
+                  members_only: true
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: ld3bariss
+                  minigame_type:
+                    !SaberDuel
+                    camera_rot: *saber_duel_camera_rot
+                    rounds_to_win: *saber_duel_rounds_to_win
+                    points_to_win_round: 8
+                    keys_per_basic_bout: 4
+                    keys_per_special_bout: 6
+                    first_special_bout: 3
+                    special_bout_interval: 6
+                    points_per_basic_bout: *saber_duel_points_per_basic_bout
+                    points_per_special_bout: *saber_duel_points_per_special_bout
+                    bout_max_millis: *saber_duel_bout_max_millis
+                    tie_interval_millis: *saber_duel_tie_interval_millis
+                    basic_bout_animations: *saber_duel_basic_bout_animations
+                    special_bout_animations: *saber_duel_special_bout_animations
+                    establishing_animation_id: *saber_duel_establishing_animation_id
+                    player_entrance_animation_id: *saber_duel_player_entrance_animation_id
+                    ai:
+                      name_id: 9522
+                      model_id: 388
+                      primary_saber:
+                        hilt_item_guid: 70017
+                        shape_item_guid: 50000
+                        color_item_guid: 60000
+                      entrance_animation_id: 6205
+                      entrance_sound_id: 2260
+                      round_won_sound_id: 2261
+                      round_lost_sound_id: 2262
+                      game_won_sound_id: 2261
+                      game_lost_sound_id: 2262
+                      min_millis_per_key: 500  # unconfirmed
+                      max_millis_per_key: 1500  # unconfirmed
+                      mistake_probability: 0.01  # unconfirmed
+                    score_penalty_per_second: *saber_duel_easy_score_penalty_per_second
+                    max_time_score_bonus: *saber_duel_max_time_score_bonus
+                    score_penalty_per_accuracy_pct: *saber_duel_score_penalty_per_accuracy_pct
+                    max_accuracy_score_bonus: *saber_duel_max_accuracy_score_bonus
+                    score_per_win_streak: *saber_duel_score_per_win_streak
+                    score_per_point: *saber_duel_score_per_point
+                    score_per_margin_of_victory: *saber_duel_score_per_margin_of_victory
+                    game_win_bonus_score: *saber_duel_game_win_bonus_score
+                    no_bouts_lost_bonus_score: *saber_duel_no_bouts_lost_bonus_score
+                    default_primary_saber: *saber_duel_default_primary_saber
+                  zone_template_guid: 202
+                  score_to_credits_expression: x / 115.5
             - !StageGroup
               guid: 31002
               name_id: 19815
