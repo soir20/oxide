@@ -1,3 +1,4 @@
+---
 members_only:
   ambient_npcs:
     #
@@ -39,8 +40,8 @@ members_only:
       cursor: 54
       enable_interact_popup: false
       one_shot_action_on_interact:
-          one_shot_action_animation_id: 2506
-          duration_millis: 1000
+        one_shot_action_animation_id: 2506
+        duration_millis: 1000
       interact_radius: 6
       auto_interact_radius: 5
     Clone_Guard_Members_Only_2:
@@ -59,8 +60,8 @@ members_only:
       cursor: 54
       enable_interact_popup: false
       one_shot_action_on_interact:
-          one_shot_action_animation_id: 2506
-          duration_millis: 1000
+        one_shot_action_animation_id: 2506
+        duration_millis: 1000
       interact_radius: 6
       auto_interact_radius: 5
     Clone_Guard_Members_Only_3:
@@ -93,6 +94,6 @@ members_only:
       cursor: 54
       enable_interact_popup: false
       one_shot_action_on_interact:
-          player_one_shot_animation_id: 3014
-          one_shot_action_animation_id: 2302
-          duration_millis: 1000
+        player_one_shot_animation_id: 3014
+        one_shot_action_animation_id: 2302
+        duration_millis: 1000
