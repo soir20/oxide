@@ -126,10 +126,10 @@ categories:
                         color_item_guid: 60000
                       entrance_animation_id: 6211
                       entrance_sound_id: 1834
-                      round_won_sound_id: 1835
-                      round_lost_sound_id: 1836
-                      game_won_sound_id: 1835
-                      game_lost_sound_id: 1836
+                      round_won_sound_id: 1836
+                      round_lost_sound_id: 1835
+                      game_won_sound_id: 1836
+                      game_lost_sound_id: 1835
                       min_millis_per_key: *saber_duel_bout_max_millis
                       max_millis_per_key: *saber_duel_bout_max_millis
                       mistake_probability: 1
@@ -188,10 +188,10 @@ categories:
                         color_item_guid: 60001
                       entrance_animation_id: 6203
                       entrance_sound_id: 1815
-                      round_won_sound_id: 1816
-                      round_lost_sound_id: 1817
-                      game_won_sound_id: 1816
-                      game_lost_sound_id: 1817
+                      round_won_sound_id: 1817
+                      round_lost_sound_id: 1816
+                      game_won_sound_id: 1817
+                      game_lost_sound_id: 1816
                       min_millis_per_key: 500
                       max_millis_per_key: 1500
                       mistake_probability: 0.01  # unconfirmed
@@ -247,10 +247,10 @@ categories:
                         color_item_guid: 60000
                       entrance_animation_id: 6205
                       entrance_sound_id: 2260
-                      round_won_sound_id: 2261
-                      round_lost_sound_id: 2262
-                      game_won_sound_id: 2261
-                      game_lost_sound_id: 2262
+                      round_won_sound_id: 2262
+                      round_lost_sound_id: 2261
+                      game_won_sound_id: 2262
+                      game_lost_sound_id: 2261
                       min_millis_per_key: 500  # unconfirmed
                       max_millis_per_key: 1500  # unconfirmed
                       mistake_probability: 0.01  # unconfirmed
@@ -306,10 +306,10 @@ categories:
                         color_item_guid: 60000
                       entrance_animation_id: 6207
                       entrance_sound_id: 2269
-                      round_won_sound_id: 2270
-                      round_lost_sound_id: 2271
-                      game_won_sound_id: 2270
-                      game_lost_sound_id: 2271
+                      round_won_sound_id: 2271
+                      round_lost_sound_id: 2270
+                      game_won_sound_id: 2271
+                      game_lost_sound_id: 2270
                       min_millis_per_key: 500  # unconfirmed
                       max_millis_per_key: 1500  # unconfirmed
                       mistake_probability: 0.01  # unconfirmed
@@ -365,10 +365,10 @@ categories:
                         color_item_guid: 60001
                       entrance_animation_id: 6208
                       entrance_sound_id: 2280
-                      round_won_sound_id: 2281
-                      round_lost_sound_id: 2282
-                      game_won_sound_id: 2281
-                      game_lost_sound_id: 2282
+                      round_won_sound_id: 2282
+                      round_lost_sound_id: 2281
+                      game_won_sound_id: 2282
+                      game_lost_sound_id: 2281
                       min_millis_per_key: 500  # unconfirmed
                       max_millis_per_key: 1500  # unconfirmed
                       mistake_probability: 0.01  # unconfirmed
