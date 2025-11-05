@@ -1449,7 +1449,7 @@ jedi_temple:
         w: 0
       stand_animation_id: 2510
     # Jedi Pillars
-    pillars_npc__1:
+    pillars_npc_1:
       model_id: 42
       scale: 0.83
       pos:
@@ -1464,7 +1464,7 @@ jedi_temple:
         w: 0
       stand_animation_id: 2536
     # Clone Pillars
-    pillars_npc__2:
+    pillars_npc_2:
       model_id: 1947
       scale: 0.83
       pos:
@@ -1479,7 +1479,7 @@ jedi_temple:
         w: 0
       stand_animation_id: 2537
     # Clone Pillars
-    pillars_npc__3:
+    pillars_npc_3:
       model_id: 1946
       scale: 0.83
       pos:
