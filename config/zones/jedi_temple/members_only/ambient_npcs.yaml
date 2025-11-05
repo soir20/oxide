@@ -8,7 +8,7 @@ members_only:
     #
     # Members
     #
-    Max_Rebo:
+    max_rebo:
       model_id: 1014
       name_id: 4782
       show_name: false
@@ -24,7 +24,7 @@ members_only:
         z: 0.73847353
         w: 0
       stand_animation_id: 2579
-    Clone_Guard_Members_Only_1:
+    clone_guard_members_only_1:
       model_id: 1936
       pos:
         x: 762.14
@@ -44,7 +44,7 @@ members_only:
         duration_millis: 1000
       interact_radius: 6
       auto_interact_radius: 5
-    Clone_Guard_Members_Only_2:
+    clone_guard_members_only_2:
       model_id: 1936
       pos:
         x: 762.14
@@ -64,7 +64,7 @@ members_only:
         duration_millis: 1000
       interact_radius: 6
       auto_interact_radius: 5
-    Clone_Guard_Members_Only_3:
+    clone_guard_members_only_3:
       model_id: 1936
       pos:
         x: 800.0
@@ -77,8 +77,14 @@ members_only:
         z: 0.75
         w: 0
       stand_animation_id: 2505
+      cursor: 54
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+        one_shot_action_animation_id: 2506
+        duration_millis: 1000
+      interact_radius: 6
     # Liftable Crate
-    Members_Only_NPC_1:
+    members_only_npc_1:
       model_id: 825
       pos:
         x: 816.7
