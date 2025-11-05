@@ -16,7 +16,9 @@ use crate::game_server::{
             AmbientNpc, BaseNpc, Character, CharacterType, MinigameMatchmakingGroup,
             MinigameStatus, PlayerInventory,
         },
-        inventory::{player_has_saber_equipped, wield_type_from_inventory},
+        inventory::{
+            attachments_from_equipped_items, player_has_saber_equipped, wield_type_from_inventory,
+        },
         minigame::{
             handle_minigame_packet_write, MinigameCountdown, MinigameStopwatch,
             SharedMinigameTypeData,
@@ -564,14 +566,40 @@ impl SaberDuelGame {
             return Ok(Vec::new());
         }
 
-        let (mut attachments, mut items) =
-            self.attachments_from_saber(&self.config.ai.primary_saber, game_server)?;
+        let mut items = BTreeMap::from([
+            (
+                EquipmentSlot::PrimaryWeapon,
+                self.config.ai.primary_saber.hilt_item_guid,
+            ),
+            (
+                EquipmentSlot::PrimarySaberShape,
+                self.config.ai.primary_saber.shape_item_guid,
+            ),
+            (
+                EquipmentSlot::PrimarySaberColor,
+                self.config.ai.primary_saber.color_item_guid,
+            ),
+        ]);
         if let Some(secondary_saber) = &self.config.ai.secondary_saber {
-            let (mut secondary_attachments, mut secondary_items) =
-                self.attachments_from_saber(secondary_saber, game_server)?;
-            attachments.append(&mut secondary_attachments);
-            items.append(&mut secondary_items);
+            items.extend([
+                (
+                    EquipmentSlot::SecondaryWeapon,
+                    secondary_saber.hilt_item_guid,
+                ),
+                (
+                    EquipmentSlot::SecondarySaberShape,
+                    secondary_saber.shape_item_guid,
+                ),
+                (
+                    EquipmentSlot::SecondarySaberColor,
+                    secondary_saber.color_item_guid,
+                ),
+            ]);
         }
+        let attachments = attachments_from_equipped_items(&items, game_server.items())
+            .into_iter()
+            .map(|attachment| attachment.into())
+            .collect();
 
         let wield_type = wield_type_from_inventory(&items, game_server);
 
@@ -1195,62 +1223,6 @@ impl SaberDuelGame {
         }
 
         Ok(broadcasts)
-    }
-
-    fn get_item<'a>(
-        &self,
-        game_server: &'a GameServer,
-        item_guid: u32,
-    ) -> Result<&'a ItemDefinition, ProcessPacketError> {
-        game_server.items().get(&item_guid).ok_or_else(|| ProcessPacketError::new(
-            ProcessPacketErrorType::ConstraintViolated,
-            format!("Tried to equip item {item_guid} in Saber Duel, but it doesn't exist ({self:?})")
-        ))
-    }
-
-    fn attachments_from_saber(
-        &self,
-        saber: &SaberDuelEquippableSaber,
-        game_server: &GameServer,
-    ) -> Result<(Vec<Attachment>, BTreeMap<EquipmentSlot, u32>), ProcessPacketError> {
-        let hilt = self.get_item(game_server, saber.hilt_item_guid)?;
-        let shape = self.get_item(game_server, saber.shape_item_guid)?;
-        let color = self.get_item(game_server, saber.color_item_guid)?;
-
-        let mut items = BTreeMap::new();
-        items.insert(hilt.slot.into(), hilt.guid);
-        items.insert(shape.slot.into(), shape.guid);
-        items.insert(color.slot.into(), color.guid);
-
-        Ok((
-            vec![
-                Attachment {
-                    model_name: hilt.model_name.clone(),
-                    texture_alias: hilt.texture_alias.clone(),
-                    tint_alias: hilt.tint_alias.clone(),
-                    tint: hilt.tint,
-                    composite_effect: hilt.composite_effect,
-                    slot: hilt.slot.into(),
-                },
-                Attachment {
-                    model_name: shape.model_name.clone(),
-                    texture_alias: shape.texture_alias.clone(),
-                    tint_alias: shape.tint_alias.clone(),
-                    tint: color.tint,
-                    composite_effect: shape.composite_effect,
-                    slot: shape.slot.into(),
-                },
-                Attachment {
-                    model_name: color.model_name.clone(),
-                    texture_alias: color.texture_alias.clone(),
-                    tint_alias: color.tint_alias.clone(),
-                    tint: color.tint,
-                    composite_effect: color.composite_effect,
-                    slot: color.slot.into(),
-                },
-            ],
-            items,
-        ))
     }
 
     fn is_ai_match(&self) -> bool {
