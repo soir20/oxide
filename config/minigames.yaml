@@ -671,7 +671,7 @@ categories:
                       min_millis_per_key: 500  # unconfirmed
                       max_millis_per_key: 1500  # unconfirmed
                       mistake_probability: 0.01  # unconfirmed
-                    score_penalty_per_second: &saber_duel_hard_score_penalty_per_second 5.5
+                    score_penalty_per_second: *saber_duel_hard_score_penalty_per_second
                     max_time_score_bonus: *saber_duel_max_time_score_bonus
                     score_penalty_per_accuracy_pct: *saber_duel_score_penalty_per_accuracy_pct
                     max_accuracy_score_bonus: *saber_duel_max_accuracy_score_bonus
