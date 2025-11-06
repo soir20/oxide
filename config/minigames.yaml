@@ -274,7 +274,7 @@ categories:
                   start_screen_icon_id: 643
                   min_players: 1
                   max_players: 1
-                  difficulty: 1
+                  difficulty: 2
                   start_sound_id: 2200
                   members_only: true
                   require_previous_completed: false
@@ -313,7 +313,7 @@ categories:
                       min_millis_per_key: 500  # unconfirmed
                       max_millis_per_key: 1500  # unconfirmed
                       mistake_probability: 0.01  # unconfirmed
-                    score_penalty_per_second: *saber_duel_easy_score_penalty_per_second
+                    score_penalty_per_second: &saber_duel_medium_score_penalty_per_second 6.5
                     max_time_score_bonus: *saber_duel_max_time_score_bonus
                     score_penalty_per_accuracy_pct: *saber_duel_score_penalty_per_accuracy_pct
                     max_accuracy_score_bonus: *saber_duel_max_accuracy_score_bonus
@@ -333,7 +333,7 @@ categories:
                   start_screen_icon_id: 644
                   min_players: 1
                   max_players: 1
-                  difficulty: 1
+                  difficulty: 2
                   start_sound_id: 2201
                   members_only: true
                   require_previous_completed: false
@@ -372,7 +372,7 @@ categories:
                       min_millis_per_key: 500  # unconfirmed
                       max_millis_per_key: 1500  # unconfirmed
                       mistake_probability: 0.01  # unconfirmed
-                    score_penalty_per_second: *saber_duel_easy_score_penalty_per_second
+                    score_penalty_per_second: *saber_duel_medium_score_penalty_per_second
                     max_time_score_bonus: *saber_duel_max_time_score_bonus
                     score_penalty_per_accuracy_pct: *saber_duel_score_penalty_per_accuracy_pct
                     max_accuracy_score_bonus: *saber_duel_max_accuracy_score_bonus
@@ -392,7 +392,7 @@ categories:
                   start_screen_icon_id: 637
                   min_players: 1
                   max_players: 1
-                  difficulty: 1
+                  difficulty: 2
                   start_sound_id: 2202
                   members_only: true
                   require_previous_completed: false
@@ -435,7 +435,7 @@ categories:
                       min_millis_per_key: 500  # unconfirmed
                       max_millis_per_key: 1500  # unconfirmed
                       mistake_probability: 0.01  # unconfirmed
-                    score_penalty_per_second: *saber_duel_easy_score_penalty_per_second
+                    score_penalty_per_second: *saber_duel_medium_score_penalty_per_second
                     max_time_score_bonus: *saber_duel_max_time_score_bonus
                     score_penalty_per_accuracy_pct: *saber_duel_score_penalty_per_accuracy_pct
                     max_accuracy_score_bonus: *saber_duel_max_accuracy_score_bonus
@@ -455,7 +455,7 @@ categories:
                   start_screen_icon_id: 645
                   min_players: 1
                   max_players: 1
-                  difficulty: 1
+                  difficulty: 2
                   start_sound_id: 2203
                   members_only: true
                   require_previous_completed: false
@@ -494,7 +494,7 @@ categories:
                       min_millis_per_key: 500  # unconfirmed
                       max_millis_per_key: 1500  # unconfirmed
                       mistake_probability: 0.01  # unconfirmed
-                    score_penalty_per_second: *saber_duel_easy_score_penalty_per_second
+                    score_penalty_per_second: *saber_duel_medium_score_penalty_per_second
                     max_time_score_bonus: *saber_duel_max_time_score_bonus
                     score_penalty_per_accuracy_pct: *saber_duel_score_penalty_per_accuracy_pct
                     max_accuracy_score_bonus: *saber_duel_max_accuracy_score_bonus
@@ -514,7 +514,7 @@ categories:
                   start_screen_icon_id: 638
                   min_players: 1
                   max_players: 1
-                  difficulty: 1
+                  difficulty: 2
                   start_sound_id: 2205
                   members_only: true
                   require_previous_completed: false
@@ -553,7 +553,7 @@ categories:
                       min_millis_per_key: 500  # unconfirmed
                       max_millis_per_key: 1500  # unconfirmed
                       mistake_probability: 0.01  # unconfirmed
-                    score_penalty_per_second: *saber_duel_easy_score_penalty_per_second
+                    score_penalty_per_second: *saber_duel_medium_score_penalty_per_second
                     max_time_score_bonus: *saber_duel_max_time_score_bonus
                     score_penalty_per_accuracy_pct: *saber_duel_score_penalty_per_accuracy_pct
                     max_accuracy_score_bonus: *saber_duel_max_accuracy_score_bonus
@@ -573,7 +573,7 @@ categories:
                   start_screen_icon_id: 647
                   min_players: 1
                   max_players: 1
-                  difficulty: 1
+                  difficulty: 3
                   start_sound_id: 2207
                   members_only: true
                   require_previous_completed: false
@@ -612,7 +612,7 @@ categories:
                       min_millis_per_key: 500  # unconfirmed
                       max_millis_per_key: 1500  # unconfirmed
                       mistake_probability: 0.01  # unconfirmed
-                    score_penalty_per_second: *saber_duel_easy_score_penalty_per_second
+                    score_penalty_per_second: &saber_duel_hard_score_penalty_per_second 5.5
                     max_time_score_bonus: *saber_duel_max_time_score_bonus
                     score_penalty_per_accuracy_pct: *saber_duel_score_penalty_per_accuracy_pct
                     max_accuracy_score_bonus: *saber_duel_max_accuracy_score_bonus
