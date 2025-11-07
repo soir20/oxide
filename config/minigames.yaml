@@ -860,6 +860,65 @@ categories:
                     default_primary_saber: *saber_duel_default_primary_saber
                   zone_template_guid: 202
                   score_to_credits_expression: x / 111
+                - !Stage
+                  guid: 31016
+                  name_id: 6379
+                  description_id: 6390
+                  stage_icon_id: 124
+                  start_screen_icon_id: 640
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 3
+                  start_sound_id: 2208
+                  members_only: true
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: ld10anakin
+                  minigame_type:
+                    !SaberDuel
+                    camera_rot: *saber_duel_camera_rot
+                    rounds_to_win: *saber_duel_rounds_to_win
+                    points_to_win_round: 10
+                    keys_per_basic_bout: 4
+                    keys_per_special_bout: 6
+                    first_special_bout: 4
+                    special_bout_interval: 5
+                    points_per_basic_bout: *saber_duel_points_per_basic_bout
+                    points_per_special_bout: *saber_duel_points_per_special_bout
+                    bout_max_millis: *saber_duel_bout_max_millis
+                    tie_interval_millis: *saber_duel_tie_interval_millis
+                    basic_bout_animations: *saber_duel_basic_bout_animations
+                    special_bout_animations: *saber_duel_special_bout_animations
+                    establishing_animation_id: *saber_duel_establishing_animation_id
+                    player_entrance_animation_id: *saber_duel_player_entrance_animation_id
+                    ai:
+                      name_id: 1134
+                      model_id: 183
+                      primary_saber:
+                        hilt_item_guid: 70015
+                        shape_item_guid: 50000
+                        color_item_guid: 60000
+                      entrance_animation_id: 6204
+                      entrance_sound_id: 2142
+                      round_won_sound_id: 2144
+                      round_lost_sound_id: 2143
+                      game_won_sound_id: 2144
+                      game_lost_sound_id: 2143
+                      min_millis_per_key: 500  # unconfirmed
+                      max_millis_per_key: 1500  # unconfirmed
+                      mistake_probability: 0.01  # unconfirmed
+                    score_penalty_per_second: *saber_duel_hard_score_penalty_per_second
+                    max_time_score_bonus: *saber_duel_max_time_score_bonus
+                    score_penalty_per_accuracy_pct: *saber_duel_score_penalty_per_accuracy_pct
+                    max_accuracy_score_bonus: *saber_duel_max_accuracy_score_bonus
+                    score_per_win_streak: *saber_duel_score_per_win_streak
+                    score_per_point: *saber_duel_score_per_point
+                    score_per_margin_of_victory: *saber_duel_score_per_margin_of_victory
+                    game_win_bonus_score: *saber_duel_game_win_bonus_score
+                    no_bouts_lost_bonus_score: *saber_duel_no_bouts_lost_bonus_score
+                    default_primary_saber: *saber_duel_default_primary_saber
+                  zone_template_guid: 202
+                  score_to_credits_expression: x / 89.68
             - !StageGroup
               guid: 31002
               name_id: 19815
