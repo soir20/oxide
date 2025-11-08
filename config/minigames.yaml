@@ -1015,7 +1015,7 @@ categories:
                       name_id: 5150
                       model_id: 2566
                       primary_saber:
-                        hilt_item_guid: 70062
+                        hilt_item_guid: 70065
                         shape_item_guid: 50014
                         color_item_guid: 60001
                       entrance_animation_id: 6214
