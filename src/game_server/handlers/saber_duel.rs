@@ -26,7 +26,7 @@ use crate::game_server::{
         unique_guid::{player_guid, saber_duel_opponent_guid},
     },
     packets::{
-        item::{Attachment, EquipmentSlot, ItemDefinition},
+        item::EquipmentSlot,
         minigame::{MinigameHeader, ScoreEntry, ScoreType},
         saber_duel::{
             SaberDuelApplyForcePower, SaberDuelBoutInfo, SaberDuelBoutStart, SaberDuelBoutTied,
