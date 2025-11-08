@@ -919,6 +919,66 @@ categories:
                     default_primary_saber: *saber_duel_default_primary_saber
                   zone_template_guid: 202
                   score_to_credits_expression: x / 89.68
+                - !Stage
+                  guid: 31018
+                  name_id: 53054
+                  description_id: 53055
+                  stage_icon_id: 6238
+                  start_screen_icon_id: 6236
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 3
+                  start_sound_id: 4446
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: ldscvos
+                  display_stage_group_guid: 31017
+                  minigame_type:
+                    !SaberDuel
+                    camera_rot: 1.57
+                    rounds_to_win: *saber_duel_rounds_to_win
+                    points_to_win_round: 10
+                    keys_per_basic_bout: 4
+                    keys_per_special_bout: 6
+                    first_special_bout: 4
+                    special_bout_interval: 4
+                    points_per_basic_bout: *saber_duel_points_per_basic_bout
+                    points_per_special_bout: *saber_duel_points_per_special_bout
+                    bout_max_millis: *saber_duel_bout_max_millis
+                    tie_interval_millis: *saber_duel_tie_interval_millis
+                    basic_bout_animations: *saber_duel_basic_bout_animations
+                    special_bout_animations: *saber_duel_special_bout_animations
+                    establishing_animation_id: *saber_duel_establishing_animation_id
+                    player_entrance_animation_id: *saber_duel_player_entrance_animation_id
+                    ai:
+                      name_id: 50263
+                      model_id: 1313
+                      primary_saber:
+                        hilt_item_guid: 70049
+                        shape_item_guid: 50000
+                        color_item_guid: 60001
+                      entrance_animation_id: 6220
+                      entrance_sound_id: 4842
+                      round_won_sound_id: 4846
+                      round_lost_sound_id: 4843
+                      game_won_sound_id: 4846
+                      game_lost_sound_id: 4843
+                      min_millis_per_key: 500  # unconfirmed
+                      max_millis_per_key: 1500  # unconfirmed
+                      mistake_probability: 0.01  # unconfirmed
+                    score_penalty_per_second: *saber_duel_hard_score_penalty_per_second
+                    max_time_score_bonus: *saber_duel_max_time_score_bonus
+                    score_penalty_per_accuracy_pct: *saber_duel_score_penalty_per_accuracy_pct
+                    max_accuracy_score_bonus: *saber_duel_max_accuracy_score_bonus
+                    score_per_win_streak: *saber_duel_score_per_win_streak
+                    score_per_point: *saber_duel_score_per_point
+                    score_per_margin_of_victory: *saber_duel_score_per_margin_of_victory
+                    game_win_bonus_score: *saber_duel_game_win_bonus_score
+                    no_bouts_lost_bonus_score: *saber_duel_no_bouts_lost_bonus_score
+                    default_primary_saber: *saber_duel_default_primary_saber
+                  zone_template_guid: 204
+                  score_to_credits_expression: x / 93
             - !StageGroup
               guid: 31002
               name_id: 19815
@@ -929,6 +989,17 @@ categories:
               require_previous_completed: false
               stage_select_map_name: RepublicGunship
               short_name: mp
+              stages: []
+            - !StageGroup
+              guid: 31017
+              name_id: 53511
+              description_id: 53074
+              icon_id: 368
+              stage_icon_id: 368
+              members_only: false
+              require_previous_completed: false
+              stage_select_map_name: ''
+              short_name: ''
               stages: []
       - guid: 9000
         name_id: 45187
