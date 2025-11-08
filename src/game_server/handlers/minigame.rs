@@ -844,6 +844,7 @@ pub struct MinigameCampaignStageConfig {
     pub require_previous_completed: bool,
     pub link_name: String,
     pub short_name: String,
+    pub display_stage_group_guid: Option<i32>,
     pub minigame_type: MinigameType,
     pub zone_template_guid: Option<u8>,
     pub start_pos: Option<Pos>,
@@ -1032,6 +1033,21 @@ impl MinigameStageGroupConfig {
                         stage_number,
                         child_stage_group_definition_guid: 0,
                     });
+
+                    if let Some(display_stage_group_guid) = stage.display_stage_group_guid {
+                        group_links.push(MinigameStageGroupLink {
+                            link_id: 0,
+                            parent_stage_group_definition_guid: display_stage_group_guid,
+                            parent_stage_definition_guid: 0,
+                            child_stage_definition_guid: stage.guid,
+                            icon_id: 0,
+                            link_name: "".to_string(),
+                            short_name: "".to_string(),
+                            stage_number,
+                            child_stage_group_definition_guid: 0,
+                        });
+                    }
+
                     group_played_today = group_played_today
                         || has_played_minigame_today(now, minigame_stats, stage.guid);
 
