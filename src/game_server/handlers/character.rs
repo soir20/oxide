@@ -1228,17 +1228,14 @@ impl ToCharacterTypeTemplate for AmbientNpcConfig {
         zone_guid: u8,
         npc_name: &str,
     ) -> CharacterTypeTemplate {
-        let resolved_action = self
-            .one_shot_interaction
-            .as_ref()
-            .map(|action_config| {
-                OneShotInteractionTemplate::from_config(
-                    action_config,
-                    zone_guid,
-                    button_keys_to_id,
-                    npc_name,
-                )
-            });
+        let resolved_action = self.one_shot_interaction.as_ref().map(|action_config| {
+            OneShotInteractionTemplate::from_config(
+                action_config,
+                zone_guid,
+                button_keys_to_id,
+                npc_name,
+            )
+        });
 
         CharacterTypeTemplate::AmbientNpc(AmbientNpcTemplate {
             base_npc: self.base_npc.clone().into(),
@@ -1945,13 +1942,9 @@ pub enum CharacterTypeTemplate {
 impl CharacterTypeTemplate {
     pub fn instantiate(self) -> CharacterType {
         match self {
-            CharacterTypeTemplate::AmbientNpc(t) => {
-                CharacterType::AmbientNpc(t.instantiate())
-            }
+            CharacterTypeTemplate::AmbientNpc(t) => CharacterType::AmbientNpc(t.instantiate()),
             CharacterTypeTemplate::Door(t) => CharacterType::Door(t.instantiate()),
-            CharacterTypeTemplate::Transport(t) => {
-                CharacterType::Transport(t.instantiate())
-            }
+            CharacterTypeTemplate::Transport(t) => CharacterType::Transport(t.instantiate()),
         }
     }
 }
