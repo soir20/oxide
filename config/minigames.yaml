@@ -68,7 +68,7 @@ categories:
                     keys_per_basic_bout: 3
                     keys_per_special_bout: 5
                     first_special_bout: 3
-                    special_bout_interval: 4  # unconfirmed
+                    special_bout_interval: 4
                     points_per_basic_bout: &saber_duel_points_per_basic_bout 1
                     points_per_special_bout: &saber_duel_points_per_special_bout 1
                     bout_max_millis: &saber_duel_bout_max_millis 10000
