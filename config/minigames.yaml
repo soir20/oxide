@@ -170,7 +170,7 @@ categories:
                     keys_per_basic_bout: 4
                     keys_per_special_bout: 6
                     first_special_bout: 3
-                    special_bout_interval: 6  # unconfirmed
+                    special_bout_interval: 6
                     points_per_basic_bout: *saber_duel_points_per_basic_bout
                     points_per_special_bout: *saber_duel_points_per_special_bout
                     bout_max_millis: *saber_duel_bout_max_millis
@@ -964,8 +964,8 @@ categories:
                       round_lost_sound_id: 4843
                       game_won_sound_id: 4846
                       game_lost_sound_id: 4843
-                      min_millis_per_key: 500  # unconfirmed
-                      max_millis_per_key: 1500  # unconfirmed
+                      min_millis_per_key: 400
+                      max_millis_per_key: 600
                       mistake_probability: 0.01  # unconfirmed
                     score_penalty_per_second: *saber_duel_hard_score_penalty_per_second
                     max_time_score_bonus: *saber_duel_max_time_score_bonus
