@@ -845,8 +845,8 @@ categories:
                       round_lost_sound_id: 3557
                       game_won_sound_id: 3558
                       game_lost_sound_id: 3557
-                      min_millis_per_key: 500  # unconfirmed
-                      max_millis_per_key: 1500  # unconfirmed
+                      min_millis_per_key: 400
+                      max_millis_per_key: 400
                       mistake_probability: 0.01  # unconfirmed
                     score_penalty_per_second: *saber_duel_hard_score_penalty_per_second
                     max_time_score_bonus: *saber_duel_max_time_score_bonus
@@ -904,8 +904,8 @@ categories:
                       round_lost_sound_id: 2143
                       game_won_sound_id: 2144
                       game_lost_sound_id: 2143
-                      min_millis_per_key: 500  # unconfirmed
-                      max_millis_per_key: 1500  # unconfirmed
+                      min_millis_per_key: 300
+                      max_millis_per_key: 400
                       mistake_probability: 0.01  # unconfirmed
                     score_penalty_per_second: *saber_duel_hard_score_penalty_per_second
                     max_time_score_bonus: *saber_duel_max_time_score_bonus
@@ -918,7 +918,7 @@ categories:
                     no_bouts_lost_bonus_score: *saber_duel_no_bouts_lost_bonus_score
                     default_primary_saber: *saber_duel_default_primary_saber
                   zone_template_guid: 202
-                  score_to_credits_expression: x / 89.68
+                  score_to_credits_expression: x / 89.75
                 - !Stage
                   guid: 31018
                   name_id: 53054
