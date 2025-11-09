@@ -251,7 +251,7 @@ categories:
                       round_lost_sound_id: 2261
                       game_won_sound_id: 2262
                       game_lost_sound_id: 2261
-                      min_millis_per_key: 500
+                      min_millis_per_key: 400
                       max_millis_per_key: 1400
                       mistake_probability: 0.01  # unconfirmed
                     score_penalty_per_second: *saber_duel_easy_score_penalty_per_second
@@ -310,8 +310,8 @@ categories:
                       round_lost_sound_id: 2270
                       game_won_sound_id: 2271
                       game_lost_sound_id: 2270
-                      min_millis_per_key: 500  # unconfirmed
-                      max_millis_per_key: 1500  # unconfirmed
+                      min_millis_per_key: 400
+                      max_millis_per_key: 1300
                       mistake_probability: 0.01  # unconfirmed
                     score_penalty_per_second: &saber_duel_medium_score_penalty_per_second 6.5
                     max_time_score_bonus: *saber_duel_max_time_score_bonus
@@ -369,8 +369,8 @@ categories:
                       round_lost_sound_id: 2281
                       game_won_sound_id: 2282
                       game_lost_sound_id: 2281
-                      min_millis_per_key: 500  # unconfirmed
-                      max_millis_per_key: 1500  # unconfirmed
+                      min_millis_per_key: 400
+                      max_millis_per_key: 1200
                       mistake_probability: 0.01  # unconfirmed
                     score_penalty_per_second: *saber_duel_medium_score_penalty_per_second
                     max_time_score_bonus: *saber_duel_max_time_score_bonus
@@ -432,8 +432,8 @@ categories:
                       round_lost_sound_id: 2251
                       game_won_sound_id: 2252
                       game_lost_sound_id: 2251
-                      min_millis_per_key: 500  # unconfirmed
-                      max_millis_per_key: 1500  # unconfirmed
+                      min_millis_per_key: 400
+                      max_millis_per_key: 1100
                       mistake_probability: 0.01  # unconfirmed
                     score_penalty_per_second: *saber_duel_medium_score_penalty_per_second
                     max_time_score_bonus: *saber_duel_max_time_score_bonus
@@ -491,8 +491,8 @@ categories:
                       round_lost_sound_id: 2291
                       game_won_sound_id: 2292
                       game_lost_sound_id: 2291
-                      min_millis_per_key: 500  # unconfirmed
-                      max_millis_per_key: 1500  # unconfirmed
+                      min_millis_per_key: 400
+                      max_millis_per_key: 1000
                       mistake_probability: 0.01  # unconfirmed
                     score_penalty_per_second: *saber_duel_medium_score_penalty_per_second
                     max_time_score_bonus: *saber_duel_max_time_score_bonus
@@ -550,7 +550,7 @@ categories:
                       round_lost_sound_id: 2410
                       game_won_sound_id: 2411
                       game_lost_sound_id: 2410
-                      min_millis_per_key: 500
+                      min_millis_per_key: 400
                       max_millis_per_key: 900
                       mistake_probability: 0.01  # unconfirmed
                     score_penalty_per_second: *saber_duel_medium_score_penalty_per_second
