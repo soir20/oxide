@@ -550,8 +550,8 @@ categories:
                       round_lost_sound_id: 2410
                       game_won_sound_id: 2411
                       game_lost_sound_id: 2410
-                      min_millis_per_key: 500  # unconfirmed
-                      max_millis_per_key: 1500  # unconfirmed
+                      min_millis_per_key: 500
+                      max_millis_per_key: 900
                       mistake_probability: 0.01  # unconfirmed
                     score_penalty_per_second: *saber_duel_medium_score_penalty_per_second
                     max_time_score_bonus: *saber_duel_max_time_score_bonus
