@@ -1,0 +1,24 @@
+jedi_temple:
+  dialog_choices:
+    - button_key: Breaker
+      npc_key: breaker
+      new_dialog:
+        dialog_message_id: 32911
+        speaker_animation_id: 2207
+        speaker_sound_id: 5400
+        camera_placement:
+          x: 75.37756
+          y: 11.99025
+          z: -180.7
+          w: 1
+        look_at:
+          x: 72.97756
+          y: 11.99025
+          z: -180.7
+          w: 1
+        choices:
+          - button_key: Galaxy Map
+            button_text_id: 5300
+    - button_key: Galaxy Map
+      script_name: UIGlobal.ShowGalaxyMap
+      close_dialog: true

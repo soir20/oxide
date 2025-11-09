@@ -12,14 +12,14 @@ use serde::Deserialize;
 use crate::{
     game_server::{
         handlers::{
-            dialog::DialogConfig,
+            dialog::handle_dialog_buttons,
             inventory::{attachments_from_equipped_items, wield_type_from_inventory},
             unique_guid::AMBIENT_NPC_DISCRIMINANT,
         },
         packets::{
             chat::{ActionBarTextColor, SendStringId},
             client_update::UpdateCredits,
-            command::{DialogChoice, EnterDialog, PlaySoundIdOnTarget},
+            command::PlaySoundIdOnTarget,
             item::{Attachment, BaseAttachmentGroup, EquipmentSlot, ItemDefinition, WieldType},
             minigame::ScoreEntry,
             player_update::{
@@ -48,7 +48,7 @@ use super::{
     minigame::{MinigameTypeData, PlayerMinigameStats},
     mount::{spawn_mount_npc, MountConfig},
     unique_guid::{mount_guid, npc_guid, player_guid},
-    zone::{teleport_anywhere, Destination},
+    zone::{teleport_anywhere, Destination, ZoneInstance},
     WriteLockingBroadcastSupplier,
 };
 
@@ -130,6 +130,26 @@ pub enum SpawnedState {
     Always,
     OnFirstStepTick,
     Despawn,
+}
+
+#[derive(Debug, Default, Clone, Deserialize)]
+#[serde(untagged, deny_unknown_fields)]
+pub enum ScriptType {
+    #[default]
+    None,
+    CustomStringParams {
+        script_name: String,
+        #[serde(default)]
+        params: Vec<String>,
+    },
+    CustomIntParams {
+        script_name: String,
+        #[serde(default)]
+        params: Vec<i32>,
+    },
+    OpenMinigameStageGroup {
+        stage_group_id: i32,
+    },
 }
 
 #[derive(Clone, Deserialize)]
@@ -349,7 +369,81 @@ impl From<BaseNpcConfig> for BaseNpc {
     }
 }
 
-#[derive(Clone, Deserialize)]
+#[derive(Clone, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct OneShotAction {
+    #[serde(default)]
+    pub award_credits: u32,
+    #[serde(default)]
+    pub script: ScriptType,
+    pub point_of_interest: Option<u32>,
+}
+
+impl OneShotAction {
+    pub fn apply(&self, player_stats: &mut Player) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+        let mut packets = Vec::new();
+
+        if self.award_credits > 0 {
+            let new_credits = player_stats.credits.saturating_add(self.award_credits);
+            player_stats.credits = new_credits;
+            packets.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: UpdateCredits { new_credits },
+            }));
+        }
+
+        match &self.script {
+            ScriptType::CustomIntParams {
+                script_name,
+                params,
+            } => {
+                packets.push(GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: ExecuteScriptWithIntParams {
+                        script_name: script_name.clone(),
+                        params: params.clone(),
+                    },
+                }));
+            }
+            ScriptType::CustomStringParams {
+                script_name,
+                params,
+            } => {
+                packets.push(GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: ExecuteScriptWithStringParams {
+                        script_name: script_name.clone(),
+                        params: params.clone(),
+                    },
+                }));
+            }
+            ScriptType::OpenMinigameStageGroup { stage_group_id } => {
+                packets.push(GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: ExecuteScriptWithIntParams {
+                        script_name: "MiniGameFlow.CreateMiniGameGroup".to_string(),
+                        params: vec![*stage_group_id],
+                    },
+                }));
+            }
+            ScriptType::None => {}
+        }
+
+        if let Some(poi) = self.point_of_interest {
+            packets.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: ExecuteScriptWithIntParams {
+                    script_name: "HudDockHandler.gotoPOI".to_string(),
+                    params: vec![poi.try_into().unwrap()],
+                },
+            }));
+        }
+
+        Ok(packets)
+    }
+}
+
+#[derive(Copy, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct PlayerOneShotAction {
     pub player_one_shot_animation_id: Option<i32>,
@@ -357,29 +451,68 @@ pub struct PlayerOneShotAction {
 
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub struct OneShotAction {
+pub struct OneShotInteractionConfig {
+    #[serde(default, flatten)]
+    pub one_shot_action: OneShotAction,
     #[serde(default, flatten)]
     pub player_action: PlayerOneShotAction,
-    pub one_shot_action_composite_effect_id: Option<u32>,
-    pub one_shot_action_animation_id: Option<i32>,
-    #[serde(default)]
-    pub award_credits: u32,
+    pub dialog_option_key: Option<String>,
+    pub one_shot_animation_id: Option<i32>,
+    pub composite_effect_id: Option<u32>,
     #[serde(default)]
     pub removal_mode: RemovalMode,
     #[serde(default)]
     pub despawn_npc: bool,
-    pub minigame_stage_group_guid: Option<i32>,
-    pub dialog_config: Option<DialogConfig>,
     pub duration_millis: u64,
 }
 
-impl OneShotAction {
+#[derive(Clone)]
+pub struct OneShotInteractionTemplate {
+    pub one_shot_action: OneShotAction,
+    pub player_action: PlayerOneShotAction,
+    pub dialog_option_id: Option<u32>,
+    pub one_shot_animation_id: Option<i32>,
+    pub composite_effect_id: Option<u32>,
+    pub removal_mode: RemovalMode,
+    pub despawn_npc: bool,
+    pub duration_millis: u64,
+}
+
+impl OneShotInteractionTemplate {
+    pub fn from_config(
+        config: &OneShotInteractionConfig,
+        zone_guid: u8,
+        button_keys_to_id: &HashMap<String, u32>,
+        npc_name: &str,
+    ) -> Self {
+        let dialog_option_id = config.dialog_option_key.as_ref().map(|key| {
+            *button_keys_to_id.get(key).unwrap_or_else(|| {
+                panic!(
+                    "Unknown (Dialog Option Key: {}) referenced in (Zone GUID: {}) for (NPC: {})",
+                    key, zone_guid, npc_name
+                )
+            })
+        });
+
+        OneShotInteractionTemplate {
+            one_shot_action: config.one_shot_action.clone(),
+            dialog_option_id,
+            player_action: config.player_action,
+            one_shot_animation_id: config.one_shot_animation_id,
+            composite_effect_id: config.composite_effect_id,
+            removal_mode: config.removal_mode,
+            despawn_npc: config.despawn_npc,
+            duration_millis: config.duration_millis,
+        }
+    }
+
     pub fn apply(
         &self,
         character: &mut CharacterStats,
         nearby_player_guids: &[u32],
         requester: u32,
         player_stats: &mut Player,
+        zone_instance: &ZoneInstance,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let mut packets_for_all = Vec::new();
         let mut packets_for_sender = Vec::new();
@@ -389,7 +522,7 @@ impl OneShotAction {
             packets_for_all.extend(character.remove_packets(self.removal_mode));
         }
 
-        if let Some(animation_id) = self.one_shot_action_animation_id {
+        if let Some(animation_id) = self.one_shot_animation_id {
             packets_for_all.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: QueueAnimation {
@@ -402,7 +535,7 @@ impl OneShotAction {
             }));
         }
 
-        if let Some(composite_effect_id) = self.one_shot_action_composite_effect_id {
+        if let Some(composite_effect_id) = self.composite_effect_id {
             packets_for_all.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: PlayCompositeEffect {
@@ -411,12 +544,7 @@ impl OneShotAction {
                     composite_effect: composite_effect_id,
                     delay_millis: 0,
                     duration_millis: self.duration_millis as u32,
-                    pos: Pos {
-                        x: 0.0,
-                        y: 0.0,
-                        z: 0.0,
-                        w: 0.0,
-                    },
+                    pos: Pos::default(),
                 },
             }));
         }
@@ -434,65 +562,20 @@ impl OneShotAction {
             }));
         }
 
-        if self.award_credits > 0 {
-            let new_credits = player_stats.credits.saturating_add(self.award_credits);
-            player_stats.credits = new_credits;
-            packets_for_sender.push(GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: UpdateCredits { new_credits },
-            }));
+        if let Some(dialog_option_id) = self.dialog_option_id {
+            let dialog_packets =
+                handle_dialog_buttons(requester, dialog_option_id, player_stats, zone_instance)?;
+
+            packets_for_sender.extend(dialog_packets);
         }
 
-        if let Some(stage_group_guid) = self.minigame_stage_group_guid {
-            packets_for_all.push(GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: ExecuteScriptWithIntParams {
-                    script_name: "MiniGameFlow.CreateMiniGameGroup".to_string(),
-                    params: vec![stage_group_guid],
-                },
-            }));
-        }
+        let action_packets = self.one_shot_action.apply(player_stats)?;
+        packets_for_sender.extend(action_packets);
 
-        if let Some(dialog) = &self.dialog_config {
-            packets_for_sender.push(GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: EnterDialog {
-                    dialog_message_id: dialog.dialog_message_id,
-                    speaker_animation_id: dialog.speaker_animation_id,
-                    speaker_guid: Guid::guid(character),
-                    enable_escape: true,
-                    unknown4: 0.0,
-                    dialog_choices: dialog
-                        .choices
-                        .iter()
-                        .map(|choice| DialogChoice {
-                            button_id: choice.button_id,
-                            unknown2: 0,
-                            button_text_id: choice.button_text_id,
-                            unknown4: 0,
-                            unknown5: 0,
-                        })
-                        .collect(),
-                    camera_placement: dialog.camera_placement,
-                    look_at: dialog.look_at,
-                    change_player_pos: false,
-                    new_player_pos: Pos::default(),
-                    unknown8: 0.0,
-                    hide_players: !dialog.show_players,
-                    unknown10: true,
-                    unknown11: true,
-                    zoom: dialog.zoom,
-                    speaker_sound_id: dialog.speaker_sound_id,
-                },
-            }));
-        }
-
-        let broadcasts = vec![
+        Ok(vec![
             Broadcast::Multi(nearby_player_guids.to_vec(), packets_for_all),
             Broadcast::Single(requester, packets_for_sender),
-        ];
-
-        Ok(broadcasts)
+        ])
     }
 }
 
@@ -1112,7 +1195,7 @@ impl TickableProcedureTracker {
     }
 }
 
-pub trait NpcConfig: Into<CharacterType> {
+pub trait NpcConfig {
     const DISCRIMINANT: u8;
     const DEFAULT_AUTO_INTERACT_RADIUS: f32;
 
@@ -1125,7 +1208,7 @@ pub struct AmbientNpcConfig {
     #[serde(flatten)]
     pub base_npc: BaseNpcConfig,
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
-    pub one_shot_action_on_interact: Option<OneShotAction>,
+    pub one_shot_interaction: Option<OneShotInteractionConfig>,
     pub notification_icon: Option<NotificationIconId>,
 }
 
@@ -1138,9 +1221,50 @@ impl NpcConfig for AmbientNpcConfig {
     }
 }
 
-impl From<AmbientNpcConfig> for CharacterType {
-    fn from(value: AmbientNpcConfig) -> Self {
-        CharacterType::AmbientNpc(value.into())
+impl ToCharacterTypeTemplate for AmbientNpcConfig {
+    fn to_character_type_template(
+        &self,
+        button_keys_to_id: &HashMap<String, u32>,
+        zone_guid: u8,
+        npc_name: &str,
+    ) -> CharacterTypeTemplate {
+        let resolved_action = self
+            .one_shot_interaction
+            .as_ref()
+            .map(|action_config| {
+                OneShotInteractionTemplate::from_config(
+                    action_config,
+                    zone_guid,
+                    button_keys_to_id,
+                    npc_name,
+                )
+            });
+
+        CharacterTypeTemplate::AmbientNpc(AmbientNpcTemplate {
+            base_npc: self.base_npc.clone().into(),
+            procedure_on_interact: self.procedure_on_interact.clone(),
+            one_shot_interaction: resolved_action,
+            notification_icon: self.notification_icon,
+        })
+    }
+}
+
+#[derive(Clone)]
+pub struct AmbientNpcTemplate {
+    pub base_npc: BaseNpc,
+    pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
+    pub one_shot_interaction: Option<OneShotInteractionTemplate>,
+    pub notification_icon: Option<NotificationIconId>,
+}
+
+impl AmbientNpcTemplate {
+    pub fn instantiate(&self) -> AmbientNpc {
+        AmbientNpc {
+            base_npc: self.base_npc.clone(),
+            procedure_on_interact: self.procedure_on_interact.clone(),
+            one_shot_interaction: self.one_shot_interaction.clone(),
+            notification_icon: self.notification_icon,
+        }
     }
 }
 
@@ -1148,7 +1272,7 @@ impl From<AmbientNpcConfig> for CharacterType {
 pub struct AmbientNpc {
     pub base_npc: BaseNpc,
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
-    pub one_shot_action_on_interact: Option<OneShotAction>,
+    pub one_shot_interaction: Option<OneShotInteractionTemplate>,
     pub notification_icon: Option<NotificationIconId>,
 }
 
@@ -1209,6 +1333,7 @@ impl AmbientNpc {
         nearby_player_guids: &[u32],
         requester: u32,
         player_stats: &mut Player,
+        zone_instance: &ZoneInstance,
     ) -> (Option<String>, WriteLockingBroadcastSupplier) {
         if let Some(active_procedure_key) = character.current_tickable_procedure() {
             if let Some(active_procedure) = character
@@ -1232,7 +1357,7 @@ impl AmbientNpc {
         });
 
         let packets = self
-            .one_shot_action_on_interact
+            .one_shot_interaction
             .as_ref()
             .map_or(Ok(Vec::new()), |action| {
                 action.apply(
@@ -1240,22 +1365,12 @@ impl AmbientNpc {
                     nearby_player_guids,
                     requester,
                     player_stats,
+                    zone_instance,
                 )
             });
 
         let broadcast_supplier = coerce_to_broadcast_supplier(move |_| packets);
         (procedure, broadcast_supplier)
-    }
-}
-
-impl From<AmbientNpcConfig> for AmbientNpc {
-    fn from(value: AmbientNpcConfig) -> Self {
-        AmbientNpc {
-            base_npc: value.base_npc.into(),
-            procedure_on_interact: value.procedure_on_interact,
-            one_shot_action_on_interact: value.one_shot_action_on_interact,
-            notification_icon: value.notification_icon,
-        }
     }
 }
 
@@ -1276,9 +1391,32 @@ impl NpcConfig for DoorConfig {
     }
 }
 
-impl From<DoorConfig> for CharacterType {
-    fn from(value: DoorConfig) -> Self {
-        CharacterType::Door(value.into())
+impl ToCharacterTypeTemplate for DoorConfig {
+    fn to_character_type_template(
+        &self,
+        _button_keys_to_id: &HashMap<String, u32>,
+        _zone_guid: u8,
+        _npc_name: &str,
+    ) -> CharacterTypeTemplate {
+        CharacterTypeTemplate::Door(DoorTemplate {
+            base_npc: self.base_npc.clone().into(),
+            destination: self.destination.clone(),
+        })
+    }
+}
+
+#[derive(Clone)]
+pub struct DoorTemplate {
+    pub base_npc: BaseNpc,
+    pub destination: Destination,
+}
+
+impl DoorTemplate {
+    pub fn instantiate(&self) -> Door {
+        Door {
+            base_npc: self.base_npc.clone(),
+            destination: self.destination.clone(),
+        }
     }
 }
 
@@ -1327,15 +1465,6 @@ impl Door {
     }
 }
 
-impl From<DoorConfig> for Door {
-    fn from(value: DoorConfig) -> Self {
-        Door {
-            base_npc: value.base_npc.into(),
-            destination: value.destination,
-        }
-    }
-}
-
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct TransportConfig {
@@ -1355,9 +1484,38 @@ impl NpcConfig for TransportConfig {
     }
 }
 
-impl From<TransportConfig> for CharacterType {
-    fn from(value: TransportConfig) -> Self {
-        CharacterType::Transport(value.into())
+impl ToCharacterTypeTemplate for TransportConfig {
+    fn to_character_type_template(
+        &self,
+        _button_keys_to_id: &HashMap<String, u32>,
+        _zone_guid: u8,
+        _npc_name: &str,
+    ) -> CharacterTypeTemplate {
+        CharacterTypeTemplate::Transport(TransportTemplate {
+            base_npc: self.base_npc.clone().into(),
+            show_icon: self.show_icon,
+            large_icon: self.large_icon,
+            show_hover_description: self.show_hover_description,
+        })
+    }
+}
+
+#[derive(Clone)]
+pub struct TransportTemplate {
+    pub base_npc: BaseNpc,
+    pub show_icon: bool,
+    pub large_icon: bool,
+    pub show_hover_description: bool,
+}
+
+impl TransportTemplate {
+    pub fn instantiate(&self) -> Transport {
+        Transport {
+            base_npc: self.base_npc.clone(),
+            show_icon: self.show_icon,
+            large_icon: self.large_icon,
+            show_hover_description: self.show_hover_description,
+        }
     }
 }
 
@@ -1437,17 +1595,6 @@ impl Transport {
                 })],
             )])
         })
-    }
-}
-
-impl From<TransportConfig> for Transport {
-    fn from(value: TransportConfig) -> Self {
-        Transport {
-            base_npc: value.base_npc.into(),
-            show_icon: value.show_icon,
-            large_icon: value.large_icon,
-            show_hover_description: value.show_hover_description,
-        }
     }
 }
 
@@ -1789,6 +1936,27 @@ pub struct CurrentFixture {
 }
 
 #[derive(Clone)]
+pub enum CharacterTypeTemplate {
+    AmbientNpc(AmbientNpcTemplate),
+    Door(DoorTemplate),
+    Transport(TransportTemplate),
+}
+
+impl CharacterTypeTemplate {
+    pub fn instantiate(self) -> CharacterType {
+        match self {
+            CharacterTypeTemplate::AmbientNpc(t) => {
+                CharacterType::AmbientNpc(t.instantiate())
+            }
+            CharacterTypeTemplate::Door(t) => CharacterType::Door(t.instantiate()),
+            CharacterTypeTemplate::Transport(t) => {
+                CharacterType::Transport(t.instantiate())
+            }
+        }
+    }
+}
+
+#[derive(Clone)]
 pub enum CharacterType {
     AmbientNpc(AmbientNpc),
     Door(Door),
@@ -1805,6 +1973,15 @@ pub enum CharacterCategory {
     NpcBasic,
 }
 
+pub trait ToCharacterTypeTemplate {
+    fn to_character_type_template(
+        &self,
+        button_keys_to_id: &HashMap<String, u32>,
+        zone_guid: u8,
+        npc_name: &str,
+    ) -> CharacterTypeTemplate;
+}
+
 #[derive(Clone)]
 pub struct NpcTemplate {
     pub key: Option<String>,
@@ -1816,7 +1993,7 @@ pub struct NpcTemplate {
     pub possible_pos: Vec<Pos>,
     pub scale: f32,
     pub stand_animation_id: i32,
-    pub character_type: CharacterType,
+    pub character_type: CharacterTypeTemplate,
     pub mount_id: Option<u32>,
     pub cursor: Option<u8>,
     pub interact_radius: f32,
@@ -1831,32 +2008,18 @@ pub struct NpcTemplate {
 }
 
 impl NpcTemplate {
-    pub fn from_config<T: NpcConfig + Clone>(
+    pub fn from_config<T: NpcConfig + ToCharacterTypeTemplate + Clone>(
         config: T,
         index: u16,
         button_keys_to_id: &HashMap<String, u32>,
-        zone_template: u8,
+        zone_guid: u8,
         npc_name: &str,
     ) -> Self {
         let mut rng = thread_rng();
         let config_clone = config.clone();
-        let mut character_type = config.into();
 
-        if let CharacterType::AmbientNpc(ref mut ambient_npc) = character_type {
-            if let Some(ref mut action) = ambient_npc.one_shot_action_on_interact {
-                if let Some(dialog) = &mut action.dialog_config {
-                    if let Some(choices) = &mut dialog.choices {
-                        for choice in choices.iter_mut() {
-                            choice.button_id = *button_keys_to_id
-                                .get(&choice.button_key)
-                                .unwrap_or_else(|| {
-                                    panic!("Unknown (Button Key: {}) referenced in (Zone Template GUID: {}) for (NPC: {})", choice.button_key, zone_template, npc_name,);
-                                });
-                        }
-                    }
-                }
-            }
-        }
+        let character_type_template =
+            config.to_character_type_template(button_keys_to_id, zone_guid, npc_name);
 
         NpcTemplate {
             key: config_clone.base_config().key.clone(),
@@ -1890,7 +2053,7 @@ impl NpcTemplate {
             move_to_interact_offset: config_clone.base_config().move_to_interact_offset,
             is_spawned: config_clone.base_config().is_spawned,
             physics: config_clone.base_config().physics,
-            character_type,
+            character_type: character_type_template,
             mount_id: None,
             wield_type: WieldType::None,
         }
@@ -1916,7 +2079,7 @@ impl NpcTemplate {
                 possible_pos: self.possible_pos.clone(),
                 chunk_size,
                 scale: self.scale,
-                character_type: self.character_type.clone(),
+                character_type: self.character_type.clone().instantiate(),
                 mount: self.mount_id.map(|mount_id| CharacterMount {
                     mount_id,
                     mount_guid: mount_guid(guid),
@@ -2391,6 +2554,7 @@ impl Character {
         requester: u32,
         player_stats: &mut Player,
         nearby_player_guids: &[u32],
+        zone_instance: &ZoneInstance,
     ) -> WriteLockingBroadcastSupplier {
         let mut new_procedure = None;
 
@@ -2398,8 +2562,13 @@ impl Character {
 
         let broadcast_supplier = match character_type {
             CharacterType::AmbientNpc(ambient_npc) => {
-                let (procedure, one_shot_interact) =
-                    ambient_npc.interact(self, nearby_player_guids, requester, player_stats);
+                let (procedure, one_shot_interact) = ambient_npc.interact(
+                    self,
+                    nearby_player_guids,
+                    requester,
+                    player_stats,
+                    zone_instance,
+                );
                 new_procedure = procedure;
                 one_shot_interact
             }

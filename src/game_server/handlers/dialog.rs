@@ -5,18 +5,15 @@ use crate::game_server::{
     packets::{
         command::{DialogChoice, EnterDialog, ExitDialog},
         tunnel::TunneledPacket,
-        ui::{ExecuteScriptWithIntParams, ExecuteScriptWithStringParams},
         GamePacket, Pos,
     },
-    Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
+    ProcessPacketError, ProcessPacketErrorType,
 };
 
 use super::{
-    character::coerce_to_broadcast_supplier,
-    lock_enforcer::CharacterLockRequest,
-    unique_guid::{player_guid, zone_template_guid},
-    zone::{teleport_anywhere, Destination},
-    WriteLockingBroadcastSupplier,
+    character::{OneShotAction, Player},
+    unique_guid::player_guid,
+    zone::ZoneInstance,
 };
 
 #[derive(Clone, Deserialize)]
@@ -57,142 +54,77 @@ pub struct DialogChoiceConfig {
     pub button_key: String,
     #[serde(flatten)]
     pub new_dialog: Option<NewDialogConfig>,
-    pub script_name: Option<String>,
     #[serde(default)]
     pub close_dialog: bool,
-    pub player_destination: Option<Destination>,
-    pub minigame_stage_group_guid: Option<i32>,
+    #[serde(default)]
+    pub one_shot_action: OneShotAction,
 }
 
 pub fn handle_dialog_buttons(
     sender: u32,
     button_id: u32,
-    game_server: &GameServer,
-) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    player_stats: &mut Player,
+    zone_instance: &ZoneInstance,
+) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
     let requester_guid = player_guid(sender);
 
-    let broadcast_supplier: WriteLockingBroadcastSupplier = game_server
-        .lock_enforcer()
-        .read_characters(|_| CharacterLockRequest {
-            read_guids: Vec::new(),
-            write_guids: vec![requester_guid],
-            character_consumer: move |_, _, mut characters_write, _| {
-                let Some(player_handle) = characters_write.get_mut(&requester_guid) else {
-                    return coerce_to_broadcast_supplier(move |_| Ok(Vec::new()));
-                };
+    let config = zone_instance.dialog_choices
+        .iter()
+        .find(|choice| choice.button_id == button_id)
+        .ok_or_else(|| ProcessPacketError::new(
+            ProcessPacketErrorType::ConstraintViolated,
+            format!(
+                "(Requester: {}) tried to select (Button ID: {}) but it was not found in (Zone Instance: {}) (Template GUID: {})",
+                requester_guid, button_id, zone_instance.guid, zone_instance.template_guid,
+            ),
+        ))?;
 
-                let instance_guid = player_handle.stats.instance_guid;
-                let template_guid = zone_template_guid(instance_guid);
+    let mut packets = Vec::new();
 
-                let zone_template = game_server.zone_templates.get(&template_guid).ok_or_else(|| {
-                    ProcessPacketError::new(
-                        ProcessPacketErrorType::ConstraintViolated,
-                        format!(
-                            "(Requester: {}) tried to select (Button ID: {}) but (Zone Template: {}) was not found",
-                            requester_guid, button_id, template_guid
-                        ),
-                    )
-                })?;
-
-                let config = zone_template.dialog_choices.get(&button_id).ok_or_else(|| {
-                    ProcessPacketError::new(
-                        ProcessPacketErrorType::ConstraintViolated,
-                        format!(
-                            "(Requester: {}) tried to select (Button ID: {}) but it was not found in (Zone Template ID: {})",
-                            requester_guid, button_id, template_guid
-                        ),
-                    )
-                })?;
-
-                let mut packets = Vec::new();
-
-                if let Some(dialog) = &config.new_dialog {
-                    packets.push(Broadcast::Single(
-                        sender,
-                        vec![GamePacket::serialize(&TunneledPacket {
-                            unknown1: true,
-                            inner: EnterDialog {
-                                dialog_message_id: dialog.dialog_message_id,
-                                speaker_animation_id: dialog.speaker_animation_id,
-                                speaker_guid: dialog.npc_guid.unwrap_or(0),
-                                enable_escape: true,
-                                unknown4: 10.0,
-                                dialog_choices: dialog
-                                    .choices
-                                    .iter()
-                                    .map(|choice| DialogChoice {
-                                        button_id: choice.button_id,
-                                        unknown2: 0,
-                                        button_text_id: choice.button_text_id,
-                                        unknown4: 0,
-                                        unknown5: 0,
-                                    })
-                                    .collect(),
-                                camera_placement: dialog.camera_placement,
-                                look_at: dialog.look_at,
-                                change_player_pos: false,
-                                new_player_pos: Pos::default(),
-                                unknown8: 10.0,
-                                hide_players: !dialog.show_players,
-                                unknown10: true,
-                                unknown11: true,
-                                zoom: dialog.zoom,
-                                speaker_sound_id: dialog.speaker_sound_id,
-                            },
-                        })],
-                    ));
-                }
-
-                if config.close_dialog {
-                    packets.push(Broadcast::Single(
-                        sender,
-                        vec![GamePacket::serialize(&TunneledPacket {
-                            unknown1: true,
-                            inner: ExitDialog {},
-                        })],
-                    ));
-                }
-
-                if let Some(script_name) = &config.script_name {
-                    packets.push(Broadcast::Single(
-                        sender,
-                        vec![GamePacket::serialize(&TunneledPacket {
-                            unknown1: true,
-                            inner: ExecuteScriptWithStringParams {
-                                script_name: script_name.clone(),
-                                params: vec![],
-                            },
-                        })],
-                    ));
-                }
-
-                if let Some(destination) = &config.player_destination {
-                    packets.extend((teleport_anywhere(
-                        destination.pos,
-                        destination.rot,
-                        destination.destination_zone,
-                        sender,
-                    )?)(game_server)?);
-                }
-
-                if let Some(minigame_stage_group_guid) = config.minigame_stage_group_guid {
-                    packets.push(Broadcast::Single(
-                        sender,
-                        vec![GamePacket::serialize(&TunneledPacket {
-                            unknown1: true,
-                            inner: ExecuteScriptWithIntParams {
-                                script_name: "MiniGameFlow.CreateMiniGameGroup".to_string(),
-                                params: vec![minigame_stage_group_guid],
-                            },
-                        })],
-                    ));
-                }
-
-                coerce_to_broadcast_supplier(move |_| Ok(packets))
+    if let Some(dialog) = &config.new_dialog {
+        packets.push(GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: EnterDialog {
+                dialog_message_id: dialog.dialog_message_id,
+                speaker_animation_id: dialog.speaker_animation_id,
+                speaker_guid: dialog.npc_guid.unwrap_or(0),
+                enable_escape: true,
+                unknown4: 0.0,
+                dialog_choices: dialog
+                    .choices
+                    .iter()
+                    .map(|choice| DialogChoice {
+                        button_id: choice.button_id,
+                        unknown2: 0,
+                        button_text_id: choice.button_text_id,
+                        unknown4: 0,
+                        unknown5: 0,
+                    })
+                    .collect(),
+                camera_placement: dialog.camera_placement,
+                look_at: dialog.look_at,
+                change_player_pos: false,
+                new_player_pos: Pos::default(),
+                unknown8: 0.0,
+                hide_players: !dialog.show_players,
+                unknown10: true,
+                unknown11: true,
+                zoom: dialog.zoom,
+                speaker_sound_id: dialog.speaker_sound_id,
             },
-        });
+        }));
+    }
 
-    broadcast_supplier?(game_server)
+    if config.close_dialog {
+        packets.push(GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: ExitDialog {},
+        }));
+    }
+
+    packets.extend(config.one_shot_action.apply(player_stats)?);
+
+    Ok(packets)
 }
 
 #[derive(Clone)]
@@ -218,10 +150,8 @@ pub struct DialogTemplate {
 pub struct DialogChoiceTemplate {
     pub button_id: u32,
     pub new_dialog: Option<DialogTemplate>,
-    pub script_name: Option<String>,
+    pub one_shot_action: OneShotAction,
     pub close_dialog: bool,
-    pub player_destination: Option<Destination>,
-    pub minigame_stage_group_guid: Option<i32>,
 }
 
 impl DialogChoiceTemplate {
@@ -279,10 +209,8 @@ impl DialogChoiceTemplate {
         DialogChoiceTemplate {
             button_id,
             new_dialog,
-            script_name: choice.script_name.clone(),
+            one_shot_action: choice.one_shot_action.clone(),
             close_dialog: choice.close_dialog,
-            player_destination: choice.player_destination.clone(),
-            minigame_stage_group_guid: choice.minigame_stage_group_guid,
         }
     }
 }
@@ -325,10 +253,8 @@ impl DialogInstance {
 pub struct DialogChoiceInstance {
     pub button_id: u32,
     pub new_dialog: Option<DialogInstance>,
-    pub script_name: Option<String>,
+    pub one_shot_action: OneShotAction,
     pub close_dialog: bool,
-    pub player_destination: Option<Destination>,
-    pub minigame_stage_group_guid: Option<i32>,
 }
 
 impl DialogChoiceInstance {
@@ -341,10 +267,8 @@ impl DialogChoiceInstance {
             new_dialog: template.new_dialog.as_ref().map(|dialog_template| {
                 DialogInstance::from_template(dialog_template, character_keys_to_guid)
             }),
-            script_name: template.script_name.clone(),
+            one_shot_action: template.one_shot_action.clone(),
             close_dialog: template.close_dialog,
-            player_destination: template.player_destination,
-            minigame_stage_group_guid: template.minigame_stage_group_guid,
         }
     }
 }

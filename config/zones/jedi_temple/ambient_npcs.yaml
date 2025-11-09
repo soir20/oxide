@@ -1,6 +1,7 @@
 jedi_temple:
   ambient_npcs:
     breaker:
+      key: breaker
       model_id: 1207
       name_id: 19237
       pos:
@@ -15,24 +16,8 @@ jedi_temple:
         w: 0
       cursor: 53
       notification_icon: Transport
-      one_shot_action_on_interact:
-        dialog_config:
-          dialog_message_id: 32911
-          speaker_animation_id: 2207
-          speaker_sound_id: 5400
-          camera_placement:
-            x: 75.37756
-            y: 11.99025
-            z: -180.7
-            w: 1
-          look_at:
-            x: 72.97756
-            y: 11.99025
-            z: -180.7
-            w: 1
-          choices:
-            - button_key: Galaxy Map
-              button_text_id: 5300
+      one_shot_interaction:
+        dialog_option_key: Breaker
         duration_millis: 1
     veranda_fountain:
       terrain_object_id: 1278971305
@@ -55,8 +40,8 @@ jedi_temple:
       enable_gravity: false
       interact_radius: 3.3
       move_to_interact_offset: 3.2
-      one_shot_action_on_interact:
-        one_shot_action_composite_effect_id: 1959
+      one_shot_interaction:
+        composite_effect_id: 1959
         player_one_shot_animation_id: 3014
         duration_millis: 5000
     war_room_holotable_holograms:
