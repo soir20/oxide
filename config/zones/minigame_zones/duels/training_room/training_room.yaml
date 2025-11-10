@@ -30,7 +30,7 @@ duel_training_room_multiplayer:
   hide_ui: false
   is_combat: false
   default_point_of_interest:
-    guid: 202
+    guid: 203
     pos:
       x: 115
       y: 9.2
