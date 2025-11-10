@@ -1071,7 +1071,6 @@ categories:
                   require_previous_completed: false
                   link_name: stage
                   short_name: stage01
-                  display_stage_group_guid: 31000
                   minigame_type:
                     !SaberDuel
                     camera_rot: *saber_duel_camera_rot
@@ -1112,6 +1111,59 @@ categories:
                     default_primary_saber: *saber_duel_default_primary_saber
                   zone_template_guid: 203
                   score_to_credits_expression: x / 103
+                - !Stage
+                  guid: 31021
+                  name_id: 9373
+                  description_id: 9163
+                  stage_icon_id: 1412
+                  start_screen_icon_id: 1986
+                  min_players: 1
+                  max_players: 2
+                  difficulty: 2
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage02
+                  minigame_type:
+                    !SaberDuel
+                    camera_rot: *saber_duel_camera_rot
+                    rounds_to_win: *saber_duel_rounds_to_win
+                    points_to_win_round: 8
+                    keys_per_basic_bout: 6
+                    keys_per_special_bout: 8
+                    first_special_bout: 5
+                    special_bout_interval: 8
+                    points_per_basic_bout: *saber_duel_points_per_basic_bout
+                    points_per_special_bout: *saber_duel_points_per_special_bout
+                    bout_max_millis: *saber_duel_bout_max_millis
+                    tie_interval_millis: *saber_duel_tie_interval_millis
+                    basic_bout_animations: *saber_duel_basic_bout_animations
+                    special_bout_animations: *saber_duel_special_bout_animations
+                    establishing_animation_id: *saber_duel_establishing_animation_id
+                    camera_entrance_animation_id: *saber_duel_camera_entrance_animation_id
+                    ai:
+                      name_id: 5623
+                      model_id: 107
+                      primary_saber:
+                        hilt_item_guid: 70015
+                        shape_item_guid: 50000
+                        color_item_guid: 60007
+                      entrance_animation_id: 5004
+                      min_millis_per_key: 400
+                      max_millis_per_key: 800
+                      mistake_probability: 0.01  # unconfirmed
+                    score_penalty_per_second: *saber_duel_easy_score_penalty_per_second
+                    max_time_score_bonus: *saber_duel_max_time_score_bonus
+                    score_penalty_per_accuracy_pct: *saber_duel_score_penalty_per_accuracy_pct
+                    max_accuracy_score_bonus: *saber_duel_max_accuracy_score_bonus
+                    score_per_win_streak: *saber_duel_score_per_win_streak
+                    score_per_point: *saber_duel_score_per_point
+                    score_per_margin_of_victory: *saber_duel_score_per_margin_of_victory
+                    game_win_bonus_score: *saber_duel_game_win_bonus_score
+                    no_bouts_lost_bonus_score: *saber_duel_no_bouts_lost_bonus_score
+                    default_primary_saber: *saber_duel_default_primary_saber
+                  zone_template_guid: 203
+                  score_to_credits_expression: x / 112.5
             - !StageGroup
               guid: 31017
               name_id: 53511
