@@ -133,7 +133,7 @@ pub enum SpawnedState {
 }
 
 #[derive(Debug, Default, Clone, Deserialize)]
-#[serde(untagged, deny_unknown_fields)]
+#[serde(deny_unknown_fields)]
 pub enum ScriptType {
     #[default]
     None,
@@ -369,7 +369,7 @@ impl From<BaseNpcConfig> for BaseNpc {
     }
 }
 
-#[derive(Clone, Default, Deserialize)]
+#[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct OneShotAction {
     #[serde(default)]
@@ -452,7 +452,7 @@ pub struct PlayerOneShotAction {
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct OneShotInteractionConfig {
-    #[serde(default, flatten)]
+    #[serde(flatten, default)]
     pub one_shot_action: OneShotAction,
     #[serde(default, flatten)]
     pub player_action: PlayerOneShotAction,
@@ -569,8 +569,7 @@ impl OneShotInteractionTemplate {
             packets_for_sender.extend(dialog_packets);
         }
 
-        let action_packets = self.one_shot_action.apply(player_stats)?;
-        packets_for_sender.extend(action_packets);
+        packets_for_sender.extend(self.one_shot_action.apply(player_stats)?);
 
         Ok(vec![
             Broadcast::Multi(nearby_player_guids.to_vec(), packets_for_all),
@@ -1456,7 +1455,7 @@ impl Door {
         teleport_anywhere(
             self.destination.pos,
             self.destination.rot,
-            self.destination.destination_zone,
+            self.destination.zone,
             requester,
         )
     }

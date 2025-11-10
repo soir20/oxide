@@ -28,12 +28,9 @@ pub struct DialogChoiceReferenceConfig {
 pub struct DialogConfig {
     pub camera_placement: Pos,
     pub look_at: Pos,
-    #[serde(default)]
-    pub dialog_message_id: u32,
-    #[serde(default)]
-    pub speaker_animation_id: i32,
-    #[serde(default)]
-    pub speaker_sound_id: u32,
+    pub dialog_message_id: Option<u32>,
+    pub speaker_animation_id: Option<i32>,
+    pub speaker_sound_id: Option<u32>,
     #[serde(default)]
     pub zoom: f32,
     #[serde(default)]
@@ -56,7 +53,7 @@ pub struct DialogChoiceConfig {
     pub new_dialog: Option<NewDialogConfig>,
     #[serde(default)]
     pub close_dialog: bool,
-    #[serde(default)]
+    #[serde(flatten, default)]
     pub one_shot_action: OneShotAction,
 }
 
@@ -85,8 +82,8 @@ pub fn handle_dialog_buttons(
         packets.push(GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: EnterDialog {
-                dialog_message_id: dialog.dialog_message_id,
-                speaker_animation_id: dialog.speaker_animation_id,
+                dialog_message_id: dialog.dialog_message_id.unwrap_or(0),
+                speaker_animation_id: dialog.speaker_animation_id.unwrap_or(0),
                 speaker_guid: dialog.npc_guid.unwrap_or(0),
                 enable_escape: true,
                 unknown4: 0.0,
@@ -110,7 +107,7 @@ pub fn handle_dialog_buttons(
                 unknown10: true,
                 unknown11: true,
                 zoom: dialog.zoom,
-                speaker_sound_id: dialog.speaker_sound_id,
+                speaker_sound_id: dialog.speaker_sound_id.unwrap_or(0),
             },
         }));
     }
@@ -137,9 +134,9 @@ pub struct DialogChoiceReference {
 pub struct DialogTemplate {
     pub camera_placement: Pos,
     pub look_at: Pos,
-    pub dialog_message_id: u32,
-    pub speaker_animation_id: i32,
-    pub speaker_sound_id: u32,
+    pub dialog_message_id: Option<u32>,
+    pub speaker_animation_id: Option<i32>,
+    pub speaker_sound_id: Option<u32>,
     pub zoom: f32,
     pub show_players: bool,
     pub choices: Vec<DialogChoiceReference>,
@@ -218,9 +215,9 @@ impl DialogChoiceTemplate {
 pub struct DialogInstance {
     pub camera_placement: Pos,
     pub look_at: Pos,
-    pub dialog_message_id: u32,
-    pub speaker_animation_id: i32,
-    pub speaker_sound_id: u32,
+    pub dialog_message_id: Option<u32>,
+    pub speaker_animation_id: Option<i32>,
+    pub speaker_sound_id: Option<u32>,
     pub zoom: f32,
     pub show_players: bool,
     pub choices: Vec<DialogChoiceReference>,

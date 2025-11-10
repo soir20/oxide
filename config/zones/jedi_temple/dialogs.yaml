@@ -20,5 +20,7 @@ jedi_temple:
           - button_key: Galaxy Map
             button_text_id: 5300
     - button_key: Galaxy Map
-      script_name: UIGlobal.ShowGalaxyMap
+      script:
+        CustomStringParams: 
+          script_name: UiGlobal.ShowGalaxyMap
       close_dialog: true

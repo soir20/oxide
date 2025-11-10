@@ -18,7 +18,7 @@ members_only:
           y: 0
           z: 0
           w: 0
-        destination_zone: !Any
+        zone: !Any
           template_guid: 24
       interact_radius: 7
     club_to_lounge:
@@ -39,6 +39,6 @@ members_only:
           y: 0
           z: 1.5
           w: 0
-        destination_zone: !Any
+        zone: !Any
           template_guid: 24
       interact_radius: 7

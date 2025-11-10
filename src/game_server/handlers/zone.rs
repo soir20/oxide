@@ -1280,7 +1280,7 @@ pub struct Destination {
     pub pos: Pos,
     pub rot: Pos,
     #[serde(default)]
-    pub destination_zone: DestinationZoneInstance,
+    pub zone: DestinationZoneInstance,
 }
 
 pub fn teleport_anywhere(

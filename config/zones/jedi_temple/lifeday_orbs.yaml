@@ -217,7 +217,7 @@ jedi_temple:
       is_spawned: false
       enable_interact_popup: false
       show_name: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         award_credits: 25
         despawn_npc: true
         removal_mode: !Graceful
@@ -288,7 +288,7 @@ jedi_temple:
       is_spawned: false
       enable_interact_popup: false
       show_name: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         award_credits: 25
         despawn_npc: true
         removal_mode: !Graceful
@@ -370,7 +370,7 @@ jedi_temple:
       is_spawned: false
       enable_interact_popup: false
       show_name: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         award_credits: 25
         despawn_npc: true
         removal_mode: !Graceful
@@ -427,7 +427,7 @@ jedi_temple:
       is_spawned: false
       enable_interact_popup: false
       show_name: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         award_credits: 100
         despawn_npc: true
         removal_mode: !Graceful
@@ -492,7 +492,7 @@ jedi_temple:
       is_spawned: false
       enable_interact_popup: false
       show_name: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         award_credits: 25
         despawn_npc: true
         removal_mode: !Graceful
@@ -558,7 +558,7 @@ jedi_temple:
       is_spawned: false
       enable_interact_popup: false
       show_name: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         award_credits: 25
         despawn_npc: true
         removal_mode: !Graceful
@@ -624,7 +624,7 @@ jedi_temple:
       is_spawned: false
       enable_interact_popup: false
       show_name: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         award_credits: 25
         despawn_npc: true
         removal_mode: !Graceful
@@ -689,7 +689,7 @@ jedi_temple:
       is_spawned: false
       enable_interact_popup: false
       show_name: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         award_credits: 25
         despawn_npc: true
         removal_mode: !Graceful
@@ -755,7 +755,7 @@ jedi_temple:
       is_spawned: false
       enable_interact_popup: false
       show_name: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         award_credits: 25
         despawn_npc: true
         removal_mode: !Graceful
@@ -821,7 +821,7 @@ jedi_temple:
       is_spawned: false
       enable_interact_popup: false
       show_name: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         award_credits: 25
         despawn_npc: true
         removal_mode: !Graceful
@@ -887,7 +887,7 @@ jedi_temple:
       is_spawned: false
       enable_interact_popup: false
       show_name: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         award_credits: 25
         despawn_npc: true
         removal_mode: !Graceful
@@ -957,7 +957,7 @@ jedi_temple:
       is_spawned: false
       enable_interact_popup: false
       show_name: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         award_credits: 25
         despawn_npc: true
         removal_mode: !Graceful
@@ -1027,7 +1027,7 @@ jedi_temple:
       is_spawned: false
       enable_interact_popup: false
       show_name: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         award_credits: 25
         despawn_npc: true
         removal_mode: !Graceful
@@ -1101,7 +1101,7 @@ jedi_temple:
       is_spawned: false
       enable_interact_popup: false
       show_name: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         award_credits: 25
         despawn_npc: true
         removal_mode: !Graceful
@@ -1162,7 +1162,7 @@ jedi_temple:
       is_spawned: false
       enable_interact_popup: false
       show_name: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         award_credits: 100
         despawn_npc: true
         removal_mode: !Graceful
@@ -1227,7 +1227,7 @@ jedi_temple:
       is_spawned: false
       enable_interact_popup: false
       show_name: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         award_credits: 25
         despawn_npc: true
         removal_mode: !Graceful
@@ -1293,7 +1293,7 @@ jedi_temple:
       is_spawned: false
       enable_interact_popup: false
       show_name: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         award_credits: 25
         despawn_npc: true
         removal_mode: !Graceful
@@ -1363,7 +1363,7 @@ jedi_temple:
       is_spawned: false
       enable_interact_popup: false
       show_name: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         award_credits: 25
         despawn_npc: true
         removal_mode: !Graceful
@@ -1428,7 +1428,7 @@ jedi_temple:
       is_spawned: false
       enable_interact_popup: false
       show_name: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         award_credits: 25
         despawn_npc: true
         removal_mode: !Graceful
@@ -1494,7 +1494,7 @@ jedi_temple:
       is_spawned: false
       enable_interact_popup: false
       show_name: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         award_credits: 25
         despawn_npc: true
         removal_mode: !Graceful
@@ -1560,7 +1560,7 @@ jedi_temple:
       is_spawned: false
       enable_interact_popup: false
       show_name: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         award_credits: 25
         despawn_npc: true
         removal_mode: !Graceful
@@ -1633,7 +1633,7 @@ jedi_temple:
       is_spawned: false
       enable_interact_popup: false
       show_name: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         award_credits: 25
         despawn_npc: true
         removal_mode: !Graceful
@@ -1711,7 +1711,7 @@ jedi_temple:
       is_spawned: false
       enable_interact_popup: false
       show_name: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         award_credits: 25
         despawn_npc: true
         removal_mode: !Graceful
@@ -1797,7 +1797,7 @@ jedi_temple:
       is_spawned: false
       enable_interact_popup: false
       show_name: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         award_credits: 25
         despawn_npc: true
         removal_mode: !Graceful
@@ -1858,7 +1858,7 @@ jedi_temple:
       is_spawned: false
       enable_interact_popup: false
       show_name: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         award_credits: 100
         despawn_npc: true
         removal_mode: !Graceful
@@ -1931,7 +1931,7 @@ jedi_temple:
       is_spawned: false
       enable_interact_popup: false
       show_name: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         award_credits: 25
         despawn_npc: true
         removal_mode: !Graceful
@@ -2009,7 +2009,7 @@ jedi_temple:
       is_spawned: false
       enable_interact_popup: false
       show_name: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         award_credits: 25
         despawn_npc: true
         removal_mode: !Graceful
@@ -2087,7 +2087,7 @@ jedi_temple:
       is_spawned: false
       show_name: false
       enable_interact_popup: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         award_credits: 25
         despawn_npc: true
         removal_mode: !Graceful
