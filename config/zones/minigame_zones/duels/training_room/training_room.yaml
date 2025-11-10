@@ -22,7 +22,7 @@ duel_training_room_singleplayer:
   jump_height_multiplier: 1
   gravity_multiplier: 1
   seconds_per_day: 10800
-duel_training_room_singleplayer:
+duel_training_room_multiplayer:
   guid: 203
   max_players: 2
   template_name: 7179
