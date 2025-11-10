@@ -20,8 +20,8 @@ use crate::game_server::{
             attachments_from_equipped_items, player_has_saber_equipped, wield_type_from_inventory,
         },
         minigame::{
-            handle_minigame_packet_write, MinigameCountdown, MinigameStopwatch,
-            SharedMinigameTypeData,
+            handle_minigame_packet_write, MinigameCountdown, MinigameRemovePlayerResult,
+            MinigameStopwatch, SharedMinigameTypeData,
         },
         unique_guid::{player_guid, saber_duel_opponent_guid},
     },
@@ -1043,7 +1043,7 @@ impl SaberDuelGame {
         &self,
         player: u32,
         minigame_status: &mut MinigameStatus,
-    ) -> Result<(Vec<Broadcast>, Vec<u64>), ProcessPacketError> {
+    ) -> Result<MinigameRemovePlayerResult, ProcessPacketError> {
         let player_index = self.player_index(player)? as usize;
 
         let player_state = &self.player_states[player_index];
@@ -1157,11 +1157,14 @@ impl SaberDuelGame {
             score_points: 0,
         });
 
-        if self.is_ai_match() {
-            Ok((Vec::new(), vec![saber_duel_opponent_guid(self.player1)]))
-        } else {
-            Ok((Vec::new(), Vec::new()))
-        }
+        Ok(MinigameRemovePlayerResult {
+            broadcasts: Vec::new(),
+            characters_to_remove: match self.is_ai_match() {
+                true => vec![saber_duel_opponent_guid(self.player1)],
+                false => Vec::new(),
+            },
+            end_game_for_all: true,
+        })
     }
 
     pub fn mark_player_ready(&mut self, sender: u32) -> Result<Vec<Broadcast>, ProcessPacketError> {

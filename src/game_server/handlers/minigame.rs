@@ -351,6 +351,13 @@ pub enum SharedMinigameDataTickableIndex {
 }
 pub type SharedMinigameDataMatchmakingIndex = (MatchmakingGroupStatus, i32, Instant);
 
+#[derive(Default)]
+pub struct MinigameRemovePlayerResult {
+    pub broadcasts: Vec<Broadcast>,
+    pub characters_to_remove: Vec<u64>,
+    pub end_game_for_all: bool,
+}
+
 #[derive(Clone)]
 pub struct SharedMinigameData {
     pub guid: MinigameMatchmakingGroup,
@@ -382,7 +389,7 @@ impl SharedMinigameData {
         &mut self,
         player: u32,
         minigame_status: &mut MinigameStatus,
-    ) -> Result<(Vec<Broadcast>, Vec<u64>), ProcessPacketError> {
+    ) -> Result<MinigameRemovePlayerResult, ProcessPacketError> {
         self.data.remove_player(player, minigame_status)
     }
 
@@ -530,7 +537,7 @@ impl SharedMinigameTypeData {
         &mut self,
         player: u32,
         minigame_status: &mut MinigameStatus,
-    ) -> Result<(Vec<Broadcast>, Vec<u64>), ProcessPacketError> {
+    ) -> Result<MinigameRemovePlayerResult, ProcessPacketError> {
         match self {
             SharedMinigameTypeData::FleetCommander { game } => {
                 game.remove_player(player, minigame_status)
@@ -541,7 +548,7 @@ impl SharedMinigameTypeData {
             SharedMinigameTypeData::SaberDuel { game } => {
                 game.remove_player(player, minigame_status)
             }
-            _ => Ok((Vec::new(), Vec::new())),
+            _ => Ok(MinigameRemovePlayerResult::default()),
         }
     }
 
@@ -3715,7 +3722,7 @@ fn leave_active_minigame_single_player_if_any(
     shared_minigame_data: &mut SharedMinigameData,
     stage_config: &StageConfigRef<'_>,
     game_server: &GameServer,
-) -> Result<Vec<Broadcast>, ProcessPacketError> {
+) -> Result<(Vec<Broadcast>, bool), ProcessPacketError> {
     let status_update_result = characters_table_write_handle
         .update_value_indices(player_guid(sender), |possible_character_write_handle, characters_table_handle| {
             let Some(character_write_handle) = possible_character_write_handle else {
@@ -3746,7 +3753,7 @@ fn leave_active_minigame_single_player_if_any(
                 false => MinigameRemovalMode::NoTeleport,
             };
 
-            let (mut broadcasts, characters_to_remove) = shared_minigame_data
+            let MinigameRemovePlayerResult { mut broadcasts, characters_to_remove, end_game_for_all } = shared_minigame_data
                 .remove_player(sender, minigame_status)?;
 
             // If we've already awarded credits after a round, don't grant those credits again
@@ -3929,11 +3936,13 @@ fn leave_active_minigame_single_player_if_any(
             player.minigame_status = None;
             character_write_handle.set_brandished_wield_type(wield_type);
 
-            Ok(Some((broadcasts, characters_to_remove, removal_mode)))
+            Ok(Some((broadcasts, characters_to_remove, removal_mode, end_game_for_all)))
         })?;
 
-    let Some((mut broadcasts, characters_to_remove, removal_move)) = status_update_result else {
-        return Ok(Vec::new());
+    let Some((mut broadcasts, characters_to_remove, removal_move, end_game_for_all)) =
+        status_update_result
+    else {
+        return Ok((Vec::new(), false));
     };
 
     for guid_to_remove in characters_to_remove.into_iter() {
@@ -3957,7 +3966,7 @@ fn leave_active_minigame_single_player_if_any(
     }
 
     let MinigameRemovalMode::Teleport(previous_location) = removal_move else {
-        return Ok(broadcasts);
+        return Ok((broadcasts, end_game_for_all));
     };
 
     let instance_guid = game_server.get_or_create_instance(
@@ -3982,7 +3991,7 @@ fn leave_active_minigame_single_player_if_any(
     );
     broadcasts.append(&mut teleport_broadcasts?);
 
-    Ok(broadcasts)
+    Ok((broadcasts, end_game_for_all))
 }
 
 fn remove_single_player_from_matchmaking(
@@ -3993,7 +4002,7 @@ fn remove_single_player_from_matchmaking(
     zones_table_write_handle: &mut ZoneTableWriteHandle<'_>,
     message_id: Option<u32>,
     game_server: &GameServer,
-) -> Result<Vec<Broadcast>, ProcessPacketError> {
+) -> Result<(Vec<Broadcast>, bool), ProcessPacketError> {
     let removal_mode = characters_table_write_handle.update_value_indices(player_guid(player), |possible_character_write_handle, _| {
         let Some(character_write_handle) = possible_character_write_handle else {
             return Err(ProcessPacketError::new(
@@ -4081,7 +4090,7 @@ fn remove_single_player_from_matchmaking(
         broadcasts.append(&mut teleport_result?);
     }
 
-    Ok(broadcasts)
+    Ok((broadcasts, false))
 }
 
 fn leave_or_remove_single_player_from_matchmaking(
@@ -4094,7 +4103,7 @@ fn leave_or_remove_single_player_from_matchmaking(
     is_matchmaking: bool,
     matchmaking_removal_message_id: Option<u32>,
     game_server: &GameServer,
-) -> Result<Vec<Broadcast>, ProcessPacketError> {
+) -> Result<(Vec<Broadcast>, bool), ProcessPacketError> {
     if is_matchmaking {
         remove_single_player_from_matchmaking(
             sender,
@@ -4188,32 +4197,40 @@ pub fn leave_active_minigame_if_any(
 
     let mut broadcasts = Vec::new();
 
-    if let LeaveMinigameTarget::Single(sender) = target {
-        let leave_result = leave_or_remove_single_player_from_matchmaking(
-            sender,
-            characters_table_write_handle,
-            zones_table_write_handle,
-            &mut minigame_data_write_handle,
-            group.stage_group_guid,
-            &stage_config,
-            is_matchmaking,
-            matchmaking_removal_message_id,
-            game_server,
-        );
-        match leave_result {
-            Ok(mut leave_broadcasts) => broadcasts.append(&mut leave_broadcasts),
-            Err(err) => info!(
-                "Unable to remove player {} from minigame (stage group {}, stage {}): {}",
-                sender, group.stage_group_guid, group.stage_guid, err
-            ),
+    let end_game_for_all = match target {
+        LeaveMinigameTarget::Single(player_guid) => {
+            let leave_result = leave_or_remove_single_player_from_matchmaking(
+                player_guid,
+                characters_table_write_handle,
+                zones_table_write_handle,
+                &mut minigame_data_write_handle,
+                group.stage_group_guid,
+                &stage_config,
+                is_matchmaking,
+                matchmaking_removal_message_id,
+                game_server,
+            );
+            match leave_result {
+                Ok((mut leave_broadcasts, end_game_for_all)) => {
+                    broadcasts.append(&mut leave_broadcasts);
+                    end_game_for_all
+                }
+                Err(err) => {
+                    info!(
+                        "Unable to remove player {player_guid} from minigame (stage group {}, stage {}): {err}",
+                        group.stage_group_guid, group.stage_guid
+                    );
+                    false
+                }
+            }
         }
-    }
+        LeaveMinigameTarget::Group(_) => true,
+    };
 
     let remaining_players = characters_table_write_handle.keys_by_index4(&group).count() as u32;
-    let is_group_removal = matches!(target, LeaveMinigameTarget::Group { .. });
 
     if (remaining_players < stage_config.stage_config.min_players() && !is_matchmaking)
-        || is_group_removal
+        || end_game_for_all
     {
         let member_guids: Vec<u64> = characters_table_write_handle
             .keys_by_index4(&group)
@@ -4236,7 +4253,7 @@ pub fn leave_active_minigame_if_any(
 
             // Don't error for this player if there's an issue with another player
             match other_player_leave_result {
-                Ok(mut leave_broadcasts) => broadcasts.append(&mut leave_broadcasts),
+                Ok((mut leave_broadcasts, _)) => broadcasts.append(&mut leave_broadcasts),
                 Err(err) => info!(
                     "Unable to remove other player {member_guid} from minigame (stage group {}, stage {}) that does not have enough players: {err}",
                     group.stage_group_guid,
