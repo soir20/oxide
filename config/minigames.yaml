@@ -116,7 +116,7 @@ categories:
                       - attack_animation_id: 5071
                         defend_animation_id: 5072
                     establishing_animation_id: &saber_duel_establishing_animation_id 6005
-                    player_entrance_animation_id: &saber_duel_player_entrance_animation_id 6004
+                    camera_entrance_animation_id: &saber_duel_camera_entrance_animation_id 6004
                     ai:
                       name_id: 1132
                       model_id: 158
@@ -178,7 +178,7 @@ categories:
                     basic_bout_animations: *saber_duel_basic_bout_animations
                     special_bout_animations: *saber_duel_special_bout_animations
                     establishing_animation_id: *saber_duel_establishing_animation_id
-                    player_entrance_animation_id: *saber_duel_player_entrance_animation_id
+                    camera_entrance_animation_id: *saber_duel_camera_entrance_animation_id
                     ai:
                       name_id: 1137
                       model_id: 182
@@ -237,7 +237,7 @@ categories:
                     basic_bout_animations: *saber_duel_basic_bout_animations
                     special_bout_animations: *saber_duel_special_bout_animations
                     establishing_animation_id: *saber_duel_establishing_animation_id
-                    player_entrance_animation_id: *saber_duel_player_entrance_animation_id
+                    camera_entrance_animation_id: *saber_duel_camera_entrance_animation_id
                     ai:
                       name_id: 9522
                       model_id: 388
@@ -296,7 +296,7 @@ categories:
                     basic_bout_animations: *saber_duel_basic_bout_animations
                     special_bout_animations: *saber_duel_special_bout_animations
                     establishing_animation_id: *saber_duel_establishing_animation_id
-                    player_entrance_animation_id: *saber_duel_player_entrance_animation_id
+                    camera_entrance_animation_id: *saber_duel_camera_entrance_animation_id
                     ai:
                       name_id: 9540
                       model_id: 387
@@ -355,7 +355,7 @@ categories:
                     basic_bout_animations: *saber_duel_basic_bout_animations
                     special_bout_animations: *saber_duel_special_bout_animations
                     establishing_animation_id: *saber_duel_establishing_animation_id
-                    player_entrance_animation_id: *saber_duel_player_entrance_animation_id
+                    camera_entrance_animation_id: *saber_duel_camera_entrance_animation_id
                     ai:
                       name_id: 6350
                       model_id: 184
@@ -414,7 +414,7 @@ categories:
                     basic_bout_animations: *saber_duel_basic_bout_animations
                     special_bout_animations: *saber_duel_special_bout_animations
                     establishing_animation_id: *saber_duel_establishing_animation_id
-                    player_entrance_animation_id: *saber_duel_player_entrance_animation_id
+                    camera_entrance_animation_id: *saber_duel_camera_entrance_animation_id
                     ai:
                       name_id: 9630
                       model_id: 400
@@ -477,7 +477,7 @@ categories:
                     basic_bout_animations: *saber_duel_basic_bout_animations
                     special_bout_animations: *saber_duel_special_bout_animations
                     establishing_animation_id: *saber_duel_establishing_animation_id
-                    player_entrance_animation_id: *saber_duel_player_entrance_animation_id
+                    camera_entrance_animation_id: *saber_duel_camera_entrance_animation_id
                     ai:
                       name_id: 6345
                       model_id: 185
@@ -536,7 +536,7 @@ categories:
                     basic_bout_animations: *saber_duel_basic_bout_animations
                     special_bout_animations: *saber_duel_special_bout_animations
                     establishing_animation_id: *saber_duel_establishing_animation_id
-                    player_entrance_animation_id: *saber_duel_player_entrance_animation_id
+                    camera_entrance_animation_id: *saber_duel_camera_entrance_animation_id
                     ai:
                       name_id: 6978
                       model_id: 401
@@ -595,7 +595,7 @@ categories:
                     basic_bout_animations: *saber_duel_basic_bout_animations
                     special_bout_animations: *saber_duel_special_bout_animations
                     establishing_animation_id: *saber_duel_establishing_animation_id
-                    player_entrance_animation_id: *saber_duel_player_entrance_animation_id
+                    camera_entrance_animation_id: *saber_duel_camera_entrance_animation_id
                     ai:
                       name_id: 1132
                       model_id: 158
@@ -654,7 +654,7 @@ categories:
                     basic_bout_animations: *saber_duel_basic_bout_animations
                     special_bout_animations: *saber_duel_special_bout_animations
                     establishing_animation_id: *saber_duel_establishing_animation_id
-                    player_entrance_animation_id: *saber_duel_player_entrance_animation_id
+                    camera_entrance_animation_id: *saber_duel_camera_entrance_animation_id
                     ai:
                       name_id: 9628
                       model_id: 402
@@ -713,7 +713,7 @@ categories:
                     basic_bout_animations: *saber_duel_basic_bout_animations
                     special_bout_animations: *saber_duel_special_bout_animations
                     establishing_animation_id: *saber_duel_establishing_animation_id
-                    player_entrance_animation_id: *saber_duel_player_entrance_animation_id
+                    camera_entrance_animation_id: *saber_duel_camera_entrance_animation_id
                     ai:
                       name_id: 9631
                       model_id: 403
@@ -772,7 +772,7 @@ categories:
                     basic_bout_animations: *saber_duel_basic_bout_animations
                     special_bout_animations: *saber_duel_special_bout_animations
                     establishing_animation_id: *saber_duel_establishing_animation_id
-                    player_entrance_animation_id: *saber_duel_player_entrance_animation_id
+                    camera_entrance_animation_id: *saber_duel_camera_entrance_animation_id
                     ai:
                       name_id: 1130
                       model_id: 349
@@ -831,7 +831,7 @@ categories:
                     basic_bout_animations: *saber_duel_basic_bout_animations
                     special_bout_animations: *saber_duel_special_bout_animations
                     establishing_animation_id: *saber_duel_establishing_animation_id
-                    player_entrance_animation_id: *saber_duel_player_entrance_animation_id
+                    camera_entrance_animation_id: *saber_duel_camera_entrance_animation_id
                     ai:
                       name_id: 17231
                       model_id: 972
@@ -890,7 +890,7 @@ categories:
                     basic_bout_animations: *saber_duel_basic_bout_animations
                     special_bout_animations: *saber_duel_special_bout_animations
                     establishing_animation_id: *saber_duel_establishing_animation_id
-                    player_entrance_animation_id: *saber_duel_player_entrance_animation_id
+                    camera_entrance_animation_id: *saber_duel_camera_entrance_animation_id
                     ai:
                       name_id: 1134
                       model_id: 183
@@ -950,7 +950,7 @@ categories:
                     basic_bout_animations: *saber_duel_basic_bout_animations
                     special_bout_animations: *saber_duel_special_bout_animations
                     establishing_animation_id: *saber_duel_establishing_animation_id
-                    player_entrance_animation_id: *saber_duel_player_entrance_animation_id
+                    camera_entrance_animation_id: *saber_duel_camera_entrance_animation_id
                     ai:
                       name_id: 50263
                       model_id: 1313
@@ -1018,7 +1018,7 @@ categories:
                       - attack_animation_id: 5043
                         defend_animation_id: 5044
                     establishing_animation_id: *saber_duel_establishing_animation_id
-                    player_entrance_animation_id: *saber_duel_player_entrance_animation_id
+                    camera_entrance_animation_id: *saber_duel_camera_entrance_animation_id
                     ai:
                       name_id: 5150
                       model_id: 2566
@@ -1057,7 +1057,61 @@ categories:
               require_previous_completed: false
               stage_select_map_name: RepublicGunship
               short_name: mp
-              stages: []
+              stages:
+                - !Stage
+                  guid: 31020
+                  name_id: 9162
+                  description_id: 9163
+                  stage_icon_id: 1410
+                  start_screen_icon_id: 1984
+                  min_players: 1
+                  max_players: 2
+                  difficulty: 1
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage01
+                  display_stage_group_guid: 31000
+                  minigame_type:
+                    !SaberDuel
+                    camera_rot: *saber_duel_camera_rot
+                    rounds_to_win: *saber_duel_rounds_to_win
+                    points_to_win_round: 6
+                    keys_per_basic_bout: 4
+                    keys_per_special_bout: 6
+                    first_special_bout: 4
+                    special_bout_interval: 6
+                    points_per_basic_bout: *saber_duel_points_per_basic_bout
+                    points_per_special_bout: *saber_duel_points_per_special_bout
+                    bout_max_millis: *saber_duel_bout_max_millis
+                    tie_interval_millis: *saber_duel_tie_interval_millis
+                    basic_bout_animations: *saber_duel_basic_bout_animations
+                    special_bout_animations: *saber_duel_special_bout_animations
+                    establishing_animation_id: *saber_duel_establishing_animation_id
+                    camera_entrance_animation_id: *saber_duel_camera_entrance_animation_id
+                    ai:
+                      name_id: 17931
+                      model_id: 106
+                      primary_saber:
+                        hilt_item_guid: 70015
+                        shape_item_guid: 50000
+                        color_item_guid: 60000
+                      entrance_animation_id: 5004
+                      min_millis_per_key: 400
+                      max_millis_per_key: 1000
+                      mistake_probability: 0.01  # unconfirmed
+                    score_penalty_per_second: *saber_duel_easy_score_penalty_per_second
+                    max_time_score_bonus: *saber_duel_max_time_score_bonus
+                    score_penalty_per_accuracy_pct: *saber_duel_score_penalty_per_accuracy_pct
+                    max_accuracy_score_bonus: *saber_duel_max_accuracy_score_bonus
+                    score_per_win_streak: *saber_duel_score_per_win_streak
+                    score_per_point: *saber_duel_score_per_point
+                    score_per_margin_of_victory: *saber_duel_score_per_margin_of_victory
+                    game_win_bonus_score: *saber_duel_game_win_bonus_score
+                    no_bouts_lost_bonus_score: *saber_duel_no_bouts_lost_bonus_score
+                    default_primary_saber: *saber_duel_default_primary_saber
+                  zone_template_guid: 203
+                  score_to_credits_expression: x / 103
             - !StageGroup
               guid: 31017
               name_id: 53511

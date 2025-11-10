@@ -73,11 +73,11 @@ struct SaberDuelAi {
     primary_saber: SaberDuelEquippableSaber,
     secondary_saber: Option<SaberDuelEquippableSaber>,
     entrance_animation_id: i32,
-    entrance_sound_id: u32,
-    round_won_sound_id: u32,
-    round_lost_sound_id: u32,
-    game_won_sound_id: u32,
-    game_lost_sound_id: u32,
+    entrance_sound_id: Option<u32>,
+    round_won_sound_id: Option<u32>,
+    round_lost_sound_id: Option<u32>,
+    game_won_sound_id: Option<u32>,
+    game_lost_sound_id: Option<u32>,
     min_millis_per_key: u16,
     max_millis_per_key: u16,
     #[serde(deserialize_with = "deserialize_probability")]
@@ -391,7 +391,7 @@ pub struct SaberDuelConfig {
     #[serde(deserialize_with = "deserialize_bout_animations")]
     special_bout_animations: Vec<SaberDuelAnimationPair>,
     establishing_animation_id: i32,
-    player_entrance_animation_id: i32,
+    camera_entrance_animation_id: i32,
     ai: SaberDuelAi,
     score_penalty_per_second: f32,
     max_time_score_bonus: f32,
@@ -721,12 +721,13 @@ impl SaberDuelGame {
                 },
                 opponent_entrance_animation_id: self
                     .player2
-                    .map(|_| self.config.player_entrance_animation_id)
+                    .map(|_| self.config.camera_entrance_animation_id)
                     .unwrap_or(self.config.ai.entrance_animation_id),
                 opponent_entrance_sound_id: self
                     .player2
                     .map(|_| 0)
-                    .unwrap_or(self.config.ai.entrance_sound_id),
+                    .or(self.config.ai.entrance_sound_id)
+                    .unwrap_or(0),
                 max_force_points: self.config.max_force_points.into(),
                 paused: false,
                 enable_memory_challenge: self.config.memory_challenge,
@@ -1587,8 +1588,8 @@ impl SaberDuelGame {
                     winner_index: leader_index.into(),
                     sound_id: match self.is_ai_match() {
                         true => match leader_index == 0 {
-                            true => self.config.ai.round_lost_sound_id,
-                            false => self.config.ai.round_won_sound_id,
+                            true => self.config.ai.round_lost_sound_id.unwrap_or(0),
+                            false => self.config.ai.round_won_sound_id.unwrap_or(0),
                         },
                         false => 0,
                     },
@@ -1615,8 +1616,8 @@ impl SaberDuelGame {
                     winner_index: leader_index.into(),
                     sound_id: match self.is_ai_match() {
                         true => match leader_index == 0 {
-                            true => self.config.ai.game_lost_sound_id,
-                            false => self.config.ai.game_won_sound_id,
+                            true => self.config.ai.game_lost_sound_id.unwrap_or(0),
+                            false => self.config.ai.game_won_sound_id.unwrap_or(0),
                         },
                         false => 0,
                     },
