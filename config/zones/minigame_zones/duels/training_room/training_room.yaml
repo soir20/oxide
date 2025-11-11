@@ -1,0 +1,47 @@
+---
+duel_training_room_singleplayer:
+  guid: 202
+  max_players: 1
+  template_name: 7179
+  asset_name: Dueling_Environment
+  hide_ui: false
+  is_combat: false
+  default_point_of_interest:
+    guid: 202
+    pos:
+      x: 115
+      y: 9.2
+      z: 380
+      w: 1
+    rot:
+      x: 0
+      y: 0
+      z: 0
+      w: 0
+  speed: 0
+  jump_height_multiplier: 1
+  gravity_multiplier: 1
+  seconds_per_day: 10800
+duel_training_room_multiplayer:
+  guid: 203
+  max_players: 2
+  template_name: 7179
+  asset_name: Dueling_Environment
+  hide_ui: false
+  is_combat: false
+  default_point_of_interest:
+    guid: 203
+    pos:
+      x: 115
+      y: 9.2
+      z: 380
+      w: 1
+    rot:
+      x: 0
+      y: 0
+      z: 0
+      w: 0
+  speed: 0
+  jump_height_multiplier: 1
+  gravity_multiplier: 1
+  seconds_per_day: 10800
