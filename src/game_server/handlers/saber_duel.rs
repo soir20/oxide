@@ -418,6 +418,8 @@ pub struct SaberDuelConfig {
     force_powers: BTreeMap<SaberDuelForcePower, SaberDuelAvailableForcePower>,
     #[serde(default)]
     memory_challenge: bool,
+    #[serde(default)]
+    perfect_accuracy_challenge: bool,
 }
 
 pub fn process_saber_duel_packet(
@@ -1049,11 +1051,13 @@ impl SaberDuelGame {
 
         let player_state = &self.player_states[player_index];
 
-        let won = player_state.rounds_won >= self.config.rounds_to_win;
-        minigame_status.win_status.set_won(won);
+        let beat_opponent = Self::has_player_beat_opponent(&self.config, player_state);
+        minigame_status
+            .win_status
+            .set_won(Self::has_player_won_game(&self.config, player_state));
 
         let mut total_score: i32 = 0;
-        if won {
+        if beat_opponent {
             total_score = total_score.saturating_add(self.config.game_win_bonus_score);
 
             if player_state.game_points_lost == 0 {
@@ -1072,7 +1076,7 @@ impl SaberDuelGame {
 
         // Time
         let duel_seconds = i16::try_from(self.stopwatch.elapsed().as_secs()).unwrap_or(i16::MAX);
-        let time_bonus = match won {
+        let time_bonus = match beat_opponent {
             true => (self.config.max_time_score_bonus
                 - Into::<f32>::into(duel_seconds) * self.config.score_penalty_per_second)
                 .round()
@@ -1217,7 +1221,7 @@ impl SaberDuelGame {
             leader_state.win_round();
             self.bout = 0;
 
-            if leader_state.rounds_won >= self.config.rounds_to_win {
+            if Self::has_player_beat_opponent(&self.config, leader_state) {
                 broadcasts.append(&mut self.prepare_game_end(leader_index));
             } else {
                 broadcasts.append(&mut self.prepare_round_end(leader_index));
@@ -1596,6 +1600,27 @@ impl SaberDuelGame {
                 },
             })],
         )]
+    }
+
+    fn has_player_beat_opponent(
+        config: &SaberDuelConfig,
+        player_state: &SaberDuelPlayerState,
+    ) -> bool {
+        player_state.rounds_won >= config.rounds_to_win
+    }
+
+    fn has_player_failed_challenge(
+        config: &SaberDuelConfig,
+        player_state: &SaberDuelPlayerState,
+    ) -> bool {
+        (config.memory_challenge || config.perfect_accuracy_challenge)
+            && !Self::has_player_beat_opponent(config, player_state)
+            && (!config.perfect_accuracy_challenge || player_state.total_mistakes == 0)
+    }
+
+    fn has_player_won_game(config: &SaberDuelConfig, player_state: &SaberDuelPlayerState) -> bool {
+        Self::has_player_beat_opponent(config, player_state)
+            && !Self::has_player_failed_challenge(config, player_state)
     }
 
     fn prepare_game_end(&mut self, leader_index: u8) -> Vec<Broadcast> {
