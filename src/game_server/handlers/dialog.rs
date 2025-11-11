@@ -24,6 +24,7 @@ pub struct DialogEffectsReferenceConfig {
     pub animation_id: Option<i32>,
     pub apply_model_id: Option<u32>,
     pub remove_model_id: Option<u32>,
+    pub duration_millis: u32,
 }
 
 #[derive(Clone, Deserialize)]
@@ -152,7 +153,7 @@ pub fn handle_dialog_buttons(
                             animation_id,
                             queue_pos: 0,
                             delay_seconds: 0.0,
-                            duration_seconds: 0.0,
+                            duration_seconds: effect.duration_millis as f32 / 1000.0,
                         },
                     }));
                 }
@@ -267,6 +268,7 @@ pub struct DialogEffectsInstance {
     pub animation_id: Option<i32>,
     pub apply_model_id: Option<u32>,
     pub remove_model_id: Option<u32>,
+    pub duration_millis: u32,
 }
 
 pub struct DialogInstance {
@@ -313,6 +315,7 @@ impl DialogInstance {
                         animation_id: effect.animation_id,
                         apply_model_id: effect.apply_model_id,
                         remove_model_id: effect.remove_model_id,
+                        duration_millis: effect.duration_millis,
                     }
                 })
                 .collect()
