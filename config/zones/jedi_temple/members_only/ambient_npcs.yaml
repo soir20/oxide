@@ -103,3 +103,46 @@ members_only:
         player_one_shot_animation_id: 3014
         one_shot_action_animation_id: 2302
         duration_millis: 1000
+    # Members Only Table 1
+    members_only_table_1:
+      model_id: 1010
+      pos:
+        x: 768.0
+        y: 10.026612
+        z: 679.1
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: -1
+        w: 0
+    # Jedi at Table
+    members_only_npc_2:
+      model_id: 39
+      enable_gravity: false
+      pos:
+        x: 768.0
+        y: 10.026612
+        z: 679.1
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: -1
+        w: 0
+      stand_animation_id: 2566
+    # Jedi at Table
+    members_only_npc_3:
+      model_id: 40
+      enable_gravity: false
+      pos:
+        x: 768.0
+        y: 10.026612
+        z: 679.1
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: -1
+        w: 0
+      stand_animation_id: 2567

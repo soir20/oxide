@@ -17,6 +17,13 @@ jedi_temple:
         z: 0
         w: 0
       stand_animation_id: 2505
+      cursor: 54
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+        one_shot_action_animation_id: 2506
+        duration_millis: 1000
+      interact_radius: 6
+      auto_interact_radius: 5
     clone_guard_archives_2:
       model_id: 1936
       pos:
@@ -30,6 +37,13 @@ jedi_temple:
         z: 0
         w: 0
       stand_animation_id: 2505
+      cursor: 54
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+        one_shot_action_animation_id: 2506
+        duration_millis: 1000
+      interact_radius: 6
+      auto_interact_radius: 5
     clone_guard_archives_3:
       model_id: 1936
       pos:
@@ -83,6 +97,13 @@ jedi_temple:
         z: 0
         w: 0
       stand_animation_id: 2505
+      cursor: 54
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+        one_shot_action_animation_id: 2506
+        duration_millis: 1000
+      interact_radius: 6
+      auto_interact_radius: 5
     clone_guard_archives_6:
       model_id: 1936
       pos:
@@ -96,6 +117,13 @@ jedi_temple:
         z: 0
         w: 0
       stand_animation_id: 2505
+      cursor: 54
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+        one_shot_action_animation_id: 2506
+        duration_millis: 1000
+      interact_radius: 6
+      auto_interact_radius: 5
     # Gonk Droid on second floor
     archives_npc_1:
       model_id: 233
@@ -691,6 +719,110 @@ jedi_temple:
         duration_millis: 1000
 
     #
+    # Lounge
+    #
+    clone_guard_lounge_1:
+      model_id: 1936
+      pos:
+        x: -109.8
+        y: 10.04
+        z: 1247.5
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 1
+        w: 0
+      stand_animation_id: 2505
+      cursor: 54
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+        one_shot_action_animation_id: 2506
+        duration_millis: 1000
+      interact_radius: 6
+      auto_interact_radius: 5
+    clone_guard_lounge_2:
+      model_id: 1936
+      pos:
+        x: -103.56
+        y: 10.04
+        z: 1247.5
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 1
+        w: 0
+      stand_animation_id: 2505
+      cursor: 54
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+        one_shot_action_animation_id: 2506
+        duration_millis: 1000
+      interact_radius: 6
+      auto_interact_radius: 5
+    # Arm wrestle clone
+    lounge_npc_1:
+      key: lounge_npc_1
+      model_id: 1952
+      enable_gravity: false
+      pos:
+        x: -123.1
+        y: 10.04
+        z: 1275.7268
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 1
+        w: 0
+      stand_animation_id: 2580
+      tickable_procedures:
+        arm_wrestle:
+          is_interruptible: false
+          steps:
+            - one_shot_animation_id: 2564
+              duration_millis: 5000
+        empty:
+          weight: 588
+          steps:
+            - duration_millis: 15000
+          next_possible_procedures:
+            - procedure: arm_wrestle
+              weight: 300
+            - procedure: empty
+    # Arm wrestle clone
+    lounge_npc_2:
+      model_id: 1958
+      enable_gravity: false
+      pos:
+        x: -123.1
+        y: 10.04
+        z: 1275.7268
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 1
+        w: 0
+      stand_animation_id: 2581
+      tickable_procedures:
+        arm_wrestle:
+          is_interruptible: false
+          steps:
+            - one_shot_animation_id: 2565
+              duration_millis: 5000
+        empty:
+          weight: 588
+          steps:
+            - duration_millis: 15000
+          next_possible_procedures:
+            - procedure: arm_wrestle
+              weight: 300
+            - procedure: empty
+      synchronize_with: lounge_npc_1
+
+    #
     # Main Hall
     #
     # Guard Left of Warroom Door
@@ -936,50 +1068,6 @@ jedi_temple:
         x: 0
         y: 0
         z: -1
-        w: 0
-      stand_animation_id: 2505
-      cursor: 54
-      enable_interact_popup: false
-      one_shot_action_on_interact:
-        one_shot_action_animation_id: 2506
-        duration_millis: 1000
-      interact_radius: 6
-      auto_interact_radius: 5
-
-    #
-    # Lounge
-    #
-    clone_guard_lounge_1:
-      model_id: 1936
-      pos:
-        x: -109.8
-        y: 10.04
-        z: 1247.5
-        w: 1
-      rot:
-        x: 0
-        y: 0
-        z: 1
-        w: 0
-      stand_animation_id: 2505
-      cursor: 54
-      enable_interact_popup: false
-      one_shot_action_on_interact:
-        one_shot_action_animation_id: 2506
-        duration_millis: 1000
-      interact_radius: 6
-      auto_interact_radius: 5
-    clone_guard_lounge_2:
-      model_id: 1936
-      pos:
-        x: -103.56
-        y: 10.04
-        z: 1247.5
-        w: 1
-      rot:
-        x: 0
-        y: 0
-        z: 1
         w: 0
       stand_animation_id: 2505
       cursor: 54
