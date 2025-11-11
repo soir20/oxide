@@ -4,6 +4,7 @@ use std::collections::HashMap;
 use crate::game_server::{
     packets::{
         command::{DialogChoice, EnterDialog, ExitDialog},
+        player_update::{QueueAnimation, RemoveTemporaryModel, UpdateTemporaryModel},
         tunnel::TunneledPacket,
         GamePacket, Pos,
     },
@@ -15,6 +16,15 @@ use super::{
     unique_guid::player_guid,
     zone::ZoneInstance,
 };
+
+#[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct DialogEffectsReferenceConfig {
+    pub npc_key: String,
+    pub animation_id: Option<i32>,
+    pub apply_model_id: Option<u32>,
+    pub remove_model_id: Option<u32>,
+}
 
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -43,6 +53,7 @@ pub struct DialogConfig {
 pub struct NewDialogConfig {
     pub npc_key: Option<String>,
     pub new_dialog: DialogConfig,
+    pub synchronized_effects: Option<Vec<DialogEffectsReferenceConfig>>,
 }
 
 #[derive(Clone, Deserialize)]
@@ -110,6 +121,43 @@ pub fn handle_dialog_buttons(
                 speaker_sound_id: dialog.speaker_sound_id.unwrap_or(0),
             },
         }));
+
+        if let Some(effects) = &dialog.synchronized_effects {
+            for effect in effects {
+                if let Some(model_id) = effect.apply_model_id {
+                    packets.push(GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: UpdateTemporaryModel {
+                            model_id,
+                            guid: effect.npc_guid,
+                        },
+                    }));
+                }
+
+                if let Some(model_id) = effect.remove_model_id {
+                    packets.push(GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: RemoveTemporaryModel {
+                            guid: effect.npc_guid,
+                            model_id,
+                        },
+                    }));
+                }
+
+                if let Some(animation_id) = effect.animation_id {
+                    packets.push(GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: QueueAnimation {
+                            character_guid: effect.npc_guid,
+                            animation_id,
+                            queue_pos: 0,
+                            delay_seconds: 0.0,
+                            duration_seconds: 0.0,
+                        },
+                    }));
+                }
+            }
+        }
     }
 
     if config.close_dialog {
@@ -141,6 +189,7 @@ pub struct DialogTemplate {
     pub show_players: bool,
     pub choices: Vec<DialogChoiceReference>,
     pub npc_key: Option<String>,
+    pub synchronized_effects: Option<Vec<DialogEffectsReferenceConfig>>,
 }
 
 #[derive(Clone)]
@@ -200,6 +249,7 @@ impl DialogChoiceTemplate {
                 show_players: config.show_players,
                 choices,
                 npc_key: new_dialog.npc_key.clone(),
+                synchronized_effects: new_dialog.synchronized_effects.clone(),
             }
         });
 
@@ -212,6 +262,13 @@ impl DialogChoiceTemplate {
     }
 }
 
+pub struct DialogEffectsInstance {
+    pub npc_guid: u64,
+    pub animation_id: Option<i32>,
+    pub apply_model_id: Option<u32>,
+    pub remove_model_id: Option<u32>,
+}
+
 pub struct DialogInstance {
     pub camera_placement: Pos,
     pub look_at: Pos,
@@ -222,6 +279,7 @@ pub struct DialogInstance {
     pub show_players: bool,
     pub choices: Vec<DialogChoiceReference>,
     pub npc_guid: Option<u64>,
+    pub synchronized_effects: Option<Vec<DialogEffectsInstance>>,
 }
 
 impl DialogInstance {
@@ -229,6 +287,37 @@ impl DialogInstance {
         template: &DialogTemplate,
         character_keys_to_guid: &HashMap<&String, u64>,
     ) -> DialogInstance {
+        let npc_guid = template.npc_key.as_ref().map(|key| {
+            character_keys_to_guid
+                .get(key)
+                .copied()
+                .unwrap_or_else(|| panic!("Unknown (NPC Key: {}) referenced in dialog", key))
+        });
+
+        let synchronized_effects = template.synchronized_effects.as_ref().map(|effects| {
+            effects
+                .iter()
+                .map(|effect| {
+                    let npc_guid = character_keys_to_guid
+                        .get(&effect.npc_key)
+                        .copied()
+                        .unwrap_or_else(|| {
+                            panic!(
+                                "Unknown (NPC Key: {}) referenced in synchronized dialog effects",
+                                effect.npc_key
+                            )
+                        });
+
+                    DialogEffectsInstance {
+                        npc_guid,
+                        animation_id: effect.animation_id,
+                        apply_model_id: effect.apply_model_id,
+                        remove_model_id: effect.remove_model_id,
+                    }
+                })
+                .collect()
+        });
+
         DialogInstance {
             camera_placement: template.camera_placement,
             look_at: template.look_at,
@@ -238,11 +327,8 @@ impl DialogInstance {
             zoom: template.zoom,
             show_players: template.show_players,
             choices: template.choices.clone(),
-            npc_guid: template
-                .npc_key
-                .as_ref()
-                .and_then(|key| character_keys_to_guid.get(key))
-                .copied(),
+            npc_guid,
+            synchronized_effects,
         }
     }
 }
