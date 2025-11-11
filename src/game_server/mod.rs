@@ -316,7 +316,7 @@ impl GameServer {
                     let mut sender_only_packets = Vec::new();
 
                     // Set the player as ready
-                    self.lock_enforcer()
+                    let mut final_broadcasts = self.lock_enforcer()
                         .write_characters(|characters_table_write_handle, _| {
                             characters_table_write_handle.update_value_indices(
                                 player_guid(sender),
@@ -344,18 +344,17 @@ impl GameServer {
                                         ));
                                     };
 
-                                    if let Some(minigame_status) = &mut player.minigame_status {
-                                        broadcasts.append(
-                                            &mut create_active_minigame_if_uncreated(
-                                                sender,
-                                                self.minigames(),
-                                                minigame_status,
-                                            )?,
-                                        );
-                                    }
+                                    let final_broadcasts = match &mut player.minigame_status {
+                                        Some(minigame_status) => create_active_minigame_if_uncreated(
+                                            sender,
+                                            self.minigames(),
+                                            minigame_status,
+                                        )?,
+                                        None => Vec::new(),
+                                    };
 
                                     if player.first_load {
-                                        sender_only_packets .push(GamePacket::serialize(&TunneledPacket {
+                                        sender_only_packets.push(GamePacket::serialize(&TunneledPacket {
                                             unknown1: true,
                                             inner: WelcomeScreen {
                                                 show_ui: true,
@@ -381,7 +380,8 @@ impl GameServer {
 
                                     player.ready = true;
                                     player.first_load = false;
-                                    Ok(())
+
+                                    Ok(final_broadcasts)
                                 },
                             )
                         })?;
@@ -563,6 +563,7 @@ impl GameServer {
                     sender_only_packets.push(GamePacket::serialize(&preload_characters_done));
 
                     broadcasts.push(Broadcast::Single(sender, sender_only_packets));
+                    broadcasts.append(&mut final_broadcasts);
                 }
                 OpCode::GameTimeSync => {
                     let sender_guid = player_guid(sender);

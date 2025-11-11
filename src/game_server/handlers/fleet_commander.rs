@@ -13,8 +13,10 @@ use crate::{
     debug,
     game_server::{
         handlers::{
-            character::MinigameStatus, guid::GuidTableIndexer,
-            lock_enforcer::CharacterTableReadHandle, minigame::MinigameCountdown,
+            character::MinigameStatus,
+            guid::GuidTableIndexer,
+            lock_enforcer::CharacterTableReadHandle,
+            minigame::{MinigameCountdown, MinigameRemovePlayerResult},
             unique_guid::player_guid,
         },
         packets::{
@@ -1043,7 +1045,7 @@ impl FleetCommanderGame {
         &self,
         player: u32,
         minigame_status: &mut MinigameStatus,
-    ) -> Result<(Vec<Broadcast>, Vec<u64>), ProcessPacketError> {
+    ) -> Result<MinigameRemovePlayerResult, ProcessPacketError> {
         let player_index = if player == self.player1 {
             0
         } else if Some(player) == self.player2 {
@@ -1066,7 +1068,11 @@ impl FleetCommanderGame {
             score_points: 0,
         });
 
-        Ok((Vec::new(), Vec::new()))
+        Ok(MinigameRemovePlayerResult {
+            broadcasts: Vec::new(),
+            characters_to_remove: Vec::new(),
+            end_game_for_all: true,
+        })
     }
 
     fn is_ai_match(&self) -> bool {

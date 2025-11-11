@@ -16,15 +16,17 @@ use crate::game_server::{
             AmbientNpc, BaseNpc, Character, CharacterType, MinigameMatchmakingGroup,
             MinigameStatus, PlayerInventory,
         },
-        inventory::{player_has_saber_equipped, wield_type_from_inventory},
+        inventory::{
+            attachments_from_equipped_items, player_has_saber_equipped, wield_type_from_inventory,
+        },
         minigame::{
-            handle_minigame_packet_write, MinigameCountdown, MinigameStopwatch,
-            SharedMinigameTypeData,
+            handle_minigame_packet_write, MinigameCountdown, MinigameRemovePlayerResult,
+            MinigameStopwatch, SharedMinigameTypeData,
         },
         unique_guid::{player_guid, saber_duel_opponent_guid},
     },
     packets::{
-        item::{Attachment, EquipmentSlot, ItemDefinition},
+        item::EquipmentSlot,
         minigame::{MinigameHeader, ScoreEntry, ScoreType},
         saber_duel::{
             SaberDuelApplyForcePower, SaberDuelBoutInfo, SaberDuelBoutStart, SaberDuelBoutTied,
@@ -71,19 +73,24 @@ struct SaberDuelAi {
     primary_saber: SaberDuelEquippableSaber,
     secondary_saber: Option<SaberDuelEquippableSaber>,
     entrance_animation_id: i32,
-    entrance_sound_id: u32,
-    bout_won_sound_id: u32,
-    bout_lost_sound_id: u32,
-    game_won_sound_id: u32,
-    game_lost_sound_id: u32,
-    millis_per_key: u16,
+    entrance_sound_id: Option<u32>,
+    round_won_sound_id: Option<u32>,
+    round_lost_sound_id: Option<u32>,
+    game_won_sound_id: Option<u32>,
+    game_lost_sound_id: Option<u32>,
+    min_millis_per_key: u16,
+    max_millis_per_key: u16,
     #[serde(deserialize_with = "deserialize_probability")]
     mistake_probability: f32,
+    #[serde(default)]
     right_to_left_ai_mistake_multiplier: f32,
+    #[serde(default)]
     opposite_ai_mistake_multiplier: f32,
-    #[serde(deserialize_with = "deserialize_probability")]
+    #[serde(deserialize_with = "deserialize_probability", default)]
     force_power_probability: f32,
+    #[serde(default)]
     force_powers: BTreeMap<SaberDuelForcePower, SaberDuelAiForcePower>,
+    #[serde(default)]
     force_power_delay_millis: u32,
 }
 
@@ -384,7 +391,7 @@ pub struct SaberDuelConfig {
     #[serde(deserialize_with = "deserialize_bout_animations")]
     special_bout_animations: Vec<SaberDuelAnimationPair>,
     establishing_animation_id: i32,
-    player_entrance_animation_id: i32,
+    camera_entrance_animation_id: i32,
     ai: SaberDuelAi,
     score_penalty_per_second: f32,
     max_time_score_bonus: f32,
@@ -397,12 +404,19 @@ pub struct SaberDuelConfig {
     no_bouts_lost_bonus_score: i32,
     default_primary_saber: SaberDuelEquippableSaber,
     default_secondary_saber: Option<SaberDuelEquippableSaber>,
+    #[serde(default)]
     max_force_points: u8,
+    #[serde(default)]
     force_power_selection_max_millis: u32,
+    #[serde(default)]
     force_points_per_bout_won: u8,
+    #[serde(default)]
     force_points_per_bout_tied: u8,
+    #[serde(default)]
     force_points_per_bout_lost: u8,
+    #[serde(default)]
     force_powers: BTreeMap<SaberDuelForcePower, SaberDuelAvailableForcePower>,
+    #[serde(default)]
     memory_challenge: bool,
 }
 
@@ -552,14 +566,40 @@ impl SaberDuelGame {
             return Ok(Vec::new());
         }
 
-        let (mut attachments, mut items) =
-            self.attachments_from_saber(&self.config.ai.primary_saber, game_server)?;
+        let mut items = BTreeMap::from([
+            (
+                EquipmentSlot::PrimaryWeapon,
+                self.config.ai.primary_saber.hilt_item_guid,
+            ),
+            (
+                EquipmentSlot::PrimarySaberShape,
+                self.config.ai.primary_saber.shape_item_guid,
+            ),
+            (
+                EquipmentSlot::PrimarySaberColor,
+                self.config.ai.primary_saber.color_item_guid,
+            ),
+        ]);
         if let Some(secondary_saber) = &self.config.ai.secondary_saber {
-            let (mut secondary_attachments, mut secondary_items) =
-                self.attachments_from_saber(secondary_saber, game_server)?;
-            attachments.append(&mut secondary_attachments);
-            items.append(&mut secondary_items);
+            items.extend([
+                (
+                    EquipmentSlot::SecondaryWeapon,
+                    secondary_saber.hilt_item_guid,
+                ),
+                (
+                    EquipmentSlot::SecondarySaberShape,
+                    secondary_saber.shape_item_guid,
+                ),
+                (
+                    EquipmentSlot::SecondarySaberColor,
+                    secondary_saber.color_item_guid,
+                ),
+            ]);
         }
+        let attachments = attachments_from_equipped_items(&items, game_server.items())
+            .into_iter()
+            .map(|attachment| attachment.into())
+            .collect();
 
         let wield_type = wield_type_from_inventory(&items, game_server);
 
@@ -681,12 +721,13 @@ impl SaberDuelGame {
                 },
                 opponent_entrance_animation_id: self
                     .player2
-                    .map(|_| self.config.player_entrance_animation_id)
+                    .map(|_| self.config.camera_entrance_animation_id)
                     .unwrap_or(self.config.ai.entrance_animation_id),
                 opponent_entrance_sound_id: self
                     .player2
                     .map(|_| 0)
-                    .unwrap_or(self.config.ai.entrance_sound_id),
+                    .or(self.config.ai.entrance_sound_id)
+                    .unwrap_or(0),
                 max_force_points: self.config.max_force_points.into(),
                 paused: false,
                 enable_memory_challenge: self.config.memory_challenge,
@@ -1003,7 +1044,7 @@ impl SaberDuelGame {
         &self,
         player: u32,
         minigame_status: &mut MinigameStatus,
-    ) -> Result<(Vec<Broadcast>, Vec<u64>), ProcessPacketError> {
+    ) -> Result<MinigameRemovePlayerResult, ProcessPacketError> {
         let player_index = self.player_index(player)? as usize;
 
         let player_state = &self.player_states[player_index];
@@ -1117,11 +1158,14 @@ impl SaberDuelGame {
             score_points: 0,
         });
 
-        if self.is_ai_match() {
-            Ok((Vec::new(), vec![saber_duel_opponent_guid(self.player1)]))
-        } else {
-            Ok((Vec::new(), Vec::new()))
-        }
+        Ok(MinigameRemovePlayerResult {
+            broadcasts: Vec::new(),
+            characters_to_remove: match self.is_ai_match() {
+                true => vec![saber_duel_opponent_guid(self.player1)],
+                false => Vec::new(),
+            },
+            end_game_for_all: true,
+        })
     }
 
     pub fn mark_player_ready(&mut self, sender: u32) -> Result<Vec<Broadcast>, ProcessPacketError> {
@@ -1183,62 +1227,6 @@ impl SaberDuelGame {
         }
 
         Ok(broadcasts)
-    }
-
-    fn get_item<'a>(
-        &self,
-        game_server: &'a GameServer,
-        item_guid: u32,
-    ) -> Result<&'a ItemDefinition, ProcessPacketError> {
-        game_server.items().get(&item_guid).ok_or_else(|| ProcessPacketError::new(
-            ProcessPacketErrorType::ConstraintViolated,
-            format!("Tried to equip item {item_guid} in Saber Duel, but it doesn't exist ({self:?})")
-        ))
-    }
-
-    fn attachments_from_saber(
-        &self,
-        saber: &SaberDuelEquippableSaber,
-        game_server: &GameServer,
-    ) -> Result<(Vec<Attachment>, BTreeMap<EquipmentSlot, u32>), ProcessPacketError> {
-        let hilt = self.get_item(game_server, saber.hilt_item_guid)?;
-        let shape = self.get_item(game_server, saber.shape_item_guid)?;
-        let color = self.get_item(game_server, saber.color_item_guid)?;
-
-        let mut items = BTreeMap::new();
-        items.insert(hilt.slot.into(), hilt.guid);
-        items.insert(shape.slot.into(), shape.guid);
-        items.insert(color.slot.into(), color.guid);
-
-        Ok((
-            vec![
-                Attachment {
-                    model_name: hilt.model_name.clone(),
-                    texture_alias: hilt.texture_alias.clone(),
-                    tint_alias: hilt.tint_alias.clone(),
-                    tint: hilt.tint,
-                    composite_effect: hilt.composite_effect,
-                    slot: hilt.slot.into(),
-                },
-                Attachment {
-                    model_name: shape.model_name.clone(),
-                    texture_alias: shape.texture_alias.clone(),
-                    tint_alias: shape.tint_alias.clone(),
-                    tint: color.tint,
-                    composite_effect: shape.composite_effect,
-                    slot: shape.slot.into(),
-                },
-                Attachment {
-                    model_name: color.model_name.clone(),
-                    texture_alias: color.texture_alias.clone(),
-                    tint_alias: color.tint_alias.clone(),
-                    tint: color.tint,
-                    composite_effect: color.composite_effect,
-                    slot: color.slot.into(),
-                },
-            ],
-            items,
-        ))
     }
 
     fn is_ai_match(&self) -> bool {
@@ -1369,8 +1357,7 @@ impl SaberDuelGame {
             keys.push(thread_rng().gen());
         }
 
-        let mut time_until_first_ai_key =
-            Duration::from_millis(self.config.ai.millis_per_key.into());
+        let mut time_until_first_ai_key = SaberDuelGame::next_ai_key_duration(&self.config);
         if self.config.memory_challenge {
             time_until_first_ai_key =
                 time_until_first_ai_key.saturating_add(MEMORY_CHALLENGE_AI_DELAY);
@@ -1425,6 +1412,12 @@ impl SaberDuelGame {
         broadcasts
     }
 
+    fn next_ai_key_duration(config: &SaberDuelConfig) -> Duration {
+        let millis =
+            thread_rng().gen_range(config.ai.min_millis_per_key..=config.ai.max_millis_per_key);
+        Duration::from_millis(millis.into())
+    }
+
     #[must_use]
     fn tick_ai_keypress(
         now: Instant,
@@ -1459,7 +1452,7 @@ impl SaberDuelGame {
         } else if player_state.increment_progress() && bout_completed_time.is_none() {
             *bout_completed_time = Some(bout_time_remaining.time_until_next_event(now));
         }
-        ai_next_key.schedule_event(Duration::from_millis(config.ai.millis_per_key.into()), now);
+        ai_next_key.schedule_event(SaberDuelGame::next_ai_key_duration(config), now);
 
         true
     }
@@ -1595,8 +1588,8 @@ impl SaberDuelGame {
                     winner_index: leader_index.into(),
                     sound_id: match self.is_ai_match() {
                         true => match leader_index == 0 {
-                            true => self.config.ai.bout_lost_sound_id,
-                            false => self.config.ai.bout_won_sound_id,
+                            true => self.config.ai.round_lost_sound_id.unwrap_or(0),
+                            false => self.config.ai.round_won_sound_id.unwrap_or(0),
                         },
                         false => 0,
                     },
@@ -1623,8 +1616,8 @@ impl SaberDuelGame {
                     winner_index: leader_index.into(),
                     sound_id: match self.is_ai_match() {
                         true => match leader_index == 0 {
-                            true => self.config.ai.game_lost_sound_id,
-                            false => self.config.ai.game_won_sound_id,
+                            true => self.config.ai.game_lost_sound_id.unwrap_or(0),
+                            false => self.config.ai.game_won_sound_id.unwrap_or(0),
                         },
                         false => 0,
                     },
