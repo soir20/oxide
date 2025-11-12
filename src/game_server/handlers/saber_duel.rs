@@ -372,6 +372,21 @@ where
     }
 }
 
+#[derive(Clone, Copy, Debug, Default, Deserialize, PartialEq, Eq)]
+pub enum SaberDuelChallenge {
+    #[default]
+    None,
+    Victory,
+    Memory,
+    PerfectAccuracy,
+}
+
+impl SaberDuelChallenge {
+    pub fn is_challenge(&self) -> bool {
+        *self == Self::None
+    }
+}
+
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct SaberDuelConfig {
@@ -417,9 +432,7 @@ pub struct SaberDuelConfig {
     #[serde(default)]
     force_powers: BTreeMap<SaberDuelForcePower, SaberDuelAvailableForcePower>,
     #[serde(default)]
-    memory_challenge: bool,
-    #[serde(default)]
-    perfect_accuracy_challenge: bool,
+    challenge: SaberDuelChallenge,
 }
 
 pub fn process_saber_duel_packet(
@@ -732,7 +745,10 @@ impl SaberDuelGame {
                     .unwrap_or(0),
                 max_force_points: self.config.max_force_points.into(),
                 paused: false,
-                enable_memory_challenge: self.config.memory_challenge,
+                enable_memory_challenge: matches!(
+                    self.config.challenge,
+                    SaberDuelChallenge::Memory
+                ),
                 force_powers: self
                     .config
                     .force_powers
@@ -1362,7 +1378,7 @@ impl SaberDuelGame {
         }
 
         let mut time_until_first_ai_key = SaberDuelGame::next_ai_key_duration(&self.config);
-        if self.config.memory_challenge {
+        if matches!(self.config.challenge, SaberDuelChallenge::Memory) {
             time_until_first_ai_key =
                 time_until_first_ai_key.saturating_add(MEMORY_CHALLENGE_AI_DELAY);
         }
@@ -1613,9 +1629,10 @@ impl SaberDuelGame {
         config: &SaberDuelConfig,
         player_state: &SaberDuelPlayerState,
     ) -> bool {
-        (config.memory_challenge || config.perfect_accuracy_challenge)
+        config.challenge.is_challenge()
             && !Self::has_player_beat_opponent(config, player_state)
-            && (!config.perfect_accuracy_challenge || player_state.total_mistakes == 0)
+            && (!matches!(config.challenge, SaberDuelChallenge::PerfectAccuracy)
+                || player_state.total_mistakes == 0)
     }
 
     fn has_player_won_game(config: &SaberDuelConfig, player_state: &SaberDuelPlayerState) -> bool {
@@ -1628,8 +1645,17 @@ impl SaberDuelGame {
             timer: MinigameCountdown::new_with_event(GAME_END_DELAY),
         };
         self.stopwatch.pause_or_resume(true);
-        vec![Broadcast::Multi(
-            self.recipients.clone(),
+
+        let sound_id = match self.is_ai_match() {
+            true => match leader_index == 0 {
+                true => self.config.ai.game_lost_sound_id.unwrap_or(0),
+                false => self.config.ai.game_won_sound_id.unwrap_or(0),
+            },
+            false => 0,
+        };
+
+        let mut broadcasts = vec![Broadcast::Single(
+            self.player1,
             vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: SaberDuelGameOver {
@@ -1639,18 +1665,40 @@ impl SaberDuelGame {
                         stage_group_guid: self.group.stage_group_guid,
                     },
                     winner_index: leader_index.into(),
-                    sound_id: match self.is_ai_match() {
-                        true => match leader_index == 0 {
-                            true => self.config.ai.game_lost_sound_id.unwrap_or(0),
-                            false => self.config.ai.game_won_sound_id.unwrap_or(0),
-                        },
-                        false => 0,
-                    },
+                    sound_id,
                     round_lost: false,
-                    challenge_failed: false,
+                    challenge_failed: Self::has_player_failed_challenge(
+                        &self.config,
+                        &self.player_states[0],
+                    ),
                 },
             })],
-        )]
+        )];
+
+        if let Some(player2) = self.player2 {
+            broadcasts.push(Broadcast::Single(
+                player2,
+                vec![GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: SaberDuelGameOver {
+                        minigame_header: MinigameHeader {
+                            stage_guid: self.group.stage_guid,
+                            sub_op_code: SaberDuelOpCode::GameOver as i32,
+                            stage_group_guid: self.group.stage_group_guid,
+                        },
+                        winner_index: leader_index.into(),
+                        sound_id,
+                        round_lost: false,
+                        challenge_failed: Self::has_player_failed_challenge(
+                            &self.config,
+                            &self.player_states[1],
+                        ),
+                    },
+                })],
+            ));
+        }
+
+        broadcasts
     }
 
     fn apply_force_power_from_index(
