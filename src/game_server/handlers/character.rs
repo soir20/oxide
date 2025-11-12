@@ -286,7 +286,7 @@ impl BaseNpc {
                 unknown40: 0,
                 bounce_area_id: self.bounce_area_id,
                 image_set_id: 0,
-                collision: true,
+                clickable: true,
                 rider_guid: 0,
                 physics: character.physics,
                 interact_popup_radius: self
