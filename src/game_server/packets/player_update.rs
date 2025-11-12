@@ -777,7 +777,7 @@ pub struct AddNpc {
     pub tint_id: u32,
     pub unknown11: bool,
     pub offset_y: f32,
-    pub composite_effect: u32,
+    pub composite_effect_id: u32,
     pub wield_type: WieldType,
     pub name_override: String,
     pub hide_name: bool,

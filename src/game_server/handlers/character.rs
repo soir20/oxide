@@ -143,6 +143,7 @@ pub struct BaseNpcConfig {
     pub texture_alias: String,
     #[serde(default)]
     pub name_id: u32,
+    pub sub_title_id: Option<u32>,
     #[serde(default)]
     pub terrain_object_id: u32,
     #[serde(default = "default_scale")]
@@ -189,12 +190,14 @@ pub struct BaseNpcConfig {
     pub synchronize_with: Option<String>,
     #[serde(default = "default_true")]
     pub is_spawned: bool,
+    pub composite_effect_id: Option<u32>,
 }
 
 #[derive(Clone)]
 pub struct BaseNpc {
     pub texture_alias: String,
     pub name_id: u32,
+    pub sub_title_id: Option<u32>,
     pub terrain_object_id: u32,
     pub name_offset_x: f32,
     pub name_offset_y: f32,
@@ -207,6 +210,7 @@ pub struct BaseNpc {
     pub enable_tilt: bool,
     pub use_terrain_model: bool,
     pub attachments: Vec<Attachment>,
+    pub composite_effect_id: Option<u32>,
 }
 
 impl BaseNpc {
@@ -239,7 +243,7 @@ impl BaseNpc {
                 tint_id: 0,
                 unknown11: true,
                 offset_y: 0.0,
-                composite_effect: 0,
+                composite_effect_id: self.composite_effect_id.unwrap_or_default(),
                 wield_type: character.wield_type(),
                 name_override: "".to_string(),
                 hide_name: !self.show_name,
@@ -256,7 +260,7 @@ impl BaseNpc {
                 stand_animation_id: character.stand_animation_id,
                 unknown26: false,
                 disable_gravity: !self.enable_gravity,
-                sub_title_id: 0,
+                sub_title_id: self.sub_title_id.unwrap_or_default(),
                 one_shot_animation_id: 0,
                 temporary_model: 0,
                 effects: vec![],
@@ -332,6 +336,7 @@ impl From<BaseNpcConfig> for BaseNpc {
         BaseNpc {
             texture_alias: value.texture_alias,
             name_id: value.name_id,
+            sub_title_id: value.sub_title_id,
             terrain_object_id: value.terrain_object_id,
             name_offset_x: value.name_offset_x,
             name_offset_y: value.name_offset_y,
@@ -344,6 +349,7 @@ impl From<BaseNpcConfig> for BaseNpc {
             enable_tilt: value.enable_tilt,
             use_terrain_model: value.use_terrain_model,
             attachments: Vec::new(),
+            composite_effect_id: value.composite_effect_id,
         }
     }
 }
