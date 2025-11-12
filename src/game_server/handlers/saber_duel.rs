@@ -381,12 +381,6 @@ pub enum SaberDuelChallenge {
     PerfectAccuracy,
 }
 
-impl SaberDuelChallenge {
-    pub fn is_challenge(&self) -> bool {
-        !matches!(self, Self::None)
-    }
-}
-
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct SaberDuelConfig {
@@ -1629,7 +1623,7 @@ impl SaberDuelGame {
         config: &SaberDuelConfig,
         player_state: &SaberDuelPlayerState,
     ) -> bool {
-        let is_challenge = config.challenge.is_challenge();
+        let is_challenge = !matches!(config.challenge, SaberDuelChallenge::None);
         let is_accuracy_challenge = matches!(config.challenge, SaberDuelChallenge::PerfectAccuracy);
         let beat_opponent = Self::has_player_beat_opponent(config, player_state);
         let made_mistake = player_state.total_mistakes > 0;
