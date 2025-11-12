@@ -383,7 +383,7 @@ pub enum SaberDuelChallenge {
 
 impl SaberDuelChallenge {
     pub fn is_challenge(&self) -> bool {
-        *self == Self::None
+        !matches!(self, Self::None)
     }
 }
 
