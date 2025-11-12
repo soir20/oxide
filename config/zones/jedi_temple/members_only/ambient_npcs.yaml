@@ -83,6 +83,7 @@ members_only:
         one_shot_action_animation_id: 2506
         duration_millis: 1000
       interact_radius: 6
+      auto_interact_radius: 5
     # Liftable Crate
     members_only_npc_1:
       model_id: 825
