@@ -38,6 +38,7 @@ members_only:
         w: 0
       stand_animation_id: 2505
       cursor: 54
+      clickable: false
       enable_interact_popup: false
       one_shot_action_on_interact:
         one_shot_action_animation_id: 2506
@@ -58,6 +59,7 @@ members_only:
         w: 0
       stand_animation_id: 2505
       cursor: 54
+      clickable: false
       enable_interact_popup: false
       one_shot_action_on_interact:
         one_shot_action_animation_id: 2506
@@ -78,6 +80,7 @@ members_only:
         w: 0
       stand_animation_id: 2505
       cursor: 54
+      clickable: false
       enable_interact_popup: false
       one_shot_action_on_interact:
         one_shot_action_animation_id: 2506
