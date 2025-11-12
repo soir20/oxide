@@ -472,7 +472,7 @@ pub fn spawn_mount_npc(
                 unknown40: 0,
                 bounce_area_id: -1,
                 image_set_id: 0,
-                collision: true,
+                clickable: true,
                 rider_guid: 0,
                 physics: PhysicsState::default(),
                 interact_popup_radius: 0.0,
