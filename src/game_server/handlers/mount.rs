@@ -429,7 +429,7 @@ pub fn spawn_mount_npc(
                 tint_id: 0,
                 unknown11: true,
                 offset_y: 0.0,
-                composite_effect: 0,
+                composite_effect_id: 0,
                 wield_type: WieldType::None,
                 name_override: "".to_string(),
                 hide_name: true,

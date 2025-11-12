@@ -626,6 +626,7 @@ impl SaberDuelGame {
                     enable_tilt: false,
                     use_terrain_model: false,
                     attachments,
+                    composite_effect_id: 0,
                 },
                 procedure_on_interact: None,
                 one_shot_action_on_interact: None,

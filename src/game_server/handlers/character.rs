@@ -189,6 +189,7 @@ pub struct BaseNpcConfig {
     pub synchronize_with: Option<String>,
     #[serde(default = "default_true")]
     pub is_spawned: bool,
+    pub composite_effect_id: u32,
 }
 
 #[derive(Clone)]
@@ -207,6 +208,7 @@ pub struct BaseNpc {
     pub enable_tilt: bool,
     pub use_terrain_model: bool,
     pub attachments: Vec<Attachment>,
+    pub composite_effect_id: u32,
 }
 
 impl BaseNpc {
@@ -239,7 +241,7 @@ impl BaseNpc {
                 tint_id: 0,
                 unknown11: true,
                 offset_y: 0.0,
-                composite_effect: 0,
+                composite_effect_id: self.composite_effect_id,
                 wield_type: character.wield_type(),
                 name_override: "".to_string(),
                 hide_name: !self.show_name,
@@ -344,6 +346,7 @@ impl From<BaseNpcConfig> for BaseNpc {
             enable_tilt: value.enable_tilt,
             use_terrain_model: value.use_terrain_model,
             attachments: Vec::new(),
+            composite_effect_id: value.composite_effect_id,
         }
     }
 }
