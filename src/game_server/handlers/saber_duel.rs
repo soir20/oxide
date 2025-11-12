@@ -1629,10 +1629,12 @@ impl SaberDuelGame {
         config: &SaberDuelConfig,
         player_state: &SaberDuelPlayerState,
     ) -> bool {
-        config.challenge.is_challenge()
-            && !Self::has_player_beat_opponent(config, player_state)
-            && (!matches!(config.challenge, SaberDuelChallenge::PerfectAccuracy)
-                || player_state.total_mistakes > 0)
+        let is_challenge = config.challenge.is_challenge();
+        let is_accuracy_challenge = matches!(config.challenge, SaberDuelChallenge::PerfectAccuracy);
+        let beat_opponent = Self::has_player_beat_opponent(config, player_state);
+        let made_mistake = player_state.total_mistakes > 0;
+
+        is_challenge && (!beat_opponent || (is_accuracy_challenge && made_mistake))
     }
 
     fn has_player_won_game(config: &SaberDuelConfig, player_state: &SaberDuelPlayerState) -> bool {
