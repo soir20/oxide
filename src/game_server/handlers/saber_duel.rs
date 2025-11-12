@@ -1632,7 +1632,7 @@ impl SaberDuelGame {
         config.challenge.is_challenge()
             && !Self::has_player_beat_opponent(config, player_state)
             && (!matches!(config.challenge, SaberDuelChallenge::PerfectAccuracy)
-                || player_state.total_mistakes == 0)
+                || player_state.total_mistakes > 0)
     }
 
     fn has_player_won_game(config: &SaberDuelConfig, player_state: &SaberDuelPlayerState) -> bool {
