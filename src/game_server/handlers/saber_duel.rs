@@ -628,6 +628,7 @@ impl SaberDuelGame {
                     attachments,
                     composite_effect_id: None,
                     sub_title_id: None,
+                    clickable: true,
                 },
                 procedure_on_interact: None,
                 one_shot_action_on_interact: None,

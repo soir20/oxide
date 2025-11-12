@@ -191,6 +191,8 @@ pub struct BaseNpcConfig {
     #[serde(default = "default_true")]
     pub is_spawned: bool,
     pub composite_effect_id: Option<u32>,
+    #[serde(default = "default_true")]
+    pub clickable: bool,
 }
 
 #[derive(Clone)]
@@ -211,6 +213,7 @@ pub struct BaseNpc {
     pub use_terrain_model: bool,
     pub attachments: Vec<Attachment>,
     pub composite_effect_id: Option<u32>,
+    pub clickable: bool,
 }
 
 impl BaseNpc {
@@ -286,7 +289,7 @@ impl BaseNpc {
                 unknown40: 0,
                 bounce_area_id: self.bounce_area_id,
                 image_set_id: 0,
-                clickable: true,
+                clickable: self.clickable,
                 rider_guid: 0,
                 physics: character.physics,
                 interact_popup_radius: self
@@ -350,6 +353,7 @@ impl From<BaseNpcConfig> for BaseNpc {
             use_terrain_model: value.use_terrain_model,
             attachments: Vec::new(),
             composite_effect_id: value.composite_effect_id,
+            clickable: value.clickable,
         }
     }
 }
