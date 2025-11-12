@@ -150,12 +150,7 @@ jedi_temple:
         y: 0
         z: 0
         w: 1.0
-      tickable_procedures:
-        daily_holocron_holo:
-          weight: 588
-          steps:
-            - composite_effect_id: 2053
-              duration_millis: 0
+      composite_effect_id: 2053
     daily_trivia_terminal_npc_1:
       model_id: 219
       enable_gravity: false
@@ -1720,12 +1715,7 @@ jedi_temple:
         y: 0
         z: -0.6692279
         w: 1.0
-      tickable_procedures:
-        infiltration_holo:
-          weight: 588
-          steps:
-            - composite_effect_id: 2044
-              duration_millis: 0
+      composite_effect_id: 2044
     # Battle Droid on Table
     workshop_npc_6:
       model_id: 1065
