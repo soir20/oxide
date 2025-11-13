@@ -328,11 +328,11 @@ categories:
                   challenges:
                     # Use base level's credit ratio as a placeholder
                     - guid: 31026
-                      name_id: &saber_duel_memory_name_id 9379
-                      description_id: &saber_duel_memory_description_id 9380
+                      name_id: *saber_duel_memory_name_id
+                      description_id: *saber_duel_memory_description_id
                       min_players: 1
                       max_players: 1
-                      start_sound_id: &saber_duel_memory_sound_id 4442
+                      start_sound_id: *saber_duel_memory_sound_id
                       members_only: false
                       minigame_type:
                         !SaberDuel
