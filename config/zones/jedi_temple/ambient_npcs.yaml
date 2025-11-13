@@ -22,7 +22,7 @@ jedi_temple:
       enable_interact_popup: false
       one_shot_action_on_interact:
         one_shot_action_animation_id: 2506
-        duration_millis: 1000
+        duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
     clone_guard_archives_2:
@@ -43,7 +43,7 @@ jedi_temple:
       enable_interact_popup: false
       one_shot_action_on_interact:
         one_shot_action_animation_id: 2506
-        duration_millis: 1000
+        duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
     clone_guard_archives_3:
@@ -64,7 +64,7 @@ jedi_temple:
       enable_interact_popup: false
       one_shot_action_on_interact:
         one_shot_action_animation_id: 2506
-        duration_millis: 1000
+        duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
     clone_guard_archives_4:
@@ -85,7 +85,7 @@ jedi_temple:
       enable_interact_popup: false
       one_shot_action_on_interact:
         one_shot_action_animation_id: 2506
-        duration_millis: 1000
+        duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
     clone_guard_archives_5:
@@ -106,7 +106,7 @@ jedi_temple:
       enable_interact_popup: false
       one_shot_action_on_interact:
         one_shot_action_animation_id: 2506
-        duration_millis: 1000
+        duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
     clone_guard_archives_6:
@@ -127,7 +127,7 @@ jedi_temple:
       enable_interact_popup: false
       one_shot_action_on_interact:
         one_shot_action_animation_id: 2506
-        duration_millis: 1000
+        duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
     # Gonk Droid on second floor
@@ -213,11 +213,12 @@ jedi_temple:
       stand_animation_id: 2547
       cursor: 54
       enable_interact_popup: false
+      interact_radius: 5
+      move_to_interact_offset: 4
       one_shot_action_on_interact:
         player_one_shot_animation_id: 3014
         one_shot_action_animation_id: 2548
-        duration_millis: 1000
-      interact_radius: 4
+        duration_millis: 2000
 
     #
     # Hanger
@@ -652,7 +653,7 @@ jedi_temple:
       enable_interact_popup: false
       one_shot_action_on_interact:
         one_shot_action_animation_id: 2506
-        duration_millis: 1000
+        duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
     clone_guard_hanger_2:
@@ -673,7 +674,7 @@ jedi_temple:
       enable_interact_popup: false
       one_shot_action_on_interact:
         one_shot_action_animation_id: 2506
-        duration_millis: 1000
+        duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
     # Dianoga Barrel
@@ -692,12 +693,12 @@ jedi_temple:
       stand_animation_id: 2301
       cursor: 54
       enable_interact_popup: false
-      interact_radius: 4
-      move_to_interact_offset: 4
+      interact_radius: 5
+      move_to_interact_offset: 4.9
       one_shot_action_on_interact:
         player_one_shot_animation_id: 3014
         one_shot_action_animation_id: 2302
-        duration_millis: 1000
+        duration_millis: 6000
     # Clone with Missile Rack
     hanger_npc_2:
       model_id: 968
@@ -714,12 +715,12 @@ jedi_temple:
       stand_animation_id: 2554
       cursor: 54
       enable_interact_popup: false
-      interact_radius: 4
-      move_to_interact_offset: 4
+      interact_radius: 5
+      move_to_interact_offset: 4.9
       one_shot_action_on_interact:
         player_one_shot_animation_id: 3014
         one_shot_action_animation_id: 2555
-        duration_millis: 1000
+        duration_millis: 8000
 
     #
     # Lounge
@@ -742,7 +743,7 @@ jedi_temple:
       enable_interact_popup: false
       one_shot_action_on_interact:
         one_shot_action_animation_id: 2506
-        duration_millis: 1000
+        duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
     clone_guard_lounge_2:
@@ -763,7 +764,7 @@ jedi_temple:
       enable_interact_popup: false
       one_shot_action_on_interact:
         one_shot_action_animation_id: 2506
-        duration_millis: 1000
+        duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
     # Arm wrestle clone
@@ -826,6 +827,28 @@ jedi_temple:
               weight: 300
             - procedure: empty
       synchronize_with: lounge_npc_1
+    # Three Interactible Cannisters
+    lounge_npc_3:
+      model_id: 826
+      pos:
+        x: -132.0
+        y: 10.04
+        z: 1280.0
+        w: 1
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2301
+      cursor: 54
+      enable_interact_popup: false
+      interact_radius: 5
+      move_to_interact_offset: 4.9
+      one_shot_action_on_interact:
+        player_one_shot_animation_id: 3014
+        one_shot_action_animation_id: 2302
+        duration_millis: 7000
 
     #
     # Main Hall
@@ -849,7 +872,7 @@ jedi_temple:
       enable_interact_popup: false
       one_shot_action_on_interact:
         one_shot_action_animation_id: 2506
-        duration_millis: 1000
+        duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
     # Guard Right of Warroom Door
@@ -871,7 +894,7 @@ jedi_temple:
       enable_interact_popup: false
       one_shot_action_on_interact:
         one_shot_action_animation_id: 2506
-        duration_millis: 1000
+        duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
     # Guard Left of Lounge Door
@@ -893,7 +916,7 @@ jedi_temple:
       enable_interact_popup: false
       one_shot_action_on_interact:
         one_shot_action_animation_id: 2506
-        duration_millis: 1000
+        duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
     # Guard Right of Lounge Door
@@ -915,7 +938,7 @@ jedi_temple:
       enable_interact_popup: false
       one_shot_action_on_interact:
         one_shot_action_animation_id: 2506
-        duration_millis: 1000
+        duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
     # Guard Left of Training Room Door
@@ -937,7 +960,7 @@ jedi_temple:
       enable_interact_popup: false
       one_shot_action_on_interact:
         one_shot_action_animation_id: 2506
-        duration_millis: 1000
+        duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
     # Guard Right of Training Room Door
@@ -959,7 +982,7 @@ jedi_temple:
       enable_interact_popup: false
       one_shot_action_on_interact:
         one_shot_action_animation_id: 2506
-        duration_millis: 1000
+        duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
     # Guard Left of Hanger Door
@@ -981,7 +1004,7 @@ jedi_temple:
       enable_interact_popup: false
       one_shot_action_on_interact:
         one_shot_action_animation_id: 2506
-        duration_millis: 1000
+        duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
     # Guard Right of Hanger Door
@@ -1003,7 +1026,7 @@ jedi_temple:
       enable_interact_popup: false
       one_shot_action_on_interact:
         one_shot_action_animation_id: 2506
-        duration_millis: 1000
+        duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
     # Guard Left Side Left of Shops Door
@@ -1025,7 +1048,7 @@ jedi_temple:
       enable_interact_popup: false
       one_shot_action_on_interact:
         one_shot_action_animation_id: 2506
-        duration_millis: 1000
+        duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
     # Guard Left Side Right of Shops Door
@@ -1047,7 +1070,7 @@ jedi_temple:
       enable_interact_popup: false
       one_shot_action_on_interact:
         one_shot_action_animation_id: 2506
-        duration_millis: 1000
+        duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
     # Guard Right Side Left of Shops Door
@@ -1069,7 +1092,7 @@ jedi_temple:
       enable_interact_popup: false
       one_shot_action_on_interact:
         one_shot_action_animation_id: 2506
-        duration_millis: 1000
+        duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
     # Guard Right Side Right of Shops Door
@@ -1091,9 +1114,31 @@ jedi_temple:
       enable_interact_popup: false
       one_shot_action_on_interact:
         one_shot_action_animation_id: 2506
-        duration_millis: 1000
+        duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
+    # Three Interactible Crates
+    main_hall_npc_1:
+      model_id: 187
+      pos:
+        x: 1243.6746
+        y: 10.038356
+        z: 263.5
+        w: 1
+      rot:
+        x: 0.25
+        y: 0
+        z: 0.5
+        w: 0
+      stand_animation_id: 2301
+      cursor: 54
+      enable_interact_popup: false
+      interact_radius: 5
+      move_to_interact_offset: 4.9
+      one_shot_action_on_interact:
+        player_one_shot_animation_id: 3014
+        one_shot_action_animation_id: 2302
+        duration_millis: 8000
 
     #
     # Shops
@@ -1142,7 +1187,7 @@ jedi_temple:
       enable_interact_popup: false
       one_shot_action_on_interact:
         one_shot_action_animation_id: 2506
-        duration_millis: 1000
+        duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
     # Guard Next to Workshop Door
@@ -1164,7 +1209,7 @@ jedi_temple:
       enable_interact_popup: false
       one_shot_action_on_interact:
         one_shot_action_animation_id: 2506
-        duration_millis: 1000
+        duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
     # Guard Top Left Main Hall Door
@@ -1186,7 +1231,7 @@ jedi_temple:
       enable_interact_popup: false
       one_shot_action_on_interact:
         one_shot_action_animation_id: 2506
-        duration_millis: 1000
+        duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
     # Guard Next to Archives Door
@@ -1208,7 +1253,7 @@ jedi_temple:
       enable_interact_popup: false
       one_shot_action_on_interact:
         one_shot_action_animation_id: 2506
-        duration_millis: 1000
+        duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
 
@@ -1675,10 +1720,12 @@ jedi_temple:
       stand_animation_id: 2560
       cursor: 54
       enable_interact_popup: false
+      interact_radius: 5
+      move_to_interact_offset: 4.9
       one_shot_action_on_interact:
         player_one_shot_animation_id: 3014
         one_shot_action_animation_id: 2561
-        duration_millis: 1000
+        duration_millis: 5000
     # Zombie Droid
     workshop_npc_2:
       model_id: 1027
@@ -1695,10 +1742,12 @@ jedi_temple:
       stand_animation_id: 2558
       cursor: 54
       enable_interact_popup: false
+      interact_radius: 5
+      move_to_interact_offset: 4.9
       one_shot_action_on_interact:
         player_one_shot_animation_id: 3014
         one_shot_action_animation_id: 2559
-        duration_millis: 1000
+        duration_millis: 12000
     # Pink Astromech Droid
     workshop_npc_3:
       model_id: 2220
@@ -1761,8 +1810,8 @@ jedi_temple:
       one_shot_action_on_interact:
         player_one_shot_animation_id: 3014
         one_shot_action_animation_id: 2563
-        duration_millis: 1000
-      interact_radius: 4
+        duration_millis: 5000
+      interact_radius: 5
       move_to_interact_offset: 4
     # Hidden Monkey Lizard
     workshop_npc_7:
