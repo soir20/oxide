@@ -827,8 +827,7 @@ jedi_temple:
               weight: 300
             - procedure: empty
       synchronize_with: lounge_npc_1
-    # Three Interactible Cannisters
-    lounge_npc_3:
+    three_interactible_cannisters:
       model_id: 826
       pos:
         x: -132.0
@@ -1117,8 +1116,7 @@ jedi_temple:
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
-    # Three Interactible Crates
-    main_hall_npc_1:
+    three_interactible_crates:
       model_id: 187
       pos:
         x: 1243.6746

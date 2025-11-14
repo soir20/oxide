@@ -108,8 +108,7 @@ members_only:
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
-    # Liftable Crate
-    members_only_npc_1:
+    liftable_crate:
       model_id: 825
       pos:
         x: 816.7
@@ -130,8 +129,7 @@ members_only:
         player_one_shot_animation_id: 3014
         one_shot_action_animation_id: 2302
         duration_millis: 7000
-    # Members Only Table 1
-    members_only_table_1:
+    members_only_jedi_table:
       model_id: 1010
       pos:
         x: 768.0
@@ -143,8 +141,7 @@ members_only:
         y: 0
         z: -1
         w: 0
-    # Jedi at Table
-    members_only_npc_2:
+    members_only_jedi_table_jedi_a:
       model_id: 39
       enable_gravity: false
       pos:
@@ -158,8 +155,7 @@ members_only:
         z: -1
         w: 0
       stand_animation_id: 2566
-    # Jedi at Table
-    members_only_npc_3:
+    members_only_jedi_table_jedi_b:
       model_id: 40
       enable_gravity: false
       pos:
@@ -173,8 +169,7 @@ members_only:
         z: -1
         w: 0
       stand_animation_id: 2567
-    # Members Only Table 2
-    members_only_table_2:
+    members_only_clones_table:
       model_id: 1010
       pos:
         x: 783.4057
@@ -186,8 +181,7 @@ members_only:
         y: 0
         z: -1
         w: 0
-    # Clone Playing Cards A
-    members_only_npc_4:
+    members_only_clones_table_clone_a:
       model_id: 1112
       enable_gravity: false
       pos:
@@ -201,8 +195,7 @@ members_only:
         z: -1
         w: 0
       stand_animation_id: 2585
-    # Clone Playing Cards B
-    members_only_npc_5:
+    members_only_clones_table_clone_b:
       model_id: 1112
       enable_gravity: false
       pos:
