@@ -937,6 +937,60 @@ enum MinigameStageGroupChild {
     Stage(Box<MinigameCampaignStageConfig>),
 }
 
+impl MinigameStageGroupChild {
+    pub fn validate(
+        &self,
+        stage_group_guids: &mut BTreeSet<i32>,
+        stage_guids: &mut BTreeSet<i32>,
+    ) -> Result<(), ConfigError> {
+        match self {
+            MinigameStageGroupChild::StageGroup(stage_group) => {
+                if !stage_group_guids.insert(stage_group.guid) {
+                    return Err(ConfigError::ConstraintViolated(format!(
+                        "Two stage groups have GUID {}",
+                        stage_group.guid
+                    )));
+                }
+
+                for child in stage_group.stages.iter() {
+                    child.validate(stage_group_guids, stage_guids)?;
+                }
+            }
+            MinigameStageGroupChild::Stage(stage) => {
+                for stage in iter::once(MinigameStageConfig::CampaignStage(stage)).chain(
+                    stage
+                        .challenges
+                        .iter()
+                        .map(|challenge| MinigameStageConfig::Challenge(challenge, stage)),
+                ) {
+                    if stage.min_players() == 0 {
+                        return Err(ConfigError::ConstraintViolated(format!(
+                            "Stage {} must have a minimum of at least 1 player",
+                            stage.guid()
+                        )));
+                    }
+
+                    if stage.max_players() < stage.min_players() {
+                        return Err(ConfigError::ConstraintViolated(format!(
+                            "Stage {}'s maximum player count is lower than its minimum player count",
+                            stage.guid()
+                        )));
+                    }
+
+                    if !stage_guids.insert(stage.guid()) {
+                        return Err(ConfigError::ConstraintViolated(format!(
+                            "Two stages have GUID {}",
+                            stage.guid()
+                        )));
+                    }
+                }
+            }
+        }
+
+        Ok(())
+    }
+}
+
 const fn default_true() -> bool {
     true
 }
@@ -1797,45 +1851,7 @@ pub fn load_all_minigames(config_dir: &Path) -> Result<AllMinigameConfigs, Confi
             }
 
             for child in potral_entry.stage_group.stages.iter() {
-                match child {
-                    MinigameStageGroupChild::StageGroup(stage_group) => {
-                        if !stage_group_guids.insert(stage_group.guid) {
-                            return Err(ConfigError::ConstraintViolated(format!(
-                                "Two stage groups have GUID {}",
-                                stage_group.guid
-                            )));
-                        }
-                    }
-                    MinigameStageGroupChild::Stage(stage) => {
-                        for stage in iter::once(MinigameStageConfig::CampaignStage(stage)).chain(
-                            stage
-                                .challenges
-                                .iter()
-                                .map(|challenge| MinigameStageConfig::Challenge(challenge, stage)),
-                        ) {
-                            if stage.min_players() == 0 {
-                                return Err(ConfigError::ConstraintViolated(format!(
-                                    "Stage {} must have a minimum of at least 1 player",
-                                    stage.guid()
-                                )));
-                            }
-
-                            if stage.max_players() < stage.min_players() {
-                                return Err(ConfigError::ConstraintViolated(format!(
-                                    "Stage {}'s maximum player count is lower than its minimum player count",
-                                    stage.guid()
-                                )));
-                            }
-
-                            if !stage_guids.insert(stage.guid()) {
-                                return Err(ConfigError::ConstraintViolated(format!(
-                                    "Two stages have GUID {}",
-                                    stage.guid()
-                                )));
-                            }
-                        }
-                    }
-                }
+                child.validate(&mut stage_group_guids, &mut stage_guids)?;
             }
         }
     }
