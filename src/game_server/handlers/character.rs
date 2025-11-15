@@ -589,7 +589,8 @@ impl OneShotInteractionTemplate {
                     character_guid: player_guid(requester),
                     animation_id,
                     queue_pos: 0,
-                    delay_seconds: self.player_one_shot_action.player_animation_delay_seconds as f32,
+                    delay_seconds: self.player_one_shot_action.player_animation_delay_seconds
+                        as f32,
                     duration_seconds: self.duration_millis as f32 / 1000.0,
                 },
             }));
@@ -913,15 +914,15 @@ impl TickableStep {
                         enable_escape: false,
                         unknown4: 0.0,
                         dialog_choices: vec![],
-                        camera_placement: camera_placement,
-                        look_at: look_at,
+                        camera_placement,
+                        look_at,
                         change_player_pos: false,
                         new_player_pos: Pos::default(),
                         unknown8: 0.0,
                         hide_players: !show_players,
                         unknown10: true,
                         unknown11: true,
-                        zoom: zoom,
+                        zoom,
                         speaker_sound_id: speaker_sound_id.unwrap_or(0),
                     },
                 }));
