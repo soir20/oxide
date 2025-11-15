@@ -466,6 +466,22 @@ impl OneShotAction {
 #[serde(deny_unknown_fields)]
 pub struct PlayerOneShotAction {
     pub player_one_shot_animation_id: Option<i32>,
+    #[serde(default)]
+    pub player_animation_delay_seconds: u32,
+    pub player_composite_effect_id: Option<u32>,
+    #[serde(default)]
+    pub player_effect_delay_millis: u32,
+}
+
+#[derive(Copy, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct NpcOneShotAction {
+    pub npc_one_shot_animation_id: Option<i32>,
+    #[serde(default)]
+    pub npc_animation_delay_seconds: f32,
+    pub npc_composite_effect_id: Option<u32>,
+    #[serde(default)]
+    pub npc_effect_delay_millis: u32,
 }
 
 #[derive(Clone, Deserialize)]
@@ -473,11 +489,11 @@ pub struct PlayerOneShotAction {
 pub struct OneShotInteractionConfig {
     #[serde(flatten, default)]
     pub one_shot_action: OneShotAction,
-    #[serde(default, flatten)]
-    pub player_action: PlayerOneShotAction,
+    #[serde(flatten)]
+    pub player_one_shot_action: PlayerOneShotAction,
+    #[serde(flatten)]
+    pub npc_one_shot_action: NpcOneShotAction,
     pub dialog_option_key: Option<String>,
-    pub one_shot_animation_id: Option<i32>,
-    pub composite_effect_id: Option<u32>,
     #[serde(default)]
     pub removal_mode: RemovalMode,
     #[serde(default)]
@@ -488,10 +504,9 @@ pub struct OneShotInteractionConfig {
 #[derive(Clone)]
 pub struct OneShotInteractionTemplate {
     pub one_shot_action: OneShotAction,
-    pub player_action: PlayerOneShotAction,
+    pub player_one_shot_action: PlayerOneShotAction,
+    pub npc_one_shot_action: NpcOneShotAction,
     pub dialog_option_id: Option<u32>,
-    pub one_shot_animation_id: Option<i32>,
-    pub composite_effect_id: Option<u32>,
     pub removal_mode: RemovalMode,
     pub despawn_npc: bool,
     pub duration_millis: u64,
@@ -516,9 +531,8 @@ impl OneShotInteractionTemplate {
         OneShotInteractionTemplate {
             one_shot_action: config.one_shot_action.clone(),
             dialog_option_id,
-            player_action: config.player_action,
-            one_shot_animation_id: config.one_shot_animation_id,
-            composite_effect_id: config.composite_effect_id,
+            player_one_shot_action: config.player_one_shot_action,
+            npc_one_shot_action: config.npc_one_shot_action,
             removal_mode: config.removal_mode,
             despawn_npc: config.despawn_npc,
             duration_millis: config.duration_millis,
@@ -541,42 +555,56 @@ impl OneShotInteractionTemplate {
             packets_for_all.extend(character.remove_packets(self.removal_mode));
         }
 
-        if let Some(animation_id) = self.one_shot_animation_id {
+        if let Some(animation_id) = self.npc_one_shot_action.npc_one_shot_animation_id {
             packets_for_all.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: QueueAnimation {
                     character_guid: Guid::guid(character),
                     animation_id,
                     queue_pos: 0,
-                    delay_seconds: 0.0,
+                    delay_seconds: self.npc_one_shot_action.npc_animation_delay_seconds,
                     duration_seconds: self.duration_millis as f32 / 1000.0,
                 },
             }));
         }
 
-        if let Some(composite_effect_id) = self.composite_effect_id {
+        if let Some(composite_effect_id) = self.npc_one_shot_action.npc_composite_effect_id {
             packets_for_all.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: PlayCompositeEffect {
                     guid: Guid::guid(character),
                     triggered_by_guid: 0,
                     composite_effect: composite_effect_id,
-                    delay_millis: 0,
+                    delay_millis: self.npc_one_shot_action.npc_effect_delay_millis,
                     duration_millis: self.duration_millis as u32,
                     pos: Pos::default(),
                 },
             }));
         }
 
-        if let Some(animation_id) = self.player_action.player_one_shot_animation_id {
+        if let Some(animation_id) = self.player_one_shot_action.player_one_shot_animation_id {
             packets_for_all.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: QueueAnimation {
                     character_guid: player_guid(requester),
                     animation_id,
                     queue_pos: 0,
-                    delay_seconds: 0.0,
+                    delay_seconds: self.player_one_shot_action.player_animation_delay_seconds as f32,
                     duration_seconds: self.duration_millis as f32 / 1000.0,
+                },
+            }));
+        }
+
+        if let Some(composite_effect_id) = self.player_one_shot_action.player_composite_effect_id {
+            packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: PlayCompositeEffect {
+                    guid: player_guid(requester),
+                    triggered_by_guid: 0,
+                    composite_effect: composite_effect_id,
+                    delay_millis: self.player_one_shot_action.player_effect_delay_millis,
+                    duration_millis: self.duration_millis as u32,
+                    pos: Pos::default(),
                 },
             }));
         }
@@ -584,7 +612,6 @@ impl OneShotInteractionTemplate {
         if let Some(dialog_option_id) = self.dialog_option_id {
             let dialog_packets =
                 handle_dialog_buttons(requester, dialog_option_id, player_stats, zone_instance)?;
-
             packets_for_sender.extend(dialog_packets);
         }
 
@@ -627,18 +654,15 @@ pub struct TickableStep {
     pub new_rot_offset_y: f32,
     #[serde(default)]
     pub new_rot_offset_z: f32,
+    #[serde(flatten)]
+    pub npc_one_shot_action: NpcOneShotAction,
     pub animation_id: Option<i32>,
-    pub one_shot_animation_id: Option<i32>,
     pub chat_message_id: Option<u32>,
     pub model_id: Option<u32>,
     pub sound_id: Option<u32>,
     pub rail_id: Option<u32>,
-    pub composite_effect_id: Option<u32>,
-    pub player_one_shot_animation_id: Option<i32>,
     #[serde(default)]
     pub dialog_mode: TickableDialogMode,
-    #[serde(default)]
-    pub effect_delay_millis: u32,
     #[serde(flatten)]
     pub script: CustomScriptIntParams,
     #[serde(default)]
@@ -761,25 +785,6 @@ impl TickableStep {
             }));
         }
 
-        if let Some(composite_effect_id) = self.composite_effect_id {
-            packets_for_all.push(GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: PlayCompositeEffect {
-                    guid: Guid::guid(character),
-                    triggered_by_guid: 0,
-                    composite_effect: composite_effect_id,
-                    delay_millis: self.effect_delay_millis,
-                    duration_millis: self.duration_millis as u32,
-                    pos: Pos {
-                        x: 0.0,
-                        y: 0.0,
-                        z: 0.0,
-                        w: 0.0,
-                    },
-                },
-            }));
-        }
-
         if let Some(rail_id) = self.rail_id {
             packets_for_all.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
@@ -837,15 +842,34 @@ impl TickableStep {
             }));
         }
 
-        if let Some(animation_id) = self.one_shot_animation_id {
+        if let Some(animation_id) = self.npc_one_shot_action.npc_one_shot_animation_id {
             packets_for_all.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: QueueAnimation {
                     character_guid: Guid::guid(character),
                     animation_id,
                     queue_pos: 0,
-                    delay_seconds: 0.0,
+                    delay_seconds: self.npc_one_shot_action.npc_animation_delay_seconds,
                     duration_seconds: self.duration_millis as f32 / 1000.0,
+                },
+            }));
+        }
+
+        if let Some(composite_effect_id) = self.npc_one_shot_action.npc_composite_effect_id {
+            packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: PlayCompositeEffect {
+                    guid: Guid::guid(character),
+                    triggered_by_guid: 0,
+                    composite_effect: composite_effect_id,
+                    delay_millis: self.npc_one_shot_action.npc_effect_delay_millis,
+                    duration_millis: self.duration_millis as u32,
+                    pos: Pos {
+                        x: 0.0,
+                        y: 0.0,
+                        z: 0.0,
+                        w: 0.0,
+                    },
                 },
             }));
         }
@@ -863,20 +887,6 @@ impl TickableStep {
             }));
         }
 
-        if let Some(animation_id) = self.player_one_shot_animation_id {
-            for guid in nearby_player_guids {
-                packets_for_all.push(GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: QueueAnimation {
-                        character_guid: player_guid(*guid),
-                        animation_id,
-                        queue_pos: 0,
-                        delay_seconds: 0.0,
-                        duration_seconds: self.duration_millis as f32 / 1000.0,
-                    },
-                }));
-            }
-        }
         match self.dialog_mode {
             TickableDialogMode::Open {
                 camera_placement,
