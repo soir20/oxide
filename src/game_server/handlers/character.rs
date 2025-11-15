@@ -2064,9 +2064,9 @@ pub enum CharacterTypeTemplate {
 impl CharacterTypeTemplate {
     pub fn instantiate(self) -> CharacterType {
         match self {
-            CharacterTypeTemplate::AmbientNpc(t) => CharacterType::AmbientNpc(t.instantiate()),
-            CharacterTypeTemplate::Door(t) => CharacterType::Door(t.instantiate()),
-            CharacterTypeTemplate::Transport(t) => CharacterType::Transport(t.instantiate()),
+            CharacterTypeTemplate::AmbientNpc(template) => CharacterType::AmbientNpc(template.instantiate()),
+            CharacterTypeTemplate::Door(template) => CharacterType::Door(template.instantiate()),
+            CharacterTypeTemplate::Transport(template) => CharacterType::Transport(template.instantiate()),
         }
     }
 }
