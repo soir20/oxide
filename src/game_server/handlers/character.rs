@@ -19,7 +19,7 @@ use crate::{
         packets::{
             chat::{ActionBarTextColor, SendStringId},
             client_update::UpdateCredits,
-            command::PlaySoundIdOnTarget,
+            command::{EnterDialog, ExitDialog, PlaySoundIdOnTarget},
             item::{Attachment, BaseAttachmentGroup, EquipmentSlot, ItemDefinition, WieldType},
             minigame::ScoreEntry,
             player_update::{
@@ -150,6 +150,25 @@ pub enum ScriptType {
     OpenMinigameStageGroup {
         stage_group_id: i32,
     },
+}
+
+#[derive(Clone, Copy, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub enum TickableDialogMode {
+    #[default]
+    None,
+    Open {
+        camera_placement: Pos,
+        look_at: Pos,
+        dialog_message_id: Option<u32>,
+        speaker_animation_id: Option<i32>,
+        speaker_sound_id: Option<u32>,
+        #[serde(default)]
+        zoom: f32,
+        #[serde(default)]
+        show_players: bool,
+    },
+    Close,
 }
 
 #[derive(Clone, Deserialize)]
@@ -580,6 +599,14 @@ impl OneShotInteractionTemplate {
 
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
+pub struct CustomScriptIntParams {
+    pub script_name: Option<String>,
+    #[serde(default)]
+    pub params: Vec<i32>,
+}
+
+#[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct TickableStep {
     pub speed: Option<f32>,
     pub new_pos_x: Option<f32>,
@@ -607,8 +634,13 @@ pub struct TickableStep {
     pub sound_id: Option<u32>,
     pub rail_id: Option<u32>,
     pub composite_effect_id: Option<u32>,
+    pub player_one_shot_animation_id: Option<i32>,
+    #[serde(default)]
+    pub dialog_mode: TickableDialogMode,
     #[serde(default)]
     pub effect_delay_millis: u32,
+    #[serde(flatten)]
+    pub script: CustomScriptIntParams,
     #[serde(default)]
     pub removal_mode: RemovalMode,
     #[serde(default)]
@@ -827,6 +859,86 @@ impl TickableStep {
                         fallback_pos: character.pos,
                         guid: Guid::guid(character),
                     }),
+                },
+            }));
+        }
+
+        if let Some(animation_id) = self.player_one_shot_animation_id {
+            for guid in nearby_player_guids {
+                packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: QueueAnimation {
+                        character_guid: player_guid(*guid),
+                        animation_id,
+                        queue_pos: 0,
+                        delay_seconds: 0.0,
+                        duration_seconds: self.duration_millis as f32 / 1000.0,
+                    },
+                }));
+            }
+        }
+        match self.dialog_mode {
+            TickableDialogMode::Open {
+                camera_placement,
+                look_at,
+                dialog_message_id,
+                speaker_animation_id,
+                speaker_sound_id,
+                zoom,
+                show_players,
+            } => {
+                packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: ExecuteScriptWithIntParams {
+                        script_name: "UIGlobal.DialogDisableInteraction".to_string(),
+                        params: vec![],
+                    },
+                }));
+                packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: EnterDialog {
+                        dialog_message_id: dialog_message_id.unwrap_or(0),
+                        speaker_animation_id: speaker_animation_id.unwrap_or(0),
+                        speaker_guid: Guid::guid(character),
+                        enable_escape: false,
+                        unknown4: 0.0,
+                        dialog_choices: vec![],
+                        camera_placement: camera_placement,
+                        look_at: look_at,
+                        change_player_pos: false,
+                        new_player_pos: Pos::default(),
+                        unknown8: 0.0,
+                        hide_players: !show_players,
+                        unknown10: true,
+                        unknown11: true,
+                        zoom: zoom,
+                        speaker_sound_id: speaker_sound_id.unwrap_or(0),
+                    },
+                }));
+            }
+            TickableDialogMode::Close => {
+                // Interaction must be enabled when exiting the dialog to prevent the UI from breaking
+                packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: ExecuteScriptWithIntParams {
+                        script_name: "UIGlobal.DialogenableInteraction".to_string(),
+                        params: vec![],
+                    },
+                }));
+                packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: ExitDialog {},
+                }));
+            }
+            TickableDialogMode::None => {}
+        }
+
+        if let Some(script) = &self.script.script_name {
+            packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: ExecuteScriptWithIntParams {
+                    script_name: script.to_string(),
+                    params: self.script.params.clone(),
                 },
             }));
         }
