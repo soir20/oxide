@@ -9,7 +9,7 @@ duel_venator_hangar_singleplayer:
   default_point_of_interest:
     guid: 206
     pos:
-      x: 236.4784
+      x: 237.8
       y: 25
       z: 249.7896
       w: 1
