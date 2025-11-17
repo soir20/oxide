@@ -24,7 +24,7 @@ categories:
         background_icon_id: 0
         is_popular: true
         is_game_of_day: false
-        sort_order: 8000
+        sort_order: 4000
         tutorial_swf: HowtoDueling.swf
         stage_group:
           guid: 31000
@@ -3116,6 +3116,28 @@ categories:
               stage_select_map_name: ''
               short_name: ''
               stages: []
+      - guid: 1027
+        name_id: 33128
+        description_id: 6394
+        members_only: true
+        is_flash: false
+        is_active: true
+        param1: 0
+        icon_id: 2726
+        background_icon_id: 0
+        is_popular: true
+        is_game_of_day: false
+        sort_order: 7000
+        tutorial_swf: HowtoDueling.swf
+        stage_group:
+          guid: 32000
+          name_id: 33128
+          description_id: 6394
+          icon_id: 2734
+          stage_icon_id: 2734
+          members_only: true
+          stage_select_map_name: lsDuelPortal
+          stages: []
       - guid: 9000
         name_id: 45187
         description_id: 45193
