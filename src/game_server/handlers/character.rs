@@ -91,6 +91,10 @@ const fn default_weight() -> u32 {
     1
 }
 
+pub const fn default_spawn_animation_id() -> i32 {
+    1
+}
+
 #[derive(Clone, Default, Deserialize, Eq, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub enum CursorUpdate {
@@ -193,6 +197,8 @@ pub struct BaseNpcConfig {
     pub composite_effect_id: Option<u32>,
     #[serde(default = "default_true")]
     pub clickable: bool,
+    #[serde(default = "default_spawn_animation_id")]
+    pub spawn_animation_id: i32,
 }
 
 #[derive(Clone)]
@@ -214,6 +220,7 @@ pub struct BaseNpc {
     pub attachments: Vec<Attachment>,
     pub composite_effect_id: Option<u32>,
     pub clickable: bool,
+    pub spawn_animation_id: i32,
 }
 
 impl BaseNpc {
@@ -237,7 +244,7 @@ impl BaseNpc {
                 scale: character.scale,
                 pos: character.pos,
                 rot: character.rot,
-                spawn_animation_id: 1,
+                spawn_animation_id: self.spawn_animation_id,
                 attachments: self.attachments.clone(),
                 hostility: Hostility::Neutral,
                 unknown10: 1,
@@ -354,6 +361,7 @@ impl From<BaseNpcConfig> for BaseNpc {
             attachments: Vec::new(),
             composite_effect_id: value.composite_effect_id,
             clickable: value.clickable,
+            spawn_animation_id: value.spawn_animation_id,
         }
     }
 }
