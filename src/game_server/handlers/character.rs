@@ -59,8 +59,8 @@ pub fn coerce_to_broadcast_supplier(
 
 pub const CHAT_BUBBLE_VISIBLE_RADIUS: f32 = 32.0;
 
-const fn default_movement_animation_id() -> i32 {
-    -1
+const fn default_stand_animation_id() -> i32 {
+    1
 }
 
 const fn default_fade_millis() -> u32 {
@@ -158,7 +158,7 @@ pub struct BaseNpcConfig {
     pub rot: Pos,
     #[serde(default)]
     pub possible_pos: Vec<Pos>,
-    #[serde(default = "default_movement_animation_id")]
+    #[serde(default = "default_stand_animation_id")]
     pub stand_animation_id: i32,
     #[serde(default)]
     pub name_offset_x: f32,
