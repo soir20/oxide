@@ -1,0 +1,50 @@
+---
+duel_dathomir_arena_night_singleplayer:
+  guid: 209
+  max_players: 1
+  template_name: 52203
+  asset_name: LD_Dathomir_Arena_Night
+  hide_ui: false
+  is_combat: false
+  default_point_of_interest:
+    guid: 209
+    pos:
+      x: 306
+      y: 100
+      z: 300
+      w: 1
+    rot:
+      x: 0
+      y: 0
+      z: 0
+      w: 0
+  spawn_sky: Sky_LD_Dathomir_Night.xml
+  speed: 0
+  jump_height_multiplier: 1
+  gravity_multiplier: 1
+  seconds_per_day: 10800
+  ambient_npcs:
+    blocks_a:
+      model_id: 1403
+      pos: &blocks_pos
+        x: 300
+        y: 100
+        z: 300
+        w: 1
+      rot: &blocks_rot
+        x: -1.57079633
+        y: 0
+        z: 0
+        w: 0
+    blocks_b:
+      model_id: 1404
+      pos: *blocks_pos
+      rot: *blocks_rot
+    blocks_c:
+      model_id: 1405
+      pos: *blocks_pos
+      rot: *blocks_rot
+    blocks_d:
+      model_id: 1406
+      pos: *blocks_pos
+      rot: *blocks_rot
