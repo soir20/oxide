@@ -26,6 +26,7 @@ duel_dathomir_arena_night_singleplayer:
   ambient_npcs:
     blocks_a:
       model_id: 1403
+      spawn_animation_id: &blocks_spawn_anim 2000
       pos: &blocks_pos
         x: 300
         y: 100
@@ -38,13 +39,16 @@ duel_dathomir_arena_night_singleplayer:
         w: 0
     blocks_b:
       model_id: 1404
+      spawn_animation_id: *blocks_spawn_anim
       pos: *blocks_pos
       rot: *blocks_rot
     blocks_c:
       model_id: 1405
+      spawn_animation_id: *blocks_spawn_anim
       pos: *blocks_pos
       rot: *blocks_rot
     blocks_d:
       model_id: 1406
+      spawn_animation_id: *blocks_spawn_anim
       pos: *blocks_pos
       rot: *blocks_rot
