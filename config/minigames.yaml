@@ -3137,7 +3137,29 @@ categories:
           stage_icon_id: 2734
           members_only: true
           stage_select_map_name: lsDuelPortal
-          stages: []
+          stages:
+            - !StageGroup
+              guid: 32001
+              name_id: 19814
+              description_id: 43799
+              icon_id: 2734
+              stage_icon_id: 2748
+              members_only: true
+              require_previous_completed: false
+              stage_select_map_name: lsDuel
+              short_name: sp
+              stages: []
+            - !StageGroup
+              guid: 32002
+              name_id: 19815
+              description_id: 43799
+              icon_id: 2734
+              stage_icon_id: 2744
+              members_only: true
+              require_previous_completed: false
+              stage_select_map_name: RepublicGunship
+              short_name: mp
+              stages: []
       - guid: 9000
         name_id: 45187
         description_id: 45193
