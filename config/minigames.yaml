@@ -3224,7 +3224,7 @@ categories:
                   short_name: ldlearnpower2
                   minigame_type:
                     !SaberDuel
-                    camera_rot: &saber_duel_venator_hangar_camera_rot 4.71
+                    camera_rot: *saber_duel_venator_hangar_camera_rot
                     rounds_to_win: *saber_duel_rounds_to_win
                     points_to_win_round: 4
                     keys_per_basic_bout: 4
