@@ -3360,10 +3360,7 @@ categories:
                     ai:
                       name_id: 1136
                       model_id: 364
-                      primary_saber:
-                        hilt_item_guid: 70045
-                        shape_item_guid: 50000
-                        color_item_guid: 60000
+                      wield_type_override: SingleSaber
                       entrance_animation_id: 6215
                       entrance_sound_id: 4734
                       round_won_sound_id: 4738

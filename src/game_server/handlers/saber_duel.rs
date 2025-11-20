@@ -26,7 +26,7 @@ use crate::game_server::{
         unique_guid::{player_guid, saber_duel_opponent_guid},
     },
     packets::{
-        item::EquipmentSlot,
+        item::{EquipmentSlot, WieldType},
         minigame::{MinigameHeader, ScoreEntry, ScoreType},
         saber_duel::{
             SaberDuelApplyForcePower, SaberDuelBoutInfo, SaberDuelBoutStart, SaberDuelBoutTied,
@@ -78,8 +78,9 @@ struct SaberDuelEquippableSaber {
 struct SaberDuelAi {
     name_id: u32,
     model_id: u32,
-    primary_saber: SaberDuelEquippableSaber,
+    primary_saber: Option<SaberDuelEquippableSaber>,
     secondary_saber: Option<SaberDuelEquippableSaber>,
+    wield_type_override: Option<WieldType>,
     entrance_animation_id: i32,
     entrance_sound_id: Option<u32>,
     round_won_sound_id: Option<u32>,
@@ -636,20 +637,21 @@ impl SaberDuelGame {
             return Ok(Vec::new());
         }
 
-        let mut items = BTreeMap::from([
-            (
-                EquipmentSlot::PrimaryWeapon,
-                self.config.ai.primary_saber.hilt_item_guid,
-            ),
-            (
-                EquipmentSlot::PrimarySaberShape,
-                self.config.ai.primary_saber.shape_item_guid,
-            ),
-            (
-                EquipmentSlot::PrimarySaberColor,
-                self.config.ai.primary_saber.color_item_guid,
-            ),
-        ]);
+        let mut items = BTreeMap::new();
+        if let Some(primary_saber) = &self.config.ai.primary_saber {
+            items.extend([
+                (EquipmentSlot::PrimaryWeapon, primary_saber.hilt_item_guid),
+                (
+                    EquipmentSlot::PrimarySaberShape,
+                    primary_saber.shape_item_guid,
+                ),
+                (
+                    EquipmentSlot::PrimarySaberColor,
+                    primary_saber.color_item_guid,
+                ),
+            ]);
+        }
+
         if let Some(secondary_saber) = &self.config.ai.secondary_saber {
             items.extend([
                 (
@@ -671,7 +673,11 @@ impl SaberDuelGame {
             .map(|attachment| attachment.into())
             .collect();
 
-        let wield_type = wield_type_from_inventory(&items, game_server);
+        let wield_type = self
+            .config
+            .ai
+            .wield_type_override
+            .unwrap_or_else(|| wield_type_from_inventory(&items, game_server));
 
         let opponent = Character::new(
             saber_duel_opponent_guid(self.player1),
