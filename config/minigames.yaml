@@ -3545,7 +3545,7 @@ categories:
                     camera_entrance_animation_id: *saber_duel_camera_entrance_animation_id
                     ai:
                       name_id: 4125
-                      model_id: 1383
+                      model_id: 1469
                       primary_saber:
                         hilt_item_guid: 70003
                         shape_item_guid: 50000
