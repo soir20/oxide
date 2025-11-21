@@ -3439,7 +3439,7 @@ categories:
                       game_won_sound_id: 5017
                       game_lost_sound_id: 5014
                       min_millis_per_key: 400
-                      max_millis_per_key: 1200
+                      max_millis_per_key: 1100
                       mistake_probability: *saber_duel_medium_mistake_probability
                     score_penalty_per_second: *saber_duel_medium_score_penalty_per_second
                     max_time_score_bonus: *saber_duel_max_time_score_bonus
