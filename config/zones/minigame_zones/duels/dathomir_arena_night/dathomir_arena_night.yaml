@@ -29,7 +29,7 @@ duel_dathomir_arena_night_singleplayer:
       spawn_animation_id: &blocks_spawn_anim 2000
       pos: &blocks_pos
         x: 300
-        y: 100
+        y: 99.75
         z: 300
         w: 1
       rot: &blocks_rot
