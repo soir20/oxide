@@ -27,6 +27,7 @@ duel_dathomir_arena_night_singleplayer:
     blocks_a:
       model_id: 1403
       spawn_animation_id: &blocks_spawn_anim 2000
+      stand_animation_id: &blocks_stand_anim 2100
       pos: &blocks_pos
         x: 300
         y: 99.75
@@ -40,15 +41,18 @@ duel_dathomir_arena_night_singleplayer:
     blocks_b:
       model_id: 1404
       spawn_animation_id: *blocks_spawn_anim
+      stand_animation_id: *blocks_stand_anim
       pos: *blocks_pos
       rot: *blocks_rot
     blocks_c:
       model_id: 1405
       spawn_animation_id: *blocks_spawn_anim
+      stand_animation_id: *blocks_stand_anim
       pos: *blocks_pos
       rot: *blocks_rot
     blocks_d:
       model_id: 1406
       spawn_animation_id: *blocks_spawn_anim
+      stand_animation_id: *blocks_stand_anim
       pos: *blocks_pos
       rot: *blocks_rot
