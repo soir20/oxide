@@ -3606,8 +3606,16 @@ categories:
                     points_per_special_bout: *saber_duel_points_per_special_bout
                     bout_max_millis: *saber_duel_bout_max_millis
                     tie_interval_millis: *saber_duel_tie_interval_millis
-                    basic_bout_animations: *saber_duel_basic_bout_animations
-                    special_bout_animations: *saber_duel_special_bout_animations
+                    basic_bout_animations:
+                      - attack_animation_id: 5037
+                        defend_animation_id: 5038
+                      - attack_animation_id: 5047
+                        defend_animation_id: 5048
+                      - attack_animation_id: 5067
+                        defend_animation_id: 5068
+                    special_bout_animations:
+                      - attack_animation_id: 5051
+                        defend_animation_id: 5052
                     establishing_animation_id: *saber_duel_establishing_animation_id
                     camera_entrance_animation_id: *saber_duel_camera_entrance_animation_id
                     ai:
