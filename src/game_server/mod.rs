@@ -350,7 +350,14 @@ impl GameServer {
                                             self.minigames(),
                                             minigame_status,
                                         )?,
-                                        None => Vec::new(),
+                                        None => vec![
+                                            Broadcast::Single(sender, vec![
+                                                GamePacket::serialize(&TunneledPacket {
+                                                    unknown1: true,
+                                                    inner: PreloadCharactersDone { unknown1: false },
+                                                })
+                                            ])
+                                        ],
                                     };
 
                                     if player.first_load {
@@ -555,12 +562,6 @@ impl GameServer {
                         inner: ZoneDetailsDone {},
                     };
                     sender_only_packets.push(GamePacket::serialize(&zone_details_done));
-
-                    let preload_characters_done = TunneledPacket {
-                        unknown1: true,
-                        inner: PreloadCharactersDone { unknown1: false },
-                    };
-                    sender_only_packets.push(GamePacket::serialize(&preload_characters_done));
 
                     broadcasts.push(Broadcast::Single(sender, sender_only_packets));
                     broadcasts.append(&mut final_broadcasts);

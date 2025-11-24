@@ -36,7 +36,7 @@ use crate::{
         },
         packets::{
             chat::{ActionBarTextColor, SendStringId},
-            client_update::UpdateCredits,
+            client_update::{PreloadCharactersDone, UpdateCredits},
             command::StartFlashGame,
             daily::{AddDailyMinigame, UpdateDailyMinigame},
             minigame::{
@@ -2654,7 +2654,14 @@ fn handle_request_start_active_minigame(
                                     stage_group_guid: minigame_status.group.stage_group_guid,
                                 },
                             },
-                        }),
+                        })
+                    );
+
+                    packets.push(
+                        GamePacket::serialize(&TunneledPacket {
+                            unknown1: true,
+                            inner: PreloadCharactersDone { unknown1: false },
+                        })
                     );
 
                     if let MinigameReadiness::InitialPlayersLoading(players, broadcasts) = &mut shared_minigame_data.readiness {
