@@ -151,6 +151,10 @@ impl SaberDuelPlayerState {
             return None;
         }
 
+        if self.is_ai && !ai.force_powers.contains_key(&force_power) {
+            return None;
+        }
+
         self.affordable_force_power(force_power, available_force_powers, ai)
     }
 
