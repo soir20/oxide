@@ -1876,7 +1876,7 @@ impl SaberDuelGame {
                         .get(&force_power)
                         .map(|definition| (definition.weight, definition.tutorial_enabled))
                         .unwrap_or((0, false)),
-                    _ => (0, false),
+                    None => (0, false),
                 };
 
                 (force_power, weight, tutorial_enabled)
