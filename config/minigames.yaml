@@ -3200,7 +3200,8 @@ categories:
                       opposite_ai_mistake_multiplier: *saber_duel_force_power_easy_mistake_multiplier
                       force_power_probability: 1
                       force_powers:
-                        ExtraKey: {}
+                        ExtraKey:
+                          tutorial_enabled: true
                       force_power_delay_millis: &saber_duel_force_power_delay_millis 2000
                     score_penalty_per_second: *saber_duel_easy_score_penalty_per_second
                     max_time_score_bonus: *saber_duel_max_time_score_bonus
@@ -3278,7 +3279,8 @@ categories:
                       opposite_ai_mistake_multiplier: *saber_duel_force_power_easy_mistake_multiplier
                       force_power_probability: 1
                       force_powers:
-                        RightToLeft: {}
+                        RightToLeft:
+                          tutorial_enabled: true
                       force_power_delay_millis: *saber_duel_force_power_delay_millis
                     score_penalty_per_second: *saber_duel_easy_score_penalty_per_second
                     max_time_score_bonus: *saber_duel_max_time_score_bonus
@@ -3356,7 +3358,8 @@ categories:
                       opposite_ai_mistake_multiplier: *saber_duel_force_power_easy_mistake_multiplier
                       force_power_probability: 1
                       force_powers:
-                        Opposite: {}
+                        Opposite:
+                          tutorial_enabled: true
                       force_power_delay_millis: *saber_duel_force_power_delay_millis
                     score_penalty_per_second: *saber_duel_easy_score_penalty_per_second
                     max_time_score_bonus: *saber_duel_max_time_score_bonus
