@@ -3196,8 +3196,8 @@ categories:
                       min_millis_per_key: 400
                       max_millis_per_key: 1300
                       mistake_probability: *saber_duel_easy_mistake_probability
-                      right_to_left_ai_mistake_multiplier: &saber_duel_force_power_easy_mistake_multiplier 2
-                      opposite_ai_mistake_multiplier: *saber_duel_force_power_easy_mistake_multiplier
+                      right_to_left_ai_mistake_multiplier: &saber_duel_easy_mistake_multiplier 2
+                      opposite_ai_mistake_multiplier: *saber_duel_easy_mistake_multiplier
                       force_power_probability: 1
                       force_powers:
                         ExtraKey:
@@ -3275,8 +3275,8 @@ categories:
                       min_millis_per_key: 400
                       max_millis_per_key: 1300
                       mistake_probability: *saber_duel_easy_mistake_probability
-                      right_to_left_ai_mistake_multiplier: *saber_duel_force_power_easy_mistake_multiplier
-                      opposite_ai_mistake_multiplier: *saber_duel_force_power_easy_mistake_multiplier
+                      right_to_left_ai_mistake_multiplier: *saber_duel_easy_mistake_multiplier
+                      opposite_ai_mistake_multiplier: *saber_duel_easy_mistake_multiplier
                       force_power_probability: 1
                       force_powers:
                         RightToLeft:
@@ -3355,8 +3355,8 @@ categories:
                       min_millis_per_key: 400
                       max_millis_per_key: 1300
                       mistake_probability: *saber_duel_easy_mistake_probability
-                      right_to_left_ai_mistake_multiplier: *saber_duel_force_power_easy_mistake_multiplier
-                      opposite_ai_mistake_multiplier: *saber_duel_force_power_easy_mistake_multiplier
+                      right_to_left_ai_mistake_multiplier: *saber_duel_easy_mistake_multiplier
+                      opposite_ai_mistake_multiplier: *saber_duel_easy_mistake_multiplier
                       force_power_probability: 1
                       force_powers:
                         Opposite:
@@ -3441,8 +3441,8 @@ categories:
                       min_millis_per_key: 400
                       max_millis_per_key: 1200
                       mistake_probability: *saber_duel_easy_mistake_probability
-                      right_to_left_ai_mistake_multiplier: *saber_duel_force_power_easy_mistake_multiplier
-                      opposite_ai_mistake_multiplier: *saber_duel_force_power_easy_mistake_multiplier
+                      right_to_left_ai_mistake_multiplier: *saber_duel_easy_mistake_multiplier
+                      opposite_ai_mistake_multiplier: *saber_duel_easy_mistake_multiplier
                       force_power_probability: &saber_duel_easy_force_power_probability 0.25
                       force_powers:
                         ExtraKey: {}
