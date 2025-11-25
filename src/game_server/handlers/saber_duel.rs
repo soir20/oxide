@@ -1769,14 +1769,12 @@ impl SaberDuelGame {
         let player_state = &self.player_states[player_index as usize];
         let other_player_state = &self.player_states[other_player_index];
 
-        let definition = player_state.usable_force_power(
+        let Some(definition) = player_state.usable_force_power(
             force_power,
             &self.config.force_powers,
             other_player_state,
             &self.config.ai,
-        );
-
-        let Some(definition) = definition else {
+        ) else {
             return Err(ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
                 format!(
