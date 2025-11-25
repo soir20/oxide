@@ -115,6 +115,7 @@ struct SaberDuelAppliedForcePower {
 
 #[derive(Clone, Debug, Default)]
 struct SaberDuelPlayerState {
+    pub is_ai: bool,
     pub ready: bool,
     pub rounds_won: u8,
     pub round_points: u8,
@@ -144,32 +145,20 @@ impl SaberDuelPlayerState {
         force_power: SaberDuelForcePower,
         available_force_powers: &'a BTreeMap<SaberDuelForcePower, SaberDuelAvailableForcePower>,
         other_player_state: &SaberDuelPlayerState,
-    ) -> Option<&'a SaberDuelAvailableForcePower> {
-        if other_player_state.is_affected_by(force_power) {
-            return None;
-        }
-
-        self.affordable_force_power(force_power, available_force_powers)
-    }
-
-    pub fn usable_force_power_ai<'a>(
-        &self,
-        force_power: SaberDuelForcePower,
-        available_force_powers: &'a BTreeMap<SaberDuelForcePower, SaberDuelAvailableForcePower>,
-        other_player_state: &SaberDuelPlayerState,
         ai: &SaberDuelAi,
     ) -> Option<&'a SaberDuelAvailableForcePower> {
         if other_player_state.is_affected_by(force_power) {
             return None;
         }
 
-        self.affordable_force_power_ai(force_power, available_force_powers, ai)
+        self.affordable_force_power(force_power, available_force_powers, ai)
     }
 
     pub fn force_power_flags(
         &self,
         available_force_powers: &BTreeMap<SaberDuelForcePower, SaberDuelAvailableForcePower>,
         other_player_state: &SaberDuelPlayerState,
+        ai: &SaberDuelAi,
     ) -> SaberDuelForcePowerFlags {
         SaberDuelForcePowerFlags {
             can_use_extra_key: self
@@ -177,6 +166,7 @@ impl SaberDuelPlayerState {
                     SaberDuelForcePower::ExtraKey,
                     available_force_powers,
                     other_player_state,
+                    ai,
                 )
                 .is_some(),
             can_use_right_to_left: self
@@ -184,6 +174,7 @@ impl SaberDuelPlayerState {
                     SaberDuelForcePower::RightToLeft,
                     available_force_powers,
                     other_player_state,
+                    ai,
                 )
                 .is_some(),
             can_use_opposite: self
@@ -191,34 +182,30 @@ impl SaberDuelPlayerState {
                     SaberDuelForcePower::Opposite,
                     available_force_powers,
                     other_player_state,
+                    ai,
                 )
                 .is_some(),
         }
     }
 
-    pub fn add_force_points(&mut self, force_points: u8, max_force_points: u8) {
-        self.force_points = self
-            .force_points
-            .saturating_add(force_points)
-            .min(max_force_points);
-    }
-
-    pub fn add_force_points_ai(&mut self, base_gain: u8, ai: &SaberDuelAi, max_force_points: u8) {
-        let effective_gain = (base_gain as f32 * ai.force_point_multiplier)
-            .floor()
-            .max(0.0) as u8;
+    pub fn add_force_points(&mut self, base_gain: u8, max_force_points: u8, ai: &SaberDuelAi) {
+        let effective_gain = match self.is_ai {
+            true => (base_gain as f32 * ai.force_point_multiplier)
+                .round()
+                .max(0.0) as u8,
+            false => base_gain,
+        };
 
         self.force_points = (self.force_points + effective_gain).min(max_force_points);
     }
 
-    pub fn use_force_power(&mut self, force_points: u8) {
-        self.force_points = self.force_points.saturating_sub(force_points);
-    }
-
-    pub fn use_force_power_ai(&mut self, base_cost: u8, ai: &SaberDuelAi) {
-        let effective_cost = (base_cost as f32 * ai.force_power_cost_multiplier)
-            .floor()
-            .max(0.0) as u8;
+    pub fn use_force_power(&mut self, base_cost: u8, ai: &SaberDuelAi) {
+        let effective_cost = match self.is_ai {
+            true => (base_cost as f32 * ai.force_power_cost_multiplier)
+                .round()
+                .max(0.0) as u8,
+            false => base_cost,
+        };
 
         self.force_points = self.force_points.saturating_sub(effective_cost);
     }
@@ -323,26 +310,16 @@ impl SaberDuelPlayerState {
         &self,
         force_power: SaberDuelForcePower,
         available_force_powers: &'a BTreeMap<SaberDuelForcePower, SaberDuelAvailableForcePower>,
-    ) -> Option<&'a SaberDuelAvailableForcePower> {
-        available_force_powers
-            .get(&force_power)
-            .and_then(|definition| match self.force_points >= definition.cost {
-                true => Some(definition),
-                false => None,
-            })
-    }
-
-    fn affordable_force_power_ai<'a>(
-        &self,
-        force_power: SaberDuelForcePower,
-        available_force_powers: &'a BTreeMap<SaberDuelForcePower, SaberDuelAvailableForcePower>,
         ai: &SaberDuelAi,
     ) -> Option<&'a SaberDuelAvailableForcePower> {
         let definition = available_force_powers.get(&force_power)?;
-        let base_cost = definition.cost as f32;
-        let effective_cost = (base_cost * ai.force_power_cost_multiplier)
-            .floor()
-            .max(0.0) as u8;
+        let base_cost = definition.cost;
+        let effective_cost = match self.is_ai {
+            true => (base_cost as f32 * ai.force_power_cost_multiplier)
+                .round()
+                .max(0.0) as u8,
+            false => base_cost,
+        };
 
         if self.force_points >= effective_cost {
             Some(definition)
@@ -623,6 +600,7 @@ impl SaberDuelGame {
             group,
         };
         game.reset_readiness(true);
+        game.player_states[1].is_ai = game.is_ai_match();
 
         game
     }
@@ -1354,12 +1332,18 @@ impl SaberDuelGame {
 
         let mut show_force_power_dialog = false;
 
-        let player1_flags = self.player_states[0]
-            .force_power_flags(&self.config.force_powers, &self.player_states[1]);
+        let player1_flags = self.player_states[0].force_power_flags(
+            &self.config.force_powers,
+            &self.player_states[1],
+            &self.config.ai,
+        );
         show_force_power_dialog |= player1_flags.can_use_any();
 
-        let player2_flags = self.player_states[1]
-            .force_power_flags(&self.config.force_powers, &self.player_states[0]);
+        let player2_flags = self.player_states[1].force_power_flags(
+            &self.config.force_powers,
+            &self.player_states[0],
+            &self.config.ai,
+        );
         show_force_power_dialog |= player2_flags.can_use_any();
 
         if show_force_power_dialog {
@@ -1569,38 +1553,22 @@ impl SaberDuelGame {
             false => self.config.points_per_basic_bout,
         };
 
-        let is_ai_match = self.is_ai_match();
-
         let loser_index = (winner_index + 1) % 2;
         let loser_state = &mut self.player_states[loser_index as usize];
-        if is_ai_match && loser_index == 1 {
-            loser_state.add_force_points_ai(
-                self.config.force_points_per_bout_lost,
-                &self.config.ai,
-                self.config.max_force_points,
-            );
-        } else {
-            loser_state.add_force_points(
-                self.config.force_points_per_bout_lost,
-                self.config.max_force_points,
-            );
-        }
+        loser_state.add_force_points(
+            self.config.force_points_per_bout_lost,
+            self.config.max_force_points,
+            &self.config.ai,
+        );
         let loser_cleared_powers = loser_state.lose_bout(points_won);
         let mut broadcasts = self.clear_force_powers(winner_index, loser_cleared_powers);
 
         let winner_state = &mut self.player_states[winner_index as usize];
-        if is_ai_match && winner_index == 1 {
-            winner_state.add_force_points_ai(
-                self.config.force_points_per_bout_won,
-                &self.config.ai,
-                self.config.max_force_points,
-            );
-        } else {
-            winner_state.add_force_points(
-                self.config.force_points_per_bout_won,
-                self.config.max_force_points,
-            );
-        }
+        winner_state.add_force_points(
+            self.config.force_points_per_bout_won,
+            self.config.max_force_points,
+            &self.config.ai,
+        );
         let winner_cleared_powers = winner_state.win_bout(points_won);
         broadcasts.append(&mut self.clear_force_powers(loser_index, winner_cleared_powers));
 
@@ -1647,6 +1615,7 @@ impl SaberDuelGame {
             player_state.add_force_points(
                 self.config.force_points_per_bout_tied,
                 self.config.max_force_points,
+                &self.config.ai,
             );
             broadcasts.append(&mut self.clear_force_powers((player_index + 1) % 2, cleared_powers));
         }
@@ -1798,20 +1767,12 @@ impl SaberDuelGame {
         let player_state = &self.player_states[player_index as usize];
         let other_player_state = &self.player_states[other_player_index];
 
-        let definition = if is_ai_player {
-            player_state.usable_force_power_ai(
-                force_power,
-                &self.config.force_powers,
-                other_player_state,
-                &self.config.ai,
-            )
-        } else {
-            player_state.usable_force_power(
-                force_power,
-                &self.config.force_powers,
-                other_player_state,
-            )
-        };
+        let definition = player_state.usable_force_power(
+            force_power,
+            &self.config.force_powers,
+            other_player_state,
+            &self.config.ai,
+        );
 
         let Some(definition) = definition else {
             return Err(ProcessPacketError::new(
@@ -1831,15 +1792,15 @@ impl SaberDuelGame {
         );
 
         let player_state = &mut self.player_states[player_index as usize];
-        if is_ai_player {
-            player_state.use_force_power_ai(definition.cost, &self.config.ai);
-        } else {
-            player_state.use_force_power(definition.cost);
-        }
+        player_state.use_force_power(definition.cost, &self.config.ai);
 
         let player_state = &self.player_states[player_index as usize];
         let other_player_state = &self.player_states[other_player_index];
-        let flags = player_state.force_power_flags(&self.config.force_powers, other_player_state);
+        let flags = player_state.force_power_flags(
+            &self.config.force_powers,
+            other_player_state,
+            &self.config.ai,
+        );
 
         Ok(vec![Broadcast::Multi(
             self.recipients.clone(),
@@ -1901,7 +1862,7 @@ impl SaberDuelGame {
 
         let weights: Vec<(SaberDuelForcePower, u8, bool)> = all::<SaberDuelForcePower>()
             .map(|force_power| {
-                let (weight, tutorial_enabled) = match ai_player_state.usable_force_power_ai(
+                let (weight, tutorial_enabled) = match ai_player_state.usable_force_power(
                     force_power,
                     &config.force_powers,
                     other_player_state,
