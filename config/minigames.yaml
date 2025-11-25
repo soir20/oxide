@@ -3214,7 +3214,7 @@ categories:
                     no_bouts_lost_bonus_score: *saber_duel_no_bouts_lost_bonus_score
                     default_primary_saber: *saber_duel_default_primary_saber
                     max_force_points: &saber_duel_max_force_points 15
-                    force_power_selection_max_millis: &saber_duel_force_power_selection_max_millis 5000
+                    force_power_selection_millis: &saber_duel_force_power_selection_millis 5000
                     force_points_per_bout_won: &saber_duel_force_points_per_bout_won 1
                     force_points_per_bout_tied: &saber_duel_force_points_per_bout_tied 1
                     force_points_per_bout_lost: 6
@@ -3293,7 +3293,7 @@ categories:
                     no_bouts_lost_bonus_score: *saber_duel_no_bouts_lost_bonus_score
                     default_primary_saber: *saber_duel_default_primary_saber
                     max_force_points: *saber_duel_max_force_points
-                    force_power_selection_max_millis: *saber_duel_force_power_selection_max_millis
+                    force_power_selection_millis: *saber_duel_force_power_selection_millis
                     force_points_per_bout_won: *saber_duel_force_points_per_bout_won
                     force_points_per_bout_tied: *saber_duel_force_points_per_bout_tied
                     force_points_per_bout_lost: 6
@@ -3373,7 +3373,7 @@ categories:
                     no_bouts_lost_bonus_score: *saber_duel_no_bouts_lost_bonus_score
                     default_primary_saber: *saber_duel_default_primary_saber
                     max_force_points: *saber_duel_max_force_points
-                    force_power_selection_max_millis: *saber_duel_force_power_selection_max_millis
+                    force_power_selection_millis: *saber_duel_force_power_selection_millis
                     force_points_per_bout_won: *saber_duel_force_points_per_bout_won
                     force_points_per_bout_tied: *saber_duel_force_points_per_bout_tied
                     force_points_per_bout_lost: 6
@@ -3460,7 +3460,7 @@ categories:
                     no_bouts_lost_bonus_score: *saber_duel_no_bouts_lost_bonus_score
                     default_primary_saber: *saber_duel_default_primary_saber
                     max_force_points: *saber_duel_max_force_points
-                    force_power_selection_max_millis: *saber_duel_force_power_selection_max_millis
+                    force_power_selection_millis: *saber_duel_force_power_selection_millis
                     force_points_per_bout_won: *saber_duel_force_points_per_bout_won
                     force_points_per_bout_tied: *saber_duel_force_points_per_bout_tied
                     force_points_per_bout_lost: &saber_duel_force_points_per_bout_lost 2
