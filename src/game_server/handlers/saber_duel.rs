@@ -1870,7 +1870,7 @@ impl SaberDuelGame {
                     other_player_state,
                     &config.ai,
                 ) {
-                    Some(_) if !other_player_state.is_affected_by(force_power) => config
+                    Some(_) => config
                         .ai
                         .force_powers
                         .get(&force_power)
