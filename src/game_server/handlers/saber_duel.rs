@@ -92,9 +92,9 @@ struct SaberDuelAi {
     #[serde(deserialize_with = "deserialize_probability")]
     mistake_probability: f32,
     #[serde(default)]
-    right_to_left_ai_mistake_multiplier: f32,
+    right_to_left_ai_mistake_probability_added: f32,
     #[serde(default)]
-    opposite_ai_mistake_multiplier: f32,
+    opposite_ai_mistake_probability_added: f32,
     #[serde(default = "default_ai_force_cost_multiplier")]
     force_power_cost_multiplier: f32,
     #[serde(default = "default_ai_force_point_multiplier")]
@@ -1505,16 +1505,15 @@ impl SaberDuelGame {
         }
 
         let mut mistake_probability: f32 = config.ai.mistake_probability;
-        let mut mistake_multiplier: f32 = 0.0;
         if player_state.is_affected_by(SaberDuelForcePower::RightToLeft) {
-            mistake_multiplier += config.ai.right_to_left_ai_mistake_multiplier;
+            mistake_probability += config.ai.right_to_left_ai_mistake_probability_added;
         }
 
         if player_state.is_affected_by(SaberDuelForcePower::Opposite) {
-            mistake_multiplier += config.ai.opposite_ai_mistake_multiplier;
+            mistake_probability += config.ai.opposite_ai_mistake_probability_added;
         }
 
-        mistake_probability = (mistake_probability * mistake_multiplier).clamp(0.0, 1.0);
+        mistake_probability = mistake_probability.clamp(0.0, 1.0);
 
         if mistake_probability.is_nan() {
             mistake_probability = 0.0;
