@@ -1505,15 +1505,16 @@ impl SaberDuelGame {
         }
 
         let mut mistake_probability: f32 = config.ai.mistake_probability;
+        let mut mistake_multiplier: f32 = 0.0;
         if player_state.is_affected_by(SaberDuelForcePower::RightToLeft) {
-            mistake_probability *= config.ai.right_to_left_ai_mistake_multiplier;
+            mistake_multiplier += config.ai.right_to_left_ai_mistake_multiplier;
         }
 
         if player_state.is_affected_by(SaberDuelForcePower::Opposite) {
-            mistake_probability *= config.ai.opposite_ai_mistake_multiplier;
+            mistake_multiplier += config.ai.opposite_ai_mistake_multiplier;
         }
 
-        mistake_probability = mistake_probability.clamp(0.0, 1.0);
+        mistake_probability = (mistake_probability * mistake_multiplier).clamp(0.0, 1.0);
 
         if mistake_probability.is_nan() {
             mistake_probability = 0.0;
