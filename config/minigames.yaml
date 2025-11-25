@@ -3196,6 +3196,12 @@ categories:
                       min_millis_per_key: 400
                       max_millis_per_key: 1300
                       mistake_probability: *saber_duel_easy_mistake_probability
+                      right_to_left_ai_mistake_multiplier: &saber_duel_force_power_easy_mistake_multiplier 2
+                      opposite_ai_mistake_multiplier: *saber_duel_force_power_easy_mistake_multiplier
+                      force_power_probability: 1
+                      force_powers:
+                        ExtraKey: {}
+                      force_power_delay_millis: &saber_duel_force_power_delay_millis 2000
                     score_penalty_per_second: *saber_duel_easy_score_penalty_per_second
                     max_time_score_bonus: *saber_duel_max_time_score_bonus
                     score_penalty_per_accuracy_pct: *saber_duel_score_penalty_per_accuracy_pct
@@ -3206,6 +3212,19 @@ categories:
                     game_win_bonus_score: *saber_duel_game_win_bonus_score
                     no_bouts_lost_bonus_score: *saber_duel_no_bouts_lost_bonus_score
                     default_primary_saber: *saber_duel_default_primary_saber
+                    max_force_points: &saber_duel_max_force_points 15
+                    force_power_selection_max_millis: &saber_duel_force_power_selection_max_millis 5000
+                    force_points_per_bout_won: &saber_duel_force_points_per_bout_won 1
+                    force_points_per_bout_tied: &saber_duel_force_points_per_bout_tied 1
+                    force_points_per_bout_lost: 6
+                    force_powers:
+                      ExtraKey: &saber_duel_extra_key_definition
+                        name_id: 1888
+                        small_icon_id: 2714
+                        icon_id: 2714
+                        cost: 5
+                        bouts_applied: 3
+                        apply_animation_id: 5007
                   zone_template_guid: 206
                   score_to_credits_expression: x / 104.5
                 - !Stage
@@ -3255,6 +3274,12 @@ categories:
                       min_millis_per_key: 400
                       max_millis_per_key: 1300
                       mistake_probability: *saber_duel_easy_mistake_probability
+                      right_to_left_ai_mistake_multiplier: *saber_duel_force_power_easy_mistake_multiplier
+                      opposite_ai_mistake_multiplier: *saber_duel_force_power_easy_mistake_multiplier
+                      force_power_probability: 1
+                      force_powers:
+                        RightToLeft: {}
+                      force_power_delay_millis: *saber_duel_force_power_delay_millis
                     score_penalty_per_second: *saber_duel_easy_score_penalty_per_second
                     max_time_score_bonus: *saber_duel_max_time_score_bonus
                     score_penalty_per_accuracy_pct: *saber_duel_score_penalty_per_accuracy_pct
@@ -3265,6 +3290,19 @@ categories:
                     game_win_bonus_score: *saber_duel_game_win_bonus_score
                     no_bouts_lost_bonus_score: *saber_duel_no_bouts_lost_bonus_score
                     default_primary_saber: *saber_duel_default_primary_saber
+                    max_force_points: *saber_duel_max_force_points
+                    force_power_selection_max_millis: *saber_duel_force_power_selection_max_millis
+                    force_points_per_bout_won: *saber_duel_force_points_per_bout_won
+                    force_points_per_bout_tied: *saber_duel_force_points_per_bout_tied
+                    force_points_per_bout_lost: 6
+                    force_powers:
+                      RightToLeft: &saber_duel_right_to_left_definition
+                        name_id: 1889
+                        small_icon_id: 2710
+                        icon_id: 2710
+                        cost: 5
+                        bouts_applied: 3
+                        apply_animation_id: 5007
                   zone_template_guid: 206
                   score_to_credits_expression: x / 104.5
                 - !Stage
@@ -3314,6 +3352,12 @@ categories:
                       min_millis_per_key: 400
                       max_millis_per_key: 1300
                       mistake_probability: *saber_duel_easy_mistake_probability
+                      right_to_left_ai_mistake_multiplier: *saber_duel_force_power_easy_mistake_multiplier
+                      opposite_ai_mistake_multiplier: *saber_duel_force_power_easy_mistake_multiplier
+                      force_power_probability: 1
+                      force_powers:
+                        Opposite: {}
+                      force_power_delay_millis: *saber_duel_force_power_delay_millis
                     score_penalty_per_second: *saber_duel_easy_score_penalty_per_second
                     max_time_score_bonus: *saber_duel_max_time_score_bonus
                     score_penalty_per_accuracy_pct: *saber_duel_score_penalty_per_accuracy_pct
@@ -3324,6 +3368,19 @@ categories:
                     game_win_bonus_score: *saber_duel_game_win_bonus_score
                     no_bouts_lost_bonus_score: *saber_duel_no_bouts_lost_bonus_score
                     default_primary_saber: *saber_duel_default_primary_saber
+                    max_force_points: *saber_duel_max_force_points
+                    force_power_selection_max_millis: *saber_duel_force_power_selection_max_millis
+                    force_points_per_bout_won: *saber_duel_force_points_per_bout_won
+                    force_points_per_bout_tied: *saber_duel_force_points_per_bout_tied
+                    force_points_per_bout_lost: 6
+                    force_powers:
+                      Opposite: &saber_duel_opposite_definition
+                        name_id: 1890
+                        small_icon_id: 2706
+                        icon_id: 2706
+                        cost: 5
+                        bouts_applied: 3
+                        apply_animation_id: 5007
                   zone_template_guid: 206
                   score_to_credits_expression: x / 104.5
                 - !Stage
@@ -3378,14 +3435,14 @@ categories:
                       min_millis_per_key: 400
                       max_millis_per_key: 1200
                       mistake_probability: *saber_duel_easy_mistake_probability
-                      right_to_left_ai_mistake_multiplier: 2
-                      opposite_ai_mistake_multiplier: 2
-                      force_power_probability: 0.25
+                      right_to_left_ai_mistake_multiplier: *saber_duel_force_power_easy_mistake_multiplier
+                      opposite_ai_mistake_multiplier: *saber_duel_force_power_easy_mistake_multiplier
+                      force_power_probability: &saber_duel_easy_force_power_probability 0.25
                       force_powers:
                         ExtraKey: {}
                         RightToLeft: {}
                         Opposite: {}
-                      force_power_delay_millis: 2000
+                      force_power_delay_millis: *saber_duel_force_power_delay_millis
                     score_penalty_per_second: *saber_duel_easy_score_penalty_per_second
                     max_time_score_bonus: *saber_duel_max_time_score_bonus
                     score_penalty_per_accuracy_pct: *saber_duel_score_penalty_per_accuracy_pct
@@ -3396,33 +3453,15 @@ categories:
                     game_win_bonus_score: *saber_duel_game_win_bonus_score
                     no_bouts_lost_bonus_score: *saber_duel_no_bouts_lost_bonus_score
                     default_primary_saber: *saber_duel_default_primary_saber
-                    max_force_points: 15
-                    force_power_selection_max_millis: 5000
-                    force_points_per_bout_won: 1
-                    force_points_per_bout_tied: 1
-                    force_points_per_bout_lost: 2
-                    force_powers:
-                      ExtraKey:
-                        name_id: 1888
-                        small_icon_id: 2714
-                        icon_id: 2714
-                        cost: 5
-                        bouts_applied: 3
-                        apply_animation_id: 5007
-                      RightToLeft:
-                        name_id: 1889
-                        small_icon_id: 2710
-                        icon_id: 2710
-                        cost: 5
-                        bouts_applied: 3
-                        apply_animation_id: 5007
-                      Opposite:
-                        name_id: 1890
-                        small_icon_id: 2706
-                        icon_id: 2706
-                        cost: 5
-                        bouts_applied: 3
-                        apply_animation_id: 5007
+                    max_force_points: *saber_duel_max_force_points
+                    force_power_selection_max_millis: *saber_duel_force_power_selection_max_millis
+                    force_points_per_bout_won: *saber_duel_force_points_per_bout_won
+                    force_points_per_bout_tied: *saber_duel_force_points_per_bout_tied
+                    force_points_per_bout_lost: &saber_duel_force_points_per_bout_lost 2
+                    force_powers: &saber_duel_force_power_definitions
+                      ExtraKey: *saber_duel_extra_key_definition
+                      RightToLeft: *saber_duel_right_to_left_definition
+                      Opposite: *saber_duel_opposite_definition
                   zone_template_guid: 207
                   score_to_credits_expression: x / 108.5
                 - !Stage
