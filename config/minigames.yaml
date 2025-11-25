@@ -3298,6 +3298,7 @@ categories:
                     force_points_per_bout_tied: *saber_duel_force_points_per_bout_tied
                     force_points_per_bout_lost: 6
                     force_powers:
+                      ExtraKey: *saber_duel_extra_key_definition
                       RightToLeft: &saber_duel_right_to_left_definition
                         name_id: 1889
                         small_icon_id: 2710
@@ -3377,6 +3378,8 @@ categories:
                     force_points_per_bout_tied: *saber_duel_force_points_per_bout_tied
                     force_points_per_bout_lost: 6
                     force_powers:
+                      ExtraKey: *saber_duel_extra_key_definition
+                      RightToLeft: *saber_duel_right_to_left_definition
                       Opposite: &saber_duel_opposite_definition
                         name_id: 1890
                         small_icon_id: 2706
