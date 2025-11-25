@@ -1762,8 +1762,6 @@ impl SaberDuelGame {
         force_power: SaberDuelForcePower,
         tutorial_enabled: bool,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        let is_ai_player = self.is_ai_match() && player_index == 1;
-
         let player_state = &self.player_states[player_index as usize];
         let other_player_state = &self.player_states[other_player_index];
 
