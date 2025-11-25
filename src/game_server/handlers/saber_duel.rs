@@ -48,14 +48,6 @@ const ROUND_START_DELAY: Duration = Duration::from_millis(1200);
 const GAME_END_DELAY: Duration = Duration::from_millis(4000);
 const MEMORY_CHALLENGE_AI_DELAY: Duration = Duration::from_millis(2000);
 
-const fn default_ai_force_point_multiplier() -> f32 {
-    1.0
-}
-
-const fn default_ai_force_cost_multiplier() -> f32 {
-    1.0
-}
-
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct SaberDuelAiForcePower {
@@ -95,10 +87,10 @@ struct SaberDuelAi {
     right_to_left_ai_mistake_probability_added: f32,
     #[serde(default)]
     opposite_ai_mistake_probability_added: f32,
-    #[serde(default = "default_ai_force_cost_multiplier")]
-    force_power_cost_multiplier: f32,
-    #[serde(default = "default_ai_force_point_multiplier")]
-    force_point_multiplier: f32,
+    #[serde(default)]
+    base_force_power_cost: i8,
+    #[serde(default)]
+    base_force_points_rewarded: i8,
     #[serde(deserialize_with = "deserialize_probability", default)]
     force_power_probability: f32,
     #[serde(default)]
@@ -194,9 +186,7 @@ impl SaberDuelPlayerState {
 
     pub fn add_force_points(&mut self, base_gain: u8, max_force_points: u8, ai: &SaberDuelAi) {
         let effective_gain = match self.is_ai {
-            true => (base_gain as f32 * ai.force_point_multiplier)
-                .round()
-                .max(0.0) as u8,
+            true => base_gain.saturating_add_signed(ai.base_force_points_rewarded),
             false => base_gain,
         };
 
@@ -205,9 +195,7 @@ impl SaberDuelPlayerState {
 
     pub fn use_force_power(&mut self, base_cost: u8, ai: &SaberDuelAi) {
         let effective_cost = match self.is_ai {
-            true => (base_cost as f32 * ai.force_power_cost_multiplier)
-                .round()
-                .max(0.0) as u8,
+            true => base_cost.saturating_add_signed(ai.base_force_power_cost),
             false => base_cost,
         };
 
@@ -319,9 +307,7 @@ impl SaberDuelPlayerState {
         let definition = available_force_powers.get(&force_power)?;
         let base_cost = definition.cost;
         let effective_cost = match self.is_ai {
-            true => (base_cost as f32 * ai.force_power_cost_multiplier)
-                .round()
-                .max(0.0) as u8,
+            true => base_cost.saturating_add_signed(ai.base_force_power_cost),
             false => base_cost,
         };
 

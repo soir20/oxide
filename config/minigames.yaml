@@ -3671,6 +3671,7 @@ categories:
                       mistake_probability: *saber_duel_hard_mistake_probability
                       right_to_left_ai_mistake_probability_added: *saber_duel_mistake_prob_added
                       opposite_ai_mistake_probability_added: *saber_duel_mistake_prob_added
+                      base_force_points_rewarded: 1
                       force_power_probability: *saber_duel_hard_force_power_probability
                       force_powers: *saber_duel_ai_force_powers
                       force_power_delay_millis: *saber_duel_force_power_delay_millis
