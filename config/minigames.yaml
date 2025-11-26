@@ -3213,7 +3213,7 @@ categories:
                     game_win_bonus_score: *saber_duel_game_win_bonus_score
                     no_bouts_lost_bonus_score: *saber_duel_no_bouts_lost_bonus_score
                     default_primary_saber: *saber_duel_default_primary_saber
-                    max_force_points: &saber_duel_max_force_points 15
+                    max_force_points: &saber_duel_max_force_points 18
                     force_power_selection_millis: &saber_duel_force_power_selection_millis 5000
                     force_points_per_bout_won: &saber_duel_force_points_per_bout_won 1
                     force_points_per_bout_tied: &saber_duel_force_points_per_bout_tied 1
