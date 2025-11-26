@@ -3196,8 +3196,8 @@ categories:
                       min_millis_per_key: 400
                       max_millis_per_key: 1300
                       mistake_probability: *saber_duel_easy_mistake_probability
-                      right_to_left_ai_mistake_probability_added: &saber_duel_mistake_prob_added 0.05
-                      opposite_ai_mistake_probability_added: *saber_duel_mistake_prob_added
+                      right_to_left_ai_mistake_probability_added: &saber_duel_fp_mistake_prob 0.05
+                      opposite_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
                       force_power_probability: 1
                       force_powers:
                         ExtraKey:
@@ -3275,8 +3275,8 @@ categories:
                       min_millis_per_key: 400
                       max_millis_per_key: 1300
                       mistake_probability: *saber_duel_easy_mistake_probability
-                      right_to_left_ai_mistake_probability_added: *saber_duel_mistake_prob_added
-                      opposite_ai_mistake_probability_added: *saber_duel_mistake_prob_added
+                      right_to_left_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
+                      opposite_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
                       force_power_probability: 1
                       force_powers:
                         RightToLeft:
@@ -3355,8 +3355,8 @@ categories:
                       min_millis_per_key: 400
                       max_millis_per_key: 1300
                       mistake_probability: *saber_duel_easy_mistake_probability
-                      right_to_left_ai_mistake_probability_added: *saber_duel_mistake_prob_added
-                      opposite_ai_mistake_probability_added: *saber_duel_mistake_prob_added
+                      right_to_left_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
+                      opposite_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
                       force_power_probability: 1
                       force_powers:
                         Opposite:
@@ -3441,8 +3441,8 @@ categories:
                       min_millis_per_key: 400
                       max_millis_per_key: 1200
                       mistake_probability: *saber_duel_easy_mistake_probability
-                      right_to_left_ai_mistake_probability_added: *saber_duel_mistake_prob_added
-                      opposite_ai_mistake_probability_added: *saber_duel_mistake_prob_added
+                      right_to_left_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
+                      opposite_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
                       force_power_probability: &saber_duel_easy_force_power_probability 0.25
                       force_powers: &saber_duel_ai_force_powers
                         ExtraKey: {}
@@ -3521,8 +3521,8 @@ categories:
                       min_millis_per_key: 400
                       max_millis_per_key: 1100
                       mistake_probability: *saber_duel_medium_mistake_probability
-                      right_to_left_ai_mistake_probability_added: *saber_duel_mistake_prob_added
-                      opposite_ai_mistake_probability_added: *saber_duel_mistake_prob_added
+                      right_to_left_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
+                      opposite_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
                       force_power_probability: &saber_duel_medium_force_power_probability 0.5
                       force_powers: *saber_duel_ai_force_powers
                       force_power_delay_millis: *saber_duel_force_power_delay_millis
@@ -3591,8 +3591,8 @@ categories:
                       min_millis_per_key: 400
                       max_millis_per_key: 1000
                       mistake_probability: *saber_duel_hard_mistake_probability
-                      right_to_left_ai_mistake_probability_added: *saber_duel_mistake_prob_added
-                      opposite_ai_mistake_probability_added: *saber_duel_mistake_prob_added
+                      right_to_left_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
+                      opposite_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
                       force_power_probability: &saber_duel_hard_force_power_probability 0.75
                       force_powers: *saber_duel_ai_force_powers
                       force_power_delay_millis: *saber_duel_force_power_delay_millis
@@ -3669,8 +3669,8 @@ categories:
                       min_millis_per_key: 400
                       max_millis_per_key: 900
                       mistake_probability: *saber_duel_hard_mistake_probability
-                      right_to_left_ai_mistake_probability_added: *saber_duel_mistake_prob_added
-                      opposite_ai_mistake_probability_added: *saber_duel_mistake_prob_added
+                      right_to_left_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
+                      opposite_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
                       base_force_points_rewarded: 1
                       force_power_probability: *saber_duel_hard_force_power_probability
                       force_powers: *saber_duel_ai_force_powers
@@ -3748,8 +3748,8 @@ categories:
                       min_millis_per_key: 400
                       max_millis_per_key: 800
                       mistake_probability: *saber_duel_hard_mistake_probability
-                      right_to_left_ai_mistake_probability_added: *saber_duel_mistake_prob_added
-                      opposite_ai_mistake_probability_added: *saber_duel_mistake_prob_added
+                      right_to_left_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
+                      opposite_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
                       force_power_probability: *saber_duel_hard_force_power_probability
                       force_powers: *saber_duel_ai_force_powers
                       force_power_delay_millis: *saber_duel_force_power_delay_millis
@@ -3823,8 +3823,8 @@ categories:
                       min_millis_per_key: 400
                       max_millis_per_key: 1200
                       mistake_probability: *saber_duel_easy_mistake_probability
-                      right_to_left_ai_mistake_probability_added: *saber_duel_mistake_prob_added
-                      opposite_ai_mistake_probability_added: *saber_duel_mistake_prob_added
+                      right_to_left_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
+                      opposite_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
                       force_power_probability: *saber_duel_easy_force_power_probability
                       force_powers: *saber_duel_ai_force_powers
                       force_power_delay_millis: *saber_duel_force_power_delay_millis
@@ -3891,8 +3891,8 @@ categories:
                       min_millis_per_key: 400
                       max_millis_per_key: 1000
                       mistake_probability: *saber_duel_medium_mistake_probability
-                      right_to_left_ai_mistake_probability_added: *saber_duel_mistake_prob_added
-                      opposite_ai_mistake_probability_added: *saber_duel_mistake_prob_added
+                      right_to_left_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
+                      opposite_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
                       force_power_probability: *saber_duel_medium_force_power_probability
                       force_powers: *saber_duel_ai_force_powers
                       force_power_delay_millis: *saber_duel_force_power_delay_millis
@@ -3955,8 +3955,8 @@ categories:
                       min_millis_per_key: 400
                       max_millis_per_key: 800
                       mistake_probability: *saber_duel_hard_mistake_probability
-                      right_to_left_ai_mistake_probability_added: *saber_duel_mistake_prob_added
-                      opposite_ai_mistake_probability_added: *saber_duel_mistake_prob_added
+                      right_to_left_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
+                      opposite_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
                       force_power_probability: *saber_duel_hard_force_power_probability
                       force_powers: *saber_duel_ai_force_powers
                       force_power_delay_millis: *saber_duel_force_power_delay_millis
