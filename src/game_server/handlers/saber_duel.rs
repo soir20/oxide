@@ -190,7 +190,10 @@ impl SaberDuelPlayerState {
             false => base_gain,
         };
 
-        self.force_points = (self.force_points + effective_gain).min(max_force_points);
+        self.force_points = self
+            .force_points
+            .saturating_add(effective_gain)
+            .min(max_force_points);
     }
 
     pub fn use_force_power(&mut self, base_cost: u8, ai: &SaberDuelAi) {
