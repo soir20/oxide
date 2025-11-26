@@ -3202,7 +3202,7 @@ categories:
                       force_powers:
                         ExtraKey:
                           tutorial_enabled: true
-                      force_power_delay_millis: &saber_duel_force_power_delay_millis 2000
+                      force_power_delay_millis: &saber_duel_force_power_delay_millis 1500
                     score_penalty_per_second: *saber_duel_easy_score_penalty_per_second
                     max_time_score_bonus: *saber_duel_max_time_score_bonus
                     score_penalty_per_accuracy_pct: *saber_duel_score_penalty_per_accuracy_pct
