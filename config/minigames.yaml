@@ -3823,6 +3823,11 @@ categories:
                       min_millis_per_key: 400
                       max_millis_per_key: 1200
                       mistake_probability: *saber_duel_easy_mistake_probability
+                      right_to_left_ai_mistake_probability_added: *saber_duel_mistake_prob_added
+                      opposite_ai_mistake_probability_added: *saber_duel_mistake_prob_added
+                      force_power_probability: *saber_duel_easy_force_power_probability
+                      force_powers: *saber_duel_ai_force_powers
+                      force_power_delay_millis: *saber_duel_force_power_delay_millis
                     score_penalty_per_second: *saber_duel_easy_score_penalty_per_second
                     max_time_score_bonus: *saber_duel_max_time_score_bonus
                     score_penalty_per_accuracy_pct: *saber_duel_score_penalty_per_accuracy_pct
@@ -3833,6 +3838,12 @@ categories:
                     game_win_bonus_score: *saber_duel_game_win_bonus_score
                     no_bouts_lost_bonus_score: *saber_duel_no_bouts_lost_bonus_score
                     default_primary_saber: *saber_duel_default_primary_saber
+                    max_force_points: *saber_duel_max_force_points
+                    force_power_selection_millis: *saber_duel_force_power_selection_millis
+                    force_points_per_bout_won: *saber_duel_force_points_per_bout_won
+                    force_points_per_bout_tied: *saber_duel_force_points_per_bout_tied
+                    force_points_per_bout_lost: *saber_duel_force_points_per_bout_lost
+                    force_powers: *saber_duel_force_power_definitions
                   zone_template_guid: 211
                   score_to_credits_expression: x / 103
                 - !Stage
@@ -3880,6 +3891,11 @@ categories:
                       min_millis_per_key: 400
                       max_millis_per_key: 1000
                       mistake_probability: *saber_duel_medium_mistake_probability
+                      right_to_left_ai_mistake_probability_added: *saber_duel_mistake_prob_added
+                      opposite_ai_mistake_probability_added: *saber_duel_mistake_prob_added
+                      force_power_probability: *saber_duel_medium_force_power_probability
+                      force_powers: *saber_duel_ai_force_powers
+                      force_power_delay_millis: *saber_duel_force_power_delay_millis
                     score_penalty_per_second: *saber_duel_medium_score_penalty_per_second
                     max_time_score_bonus: *saber_duel_max_time_score_bonus
                     score_penalty_per_accuracy_pct: *saber_duel_score_penalty_per_accuracy_pct
@@ -3890,6 +3906,12 @@ categories:
                     game_win_bonus_score: *saber_duel_game_win_bonus_score
                     no_bouts_lost_bonus_score: *saber_duel_no_bouts_lost_bonus_score
                     default_primary_saber: *saber_duel_default_primary_saber
+                    max_force_points: *saber_duel_max_force_points
+                    force_power_selection_millis: *saber_duel_force_power_selection_millis
+                    force_points_per_bout_won: *saber_duel_force_points_per_bout_won
+                    force_points_per_bout_tied: *saber_duel_force_points_per_bout_tied
+                    force_points_per_bout_lost: *saber_duel_force_points_per_bout_lost
+                    force_powers: *saber_duel_force_power_definitions
                   zone_template_guid: 212
                   score_to_credits_expression: x / 112.5
                 - !Stage
@@ -3933,6 +3955,11 @@ categories:
                       min_millis_per_key: 400
                       max_millis_per_key: 800
                       mistake_probability: *saber_duel_hard_mistake_probability
+                      right_to_left_ai_mistake_probability_added: *saber_duel_mistake_prob_added
+                      opposite_ai_mistake_probability_added: *saber_duel_mistake_prob_added
+                      force_power_probability: *saber_duel_hard_force_power_probability
+                      force_powers: *saber_duel_ai_force_powers
+                      force_power_delay_millis: *saber_duel_force_power_delay_millis
                     score_penalty_per_second: *saber_duel_hard_score_penalty_per_second
                     max_time_score_bonus: *saber_duel_max_time_score_bonus
                     score_penalty_per_accuracy_pct: *saber_duel_score_penalty_per_accuracy_pct
@@ -3943,6 +3970,12 @@ categories:
                     game_win_bonus_score: *saber_duel_game_win_bonus_score
                     no_bouts_lost_bonus_score: *saber_duel_no_bouts_lost_bonus_score
                     default_primary_saber: *saber_duel_default_primary_saber
+                    max_force_points: *saber_duel_max_force_points
+                    force_power_selection_millis: *saber_duel_force_power_selection_millis
+                    force_points_per_bout_won: *saber_duel_force_points_per_bout_won
+                    force_points_per_bout_tied: *saber_duel_force_points_per_bout_tied
+                    force_points_per_bout_lost: *saber_duel_force_points_per_bout_lost
+                    force_powers: *saber_duel_force_power_definitions
                   zone_template_guid: 213
                   score_to_credits_expression: x / 122.5
       - guid: 9000
