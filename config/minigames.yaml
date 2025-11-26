@@ -3130,7 +3130,7 @@ categories:
         sort_order: 7000
         tutorial_swf: HowtoDarksideDuel.swf
         stage_group:
-          guid: 32000
+          guid: 92
           name_id: 33128
           description_id: 6394
           icon_id: 2734
