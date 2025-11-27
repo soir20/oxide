@@ -59,8 +59,8 @@ pub fn coerce_to_broadcast_supplier(
 
 pub const CHAT_BUBBLE_VISIBLE_RADIUS: f32 = 32.0;
 
-const fn default_movement_animation_id() -> i32 {
-    -1
+const fn default_stand_animation_id() -> i32 {
+    1
 }
 
 const fn default_fade_millis() -> u32 {
@@ -88,6 +88,10 @@ const fn default_true() -> bool {
 }
 
 const fn default_weight() -> u32 {
+    1
+}
+
+pub const fn default_spawn_animation_id() -> i32 {
     1
 }
 
@@ -154,7 +158,7 @@ pub struct BaseNpcConfig {
     pub rot: Pos,
     #[serde(default)]
     pub possible_pos: Vec<Pos>,
-    #[serde(default = "default_movement_animation_id")]
+    #[serde(default = "default_stand_animation_id")]
     pub stand_animation_id: i32,
     #[serde(default)]
     pub name_offset_x: f32,
@@ -193,6 +197,8 @@ pub struct BaseNpcConfig {
     pub composite_effect_id: Option<u32>,
     #[serde(default = "default_true")]
     pub clickable: bool,
+    #[serde(default = "default_spawn_animation_id")]
+    pub spawn_animation_id: i32,
 }
 
 #[derive(Clone)]
@@ -214,6 +220,7 @@ pub struct BaseNpc {
     pub attachments: Vec<Attachment>,
     pub composite_effect_id: Option<u32>,
     pub clickable: bool,
+    pub spawn_animation_id: i32,
 }
 
 impl BaseNpc {
@@ -237,7 +244,7 @@ impl BaseNpc {
                 scale: character.scale,
                 pos: character.pos,
                 rot: character.rot,
-                spawn_animation_id: 1,
+                spawn_animation_id: self.spawn_animation_id,
                 attachments: self.attachments.clone(),
                 hostility: Hostility::Neutral,
                 unknown10: 1,
@@ -354,6 +361,7 @@ impl From<BaseNpcConfig> for BaseNpc {
             attachments: Vec::new(),
             composite_effect_id: value.composite_effect_id,
             clickable: value.clickable,
+            spawn_animation_id: value.spawn_animation_id,
         }
     }
 }

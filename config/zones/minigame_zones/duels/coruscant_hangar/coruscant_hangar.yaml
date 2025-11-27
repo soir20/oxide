@@ -1,5 +1,5 @@
 ---
-duel_hangar_singleplayer:
+duel_coruscant_hangar_singleplayer:
   guid: 204
   max_players: 1
   template_name: 13601

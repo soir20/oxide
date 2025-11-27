@@ -2,7 +2,7 @@ use std::{
     collections::{BTreeMap, BTreeSet},
     fs::File,
     io::{Cursor, Error, ErrorKind, Read},
-    iter,
+    iter, mem,
     path::Path,
     sync::Arc,
     time::{Duration, Instant},
@@ -36,7 +36,7 @@ use crate::{
         },
         packets::{
             chat::{ActionBarTextColor, SendStringId},
-            client_update::UpdateCredits,
+            client_update::{PreloadCharactersDone, UpdateCredits},
             command::StartFlashGame,
             daily::{AddDailyMinigame, UpdateDailyMinigame},
             minigame::{
@@ -337,10 +337,9 @@ pub enum MatchmakingGroupStatus {
     Closed,
 }
 
-#[derive(Clone)]
 pub enum MinigameReadiness {
     Matchmaking,
-    InitialPlayersLoading(BTreeSet<u32>, Option<Instant>),
+    InitialPlayersLoading(BTreeSet<u32>, Vec<Broadcast>),
     Ready(MinigameStopwatch),
 }
 
@@ -358,7 +357,6 @@ pub struct MinigameRemovePlayerResult {
     pub end_game_for_all: bool,
 }
 
-#[derive(Clone)]
 pub struct SharedMinigameData {
     pub guid: MinigameMatchmakingGroup,
     pub readiness: MinigameReadiness,
@@ -2403,7 +2401,7 @@ pub fn prepare_active_minigame_instance(
 
             minigame_data.readiness = MinigameReadiness::InitialPlayersLoading(
                 BTreeSet::from_iter(members.iter().copied()),
-                None,
+                Vec::new(),
             );
 
             Ok(())
@@ -2573,8 +2571,6 @@ fn handle_request_start_active_minigame(
                 ));
             };
 
-            let mut packets = Vec::new();
-
             let Some(StageConfigRef {stage_config, ..}) = game_server.minigames().stage_config(minigame_status.group.stage_group_guid, minigame_status.group.stage_guid) else {
                 return Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
@@ -2600,19 +2596,8 @@ fn handle_request_start_active_minigame(
                         ));
                     };
 
-                    if let MinigameReadiness::InitialPlayersLoading(players, first_player_load_time) = &mut shared_minigame_data.readiness {
-                        let now = Instant::now();
-                        if first_player_load_time.is_none() {
-                            *first_player_load_time = Some(now);
-                        }
-
-                        if players.remove(&sender) && players.is_empty() {
-                            shared_minigame_data.readiness = MinigameReadiness::Ready(MinigameStopwatch::new(Some(first_player_load_time.unwrap_or(now))));
-                        }
-                    }
-
                     let mut stage_group_instance =
-                    game_server.minigames().stage_group_instance(minigame_status.group.stage_group_guid, player)?;
+                        game_server.minigames().stage_group_instance(minigame_status.group.stage_group_guid, player)?;
                     stage_group_instance.header.stage_guid = minigame_status.group.stage_guid;
                     // The default stage instance must be set for the how-to button the options menu to work
                     stage_group_instance.default_stage_instance_guid = minigame_status.group.stage_guid;
@@ -2624,13 +2609,13 @@ fn handle_request_start_active_minigame(
                     // group instance data. Then we can load the minigame.
                     //
                     // We hide the HUD so that no HUD appears before the minigame HUD loads.
-                    packets.push(GamePacket::serialize(&TunneledPacket {
+                    let mut packets = vec![GamePacket::serialize(&TunneledPacket {
                         unknown1: true,
                         inner: ExecuteScriptWithStringParams {
                             script_name: "UIGlobal.SetStateNoHud".to_string(),
                             params: vec![],
                         },
-                    }));
+                    })];
                     packets.push(GamePacket::serialize(&TunneledPacket {
                         unknown1: true,
                         inner: stage_group_instance,
@@ -2669,12 +2654,27 @@ fn handle_request_start_active_minigame(
                                     stage_group_guid: minigame_status.group.stage_group_guid,
                                 },
                             },
-                        }),
+                        })
                     );
 
-                    Ok(vec![
-                        Broadcast::Single(sender, packets)
-                    ])
+                    packets.push(
+                        GamePacket::serialize(&TunneledPacket {
+                            unknown1: true,
+                            inner: PreloadCharactersDone { unknown1: false },
+                        })
+                    );
+
+                    if let MinigameReadiness::InitialPlayersLoading(players, broadcasts) = &mut shared_minigame_data.readiness {
+                        broadcasts.push(Broadcast::Single(sender, packets));
+
+                        if players.remove(&sender) && players.is_empty() {
+                            let broadcasts = mem::take(broadcasts);
+                            shared_minigame_data.readiness = MinigameReadiness::Ready(MinigameStopwatch::new(None));
+                            return Ok(broadcasts);
+                        }
+                    }
+
+                    Ok(Vec::new())
                 },
             })
         }

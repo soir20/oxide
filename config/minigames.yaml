@@ -24,7 +24,7 @@ categories:
         background_icon_id: 0
         is_popular: true
         is_game_of_day: false
-        sort_order: 8000
+        sort_order: 4000
         tutorial_swf: HowtoDueling.swf
         stage_group:
           guid: 31000
@@ -3116,6 +3116,868 @@ categories:
               stage_select_map_name: ''
               short_name: ''
               stages: []
+      - guid: 1027
+        name_id: 33128
+        description_id: 6394
+        members_only: true
+        is_flash: false
+        is_active: true
+        param1: 0
+        icon_id: 2726
+        background_icon_id: 0
+        is_popular: true
+        is_game_of_day: false
+        sort_order: 7000
+        tutorial_swf: HowtoDarksideDuel.swf
+        stage_group:
+          guid: 92
+          name_id: 33128
+          description_id: 6394
+          icon_id: 2734
+          stage_icon_id: 2734
+          members_only: true
+          stage_select_map_name: lsDuelPortal
+          stages:
+            - !StageGroup
+              guid: 32001
+              name_id: 19814
+              description_id: 43799
+              icon_id: 2734
+              stage_icon_id: 2748
+              members_only: true
+              require_previous_completed: false
+              stage_select_map_name: darksideDuel
+              short_name: sp
+              stages:
+                - !Stage
+                  guid: 32003
+                  name_id: 33129
+                  description_id: 44382
+                  stage_icon_id: 2731
+                  start_screen_icon_id: 2739
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 5486
+                  members_only: true
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: ldlearnpower1
+                  minigame_type:
+                    !SaberDuel
+                    camera_rot: &saber_duel_venator_hangar_camera_rot 4.71
+                    rounds_to_win: *saber_duel_rounds_to_win
+                    points_to_win_round: 4
+                    keys_per_basic_bout: 4
+                    keys_per_special_bout: 6
+                    first_special_bout: 5
+                    special_bout_interval: 4
+                    points_per_basic_bout: *saber_duel_points_per_basic_bout
+                    points_per_special_bout: *saber_duel_points_per_special_bout
+                    bout_max_millis: *saber_duel_bout_max_millis
+                    tie_interval_millis: *saber_duel_tie_interval_millis
+                    basic_bout_animations: *saber_duel_basic_bout_animations
+                    special_bout_animations: *saber_duel_special_bout_animations
+                    establishing_animation_id: *saber_duel_establishing_animation_id
+                    camera_entrance_animation_id: *saber_duel_camera_entrance_animation_id
+                    ai:
+                      name_id: 1132
+                      model_id: 158
+                      primary_saber:
+                        hilt_item_guid: 70045
+                        shape_item_guid: 50000
+                        color_item_guid: 60000
+                      entrance_animation_id: 6211
+                      entrance_sound_id: 5503
+                      round_won_sound_id: 1836
+                      round_lost_sound_id: 1835
+                      game_won_sound_id: 1836
+                      game_lost_sound_id: 1835
+                      min_millis_per_key: 400
+                      max_millis_per_key: 1300
+                      mistake_probability: *saber_duel_easy_mistake_probability
+                      right_to_left_ai_mistake_probability_added: &saber_duel_fp_mistake_prob 0.05
+                      opposite_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
+                      force_power_probability: 1
+                      force_powers:
+                        ExtraKey:
+                          tutorial_enabled: true
+                      force_power_delay_millis: &saber_duel_force_power_delay_millis 1500
+                    score_penalty_per_second: *saber_duel_easy_score_penalty_per_second
+                    max_time_score_bonus: *saber_duel_max_time_score_bonus
+                    score_penalty_per_accuracy_pct: *saber_duel_score_penalty_per_accuracy_pct
+                    max_accuracy_score_bonus: *saber_duel_max_accuracy_score_bonus
+                    score_per_win_streak: *saber_duel_score_per_win_streak
+                    score_per_point: *saber_duel_score_per_point
+                    score_per_margin_of_victory: *saber_duel_score_per_margin_of_victory
+                    game_win_bonus_score: *saber_duel_game_win_bonus_score
+                    no_bouts_lost_bonus_score: *saber_duel_no_bouts_lost_bonus_score
+                    default_primary_saber: *saber_duel_default_primary_saber
+                    max_force_points: &saber_duel_max_force_points 18
+                    force_power_selection_millis: &saber_duel_force_power_selection_millis 5000
+                    force_points_per_bout_won: &saber_duel_force_points_per_bout_won 1
+                    force_points_per_bout_tied: &saber_duel_force_points_per_bout_tied 1
+                    force_points_per_bout_lost: 6
+                    force_powers:
+                      ExtraKey: &saber_duel_extra_key_definition
+                        name_id: 1888
+                        small_icon_id: 2714
+                        icon_id: 2714
+                        cost: 5
+                        bouts_applied: 3
+                        apply_animation_id: 5007
+                  zone_template_guid: 206
+                  score_to_credits_expression: x / 104.5
+                - !Stage
+                  guid: 32004
+                  name_id: 33130
+                  description_id: 44383
+                  stage_icon_id: 2732
+                  start_screen_icon_id: 2740
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 5487
+                  members_only: true
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: ldlearnpower2
+                  minigame_type:
+                    !SaberDuel
+                    camera_rot: *saber_duel_venator_hangar_camera_rot
+                    rounds_to_win: *saber_duel_rounds_to_win
+                    points_to_win_round: 4
+                    keys_per_basic_bout: 4
+                    keys_per_special_bout: 6
+                    first_special_bout: 5
+                    special_bout_interval: 4
+                    points_per_basic_bout: *saber_duel_points_per_basic_bout
+                    points_per_special_bout: *saber_duel_points_per_special_bout
+                    bout_max_millis: *saber_duel_bout_max_millis
+                    tie_interval_millis: *saber_duel_tie_interval_millis
+                    basic_bout_animations: *saber_duel_basic_bout_animations
+                    special_bout_animations: *saber_duel_special_bout_animations
+                    establishing_animation_id: *saber_duel_establishing_animation_id
+                    camera_entrance_animation_id: *saber_duel_camera_entrance_animation_id
+                    ai:
+                      name_id: 1132
+                      model_id: 158
+                      primary_saber:
+                        hilt_item_guid: 70045
+                        shape_item_guid: 50000
+                        color_item_guid: 60000
+                      entrance_animation_id: 6211
+                      entrance_sound_id: 5504
+                      round_won_sound_id: 1836
+                      round_lost_sound_id: 1835
+                      game_won_sound_id: 1836
+                      game_lost_sound_id: 1835
+                      min_millis_per_key: 400
+                      max_millis_per_key: 1300
+                      mistake_probability: *saber_duel_easy_mistake_probability
+                      right_to_left_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
+                      opposite_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
+                      force_power_probability: 1
+                      force_powers:
+                        RightToLeft:
+                          tutorial_enabled: true
+                      force_power_delay_millis: *saber_duel_force_power_delay_millis
+                    score_penalty_per_second: *saber_duel_easy_score_penalty_per_second
+                    max_time_score_bonus: *saber_duel_max_time_score_bonus
+                    score_penalty_per_accuracy_pct: *saber_duel_score_penalty_per_accuracy_pct
+                    max_accuracy_score_bonus: *saber_duel_max_accuracy_score_bonus
+                    score_per_win_streak: *saber_duel_score_per_win_streak
+                    score_per_point: *saber_duel_score_per_point
+                    score_per_margin_of_victory: *saber_duel_score_per_margin_of_victory
+                    game_win_bonus_score: *saber_duel_game_win_bonus_score
+                    no_bouts_lost_bonus_score: *saber_duel_no_bouts_lost_bonus_score
+                    default_primary_saber: *saber_duel_default_primary_saber
+                    max_force_points: *saber_duel_max_force_points
+                    force_power_selection_millis: *saber_duel_force_power_selection_millis
+                    force_points_per_bout_won: *saber_duel_force_points_per_bout_won
+                    force_points_per_bout_tied: *saber_duel_force_points_per_bout_tied
+                    force_points_per_bout_lost: 6
+                    force_powers:
+                      ExtraKey: *saber_duel_extra_key_definition
+                      RightToLeft: &saber_duel_right_to_left_definition
+                        name_id: 1889
+                        small_icon_id: 2710
+                        icon_id: 2710
+                        cost: 5
+                        bouts_applied: 3
+                        apply_animation_id: 5007
+                  zone_template_guid: 206
+                  score_to_credits_expression: x / 104.5
+                - !Stage
+                  guid: 32005
+                  name_id: 33131
+                  description_id: 44384
+                  stage_icon_id: 2733
+                  start_screen_icon_id: 2741
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 5488
+                  members_only: true
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: ldlearnpower3
+                  minigame_type:
+                    !SaberDuel
+                    camera_rot: *saber_duel_venator_hangar_camera_rot
+                    rounds_to_win: *saber_duel_rounds_to_win
+                    points_to_win_round: 4
+                    keys_per_basic_bout: 4
+                    keys_per_special_bout: 6
+                    first_special_bout: 5
+                    special_bout_interval: 4
+                    points_per_basic_bout: *saber_duel_points_per_basic_bout
+                    points_per_special_bout: *saber_duel_points_per_special_bout
+                    bout_max_millis: *saber_duel_bout_max_millis
+                    tie_interval_millis: *saber_duel_tie_interval_millis
+                    basic_bout_animations: *saber_duel_basic_bout_animations
+                    special_bout_animations: *saber_duel_special_bout_animations
+                    establishing_animation_id: *saber_duel_establishing_animation_id
+                    camera_entrance_animation_id: *saber_duel_camera_entrance_animation_id
+                    ai:
+                      name_id: 1132
+                      model_id: 158
+                      primary_saber:
+                        hilt_item_guid: 70045
+                        shape_item_guid: 50000
+                        color_item_guid: 60000
+                      entrance_animation_id: 6211
+                      entrance_sound_id: 5505
+                      round_won_sound_id: 1836
+                      round_lost_sound_id: 1835
+                      game_won_sound_id: 1836
+                      game_lost_sound_id: 1835
+                      min_millis_per_key: 400
+                      max_millis_per_key: 1300
+                      mistake_probability: *saber_duel_easy_mistake_probability
+                      right_to_left_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
+                      opposite_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
+                      force_power_probability: 1
+                      force_powers:
+                        Opposite:
+                          tutorial_enabled: true
+                      force_power_delay_millis: *saber_duel_force_power_delay_millis
+                    score_penalty_per_second: *saber_duel_easy_score_penalty_per_second
+                    max_time_score_bonus: *saber_duel_max_time_score_bonus
+                    score_penalty_per_accuracy_pct: *saber_duel_score_penalty_per_accuracy_pct
+                    max_accuracy_score_bonus: *saber_duel_max_accuracy_score_bonus
+                    score_per_win_streak: *saber_duel_score_per_win_streak
+                    score_per_point: *saber_duel_score_per_point
+                    score_per_margin_of_victory: *saber_duel_score_per_margin_of_victory
+                    game_win_bonus_score: *saber_duel_game_win_bonus_score
+                    no_bouts_lost_bonus_score: *saber_duel_no_bouts_lost_bonus_score
+                    default_primary_saber: *saber_duel_default_primary_saber
+                    max_force_points: *saber_duel_max_force_points
+                    force_power_selection_millis: *saber_duel_force_power_selection_millis
+                    force_points_per_bout_won: *saber_duel_force_points_per_bout_won
+                    force_points_per_bout_tied: *saber_duel_force_points_per_bout_tied
+                    force_points_per_bout_lost: 6
+                    force_powers:
+                      ExtraKey: *saber_duel_extra_key_definition
+                      RightToLeft: *saber_duel_right_to_left_definition
+                      Opposite: &saber_duel_opposite_definition
+                        name_id: 1890
+                        small_icon_id: 2706
+                        icon_id: 2706
+                        cost: 5
+                        bouts_applied: 3
+                        apply_animation_id: 5007
+                  zone_template_guid: 206
+                  score_to_credits_expression: x / 104.5
+                - !Stage
+                  guid: 32006
+                  name_id: 44693
+                  description_id: 32961
+                  stage_icon_id: 2728
+                  start_screen_icon_id: 2738
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 4449
+                  members_only: true
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: ldgrievous
+                  minigame_type:
+                    !SaberDuel
+                    camera_rot: *saber_duel_venator_hangar_camera_rot
+                    rounds_to_win: *saber_duel_rounds_to_win
+                    points_to_win_round: 6
+                    keys_per_basic_bout: 4
+                    keys_per_special_bout: 6
+                    first_special_bout: 3
+                    special_bout_interval: 5
+                    points_per_basic_bout: *saber_duel_points_per_basic_bout
+                    points_per_special_bout: *saber_duel_points_per_special_bout
+                    bout_max_millis: *saber_duel_bout_max_millis
+                    tie_interval_millis: *saber_duel_tie_interval_millis
+                    basic_bout_animations:
+                      - attack_animation_id: 5037
+                        defend_animation_id: 5038
+                      - attack_animation_id: 5041
+                        defend_animation_id: 5042
+                      - attack_animation_id: 5047
+                        defend_animation_id: 5048
+                    special_bout_animations:
+                      - attack_animation_id: 5043
+                        defend_animation_id: 5044
+                    establishing_animation_id: *saber_duel_establishing_animation_id
+                    camera_entrance_animation_id: *saber_duel_camera_entrance_animation_id
+                    ai:
+                      name_id: 1136
+                      model_id: 364
+                      wield_type_override: SingleSaber
+                      entrance_animation_id: 6215
+                      entrance_sound_id: 4734
+                      round_won_sound_id: 4738
+                      round_lost_sound_id: 4735
+                      game_won_sound_id: 4738
+                      game_lost_sound_id: 4735
+                      min_millis_per_key: 400
+                      max_millis_per_key: 1200
+                      mistake_probability: *saber_duel_easy_mistake_probability
+                      right_to_left_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
+                      opposite_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
+                      force_power_probability: &saber_duel_easy_force_power_probability 0.25
+                      force_powers: &saber_duel_ai_force_powers
+                        ExtraKey: {}
+                        RightToLeft: {}
+                        Opposite: {}
+                      force_power_delay_millis: *saber_duel_force_power_delay_millis
+                    score_penalty_per_second: *saber_duel_easy_score_penalty_per_second
+                    max_time_score_bonus: *saber_duel_max_time_score_bonus
+                    score_penalty_per_accuracy_pct: *saber_duel_score_penalty_per_accuracy_pct
+                    max_accuracy_score_bonus: *saber_duel_max_accuracy_score_bonus
+                    score_per_win_streak: *saber_duel_score_per_win_streak
+                    score_per_point: *saber_duel_score_per_point
+                    score_per_margin_of_victory: *saber_duel_score_per_margin_of_victory
+                    game_win_bonus_score: *saber_duel_game_win_bonus_score
+                    no_bouts_lost_bonus_score: *saber_duel_no_bouts_lost_bonus_score
+                    default_primary_saber: *saber_duel_default_primary_saber
+                    max_force_points: *saber_duel_max_force_points
+                    force_power_selection_millis: *saber_duel_force_power_selection_millis
+                    force_points_per_bout_won: *saber_duel_force_points_per_bout_won
+                    force_points_per_bout_tied: *saber_duel_force_points_per_bout_tied
+                    force_points_per_bout_lost: &saber_duel_force_points_per_bout_lost 2
+                    force_powers: &saber_duel_force_power_definitions
+                      ExtraKey: *saber_duel_extra_key_definition
+                      RightToLeft: *saber_duel_right_to_left_definition
+                      Opposite: *saber_duel_opposite_definition
+                  zone_template_guid: 207
+                  score_to_credits_expression: x / 108.5
+                - !Stage
+                  guid: 32007
+                  name_id: 32957
+                  description_id: 32958
+                  stage_icon_id: 2730
+                  start_screen_icon_id: 2743
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 2
+                  start_sound_id: 4447
+                  members_only: true
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: ldventress
+                  minigame_type:
+                    !SaberDuel
+                    camera_rot: &saber_duel_dathomir_arena_camera_rot 3.14
+                    rounds_to_win: *saber_duel_rounds_to_win
+                    points_to_win_round: 8
+                    keys_per_basic_bout: 4
+                    keys_per_special_bout: 6
+                    first_special_bout: 3
+                    special_bout_interval: 5
+                    points_per_basic_bout: *saber_duel_points_per_basic_bout
+                    points_per_special_bout: *saber_duel_points_per_special_bout
+                    bout_max_millis: *saber_duel_bout_max_millis
+                    tie_interval_millis: *saber_duel_tie_interval_millis
+                    basic_bout_animations: *saber_duel_basic_bout_animations
+                    special_bout_animations: *saber_duel_special_bout_animations
+                    establishing_animation_id: *saber_duel_establishing_animation_id
+                    camera_entrance_animation_id: *saber_duel_camera_entrance_animation_id
+                    ai:
+                      name_id: 8620
+                      model_id: 1468
+                      primary_saber:
+                        hilt_item_guid: 70060
+                        shape_item_guid: 50000
+                        color_item_guid: 60004
+                      secondary_saber:
+                        hilt_item_guid: 80061
+                        shape_item_guid: 90000
+                        color_item_guid: 100004
+                      entrance_animation_id: 6216
+                      entrance_sound_id: 5013
+                      round_won_sound_id: 5017
+                      round_lost_sound_id: 5014
+                      game_won_sound_id: 5017
+                      game_lost_sound_id: 5014
+                      min_millis_per_key: 400
+                      max_millis_per_key: 1100
+                      mistake_probability: *saber_duel_medium_mistake_probability
+                      right_to_left_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
+                      opposite_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
+                      force_power_probability: &saber_duel_medium_force_power_probability 0.5
+                      force_powers: *saber_duel_ai_force_powers
+                      force_power_delay_millis: *saber_duel_force_power_delay_millis
+                    score_penalty_per_second: *saber_duel_medium_score_penalty_per_second
+                    max_time_score_bonus: *saber_duel_max_time_score_bonus
+                    score_penalty_per_accuracy_pct: *saber_duel_score_penalty_per_accuracy_pct
+                    max_accuracy_score_bonus: *saber_duel_max_accuracy_score_bonus
+                    score_per_win_streak: *saber_duel_score_per_win_streak
+                    score_per_point: *saber_duel_score_per_point
+                    score_per_margin_of_victory: *saber_duel_score_per_margin_of_victory
+                    game_win_bonus_score: *saber_duel_game_win_bonus_score
+                    no_bouts_lost_bonus_score: *saber_duel_no_bouts_lost_bonus_score
+                    default_primary_saber: *saber_duel_default_primary_saber
+                    max_force_points: *saber_duel_max_force_points
+                    force_power_selection_millis: *saber_duel_force_power_selection_millis
+                    force_points_per_bout_won: *saber_duel_force_points_per_bout_won
+                    force_points_per_bout_tied: *saber_duel_force_points_per_bout_tied
+                    force_points_per_bout_lost: *saber_duel_force_points_per_bout_lost
+                    force_powers: *saber_duel_force_power_definitions
+                  zone_template_guid: 208
+                  score_to_credits_expression: x / 117
+                - !Stage
+                  guid: 32008
+                  name_id: 32962
+                  description_id: 32963
+                  stage_icon_id: 2727
+                  start_screen_icon_id: 2737
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 3
+                  start_sound_id: 4448
+                  members_only: true
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: lddooku
+                  minigame_type:
+                    !SaberDuel
+                    camera_rot: *saber_duel_dathomir_arena_camera_rot
+                    rounds_to_win: *saber_duel_rounds_to_win
+                    points_to_win_round: 10
+                    keys_per_basic_bout: 4
+                    keys_per_special_bout: 6
+                    first_special_bout: 4
+                    special_bout_interval: 6
+                    points_per_basic_bout: *saber_duel_points_per_basic_bout
+                    points_per_special_bout: *saber_duel_points_per_special_bout
+                    bout_max_millis: *saber_duel_bout_max_millis
+                    tie_interval_millis: *saber_duel_tie_interval_millis
+                    basic_bout_animations: *saber_duel_basic_bout_animations
+                    special_bout_animations: *saber_duel_special_bout_animations
+                    establishing_animation_id: *saber_duel_establishing_animation_id
+                    camera_entrance_animation_id: *saber_duel_camera_entrance_animation_id
+                    ai:
+                      name_id: 32942
+                      model_id: 1308
+                      primary_saber:
+                        hilt_item_guid: 70025
+                        shape_item_guid: 50000
+                        color_item_guid: 60004
+                      entrance_animation_id: 6217
+                      entrance_sound_id: 4702
+                      round_won_sound_id: 4707
+                      round_lost_sound_id: 4704
+                      game_won_sound_id: 4707
+                      game_lost_sound_id: 4704
+                      min_millis_per_key: 400
+                      max_millis_per_key: 1000
+                      mistake_probability: *saber_duel_hard_mistake_probability
+                      right_to_left_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
+                      opposite_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
+                      force_power_probability: &saber_duel_hard_force_power_probability 0.75
+                      force_powers: *saber_duel_ai_force_powers
+                      force_power_delay_millis: *saber_duel_force_power_delay_millis
+                    score_penalty_per_second: *saber_duel_hard_score_penalty_per_second
+                    max_time_score_bonus: *saber_duel_max_time_score_bonus
+                    score_penalty_per_accuracy_pct: *saber_duel_score_penalty_per_accuracy_pct
+                    max_accuracy_score_bonus: *saber_duel_max_accuracy_score_bonus
+                    score_per_win_streak: *saber_duel_score_per_win_streak
+                    score_per_point: *saber_duel_score_per_point
+                    score_per_margin_of_victory: *saber_duel_score_per_margin_of_victory
+                    game_win_bonus_score: *saber_duel_game_win_bonus_score
+                    no_bouts_lost_bonus_score: *saber_duel_no_bouts_lost_bonus_score
+                    default_primary_saber: *saber_duel_default_primary_saber
+                    max_force_points: *saber_duel_max_force_points
+                    force_power_selection_millis: *saber_duel_force_power_selection_millis
+                    force_points_per_bout_won: *saber_duel_force_points_per_bout_won
+                    force_points_per_bout_tied: *saber_duel_force_points_per_bout_tied
+                    force_points_per_bout_lost: *saber_duel_force_points_per_bout_lost
+                    force_powers: *saber_duel_force_power_definitions
+                  zone_template_guid: 209
+                  score_to_credits_expression: x / 134.5
+                - !Stage
+                  guid: 32009
+                  name_id: 33011
+                  description_id: 33012
+                  stage_icon_id: 2729
+                  start_screen_icon_id: 2742
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 3
+                  start_sound_id: 4450
+                  members_only: true
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: ldopress
+                  minigame_type:
+                    !SaberDuel
+                    camera_rot: *saber_duel_dathomir_arena_camera_rot
+                    rounds_to_win: *saber_duel_rounds_to_win
+                    points_to_win_round: 10
+                    keys_per_basic_bout: 4
+                    keys_per_special_bout: 6
+                    first_special_bout: 4
+                    special_bout_interval: 6
+                    points_per_basic_bout: *saber_duel_points_per_basic_bout
+                    points_per_special_bout: *saber_duel_points_per_special_bout
+                    bout_max_millis: *saber_duel_bout_max_millis
+                    tie_interval_millis: *saber_duel_tie_interval_millis
+                    basic_bout_animations:
+                      - attack_animation_id: 5037
+                        defend_animation_id: 5038
+                      - attack_animation_id: 5045
+                        defend_animation_id: 5046
+                      - attack_animation_id: 5057
+                        defend_animation_id: 5058
+                    special_bout_animations:
+                      - attack_animation_id: 5043
+                        defend_animation_id: 5044
+                    establishing_animation_id: *saber_duel_establishing_animation_id
+                    camera_entrance_animation_id: *saber_duel_camera_entrance_animation_id
+                    ai:
+                      name_id: 4125
+                      model_id: 1469
+                      primary_saber:
+                        hilt_item_guid: 70003
+                        shape_item_guid: 50000
+                        color_item_guid: 60004
+                      entrance_animation_id: 6218
+                      entrance_sound_id: 4911
+                      round_won_sound_id: 4915
+                      round_lost_sound_id: 4912
+                      game_won_sound_id: 4915
+                      game_lost_sound_id: 4912
+                      min_millis_per_key: 400
+                      max_millis_per_key: 900
+                      mistake_probability: *saber_duel_hard_mistake_probability
+                      right_to_left_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
+                      opposite_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
+                      base_force_points_rewarded: 1
+                      force_power_probability: *saber_duel_hard_force_power_probability
+                      force_powers: *saber_duel_ai_force_powers
+                      force_power_delay_millis: *saber_duel_force_power_delay_millis
+                    score_penalty_per_second: *saber_duel_hard_score_penalty_per_second
+                    max_time_score_bonus: *saber_duel_max_time_score_bonus
+                    score_penalty_per_accuracy_pct: *saber_duel_score_penalty_per_accuracy_pct
+                    max_accuracy_score_bonus: *saber_duel_max_accuracy_score_bonus
+                    score_per_win_streak: *saber_duel_score_per_win_streak
+                    score_per_point: *saber_duel_score_per_point
+                    score_per_margin_of_victory: *saber_duel_score_per_margin_of_victory
+                    game_win_bonus_score: *saber_duel_game_win_bonus_score
+                    no_bouts_lost_bonus_score: *saber_duel_no_bouts_lost_bonus_score
+                    default_primary_saber: *saber_duel_default_primary_saber
+                    max_force_points: *saber_duel_max_force_points
+                    force_power_selection_millis: *saber_duel_force_power_selection_millis
+                    force_points_per_bout_won: *saber_duel_force_points_per_bout_won
+                    force_points_per_bout_tied: *saber_duel_force_points_per_bout_tied
+                    force_points_per_bout_lost: *saber_duel_force_points_per_bout_lost
+                    force_powers: *saber_duel_force_power_definitions
+                  zone_template_guid: 209
+                  score_to_credits_expression: x / 108
+                - !Stage
+                  guid: 32010
+                  name_id: 51099
+                  description_id: 51100
+                  stage_icon_id: 5670
+                  start_screen_icon_id: 5669
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 3
+                  start_sound_id: 5869
+                  members_only: true
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: ldmaul
+                  minigame_type:
+                    !SaberDuel
+                    camera_rot: &saber_duel_sith_temple_camera_rot 0
+                    rounds_to_win: *saber_duel_rounds_to_win
+                    points_to_win_round: 10
+                    keys_per_basic_bout: 4
+                    keys_per_special_bout: 6
+                    first_special_bout: 4
+                    special_bout_interval: 5
+                    points_per_basic_bout: *saber_duel_points_per_basic_bout
+                    points_per_special_bout: *saber_duel_points_per_special_bout
+                    bout_max_millis: *saber_duel_bout_max_millis
+                    tie_interval_millis: *saber_duel_tie_interval_millis
+                    basic_bout_animations:
+                      - attack_animation_id: 5037
+                        defend_animation_id: 5038
+                      - attack_animation_id: 5047
+                        defend_animation_id: 5048
+                      - attack_animation_id: 5067
+                        defend_animation_id: 5068
+                    special_bout_animations:
+                      - attack_animation_id: 5051
+                        defend_animation_id: 5052
+                    establishing_animation_id: *saber_duel_establishing_animation_id
+                    camera_entrance_animation_id: *saber_duel_camera_entrance_animation_id
+                    ai:
+                      name_id: 10380
+                      model_id: 2313
+                      primary_saber:
+                        hilt_item_guid: 70024
+                        shape_item_guid: 50000
+                        color_item_guid: 60004
+                      entrance_animation_id: 6219
+                      entrance_sound_id: 5919
+                      round_won_sound_id: 5923
+                      round_lost_sound_id: 5920
+                      game_won_sound_id: 5923
+                      game_lost_sound_id: 5920
+                      min_millis_per_key: 400
+                      max_millis_per_key: 800
+                      mistake_probability: *saber_duel_hard_mistake_probability
+                      right_to_left_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
+                      opposite_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
+                      force_power_probability: *saber_duel_hard_force_power_probability
+                      force_powers: *saber_duel_ai_force_powers
+                      force_power_delay_millis: *saber_duel_force_power_delay_millis
+                    score_penalty_per_second: *saber_duel_hard_score_penalty_per_second
+                    max_time_score_bonus: *saber_duel_max_time_score_bonus
+                    score_penalty_per_accuracy_pct: *saber_duel_score_penalty_per_accuracy_pct
+                    max_accuracy_score_bonus: *saber_duel_max_accuracy_score_bonus
+                    score_per_win_streak: *saber_duel_score_per_win_streak
+                    score_per_point: *saber_duel_score_per_point
+                    score_per_margin_of_victory: *saber_duel_score_per_margin_of_victory
+                    game_win_bonus_score: *saber_duel_game_win_bonus_score
+                    no_bouts_lost_bonus_score: *saber_duel_no_bouts_lost_bonus_score
+                    default_primary_saber: *saber_duel_default_primary_saber
+                    max_force_points: *saber_duel_max_force_points
+                    force_power_selection_millis: *saber_duel_force_power_selection_millis
+                    force_points_per_bout_won: *saber_duel_force_points_per_bout_won
+                    force_points_per_bout_tied: *saber_duel_force_points_per_bout_tied
+                    force_points_per_bout_lost: *saber_duel_force_points_per_bout_lost
+                    force_powers: *saber_duel_force_power_definitions
+                  zone_template_guid: 210
+                  score_to_credits_expression: x / 108.5
+            - !StageGroup
+              guid: 32002
+              name_id: 19815
+              description_id: 43799
+              icon_id: 2734
+              stage_icon_id: 2744
+              members_only: true
+              require_previous_completed: false
+              stage_select_map_name: RepublicGunship
+              short_name: mp
+              stages:
+                - !Stage
+                  guid: 32011
+                  name_id: 9162
+                  description_id: 33021
+                  stage_icon_id: 2745
+                  start_screen_icon_id: 2749
+                  min_players: 1
+                  max_players: 2
+                  difficulty: 1
+                  members_only: true
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage01
+                  minigame_type:
+                    !SaberDuel
+                    camera_rot: *saber_duel_venator_hangar_camera_rot
+                    rounds_to_win: *saber_duel_rounds_to_win
+                    points_to_win_round: 6
+                    keys_per_basic_bout: 4
+                    keys_per_special_bout: 6
+                    first_special_bout: 6
+                    special_bout_interval: 6
+                    points_per_basic_bout: *saber_duel_points_per_basic_bout
+                    points_per_special_bout: *saber_duel_points_per_special_bout
+                    bout_max_millis: *saber_duel_bout_max_millis
+                    tie_interval_millis: *saber_duel_tie_interval_millis
+                    basic_bout_animations: *saber_duel_basic_bout_animations
+                    special_bout_animations: *saber_duel_special_bout_animations
+                    establishing_animation_id: *saber_duel_establishing_animation_id
+                    camera_entrance_animation_id: *saber_duel_camera_entrance_animation_id
+                    ai:
+                      name_id: 33017
+                      model_id: 1332
+                      primary_saber:
+                        hilt_item_guid: 70005
+                        shape_item_guid: 50007
+                        color_item_guid: 60004
+                      entrance_animation_id: 5004
+                      min_millis_per_key: 400
+                      max_millis_per_key: 1200
+                      mistake_probability: *saber_duel_easy_mistake_probability
+                      right_to_left_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
+                      opposite_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
+                      force_power_probability: *saber_duel_easy_force_power_probability
+                      force_powers: *saber_duel_ai_force_powers
+                      force_power_delay_millis: *saber_duel_force_power_delay_millis
+                    score_penalty_per_second: *saber_duel_easy_score_penalty_per_second
+                    max_time_score_bonus: *saber_duel_max_time_score_bonus
+                    score_penalty_per_accuracy_pct: *saber_duel_score_penalty_per_accuracy_pct
+                    max_accuracy_score_bonus: *saber_duel_max_accuracy_score_bonus
+                    score_per_win_streak: *saber_duel_score_per_win_streak
+                    score_per_point: *saber_duel_score_per_point
+                    score_per_margin_of_victory: *saber_duel_score_per_margin_of_victory
+                    game_win_bonus_score: *saber_duel_game_win_bonus_score
+                    no_bouts_lost_bonus_score: *saber_duel_no_bouts_lost_bonus_score
+                    default_primary_saber: *saber_duel_default_primary_saber
+                    max_force_points: *saber_duel_max_force_points
+                    force_power_selection_millis: *saber_duel_force_power_selection_millis
+                    force_points_per_bout_won: *saber_duel_force_points_per_bout_won
+                    force_points_per_bout_tied: *saber_duel_force_points_per_bout_tied
+                    force_points_per_bout_lost: *saber_duel_force_points_per_bout_lost
+                    force_powers: *saber_duel_force_power_definitions
+                  zone_template_guid: 211
+                  score_to_credits_expression: x / 103
+                - !Stage
+                  guid: 32012
+                  name_id: 9373
+                  description_id: 33021
+                  stage_icon_id: 2746
+                  start_screen_icon_id: 2750
+                  min_players: 1
+                  max_players: 2
+                  difficulty: 2
+                  members_only: true
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage02
+                  minigame_type:
+                    !SaberDuel
+                    camera_rot: *saber_duel_dathomir_arena_camera_rot
+                    rounds_to_win: *saber_duel_rounds_to_win
+                    points_to_win_round: 8
+                    keys_per_basic_bout: 6
+                    keys_per_special_bout: 8
+                    first_special_bout: 3
+                    special_bout_interval: 5
+                    points_per_basic_bout: *saber_duel_points_per_basic_bout
+                    points_per_special_bout: *saber_duel_points_per_special_bout
+                    bout_max_millis: *saber_duel_bout_max_millis
+                    tie_interval_millis: *saber_duel_tie_interval_millis
+                    basic_bout_animations: *saber_duel_basic_bout_animations
+                    special_bout_animations: *saber_duel_special_bout_animations
+                    establishing_animation_id: *saber_duel_establishing_animation_id
+                    camera_entrance_animation_id: *saber_duel_camera_entrance_animation_id
+                    ai:
+                      name_id: 33018
+                      model_id: 1333
+                      primary_saber:
+                        hilt_item_guid: 70047
+                        shape_item_guid: 50000
+                        color_item_guid: 60002
+                      secondary_saber:
+                        hilt_item_guid: 80019
+                        shape_item_guid: 90000
+                        color_item_guid: 100004
+                      entrance_animation_id: 5004
+                      min_millis_per_key: 400
+                      max_millis_per_key: 1000
+                      mistake_probability: *saber_duel_medium_mistake_probability
+                      right_to_left_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
+                      opposite_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
+                      force_power_probability: *saber_duel_medium_force_power_probability
+                      force_powers: *saber_duel_ai_force_powers
+                      force_power_delay_millis: *saber_duel_force_power_delay_millis
+                    score_penalty_per_second: *saber_duel_medium_score_penalty_per_second
+                    max_time_score_bonus: *saber_duel_max_time_score_bonus
+                    score_penalty_per_accuracy_pct: *saber_duel_score_penalty_per_accuracy_pct
+                    max_accuracy_score_bonus: *saber_duel_max_accuracy_score_bonus
+                    score_per_win_streak: *saber_duel_score_per_win_streak
+                    score_per_point: *saber_duel_score_per_point
+                    score_per_margin_of_victory: *saber_duel_score_per_margin_of_victory
+                    game_win_bonus_score: *saber_duel_game_win_bonus_score
+                    no_bouts_lost_bonus_score: *saber_duel_no_bouts_lost_bonus_score
+                    default_primary_saber: *saber_duel_default_primary_saber
+                    max_force_points: *saber_duel_max_force_points
+                    force_power_selection_millis: *saber_duel_force_power_selection_millis
+                    force_points_per_bout_won: *saber_duel_force_points_per_bout_won
+                    force_points_per_bout_tied: *saber_duel_force_points_per_bout_tied
+                    force_points_per_bout_lost: *saber_duel_force_points_per_bout_lost
+                    force_powers: *saber_duel_force_power_definitions
+                  zone_template_guid: 212
+                  score_to_credits_expression: x / 112.5
+                - !Stage
+                  guid: 32013
+                  name_id: 9374
+                  description_id: 33021
+                  stage_icon_id: 2747
+                  start_screen_icon_id: 2751
+                  min_players: 1
+                  max_players: 2
+                  difficulty: 3
+                  members_only: true
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage03
+                  minigame_type:
+                    !SaberDuel
+                    camera_rot: *saber_duel_dathomir_arena_camera_rot
+                    rounds_to_win: *saber_duel_rounds_to_win
+                    points_to_win_round: 10
+                    keys_per_basic_bout: 8
+                    keys_per_special_bout: 10
+                    first_special_bout: 4
+                    special_bout_interval: 6
+                    points_per_basic_bout: *saber_duel_points_per_basic_bout
+                    points_per_special_bout: *saber_duel_points_per_special_bout
+                    bout_max_millis: *saber_duel_bout_max_millis
+                    tie_interval_millis: *saber_duel_tie_interval_millis
+                    basic_bout_animations: *saber_duel_basic_bout_animations
+                    special_bout_animations: *saber_duel_special_bout_animations
+                    establishing_animation_id: *saber_duel_establishing_animation_id
+                    camera_entrance_animation_id: *saber_duel_camera_entrance_animation_id
+                    ai:
+                      name_id: 33019
+                      model_id: 1334
+                      primary_saber:
+                        hilt_item_guid: 70001
+                        shape_item_guid: 50007
+                        color_item_guid: 60005
+                      entrance_animation_id: 5004
+                      min_millis_per_key: 400
+                      max_millis_per_key: 800
+                      mistake_probability: *saber_duel_hard_mistake_probability
+                      right_to_left_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
+                      opposite_ai_mistake_probability_added: *saber_duel_fp_mistake_prob
+                      force_power_probability: *saber_duel_hard_force_power_probability
+                      force_powers: *saber_duel_ai_force_powers
+                      force_power_delay_millis: *saber_duel_force_power_delay_millis
+                    score_penalty_per_second: *saber_duel_hard_score_penalty_per_second
+                    max_time_score_bonus: *saber_duel_max_time_score_bonus
+                    score_penalty_per_accuracy_pct: *saber_duel_score_penalty_per_accuracy_pct
+                    max_accuracy_score_bonus: *saber_duel_max_accuracy_score_bonus
+                    score_per_win_streak: *saber_duel_score_per_win_streak
+                    score_per_point: *saber_duel_score_per_point
+                    score_per_margin_of_victory: *saber_duel_score_per_margin_of_victory
+                    game_win_bonus_score: *saber_duel_game_win_bonus_score
+                    no_bouts_lost_bonus_score: *saber_duel_no_bouts_lost_bonus_score
+                    default_primary_saber: *saber_duel_default_primary_saber
+                    max_force_points: *saber_duel_max_force_points
+                    force_power_selection_millis: *saber_duel_force_power_selection_millis
+                    force_points_per_bout_won: *saber_duel_force_points_per_bout_won
+                    force_points_per_bout_tied: *saber_duel_force_points_per_bout_tied
+                    force_points_per_bout_lost: *saber_duel_force_points_per_bout_lost
+                    force_powers: *saber_duel_force_power_definitions
+                  zone_template_guid: 213
+                  score_to_credits_expression: x / 122.5
       - guid: 9000
         name_id: 45187
         description_id: 45193
