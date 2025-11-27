@@ -63,7 +63,7 @@ pub struct TowerDefenseStageData {
     pub unknown_array2: Vec<UnknownRDArray2>,
     pub unknown_pos1: Pos,
     pub unknown_pos2: Pos,
-    pub unknown1: f32,
+    pub field_of_view: f32,
     pub unknown_pos3: Pos,
     pub unknown_pos4: Pos,
 }
