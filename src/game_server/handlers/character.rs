@@ -395,7 +395,7 @@ pub struct OneShotAction {
     pub award_credits: u32,
     #[serde(default)]
     pub script: ScriptType,
-    pub point_of_interest: Option<u32>,
+    pub point_of_interest: Option<u16>,
 }
 
 impl OneShotAction {
@@ -453,7 +453,7 @@ impl OneShotAction {
                 unknown1: true,
                 inner: ExecuteScriptWithIntParams {
                     script_name: "HudDockHandler.gotoPOI".to_string(),
-                    params: vec![poi.try_into().unwrap()],
+                    params: vec![poi.into()],
                 },
             }));
         }
@@ -470,7 +470,7 @@ pub struct PlayerOneShotAction {
     pub player_animation_delay_seconds: u32,
     pub player_composite_effect_id: Option<u32>,
     #[serde(default)]
-    pub player_effect_delay_millis: u32,
+    pub player_composite_effect_delay_millis: u32,
 }
 
 #[derive(Clone, Deserialize)]
@@ -485,7 +485,7 @@ pub struct OneShotInteractionConfig {
     pub animation_delay_seconds: f32,
     pub composite_effect_id: Option<u32>,
     #[serde(default)]
-    pub effect_delay_millis: u32,
+    pub composite_effect_delay_millis: u32,
     pub dialog_option_key: Option<String>,
     #[serde(default)]
     pub removal_mode: RemovalMode,
@@ -501,7 +501,7 @@ pub struct OneShotInteractionTemplate {
     pub one_shot_animation_id: Option<i32>,
     pub animation_delay_seconds: f32,
     pub composite_effect_id: Option<u32>,
-    pub effect_delay_millis: u32,
+    pub composite_effect_delay_millis: u32,
     pub dialog_option_id: Option<u32>,
     pub removal_mode: RemovalMode,
     pub despawn_npc: bool,
@@ -531,7 +531,7 @@ impl OneShotInteractionTemplate {
             one_shot_animation_id: config.one_shot_animation_id,
             animation_delay_seconds: config.animation_delay_seconds,
             composite_effect_id: config.composite_effect_id,
-            effect_delay_millis: config.effect_delay_millis,
+            composite_effect_delay_millis: config.composite_effect_delay_millis,
             removal_mode: config.removal_mode,
             despawn_npc: config.despawn_npc,
             duration_millis: config.duration_millis,
@@ -574,7 +574,7 @@ impl OneShotInteractionTemplate {
                     guid: Guid::guid(character),
                     triggered_by_guid: 0,
                     composite_effect: composite_effect_id,
-                    delay_millis: self.effect_delay_millis,
+                    delay_millis: self.composite_effect_delay_millis,
                     duration_millis: self.duration_millis as u32,
                     pos: Pos::default(),
                 },
@@ -602,7 +602,7 @@ impl OneShotInteractionTemplate {
                     guid: player_guid(requester),
                     triggered_by_guid: 0,
                     composite_effect: composite_effect_id,
-                    delay_millis: self.player_one_shot_action.player_effect_delay_millis,
+                    delay_millis: self.player_one_shot_action.player_composite_effect_delay_millis,
                     duration_millis: self.duration_millis as u32,
                     pos: Pos::default(),
                 },
