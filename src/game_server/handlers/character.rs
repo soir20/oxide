@@ -668,7 +668,7 @@ pub struct TickableStep {
     #[serde(default)]
     pub dialog_mode: TickableDialogMode,
     #[serde(flatten)]
-    pub script: CustomScriptIntParams,
+    pub script: ScriptType,
     #[serde(default)]
     pub removal_mode: RemovalMode,
     #[serde(default)]
@@ -947,14 +947,41 @@ impl TickableStep {
             TickableDialogMode::None => {}
         }
 
-        if let Some(script) = &self.script.script_name {
-            packets_for_all.push(GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: ExecuteScriptWithIntParams {
-                    script_name: script.to_string(),
-                    params: self.script.params.clone(),
-                },
-            }));
+        match &self.script {
+            ScriptType::CustomIntParams {
+                script_name,
+                params,
+            } => {
+                packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: ExecuteScriptWithIntParams {
+                        script_name: script_name.clone(),
+                        params: params.clone(),
+                    },
+                }));
+            }
+            ScriptType::CustomStringParams {
+                script_name,
+                params,
+            } => {
+                packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: ExecuteScriptWithStringParams {
+                        script_name: script_name.clone(),
+                        params: params.clone(),
+                    },
+                }));
+            }
+            ScriptType::OpenMinigameStageGroup { stage_group_id } => {
+                packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: ExecuteScriptWithIntParams {
+                        script_name: "MiniGameFlow.CreateMiniGameGroup".to_string(),
+                        params: vec![*stage_group_id],
+                    },
+                }));
+            }
+            ScriptType::None => {}
         }
 
         if self.cursor != CursorUpdate::Keep {
