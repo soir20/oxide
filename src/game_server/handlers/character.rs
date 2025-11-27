@@ -935,7 +935,7 @@ impl TickableStep {
                 packets_for_all.push(GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
                     inner: ExecuteScriptWithIntParams {
-                        script_name: "UIGlobal.DialogenableInteraction".to_string(),
+                        script_name: "UIGlobal.DialogEnableInteraction".to_string(),
                         params: vec![],
                     },
                 }));
