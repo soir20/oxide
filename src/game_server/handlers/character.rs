@@ -24,7 +24,7 @@ use crate::{
             minigame::ScoreEntry,
             player_update::{
                 AddNotifications, AddNpc, AddPc, Customization, CustomizationSlot, Hostility, Icon,
-                MoveOnRail, NameplateImage, NotificationData, NotificationIconId, NpcRelevance,
+                MoveOnRail, NameplateImage, NotificationData, NpcRelevance,
                 PhysicsState, PlayCompositeEffect, QueueAnimation, RemoveGracefully,
                 RemoveStandard, RemoveTemporaryModel, SetAnimation, SingleNotification,
                 SingleNpcRelevance, UpdateSpeed, UpdateTemporaryModel,
@@ -1355,7 +1355,7 @@ pub struct AmbientNpcConfig {
     pub base_npc: BaseNpcConfig,
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
     pub one_shot_interaction: Option<OneShotInteractionConfig>,
-    pub notification_icon: Option<NotificationIconId>,
+    pub notification_icon: Option<u32>,
 }
 
 impl NpcConfig for AmbientNpcConfig {
@@ -1397,7 +1397,7 @@ pub struct AmbientNpcTemplate {
     pub base_npc: BaseNpc,
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
     pub one_shot_interaction: Option<OneShotInteractionTemplate>,
-    pub notification_icon: Option<NotificationIconId>,
+    pub notification_icon: Option<u32>,
 }
 
 impl AmbientNpcTemplate {
@@ -1422,7 +1422,7 @@ pub struct AmbientNpc {
     pub base_npc: BaseNpc,
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
     pub one_shot_interaction: Option<OneShotInteractionTemplate>,
-    pub notification_icon: Option<NotificationIconId>,
+    pub notification_icon: Option<u32>,
 }
 
 impl AmbientNpc {
@@ -1723,11 +1723,7 @@ impl Transport {
                         unknown1: 0,
                         notification: Some(NotificationData {
                             unknown1: 0,
-                            icon_id: if self.large_icon {
-                                NotificationIconId::LargeTransport
-                            } else {
-                                NotificationIconId::Transport
-                            },
+                            icon_id: if self.large_icon { 46 } else { 37 },
                             unknown3: 0,
                             name_id: 0,
                             unknown4: 0,
