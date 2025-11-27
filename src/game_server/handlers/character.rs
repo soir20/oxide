@@ -1379,7 +1379,7 @@ pub struct AmbientNpcTemplate {
     pub notification_icon: Option<NotificationIconId>,
 }
 
-impl AmbientNpcTemplate {
+impl From<&AmbientNpcTemplate> for AmbientNpc {
     pub fn instantiate(&self) -> AmbientNpc {
         AmbientNpc {
             base_npc: self.base_npc.clone(),
