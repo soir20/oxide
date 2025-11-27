@@ -628,14 +628,6 @@ impl OneShotInteractionTemplate {
 
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub struct CustomScriptIntParams {
-    pub script_name: Option<String>,
-    #[serde(default)]
-    pub params: Vec<i32>,
-}
-
-#[derive(Clone, Deserialize)]
-#[serde(deny_unknown_fields)]
 pub struct TickableStep {
     pub speed: Option<f32>,
     pub new_pos_x: Option<f32>,
@@ -1408,13 +1400,19 @@ pub struct AmbientNpcTemplate {
     pub notification_icon: Option<NotificationIconId>,
 }
 
-impl From<&AmbientNpcTemplate> for AmbientNpc {
+impl AmbientNpcTemplate {
     pub fn instantiate(&self) -> AmbientNpc {
+        AmbientNpc::from(self)
+    }
+}
+
+impl From<&AmbientNpcTemplate> for AmbientNpc {
+    fn from(value: &AmbientNpcTemplate) -> Self {
         AmbientNpc {
-            base_npc: self.base_npc.clone(),
-            procedure_on_interact: self.procedure_on_interact.clone(),
-            one_shot_interaction: self.one_shot_interaction.clone(),
-            notification_icon: self.notification_icon,
+            base_npc: value.base_npc.clone(),
+            procedure_on_interact: value.procedure_on_interact.clone(),
+            one_shot_interaction: value.one_shot_interaction.clone(),
+            notification_icon: value.notification_icon,
         }
     }
 }
@@ -1564,9 +1562,15 @@ pub struct DoorTemplate {
 
 impl DoorTemplate {
     pub fn instantiate(&self) -> Door {
+        Door::from(self)
+    }
+}
+
+impl From<&DoorTemplate> for Door {
+    fn from(value: &DoorTemplate) -> Self {
         Door {
-            base_npc: self.base_npc.clone(),
-            destination: self.destination.clone(),
+            base_npc: value.base_npc.clone(),
+            destination: value.destination.clone(),
         }
     }
 }
@@ -1661,11 +1665,17 @@ pub struct TransportTemplate {
 
 impl TransportTemplate {
     pub fn instantiate(&self) -> Transport {
+        Transport::from(self)
+    }
+}
+
+impl From<&TransportTemplate> for Transport {
+    fn from(value: &TransportTemplate) -> Self {
         Transport {
-            base_npc: self.base_npc.clone(),
-            show_icon: self.show_icon,
-            large_icon: self.large_icon,
-            show_hover_description: self.show_hover_description,
+            base_npc: value.base_npc.clone(),
+            show_icon: value.show_icon,
+            large_icon: value.large_icon,
+            show_hover_description: value.show_hover_description,
         }
     }
 }
