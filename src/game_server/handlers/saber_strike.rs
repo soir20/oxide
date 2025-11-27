@@ -15,8 +15,9 @@ use crate::game_server::{
         },
         tower_defense::{
             TowerDefenseDeck, TowerDefenseNotify, TowerDefenseOpCode, TowerDefenseStageData,
-            TowerDefenseState, TowerDefenseWaves, UnknownDeckArray, UnknownRDArray1,
-            UnknownRDArray2, UnknownWaveArray1, UnknownWaveArray2, UnknownWaveArray3,
+            TowerDefenseState, TowerDefenseUnknown, TowerDefenseWaves, UnknownDeckArray,
+            UnknownRDArray1, UnknownRDArray2, UnknownWaveArray1, UnknownWaveArray2,
+            UnknownWaveArray3,
         },
         tunnel::TunneledPacket,
         ui::ExecuteScriptWithStringParams,
@@ -34,7 +35,7 @@ pub fn start_saber_strike(
     game_server: &GameServer,
 ) -> Vec<Vec<u8>> {
     vec![
-        GamePacket::serialize(&TunneledPacket {
+        /*GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: ExecuteScriptWithStringParams {
                 script_name: "TowerDefenseHandler.show".to_string(),
@@ -47,7 +48,7 @@ pub fn start_saber_strike(
                 script_name: "TowerDefenseHandler.showTowerSelectionPanel".to_string(),
                 params: vec![],
             },
-        }),
+        }),*/
         GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: TowerDefenseStageData {
@@ -198,6 +199,18 @@ pub fn start_saber_strike(
                     unknown1: 1000,
                     unknown2: true,
                 }],
+            },
+        }),
+        GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: TowerDefenseUnknown {
+                minigame_header: MinigameHeader {
+                    stage_guid: minigame_status.group.stage_guid,
+                    sub_op_code: TowerDefenseOpCode::Unknown as i32,
+                    stage_group_guid: minigame_status.group.stage_group_guid,
+                },
+                unknown_header_int: TowerDefenseOpCode::Unknown as u32,
+                unknown_header_boolean: true,
             },
         }),
         GamePacket::serialize(&TunneledPacket {
