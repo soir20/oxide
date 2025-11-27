@@ -661,7 +661,7 @@ pub struct TickableStep {
     pub rail_id: Option<u32>,
     #[serde(default)]
     pub dialog_mode: TickableDialogMode,
-    #[serde(flatten)]
+    #[serde(default)]
     pub script: ScriptType,
     #[serde(default)]
     pub removal_mode: RemovalMode,

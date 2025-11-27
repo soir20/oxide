@@ -15,7 +15,7 @@ jedi_temple:
         z: -0.13887587
         w: 0
       cursor: 53
-      notification_icon: Transport
+      notification_icon: 37
       one_shot_interaction:
         dialog_option_key: Breaker
         duration_millis: 1
