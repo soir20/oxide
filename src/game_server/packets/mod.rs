@@ -18,6 +18,7 @@ pub mod saber_strike;
 pub mod squad;
 pub mod store;
 pub mod time;
+pub mod tower_defense;
 pub mod tunnel;
 pub mod ui;
 pub mod update_position;

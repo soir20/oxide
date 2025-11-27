@@ -5054,7 +5054,7 @@ categories:
     icon_id: 5809
     sort_order: 3
     portal_entries:
-      - guid: 1004
+      - guid: 1002
         name_id: 7040
         description_id: 7041
         members_only: false
