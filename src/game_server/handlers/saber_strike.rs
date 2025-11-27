@@ -60,7 +60,8 @@ pub fn start_saber_strike(
                 unknown_header_boolean: true,
                 unknown_array1: vec![
                     UnknownRDArray1 {
-                        unknown1: 1,
+                        guid: 1,
+                        guid2: 1,
                         unknown2: 1,
                         unknown3: 1000,
                         unknown4: 1000,
@@ -80,7 +81,8 @@ pub fn start_saber_strike(
                         unknown18: 1000,
                     },
                     UnknownRDArray1 {
-                        unknown1: 2,
+                        guid: 2,
+                        guid2: 2,
                         unknown2: 2,
                         unknown3: 10,
                         unknown4: 10,
@@ -100,7 +102,8 @@ pub fn start_saber_strike(
                         unknown18: 10,
                     },
                     UnknownRDArray1 {
-                        unknown1: 3,
+                        guid: 3,
+                        guid2: 3,
                         unknown2: 3,
                         unknown3: 10,
                         unknown4: 10,
@@ -120,7 +123,8 @@ pub fn start_saber_strike(
                         unknown18: 0,
                     },
                     UnknownRDArray1 {
-                        unknown1: 4,
+                        guid: 4,
+                        guid2: 4,
                         unknown2: 4,
                         unknown3: 0,
                         unknown4: 0,
@@ -141,7 +145,8 @@ pub fn start_saber_strike(
                     },
                 ],
                 unknown_array2: vec![UnknownRDArray2 {
-                    unknown1: 10,
+                    guid: 10,
+                    guid2: 10,
                     unknown2: 10,
                     unknown3: 10.0,
                     unknown4: 10,

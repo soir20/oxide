@@ -21,7 +21,8 @@ pub enum TowerDefenseOpCode {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct UnknownRDArray1 {
-    pub unknown1: u32,
+    pub guid: u32,
+    pub guid2: u32,
     pub unknown2: u32,
     pub unknown3: u32,
     pub unknown4: u32,
@@ -43,7 +44,8 @@ pub struct UnknownRDArray1 {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct UnknownRDArray2 {
-    pub unknown1: u32,
+    pub guid: u32,
+    pub guid2: u32,
     pub unknown2: u32,
     pub unknown3: f32,
     pub unknown4: u32,
