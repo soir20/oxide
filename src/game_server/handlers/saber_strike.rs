@@ -21,7 +21,7 @@ use crate::game_server::{
         },
         tunnel::TunneledPacket,
         ui::ExecuteScriptWithStringParams,
-        GamePacket, Pos, Target,
+        GamePacket, Pos, Target, GuidTarget,
     },
     Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
 };
@@ -35,7 +35,7 @@ pub fn start_saber_strike(
     game_server: &GameServer,
 ) -> Vec<Vec<u8>> {
     vec![
-        /*GamePacket::serialize(&TunneledPacket {
+        GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: ExecuteScriptWithStringParams {
                 script_name: "TowerDefenseHandler.show".to_string(),
@@ -45,10 +45,10 @@ pub fn start_saber_strike(
         GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: ExecuteScriptWithStringParams {
-                script_name: "TowerDefenseHandler.showTowerSelectionPanel".to_string(),
+                script_name: "TowerDefenseHandler.onStart".to_string(),
                 params: vec![],
             },
-        }),*/
+        }),
         GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: TowerDefenseStageData {
@@ -203,18 +203,6 @@ pub fn start_saber_strike(
         }),
         GamePacket::serialize(&TunneledPacket {
             unknown1: true,
-            inner: TowerDefenseUnknown {
-                minigame_header: MinigameHeader {
-                    stage_guid: minigame_status.group.stage_guid,
-                    sub_op_code: TowerDefenseOpCode::Unknown as i32,
-                    stage_group_guid: minigame_status.group.stage_group_guid,
-                },
-                sub_op_code: TowerDefenseOpCode::Unknown as u32,
-                unknown_header_boolean: true,
-            },
-        }),
-        GamePacket::serialize(&TunneledPacket {
-            unknown1: true,
             inner: TowerDefenseWaves {
                 minigame_header: MinigameHeader {
                     stage_guid: minigame_status.group.stage_guid,
@@ -224,31 +212,31 @@ pub fn start_saber_strike(
                 sub_op_code: TowerDefenseOpCode::Waves as u32,
                 unknown_header_boolean: true,
                 unknown_array1: vec![UnknownWaveArray1 {
-                    unknown1: 1,
-                    unknown2: 1,
-                    unknown3: 1,
-                    unknown4: 1,
-                    unknown5: 1,
-                    unknown6: 1,
+                    unknown1: 25,
+                    unknown2: 25,
+                    unknown3: 25,
+                    unknown4: 25,
+                    unknown5: 25,
+                    unknown6: 25,
                 }],
                 unknown_array2: vec![UnknownWaveArray2 {
-                    unknown1: 1,
-                    unknown2: 1,
-                    unknown3: 1,
-                    unknown4: 1,
-                    unknown5: 1,
-                    unknown6: 1,
-                    unknown7: 1,
-                    unknown8: 1,
-                    unknown9: 1,
-                    unknown10: 1,
-                    unknown11: 1,
+                    unknown1: 25,
+                    unknown2: 25,
+                    unknown3: 25,
+                    unknown4: 25,
+                    unknown5: 25,
+                    unknown6: 25,
+                    unknown7: 25,
+                    unknown8: 25,
+                    unknown9: 25,
+                    unknown10: 25,
+                    unknown11: 25,
                 }],
                 unknown_array3: vec![UnknownWaveArray3 {
-                    unknown1: 1,
-                    unknown2: 1,
-                    unknown3: 1,
-                    unknown4: 1,
+                    unknown1: 25,
+                    unknown2: 25,
+                    unknown3: 25,
+                    unknown4: 25,
                 }],
             },
         }),
@@ -261,13 +249,13 @@ pub fn start_saber_strike(
                     stage_group_guid: minigame_status.group.stage_group_guid,
                 },
                 sub_op_code: TowerDefenseOpCode::State as u32,
-                unknown_header_boolean: true,
-                unknown1: 1,
-                unknown2: 1,
-                unknown3: 1,
-                unknown4: 1,
-                unknown5: 1,
-                unknown6: 0,
+                unknown_header_boolean: false,
+                unknown1: 35,
+                unknown2: 35,
+                unknown3: 35,
+                unknown4: 35,
+                unknown5: 35,
+                unknown6: 35,
             },
         }),
         GamePacket::serialize(&TunneledPacket {
@@ -280,12 +268,25 @@ pub fn start_saber_strike(
                 },
                 sub_op_code: TowerDefenseOpCode::Notify as u32,
                 unknown_header_boolean: true,
-                unknown1: 0,
-                target: Target::default(), /*Target::Guid(GuidTarget {
+                unknown1: 12,
+                target: Target::Guid(GuidTarget {
                                                fallback_pos: Pos::default(),
                                                guid: 1,
-                                           }),*/
-                unknown2: 0,
+                                           }),
+                unknown2: 12,
+            },
+        }),
+        
+        GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: TowerDefenseUnknown {
+                minigame_header: MinigameHeader {
+                    stage_guid: minigame_status.group.stage_guid,
+                    sub_op_code: TowerDefenseOpCode::Unknown as i32,
+                    stage_group_guid: minigame_status.group.stage_group_guid,
+                },
+                sub_op_code: TowerDefenseOpCode::Unknown as u32,
+                unknown_header_boolean: true,
             },
         }),
     ]
