@@ -21,7 +21,7 @@ use crate::game_server::{
         },
         tunnel::TunneledPacket,
         ui::ExecuteScriptWithStringParams,
-        GamePacket, Pos, Target, GuidTarget,
+        GamePacket, GuidTarget, Pos, Target,
     },
     Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
 };
@@ -270,13 +270,12 @@ pub fn start_saber_strike(
                 unknown_header_boolean: false,
                 unknown1: 4,
                 target: Target::Guid(GuidTarget {
-                                               fallback_pos: Pos::default(),
-                                               guid: 1,
-                                           }),
+                    fallback_pos: Pos::default(),
+                    guid: 1,
+                }),
                 unknown2: 12,
             },
         }),
-        
         GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: TowerDefenseUnknown {
