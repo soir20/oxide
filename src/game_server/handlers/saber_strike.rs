@@ -57,7 +57,7 @@ pub fn start_saber_strike(
                     sub_op_code: TowerDefenseOpCode::StageData as i32,
                     stage_group_guid: minigame_status.group.stage_group_guid,
                 },
-                unknown_header_int: 1,
+                sub_op_code: TowerDefenseOpCode::StageData as u32,
                 unknown_header_boolean: true,
                 unknown_array1: vec![
                     UnknownRDArray1 {
@@ -189,7 +189,7 @@ pub fn start_saber_strike(
                     sub_op_code: TowerDefenseOpCode::Deck as i32,
                     stage_group_guid: minigame_status.group.stage_group_guid,
                 },
-                unknown_header_int: 2,
+                sub_op_code: TowerDefenseOpCode::Deck as u32,
                 unknown_header_boolean: true,
                 unknown1: vec![UnknownDeckArray {
                     unknown1: 1000,
@@ -209,7 +209,7 @@ pub fn start_saber_strike(
                     sub_op_code: TowerDefenseOpCode::Unknown as i32,
                     stage_group_guid: minigame_status.group.stage_group_guid,
                 },
-                unknown_header_int: TowerDefenseOpCode::Unknown as u32,
+                sub_op_code: TowerDefenseOpCode::Unknown as u32,
                 unknown_header_boolean: true,
             },
         }),
@@ -221,7 +221,7 @@ pub fn start_saber_strike(
                     sub_op_code: TowerDefenseOpCode::Waves as i32,
                     stage_group_guid: minigame_status.group.stage_group_guid,
                 },
-                unknown_header_int: 3,
+                sub_op_code: TowerDefenseOpCode::Waves as u32,
                 unknown_header_boolean: true,
                 unknown_array1: vec![UnknownWaveArray1 {
                     unknown1: 1,
@@ -260,7 +260,7 @@ pub fn start_saber_strike(
                     sub_op_code: TowerDefenseOpCode::State as i32,
                     stage_group_guid: minigame_status.group.stage_group_guid,
                 },
-                unknown_header_int: 4,
+                sub_op_code: TowerDefenseOpCode::State as u32,
                 unknown_header_boolean: true,
                 unknown1: 1,
                 unknown2: 1,
@@ -278,7 +278,7 @@ pub fn start_saber_strike(
                     sub_op_code: TowerDefenseOpCode::Notify as i32,
                     stage_group_guid: minigame_status.group.stage_group_guid,
                 },
-                unknown_header_int: 6,
+                sub_op_code: TowerDefenseOpCode::Notify as u32,
                 unknown_header_boolean: true,
                 unknown1: 0,
                 target: Target::default(), /*Target::Guid(GuidTarget {

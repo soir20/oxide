@@ -57,7 +57,7 @@ pub struct UnknownRDArray2 {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct TowerDefenseStageData {
     pub minigame_header: MinigameHeader,
-    pub unknown_header_int: u32,
+    pub sub_op_code: u32,
     pub unknown_header_boolean: bool,
     pub unknown_array1: Vec<UnknownRDArray1>,
     pub unknown_array2: Vec<UnknownRDArray2>,
@@ -83,7 +83,7 @@ pub struct UnknownDeckArray {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct TowerDefenseDeck {
     pub minigame_header: MinigameHeader,
-    pub unknown_header_int: u32,
+    pub sub_op_code: u32,
     pub unknown_header_boolean: bool,
     pub unknown1: Vec<UnknownDeckArray>,
     pub unknown2: Vec<UnknownDeckArray>,
@@ -131,7 +131,7 @@ pub struct UnknownWaveArray3 {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct TowerDefenseWaves {
     pub minigame_header: MinigameHeader,
-    pub unknown_header_int: u32,
+    pub sub_op_code: u32,
     pub unknown_header_boolean: bool,
     pub unknown_array1: Vec<UnknownWaveArray1>,
     pub unknown_array2: Vec<UnknownWaveArray2>,
@@ -147,7 +147,7 @@ impl GamePacket for TowerDefenseWaves {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct TowerDefenseState {
     pub minigame_header: MinigameHeader,
-    pub unknown_header_int: u32,
+    pub sub_op_code: u32,
     pub unknown_header_boolean: bool,
     pub unknown1: u32,
     pub unknown2: u32,
@@ -166,7 +166,7 @@ impl GamePacket for TowerDefenseState {
 #[derive(SerializePacket)]
 pub struct TowerDefenseNotify {
     pub minigame_header: MinigameHeader,
-    pub unknown_header_int: u32,
+    pub sub_op_code: u32,
     pub unknown_header_boolean: bool,
     pub unknown1: u32,
     pub target: Target,
@@ -182,7 +182,7 @@ impl GamePacket for TowerDefenseNotify {
 #[derive(SerializePacket)]
 pub struct TowerDefenseUnknown {
     pub minigame_header: MinigameHeader,
-    pub unknown_header_int: u32,
+    pub sub_op_code: u32,
     pub unknown_header_boolean: bool,
 }
 
