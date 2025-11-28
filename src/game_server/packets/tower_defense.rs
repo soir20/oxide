@@ -150,11 +150,11 @@ pub struct TowerDefenseState {
     pub sub_op_code: u32,
     pub unknown_header_boolean: bool,
     pub energy: u32,
-    pub unknown2: u32,
-    pub unknown3: u32,
+    pub score: u32,
+    pub current_wave: u32,
     pub unknown4: u32,
-    pub unknown5: u32,
-    pub unknown6: u32,
+    pub max_waves: u32,
+    pub lives: u32,
 }
 
 impl GamePacket for TowerDefenseState {
