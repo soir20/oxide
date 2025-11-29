@@ -64,7 +64,7 @@ pub struct TowerDefenseStageData {
     pub fixed_camera_pos: Pos,
     pub fixed_look_at: Pos,
     pub fixed_field_of_view: f32,
-    pub pan_look_at: Pos,
+    pub pan_origin: Pos,
     pub pan_max_scale: Pos,
 }
 
