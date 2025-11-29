@@ -63,7 +63,7 @@ pub struct TowerDefenseStageData {
     pub unknown_array2: Vec<UnknownRDArray2>,
     pub fixed_camera_pos: Pos,
     pub fixed_look_at: Pos,
-    pub field_of_view: f32,
+    pub fixed_field_of_view: f32,
     pub pan_look_at: Pos,
     pub max_scale: Pos,
 }

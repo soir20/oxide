@@ -166,7 +166,7 @@ pub fn start_saber_strike(
                     z: 0.0,
                     w: 1.0,
                 },
-                field_of_view: 100.0,
+                fixed_field_of_view: 100.0,
                 pan_look_at: Pos {
                     x: 230.0,
                     y: 10.0,
