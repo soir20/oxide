@@ -545,6 +545,7 @@ impl OneShotInteractionTemplate {
         requester: u32,
         player_stats: &mut Player,
         zone_instance: &ZoneInstance,
+        game_server: &GameServer,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let mut packets_for_all = Vec::new();
         let mut packets_for_sender = Vec::new();
@@ -612,8 +613,13 @@ impl OneShotInteractionTemplate {
         }
 
         if let Some(dialog_option_id) = self.dialog_option_id {
-            let dialog_packets =
-                handle_dialog_buttons(requester, dialog_option_id, player_stats, zone_instance)?;
+            let dialog_packets = handle_dialog_buttons(
+                requester,
+                dialog_option_id,
+                player_stats,
+                zone_instance,
+                game_server,
+            )?;
             packets_for_sender.extend(dialog_packets);
         }
 
@@ -1483,6 +1489,7 @@ impl AmbientNpc {
         requester: u32,
         player_stats: &mut Player,
         zone_instance: &ZoneInstance,
+        game_server: &GameServer,
     ) -> (Option<String>, WriteLockingBroadcastSupplier) {
         if let Some(active_procedure_key) = character.current_tickable_procedure() {
             if let Some(active_procedure) = character
@@ -1515,6 +1522,7 @@ impl AmbientNpc {
                     requester,
                     player_stats,
                     zone_instance,
+                    game_server,
                 )
             });
 
@@ -2711,6 +2719,7 @@ impl Character {
         player_stats: &mut Player,
         nearby_player_guids: &[u32],
         zone_instance: &ZoneInstance,
+        game_server: &GameServer,
     ) -> WriteLockingBroadcastSupplier {
         let mut new_procedure = None;
 
@@ -2724,6 +2733,7 @@ impl Character {
                     requester,
                     player_stats,
                     zone_instance,
+                    game_server,
                 );
                 new_procedure = procedure;
                 one_shot_interact

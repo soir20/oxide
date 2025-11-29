@@ -1459,6 +1459,7 @@ pub fn interact_with_character(
                                 player_stats,
                                 &nearby_player_guids,
                                 zone_instance,
+                                game_server,
                             )
                         })();
 

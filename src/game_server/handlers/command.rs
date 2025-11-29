@@ -51,7 +51,7 @@ pub fn process_command(
                         return coerce_to_broadcast_supplier(move |_| Err(ProcessPacketError::new(
                             ProcessPacketErrorType::ConstraintViolated,
                             format!(
-                                "AdvanceDialog received from non-player character: {requester_guid}"
+                                "(Requester: {}) tried to advance dialog but is a non-player character", requester_guid
                             ),
                         )));
                     }
@@ -78,6 +78,7 @@ pub fn process_command(
                             advancement.button_id,
                             player_stats,
                             zone_instance,
+                            game_server,
                         )
                         .map(|packets| Broadcast::Single(sender, packets));
 
