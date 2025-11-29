@@ -173,10 +173,10 @@ pub fn start_saber_strike(
                     z: 90.0,
                     w: 1.0,
                 },
-                max_scale: Pos {
-                    x: 0.0,
+                pan_max_scale: Pos {
+                    x: 10.0,
                     y: 0.0,
-                    z: 10.0,
+                    z: 0.0,
                     w: 1.0,
                 },
             },

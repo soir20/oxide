@@ -65,7 +65,7 @@ pub struct TowerDefenseStageData {
     pub fixed_look_at: Pos,
     pub fixed_field_of_view: f32,
     pub pan_look_at: Pos,
-    pub max_scale: Pos,
+    pub pan_max_scale: Pos,
 }
 
 impl GamePacket for TowerDefenseStageData {
