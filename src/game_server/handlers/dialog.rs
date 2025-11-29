@@ -140,25 +140,38 @@ pub fn handle_dialog_buttons(
                     for effect in effects {
                         if let Some(character) = characters_write.get_mut(&effect.npc_guid) {
                             if let Some(model_id) = effect.apply_temporary_model_id {
+                                if let Some(temporary_model_id) = character.stats.temporary_model_id {
+                                    packets.push(GamePacket::serialize(&TunneledPacket {
+                                        unknown1: true,
+                                        inner: RemoveTemporaryModel {
+                                            guid: effect.npc_guid,
+                                            model_id: temporary_model_id,
+                                        },
+                                    }));
+                                }
+
                                 character.stats.temporary_model_id = Some(model_id);
                                 packets.push(GamePacket::serialize(&TunneledPacket {
                                     unknown1: true,
-                                    inner: UpdateTemporaryModel { model_id, guid: effect.npc_guid },
+                                    inner: UpdateTemporaryModel {
+                                        model_id,
+                                        guid: effect.npc_guid,
+                                    },
                                 }));
                             }
 
                             if effect.remove_temporary_model {
-    if let Some(temporary_model_id) = character.stats.temporary_model_id {
-        packets.push(GamePacket::serialize(&TunneledPacket {
-            unknown1: true,
-            inner: RemoveTemporaryModel {
-                guid: effect.npc_guid,
-                model_id: temporary_model_id,
-            },
-        }));
-        character.stats.temporary_model_id = None;
-    }
-}
+                                if let Some(temporary_model_id) = character.stats.temporary_model_id {
+                                    packets.push(GamePacket::serialize(&TunneledPacket {
+                                        unknown1: true,
+                                        inner: RemoveTemporaryModel {
+                                            guid: effect.npc_guid,
+                                            model_id: temporary_model_id,
+                                        },
+                                    }));
+                                    character.stats.temporary_model_id = None;
+                                }
+                            }
 
                             if let Some(animation_id) = effect.animation_id {
                                 packets.push(GamePacket::serialize(&TunneledPacket {
