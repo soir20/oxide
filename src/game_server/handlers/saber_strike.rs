@@ -154,29 +154,29 @@ pub fn start_saber_strike(
                     unknown5: 10,
                     unknown6: true,
                 }],
-                camera_pos: Pos {
+                fixed_camera_pos: Pos {
                     x: 0.0,
                     y: 0.0,
                     z: 0.0,
                     w: 0.0,
                 },
-                look_at: Pos {
+                fixed_look_at: Pos {
                     x: 0.0,
                     y: 0.0,
                     z: 0.0,
-                    w: 0.0,
-                },
-                field_of_view: 100.0,
-                unknown_pos3: Pos {
-                    x: 0.1,
-                    y: 0.2,
-                    z: 0.3,
                     w: 1.0,
                 },
-                unknown_pos4: Pos {
-                    x: 0.4,
-                    y: 0.5,
-                    z: 0.6,
+                field_of_view: 100.0,
+                pan_look_at: Pos {
+                    x: 230.0,
+                    y: 10.0,
+                    z: 90.0,
+                    w: 1.0,
+                },
+                max_scale: Pos {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 10.0,
                     w: 1.0,
                 },
             },

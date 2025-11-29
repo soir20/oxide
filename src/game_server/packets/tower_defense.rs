@@ -61,11 +61,11 @@ pub struct TowerDefenseStageData {
     pub unknown_header_boolean: bool,
     pub unknown_array1: Vec<UnknownRDArray1>,
     pub unknown_array2: Vec<UnknownRDArray2>,
-    pub camera_pos: Pos,
-    pub look_at: Pos,
+    pub fixed_camera_pos: Pos,
+    pub fixed_look_at: Pos,
     pub field_of_view: f32,
-    pub unknown_pos3: Pos,
-    pub unknown_pos4: Pos,
+    pub pan_look_at: Pos,
+    pub max_scale: Pos,
 }
 
 impl GamePacket for TowerDefenseStageData {
