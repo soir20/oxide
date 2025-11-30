@@ -198,7 +198,7 @@ pub struct TowerTransaction {
     pub minigame_header: MinigameHeader,
     pub sub_op_code: u32,
     pub unknown_header_boolean: bool,
-    pub unknown1: u32,
+    pub tower_definition_guid: u32,
     pub unknown2: u64,
     pub unknown3: u64,
     pub unknown4: u64,

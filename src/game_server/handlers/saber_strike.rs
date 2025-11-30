@@ -14,7 +14,10 @@ use crate::game_server::{
             SaberStrikeSingleKill, SaberStrikeStageData, SaberStrikeThrowKill,
         },
         tower_defense::{
-            TowerDefenseDeck, TowerDefenseNotify, TowerDefenseOpCode, TowerDefenseStageData, TowerDefenseState, TowerDefenseTowerDefinition, TowerDefenseUnknown, TowerDefenseWaves, TowerTransaction, UnknownDeckArray, UnknownRDArray2, UnknownWaveArray1, UnknownWaveArray2, UnknownWaveArray3
+            TowerDefenseDeck, TowerDefenseNotify, TowerDefenseOpCode, TowerDefenseStageData,
+            TowerDefenseState, TowerDefenseTowerDefinition, TowerDefenseUnknown, TowerDefenseWaves,
+            TowerTransaction, UnknownDeckArray, UnknownRDArray2, UnknownWaveArray1,
+            UnknownWaveArray2, UnknownWaveArray3,
         },
         tunnel::TunneledPacket,
         ui::ExecuteScriptWithStringParams,
@@ -313,12 +316,12 @@ pub fn start_saber_strike(
                 },
                 sub_op_code: TowerDefenseOpCode::TowerTransaction as u32,
                 unknown_header_boolean: false,
-                unknown1: 1,
+                tower_definition_guid: 1,
                 unknown2: 1152921504606847176,
                 unknown3: 1152921504606847176,
                 unknown4: 1152921504606847176,
                 unknown5: "".to_string(),
-                unknown6: 1,
+                unknown6: 0,
             },
         }),
     ]
