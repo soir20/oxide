@@ -174,7 +174,7 @@ pub fn start_saber_strike(
                     w: 1.0,
                 },
                 pan_max_scale: Pos {
-                    x: 10.0,
+                    x: 5.0,
                     y: 0.0,
                     z: 0.0,
                     w: 1.0,
@@ -215,7 +215,8 @@ pub fn start_saber_strike(
                 sub_op_code: TowerDefenseOpCode::Waves as u32,
                 unknown_header_boolean: false,
                 unknown_array1: vec![UnknownWaveArray1 {
-                    unknown1: 25,
+                    guid: 25,
+                    guid2: 25,
                     unknown2: 25,
                     unknown3: 25,
                     unknown4: 25,
@@ -223,7 +224,8 @@ pub fn start_saber_strike(
                     unknown6: 25,
                 }],
                 unknown_array2: vec![UnknownWaveArray2 {
-                    unknown1: 25,
+                    guid: 25,
+                    guid2: 25,
                     unknown2: 25,
                     unknown3: 25,
                     unknown4: 25,
@@ -236,7 +238,8 @@ pub fn start_saber_strike(
                     unknown11: 25,
                 }],
                 unknown_array3: vec![UnknownWaveArray3 {
-                    unknown1: 25,
+                    guid: 25,
+                    guid2: 25,
                     unknown2: 25,
                     unknown3: 25,
                     unknown4: 25,

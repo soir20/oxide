@@ -97,7 +97,8 @@ impl GamePacket for TowerDefenseDeck {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct UnknownWaveArray1 {
-    pub unknown1: u32,
+    pub guid: u32,
+    pub guid2: u32,
     pub unknown2: u32,
     pub unknown3: u32,
     pub unknown4: u32,
@@ -107,7 +108,8 @@ pub struct UnknownWaveArray1 {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct UnknownWaveArray2 {
-    pub unknown1: u32,
+    pub guid: u32,
+    pub guid2: u32,
     pub unknown2: u32,
     pub unknown3: u32,
     pub unknown4: u32,
@@ -122,7 +124,8 @@ pub struct UnknownWaveArray2 {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct UnknownWaveArray3 {
-    pub unknown1: u32,
+    pub guid: u32,
+    pub guid2: u32,
     pub unknown2: u32,
     pub unknown3: u32,
     pub unknown4: u32,
