@@ -210,7 +210,7 @@ pub struct TowerTransaction {
     pub new_tower_npc_guid: u64,
     pub base_guid: u64,
     pub old_tower_npc_guid: u64,
-    pub base_texture_alias: String,
+    pub new_base_texture_alias: String,
     pub tower_definition_guid: u32,
 }
 

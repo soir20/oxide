@@ -320,7 +320,7 @@ pub fn start_saber_strike(
                 new_tower_npc_guid: 1152923703630102728,
                 base_guid: 1152921504606847176,
                 old_tower_npc_guid: 1152922604118474952,
-                base_texture_alias: "Rank2".to_string(),
+                new_base_texture_alias: "Rank2".to_string(),
                 tower_definition_guid: 1,
             },
         }),
