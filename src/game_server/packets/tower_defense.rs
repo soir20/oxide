@@ -16,6 +16,7 @@ pub enum TowerDefenseOpCode {
     Deck = 0x2,
     Waves = 0x3,
     State = 0x4,
+    TowerTransaction = 0x5,
     Notify = 0x6,
     Unknown = 0x9,
 }
@@ -190,4 +191,23 @@ impl GamePacket for TowerDefenseUnknown {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::TowerDefense;
+}
+
+#[derive(SerializePacket)]
+pub struct TowerTransaction {
+    pub minigame_header: MinigameHeader,
+    pub sub_op_code: u32,
+    pub unknown_header_boolean: bool,
+    pub unknown1: u32,
+    pub unknown2: u64,
+    pub unknown3: u64,
+    pub unknown4: u64,
+    pub unknown5: String,
+    pub unknown6: u32,
+}
+
+impl GamePacket for TowerTransaction {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::TowerTransaction;
 }
