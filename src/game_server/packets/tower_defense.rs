@@ -76,7 +76,7 @@ impl GamePacket for TowerDefenseStageData {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct UnknownDeckArray {
-    pub unknown1: u32,
+    pub tower_guid: u32,
     pub unknown2: bool,
 }
 

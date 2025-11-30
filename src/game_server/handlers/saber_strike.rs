@@ -193,11 +193,11 @@ pub fn start_saber_strike(
                 unknown_header_boolean: false,
                 unknown1: vec![
                     UnknownDeckArray {
-                        unknown1: 1000,
+                        tower_guid: 1,
                         unknown2: false,
                     },
                     UnknownDeckArray {
-                        unknown1: 1001,
+                        tower_guid: 1001,
                         unknown2: false,
                     },
                 ],
