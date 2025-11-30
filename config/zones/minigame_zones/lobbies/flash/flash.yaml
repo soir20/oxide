@@ -28,10 +28,10 @@ singleplayer_flash_lobby:
   update_previous_location_on_leave: false
   ambient_npcs:
     blocks_a:
-      model_id: 6
+      model_id: 8
       pos:
         x: 300
-        y: 3
+        y: 5
         z: 225
         w: 1
       rot:
