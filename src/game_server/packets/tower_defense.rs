@@ -1,4 +1,4 @@
-use num_enum::TryFromPrimitive;
+use num_enum::{IntoPrimitive, TryFromPrimitive};
 use packet_serialize::{DeserializePacket, SerializePacket};
 
 use super::{
@@ -193,12 +193,20 @@ impl GamePacket for TowerDefenseUnknown {
     const HEADER: Self::Header = MinigameOpCode::TowerDefense;
 }
 
+#[derive(Copy, Clone, Debug, IntoPrimitive, SerializePacket)]
+#[repr(u32)]
+pub enum TowerTransactionType {
+    Build = 1,
+    Sell = 2,
+    Upgrade = 3,
+}
+
 #[derive(SerializePacket)]
 pub struct TowerTransaction {
     pub minigame_header: MinigameHeader,
     pub sub_op_code: u32,
     pub unknown_header_boolean: bool,
-    pub transaction_type: u32,
+    pub transaction_type: TowerTransactionType,
     pub new_tower_npc_guid: u64,
     pub base_guid: u64,
     pub old_tower_npc_guid: u64,
