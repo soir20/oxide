@@ -199,10 +199,10 @@ pub struct TowerTransaction {
     pub sub_op_code: u32,
     pub unknown_header_boolean: bool,
     pub tower_definition_guid: u32,
-    pub tower_npc_guid: u64,
+    pub new_tower_npc_guid: u64,
     pub base_guid: u64,
-    pub unknown4: u64,
-    pub unknown5: String,
+    pub old_tower_npc_guid: u64,
+    pub base_texture_alias: String,
     pub unknown6: u32,
 }
 
