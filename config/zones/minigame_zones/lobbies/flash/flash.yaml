@@ -27,11 +27,23 @@ singleplayer_flash_lobby:
   seconds_per_day: 10800
   update_previous_location_on_leave: false
   ambient_npcs:
-    blocks_a:
+    base:
       model_id: 8
       pos:
         x: 300
         y: 5
+        z: 225
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+    tower:
+      model_id: 6
+      pos:
+        x: 300
+        y: 3
         z: 225
         w: 1
       rot:
