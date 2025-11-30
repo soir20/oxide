@@ -198,12 +198,12 @@ pub struct TowerTransaction {
     pub minigame_header: MinigameHeader,
     pub sub_op_code: u32,
     pub unknown_header_boolean: bool,
-    pub tower_definition_guid: u32,
+    pub transaction_type: u32,
     pub new_tower_npc_guid: u64,
     pub base_guid: u64,
     pub old_tower_npc_guid: u64,
     pub base_texture_alias: String,
-    pub unknown6: u32,
+    pub tower_definition_guid: u32,
 }
 
 impl GamePacket for TowerTransaction {
