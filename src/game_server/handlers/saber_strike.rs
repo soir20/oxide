@@ -15,8 +15,8 @@ use crate::game_server::{
         },
         tower_defense::{
             TowerDefenseDeck, TowerDefenseNotify, TowerDefenseOpCode, TowerDefenseStageData,
-            TowerDefenseState, TowerDefenseUnknown, TowerDefenseWaves, UnknownDeckArray,
-            UnknownRDArray1, UnknownRDArray2, UnknownWaveArray1, UnknownWaveArray2,
+            TowerDefenseState, TowerDefenseTower, TowerDefenseUnknown, TowerDefenseWaves,
+            UnknownDeckArray, UnknownRDArray2, UnknownWaveArray1, UnknownWaveArray2,
             UnknownWaveArray3,
         },
         tunnel::TunneledPacket,
@@ -60,7 +60,7 @@ pub fn start_saber_strike(
                 sub_op_code: TowerDefenseOpCode::StageData as u32,
                 unknown_header_boolean: false,
                 unknown_array1: vec![
-                    UnknownRDArray1 {
+                    TowerDefenseTower {
                         guid: 1,
                         guid2: 1,
                         tower_type: 1,
@@ -81,7 +81,7 @@ pub fn start_saber_strike(
                         description_id: 11,
                         unknown18: 120,
                     },
-                    UnknownRDArray1 {
+                    TowerDefenseTower {
                         guid: 2,
                         guid2: 2,
                         tower_type: 1,
@@ -102,7 +102,7 @@ pub fn start_saber_strike(
                         description_id: 10,
                         unknown18: 10,
                     },
-                    UnknownRDArray1 {
+                    TowerDefenseTower {
                         guid: 3,
                         guid2: 3,
                         tower_type: 1,
@@ -123,7 +123,7 @@ pub fn start_saber_strike(
                         description_id: 0,
                         unknown18: 0,
                     },
-                    UnknownRDArray1 {
+                    TowerDefenseTower {
                         guid: 4,
                         guid2: 4,
                         tower_type: 1,
