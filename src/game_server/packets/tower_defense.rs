@@ -212,5 +212,5 @@ pub struct TowerTransaction {
 impl GamePacket for TowerTransaction {
     type Header = MinigameOpCode;
 
-    const HEADER: Self::Header = MinigameOpCode::TowerTransaction;
+    const HEADER: Self::Header = MinigameOpCode::TowerDefense;
 }
