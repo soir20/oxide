@@ -15,7 +15,7 @@ use crate::game_server::{
         },
         tower_defense::{
             TowerDefenseDeck, TowerDefenseNotify, TowerDefenseOpCode, TowerDefenseStageData,
-            TowerDefenseState, TowerDefenseTower, TowerDefenseUnknown, TowerDefenseWaves,
+            TowerDefenseState, TowerDefenseTowerDefinition, TowerDefenseUnknown, TowerDefenseWaves,
             UnknownDeckArray, UnknownRDArray2, UnknownWaveArray1, UnknownWaveArray2,
             UnknownWaveArray3,
         },
@@ -60,7 +60,7 @@ pub fn start_saber_strike(
                 sub_op_code: TowerDefenseOpCode::StageData as u32,
                 unknown_header_boolean: false,
                 unknown_array1: vec![
-                    TowerDefenseTower {
+                    TowerDefenseTowerDefinition {
                         guid: 1,
                         guid2: 1,
                         rank: 1,
@@ -75,13 +75,13 @@ pub fn start_saber_strike(
                         firing_rate: 0.1,
                         can_attack_aerial: true,
                         can_attack_ground: true,
-                        unknown14: true,
+                        unknown14: false,
                         required: true,
-                        unknown16: true,
+                        unknown16: false,
                         description_id: 11,
                         shield_damage: 120,
                     },
-                    TowerDefenseTower {
+                    TowerDefenseTowerDefinition {
                         guid: 2,
                         guid2: 2,
                         rank: 2,
@@ -102,7 +102,7 @@ pub fn start_saber_strike(
                         description_id: 10,
                         shield_damage: 10,
                     },
-                    TowerDefenseTower {
+                    TowerDefenseTowerDefinition {
                         guid: 3,
                         guid2: 3,
                         rank: 1,
@@ -123,7 +123,7 @@ pub fn start_saber_strike(
                         description_id: 0,
                         shield_damage: 0,
                     },
-                    TowerDefenseTower {
+                    TowerDefenseTowerDefinition {
                         guid: 4,
                         guid2: 4,
                         rank: 1,
