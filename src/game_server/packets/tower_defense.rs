@@ -1,8 +1,5 @@
-use enum_iterator::Sequence;
-use num_enum::{IntoPrimitive, TryFromPrimitive};
+use num_enum::TryFromPrimitive;
 use packet_serialize::{DeserializePacket, SerializePacket};
-use rand_distr::{Distribution, Standard};
-use serde::Deserialize;
 
 use super::{
     minigame::{MinigameHeader, MinigameOpCode},
