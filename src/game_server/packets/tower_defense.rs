@@ -31,7 +31,7 @@ pub struct TowerDefenseTower {
     pub sell_value: u32,
     pub damage: f32,
     pub range: f32,
-    pub unknown9: u32,
+    pub upgraded_tower_guid: u32,
     pub icon_id: u32,
     pub firing_rate: f32,
     pub can_attack_aerial: bool,
