@@ -335,7 +335,7 @@ pub fn start_saber_strike(
                     character_guid: 1152921504606847176,
                     bone_name: "BASE".to_string(),
                 }),
-                unknown4: true,
+                attach: true,
             },
         }),
         GamePacket::serialize(&TunneledPacket {
@@ -347,7 +347,7 @@ pub fn start_saber_strike(
                     character_guid: 1152921504606847176,
                     bone_name: "BASE".to_string(),
                 }),
-                unknown4: true,
+                attach: true,
             },
         }),
     ]

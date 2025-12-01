@@ -647,7 +647,7 @@ impl GamePacket for SetCollision {
 pub struct UpdateOwner {
     pub child_guid: u64,
     pub owner: Target,
-    pub unknown4: bool,
+    pub attach: bool,
 }
 
 impl GamePacket for UpdateOwner {
