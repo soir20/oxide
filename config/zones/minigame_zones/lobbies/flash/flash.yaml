@@ -43,7 +43,7 @@ singleplayer_flash_lobby:
       model_id: 7
       pos:
         x: 300
-        y: 3
+        y: 0
         z: 225
         w: 1
       rot:
