@@ -3,16 +3,13 @@ use std::io::{Cursor, Read};
 use packet_serialize::DeserializePacket;
 
 use crate::game_server::{
-    handlers::{
-        character::{MinigameStatus, Player},
-        inventory::player_has_saber_equipped,
-    },
+    handlers::character::{MinigameStatus, Player},
     packets::{
         minigame::{MinigameHeader, ScoreEntry, ScoreType},
         player_update::UpdateOwner,
         saber_strike::{
             SaberStrikeGameOver, SaberStrikeObfuscatedScore, SaberStrikeOpCode,
-            SaberStrikeSingleKill, SaberStrikeStageData, SaberStrikeThrowKill,
+            SaberStrikeSingleKill, SaberStrikeThrowKill,
         },
         tower_defense::{
             TowerDefenseDeck, TowerDefenseNotify, TowerDefenseOpCode, TowerDefenseStageData,
@@ -22,7 +19,6 @@ use crate::game_server::{
         },
         tunnel::TunneledPacket,
         ui::ExecuteScriptWithStringParams,
-        update_position::UpdatePlayerPosition,
         CharacterBoneNameTarget, GamePacket, GuidTarget, Pos, Target,
     },
     Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
