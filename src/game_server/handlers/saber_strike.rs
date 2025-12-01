@@ -9,6 +9,7 @@ use crate::game_server::{
     },
     packets::{
         minigame::{MinigameHeader, ScoreEntry, ScoreType},
+        player_update::UpdateOwner,
         saber_strike::{
             SaberStrikeGameOver, SaberStrikeObfuscatedScore, SaberStrikeOpCode,
             SaberStrikeSingleKill, SaberStrikeStageData, SaberStrikeThrowKill,
@@ -21,7 +22,8 @@ use crate::game_server::{
         },
         tunnel::TunneledPacket,
         ui::ExecuteScriptWithStringParams,
-        GamePacket, GuidTarget, Pos, Target,
+        update_position::UpdatePlayerPosition,
+        CharacterBoneNameTarget, GamePacket, GuidTarget, Pos, Target,
     },
     Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
 };
@@ -65,7 +67,7 @@ pub fn start_saber_strike(
                         guid2: 1,
                         rank: 1,
                         name_id: 2,
-                        tower_type: 30,
+                        tower_type: 10,
                         energy_cost: 4,
                         sell_value: 50,
                         damage: 0.6,
@@ -86,7 +88,7 @@ pub fn start_saber_strike(
                         guid2: 2,
                         rank: 2,
                         name_id: 10,
-                        tower_type: 30,
+                        tower_type: 10,
                         energy_cost: 10,
                         sell_value: 10,
                         damage: 0.5,
@@ -174,7 +176,7 @@ pub fn start_saber_strike(
                     w: 1.0,
                 },
                 pan_max_scale: Pos {
-                    x: 2.0,
+                    x: 1.5,
                     y: 0.0,
                     z: 0.0,
                     w: 1.0,
@@ -322,6 +324,30 @@ pub fn start_saber_strike(
                 old_tower_npc_guid: 1152922604118474952,
                 new_base_texture_alias: "Rank2".to_string(),
                 tower_definition_guid: 1,
+            },
+        }),
+        GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: UpdateOwner {
+                child_guid: 1152922604118474952,
+                owner: Target::CharacterBone(CharacterBoneNameTarget {
+                    fallback_pos: Pos::default(),
+                    character_guid: 1152921504606847176,
+                    bone_name: "BASE".to_string(),
+                }),
+                unknown4: true,
+            },
+        }),
+        GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: UpdateOwner {
+                child_guid: 1152923703630102728,
+                owner: Target::CharacterBone(CharacterBoneNameTarget {
+                    fallback_pos: Pos::default(),
+                    character_guid: 1152921504606847176,
+                    bone_name: "BASE".to_string(),
+                }),
+                unknown4: true,
             },
         }),
     ]
