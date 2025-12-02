@@ -24,7 +24,7 @@ members_only:
           one_shot_action_animation_id: 2550
           duration_millis: 1000
       interact_radius: 5
-    construction_chamber_hologram_projector_01:
+    construction_chamber_hologram_projector_1:
       model_id: 1012
       pos:
         x: 1489.576
@@ -57,7 +57,7 @@ members_only:
           one_shot_action_animation_id: 2550
           duration_millis: 1000
       interact_radius: 5
-    construction_chamber_hologram_projector_02:
+    construction_chamber_hologram_projector_2:
       model_id: 1012
       pos:
         x: 1497.21
@@ -90,7 +90,7 @@ members_only:
           one_shot_action_animation_id: 2550
           duration_millis: 1000
       interact_radius: 5
-    construction_chamber_hologram_projector_03:
+    construction_chamber_hologram_projector_3:
       model_id: 1012
       pos:
         x: 1493.39
@@ -103,7 +103,7 @@ members_only:
         z: -0.6
         w: 0
       composite_effect_id: 2056
-    construction_chamber_meditating_jedi_01:
+    construction_chamber_meditating_jedi_1:
       model_id: 2037
       pos:
         x: 1467.9178
@@ -116,7 +116,7 @@ members_only:
         z: 0.7
         w: 0
       stand_animation_id: 2530
-    construction_chamber_meditating_jedi_02:
+    construction_chamber_meditating_jedi_2:
       model_id: 2038
       pos:
         x: 1479.3802
