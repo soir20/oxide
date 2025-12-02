@@ -7,6 +7,7 @@ edition = "2021"
 axum = "0.7.5"
 byteorder = "1.5.0"
 chrono = "0.4.38"
+clap = { version = "4.5.51", features = ["derive"] }
 crc32fast = "1.4.2"
 crossbeam-channel = "0.5.13"
 defer-lite = "1.0.0"

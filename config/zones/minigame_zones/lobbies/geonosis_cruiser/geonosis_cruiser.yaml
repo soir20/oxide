@@ -1,8 +1,8 @@
+---
 geonosis_cruiser:
   guid: 14
   max_players: 4294967295
   template_name: 7203
-  template_icon: 4209
   asset_name: MonCala_Venetor
   hide_ui: false
   is_combat: false

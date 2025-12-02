@@ -1,25 +1,24 @@
 ---
-jedi_temple:
-  guid: 24
-  max_players: 4294967295
-  template_name: 52297
-  asset_name: JediTemple
+duel_venator_hangar_singleplayer:
+  guid: 206
+  max_players: 1
+  template_name: 33127
+  asset_name: LD_ForcePowers_Tutorial
   hide_ui: false
   is_combat: false
-  chunk_size: 70
   default_point_of_interest:
-    guid: 24
+    guid: 206
     pos:
-      x: 101.9832
-      y: 10
-      z: -181.1351
+      x: 237.8
+      y: 25
+      z: 249.7896
       w: 1
     rot:
-      x: -1.5
+      x: 0
       y: 0
       z: 0
       w: 0
-  speed: 8
+  speed: 0
   jump_height_multiplier: 1
   gravity_multiplier: 1
   seconds_per_day: 10800

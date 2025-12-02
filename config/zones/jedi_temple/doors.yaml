@@ -1,3 +1,4 @@
+---
 jedi_temple:
   doors:
     veranda_to_archives:
@@ -26,17 +27,16 @@ jedi_temple:
           z: 1694
           w: 1
         terrain_object_id: 1278971880
-        destination:
-          pos:
-            x: 898.7137
-            y: 172.44917
-            z: 1529.221
-            w: 1
-          rot:
-            x: 0
-            y: 0
-            z: 1.5
-            w: 0
+        destination_pos:
+          x: 898.7137
+          y: 172.44917
+          z: 1529.221
+          w: 1
+        destination_rot:
+          x: 0
+          y: 0
+          z: 1.5
+          w: 0
         interact_radius: 7
     veranda_to_workshop:
        pos:

@@ -2,7 +2,7 @@ use std::{
     collections::{BTreeMap, BTreeSet},
     fs::File,
     io::{Cursor, Error, ErrorKind, Read},
-    iter,
+    iter, mem,
     path::Path,
     sync::Arc,
     time::{Duration, Instant},
@@ -36,7 +36,7 @@ use crate::{
         },
         packets::{
             chat::{ActionBarTextColor, SendStringId},
-            client_update::UpdateCredits,
+            client_update::{PreloadCharactersDone, UpdateCredits},
             command::StartFlashGame,
             daily::{AddDailyMinigame, UpdateDailyMinigame},
             minigame::{
@@ -337,10 +337,9 @@ pub enum MatchmakingGroupStatus {
     Closed,
 }
 
-#[derive(Clone)]
 pub enum MinigameReadiness {
     Matchmaking,
-    InitialPlayersLoading(BTreeSet<u32>, Option<Instant>),
+    InitialPlayersLoading(BTreeSet<u32>, Vec<Broadcast>),
     Ready(MinigameStopwatch),
 }
 
@@ -351,7 +350,13 @@ pub enum SharedMinigameDataTickableIndex {
 }
 pub type SharedMinigameDataMatchmakingIndex = (MatchmakingGroupStatus, i32, Instant);
 
-#[derive(Clone)]
+#[derive(Default)]
+pub struct MinigameRemovePlayerResult {
+    pub broadcasts: Vec<Broadcast>,
+    pub characters_to_remove: Vec<u64>,
+    pub end_game_for_all: bool,
+}
+
 pub struct SharedMinigameData {
     pub guid: MinigameMatchmakingGroup,
     pub readiness: MinigameReadiness,
@@ -382,7 +387,7 @@ impl SharedMinigameData {
         &mut self,
         player: u32,
         minigame_status: &mut MinigameStatus,
-    ) -> Result<(Vec<Broadcast>, Vec<u64>), ProcessPacketError> {
+    ) -> Result<MinigameRemovePlayerResult, ProcessPacketError> {
         self.data.remove_player(player, minigame_status)
     }
 
@@ -530,7 +535,7 @@ impl SharedMinigameTypeData {
         &mut self,
         player: u32,
         minigame_status: &mut MinigameStatus,
-    ) -> Result<(Vec<Broadcast>, Vec<u64>), ProcessPacketError> {
+    ) -> Result<MinigameRemovePlayerResult, ProcessPacketError> {
         match self {
             SharedMinigameTypeData::FleetCommander { game } => {
                 game.remove_player(player, minigame_status)
@@ -541,7 +546,7 @@ impl SharedMinigameTypeData {
             SharedMinigameTypeData::SaberDuel { game } => {
                 game.remove_player(player, minigame_status)
             }
-            _ => Ok((Vec::new(), Vec::new())),
+            _ => Ok(MinigameRemovePlayerResult::default()),
         }
     }
 
@@ -742,7 +747,7 @@ pub struct MinigameChallengeConfig {
     pub description_id: u32,
     pub min_players: u32,
     pub max_players: u32,
-    pub start_sound_id: u32,
+    pub start_sound_id: Option<u32>,
     pub required_item_guid: Option<u32>,
     pub members_only: bool,
     pub minigame_type: MinigameType,
@@ -785,7 +790,7 @@ impl MinigameChallengeConfig {
             unknown9: "".to_string(),
             unknown10: 0,
             unknown11: 0,
-            start_sound_id: self.start_sound_id,
+            start_sound_id: self.start_sound_id.unwrap_or_default(),
             unknown13: "".to_string(),
             unknown14: 0,
             unknown15: 0,
@@ -835,7 +840,7 @@ pub struct MinigameCampaignStageConfig {
     pub min_players: u32,
     pub max_players: u32,
     pub difficulty: u32,
-    pub start_sound_id: u32,
+    pub start_sound_id: Option<u32>,
     #[serde(default = "default_true")]
     pub show_end_score_screen: bool,
     pub required_item_guid: Option<u32>,
@@ -844,6 +849,7 @@ pub struct MinigameCampaignStageConfig {
     pub require_previous_completed: bool,
     pub link_name: String,
     pub short_name: String,
+    pub display_stage_group_guid: Option<i32>,
     pub minigame_type: MinigameType,
     pub zone_template_guid: Option<u8>,
     pub start_pos: Option<Pos>,
@@ -882,7 +888,7 @@ impl MinigameCampaignStageConfig {
             unknown9: "".to_string(),
             unknown10: 0,
             unknown11: 0,
-            start_sound_id: self.start_sound_id,
+            start_sound_id: self.start_sound_id.unwrap_or_default(),
             unknown13: "".to_string(),
             unknown14: 0,
             unknown15: 0,
@@ -927,6 +933,60 @@ impl MinigameCampaignStageConfig {
 enum MinigameStageGroupChild {
     StageGroup(Arc<MinigameStageGroupConfig>),
     Stage(Box<MinigameCampaignStageConfig>),
+}
+
+impl MinigameStageGroupChild {
+    pub fn validate(
+        &self,
+        stage_group_guids: &mut BTreeSet<i32>,
+        stage_guids: &mut BTreeSet<i32>,
+    ) -> Result<(), ConfigError> {
+        match self {
+            MinigameStageGroupChild::StageGroup(stage_group) => {
+                if !stage_group_guids.insert(stage_group.guid) {
+                    return Err(ConfigError::ConstraintViolated(format!(
+                        "Two stage groups have GUID {}",
+                        stage_group.guid
+                    )));
+                }
+
+                for child in stage_group.stages.iter() {
+                    child.validate(stage_group_guids, stage_guids)?;
+                }
+            }
+            MinigameStageGroupChild::Stage(stage) => {
+                for stage in iter::once(MinigameStageConfig::CampaignStage(stage)).chain(
+                    stage
+                        .challenges
+                        .iter()
+                        .map(|challenge| MinigameStageConfig::Challenge(challenge, stage)),
+                ) {
+                    if stage.min_players() == 0 {
+                        return Err(ConfigError::ConstraintViolated(format!(
+                            "Stage {} must have a minimum of at least 1 player",
+                            stage.guid()
+                        )));
+                    }
+
+                    if stage.max_players() < stage.min_players() {
+                        return Err(ConfigError::ConstraintViolated(format!(
+                            "Stage {}'s maximum player count is lower than its minimum player count",
+                            stage.guid()
+                        )));
+                    }
+
+                    if !stage_guids.insert(stage.guid()) {
+                        return Err(ConfigError::ConstraintViolated(format!(
+                            "Two stages have GUID {}",
+                            stage.guid()
+                        )));
+                    }
+                }
+            }
+        }
+
+        Ok(())
+    }
 }
 
 const fn default_true() -> bool {
@@ -1032,6 +1092,21 @@ impl MinigameStageGroupConfig {
                         stage_number,
                         child_stage_group_definition_guid: 0,
                     });
+
+                    if let Some(display_stage_group_guid) = stage.display_stage_group_guid {
+                        group_links.push(MinigameStageGroupLink {
+                            link_id: 0,
+                            parent_stage_group_definition_guid: display_stage_group_guid,
+                            parent_stage_definition_guid: 0,
+                            child_stage_definition_guid: stage.guid,
+                            icon_id: 0,
+                            link_name: "".to_string(),
+                            short_name: "".to_string(),
+                            stage_number,
+                            child_stage_group_definition_guid: 0,
+                        });
+                    }
+
                     group_played_today = group_played_today
                         || has_played_minigame_today(now, minigame_stats, stage.guid);
 
@@ -1774,45 +1849,7 @@ pub fn load_all_minigames(config_dir: &Path) -> Result<AllMinigameConfigs, Confi
             }
 
             for child in potral_entry.stage_group.stages.iter() {
-                match child {
-                    MinigameStageGroupChild::StageGroup(stage_group) => {
-                        if !stage_group_guids.insert(stage_group.guid) {
-                            return Err(ConfigError::ConstraintViolated(format!(
-                                "Two stage groups have GUID {}",
-                                stage_group.guid
-                            )));
-                        }
-                    }
-                    MinigameStageGroupChild::Stage(stage) => {
-                        for stage in iter::once(MinigameStageConfig::CampaignStage(stage)).chain(
-                            stage
-                                .challenges
-                                .iter()
-                                .map(|challenge| MinigameStageConfig::Challenge(challenge, stage)),
-                        ) {
-                            if stage.min_players() == 0 {
-                                return Err(ConfigError::ConstraintViolated(format!(
-                                    "Stage {} must have a minimum of at least 1 player",
-                                    stage.guid()
-                                )));
-                            }
-
-                            if stage.max_players() < stage.min_players() {
-                                return Err(ConfigError::ConstraintViolated(format!(
-                                    "Stage {}'s maximum player count is lower than its minimum player count",
-                                    stage.guid()
-                                )));
-                            }
-
-                            if !stage_guids.insert(stage.guid()) {
-                                return Err(ConfigError::ConstraintViolated(format!(
-                                    "Two stages have GUID {}",
-                                    stage.guid()
-                                )));
-                            }
-                        }
-                    }
-                }
+                child.validate(&mut stage_group_guids, &mut stage_guids)?;
             }
         }
     }
@@ -2364,7 +2401,7 @@ pub fn prepare_active_minigame_instance(
 
             minigame_data.readiness = MinigameReadiness::InitialPlayersLoading(
                 BTreeSet::from_iter(members.iter().copied()),
-                None,
+                Vec::new(),
             );
 
             Ok(())
@@ -2534,8 +2571,6 @@ fn handle_request_start_active_minigame(
                 ));
             };
 
-            let mut packets = Vec::new();
-
             let Some(StageConfigRef {stage_config, ..}) = game_server.minigames().stage_config(minigame_status.group.stage_group_guid, minigame_status.group.stage_guid) else {
                 return Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
@@ -2561,19 +2596,8 @@ fn handle_request_start_active_minigame(
                         ));
                     };
 
-                    if let MinigameReadiness::InitialPlayersLoading(players, first_player_load_time) = &mut shared_minigame_data.readiness {
-                        let now = Instant::now();
-                        if first_player_load_time.is_none() {
-                            *first_player_load_time = Some(now);
-                        }
-
-                        if players.remove(&sender) && players.is_empty() {
-                            shared_minigame_data.readiness = MinigameReadiness::Ready(MinigameStopwatch::new(Some(first_player_load_time.unwrap_or(now))));
-                        }
-                    }
-
                     let mut stage_group_instance =
-                    game_server.minigames().stage_group_instance(minigame_status.group.stage_group_guid, player)?;
+                        game_server.minigames().stage_group_instance(minigame_status.group.stage_group_guid, player)?;
                     stage_group_instance.header.stage_guid = minigame_status.group.stage_guid;
                     // The default stage instance must be set for the how-to button the options menu to work
                     stage_group_instance.default_stage_instance_guid = minigame_status.group.stage_guid;
@@ -2585,13 +2609,13 @@ fn handle_request_start_active_minigame(
                     // group instance data. Then we can load the minigame.
                     //
                     // We hide the HUD so that no HUD appears before the minigame HUD loads.
-                    packets.push(GamePacket::serialize(&TunneledPacket {
+                    let mut packets = vec![GamePacket::serialize(&TunneledPacket {
                         unknown1: true,
                         inner: ExecuteScriptWithStringParams {
                             script_name: "UIGlobal.SetStateNoHud".to_string(),
                             params: vec![],
                         },
-                    }));
+                    })];
                     packets.push(GamePacket::serialize(&TunneledPacket {
                         unknown1: true,
                         inner: stage_group_instance,
@@ -2630,12 +2654,27 @@ fn handle_request_start_active_minigame(
                                     stage_group_guid: minigame_status.group.stage_group_guid,
                                 },
                             },
-                        }),
+                        })
                     );
 
-                    Ok(vec![
-                        Broadcast::Single(sender, packets)
-                    ])
+                    packets.push(
+                        GamePacket::serialize(&TunneledPacket {
+                            unknown1: true,
+                            inner: PreloadCharactersDone { unknown1: false },
+                        })
+                    );
+
+                    if let MinigameReadiness::InitialPlayersLoading(players, broadcasts) = &mut shared_minigame_data.readiness {
+                        broadcasts.push(Broadcast::Single(sender, packets));
+
+                        if players.remove(&sender) && players.is_empty() {
+                            let broadcasts = mem::take(broadcasts);
+                            shared_minigame_data.readiness = MinigameReadiness::Ready(MinigameStopwatch::new(None));
+                            return Ok(broadcasts);
+                        }
+                    }
+
+                    Ok(Vec::new())
                 },
             })
         }
@@ -3699,7 +3738,7 @@ fn leave_active_minigame_single_player_if_any(
     shared_minigame_data: &mut SharedMinigameData,
     stage_config: &StageConfigRef<'_>,
     game_server: &GameServer,
-) -> Result<Vec<Broadcast>, ProcessPacketError> {
+) -> Result<(Vec<Broadcast>, bool), ProcessPacketError> {
     let status_update_result = characters_table_write_handle
         .update_value_indices(player_guid(sender), |possible_character_write_handle, characters_table_handle| {
             let Some(character_write_handle) = possible_character_write_handle else {
@@ -3730,7 +3769,7 @@ fn leave_active_minigame_single_player_if_any(
                 false => MinigameRemovalMode::NoTeleport,
             };
 
-            let (mut broadcasts, characters_to_remove) = shared_minigame_data
+            let MinigameRemovePlayerResult { mut broadcasts, characters_to_remove, end_game_for_all } = shared_minigame_data
                 .remove_player(sender, minigame_status)?;
 
             // If we've already awarded credits after a round, don't grant those credits again
@@ -3913,11 +3952,13 @@ fn leave_active_minigame_single_player_if_any(
             player.minigame_status = None;
             character_write_handle.set_brandished_wield_type(wield_type);
 
-            Ok(Some((broadcasts, characters_to_remove, removal_mode)))
+            Ok(Some((broadcasts, characters_to_remove, removal_mode, end_game_for_all)))
         })?;
 
-    let Some((mut broadcasts, characters_to_remove, removal_move)) = status_update_result else {
-        return Ok(Vec::new());
+    let Some((mut broadcasts, characters_to_remove, removal_move, end_game_for_all)) =
+        status_update_result
+    else {
+        return Ok((Vec::new(), false));
     };
 
     for guid_to_remove in characters_to_remove.into_iter() {
@@ -3935,13 +3976,13 @@ fn leave_active_minigame_single_player_if_any(
                 character
                     .read()
                     .stats
-                    .remove_packets(RemovalMode::Immediate),
+                    .remove_packets(RemovalMode::default()),
             ));
         }
     }
 
     let MinigameRemovalMode::Teleport(previous_location) = removal_move else {
-        return Ok(broadcasts);
+        return Ok((broadcasts, end_game_for_all));
     };
 
     let instance_guid = game_server.get_or_create_instance(
@@ -3966,7 +4007,7 @@ fn leave_active_minigame_single_player_if_any(
     );
     broadcasts.append(&mut teleport_broadcasts?);
 
-    Ok(broadcasts)
+    Ok((broadcasts, end_game_for_all))
 }
 
 fn remove_single_player_from_matchmaking(
@@ -3977,7 +4018,7 @@ fn remove_single_player_from_matchmaking(
     zones_table_write_handle: &mut ZoneTableWriteHandle<'_>,
     message_id: Option<u32>,
     game_server: &GameServer,
-) -> Result<Vec<Broadcast>, ProcessPacketError> {
+) -> Result<(Vec<Broadcast>, bool), ProcessPacketError> {
     let removal_mode = characters_table_write_handle.update_value_indices(player_guid(player), |possible_character_write_handle, _| {
         let Some(character_write_handle) = possible_character_write_handle else {
             return Err(ProcessPacketError::new(
@@ -4065,7 +4106,7 @@ fn remove_single_player_from_matchmaking(
         broadcasts.append(&mut teleport_result?);
     }
 
-    Ok(broadcasts)
+    Ok((broadcasts, false))
 }
 
 fn leave_or_remove_single_player_from_matchmaking(
@@ -4078,7 +4119,7 @@ fn leave_or_remove_single_player_from_matchmaking(
     is_matchmaking: bool,
     matchmaking_removal_message_id: Option<u32>,
     game_server: &GameServer,
-) -> Result<Vec<Broadcast>, ProcessPacketError> {
+) -> Result<(Vec<Broadcast>, bool), ProcessPacketError> {
     if is_matchmaking {
         remove_single_player_from_matchmaking(
             sender,
@@ -4172,32 +4213,40 @@ pub fn leave_active_minigame_if_any(
 
     let mut broadcasts = Vec::new();
 
-    if let LeaveMinigameTarget::Single(sender) = target {
-        let leave_result = leave_or_remove_single_player_from_matchmaking(
-            sender,
-            characters_table_write_handle,
-            zones_table_write_handle,
-            &mut minigame_data_write_handle,
-            group.stage_group_guid,
-            &stage_config,
-            is_matchmaking,
-            matchmaking_removal_message_id,
-            game_server,
-        );
-        match leave_result {
-            Ok(mut leave_broadcasts) => broadcasts.append(&mut leave_broadcasts),
-            Err(err) => info!(
-                "Unable to remove player {} from minigame (stage group {}, stage {}): {}",
-                sender, group.stage_group_guid, group.stage_guid, err
-            ),
+    let end_game_for_all = match target {
+        LeaveMinigameTarget::Single(player_guid) => {
+            let leave_result = leave_or_remove_single_player_from_matchmaking(
+                player_guid,
+                characters_table_write_handle,
+                zones_table_write_handle,
+                &mut minigame_data_write_handle,
+                group.stage_group_guid,
+                &stage_config,
+                is_matchmaking,
+                matchmaking_removal_message_id,
+                game_server,
+            );
+            match leave_result {
+                Ok((mut leave_broadcasts, end_game_for_all)) => {
+                    broadcasts.append(&mut leave_broadcasts);
+                    end_game_for_all
+                }
+                Err(err) => {
+                    info!(
+                        "Unable to remove player {player_guid} from minigame (stage group {}, stage {}): {err}",
+                        group.stage_group_guid, group.stage_guid
+                    );
+                    false
+                }
+            }
         }
-    }
+        LeaveMinigameTarget::Group(_) => true,
+    };
 
     let remaining_players = characters_table_write_handle.keys_by_index4(&group).count() as u32;
-    let is_group_removal = matches!(target, LeaveMinigameTarget::Group { .. });
 
     if (remaining_players < stage_config.stage_config.min_players() && !is_matchmaking)
-        || is_group_removal
+        || end_game_for_all
     {
         let member_guids: Vec<u64> = characters_table_write_handle
             .keys_by_index4(&group)
@@ -4220,7 +4269,7 @@ pub fn leave_active_minigame_if_any(
 
             // Don't error for this player if there's an issue with another player
             match other_player_leave_result {
-                Ok(mut leave_broadcasts) => broadcasts.append(&mut leave_broadcasts),
+                Ok((mut leave_broadcasts, _)) => broadcasts.append(&mut leave_broadcasts),
                 Err(err) => info!(
                     "Unable to remove other player {member_guid} from minigame (stage group {}, stage {}) that does not have enough players: {err}",
                     group.stage_group_guid,

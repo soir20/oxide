@@ -1,0 +1,211 @@
+---
+members_only:
+  ambient_npcs:
+    #
+    # Lightsaber Construction Chamber
+    #
+
+    #
+    # Members
+    #
+    max_rebo:
+      model_id: 1014
+      name_id: 4782
+      show_name: false
+      enable_gravity: false
+      pos:
+        x: 800.338
+        y: 11.77
+        z: 668.0857
+        w: 1.0
+      rot:
+        x: -0.6742825
+        y: 0
+        z: 0.73847353
+        w: 0
+      stand_animation_id: 2579
+    jar_jar_binks:
+      model_id: 2553
+      name_id: 52497
+      sub_title_id: 53004
+      pos:
+        x: 801.25
+        y: 10.040312
+        z: 678.0
+        w: 1
+      rot:
+        x: -1
+        y: 0
+        z: -0.3
+        w: 0
+      cursor: 54
+      enable_interact_popup: true
+      interact_radius: 5
+      move_to_interact_offset: 4
+      one_shot_action_on_interact:
+        one_shot_action_animation_id: 3113
+        duration_millis: 10000
+    clone_guard_members_only_1:
+      model_id: 1936
+      pos:
+        x: 762.14
+        y: 10.028671
+        z: 680.5
+        w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2505
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+        one_shot_action_animation_id: 2506
+        duration_millis: 4000
+      interact_radius: 6
+      auto_interact_radius: 5
+    clone_guard_members_only_2:
+      model_id: 1936
+      pos:
+        x: 762.14
+        y: 10.036716
+        z: 687.5
+        w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2505
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+        one_shot_action_animation_id: 2506
+        duration_millis: 4000
+      interact_radius: 6
+      auto_interact_radius: 5
+    clone_guard_members_only_3:
+      model_id: 1936
+      pos:
+        x: 800.0
+        y: 10.040405
+        z: 674.48
+        w: 1
+      rot:
+        x: -0.5
+        y: 0
+        z: 0.75
+        w: 0
+      stand_animation_id: 2505
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+        one_shot_action_animation_id: 2506
+        duration_millis: 4000
+      interact_radius: 6
+      auto_interact_radius: 5
+    liftable_crate:
+      model_id: 825
+      pos:
+        x: 816.7
+        y: 10.04
+        z: 694.30
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2301
+      cursor: 54
+      enable_interact_popup: false
+      interact_radius: 5
+      move_to_interact_offset: 4.9
+      one_shot_action_on_interact:
+        player_one_shot_animation_id: 3014
+        one_shot_action_animation_id: 2302
+        duration_millis: 7000
+    members_only_jedi_table:
+      model_id: 1010
+      pos:
+        x: 768.0
+        y: 10.026612
+        z: 679.1
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: -1
+        w: 0
+    members_only_jedi_table_jedi_a:
+      model_id: 39
+      enable_gravity: false
+      pos:
+        x: 768.0
+        y: 10.026612
+        z: 679.1
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: -1
+        w: 0
+      stand_animation_id: 2566
+    members_only_jedi_table_jedi_b:
+      model_id: 40
+      enable_gravity: false
+      pos:
+        x: 768.0
+        y: 10.026612
+        z: 679.1
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: -1
+        w: 0
+      stand_animation_id: 2567
+    members_only_clones_table:
+      model_id: 1010
+      pos:
+        x: 783.4057
+        y: 10.03749
+        z: 688.0
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: -1
+        w: 0
+    members_only_clones_table_clone_a:
+      model_id: 1112
+      enable_gravity: false
+      pos:
+        x: 783.25
+        y: 10.03749
+        z: 688.0
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: -1
+        w: 0
+      stand_animation_id: 2585
+    members_only_clones_table_clone_b:
+      model_id: 1112
+      enable_gravity: false
+      pos:
+        x: 783.6
+        y: 10.03749
+        z: 688.0
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: -1
+        w: 0
+      stand_animation_id: 2586

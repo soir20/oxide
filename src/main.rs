@@ -1,4 +1,5 @@
 use chrono::Utc;
+use clap::Parser;
 use crossbeam_channel::{bounded, tick, unbounded, Receiver, Sender};
 use defer_lite::defer;
 use game_server::{Broadcast, TickableNpcSynchronization};
@@ -95,6 +96,14 @@ impl From<serde_yaml::Error> for ConfigError {
     }
 }
 
+#[derive(Parser, Debug)]
+#[command(about, long_about = None)]
+struct Args {
+    /// If true, the server exits immediately with a success code if all configuration is valid
+    #[arg(long)]
+    validate: bool,
+}
+
 #[tokio::main]
 async fn main() {
     let default_hook = panic::take_hook();
@@ -102,6 +111,8 @@ async fn main() {
         default_hook(panic_info);
         process::exit(1);
     }));
+
+    let args = Args::parse();
 
     let config_dir = Path::new("config");
     let server_options =
@@ -120,10 +131,13 @@ async fn main() {
         server_options.udp_port,
     ))
     .expect("couldn't bind to socket");
-    info!("Hello, world!");
 
     let channel_manager = RwLock::new(ChannelManager::new(server_options.max_sessions));
     let game_server = GameServer::new(config_dir).unwrap();
+
+    if args.validate {
+        return;
+    }
 
     let channel_manager_arc = Arc::new(channel_manager);
     let socket_arc = Arc::new(socket);
@@ -200,6 +214,8 @@ async fn main() {
         &server_options,
         &game_server_arc,
     );
+
+    info!("Hello, world!");
 
     for thread in threads {
         thread.join().expect("Thread exited with error");
