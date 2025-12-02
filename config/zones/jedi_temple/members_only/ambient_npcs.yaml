@@ -4,6 +4,29 @@ members_only:
     #
     # Lightsaber Construction Chamber
     #
+    ki-adi-mundi:
+      key: ki-adi-mundi
+      model_id: 438
+      name_id: 9540
+      show_name: true
+      pos:
+        x: 1477.1298
+        y: 69.85488
+        z: 905.9868
+        w: 1.0
+      rot:
+        x: -0.99949026
+        y: 0
+        z: 0.031924263
+        w: 0
+      stand_animation_id: 2201
+      cursor: 53
+      enable_interact_popup: true
+      notification_icon: 16
+      one_shot_interaction:
+        dialog_option_key: Ki-Adi-Mundi
+        duration_millis: 1
+      interact_radius: 6
     construction_chamber_twilek_1:
       model_id: 412
       pos:
