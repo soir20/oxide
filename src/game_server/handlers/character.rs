@@ -659,7 +659,7 @@ pub struct TickableStep {
     pub animation_delay_seconds: f32,
     pub composite_effect_id: Option<u32>,
     #[serde(default)]
-    pub effect_delay_millis: u32,
+    pub composite_effect_delay_millis: u32,
     pub animation_id: Option<i32>,
     pub chat_message_id: Option<u32>,
     pub model_id: Option<u32>,
@@ -866,7 +866,7 @@ impl TickableStep {
                     guid: Guid::guid(character),
                     triggered_by_guid: 0,
                     composite_effect: composite_effect_id,
-                    delay_millis: self.effect_delay_millis,
+                    delay_millis: self.composite_effect_delay_millis,
                     duration_millis: self.duration_millis as u32,
                     pos: Pos {
                         x: 0.0,
