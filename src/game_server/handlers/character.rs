@@ -2110,9 +2110,13 @@ pub enum CharacterTypeTemplate {
 impl From<CharacterTypeTemplate> for CharacterType {
     fn from(template: CharacterTypeTemplate) -> Self {
         match template {
-            CharacterTypeTemplate::AmbientNpc(template) => CharacterType::AmbientNpc(template.instantiate()),
+            CharacterTypeTemplate::AmbientNpc(template) => {
+                CharacterType::AmbientNpc(template.instantiate())
+            }
             CharacterTypeTemplate::Door(template) => CharacterType::Door(template.instantiate()),
-            CharacterTypeTemplate::Transport(template) => CharacterType::Transport(template.instantiate()),
+            CharacterTypeTemplate::Transport(template) => {
+                CharacterType::Transport(template.instantiate())
+            }
         }
     }
 }
