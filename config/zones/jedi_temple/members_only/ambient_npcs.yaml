@@ -4,7 +4,131 @@ members_only:
     #
     # Lightsaber Construction Chamber
     #
-
+    construction_chamber_twilek_1:
+      model_id: 412
+      pos:
+        x: 1488.795
+        y: 71.88129
+        z: 919.0992
+        w: 1.0
+      rot:
+        x: 0.9
+        y: 0
+        z: -0.5
+        w: 0
+      stand_animation_id: 2549
+      cursor: 54
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          player_one_shot_animation_id: 3014
+          one_shot_action_animation_id: 2550
+          duration_millis: 1000
+      interact_radius: 5
+    construction_chamber_hologram_projector_01:
+      model_id: 1012
+      pos:
+        x: 1489.576
+        y: 73.23138
+        z: 920.426
+        w: 1.0
+      rot:
+        x: 0.5
+        y: 0
+        z: 0.8
+        w: 0
+      composite_effect_id: 2056
+    construction_chamber_togruta_1:
+      model_id: 222
+      pos:
+        x: 1495.6
+        y: 71.88129
+        z: 908.2
+        w: 1.0
+      rot:
+        x: 0.17
+        y: 0
+        z: -1
+        w: 0
+      stand_animation_id: 2549
+      cursor: 54
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          player_one_shot_animation_id: 3014
+          one_shot_action_animation_id: 2550
+          duration_millis: 1000
+      interact_radius: 5
+    construction_chamber_hologram_projector_02:
+      model_id: 1012
+      pos:
+        x: 1497.21
+        y: 73.301125
+        z: 908.5
+        w: 1.0
+      rot:
+        x: 1.0
+        y: 0
+        z: 0.16
+        w: 0
+      composite_effect_id: 2056
+    construction_chamber_rodian_1:
+      model_id: 86
+      pos:
+        x: 1492.0
+        y: 71.88129
+        z: 895.9
+        w: 1.0
+      rot:
+        x: -0.6
+        y: 0
+        z: -0.8
+        w: 0
+      stand_animation_id: 2549
+      cursor: 54
+      enable_interact_popup: false
+      one_shot_action_on_interact:
+          player_one_shot_animation_id: 3014
+          one_shot_action_animation_id: 2550
+          duration_millis: 1000
+      interact_radius: 5
+    construction_chamber_hologram_projector_03:
+      model_id: 1012
+      pos:
+        x: 1493.39
+        y: 73.235306
+        z: 894.9
+        w: 1.0
+      rot:
+        x: 0.8
+        y: 0
+        z: -0.6
+        w: 0
+      composite_effect_id: 2056
+    construction_chamber_meditating_jedi_01:
+      model_id: 2037
+      pos:
+        x: 1467.9178
+        y: 70.15328
+        z: 892.4749
+        w: 1.0
+      rot:
+        x: 0.7
+        y: 0
+        z: 0.7
+        w: 0
+      stand_animation_id: 2530
+    construction_chamber_meditating_jedi_02:
+      model_id: 2038
+      pos:
+        x: 1479.3802
+        y: 70.143936
+        z: 923.82324
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: -1
+        w: 0
+      stand_animation_id: 2530
     #
     # Members
     #
