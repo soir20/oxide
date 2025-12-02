@@ -19,9 +19,9 @@ members_only:
       stand_animation_id: 2549
       cursor: 54
       enable_interact_popup: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         player_one_shot_animation_id: 3014
-        one_shot_action_animation_id: 2550
+        one_shot_animation_id: 2550
         duration_millis: 1000
       interact_radius: 5
     construction_chamber_hologram_projector_1:
@@ -52,9 +52,9 @@ members_only:
       stand_animation_id: 2549
       cursor: 54
       enable_interact_popup: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         player_one_shot_animation_id: 3014
-        one_shot_action_animation_id: 2550
+        one_shot_animation_id: 2550
         duration_millis: 1000
       interact_radius: 5
     construction_chamber_hologram_projector_2:
@@ -85,9 +85,9 @@ members_only:
       stand_animation_id: 2549
       cursor: 54
       enable_interact_popup: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         player_one_shot_animation_id: 3014
-        one_shot_action_animation_id: 2550
+        one_shot_animation_id: 2550
         duration_millis: 1000
       interact_radius: 5
     construction_chamber_hologram_projector_3:
