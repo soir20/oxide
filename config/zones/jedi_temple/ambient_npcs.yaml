@@ -20,8 +20,8 @@ jedi_temple:
       cursor: 54
       clickable: false
       enable_interact_popup: false
-      one_shot_action_on_interact:
-        one_shot_action_animation_id: 2506
+      one_shot_interaction:
+        one_shot_animation_id: 2506
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
@@ -41,8 +41,8 @@ jedi_temple:
       cursor: 54
       clickable: false
       enable_interact_popup: false
-      one_shot_action_on_interact:
-        one_shot_action_animation_id: 2506
+      one_shot_interaction:
+        one_shot_animation_id: 2506
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
@@ -62,8 +62,8 @@ jedi_temple:
       cursor: 54
       clickable: false
       enable_interact_popup: false
-      one_shot_action_on_interact:
-        one_shot_action_animation_id: 2506
+      one_shot_interaction:
+        one_shot_animation_id: 2506
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
@@ -83,8 +83,8 @@ jedi_temple:
       cursor: 54
       clickable: false
       enable_interact_popup: false
-      one_shot_action_on_interact:
-        one_shot_action_animation_id: 2506
+      one_shot_interaction:
+        one_shot_animation_id: 2506
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
@@ -104,8 +104,8 @@ jedi_temple:
       cursor: 54
       clickable: false
       enable_interact_popup: false
-      one_shot_action_on_interact:
-        one_shot_action_animation_id: 2506
+      one_shot_interaction:
+        one_shot_animation_id: 2506
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
@@ -125,8 +125,8 @@ jedi_temple:
       cursor: 54
       clickable: false
       enable_interact_popup: false
-      one_shot_action_on_interact:
-        one_shot_action_animation_id: 2506
+      one_shot_interaction:
+        one_shot_animation_id: 2506
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
@@ -215,9 +215,9 @@ jedi_temple:
       enable_interact_popup: false
       interact_radius: 5
       move_to_interact_offset: 4
-      one_shot_action_on_interact:
+      one_shot_interaction:
         player_one_shot_animation_id: 3014
-        one_shot_action_animation_id: 2548
+        one_shot_animation_id: 2548
         duration_millis: 2000
 
     #
@@ -670,8 +670,8 @@ jedi_temple:
       cursor: 54
       clickable: false
       enable_interact_popup: false
-      one_shot_action_on_interact:
-        one_shot_action_animation_id: 2506
+      one_shot_interaction:
+        one_shot_animation_id: 2506
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
@@ -691,8 +691,8 @@ jedi_temple:
       cursor: 54
       clickable: false
       enable_interact_popup: false
-      one_shot_action_on_interact:
-        one_shot_action_animation_id: 2506
+      one_shot_interaction:
+        one_shot_animation_id: 2506
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
@@ -714,9 +714,9 @@ jedi_temple:
       enable_interact_popup: false
       interact_radius: 5
       move_to_interact_offset: 4.9
-      one_shot_action_on_interact:
+      one_shot_interaction:
         player_one_shot_animation_id: 3014
-        one_shot_action_animation_id: 2302
+        one_shot_animation_id: 2302
         duration_millis: 6000
     # Clone with Missile Rack
     hanger_npc_2:
@@ -736,9 +736,9 @@ jedi_temple:
       enable_interact_popup: false
       interact_radius: 5
       move_to_interact_offset: 4.9
-      one_shot_action_on_interact:
+      one_shot_interaction:
         player_one_shot_animation_id: 3014
-        one_shot_action_animation_id: 2555
+        one_shot_animation_id: 2555
         duration_millis: 8000
 
     #
@@ -760,8 +760,8 @@ jedi_temple:
       cursor: 54
       clickable: false
       enable_interact_popup: false
-      one_shot_action_on_interact:
-        one_shot_action_animation_id: 2506
+      one_shot_interaction:
+        one_shot_animation_id: 2506
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
@@ -781,8 +781,8 @@ jedi_temple:
       cursor: 54
       clickable: false
       enable_interact_popup: false
-      one_shot_action_on_interact:
-        one_shot_action_animation_id: 2506
+      one_shot_interaction:
+        one_shot_animation_id: 2506
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
@@ -863,9 +863,9 @@ jedi_temple:
       enable_interact_popup: false
       interact_radius: 5
       move_to_interact_offset: 4.9
-      one_shot_action_on_interact:
+      one_shot_interaction:
         player_one_shot_animation_id: 3014
-        one_shot_action_animation_id: 2302
+        one_shot_animation_id: 2302
         duration_millis: 7000
 
     #
@@ -888,8 +888,8 @@ jedi_temple:
       cursor: 54
       clickable: false
       enable_interact_popup: false
-      one_shot_action_on_interact:
-        one_shot_action_animation_id: 2506
+      one_shot_interaction:
+        one_shot_animation_id: 2506
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
@@ -910,8 +910,8 @@ jedi_temple:
       cursor: 54
       clickable: false
       enable_interact_popup: false
-      one_shot_action_on_interact:
-        one_shot_action_animation_id: 2506
+      one_shot_interaction:
+        one_shot_animation_id: 2506
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
@@ -932,8 +932,8 @@ jedi_temple:
       cursor: 54
       clickable: false
       enable_interact_popup: false
-      one_shot_action_on_interact:
-        one_shot_action_animation_id: 2506
+      one_shot_interaction:
+        one_shot_animation_id: 2506
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
@@ -954,8 +954,8 @@ jedi_temple:
       cursor: 54
       clickable: false
       enable_interact_popup: false
-      one_shot_action_on_interact:
-        one_shot_action_animation_id: 2506
+      one_shot_interaction:
+        one_shot_animation_id: 2506
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
@@ -976,8 +976,8 @@ jedi_temple:
       cursor: 54
       clickable: false
       enable_interact_popup: false
-      one_shot_action_on_interact:
-        one_shot_action_animation_id: 2506
+      one_shot_interaction:
+        one_shot_animation_id: 2506
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
@@ -998,8 +998,8 @@ jedi_temple:
       cursor: 54
       clickable: false
       enable_interact_popup: false
-      one_shot_action_on_interact:
-        one_shot_action_animation_id: 2506
+      one_shot_interaction:
+        one_shot_animation_id: 2506
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
@@ -1020,8 +1020,8 @@ jedi_temple:
       cursor: 54
       clickable: false
       enable_interact_popup: false
-      one_shot_action_on_interact:
-        one_shot_action_animation_id: 2506
+      one_shot_interaction:
+        one_shot_animation_id: 2506
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
@@ -1042,8 +1042,8 @@ jedi_temple:
       cursor: 54
       clickable: false
       enable_interact_popup: false
-      one_shot_action_on_interact:
-        one_shot_action_animation_id: 2506
+      one_shot_interaction:
+        one_shot_animation_id: 2506
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
@@ -1064,8 +1064,8 @@ jedi_temple:
       cursor: 54
       clickable: false
       enable_interact_popup: false
-      one_shot_action_on_interact:
-        one_shot_action_animation_id: 2506
+      one_shot_interaction:
+        one_shot_animation_id: 2506
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
@@ -1086,8 +1086,8 @@ jedi_temple:
       cursor: 54
       clickable: false
       enable_interact_popup: false
-      one_shot_action_on_interact:
-        one_shot_action_animation_id: 2506
+      one_shot_interaction:
+        one_shot_animation_id: 2506
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
@@ -1108,8 +1108,8 @@ jedi_temple:
       cursor: 54
       clickable: false
       enable_interact_popup: false
-      one_shot_action_on_interact:
-        one_shot_action_animation_id: 2506
+      one_shot_interaction:
+        one_shot_animation_id: 2506
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
@@ -1130,8 +1130,8 @@ jedi_temple:
       cursor: 54
       clickable: false
       enable_interact_popup: false
-      one_shot_action_on_interact:
-        one_shot_action_animation_id: 2506
+      one_shot_interaction:
+        one_shot_animation_id: 2506
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
@@ -1152,9 +1152,9 @@ jedi_temple:
       enable_interact_popup: false
       interact_radius: 5
       move_to_interact_offset: 4.9
-      one_shot_action_on_interact:
+      one_shot_interaction:
         player_one_shot_animation_id: 3014
-        one_shot_action_animation_id: 2302
+        one_shot_animation_id: 2302
         duration_millis: 8000
 
     #
@@ -1181,8 +1181,8 @@ jedi_temple:
       enable_gravity: false
       interact_radius: 3.3
       move_to_interact_offset: 3.2
-      one_shot_action_on_interact:
-        one_shot_action_composite_effect_id: 1959
+      one_shot_interaction:
+        composite_effect_id: 1959
         player_one_shot_animation_id: 3014
         duration_millis: 5000
     # Guard Top Right Main Hall Door
@@ -1202,8 +1202,8 @@ jedi_temple:
       cursor: 54
       clickable: false
       enable_interact_popup: false
-      one_shot_action_on_interact:
-        one_shot_action_animation_id: 2506
+      one_shot_interaction:
+        one_shot_animation_id: 2506
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
@@ -1224,8 +1224,8 @@ jedi_temple:
       cursor: 54
       clickable: false
       enable_interact_popup: false
-      one_shot_action_on_interact:
-        one_shot_action_animation_id: 2506
+      one_shot_interaction:
+        one_shot_animation_id: 2506
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
@@ -1246,8 +1246,8 @@ jedi_temple:
       cursor: 54
       clickable: false
       enable_interact_popup: false
-      one_shot_action_on_interact:
-        one_shot_action_animation_id: 2506
+      one_shot_interaction:
+        one_shot_animation_id: 2506
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
@@ -1268,8 +1268,8 @@ jedi_temple:
       cursor: 54
       clickable: false
       enable_interact_popup: false
-      one_shot_action_on_interact:
-        one_shot_action_animation_id: 2506
+      one_shot_interaction:
+        one_shot_animation_id: 2506
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
@@ -1739,9 +1739,9 @@ jedi_temple:
       enable_interact_popup: false
       interact_radius: 5
       move_to_interact_offset: 4.9
-      one_shot_action_on_interact:
+      one_shot_interaction:
         player_one_shot_animation_id: 3014
-        one_shot_action_animation_id: 2561
+        one_shot_animation_id: 2561
         duration_millis: 5000
     # Zombie Droid
     workshop_npc_2:
@@ -1761,9 +1761,9 @@ jedi_temple:
       enable_interact_popup: false
       interact_radius: 5
       move_to_interact_offset: 4.9
-      one_shot_action_on_interact:
+      one_shot_interaction:
         player_one_shot_animation_id: 3014
-        one_shot_action_animation_id: 2559
+        one_shot_animation_id: 2559
         duration_millis: 12000
     # Pink Astromech Droid
     workshop_npc_3:
@@ -1824,9 +1824,9 @@ jedi_temple:
       stand_animation_id: 2562
       cursor: 54
       enable_interact_popup: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         player_one_shot_animation_id: 3014
-        one_shot_action_animation_id: 2563
+        one_shot_animation_id: 2563
         duration_millis: 5000
       interact_radius: 5
       move_to_interact_offset: 4
