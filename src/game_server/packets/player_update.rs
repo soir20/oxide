@@ -642,7 +642,7 @@ impl GamePacket for SetCollision {
     const HEADER: Self::Header = PlayerUpdateOpCode::SetCollision;
 }
 
-#[derive(SerializePacket, DeserializePacket)]
+#[derive(SerializePacket)]
 pub struct NotificationData {
     pub unknown1: u32,
     pub icon_id: u32,
