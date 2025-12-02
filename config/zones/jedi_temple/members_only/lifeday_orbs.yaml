@@ -167,7 +167,7 @@ members_only:
       is_spawned: false
       enable_interact_popup: false
       show_name: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         award_credits: 25
         despawn_npc: true
         removal_mode: !Graceful
@@ -233,7 +233,7 @@ members_only:
       is_spawned: false
       enable_interact_popup: false
       show_name: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         award_credits: 25
         despawn_npc: true
         removal_mode: !Graceful
@@ -307,7 +307,7 @@ members_only:
       is_spawned: false
       enable_interact_popup: false
       show_name: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         award_credits: 25
         despawn_npc: true
         removal_mode: !Graceful
@@ -372,7 +372,7 @@ members_only:
       is_spawned: false
       enable_interact_popup: false
       show_name: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         award_credits: 100
         despawn_npc: true
         removal_mode: !Graceful
@@ -441,7 +441,7 @@ members_only:
       is_spawned: false
       enable_interact_popup: false
       show_name: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         award_credits: 25
         despawn_npc: true
         removal_mode: !Graceful
@@ -511,7 +511,7 @@ members_only:
       is_spawned: false
       enable_interact_popup: false
       show_name: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         award_credits: 25
         despawn_npc: true
         removal_mode: !Graceful
@@ -577,7 +577,7 @@ members_only:
       is_spawned: false
       enable_interact_popup: false
       show_name: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         award_credits: 25
         despawn_npc: true
         removal_mode: !Graceful
@@ -634,7 +634,7 @@ members_only:
       is_spawned: false
       enable_interact_popup: false
       show_name: false
-      one_shot_action_on_interact:
+      one_shot_interaction:
         award_credits: 100
         despawn_npc: true
         removal_mode: !Graceful

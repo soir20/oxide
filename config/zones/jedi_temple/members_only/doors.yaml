@@ -8,18 +8,19 @@ members_only:
         z: 887.65
         w: 1
       terrain_object_id: 1281994173
-      destination_pos:
-        x: 919.5898
-        y: 178.51657
-        z: 1546.969
-        w: 1
-      destination_rot:
-        x: -1.5
-        y: 0
-        z: 0
-        w: 0
-      destination_zone: !Any
-        template_guid: 24
+      destination:
+        pos:
+          x: 919.5898
+          y: 178.51657
+          z: 1546.969
+          w: 1
+        rot:
+          x: -1.5
+          y: 0
+          z: 0
+          w: 0
+        zone: !Any
+          template_guid: 24
       interact_radius: 7
     club_to_lounge:
       pos:
@@ -28,16 +29,17 @@ members_only:
         z: 683.99
         w: 1
       terrain_object_id: 1281995677
-      destination_pos:
-        x: -106.5555
-        y: 10
-        z: 1250.071
-        w: 1
-      destination_rot:
-        x: 0
-        y: 0
-        z: 1.5
-        w: 0
-      destination_zone: !Any
-        template_guid: 24
+      destination:
+        pos:
+          x: -106.5555
+          y: 10
+          z: 1250.071
+          w: 1
+        rot:
+          x: 0
+          y: 0
+          z: 1.5
+          w: 0
+        zone: !Any
+          template_guid: 24
       interact_radius: 7
