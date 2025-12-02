@@ -2107,16 +2107,12 @@ pub enum CharacterTypeTemplate {
     Transport(TransportTemplate),
 }
 
-impl CharacterTypeTemplate {
-    pub fn instantiate(self) -> CharacterType {
-        match self {
-            CharacterTypeTemplate::AmbientNpc(template) => {
-                CharacterType::AmbientNpc(template.instantiate())
-            }
+impl From<CharacterTypeTemplate> for CharacterType {
+    fn from(template: CharacterTypeTemplate) -> Self {
+        match template {
+            CharacterTypeTemplate::AmbientNpc(template) => CharacterType::AmbientNpc(template.instantiate()),
             CharacterTypeTemplate::Door(template) => CharacterType::Door(template.instantiate()),
-            CharacterTypeTemplate::Transport(template) => {
-                CharacterType::Transport(template.instantiate())
-            }
+            CharacterTypeTemplate::Transport(template) => CharacterType::Transport(template.instantiate()),
         }
     }
 }
@@ -2243,7 +2239,7 @@ impl NpcTemplate {
                 possible_pos: self.possible_pos.clone(),
                 chunk_size,
                 scale: self.scale,
-                character_type: self.character_type.clone().instantiate(),
+                character_type: self.character_type.clone().into(),
                 mount: self.mount_id.map(|mount_id| CharacterMount {
                     mount_id,
                     mount_guid: mount_guid(guid),
