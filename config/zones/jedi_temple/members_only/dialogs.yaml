@@ -1,0 +1,28 @@
+---
+members_only:
+  dialog_choices:
+    - button_key: Crystal Attunement
+      script:
+        OpenMinigameStageGroup:
+          stage_group_id: 16000
+      close_dialog: true
+
+    - button_key: Ki-Adi-Mundi
+      npc_key: ki-adi-mundi
+      new_dialog:
+        dialog_message_id: 15027
+        speaker_animation_id: 2202
+        zoom: 11.85
+        camera_placement:
+          x: 1471.38208
+          y: 71.37633
+          z: 904.08966
+          w: 1.0
+        look_at:
+          x: 1478.8
+          y: 71.675
+          z: 906.0
+          w: 1
+        choices:
+          - button_key: Crystal Attunement
+            button_text_id: 44184
