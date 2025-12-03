@@ -42,8 +42,8 @@ members_only:
       enable_interact_popup: true
       interact_radius: 5
       move_to_interact_offset: 4
-      one_shot_action_on_interact:
-        one_shot_action_animation_id: 3113
+      one_shot_interaction:
+        one_shot_animation_id: 3113
         duration_millis: 10000
     clone_guard_members_only_1:
       model_id: 1936
@@ -61,8 +61,8 @@ members_only:
       cursor: 54
       clickable: false
       enable_interact_popup: false
-      one_shot_action_on_interact:
-        one_shot_action_animation_id: 2506
+      one_shot_interaction:
+        one_shot_animation_id: 2506
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
@@ -82,8 +82,8 @@ members_only:
       cursor: 54
       clickable: false
       enable_interact_popup: false
-      one_shot_action_on_interact:
-        one_shot_action_animation_id: 2506
+      one_shot_interaction:
+        one_shot_animation_id: 2506
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
@@ -103,8 +103,8 @@ members_only:
       cursor: 54
       clickable: false
       enable_interact_popup: false
-      one_shot_action_on_interact:
-        one_shot_action_animation_id: 2506
+      one_shot_interaction:
+        one_shot_animation_id: 2506
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
@@ -125,9 +125,9 @@ members_only:
       enable_interact_popup: false
       interact_radius: 5
       move_to_interact_offset: 4.9
-      one_shot_action_on_interact:
+      one_shot_interaction:
         player_one_shot_animation_id: 3014
-        one_shot_action_animation_id: 2302
+        one_shot_animation_id: 2302
         duration_millis: 7000
     members_only_jedi_table:
       model_id: 1010
