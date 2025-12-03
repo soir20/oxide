@@ -5,7 +5,7 @@ use std::{
 
 use chrono::{DateTime, FixedOffset, Utc};
 use enum_iterator::Sequence;
-use rand::{seq::SliceRandom, thread_rng};
+use rand::{seq::SliceRandom, thread_rng, Rng};
 use rand_distr::{Distribution, WeightedAliasIndex};
 use serde::Deserialize;
 
@@ -652,6 +652,15 @@ impl OneShotInteractionTemplate {
 
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
+pub struct WanderConfig {
+    pub wander_radius: f32,
+    pub wander_origin: Pos,
+    #[serde(default)]
+    pub min_wander_offset: f32,
+}
+
+#[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct TickableStep {
     pub speed: Option<f32>,
     pub new_pos_x: Option<f32>,
@@ -672,6 +681,8 @@ pub struct TickableStep {
     pub new_rot_offset_y: f32,
     #[serde(default)]
     pub new_rot_offset_z: f32,
+    #[serde(flatten)]
+    pub wander_config: Option<WanderConfig>,
     pub one_shot_animation_id: Option<i32>,
     #[serde(default)]
     pub animation_delay_seconds: f32,
@@ -846,6 +857,48 @@ impl TickableStep {
                 rot_x: new_rot.x,
                 rot_y: new_rot.y,
                 rot_z: new_rot.z,
+                character_state: 1,
+                unknown: 0,
+            });
+        }
+
+        if let Some(wander) = &self.wander_config {
+            let mut rng = thread_rng();
+
+            let mut offset_x = rng.gen_range(-wander.wander_radius..wander.wander_radius);
+            let mut offset_z = rng.gen_range(-wander.wander_radius..wander.wander_radius);
+
+            if offset_x.abs() < wander.min_wander_offset {
+                offset_x = offset_x.signum() * wander.min_wander_offset;
+            }
+            if offset_z.abs() < wander.min_wander_offset {
+                offset_z = offset_z.signum() * wander.min_wander_offset;
+            }
+
+            let new_pos = Pos {
+                x: wander.wander_origin.x + offset_x,
+                y: wander.wander_origin.y,
+                z: wander.wander_origin.z + offset_z,
+                w: character.pos.w,
+            };
+
+            let wander_angle = (new_pos.z - character.pos.z).atan2(new_pos.x - character.pos.x);
+
+            let wander_direction = Pos {
+                x: wander_angle.cos(),
+                y: character.rot.y,
+                z: wander_angle.sin(),
+                w: character.rot.w,
+            };
+
+            update_pos = Some(UpdatePlayerPosition {
+                guid: Guid::guid(character),
+                pos_x: new_pos.x,
+                pos_y: new_pos.y,
+                pos_z: new_pos.z,
+                rot_x: wander_direction.x,
+                rot_y: wander_direction.y,
+                rot_z: wander_direction.z,
                 character_state: 1,
                 unknown: 0,
             });
