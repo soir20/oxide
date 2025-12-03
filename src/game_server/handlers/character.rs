@@ -868,13 +868,11 @@ impl TickableStep {
             let mut offset_x = rng.gen_range(-wander.wander_radius..wander.wander_radius);
             let mut offset_z = rng.gen_range(-wander.wander_radius..wander.wander_radius);
 
-            if wander.min_wander_offset > 0.0 {
-                if offset_x.abs() < wander.min_wander_offset {
-                    offset_x = offset_x.signum() * wander.min_wander_offset;
-                }
-                if offset_z.abs() < wander.min_wander_offset {
-                    offset_z = offset_z.signum() * wander.min_wander_offset;
-                }
+            if offset_x.abs() < wander.min_wander_offset {
+                offset_x = offset_x.signum() * wander.min_wander_offset;
+            }
+            if offset_z.abs() < wander.min_wander_offset {
+                offset_z = offset_z.signum() * wander.min_wander_offset;
             }
 
             let new_pos = Pos {
