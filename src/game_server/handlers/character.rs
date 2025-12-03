@@ -655,7 +655,8 @@ impl OneShotInteractionTemplate {
 pub struct WanderConfig {
     pub wander_radius: f32,
     pub wander_origin: Pos,
-    pub min_wander_offset: Option<f32>,
+    #[serde(default)]
+    pub min_wander_offset: f32,
 }
 
 #[derive(Clone, Deserialize)]
@@ -867,12 +868,12 @@ impl TickableStep {
             let mut offset_x = rng.gen_range(-wander.wander_radius..wander.wander_radius);
             let mut offset_z = rng.gen_range(-wander.wander_radius..wander.wander_radius);
 
-            if let Some(min_offset) = wander.min_wander_offset {
-                if offset_x.abs() < min_offset {
-                    offset_x = offset_x.signum() * min_offset;
+            if wander.min_wander_offset > 0.0 {
+                if offset_x.abs() < wander.min_wander_offset {
+                    offset_x = offset_x.signum() * wander.min_wander_offset;
                 }
-                if offset_z.abs() < min_offset {
-                    offset_z = offset_z.signum() * min_offset;
+                if offset_z.abs() < wander.min_wander_offset {
+                    offset_z = offset_z.signum() * wander.min_wander_offset;
                 }
             }
 
