@@ -57,7 +57,7 @@ pub fn start_saber_strike(
                 },
                 sub_op_code: TowerDefenseOpCode::StageData as u32,
                 unknown_header_boolean: false,
-                unknown_array1: vec![
+                tower_definitions: vec![
                     TowerDefenseTowerDefinition {
                         guid: 1,
                         guid2: 1,

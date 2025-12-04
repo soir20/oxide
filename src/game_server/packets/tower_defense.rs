@@ -57,7 +57,7 @@ pub struct TowerDefenseStageData {
     pub minigame_header: MinigameHeader,
     pub sub_op_code: u32,
     pub unknown_header_boolean: bool,
-    pub unknown_array1: Vec<TowerDefenseTowerDefinition>,
+    pub tower_definitions: Vec<TowerDefenseTowerDefinition>,
     pub unknown_array2: Vec<UnknownRDArray2>,
     pub fixed_camera_pos: Pos,
     pub fixed_look_at: Pos,
