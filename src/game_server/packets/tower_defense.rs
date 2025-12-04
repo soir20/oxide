@@ -42,13 +42,13 @@ pub struct TowerDefenseTowerDefinition {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct UnknownRDArray2 {
+pub struct TowerDefenseSpecialDefinition {
     pub guid: u32,
     pub guid2: u32,
-    pub unknown2: u32,
-    pub unknown3: f32,
-    pub unknown4: u32,
-    pub unknown5: u32,
+    pub name_id: u32,
+    pub damage: f32,
+    pub icon_id: u32,
+    pub description_id: u32,
     pub unknown6: bool,
 }
 
@@ -58,7 +58,7 @@ pub struct TowerDefenseStageData {
     pub sub_op_code: u32,
     pub unknown_header_boolean: bool,
     pub tower_definitions: Vec<TowerDefenseTowerDefinition>,
-    pub unknown_array2: Vec<UnknownRDArray2>,
+    pub special_definitions: Vec<TowerDefenseSpecialDefinition>,
     pub fixed_camera_pos: Pos,
     pub fixed_look_at: Pos,
     pub fixed_field_of_view: f32,
