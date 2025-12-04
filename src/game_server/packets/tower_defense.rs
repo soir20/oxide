@@ -15,7 +15,7 @@ pub enum TowerDefenseOpCode {
     State = 0x4,
     TowerTransaction = 0x5,
     Notify = 0x6,
-    Unknown = 0x9,
+    StartGame = 0x9,
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -181,13 +181,13 @@ impl GamePacket for TowerDefenseNotify {
 }
 
 #[derive(SerializePacket)]
-pub struct TowerDefenseUnknown {
+pub struct TowerDefenseStartGame {
     pub minigame_header: MinigameHeader,
     pub sub_op_code: u32,
     pub unknown_header_boolean: bool,
 }
 
-impl GamePacket for TowerDefenseUnknown {
+impl GamePacket for TowerDefenseStartGame {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::TowerDefense;

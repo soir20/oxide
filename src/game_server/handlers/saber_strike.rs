@@ -13,9 +13,9 @@ use crate::game_server::{
         },
         tower_defense::{
             TowerDefenseDeck, TowerDefenseNotify, TowerDefenseOpCode, TowerDefenseStageData,
-            TowerDefenseState, TowerDefenseTowerDefinition, TowerDefenseUnknown, TowerDefenseWaves,
-            TowerTransaction, TowerTransactionType, UnknownDeckArray, UnknownRDArray2,
-            UnknownWaveArray1, UnknownWaveArray2, UnknownWaveArray3,
+            TowerDefenseStartGame, TowerDefenseState, TowerDefenseTowerDefinition,
+            TowerDefenseWaves, TowerTransaction, TowerTransactionType, UnknownDeckArray,
+            UnknownRDArray2, UnknownWaveArray1, UnknownWaveArray2, UnknownWaveArray3,
         },
         tunnel::TunneledPacket,
         ui::ExecuteScriptWithStringParams,
@@ -282,25 +282,25 @@ pub fn start_saber_strike(
         }),
         GamePacket::serialize(&TunneledPacket {
             unknown1: true,
-            inner: TowerDefenseUnknown {
+            inner: TowerDefenseStartGame {
                 minigame_header: MinigameHeader {
                     stage_guid: minigame_status.group.stage_guid,
-                    sub_op_code: TowerDefenseOpCode::Unknown as i32,
+                    sub_op_code: TowerDefenseOpCode::StartGame as i32,
                     stage_group_guid: minigame_status.group.stage_group_guid,
                 },
-                sub_op_code: TowerDefenseOpCode::Unknown as u32,
+                sub_op_code: TowerDefenseOpCode::StartGame as u32,
                 unknown_header_boolean: false,
             },
         }),
         GamePacket::serialize(&TunneledPacket {
             unknown1: true,
-            inner: TowerDefenseUnknown {
+            inner: TowerDefenseStartGame {
                 minigame_header: MinigameHeader {
                     stage_guid: minigame_status.group.stage_guid,
-                    sub_op_code: TowerDefenseOpCode::Unknown as i32,
+                    sub_op_code: TowerDefenseOpCode::StartGame as i32,
                     stage_group_guid: minigame_status.group.stage_group_guid,
                 },
-                sub_op_code: TowerDefenseOpCode::Unknown as u32,
+                sub_op_code: TowerDefenseOpCode::StartGame as u32,
                 unknown_header_boolean: false,
             },
         }),
