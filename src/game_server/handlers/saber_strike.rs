@@ -12,11 +12,10 @@ use crate::game_server::{
             SaberStrikeSingleKill, SaberStrikeThrowKill,
         },
         tower_defense::{
-            TowerDefenseDeck, TowerDefenseNotify, TowerDefenseOpCode,
+            TowerDefenseDeck, TowerDefenseInventoryItem, TowerDefenseNotify, TowerDefenseOpCode,
             TowerDefenseSpecialDefinition, TowerDefenseStageData, TowerDefenseStartGame,
             TowerDefenseState, TowerDefenseTowerDefinition, TowerDefenseWaves, TowerTransaction,
-            TowerTransactionType, UnknownDeckArray, UnknownWaveArray1, UnknownWaveArray2,
-            UnknownWaveArray3,
+            TowerTransactionType, UnknownWaveArray1, UnknownWaveArray2, UnknownWaveArray3,
         },
         tunnel::TunneledPacket,
         ui::ExecuteScriptWithStringParams,
@@ -147,11 +146,11 @@ pub fn start_saber_strike(
                 special_definitions: vec![TowerDefenseSpecialDefinition {
                     guid: 10,
                     guid2: 10,
-                    name_id: 1,
+                    name_id: 2,
                     damage: 0.5,
                     icon_id: 3,
                     description_id: 4,
-                    unknown6: false,
+                    unknown6: true,
                 }],
                 fixed_camera_pos: Pos {
                     x: 0.0,
@@ -190,17 +189,14 @@ pub fn start_saber_strike(
                 },
                 sub_op_code: TowerDefenseOpCode::Deck as u32,
                 unknown_header_boolean: false,
-                unknown1: vec![
-                    UnknownDeckArray {
-                        tower_guid: 1,
-                        unknown2: false,
-                    },
-                    UnknownDeckArray {
-                        tower_guid: 1001,
-                        unknown2: false,
-                    },
-                ],
-                unknown2: vec![],
+                towers: vec![TowerDefenseInventoryItem {
+                    guid: 1,
+                    required: false,
+                }],
+                specials: vec![TowerDefenseInventoryItem {
+                    guid: 10,
+                    required: false,
+                }],
             },
         }),
         GamePacket::serialize(&TunneledPacket {

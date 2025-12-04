@@ -73,9 +73,9 @@ impl GamePacket for TowerDefenseStageData {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct UnknownDeckArray {
-    pub tower_guid: u32,
-    pub unknown2: bool,
+pub struct TowerDefenseInventoryItem {
+    pub guid: u32,
+    pub required: bool,
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -83,8 +83,8 @@ pub struct TowerDefenseDeck {
     pub minigame_header: MinigameHeader,
     pub sub_op_code: u32,
     pub unknown_header_boolean: bool,
-    pub unknown1: Vec<UnknownDeckArray>,
-    pub unknown2: Vec<UnknownDeckArray>,
+    pub towers: Vec<TowerDefenseInventoryItem>,
+    pub specials: Vec<TowerDefenseInventoryItem>,
 }
 
 impl GamePacket for TowerDefenseDeck {
