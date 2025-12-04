@@ -55,7 +55,7 @@ pub struct TowerDefenseSpecialDefinition {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct TowerDefenseStageData {
     pub minigame_header: MinigameHeader,
-    pub sub_op_code: u32,
+    pub sub_op_code: i32,
     pub unknown_header_boolean: bool,
     pub tower_definitions: Vec<TowerDefenseTowerDefinition>,
     pub special_definitions: Vec<TowerDefenseSpecialDefinition>,
@@ -81,7 +81,7 @@ pub struct TowerDefenseInventoryItem {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct TowerDefenseDeck {
     pub minigame_header: MinigameHeader,
-    pub sub_op_code: u32,
+    pub sub_op_code: i32,
     pub unknown_header_boolean: bool,
     pub towers: Vec<TowerDefenseInventoryItem>,
     pub specials: Vec<TowerDefenseInventoryItem>,
@@ -132,7 +132,7 @@ pub struct UnknownWaveArray3 {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct TowerDefenseWaves {
     pub minigame_header: MinigameHeader,
-    pub sub_op_code: u32,
+    pub sub_op_code: i32,
     pub unknown_header_boolean: bool,
     pub unknown_array1: Vec<UnknownWaveArray1>,
     pub unknown_array2: Vec<UnknownWaveArray2>,
@@ -148,7 +148,7 @@ impl GamePacket for TowerDefenseWaves {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct TowerDefenseState {
     pub minigame_header: MinigameHeader,
-    pub sub_op_code: u32,
+    pub sub_op_code: i32,
     pub unknown_header_boolean: bool,
     pub energy: u32,
     pub score: u32,
@@ -167,7 +167,7 @@ impl GamePacket for TowerDefenseState {
 #[derive(SerializePacket)]
 pub struct TowerDefenseNotify {
     pub minigame_header: MinigameHeader,
-    pub sub_op_code: u32,
+    pub sub_op_code: i32,
     pub unknown_header_boolean: bool,
     pub unknown1: u32,
     pub target: Target,
@@ -183,7 +183,7 @@ impl GamePacket for TowerDefenseNotify {
 #[derive(SerializePacket)]
 pub struct TowerDefenseStartGame {
     pub minigame_header: MinigameHeader,
-    pub sub_op_code: u32,
+    pub sub_op_code: i32,
     pub unknown_header_boolean: bool,
 }
 
@@ -204,7 +204,7 @@ pub enum TowerTransactionType {
 #[derive(SerializePacket)]
 pub struct TowerTransaction {
     pub minigame_header: MinigameHeader,
-    pub sub_op_code: u32,
+    pub sub_op_code: i32,
     pub unknown_header_boolean: bool,
     pub transaction_type: TowerTransactionType,
     pub new_tower_npc_guid: u64,
