@@ -94,13 +94,13 @@ impl GamePacket for TowerDefenseDeck {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct UnknownWaveArray1 {
+pub struct TowerDefenseEnemyGroup {
     pub guid: u32,
     pub guid2: u32,
-    pub unknown2: u32,
-    pub unknown3: u32,
-    pub unknown4: u32,
-    pub unknown5: u32,
+    pub wave_id: u32,
+    pub spawn_number: u32,
+    pub spawn_delay: u32,
+    pub icon_id: u32,
     pub unknown6: u32,
 }
 
@@ -134,7 +134,7 @@ pub struct TowerDefenseWaves {
     pub minigame_header: MinigameHeader,
     pub sub_op_code: i32,
     pub unknown_header_boolean: bool,
-    pub unknown_array1: Vec<UnknownWaveArray1>,
+    pub enemy_groups: Vec<TowerDefenseEnemyGroup>,
     pub unknown_array2: Vec<UnknownWaveArray2>,
     pub unknown_array3: Vec<UnknownWaveArray3>,
 }
