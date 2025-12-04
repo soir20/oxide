@@ -121,7 +121,7 @@ pub struct TowerDefenseEnemyType {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct UnknownWaveArray3 {
+pub struct TowerDefenseWave {
     pub guid: u32,
     pub guid2: u32,
     pub unknown2: u32,
@@ -136,7 +136,7 @@ pub struct TowerDefenseWaves {
     pub unknown_header_boolean: bool,
     pub enemy_groups: Vec<TowerDefenseEnemyGroup>,
     pub enemy_types: Vec<TowerDefenseEnemyType>,
-    pub unknown_array3: Vec<UnknownWaveArray3>,
+    pub waves: Vec<TowerDefenseWave>,
 }
 
 impl GamePacket for TowerDefenseWaves {

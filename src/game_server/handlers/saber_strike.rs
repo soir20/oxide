@@ -15,8 +15,8 @@ use crate::game_server::{
             TowerDefenseDeck, TowerDefenseEnemyGroup, TowerDefenseEnemyType,
             TowerDefenseInventoryItem, TowerDefenseNotify, TowerDefenseOpCode,
             TowerDefenseSpecialDefinition, TowerDefenseStageData, TowerDefenseStartGame,
-            TowerDefenseState, TowerDefenseTowerDefinition, TowerDefenseWaves, TowerTransaction,
-            TowerTransactionType, UnknownWaveArray3,
+            TowerDefenseState, TowerDefenseTowerDefinition, TowerDefenseWave, TowerDefenseWaves,
+            TowerTransaction, TowerTransactionType,
         },
         tunnel::TunneledPacket,
         ui::ExecuteScriptWithStringParams,
@@ -213,7 +213,7 @@ pub fn start_saber_strike(
                 enemy_groups: vec![TowerDefenseEnemyGroup {
                     guid: 25,
                     guid2: 25,
-                    wave_id: 1,
+                    wave_id: 25,
                     spawn_number: 2,
                     spawn_delay: 3,
                     icon_id: 4,
@@ -233,7 +233,7 @@ pub fn start_saber_strike(
                     max_force_power: 9,
                     max_shield: 10,
                 }],
-                unknown_array3: vec![UnknownWaveArray3 {
+                waves: vec![TowerDefenseWave {
                     guid: 25,
                     guid2: 25,
                     unknown2: 25,
