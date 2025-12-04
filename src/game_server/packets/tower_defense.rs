@@ -105,19 +105,19 @@ pub struct TowerDefenseEnemyGroup {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct UnknownWaveArray2 {
+pub struct TowerDefenseEnemyType {
     pub guid: u32,
     pub guid2: u32,
-    pub unknown2: u32,
-    pub unknown3: u32,
-    pub unknown4: u32,
-    pub unknown5: u32,
-    pub unknown6: u32,
-    pub unknown7: u32,
-    pub unknown8: u32,
-    pub unknown9: u32,
-    pub unknown10: u32,
-    pub unknown11: u32,
+    pub count: u32,
+    pub battle_class_icon_id: u32,
+    pub battle_class_background_icon_id: u32,
+    pub battle_class_rank: u32,
+    pub icon_id: u32,
+    pub name_id: u32,
+    pub description_id: u32,
+    pub max_health: u32,
+    pub max_force_power: u32,
+    pub max_shield: u32,
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -135,7 +135,7 @@ pub struct TowerDefenseWaves {
     pub sub_op_code: i32,
     pub unknown_header_boolean: bool,
     pub enemy_groups: Vec<TowerDefenseEnemyGroup>,
-    pub unknown_array2: Vec<UnknownWaveArray2>,
+    pub enemy_types: Vec<TowerDefenseEnemyType>,
     pub unknown_array3: Vec<UnknownWaveArray3>,
 }
 
