@@ -121,9 +121,9 @@ pub struct TowerDefenseEnemyType {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct TowerDefenseWave {
-    pub guid: u32,
-    pub guid2: u32,
+pub struct TowerDefenseAerialPath {
+    pub rail_id: u32,
+    pub rail_id2: u32,
     pub unknown2: u32,
     pub unknown3: u32,
     pub unknown4: u32,
@@ -136,7 +136,7 @@ pub struct TowerDefenseWaves {
     pub unknown_header_boolean: bool,
     pub enemy_groups: Vec<TowerDefenseEnemyGroup>,
     pub enemy_types: Vec<TowerDefenseEnemyType>,
-    pub waves: Vec<TowerDefenseWave>,
+    pub aerial_paths: Vec<TowerDefenseAerialPath>,
 }
 
 impl GamePacket for TowerDefenseWaves {
