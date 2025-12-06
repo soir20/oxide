@@ -6,7 +6,9 @@ use super::{
     GamePacket, Pos, Target,
 };
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(
+    Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
+)]
 #[repr(i32)]
 pub enum TowerDefenseOpCode {
     StageData = 0x1,
@@ -16,6 +18,12 @@ pub enum TowerDefenseOpCode {
     TowerTransaction = 0x5,
     Notify = 0x6,
     StartGame = 0x9,
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct TowerDefenseHeader {
+    pub sub_op_code: TowerDefenseOpCode,
+    pub in_dialog: bool,
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -55,8 +63,7 @@ pub struct TowerDefenseSpecialDefinition {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct TowerDefenseStageData {
     pub minigame_header: MinigameHeader,
-    pub sub_op_code: i32,
-    pub unknown_header_boolean: bool,
+    pub tower_defense_header: TowerDefenseHeader,
     pub tower_definitions: Vec<TowerDefenseTowerDefinition>,
     pub special_definitions: Vec<TowerDefenseSpecialDefinition>,
     pub fixed_camera_pos: Pos,
@@ -81,8 +88,7 @@ pub struct TowerDefenseInventoryItem {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct TowerDefenseDeck {
     pub minigame_header: MinigameHeader,
-    pub sub_op_code: i32,
-    pub unknown_header_boolean: bool,
+    pub tower_defense_header: TowerDefenseHeader,
     pub towers: Vec<TowerDefenseInventoryItem>,
     pub specials: Vec<TowerDefenseInventoryItem>,
 }
@@ -132,8 +138,7 @@ pub struct TowerDefenseAerialPath {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct TowerDefenseWaves {
     pub minigame_header: MinigameHeader,
-    pub sub_op_code: i32,
-    pub unknown_header_boolean: bool,
+    pub tower_defense_header: TowerDefenseHeader,
     pub enemy_groups: Vec<TowerDefenseEnemyGroup>,
     pub enemy_types: Vec<TowerDefenseEnemyType>,
     pub aerial_paths: Vec<TowerDefenseAerialPath>,
@@ -148,8 +153,7 @@ impl GamePacket for TowerDefenseWaves {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct TowerDefenseState {
     pub minigame_header: MinigameHeader,
-    pub sub_op_code: i32,
-    pub unknown_header_boolean: bool,
+    pub tower_defense_header: TowerDefenseHeader,
     pub energy: u32,
     pub score: u32,
     pub current_wave: u32,
@@ -167,8 +171,7 @@ impl GamePacket for TowerDefenseState {
 #[derive(SerializePacket)]
 pub struct TowerDefenseNotify {
     pub minigame_header: MinigameHeader,
-    pub sub_op_code: i32,
-    pub in_dialog: bool,
+    pub tower_defense_header: TowerDefenseHeader,
     pub unknown1: u32,
     pub target: Target,
     pub unknown2: u32,
@@ -183,8 +186,7 @@ impl GamePacket for TowerDefenseNotify {
 #[derive(SerializePacket)]
 pub struct TowerDefenseStartGame {
     pub minigame_header: MinigameHeader,
-    pub sub_op_code: i32,
-    pub unknown_header_boolean: bool,
+    pub tower_defense_header: TowerDefenseHeader,
 }
 
 impl GamePacket for TowerDefenseStartGame {
@@ -204,8 +206,7 @@ pub enum TowerTransactionType {
 #[derive(SerializePacket)]
 pub struct TowerTransaction {
     pub minigame_header: MinigameHeader,
-    pub sub_op_code: i32,
-    pub unknown_header_boolean: bool,
+    pub tower_defense_header: TowerDefenseHeader,
     pub transaction_type: TowerTransactionType,
     pub new_tower_npc_guid: u64,
     pub base_guid: u64,

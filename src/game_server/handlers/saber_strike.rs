@@ -13,10 +13,10 @@ use crate::game_server::{
         },
         tower_defense::{
             TowerDefenseAerialPath, TowerDefenseDeck, TowerDefenseEnemyGroup,
-            TowerDefenseEnemyType, TowerDefenseInventoryItem, TowerDefenseNotify,
-            TowerDefenseOpCode, TowerDefenseSpecialDefinition, TowerDefenseStageData,
-            TowerDefenseStartGame, TowerDefenseState, TowerDefenseTowerDefinition,
-            TowerDefenseWaves, TowerTransaction, TowerTransactionType,
+            TowerDefenseEnemyType, TowerDefenseHeader, TowerDefenseInventoryItem,
+            TowerDefenseNotify, TowerDefenseOpCode, TowerDefenseSpecialDefinition,
+            TowerDefenseStageData, TowerDefenseStartGame, TowerDefenseState,
+            TowerDefenseTowerDefinition, TowerDefenseWaves, TowerTransaction, TowerTransactionType,
         },
         tunnel::TunneledPacket,
         ui::ExecuteScriptWithStringParams,
@@ -56,8 +56,10 @@ pub fn start_saber_strike(
                     sub_op_code: TowerDefenseOpCode::StageData as i32,
                     stage_group_guid: minigame_status.group.stage_group_guid,
                 },
-                sub_op_code: TowerDefenseOpCode::StageData as i32,
-                unknown_header_boolean: false,
+                tower_defense_header: TowerDefenseHeader {
+                    sub_op_code: TowerDefenseOpCode::StageData,
+                    in_dialog: false,
+                },
                 tower_definitions: vec![
                     TowerDefenseTowerDefinition {
                         guid: 1,
@@ -199,8 +201,10 @@ pub fn start_saber_strike(
                     sub_op_code: TowerDefenseOpCode::Deck as i32,
                     stage_group_guid: minigame_status.group.stage_group_guid,
                 },
-                sub_op_code: TowerDefenseOpCode::Deck as i32,
-                unknown_header_boolean: false,
+                tower_defense_header: TowerDefenseHeader {
+                    sub_op_code: TowerDefenseOpCode::Deck,
+                    in_dialog: false,
+                },
                 towers: vec![TowerDefenseInventoryItem {
                     guid: 1,
                     required: false,
@@ -216,8 +220,10 @@ pub fn start_saber_strike(
                     sub_op_code: TowerDefenseOpCode::Waves as i32,
                     stage_group_guid: minigame_status.group.stage_group_guid,
                 },
-                sub_op_code: TowerDefenseOpCode::Waves as i32,
-                unknown_header_boolean: false,
+                tower_defense_header: TowerDefenseHeader {
+                    sub_op_code: TowerDefenseOpCode::Waves,
+                    in_dialog: false,
+                },
                 enemy_groups: vec![TowerDefenseEnemyGroup {
                     guid: 25,
                     guid2: 25,
@@ -258,8 +264,10 @@ pub fn start_saber_strike(
                     sub_op_code: TowerDefenseOpCode::State as i32,
                     stage_group_guid: minigame_status.group.stage_group_guid,
                 },
-                sub_op_code: TowerDefenseOpCode::State as i32,
-                unknown_header_boolean: false,
+                tower_defense_header: TowerDefenseHeader {
+                    sub_op_code: TowerDefenseOpCode::State,
+                    in_dialog: false,
+                },
                 energy: 100,
                 score: 200,
                 current_wave: 300,
@@ -276,8 +284,10 @@ pub fn start_saber_strike(
                     sub_op_code: TowerDefenseOpCode::Notify as i32,
                     stage_group_guid: minigame_status.group.stage_group_guid,
                 },
-                sub_op_code: TowerDefenseOpCode::Notify as i32,
-                in_dialog: false,
+                tower_defense_header: TowerDefenseHeader {
+                    sub_op_code: TowerDefenseOpCode::Notify,
+                    in_dialog: false,
+                },
                 unknown1: 4,
                 target: Target::Guid(GuidTarget {
                     fallback_pos: Pos::default(),
@@ -294,20 +304,10 @@ pub fn start_saber_strike(
                     sub_op_code: TowerDefenseOpCode::StartGame as i32,
                     stage_group_guid: minigame_status.group.stage_group_guid,
                 },
-                sub_op_code: TowerDefenseOpCode::StartGame as i32,
-                unknown_header_boolean: false,
-            },
-        }),
-        GamePacket::serialize(&TunneledPacket {
-            unknown1: true,
-            inner: TowerDefenseStartGame {
-                minigame_header: MinigameHeader {
-                    stage_guid: minigame_status.group.stage_guid,
-                    sub_op_code: TowerDefenseOpCode::StartGame as i32,
-                    stage_group_guid: minigame_status.group.stage_group_guid,
+                tower_defense_header: TowerDefenseHeader {
+                    sub_op_code: TowerDefenseOpCode::StartGame,
+                    in_dialog: false,
                 },
-                sub_op_code: TowerDefenseOpCode::StartGame as i32,
-                unknown_header_boolean: false,
             },
         }),
         GamePacket::serialize(&TunneledPacket {
@@ -318,8 +318,10 @@ pub fn start_saber_strike(
                     sub_op_code: TowerDefenseOpCode::TowerTransaction as i32,
                     stage_group_guid: minigame_status.group.stage_group_guid,
                 },
-                sub_op_code: TowerDefenseOpCode::TowerTransaction as i32,
-                unknown_header_boolean: false,
+                tower_defense_header: TowerDefenseHeader {
+                    sub_op_code: TowerDefenseOpCode::TowerTransaction,
+                    in_dialog: false,
+                },
                 transaction_type: TowerTransactionType::Upgrade,
                 new_tower_npc_guid: 1152923703630102728,
                 base_guid: 1152921504606847176,
