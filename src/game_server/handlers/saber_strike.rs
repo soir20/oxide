@@ -277,7 +277,7 @@ pub fn start_saber_strike(
                     stage_group_guid: minigame_status.group.stage_group_guid,
                 },
                 sub_op_code: TowerDefenseOpCode::Notify as i32,
-                unknown_header_boolean: false,
+                in_dialog: false,
                 unknown1: 4,
                 target: Target::Guid(GuidTarget {
                     fallback_pos: Pos::default(),

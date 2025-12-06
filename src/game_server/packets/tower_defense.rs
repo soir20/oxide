@@ -168,7 +168,7 @@ impl GamePacket for TowerDefenseState {
 pub struct TowerDefenseNotify {
     pub minigame_header: MinigameHeader,
     pub sub_op_code: i32,
-    pub unknown_header_boolean: bool,
+    pub in_dialog: bool,
     pub unknown1: u32,
     pub target: Target,
     pub unknown2: u32,
