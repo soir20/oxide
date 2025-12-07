@@ -203,7 +203,7 @@ pub struct UpdateActionBarSlot {
     pub unknown13: u32,
     pub quantity: u32,
     pub is_consumable: bool,
-    pub unknown16: u32,
+    pub millis_since_last_use: u32,
 }
 
 impl GamePacket for UpdateActionBarSlot {

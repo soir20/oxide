@@ -376,7 +376,7 @@ pub fn start_saber_strike(
                 unknown13: 1009,
                 quantity: 1010,
                 is_consumable: false,
-                unknown16: 1011,
+                millis_since_last_use: 0,
             },
         }),
     ]
