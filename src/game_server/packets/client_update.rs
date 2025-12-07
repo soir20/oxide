@@ -1,6 +1,8 @@
 use num_enum::{IntoPrimitive, TryFromPrimitive};
 use packet_serialize::{DeserializePacket, SerializePacket};
 
+use crate::game_server::packets::player_data::ActionBarType;
+
 use super::{
     item::{Attachment, EquipmentSlot, Item, ItemDefinition},
     GamePacket, OpCode, Pos,
@@ -184,8 +186,8 @@ impl GamePacket for UpdateCredits {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct UpdateActionBarSlot {
-    pub action_bar_id: u32,
-    pub slot_id: u32,
+    pub action_bar_type: ActionBarType,
+    pub slot_index: u32,
     pub is_empty: bool,
     pub icon_id: u32,
     pub icon_tint_id: u32,

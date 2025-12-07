@@ -5,9 +5,9 @@ use packet_serialize::LengthlessVec;
 use crate::game_server::packets::{
     item::{EquipmentSlot, Item, ItemDefinition, MarketData},
     player_data::{
-        Ability, ActionBar, BattleClass, BattleClassItem, BattleClassUnknown10, EquippedItem,
-        InventoryItem, Item2, ItemGuid, Mount, Pet, PetTrick, Player, PlayerData, Slot, Unknown12,
-        Unknown13, Unknown2,
+        Ability, ActionBar, ActionBarType, BattleClass, BattleClassItem, BattleClassUnknown10,
+        EquippedItem, InventoryItem, Item2, ItemGuid, Mount, Pet, PetTrick, Player, PlayerData,
+        Slot, Unknown12, Unknown13, Unknown2,
     },
     player_update::{CustomizationSlot, NameplateImage, NameplateImageId},
     tunnel::TunneledPacket,
@@ -267,7 +267,7 @@ pub fn make_test_player(
             pet_unknown2: 0,
             mounts: owned_mounts,
             action_bars: vec![ActionBar {
-                unknown1: 2,
+                action_bar_type: ActionBarType::Consumable,
                 unknown2: 2,
                 slots: vec![
                     Slot {

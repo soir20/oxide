@@ -5,7 +5,9 @@ use packet_serialize::DeserializePacket;
 use crate::game_server::{
     handlers::character::{MinigameStatus, Player},
     packets::{
+        client_update::UpdateActionBarSlot,
         minigame::{MinigameHeader, ScoreEntry, ScoreType},
+        player_data::ActionBarType,
         player_update::UpdateOwner,
         saber_strike::{
             SaberStrikeGameOver, SaberStrikeObfuscatedScore, SaberStrikeOpCode,
@@ -352,6 +354,29 @@ pub fn start_saber_strike(
                     bone_name: "BASE".to_string(),
                 }),
                 attach: true,
+            },
+        }),
+        GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: UpdateActionBarSlot {
+                action_bar_type: ActionBarType::Minigame,
+                slot_index: 0,
+                is_empty: false,
+                icon_id: 1000,
+                icon_tint_id: 0,
+                name_id: 1000,
+                unknown5: 0,
+                unknown6: 0,
+                unknown7: 0,
+                unknown8: 0,
+                unknown9: 0,
+                is_enabled: true,
+                unknown11: 0,
+                cooldown_millis: 0,
+                unknown13: 0,
+                quantity: 0,
+                forces_dismount: false,
+                unknown16: 0,
             },
         }),
     ]
