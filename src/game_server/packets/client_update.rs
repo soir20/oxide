@@ -196,13 +196,13 @@ pub struct UpdateActionBarSlot {
     pub unknown6: u32,
     pub unknown7: u32,
     pub unknown8: u32,
-    pub unknown9: u32,
+    pub required_force_points: u32,
     pub is_enabled: bool,
     pub unknown11: u32,
     pub cooldown_millis: u32,
     pub unknown13: u32,
     pub quantity: u32,
-    pub forces_dismount: bool,
+    pub is_consumable: bool,
     pub unknown16: u32,
 }
 
