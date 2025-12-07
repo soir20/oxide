@@ -16,6 +16,7 @@ pub enum ClientUpdateOpCode {
     Power = 0xd,
     Stats = 0x7,
     UpdateCredits = 0x13,
+    UpdateActionBarSlot = 0x19,
     PreloadCharactersDone = 0x1a,
 }
 
@@ -179,6 +180,33 @@ impl GamePacket for UpdateCredits {
     type Header = ClientUpdateOpCode;
 
     const HEADER: Self::Header = ClientUpdateOpCode::UpdateCredits;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct UpdateActionBarSlot {
+    pub action_bar_id: u32,
+    pub slot_id: u32,
+    pub is_empty: bool,
+    pub icon_id: u32,
+    pub icon_tint_id: u32,
+    pub name_id: u32,
+    pub unknown5: u32,
+    pub unknown6: u32,
+    pub unknown7: u32,
+    pub unknown8: u32,
+    pub unknown9: u32,
+    pub is_enabled: bool,
+    pub unknown11: u32,
+    pub cooldown_millis: u32,
+    pub unknown13: u32,
+    pub quantity: u32,
+    pub forces_dismount: bool,
+    pub unknown16: u32,
+}
+
+impl GamePacket for UpdateActionBarSlot {
+    type Header = ClientUpdateOpCode;
+    const HEADER: ClientUpdateOpCode = ClientUpdateOpCode::UpdateActionBarSlot;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
