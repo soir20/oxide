@@ -451,3 +451,33 @@ pub struct RewardBundle {
     pub entries: Vec<RewardEntry>,
     pub unknown17: u32,
 }
+
+#[derive(
+    Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
+)]
+#[repr(u32)]
+pub enum ActionBarType {
+    Weapon = 1,
+    Consumable = 2,
+    Minigame = 3,
+}
+
+#[derive(Clone, SerializePacket, DeserializePacket)]
+pub struct ActionBarSlot {
+    pub is_empty: bool,
+    pub icon_id: u32,
+    pub icon_tint_id: u32,
+    pub name_id: u32,
+    pub ability_type: u32,
+    pub ability_sub_type: u32,
+    pub unknown7: u32,
+    pub unknown8: u32,
+    pub required_force_points: u32,
+    pub is_enabled: bool,
+    pub use_cooldown_millis: u32,
+    pub init_cooldown_millis: u32,
+    pub unknown13: u32,
+    pub quantity: u32,
+    pub is_consumable: bool,
+    pub millis_since_last_use: u32,
+}

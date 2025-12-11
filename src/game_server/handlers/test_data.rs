@@ -5,13 +5,13 @@ use packet_serialize::LengthlessVec;
 use crate::game_server::packets::{
     item::{EquipmentSlot, Item, ItemDefinition, MarketData},
     player_data::{
-        Ability, ActionBar, ActionBarType, BattleClass, BattleClassItem, BattleClassUnknown10,
-        EquippedItem, InventoryItem, Item2, ItemGuid, Mount, Pet, PetTrick, Player, PlayerData,
-        Slot, Unknown12, Unknown13, Unknown2,
+        Ability, ActionBar, BattleClass, BattleClassItem, BattleClassUnknown10, EquippedItem,
+        InventoryItem, Item2, ItemGuid, Mount, Pet, PetTrick, Player, PlayerData, Slot, Unknown12,
+        Unknown13, Unknown2,
     },
     player_update::{CustomizationSlot, NameplateImage, NameplateImageId},
     tunnel::TunneledPacket,
-    GamePacket, Name, Pos,
+    ActionBarType, GamePacket, Name, Pos,
 };
 
 use super::{

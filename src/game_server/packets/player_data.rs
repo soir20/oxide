@@ -1,7 +1,8 @@
 use std::collections::BTreeMap;
 
-use num_enum::{IntoPrimitive, TryFromPrimitive};
-use packet_serialize::{DeserializePacket, LengthlessVec, SerializePacket};
+use packet_serialize::{LengthlessVec, SerializePacket};
+
+use crate::game_server::packets::ActionBarType;
 
 use super::{
     item::{EquipmentSlot, Item, MarketData},
@@ -337,16 +338,6 @@ pub struct Mount {
     pub unknown5: bool,
     pub unknown6: u32,
     pub unknown7: String,
-}
-
-#[derive(
-    Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
-)]
-#[repr(u32)]
-pub enum ActionBarType {
-    Weapon = 1,
-    Consumable = 2,
-    Minigame = 3,
 }
 
 #[derive(Clone, SerializePacket)]

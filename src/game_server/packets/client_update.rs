@@ -1,7 +1,7 @@
 use num_enum::{IntoPrimitive, TryFromPrimitive};
 use packet_serialize::{DeserializePacket, SerializePacket};
 
-use crate::game_server::packets::player_data::ActionBarType;
+use crate::game_server::packets::{ActionBarSlot, ActionBarType};
 
 use super::{
     item::{Attachment, EquipmentSlot, Item, ItemDefinition},
@@ -188,22 +188,7 @@ impl GamePacket for UpdateCredits {
 pub struct UpdateActionBarSlot {
     pub action_bar_type: ActionBarType,
     pub slot_index: u32,
-    pub is_empty: bool,
-    pub icon_id: u32,
-    pub icon_tint_id: u32,
-    pub name_id: u32,
-    pub ability_type: u32,
-    pub ability_sub_type: u32,
-    pub unknown7: u32,
-    pub unknown8: u32,
-    pub required_force_points: u32,
-    pub is_enabled: bool,
-    pub use_cooldown_millis: u32,
-    pub init_cooldown_millis: u32,
-    pub unknown13: u32,
-    pub quantity: u32,
-    pub is_consumable: bool,
-    pub millis_since_last_use: u32,
+    pub slot: ActionBarSlot,
 }
 
 impl GamePacket for UpdateActionBarSlot {
