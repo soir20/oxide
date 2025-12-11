@@ -2,7 +2,7 @@ use std::collections::BTreeMap;
 
 use packet_serialize::{LengthlessVec, SerializePacket};
 
-use crate::game_server::packets::ActionBarType;
+use crate::game_server::packets::{ActionBarSlot, ActionBarType};
 
 use super::{
     item::{EquipmentSlot, Item, MarketData},
@@ -341,30 +341,10 @@ pub struct Mount {
 }
 
 #[derive(Clone, SerializePacket)]
-pub struct Slot {
-    pub slot_id: u32,
-    pub empty: bool,
-    pub icon_id: u32,
-    pub unknown1: u32,
-    pub name_id: u32,
-    pub unknown2: u32,
-    pub unknown3: u32,
-    pub unknown4: u32,
-    pub unknown5: u32,
-    pub usable: bool,
-    pub unknown6: u32,
-    pub unknown7: u32,
-    pub unknown8: u32,
-    pub quantity: u32,
-    pub unknown9: bool,
-    pub unknown10: u32,
-}
-
-#[derive(Clone, SerializePacket)]
 pub struct ActionBar {
     pub action_bar_type: ActionBarType,
     pub unknown2: u32,
-    pub slots: Vec<Slot>,
+    pub slots: Vec<ActionBarSlot>,
 }
 
 pub type MatchmakingQueue = u32;
