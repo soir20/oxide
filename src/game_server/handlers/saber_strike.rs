@@ -21,7 +21,8 @@ use crate::game_server::{
         },
         tunnel::TunneledPacket,
         ui::ExecuteScriptWithStringParams,
-        ActionBarSlot, ActionBarType, CharacterBoneNameTarget, GamePacket, GuidTarget, Pos, Target,
+        ActionBarSlot, ActionBarType, CharacterBoneNameTarget, GamePacket, GuidTarget, Pos, Rgba,
+        Target,
     },
     Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
 };
@@ -368,7 +369,7 @@ pub fn start_saber_strike(
                     ability_type: 1,
                     ability_sub_type: 2,
                     unknown7: 0,
-                    unknown8: 0,
+                    target_ring_color: Rgba::default(),
                     required_force_points: 0,
                     is_enabled: true,
                     use_cooldown_millis: 0,
