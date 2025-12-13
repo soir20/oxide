@@ -121,7 +121,7 @@ impl Display for Name {
     }
 }
 
-#[derive(Clone, Default, SerializePacket, DeserializePacket)]
+#[derive(SerializePacket, DeserializePacket)]
 pub struct Rgba {
     b: u8,
     g: u8,
@@ -471,7 +471,7 @@ pub struct ActionBarSlot {
     pub ability_type: u32,
     pub ability_sub_type: u32,
     pub unknown7: u32,
-    pub target_ring_color: Rgba,
+    pub unknown8: u32,
     pub required_force_points: u32,
     pub is_enabled: bool,
     pub use_cooldown_millis: u32,
