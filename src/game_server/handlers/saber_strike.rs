@@ -368,7 +368,7 @@ pub fn start_saber_strike(
                     ability_type: 1,
                     ability_sub_type: 2,
                     unknown7: 0,
-                    unknown8: 0,
+                    target_ring_color: 0,
                     required_force_points: 0,
                     is_enabled: true,
                     use_cooldown_millis: 0,
