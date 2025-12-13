@@ -332,7 +332,7 @@ pub fn make_test_player(
                         ability_type: 0,
                         ability_sub_type: 0,
                         unknown7: 0,
-                        target_ring_color: 2,
+                        target_ring_color: 0,
                         required_force_points: 0,
                         is_enabled: false,
                         use_cooldown_millis: 0,
