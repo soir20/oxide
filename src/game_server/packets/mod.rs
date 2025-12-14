@@ -462,6 +462,20 @@ pub enum ActionBarType {
     Minigame = 3,
 }
 
+#[derive(
+    Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
+)]
+#[repr(u32)]
+pub enum AbilitySubType {
+    AoeRadius1 = 1,
+    SingleTargetAttackWithoutKeypressCooldown = 2,
+    AoeSizable = 3,
+    SingleTargetAttackWithoutKeypressCooldown2 = 4,
+    SingleTargetAttack = 5,
+    SingleTargetAttackWithoutKeypressCooldown3 = 6,
+    SingleTargetNonAttack = 7,
+}
+
 #[derive(Clone, SerializePacket, DeserializePacket)]
 pub struct ActionBarSlot {
     pub is_empty: bool,
@@ -469,7 +483,7 @@ pub struct ActionBarSlot {
     pub icon_tint_id: u32,
     pub name_id: u32,
     pub ability_type: u32,
-    pub ability_sub_type: u32,
+    pub ability_sub_type: AbilitySubType,
     pub area_of_effect_radius: f32,
     pub max_distance_from_player: f32,
     pub required_force_points: u32,
