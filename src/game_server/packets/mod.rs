@@ -468,11 +468,11 @@ pub enum ActionBarType {
 #[repr(u32)]
 pub enum AbilitySubType {
     AoeRadius1 = 1,
-    SingleTargetAttackWithoutKeypressCooldown = 2,
+    SingleTargetAttackWithoutDsUpdate = 2,
     AoeSizable = 3,
-    SingleTargetAttackWithoutKeypressCooldown2 = 4,
+    SingleTargetAttackWithoutDsUpdate2 = 4,
     SingleTargetAttack = 5,
-    SingleTargetAttackWithoutKeypressCooldown3 = 6,
+    SingleTargetAttackWithoutDsUpdate3 = 6,
     SingleTargetNonAttack = 7,
 }
 
