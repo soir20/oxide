@@ -471,7 +471,7 @@ pub enum AbilitySubType {
     SingleTargetAttackWithoutDsUpdate = 2,
     AoeGroundSizable = 3,
     AoeTargetAttached = 4,
-    SingleTargetAttack = 5,
+    SingleTargetAttackWithDsUpdate = 5,
     SingleTargetAttackWithoutDsUpdate3 = 6,
     SingleTargetNonAttack = 7,
 }
