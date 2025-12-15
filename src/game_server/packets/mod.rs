@@ -467,10 +467,10 @@ pub enum ActionBarType {
 )]
 #[repr(u32)]
 pub enum AbilitySubType {
-    AoeRadius1 = 1,
+    AoeGroundRadius1 = 1,
     SingleTargetAttackWithoutDsUpdate = 2,
-    AoeSizable = 3,
-    SingleTargetAttackWithoutDsUpdate2 = 4,
+    AoeGroundSizable = 3,
+    AoeTargetAttached = 4,
     SingleTargetAttack = 5,
     SingleTargetAttackWithoutDsUpdate3 = 6,
     SingleTargetNonAttack = 7,
