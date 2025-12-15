@@ -467,13 +467,13 @@ pub enum ActionBarType {
 )]
 #[repr(u32)]
 pub enum AbilitySubType {
-    AoeGroundRadius1 = 1,
-    SingleTargetAttackWithoutDsUpdate = 2,
-    AoeGroundSizable = 3,
-    AoeTargetAttached = 4,
-    SingleTargetAttackWithDsUpdate = 5,
+    CastableGroundAoeRadius1 = 1,
+    CastableSingleTarget = 2,
+    CastableGroundAoe = 3,
+    CastableTargetedAoe = 4,
+    InstantSingleTarget = 5,
     SingleTargetAttackWithoutDsUpdate3 = 6,
-    SingleTargetNonAttack = 7,
+    InstantTargetedNonCombat = 7,
 }
 
 #[derive(Clone, SerializePacket, DeserializePacket)]

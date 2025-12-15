@@ -367,7 +367,7 @@ pub fn start_saber_strike(
                     icon_tint_id: 0,
                     name_id: 1001,
                     ability_type: 1,
-                    ability_sub_type: AbilitySubType::SingleTargetAttackWithoutDsUpdate,
+                    ability_sub_type: AbilitySubType::CastableSingleTarget,
                     area_of_effect_radius: 0.0,
                     max_distance_from_player: 0.0,
                     required_force_points: 0,
