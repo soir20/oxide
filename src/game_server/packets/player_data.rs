@@ -340,11 +340,18 @@ pub struct Mount {
     pub unknown7: String,
 }
 
-#[derive(Clone, SerializePacket)]
+#[derive(Clone)]
 pub struct ActionBar {
     pub action_bar_type: ActionBarType,
-    pub unknown2: u32,
     pub slots: Vec<ActionBarSlot>,
+}
+
+impl SerializePacket for ActionBar {
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        self.action_bar_type.serialize(buffer);
+        self.action_bar_type.serialize(buffer);
+        self.slots.serialize(buffer);
+    }
 }
 
 pub type MatchmakingQueue = u32;

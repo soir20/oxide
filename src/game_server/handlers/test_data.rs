@@ -269,7 +269,6 @@ pub fn make_test_player(
             action_bars: vec![
                 ActionBar {
                     action_bar_type: ActionBarType::Weapon,
-                    unknown2: 1,
                     slots: vec![
                         ActionBarSlot {
                             is_empty: true,
@@ -347,7 +346,6 @@ pub fn make_test_player(
                 },
                 ActionBar {
                     action_bar_type: ActionBarType::Consumable,
-                    unknown2: 2,
                     slots: vec![
                         ActionBarSlot {
                             is_empty: true,
