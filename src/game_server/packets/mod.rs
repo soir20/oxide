@@ -472,7 +472,7 @@ pub enum AbilitySubType {
     CastableGroundAoe = 3,
     CastableTargetedAoe = 4,
     InstantSingleTarget = 5,
-    SingleTargetAttackWithoutDsUpdate3 = 6,
+    CastableSingleTargetNoCursor = 6,
     InstantTargetedNonCombat = 7,
 }
 
