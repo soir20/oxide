@@ -1,0 +1,222 @@
+use num_enum::{IntoPrimitive, TryFromPrimitive};
+use packet_serialize::{DeserializePacket, SerializePacket};
+
+use super::{
+    minigame::{MinigameHeader, MinigameOpCode},
+    GamePacket, Pos, Target,
+};
+
+#[derive(
+    Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
+)]
+#[repr(i32)]
+pub enum TowerDefenseOpCode {
+    StageData = 0x1,
+    Deck = 0x2,
+    Waves = 0x3,
+    State = 0x4,
+    TowerTransaction = 0x5,
+    Notify = 0x6,
+    StartGame = 0x9,
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct TowerDefenseHeader {
+    pub sub_op_code: TowerDefenseOpCode,
+    pub in_dialog: bool,
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct TowerDefenseTowerDefinition {
+    pub guid: u32,
+    pub guid2: u32,
+    pub rank: u32,
+    pub name_id: u32,
+    pub tower_type: u32,
+    pub energy_cost: u32,
+    pub sell_value: u32,
+    pub damage: f32,
+    pub range: f32,
+    pub upgraded_tower_guid: u32,
+    pub icon_id: u32,
+    pub firing_rate: f32,
+    pub can_attack_aerial: bool,
+    pub can_attack_ground: bool,
+    pub unknown14: bool,
+    pub required: bool,
+    pub unknown16: bool,
+    pub description_id: u32,
+    pub shield_damage: u32,
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct TowerDefenseSpecialDefinition {
+    pub guid: u32,
+    pub guid2: u32,
+    pub name_id: u32,
+    pub damage: f32,
+    pub icon_id: u32,
+    pub description_id: u32,
+    pub unknown6: bool,
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct TowerDefenseStageData {
+    pub minigame_header: MinigameHeader,
+    pub tower_defense_header: TowerDefenseHeader,
+    pub tower_definitions: Vec<TowerDefenseTowerDefinition>,
+    pub special_definitions: Vec<TowerDefenseSpecialDefinition>,
+    pub fixed_camera_pos: Pos,
+    pub fixed_look_at: Pos,
+    pub fixed_field_of_view: f32,
+    pub pan_origin: Pos,
+    pub pan_max_scale: Pos,
+}
+
+impl GamePacket for TowerDefenseStageData {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::TowerDefense;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct TowerDefenseInventoryItem {
+    pub guid: u32,
+    pub required: bool,
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct TowerDefenseDeck {
+    pub minigame_header: MinigameHeader,
+    pub tower_defense_header: TowerDefenseHeader,
+    pub towers: Vec<TowerDefenseInventoryItem>,
+    pub specials: Vec<TowerDefenseInventoryItem>,
+}
+
+impl GamePacket for TowerDefenseDeck {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::TowerDefense;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct TowerDefenseEnemyGroup {
+    pub guid: u32,
+    pub guid2: u32,
+    pub wave_id: u32,
+    pub spawn_number: u32,
+    pub spawn_delay: u32,
+    pub icon_id: u32,
+    pub unknown6: u32,
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct TowerDefenseEnemyType {
+    pub guid: u32,
+    pub guid2: u32,
+    pub count: u32,
+    pub battle_class_icon_id: u32,
+    pub battle_class_background_icon_id: u32,
+    pub battle_class_rank: u32,
+    pub icon_id: u32,
+    pub name_id: u32,
+    pub description_id: u32,
+    pub max_health: u32,
+    pub max_force_power: u32,
+    pub max_shield: u32,
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct TowerDefenseAerialPath {
+    pub rail_id: u32,
+    pub rail_id2: u32,
+    pub unknown2: u32,
+    pub unknown3: u32,
+    pub unknown4: u32,
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct TowerDefenseWaves {
+    pub minigame_header: MinigameHeader,
+    pub tower_defense_header: TowerDefenseHeader,
+    pub enemy_groups: Vec<TowerDefenseEnemyGroup>,
+    pub enemy_types: Vec<TowerDefenseEnemyType>,
+    pub aerial_paths: Vec<TowerDefenseAerialPath>,
+}
+
+impl GamePacket for TowerDefenseWaves {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::TowerDefense;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct TowerDefenseState {
+    pub minigame_header: MinigameHeader,
+    pub tower_defense_header: TowerDefenseHeader,
+    pub energy: u32,
+    pub score: u32,
+    pub current_wave: u32,
+    pub unknown4: u32,
+    pub max_waves: u32,
+    pub lives: u32,
+}
+
+impl GamePacket for TowerDefenseState {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::TowerDefense;
+}
+
+#[derive(SerializePacket)]
+pub struct TowerDefenseNotify {
+    pub minigame_header: MinigameHeader,
+    pub tower_defense_header: TowerDefenseHeader,
+    pub unknown1: u32,
+    pub target: Target,
+    pub unknown2: u32,
+}
+
+impl GamePacket for TowerDefenseNotify {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::TowerDefense;
+}
+
+#[derive(SerializePacket)]
+pub struct TowerDefenseStartGame {
+    pub minigame_header: MinigameHeader,
+    pub tower_defense_header: TowerDefenseHeader,
+}
+
+impl GamePacket for TowerDefenseStartGame {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::TowerDefense;
+}
+
+#[derive(Copy, Clone, Debug, IntoPrimitive, SerializePacket)]
+#[repr(u32)]
+pub enum TowerTransactionType {
+    Build = 1,
+    Sell = 2,
+    Upgrade = 3,
+}
+
+#[derive(SerializePacket)]
+pub struct TowerTransaction {
+    pub minigame_header: MinigameHeader,
+    pub tower_defense_header: TowerDefenseHeader,
+    pub transaction_type: TowerTransactionType,
+    pub new_tower_npc_guid: u64,
+    pub base_guid: u64,
+    pub old_tower_npc_guid: u64,
+    pub new_base_texture_alias: String,
+    pub tower_definition_guid: u32,
+}
+
+impl GamePacket for TowerTransaction {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::TowerDefense;
+}

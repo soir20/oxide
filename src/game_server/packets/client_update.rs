@@ -1,6 +1,8 @@
 use num_enum::{IntoPrimitive, TryFromPrimitive};
 use packet_serialize::{DeserializePacket, SerializePacket};
 
+use crate::game_server::packets::{ActionBarSlot, ActionBarType};
+
 use super::{
     item::{Attachment, EquipmentSlot, Item, ItemDefinition},
     GamePacket, OpCode, Pos,
@@ -16,6 +18,7 @@ pub enum ClientUpdateOpCode {
     Power = 0xd,
     Stats = 0x7,
     UpdateCredits = 0x13,
+    UpdateActionBarSlot = 0x19,
     PreloadCharactersDone = 0x1a,
 }
 
@@ -179,6 +182,18 @@ impl GamePacket for UpdateCredits {
     type Header = ClientUpdateOpCode;
 
     const HEADER: Self::Header = ClientUpdateOpCode::UpdateCredits;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct UpdateActionBarSlot {
+    pub action_bar_type: ActionBarType,
+    pub slot_index: u32,
+    pub slot: ActionBarSlot,
+}
+
+impl GamePacket for UpdateActionBarSlot {
+    type Header = ClientUpdateOpCode;
+    const HEADER: ClientUpdateOpCode = ClientUpdateOpCode::UpdateActionBarSlot;
 }
 
 #[derive(SerializePacket, DeserializePacket)]

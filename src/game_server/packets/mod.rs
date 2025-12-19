@@ -18,6 +18,7 @@ pub mod saber_strike;
 pub mod squad;
 pub mod store;
 pub mod time;
+pub mod tower_defense;
 pub mod tunnel;
 pub mod ui;
 pub mod update_position;
@@ -449,4 +450,48 @@ pub struct RewardBundle {
     pub name_id: u32,
     pub entries: Vec<RewardEntry>,
     pub unknown17: u32,
+}
+
+#[derive(
+    Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
+)]
+#[repr(u32)]
+pub enum ActionBarType {
+    Weapon = 1,
+    Consumable = 2,
+    Minigame = 3,
+}
+
+#[derive(
+    Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
+)]
+#[repr(u32)]
+pub enum AbilitySubType {
+    CastableGroundAoeRadius1 = 1,
+    CastableSingleTarget = 2,
+    CastableGroundAoe = 3,
+    CastableTargetedAoe = 4,
+    InstantSingleTarget = 5,
+    CastableSingleTargetNoCursor = 6,
+    InstantTargetedNonCombat = 7,
+}
+
+#[derive(Clone, SerializePacket, DeserializePacket)]
+pub struct ActionBarSlot {
+    pub is_empty: bool,
+    pub icon_id: u32,
+    pub icon_tint_id: u32,
+    pub name_id: u32,
+    pub ability_type: u32,
+    pub ability_sub_type: AbilitySubType,
+    pub area_of_effect_radius: f32,
+    pub max_distance_from_player: f32,
+    pub required_force_points: u32,
+    pub is_enabled: bool,
+    pub use_cooldown_millis: u32,
+    pub init_cooldown_millis: u32,
+    pub unknown13: u32,
+    pub quantity: u32,
+    pub is_consumable: bool,
+    pub millis_since_last_use: u32,
 }

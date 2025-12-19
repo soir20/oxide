@@ -43,6 +43,7 @@ pub enum PlayerUpdateOpCode {
     SetSpawnerActivationEffect = 0x2f,
     ReplaceBaseModel = 0x31,
     SetCollision = 0x32,
+    UpdateOwner = 0x33,
     MoveOnRail = 0x35,
     ClearRail = 0x36,
     MoveOnRelativeRail = 0x37,
@@ -643,6 +644,18 @@ impl GamePacket for SetCollision {
 }
 
 #[derive(SerializePacket)]
+pub struct UpdateOwner {
+    pub child_guid: u64,
+    pub owner: Target,
+    pub attach: bool,
+}
+
+impl GamePacket for UpdateOwner {
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::UpdateOwner;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
 pub struct NotificationData {
     pub unknown1: u32,
     pub icon_id: u32,

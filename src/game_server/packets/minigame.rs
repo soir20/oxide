@@ -24,6 +24,7 @@ pub enum MinigameOpCode {
     RequestMinigameStageGroupInstance = 0x31,
     CreateMinigameStageGroupInstance = 0x33,
     ShowStageInstanceSelect = 0x34,
+    TowerDefense = 0x36,
     SaberStrike = 0x39,
     SaberDuel = 0x3a,
     ActiveMinigameCreationResult = 0x44,
