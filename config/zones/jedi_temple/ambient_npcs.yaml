@@ -130,8 +130,7 @@ jedi_temple:
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
-    # Gonk Droid on second floor
-    archives_npc_1:
+    archives_gonk_droid:
       model_id: 233
       pos:
         x: 1756.5
@@ -143,9 +142,8 @@ jedi_temple:
         y: 0
         z: 1
         w: 0
-    # Droid next to Jocasta Nu
-    daily_holocron_door_npc_1:
-      model_id: 300
+    archives_lep_servent_droid_with_projector:
+      model_id: 1013
       pos:
         x: 1692.8328
         y: 10.040001
@@ -157,7 +155,7 @@ jedi_temple:
         z: 0
         w: 1.0
       composite_effect_id: 2053
-    daily_trivia_terminal_npc_1:
+    archives_terminal_human_1:
       model_id: 219
       enable_gravity: false
       pos:
@@ -171,7 +169,7 @@ jedi_temple:
         z: 0
         w: 1.0
       stand_animation_id: 2545
-    force_perception_terminal_npc_1:
+    archives_terminal_human_2:
       model_id: 2033
       enable_gravity: false
       pos:
@@ -195,7 +193,7 @@ jedi_temple:
           weight: 588
           steps:
             - duration_millis: 1000
-    jedi_archives_bust_06:
+    archives_bust_06:
       model_id: 1007
       terrain_object_id: 1283389222
       use_terrain_model: false
@@ -696,8 +694,7 @@ jedi_temple:
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
-    # Dianoga Barrel
-    hanger_npc_1:
+    hanger_dianoga_barrel:
       model_id: 1089
       pos:
         x: 97.0
@@ -719,7 +716,7 @@ jedi_temple:
         one_shot_animation_id: 2302
         duration_millis: 6000
     # Clone with Missile Rack
-    hanger_npc_2:
+    hanger_clone_with_missile_rack:
       model_id: 968
       pos:
         x: 106.64343
@@ -786,9 +783,8 @@ jedi_temple:
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
-    # Arm wrestle clone
-    lounge_npc_1:
-      key: lounge_npc_1
+    lounge_arm_wrestle_clone_1:
+      key: lounge_arm_wrestle_clone_1
       model_id: 1952
       enable_gravity: false
       pos:
@@ -816,8 +812,7 @@ jedi_temple:
             - procedure: arm_wrestle
               weight: 300
             - procedure: empty
-    # Arm wrestle clone
-    lounge_npc_2:
+    lounge_arm_wrestle_clone_2:
       model_id: 1958
       enable_gravity: false
       pos:
@@ -845,8 +840,8 @@ jedi_temple:
             - procedure: arm_wrestle
               weight: 300
             - procedure: empty
-      synchronize_with: lounge_npc_1
-    three_interactible_cannisters:
+      synchronize_with: lounge_arm_wrestle_clone_1
+    lounge_three_interactible_cannisters:
       model_id: 826
       pos:
         x: -132.0
@@ -1135,7 +1130,7 @@ jedi_temple:
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
-    three_interactible_crates:
+    main_hall_three_interactible_crates:
       model_id: 187
       pos:
         x: 1243.6746
@@ -1160,7 +1155,7 @@ jedi_temple:
     #
     # Shops
     #
-    veranda_fountain:
+    shops_veranda_fountain:
       terrain_object_id: 1278971305
       model_id: 907
       name_id: 16957
@@ -1277,7 +1272,6 @@ jedi_temple:
     #
     # Training Room
     #
-    # Spinning Lightsaber Front Jedi
     training_room_main_platform_lift:
       model_id: 1438
       physics: Disabled
@@ -1322,7 +1316,7 @@ jedi_temple:
             - speed: 2
               new_pos_offset_y: -12
               duration_millis: 12000
-    saber_strike_npc_1:
+    training_room_spinning_lightsaber_rodian:
       model_id: 146
       pos:
         x: 139.95262
@@ -1335,8 +1329,7 @@ jedi_temple:
         z: 0.9022371
         w: 0
       stand_animation_id: 2504
-    # Spinning Lightsaber Jump Jedi
-    saber_strike_npc_2:
+    training_room_spinning_lightsaber_human:
       model_id: 147
       pos:
         x: 144.97792
@@ -1349,8 +1342,7 @@ jedi_temple:
         z: 0
         w: 0
       stand_animation_id: 2529
-    # Horizontal Spinning Lightsaber Jedi
-    saber_strike_npc_3:
+    training_room_spinning_lightsaber_togruta:
       model_id: 223
       pos:
         x: 141.74367
@@ -1363,8 +1355,7 @@ jedi_temple:
         z: 1
         w: 0
       stand_animation_id: 2503
-    # Drill Sergeant for push-up clones
-    clone_push-ups_npc_1:
+    training_room_clone_drill_sergeant:
       model_id: 60
       pos:
         x: 106.5
@@ -1377,8 +1368,8 @@ jedi_temple:
         z: 0
         w: 0
       stand_animation_id: 2505
-    # Rest of these are clones doing push-ups
-    clone_push-ups_npc_2:
+    training_room_clone_push-ups_1:
+      key: training_room_clone_push-ups_1
       model_id: 48
       pos:
         x: 101.0
@@ -1391,7 +1382,7 @@ jedi_temple:
         z: 0
         w: 0
       stand_animation_id: 2524
-    clone_push-ups_npc_3:
+    training_room_clone_push-ups_2:
       model_id: 48
       pos:
         x: 101.02
@@ -1404,7 +1395,8 @@ jedi_temple:
         z: 0
         w: 0
       stand_animation_id: 2524
-    clone_push-ups_npc_4:
+      synchronize_with: training_room_clone_push-ups_1
+    training_room_clone_push-ups_3:
       model_id: 48
       pos:
         x: 101.04
@@ -1417,7 +1409,8 @@ jedi_temple:
         z: 0
         w: 0
       stand_animation_id: 2524
-    clone_push-ups_npc_5:
+      synchronize_with: training_room_clone_push-ups_1
+    training_room_clone_push-ups_4:
       model_id: 48
       pos:
         x: 101.06
@@ -1430,7 +1423,8 @@ jedi_temple:
         z: 0
         w: 0
       stand_animation_id: 2524
-    clone_push-ups_npc_6:
+      synchronize_with: training_room_clone_push-ups_1
+    training_room_clone_push-ups_5:
       model_id: 48
       pos:
         x: 97.38
@@ -1443,7 +1437,8 @@ jedi_temple:
         z: 0
         w: 0
       stand_animation_id: 2524
-    clone_push-ups_npc_7:
+      synchronize_with: training_room_clone_push-ups_1
+    training_room_clone_push-ups_6:
       model_id: 48
       pos:
         x: 97.36
@@ -1456,7 +1451,8 @@ jedi_temple:
         z: 0
         w: 0
       stand_animation_id: 2524
-    clone_push-ups_npc_8:
+      synchronize_with: training_room_clone_push-ups_1
+    training_room_clone_push-ups_7:
       model_id: 48
       pos:
         x: 97.34
@@ -1469,8 +1465,8 @@ jedi_temple:
         z: 0
         w: 0
       stand_animation_id: 2524
-    # Clone climbing wall
-    wall_climb_npc_1:
+      synchronize_with: training_room_clone_push-ups_1
+    training_room_wall_climb_1:
       model_id: 1948
       scale: 0.83
       pos:
@@ -1484,8 +1480,7 @@ jedi_temple:
         z: 0
         w: 0
       stand_animation_id: 2511
-    # Clone climbing wall
-    wall_climb_npc_2:
+    training_room_wall_climb_2:
       model_id: 1949
       scale: 0.83
       pos:
@@ -1499,8 +1494,7 @@ jedi_temple:
         z: 0
         w: 0
       stand_animation_id: 2512
-    # Jedi climbing wall
-    wall_climb_npc_3:
+    training_room_wall_climb_3:
       model_id: 41
       scale: 0.83
       pos:
@@ -1514,8 +1508,7 @@ jedi_temple:
         z: 0
         w: 0
       stand_animation_id: 2516
-    # Clone climbing wall
-    wall_climb_npc_4:
+    training_room_wall_climb_4:
       model_id: 1950
       scale: 0.83
       pos:
@@ -1529,8 +1522,7 @@ jedi_temple:
         z: 0
         w: 0
       stand_animation_id: 2513
-    # Clone climbing wall
-    wall_climb_npc_5:
+    training_room_wall_climb_5:
       model_id: 1951
       scale: 0.83
       pos:
@@ -1544,8 +1536,7 @@ jedi_temple:
         z: 0
         w: 0
       stand_animation_id: 2514
-    # Clone climbing wall
-    wall_climb_npc_6:
+    training_room_wall_climb_6:
       model_id: 48
       scale: 0.83
       pos:
@@ -1559,8 +1550,7 @@ jedi_temple:
         z: 0
         w: 0
       stand_animation_id: 2515
-    # Clone obstacles
-    obstacles_npc_1:
+    training_room_obstacles_1:
       model_id: 48
       scale: 0.83
       pos:
@@ -1574,8 +1564,7 @@ jedi_temple:
         z: 0
         w: 0
       stand_animation_id: 2507
-    # Clone obstacles
-    obstacles_npc_2:
+    training_room_obstacles_2:
       model_id: 1947
       scale: 0.83
       pos:
@@ -1589,8 +1578,7 @@ jedi_temple:
         z: 0
         w: 0
       stand_animation_id: 2508
-    # Jedi obstacles
-    obstacles_npc_3:
+    training_room_obstacles_3:
       model_id: 412
       scale: 0.83
       pos:
@@ -1604,8 +1592,7 @@ jedi_temple:
         z: 0
         w: 0
       stand_animation_id: 2509
-    # Jedi obstacles
-    obstacles_npc_4:
+    training_room_obstacles_4:
       model_id: 42
       scale: 0.83
       pos:
@@ -1619,8 +1606,7 @@ jedi_temple:
         z: 0
         w: 0
       stand_animation_id: 2510
-    # Jedi Pillars
-    pillars_npc_1:
+    training_room_pillars_1:
       model_id: 42
       scale: 0.83
       pos:
@@ -1634,8 +1620,7 @@ jedi_temple:
         z: 0
         w: 0
       stand_animation_id: 2536
-    # Clone Pillars
-    pillars_npc_2:
+    training_room_pillars_2:
       model_id: 1947
       scale: 0.83
       pos:
@@ -1649,8 +1634,7 @@ jedi_temple:
         z: 0
         w: 0
       stand_animation_id: 2537
-    # Clone Pillars
-    pillars_npc_3:
+    training_room_pillars_3:
       model_id: 1946
       scale: 0.83
       pos:
@@ -1721,8 +1705,7 @@ jedi_temple:
     #
     # Workshop
     #
-    # Droid Pile
-    workshop_npc_1:
+    workshop_droid_pile:
       model_id: 1009
       pos:
         x: -337.12753
@@ -1743,8 +1726,7 @@ jedi_temple:
         player_one_shot_animation_id: 3014
         one_shot_animation_id: 2561
         duration_millis: 5000
-    # Zombie Droid
-    workshop_npc_2:
+    workshop_zombie_droid:
       model_id: 1027
       pos:
         x: -331.35208
@@ -1766,7 +1748,7 @@ jedi_temple:
         one_shot_animation_id: 2559
         duration_millis: 12000
     # Pink Astromech Droid
-    workshop_npc_3:
+    workshop_ambient_droid_1:
       model_id: 2220
       pos:
         x: -337.6852
@@ -1778,8 +1760,7 @@ jedi_temple:
         y: 0
         z: 0.89974594
         w: 1.0
-    # Running Gonk Droid
-    workshop_npc_4:
+    workshop_running_gonk_droid:
       model_id: 233
       pos:
         x: -347.34412
@@ -1792,8 +1773,7 @@ jedi_temple:
         z: 0.9999439
         w: 0
       stand_animation_id: 3
-    # Astromech Droid next to Commander Gree
-    workshop_npc_5:
+    workshop_infiltration_droid:
       model_id: 642
       name_id: 12797
       show_name: false
@@ -1808,8 +1788,7 @@ jedi_temple:
         z: -0.6692279
         w: 1.0
       composite_effect_id: 2044
-    # Battle Droid on Table
-    workshop_npc_6:
+    workshop_damaged_battle_droid:
       model_id: 1065
       pos:
         x: -336.9498
@@ -1830,8 +1809,7 @@ jedi_temple:
         duration_millis: 5000
       interact_radius: 5
       move_to_interact_offset: 4
-    # Hidden Monkey Lizard
-    workshop_npc_7:
+    workshop_green_monkey_lizard:
       model_id: 1612
       texture_alias: Green
       pos:
