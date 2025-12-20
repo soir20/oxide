@@ -1272,6 +1272,98 @@ jedi_temple:
     #
     # Training Room
     #
+    commander_stone:
+      key: commander_stone
+      model_id: 2036
+      name_id: 1969
+      name_offset_x: -0.3
+      show_name: true
+      pos:
+        x: 142.0
+        y: 6.8242335
+        z: 426.5
+        w: 1.0
+      rot:
+        x: -0.075
+        y: 0
+        z: 1.0
+        w: 1.0
+      stand_animation_id: 2220
+      cursor: 53
+      enable_interact_popup: true
+      notification_icon: 14
+      one_shot_interaction:
+        dialog_option_key: Commander Stone
+        duration_millis: 1
+    adi_gallia:
+      key: adi_gallia
+      model_id: 405
+      name_id: 6978
+      show_name: true
+      scale: 0.947
+      pos:
+        x: 155.17
+        y: 6.8242383
+        z: 403.678
+        w: 1.0
+      rot:
+        x: 1
+        y: 0
+        z: 0.3
+        w: 0
+      stand_animation_id: 2201
+      cursor: 53
+      enable_interact_popup: true
+      one_shot_interaction:
+        dialog_option_key: Adi Gallia
+        duration_millis: 1
+    obi-wan_kenobi:
+      key: obi-wan_kenobi
+      model_id: 105
+      name_id: 1132
+      name_offset_x: -0.3
+      show_name: true
+      scale: 0.985
+      pos:
+        x: 153.45
+        y: 6.824234
+        z: 377.135
+        w: 1.0
+      rot:
+        x: 0.8215353
+        y: 0
+        z: 0.57015777
+        w: 0
+      stand_animation_id: 2201
+      cursor: 53
+      enable_interact_popup: true
+      notification_icon: 12
+      one_shot_interaction:
+        dialog_option_key: Obi-Wan Kenobi
+        duration_millis: 1
+    luminara_unduli:
+      key: luminara_unduli
+      model_id: 181
+      name_id: 6345
+      name_offset_x: -0.3
+      show_name: true
+      pos:
+        x: 138.175
+        y: 6.8242426
+        z: 341.99
+        w: 1.0
+      rot:
+        x: 0.631
+        y: 0
+        z: 0.45
+        w: 0
+      stand_animation_id: 2201
+      cursor: 53
+      enable_interact_popup: true
+      notification_icon: 29
+      one_shot_interaction:
+        dialog_option_key: Luminara Unduli
+        duration_millis: 1
     training_room_main_platform_lift:
       model_id: 1438
       physics: Disabled
@@ -1332,7 +1424,7 @@ jedi_temple:
     training_room_spinning_lightsaber_human:
       model_id: 147
       pos:
-        x: 144.97792
+        x: 143.9
         y: 6.8242335
         z: 334.98163
         w: 1.0
@@ -1345,14 +1437,14 @@ jedi_temple:
     training_room_spinning_lightsaber_togruta:
       model_id: 223
       pos:
-        x: 141.74367
+        x: 141.33
         y: 7.0
         z: 326.64008
         w: 1.0
       rot:
         x: 0
         y: 0
-        z: 1
+        z: 1.0
         w: 0
       stand_animation_id: 2503
     training_room_clone_drill_sergeant:
@@ -1466,6 +1558,127 @@ jedi_temple:
         w: 0
       stand_animation_id: 2524
       synchronize_with: training_room_clone_push-ups_1
+    training_room_clone_shooting_range_1:
+      model_id: 1044
+      pos:
+        x: 145.28635
+        y: 6.8242335
+        z: 427.0
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 1.0
+        w: 1.0
+      stand_animation_id: 241
+      tickable_procedures:
+        shoot:
+          weight: 300
+          steps:
+            - one_shot_animation_id: 2539
+              duration_millis: 1000
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1
+          next_possible_procedures:
+            - procedure: shoot
+              weight: 300
+            - procedure: empty
+    training_room_clone_shooting_range_2:
+      model_id: 1044
+      pos:
+        x: 138.52481
+        y: 6.8242335
+        z: 426.40643
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 1.0
+        w: 1.0
+      stand_animation_id: 241
+      tickable_procedures:
+        shoot:
+          weight: 300
+          steps:
+            - one_shot_animation_id: 2539
+              duration_millis: 1000
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1
+          next_possible_procedures:
+            - procedure: shoot
+              weight: 300
+            - procedure: empty
+    training_room_clone_shooting_range_3:
+      model_id: 1044
+      pos:
+        x: 135.35289
+        y: 6.8242335
+        z: 427.0
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 1.0
+        w: 1.0
+      stand_animation_id: 241
+      tickable_procedures:
+        shoot:
+          weight: 300
+          steps:
+            - one_shot_animation_id: 2539
+              duration_millis: 1000
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1
+          next_possible_procedures:
+            - procedure: shoot
+              weight: 300
+            - procedure: empty
+    # These cutting wall ones need positioning updated
+    training_room_cutting_wall_human:
+      model_id: 1066
+      pos:
+        x: 102.66457
+        y: -3.6210194
+        z: 414.63742
+        w: 1.0
+      rot:
+        x: -0.4
+        y: 0
+        z: 0.91848433
+        w: 0
+      stand_animation_id: 2523
+    training_room_cutting_wall_twilek:
+      model_id: 1068
+      pos:
+        x: 96.89205
+        y: -3.6210198
+        z: 412.05457
+        w: 1.0
+      rot:
+        x: -0.41702244
+        y: 0
+        z: 0.90889627
+        w: 0
+      stand_animation_id: 2521
+    training_room_cutting_wall_togruta:
+      model_id: 1067
+      pos:
+        x: 91.63302
+        y: -3.6210198
+        z: 409.3891
+        w: 1.0
+      rot:
+        x: -0.4945183
+        y: 0
+        z: 0.8691672
+        w: 0
+      stand_animation_id: 2522
     training_room_wall_climb_1:
       model_id: 1948
       scale: 0.83
@@ -1509,6 +1722,7 @@ jedi_temple:
         w: 0
       stand_animation_id: 2516
     training_room_wall_climb_4:
+      key: training_room_wall_climb_4
       model_id: 1950
       scale: 0.83
       pos:
@@ -1536,6 +1750,7 @@ jedi_temple:
         z: 0
         w: 0
       stand_animation_id: 2514
+      synchronize_with: training_room_wall_climb_4
     training_room_wall_climb_6:
       model_id: 48
       scale: 0.83
@@ -1648,6 +1863,169 @@ jedi_temple:
         z: 0
         w: 0
       stand_animation_id: 2538
+    # Behind counter near shooting range (still need to position)
+    # (X: (136.91458)), (Y: (6.824233)), (Z: (421.12637)), (ROT_X: (0.88634866)), (ROT_Y: (0)), (ROT_Z: (-0.46301827))
+    training_room_ambient_1:
+      model_id: 1901
+      pos:
+        x: 136.91458
+        y: 6.824233
+        z: 421.12637
+        w: 1.0
+      rot:
+        x: 0.88634866
+        y: 0
+        z: -0.46301827
+        w: 1.0
+    training_room_ambient_2:
+      model_id: 1956
+      pos:
+        x: 151.95
+        y: 6.8242593
+        z: 343.1
+        w: 1.0
+      rot:
+        x: 0.88
+        y: 0
+        z: -0.5
+        w: 1.0
+    training_room_ambient_3:
+      model_id: 1952
+      pos:
+        x: 153.34698
+        y: 6.8242593
+        z: 343.84308
+        w: 1.0
+      rot:
+        x: 0.25
+        y: 0
+        z: -0.95
+        w: 1.0
+    training_room_ambient_4:
+      model_id: 1962
+      pos:
+        x: 153.96236
+        y: 6.8242626
+        z: 342.8407
+        w: 1.0
+      rot:
+        x: -0.35
+        y: 0
+        z: 0.95
+        w: 1.0
+    # Hand Stand Jedi with Crates (still need to position)
+    training_room_jedi_and_crates_crates:
+      key: training_room_jedi_and_crates_crates
+      model_id: 187
+      name_id: 0
+      show_name: false
+      pos:
+        x: 161.86
+        y: 6.8242364
+        z: 347.2271
+        w: 1.0
+      rot:
+        x: 0.2592235
+        y: 0
+        z: -0.96581733
+        w: 0
+      stand_animation_id: 2501
+    training_room_jedi_and_crates_jedi:
+      model_id: 41
+      name_id: 0
+      show_name: false
+      pos:
+        x: 161.86
+        y: 6.8242364
+        z: 347.2271
+        w: 1.0
+      rot:
+        x: 0.2592235
+        y: 0
+        z: -0.96581733
+        w: 0
+      stand_animation_id: 2501
+      synchronize_with: training_room_jedi_and_crates_crates
+    training_room_control_room_ambient_1:
+      model_id: 48
+      pos:
+        x: 192.0
+        y: 9.581754
+        z: 395.1
+        w: 1.0
+      rot:
+        x: -0.8794418
+        y: 0
+        z: -0.47600633
+        w: 0
+      stand_animation_id: 2590
+    training_room_control_room_ambient_2:
+      model_id: 48
+      pos:
+        x: 199.28156
+        y: 9.583165
+        z: 378.56808
+        w: 1.0
+      rot:
+        x: 0.9836331
+        y: 0
+        z: -0.18018341
+        w: 0
+      stand_animation_id: 2590
+    training_room_control_room_ambient_3:
+      model_id: 48
+      pos:
+        x: 197.39528
+        y: 9.583178
+        z: 367.04382
+        w: 1.0
+      rot:
+        x: 0.9836331
+        y: 0
+        z: -0.18018341
+        w: 0
+      stand_animation_id: 2590
+    training_room_control_room_ambient_4:
+      model_id: 60
+      enable_gravity: false
+      pos:
+        x: 193.4
+        y: 9.7
+        z: 401.4
+        w: 1.0
+      rot:
+        x: 0.32465783
+        y: 0
+        z: -0.9458316
+        w: 0
+      stand_animation_id: 2551
+    training_room_control_room_ambient_5:
+      model_id: 43
+      enable_gravity: false
+      pos:
+        x: 194.8
+        y: 9.7
+        z: 398.86
+        w: 1.0
+      rot:
+        x: 0.85
+        y: 0
+        z: -0.5
+        w: 0
+      stand_animation_id: 2551
+    training_room_yellow_monkey_lizard:
+      model_id: 1612
+      texture_alias: Yellow
+      pos:
+        x: 146.38
+        y: 10.334785
+        z: 327.56
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 1
+        w: 1.0
 
     #
     # War Room

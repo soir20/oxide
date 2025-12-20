@@ -1,6 +1,42 @@
 ---
 jedi_temple:
   dialog_choices:
+    #
+    # General Dialog Options
+    #
+    - button_key: Galaxy Map
+      script:
+        CustomStringParams:
+          script_name: UIGlobal.ShowGalaxyMap
+      close_dialog: true
+
+    - button_key: Exit
+      close_dialog: true
+
+    #
+    # Minigames
+    #
+    - button_key: Lightsaber Duel
+      script:
+        OpenMinigameStageGroup:
+          stage_group_id: 31000
+      close_dialog: true
+
+    - button_key: Blaster Training
+      script:
+        OpenMinigameStageGroup:
+          stage_group_id: 11
+      close_dialog: true
+
+    - button_key: Saber Strike
+      script:
+        OpenMinigameStageGroup:
+          stage_group_id: 13
+      close_dialog: true
+
+    #
+    # Hanger
+    #
     - button_key: Breaker
       npc_key: breaker
       new_dialog:
@@ -20,8 +56,157 @@ jedi_temple:
         choices:
           - button_key: Galaxy Map
             button_text_id: 5300
-    - button_key: Galaxy Map
-      script:
-        CustomStringParams:
-          script_name: UIGlobal.ShowGalaxyMap
-      close_dialog: true
+
+    #
+    # Training Room
+    #
+    - button_key: Luminara Unduli
+      npc_key: luminara_unduli
+      new_dialog:
+        dialog_message_id: 6346
+        speaker_animation_id: 2202
+        #speaker_sound_id:
+        zoom: 35
+        camera_placement:
+          x: 137.93954
+          y: 8.47336
+          z: 344.74066
+          w: 1.0
+        look_at:
+          x: 138.66
+          y: 8.40
+          z: 341.9
+          w: 1.0
+        choices:
+          - button_key: Saber Strike
+            button_text_id: 3793
+
+    - button_key: Commander Stone
+      npc_key: commander_stone
+      new_dialog:
+        dialog_message_id: 43449
+        speaker_animation_id: 2221
+        #speaker_sound_id: 2373
+        zoom: 22.5
+        camera_placement:
+          x: 144.38
+          y: 8.91
+          z: 423.08
+          w: 1.0
+        look_at:
+          x: 142.55
+          y: 8.575
+          z: 426.5
+          w: 1.0
+        choices:
+          - button_key: Blaster Training
+            button_text_id: 43451
+
+    - button_key: Adi Gallia
+      npc_key: adi_gallia
+      new_dialog:
+        dialog_message_id: 6986
+        speaker_animation_id: 2202
+        #speaker_sound_id: 2964
+        zoom: 33.55
+        camera_placement:
+          x: 156.54558
+          y: 8.823276
+          z: 404.85535
+          w: 1.0
+        look_at:
+          x: 155.05202
+          y: 8.53
+          z: 403.25
+          w: 1.0
+        choices:
+          - button_key: Adi Gallia 2
+            button_text_id: 3794
+          - button_key: Exit
+            button_text_id: 3870
+
+    - button_key: Adi Gallia 2
+      npc_key: adi_gallia
+      new_dialog:
+        dialog_message_id: 6988
+        speaker_sound_id: 2965
+        zoom: 29.5
+        camera_placement:
+          x: 132.72180
+          y: 3.95768
+          z: 379.39459
+          w: 1.0
+        look_at:
+          x: 107.40269
+          y: -5.0
+          z: 349.36655
+          w: 1.0
+        choices:
+        - button_key: Adi Gallia 3
+          button_text_id: 3794
+        - button_key: Exit
+          button_text_id: 3870
+
+    - button_key: Adi Gallia 3
+      npc_key: adi_gallia
+      new_dialog:
+        dialog_message_id: 6991
+        speaker_sound_id: 2966
+        zoom: 29.5
+        camera_placement:
+          x: 124.465034
+          y: 2.33637
+          z: 401.43710
+          w: 1.0
+        look_at:
+          x: 98.28077
+          y: -4.3
+          z: 413.8735
+          w: 1.0
+        choices:
+        - button_key: Adi Gallia 4
+          button_text_id: 3794
+        - button_key: Exit
+          button_text_id: 3870
+
+    - button_key: Adi Gallia 4
+      npc_key: adi_gallia
+      new_dialog:
+        dialog_message_id: 6995
+        speaker_animation_id: 2203
+        #speaker_sound_id: 2967
+        zoom: 25
+        camera_placement:
+          x: 157.42574
+          y: 8.340694
+          z: 405.42996
+          w: 1.0
+        look_at:
+          x: 154.5
+          y: 8.38
+          z: 402.8
+          w: 1.0
+        choices:
+        - button_key: Exit
+          button_text_id: 3870
+
+    - button_key: Obi-Wan Kenobi
+      npc_key: obi-wan_kenobi
+      new_dialog:
+        dialog_message_id: 5274
+        speaker_animation_id: 2202
+        #speaker_sound_id: 1833
+        zoom: 24
+        camera_placement:
+          x: 154.79332
+          y: 8.55572
+          z: 377.40988
+          w: 1.0
+        look_at:
+          x: 153.08383
+          y: 8.80
+          z: 377.25
+          w: 1.0
+        choices:
+        - button_key: Lightsaber Duel
+          button_text_id: 3793
