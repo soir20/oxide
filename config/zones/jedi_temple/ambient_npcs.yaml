@@ -1864,7 +1864,6 @@ jedi_temple:
         w: 0
       stand_animation_id: 2538
     # Behind counter near shooting range (still need to position)
-    # (X: (136.91458)), (Y: (6.824233)), (Z: (421.12637)), (ROT_X: (0.88634866)), (ROT_Y: (0)), (ROT_Z: (-0.46301827))
     training_room_ambient_1:
       model_id: 1901
       pos:
