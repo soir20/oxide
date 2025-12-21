@@ -156,7 +156,7 @@ pub struct InteractionList {
     pub buttons: Vec<InteractionButton>,
     pub context_name: String,
     pub unknown3: bool,
-    pub unknown4: bool,
+    pub hidden: bool,
 }
 
 impl GamePacket for InteractionList {
