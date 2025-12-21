@@ -4,28 +4,29 @@ jedi_temple:
     #
     # General Dialog Options
     #
+    - button_key: Exit
+      close_dialog: true
+
     - button_key: Galaxy Map
       script:
         CustomStringParams:
           script_name: UIGlobal.ShowGalaxyMap
       close_dialog: true
 
-    - button_key: Exit
-      close_dialog: true
-
     #
     # Minigames
     #
-    - button_key: Lightsaber Duel
-      script:
-        OpenMinigameStageGroup:
-          stage_group_id: 31000
-      close_dialog: true
 
     - button_key: Blaster Training
       script:
         OpenMinigameStageGroup:
           stage_group_id: 11
+      close_dialog: true
+
+    - button_key: Lightsaber Duel
+      script:
+        OpenMinigameStageGroup:
+          stage_group_id: 31000
       close_dialog: true
 
     - button_key: Saber Strike
@@ -60,48 +61,6 @@ jedi_temple:
     #
     # Training Room
     #
-    - button_key: Luminara Unduli
-      npc_key: luminara_unduli
-      new_dialog:
-        dialog_message_id: 6346
-        speaker_animation_id: 2202
-        # speaker_sound_id:
-        zoom: 35
-        camera_placement:
-          x: 137.93954
-          y: 8.47336
-          z: 344.74066
-          w: 1.0
-        look_at:
-          x: 138.66
-          y: 8.40
-          z: 341.9
-          w: 1.0
-        choices:
-          - button_key: Saber Strike
-            button_text_id: 3793
-
-    - button_key: Commander Stone
-      npc_key: commander_stone
-      new_dialog:
-        dialog_message_id: 43449
-        speaker_animation_id: 2221
-        # speaker_sound_id: 2373
-        zoom: 22.5
-        camera_placement:
-          x: 144.38
-          y: 8.91
-          z: 423.08
-          w: 1.0
-        look_at:
-          x: 142.55
-          y: 8.575
-          z: 426.5
-          w: 1.0
-        choices:
-          - button_key: Blaster Training
-            button_text_id: 43451
-
     - button_key: Adi Gallia
       npc_key: adi_gallia
       new_dialog:
@@ -189,6 +148,48 @@ jedi_temple:
         choices:
           - button_key: Exit
             button_text_id: 3870
+
+    - button_key: Commander Stone
+      npc_key: commander_stone
+      new_dialog:
+        dialog_message_id: 43449
+        speaker_animation_id: 2221
+        # speaker_sound_id: 2373
+        zoom: 22.5
+        camera_placement:
+          x: 144.38
+          y: 8.91
+          z: 423.08
+          w: 1.0
+        look_at:
+          x: 142.55
+          y: 8.575
+          z: 426.5
+          w: 1.0
+        choices:
+          - button_key: Blaster Training
+            button_text_id: 43451
+
+    - button_key: Luminara Unduli
+      npc_key: luminara_unduli
+      new_dialog:
+        dialog_message_id: 6346
+        speaker_animation_id: 2202
+        # speaker_sound_id: 2297
+        zoom: 35
+        camera_placement:
+          x: 137.93954
+          y: 8.47336
+          z: 344.74066
+          w: 1.0
+        look_at:
+          x: 138.66
+          y: 8.40
+          z: 341.9
+          w: 1.0
+        choices:
+          - button_key: Saber Strike
+            button_text_id: 3793
 
     - button_key: Obi-Wan Kenobi
       npc_key: obi-wan_kenobi
