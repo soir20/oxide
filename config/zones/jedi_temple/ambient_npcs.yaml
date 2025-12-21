@@ -1769,6 +1769,104 @@ jedi_temple:
         z: -0.5
         w: 0
       stand_animation_id: 2551
+    training_room_control_room_ambient_6:
+      model_id: 60
+      enable_gravity: false
+      pos:
+        x: 194.28
+        y: 9.7
+        z: 387.071
+        w: 1.0
+      rot:
+        x: -0.15
+        y: 0
+        z: 0.99
+        w: 0
+      stand_animation_id: 2551
+    training_room_control_room_ambient_7:
+      model_id: 43
+      enable_gravity: false
+      pos:
+        x: 194.5
+        y: 9.7
+        z: 383.63
+        w: 1.0
+      rot:
+        x: -0.097
+        y: 0
+        z: 1
+        w: 0
+      stand_animation_id: 2551
+    training_room_control_room_ambient_8:
+      model_id: 43
+      enable_gravity: false
+      pos:
+        x: 194.2
+        y: 9.7
+        z: 376.33
+        w: 1.0
+      rot:
+        x: 0.17
+        y: 0
+        z: 0.99
+        w: 0
+      stand_animation_id: 2551
+    training_room_control_room_ambient_9:
+      model_id: 60
+      enable_gravity: false
+      pos:
+        x: 193.92
+        y: 9.7
+        z: 373.0
+        w: 1.0
+      rot:
+        x: 0.17
+        y: 0
+        z: 0.985
+        w: 0
+      stand_animation_id: 2551
+    training_room_control_room_ambient_10:
+      model_id: 43
+      enable_gravity: false
+      pos:
+        x: 193.1
+        y: 9.7
+        z: 369.65
+        w: 1.0
+      rot:
+        x: 0.2
+        y: 0
+        z: 0.98
+        w: 0
+      stand_animation_id: 2551
+    training_room_control_room_ambient_11:
+      model_id: 60
+      enable_gravity: false
+      pos:
+        x: 195.2
+        y: 9.7
+        z: 362.065
+        w: 1.0
+      rot:
+        x: -0.65
+        y: 0
+        z: -0.75
+        w: 0
+      stand_animation_id: 2551
+    training_room_control_room_ambient_12:
+      model_id: 43
+      enable_gravity: false
+      pos:
+        x: 193.32
+        y: 9.7
+        z: 358.5
+        w: 1.0
+      rot:
+        x: -0.1
+        y: 0
+        z: -0.99
+        w: 0
+      stand_animation_id: 2551
     training_room_cutting_wall_human:
       model_id: 1066
       pos:
