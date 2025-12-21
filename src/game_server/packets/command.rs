@@ -146,13 +146,13 @@ pub struct InteractionButton {
     pub param1: u32,
     pub param2: u32,
     pub param3: u32,
-    pub unknown9: u32,
+    pub sort_order: u32,
 }
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct InteractionList {
     pub guid: u64,
-    pub unknown1: bool,
+    pub auto_select_if_single_button: bool,
     pub buttons: Vec<InteractionButton>,
     pub context_name: String,
     pub unknown3: bool,
