@@ -155,7 +155,7 @@ pub struct InteractionList {
     pub auto_select_if_single_button: bool,
     pub buttons: Vec<InteractionButton>,
     pub context_name: String,
-    pub unknown3: bool,
+    pub is_quest_objective: bool,
     pub hidden: bool,
 }
 
