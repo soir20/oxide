@@ -137,26 +137,26 @@ impl GamePacket for ChatBubbleColor {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct Interaction {
-    pub unknown1: u32,
-    pub unknown2: u32,
-    pub unknown3: u32,
-    pub unknown4: u32,
-    pub unknown5: u32,
-    pub unknown6: u32,
-    pub unknown7: u32,
-    pub unknown8: u32,
-    pub unknown9: u32,
+pub struct InteractionButton {
+    pub event_id: u32,
+    pub icon_id: u32,
+    pub label_id: u32,
+    pub interaction_type: u32,
+    pub tooltip_id: u32,
+    pub param1: u32,
+    pub param2: u32,
+    pub param3: u32,
+    pub sort_order: u32,
 }
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct InteractionList {
     pub guid: u64,
-    pub unknown1: bool,
-    pub interactions: Vec<Interaction>,
-    pub unknown2: String,
-    pub unknown3: bool,
-    pub unknown4: bool,
+    pub auto_select_if_single_button: bool,
+    pub buttons: Vec<InteractionButton>,
+    pub context_name: String,
+    pub is_quest_objective: bool,
+    pub is_hidden: bool,
 }
 
 impl GamePacket for InteractionList {
