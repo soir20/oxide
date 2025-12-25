@@ -60,6 +60,7 @@ use packets::{GamePacket, OpCode};
 use rand::Rng;
 
 use crate::game_server::handlers::tick::reset_daily_minigames;
+use crate::game_server::packets::ui::ExecuteScriptWithStringParams;
 use crate::ConfigError;
 use packet_serialize::{DeserializePacket, DeserializePacketError};
 
@@ -404,6 +405,15 @@ impl GameServer {
                     let item_groups = TunneledPacket {
                         unknown1: true,
                         inner: GamePacket::serialize(&self.item_groups),
+                    };
+                    sender_only_packets.push(GamePacket::serialize(&item_groups));
+
+                    let item_groups = TunneledPacket {
+                        unknown1: true,
+                        inner: GamePacket::serialize(&ExecuteScriptWithStringParams {
+                            script_name: "Console.show".to_string(),
+                            params: vec![],
+                        }),
                     };
                     sender_only_packets.push(GamePacket::serialize(&item_groups));
 

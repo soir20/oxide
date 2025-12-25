@@ -1361,6 +1361,8 @@ pub fn interact_with_character(
                     return coerce_to_broadcast_supplier(|_| Ok(Vec::new()));
                 };
 
+                println!("CHARACTER INTERACT {}", target);
+
                 let requester_pos = requester_read_handle.stats.pos;
                 let requester_instance = requester_read_handle.stats.instance_guid;
                 let requester_chunk = requester_read_handle.index1().2;

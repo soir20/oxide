@@ -1,18 +1,19 @@
 ---
+
 singleplayer_flash_lobby:
   guid: 200
   max_players: 1
   template_name: 9
-  asset_name: Starship_Housing
+  asset_name: TD_Maridun_1-1
   hide_ui: false
   is_combat: false
   chunk_size: 1000
   default_point_of_interest:
     guid: 200
     pos:
-      x: 244.0913
+      x: 290
       y: 10
-      z: 465
+      z: 230
       w: 1
     rot:
       x: 0
@@ -25,6 +26,51 @@ singleplayer_flash_lobby:
   gravity_multiplier: 1
   seconds_per_day: 10800
   update_previous_location_on_leave: false
+  ambient_npcs:
+    base:
+      model_id: 8
+      pos:
+        x: 300
+        y: 5
+        z: 225
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+    tower:
+      model_id: 7
+      pos:
+        x: 300
+        y: 0
+        z: 225
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      clickable: true
+      cursor: 54
+      interact_radius: 10000
+      interact_popup_radius: 0
+    tower2:
+      model_id: 9
+      pos:
+        x: 300
+        y: 0
+        z: 225
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      clickable: true
+      cursor: 54
+      interact_radius: 10000
+      interact_popup_radius: 0
 multiplayer_flash_lobby:
   guid: 201
   max_players: 2
