@@ -66,7 +66,6 @@ jedi_temple:
       new_dialog:
         dialog_message_id: 6986
         speaker_animation_id: 2202
-        # speaker_sound_id: 2964
         zoom: 33.55
         camera_placement:
           x: 156.54558
@@ -133,7 +132,6 @@ jedi_temple:
       new_dialog:
         dialog_message_id: 6995
         speaker_animation_id: 2203
-        # speaker_sound_id: 2967
         zoom: 25
         camera_placement:
           x: 157.42574
@@ -154,7 +152,6 @@ jedi_temple:
       new_dialog:
         dialog_message_id: 43449
         speaker_animation_id: 2221
-        # speaker_sound_id: 2373
         zoom: 22.5
         camera_placement:
           x: 144.38
@@ -175,7 +172,6 @@ jedi_temple:
       new_dialog:
         dialog_message_id: 6346
         speaker_animation_id: 2202
-        # speaker_sound_id: 2297
         zoom: 35
         camera_placement:
           x: 137.93954
@@ -196,7 +192,6 @@ jedi_temple:
       new_dialog:
         dialog_message_id: 5274
         speaker_animation_id: 2202
-        # speaker_sound_id: 1833
         zoom: 24
         camera_placement:
           x: 154.79332
