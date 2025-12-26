@@ -130,8 +130,7 @@ jedi_temple:
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
-    # Gonk Droid on second floor
-    archives_npc_1:
+    archives_gonk_droid:
       model_id: 233
       pos:
         x: 1756.5
@@ -143,13 +142,12 @@ jedi_temple:
         y: 0
         z: 1
         w: 0
-    # Droid next to Jocasta Nu
-    daily_holocron_door_npc_1:
-      model_id: 300
+    archives_lep_servent_droid_with_projector:
+      model_id: 1013
       pos:
-        x: 1692.8328
+        x: 1692.7
         y: 10.040001
-        z: 1695.3916
+        z: 1695.35
         w: 1.0
       rot:
         x: 1
@@ -157,7 +155,7 @@ jedi_temple:
         z: 0
         w: 1.0
       composite_effect_id: 2053
-    daily_trivia_terminal_npc_1:
+    archives_terminal_human_1:
       model_id: 219
       enable_gravity: false
       pos:
@@ -171,7 +169,7 @@ jedi_temple:
         z: 0
         w: 1.0
       stand_animation_id: 2545
-    force_perception_terminal_npc_1:
+    archives_terminal_human_2:
       model_id: 2033
       enable_gravity: false
       pos:
@@ -195,7 +193,7 @@ jedi_temple:
           weight: 588
           steps:
             - duration_millis: 1000
-    jedi_archives_bust_06:
+    archives_bust_06:
       model_id: 1007
       terrain_object_id: 1283389222
       use_terrain_model: false
@@ -696,8 +694,7 @@ jedi_temple:
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
-    # Dianoga Barrel
-    hanger_npc_1:
+    hanger_dianoga_barrel:
       model_id: 1089
       pos:
         x: 97.0
@@ -718,8 +715,7 @@ jedi_temple:
         player_one_shot_animation_id: 3014
         one_shot_animation_id: 2302
         duration_millis: 6000
-    # Clone with Missile Rack
-    hanger_npc_2:
+    hanger_clone_with_missile_rack:
       model_id: 968
       pos:
         x: 106.64343
@@ -786,9 +782,8 @@ jedi_temple:
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
-    # Arm wrestle clone
-    lounge_npc_1:
-      key: lounge_npc_1
+    lounge_arm_wrestle_clone_1:
+      key: lounge_arm_wrestle_clone_1
       model_id: 1952
       enable_gravity: false
       pos:
@@ -816,8 +811,7 @@ jedi_temple:
             - procedure: arm_wrestle
               weight: 300
             - procedure: empty
-    # Arm wrestle clone
-    lounge_npc_2:
+    lounge_arm_wrestle_clone_2:
       model_id: 1958
       enable_gravity: false
       pos:
@@ -845,8 +839,8 @@ jedi_temple:
             - procedure: arm_wrestle
               weight: 300
             - procedure: empty
-      synchronize_with: lounge_npc_1
-    three_interactible_cannisters:
+      synchronize_with: lounge_arm_wrestle_clone_1
+    lounge_three_interactible_cannisters:
       model_id: 826
       pos:
         x: -132.0
@@ -1135,7 +1129,7 @@ jedi_temple:
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
-    three_interactible_crates:
+    main_hall_three_interactible_crates:
       model_id: 187
       pos:
         x: 1243.6746
@@ -1158,7 +1152,959 @@ jedi_temple:
         duration_millis: 8000
 
     #
-    # Shops
+    # Training Room
+    #
+    adi_gallia:
+      key: adi_gallia
+      model_id: 405
+      name_id: 6978
+      show_name: true
+      scale: 0.947
+      pos:
+        x: 155.17
+        y: 6.8242383
+        z: 403.678
+        w: 1.0
+      rot:
+        x: 1
+        y: 0
+        z: 0.3
+        w: 0
+      stand_animation_id: 2201
+      cursor: 53
+      enable_interact_popup: false
+      one_shot_interaction:
+        dialog_option_key: Adi Gallia
+        duration_millis: 1
+    commander_stone:
+      key: commander_stone
+      model_id: 2036
+      name_id: 1969
+      name_offset_x: -0.3
+      show_name: true
+      pos:
+        x: 142.0
+        y: 6.8242335
+        z: 426.5
+        w: 1.0
+      rot:
+        x: -0.075
+        y: 0
+        z: 1.0
+        w: 1.0
+      stand_animation_id: 2220
+      cursor: 53
+      enable_interact_popup: true
+      notification_icon: 14
+      one_shot_interaction:
+        dialog_option_key: Commander Stone
+        duration_millis: 1
+      interact_radius: 13
+    obi-wan_kenobi:
+      key: obi-wan_kenobi
+      model_id: 105
+      name_id: 1132
+      name_offset_x: -0.3
+      show_name: true
+      scale: 0.985
+      pos:
+        x: 153.45
+        y: 6.824234
+        z: 377.135
+        w: 1.0
+      rot:
+        x: 0.8215353
+        y: 0
+        z: 0.57015777
+        w: 0
+      stand_animation_id: 2201
+      cursor: 53
+      enable_interact_popup: true
+      notification_icon: 12
+      one_shot_interaction:
+        dialog_option_key: Obi-Wan Kenobi
+        duration_millis: 1
+      interact_radius: 7
+    luminara_unduli:
+      key: luminara_unduli
+      model_id: 181
+      name_id: 6345
+      name_offset_x: -0.3
+      show_name: true
+      pos:
+        x: 138.175
+        y: 6.8242426
+        z: 341.99
+        w: 1.0
+      rot:
+        x: 0.631
+        y: 0
+        z: 0.45
+        w: 0
+      stand_animation_id: 2201
+      cursor: 53
+      enable_interact_popup: true
+      notification_icon: 29
+      one_shot_interaction:
+        dialog_option_key: Luminara Unduli
+        duration_millis: 1
+      interact_radius: 22
+    training_room_ambient_1:
+      possible_model_ids:
+        - 1901
+      pos:
+        x: 136.75
+        y: 6.824233
+        z: 421.12637
+        w: 1.0
+      rot:
+        x: 0.85
+        y: 0
+        z: -0.5
+        w: 1.0
+    training_room_ambient_2:
+      possible_model_ids:
+        - 1884
+      pos:
+        x: 139.75
+        y: 6.824233
+        z: 420.6
+        w: 1.0
+      rot:
+        x: -1
+        y: 0
+        z: 0.1
+        w: 0
+    training_room_ambient_3:
+      possible_model_ids:
+        - 1962
+      pos:
+        x: 138.08643
+        y: 6.8242426
+        z: 417.85
+        w: 1.0
+      rot:
+        x: -0.25
+        y: 0
+        z: 1.0
+        w: 0
+    training_room_ambient_4:
+      possible_model_ids:
+        - 1887
+      pos:
+        x: 153.77
+        y: 6.824235
+        z: 404.75
+        w: 1.0
+      rot:
+        x: -0.65
+        y: 0
+        z: -0.75
+        w: 0
+    training_room_ambient_5:
+      possible_model_ids:
+        - 2015
+      pos:
+        x: 155.2815
+        y: 6.8242407
+        z: 402.1675
+        w: 1.0
+      rot:
+        x: -0.95
+        y: 0
+        z: -0.32
+        w: 0
+    training_room_ambient_6:
+      possible_model_ids:
+        - 2007
+      pos:
+        x: 155.82
+        y: 6.8242435
+        z: 401.05
+        w: 1.0
+      rot:
+        x: -0.8
+        y: 0
+        z: -0.55
+        w: 0
+    training_room_ambient_7:
+      possible_model_ids:
+        - 2000
+      pos:
+        x: 158.1349
+        y: 6.8243723
+        z: 366.27618
+        w: 1.0
+      rot:
+        x: -0.9296713
+        y: 0
+        z: 0.36839005
+        w: 0
+    training_room_ambient_8:
+      possible_model_ids:
+        - 2008
+      pos:
+        x: 157.95442
+        y: 6.8243237
+        z: 365.14832
+        w: 1.0
+      rot:
+        x: -0.86171156
+        y: 0
+        z: 0.50739855
+        w: 0
+    training_room_ambient_9:
+      possible_model_ids:
+        - 1956
+      pos:
+        x: 151.95
+        y: 6.8242593
+        z: 343.1
+        w: 1.0
+      rot:
+        x: 0.88
+        y: 0
+        z: -0.5
+        w: 1.0
+    training_room_ambient_10:
+      possible_model_ids:
+        - 1952
+      pos:
+        x: 153.34698
+        y: 6.8242593
+        z: 343.84308
+        w: 1.0
+      rot:
+        x: 0.25
+        y: 0
+        z: -0.95
+        w: 1.0
+    training_room_ambient_11:
+      possible_model_ids:
+        - 1962
+      pos:
+        x: 153.96236
+        y: 6.8242626
+        z: 342.8407
+        w: 1.0
+      rot:
+        x: -0.35
+        y: 0
+        z: 0.95
+        w: 0
+    training_room_clone_drill_sergeant:
+      model_id: 60
+      pos:
+        x: 106.5
+        y: -3.6210203
+        z: 390.5
+        w: 1.0
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2505
+    training_room_clone_push-ups_1:
+      key: training_room_clone_push-ups_1
+      model_id: 48
+      pos:
+        x: 101.0
+        y: -3.6210194
+        z: 394.5
+        w: 1.0
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2524
+    training_room_clone_push-ups_2:
+      model_id: 48
+      pos:
+        x: 101.02
+        y: -3.6210194
+        z: 392.25
+        w: 1.0
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2524
+      synchronize_with: training_room_clone_push-ups_1
+    training_room_clone_push-ups_3:
+      model_id: 48
+      pos:
+        x: 101.04
+        y: -3.6210194
+        z: 390.0
+        w: 1.0
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2524
+      synchronize_with: training_room_clone_push-ups_1
+    training_room_clone_push-ups_4:
+      model_id: 48
+      pos:
+        x: 101.06
+        y: -3.6210194
+        z: 387.75
+        w: 1.0
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2524
+      synchronize_with: training_room_clone_push-ups_1
+    training_room_clone_push-ups_5:
+      model_id: 48
+      pos:
+        x: 97.38
+        y: -3.6210198
+        z: 394.25
+        w: 1.0
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2524
+      synchronize_with: training_room_clone_push-ups_1
+    training_room_clone_push-ups_6:
+      model_id: 48
+      pos:
+        x: 97.36
+        y: -3.6210198
+        z: 392.0
+        w: 1.0
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2524
+      synchronize_with: training_room_clone_push-ups_1
+    training_room_clone_push-ups_7:
+      model_id: 48
+      pos:
+        x: 97.34
+        y: -3.6210198
+        z: 389.75
+        w: 1.0
+      rot:
+        x: 1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2524
+      synchronize_with: training_room_clone_push-ups_1
+    training_room_clone_shooting_range_1:
+      model_id: 1044
+      pos:
+        x: 145.28635
+        y: 6.8242335
+        z: 427.0
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 1.0
+        w: 1.0
+      stand_animation_id: 241
+      tickable_procedures:
+        shoot:
+          weight: 300
+          steps:
+            - one_shot_animation_id: 2539
+              duration_millis: 1000
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1
+          next_possible_procedures:
+            - procedure: shoot
+              weight: 300
+            - procedure: empty
+    training_room_clone_shooting_range_2:
+      model_id: 1044
+      pos:
+        x: 138.52481
+        y: 6.8242335
+        z: 426.40643
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 1.0
+        w: 1.0
+      stand_animation_id: 241
+      tickable_procedures:
+        shoot:
+          weight: 300
+          steps:
+            - one_shot_animation_id: 2539
+              duration_millis: 1000
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1
+          next_possible_procedures:
+            - procedure: shoot
+              weight: 300
+            - procedure: empty
+    training_room_clone_shooting_range_3:
+      model_id: 1044
+      pos:
+        x: 135.35289
+        y: 6.8242335
+        z: 427.0
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 1.0
+        w: 1.0
+      stand_animation_id: 241
+      tickable_procedures:
+        shoot:
+          weight: 300
+          steps:
+            - one_shot_animation_id: 2539
+              duration_millis: 1000
+        empty:
+          weight: 89700
+          steps:
+            - duration_millis: 1
+          next_possible_procedures:
+            - procedure: shoot
+              weight: 300
+            - procedure: empty
+    training_room_control_room_ambient_1:
+      model_id: 48
+      pos:
+        x: 192.0
+        y: 9.581754
+        z: 395.1
+        w: 1.0
+      rot:
+        x: -0.8794418
+        y: 0
+        z: -0.47600633
+        w: 0
+      stand_animation_id: 2590
+    training_room_control_room_ambient_2:
+      model_id: 48
+      pos:
+        x: 199.28156
+        y: 9.583165
+        z: 378.56808
+        w: 1.0
+      rot:
+        x: 0.9836331
+        y: 0
+        z: -0.18018341
+        w: 0
+      stand_animation_id: 2590
+    training_room_control_room_ambient_3:
+      model_id: 48
+      pos:
+        x: 197.39528
+        y: 9.583178
+        z: 367.04382
+        w: 1.0
+      rot:
+        x: 0.9836331
+        y: 0
+        z: -0.18018341
+        w: 0
+      stand_animation_id: 2590
+    training_room_control_room_ambient_4:
+      model_id: 60
+      enable_gravity: false
+      pos:
+        x: 193.4
+        y: 9.7
+        z: 401.4
+        w: 1.0
+      rot:
+        x: 0.32465783
+        y: 0
+        z: -0.9458316
+        w: 0
+      stand_animation_id: 2551
+    training_room_control_room_ambient_5:
+      model_id: 43
+      enable_gravity: false
+      pos:
+        x: 194.8
+        y: 9.7
+        z: 398.86
+        w: 1.0
+      rot:
+        x: 0.85
+        y: 0
+        z: -0.5
+        w: 0
+      stand_animation_id: 2551
+    training_room_control_room_ambient_6:
+      model_id: 60
+      enable_gravity: false
+      pos:
+        x: 194.28
+        y: 9.7
+        z: 387.071
+        w: 1.0
+      rot:
+        x: -0.15
+        y: 0
+        z: 0.99
+        w: 0
+      stand_animation_id: 2551
+    training_room_control_room_ambient_7:
+      model_id: 43
+      enable_gravity: false
+      pos:
+        x: 194.5
+        y: 9.7
+        z: 383.63
+        w: 1.0
+      rot:
+        x: -0.097
+        y: 0
+        z: 1
+        w: 0
+      stand_animation_id: 2551
+    training_room_control_room_ambient_8:
+      model_id: 43
+      enable_gravity: false
+      pos:
+        x: 194.2
+        y: 9.7
+        z: 376.33
+        w: 1.0
+      rot:
+        x: 0.17
+        y: 0
+        z: 0.99
+        w: 0
+      stand_animation_id: 2551
+    training_room_control_room_ambient_9:
+      model_id: 60
+      enable_gravity: false
+      pos:
+        x: 193.92
+        y: 9.7
+        z: 373.0
+        w: 1.0
+      rot:
+        x: 0.17
+        y: 0
+        z: 0.985
+        w: 0
+      stand_animation_id: 2551
+    training_room_control_room_ambient_10:
+      model_id: 43
+      enable_gravity: false
+      pos:
+        x: 193.1
+        y: 9.7
+        z: 369.65
+        w: 1.0
+      rot:
+        x: 0.2
+        y: 0
+        z: 0.98
+        w: 0
+      stand_animation_id: 2551
+    training_room_control_room_ambient_11:
+      model_id: 60
+      enable_gravity: false
+      pos:
+        x: 195.2
+        y: 9.7
+        z: 362.065
+        w: 1.0
+      rot:
+        x: -0.65
+        y: 0
+        z: -0.75
+        w: 0
+      stand_animation_id: 2551
+    training_room_control_room_ambient_12:
+      model_id: 43
+      enable_gravity: false
+      pos:
+        x: 193.32
+        y: 9.7
+        z: 358.5
+        w: 1.0
+      rot:
+        x: -0.1
+        y: 0
+        z: -0.99
+        w: 0
+      stand_animation_id: 2551
+    training_room_cutting_wall_human:
+      model_id: 1066
+      pos:
+        x: 103.15
+        y: -3.6210194
+        z: 414.5
+        w: 1.0
+      rot:
+        x: -0.4
+        y: 0
+        z: 0.91848433
+        w: 0
+      stand_animation_id: 2523
+    training_room_cutting_wall_twilek:
+      model_id: 1068
+      pos:
+        x: 97.0
+        y: -3.6210198
+        z: 411.9
+        w: 1.0
+      rot:
+        x: -0.41702244
+        y: 0
+        z: 0.90889627
+        w: 0
+      stand_animation_id: 2521
+    training_room_cutting_wall_togruta:
+      model_id: 1067
+      pos:
+        x: 91.5
+        y: -3.6210198
+        z: 409.25
+        w: 1.0
+      rot:
+        x: -0.6
+        y: 0
+        z: 0.8
+        w: 0
+      stand_animation_id: 2522
+    training_room_dueling_platform_lift:
+      model_id: 1438
+      physics: Disabled
+      pos:
+        x: 130.9
+        y: -3.6210175
+        z: 379.9795
+        w: 1
+      rot:
+        x: -1.5708
+        y: 0
+        z: 0
+        w: 0
+      tickable_procedures:
+        lift:
+          steps:
+            - speed: 2
+              new_pos_offset_y: 12
+              duration_millis: 12000
+            - speed: 2
+              new_pos_offset_y: -12
+              duration_millis: 12000
+    training_room_jedi_and_crates_crates:
+      key: training_room_jedi_and_crates_crates
+      model_id: 187
+      name_id: 0
+      show_name: false
+      pos:
+        x: 161.65
+        y: 6.824238
+        z: 346.9
+        w: 1.0
+      rot:
+        x: 0.75
+        y: 0
+        z: -0.75
+        w: 0
+      stand_animation_id: 2501
+    training_room_jedi_and_crates_jedi:
+      model_id: 41
+      name_id: 0
+      show_name: false
+      pos:
+        x: 161.65
+        y: 6.824238
+        z: 346.9
+        w: 1.0
+      rot:
+        x: 0.75
+        y: 0
+        z: -0.75
+        w: 0
+      stand_animation_id: 2501
+      synchronize_with: training_room_jedi_and_crates_crates
+    training_room_main_platform_lift:
+      model_id: 1438
+      physics: Disabled
+      pos:
+        x: 148.8
+        y: -3.6210175
+        z: 379.9795
+        w: 1
+      rot:
+        x: 1.5708
+        y: 0
+        z: 0
+        w: 0
+      tickable_procedures:
+        lift:
+          steps:
+            - speed: 2
+              new_pos_offset_y: 10
+              duration_millis: 10000
+            - speed: 2
+              new_pos_offset_y: -10
+              duration_millis: 10000
+    training_room_obstacles_1:
+      key: training_room_obstacles_1
+      model_id: 48
+      scale: 0.83
+      pos:
+        x: 135.8
+        y: 9.95
+        z: 379.9
+        w: 1
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2507
+    training_room_obstacles_2:
+      model_id: 1947
+      scale: 0.83
+      pos:
+        x: 135.8
+        y: 9.95
+        z: 379.9
+        w: 1
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2508
+      synchronize_with: training_room_obstacles_1
+    training_room_obstacles_3:
+      model_id: 412
+      scale: 0.83
+      pos:
+        x: 135.8
+        y: 9.95
+        z: 379.9
+        w: 1
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2509
+    training_room_obstacles_4:
+      model_id: 42
+      scale: 0.83
+      pos:
+        x: 135.8
+        y: 9.95
+        z: 379.9
+        w: 1
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2510
+    training_room_pillars_1:
+      model_id: 42
+      scale: 0.83
+      pos:
+        x: 135.9
+        y: 9.95
+        z: 380.15
+        w: 1.0
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2536
+    training_room_pillars_2:
+      model_id: 1947
+      scale: 0.83
+      pos:
+        x: 135.9
+        y: 9.95
+        z: 380.15
+        w: 1.0
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2537
+    training_room_pillars_3:
+      model_id: 1946
+      scale: 0.83
+      pos:
+        x: 135.9
+        y: 9.95
+        z: 380.15
+        w: 1.0
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2538
+    training_room_spinning_lightsaber_rodian:
+      model_id: 146
+      pos:
+        x: 139.95262
+        y: 6.8242335
+        z: 339.0148
+        w: 1.0
+      rot:
+        x: 0.43124008
+        y: 0
+        z: 0.9022371
+        w: 0
+      stand_animation_id: 2504
+    training_room_spinning_lightsaber_human:
+      model_id: 147
+      pos:
+        x: 143.9
+        y: 6.8242335
+        z: 334.98163
+        w: 1.0
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2529
+    training_room_spinning_lightsaber_togruta:
+      model_id: 223
+      pos:
+        x: 141.33
+        y: 7.0
+        z: 326.64008
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 1.0
+        w: 0
+      stand_animation_id: 2503
+    training_room_wall_climb_1:
+      model_id: 1948
+      scale: 0.83
+      pos:
+        x: 135.8
+        y: 9.95
+        z: 379.9
+        w: 1
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2511
+    training_room_wall_climb_2:
+      model_id: 1949
+      scale: 0.83
+      pos:
+        x: 135.8
+        y: 9.95
+        z: 379.9
+        w: 1
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2512
+    training_room_wall_climb_3:
+      model_id: 41
+      scale: 0.83
+      pos:
+        x: 135.8
+        y: 9.95
+        z: 379.9
+        w: 1
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2516
+    training_room_wall_climb_4:
+      key: training_room_wall_climb_4
+      model_id: 1950
+      scale: 0.83
+      pos:
+        x: 135.8
+        y: 9.95
+        z: 379.9
+        w: 1
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2513
+    training_room_wall_climb_5:
+      model_id: 1951
+      scale: 0.83
+      pos:
+        x: 135.8
+        y: 9.95
+        z: 379.9
+        w: 1
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2514
+      synchronize_with: training_room_wall_climb_4
+    training_room_wall_climb_6:
+      model_id: 48
+      scale: 0.83
+      pos:
+        x: 135.8
+        y: 9.95
+        z: 379.9
+        w: 1
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2515
+    training_room_yellow_monkey_lizard:
+      model_id: 1612
+      texture_alias: Yellow
+      pos:
+        x: 146.38
+        y: 10.334785
+        z: 327.56
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 1
+        w: 1.0
+
+    #
+    # Veranda (Shops)
     #
     veranda_fountain:
       terrain_object_id: 1278971305
@@ -1186,7 +2132,7 @@ jedi_temple:
         player_one_shot_animation_id: 3014
         duration_millis: 5000
     # Guard Top Right Main Hall Door
-    clone_guard_shops_1:
+    clone_guard_veranda_1:
       model_id: 1936
       pos:
         x: 917.18353
@@ -1208,7 +2154,7 @@ jedi_temple:
       interact_radius: 6
       auto_interact_radius: 5
     # Guard Next to Workshop Door
-    clone_guard_shops_2:
+    clone_guard_veranda_2:
       model_id: 1936
       pos:
         x: 898.0
@@ -1230,7 +2176,7 @@ jedi_temple:
       interact_radius: 6
       auto_interact_radius: 5
     # Guard Top Left Main Hall Door
-    clone_guard_shops_3:
+    clone_guard_veranda_3:
       model_id: 1936
       pos:
         x: 917.18353
@@ -1252,7 +2198,7 @@ jedi_temple:
       interact_radius: 6
       auto_interact_radius: 5
     # Guard Next to Archives Door
-    clone_guard_shops_4:
+    clone_guard_veranda_4:
       model_id: 1936
       pos:
         x: 898.0
@@ -1273,397 +2219,6 @@ jedi_temple:
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
-
-    #
-    # Training Room
-    #
-    # Spinning Lightsaber Front Jedi
-    training_room_main_platform_lift:
-      model_id: 1438
-      physics: Disabled
-      pos:
-        x: 148.8
-        y: -3.6210175
-        z: 379.9795
-        w: 1
-      rot:
-        x: 1.5708
-        y: 0
-        z: 0
-        w: 0
-      tickable_procedures:
-        lift:
-          steps:
-            - speed: 2
-              new_pos_offset_y: 10
-              duration_millis: 10000
-            - speed: 2
-              new_pos_offset_y: -10
-              duration_millis: 10000
-    training_room_dueling_platform_lift:
-      model_id: 1438
-      physics: Disabled
-      pos:
-        x: 130.9
-        y: -3.6210175
-        z: 379.9795
-        w: 1
-      rot:
-        x: -1.5708
-        y: 0
-        z: 0
-        w: 0
-      tickable_procedures:
-        lift:
-          steps:
-            - speed: 2
-              new_pos_offset_y: 12
-              duration_millis: 12000
-            - speed: 2
-              new_pos_offset_y: -12
-              duration_millis: 12000
-    saber_strike_npc_1:
-      model_id: 146
-      pos:
-        x: 139.95262
-        y: 6.8242335
-        z: 339.0148
-        w: 1.0
-      rot:
-        x: 0.43124008
-        y: 0
-        z: 0.9022371
-        w: 0
-      stand_animation_id: 2504
-    # Spinning Lightsaber Jump Jedi
-    saber_strike_npc_2:
-      model_id: 147
-      pos:
-        x: 144.97792
-        y: 6.8242335
-        z: 334.98163
-        w: 1.0
-      rot:
-        x: -1
-        y: 0
-        z: 0
-        w: 0
-      stand_animation_id: 2529
-    # Horizontal Spinning Lightsaber Jedi
-    saber_strike_npc_3:
-      model_id: 223
-      pos:
-        x: 141.74367
-        y: 7.0
-        z: 326.64008
-        w: 1.0
-      rot:
-        x: 0
-        y: 0
-        z: 1
-        w: 0
-      stand_animation_id: 2503
-    # Drill Sergeant for push-up clones
-    clone_push-ups_npc_1:
-      model_id: 60
-      pos:
-        x: 106.5
-        y: -3.6210203
-        z: 390.5
-        w: 1.0
-      rot:
-        x: -1
-        y: 0
-        z: 0
-        w: 0
-      stand_animation_id: 2505
-    # Rest of these are clones doing push-ups
-    clone_push-ups_npc_2:
-      model_id: 48
-      pos:
-        x: 101.0
-        y: -3.6210194
-        z: 394.5
-        w: 1.0
-      rot:
-        x: 1
-        y: 0
-        z: 0
-        w: 0
-      stand_animation_id: 2524
-    clone_push-ups_npc_3:
-      model_id: 48
-      pos:
-        x: 101.02
-        y: -3.6210194
-        z: 392.25
-        w: 1.0
-      rot:
-        x: 1
-        y: 0
-        z: 0
-        w: 0
-      stand_animation_id: 2524
-    clone_push-ups_npc_4:
-      model_id: 48
-      pos:
-        x: 101.04
-        y: -3.6210194
-        z: 390.0
-        w: 1.0
-      rot:
-        x: 1
-        y: 0
-        z: 0
-        w: 0
-      stand_animation_id: 2524
-    clone_push-ups_npc_5:
-      model_id: 48
-      pos:
-        x: 101.06
-        y: -3.6210194
-        z: 387.75
-        w: 1.0
-      rot:
-        x: 1
-        y: 0
-        z: 0
-        w: 0
-      stand_animation_id: 2524
-    clone_push-ups_npc_6:
-      model_id: 48
-      pos:
-        x: 97.38
-        y: -3.6210198
-        z: 394.25
-        w: 1.0
-      rot:
-        x: 1
-        y: 0
-        z: 0
-        w: 0
-      stand_animation_id: 2524
-    clone_push-ups_npc_7:
-      model_id: 48
-      pos:
-        x: 97.36
-        y: -3.6210198
-        z: 392.0
-        w: 1.0
-      rot:
-        x: 1
-        y: 0
-        z: 0
-        w: 0
-      stand_animation_id: 2524
-    clone_push-ups_npc_8:
-      model_id: 48
-      pos:
-        x: 97.34
-        y: -3.6210198
-        z: 389.75
-        w: 1.0
-      rot:
-        x: 1
-        y: 0
-        z: 0
-        w: 0
-      stand_animation_id: 2524
-    # Clone climbing wall
-    wall_climb_npc_1:
-      model_id: 1948
-      scale: 0.83
-      pos:
-        x: 135.8
-        y: 9.95
-        z: 379.9
-        w: 1
-      rot:
-        x: -1
-        y: 0
-        z: 0
-        w: 0
-      stand_animation_id: 2511
-    # Clone climbing wall
-    wall_climb_npc_2:
-      model_id: 1949
-      scale: 0.83
-      pos:
-        x: 135.8
-        y: 9.95
-        z: 379.9
-        w: 1
-      rot:
-        x: -1
-        y: 0
-        z: 0
-        w: 0
-      stand_animation_id: 2512
-    # Jedi climbing wall
-    wall_climb_npc_3:
-      model_id: 41
-      scale: 0.83
-      pos:
-        x: 135.8
-        y: 9.95
-        z: 379.9
-        w: 1
-      rot:
-        x: -1
-        y: 0
-        z: 0
-        w: 0
-      stand_animation_id: 2516
-    # Clone climbing wall
-    wall_climb_npc_4:
-      model_id: 1950
-      scale: 0.83
-      pos:
-        x: 135.8
-        y: 9.95
-        z: 379.9
-        w: 1
-      rot:
-        x: -1
-        y: 0
-        z: 0
-        w: 0
-      stand_animation_id: 2513
-    # Clone climbing wall
-    wall_climb_npc_5:
-      model_id: 1951
-      scale: 0.83
-      pos:
-        x: 135.8
-        y: 9.95
-        z: 379.9
-        w: 1
-      rot:
-        x: -1
-        y: 0
-        z: 0
-        w: 0
-      stand_animation_id: 2514
-    # Clone climbing wall
-    wall_climb_npc_6:
-      model_id: 48
-      scale: 0.83
-      pos:
-        x: 135.8
-        y: 9.95
-        z: 379.9
-        w: 1
-      rot:
-        x: -1
-        y: 0
-        z: 0
-        w: 0
-      stand_animation_id: 2515
-    # Clone obstacles
-    obstacles_npc_1:
-      model_id: 48
-      scale: 0.83
-      pos:
-        x: 135.8
-        y: 9.95
-        z: 379.9
-        w: 1
-      rot:
-        x: -1
-        y: 0
-        z: 0
-        w: 0
-      stand_animation_id: 2507
-    # Clone obstacles
-    obstacles_npc_2:
-      model_id: 1947
-      scale: 0.83
-      pos:
-        x: 135.8
-        y: 9.95
-        z: 379.9
-        w: 1
-      rot:
-        x: -1
-        y: 0
-        z: 0
-        w: 0
-      stand_animation_id: 2508
-    # Jedi obstacles
-    obstacles_npc_3:
-      model_id: 412
-      scale: 0.83
-      pos:
-        x: 135.8
-        y: 9.95
-        z: 379.9
-        w: 1
-      rot:
-        x: -1
-        y: 0
-        z: 0
-        w: 0
-      stand_animation_id: 2509
-    # Jedi obstacles
-    obstacles_npc_4:
-      model_id: 42
-      scale: 0.83
-      pos:
-        x: 135.8
-        y: 9.95
-        z: 379.9
-        w: 1
-      rot:
-        x: -1
-        y: 0
-        z: 0
-        w: 0
-      stand_animation_id: 2510
-    # Jedi Pillars
-    pillars_npc_1:
-      model_id: 42
-      scale: 0.83
-      pos:
-        x: 135.9
-        y: 9.95
-        z: 380.15
-        w: 1.0
-      rot:
-        x: -1
-        y: 0
-        z: 0
-        w: 0
-      stand_animation_id: 2536
-    # Clone Pillars
-    pillars_npc_2:
-      model_id: 1947
-      scale: 0.83
-      pos:
-        x: 135.9
-        y: 9.95
-        z: 380.15
-        w: 1.0
-      rot:
-        x: -1
-        y: 0
-        z: 0
-        w: 0
-      stand_animation_id: 2537
-    # Clone Pillars
-    pillars_npc_3:
-      model_id: 1946
-      scale: 0.83
-      pos:
-        x: 135.9
-        y: 9.95
-        z: 380.15
-        w: 1.0
-      rot:
-        x: -1
-        y: 0
-        z: 0
-        w: 0
-      stand_animation_id: 2538
 
     #
     # War Room
@@ -1721,8 +2276,7 @@ jedi_temple:
     #
     # Workshop
     #
-    # Droid Pile
-    workshop_npc_1:
+    workshop_droid_pile:
       model_id: 1009
       pos:
         x: -337.12753
@@ -1743,8 +2297,7 @@ jedi_temple:
         player_one_shot_animation_id: 3014
         one_shot_animation_id: 2561
         duration_millis: 5000
-    # Zombie Droid
-    workshop_npc_2:
+    workshop_zombie_droid:
       model_id: 1027
       pos:
         x: -331.35208
@@ -1766,7 +2319,7 @@ jedi_temple:
         one_shot_animation_id: 2559
         duration_millis: 12000
     # Pink Astromech Droid
-    workshop_npc_3:
+    workshop_ambient_droid_1:
       model_id: 2220
       pos:
         x: -337.6852
@@ -1778,8 +2331,7 @@ jedi_temple:
         y: 0
         z: 0.89974594
         w: 1.0
-    # Running Gonk Droid
-    workshop_npc_4:
+    workshop_running_gonk_droid:
       model_id: 233
       pos:
         x: -347.34412
@@ -1792,15 +2344,14 @@ jedi_temple:
         z: 0.9999439
         w: 0
       stand_animation_id: 3
-    # Astromech Droid next to Commander Gree
-    workshop_npc_5:
+    workshop_infiltration_droid:
       model_id: 642
       name_id: 12797
       show_name: false
       pos:
-        x: -330.9994
+        x: -330.63
         y: 10.185185
-        z: 1791.6196
+        z: 1791.75
         w: 1.0
       rot:
         x: -0.7430571
@@ -1808,8 +2359,7 @@ jedi_temple:
         z: -0.6692279
         w: 1.0
       composite_effect_id: 2044
-    # Battle Droid on Table
-    workshop_npc_6:
+    workshop_damaged_battle_droid:
       model_id: 1065
       pos:
         x: -336.9498
@@ -1830,8 +2380,7 @@ jedi_temple:
         duration_millis: 5000
       interact_radius: 5
       move_to_interact_offset: 4
-    # Hidden Monkey Lizard
-    workshop_npc_7:
+    workshop_green_monkey_lizard:
       model_id: 1612
       texture_alias: Green
       pos:
