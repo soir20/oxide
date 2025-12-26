@@ -715,7 +715,6 @@ jedi_temple:
         player_one_shot_animation_id: 3014
         one_shot_animation_id: 2302
         duration_millis: 6000
-    # Clone with Missile Rack
     hanger_clone_with_missile_rack:
       model_id: 968
       pos:
@@ -1151,123 +1150,6 @@ jedi_temple:
         player_one_shot_animation_id: 3014
         one_shot_animation_id: 2302
         duration_millis: 8000
-
-    #
-    # Shops
-    #
-    shops_veranda_fountain:
-      terrain_object_id: 1278971305
-      model_id: 907
-      name_id: 16957
-      pos:
-        x: 897.7858
-        y: 172.44917
-        z: 1547.0056
-        w: 1
-      rot:
-        x: 0
-        y: 0
-        z: 0
-        w: 0
-      cursor: 54
-      enable_interact_popup: false
-      use_terrain_model: false
-      show_name: false
-      enable_gravity: false
-      interact_radius: 3.3
-      move_to_interact_offset: 3.2
-      one_shot_interaction:
-        composite_effect_id: 1959
-        player_one_shot_animation_id: 3014
-        duration_millis: 5000
-    # Guard Top Right Main Hall Door
-    clone_guard_shops_1:
-      model_id: 1936
-      pos:
-        x: 917.18353
-        y: 178.45145
-        z: 1566.1334
-        w: 1.0
-      rot:
-        x: 0
-        y: 0
-        z: -1
-        w: 0
-      stand_animation_id: 2505
-      cursor: 54
-      clickable: false
-      enable_interact_popup: false
-      one_shot_interaction:
-        one_shot_animation_id: 2506
-        duration_millis: 4000
-      interact_radius: 6
-      auto_interact_radius: 5
-    # Guard Next to Workshop Door
-    clone_guard_shops_2:
-      model_id: 1936
-      pos:
-        x: 898.0
-        y: 172.44919
-        z: 1561.6
-        w: 1.0
-      rot:
-        x: -1
-        y: 0
-        z: 0
-        w: 0
-      stand_animation_id: 2505
-      cursor: 54
-      clickable: false
-      enable_interact_popup: false
-      one_shot_interaction:
-        one_shot_animation_id: 2506
-        duration_millis: 4000
-      interact_radius: 6
-      auto_interact_radius: 5
-    # Guard Top Left Main Hall Door
-    clone_guard_shops_3:
-      model_id: 1936
-      pos:
-        x: 917.18353
-        y: 178.45145
-        z: 1527.4415
-        w: 1.0
-      rot:
-        x: 0
-        y: 0
-        z: 1
-        w: 0
-      stand_animation_id: 2505
-      cursor: 54
-      clickable: false
-      enable_interact_popup: false
-      one_shot_interaction:
-        one_shot_animation_id: 2506
-        duration_millis: 4000
-      interact_radius: 6
-      auto_interact_radius: 5
-    # Guard Next to Archives Door
-    clone_guard_shops_4:
-      model_id: 1936
-      pos:
-        x: 898.0
-        y: 172.44919
-        z: 1532.5
-        w: 1.0
-      rot:
-        x: -1
-        y: 0
-        z: 0
-        w: 0
-      stand_animation_id: 2505
-      cursor: 54
-      clickable: false
-      enable_interact_popup: false
-      one_shot_interaction:
-        one_shot_animation_id: 2506
-        duration_millis: 4000
-      interact_radius: 6
-      auto_interact_radius: 5
 
     #
     # Training Room
@@ -2220,6 +2102,123 @@ jedi_temple:
         y: 0
         z: 1
         w: 1.0
+
+    #
+    # Veranda (Shops)
+    #
+    veranda_fountain:
+      terrain_object_id: 1278971305
+      model_id: 907
+      name_id: 16957
+      pos:
+        x: 897.7858
+        y: 172.44917
+        z: 1547.0056
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: false
+      use_terrain_model: false
+      show_name: false
+      enable_gravity: false
+      interact_radius: 3.3
+      move_to_interact_offset: 3.2
+      one_shot_interaction:
+        composite_effect_id: 1959
+        player_one_shot_animation_id: 3014
+        duration_millis: 5000
+    # Guard Top Right Main Hall Door
+    clone_guard_veranda_1:
+      model_id: 1936
+      pos:
+        x: 917.18353
+        y: 178.45145
+        z: 1566.1334
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: -1
+        w: 0
+      stand_animation_id: 2505
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+      one_shot_interaction:
+        one_shot_animation_id: 2506
+        duration_millis: 4000
+      interact_radius: 6
+      auto_interact_radius: 5
+    # Guard Next to Workshop Door
+    clone_guard_veranda_2:
+      model_id: 1936
+      pos:
+        x: 898.0
+        y: 172.44919
+        z: 1561.6
+        w: 1.0
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2505
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+      one_shot_interaction:
+        one_shot_animation_id: 2506
+        duration_millis: 4000
+      interact_radius: 6
+      auto_interact_radius: 5
+    # Guard Top Left Main Hall Door
+    clone_guard_veranda_3:
+      model_id: 1936
+      pos:
+        x: 917.18353
+        y: 178.45145
+        z: 1527.4415
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 1
+        w: 0
+      stand_animation_id: 2505
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+      one_shot_interaction:
+        one_shot_animation_id: 2506
+        duration_millis: 4000
+      interact_radius: 6
+      auto_interact_radius: 5
+    # Guard Next to Archives Door
+    clone_guard_veranda_4:
+      model_id: 1936
+      pos:
+        x: 898.0
+        y: 172.44919
+        z: 1532.5
+        w: 1.0
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      stand_animation_id: 2505
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+      one_shot_interaction:
+        one_shot_animation_id: 2506
+        duration_millis: 4000
+      interact_radius: 6
+      auto_interact_radius: 5
 
     #
     # War Room
