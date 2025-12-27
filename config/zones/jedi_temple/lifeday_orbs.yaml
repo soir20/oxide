@@ -19,12 +19,12 @@ jedi_temple:
           weight: 300
           steps:
             - spawned_state: Always
-              duration_millis: 1
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: lifespan
         lifespan:
           steps:
-            - duration_millis: 1200000
+            - min_duration_millis: 1200000
           next_possible_procedures:
             - procedure: remove
         remove:
@@ -34,7 +34,7 @@ jedi_temple:
                 Graceful:
                   fade_duration_millis: 1000
                   removal_delay_millis: 0
-              duration_millis: 1000
+              min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
             - procedure: empty
@@ -42,7 +42,7 @@ jedi_temple:
         empty:
           weight: 89700
           steps:
-            - duration_millis: 1000
+            - min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
               weight: 300
@@ -66,12 +66,12 @@ jedi_temple:
           weight: 300
           steps:
             - spawned_state: Always
-              duration_millis: 1
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: lifespan
         lifespan:
           steps:
-            - duration_millis: 1200000
+            - min_duration_millis: 1200000
           next_possible_procedures:
             - procedure: remove
         remove:
@@ -81,7 +81,7 @@ jedi_temple:
                 Graceful:
                   fade_duration_millis: 1000
                   removal_delay_millis: 0
-              duration_millis: 1000
+              min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
             - procedure: empty
@@ -89,7 +89,7 @@ jedi_temple:
         empty:
           weight: 89700
           steps:
-            - duration_millis: 1000
+            - min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
               weight: 300
@@ -113,12 +113,12 @@ jedi_temple:
           weight: 300
           steps:
             - spawned_state: Always
-              duration_millis: 1
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: lifespan
         lifespan:
           steps:
-            - duration_millis: 1200000
+            - min_duration_millis: 1200000
           next_possible_procedures:
             - procedure: remove
         remove:
@@ -128,7 +128,7 @@ jedi_temple:
                 Graceful:
                   fade_duration_millis: 1000
                   removal_delay_millis: 0
-              duration_millis: 1000
+              min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
             - procedure: empty
@@ -136,7 +136,7 @@ jedi_temple:
         empty:
           weight: 89700
           steps:
-            - duration_millis: 1000
+            - min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
               weight: 300
@@ -160,12 +160,12 @@ jedi_temple:
           weight: 150
           steps:
             - spawned_state: Always
-              duration_millis: 1
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: lifespan
         lifespan:
           steps:
-            - duration_millis: 1200000
+            - min_duration_millis: 1200000
           next_possible_procedures:
             - procedure: remove
         remove:
@@ -175,7 +175,7 @@ jedi_temple:
                 Graceful:
                   fade_duration_millis: 1000
                   removal_delay_millis: 0
-              duration_millis: 1000
+              min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
             - procedure: empty
@@ -183,7 +183,7 @@ jedi_temple:
         empty:
           weight: 89700
           steps:
-            - duration_millis: 1000
+            - min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
               weight: 150
@@ -229,12 +229,12 @@ jedi_temple:
         spawn:
           steps:
             - spawned_state: Always
-              duration_millis: 1
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: idle
         idle:
           steps:
-            - duration_millis: 1200000
+            - min_duration_millis: 1200000
           next_possible_procedures:
             - procedure: remove
         remove:
@@ -244,7 +244,7 @@ jedi_temple:
                 Graceful:
                   fade_duration_millis: 1000
                   removal_delay_millis: 0
-              duration_millis: 1000
+              min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
             - procedure: empty
@@ -252,7 +252,7 @@ jedi_temple:
         empty:
           weight: 89700
           steps:
-            - duration_millis: 1000
+            - min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
               weight: 300
@@ -300,12 +300,12 @@ jedi_temple:
         spawn:
           steps:
             - spawned_state: Always
-              duration_millis: 1
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: idle
         idle:
           steps:
-            - duration_millis: 1200000
+            - min_duration_millis: 1200000
           next_possible_procedures:
             - procedure: remove
         remove:
@@ -315,7 +315,7 @@ jedi_temple:
                 Graceful:
                   fade_duration_millis: 1000
                   removal_delay_millis: 0
-              duration_millis: 1000
+              min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
             - procedure: empty
@@ -323,7 +323,7 @@ jedi_temple:
         empty:
           weight: 89700
           steps:
-            - duration_millis: 1000
+            - min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
               weight: 300
@@ -383,12 +383,12 @@ jedi_temple:
           weight: 300
           steps:
             - spawned_state: Always
-              duration_millis: 1
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: lifespan
         lifespan:
           steps:
-            - duration_millis: 1200000
+            - min_duration_millis: 1200000
           next_possible_procedures:
             - procedure: remove
         remove:
@@ -398,13 +398,13 @@ jedi_temple:
                 Graceful:
                   fade_duration_millis: 1000
                   removal_delay_millis: 0
-              duration_millis: 1000
+              min_duration_millis: 1000
           next_possible_procedures:
             - procedure: empty
         empty:
           weight: 89700
           steps:
-            - duration_millis: 1000
+            - min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
               weight: 300
@@ -440,12 +440,12 @@ jedi_temple:
           weight: 150
           steps:
             - spawned_state: Always
-              duration_millis: 1
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: lifespan
         lifespan:
           steps:
-            - duration_millis: 1200000
+            - min_duration_millis: 1200000
           next_possible_procedures:
             - procedure: remove
         remove:
@@ -455,13 +455,13 @@ jedi_temple:
                 Graceful:
                   fade_duration_millis: 1000
                   removal_delay_millis: 0
-              duration_millis: 1000
+              min_duration_millis: 1000
           next_possible_procedures:
             - procedure: empty
         empty:
           weight: 89700
           steps:
-            - duration_millis: 1000
+            - min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
               weight: 150
@@ -504,12 +504,12 @@ jedi_temple:
         spawn:
           steps:
             - spawned_state: Always
-              duration_millis: 1
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: idle
         idle:
           steps:
-            - duration_millis: 1200000
+            - min_duration_millis: 1200000
           next_possible_procedures:
             - procedure: remove
         remove:
@@ -519,7 +519,7 @@ jedi_temple:
                 Graceful:
                   fade_duration_millis: 1000
                   removal_delay_millis: 0
-              duration_millis: 1000
+              min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
             - procedure: empty
@@ -527,7 +527,7 @@ jedi_temple:
         empty:
           weight: 89700
           steps:
-            - duration_millis: 1000
+            - min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
               weight: 300
@@ -570,12 +570,12 @@ jedi_temple:
         spawn:
           steps:
             - spawned_state: Always
-              duration_millis: 1
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: idle
         idle:
           steps:
-            - duration_millis: 1200000
+            - min_duration_millis: 1200000
           next_possible_procedures:
             - procedure: remove
         remove:
@@ -585,7 +585,7 @@ jedi_temple:
                 Graceful:
                   fade_duration_millis: 1000
                   removal_delay_millis: 0
-              duration_millis: 1000
+              min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
             - procedure: empty
@@ -593,7 +593,7 @@ jedi_temple:
         empty:
           weight: 89700
           steps:
-            - duration_millis: 1000
+            - min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
               weight: 300
@@ -637,12 +637,12 @@ jedi_temple:
           weight: 300
           steps:
             - spawned_state: Always
-              duration_millis: 1
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: lifespan
         lifespan:
           steps:
-            - duration_millis: 1200000
+            - min_duration_millis: 1200000
           next_possible_procedures:
             - procedure: remove
         remove:
@@ -652,13 +652,13 @@ jedi_temple:
                 Graceful:
                   fade_duration_millis: 1000
                   removal_delay_millis: 0
-              duration_millis: 1000
+              min_duration_millis: 1000
           next_possible_procedures:
             - procedure: empty
         empty:
           weight: 89700
           steps:
-            - duration_millis: 1000
+            - min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
               weight: 300
@@ -701,12 +701,12 @@ jedi_temple:
         spawn:
           steps:
             - spawned_state: Always
-              duration_millis: 1
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: idle
         idle:
           steps:
-            - duration_millis: 1200000
+            - min_duration_millis: 1200000
           next_possible_procedures:
             - procedure: remove
         remove:
@@ -716,7 +716,7 @@ jedi_temple:
                 Graceful:
                   fade_duration_millis: 1000
                   removal_delay_millis: 0
-              duration_millis: 1000
+              min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
             - procedure: empty
@@ -724,7 +724,7 @@ jedi_temple:
         empty:
           weight: 89700
           steps:
-            - duration_millis: 1000
+            - min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
               weight: 300
@@ -767,12 +767,12 @@ jedi_temple:
         spawn:
           steps:
             - spawned_state: Always
-              duration_millis: 1
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: idle
         idle:
           steps:
-            - duration_millis: 1200000
+            - min_duration_millis: 1200000
           next_possible_procedures:
             - procedure: remove
         remove:
@@ -782,7 +782,7 @@ jedi_temple:
                 Graceful:
                   fade_duration_millis: 1000
                   removal_delay_millis: 0
-              duration_millis: 1000
+              min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
             - procedure: empty
@@ -790,7 +790,7 @@ jedi_temple:
         empty:
           weight: 89700
           steps:
-            - duration_millis: 1000
+            - min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
               weight: 300
@@ -833,12 +833,12 @@ jedi_temple:
         spawn:
           steps:
             - spawned_state: Always
-              duration_millis: 1
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: idle
         idle:
           steps:
-            - duration_millis: 1200000
+            - min_duration_millis: 1200000
           next_possible_procedures:
             - procedure: remove
         remove:
@@ -848,7 +848,7 @@ jedi_temple:
                 Graceful:
                   fade_duration_millis: 1000
                   removal_delay_millis: 0
-              duration_millis: 1000
+              min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
             - procedure: empty
@@ -856,7 +856,7 @@ jedi_temple:
         empty:
           weight: 89700
           steps:
-            - duration_millis: 1000
+            - min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
               weight: 300
@@ -899,12 +899,12 @@ jedi_temple:
         spawn:
           steps:
             - spawned_state: Always
-              duration_millis: 1
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: idle
         idle:
           steps:
-            - duration_millis: 1200000
+            - min_duration_millis: 1200000
           next_possible_procedures:
             - procedure: remove
         remove:
@@ -914,7 +914,7 @@ jedi_temple:
                 Graceful:
                   fade_duration_millis: 1000
                   removal_delay_millis: 0
-              duration_millis: 1000
+              min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
             - procedure: empty
@@ -922,7 +922,7 @@ jedi_temple:
         empty:
           weight: 89700
           steps:
-            - duration_millis: 1000
+            - min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
               weight: 300
@@ -969,12 +969,12 @@ jedi_temple:
         spawn:
           steps:
             - spawned_state: Always
-              duration_millis: 1
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: idle
         idle:
           steps:
-            - duration_millis: 1200000
+            - min_duration_millis: 1200000
           next_possible_procedures:
             - procedure: remove
         remove:
@@ -984,7 +984,7 @@ jedi_temple:
                 Graceful:
                   fade_duration_millis: 1000
                   removal_delay_millis: 0
-              duration_millis: 1000
+              min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
             - procedure: empty
@@ -992,7 +992,7 @@ jedi_temple:
         empty:
           weight: 89700
           steps:
-            - duration_millis: 1000
+            - min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
               weight: 300
@@ -1039,12 +1039,12 @@ jedi_temple:
         spawn:
           steps:
             - spawned_state: Always
-              duration_millis: 1
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: idle
         idle:
           steps:
-            - duration_millis: 1200000
+            - min_duration_millis: 1200000
           next_possible_procedures:
             - procedure: remove
         remove:
@@ -1054,7 +1054,7 @@ jedi_temple:
                 Graceful:
                   fade_duration_millis: 1000
                   removal_delay_millis: 0
-              duration_millis: 1000
+              min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
             - procedure: empty
@@ -1062,7 +1062,7 @@ jedi_temple:
         empty:
           weight: 89700
           steps:
-            - duration_millis: 1000
+            - min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
               weight: 300
@@ -1114,12 +1114,12 @@ jedi_temple:
           weight: 300
           steps:
             - spawned_state: Always
-              duration_millis: 1
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: lifespan
         lifespan:
           steps:
-            - duration_millis: 1200000
+            - min_duration_millis: 1200000
           next_possible_procedures:
             - procedure: remove
         remove:
@@ -1129,13 +1129,13 @@ jedi_temple:
                 Graceful:
                   fade_duration_millis: 1000
                   removal_delay_millis: 0
-              duration_millis: 1000
+              min_duration_millis: 1000
           next_possible_procedures:
             - procedure: empty
         empty:
           weight: 89700
           steps:
-            - duration_millis: 1000
+            - min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
               weight: 300
@@ -1175,12 +1175,12 @@ jedi_temple:
           weight: 150
           steps:
             - spawned_state: Always
-              duration_millis: 1
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: lifespan
         lifespan:
           steps:
-            - duration_millis: 1200000
+            - min_duration_millis: 1200000
           next_possible_procedures:
             - procedure: remove
         remove:
@@ -1190,13 +1190,13 @@ jedi_temple:
                 Graceful:
                   fade_duration_millis: 1000
                   removal_delay_millis: 0
-              duration_millis: 1000
+              min_duration_millis: 1000
           next_possible_procedures:
             - procedure: empty
         empty:
           weight: 89700
           steps:
-            - duration_millis: 1000
+            - min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
               weight: 150
@@ -1239,12 +1239,12 @@ jedi_temple:
         spawn:
           steps:
             - spawned_state: Always
-              duration_millis: 1
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: idle
         idle:
           steps:
-            - duration_millis: 1200000
+            - min_duration_millis: 1200000
           next_possible_procedures:
             - procedure: remove
         remove:
@@ -1254,7 +1254,7 @@ jedi_temple:
                 Graceful:
                   fade_duration_millis: 1000
                   removal_delay_millis: 0
-              duration_millis: 1000
+              min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
             - procedure: empty
@@ -1262,7 +1262,7 @@ jedi_temple:
         empty:
           weight: 89700
           steps:
-            - duration_millis: 1000
+            - min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
               weight: 300
@@ -1305,12 +1305,12 @@ jedi_temple:
         spawn:
           steps:
             - spawned_state: Always
-              duration_millis: 1
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: idle
         idle:
           steps:
-            - duration_millis: 1200000
+            - min_duration_millis: 1200000
           next_possible_procedures:
             - procedure: remove
         remove:
@@ -1320,7 +1320,7 @@ jedi_temple:
                 Graceful:
                   fade_duration_millis: 1000
                   removal_delay_millis: 0
-              duration_millis: 1000
+              min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
             - procedure: empty
@@ -1328,7 +1328,7 @@ jedi_temple:
         empty:
           weight: 89700
           steps:
-            - duration_millis: 1000
+            - min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
               weight: 300
@@ -1376,12 +1376,12 @@ jedi_temple:
           weight: 300
           steps:
             - spawned_state: Always
-              duration_millis: 1
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: lifespan
         lifespan:
           steps:
-            - duration_millis: 1200000
+            - min_duration_millis: 1200000
           next_possible_procedures:
             - procedure: remove
         remove:
@@ -1391,13 +1391,13 @@ jedi_temple:
                 Graceful:
                   fade_duration_millis: 1000
                   removal_delay_millis: 0
-              duration_millis: 1000
+              min_duration_millis: 1000
           next_possible_procedures:
             - procedure: empty
         empty:
           weight: 89700
           steps:
-            - duration_millis: 1000
+            - min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
               weight: 300
@@ -1440,12 +1440,12 @@ jedi_temple:
         spawn:
           steps:
             - spawned_state: Always
-              duration_millis: 1
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: idle
         idle:
           steps:
-            - duration_millis: 1200000
+            - min_duration_millis: 1200000
           next_possible_procedures:
             - procedure: remove
         remove:
@@ -1455,7 +1455,7 @@ jedi_temple:
                 Graceful:
                   fade_duration_millis: 1000
                   removal_delay_millis: 0
-              duration_millis: 1000
+              min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
             - procedure: empty
@@ -1463,7 +1463,7 @@ jedi_temple:
         empty:
           weight: 89700
           steps:
-            - duration_millis: 1000
+            - min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
               weight: 300
@@ -1506,12 +1506,12 @@ jedi_temple:
         spawn:
           steps:
             - spawned_state: Always
-              duration_millis: 1
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: idle
         idle:
           steps:
-            - duration_millis: 1200000
+            - min_duration_millis: 1200000
           next_possible_procedures:
             - procedure: remove
         remove:
@@ -1521,7 +1521,7 @@ jedi_temple:
                 Graceful:
                   fade_duration_millis: 1000
                   removal_delay_millis: 0
-              duration_millis: 1000
+              min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
             - procedure: empty
@@ -1529,7 +1529,7 @@ jedi_temple:
         empty:
           weight: 89700
           steps:
-            - duration_millis: 1000
+            - min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
               weight: 300
@@ -1573,12 +1573,12 @@ jedi_temple:
           weight: 300
           steps:
             - spawned_state: Always
-              duration_millis: 1
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: lifespan
         lifespan:
           steps:
-            - duration_millis: 1200000
+            - min_duration_millis: 1200000
           next_possible_procedures:
             - procedure: remove
         remove:
@@ -1588,13 +1588,13 @@ jedi_temple:
                 Graceful:
                   fade_duration_millis: 1000
                   removal_delay_millis: 0
-              duration_millis: 1000
+              min_duration_millis: 1000
           next_possible_procedures:
             - procedure: empty
         empty:
           weight: 89700
           steps:
-            - duration_millis: 1000
+            - min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
               weight: 300
@@ -1645,12 +1645,12 @@ jedi_temple:
         spawn:
           steps:
             - spawned_state: Always
-              duration_millis: 1
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: idle
         idle:
           steps:
-            - duration_millis: 1200000
+            - min_duration_millis: 1200000
           next_possible_procedures:
             - procedure: remove
         remove:
@@ -1660,7 +1660,7 @@ jedi_temple:
                 Graceful:
                   fade_duration_millis: 1000
                   removal_delay_millis: 0
-              duration_millis: 1000
+              min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
             - procedure: empty
@@ -1668,7 +1668,7 @@ jedi_temple:
         empty:
           weight: 89700
           steps:
-            - duration_millis: 1000
+            - min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
               weight: 300
@@ -1723,12 +1723,12 @@ jedi_temple:
         spawn:
           steps:
             - spawned_state: Always
-              duration_millis: 1
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: idle
         idle:
           steps:
-            - duration_millis: 1200000
+            - min_duration_millis: 1200000
           next_possible_procedures:
             - procedure: remove
         remove:
@@ -1738,7 +1738,7 @@ jedi_temple:
                 Graceful:
                   fade_duration_millis: 1000
                   removal_delay_millis: 0
-              duration_millis: 1000
+              min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
             - procedure: empty
@@ -1746,7 +1746,7 @@ jedi_temple:
         empty:
           weight: 89700
           steps:
-            - duration_millis: 1000
+            - min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
               weight: 300
@@ -1810,12 +1810,12 @@ jedi_temple:
           weight: 300
           steps:
             - spawned_state: Always
-              duration_millis: 1
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: lifespan
         lifespan:
           steps:
-            - duration_millis: 1200000
+            - min_duration_millis: 1200000
           next_possible_procedures:
             - procedure: remove
         remove:
@@ -1825,13 +1825,13 @@ jedi_temple:
                 Graceful:
                   fade_duration_millis: 1000
                   removal_delay_millis: 0
-              duration_millis: 1000
+              min_duration_millis: 1000
           next_possible_procedures:
             - procedure: empty
         empty:
           weight: 89700
           steps:
-            - duration_millis: 1000
+            - min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
               weight: 300
@@ -1871,12 +1871,12 @@ jedi_temple:
           weight: 150
           steps:
             - spawned_state: Always
-              duration_millis: 1
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: lifespan
         lifespan:
           steps:
-            - duration_millis: 1200000
+            - min_duration_millis: 1200000
           next_possible_procedures:
             - procedure: remove
         remove:
@@ -1886,13 +1886,13 @@ jedi_temple:
                 Graceful:
                   fade_duration_millis: 1000
                   removal_delay_millis: 0
-              duration_millis: 1000
+              min_duration_millis: 1000
           next_possible_procedures:
             - procedure: empty
         empty:
           weight: 89700
           steps:
-            - duration_millis: 1000
+            - min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
               weight: 150
@@ -1943,12 +1943,12 @@ jedi_temple:
         spawn:
           steps:
             - spawned_state: Always
-              duration_millis: 1
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: idle
         idle:
           steps:
-            - duration_millis: 1200000
+            - min_duration_millis: 1200000
           next_possible_procedures:
             - procedure: remove
         remove:
@@ -1958,7 +1958,7 @@ jedi_temple:
                 Graceful:
                   fade_duration_millis: 1000
                   removal_delay_millis: 0
-              duration_millis: 1000
+              min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
             - procedure: empty
@@ -1966,7 +1966,7 @@ jedi_temple:
         empty:
           weight: 89700
           steps:
-            - duration_millis: 1000
+            - min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
               weight: 300
@@ -2021,12 +2021,12 @@ jedi_temple:
         spawn:
           steps:
             - spawned_state: Always
-              duration_millis: 1
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: idle
         idle:
           steps:
-            - duration_millis: 1200000
+            - min_duration_millis: 1200000
           next_possible_procedures:
             - procedure: remove
         remove:
@@ -2036,7 +2036,7 @@ jedi_temple:
                 Graceful:
                   fade_duration_millis: 1000
                   removal_delay_millis: 0
-              duration_millis: 1000
+              min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
             - procedure: empty
@@ -2044,7 +2044,7 @@ jedi_temple:
         empty:
           weight: 89700
           steps:
-            - duration_millis: 1000
+            - min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
               weight: 300
@@ -2100,12 +2100,12 @@ jedi_temple:
           weight: 300
           steps:
             - spawned_state: Always
-              duration_millis: 1
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: lifespan
         lifespan:
           steps:
-            - duration_millis: 1200000
+            - min_duration_millis: 1200000
           next_possible_procedures:
             - procedure: remove
         remove:
@@ -2115,13 +2115,13 @@ jedi_temple:
                 Graceful:
                   fade_duration_millis: 1000
                   removal_delay_millis: 0
-              duration_millis: 1000
+              min_duration_millis: 1000
           next_possible_procedures:
             - procedure: empty
         empty:
           weight: 89700
           steps:
-            - duration_millis: 1000
+            - min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
               weight: 300
