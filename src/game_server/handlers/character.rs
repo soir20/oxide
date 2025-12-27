@@ -1433,16 +1433,19 @@ impl TickableProcedureTracker {
                 item_definitions,
                 customizations,
             );
-            if let TickResult::TickedCurrentProcedure(broadcasts, update_pos) = tick_result {
-                break (broadcasts, update_pos);
-            } else if let TickResult::MustChangeProcedure(procedure_key) = tick_result {
-                current_procedure.reset();
-                self.current_procedure_key = procedure_key;
-                current_procedure = self
-                    .procedures
-                    .get_mut(&self.current_procedure_key)
-                    .expect("Missing procedure");
-                self.last_procedure_change = now;
+            match tick_result {
+                TickResult::TickedCurrentProcedure(broadcasts, update_pos) => {
+                    break (broadcasts, update_pos);
+                }
+                TickResult::MustChangeProcedure(procedure_key) => {
+                    current_procedure.reset();
+                    self.current_procedure_key = procedure_key;
+                    current_procedure = self
+                        .procedures
+                        .get_mut(&self.current_procedure_key)
+                        .expect("Missing procedure");
+                    self.last_procedure_change = now;
+                }
             }
         }
     }
