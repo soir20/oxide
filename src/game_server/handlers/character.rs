@@ -704,7 +704,7 @@ pub struct TickableStep {
     pub spawned_state: SpawnedState,
     #[serde(default)]
     pub cursor: CursorUpdate,
-    pub duration_millis: u64,
+    pub min_duration_millis: u64,
 }
 
 impl TickableStep {
@@ -925,7 +925,7 @@ impl TickableStep {
                     animation_id,
                     queue_pos: 0,
                     delay_seconds: self.animation_delay_seconds,
-                    duration_seconds: self.duration_millis as f32 / 1000.0,
+                    duration_seconds: self.min_duration_millis as f32 / 1000.0,
                 },
             }));
         }
@@ -938,7 +938,7 @@ impl TickableStep {
                     triggered_by_guid: 0,
                     composite_effect: composite_effect_id,
                     delay_millis: self.composite_effect_delay_millis,
-                    duration_millis: self.duration_millis as u32,
+                    duration_millis: self.min_duration_millis as u32,
                     pos: Pos {
                         x: 0.0,
                         y: 0.0,
@@ -1143,9 +1143,18 @@ pub enum TickResult {
 }
 
 #[derive(Clone)]
+pub struct TickableStepProgress {
+    step_index: usize,
+    last_step_change: Instant,
+    last_tick: Instant,
+    distance_traveled: f32,
+    distance_required: f32,
+}
+
+#[derive(Clone)]
 pub struct TickableProcedure {
     steps: Vec<TickableStep>,
-    current_step: Option<(usize, Instant)>,
+    current_step: Option<TickableStepProgress>,
     distribution: WeightedAliasIndex<u32>,
     next_possible_procedures: Vec<String>,
     is_interruptible: bool,
@@ -1211,25 +1220,35 @@ impl TickableProcedure {
     ) -> TickResult {
         self.panic_if_empty();
 
-        let should_change_steps =
-            if let Some((current_step_index, last_step_change)) = self.current_step {
-                let time_since_last_step_change = now.saturating_duration_since(last_step_change);
-                let current_step = &self.steps[current_step_index];
+        let should_change_steps = match &mut self.current_step {
+            Some(progress) => {
+                let time_since_last_step_change =
+                    now.saturating_duration_since(progress.last_step_change);
+                let current_step = &self.steps[progress.step_index];
 
-                time_since_last_step_change >= Duration::from_millis(current_step.duration_millis)
-            } else {
-                true
-            };
+                let seconds_since_last_tick = now
+                    .saturating_duration_since(progress.last_tick)
+                    .as_secs_f32();
+                progress.distance_traveled += character.speed.total() * seconds_since_last_tick;
+                progress.last_tick = now;
+
+                time_since_last_step_change
+                    >= Duration::from_millis(current_step.min_duration_millis)
+                    && progress.distance_traveled >= progress.distance_required
+            }
+            None => true,
+        };
 
         if should_change_steps {
             let new_step_index = self
                 .current_step
-                .map(|(current_step_index, _)| current_step_index.saturating_add(1))
+                .as_ref()
+                .map(|current_step| current_step.step_index.saturating_add(1))
                 .unwrap_or_default();
             if new_step_index >= self.steps.len() {
                 TickResult::MustChangeProcedure(self.next_procedure())
             } else {
-                self.current_step = Some((new_step_index, now));
+                let prev_pos = character.pos;
 
                 let (broadcasts, update_pos) = self.steps[new_step_index].apply(
                     character,
@@ -1239,6 +1258,14 @@ impl TickableProcedure {
                     item_definitions,
                     customizations,
                 );
+
+                self.current_step = Some(TickableStepProgress {
+                    step_index: new_step_index,
+                    last_step_change: now,
+                    last_tick: now,
+                    distance_traveled: 0.0,
+                    distance_required: distance3_pos(prev_pos, character.pos),
+                });
                 TickResult::TickedCurrentProcedure(broadcasts, update_pos)
             }
         } else {
@@ -1277,10 +1304,10 @@ impl TickableProcedure {
                 let total_removal_time =
                     removal_delay_millis + removal_effect_delay_millis + fade_duration_millis;
 
-                if total_removal_time > step.duration_millis as u32 {
+                if total_removal_time > step.min_duration_millis as u32 {
                     panic!(
                         "(Removal delay: {}) + (Fade duration: {}) exceeded (Step duration: {})",
-                        removal_delay_millis, fade_duration_millis, step.duration_millis
+                        removal_delay_millis, fade_duration_millis, step.min_duration_millis
                     );
                 }
             }
