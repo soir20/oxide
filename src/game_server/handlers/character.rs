@@ -1151,6 +1151,14 @@ pub struct TickableStepProgress {
     distance_required: f32,
 }
 
+impl TickableStepProgress {
+    pub fn update(&mut self, now: Instant, speed: f32) {
+        let seconds_since_last_tick = now.saturating_duration_since(self.last_tick).as_secs_f32();
+        self.distance_traveled += speed * seconds_since_last_tick;
+        self.last_tick = now;
+    }
+}
+
 #[derive(Clone)]
 pub struct TickableProcedure {
     steps: Vec<TickableStep>,
@@ -1226,11 +1234,7 @@ impl TickableProcedure {
                     now.saturating_duration_since(progress.last_step_change);
                 let current_step = &self.steps[progress.step_index];
 
-                let seconds_since_last_tick = now
-                    .saturating_duration_since(progress.last_tick)
-                    .as_secs_f32();
-                progress.distance_traveled += character.speed.total() * seconds_since_last_tick;
-                progress.last_tick = now;
+                progress.update(now, character.speed.total());
 
                 time_since_last_step_change
                     >= Duration::from_millis(current_step.min_duration_millis)
@@ -1436,6 +1440,14 @@ impl TickableProcedureTracker {
                     .get_mut(&self.current_procedure_key)
                     .expect("Missing procedure");
                 self.last_procedure_change = now;
+            }
+        }
+    }
+
+    pub fn update_progress(&mut self, now: Instant, speed: f32) {
+        if let Some(procedure) = self.procedures.get_mut(&self.current_procedure_key) {
+            if let Some(step) = &mut procedure.current_step {
+                step.update(now, speed);
             }
         }
     }
@@ -2438,7 +2450,7 @@ pub struct CharacterStats {
     pub instance_guid: u64,
     pub temporary_model_id: Option<u32>,
     pub stand_animation_id: i32,
-    pub speed: CharacterStat,
+    speed: CharacterStat,
     pub jump_height_multiplier: CharacterStat,
     pub cursor: Option<u8>,
     pub is_spawned: bool,
@@ -2861,6 +2873,17 @@ impl Character {
 
             Ok(broadcasts)
         })
+    }
+
+    pub fn speed(&self) -> &CharacterStat {
+        &self.stats.speed
+    }
+
+    pub fn update_speed(&mut self, mut f: impl FnMut(&mut CharacterStat)) {
+        let speed = self.stats.speed.total();
+        f(&mut self.stats.speed);
+        self.tickable_procedure_tracker
+            .update_progress(Instant::now(), speed);
     }
 
     fn tickable(&self) -> bool {

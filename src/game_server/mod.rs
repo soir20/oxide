@@ -507,7 +507,7 @@ impl GameServer {
                                             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {sender} sent a ready packet")));
                                         };
 
-                                        character_write_handle.stats.speed.base = zone.speed;
+                                        character_write_handle.update_speed(|speed| speed.base = zone.speed);
                                         character_write_handle.stats.jump_height_multiplier.base = zone.jump_height_multiplier;
 
                                         let mut global_packets = character_write_handle.stats.add_packets(false, self.mounts(), self.items(), self.customizations());

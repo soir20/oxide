@@ -101,7 +101,7 @@ pub fn reply_dismount<'a>(
         ));
     };
 
-    character.stats.speed.mount_multiplier = 1.0;
+    character.update_speed(|stat| stat.mount_multiplier = 1.0);
     character.stats.jump_height_multiplier.mount_multiplier = 1.0;
     let (_, instance_guid, chunk) = character.index1();
     let all_players_nearby =
@@ -132,7 +132,7 @@ pub fn reply_dismount<'a>(
                     unknown1: true,
                     inner: UpdateSpeed {
                         guid: player_guid(sender),
-                        speed: character.stats.speed.total(),
+                        speed: character.speed().total(),
                     },
                 }),
             ],
@@ -269,8 +269,7 @@ fn process_mount_spawn(
                             ));
                         };
 
-                        character_write_handle.stats.speed.mount_multiplier =
-                            mount.speed_multiplier;
+                        character_write_handle.update_speed(|speed| speed.mount_multiplier = mount.speed_multiplier);
                         character_write_handle
                             .stats
                             .jump_height_multiplier
@@ -290,7 +289,7 @@ fn process_mount_spawn(
                             unknown1: true,
                             inner: UpdateSpeed {
                                 guid: player_guid(sender),
-                                speed: character_write_handle.stats.speed.total(),
+                                speed: character_write_handle.speed().total(),
                             },
                         }));
 
@@ -323,7 +322,7 @@ fn process_mount_spawn(
                                                 id: StatId::Speed,
                                                 multiplier: 1,
                                                 value1: 0.0,
-                                                value2: character_write_handle.stats.speed.total(),
+                                                value2: character_write_handle.speed().total(),
                                             },
                                             Stat {
                                                 id: StatId::JumpHeightMultiplier,
