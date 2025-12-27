@@ -15,6 +15,7 @@ use crate::{
             dialog::handle_dialog_buttons,
             inventory::{attachments_from_equipped_items, wield_type_from_inventory},
             unique_guid::AMBIENT_NPC_DISCRIMINANT,
+            update_position::UpdatePositionPacket,
         },
         packets::{
             chat::{ActionBarTextColor, SendStringId},
@@ -1268,7 +1269,9 @@ impl TickableProcedure {
                     last_step_change: now,
                     last_tick: now,
                     distance_traveled: 0.0,
-                    distance_required: distance3_pos(prev_pos, character.pos),
+                    distance_required: update_pos
+                        .map(|update_pos| distance3_pos(prev_pos, update_pos.pos()))
+                        .unwrap_or_default(),
                 });
                 TickResult::TickedCurrentProcedure(broadcasts, update_pos)
             }
