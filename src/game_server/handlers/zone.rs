@@ -13,10 +13,7 @@ use serde_yaml::{Mapping, Value};
 
 use crate::{
     game_server::{
-        handlers::{
-            dialog::{DialogChoiceConfig, DialogChoiceInstance, DialogChoiceTemplate},
-            update_position::UpdatePosProgress,
-        },
+        handlers::dialog::{DialogChoiceConfig, DialogChoiceInstance, DialogChoiceTemplate},
         packets::{
             client_update::Position,
             command::MoveToInteract,
@@ -727,13 +724,13 @@ impl ZoneInstance {
     }
 
     pub fn move_character<T: UpdatePosPacket>(
-        mut pos_update: UpdatePosProgress<T>,
+        mut pos_update: T,
         should_teleport: bool,
         game_server: &GameServer,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        let moved_character_guid = pos_update.packet.guid();
-        let new_pos = pos_update.new_pos;
-        let new_rot = pos_update.new_rot;
+        let moved_character_guid = pos_update.guid();
+        let new_pos = pos_update.pos();
+        let new_rot = pos_update.rot();
 
         let movement_result: Result<(Vec<Broadcast>, CharacterMovementType), ProcessPacketError> =
             game_server
@@ -789,7 +786,7 @@ impl ZoneInstance {
                                     character_handle.stats.jump_height_multiplier.total()
                                 })
                                 .unwrap_or(1.0);
-                            pos_update.packet.apply_jump_height_multiplier(jump_multiplier);
+                            pos_update.apply_jump_height_multiplier(jump_multiplier);
 
                             ZoneInstance::move_character_with_locks(
                                 characters_write.get_mut(&moved_character_guid).unwrap(),
@@ -809,7 +806,7 @@ impl ZoneInstance {
                                 other_players_nearby,
                                 vec![GamePacket::serialize(&TunneledPacket {
                                     unknown1: true,
-                                    inner: pos_update.packet,
+                                    inner: pos_update,
                                 })],
                             ));
                             Ok((
@@ -882,9 +879,7 @@ impl ZoneInstance {
                                 .stats
                                 .jump_height_multiplier
                                 .total();
-                            pos_update
-                                .packet
-                                .apply_jump_height_multiplier(jump_multiplier);
+                            pos_update.apply_jump_height_multiplier(jump_multiplier);
 
                             let other_players_nearby = ZoneInstance::other_players_nearby(
                                 shorten_player_guid(moved_character_guid).ok(),
@@ -901,7 +896,7 @@ impl ZoneInstance {
                                 );
                             new_chunk_packets.push(GamePacket::serialize(&TunneledPacket {
                                 unknown1: true,
-                                inner: pos_update.packet,
+                                inner: pos_update,
                             }));
                             broadcasts
                                 .push(Broadcast::Multi(other_players_nearby, new_chunk_packets));

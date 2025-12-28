@@ -74,39 +74,3 @@ impl UpdatePosPacket for UpdatePlayerPlatformPos {
         self.pos_update.rot()
     }
 }
-
-pub struct UpdatePosProgress<T> {
-    pub new_pos: Pos,
-    pub new_rot: Pos,
-    pub packet: T,
-}
-
-impl From<UpdatePlayerPos> for UpdatePosProgress<UpdatePlayerPos> {
-    fn from(packet: UpdatePlayerPos) -> Self {
-        UpdatePosProgress {
-            new_pos: packet.pos(),
-            new_rot: packet.rot(),
-            packet,
-        }
-    }
-}
-
-impl From<PlayerJump> for UpdatePosProgress<PlayerJump> {
-    fn from(packet: PlayerJump) -> Self {
-        UpdatePosProgress {
-            new_pos: packet.pos(),
-            new_rot: packet.rot(),
-            packet,
-        }
-    }
-}
-
-impl From<UpdatePlayerPlatformPos> for UpdatePosProgress<UpdatePlayerPlatformPos> {
-    fn from(packet: UpdatePlayerPlatformPos) -> Self {
-        UpdatePosProgress {
-            new_pos: packet.pos(),
-            new_rot: packet.rot(),
-            packet,
-        }
-    }
-}

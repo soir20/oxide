@@ -622,21 +622,13 @@ impl GameServer {
                         DeserializePacket::deserialize(&mut cursor)?;
                     // Don't allow players to update another player's position
                     pos_update.guid = player_guid(sender);
-                    broadcasts.append(&mut ZoneInstance::move_character(
-                        pos_update.into(),
-                        false,
-                        self,
-                    )?);
+                    broadcasts.append(&mut ZoneInstance::move_character(pos_update, false, self)?);
                 }
                 OpCode::PlayerJump => {
                     let mut player_jump: PlayerJump = DeserializePacket::deserialize(&mut cursor)?;
                     // Don't allow players to update another player's position
                     player_jump.pos_update.guid = player_guid(sender);
-                    broadcasts.append(&mut ZoneInstance::move_character(
-                        player_jump.into(),
-                        false,
-                        self,
-                    )?);
+                    broadcasts.append(&mut ZoneInstance::move_character(player_jump, false, self)?);
                 }
                 OpCode::UpdatePlayerPlatformPosition => {
                     let mut platform_pos_update: UpdatePlayerPlatformPos =
@@ -644,7 +636,7 @@ impl GameServer {
                     // Don't allow players to update another player's position
                     platform_pos_update.pos_update.guid = player_guid(sender);
                     broadcasts.append(&mut ZoneInstance::move_character(
-                        platform_pos_update.into(),
+                        platform_pos_update,
                         false,
                         self,
                     )?);
