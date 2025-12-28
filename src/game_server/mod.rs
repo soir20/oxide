@@ -520,7 +520,8 @@ impl GameServer {
 
                                         character_broadcasts.append(&mut ZoneInstance::diff_character_broadcasts(
                                             player_guid(sender),
-                                            character_diffs, &characters_read,
+                                            character_diffs,
+                                            &characters_read,
                                             character_write_handle,
                                             self.mounts(),
                                             self.items(),
