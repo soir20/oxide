@@ -1208,7 +1208,7 @@ impl TickableStepProgress {
 
             self.delta_since_last_tick = Pos::default();
             UpdatePosProgress {
-                new_pos: current_pos,
+                new_pos,
                 // The client doesn't rotate the character after it stops moving when rotation is (0, 0, 0)
                 new_rot: match self.reached_destination()
                     && update_pos_packet.rot() != Pos::default()
