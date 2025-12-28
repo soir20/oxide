@@ -665,6 +665,7 @@ impl ZoneInstance {
         moved_character_guid: u64,
         character_diffs: CharacterDiffResult,
         characters_read: &BTreeMap<u64, CharacterReadGuard<'_>>,
+        moved_character_handle: &Character,
         mount_configs: &BTreeMap<u32, MountConfig>,
         item_definitions: &BTreeMap<u32, ItemDefinition>,
         customizations: &BTreeMap<u32, Customization>,
@@ -693,23 +694,21 @@ impl ZoneInstance {
             broadcasts.push(Broadcast::Single(moved_player_guid, diff_packets));
         }
 
-        if let Some(moved_character_read_handle) = characters_read.get(&moved_character_guid) {
-            broadcasts.push(Broadcast::Multi(
-                character_diffs.new_players_close_to_moved_character,
-                moved_character_read_handle.stats.add_packets(
-                    false,
-                    mount_configs,
-                    item_definitions,
-                    customizations,
-                ),
-            ));
-            broadcasts.push(Broadcast::Multi(
-                character_diffs.players_too_far_from_moved_character,
-                moved_character_read_handle
-                    .stats
-                    .remove_packets(RemovalMode::default()),
-            ));
-        }
+        broadcasts.push(Broadcast::Multi(
+            character_diffs.new_players_close_to_moved_character,
+            moved_character_handle.stats.add_packets(
+                false,
+                mount_configs,
+                item_definitions,
+                customizations,
+            ),
+        ));
+        broadcasts.push(Broadcast::Multi(
+            character_diffs.players_too_far_from_moved_character,
+            moved_character_handle
+                .stats
+                .remove_packets(RemovalMode::default()),
+        ));
 
         broadcasts
     }
@@ -845,29 +844,6 @@ impl ZoneInstance {
                                 moved_character_guid
                             );
 
-                            broadcasts.append(&mut ZoneInstance::diff_character_broadcasts(
-                                moved_character_guid,
-                                character_diffs,
-                                &characters_read,
-                                game_server.mounts(),
-                                game_server.items(),
-                                game_server.customizations(),
-                            ));
-
-                            // Remove the moved character when they change chunks
-                            let previous_other_players_nearby = ZoneInstance::other_players_nearby(
-                                shorten_player_guid(moved_character_guid).ok(),
-                                old_chunk,
-                                instance_guid,
-                                characters_table_write_handle,
-                            );
-                            broadcasts.push(Broadcast::Multi(
-                                previous_other_players_nearby,
-                                moved_character_write_handle
-                                    .stats
-                                    .remove_packets(RemovalMode::default()),
-                            ));
-
                             // Move the character
                             ZoneInstance::move_character_with_locks(
                                 moved_character_write_handle,
@@ -881,25 +857,15 @@ impl ZoneInstance {
                                 .total();
                             pos_update.apply_jump_height_multiplier(jump_multiplier);
 
-                            let other_players_nearby = ZoneInstance::other_players_nearby(
-                                shorten_player_guid(moved_character_guid).ok(),
-                                new_chunk,
-                                instance_guid,
-                                characters_table_write_handle,
-                            );
-                            let mut new_chunk_packets =
-                                moved_character_write_handle.stats.add_packets(
-                                    false,
-                                    game_server.mounts(),
-                                    game_server.items(),
-                                    game_server.customizations(),
-                                );
-                            new_chunk_packets.push(GamePacket::serialize(&TunneledPacket {
-                                unknown1: true,
-                                inner: pos_update,
-                            }));
-                            broadcasts
-                                .push(Broadcast::Multi(other_players_nearby, new_chunk_packets));
+                            broadcasts.append(&mut ZoneInstance::diff_character_broadcasts(
+                                moved_character_guid,
+                                character_diffs,
+                                &characters_read,
+                                moved_character_write_handle,
+                                game_server.mounts(),
+                                game_server.items(),
+                                game_server.customizations(),
+                            ));
                         },
                     )
                 })

@@ -518,7 +518,15 @@ impl GameServer {
                                         character_write_handle.update_speed(|speed| speed.base = zone.speed);
                                         character_write_handle.stats.jump_height_multiplier.base = zone.jump_height_multiplier;
 
-                                        let mut global_packets = character_write_handle.stats.add_packets(false, self.mounts(), self.items(), self.customizations());
+                                        character_broadcasts.append(&mut ZoneInstance::diff_character_broadcasts(
+                                            player_guid(sender),
+                                            character_diffs, &characters_read,
+                                            character_write_handle,
+                                            self.mounts(),
+                                            self.items(),
+                                            self.customizations()
+                                        ));
+
                                         let wield_type = TunneledPacket {
                                             unknown1: true,
                                             inner: UpdateWieldType {
@@ -526,7 +534,7 @@ impl GameServer {
                                                 wield_type: character_write_handle.stats.wield_type(),
                                             },
                                         };
-                                        global_packets.push(GamePacket::serialize(&wield_type));
+                                        let global_packets = vec![GamePacket::serialize(&wield_type)];
 
                                         if let CharacterType::Player(player) = &character_write_handle.stats.character_type {
                                             sender_only_character_packets.push(GamePacket::serialize(&TunneledPacket {
@@ -553,7 +561,6 @@ impl GameServer {
                                         character_broadcasts.push(Broadcast::Multi(all_players_nearby, global_packets));
 
                                         character_broadcasts.push(Broadcast::Single(sender, sender_only_character_packets));
-                                        character_broadcasts.append(&mut ZoneInstance::diff_character_broadcasts(player_guid(sender), character_diffs, &characters_read, self.mounts(), self.items(), self.customizations()));
 
                                         Ok(character_broadcasts)
                                     },
