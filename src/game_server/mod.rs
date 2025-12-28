@@ -5,7 +5,7 @@ use std::io::{Cursor, Error};
 use std::num::ParseIntError;
 use std::path::Path;
 use std::str::ParseBoolError;
-use std::time::Instant;
+use std::time::{Duration, Instant};
 use std::vec;
 
 use crossbeam_channel::Sender;
@@ -264,8 +264,16 @@ impl GameServer {
         instance_guid: u64,
         chunk: Chunk,
         synchronization: TickableNpcSynchronization,
+        tick_duration: Duration,
     ) -> Vec<Broadcast> {
-        tick_single_chunk(self, now, instance_guid, chunk, synchronization)
+        tick_single_chunk(
+            self,
+            now,
+            instance_guid,
+            chunk,
+            synchronization,
+            tick_duration,
+        )
     }
 
     pub fn tick_matchmaking_groups(&self) -> Vec<Broadcast> {

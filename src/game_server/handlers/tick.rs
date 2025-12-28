@@ -69,6 +69,7 @@ pub fn tick_single_chunk(
     instance_guid: u64,
     chunk: Chunk,
     synchronization: TickableNpcSynchronization,
+    tick_duration: Duration,
 ) -> Vec<Broadcast> {
     let (mut broadcasts, pos_updates) = game_server.lock_enforcer().read_characters(|characters_table_read_handle| {
         let tickable_characters: Vec<u64> = tickable_categories(synchronization)
@@ -123,7 +124,7 @@ pub fn tick_single_chunk(
                         }
                     }
 
-                    let (mut character_broadcasts, character_pos_update) = tickable_character.tick(now, &nearby_player_guids, &characters_read, game_server.mounts(), game_server.items(), game_server.customizations());
+                    let (mut character_broadcasts, character_pos_update) = tickable_character.tick(now, &nearby_player_guids, &characters_read, game_server.mounts(), game_server.items(), game_server.customizations(), tick_duration);
                     broadcasts.append(&mut character_broadcasts);
                     if let Some(pos_update) = character_pos_update {
                         pos_updates.push((*guid, pos_update));

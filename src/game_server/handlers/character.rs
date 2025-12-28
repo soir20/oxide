@@ -1123,6 +1123,7 @@ pub struct TickableStepProgress {
     direction_unit_vector: Pos,
     distance_traveled: f32,
     distance_required: f32,
+    current_pos: Pos,
     delta_since_last_tick: Pos,
     destination: Option<TickPosUpdate>,
 }
@@ -1132,20 +1133,21 @@ impl TickableStepProgress {
         new_step_index: usize,
         now: Instant,
         update_pos: Option<TickPosUpdate>,
-        old_pos: Pos,
+        start_pos: Pos,
     ) -> Self {
         let new_pos = update_pos
             .as_ref()
             .map(|update_pos| update_pos.pos)
             .unwrap_or_default();
-        let distance_required = distance3_pos(old_pos, new_pos);
+        let distance_required = distance3_pos(start_pos, new_pos);
         TickableStepProgress {
             step_index: new_step_index,
             last_step_change: now,
             last_speed_update: now,
-            direction_unit_vector: (new_pos - old_pos) / distance_required,
+            direction_unit_vector: (new_pos - start_pos) / distance_required,
             distance_traveled: 0.0,
             distance_required,
+            current_pos: start_pos,
             delta_since_last_tick: Pos::default(),
             destination: update_pos,
         }
@@ -1165,24 +1167,34 @@ impl TickableStepProgress {
         guid: u64,
         now: Instant,
         speed: f32,
-        current_pos: Pos,
+        tick_duration: Duration,
         current_rot: Pos,
     ) -> Option<UpdatePlayerPos> {
         self.update_speed(now, speed);
 
         match &self.destination {
             Some(destination) => {
-                let new_pos = match self.reached_destination() {
+                self.current_pos += self.delta_since_last_tick;
+                let seconds_per_tick = tick_duration.as_secs_f32();
+                let next_tick_estimated_distance = speed * seconds_per_tick;
+
+                // We don't know for certain if the NPC will reach the destination in the next tick,
+                // because its speed could change
+                let should_reach_destination =
+                    self.distance_traveled + next_tick_estimated_distance >= self.distance_required;
+                let new_estimated_pos = match should_reach_destination {
                     true => destination.pos,
-                    false => current_pos + self.delta_since_last_tick,
+                    false => {
+                        self.current_pos + self.direction_unit_vector * speed * seconds_per_tick
+                    }
                 };
 
                 // The client doesn't rotate the character after it stops moving when rotation is (0, 0, 0)
-                let new_rot = match self.reached_destination() && destination.rot != Pos::default()
-                {
+                let new_rot = match should_reach_destination && destination.rot != Pos::default() {
                     true => destination.rot,
                     false => {
-                        let angle = (new_pos.z - current_pos.z).atan2(new_pos.x - current_pos.x);
+                        let angle = (new_estimated_pos.z - self.current_pos.z)
+                            .atan2(new_estimated_pos.x - self.current_pos.x);
                         Pos {
                             x: angle.cos(),
                             y: current_rot.y,
@@ -1195,13 +1207,13 @@ impl TickableStepProgress {
                 self.delta_since_last_tick = Pos::default();
                 Some(UpdatePlayerPos {
                     guid,
-                    pos_x: new_pos.x,
-                    pos_y: new_pos.y,
-                    pos_z: new_pos.z,
+                    pos_x: new_estimated_pos.x,
+                    pos_y: new_estimated_pos.y,
+                    pos_z: new_estimated_pos.z,
                     rot_x: new_rot.x,
                     rot_y: new_rot.y,
                     rot_z: new_rot.z,
-                    character_state: 1,
+                    character_state: should_reach_destination as u8,
                     unknown: 0,
                 })
             }
@@ -1280,6 +1292,7 @@ impl TickableProcedure {
         mount_configs: &BTreeMap<u32, MountConfig>,
         item_definitions: &BTreeMap<u32, ItemDefinition>,
         customizations: &BTreeMap<u32, Customization>,
+        tick_duration: Duration,
     ) -> TickResult {
         self.panic_if_empty();
 
@@ -1293,7 +1306,7 @@ impl TickableProcedure {
                     Guid::guid(character),
                     now,
                     character.speed.total(),
-                    character.pos,
+                    tick_duration,
                     character.rot,
                 );
 
@@ -1332,7 +1345,7 @@ impl TickableProcedure {
                     Guid::guid(character),
                     now,
                     character.speed.total(),
-                    character.pos,
+                    tick_duration,
                     character.rot,
                 );
 
@@ -1478,6 +1491,7 @@ impl TickableProcedureTracker {
         mount_configs: &BTreeMap<u32, MountConfig>,
         item_definitions: &BTreeMap<u32, ItemDefinition>,
         customizations: &BTreeMap<u32, Customization>,
+        tick_duration: Duration,
     ) -> (Vec<Broadcast>, Option<UpdatePlayerPos>) {
         if self.procedures.is_empty() {
             return (Vec::new(), None);
@@ -1496,6 +1510,7 @@ impl TickableProcedureTracker {
                 mount_configs,
                 item_definitions,
                 customizations,
+                tick_duration,
             );
             match tick_result {
                 TickResult::TickedCurrentProcedure(broadcasts, update_pos) => {
@@ -2854,6 +2869,7 @@ impl Character {
         mount_configs: &BTreeMap<u32, MountConfig>,
         item_definitions: &BTreeMap<u32, ItemDefinition>,
         customizations: &BTreeMap<u32, Customization>,
+        tick_duration: Duration,
     ) -> (Vec<Broadcast>, Option<UpdatePlayerPos>) {
         self.tickable_procedure_tracker.tick(
             &mut self.stats,
@@ -2863,6 +2879,7 @@ impl Character {
             mount_configs,
             item_definitions,
             customizations,
+            tick_duration,
         )
     }
 

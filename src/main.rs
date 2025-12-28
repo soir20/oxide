@@ -163,15 +163,15 @@ async fn main() {
         &game_server_arc,
     ));
 
-    let chunk_tick_dequeue = tick(Duration::from_millis(
-        server_options.chunk_tick_period_millis,
-    ));
+    let chunk_tick_duration = Duration::from_millis(server_options.chunk_tick_period_millis);
+    let chunk_tick_dequeue = tick(chunk_tick_duration);
     spawn_chunk_tick_threads(
         &channel_manager_arc,
         chunk_tick_dequeue,
         client_enqueue.clone(),
         &server_options,
         &game_server_arc,
+        chunk_tick_duration,
     );
 
     let matchmaking_tick_dequeue = tick(Duration::from_millis(
@@ -570,6 +570,7 @@ fn spawn_chunk_tick_threads(
     client_enqueue: Sender<SocketAddr>,
     server_options: &Arc<ServerOptions>,
     game_server: &Arc<GameServer>,
+    tick_duration: Duration,
 ) {
     let (chunks_enqueue, chunks_dequeue) = unbounded();
     let (done_enqueue, done_dequeue) = unbounded();
@@ -591,6 +592,7 @@ fn spawn_chunk_tick_threads(
                 instance_guid,
                 chunk,
                 synchronization,
+                tick_duration,
             );
             channel_manager
                 .read()
