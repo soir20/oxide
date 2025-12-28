@@ -1153,22 +1153,51 @@ pub struct TickableStepProgress {
 }
 
 impl TickableStepProgress {
+    pub fn new(
+        new_step_index: usize,
+        now: Instant,
+        update_pos: Option<UpdatePlayerPos>,
+        old_pos: Pos,
+    ) -> Self {
+        let new_pos = update_pos
+            .map(|update_pos| update_pos.pos())
+            .unwrap_or_default();
+        let distance_required = distance3_pos(old_pos, new_pos);
+        TickableStepProgress {
+            step_index: new_step_index,
+            last_step_change: now,
+            last_speed_update: now,
+            direction_unit_vector: (new_pos - old_pos) / distance_required,
+            distance_traveled: 0.0,
+            distance_required,
+            delta_since_last_tick: Pos::default(),
+            update_pos_packet: update_pos,
+        }
+    }
+
     pub fn update_speed(&mut self, now: Instant, speed: f32) {
         let seconds_since_last_tick = now
             .saturating_duration_since(self.last_speed_update)
             .as_secs_f32();
-        self.distance_traveled += (speed * seconds_since_last_tick).max(self.distance_required);
+        self.distance_traveled += speed * seconds_since_last_tick;
         self.delta_since_last_tick += self.direction_unit_vector * speed * seconds_since_last_tick;
         self.last_speed_update = now;
     }
 
     pub fn tick(
         &mut self,
+        now: Instant,
+        speed: f32,
         current_pos: Pos,
         current_rot: Pos,
     ) -> Option<UpdatePosProgress<UpdatePlayerPos>> {
+        self.update_speed(now, speed);
+
         self.update_pos_packet.map(|update_pos_packet| {
-            let new_pos = current_pos + self.delta_since_last_tick;
+            let new_pos = match self.reached_destination() {
+                true => update_pos_packet.pos(),
+                false => current_pos + self.delta_since_last_tick,
+            };
             let angle = (new_pos.z - current_pos.z).atan2(new_pos.x - current_pos.x);
             let new_rot = Pos {
                 x: angle.cos(),
@@ -1266,19 +1295,22 @@ impl TickableProcedure {
     ) -> TickResult {
         self.panic_if_empty();
 
-        let should_change_steps = match &mut self.current_step {
+        let (should_change_steps, update_pos_progress) = match &mut self.current_step {
             Some(progress) => {
                 let time_since_last_step_change =
                     now.saturating_duration_since(progress.last_step_change);
                 let current_step = &self.steps[progress.step_index];
 
-                progress.update_speed(now, character.speed.total());
+                let update_pos_progress =
+                    progress.tick(now, character.speed.total(), character.pos, character.rot);
 
-                time_since_last_step_change
+                let should_change_steps = time_since_last_step_change
                     >= Duration::from_millis(current_step.min_duration_millis)
-                    && progress.reached_destination()
+                    && progress.reached_destination();
+
+                (should_change_steps, update_pos_progress)
             }
-            None => true,
+            None => (true, None),
         };
 
         if should_change_steps {
@@ -1301,24 +1333,16 @@ impl TickableProcedure {
                     customizations,
                 );
 
-                let new_pos = update_pos
-                    .map(|update_pos| update_pos.pos())
-                    .unwrap_or_default();
-                let distance_required = distance3_pos(old_pos, new_pos);
-                self.current_step = Some(TickableStepProgress {
-                    step_index: new_step_index,
-                    last_step_change: now,
-                    last_speed_update: now,
-                    direction_unit_vector: (new_pos - old_pos) / distance_required,
-                    distance_traveled: 0.0,
-                    distance_required,
-                    delta_since_last_tick: Pos::default(),
-                    update_pos_packet: update_pos,
-                });
+                self.current_step = Some(TickableStepProgress::new(
+                    new_step_index,
+                    now,
+                    update_pos,
+                    old_pos,
+                ));
                 TickResult::TickedCurrentProcedure(broadcasts, update_pos)
             }
         } else {
-            TickResult::TickedCurrentProcedure(Vec::new(), None)
+            TickResult::TickedCurrentProcedure(Vec::new(), update_pos_progress)
         }
     }
 
