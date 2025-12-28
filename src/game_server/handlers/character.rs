@@ -1196,9 +1196,9 @@ impl TickableStepProgress {
                         let angle = (new_estimated_pos.z - self.current_pos.z)
                             .atan2(new_estimated_pos.x - self.current_pos.x);
                         Pos {
-                            x: angle.cos(),
+                            x: angle,
                             y: current_rot.y,
-                            z: angle.sin(),
+                            z: current_rot.z,
                             w: current_rot.w,
                         }
                     }
