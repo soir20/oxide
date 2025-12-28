@@ -60,7 +60,6 @@ use packets::{GamePacket, OpCode};
 use rand::Rng;
 
 use crate::game_server::handlers::tick::reset_daily_minigames;
-use crate::game_server::handlers::update_position::{UpdatePosPacket, UpdatePosProgress};
 use crate::ConfigError;
 use packet_serialize::{DeserializePacket, DeserializePacketError};
 
