@@ -54,7 +54,7 @@ use packets::player_update::{Customization, InitCustomizations, QueueAnimation, 
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
 use packets::store::StoreItemList;
 use packets::tunnel::{TunneledPacket, TunneledWorldPacket};
-use packets::update_position::{PlayerJump, UpdatePlayerPlatformPosition, UpdatePlayerPosition};
+use packets::update_position::{PlayerJump, UpdatePlayerPlatformPosition, UpdatePlayerPos};
 use packets::zone::PointOfInterestTeleportRequest;
 use packets::{GamePacket, OpCode};
 use rand::Rng;
@@ -618,7 +618,7 @@ impl GameServer {
                     broadcasts.append(&mut process_command(self, sender, &mut cursor)?);
                 }
                 OpCode::UpdatePlayerPosition => {
-                    let mut pos_update: UpdatePlayerPosition =
+                    let mut pos_update: UpdatePlayerPos =
                         DeserializePacket::deserialize(&mut cursor)?;
                     // Don't allow players to update another player's position
                     pos_update.guid = player_guid(sender);

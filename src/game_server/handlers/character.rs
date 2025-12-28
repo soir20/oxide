@@ -15,7 +15,7 @@ use crate::{
             dialog::handle_dialog_buttons,
             inventory::{attachments_from_equipped_items, wield_type_from_inventory},
             unique_guid::AMBIENT_NPC_DISCRIMINANT,
-            update_position::UpdatePositionPacket,
+            update_position::{UpdatePosProgress, UpdatePositionPacket},
         },
         packets::{
             chat::{ActionBarTextColor, SendStringId},
@@ -32,7 +32,7 @@ use crate::{
             },
             tunnel::TunneledPacket,
             ui::{ExecuteScriptWithIntParams, ExecuteScriptWithStringParams},
-            update_position::UpdatePlayerPosition,
+            update_position::UpdatePlayerPos,
             GamePacket, GuidTarget, Name, Pos, Rgba, Target,
         },
         Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
@@ -709,10 +709,7 @@ pub struct TickableStep {
 }
 
 impl TickableStep {
-    pub fn reselect_possible_pos(
-        &self,
-        character: &CharacterStats,
-    ) -> Option<UpdatePlayerPosition> {
+    pub fn reselect_possible_pos(&self, character: &CharacterStats) -> Option<UpdatePlayerPos> {
         if character.possible_pos.is_empty() {
             return None;
         }
@@ -720,7 +717,7 @@ impl TickableStep {
         character
             .possible_pos
             .choose(&mut thread_rng())
-            .map(|pos| UpdatePlayerPosition {
+            .map(|pos| UpdatePlayerPos {
                 guid: Guid::guid(character),
                 pos_x: pos.x,
                 pos_y: pos.y,
@@ -759,9 +756,9 @@ impl TickableStep {
         mount_configs: &BTreeMap<u32, MountConfig>,
         item_definitions: &BTreeMap<u32, ItemDefinition>,
         customizations: &BTreeMap<u32, Customization>,
-    ) -> (Vec<Broadcast>, Option<UpdatePlayerPosition>) {
+    ) -> (Vec<Broadcast>, Option<UpdatePlayerPos>) {
         let mut packets_for_all = Vec::new();
-        let mut update_pos: Option<UpdatePlayerPosition> = None;
+        let mut update_pos: Option<UpdatePlayerPos> = None;
 
         match self.spawned_state {
             SpawnedState::Always => {
@@ -850,7 +847,7 @@ impl TickableStep {
         let new_pos = self.new_pos(character.pos);
         let new_rot = self.new_rot(character.rot);
         if new_pos != character.pos || new_rot != character.rot {
-            update_pos = Some(UpdatePlayerPosition {
+            update_pos = Some(UpdatePlayerPos {
                 guid: Guid::guid(character),
                 pos_x: new_pos.x,
                 pos_y: new_pos.y,
@@ -892,7 +889,7 @@ impl TickableStep {
                 w: character.rot.w,
             };
 
-            update_pos = Some(UpdatePlayerPosition {
+            update_pos = Some(UpdatePlayerPos {
                 guid: Guid::guid(character),
                 pos_x: new_pos.x,
                 pos_y: new_pos.y,
@@ -1139,7 +1136,7 @@ pub struct TickableProcedureConfig {
 }
 
 pub enum TickResult {
-    TickedCurrentProcedure(Vec<Broadcast>, Option<UpdatePlayerPosition>),
+    TickedCurrentProcedure(Vec<Broadcast>, Option<UpdatePosProgress<UpdatePlayerPos>>),
     MustChangeProcedure(String),
 }
 
@@ -1147,16 +1144,56 @@ pub enum TickResult {
 pub struct TickableStepProgress {
     step_index: usize,
     last_step_change: Instant,
-    last_tick: Instant,
+    last_speed_update: Instant,
+    direction_unit_vector: Pos,
     distance_traveled: f32,
     distance_required: f32,
+    delta_since_last_tick: Pos,
+    update_pos_packet: Option<UpdatePlayerPos>,
 }
 
 impl TickableStepProgress {
-    pub fn update(&mut self, now: Instant, speed: f32) {
-        let seconds_since_last_tick = now.saturating_duration_since(self.last_tick).as_secs_f32();
-        self.distance_traveled += speed * seconds_since_last_tick;
-        self.last_tick = now;
+    pub fn update_speed(&mut self, now: Instant, speed: f32) {
+        let seconds_since_last_tick = now
+            .saturating_duration_since(self.last_speed_update)
+            .as_secs_f32();
+        self.distance_traveled += (speed * seconds_since_last_tick).max(self.distance_required);
+        self.delta_since_last_tick += self.direction_unit_vector * speed * seconds_since_last_tick;
+        self.last_speed_update = now;
+    }
+
+    pub fn tick(
+        &mut self,
+        current_pos: Pos,
+        current_rot: Pos,
+    ) -> Option<UpdatePosProgress<UpdatePlayerPos>> {
+        self.update_pos_packet.map(|update_pos_packet| {
+            let new_pos = current_pos + self.delta_since_last_tick;
+            let angle = (new_pos.z - current_pos.z).atan2(new_pos.x - current_pos.x);
+            let new_rot = Pos {
+                x: angle.cos(),
+                y: current_rot.y,
+                z: angle.sin(),
+                w: current_rot.w,
+            };
+
+            self.delta_since_last_tick = Pos::default();
+            UpdatePosProgress {
+                new_pos: current_pos,
+                // The client doesn't rotate the character after it stops moving when rotation is (0, 0, 0)
+                new_rot: match self.reached_destination()
+                    && update_pos_packet.rot() != Pos::default()
+                {
+                    true => update_pos_packet.rot(),
+                    false => new_rot,
+                },
+                packet: update_pos_packet.clone(),
+            }
+        })
+    }
+
+    pub fn reached_destination(&self) -> bool {
+        self.distance_traveled >= self.distance_required
     }
 }
 
@@ -1235,11 +1272,11 @@ impl TickableProcedure {
                     now.saturating_duration_since(progress.last_step_change);
                 let current_step = &self.steps[progress.step_index];
 
-                progress.update(now, character.speed.total());
+                progress.update_speed(now, character.speed.total());
 
                 time_since_last_step_change
                     >= Duration::from_millis(current_step.min_duration_millis)
-                    && progress.distance_traveled >= progress.distance_required
+                    && progress.reached_destination()
             }
             None => true,
         };
@@ -1253,7 +1290,7 @@ impl TickableProcedure {
             if new_step_index >= self.steps.len() {
                 TickResult::MustChangeProcedure(self.next_procedure())
             } else {
-                let prev_pos = character.pos;
+                let old_pos = character.pos;
 
                 let (broadcasts, update_pos) = self.steps[new_step_index].apply(
                     character,
@@ -1264,14 +1301,19 @@ impl TickableProcedure {
                     customizations,
                 );
 
+                let new_pos = update_pos
+                    .map(|update_pos| update_pos.pos())
+                    .unwrap_or_default();
+                let distance_required = distance3_pos(old_pos, new_pos);
                 self.current_step = Some(TickableStepProgress {
                     step_index: new_step_index,
                     last_step_change: now,
-                    last_tick: now,
+                    last_speed_update: now,
+                    direction_unit_vector: (new_pos - old_pos) / distance_required,
                     distance_traveled: 0.0,
-                    distance_required: update_pos
-                        .map(|update_pos| distance3_pos(prev_pos, update_pos.pos()))
-                        .unwrap_or_default(),
+                    distance_required,
+                    delta_since_last_tick: Pos::default(),
+                    update_pos_packet: update_pos,
                 });
                 TickResult::TickedCurrentProcedure(broadcasts, update_pos)
             }
@@ -1414,7 +1456,7 @@ impl TickableProcedureTracker {
         mount_configs: &BTreeMap<u32, MountConfig>,
         item_definitions: &BTreeMap<u32, ItemDefinition>,
         customizations: &BTreeMap<u32, Customization>,
-    ) -> (Vec<Broadcast>, Option<UpdatePlayerPosition>) {
+    ) -> (Vec<Broadcast>, Option<UpdatePosProgress<UpdatePlayerPos>>) {
         if self.procedures.is_empty() {
             return (Vec::new(), None);
         }
@@ -1453,7 +1495,7 @@ impl TickableProcedureTracker {
     pub fn update_progress(&mut self, now: Instant, speed: f32) {
         if let Some(procedure) = self.procedures.get_mut(&self.current_procedure_key) {
             if let Some(step) = &mut procedure.current_step {
-                step.update(now, speed);
+                step.update_speed(now, speed);
             }
         }
     }
@@ -2790,7 +2832,7 @@ impl Character {
         mount_configs: &BTreeMap<u32, MountConfig>,
         item_definitions: &BTreeMap<u32, ItemDefinition>,
         customizations: &BTreeMap<u32, Customization>,
-    ) -> (Vec<Broadcast>, Option<UpdatePlayerPosition>) {
+    ) -> (Vec<Broadcast>, Option<UpdatePosProgress<UpdatePlayerPos>>) {
         self.tickable_procedure_tracker.tick(
             &mut self.stats,
             now,

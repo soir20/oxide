@@ -1,5 +1,5 @@
 use crate::game_server::packets::{
-    update_position::{PlayerJump, UpdatePlayerPlatformPosition, UpdatePlayerPosition},
+    update_position::{PlayerJump, UpdatePlayerPlatformPosition, UpdatePlayerPos},
     GamePacket, Pos,
 };
 
@@ -13,7 +13,7 @@ pub trait UpdatePositionPacket: Copy + GamePacket {
     fn rot(&self) -> Pos;
 }
 
-impl UpdatePositionPacket for UpdatePlayerPosition {
+impl UpdatePositionPacket for UpdatePlayerPos {
     fn apply_jump_height_multiplier(&mut self, _: f32) {}
 
     fn guid(&self) -> u64 {
@@ -73,4 +73,10 @@ impl UpdatePositionPacket for UpdatePlayerPlatformPosition {
     fn rot(&self) -> Pos {
         self.pos_update.rot()
     }
+}
+
+pub struct UpdatePosProgress<T> {
+    pub new_pos: Pos,
+    pub new_rot: Pos,
+    pub packet: T,
 }

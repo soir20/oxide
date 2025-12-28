@@ -24,7 +24,10 @@ pub mod ui;
 pub mod update_position;
 pub mod zone;
 
-use std::fmt::Display;
+use std::{
+    fmt::Display,
+    ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign},
+};
 
 use num_enum::{IntoPrimitive, TryFromPrimitive};
 use packet_serialize::{DeserializePacket, SerializePacket};
@@ -103,6 +106,134 @@ pub struct Pos {
     pub y: f32,
     pub z: f32,
     pub w: f32,
+}
+
+impl Add for Pos {
+    type Output = Self;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        Pos {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+            z: self.z + rhs.z,
+            w: self.w + rhs.w,
+        }
+    }
+}
+
+impl Sub for Pos {
+    type Output = Pos;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        Pos {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+            z: self.z - rhs.z,
+            w: self.w - rhs.w,
+        }
+    }
+}
+
+impl Mul for Pos {
+    type Output = Pos;
+
+    fn mul(self, rhs: Self) -> Self::Output {
+        Pos {
+            x: self.x * rhs.x,
+            y: self.y * rhs.y,
+            z: self.z * rhs.z,
+            w: self.w * rhs.w,
+        }
+    }
+}
+
+impl Div for Pos {
+    type Output = Pos;
+
+    fn div(self, rhs: Self) -> Self::Output {
+        Pos {
+            x: self.x / rhs.x,
+            y: self.y / rhs.y,
+            z: self.z / rhs.z,
+            w: self.w / rhs.w,
+        }
+    }
+}
+
+impl Add<f32> for Pos {
+    type Output = Self;
+
+    fn add(self, rhs: f32) -> Self::Output {
+        Pos {
+            x: self.x + rhs,
+            y: self.y + rhs,
+            z: self.z + rhs,
+            w: self.w + rhs,
+        }
+    }
+}
+
+impl Sub<f32> for Pos {
+    type Output = Self;
+
+    fn sub(self, rhs: f32) -> Self::Output {
+        Pos {
+            x: self.x - rhs,
+            y: self.y - rhs,
+            z: self.z - rhs,
+            w: self.w - rhs,
+        }
+    }
+}
+
+impl Mul<f32> for Pos {
+    type Output = Pos;
+
+    fn mul(self, rhs: f32) -> Self::Output {
+        Pos {
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs,
+            w: self.w * rhs,
+        }
+    }
+}
+
+impl Div<f32> for Pos {
+    type Output = Pos;
+
+    fn div(self, rhs: f32) -> Self::Output {
+        Pos {
+            x: self.x / rhs,
+            y: self.y / rhs,
+            z: self.z / rhs,
+            w: self.w / rhs,
+        }
+    }
+}
+
+impl AddAssign for Pos {
+    fn add_assign(&mut self, rhs: Self) {
+        *self = *self + rhs;
+    }
+}
+
+impl SubAssign for Pos {
+    fn sub_assign(&mut self, rhs: Self) {
+        *self = *self - rhs;
+    }
+}
+
+impl MulAssign for Pos {
+    fn mul_assign(&mut self, rhs: Self) {
+        *self = *self * rhs;
+    }
+}
+
+impl DivAssign for Pos {
+    fn div_assign(&mut self, rhs: Self) {
+        *self = *self / rhs;
+    }
 }
 
 #[derive(Clone, SerializePacket, DeserializePacket)]
