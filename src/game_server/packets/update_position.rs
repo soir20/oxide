@@ -32,13 +32,13 @@ impl GamePacket for PlayerJump {
 }
 
 #[derive(Copy, Clone, SerializePacket, DeserializePacket)]
-pub struct UpdatePlayerPlatformPosition {
+pub struct UpdatePlayerPlatformPos {
     pub pos_update: UpdatePlayerPos,
     pub platform_guid: u64,
     pub player_pos_relative_to_platform: Pos,
 }
 
-impl GamePacket for UpdatePlayerPlatformPosition {
+impl GamePacket for UpdatePlayerPlatformPos {
     type Header = OpCode;
     const HEADER: Self::Header = OpCode::UpdatePlayerPlatformPosition;
 }

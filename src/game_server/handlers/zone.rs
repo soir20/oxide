@@ -51,7 +51,7 @@ use super::{
     unique_guid::{
         npc_guid, player_guid, shorten_player_guid, zone_template_guid, FIXTURE_DISCRIMINANT,
     },
-    update_position::UpdatePositionPacket,
+    update_position::UpdatePosPacket,
     WriteLockingBroadcastSupplier,
 };
 
@@ -726,7 +726,7 @@ impl ZoneInstance {
         moved_character_write_handle.stats.rot = new_rot;
     }
 
-    pub fn move_character<T: UpdatePositionPacket>(
+    pub fn move_character<T: UpdatePosPacket>(
         mut pos_update: UpdatePosProgress<T>,
         should_teleport: bool,
         game_server: &GameServer,

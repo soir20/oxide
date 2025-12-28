@@ -54,12 +54,13 @@ use packets::player_update::{Customization, InitCustomizations, QueueAnimation, 
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
 use packets::store::StoreItemList;
 use packets::tunnel::{TunneledPacket, TunneledWorldPacket};
-use packets::update_position::{PlayerJump, UpdatePlayerPlatformPosition, UpdatePlayerPos};
+use packets::update_position::{PlayerJump, UpdatePlayerPlatformPos, UpdatePlayerPos};
 use packets::zone::PointOfInterestTeleportRequest;
 use packets::{GamePacket, OpCode};
 use rand::Rng;
 
 use crate::game_server::handlers::tick::reset_daily_minigames;
+use crate::game_server::handlers::update_position::{UpdatePosPacket, UpdatePosProgress};
 use crate::ConfigError;
 use packet_serialize::{DeserializePacket, DeserializePacketError};
 
@@ -622,21 +623,29 @@ impl GameServer {
                         DeserializePacket::deserialize(&mut cursor)?;
                     // Don't allow players to update another player's position
                     pos_update.guid = player_guid(sender);
-                    broadcasts.append(&mut ZoneInstance::move_character(pos_update, false, self)?);
+                    broadcasts.append(&mut ZoneInstance::move_character(
+                        pos_update.into(),
+                        false,
+                        self,
+                    )?);
                 }
                 OpCode::PlayerJump => {
                     let mut player_jump: PlayerJump = DeserializePacket::deserialize(&mut cursor)?;
                     // Don't allow players to update another player's position
                     player_jump.pos_update.guid = player_guid(sender);
-                    broadcasts.append(&mut ZoneInstance::move_character(player_jump, false, self)?);
+                    broadcasts.append(&mut ZoneInstance::move_character(
+                        player_jump.into(),
+                        false,
+                        self,
+                    )?);
                 }
                 OpCode::UpdatePlayerPlatformPosition => {
-                    let mut platform_pos_update: UpdatePlayerPlatformPosition =
+                    let mut platform_pos_update: UpdatePlayerPlatformPos =
                         DeserializePacket::deserialize(&mut cursor)?;
                     // Don't allow players to update another player's position
                     platform_pos_update.pos_update.guid = player_guid(sender);
                     broadcasts.append(&mut ZoneInstance::move_character(
-                        platform_pos_update,
+                        platform_pos_update.into(),
                         false,
                         self,
                     )?);

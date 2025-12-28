@@ -15,7 +15,7 @@ use crate::{
             dialog::handle_dialog_buttons,
             inventory::{attachments_from_equipped_items, wield_type_from_inventory},
             unique_guid::AMBIENT_NPC_DISCRIMINANT,
-            update_position::{UpdatePosProgress, UpdatePositionPacket},
+            update_position::{UpdatePosPacket, UpdatePosProgress},
         },
         packets::{
             chat::{ActionBarTextColor, SendStringId},
@@ -1216,7 +1216,7 @@ impl TickableStepProgress {
                     true => update_pos_packet.rot(),
                     false => new_rot,
                 },
-                packet: update_pos_packet.clone(),
+                packet: update_pos_packet,
             }
         })
     }
@@ -1333,13 +1333,13 @@ impl TickableProcedure {
                     customizations,
                 );
 
-                self.current_step = Some(TickableStepProgress::new(
-                    new_step_index,
-                    now,
-                    update_pos,
-                    old_pos,
-                ));
-                TickResult::TickedCurrentProcedure(broadcasts, update_pos)
+                let mut progress =
+                    TickableStepProgress::new(new_step_index, now, update_pos, old_pos);
+                let update_pos_progress =
+                    progress.tick(now, character.speed.total(), character.pos, character.rot);
+
+                self.current_step = Some(progress);
+                TickResult::TickedCurrentProcedure(broadcasts, update_pos_progress)
             }
         } else {
             TickResult::TickedCurrentProcedure(Vec::new(), update_pos_progress)
