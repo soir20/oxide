@@ -1201,7 +1201,7 @@ impl TickableStepProgress {
                     rot_x: new_rot.x,
                     rot_y: new_rot.y,
                     rot_z: new_rot.z,
-                    character_state: self.reached_destination() as u8,
+                    character_state: 1,
                     unknown: 0,
                 })
             }
