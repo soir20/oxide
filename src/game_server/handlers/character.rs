@@ -1204,11 +1204,13 @@ impl TickableStepProgress {
                 };
 
                 // The client doesn't rotate the character after it stops moving when rotation is (0, 0, 0)
-                let new_rot = match should_reach_destination && destination.rot != Pos::default() {
+                let new_rot = match should_reach_destination && destination.rot.x != 0.0 {
                     true => destination.rot,
                     false => {
-                        let angle = (self.new_pos.z - self.old_pos.z)
-                            .atan2(self.new_pos.x - self.old_pos.x);
+                        let angle = self
+                            .direction_unit_vector
+                            .x
+                            .atan2(self.direction_unit_vector.z);
                         Pos {
                             x: angle,
                             y: current_rot.y,

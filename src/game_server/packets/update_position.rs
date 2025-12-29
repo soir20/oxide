@@ -17,7 +17,7 @@ pub struct UpdatePlayerPos {
 
 impl GamePacket for UpdatePlayerPos {
     type Header = OpCode;
-    const HEADER: Self::Header = OpCode::UpdatePlayerPosition;
+    const HEADER: Self::Header = OpCode::UpdatePlayerPos;
 }
 
 #[derive(Copy, Clone, SerializePacket, DeserializePacket)]
@@ -40,5 +40,5 @@ pub struct UpdatePlayerPlatformPos {
 
 impl GamePacket for UpdatePlayerPlatformPos {
     type Header = OpCode;
-    const HEADER: Self::Header = OpCode::UpdatePlayerPlatformPosition;
+    const HEADER: Self::Header = OpCode::UpdatePlayerPlatformPos;
 }
