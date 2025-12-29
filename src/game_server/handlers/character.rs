@@ -1121,8 +1121,6 @@ pub struct TickableStepProgress {
     last_step_change: Instant,
     last_speed_update: Instant,
     direction_unit_vector: Pos,
-    distance_traveled: f32,
-    distance_required: f32,
     old_pos: Pos,
     new_pos: Pos,
     estimated_delta_since_last_tick: Pos,
@@ -1146,8 +1144,6 @@ impl TickableStepProgress {
             last_step_change: now,
             last_speed_update: now,
             direction_unit_vector: (new_pos - start_pos) / distance_required,
-            distance_traveled: 0.0,
-            distance_required,
             old_pos: start_pos,
             new_pos: start_pos,
             estimated_delta_since_last_tick: Pos::default(),
@@ -1187,20 +1183,20 @@ impl TickableStepProgress {
                     true => self.new_pos,
                     false => estimated_current_pos,
                 };
-                self.distance_traveled += max_distance_traveled.min(distance_to_new_pos);
 
                 // Overestimate by 2x so that the NPC keeps moving if the tick lasts slightly
                 // longer than expected
-                let seconds_per_tick = tick_duration.as_secs_f32() * 2.0;
-                let next_tick_estimated_distance = speed * seconds_per_tick;
+                let seconds_per_tick = tick_duration.as_secs_f32();
+                let estimated_new_pos =
+                    self.old_pos + self.direction_unit_vector * speed * seconds_per_tick * 2.0;
 
                 // We don't know for certain if the NPC will reach the destination in the next tick,
                 // because its speed could change
                 let should_reach_destination =
-                    self.distance_traveled + next_tick_estimated_distance >= self.distance_required;
+                    Self::are_pos_close_enough(estimated_new_pos, destination.pos);
                 self.new_pos = match should_reach_destination {
                     true => destination.pos,
-                    false => self.old_pos + self.direction_unit_vector * speed * seconds_per_tick,
+                    false => estimated_new_pos,
                 };
 
                 // The client doesn't rotate the character after it stops moving when rotation is (0, 0)
@@ -1235,7 +1231,14 @@ impl TickableStepProgress {
     }
 
     pub fn reached_destination(&self) -> bool {
-        self.distance_traveled >= self.distance_required
+        self.destination
+            .as_ref()
+            .map(|destination| self.old_pos == destination.pos)
+            .unwrap_or(true)
+    }
+
+    fn are_pos_close_enough(pos1: Pos, pos2: Pos) -> bool {
+        distance3_pos(pos1, pos2) < 0.1
     }
 }
 
