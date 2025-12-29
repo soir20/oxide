@@ -5,7 +5,7 @@ use std::io::{Cursor, Error};
 use std::num::ParseIntError;
 use std::path::Path;
 use std::str::ParseBoolError;
-use std::time::Instant;
+use std::time::{Duration, Instant};
 use std::vec;
 
 use crossbeam_channel::Sender;
@@ -54,7 +54,7 @@ use packets::player_update::{Customization, InitCustomizations, QueueAnimation, 
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
 use packets::store::StoreItemList;
 use packets::tunnel::{TunneledPacket, TunneledWorldPacket};
-use packets::update_position::{PlayerJump, UpdatePlayerPlatformPosition, UpdatePlayerPosition};
+use packets::update_position::{PlayerJump, UpdatePlayerPlatformPos, UpdatePlayerPos};
 use packets::zone::PointOfInterestTeleportRequest;
 use packets::{GamePacket, OpCode};
 use rand::Rng;
@@ -264,8 +264,16 @@ impl GameServer {
         instance_guid: u64,
         chunk: Chunk,
         synchronization: TickableNpcSynchronization,
+        tick_duration: Duration,
     ) -> Vec<Broadcast> {
-        tick_single_chunk(self, now, instance_guid, chunk, synchronization)
+        tick_single_chunk(
+            self,
+            now,
+            instance_guid,
+            chunk,
+            synchronization,
+            tick_duration,
+        )
     }
 
     pub fn tick_matchmaking_groups(&self) -> Vec<Broadcast> {
@@ -507,10 +515,19 @@ impl GameServer {
                                             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {sender} sent a ready packet")));
                                         };
 
-                                        character_write_handle.stats.speed.base = zone.speed;
+                                        character_write_handle.update_speed(|speed| speed.base = zone.speed);
                                         character_write_handle.stats.jump_height_multiplier.base = zone.jump_height_multiplier;
 
-                                        let mut global_packets = character_write_handle.stats.add_packets(false, self.mounts(), self.items(), self.customizations());
+                                        character_broadcasts.append(&mut ZoneInstance::diff_character_broadcasts(
+                                            player_guid(sender),
+                                            character_diffs,
+                                            &characters_read,
+                                            character_write_handle,
+                                            self.mounts(),
+                                            self.items(),
+                                            self.customizations()
+                                        ));
+
                                         let wield_type = TunneledPacket {
                                             unknown1: true,
                                             inner: UpdateWieldType {
@@ -518,7 +535,7 @@ impl GameServer {
                                                 wield_type: character_write_handle.stats.wield_type(),
                                             },
                                         };
-                                        global_packets.push(GamePacket::serialize(&wield_type));
+                                        let global_packets = vec![GamePacket::serialize(&wield_type)];
 
                                         if let CharacterType::Player(player) = &character_write_handle.stats.character_type {
                                             sender_only_character_packets.push(GamePacket::serialize(&TunneledPacket {
@@ -545,7 +562,6 @@ impl GameServer {
                                         character_broadcasts.push(Broadcast::Multi(all_players_nearby, global_packets));
 
                                         character_broadcasts.push(Broadcast::Single(sender, sender_only_character_packets));
-                                        character_broadcasts.append(&mut ZoneInstance::diff_character_broadcasts(player_guid(sender), character_diffs, &characters_read, self.mounts(), self.items(), self.customizations()));
 
                                         Ok(character_broadcasts)
                                     },
@@ -617,8 +633,8 @@ impl GameServer {
                 OpCode::Command => {
                     broadcasts.append(&mut process_command(self, sender, &mut cursor)?);
                 }
-                OpCode::UpdatePlayerPosition => {
-                    let mut pos_update: UpdatePlayerPosition =
+                OpCode::UpdatePlayerPos => {
+                    let mut pos_update: UpdatePlayerPos =
                         DeserializePacket::deserialize(&mut cursor)?;
                     // Don't allow players to update another player's position
                     pos_update.guid = player_guid(sender);
@@ -630,8 +646,8 @@ impl GameServer {
                     player_jump.pos_update.guid = player_guid(sender);
                     broadcasts.append(&mut ZoneInstance::move_character(player_jump, false, self)?);
                 }
-                OpCode::UpdatePlayerPlatformPosition => {
-                    let mut platform_pos_update: UpdatePlayerPlatformPosition =
+                OpCode::UpdatePlayerPlatformPos => {
+                    let mut platform_pos_update: UpdatePlayerPlatformPos =
                         DeserializePacket::deserialize(&mut cursor)?;
                     // Don't allow players to update another player's position
                     platform_pos_update.pos_update.guid = player_guid(sender);
