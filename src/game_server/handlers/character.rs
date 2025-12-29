@@ -1123,8 +1123,9 @@ pub struct TickableStepProgress {
     direction_unit_vector: Pos,
     distance_traveled: f32,
     distance_required: f32,
-    current_pos: Pos,
-    delta_since_last_tick: Pos,
+    old_pos: Pos,
+    new_pos: Pos,
+    estimated_delta_since_last_tick: Pos,
     destination: Option<TickPosUpdate>,
 }
 
@@ -1147,18 +1148,19 @@ impl TickableStepProgress {
             direction_unit_vector: (new_pos - start_pos) / distance_required,
             distance_traveled: 0.0,
             distance_required,
-            current_pos: start_pos,
-            delta_since_last_tick: Pos::default(),
+            old_pos: start_pos,
+            new_pos: start_pos,
+            estimated_delta_since_last_tick: Pos::default(),
             destination: update_pos,
         }
     }
 
     pub fn update_speed(&mut self, now: Instant, speed: f32) {
-        let seconds_since_last_tick = now
+        let seconds_since_last_speed_update = now
             .saturating_duration_since(self.last_speed_update)
             .as_secs_f32();
-        self.distance_traveled += speed * seconds_since_last_tick;
-        self.delta_since_last_tick += self.direction_unit_vector * speed * seconds_since_last_tick;
+        self.estimated_delta_since_last_tick +=
+            self.direction_unit_vector * speed * seconds_since_last_speed_update;
         self.last_speed_update = now;
     }
 
@@ -1174,27 +1176,39 @@ impl TickableStepProgress {
 
         match &self.destination {
             Some(destination) => {
-                self.current_pos += self.delta_since_last_tick;
-                let seconds_per_tick = tick_duration.as_secs_f32();
+                let estimated_current_pos = self.old_pos + self.estimated_delta_since_last_tick;
+                let max_distance_traveled = distance3_pos(self.old_pos, estimated_current_pos);
+                let distance_to_new_pos = distance3_pos(self.old_pos, self.new_pos);
+
+                // The max distance traveled might be less than we expect if the NPC slowed down
+                // during the tick. If the tick was longer than we expected, then the NPC stopped
+                // at the new_pos and did not go any further.
+                self.old_pos = match max_distance_traveled > distance_to_new_pos {
+                    true => self.new_pos,
+                    false => estimated_current_pos,
+                };
+                self.distance_traveled += max_distance_traveled.min(distance_to_new_pos);
+
+                // Overestimate by 2x so that the NPC keeps moving if the tick lasts slightly
+                // longer than expected
+                let seconds_per_tick = tick_duration.as_secs_f32() * 2.0;
                 let next_tick_estimated_distance = speed * seconds_per_tick;
 
                 // We don't know for certain if the NPC will reach the destination in the next tick,
                 // because its speed could change
                 let should_reach_destination =
                     self.distance_traveled + next_tick_estimated_distance >= self.distance_required;
-                let new_estimated_pos = match should_reach_destination {
+                self.new_pos = match should_reach_destination {
                     true => destination.pos,
-                    false => {
-                        self.current_pos + self.direction_unit_vector * speed * seconds_per_tick
-                    }
+                    false => self.old_pos + self.direction_unit_vector * speed * seconds_per_tick,
                 };
 
                 // The client doesn't rotate the character after it stops moving when rotation is (0, 0, 0)
                 let new_rot = match should_reach_destination && destination.rot != Pos::default() {
                     true => destination.rot,
                     false => {
-                        let angle = (new_estimated_pos.z - self.current_pos.z)
-                            .atan2(new_estimated_pos.x - self.current_pos.x);
+                        let angle = (self.new_pos.z - self.old_pos.z)
+                            .atan2(self.new_pos.x - self.old_pos.x);
                         Pos {
                             x: angle,
                             y: current_rot.y,
@@ -1204,16 +1218,16 @@ impl TickableStepProgress {
                     }
                 };
 
-                self.delta_since_last_tick = Pos::default();
+                self.estimated_delta_since_last_tick = Pos::default();
                 Some(UpdatePlayerPos {
                     guid,
-                    pos_x: new_estimated_pos.x,
-                    pos_y: new_estimated_pos.y,
-                    pos_z: new_estimated_pos.z,
+                    pos_x: self.new_pos.x,
+                    pos_y: self.new_pos.y,
+                    pos_z: self.new_pos.z,
                     rot_x: new_rot.x,
                     rot_y: new_rot.y,
                     rot_z: new_rot.z,
-                    character_state: should_reach_destination as u8,
+                    character_state: 1,
                     unknown: 0,
                 })
             }
