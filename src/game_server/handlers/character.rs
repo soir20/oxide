@@ -1209,12 +1209,12 @@ impl TickableStepProgress {
                     false => {
                         let angle = self
                             .direction_unit_vector
-                            .x
-                            .atan2(self.direction_unit_vector.z);
+                            .z
+                            .atan2(self.direction_unit_vector.x);
                         Pos {
-                            x: angle,
+                            x: angle.cos(),
                             y: current_rot.y,
-                            z: current_rot.z,
+                            z: angle.sin(),
                             w: current_rot.w,
                         }
                     }
