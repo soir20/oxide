@@ -1182,6 +1182,9 @@ impl TickableStepProgress {
 
                 self.distance_traveled += max_distance_traveled.min(distance_to_new_pos);
 
+                // Allow the next tickable step to start just as the NPC is almost reaching its
+                // destination on clients. Since we set the old_pos to destination.pos, the NPC's
+                // position will be set to the desired end position without drift.
                 let seconds_per_tick = tick_duration.as_secs_f32();
                 let estimated_distance_per_tick = speed * seconds_per_tick;
                 let close_enough_distance = self.distance_required - estimated_distance_per_tick;
@@ -1198,7 +1201,7 @@ impl TickableStepProgress {
                 };
 
                 // Overestimate by 2x so that the NPC keeps moving if the tick lasts slightly
-                // longer than expected
+                // longer than expected or the NPC speeds up
                 let next_estimated_distance = estimated_distance_per_tick * 2.0;
 
                 // We don't know for certain if the NPC will reach the destination in the next tick,
