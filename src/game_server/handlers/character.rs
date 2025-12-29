@@ -1203,21 +1203,18 @@ impl TickableStepProgress {
                     false => self.old_pos + self.direction_unit_vector * speed * seconds_per_tick,
                 };
 
-                // The client doesn't rotate the character after it stops moving when rotation is (0, 0, 0)
-                let new_rot = match should_reach_destination && destination.rot.x != 0.0 {
+                // The client doesn't rotate the character after it stops moving when rotation is (0, 0)
+                let new_rot = match should_reach_destination
+                    && destination.rot.x != 0.0
+                    && destination.rot.z != 0.0
+                {
                     true => destination.rot,
-                    false => {
-                        let angle = self
-                            .direction_unit_vector
-                            .z
-                            .atan2(self.direction_unit_vector.x);
-                        Pos {
-                            x: angle.cos(),
-                            y: current_rot.y,
-                            z: angle.sin(),
-                            w: current_rot.w,
-                        }
-                    }
+                    false => Pos {
+                        x: self.direction_unit_vector.x,
+                        y: current_rot.y,
+                        z: self.direction_unit_vector.z,
+                        w: current_rot.w,
+                    },
                 };
 
                 self.estimated_delta_since_last_tick = Pos::default();
