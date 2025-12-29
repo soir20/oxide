@@ -1235,7 +1235,11 @@ impl TickableStepProgress {
     }
 
     pub fn reached_destination(&self) -> bool {
-        self.distance_traveled >= self.distance_required
+        // We can do an exact comparison because we set old_pos to the destination pos exactly
+        self.destination
+            .as_ref()
+            .map(|destination| self.old_pos == destination.pos)
+            .unwrap_or(true)
     }
 }
 
