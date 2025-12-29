@@ -1191,8 +1191,8 @@ impl TickableStepProgress {
 
                 // Overestimate by 2x so that the NPC keeps moving if the tick lasts slightly
                 // longer than expected
-                let seconds_per_tick = tick_duration.as_secs_f32() * 2.0;
-                let next_tick_estimated_distance = speed * seconds_per_tick;
+                let seconds_per_tick = tick_duration.as_secs_f32();
+                let next_tick_estimated_distance = speed * seconds_per_tick * 2.0;
 
                 // We don't know for certain if the NPC will reach the destination in the next tick,
                 // because its speed could change
@@ -1200,7 +1200,9 @@ impl TickableStepProgress {
                     self.distance_traveled + next_tick_estimated_distance >= self.distance_required;
                 self.new_pos = match should_reach_destination {
                     true => destination.pos,
-                    false => self.old_pos + self.direction_unit_vector * speed * seconds_per_tick,
+                    false => {
+                        self.old_pos + self.direction_unit_vector * next_tick_estimated_distance
+                    }
                 };
 
                 // The client doesn't rotate the character after it stops moving when rotation is (0, 0)
