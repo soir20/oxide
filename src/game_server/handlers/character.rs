@@ -1202,7 +1202,8 @@ impl TickableStepProgress {
                 // position will be set to the desired end position without drift.
                 let seconds_per_tick = tick_duration.as_secs_f32();
                 let estimated_distance_per_tick = speed * seconds_per_tick;
-                let close_enough_distance = self.distance_required - estimated_distance_per_tick;
+                let close_enough_distance =
+                    self.distance_required - estimated_distance_per_tick * 1.5;
 
                 // The max distance traveled might be less than we expect if the NPC slowed down
                 // during the tick. If the tick was longer than we expected, then the NPC stopped
