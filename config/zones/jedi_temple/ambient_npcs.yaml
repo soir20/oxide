@@ -672,7 +672,7 @@ jedi_temple:
         one_shot_animation_id: 2506
         duration_millis: 4000
       interact_radius: 6
-      auto_interact_radius: 5
+      auto_interact_radius: 2.5
     clone_guard_hanger_2:
       model_id: 1936
       pos:
@@ -693,7 +693,7 @@ jedi_temple:
         one_shot_animation_id: 2506
         duration_millis: 4000
       interact_radius: 6
-      auto_interact_radius: 5
+      auto_interact_radius: 2.5
     hanger_dianoga_barrel:
       model_id: 1089
       pos:
