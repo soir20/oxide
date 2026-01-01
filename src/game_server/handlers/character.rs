@@ -2523,6 +2523,9 @@ impl NpcTemplate {
                 physics: self.physics,
                 name: None,
                 squad_guid: None,
+                target_state: TargetState::None,
+                max_distance_from_target: 0.0,
+                max_distance_from_origin: 0.0,
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(
                 self.tickable_procedures.clone(),
@@ -2578,6 +2581,12 @@ pub struct CharacterMount {
 }
 
 #[derive(Clone)]
+pub enum TargetState {
+    None,
+    Targeting { guid: u64, pos_before_target: Pos },
+}
+
+#[derive(Clone)]
 pub struct CharacterStats {
     guid: u64,
     pub model_id: u32,
@@ -2603,6 +2612,9 @@ pub struct CharacterStats {
     pub squad_guid: Option<u64>,
     wield_type: (WieldType, WieldType),
     holstered: bool,
+    pub target_state: TargetState,
+    pub max_distance_from_target: f32,
+    pub max_distance_from_origin: f32,
 }
 
 impl CharacterStats {
@@ -2840,6 +2852,9 @@ impl Character {
                     base: 1.0,
                     mount_multiplier: 1.0,
                 },
+                target_state: TargetState::None,
+                max_distance_from_target: 0.0,
+                max_distance_from_origin: 0.0,
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(
                 tickable_procedures,
@@ -2897,6 +2912,9 @@ impl Character {
                     base: 1.0,
                     mount_multiplier: 1.0,
                 },
+                target_state: TargetState::None,
+                max_distance_from_target: 0.0,
+                max_distance_from_origin: 0.0,
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(HashMap::new(), Vec::new()),
             synchronize_with: None,
