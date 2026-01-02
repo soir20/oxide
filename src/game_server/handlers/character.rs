@@ -2984,7 +2984,7 @@ impl Character {
                 let broadcasts = Vec::new();
                 let mut pos_update = None;
 
-                let Some(target_read_handle) = nearby_players.get(&guid) else {
+                let Some(target_read_handle) = nearby_players.get(guid) else {
                     return (broadcasts, pos_update);
                 };
 
