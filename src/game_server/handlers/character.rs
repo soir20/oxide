@@ -1098,7 +1098,7 @@ pub enum TickResult {
     TickedCurrentProcedure(Vec<Broadcast>, Option<UpdatePlayerPos>),
     MustChangeProcedure(String),
 }
-#[derive(Clone)]
+#[derive(Clone, PartialEq)]
 pub struct TickPosUpdate {
     pub pos: Pos,
     pub rot_x: Option<f32>,
@@ -1262,13 +1262,33 @@ impl TickablePosUpdateProgress {
         })
     }
 
+    pub fn update_destination_and_tick(
+        &mut self,
+        guid: u64,
+        now: Instant,
+        speed: f32,
+        tick_duration: Duration,
+        current_rot: Pos,
+        new_destination: TickPosUpdate,
+    ) -> Option<UpdatePlayerPos> {
+        let prev_pos_update = self.tick(guid, now, speed, tick_duration, current_rot);
+        if self.destination == new_destination {
+            return prev_pos_update;
+        }
+
+        let distance_required = distance3_pos(self.old_pos, new_destination.pos);
+        self.direction_unit_vector = (new_destination.pos - self.old_pos) / distance_required;
+        self.distance_traveled = 0.0;
+        self.distance_required = distance_required;
+        self.new_pos = self.old_pos;
+        self.destination = new_destination;
+
+        self.tick(guid, now, speed, tick_duration, current_rot)
+    }
+
     pub fn reached_destination(&self) -> bool {
         // We can do an exact comparison because we set old_pos to the destination pos exactly
         self.old_pos == self.destination.pos
-    }
-
-    pub fn destination(&self) -> &TickPosUpdate {
-        &self.destination
     }
 }
 
@@ -2988,28 +3008,21 @@ impl Character {
                     return (broadcasts, pos_update);
                 };
 
-                if target_read_handle.stats.pos != pos_update_progress.destination().pos {
-                    **pos_update_progress = TickablePosUpdateProgress::new(
-                        now,
-                        TickPosUpdate {
-                            pos: target_read_handle.stats.pos,
-                            rot_x: None,
-                            rot_y: None,
-                            rot_z: None,
-                            rot_x_offset: 0.0,
-                            rot_y_offset: 0.0,
-                            rot_z_offset: 0.0,
-                        },
-                        self.stats.pos,
-                    )
-                }
-
-                pos_update = pos_update_progress.tick(
+                pos_update = pos_update_progress.update_destination_and_tick(
                     self.stats.guid,
                     now,
                     self.stats.speed.total(),
                     tick_duration,
                     self.stats.rot,
+                    TickPosUpdate {
+                        pos: target_read_handle.stats.pos,
+                        rot_x: None,
+                        rot_y: None,
+                        rot_z: None,
+                        rot_x_offset: 0.0,
+                        rot_y_offset: 0.0,
+                        rot_z_offset: 0.0,
+                    },
                 );
 
                 (broadcasts, pos_update)
