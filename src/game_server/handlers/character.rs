@@ -2583,7 +2583,7 @@ pub struct CharacterMount {
 #[derive(Clone)]
 pub enum TargetState {
     None,
-    Targeting { guid: u64, pos_before_target: Pos },
+    Targeting { guid: u64, origin: Pos },
 }
 
 #[derive(Clone)]
@@ -2948,16 +2948,19 @@ impl Character {
         customizations: &BTreeMap<u32, Customization>,
         tick_duration: Duration,
     ) -> (Vec<Broadcast>, Option<UpdatePlayerPos>) {
-        self.tickable_procedure_tracker.tick(
-            &mut self.stats,
-            now,
-            nearby_player_guids,
-            nearby_players,
-            mount_configs,
-            item_definitions,
-            customizations,
-            tick_duration,
-        )
+        match self.stats.target_state {
+            TargetState::None => self.tickable_procedure_tracker.tick(
+                &mut self.stats,
+                now,
+                nearby_player_guids,
+                nearby_players,
+                mount_configs,
+                item_definitions,
+                customizations,
+                tick_duration,
+            ),
+            TargetState::Targeting { guid, origin } => todo!(),
+        }
     }
 
     pub fn current_tickable_procedure(&self) -> Option<&String> {
