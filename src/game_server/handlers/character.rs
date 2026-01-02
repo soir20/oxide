@@ -1140,10 +1140,16 @@ pub struct TickablePosUpdateProgress {
     new_pos: Pos,
     estimated_delta_since_last_tick: Pos,
     destination: TickPosUpdate,
+    will_stop_at_destination: bool,
 }
 
 impl TickablePosUpdateProgress {
-    pub fn new(now: Instant, pos_update: TickPosUpdate, start_pos: Pos) -> Self {
+    pub fn new(
+        now: Instant,
+        pos_update: TickPosUpdate,
+        start_pos: Pos,
+        will_stop_at_destination: bool,
+    ) -> Self {
         let new_pos = pos_update.pos;
         let distance_required = distance3_pos(start_pos, new_pos);
         TickablePosUpdateProgress {
@@ -1155,6 +1161,7 @@ impl TickablePosUpdateProgress {
             new_pos: start_pos,
             estimated_delta_since_last_tick: Pos::default(),
             destination: pos_update,
+            will_stop_at_destination,
         }
     }
 
@@ -1192,7 +1199,14 @@ impl TickablePosUpdateProgress {
         // position will be set to the desired end position without drift.
         let seconds_per_tick = tick_duration.as_secs_f32();
         let estimated_distance_per_tick = speed * seconds_per_tick;
-        let close_enough_distance = self.distance_required - estimated_distance_per_tick * 1.5;
+        // NPCs decelerate near their destination client-side, so start the next tick
+        // slightly sooner to avoid deceleration if the NPC might continue moving.
+        let close_enough_factor = match self.will_stop_at_destination {
+            true => 1.0,
+            false => 1.5,
+        };
+        let close_enough_distance =
+            self.distance_required - estimated_distance_per_tick * close_enough_factor;
 
         // The max distance traveled might be less than we expect if the NPC slowed down
         // during the tick. If the tick was longer than we expected, then the NPC stopped
@@ -1419,7 +1433,9 @@ impl TickableProcedure {
                 );
 
                 let mut pos_update_progress = pos_update.map(|pos_update| {
-                    Box::new(TickablePosUpdateProgress::new(now, pos_update, old_pos))
+                    Box::new(TickablePosUpdateProgress::new(
+                        now, pos_update, old_pos, false,
+                    ))
                 });
                 let first_pos_update =
                     pos_update_progress
