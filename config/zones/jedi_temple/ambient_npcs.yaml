@@ -1844,7 +1844,7 @@ jedi_temple:
       enable_interact_popup: false
       cursor: 54
       one_shot_interaction:
-        player_one_shot_animation_id: 3014 
+        player_one_shot_animation_id: 3014
         one_shot_animation_id: 2502
         duration_millis: 5000
       triggered_npc_key: training_room_jedi_and_crates_crates
