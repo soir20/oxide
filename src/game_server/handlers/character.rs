@@ -1140,7 +1140,7 @@ pub struct TickablePosUpdateProgress {
     new_pos: Pos,
     estimated_delta_since_last_tick: Pos,
     destination: TickPosUpdate,
-    will_stop_at_destination: bool,
+    wait_for_deceleration: bool,
 }
 
 impl TickablePosUpdateProgress {
@@ -1148,7 +1148,7 @@ impl TickablePosUpdateProgress {
         now: Instant,
         pos_update: TickPosUpdate,
         start_pos: Pos,
-        will_stop_at_destination: bool,
+        wait_for_deceleration: bool,
     ) -> Self {
         let new_pos = pos_update.pos;
         let distance_required = distance3_pos(start_pos, new_pos);
@@ -1161,7 +1161,7 @@ impl TickablePosUpdateProgress {
             new_pos: start_pos,
             estimated_delta_since_last_tick: Pos::default(),
             destination: pos_update,
-            will_stop_at_destination,
+            wait_for_deceleration,
         }
     }
 
@@ -1201,7 +1201,7 @@ impl TickablePosUpdateProgress {
         let estimated_distance_per_tick = speed * seconds_per_tick;
         // NPCs decelerate near their destination client-side, so start the next tick
         // slightly sooner to avoid deceleration if the NPC might continue moving.
-        let close_enough_factor = match self.will_stop_at_destination {
+        let close_enough_factor = match self.wait_for_deceleration {
             true => 1.0,
             false => 1.5,
         };
