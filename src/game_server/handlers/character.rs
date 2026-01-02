@@ -1131,9 +1131,7 @@ impl TickPosUpdate {
 }
 
 #[derive(Clone)]
-pub struct TickableStepProgress {
-    step_index: usize,
-    last_step_change: Instant,
+pub struct TickablePosUpdateProgress {
     last_speed_update: Instant,
     direction_unit_vector: Pos,
     distance_traveled: f32,
@@ -1141,24 +1139,14 @@ pub struct TickableStepProgress {
     old_pos: Pos,
     new_pos: Pos,
     estimated_delta_since_last_tick: Pos,
-    destination: Option<TickPosUpdate>,
+    destination: TickPosUpdate,
 }
 
-impl TickableStepProgress {
-    pub fn new(
-        new_step_index: usize,
-        now: Instant,
-        pos_update: Option<TickPosUpdate>,
-        start_pos: Pos,
-    ) -> Self {
-        let new_pos = pos_update
-            .as_ref()
-            .map(|pos_update| pos_update.pos)
-            .unwrap_or_default();
+impl TickablePosUpdateProgress {
+    pub fn new(now: Instant, pos_update: TickPosUpdate, start_pos: Pos) -> Self {
+        let new_pos = pos_update.pos;
         let distance_required = distance3_pos(start_pos, new_pos);
-        TickableStepProgress {
-            step_index: new_step_index,
-            last_step_change: now,
+        TickablePosUpdateProgress {
             last_speed_update: now,
             direction_unit_vector: (new_pos - start_pos) / distance_required,
             distance_traveled: 0.0,
@@ -1189,106 +1177,103 @@ impl TickableStepProgress {
     ) -> Option<UpdatePlayerPos> {
         self.update_speed(now, speed);
 
-        match &self.destination {
-            Some(destination) => {
-                let estimated_current_pos = self.old_pos + self.estimated_delta_since_last_tick;
-                let max_distance_traveled = distance3_pos(self.old_pos, estimated_current_pos);
-                let distance_to_new_pos = distance3_pos(self.old_pos, self.new_pos);
-
-                self.distance_traveled += max_distance_traveled.min(distance_to_new_pos);
-
-                // Allow the next tickable step to start just as the NPC is almost reaching its
-                // destination on clients. Since we set the old_pos to destination.pos, the NPC's
-                // position will be set to the desired end position without drift.
-                let seconds_per_tick = tick_duration.as_secs_f32();
-                let estimated_distance_per_tick = speed * seconds_per_tick;
-                let close_enough_distance =
-                    self.distance_required - estimated_distance_per_tick * 1.5;
-
-                // The max distance traveled might be less than we expect if the NPC slowed down
-                // during the tick. If the tick was longer than we expected, then the NPC stopped
-                // at the new_pos and did not go any further.
-                self.old_pos = match self.distance_traveled >= close_enough_distance {
-                    true => destination.pos,
-                    false => match max_distance_traveled > distance_to_new_pos {
-                        true => self.new_pos,
-                        false => estimated_current_pos,
-                    },
-                };
-
-                // Overestimate by 2x so that the NPC keeps moving if the tick lasts slightly
-                // longer than expected or the NPC speeds up
-                let next_estimated_distance = estimated_distance_per_tick * 2.0;
-
-                // We don't know for certain if the NPC will reach the destination in the next tick,
-                // because its speed could change
-                let should_reach_destination =
-                    self.distance_traveled + next_estimated_distance >= self.distance_required;
-                self.new_pos = match should_reach_destination {
-                    true => destination.pos,
-                    false => self.old_pos + self.direction_unit_vector * next_estimated_distance,
-                };
-
-                let mut new_rot = Pos {
-                    x: self.direction_unit_vector.x,
-                    y: current_rot.y,
-                    z: self.direction_unit_vector.z,
-                    w: current_rot.w,
-                };
-
-                if should_reach_destination {
-                    if let Some(new_rot_x) = destination.rot_x {
-                        new_rot.x = new_rot_x;
-                    }
-                    new_rot.x += destination.rot_x_offset;
-
-                    if let Some(new_rot_y) = destination.rot_y {
-                        new_rot.y = new_rot_y;
-                    }
-                    new_rot.y += destination.rot_y_offset;
-
-                    if let Some(new_rot_z) = destination.rot_z {
-                        new_rot.z = new_rot_z;
-                    }
-                    new_rot.z += destination.rot_z_offset;
-                }
-
-                // The client doesn't rotate the character after it stops moving when rotation is (0, 0)
-                if new_rot.x == 0.0 && new_rot.z == 0.0 {
-                    new_rot.x = self.direction_unit_vector.x;
-                    new_rot.z = self.direction_unit_vector.z;
-                }
-
-                self.estimated_delta_since_last_tick = Pos::default();
-                Some(UpdatePlayerPos {
-                    guid,
-                    pos_x: self.new_pos.x,
-                    pos_y: self.new_pos.y,
-                    pos_z: self.new_pos.z,
-                    rot_x: new_rot.x,
-                    rot_y: new_rot.y,
-                    rot_z: new_rot.z,
-                    character_state: 1,
-                    unknown: 0,
-                })
-            }
-            None => None,
+        if self.reached_destination() {
+            return None;
         }
+
+        let estimated_current_pos = self.old_pos + self.estimated_delta_since_last_tick;
+        let max_distance_traveled = distance3_pos(self.old_pos, estimated_current_pos);
+        let distance_to_new_pos = distance3_pos(self.old_pos, self.new_pos);
+
+        self.distance_traveled += max_distance_traveled.min(distance_to_new_pos);
+
+        // Allow the next tickable step to start just as the NPC is almost reaching its
+        // destination on clients. Since we set the old_pos to destination.pos, the NPC's
+        // position will be set to the desired end position without drift.
+        let seconds_per_tick = tick_duration.as_secs_f32();
+        let estimated_distance_per_tick = speed * seconds_per_tick;
+        let close_enough_distance = self.distance_required - estimated_distance_per_tick * 1.5;
+
+        // The max distance traveled might be less than we expect if the NPC slowed down
+        // during the tick. If the tick was longer than we expected, then the NPC stopped
+        // at the new_pos and did not go any further.
+        self.old_pos = match self.distance_traveled >= close_enough_distance {
+            true => self.destination.pos,
+            false => match max_distance_traveled > distance_to_new_pos {
+                true => self.new_pos,
+                false => estimated_current_pos,
+            },
+        };
+
+        // Overestimate by 2x so that the NPC keeps moving if the tick lasts slightly
+        // longer than expected or the NPC speeds up
+        let next_estimated_distance = estimated_distance_per_tick * 2.0;
+
+        // We don't know for certain if the NPC will reach the destination in the next tick,
+        // because its speed could change
+        let should_reach_destination =
+            self.distance_traveled + next_estimated_distance >= self.distance_required;
+        self.new_pos = match should_reach_destination {
+            true => self.destination.pos,
+            false => self.old_pos + self.direction_unit_vector * next_estimated_distance,
+        };
+
+        let mut new_rot = Pos {
+            x: self.direction_unit_vector.x,
+            y: current_rot.y,
+            z: self.direction_unit_vector.z,
+            w: current_rot.w,
+        };
+
+        if should_reach_destination {
+            if let Some(new_rot_x) = self.destination.rot_x {
+                new_rot.x = new_rot_x;
+            }
+            new_rot.x += self.destination.rot_x_offset;
+
+            if let Some(new_rot_y) = self.destination.rot_y {
+                new_rot.y = new_rot_y;
+            }
+            new_rot.y += self.destination.rot_y_offset;
+
+            if let Some(new_rot_z) = self.destination.rot_z {
+                new_rot.z = new_rot_z;
+            }
+            new_rot.z += self.destination.rot_z_offset;
+        }
+
+        // The client doesn't rotate the character after it stops moving when rotation is (0, 0)
+        if new_rot.x == 0.0 && new_rot.z == 0.0 {
+            new_rot.x = self.direction_unit_vector.x;
+            new_rot.z = self.direction_unit_vector.z;
+        }
+
+        self.estimated_delta_since_last_tick = Pos::default();
+        Some(UpdatePlayerPos {
+            guid,
+            pos_x: self.new_pos.x,
+            pos_y: self.new_pos.y,
+            pos_z: self.new_pos.z,
+            rot_x: new_rot.x,
+            rot_y: new_rot.y,
+            rot_z: new_rot.z,
+            character_state: 1,
+            unknown: 0,
+        })
     }
 
     pub fn reached_destination(&self) -> bool {
         // We can do an exact comparison because we set old_pos to the destination pos exactly
-        self.destination
-            .as_ref()
-            .map(|destination| self.old_pos == destination.pos)
-            .unwrap_or(true)
+        self.old_pos == self.destination.pos
     }
 }
 
 #[derive(Clone)]
 pub struct TickableProcedure {
     steps: Vec<TickableStep>,
-    current_step: Option<TickableStepProgress>,
+    current_step_index: Option<usize>,
+    last_step_change: Instant,
+    pos_update_progress: Option<Box<TickablePosUpdateProgress>>,
     distribution: WeightedAliasIndex<u32>,
     next_possible_procedures: Vec<String>,
     is_interruptible: bool,
@@ -1331,7 +1316,9 @@ impl TickableProcedure {
 
         let procedure = TickableProcedure {
             steps: config.steps,
-            current_step: None,
+            current_step_index: None,
+            last_step_change: Instant::now(),
+            pos_update_progress: None,
             distribution: distribution.expect("Couldn't create weighted alias index"),
             next_possible_procedures,
             is_interruptible: config.is_interruptible,
@@ -1355,23 +1342,33 @@ impl TickableProcedure {
     ) -> TickResult {
         self.panic_if_empty();
 
-        let (should_change_steps, pos_update_packet) = match &mut self.current_step {
-            Some(progress) => {
+        let (should_change_steps, pos_update_packet) = match self.current_step_index {
+            Some(current_step_index) => {
                 let time_since_last_step_change =
-                    now.saturating_duration_since(progress.last_step_change);
-                let current_step = &self.steps[progress.step_index];
+                    now.saturating_duration_since(self.last_step_change);
+                let current_step = &self.steps[current_step_index];
 
-                let pos_update_packet = progress.tick(
-                    Guid::guid(character),
-                    now,
-                    character.speed.total(),
-                    tick_duration,
-                    character.rot,
-                );
+                let pos_update_packet =
+                    self.pos_update_progress
+                        .as_mut()
+                        .and_then(|pos_update_progress| {
+                            pos_update_progress.tick(
+                                Guid::guid(character),
+                                now,
+                                character.speed.total(),
+                                tick_duration,
+                                character.rot,
+                            )
+                        });
+                let reached_destination = self
+                    .pos_update_progress
+                    .as_ref()
+                    .map(|pos_update_progress| pos_update_progress.reached_destination())
+                    .unwrap_or(true);
 
                 let should_change_steps = time_since_last_step_change
                     >= Duration::from_millis(current_step.min_duration_millis)
-                    && progress.reached_destination();
+                    && reached_destination;
 
                 (should_change_steps, pos_update_packet)
             }
@@ -1380,9 +1377,8 @@ impl TickableProcedure {
 
         if should_change_steps {
             let new_step_index = self
-                .current_step
-                .as_ref()
-                .map(|current_step| current_step.step_index.saturating_add(1))
+                .current_step_index
+                .map(|current_step_index| current_step_index.saturating_add(1))
                 .unwrap_or_default();
             if new_step_index >= self.steps.len() {
                 TickResult::MustChangeProcedure(self.next_procedure())
@@ -1398,18 +1394,26 @@ impl TickableProcedure {
                     customizations,
                 );
 
-                let mut progress =
-                    TickableStepProgress::new(new_step_index, now, pos_update, old_pos);
-                let pos_update_progress = progress.tick(
-                    Guid::guid(character),
-                    now,
-                    character.speed.total(),
-                    tick_duration,
-                    character.rot,
-                );
+                let mut pos_update_progress = pos_update.map(|pos_update| {
+                    Box::new(TickablePosUpdateProgress::new(now, pos_update, old_pos))
+                });
+                let first_pos_update =
+                    pos_update_progress
+                        .as_mut()
+                        .and_then(|pos_update_progress| {
+                            pos_update_progress.tick(
+                                Guid::guid(character),
+                                now,
+                                character.speed.total(),
+                                tick_duration,
+                                character.rot,
+                            )
+                        });
 
-                self.current_step = Some(progress);
-                TickResult::TickedCurrentProcedure(broadcasts, pos_update_progress)
+                self.current_step_index = Some(new_step_index);
+                self.last_step_change = now;
+                self.pos_update_progress = pos_update_progress;
+                TickResult::TickedCurrentProcedure(broadcasts, first_pos_update)
             }
         } else {
             TickResult::TickedCurrentProcedure(Vec::new(), pos_update_packet)
@@ -1422,7 +1426,8 @@ impl TickableProcedure {
     }
 
     pub fn reset(&mut self) {
-        self.current_step = None;
+        self.current_step_index = None;
+        self.pos_update_progress = None;
     }
 
     fn panic_if_empty(&self) {
@@ -1590,8 +1595,8 @@ impl TickableProcedureTracker {
 
     pub fn update_progress(&mut self, now: Instant, speed: f32) {
         if let Some(procedure) = self.procedures.get_mut(&self.current_procedure_key) {
-            if let Some(step) = &mut procedure.current_step {
-                step.update_speed(now, speed);
+            if let Some(pos_update_progress) = &mut procedure.pos_update_progress {
+                pos_update_progress.update_speed(now, speed);
             }
         }
     }
@@ -2584,6 +2589,7 @@ pub struct CharacterMount {
 pub enum TargetState {
     None,
     Targeting { guid: u64, origin: Pos },
+    ReturningToOrigin { origin: Pos },
 }
 
 #[derive(Clone)]
@@ -2959,7 +2965,18 @@ impl Character {
                 customizations,
                 tick_duration,
             ),
-            TargetState::Targeting { guid, origin } => todo!(),
+            TargetState::Targeting { guid, origin } => {
+                let broadcasts = Vec::new();
+                let mut pos_update = None;
+
+                let Some(target_read_handle) = nearby_players.get(&guid) else {
+                    return (broadcasts, pos_update);
+                };
+
+                // target_read_handle.stats.pos;
+                (broadcasts, pos_update)
+            }
+            TargetState::ReturningToOrigin { origin } => todo!(),
         }
     }
 
