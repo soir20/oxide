@@ -1266,6 +1266,10 @@ impl TickablePosUpdateProgress {
         // We can do an exact comparison because we set old_pos to the destination pos exactly
         self.old_pos == self.destination.pos
     }
+
+    pub fn destination(&self) -> &TickPosUpdate {
+        &self.destination
+    }
 }
 
 #[derive(Clone)]
@@ -2588,8 +2592,15 @@ pub struct CharacterMount {
 #[derive(Clone)]
 pub enum TargetState {
     None,
-    Targeting { guid: u64, origin: Pos },
-    ReturningToOrigin { origin: Pos },
+    Targeting {
+        guid: u64,
+        origin: Pos,
+        pos_update_progress: Box<TickablePosUpdateProgress>,
+    },
+    ReturningToOrigin {
+        origin: Pos,
+        pos_update_progress: Box<TickablePosUpdateProgress>,
+    },
 }
 
 #[derive(Clone)]
@@ -2954,7 +2965,7 @@ impl Character {
         customizations: &BTreeMap<u32, Customization>,
         tick_duration: Duration,
     ) -> (Vec<Broadcast>, Option<UpdatePlayerPos>) {
-        match self.stats.target_state {
+        match &mut self.stats.target_state {
             TargetState::None => self.tickable_procedure_tracker.tick(
                 &mut self.stats,
                 now,
@@ -2965,7 +2976,11 @@ impl Character {
                 customizations,
                 tick_duration,
             ),
-            TargetState::Targeting { guid, origin } => {
+            TargetState::Targeting {
+                guid,
+                origin,
+                pos_update_progress,
+            } => {
                 let broadcasts = Vec::new();
                 let mut pos_update = None;
 
@@ -2973,10 +2988,36 @@ impl Character {
                     return (broadcasts, pos_update);
                 };
 
-                // target_read_handle.stats.pos;
+                if target_read_handle.stats.pos != pos_update_progress.destination().pos {
+                    **pos_update_progress = TickablePosUpdateProgress::new(
+                        now,
+                        TickPosUpdate {
+                            pos: target_read_handle.stats.pos,
+                            rot_x: None,
+                            rot_y: None,
+                            rot_z: None,
+                            rot_x_offset: 0.0,
+                            rot_y_offset: 0.0,
+                            rot_z_offset: 0.0,
+                        },
+                        self.stats.pos,
+                    )
+                }
+
+                pos_update = pos_update_progress.tick(
+                    self.stats.guid,
+                    now,
+                    self.stats.speed.total(),
+                    tick_duration,
+                    self.stats.rot,
+                );
+
                 (broadcasts, pos_update)
             }
-            TargetState::ReturningToOrigin { origin } => todo!(),
+            TargetState::ReturningToOrigin {
+                origin,
+                pos_update_progress,
+            } => todo!(),
         }
     }
 
