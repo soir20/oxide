@@ -2630,7 +2630,8 @@ pub enum TargetState {
     None,
     Targeting {
         guid: u64,
-        origin: Pos,
+        origin_pos: Pos,
+        origin_rot: Pos,
         pos_update_progress: Box<TickablePosUpdateProgress>,
     },
     ReturningToOrigin {
@@ -3015,13 +3016,14 @@ impl Character {
             ),
             TargetState::Targeting {
                 guid,
-                origin,
+                origin_pos,
+                origin_rot,
                 pos_update_progress,
             } => {
                 let broadcasts = Vec::new();
                 let mut pos_update = None;
 
-                let distance_from_origin = distance3_pos(self.stats.pos, *origin);
+                let distance_from_origin = distance3_pos(self.stats.pos, *origin_pos);
                 let too_far_from_origin =
                     distance_from_origin > self.stats.max_distance_from_origin;
 
@@ -3053,7 +3055,15 @@ impl Character {
                     speed,
                     tick_duration,
                     self.stats.rot,
-                    TickPosUpdate::without_rot_change(*origin),
+                    TickPosUpdate {
+                        pos: *origin_pos,
+                        rot_x: Some(origin_rot.x),
+                        rot_y: Some(origin_rot.y),
+                        rot_z: Some(origin_rot.z),
+                        rot_x_offset: 0.0,
+                        rot_y_offset: 0.0,
+                        rot_z_offset: 0.0,
+                    },
                 );
                 self.stats.target_state = TargetState::ReturningToOrigin {
                     pos_update_progress: pos_update_progress.clone(),
