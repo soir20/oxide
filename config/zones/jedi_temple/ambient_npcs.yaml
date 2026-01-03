@@ -1825,6 +1825,8 @@ jedi_temple:
         z: -0.75
         w: 0
       stand_animation_id: 2501
+      cursor: 54
+      enable_interact_popup: false
       one_shot_interaction:
         one_shot_animation_id: 2502
         duration_millis: 5000
@@ -1841,8 +1843,6 @@ jedi_temple:
         z: -0.75
         w: 0
       stand_animation_id: 2501
-      enable_interact_popup: false
-      cursor: 54
       one_shot_interaction:
         player_one_shot_animation_id: 3014
         one_shot_animation_id: 2502
