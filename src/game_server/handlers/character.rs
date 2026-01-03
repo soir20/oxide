@@ -2446,9 +2446,7 @@ impl CharacterType {
                 CharacterType::AmbientNpc(template.instantiate(keys_to_guid))
             }
 
-            CharacterTypeTemplate::Door(template) => {
-                CharacterType::Door(template.instantiate())
-            }
+            CharacterTypeTemplate::Door(template) => CharacterType::Door(template.instantiate()),
 
             CharacterTypeTemplate::Transport(template) => {
                 CharacterType::Transport(template.instantiate())
