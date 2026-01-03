@@ -1828,7 +1828,8 @@ jedi_temple:
       one_shot_interaction:
         one_shot_animation_id: 2502
         duration_millis: 5000
-      triggered_npc_key_on_interact: training_room_jedi_and_crates_jedi
+      triggered_npc_keys_on_interact: 
+        - training_room_jedi_and_crates_jedi
     training_room_jedi_and_crates_jedi:
       key: training_room_jedi_and_crates_jedi
       model_id: 41

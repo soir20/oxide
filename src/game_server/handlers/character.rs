@@ -1615,7 +1615,7 @@ pub struct AmbientNpcConfig {
     pub base_npc: BaseNpcConfig,
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
     pub one_shot_interaction: Option<OneShotInteractionConfig>,
-    pub triggered_npc_key_on_interact: Option<String>,
+    pub triggered_npc_keys_on_interact: Option<Vec<String>>,
     pub notification_icon: Option<u32>,
 }
 
@@ -1635,10 +1635,13 @@ impl ToCharacterTypeTemplate for AmbientNpcConfig {
         zone_guid: u8,
         npc_name: &str,
     ) -> CharacterTypeTemplate {
-        if let Some(triggered_key) = &self.triggered_npc_key_on_interact {
+        if let Some(triggered_keys) = &self.triggered_npc_keys_on_interact {
             if let Some(base_key) = &self.base_config().key {
-                if triggered_key == base_key {
-                    panic!("(NPC: {}) in (Zone GUID: {}) contains a self-reference as its (Triggered NPC Key: {})", npc_name, zone_guid, triggered_key);
+                if triggered_keys.contains(base_key) {
+                    panic!(
+                        "(NPC: {}) in (Zone GUID: {}) contains a self-reference in its (Triggered NPC Keys: {:?})",
+                        npc_name, zone_guid, triggered_keys,
+                    );
                 }
             }
         }
@@ -1656,7 +1659,7 @@ impl ToCharacterTypeTemplate for AmbientNpcConfig {
             base_npc: self.base_npc.clone().into(),
             procedure_on_interact: self.procedure_on_interact.clone(),
             one_shot_interaction: resolved_action,
-            triggered_npc_key_on_interact: self.triggered_npc_key_on_interact.clone(),
+            triggered_npc_keys_on_interact: self.triggered_npc_keys_on_interact.clone(),
             notification_icon: self.notification_icon,
         })
     }
@@ -1667,7 +1670,7 @@ pub struct AmbientNpcTemplate {
     pub base_npc: BaseNpc,
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
     pub one_shot_interaction: Option<OneShotInteractionTemplate>,
-    pub triggered_npc_key_on_interact: Option<String>,
+    pub triggered_npc_keys_on_interact: Option<Vec<String>>,
     pub notification_icon: Option<u32>,
 }
 
@@ -1677,11 +1680,11 @@ impl AmbientNpcTemplate {
             base_npc: self.base_npc.clone(),
             procedure_on_interact: self.procedure_on_interact.clone(),
             one_shot_interaction: self.one_shot_interaction.clone(),
-            triggered_npc_guid: self
-                .triggered_npc_key_on_interact
-                .as_ref()
-                .and_then(|key| keys_to_guid.get(key))
-                .copied(),
+            triggered_npc_guids: self.triggered_npc_keys_on_interact.as_ref().map(|keys| {
+                keys.iter()
+                    .filter_map(|key| keys_to_guid.get(key).copied())
+                    .collect()
+            }),
             notification_icon: self.notification_icon,
         }
     }
@@ -1692,7 +1695,7 @@ pub struct AmbientNpc {
     pub base_npc: BaseNpc,
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
     pub one_shot_interaction: Option<OneShotInteractionTemplate>,
-    pub triggered_npc_guid: Option<u64>,
+    pub triggered_npc_guids: Option<Vec<u64>>,
     pub notification_icon: Option<u32>,
 }
 
@@ -1794,16 +1797,18 @@ impl AmbientNpc {
             })
             .unwrap_or_default();
 
-        if let Some(triggered_npc_guid) = self.triggered_npc_guid {
-            if let Ok(mut triggered_npc_packets) = trigger_synchronized_interaction(
-                triggered_npc_guid,
-                nearby_player_guids,
-                requester,
-                player_stats,
-                zone_instance,
-                game_server,
-            ) {
-                packets.append(&mut triggered_npc_packets);
+        if let Some(triggered_guids) = &self.triggered_npc_guids {
+            for guid in triggered_guids {
+                if let Ok(mut triggered_packets) = trigger_synchronized_interaction(
+                    *guid,
+                    nearby_player_guids,
+                    requester,
+                    player_stats,
+                    zone_instance,
+                    game_server,
+                ) {
+                    packets.append(&mut triggered_packets);
+                }
             }
         }
 
