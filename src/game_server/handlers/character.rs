@@ -3021,34 +3021,43 @@ impl Character {
                 let broadcasts = Vec::new();
                 let mut pos_update = None;
 
-                let Some(target_read_handle) = nearby_players.get(guid) else {
-                    return (broadcasts, pos_update);
-                };
+                let distance_from_origin = distance3_pos(self.stats.pos, *origin);
+                let too_far_from_origin =
+                    distance_from_origin > self.stats.max_distance_from_origin;
 
-                if distance3_pos(self.stats.pos, *origin) > self.stats.max_distance_from_origin {
-                    pos_update = pos_update_progress.update_destination_and_tick(
-                        self.stats.guid,
-                        now,
-                        speed,
-                        tick_duration,
-                        self.stats.rot,
-                        TickPosUpdate::without_rot_change(*origin),
-                    );
-                    self.stats.target_state = TargetState::ReturningToOrigin {
-                        pos_update_progress: pos_update_progress.clone(),
-                    };
-                } else if distance3_pos(self.stats.pos, target_read_handle.stats.pos)
-                    > self.stats.max_distance_from_target
-                {
-                    pos_update = pos_update_progress.update_destination_and_tick(
-                        self.stats.guid,
-                        now,
-                        speed,
-                        tick_duration,
-                        self.stats.rot,
-                        TickPosUpdate::without_rot_change(target_read_handle.stats.pos),
-                    );
+                if let Some(target_read_handle) = nearby_players.get(guid) {
+                    let distance_from_target =
+                        distance3_pos(self.stats.pos, target_read_handle.stats.pos);
+                    let too_far_from_target =
+                        distance_from_target > self.stats.max_distance_from_target;
+
+                    if !too_far_from_origin {
+                        if too_far_from_target {
+                            pos_update = pos_update_progress.update_destination_and_tick(
+                                self.stats.guid,
+                                now,
+                                speed,
+                                tick_duration,
+                                self.stats.rot,
+                                TickPosUpdate::without_rot_change(target_read_handle.stats.pos),
+                            );
+                        }
+
+                        return (broadcasts, pos_update);
+                    }
                 }
+
+                pos_update = pos_update_progress.update_destination_and_tick(
+                    self.stats.guid,
+                    now,
+                    speed,
+                    tick_duration,
+                    self.stats.rot,
+                    TickPosUpdate::without_rot_change(*origin),
+                );
+                self.stats.target_state = TargetState::ReturningToOrigin {
+                    pos_update_progress: pos_update_progress.clone(),
+                };
 
                 (broadcasts, pos_update)
             }
