@@ -2427,8 +2427,20 @@ pub enum CharacterTypeTemplate {
     Transport(TransportTemplate),
 }
 
-impl From<(CharacterTypeTemplate, &HashMap<&String, u64>)> for CharacterType {
-    fn from(template: CharacterTypeTemplate, keys_to_guid: &HashMap<&String, u64>) -> Self {
+#[derive(Clone)]
+pub enum CharacterType {
+    AmbientNpc(AmbientNpc),
+    Door(Door),
+    Transport(Transport),
+    Player(Box<Player>),
+    Fixture(u64, CurrentFixture),
+}
+
+impl CharacterType {
+    pub fn from_template(
+        template: CharacterTypeTemplate,
+        keys_to_guid: &HashMap<&String, u64>,
+    ) -> Self {
         match template {
             CharacterTypeTemplate::AmbientNpc(template) => {
                 CharacterType::AmbientNpc(template.instantiate(keys_to_guid))
@@ -2441,15 +2453,6 @@ impl From<(CharacterTypeTemplate, &HashMap<&String, u64>)> for CharacterType {
             }
         }
     }
-}
-
-#[derive(Clone)]
-pub enum CharacterType {
-    AmbientNpc(AmbientNpc),
-    Door(Door),
-    Transport(Transport),
-    Player(Box<Player>),
-    Fixture(u64, CurrentFixture),
 }
 
 #[derive(Copy, Clone, Eq, PartialOrd, PartialEq, Ord, Sequence)]
@@ -2565,7 +2568,10 @@ impl NpcTemplate {
                 possible_pos: self.possible_pos.clone(),
                 chunk_size,
                 scale: self.scale,
-                character_type: CharacterType::from((self.character_type.clone(), keys_to_guid)),
+                character_type: CharacterType::from_template(
+                    self.character_type.clone(),
+                    keys_to_guid,
+                ),
                 mount: self.mount_id.map(|mount_id| CharacterMount {
                     mount_id,
                     mount_guid: mount_guid(guid),
