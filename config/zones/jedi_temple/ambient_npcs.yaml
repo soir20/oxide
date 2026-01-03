@@ -237,7 +237,6 @@ jedi_temple:
         w: 0
       cursor: 53
       notification_icon: 37
-      triggered_npc_key: joker
       one_shot_interaction:
         dialog_option_key: Breaker
         duration_millis: 1
