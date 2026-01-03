@@ -1615,8 +1615,8 @@ pub struct AmbientNpcConfig {
     pub base_npc: BaseNpcConfig,
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
     pub one_shot_interaction: Option<OneShotInteractionConfig>,
+    pub triggered_npc_key_on_interact: Option<String>,
     pub notification_icon: Option<u32>,
-    pub triggered_npc_key: Option<String>,
 }
 
 impl NpcConfig for AmbientNpcConfig {
@@ -1635,7 +1635,7 @@ impl ToCharacterTypeTemplate for AmbientNpcConfig {
         zone_guid: u8,
         npc_name: &str,
     ) -> CharacterTypeTemplate {
-        if let Some(triggered_key) = &self.triggered_npc_key {
+        if let Some(triggered_key) = &self.triggered_npc_key_on_interact {
             if let Some(base_key) = &self.base_config().key {
                 if triggered_key == base_key {
                     panic!("(NPC: {}) in (Zone GUID: {}) contains a self-reference as its (Triggered NPC Key: {})", npc_name, zone_guid, triggered_key);
@@ -1656,8 +1656,8 @@ impl ToCharacterTypeTemplate for AmbientNpcConfig {
             base_npc: self.base_npc.clone().into(),
             procedure_on_interact: self.procedure_on_interact.clone(),
             one_shot_interaction: resolved_action,
+            triggered_npc_key_on_interact: self.triggered_npc_key_on_interact.clone(),
             notification_icon: self.notification_icon,
-            triggered_npc_key: self.triggered_npc_key.clone(),
         })
     }
 }
@@ -1667,24 +1667,22 @@ pub struct AmbientNpcTemplate {
     pub base_npc: BaseNpc,
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
     pub one_shot_interaction: Option<OneShotInteractionTemplate>,
+    pub triggered_npc_key_on_interact: Option<String>,
     pub notification_icon: Option<u32>,
-    pub triggered_npc_key: Option<String>,
 }
 
 impl AmbientNpcTemplate {
     pub fn instantiate(&self, keys_to_guid: &HashMap<&String, u64>) -> AmbientNpc {
-        let resolved_guid = self
-            .triggered_npc_key
-            .as_ref()
-            .and_then(|key| keys_to_guid.get(key))
-            .copied();
-
         AmbientNpc {
             base_npc: self.base_npc.clone(),
             procedure_on_interact: self.procedure_on_interact.clone(),
             one_shot_interaction: self.one_shot_interaction.clone(),
+            triggered_npc_guid: self
+                .triggered_npc_key_on_interact
+                .as_ref()
+                .and_then(|key| keys_to_guid.get(key))
+                .copied(),
             notification_icon: self.notification_icon,
-            triggered_npc_guid: resolved_guid,
         }
     }
 }
@@ -1694,8 +1692,8 @@ pub struct AmbientNpc {
     pub base_npc: BaseNpc,
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
     pub one_shot_interaction: Option<OneShotInteractionTemplate>,
-    pub notification_icon: Option<u32>,
     pub triggered_npc_guid: Option<u64>,
+    pub notification_icon: Option<u32>,
 }
 
 impl AmbientNpc {
