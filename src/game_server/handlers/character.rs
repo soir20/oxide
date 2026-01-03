@@ -2634,7 +2634,6 @@ pub enum TargetState {
         pos_update_progress: Box<TickablePosUpdateProgress>,
     },
     ReturningToOrigin {
-        origin: Pos,
         pos_update_progress: Box<TickablePosUpdateProgress>,
     },
 }
@@ -3024,27 +3023,34 @@ impl Character {
                     return (broadcasts, pos_update);
                 };
 
-                pos_update = pos_update_progress.update_destination_and_tick(
-                    self.stats.guid,
-                    now,
-                    self.stats.speed.total(),
-                    tick_duration,
-                    self.stats.rot,
-                    TickPosUpdate {
-                        pos: target_read_handle.stats.pos,
-                        rot_x: None,
-                        rot_y: None,
-                        rot_z: None,
-                        rot_x_offset: 0.0,
-                        rot_y_offset: 0.0,
-                        rot_z_offset: 0.0,
-                    },
-                );
+                if distance3_pos(self.stats.pos, *origin) > self.stats.max_distance_from_origin {
+                    pos_update = pos_update_progress.update_destination_and_tick(
+                        self.stats.guid,
+                        now,
+                        self.stats.speed.total(),
+                        tick_duration,
+                        self.stats.rot,
+                        TickPosUpdate::without_rot_change(*origin),
+                    );
+                    self.stats.target_state = TargetState::ReturningToOrigin {
+                        pos_update_progress: pos_update_progress.clone(),
+                    };
+                } else if distance3_pos(self.stats.pos, target_read_handle.stats.pos)
+                    > self.stats.max_distance_from_target
+                {
+                    pos_update = pos_update_progress.update_destination_and_tick(
+                        self.stats.guid,
+                        now,
+                        self.stats.speed.total(),
+                        tick_duration,
+                        self.stats.rot,
+                        TickPosUpdate::without_rot_change(target_read_handle.stats.pos),
+                    );
+                }
 
                 (broadcasts, pos_update)
             }
             TargetState::ReturningToOrigin {
-                origin,
                 pos_update_progress,
             } => todo!(),
         }
