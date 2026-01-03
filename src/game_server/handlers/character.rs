@@ -2428,7 +2428,7 @@ pub enum CharacterTypeTemplate {
 }
 
 impl From<(CharacterTypeTemplate, &HashMap<&String, u64>)> for CharacterType {
-    fn from((template, keys_to_guid): (CharacterTypeTemplate, &HashMap<&String, u64>)) -> Self {
+    fn from(template: CharacterTypeTemplate, keys_to_guid: &HashMap<&String, u64>) -> Self {
         match template {
             CharacterTypeTemplate::AmbientNpc(template) => {
                 CharacterType::AmbientNpc(template.instantiate(keys_to_guid))
