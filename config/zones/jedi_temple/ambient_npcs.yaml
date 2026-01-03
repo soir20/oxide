@@ -1847,7 +1847,7 @@ jedi_temple:
         player_one_shot_animation_id: 3014
         one_shot_animation_id: 2502
         duration_millis: 5000
-      triggered_npc_key: training_room_jedi_and_crates_crates
+      triggered_npc_key_on_interact: training_room_jedi_and_crates_crates
     training_room_main_platform_lift:
       model_id: 1438
       physics: Disabled
