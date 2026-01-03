@@ -3000,6 +3000,8 @@ impl Character {
         customizations: &BTreeMap<u32, Customization>,
         tick_duration: Duration,
     ) -> (Vec<Broadcast>, Option<UpdatePlayerPos>) {
+        let speed = self.stats.speed.total();
+
         match &mut self.stats.target_state {
             TargetState::None => self.tickable_procedure_tracker.tick(
                 &mut self.stats,
@@ -3027,7 +3029,7 @@ impl Character {
                     pos_update = pos_update_progress.update_destination_and_tick(
                         self.stats.guid,
                         now,
-                        self.stats.speed.total(),
+                        speed,
                         tick_duration,
                         self.stats.rot,
                         TickPosUpdate::without_rot_change(*origin),
@@ -3041,7 +3043,7 @@ impl Character {
                     pos_update = pos_update_progress.update_destination_and_tick(
                         self.stats.guid,
                         now,
-                        self.stats.speed.total(),
+                        speed,
                         tick_duration,
                         self.stats.rot,
                         TickPosUpdate::without_rot_change(target_read_handle.stats.pos),
@@ -3052,7 +3054,19 @@ impl Character {
             }
             TargetState::ReturningToOrigin {
                 pos_update_progress,
-            } => todo!(),
+            } => {
+                let pos_update = pos_update_progress.tick(
+                    self.stats.guid,
+                    now,
+                    speed,
+                    tick_duration,
+                    self.stats.rot,
+                );
+                if pos_update_progress.reached_destination() {
+                    self.stats.target_state = TargetState::None;
+                }
+                (Vec::new(), pos_update)
+            }
         }
     }
 
