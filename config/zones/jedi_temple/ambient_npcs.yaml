@@ -1811,10 +1811,7 @@ jedi_temple:
               new_pos_offset_y: -12
               min_duration_millis: 12000
     training_room_jedi_and_crates_crates:
-      key: training_room_jedi_and_crates_crates
       model_id: 187
-      name_id: 0
-      show_name: false
       pos:
         x: 161.65
         y: 6.824238
@@ -1826,10 +1823,16 @@ jedi_temple:
         z: -0.75
         w: 0
       stand_animation_id: 2501
+      cursor: 54
+      enable_interact_popup: false
+      one_shot_interaction:
+        one_shot_animation_id: 2502
+        duration_millis: 5000
+      triggered_npc_keys_on_interact:
+        - training_room_jedi_and_crates_jedi
     training_room_jedi_and_crates_jedi:
+      key: training_room_jedi_and_crates_jedi
       model_id: 41
-      name_id: 0
-      show_name: false
       pos:
         x: 161.65
         y: 6.824238
@@ -1841,7 +1844,10 @@ jedi_temple:
         z: -0.75
         w: 0
       stand_animation_id: 2501
-      synchronize_with: training_room_jedi_and_crates_crates
+      one_shot_interaction:
+        player_one_shot_animation_id: 3014
+        one_shot_animation_id: 2502
+        duration_millis: 5000
     training_room_main_platform_lift:
       model_id: 1438
       physics: Disabled

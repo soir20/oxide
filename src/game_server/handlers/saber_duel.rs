@@ -681,6 +681,7 @@ impl SaberDuelGame {
                 procedure_on_interact: None,
                 one_shot_interaction: None,
                 notification_icon: None,
+                triggered_npc_guids: None,
             }),
             None,
             None,

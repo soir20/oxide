@@ -44,7 +44,7 @@ use super::{
     distance3_pos,
     guid::{Guid, IndexedGuid},
     housing::fixture_packets,
-    lock_enforcer::CharacterReadGuard,
+    lock_enforcer::{CharacterLockRequest, CharacterReadGuard},
     minigame::{MinigameTypeData, PlayerMinigameStats},
     mount::{spawn_mount_npc, MountConfig},
     unique_guid::{mount_guid, npc_guid, player_guid},
@@ -1660,6 +1660,7 @@ pub struct AmbientNpcConfig {
     pub base_npc: BaseNpcConfig,
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
     pub one_shot_interaction: Option<OneShotInteractionConfig>,
+    pub triggered_npc_keys_on_interact: Option<Vec<String>>,
     pub notification_icon: Option<u32>,
 }
 
@@ -1679,6 +1680,17 @@ impl ToCharacterTypeTemplate for AmbientNpcConfig {
         zone_guid: u8,
         npc_name: &str,
     ) -> CharacterTypeTemplate {
+        if let Some(triggered_keys) = &self.triggered_npc_keys_on_interact {
+            if let Some(base_key) = &self.base_config().key {
+                if triggered_keys.contains(base_key) {
+                    panic!(
+                        "(NPC: {}) in (Zone GUID: {}) contains a self-reference in its (Triggered NPC Keys: {:?})",
+                        npc_name, zone_guid, triggered_keys,
+                    );
+                }
+            }
+        }
+
         let resolved_action = self.one_shot_interaction.as_ref().map(|action_config| {
             OneShotInteractionTemplate::from_config(
                 action_config,
@@ -1692,6 +1704,7 @@ impl ToCharacterTypeTemplate for AmbientNpcConfig {
             base_npc: self.base_npc.clone().into(),
             procedure_on_interact: self.procedure_on_interact.clone(),
             one_shot_interaction: resolved_action,
+            triggered_npc_keys_on_interact: self.triggered_npc_keys_on_interact.clone(),
             notification_icon: self.notification_icon,
         })
     }
@@ -1702,22 +1715,22 @@ pub struct AmbientNpcTemplate {
     pub base_npc: BaseNpc,
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
     pub one_shot_interaction: Option<OneShotInteractionTemplate>,
+    pub triggered_npc_keys_on_interact: Option<Vec<String>>,
     pub notification_icon: Option<u32>,
 }
 
 impl AmbientNpcTemplate {
-    pub fn instantiate(&self) -> AmbientNpc {
-        AmbientNpc::from(self)
-    }
-}
-
-impl From<&AmbientNpcTemplate> for AmbientNpc {
-    fn from(value: &AmbientNpcTemplate) -> Self {
+    pub fn instantiate(&self, keys_to_guid: &HashMap<&String, u64>) -> AmbientNpc {
         AmbientNpc {
-            base_npc: value.base_npc.clone(),
-            procedure_on_interact: value.procedure_on_interact.clone(),
-            one_shot_interaction: value.one_shot_interaction.clone(),
-            notification_icon: value.notification_icon,
+            base_npc: self.base_npc.clone(),
+            procedure_on_interact: self.procedure_on_interact.clone(),
+            one_shot_interaction: self.one_shot_interaction.clone(),
+            triggered_npc_guids: self.triggered_npc_keys_on_interact.as_ref().map(|keys| {
+                keys.iter()
+                    .filter_map(|key| keys_to_guid.get(key).copied())
+                    .collect()
+            }),
+            notification_icon: self.notification_icon,
         }
     }
 }
@@ -1727,6 +1740,7 @@ pub struct AmbientNpc {
     pub base_npc: BaseNpc,
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
     pub one_shot_interaction: Option<OneShotInteractionTemplate>,
+    pub triggered_npc_guids: Option<Vec<u64>>,
     pub notification_icon: Option<u32>,
 }
 
@@ -1811,23 +1825,75 @@ impl AmbientNpc {
             options[index].procedure.clone()
         });
 
-        let packets = self
+        let mut packets = self
             .one_shot_interaction
             .as_ref()
-            .map_or(Ok(Vec::new()), |action| {
-                action.apply(
-                    &mut character.stats,
+            .and_then(|action| {
+                action
+                    .apply(
+                        &mut character.stats,
+                        nearby_player_guids,
+                        requester,
+                        player_stats,
+                        zone_instance,
+                        game_server,
+                    )
+                    .ok()
+            })
+            .unwrap_or_default();
+
+        if let Some(triggered_guids) = &self.triggered_npc_guids {
+            for guid in triggered_guids {
+                if let Ok(mut triggered_packets) = trigger_synchronized_interaction(
+                    *guid,
                     nearby_player_guids,
                     requester,
                     player_stats,
                     zone_instance,
                     game_server,
-                )
-            });
+                ) {
+                    packets.append(&mut triggered_packets);
+                }
+            }
+        }
 
-        let broadcast_supplier = coerce_to_broadcast_supplier(move |_| packets);
+        let broadcast_supplier = coerce_to_broadcast_supplier(move |_| Ok(packets));
         (procedure, broadcast_supplier)
     }
+}
+
+fn trigger_synchronized_interaction(
+    target_guid: u64,
+    nearby_player_guids: &[u32],
+    requester: u32,
+    player_stats: &mut Player,
+    zone_instance: &ZoneInstance,
+    game_server: &GameServer,
+) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    let supplier: WriteLockingBroadcastSupplier =
+        game_server
+            .lock_enforcer()
+            .read_characters(|_| CharacterLockRequest {
+                read_guids: vec![],
+                write_guids: vec![target_guid],
+                character_consumer: move |_, _, mut characters, _| {
+                    let Some(target) = characters.get_mut(&target_guid) else {
+                        return coerce_to_broadcast_supplier(|_| Ok(vec![]));
+                    };
+
+                    let result = target.interact(
+                        requester,
+                        player_stats,
+                        nearby_player_guids,
+                        zone_instance,
+                        game_server,
+                    )?;
+
+                    coerce_to_broadcast_supplier(move |game_server| result(game_server))
+                },
+            });
+
+    supplier?(game_server)
 }
 
 #[derive(Clone, Deserialize)]
@@ -2406,20 +2472,6 @@ pub enum CharacterTypeTemplate {
     Transport(TransportTemplate),
 }
 
-impl From<CharacterTypeTemplate> for CharacterType {
-    fn from(template: CharacterTypeTemplate) -> Self {
-        match template {
-            CharacterTypeTemplate::AmbientNpc(template) => {
-                CharacterType::AmbientNpc(template.instantiate())
-            }
-            CharacterTypeTemplate::Door(template) => CharacterType::Door(template.instantiate()),
-            CharacterTypeTemplate::Transport(template) => {
-                CharacterType::Transport(template.instantiate())
-            }
-        }
-    }
-}
-
 #[derive(Clone)]
 pub enum CharacterType {
     AmbientNpc(AmbientNpc),
@@ -2427,6 +2479,25 @@ pub enum CharacterType {
     Transport(Transport),
     Player(Box<Player>),
     Fixture(u64, CurrentFixture),
+}
+
+impl CharacterType {
+    pub fn from_template(
+        template: CharacterTypeTemplate,
+        keys_to_guid: &HashMap<&String, u64>,
+    ) -> Self {
+        match template {
+            CharacterTypeTemplate::AmbientNpc(template) => {
+                CharacterType::AmbientNpc(template.instantiate(keys_to_guid))
+            }
+
+            CharacterTypeTemplate::Door(template) => CharacterType::Door(template.instantiate()),
+
+            CharacterTypeTemplate::Transport(template) => {
+                CharacterType::Transport(template.instantiate())
+            }
+        }
+    }
 }
 
 #[derive(Copy, Clone, Eq, PartialOrd, PartialEq, Ord, Sequence)]
@@ -2542,7 +2613,10 @@ impl NpcTemplate {
                 possible_pos: self.possible_pos.clone(),
                 chunk_size,
                 scale: self.scale,
-                character_type: self.character_type.clone().into(),
+                character_type: CharacterType::from_template(
+                    self.character_type.clone(),
+                    keys_to_guid,
+                ),
                 mount: self.mount_id.map(|mount_id| CharacterMount {
                     mount_id,
                     mount_guid: mount_guid(guid),
