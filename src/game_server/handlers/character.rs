@@ -1817,7 +1817,7 @@ impl AmbientNpc {
     }
 }
 
-pub fn trigger_synchronized_interaction(
+fn trigger_synchronized_interaction(
     target_guid: u64,
     nearby_player_guids: &[u32],
     requester: u32,
