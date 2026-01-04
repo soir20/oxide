@@ -8,4 +8,4 @@ pub fn load_enemy_types(config_dir: &Path) -> Result<HashSet<String>, ConfigErro
     Ok(enemy_types)
 }
 
-pub struct EnemyPriorization {}
+pub struct EnemyPrioritization {}
