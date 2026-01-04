@@ -3097,13 +3097,14 @@ impl Character {
                 let broadcasts = Vec::new();
                 let mut pos_update = None;
 
-                let distance_from_origin = distance3_pos(self.stats.pos, *origin_pos);
-                let too_far_from_origin =
-                    distance_from_origin > self.stats.max_distance_from_origin;
-
                 if let Some(target_read_handle) = nearby_players.get(guid) {
+                    let distance_from_origin =
+                        distance3_pos(target_read_handle.stats.pos, *origin_pos);
+                    let too_far_from_origin =
+                        distance_from_origin > self.stats.max_distance_from_origin;
+
                     let distance_from_target =
-                        distance3_pos(self.stats.pos, target_read_handle.stats.pos);
+                        distance3_pos(target_read_handle.stats.pos, self.stats.pos);
                     let too_far_from_target =
                         distance_from_target > self.stats.max_distance_from_target;
 
