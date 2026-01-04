@@ -1,16 +1,6 @@
-use std::{collections::HashSet, fs::File, path::Path};
-
 use packet_serialize::{DeserializePacket, SerializePacket};
 
-use crate::ConfigError;
-
 use super::{GamePacket, OpCode};
-
-pub fn load_enemy_types(config_dir: &Path) -> Result<HashSet<String>, ConfigError> {
-    let mut file = File::open(config_dir.join("enemy_types.yaml"))?;
-    let enemy_types: HashSet<String> = serde_yaml::from_reader(&mut file)?;
-    Ok(enemy_types)
-}
 
 #[derive(Copy, Clone, Debug)]
 pub enum CombatOpCode {

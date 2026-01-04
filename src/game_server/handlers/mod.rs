@@ -4,6 +4,7 @@ use super::{packets::Pos, Broadcast, GameServer, ProcessPacketError};
 
 pub mod character;
 pub mod chat;
+pub mod combat;
 pub mod command;
 pub mod daily;
 pub mod dialog;

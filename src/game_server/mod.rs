@@ -59,8 +59,8 @@ use packets::zone::PointOfInterestTeleportRequest;
 use packets::{GamePacket, OpCode};
 use rand::Rng;
 
+use crate::game_server::handlers::combat::load_enemy_types;
 use crate::game_server::handlers::tick::reset_daily_minigames;
-use crate::game_server::packets::combat::load_enemy_types;
 use crate::ConfigError;
 use packet_serialize::{DeserializePacket, DeserializePacketError};
 
