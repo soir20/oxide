@@ -1,5 +1,5 @@
 use std::backtrace::Backtrace;
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::{BTreeMap, BTreeSet, HashSet};
 use std::fmt::Display;
 use std::io::{Cursor, Error};
 use std::num::ParseIntError;
@@ -60,6 +60,7 @@ use packets::{GamePacket, OpCode};
 use rand::Rng;
 
 use crate::game_server::handlers::tick::reset_daily_minigames;
+use crate::game_server::packets::combat::load_enemy_types;
 use crate::ConfigError;
 use packet_serialize::{DeserializePacket, DeserializePacketError};
 
@@ -183,6 +184,7 @@ pub struct GameServer {
     customizations: BTreeMap<u32, Customization>,
     customization_item_mappings: BTreeMap<u32, Vec<u32>>,
     default_sabers: BTreeMap<u32, DefaultSaber>,
+    enemy_types: HashSet<String>,
     lock_enforcer_source: LockEnforcerSource,
     items: BTreeMap<u32, ItemDefinition>,
     item_classes: ItemClassDefinitions,
@@ -206,6 +208,7 @@ impl GameServer {
             customizations: load_customizations(config_dir)?,
             customization_item_mappings: load_customization_item_mappings(config_dir)?,
             default_sabers: load_default_sabers(config_dir)?,
+            enemy_types: load_enemy_types(config_dir)?,
             lock_enforcer_source: LockEnforcerSource::from(characters, zones, GuidTable::new()),
             items: item_definitions,
             item_classes: load_item_classes(config_dir)?,
