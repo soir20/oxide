@@ -23,11 +23,11 @@ use crate::{
             item::{Attachment, BaseAttachmentGroup, EquipmentSlot, ItemDefinition, WieldType},
             minigame::ScoreEntry,
             player_update::{
-                AddNotifications, AddNpc, AddPc, Customization, CustomizationSlot, Hostility, Icon,
-                MoveOnRail, NameplateImage, NotificationData, NpcRelevance, PhysicsState,
-                PlayCompositeEffect, QueueAnimation, RemoveGracefully, RemoveStandard,
-                RemoveTemporaryModel, SetAnimation, SingleNotification, SingleNpcRelevance,
-                UpdateSpeed, UpdateTemporaryModel,
+                AddNotifications, AddNpc, AddPc, Customization, CustomizationSlot, Hostility,
+                HudMessage, Icon, MoveOnRail, NameplateImage, NotificationData, NpcRelevance,
+                PhysicsState, PlayCompositeEffect, QueueAnimation, RemoveGracefully,
+                RemoveStandard, RemoveTemporaryModel, SetAnimation, SingleNotification,
+                SingleNpcRelevance, UpdateSpeed, UpdateTemporaryModel,
             },
             tunnel::TunneledPacket,
             ui::{ExecuteScriptWithIntParams, ExecuteScriptWithStringParams},
@@ -94,6 +94,10 @@ const fn default_weight() -> u32 {
 
 pub const fn default_spawn_animation_id() -> i32 {
     1
+}
+
+const fn default_hud_message_millis() -> u32 {
+    2000
 }
 
 #[derive(Clone, Default, Deserialize, Eq, PartialEq)]
@@ -173,6 +177,25 @@ pub enum TickableDialogMode {
         show_players: bool,
     },
     Close,
+}
+
+#[derive(Clone, Copy, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub enum HudMessageType {
+    #[default]
+    None,
+    Overhead {
+        name_id: u32,
+        message_id: u32,
+        image_id: u32,
+        #[serde(default)]
+        sound_id: u32,
+        #[serde(default = "default_hud_message_millis")]
+        duration_millis: u32,
+    },
+    ActionBar {
+        message_id: u32,
+    },
 }
 
 #[derive(Clone, Deserialize)]
@@ -506,6 +529,8 @@ pub struct OneShotInteractionConfig {
     pub composite_effect_delay_millis: u32,
     pub dialog_option_key: Option<String>,
     #[serde(default)]
+    pub hud_message: HudMessageType,
+    #[serde(default)]
     pub removal_mode: RemovalMode,
     #[serde(default)]
     pub despawn_npc: bool,
@@ -521,6 +546,7 @@ pub struct OneShotInteractionTemplate {
     pub composite_effect_id: Option<u32>,
     pub composite_effect_delay_millis: u32,
     pub dialog_option_id: Option<u32>,
+    pub hud_message: HudMessageType,
     pub removal_mode: RemovalMode,
     pub despawn_npc: bool,
     pub duration_millis: u64,
@@ -545,6 +571,7 @@ impl OneShotInteractionTemplate {
         OneShotInteractionTemplate {
             one_shot_action: config.one_shot_action.clone(),
             dialog_option_id,
+            hud_message: config.hud_message,
             player_one_shot_action: config.player_one_shot_action,
             one_shot_animation_id: config.one_shot_animation_id,
             animation_delay_seconds: config.animation_delay_seconds,
@@ -639,6 +666,47 @@ impl OneShotInteractionTemplate {
                 game_server,
             )?;
             packets_for_sender.extend(dialog_packets);
+        }
+
+        match &self.hud_message {
+            HudMessageType::Overhead {
+                name_id,
+                message_id,
+                image_id,
+                sound_id,
+                duration_millis,
+            } => {
+                packets_for_sender.push(GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: HudMessage {
+                        unknown1: 0,
+                        unknown2: 0,
+                        name_id: *name_id,
+                        image_id: *image_id,
+                        message_id: *message_id,
+                        sound_id: *sound_id,
+                        duration_millis: *duration_millis,
+                        unknown5: 0,
+                    },
+                }));
+            }
+            HudMessageType::ActionBar { message_id } => {
+                packets_for_sender.push(GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: SendStringId {
+                        sender_guid: Guid::guid(character),
+                        message_id: *message_id,
+                        is_anonymous: false,
+                        unknown2: false,
+                        is_action_bar_message: false,
+                        action_bar_text_color: ActionBarTextColor::default(),
+                        target_guid: 0,
+                        owner_guid: 0,
+                        unknown7: 0,
+                    },
+                }));
+            }
+            HudMessageType::None => {}
         }
 
         packets_for_sender.extend(self.one_shot_action.apply(player_stats)?);
