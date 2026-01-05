@@ -2,6 +2,7 @@ use std::{
     collections::{HashMap, HashSet},
     fs::File,
     path::Path,
+    time::Instant,
 };
 
 use mut_binary_heap::BinaryHeap;
@@ -39,8 +40,30 @@ impl From<HashMap<String, i8>> for EnemyPrioritization {
     }
 }
 
+#[derive(Eq, PartialEq)]
+struct ThreatTableValue {
+    priority: i8,
+    damage_dealt: u32,
+    time_added: Instant,
+}
+
+impl Ord for ThreatTableValue {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.priority
+            .cmp(&other.priority)
+            .then(self.damage_dealt.cmp(&other.damage_dealt))
+            .then(other.time_added.cmp(&self.time_added))
+    }
+}
+
+impl PartialOrd for ThreatTableValue {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
 pub struct ThreatTable {
-    heap: BinaryHeap<u64, (i8, u32)>,
+    heap: BinaryHeap<u64, ThreatTableValue>,
     prioritization: EnemyPrioritization,
 }
 
@@ -52,13 +75,32 @@ impl ThreatTable {
         damage_dealt: u32,
     ) {
         if let Some(mut value) = self.heap.get_mut(&attacker_guid) {
-            *value = (value.0, value.1.saturating_add(damage_dealt));
+            *value = ThreatTableValue {
+                priority: value.priority,
+                damage_dealt: value.damage_dealt.saturating_add(damage_dealt),
+                time_added: value.time_added,
+            };
         }
 
         if !self.heap.contains_key(&attacker_guid) {
             let priority = self.prioritization.priority(attacker_types);
-            self.heap.push(attacker_guid, (priority, damage_dealt));
+            self.heap.push(
+                attacker_guid,
+                ThreatTableValue {
+                    priority,
+                    damage_dealt,
+                    time_added: Instant::now(),
+                },
+            );
         }
+    }
+
+    pub fn remove(&mut self, guid: u64) {
+        self.heap.remove(&guid);
+    }
+
+    pub fn target(&self) -> Option<u64> {
+        self.heap.peek_with_key().map(|(guid, _)| *guid)
     }
 }
 
@@ -68,5 +110,31 @@ impl From<HashMap<String, i8>> for ThreatTable {
             heap: BinaryHeap::new(),
             prioritization: priority_points_by_type.into(),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::iter;
+
+    use super::*;
+
+    #[test]
+    fn test_priority_by_time_added() {
+        let mut table: ThreatTable = HashMap::new().into();
+        table.deal_damage(2, iter::empty(), 0);
+        table.deal_damage(1, iter::empty(), 0);
+        table.deal_damage(4, iter::empty(), 0);
+        table.deal_damage(3, iter::empty(), 0);
+
+        assert_eq!(Some(2), table.target());
+        table.remove(1);
+        assert_eq!(Some(2), table.target());
+        table.remove(2);
+        assert_eq!(Some(4), table.target());
+        table.remove(4);
+        assert_eq!(Some(3), table.target());
+        table.remove(3);
+        assert_eq!(None, table.target());
     }
 }
