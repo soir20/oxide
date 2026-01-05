@@ -15,6 +15,7 @@ enum-iterator = "2.1.0"
 evalexpr = "11.3.0"
 packet_serialize = { path = "src/packet_serialize" }
 miniz_oxide = "0.7.2"
+mut-binary-heap = "0.1.0"
 num_enum = "0.7.2"
 parking_lot = "0.12.1"
 rand = "0.8.5"
