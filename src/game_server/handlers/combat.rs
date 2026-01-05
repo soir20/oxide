@@ -120,6 +120,31 @@ mod tests {
     use super::*;
 
     #[test]
+    fn test_priority_by_enemy_type() {
+        let mut table: ThreatTable = HashMap::from_iter(vec![
+            ("one".to_string(), 1),
+            ("two".to_string(), 2),
+            ("three".to_string(), 3),
+            ("four".to_string(), 4),
+        ])
+        .into();
+        table.deal_damage(2, ["two".to_string()].iter(), 30);
+        table.deal_damage(1, ["one".to_string()].iter(), 20);
+        table.deal_damage(4, ["four".to_string()].iter(), 10);
+        table.deal_damage(3, ["three".to_string()].iter(), 40);
+
+        assert_eq!(Some(4), table.target());
+        table.remove(4);
+        assert_eq!(Some(3), table.target());
+        table.remove(3);
+        assert_eq!(Some(2), table.target());
+        table.remove(2);
+        assert_eq!(Some(1), table.target());
+        table.remove(1);
+        assert_eq!(None, table.target());
+    }
+
+    #[test]
     fn test_priority_by_damage_dealt() {
         let mut table: ThreatTable = HashMap::new().into();
         table.deal_damage(2, iter::empty(), 30);
