@@ -1,5 +1,5 @@
 use std::backtrace::Backtrace;
-use std::collections::{BTreeMap, BTreeSet, HashSet};
+use std::collections::{BTreeMap, BTreeSet};
 use std::fmt::Display;
 use std::io::{Cursor, Error};
 use std::num::ParseIntError;
@@ -59,7 +59,7 @@ use packets::zone::PointOfInterestTeleportRequest;
 use packets::{GamePacket, OpCode};
 use rand::Rng;
 
-use crate::game_server::handlers::combat::load_enemy_types;
+use crate::game_server::handlers::combat::{load_enemy_types, EnemyTypeConfig};
 use crate::game_server::handlers::tick::reset_daily_minigames;
 use crate::ConfigError;
 use packet_serialize::{DeserializePacket, DeserializePacketError};
@@ -184,7 +184,7 @@ pub struct GameServer {
     customizations: BTreeMap<u32, Customization>,
     customization_item_mappings: BTreeMap<u32, Vec<u32>>,
     default_sabers: BTreeMap<u32, DefaultSaber>,
-    enemy_types: HashSet<String>,
+    enemy_types: EnemyTypeConfig,
     lock_enforcer_source: LockEnforcerSource,
     items: BTreeMap<u32, ItemDefinition>,
     item_classes: ItemClassDefinitions,

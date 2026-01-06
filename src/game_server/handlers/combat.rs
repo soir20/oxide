@@ -6,13 +6,20 @@ use std::{
 };
 
 use mut_binary_heap::BinaryHeap;
+use serde::Deserialize;
 
 use crate::ConfigError;
 
-pub fn load_enemy_types(config_dir: &Path) -> Result<HashSet<String>, ConfigError> {
+#[derive(Deserialize)]
+pub struct EnemyTypeConfig {
+    pub enemy_types: HashSet<String>,
+    pub enemy_types_applied_to_players: HashSet<String>,
+}
+
+pub fn load_enemy_types(config_dir: &Path) -> Result<EnemyTypeConfig, ConfigError> {
     let mut file = File::open(config_dir.join("enemy_types.yaml"))?;
-    let enemy_types: HashSet<String> = serde_yaml::from_reader(&mut file)?;
-    Ok(enemy_types)
+    let config: EnemyTypeConfig = serde_yaml::from_reader(&mut file)?;
+    Ok(config)
 }
 
 pub struct EnemyPrioritization {
