@@ -813,6 +813,10 @@ impl GameServer {
         &self.default_sabers
     }
 
+    pub fn enemy_types(&self) -> &EnemyTypeConfig {
+        &self.enemy_types
+    }
+
     pub fn items(&self) -> &BTreeMap<u32, ItemDefinition> {
         &self.items
     }

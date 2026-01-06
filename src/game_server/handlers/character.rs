@@ -1,5 +1,5 @@
 use std::{
-    collections::{BTreeMap, BTreeSet, HashMap},
+    collections::{BTreeMap, BTreeSet, HashMap, HashSet},
     time::{Duration, Instant},
 };
 
@@ -12,6 +12,7 @@ use serde::Deserialize;
 use crate::{
     game_server::{
         handlers::{
+            combat::EnemyPrioritization,
             dialog::handle_dialog_buttons,
             inventory::{attachments_from_equipped_items, wield_type_from_inventory},
             unique_guid::AMBIENT_NPC_DISCRIMINANT,
@@ -239,6 +240,10 @@ pub struct BaseNpcConfig {
     pub clickable: bool,
     #[serde(default = "default_spawn_animation_id")]
     pub spawn_animation_id: i32,
+    #[serde(default)]
+    pub enemy_types: HashSet<String>,
+    #[serde(default)]
+    pub enemy_prioritization: HashMap<String, i8>,
 }
 
 #[derive(Clone)]
@@ -2540,6 +2545,8 @@ pub struct NpcTemplate {
     pub synchronize_with: Option<String>,
     pub is_spawned: bool,
     pub physics: PhysicsState,
+    pub enemy_types: HashSet<String>,
+    pub enemy_prioritization: HashMap<String, i8>,
 }
 
 impl NpcTemplate {
@@ -2590,6 +2597,8 @@ impl NpcTemplate {
             ),
             mount_id: None,
             wield_type: WieldType::None,
+            enemy_types: config.base_config().enemy_types.clone(),
+            enemy_prioritization: config.base_config().enemy_prioritization.clone(),
         }
     }
 
@@ -2645,6 +2654,8 @@ impl NpcTemplate {
                 target_state: TargetState::None,
                 max_distance_from_target: 0.0,
                 max_distance_from_origin: 0.0,
+                enemy_types: self.enemy_types.clone(),
+                enemy_prioritization: self.enemy_prioritization.clone().into(),
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(
                 self.tickable_procedures.clone(),
@@ -2742,6 +2753,8 @@ pub struct CharacterStats {
     pub target_state: TargetState,
     pub max_distance_from_target: f32,
     pub max_distance_from_origin: f32,
+    pub enemy_types: HashSet<String>,
+    pub enemy_prioritization: EnemyPrioritization,
 }
 
 impl CharacterStats {
@@ -2982,6 +2995,8 @@ impl Character {
                 target_state: TargetState::None,
                 max_distance_from_target: 0.0,
                 max_distance_from_origin: 0.0,
+                enemy_types: HashSet::new(),
+                enemy_prioritization: EnemyPrioritization::default(),
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(
                 tickable_procedures,
@@ -3042,6 +3057,11 @@ impl Character {
                 target_state: TargetState::None,
                 max_distance_from_target: 0.0,
                 max_distance_from_origin: 0.0,
+                enemy_types: game_server
+                    .enemy_types()
+                    .enemy_types_applied_to_players
+                    .clone(),
+                enemy_prioritization: EnemyPrioritization::default(),
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(HashMap::new(), Vec::new()),
             synchronize_with: None,

@@ -30,7 +30,7 @@ pub fn load_enemy_types(config_dir: &Path) -> Result<EnemyTypeConfig, ConfigErro
     Ok(config)
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct EnemyPrioritization {
     priority_points_by_type: HashMap<String, i8>,
 }
