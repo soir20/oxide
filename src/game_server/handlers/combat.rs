@@ -42,9 +42,9 @@ impl From<HashMap<String, i8>> for EnemyPrioritization {
 
 #[derive(Eq, PartialEq)]
 pub struct ThreatTableValue {
-    priority: i8,
-    damage_dealt: u32,
-    time_added: Instant,
+    pub priority: i8,
+    pub damage_dealt: u32,
+    pub time_added: Instant,
 }
 
 impl Ord for ThreatTableValue {
@@ -194,6 +194,29 @@ mod tests {
         table.remove(4);
         assert_eq!(Some(3), table.target());
         table.remove(3);
+        assert_eq!(None, table.target());
+    }
+
+    #[test]
+    fn test_retain() {
+        let mut table: ThreatTable = HashMap::from_iter(vec![
+            ("one".to_string(), 1),
+            ("two".to_string(), 2),
+            ("three".to_string(), 3),
+            ("four".to_string(), 4),
+        ])
+        .into();
+        table.deal_damage(2, ["two".to_string()].iter(), 30);
+        table.deal_damage(1, ["one".to_string()].iter(), 20);
+        table.deal_damage(4, ["four".to_string()].iter(), 10);
+        table.deal_damage(3, ["three".to_string()].iter(), 40);
+
+        table.retain(|guid, _| *guid % 2 == 0);
+
+        assert_eq!(Some(4), table.target());
+        table.remove(4);
+        assert_eq!(Some(2), table.target());
+        table.remove(2);
         assert_eq!(None, table.target());
     }
 }
