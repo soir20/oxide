@@ -41,7 +41,7 @@ impl From<HashMap<String, i8>> for EnemyPrioritization {
 }
 
 #[derive(Eq, PartialEq)]
-struct ThreatTableValue {
+pub struct ThreatTableValue {
     priority: i8,
     damage_dealt: u32,
     time_added: Instant,
@@ -97,6 +97,21 @@ impl ThreatTable {
 
     pub fn remove(&mut self, guid: u64) {
         self.heap.remove(&guid);
+    }
+
+    pub fn retain<F: FnMut(&u64, &ThreatTableValue) -> bool>(&mut self, mut pred: F) {
+        let keys_to_remove: Vec<u64> = self
+            .heap
+            .iter()
+            .filter_map(|(key, value)| match pred(key, value) {
+                true => None,
+                false => Some(*key),
+            })
+            .collect();
+
+        for key in keys_to_remove.into_iter() {
+            self.remove(key);
+        }
     }
 
     pub fn target(&self) -> Option<u64> {
