@@ -698,7 +698,7 @@ impl OneShotInteractionTemplate {
                         message_id: *message_id,
                         is_anonymous: false,
                         unknown2: false,
-                        is_action_bar_message: false,
+                        is_action_bar_message: true,
                         action_bar_text_color: ActionBarTextColor::default(),
                         target_guid: 0,
                         owner_guid: 0,
