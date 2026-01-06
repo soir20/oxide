@@ -1,3 +1,7 @@
 ---
+enemy_types:
 - aerial
 - ground
+- player
+enemy_types_applied_to_players:
+- player
