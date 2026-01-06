@@ -19,9 +19,18 @@ pub struct EnemyTypeConfig {
 pub fn load_enemy_types(config_dir: &Path) -> Result<EnemyTypeConfig, ConfigError> {
     let mut file = File::open(config_dir.join("enemy_types.yaml"))?;
     let config: EnemyTypeConfig = serde_yaml::from_reader(&mut file)?;
+    if !config
+        .enemy_types_applied_to_players
+        .is_subset(&config.enemy_types)
+    {
+        return Err(ConfigError::ConstraintViolated(
+            "Enemy types applied to players must be a subset of valid enemy types".to_string(),
+        ));
+    }
     Ok(config)
 }
 
+#[derive(Clone)]
 pub struct EnemyPrioritization {
     priority_points_by_type: HashMap<String, i8>,
 }
