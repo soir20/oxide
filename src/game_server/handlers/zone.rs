@@ -857,6 +857,20 @@ impl ZoneInstance {
                                 .total();
                             pos_update.apply_jump_height_multiplier(jump_multiplier);
 
+                            let other_players_nearby = ZoneInstance::other_players_nearby(
+                                shorten_player_guid(moved_character_guid).ok(),
+                                new_chunk,
+                                instance_guid,
+                                characters_table_write_handle,
+                            );
+                            broadcasts.push(Broadcast::Multi(
+                                other_players_nearby,
+                                vec![GamePacket::serialize(&TunneledPacket {
+                                    unknown1: true,
+                                    inner: pos_update,
+                                })],
+                            ));
+
                             broadcasts.append(&mut ZoneInstance::diff_character_broadcasts(
                                 moved_character_guid,
                                 character_diffs,
