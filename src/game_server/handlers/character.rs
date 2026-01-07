@@ -241,6 +241,12 @@ pub struct BaseNpcConfig {
     #[serde(default = "default_spawn_animation_id")]
     pub spawn_animation_id: i32,
     #[serde(default)]
+    pub max_distance_from_target: f32,
+    #[serde(default)]
+    pub max_distance_from_origin: f32,
+    #[serde(default)]
+    pub auto_target_radius: f32,
+    #[serde(default)]
     pub enemy_types: HashSet<String>,
     #[serde(default)]
     pub enemy_prioritization: HashMap<String, i8>,
@@ -2545,6 +2551,9 @@ pub struct NpcTemplate {
     pub synchronize_with: Option<String>,
     pub is_spawned: bool,
     pub physics: PhysicsState,
+    pub max_distance_from_target: f32,
+    pub max_distance_from_origin: f32,
+    pub auto_target_radius: f32,
     pub enemy_types: HashSet<String>,
     pub enemy_prioritization: HashMap<String, i8>,
 }
@@ -2597,6 +2606,9 @@ impl NpcTemplate {
             ),
             mount_id: None,
             wield_type: WieldType::None,
+            max_distance_from_target: config.base_config().max_distance_from_target,
+            max_distance_from_origin: config.base_config().max_distance_from_origin,
+            auto_target_radius: config.base_config().auto_target_radius,
             enemy_types: config.base_config().enemy_types.clone(),
             enemy_prioritization: config.base_config().enemy_prioritization.clone(),
         }
@@ -2652,8 +2664,9 @@ impl NpcTemplate {
                 name: None,
                 squad_guid: None,
                 target_state: TargetState::None,
-                max_distance_from_target: 0.0,
-                max_distance_from_origin: 0.0,
+                max_distance_from_target: self.max_distance_from_target,
+                max_distance_from_origin: self.max_distance_from_origin,
+                auto_target_radius: self.auto_target_radius,
                 enemy_types: self.enemy_types.clone(),
                 enemy_prioritization: self.enemy_prioritization.clone().into(),
             },
@@ -2753,6 +2766,7 @@ pub struct CharacterStats {
     pub target_state: TargetState,
     pub max_distance_from_target: f32,
     pub max_distance_from_origin: f32,
+    pub auto_target_radius: f32,
     pub enemy_types: HashSet<String>,
     pub enemy_prioritization: EnemyPrioritization,
 }
@@ -2995,6 +3009,7 @@ impl Character {
                 target_state: TargetState::None,
                 max_distance_from_target: 0.0,
                 max_distance_from_origin: 0.0,
+                auto_target_radius: 0.0,
                 enemy_types: HashSet::new(),
                 enemy_prioritization: EnemyPrioritization::default(),
             },
@@ -3055,8 +3070,9 @@ impl Character {
                     mount_multiplier: 1.0,
                 },
                 target_state: TargetState::None,
-                max_distance_from_target: 0.0,
-                max_distance_from_origin: 0.0,
+                max_distance_from_target: f32::INFINITY,
+                max_distance_from_origin: f32::INFINITY,
+                auto_target_radius: 0.0,
                 enemy_types: game_server
                     .enemy_types()
                     .enemy_types_applied_to_players
