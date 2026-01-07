@@ -743,7 +743,7 @@ impl TickableStep {
         &self,
         character: &mut CharacterStats,
         nearby_player_guids: &[u32],
-        nearby_players: &BTreeMap<u64, CharacterReadGuard>,
+        nearby_characters: &BTreeMap<u64, CharacterReadGuard>,
         mount_configs: &BTreeMap<u32, MountConfig>,
         item_definitions: &BTreeMap<u32, ItemDefinition>,
         customizations: &BTreeMap<u32, Customization>,
@@ -1069,7 +1069,7 @@ impl TickableStep {
                 .iter()
                 .filter(|guid| {
                     let pos = distance3_pos(
-                        nearby_players[&player_guid(**guid)].stats.pos,
+                        nearby_characters[&player_guid(**guid)].stats.pos,
                         character.pos,
                     );
                     pos <= CHAT_BUBBLE_VISIBLE_RADIUS
@@ -1383,7 +1383,7 @@ impl TickableProcedure {
         character: &mut CharacterStats,
         now: Instant,
         nearby_player_guids: &[u32],
-        nearby_players: &BTreeMap<u64, CharacterReadGuard>,
+        nearby_characters: &BTreeMap<u64, CharacterReadGuard>,
         mount_configs: &BTreeMap<u32, MountConfig>,
         item_definitions: &BTreeMap<u32, ItemDefinition>,
         customizations: &BTreeMap<u32, Customization>,
@@ -1437,7 +1437,7 @@ impl TickableProcedure {
                 let (broadcasts, pos_update) = self.steps[new_step_index].apply(
                     character,
                     nearby_player_guids,
-                    nearby_players,
+                    nearby_characters,
                     mount_configs,
                     item_definitions,
                     customizations,
@@ -1602,7 +1602,7 @@ impl TickableProcedureTracker {
         character: &mut CharacterStats,
         now: Instant,
         nearby_player_guids: &[u32],
-        nearby_players: &BTreeMap<u64, CharacterReadGuard>,
+        nearby_characters: &BTreeMap<u64, CharacterReadGuard>,
         mount_configs: &BTreeMap<u32, MountConfig>,
         item_definitions: &BTreeMap<u32, ItemDefinition>,
         customizations: &BTreeMap<u32, Customization>,
@@ -1621,7 +1621,7 @@ impl TickableProcedureTracker {
                 character,
                 now,
                 nearby_player_guids,
-                nearby_players,
+                nearby_characters,
                 mount_configs,
                 item_definitions,
                 customizations,
@@ -3105,7 +3105,7 @@ impl Character {
         &mut self,
         now: Instant,
         nearby_player_guids: &[u32],
-        nearby_players: &BTreeMap<u64, CharacterReadGuard>,
+        nearby_characters: &BTreeMap<u64, CharacterReadGuard>,
         mount_configs: &BTreeMap<u32, MountConfig>,
         item_definitions: &BTreeMap<u32, ItemDefinition>,
         customizations: &BTreeMap<u32, Customization>,
@@ -3118,7 +3118,7 @@ impl Character {
                 &mut self.stats,
                 now,
                 nearby_player_guids,
-                nearby_players,
+                nearby_characters,
                 mount_configs,
                 item_definitions,
                 customizations,
@@ -3133,7 +3133,7 @@ impl Character {
                 let broadcasts = Vec::new();
                 let mut pos_update = None;
 
-                if let Some(target_read_handle) = nearby_players.get(guid) {
+                if let Some(target_read_handle) = nearby_characters.get(guid) {
                     let distance_from_origin =
                         distance3_pos(target_read_handle.stats.pos, *origin_pos);
                     let too_far_from_origin =

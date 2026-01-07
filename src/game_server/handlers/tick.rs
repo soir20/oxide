@@ -124,7 +124,15 @@ pub fn tick_single_chunk(
                         }
                     }
 
-                    let (mut character_broadcasts, character_pos_update) = tickable_character.tick(now, &nearby_player_guids, &characters_read, game_server.mounts(), game_server.items(), game_server.customizations(), tick_duration);
+                    let (mut character_broadcasts, character_pos_update) = tickable_character.tick(
+                        now,
+                        &nearby_player_guids,
+                        &characters_read,
+                        game_server.mounts(),
+                        game_server.items(),
+                        game_server.customizations(),
+                        tick_duration
+                    );
                     broadcasts.append(&mut character_broadcasts);
                     if let Some(pos_update) = character_pos_update {
                         pos_updates.push((*guid, pos_update));
