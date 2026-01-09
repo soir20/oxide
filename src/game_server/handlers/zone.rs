@@ -596,6 +596,35 @@ impl ZoneInstance {
         ZoneInstance::other_players_nearby(None, chunk, instance_guid, characters_table_handle)
     }
 
+    pub fn all_characters_nearby<'a>(
+        chunk: Chunk,
+        instance_guid: u64,
+        characters_table_handle: &'a impl GuidTableIndexer<
+            'a,
+            u64,
+            Character,
+            CharacterLocationIndex,
+            CharacterNameIndex,
+            CharacterSquadIndex,
+            CharacterMatchmakingGroupIndex,
+            CharacterSynchronizationIndex,
+        >,
+    ) -> Vec<u64> {
+        let mut guids = Vec::new();
+
+        for chunk in ZoneInstance::nearby_chunks(chunk) {
+            for category in all::<CharacterCategory>() {
+                guids.extend(characters_table_handle.keys_by_index1((
+                    category,
+                    instance_guid,
+                    chunk,
+                )));
+            }
+        }
+
+        guids
+    }
+
     pub fn diff_character_guids<'a>(
         instance_guid: u64,
         old_chunk: Chunk,
