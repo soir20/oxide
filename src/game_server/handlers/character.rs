@@ -188,8 +188,7 @@ pub enum HudMessageType {
         name_id: u32,
         message_id: u32,
         image_id: u32,
-        #[serde(default)]
-        sound_id: u32,
+        sound_id: Option<u32>,
         #[serde(default = "default_hud_message_millis")]
         duration_millis: u32,
     },
@@ -684,7 +683,7 @@ impl OneShotInteractionTemplate {
                         name_id: *name_id,
                         image_id: *image_id,
                         message_id: *message_id,
-                        sound_id: *sound_id,
+                        sound_id: sound_id.unwrap_or(0),
                         duration_millis: *duration_millis,
                         unknown5: 0,
                     },
