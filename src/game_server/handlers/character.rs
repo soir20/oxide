@@ -1112,7 +1112,7 @@ pub enum TickResult {
     TickedCurrentProcedure(Vec<Broadcast>, Option<UpdatePlayerPos>),
     MustChangeProcedure(String),
 }
-#[derive(Clone, Default, PartialEq)]
+#[derive(Clone, PartialEq)]
 pub struct TickPosUpdate {
     pub pos: Pos,
     pub rot_x: Option<f32>,
@@ -1168,7 +1168,7 @@ impl TickablePosUpdateProgress {
         let distance_required = distance3_pos(start_pos, new_pos);
         TickablePosUpdateProgress {
             last_speed_update: now,
-            direction_unit_vector: (new_pos - start_pos) / distance_required,
+            direction_unit_vector: (new_pos - start_pos) / distance_required.max(f32::MIN_POSITIVE),
             distance_traveled: 0.0,
             distance_required,
             old_pos: start_pos,
@@ -1305,7 +1305,8 @@ impl TickablePosUpdateProgress {
         }
 
         let distance_required = distance3_pos(self.old_pos, new_destination.pos);
-        self.direction_unit_vector = (new_destination.pos - self.old_pos) / distance_required;
+        self.direction_unit_vector =
+            (new_destination.pos - self.old_pos) / distance_required.max(f32::MIN_POSITIVE);
         self.distance_traveled = 0.0;
         self.distance_required = distance_required;
         self.new_pos = self.old_pos;
@@ -3346,7 +3347,7 @@ impl Character {
                     origin_rot: self.stats.rot,
                     pos_update_progress: Box::new(TickablePosUpdateProgress::new(
                         now,
-                        TickPosUpdate::default(),
+                        TickPosUpdate::without_rot_change(self.stats.pos),
                         self.stats.pos,
                         true,
                     )),
