@@ -2363,6 +2363,15 @@ pub fn prepare_active_minigame_instance(
     let stage_group_guid = stage_config.stage_group_guid;
     let stage_guid = stage_config.stage_config.guid();
 
+    // These might be different if we switched to a singleplayer stage
+    let old_matchmaking_group = matchmaking_group;
+    let matchmaking_group = MinigameMatchmakingGroup {
+        stage_group_guid,
+        stage_guid,
+        creation_time: old_matchmaking_group.creation_time,
+        owner_guid: old_matchmaking_group.owner_guid,
+    };
+
     let mut broadcasts = Vec::new();
 
     let zone_template = stage_config
@@ -2379,17 +2388,18 @@ pub fn prepare_active_minigame_instance(
         .or(zone_template.map(|template| template.default_spawn_rot));
 
     let shared_data_result = minigame_data_table_write_handle.update_value_indices(
-        matchmaking_group,
+        old_matchmaking_group,
         |possible_minigame_data, _| {
             let Some(minigame_data) = possible_minigame_data else {
                 return Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
-                    format!("Unable to find shared minigame data for group {matchmaking_group:?}"),
+                    format!(
+                        "Unable to find shared minigame data for group {old_matchmaking_group:?}"
+                    ),
                 ));
             };
 
-            minigame_data.guid.stage_group_guid = stage_group_guid;
-            minigame_data.guid.stage_guid = stage_guid;
+            minigame_data.guid = matchmaking_group;
 
             minigame_data.data = SharedMinigameTypeData::from(
                 stage_config.stage_config.minigame_type(),
