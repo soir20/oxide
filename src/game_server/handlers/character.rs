@@ -1561,7 +1561,7 @@ impl TickableProcedure {
 
                 if total_removal_time > step.min_duration_millis as u32 {
                     panic!(
-                        "(Removal delay: {}) + (Fade duration: {}) exceeded (Step duration: {})",
+                        "(Removal delay: {}) + (Effect Delay: {}) + (Fade duration: {}) exceeded (Step duration: {})",
                         removal_delay_millis, fade_duration_millis, step.min_duration_millis
                     );
                 }
