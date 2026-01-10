@@ -3334,12 +3334,12 @@ impl Character {
             if update_target {
                 self.stats.target_state = TargetState::Targeting {
                     guid: new_target.guid(),
-                    origin_pos: new_target.stats.pos,
-                    origin_rot: new_target.stats.rot,
+                    origin_pos: self.stats.pos,
+                    origin_rot: self.stats.rot,
                     pos_update_progress: Box::new(TickablePosUpdateProgress::new(
                         now,
                         TickPosUpdate::default(),
-                        new_target.stats.pos,
+                        self.stats.pos,
                         true,
                     )),
                 };
