@@ -3308,20 +3308,25 @@ impl Character {
         now: Instant,
         nearby_characters: &BTreeMap<u64, CharacterWriteGuard>,
     ) {
+        let origin = match self.stats.target_state {
+            TargetState::Targeting { origin_pos, .. } => origin_pos,
+            _ => self.stats.pos,
+        };
         self.stats
             .threat_table
             .retain(|guid, _| nearby_characters.contains_key(guid));
         for nearby_character in nearby_characters.values() {
-            let distance = distance3_pos(nearby_character.stats.pos, self.stats.pos);
+            let distance_from_target = distance3_pos(nearby_character.stats.pos, self.stats.pos);
+            let distance_from_origin = distance3_pos(nearby_character.stats.pos, origin);
 
-            if distance <= self.stats.auto_target_radius {
+            if distance_from_origin > self.stats.max_distance_from_origin {
+                self.stats.threat_table.remove(nearby_character.guid());
+            } else if distance_from_target <= self.stats.auto_target_radius {
                 self.stats.threat_table.deal_damage(
                     nearby_character.guid(),
                     nearby_character.stats.enemy_types.iter(),
                     0,
                 );
-            } else if distance > self.stats.max_distance_from_origin {
-                self.stats.threat_table.remove(nearby_character.guid());
             }
         }
 
