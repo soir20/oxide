@@ -730,7 +730,7 @@ impl TickableStep {
         character
             .possible_pos
             .choose(&mut thread_rng())
-            .map(|pos| TickPosUpdate::without_rot_change(*pos))
+            .map(|pos| TickPosUpdate::without_destination_rot(*pos))
     }
 
     pub fn new_pos(&self, current_pos: Pos) -> Pos {
@@ -872,7 +872,7 @@ impl TickableStep {
                 w: character.pos.w,
             };
 
-            pos_update = Some(TickPosUpdate::without_rot_change(new_pos));
+            pos_update = Some(TickPosUpdate::without_destination_rot(new_pos));
         }
 
         if let Some(animation_id) = self.animation_id {
@@ -1124,7 +1124,7 @@ pub struct TickPosUpdate {
 }
 
 impl TickPosUpdate {
-    pub fn without_rot_change(pos: Pos) -> Self {
+    pub fn without_destination_rot(pos: Pos) -> Self {
         TickPosUpdate {
             pos,
             rot_x: None,
@@ -3160,7 +3160,9 @@ impl Character {
                                 speed,
                                 tick_duration,
                                 self.stats.rot,
-                                TickPosUpdate::without_rot_change(target_read_handle.stats.pos),
+                                TickPosUpdate::without_destination_rot(
+                                    target_read_handle.stats.pos,
+                                ),
                             );
                         }
 
@@ -3360,7 +3362,7 @@ impl Character {
                     origin_rot,
                     pos_update_progress: Box::new(TickablePosUpdateProgress::new(
                         now,
-                        TickPosUpdate::without_rot_change(self.stats.pos),
+                        TickPosUpdate::without_destination_rot(self.stats.pos),
                         self.stats.pos,
                         true,
                     )),
