@@ -3308,7 +3308,13 @@ impl Character {
     ) {
         for nearby_character in nearby_characters.values() {
             let distance = distance3_pos(nearby_character.stats.pos, self.stats.pos);
-            if distance > self.stats.auto_target_radius {
+            let in_range = distance > self.stats.auto_target_radius;
+            let is_current_target = match &self.stats.target_state {
+                TargetState::Targeting { guid, .. } => *guid == nearby_character.guid(),
+                _ => false,
+            };
+
+            if in_range && !is_current_target {
                 self.stats.threat_table.remove(nearby_character.guid());
             } else {
                 self.stats.threat_table.deal_damage(
