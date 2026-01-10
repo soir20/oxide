@@ -3334,17 +3334,25 @@ impl Character {
             .target()
             .and_then(|guid| nearby_characters.get(&guid))
         {
-            let update_target = match &self.stats.target_state {
-                TargetState::None => true,
-                TargetState::Targeting { guid, .. } => *guid != new_target.guid(),
-                TargetState::ReturningToOrigin { .. } => false,
+            let target_update = match &self.stats.target_state {
+                TargetState::None => Some((self.stats.pos, self.stats.rot)),
+                TargetState::Targeting {
+                    guid,
+                    origin_pos,
+                    origin_rot,
+                    ..
+                } => match *guid != new_target.guid() {
+                    true => Some((*origin_pos, *origin_rot)),
+                    false => None,
+                },
+                TargetState::ReturningToOrigin { .. } => None,
             };
 
-            if update_target {
+            if let Some((origin_pos, origin_rot)) = target_update {
                 self.stats.target_state = TargetState::Targeting {
                     guid: new_target.guid(),
-                    origin_pos: self.stats.pos,
-                    origin_rot: self.stats.rot,
+                    origin_pos,
+                    origin_rot,
                     pos_update_progress: Box::new(TickablePosUpdateProgress::new(
                         now,
                         TickPosUpdate::without_rot_change(self.stats.pos),
