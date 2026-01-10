@@ -12,7 +12,7 @@ use serde::Deserialize;
 use crate::{
     game_server::{
         handlers::{
-            combat::EnemyPrioritization,
+            combat::{EnemyPrioritization, ThreatTable},
             dialog::handle_dialog_buttons,
             inventory::{attachments_from_equipped_items, wield_type_from_inventory},
             lock_enforcer::CharacterWriteGuard,
@@ -1110,7 +1110,7 @@ pub enum TickResult {
     TickedCurrentProcedure(Vec<Broadcast>, Option<UpdatePlayerPos>),
     MustChangeProcedure(String),
 }
-#[derive(Clone, PartialEq)]
+#[derive(Clone, Default, PartialEq)]
 pub struct TickPosUpdate {
     pub pos: Pos,
     pub rot_x: Option<f32>,
@@ -2669,7 +2669,7 @@ impl NpcTemplate {
                 max_distance_from_origin: self.max_distance_from_origin,
                 auto_target_radius: self.auto_target_radius,
                 enemy_types: self.enemy_types.clone(),
-                enemy_prioritization: self.enemy_prioritization.clone().into(),
+                threat_table: self.enemy_prioritization.clone().into(),
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(
                 self.tickable_procedures.clone(),
@@ -2769,7 +2769,7 @@ pub struct CharacterStats {
     pub max_distance_from_origin: f32,
     pub auto_target_radius: f32,
     pub enemy_types: HashSet<String>,
-    pub enemy_prioritization: EnemyPrioritization,
+    pub threat_table: ThreatTable,
 }
 
 impl CharacterStats {
@@ -3012,7 +3012,7 @@ impl Character {
                 max_distance_from_origin: 0.0,
                 auto_target_radius: 0.0,
                 enemy_types: HashSet::new(),
-                enemy_prioritization: EnemyPrioritization::default(),
+                threat_table: ThreatTable::default(),
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(
                 tickable_procedures,
@@ -3078,7 +3078,7 @@ impl Character {
                     .enemy_types()
                     .enemy_types_applied_to_players
                     .clone(),
-                enemy_prioritization: EnemyPrioritization::default(),
+                threat_table: ThreatTable::default(),
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(HashMap::new(), Vec::new()),
             synchronize_with: None,
@@ -3112,6 +3112,46 @@ impl Character {
         customizations: &BTreeMap<u32, Customization>,
         tick_duration: Duration,
     ) -> (Vec<Broadcast>, Option<UpdatePlayerPos>) {
+        for nearby_character in nearby_characters.values() {
+            let distance = distance3_pos(nearby_character.stats.pos, self.stats.pos);
+            if distance > self.stats.auto_target_radius {
+                self.stats.threat_table.remove(nearby_character.guid());
+            } else {
+                self.stats.threat_table.deal_damage(
+                    nearby_character.guid(),
+                    nearby_character.stats.enemy_types.iter(),
+                    0,
+                );
+            }
+        }
+
+        if let Some(new_target) = self
+            .stats
+            .threat_table
+            .target()
+            .and_then(|guid| nearby_characters.get(&guid))
+        {
+            let update_target = match &self.stats.target_state {
+                TargetState::None => true,
+                TargetState::Targeting { guid, .. } => *guid != new_target.guid(),
+                TargetState::ReturningToOrigin { .. } => false,
+            };
+
+            if update_target {
+                self.stats.target_state = TargetState::Targeting {
+                    guid: new_target.guid(),
+                    origin_pos: new_target.stats.pos,
+                    origin_rot: new_target.stats.rot,
+                    pos_update_progress: Box::new(TickablePosUpdateProgress::new(
+                        now,
+                        TickPosUpdate::default(),
+                        new_target.stats.pos,
+                        true,
+                    )),
+                };
+            }
+        }
+
         let speed = self.stats.speed.total();
 
         match &mut self.stats.target_state {
