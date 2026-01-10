@@ -3306,12 +3306,11 @@ impl Character {
         now: Instant,
         nearby_characters: &BTreeMap<u64, CharacterWriteGuard>,
     ) {
-        self.stats
-            .threat_table
-            .retain(|guid, _| nearby_characters.contains_key(guid));
         for nearby_character in nearby_characters.values() {
             let distance = distance3_pos(nearby_character.stats.pos, self.stats.pos);
-            if distance <= self.stats.auto_target_radius {
+            if distance > self.stats.auto_target_radius {
+                self.stats.threat_table.remove(nearby_character.guid());
+            } else {
                 self.stats.threat_table.deal_damage(
                     nearby_character.guid(),
                     nearby_character.stats.enemy_types.iter(),
