@@ -130,8 +130,6 @@ impl From<HashMap<String, i8>> for ThreatTable {
 
 #[cfg(test)]
 mod tests {
-    use std::iter;
-
     use super::*;
 
     #[test]
@@ -144,6 +142,7 @@ mod tests {
         ])
         .into();
         table.deal_damage(2, ["two".to_string()].iter(), 30);
+        table.deal_damage(4, ["five".to_string()].iter(), 50);
         table.deal_damage(1, ["one".to_string()].iter(), 20);
         table.deal_damage(4, ["four".to_string()].iter(), 10);
         table.deal_damage(3, ["three".to_string()].iter(), 40);
@@ -161,11 +160,12 @@ mod tests {
 
     #[test]
     fn test_priority_by_damage_dealt() {
-        let mut table: ThreatTable = HashMap::new().into();
-        table.deal_damage(2, iter::empty(), 30);
-        table.deal_damage(1, iter::empty(), 20);
-        table.deal_damage(4, iter::empty(), 10);
-        table.deal_damage(3, iter::empty(), 40);
+        let mut table: ThreatTable = HashMap::from_iter(vec![("one".to_string(), 1)]).into();
+        table.deal_damage(2, ["one".to_string()].iter(), 30);
+        table.deal_damage(4, ["five".to_string()].iter(), 50);
+        table.deal_damage(1, ["one".to_string()].iter(), 20);
+        table.deal_damage(4, ["one".to_string()].iter(), 10);
+        table.deal_damage(3, ["one".to_string()].iter(), 40);
 
         assert_eq!(Some(3), table.target());
         table.remove(3);
@@ -180,11 +180,11 @@ mod tests {
 
     #[test]
     fn test_priority_by_time_added() {
-        let mut table: ThreatTable = HashMap::new().into();
-        table.deal_damage(2, iter::empty(), 0);
-        table.deal_damage(1, iter::empty(), 0);
-        table.deal_damage(4, iter::empty(), 0);
-        table.deal_damage(3, iter::empty(), 0);
+        let mut table: ThreatTable = HashMap::from_iter(vec![("one".to_string(), 1)]).into();
+        table.deal_damage(2, ["one".to_string()].iter(), 0);
+        table.deal_damage(1, ["one".to_string()].iter(), 0);
+        table.deal_damage(4, ["one".to_string()].iter(), 0);
+        table.deal_damage(3, ["one".to_string()].iter(), 0);
 
         assert_eq!(Some(2), table.target());
         table.remove(1);
