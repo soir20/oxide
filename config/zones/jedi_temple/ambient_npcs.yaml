@@ -597,7 +597,7 @@ jedi_temple:
         remove:
           steps:
             - spawned_state: Despawn
-              removal_mode: 
+              removal_mode:
                 Graceful: {}
               min_duration_millis: 6000
           next_possible_procedures:
