@@ -2368,8 +2368,8 @@ pub fn prepare_active_minigame_instance(
     let matchmaking_group = MinigameMatchmakingGroup {
         stage_group_guid,
         stage_guid,
-        creation_time: matchmaking_group.creation_time,
-        owner_guid: matchmaking_group.owner_guid,
+        creation_time: old_matchmaking_group.creation_time,
+        owner_guid: old_matchmaking_group.owner_guid,
     };
 
     let mut broadcasts = Vec::new();
