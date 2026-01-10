@@ -3187,7 +3187,6 @@ impl Character {
                 self.stats.target_state = TargetState::ReturningToOrigin {
                     pos_update_progress: pos_update_progress.clone(),
                 };
-                self.stats.threat_table.clear();
 
                 (broadcasts, pos_update)
             }
@@ -3203,6 +3202,7 @@ impl Character {
                 );
                 if pos_update_progress.reached_destination() {
                     self.stats.target_state = TargetState::None;
+                    self.stats.threat_table.clear();
                 }
                 (Vec::new(), pos_update)
             }
@@ -3308,9 +3308,11 @@ impl Character {
         now: Instant,
         nearby_characters: &BTreeMap<u64, CharacterWriteGuard>,
     ) {
-        let origin = match self.stats.target_state {
-            TargetState::Targeting { origin_pos, .. } => origin_pos,
-            _ => self.stats.pos,
+        let (current_target, origin) = match self.stats.target_state {
+            TargetState::Targeting {
+                guid, origin_pos, ..
+            } => (Some(guid), origin_pos),
+            _ => (None, self.stats.pos),
         };
         self.stats
             .threat_table
@@ -3318,8 +3320,9 @@ impl Character {
         for nearby_character in nearby_characters.values() {
             let distance_from_target = distance3_pos(nearby_character.stats.pos, self.stats.pos);
             let distance_from_origin = distance3_pos(nearby_character.stats.pos, origin);
+            let is_current_target = current_target == Some(nearby_character.guid());
 
-            if distance_from_origin > self.stats.max_distance_from_origin {
+            if distance_from_origin > self.stats.max_distance_from_origin && !is_current_target {
                 self.stats.threat_table.remove(nearby_character.guid());
             } else if distance_from_target <= self.stats.auto_target_radius {
                 self.stats.threat_table.deal_damage(
