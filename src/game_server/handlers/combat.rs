@@ -97,14 +97,16 @@ impl ThreatTable {
 
         if !updated {
             let priority = self.prioritization.priority(attacker_types);
-            self.heap.push(
-                attacker_guid,
-                ThreatTableValue {
-                    priority,
-                    damage_dealt,
-                    time_added: Instant::now(),
-                },
-            );
+            if priority > 0 {
+                self.heap.push(
+                    attacker_guid,
+                    ThreatTableValue {
+                        priority,
+                        damage_dealt,
+                        time_added: Instant::now(),
+                    },
+                );
+            }
         }
     }
 
@@ -113,12 +115,7 @@ impl ThreatTable {
     }
 
     pub fn target(&self) -> Option<u64> {
-        self.heap
-            .peek()
-            .and_then(|(guid, priority)| match priority.priority > 0 {
-                true => Some(*guid),
-                false => None,
-            })
+        self.heap.peek().map(|(guid, _)| *guid)
     }
 }
 
