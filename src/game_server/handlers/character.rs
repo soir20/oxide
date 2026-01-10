@@ -3187,6 +3187,7 @@ impl Character {
                 self.stats.target_state = TargetState::ReturningToOrigin {
                     pos_update_progress: pos_update_progress.clone(),
                 };
+                self.stats.threat_table.clear();
 
                 (broadcasts, pos_update)
             }
@@ -3307,24 +3308,20 @@ impl Character {
         now: Instant,
         nearby_characters: &BTreeMap<u64, CharacterWriteGuard>,
     ) {
-        let current_target = match &self.stats.target_state {
-            TargetState::Targeting { guid, .. } => Some(*guid),
-            _ => None,
-        };
-
+        self.stats
+            .threat_table
+            .retain(|guid, _| nearby_characters.contains_key(guid));
         for nearby_character in nearby_characters.values() {
             let distance = distance3_pos(nearby_character.stats.pos, self.stats.pos);
-            let in_range = distance > self.stats.auto_target_radius;
-            let is_current_target = current_target == Some(nearby_character.guid());
 
-            if in_range && !is_current_target {
-                self.stats.threat_table.remove(nearby_character.guid());
-            } else {
+            if distance <= self.stats.auto_target_radius {
                 self.stats.threat_table.deal_damage(
                     nearby_character.guid(),
                     nearby_character.stats.enemy_types.iter(),
                     0,
                 );
+            } else if distance > self.stats.max_distance_from_origin {
+                self.stats.threat_table.remove(nearby_character.guid());
             }
         }
 
