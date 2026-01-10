@@ -5,7 +5,7 @@ use std::{
     time::Instant,
 };
 
-use mut_binary_heap::BinaryHeap;
+use priority_queue::PriorityQueue;
 use serde::Deserialize;
 
 use crate::ConfigError;
@@ -80,7 +80,7 @@ impl PartialOrd for ThreatTableValue {
 
 #[derive(Clone, Default)]
 pub struct ThreatTable {
-    heap: BinaryHeap<u64, ThreatTableValue>,
+    heap: PriorityQueue<u64, ThreatTableValue>,
     prioritization: EnemyPrioritization,
 }
 
@@ -91,15 +91,11 @@ impl ThreatTable {
         attacker_types: impl Iterator<Item = &'a String>,
         damage_dealt: u32,
     ) {
-        if let Some(mut value) = self.heap.get_mut(&attacker_guid) {
-            *value = ThreatTableValue {
-                priority: value.priority,
-                damage_dealt: value.damage_dealt.saturating_add(damage_dealt),
-                time_added: value.time_added,
-            };
-        }
+        let updated = self.heap.change_priority_by(&attacker_guid, |priority| {
+            priority.damage_dealt = priority.damage_dealt.saturating_add(damage_dealt);
+        });
 
-        if !self.heap.contains_key(&attacker_guid) {
+        if !updated {
             let priority = self.prioritization.priority(attacker_types);
             self.heap.push(
                 attacker_guid,
@@ -117,14 +113,14 @@ impl ThreatTable {
     }
 
     pub fn target(&self) -> Option<u64> {
-        self.heap.peek_with_key().map(|(guid, _)| *guid)
+        self.heap.peek().map(|(guid, _)| *guid)
     }
 }
 
 impl From<HashMap<String, i8>> for ThreatTable {
     fn from(priority_points_by_type: HashMap<String, i8>) -> Self {
         ThreatTable {
-            heap: BinaryHeap::new(),
+            heap: PriorityQueue::new(),
             prioritization: priority_points_by_type.into(),
         }
     }
