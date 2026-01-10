@@ -3112,45 +3112,7 @@ impl Character {
         customizations: &BTreeMap<u32, Customization>,
         tick_duration: Duration,
     ) -> (Vec<Broadcast>, Option<UpdatePlayerPos>) {
-        for nearby_character in nearby_characters.values() {
-            let distance = distance3_pos(nearby_character.stats.pos, self.stats.pos);
-            if distance > self.stats.auto_target_radius {
-                self.stats.threat_table.remove(nearby_character.guid());
-            } else {
-                self.stats.threat_table.deal_damage(
-                    nearby_character.guid(),
-                    nearby_character.stats.enemy_types.iter(),
-                    0,
-                );
-            }
-        }
-
-        if let Some(new_target) = self
-            .stats
-            .threat_table
-            .target()
-            .and_then(|guid| nearby_characters.get(&guid))
-        {
-            let update_target = match &self.stats.target_state {
-                TargetState::None => true,
-                TargetState::Targeting { guid, .. } => *guid != new_target.guid(),
-                TargetState::ReturningToOrigin { .. } => false,
-            };
-
-            if update_target {
-                self.stats.target_state = TargetState::Targeting {
-                    guid: new_target.guid(),
-                    origin_pos: new_target.stats.pos,
-                    origin_rot: new_target.stats.rot,
-                    pos_update_progress: Box::new(TickablePosUpdateProgress::new(
-                        now,
-                        TickPosUpdate::default(),
-                        new_target.stats.pos,
-                        true,
-                    )),
-                };
-            }
-        }
+        self.update_target(now, nearby_characters);
 
         let speed = self.stats.speed.total();
 
@@ -3333,5 +3295,51 @@ impl Character {
 
     fn tickable(&self) -> bool {
         self.tickable_procedure_tracker.tickable()
+    }
+
+    fn update_target(
+        &mut self,
+        now: Instant,
+        nearby_characters: &BTreeMap<u64, CharacterWriteGuard>,
+    ) {
+        for nearby_character in nearby_characters.values() {
+            let distance = distance3_pos(nearby_character.stats.pos, self.stats.pos);
+            if distance > self.stats.auto_target_radius {
+                self.stats.threat_table.remove(nearby_character.guid());
+            } else {
+                self.stats.threat_table.deal_damage(
+                    nearby_character.guid(),
+                    nearby_character.stats.enemy_types.iter(),
+                    0,
+                );
+            }
+        }
+
+        if let Some(new_target) = self
+            .stats
+            .threat_table
+            .target()
+            .and_then(|guid| nearby_characters.get(&guid))
+        {
+            let update_target = match &self.stats.target_state {
+                TargetState::None => true,
+                TargetState::Targeting { guid, .. } => *guid != new_target.guid(),
+                TargetState::ReturningToOrigin { .. } => false,
+            };
+
+            if update_target {
+                self.stats.target_state = TargetState::Targeting {
+                    guid: new_target.guid(),
+                    origin_pos: new_target.stats.pos,
+                    origin_rot: new_target.stats.rot,
+                    pos_update_progress: Box::new(TickablePosUpdateProgress::new(
+                        now,
+                        TickPosUpdate::default(),
+                        new_target.stats.pos,
+                        true,
+                    )),
+                };
+            }
+        }
     }
 }
