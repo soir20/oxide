@@ -56,7 +56,7 @@ impl From<HashMap<String, i8>> for EnemyPrioritization {
     }
 }
 
-#[derive(Eq, PartialEq)]
+#[derive(Clone, Eq, PartialEq)]
 pub struct ThreatTableValue {
     pub priority: i8,
     pub damage_dealt: u32,
@@ -78,6 +78,7 @@ impl PartialOrd for ThreatTableValue {
     }
 }
 
+#[derive(Clone, Default)]
 pub struct ThreatTable {
     heap: BinaryHeap<u64, ThreatTableValue>,
     prioritization: EnemyPrioritization,
@@ -113,21 +114,6 @@ impl ThreatTable {
 
     pub fn remove(&mut self, guid: u64) {
         self.heap.remove(&guid);
-    }
-
-    pub fn retain<F: FnMut(&u64, &ThreatTableValue) -> bool>(&mut self, mut pred: F) {
-        let keys_to_remove: Vec<u64> = self
-            .heap
-            .iter()
-            .filter_map(|(key, value)| match pred(key, value) {
-                true => None,
-                false => Some(*key),
-            })
-            .collect();
-
-        for key in keys_to_remove.into_iter() {
-            self.remove(key);
-        }
     }
 
     pub fn target(&self) -> Option<u64> {
@@ -210,29 +196,6 @@ mod tests {
         table.remove(4);
         assert_eq!(Some(3), table.target());
         table.remove(3);
-        assert_eq!(None, table.target());
-    }
-
-    #[test]
-    fn test_retain() {
-        let mut table: ThreatTable = HashMap::from_iter(vec![
-            ("one".to_string(), 1),
-            ("two".to_string(), 2),
-            ("three".to_string(), 3),
-            ("four".to_string(), 4),
-        ])
-        .into();
-        table.deal_damage(2, ["two".to_string()].iter(), 30);
-        table.deal_damage(1, ["one".to_string()].iter(), 20);
-        table.deal_damage(4, ["four".to_string()].iter(), 10);
-        table.deal_damage(3, ["three".to_string()].iter(), 40);
-
-        table.retain(|guid, _| *guid % 2 == 0);
-
-        assert_eq!(Some(4), table.target());
-        table.remove(4);
-        assert_eq!(Some(2), table.target());
-        table.remove(2);
         assert_eq!(None, table.target());
     }
 }
