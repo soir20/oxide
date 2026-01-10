@@ -12,7 +12,7 @@ use serde::Deserialize;
 use crate::{
     game_server::{
         handlers::{
-            combat::{EnemyPrioritization, ThreatTable},
+            combat::ThreatTable,
             dialog::handle_dialog_buttons,
             inventory::{attachments_from_equipped_items, wield_type_from_inventory},
             lock_enforcer::CharacterWriteGuard,
@@ -208,6 +208,8 @@ pub struct BaseNpcConfig {
     pub name_offset_y: f32,
     #[serde(default)]
     pub name_offset_z: f32,
+    #[serde(default)]
+    pub speed: f32,
     pub cursor: Option<u8>,
     #[serde(default = "default_true")]
     pub enable_interact_popup: bool,
@@ -2539,6 +2541,7 @@ pub struct NpcTemplate {
     pub rot: Pos,
     pub possible_pos: Vec<Pos>,
     pub scale: f32,
+    pub speed: f32,
     pub stand_animation_id: i32,
     pub character_type: CharacterTypeTemplate,
     pub mount_id: Option<u32>,
@@ -2587,6 +2590,7 @@ impl NpcTemplate {
             rot: config.base_config().rot,
             possible_pos: config.base_config().possible_pos.clone(),
             scale: config.base_config().scale,
+            speed: config.base_config().speed,
             tickable_procedures: config.base_config().tickable_procedures.clone(),
             first_possible_procedures: config.base_config().first_possible_procedures.clone(),
             synchronize_with: config.base_config().synchronize_with.clone(),
@@ -2652,7 +2656,7 @@ impl NpcTemplate {
                 stand_animation_id: self.stand_animation_id,
                 temporary_model_id: None,
                 speed: CharacterStat {
-                    base: 0.0,
+                    base: self.speed,
                     mount_multiplier: 1.0,
                 },
                 jump_height_multiplier: CharacterStat {
