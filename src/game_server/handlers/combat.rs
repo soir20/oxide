@@ -113,7 +113,12 @@ impl ThreatTable {
     }
 
     pub fn target(&self) -> Option<u64> {
-        self.heap.peek().map(|(guid, _)| *guid)
+        self.heap
+            .peek()
+            .and_then(|(guid, priority)| match priority.priority > 0 {
+                true => Some(*guid),
+                false => None,
+            })
     }
 }
 
