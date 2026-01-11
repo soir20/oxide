@@ -16,6 +16,7 @@ use crate::{
             dialog::handle_dialog_buttons,
             inventory::{attachments_from_equipped_items, wield_type_from_inventory},
             lock_enforcer::CharacterWriteGuard,
+            offset_destination,
             unique_guid::AMBIENT_NPC_DISCRIMINANT,
         },
         packets::{
@@ -3158,17 +3159,11 @@ impl Character {
 
                     if !too_far_from_origin {
                         if too_far_from_target {
-                            let angle = (target_read_handle.stats.pos.z - self.stats.pos.z)
-                                .atan2(target_read_handle.stats.pos.x - self.stats.pos.x);
-
-                            let destination = Pos {
-                                x: target_read_handle.stats.pos.x
-                                    - self.stats.max_distance_from_target * angle.cos(),
-                                y: target_read_handle.stats.pos.y,
-                                z: target_read_handle.stats.pos.z
-                                    - self.stats.max_distance_from_target * angle.sin(),
-                                w: 1.0,
-                            };
+                            let destination = offset_destination(
+                                self.stats.pos,
+                                target_read_handle.stats.pos,
+                                self.stats.max_distance_from_target,
+                            );
 
                             pos_update = pos_update_progress.update_destination_and_tick(
                                 self.stats.guid,

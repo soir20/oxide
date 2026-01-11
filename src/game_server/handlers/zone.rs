@@ -13,7 +13,10 @@ use serde_yaml::{Mapping, Value};
 
 use crate::{
     game_server::{
-        handlers::dialog::{DialogChoiceConfig, DialogChoiceInstance, DialogChoiceTemplate},
+        handlers::{
+            dialog::{DialogChoiceConfig, DialogChoiceInstance, DialogChoiceTemplate},
+            distance3_pos, offset_destination,
+        },
         packets::{
             client_update::Position,
             command::MoveToInteract,
@@ -1425,29 +1428,16 @@ pub fn interact_with_character(
                                 ));
                             }
 
-                            let distance = distance3(
-                                requester_pos.x,
-                                requester_pos.y,
-                                requester_pos.z,
-                                target_read_handle.stats.pos.x,
-                                target_read_handle.stats.pos.y,
-                                target_read_handle.stats.pos.z,
-                            );
+                            let distance = distance3_pos(requester_pos, target_read_handle.stats.pos);
 
                             if distance > target_read_handle.stats.interact_radius
                                 || target_read_handle.stats.instance_guid != requester_instance
                             {
-                                let interaction_angle = (target_read_handle.stats.pos.z - requester_pos.z)
-                                    .atan2(target_read_handle.stats.pos.x - requester_pos.x);
-
-                                let destination = Pos {
-                                    x: target_read_handle.stats.pos.x
-                                        - target_read_handle.stats.move_to_interact_offset * interaction_angle.cos(),
-                                    y: target_read_handle.stats.pos.y,
-                                    z: target_read_handle.stats.pos.z
-                                        - target_read_handle.stats.move_to_interact_offset * interaction_angle.sin(),
-                                    w: 1.0,
-                                };
+                                let destination = offset_destination(
+                                    requester_pos,
+                                    target_read_handle.stats.pos,
+                                    target_read_handle.stats.move_to_interact_offset
+                                );
 
                                 return coerce_to_broadcast_supplier(move |_| {
                                     Ok(vec![Broadcast::Single(
