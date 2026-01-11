@@ -13,7 +13,10 @@ use serde_yaml::{Mapping, Value};
 
 use crate::{
     game_server::{
-        handlers::dialog::{DialogChoiceConfig, DialogChoiceInstance, DialogChoiceTemplate},
+        handlers::{
+            dialog::{DialogChoiceConfig, DialogChoiceInstance, DialogChoiceTemplate},
+            distance3_pos, offset_destination,
+        },
         packets::{
             client_update::Position,
             command::MoveToInteract,
@@ -37,7 +40,6 @@ use super::{
         CharacterSquadIndex, CharacterSynchronizationIndex, CharacterType, Chunk, DoorConfig,
         NpcTemplate, PreviousFixture, PreviousLocation, RemovalMode, TransportConfig,
     },
-    distance3,
     guid::{Guid, GuidTable, GuidTableIndexer, GuidTableWriteHandle, IndexedGuid},
     housing::prepare_init_house_packets,
     lock_enforcer::{
@@ -594,6 +596,35 @@ impl ZoneInstance {
         >,
     ) -> Vec<u32> {
         ZoneInstance::other_players_nearby(None, chunk, instance_guid, characters_table_handle)
+    }
+
+    pub fn all_characters_nearby<'a>(
+        chunk: Chunk,
+        instance_guid: u64,
+        characters_table_handle: &'a impl GuidTableIndexer<
+            'a,
+            u64,
+            Character,
+            CharacterLocationIndex,
+            CharacterNameIndex,
+            CharacterSquadIndex,
+            CharacterMatchmakingGroupIndex,
+            CharacterSynchronizationIndex,
+        >,
+    ) -> Vec<u64> {
+        let mut guids = Vec::new();
+
+        for chunk in ZoneInstance::nearby_chunks(chunk) {
+            for category in all::<CharacterCategory>() {
+                guids.extend(characters_table_handle.keys_by_index1((
+                    category,
+                    instance_guid,
+                    chunk,
+                )));
+            }
+        }
+
+        guids
     }
 
     pub fn diff_character_guids<'a>(
@@ -1396,29 +1427,16 @@ pub fn interact_with_character(
                                 ));
                             }
 
-                            let distance = distance3(
-                                requester_pos.x,
-                                requester_pos.y,
-                                requester_pos.z,
-                                target_read_handle.stats.pos.x,
-                                target_read_handle.stats.pos.y,
-                                target_read_handle.stats.pos.z,
-                            );
+                            let distance = distance3_pos(requester_pos, target_read_handle.stats.pos);
 
                             if distance > target_read_handle.stats.interact_radius
                                 || target_read_handle.stats.instance_guid != requester_instance
                             {
-                                let interaction_angle = (target_read_handle.stats.pos.z - requester_pos.z)
-                                    .atan2(target_read_handle.stats.pos.x - requester_pos.x);
-
-                                let destination = Pos {
-                                    x: target_read_handle.stats.pos.x
-                                        - target_read_handle.stats.move_to_interact_offset * interaction_angle.cos(),
-                                    y: target_read_handle.stats.pos.y,
-                                    z: target_read_handle.stats.pos.z
-                                        - target_read_handle.stats.move_to_interact_offset * interaction_angle.sin(),
-                                    w: 1.0,
-                                };
+                                let destination = offset_destination(
+                                    requester_pos,
+                                    target_read_handle.stats.pos,
+                                    target_read_handle.stats.move_to_interact_offset
+                                );
 
                                 return coerce_to_broadcast_supplier(move |_| {
                                     Ok(vec![Broadcast::Single(

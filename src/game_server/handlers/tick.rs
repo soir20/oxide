@@ -77,33 +77,27 @@ pub fn tick_single_chunk(
             .flat_map(|category| characters_table_read_handle.keys_by_index1((category, instance_guid, chunk)))
             .collect();
 
+        let write_guids = ZoneInstance::all_characters_nearby(chunk, instance_guid, characters_table_read_handle);
         let nearby_player_guids = ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_read_handle);
-        let mut read_guids: Vec<u64> = nearby_player_guids.iter()
-            .map(|guid| *guid as u64)
-            .collect();
-
-        for ticked_character_guid in tickable_characters.iter() {
-            if let Some(synchronzied_character_guid) = characters_table_read_handle.index5(*ticked_character_guid) {
-                read_guids.push(*synchronzied_character_guid);
-            }
-        }
 
         CharacterLockRequest {
-            read_guids,
-            write_guids: tickable_characters.clone(),
+            read_guids: Vec::new(),
+            write_guids,
             character_consumer: move |_,
-            characters_read,
+            _,
             mut characters_write,
             _| {
                 let mut broadcasts = Vec::new();
                 let mut pos_updates = Vec::new();
 
                 for guid in tickable_characters.iter() {
-                    let tickable_character = characters_write.get_mut(guid).unwrap();
+                    let Some(mut tickable_character) = characters_write.remove(guid) else {
+                        continue;
+                    };
 
                     if let Some(synchronize_with) = &tickable_character.synchronize_with {
                         if let Some(synchronized_character) =
-                            characters_read.get(synchronize_with)
+                            characters_write.get(synchronize_with)
                         {
                             if let Some(synchronized_guid) = synchronized_character.synchronize_with {
                                 panic!(
@@ -124,11 +118,21 @@ pub fn tick_single_chunk(
                         }
                     }
 
-                    let (mut character_broadcasts, character_pos_update) = tickable_character.tick(now, &nearby_player_guids, &characters_read, game_server.mounts(), game_server.items(), game_server.customizations(), tick_duration);
+                    let (mut character_broadcasts, character_pos_update) = tickable_character.tick(
+                        now,
+                        &nearby_player_guids,
+                        &characters_write,
+                        game_server.mounts(),
+                        game_server.items(),
+                        game_server.customizations(),
+                        tick_duration
+                    );
                     broadcasts.append(&mut character_broadcasts);
                     if let Some(pos_update) = character_pos_update {
                         pos_updates.push((*guid, pos_update));
                     }
+
+                    characters_write.insert(*guid, tickable_character);
                 }
 
                 (broadcasts, pos_updates)

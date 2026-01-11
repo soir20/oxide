@@ -4,6 +4,7 @@ use super::{packets::Pos, Broadcast, GameServer, ProcessPacketError};
 
 pub mod character;
 pub mod chat;
+pub mod combat;
 pub mod command;
 pub mod daily;
 pub mod dialog;
@@ -42,6 +43,19 @@ pub fn distance3(x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32) -> f32 {
     let diff_y = y2 - y1;
     let diff_z = z2 - z1;
     (diff_x * diff_x + diff_y * diff_y + diff_z * diff_z).sqrt()
+}
+
+pub fn offset_destination(old_pos: Pos, new_pos: Pos, offset: f32) -> Pos {
+    let distance_required = distance3_pos(old_pos, new_pos).max(f32::MIN_POSITIVE);
+
+    let unit_vector = (new_pos - old_pos) / distance_required;
+
+    Pos {
+        x: new_pos.x - offset * unit_vector.x,
+        y: new_pos.y - offset * unit_vector.y,
+        z: new_pos.z - offset * unit_vector.z,
+        w: new_pos.w,
+    }
 }
 
 pub fn are_dates_in_same_week(
