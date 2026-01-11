@@ -2675,6 +2675,7 @@ impl NpcTemplate {
                 auto_target_radius: self.auto_target_radius,
                 enemy_types: self.enemy_types.clone(),
                 threat_table: self.enemy_prioritization.clone().into(),
+                health: 1,
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(
                 self.tickable_procedures.clone(),
@@ -2775,6 +2776,7 @@ pub struct CharacterStats {
     pub auto_target_radius: f32,
     pub enemy_types: HashSet<String>,
     pub threat_table: ThreatTable,
+    pub health: u32,
 }
 
 impl CharacterStats {
@@ -3018,6 +3020,7 @@ impl Character {
                 auto_target_radius: 0.0,
                 enemy_types: HashSet::new(),
                 threat_table: ThreatTable::default(),
+                health: 1,
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(
                 tickable_procedures,
@@ -3084,6 +3087,7 @@ impl Character {
                     .enemy_types_applied_to_players
                     .clone(),
                 threat_table: ThreatTable::default(),
+                health: 1,
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(HashMap::new(), Vec::new()),
             synchronize_with: None,
@@ -3322,9 +3326,11 @@ impl Character {
         for nearby_character in nearby_characters.values() {
             let distance_from_target = distance3_pos(nearby_character.stats.pos, self.stats.pos);
             let distance_from_origin = distance3_pos(nearby_character.stats.pos, origin);
+            let is_too_far_from_origin = distance_from_origin > self.stats.max_distance_from_origin;
             let is_current_target = current_target == Some(nearby_character.guid());
+            let is_dead = nearby_character.stats.health == 0;
 
-            if distance_from_origin > self.stats.max_distance_from_origin && !is_current_target {
+            if (!is_current_target && is_too_far_from_origin) || is_dead {
                 self.stats.threat_table.remove(nearby_character.guid());
             } else if distance_from_target <= self.stats.auto_target_radius {
                 self.stats.threat_table.deal_damage(
