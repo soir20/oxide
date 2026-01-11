@@ -3158,15 +3158,25 @@ impl Character {
 
                     if !too_far_from_origin {
                         if too_far_from_target {
+                            let angle = (target_read_handle.stats.pos.z - self.stats.pos.z)
+                                .atan2(target_read_handle.stats.pos.x - self.stats.pos.x);
+
+                            let destination = Pos {
+                                x: target_read_handle.stats.pos.x
+                                    - self.stats.max_distance_from_target * angle.cos(),
+                                y: target_read_handle.stats.pos.y,
+                                z: target_read_handle.stats.pos.z
+                                    - self.stats.max_distance_from_target * angle.sin(),
+                                w: 1.0,
+                            };
+
                             pos_update = pos_update_progress.update_destination_and_tick(
                                 self.stats.guid,
                                 now,
                                 speed,
                                 tick_duration,
                                 self.stats.rot,
-                                TickPosUpdate::without_destination_rot(
-                                    target_read_handle.stats.pos,
-                                ),
+                                TickPosUpdate::without_destination_rot(destination),
                             );
                         }
 
