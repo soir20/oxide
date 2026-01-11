@@ -40,7 +40,6 @@ use super::{
         CharacterSquadIndex, CharacterSynchronizationIndex, CharacterType, Chunk, DoorConfig,
         NpcTemplate, PreviousFixture, PreviousLocation, RemovalMode, TransportConfig,
     },
-    distance3,
     guid::{Guid, GuidTable, GuidTableIndexer, GuidTableWriteHandle, IndexedGuid},
     housing::prepare_init_house_packets,
     lock_enforcer::{
