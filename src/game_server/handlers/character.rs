@@ -3311,7 +3311,7 @@ impl Character {
     }
 
     fn tickable(&self) -> bool {
-        self.tickable_procedure_tracker.tickable()
+        self.tickable_procedure_tracker.tickable() || self.stats.auto_target_radius > 0.0
     }
 
     fn update_target(
