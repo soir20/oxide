@@ -775,10 +775,19 @@ impl GameServer {
                 OpCode::Minigame => {
                     broadcasts.append(&mut process_minigame_packet(&mut cursor, sender, self)?);
                 }
+                // Ignore these packets to reduce log spam for now
                 OpCode::LobbyGameDefinition => {}
                 OpCode::UiInteractions => {}
                 OpCode::ClientMetrics => {}
+                OpCode::LuaMetrics => {}
                 OpCode::ClientLog => {}
+                OpCode::SetLocale => {}
+                OpCode::ClientIsDoneLoading => {}
+                OpCode::PlayerUpdate => {}
+                OpCode::SecondsOffGmt => {}
+                OpCode::Purchase => {}
+                OpCode::Portrait => {}
+                OpCode::ClickedLocation => {}
                 _ => {
                     return Err(ProcessPacketError::new(
                         ProcessPacketErrorType::UnknownOpCode,

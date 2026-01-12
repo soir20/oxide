@@ -12,6 +12,7 @@ pub enum MinigameOpCode {
     RequestCreateActiveMinigame = 0x4,
     RequestStartActiveMinigame = 0x6,
     RequestCancelActiveMinigame = 0x7,
+    LeaveInstance = 0x8,
     PauseActiveMinigame = 0x9,
     ResumeActiveMinigame = 0xa,
     FlashPayload = 0xf,

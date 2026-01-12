@@ -180,3 +180,13 @@ impl GamePacket for DefinePointsOfInterest {
     type Header = OpCode;
     const HEADER: Self::Header = OpCode::DefinePointsOfInterest;
 }
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct SetLocale {
+    pub locale: String,
+}
+
+impl GamePacket for SetLocale {
+    type Header = OpCode;
+    const HEADER: Self::Header = OpCode::SetLocale;
+}
