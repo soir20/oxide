@@ -1896,9 +1896,7 @@ pub fn process_minigame_packet(
             MinigameOpCode::SaberStrike => process_saber_strike_packet(cursor, sender, game_server),
             MinigameOpCode::SaberDuel => process_saber_duel_packet(cursor, sender, game_server),
             // Ignore this unused packet to reduce log spam
-            MinigameOpCode::LeaveInstance => {
-                Ok(Vec::new())
-            },
+            MinigameOpCode::LeaveInstance => Ok(Vec::new()),
             _ => {
                 let mut buffer = Vec::new();
                 cursor.read_to_end(&mut buffer)?;
