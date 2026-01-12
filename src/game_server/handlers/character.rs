@@ -26,11 +26,12 @@ use crate::{
             item::{Attachment, BaseAttachmentGroup, EquipmentSlot, ItemDefinition, WieldType},
             minigame::ScoreEntry,
             player_update::{
-                AddNotifications, AddNpc, AddPc, Customization, CustomizationSlot, Hostility,
-                HudMessage, Icon, MoveOnRail, NameplateImage, NotificationData, NpcRelevance,
-                PhysicsState, PlayCompositeEffect, QueueAnimation, RemoveGracefully,
-                RemoveStandard, RemoveTemporaryModel, SetAnimation, SingleNotification,
-                SingleNpcRelevance, UpdateSpeed, UpdateTemporaryModel,
+                AddCompositeEffectTag, AddNotifications, AddNpc, AddPc, Customization,
+                CustomizationSlot, Hostility, HudMessage, Icon, MoveOnRail, NameplateImage,
+                NotificationData, NpcRelevance, PhysicsState, PlayCompositeEffect, QueueAnimation,
+                RemoveCompositeEffectTag, RemoveGracefully, RemoveStandard, RemoveTemporaryModel,
+                SetAnimation, SingleNotification, SingleNpcRelevance, UpdateSpeed,
+                UpdateTemporaryModel,
             },
             tunnel::TunneledPacket,
             ui::{ExecuteScriptWithIntParams, ExecuteScriptWithStringParams},
@@ -62,6 +63,8 @@ pub fn coerce_to_broadcast_supplier(
 }
 
 pub const CHAT_BUBBLE_VISIBLE_RADIUS: f32 = 32.0;
+pub const ORIGIN_RESET_TAG_ID: u32 = 1;
+pub const ORIGIN_RESET_COMPOSITE_EFFECT_ID: u32 = 2764;
 
 const fn default_stand_animation_id() -> i32 {
     1
@@ -2744,6 +2747,7 @@ impl NpcTemplate {
                 enemy_types: self.enemy_types.clone(),
                 threat_table: self.enemy_prioritization.clone().into(),
                 health: 1,
+                composite_effect_tags: BTreeMap::new(),
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(
                 self.tickable_procedures.clone(),
@@ -2845,6 +2849,7 @@ pub struct CharacterStats {
     pub enemy_types: HashSet<String>,
     pub threat_table: ThreatTable,
     pub health: u32,
+    pub composite_effect_tags: BTreeMap<u32, u32>,
 }
 
 impl CharacterStats {
@@ -2855,7 +2860,7 @@ impl CharacterStats {
         item_definitions: &BTreeMap<u32, ItemDefinition>,
         customizations: &BTreeMap<u32, Customization>,
     ) -> Vec<Vec<u8>> {
-        match &self.character_type {
+        let mut packets = match &self.character_type {
             CharacterType::AmbientNpc(ambient_npc) => {
                 ambient_npc.add_packets(self, override_is_spawned)
             }
@@ -2872,7 +2877,22 @@ impl CharacterStats {
                 self.rot,
                 self.scale,
             ),
+        };
+
+        for (tag_id, composite_effect_id) in self.composite_effect_tags.iter() {
+            packets.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: AddCompositeEffectTag {
+                    guid: Guid::guid(self),
+                    tag_id: *tag_id,
+                    composite_effect_id: *composite_effect_id,
+                    triggered_by_guid: 0,
+                    unknown2: 0,
+                },
+            }));
         }
+
+        packets
     }
 
     pub fn remove_packets(&self, mode: RemovalMode) -> Vec<Vec<u8>> {
@@ -3089,6 +3109,7 @@ impl Character {
                 enemy_types: HashSet::new(),
                 threat_table: ThreatTable::default(),
                 health: 1,
+                composite_effect_tags: BTreeMap::new(),
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(
                 tickable_procedures,
@@ -3156,6 +3177,7 @@ impl Character {
                     .clone(),
                 threat_table: ThreatTable::default(),
                 health: 1,
+                composite_effect_tags: BTreeMap::new(),
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(HashMap::new(), Vec::new()),
             synchronize_with: None,
@@ -3265,8 +3287,26 @@ impl Character {
                 self.stats.target_state = TargetState::ReturningToOrigin {
                     pos_update_progress: pos_update_progress.clone(),
                 };
+                self.stats
+                    .composite_effect_tags
+                    .insert(ORIGIN_RESET_TAG_ID, ORIGIN_RESET_COMPOSITE_EFFECT_ID);
 
-                (broadcasts, pos_update)
+                (
+                    vec![Broadcast::Multi(
+                        nearby_player_guids.to_vec(),
+                        vec![GamePacket::serialize(&TunneledPacket {
+                            unknown1: true,
+                            inner: AddCompositeEffectTag {
+                                guid: self.stats.guid,
+                                tag_id: ORIGIN_RESET_TAG_ID,
+                                composite_effect_id: ORIGIN_RESET_COMPOSITE_EFFECT_ID,
+                                triggered_by_guid: 0,
+                                unknown2: 0,
+                            },
+                        })],
+                    )],
+                    pos_update,
+                )
             }
             TargetState::ReturningToOrigin {
                 pos_update_progress,
@@ -3278,11 +3318,28 @@ impl Character {
                     tick_duration,
                     self.stats.rot,
                 );
-                if pos_update_progress.reached_destination() {
-                    self.stats.target_state = TargetState::None;
-                    self.stats.threat_table.clear();
+                if !pos_update_progress.reached_destination() {
+                    return (Vec::new(), pos_update);
                 }
-                (Vec::new(), pos_update)
+
+                self.stats.target_state = TargetState::None;
+                self.stats.threat_table.clear();
+                self.stats
+                    .composite_effect_tags
+                    .remove(&ORIGIN_RESET_TAG_ID);
+                (
+                    vec![Broadcast::Multi(
+                        nearby_player_guids.to_vec(),
+                        vec![GamePacket::serialize(&TunneledPacket {
+                            unknown1: true,
+                            inner: RemoveCompositeEffectTag {
+                                guid: self.stats.guid,
+                                tag_id: ORIGIN_RESET_TAG_ID,
+                            },
+                        })],
+                    )],
+                    pos_update,
+                )
             }
         }
     }

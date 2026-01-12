@@ -418,7 +418,7 @@ impl GamePacket for InitCustomizations {
 pub struct AddCompositeEffectTag {
     pub guid: u64,
     pub tag_id: u32,
-    pub composite_effect: u32,
+    pub composite_effect_id: u32,
     pub triggered_by_guid: u64,
     pub unknown2: u64,
 }
