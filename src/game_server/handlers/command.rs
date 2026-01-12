@@ -90,8 +90,9 @@ pub fn process_command(
 
                 broadcast_supplier?(game_server)
             }
-            // Ignore this packet to reduce log spam
+            // Ignore these packets to reduce log spam
             CommandOpCode::ExitDialog => Ok(Vec::new()),
+            CommandOpCode::FreeInteractNpc => Ok(Vec::new()),
             _ => {
                 let mut buffer = Vec::new();
                 cursor.read_to_end(&mut buffer)?;
