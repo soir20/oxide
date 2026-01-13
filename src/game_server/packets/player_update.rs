@@ -493,8 +493,8 @@ impl GamePacket for MoveOnRail {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct SeekTargetUpdate {
-    guid: u64,
-    target_id: u64,
+    pub guid: u64,
+    pub target_guid: u64,
 }
 
 impl GamePacket for SeekTargetUpdate {
@@ -504,14 +504,14 @@ impl GamePacket for SeekTargetUpdate {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct SeekTarget {
-    guid: u64,
-    target_id: u64,
-    init_speed: f32,
-    acceleration: f32,
-    speed: f32,
-    unknown1: f32,
-    rot_y: f32,
-    rot: Pos,
+    pub guid: u64,
+    pub target_guid: u64,
+    pub init_speed: f32,
+    pub acceleration: f32,
+    pub speed: f32,
+    pub vertical_rot_speed: f32,
+    pub horizontal_rot_speed: f32,
+    pub rot: Pos,
 }
 
 impl GamePacket for SeekTarget {
