@@ -1868,11 +1868,14 @@ impl AmbientNpc {
         character: &CharacterStats,
         override_is_spawned: bool,
     ) -> Vec<Vec<u8>> {
-        let Some((add_npc, enable_interaction)) =
+        let notif = &self.notification_config;
+
+        let Some((mut add_npc, enable_interaction)) =
             self.base_npc.add_packets(character, override_is_spawned)
         else {
             return Vec::new();
         };
+        add_npc.hover_description = notif.resolve_hover_description(add_npc.name_id);
 
         let mut packets = Vec::new();
 
@@ -1888,8 +1891,6 @@ impl AmbientNpc {
             },
         }));
 
-        let notif = &self.notification_config;
-
         if notif.should_notify() {
             packets.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
@@ -1901,7 +1902,7 @@ impl AmbientNpc {
                             unknown1: 0,
                             icon_id: notif.notification_icon.unwrap_or(0),
                             unknown3: 0,
-                            name_id: notif.resolve_hover_description(self.base_npc.name_id),
+                            name_id: 0,
                             unknown4: 0,
                             hide_icon: false,
                             unknown6: 0,

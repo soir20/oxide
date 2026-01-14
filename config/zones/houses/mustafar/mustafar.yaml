@@ -24,7 +24,7 @@ mustafar:
   gravity_multiplier: 1
   seconds_per_day: 10800
   update_previous_location_on_leave: false
-  transports:
+  ambient_npcs:
     fighter:
       name_id: 32914
       terrain_object_id: 1297277377
@@ -41,6 +41,7 @@ mustafar:
       name_offset_x: -0.5
       cursor: 0
       show_name: false
-      show_icon: true
-      large_icon: false
-      show_hover_description: true
+      notification_config:
+        notification_icon: 37
+        hover_description:
+          !UseName

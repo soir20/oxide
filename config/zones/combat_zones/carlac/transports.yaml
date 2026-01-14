@@ -1,6 +1,6 @@
 ---
 carlac:
-  transports:
+  ambient_npcs:
     holo_table:
       name_id: 32914
       model_id: 1603
@@ -16,9 +16,6 @@ carlac:
         w: 0
       cursor: 54
       show_name: false
-      show_icon: false
-      large_icon: false
-      show_hover_description: false
       interact_radius: 3.3
       move_to_interact_offset: 3.2
       interact_popup_radius: 7
@@ -38,6 +35,12 @@ carlac:
       name_offset_x: -0.5
       cursor: 0
       show_name: false
-      show_icon: true
-      large_icon: false
-      show_hover_description: true
+      notification_config:
+        notification_icon: 46
+        hover_description:
+          !UseName
+      one_shot_interaction:
+        script:
+          CustomStringParams:
+            script_name: "UIGlobal.ShowGalaxyMap"
+        duration_millis: 1
