@@ -20,30 +20,30 @@ members_only:
       z: 1.5
       w: 0
   other_points_of_interest:
-  # Veranda → Construction Chamber
-  - guid: 10018
-    pos:
-      x: 1487.53
-      y: 70
-      z: 890.248076
-      w: 1
-    rot:
-      x: 0
-      y: 0
-      z: 1.5
-      w: 0
-  # Lounge → Club
-  - guid: 10019
-    pos:
-      x: 764.51
-      y: 10
-      z: 683.99
-      w: 1
-    rot:
-      x: 1.5
-      y: 0
-      z: 0
-      w: 0
+  # Veranda -> Construction Chamber
+    - guid: 10018
+      pos:
+        x: 1487.53
+        y: 70
+        z: 890.248076
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 1.5
+        w: 0
+  # Lounge -> Club
+    - guid: 10019
+      pos:
+        x: 764.51
+        y: 10
+        z: 683.99
+        w: 1
+      rot:
+        x: 1.5
+        y: 0
+        z: 0
+        w: 0
   speed: 8
   jump_height_multiplier: 1
   gravity_multiplier: 1
