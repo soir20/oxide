@@ -236,7 +236,8 @@ jedi_temple:
         z: -0.13887587
         w: 0
       cursor: 53
-      notification_icon: 37
+      notification_config: 
+        notification_icon: 37
       one_shot_interaction:
         dialog_option_key: Breaker
         duration_millis: 1
@@ -1199,7 +1200,8 @@ jedi_temple:
       stand_animation_id: 2220
       cursor: 53
       enable_interact_popup: true
-      notification_icon: 14
+      notification_config: 
+        notification_icon: 14
       one_shot_interaction:
         dialog_option_key: Commander Stone
         duration_millis: 1
@@ -1224,7 +1226,8 @@ jedi_temple:
       stand_animation_id: 2201
       cursor: 53
       enable_interact_popup: true
-      notification_icon: 12
+      notification_config: 
+        notification_icon: 12
       one_shot_interaction:
         dialog_option_key: Obi-Wan Kenobi
         duration_millis: 1
@@ -1248,7 +1251,8 @@ jedi_temple:
       stand_animation_id: 2201
       cursor: 53
       enable_interact_popup: true
-      notification_icon: 29
+      notification_config: 
+        notification_icon: 29
       one_shot_interaction:
         dialog_option_key: Luminara Unduli
         duration_millis: 1

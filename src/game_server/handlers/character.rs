@@ -203,6 +203,15 @@ pub enum HudMessageType {
     },
 }
 
+#[derive(Clone, Copy, Default, Deserialize, PartialEq)]
+#[serde(deny_unknown_fields)]
+pub enum HoverDescriptionMode {
+    #[default]
+    None,
+    UseName,
+    OverrideNameId(u32),
+}
+
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct BaseNpcConfig {
@@ -1739,6 +1748,28 @@ pub trait NpcConfig {
     fn base_config(&self) -> &BaseNpcConfig;
 }
 
+#[derive(Clone, Deserialize, Default)]
+#[serde(deny_unknown_fields)]
+pub struct NotificationConfig {
+    pub notification_icon: Option<u32>,
+    #[serde(default)]
+    pub hover_description: HoverDescriptionMode,
+}
+
+impl NotificationConfig {
+    pub fn should_notify(&self) -> bool {
+        self.notification_icon.is_some() || self.hover_description != HoverDescriptionMode::None
+    }
+
+    pub fn resolve_hover_description(&self, npc_name_id: u32) -> u32 {
+        match self.hover_description {
+            HoverDescriptionMode::None => 0,
+            HoverDescriptionMode::UseName => npc_name_id,
+            HoverDescriptionMode::OverrideNameId(id) => id,
+        }
+    }
+}
+
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct AmbientNpcConfig {
@@ -1747,7 +1778,8 @@ pub struct AmbientNpcConfig {
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
     pub one_shot_interaction: Option<OneShotInteractionConfig>,
     pub triggered_npc_keys_on_interact: Option<Vec<String>>,
-    pub notification_icon: Option<u32>,
+    #[serde(default)]
+    pub notification_config: NotificationConfig,
 }
 
 impl NpcConfig for AmbientNpcConfig {
@@ -1791,7 +1823,7 @@ impl ToCharacterTypeTemplate for AmbientNpcConfig {
             procedure_on_interact: self.procedure_on_interact.clone(),
             one_shot_interaction: resolved_action,
             triggered_npc_keys_on_interact: self.triggered_npc_keys_on_interact.clone(),
-            notification_icon: self.notification_icon,
+            notification_config: self.notification_config.clone(),
         })
     }
 }
@@ -1802,7 +1834,7 @@ pub struct AmbientNpcTemplate {
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
     pub one_shot_interaction: Option<OneShotInteractionTemplate>,
     pub triggered_npc_keys_on_interact: Option<Vec<String>>,
-    pub notification_icon: Option<u32>,
+    pub notification_config: NotificationConfig,
 }
 
 impl AmbientNpcTemplate {
@@ -1816,7 +1848,7 @@ impl AmbientNpcTemplate {
                     .filter_map(|key| keys_to_guid.get(key).copied())
                     .collect()
             }),
-            notification_icon: self.notification_icon,
+            notification_config: self.notification_config.clone(),
         }
     }
 }
@@ -1827,7 +1859,7 @@ pub struct AmbientNpc {
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
     pub one_shot_interaction: Option<OneShotInteractionTemplate>,
     pub triggered_npc_guids: Option<Vec<u64>>,
-    pub notification_icon: Option<u32>,
+    pub notification_config: NotificationConfig,
 }
 
 impl AmbientNpc {
@@ -1856,7 +1888,9 @@ impl AmbientNpc {
             },
         }));
 
-        if let Some(icon_id) = self.notification_icon {
+        let notif = &self.notification_config;
+
+        if notif.should_notify() {
             packets.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: AddNotifications {
@@ -1865,9 +1899,9 @@ impl AmbientNpc {
                         unknown1: 0,
                         notification: Some(NotificationData {
                             unknown1: 0,
-                            icon_id,
+                            icon_id: notif.notification_icon.unwrap_or(0),
                             unknown3: 0,
-                            name_id: 0,
+                            name_id: notif.resolve_hover_description(self.base_npc.name_id),
                             unknown4: 0,
                             hide_icon: false,
                             unknown6: 0,

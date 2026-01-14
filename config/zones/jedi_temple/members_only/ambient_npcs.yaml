@@ -22,7 +22,8 @@ members_only:
       stand_animation_id: 2201
       cursor: 53
       enable_interact_popup: true
-      notification_icon: 16
+      notification_config: 
+        notification_icon: 16
       one_shot_interaction:
         dialog_option_key: Ki-Adi-Mundi
         duration_millis: 1

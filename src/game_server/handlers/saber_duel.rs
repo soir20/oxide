@@ -14,7 +14,7 @@ use crate::game_server::{
     handlers::{
         character::{
             default_spawn_animation_id, AmbientNpc, BaseNpc, Character, CharacterType,
-            MinigameMatchmakingGroup, MinigameStatus, PlayerInventory,
+            MinigameMatchmakingGroup, MinigameStatus, NotificationConfig, PlayerInventory,
         },
         inventory::{
             attachments_from_equipped_items, player_has_saber_equipped, wield_type_from_inventory,
@@ -680,8 +680,8 @@ impl SaberDuelGame {
                 },
                 procedure_on_interact: None,
                 one_shot_interaction: None,
-                notification_icon: None,
                 triggered_npc_guids: None,
+                notification_config: NotificationConfig::default(),
             }),
             None,
             None,
