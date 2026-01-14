@@ -20,7 +20,7 @@ members_only:
       z: 1.5
       w: 0
   other_points_of_interest:
-  # Veranda -> Construction Chamber
+    # Veranda -> Construction Chamber
     - guid: 10018
       pos:
         x: 1487.53
@@ -32,7 +32,7 @@ members_only:
         y: 0
         z: 1.5
         w: 0
-  # Lounge -> Club
+    # Lounge -> Club
     - guid: 10019
       pos:
         x: 764.51

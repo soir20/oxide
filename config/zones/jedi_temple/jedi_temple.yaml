@@ -20,7 +20,7 @@ jedi_temple:
       z: 0
       w: 0
   other_points_of_interest:
-  # Veranda -> Archives
+    # Veranda -> Archives
     - guid: 10000
       pos:
         x: 1757.083
@@ -32,7 +32,7 @@ jedi_temple:
         y: 0
         z: 0
         w: 0
-  # Archives -> Veranda
+    # Archives -> Veranda
     - guid: 10001
       pos:
         x: 898.7137
@@ -44,7 +44,7 @@ jedi_temple:
         y: 0
         z: 1.5
         w: 0
-  # Veranda -> Workshop
+    # Veranda -> Workshop
     - guid: 10002
       pos:
         x: -356.4902
@@ -56,7 +56,7 @@ jedi_temple:
         y: 0
         z: 0
         w: 0
-  # Workshop -> Veranda
+    # Workshop -> Veranda
     - guid: 10003
       pos:
         x: 898.6971
@@ -68,7 +68,7 @@ jedi_temple:
         y: 0
         z: -1.5
         w: 0
-  # Veranda -> Main Hall (Left)
+    # Veranda -> Main Hall (Left)
     - guid: 10004
       pos:
         x: 1256.403
@@ -80,7 +80,7 @@ jedi_temple:
         y: 0
         z: -1
         w: 0
-  # Main Hall -> Veranda (Left)
+    # Main Hall -> Veranda (Left)
     - guid: 10005
       pos:
         x: 919.5864
@@ -92,7 +92,7 @@ jedi_temple:
         y: 0
         z: 0
         w: 0
-  # Veranda -> Main Hall (Right)
+    # Veranda -> Main Hall (Right)
     - guid: 10006
       pos:
         x: 1305.649
@@ -104,7 +104,7 @@ jedi_temple:
         y: 0
         z: -1
         w: 0
-  # Main Hall -> Veranda (Right)
+    # Main Hall -> Veranda (Right)
     - guid: 10007
       pos:
         x: 919.5864
@@ -116,7 +116,7 @@ jedi_temple:
         y: 0
         z: 0
         w: 0
-  # Main Hall -> Training Room
+    # Main Hall -> Training Room
     - guid: 10008
       pos:
         x: 160.4435
@@ -128,7 +128,7 @@ jedi_temple:
         y: 0
         z: -1.5
         w: 0
-  # Training Room -> Main Hall
+    # Training Room -> Main Hall
     - guid: 10009
       pos:
         x: 1245.232
@@ -140,7 +140,7 @@ jedi_temple:
         y: 0
         z: 0
         w: 0
-  # Main Hall -> Hangar
+    # Main Hall -> Hangar
     - guid: 10010
       pos:
         x: 130.3168
@@ -152,7 +152,7 @@ jedi_temple:
         y: 0
         z: 0
         w: 0
-  # Hangar -> Main Hall
+    # Hangar -> Main Hall
     - guid: 10011
       pos:
         x: 1245.241
@@ -164,7 +164,7 @@ jedi_temple:
         y: 0
         z: 0
         w: 0
-  # Main Hall -> Lounge
+    # Main Hall -> Lounge
     - guid: 10012
       pos:
         x: -133.2943
@@ -176,7 +176,7 @@ jedi_temple:
         y: 0
         z: 0
         w: 0
-  # Lounge -> Main Hall
+    # Lounge -> Main Hall
     - guid: 10013
       pos:
         x: 1316.713
@@ -188,7 +188,7 @@ jedi_temple:
         y: 0
         z: 0
         w: 0
-  # Main Hall -> War Room
+    # Main Hall -> War Room
     - guid: 10014
       pos:
         x: 693.7585
@@ -200,7 +200,7 @@ jedi_temple:
         y: 0
         z: 0
         w: 0
-  # War Room → Main Hall
+    # War Room → Main Hall
     - guid: 10015
       pos:
         x: 1316.77
@@ -212,7 +212,7 @@ jedi_temple:
         y: 0
         z: 0
         w: 0
-  # Construction Chamber -> Veranda
+    # Construction Chamber -> Veranda
     - guid: 10016
       pos:
         x: 919.5898
@@ -224,7 +224,7 @@ jedi_temple:
         y: 0
         z: 0
         w: 0
-  # Club -> Lounge
+    # Club -> Lounge
     - guid: 10017
       pos:
         x: -106.5555
