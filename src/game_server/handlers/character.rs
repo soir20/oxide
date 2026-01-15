@@ -2361,7 +2361,7 @@ pub enum CharacterTypeTemplate {
 
 #[derive(Clone)]
 pub enum CharacterType {
-    AmbientNpc(AmbientNpc),
+    AmbientNpc(Box<AmbientNpc>),
     Player(Box<Player>),
     Fixture(u64, CurrentFixture),
 }
@@ -2373,7 +2373,7 @@ impl CharacterType {
     ) -> Self {
         match template {
             CharacterTypeTemplate::AmbientNpc(template) => {
-                CharacterType::AmbientNpc(template.instantiate(keys_to_guid))
+                CharacterType::AmbientNpc(Box::new(template.instantiate(keys_to_guid)))
             }
         }
     }

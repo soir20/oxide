@@ -657,7 +657,7 @@ impl SaberDuelGame {
             Pos::default(),
             chunk_size,
             1.0,
-            CharacterType::AmbientNpc(AmbientNpc {
+            CharacterType::AmbientNpc(Box::new(AmbientNpc {
                 base_npc: BaseNpc {
                     texture_alias: "".to_string(),
                     name_id: self.config.ai.name_id,
@@ -682,7 +682,7 @@ impl SaberDuelGame {
                 one_shot_interaction: None,
                 triggered_npc_guids: None,
                 notification_config: NotificationConfig::default(),
-            }),
+            })),
             None,
             None,
             0.0,
