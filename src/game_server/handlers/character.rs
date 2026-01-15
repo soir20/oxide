@@ -213,6 +213,16 @@ pub enum HoverDescriptionMode {
     OverrideNameId(u32),
 }
 
+impl HoverDescriptionMode {
+    fn resolve_hover_description(&self, npc_name_id: u32) -> u32 {
+        match *self {
+            HoverDescriptionMode::None => 0,
+            HoverDescriptionMode::UseName => npc_name_id,
+            HoverDescriptionMode::OverrideNameId(id) => id,
+        }
+    }
+}
+
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct BaseNpcConfig {
@@ -247,6 +257,8 @@ pub struct BaseNpcConfig {
     #[serde(default)]
     pub speed: f32,
     pub cursor: Option<u8>,
+    #[serde(default)]
+    pub hover_description: HoverDescriptionMode,
     #[serde(default = "default_true")]
     pub enable_interact_popup: bool,
     #[serde(default = "default_interact_radius")]
@@ -311,6 +323,7 @@ pub struct BaseNpc {
     pub composite_effect_id: Option<u32>,
     pub clickable: bool,
     pub spawn_animation_id: i32,
+    pub hover_description: HoverDescriptionMode,
 }
 
 impl BaseNpc {
@@ -411,7 +424,9 @@ impl BaseNpc {
                 body_customization_override: "".to_string(),
                 override_terrain_model: !self.use_terrain_model,
                 hover_glow: 0,
-                hover_description: 0,
+                hover_description: self
+                    .hover_description
+                    .resolve_hover_description(self.name_id),
                 fly_over_effect: 0,
                 unknown65: 0,
                 unknown66: 0,
@@ -452,6 +467,7 @@ impl From<BaseNpcConfig> for BaseNpc {
             composite_effect_id: value.composite_effect_id,
             clickable: value.clickable,
             spawn_animation_id: value.spawn_animation_id,
+            hover_description: value.hover_description,
         }
     }
 }
@@ -1767,28 +1783,6 @@ pub trait NpcConfig {
     fn base_config(&self) -> &BaseNpcConfig;
 }
 
-#[derive(Clone, Deserialize, Default)]
-#[serde(deny_unknown_fields)]
-pub struct NotificationConfig {
-    pub notification_icon: Option<u32>,
-    #[serde(default)]
-    pub hover_description: HoverDescriptionMode,
-}
-
-impl NotificationConfig {
-    pub fn should_notify(&self) -> bool {
-        self.notification_icon.is_some() || self.hover_description != HoverDescriptionMode::None
-    }
-
-    pub fn resolve_hover_description(&self, npc_name_id: u32) -> u32 {
-        match self.hover_description {
-            HoverDescriptionMode::None => 0,
-            HoverDescriptionMode::UseName => npc_name_id,
-            HoverDescriptionMode::OverrideNameId(id) => id,
-        }
-    }
-}
-
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct AmbientNpcConfig {
@@ -1797,8 +1791,7 @@ pub struct AmbientNpcConfig {
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
     pub one_shot_interaction: Option<OneShotInteractionConfig>,
     pub triggered_npc_keys_on_interact: Option<Vec<String>>,
-    #[serde(default)]
-    pub notification_config: NotificationConfig,
+    pub notification_icon: Option<u32>,
 }
 
 impl NpcConfig for AmbientNpcConfig {
@@ -1842,7 +1835,7 @@ impl ToCharacterTypeTemplate for AmbientNpcConfig {
             procedure_on_interact: self.procedure_on_interact.clone(),
             one_shot_interaction: resolved_action,
             triggered_npc_keys_on_interact: self.triggered_npc_keys_on_interact.clone(),
-            notification_config: self.notification_config.clone(),
+            notification_icon: self.notification_icon,
         })
     }
 }
@@ -1853,7 +1846,7 @@ pub struct AmbientNpcTemplate {
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
     pub one_shot_interaction: Option<OneShotInteractionTemplate>,
     pub triggered_npc_keys_on_interact: Option<Vec<String>>,
-    pub notification_config: NotificationConfig,
+    pub notification_icon: Option<u32>,
 }
 
 impl AmbientNpcTemplate {
@@ -1867,7 +1860,7 @@ impl AmbientNpcTemplate {
                     .filter_map(|key| keys_to_guid.get(key).copied())
                     .collect()
             }),
-            notification_config: self.notification_config.clone(),
+            notification_icon: self.notification_icon,
         }
     }
 }
@@ -1878,7 +1871,7 @@ pub struct AmbientNpc {
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
     pub one_shot_interaction: Option<OneShotInteractionTemplate>,
     pub triggered_npc_guids: Option<Vec<u64>>,
-    pub notification_config: NotificationConfig,
+    pub notification_icon: Option<u32>,
 }
 
 impl AmbientNpc {
@@ -1887,14 +1880,11 @@ impl AmbientNpc {
         character: &CharacterStats,
         override_is_spawned: bool,
     ) -> Vec<Vec<u8>> {
-        let notif = &self.notification_config;
-
-        let Some((mut add_npc, enable_interaction)) =
+        let Some((add_npc, enable_interaction)) =
             self.base_npc.add_packets(character, override_is_spawned)
         else {
             return Vec::new();
         };
-        add_npc.hover_description = notif.resolve_hover_description(add_npc.name_id);
 
         let mut packets = Vec::new();
 
@@ -1910,7 +1900,7 @@ impl AmbientNpc {
             },
         }));
 
-        if notif.should_notify() {
+        if let Some(icon_id) = self.notification_icon {
             packets.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: AddNotifications {
@@ -1919,7 +1909,7 @@ impl AmbientNpc {
                         unknown1: 0,
                         notification: Some(NotificationData {
                             unknown1: 0,
-                            icon_id: notif.notification_icon.unwrap_or(0),
+                            icon_id,
                             unknown3: 0,
                             name_id: 0,
                             unknown4: 0,

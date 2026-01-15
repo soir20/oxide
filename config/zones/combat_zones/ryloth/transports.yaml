@@ -72,10 +72,8 @@ ryloth:
       name_offset_x: -0.5
       cursor: 0
       show_name: false
-      notification_config:
-        notification_icon: 37
-        hover_description:
-          !UseName
+      notification_icon: 37
+      hover_description: UseName
       one_shot_interaction:
         script: OpenGalaxyMap
         duration_millis: 1

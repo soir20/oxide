@@ -41,6 +41,4 @@ geonosis_cruiser:
       auto_interact_radius: 1.5
       move_to_interact_offset: 0
       show_name: false
-      notification_config:
-        hover_description:
-          !UseName
+      hover_description: UseName
