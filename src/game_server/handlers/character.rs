@@ -151,6 +151,7 @@ pub enum SpawnedState {
 pub enum ScriptType {
     #[default]
     None,
+    OpenGalaxyMap,
     CustomStringParams {
         script_name: String,
         #[serde(default)]
@@ -509,6 +510,15 @@ impl OneShotAction {
                     inner: ExecuteScriptWithIntParams {
                         script_name: "MiniGameFlow.CreateMiniGameGroup".to_string(),
                         params: vec![*stage_group_id],
+                    },
+                }));
+            }
+            ScriptType::OpenGalaxyMap => {
+                packets.push(GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: ExecuteScriptWithIntParams {
+                        script_name: "UIGlobal.ShowGalaxyMap".to_string(),
+                        params: vec![],
                     },
                 }));
             }
@@ -1100,6 +1110,15 @@ impl TickableStep {
                     inner: ExecuteScriptWithIntParams {
                         script_name: "MiniGameFlow.CreateMiniGameGroup".to_string(),
                         params: vec![*stage_group_id],
+                    },
+                }));
+            }
+            ScriptType::OpenGalaxyMap => {
+                packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: ExecuteScriptWithIntParams {
+                        script_name: "UIGlobal.ShowGalaxyMap".to_string(),
+                        params: vec![],
                     },
                 }));
             }

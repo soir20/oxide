@@ -8,9 +8,7 @@ jedi_temple:
       close_dialog: true
 
     - button_key: Galaxy Map
-      script:
-        CustomStringParams:
-          script_name: UIGlobal.ShowGalaxyMap
+      script: OpenGalaxyMap
       close_dialog: true
 
     #

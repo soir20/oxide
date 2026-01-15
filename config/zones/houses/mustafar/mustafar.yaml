@@ -45,3 +45,6 @@ mustafar:
         notification_icon: 37
         hover_description:
           !UseName
+      one_shot_interaction:
+        script: OpenGalaxyMap
+        duration_millis: 1

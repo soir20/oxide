@@ -16,13 +16,12 @@ umbara:
         w: 0
       cursor: 54
       show_name: false
-      notification_config:
-        notification_icon: 37
-        hover_description:
-          !UseName
       interact_radius: 3.3
       move_to_interact_offset: 3.2
       interact_popup_radius: 7
+      one_shot_interaction:
+        script: OpenGalaxyMap
+        duration_millis: 1
     fighter:
       name_id: 32914
       terrain_object_id: 1319570319
@@ -43,6 +42,9 @@ umbara:
         notification_icon: 37
         hover_description:
           !UseName
+      one_shot_interaction:
+        script: OpenGalaxyMap
+        duration_millis: 1
     gunship:
       name_id: 32914
       model_id: 2133
@@ -68,3 +70,6 @@ umbara:
         notification_icon: 46
         hover_description:
           !UseName
+      one_shot_interaction:
+        script: OpenGalaxyMap
+        duration_millis: 1
