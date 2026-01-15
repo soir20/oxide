@@ -37,8 +37,8 @@ use super::{
     character::{
         coerce_to_broadcast_supplier, AmbientNpcConfig, Character, CharacterCategory,
         CharacterLocationIndex, CharacterMatchmakingGroupIndex, CharacterNameIndex,
-        CharacterSquadIndex, CharacterSynchronizationIndex, CharacterType, Chunk, DoorConfig,
-        NpcTemplate, PreviousFixture, PreviousLocation, RemovalMode, TransportConfig,
+        CharacterSquadIndex, CharacterSynchronizationIndex, CharacterType, Chunk, NpcTemplate,
+        PreviousFixture, PreviousLocation, RemovalMode,
     },
     guid::{Guid, GuidTable, GuidTableIndexer, GuidTableWriteHandle, IndexedGuid},
     housing::prepare_init_house_packets,
@@ -95,10 +95,6 @@ pub struct ZoneConfig {
     speed: f32,
     jump_height_multiplier: f32,
     gravity_multiplier: f32,
-    #[serde(default)]
-    doors: BTreeMap<String, DoorConfig>,
-    #[serde(default)]
-    transports: BTreeMap<String, TransportConfig>,
     #[serde(default)]
     ambient_npcs: BTreeMap<String, AmbientNpcConfig>,
     seconds_per_day: u32,
@@ -192,28 +188,6 @@ impl From<ZoneConfig> for ZoneTemplate {
             for (name, ambient_npc) in value.ambient_npcs {
                 characters.push(NpcTemplate::from_config(
                     ambient_npc.clone(),
-                    index,
-                    &button_keys_to_id,
-                    value.guid,
-                    &name,
-                ));
-                index += 1;
-            }
-
-            for (name, door) in value.doors {
-                characters.push(NpcTemplate::from_config(
-                    door.clone(),
-                    index,
-                    &button_keys_to_id,
-                    value.guid,
-                    &name,
-                ));
-                index += 1;
-            }
-
-            for (name, transport) in value.transports {
-                characters.push(NpcTemplate::from_config(
-                    transport.clone(),
                     index,
                     &button_keys_to_id,
                     value.guid,
@@ -1284,14 +1258,6 @@ pub enum DestinationZoneInstance {
     Any {
         template_guid: u8,
     },
-}
-
-#[derive(Clone, Deserialize)]
-pub struct Destination {
-    pub pos: Pos,
-    pub rot: Pos,
-    #[serde(default)]
-    pub zone: DestinationZoneInstance,
 }
 
 pub fn teleport_anywhere(

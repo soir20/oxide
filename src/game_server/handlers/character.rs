@@ -52,7 +52,7 @@ use super::{
     minigame::{MinigameTypeData, PlayerMinigameStats},
     mount::{spawn_mount_npc, MountConfig},
     unique_guid::{mount_guid, npc_guid, player_guid},
-    zone::{teleport_anywhere, Destination, ZoneInstance},
+    zone::ZoneInstance,
     WriteLockingBroadcastSupplier,
 };
 
@@ -2017,238 +2017,6 @@ fn trigger_synchronized_interaction(
     supplier?(game_server)
 }
 
-#[derive(Clone, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct DoorConfig {
-    #[serde(flatten)]
-    pub base_npc: BaseNpcConfig,
-    pub destination: Destination,
-}
-
-impl NpcConfig for DoorConfig {
-    const DISCRIMINANT: u8 = AMBIENT_NPC_DISCRIMINANT;
-    const DEFAULT_AUTO_INTERACT_RADIUS: f32 = 1.5;
-
-    fn base_config(&self) -> &BaseNpcConfig {
-        &self.base_npc
-    }
-}
-
-impl ToCharacterTypeTemplate for DoorConfig {
-    fn to_character_type_template(
-        &self,
-        _button_keys_to_id: &HashMap<String, u32>,
-        _zone_guid: u8,
-        _npc_name: &str,
-    ) -> CharacterTypeTemplate {
-        CharacterTypeTemplate::Door(DoorTemplate {
-            base_npc: self.base_npc.clone().into(),
-            destination: self.destination.clone(),
-        })
-    }
-}
-
-#[derive(Clone)]
-pub struct DoorTemplate {
-    pub base_npc: BaseNpc,
-    pub destination: Destination,
-}
-
-impl DoorTemplate {
-    pub fn instantiate(&self) -> Door {
-        Door::from(self)
-    }
-}
-
-impl From<&DoorTemplate> for Door {
-    fn from(value: &DoorTemplate) -> Self {
-        Door {
-            base_npc: value.base_npc.clone(),
-            destination: value.destination.clone(),
-        }
-    }
-}
-
-#[derive(Clone)]
-pub struct Door {
-    pub base_npc: BaseNpc,
-    pub destination: Destination,
-}
-
-impl Door {
-    pub fn add_packets(
-        &self,
-        character: &CharacterStats,
-        override_is_spawned: bool,
-    ) -> Vec<Vec<u8>> {
-        let Some((mut add_npc, mut enable_interaction)) =
-            self.base_npc.add_packets(character, override_is_spawned)
-        else {
-            return Vec::new();
-        };
-        add_npc.disable_interact_popup = true;
-        enable_interaction.cursor = enable_interaction.cursor.or(Some(55));
-        let packets = vec![
-            GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: add_npc,
-            }),
-            GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: NpcRelevance {
-                    new_states: vec![enable_interaction],
-                },
-            }),
-        ];
-
-        packets
-    }
-
-    pub fn interact(&self, requester: u32) -> WriteLockingBroadcastSupplier {
-        teleport_anywhere(
-            self.destination.pos,
-            self.destination.rot,
-            self.destination.zone,
-            requester,
-        )
-    }
-}
-
-#[derive(Clone, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct TransportConfig {
-    #[serde(flatten)]
-    pub base_npc: BaseNpcConfig,
-    pub show_icon: bool,
-    pub large_icon: bool,
-    pub show_hover_description: bool,
-}
-
-impl NpcConfig for TransportConfig {
-    const DISCRIMINANT: u8 = AMBIENT_NPC_DISCRIMINANT;
-    const DEFAULT_AUTO_INTERACT_RADIUS: f32 = 0.0;
-
-    fn base_config(&self) -> &BaseNpcConfig {
-        &self.base_npc
-    }
-}
-
-impl ToCharacterTypeTemplate for TransportConfig {
-    fn to_character_type_template(
-        &self,
-        _button_keys_to_id: &HashMap<String, u32>,
-        _zone_guid: u8,
-        _npc_name: &str,
-    ) -> CharacterTypeTemplate {
-        CharacterTypeTemplate::Transport(TransportTemplate {
-            base_npc: self.base_npc.clone().into(),
-            show_icon: self.show_icon,
-            large_icon: self.large_icon,
-            show_hover_description: self.show_hover_description,
-        })
-    }
-}
-
-#[derive(Clone)]
-pub struct TransportTemplate {
-    pub base_npc: BaseNpc,
-    pub show_icon: bool,
-    pub large_icon: bool,
-    pub show_hover_description: bool,
-}
-
-impl TransportTemplate {
-    pub fn instantiate(&self) -> Transport {
-        Transport::from(self)
-    }
-}
-
-impl From<&TransportTemplate> for Transport {
-    fn from(value: &TransportTemplate) -> Self {
-        Transport {
-            base_npc: value.base_npc.clone(),
-            show_icon: value.show_icon,
-            large_icon: value.large_icon,
-            show_hover_description: value.show_hover_description,
-        }
-    }
-}
-
-#[derive(Clone)]
-pub struct Transport {
-    pub base_npc: BaseNpc,
-    pub show_icon: bool,
-    pub large_icon: bool,
-    pub show_hover_description: bool,
-}
-
-impl Transport {
-    pub fn add_packets(
-        &self,
-        character: &CharacterStats,
-        override_is_spawned: bool,
-    ) -> Vec<Vec<u8>> {
-        let Some((mut add_npc, enable_interaction)) =
-            self.base_npc.add_packets(character, override_is_spawned)
-        else {
-            return Vec::new();
-        };
-        add_npc.hover_description = if self.show_hover_description {
-            self.base_npc.name_id
-        } else {
-            0
-        };
-        let packets = vec![
-            GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: add_npc,
-            }),
-            GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: NpcRelevance {
-                    new_states: vec![enable_interaction],
-                },
-            }),
-            GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: AddNotifications {
-                    notifications: vec![SingleNotification {
-                        guid: Guid::guid(character),
-                        unknown1: 0,
-                        notification: Some(NotificationData {
-                            unknown1: 0,
-                            icon_id: if self.large_icon { 46 } else { 37 },
-                            unknown3: 0,
-                            name_id: 0,
-                            unknown4: 0,
-                            hide_icon: !self.show_icon,
-                            unknown6: 0,
-                        }),
-                        unknown2: false,
-                    }],
-                },
-            }),
-        ];
-
-        packets
-    }
-
-    pub fn interact(&self, requester: u32) -> WriteLockingBroadcastSupplier {
-        coerce_to_broadcast_supplier(move |_| {
-            Ok(vec![Broadcast::Single(
-                requester,
-                vec![GamePacket::serialize(&TunneledPacket {
-                    unknown1: false,
-                    inner: ExecuteScriptWithStringParams {
-                        script_name: "UIGlobal.ShowGalaxyMap".to_string(),
-                        params: vec![],
-                    },
-                })],
-            )])
-        })
-    }
-}
-
 pub type EquippedItemMap = BTreeMap<EquipmentSlot, u32>;
 
 #[derive(Clone)]
@@ -2589,15 +2357,11 @@ pub struct CurrentFixture {
 #[derive(Clone)]
 pub enum CharacterTypeTemplate {
     AmbientNpc(AmbientNpcTemplate),
-    Door(DoorTemplate),
-    Transport(TransportTemplate),
 }
 
 #[derive(Clone)]
 pub enum CharacterType {
     AmbientNpc(AmbientNpc),
-    Door(Door),
-    Transport(Transport),
     Player(Box<Player>),
     Fixture(u64, CurrentFixture),
 }
@@ -2610,12 +2374,6 @@ impl CharacterType {
         match template {
             CharacterTypeTemplate::AmbientNpc(template) => {
                 CharacterType::AmbientNpc(template.instantiate(keys_to_guid))
-            }
-
-            CharacterTypeTemplate::Door(template) => CharacterType::Door(template.instantiate()),
-
-            CharacterTypeTemplate::Transport(template) => {
-                CharacterType::Transport(template.instantiate())
             }
         }
     }
@@ -2899,8 +2657,6 @@ impl CharacterStats {
             CharacterType::AmbientNpc(ambient_npc) => {
                 ambient_npc.add_packets(self, override_is_spawned)
             }
-            CharacterType::Door(door) => door.add_packets(self, override_is_spawned),
-            CharacterType::Transport(transport) => transport.add_packets(self, override_is_spawned),
             CharacterType::Player(player) => {
                 player.add_packets(self, mount_configs, item_definitions, customizations)
             }
@@ -3431,8 +3187,6 @@ impl Character {
                 new_procedure = procedure;
                 one_shot_interact
             }
-            CharacterType::Door(door) => door.interact(requester),
-            CharacterType::Transport(transport) => transport.interact(requester),
             _ => coerce_to_broadcast_supplier(|_| Ok(Vec::new())),
         };
 
