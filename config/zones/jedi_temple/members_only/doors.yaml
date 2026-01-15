@@ -1,6 +1,6 @@
 ---
 members_only:
-  doors:
+  ambient_npcs:
     construction_chamber_to_veranda:
       pos:
         x: 1489.03
@@ -8,20 +8,14 @@ members_only:
         z: 887.65
         w: 1
       terrain_object_id: 1281994173
-      destination:
-        pos:
-          x: 919.5898
-          y: 178.51657
-          z: 1546.969
-          w: 1
-        rot:
-          x: -1.5
-          y: 0
-          z: 0
-          w: 0
-        zone: !Any
-          template_guid: 24
+      cursor: 55
+      enable_interact_popup: false
+      auto_interact_radius: 1.5
       interact_radius: 7
+      one_shot_interaction:
+        point_of_interest: 10016
+        duration_millis: 1
+
     club_to_lounge:
       pos:
         x: 761.51
@@ -29,17 +23,10 @@ members_only:
         z: 683.99
         w: 1
       terrain_object_id: 1281995677
-      destination:
-        pos:
-          x: -106.5555
-          y: 10
-          z: 1250.071
-          w: 1
-        rot:
-          x: 0
-          y: 0
-          z: 1.5
-          w: 0
-        zone: !Any
-          template_guid: 24
+      cursor: 55
+      enable_interact_popup: false
+      auto_interact_radius: 1.5
       interact_radius: 7
+      one_shot_interaction:
+        point_of_interest: 10017
+        duration_millis: 1
