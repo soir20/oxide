@@ -214,7 +214,7 @@ pub enum HoverDescriptionMode {
 }
 
 impl HoverDescriptionMode {
-    fn resolve_hover_description(&self, npc_name_id: u32) -> u32 {
+    pub fn resolve_hover_description(&self, npc_name_id: u32) -> u32 {
         match *self {
             HoverDescriptionMode::None => 0,
             HoverDescriptionMode::UseName => npc_name_id,
