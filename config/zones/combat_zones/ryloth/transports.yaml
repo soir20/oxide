@@ -1,6 +1,6 @@
 ---
 ryloth:
-  transports:
+  ambient_npcs:
     holotable_holograms:
       name_id: 32914
       model_id: 44
@@ -16,9 +16,6 @@ ryloth:
         w: 0
       cursor: 54
       show_name: false
-      show_icon: false
-      large_icon: false
-      show_hover_description: false
       interact_radius: 3.3
       move_to_interact_offset: 3.2
       tickable_procedures:
@@ -56,6 +53,9 @@ ryloth:
             - procedure: battle_droid_hologram
             - procedure: super_battle_droid_hologram
             - procedure: droideka_hologram
+      one_shot_interaction:
+        script: OpenGalaxyMap
+        duration_millis: 1
     fighter:
       name_id: 32914
       terrain_object_id: 1332791341
@@ -72,6 +72,8 @@ ryloth:
       name_offset_x: -0.5
       cursor: 0
       show_name: false
-      show_icon: true
-      large_icon: false
-      show_hover_description: true
+      notification_icon: 37
+      hover_description: UseName
+      one_shot_interaction:
+        script: OpenGalaxyMap
+        duration_millis: 1

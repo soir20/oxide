@@ -1,6 +1,6 @@
 ---
 felucia:
-  transports:
+  ambient_npcs:
     holo_table:
       name_id: 32914
       model_id: 1603
@@ -16,9 +16,9 @@ felucia:
         w: 0
       cursor: 54
       show_name: false
-      show_icon: false
-      large_icon: false
-      show_hover_description: false
       interact_radius: 3.3
       move_to_interact_offset: 3.2
       interact_popup_radius: 7
+      one_shot_interaction:
+        script: OpenGalaxyMap
+        duration_millis: 1

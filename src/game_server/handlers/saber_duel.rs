@@ -14,7 +14,7 @@ use crate::game_server::{
     handlers::{
         character::{
             default_spawn_animation_id, AmbientNpc, BaseNpc, Character, CharacterType,
-            MinigameMatchmakingGroup, MinigameStatus, PlayerInventory,
+            HoverDescriptionMode, MinigameMatchmakingGroup, MinigameStatus, PlayerInventory,
         },
         inventory::{
             attachments_from_equipped_items, player_has_saber_equipped, wield_type_from_inventory,
@@ -657,7 +657,7 @@ impl SaberDuelGame {
             Pos::default(),
             chunk_size,
             1.0,
-            CharacterType::AmbientNpc(AmbientNpc {
+            CharacterType::AmbientNpc(Box::new(AmbientNpc {
                 base_npc: BaseNpc {
                     texture_alias: "".to_string(),
                     name_id: self.config.ai.name_id,
@@ -677,12 +677,13 @@ impl SaberDuelGame {
                     sub_title_id: None,
                     clickable: true,
                     spawn_animation_id: default_spawn_animation_id(),
+                    hover_description: HoverDescriptionMode::default(),
                 },
                 procedure_on_interact: None,
                 one_shot_interaction: None,
-                notification_icon: None,
                 triggered_npc_guids: None,
-            }),
+                notification_icon: None,
+            })),
             None,
             None,
             0.0,

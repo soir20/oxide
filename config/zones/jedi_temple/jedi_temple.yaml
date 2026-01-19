@@ -19,6 +19,223 @@ jedi_temple:
       y: 0
       z: 0
       w: 0
+  other_points_of_interest:
+    # Veranda -> Archives
+    - guid: 10000
+      pos:
+        x: 1757.083
+        y: 10
+        z: 1694
+        w: 1
+      rot:
+        x: -1.5
+        y: 0
+        z: 0
+        w: 0
+    # Archives -> Veranda
+    - guid: 10001
+      pos:
+        x: 898.7137
+        y: 172.44917
+        z: 1529.221
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 1.5
+        w: 0
+    # Veranda -> Workshop
+    - guid: 10002
+      pos:
+        x: -356.4902
+        y: 10
+        z: 1780.211
+        w: 1
+      rot:
+        x: 1.5
+        y: 0
+        z: 0
+        w: 0
+    # Workshop -> Veranda
+    - guid: 10003
+      pos:
+        x: 898.6971
+        y: 172.44917
+        z: 1564.624
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: -1.5
+        w: 0
+    # Veranda -> Main Hall (Left)
+    - guid: 10004
+      pos:
+        x: 1256.403
+        y: 10
+        z: 291.7501
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: -1
+        w: 0
+    # Main Hall -> Veranda (Left)
+    - guid: 10005
+      pos:
+        x: 919.5864
+        y: 178.51657
+        z: 1530.958
+        w: 1
+      rot:
+        x: -1.5
+        y: 0
+        z: 0
+        w: 0
+    # Veranda -> Main Hall (Right)
+    - guid: 10006
+      pos:
+        x: 1305.649
+        y: 10
+        z: 291.7528
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: -1
+        w: 0
+    # Main Hall -> Veranda (Right)
+    - guid: 10007
+      pos:
+        x: 919.5864
+        y: 178.51657
+        z: 1562.8
+        w: 1
+      rot:
+        x: -1.5
+        y: 0
+        z: 0
+        w: 0
+    # Main Hall -> Training Room
+    - guid: 10008
+      pos:
+        x: 160.4435
+        y: 6.8242483
+        z: 415.3869
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: -1.5
+        w: 0
+    # Training Room -> Main Hall
+    - guid: 10009
+      pos:
+        x: 1245.232
+        y: 10
+        z: 275.1337
+        w: 1
+      rot:
+        x: 1.5
+        y: 0
+        z: 0
+        w: 0
+    # Main Hall -> Hangar
+    - guid: 10010
+      pos:
+        x: 130.3168
+        y: 10
+        z: -181.1351
+        w: 1
+      rot:
+        x: -1.5
+        y: 0
+        z: 0
+        w: 0
+    # Hangar -> Main Hall
+    - guid: 10011
+      pos:
+        x: 1245.241
+        y: 10
+        z: 253.2976
+        w: 1
+      rot:
+        x: 1.5
+        y: 0
+        z: 0
+        w: 0
+    # Main Hall -> Lounge
+    - guid: 10012
+      pos:
+        x: -133.2943
+        y: 10
+        z: 1270.001
+        w: 1
+      rot:
+        x: 1.5
+        y: 0
+        z: 0
+        w: 0
+    # Lounge -> Main Hall
+    - guid: 10013
+      pos:
+        x: 1316.713
+        y: 10
+        z: 275.1354
+        w: 1
+      rot:
+        x: -1.5
+        y: 0
+        z: 0
+        w: 0
+    # Main Hall -> War Room
+    - guid: 10014
+      pos:
+        x: 693.7585
+        y: 10
+        z: -2.675201
+        w: 1
+      rot:
+        x: 1.5
+        y: 0
+        z: 0
+        w: 0
+    # War Room → Main Hall
+    - guid: 10015
+      pos:
+        x: 1316.77
+        y: 10
+        z: 253.2967
+        w: 1
+      rot:
+        x: -1.5
+        y: 0
+        z: 0
+        w: 0
+    # Construction Chamber -> Veranda
+    - guid: 10016
+      pos:
+        x: 919.5898
+        y: 178.51657
+        z: 1546.969
+        w: 1
+      rot:
+        x: -1.5
+        y: 0
+        z: 0
+        w: 0
+    # Club -> Lounge
+    - guid: 10017
+      pos:
+        x: -106.5555
+        y: 10
+        z: 1250.071
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 1.5
+        w: 0
   speed: 8
   jump_height_multiplier: 1
   gravity_multiplier: 1

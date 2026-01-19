@@ -1,6 +1,6 @@
 ---
 umbara:
-  transports:
+  ambient_npcs:
     holo_table:
       name_id: 32914
       model_id: 1603
@@ -16,12 +16,12 @@ umbara:
         w: 0
       cursor: 54
       show_name: false
-      show_icon: false
-      large_icon: false
-      show_hover_description: true
       interact_radius: 3.3
       move_to_interact_offset: 3.2
       interact_popup_radius: 7
+      one_shot_interaction:
+        script: OpenGalaxyMap
+        duration_millis: 1
     fighter:
       name_id: 32914
       terrain_object_id: 1319570319
@@ -38,9 +38,11 @@ umbara:
       name_offset_x: -0.5
       cursor: 0
       show_name: false
-      show_icon: true
-      large_icon: false
-      show_hover_description: true
+      notification_icon: 37
+      hover_description: UseName
+      one_shot_interaction:
+        script: OpenGalaxyMap
+        duration_millis: 1
     gunship:
       name_id: 32914
       model_id: 2133
@@ -62,6 +64,8 @@ umbara:
       interact_radius: 15
       move_to_interact_offset: 14
       show_name: false
-      show_icon: true
-      large_icon: true
-      show_hover_description: true
+      notification_icon: 46
+      hover_description: UseName
+      one_shot_interaction:
+        script: OpenGalaxyMap
+        duration_millis: 1
