@@ -2168,6 +2168,11 @@ impl MinigameWinStatus {
 }
 
 #[derive(Clone)]
+pub struct Toggles {
+    pub console: bool,
+}
+
+#[derive(Clone)]
 pub struct MinigameStatus {
     pub group: MinigameMatchmakingGroup,
     pub teleported_to_game: bool,
@@ -2200,6 +2205,7 @@ pub struct Player {
     pub minigame_status: Option<MinigameStatus>,
     pub update_previous_location_on_leave: bool,
     pub previous_location: PreviousLocation,
+    pub toggles: Toggles,
 }
 
 impl Player {

@@ -3,7 +3,7 @@ use packet_serialize::NullTerminatedString;
 use crate::{
     game_server::{
         handlers::{
-            character::{BattleClass, PlayerInventory},
+            character::{BattleClass, PlayerInventory, Toggles},
             minigame::{leave_active_minigame_if_any, LeaveMinigameTarget},
         },
         packets::{
@@ -145,6 +145,9 @@ pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, P
                         template_guid: player_zone_template,
                         pos: player.inner.data.pos,
                         rot: player.inner.data.rot,
+                    },
+                    toggles: Toggles {
+                        console: false,
                     },
                 },
                 game_server,
