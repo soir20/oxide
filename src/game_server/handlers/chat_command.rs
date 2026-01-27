@@ -148,7 +148,7 @@ pub fn process_chat_command(
 
                 let response = {
                     // TODO: Gate certain commands behind a moderator check
-                    let Some(command) = arguments.get(0).cloned() else {
+                    let Some(command) = arguments.first().cloned() else {
                         return coerce_to_broadcast_supplier(move |_| {
                             Ok(server_msg(
                                 sender,
