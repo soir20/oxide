@@ -167,9 +167,10 @@ pub fn process_chat_command(
                     match cmd {
                         "help" => {
                             let mut msg = String::from("Available commands:\n");
+                            msg.push_str("Use ./<command> with the help flag (-h or -help) to list command-specific info\n\n");
                             for cmd in COMMANDS {
                                 msg.push_str(&format!(
-                                    "  ./{} - {}\n    Usage: {}\n",
+                                    "  ./{} - {}\n    Usage: {}\n\n",
                                     cmd.name, cmd.description, cmd.usage
                                 ));
                             }
