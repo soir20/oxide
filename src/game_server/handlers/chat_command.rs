@@ -93,25 +93,13 @@ fn args_len_is_less_than(args: &[String], n: usize) -> bool {
     args.len() < n
 }
 
-fn command_details(sender: u32, name: &str) -> Vec<Broadcast> {
-    let text = if let Some(cmd) = COMMANDS.iter().find(|c| c.name == name) {
-        format!("{}\nUsage: {}", cmd.description, cmd.usage)
-    } else {
-        format!("No information found for {}", name)
-    };
-
+fn command_details(sender: u32, info: &CommandInfo) -> Vec<Broadcast> {
+    let text = format!("{}\nUsage: {}", info.description, info.usage);
     server_msg(sender, &text)
 }
 
-fn command_error(sender: u32, name: &str, error: &str) -> Vec<Broadcast> {
-    let usage_text = if let Some(cmd) = COMMANDS.iter().find(|c| c.name == name) {
-        format!("Usage: {}", cmd.usage)
-    } else {
-        format!("No usage details found for {}", name)
-    };
-
-    let text = format!("Error: {}\n{}", error, usage_text);
-
+fn command_error(sender: u32, error: &str, info: &CommandInfo) -> Vec<Broadcast> {
+    let text = format!("Error: {}\nUsage: {}", error, info.usage);
     server_msg(sender, &text)
 }
 
@@ -147,8 +135,7 @@ pub fn process_chat_command(
                 };
 
                 let response = {
-                    // TODO: Gate certain commands behind a moderator check
-                    let Some(command) = arguments.first().cloned() else {
+                    let Some(cmd) = arguments.first().cloned() else {
                         return coerce_to_broadcast_supplier(move |_| {
                             Ok(server_msg(
                                 sender,
@@ -157,7 +144,27 @@ pub fn process_chat_command(
                         });
                     };
 
-                    match command.as_str() {
+                    let (cmd, cmd_info) = if let Some(info) =
+                        COMMANDS.iter().find(|c| c.name == cmd)
+                    {
+                        (info.name, info)
+                    } else {
+                        let msg = format!("Unknown command {cmd}");
+                        return coerce_to_broadcast_supplier(move |_| Ok(server_msg(sender, &msg)));
+                    };
+
+                    if arguments
+                        .get(1)
+                        .map(|f| f == "-h" || f == "-help")
+                        .unwrap_or(false)
+                    {
+                        return coerce_to_broadcast_supplier(move |_| {
+                            Ok(command_details(sender, cmd_info))
+                        });
+                    }
+
+                    // TODO: Gate certain commands behind a moderator check
+                    match cmd {
                         "help" => {
                             let mut msg = String::from("Available commands:\n");
                             for cmd in COMMANDS {
@@ -193,7 +200,7 @@ pub fn process_chat_command(
                         "script" => {
                             if has_no_arguments(arguments) {
                                 return coerce_to_broadcast_supplier(move |_| {
-                                    Ok(command_details(sender, &command))
+                                    Ok(command_details(sender, cmd_info))
                                 });
                             }
 
@@ -216,7 +223,7 @@ pub fn process_chat_command(
                             let err = |msg: &str| {
                                 let msg = msg.to_string();
                                 coerce_to_broadcast_supplier(move |_| {
-                                    Ok(command_error(sender, &command, &msg))
+                                    Ok(command_error(sender, &msg, cmd_info))
                                 })
                             };
 
@@ -240,8 +247,10 @@ pub fn process_chat_command(
 
                             teleport_within_zone(sender, destination_pos, destination_rot)
                         }
+
                         _ => {
-                            let msg = format!("Unknown command {command}");
+                            let msg =
+                                format!("Command {cmd} exists in the registry but has no handler.");
                             server_msg(sender, &msg)
                         }
                     }
