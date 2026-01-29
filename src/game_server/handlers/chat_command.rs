@@ -1,6 +1,7 @@
 use crate::game_server::{
     packets::{
         chat::{MessagePayload, MessageTypeData, SendMessage},
+        housing::{BuildArea, HouseInfo, HouseInstanceData, InnerInstanceData, RoomInstances},
         tunnel::TunneledPacket,
         ui::ExecuteScriptWithStringParams,
         GamePacket, Name, Pos,
@@ -42,6 +43,11 @@ static COMMANDS: &[CommandInfo] = &[
         name: "tp",
         description: "Teleport to a set of coordinates.",
         usage: "./tp <x> <y> <z>",
+    },
+    CommandInfo {
+        name: "freecam",
+        description: "Toggles free camera.",
+        usage: "./freecam (Must be used again to properly exit; other methods can break clickable NPCs until doing so)",
     },
 ];
 
@@ -144,14 +150,15 @@ pub fn process_chat_command(
                         });
                     };
 
-                    let (cmd, cmd_info) = if let Some(info) =
-                        COMMANDS.iter().find(|c| c.name == cmd)
-                    {
-                        (info.name, info)
-                    } else {
-                        let msg = format!("Unknown command {cmd}");
-                        return coerce_to_broadcast_supplier(move |_| Ok(server_msg(sender, &msg)));
-                    };
+                    let (cmd, cmd_info) =
+                        if let Some(info) = COMMANDS.iter().find(|c| c.name == cmd) {
+                            (info.name, info)
+                        } else {
+                            let msg = format!("Unknown command {cmd}");
+                            return coerce_to_broadcast_supplier(move |_| {
+                                Ok(server_msg(sender, &msg))
+                            });
+                        };
 
                     if arguments
                         .get(1)
@@ -167,13 +174,17 @@ pub fn process_chat_command(
                     match cmd {
                         "help" => {
                             let mut msg = String::from("Available commands:\n");
-                            msg.push_str("Use ./<command> with the help flag (-h or -help) to list command-specific info\n\n");
+                            msg.push_str(
+                                "Use ./<command> with the help flag (-h or -help) to list command-specific info\n\n",
+                            );
+
                             for cmd in COMMANDS {
                                 msg.push_str(&format!(
                                     "  ./{} - {}\n    Usage: {}\n\n",
                                     cmd.name, cmd.description, cmd.usage
                                 ));
                             }
+
                             server_msg(sender, &msg)
                         }
 
@@ -206,7 +217,8 @@ pub fn process_chat_command(
                             }
 
                             let script_name = &arguments[1];
-                            let params: Vec<String> = arguments.iter().skip(2).cloned().collect();
+                            let params: Vec<String> =
+                                arguments.iter().skip(2).cloned().collect();
 
                             vec![Broadcast::Single(
                                 sender,
@@ -249,9 +261,106 @@ pub fn process_chat_command(
                             teleport_within_zone(sender, destination_pos, destination_rot)
                         }
 
+                        "freecam" => {
+                            player_stats.toggles.free_camera =
+                                !player_stats.toggles.free_camera;
+
+                            if player_stats.toggles.free_camera {
+                                vec![Broadcast::Single(
+                                    sender,
+                                    vec![
+                                        GamePacket::serialize(&TunneledPacket {
+                                            unknown1: true,
+                                            inner: ExecuteScriptWithStringParams {
+                                                script_name:
+                                                    "GameOptions.SetFreeFlyHousingEdit".to_string(),
+                                                params: vec!["1".to_string()],
+                                            },
+                                        }),
+                                        GamePacket::serialize(&TunneledPacket {
+                                            unknown1: true,
+                                            inner: HouseInstanceData {
+                                                inner: InnerInstanceData {
+                                                    house_guid: 0,
+                                                    owner_guid: sender_guid,
+                                                    owner_name: "".to_string(),
+                                                    unknown3: 0,
+                                                    house_name: 0,
+                                                    player_given_name: "".to_string(),
+                                                    unknown4: 0,
+                                                    max_fixtures: 0,
+                                                    unknown6: 0,
+                                                    placed_fixture: vec![],
+                                                    unknown7: false,
+                                                    unknown8: 0,
+                                                    unknown9: 0,
+                                                    unknown10: false,
+                                                    unknown11: 0,
+                                                    unknown12: false,
+                                                    build_areas: vec![BuildArea {
+                                                        min: Pos {
+                                                            x: -100000.0,
+                                                            y: -100000.0,
+                                                            z: -100000.0,
+                                                            w: 1.0,
+                                                        },
+                                                        max: Pos {
+                                                            x: 100000.0,
+                                                            y: 100000.0,
+                                                            z: 100000.0,
+                                                            w: 1.0,
+                                                        },
+                                                    }],
+                                                    house_icon: 0,
+                                                    unknown14: false,
+                                                    unknown15: false,
+                                                    unknown16: false,
+                                                    unknown17: 0,
+                                                    unknown18: 0,
+                                                },
+                                                rooms: RoomInstances {
+                                                    unknown1: vec![],
+                                                    unknown2: vec![],
+                                                },
+                                            },
+                                        }),
+                                        GamePacket::serialize(&TunneledPacket {
+                                            unknown1: true,
+                                            inner: HouseInfo {
+                                                edit_mode_enabled: true,
+                                                unknown2: 0,
+                                                unknown3: true,
+                                                fixtures: 0,
+                                                unknown5: 0,
+                                                unknown6: 0,
+                                                unknown7: 0,
+                                            },
+                                        }),
+                                    ],
+                                )]
+                            } else {
+                                vec![Broadcast::Single(
+                                    sender,
+                                    vec![GamePacket::serialize(&TunneledPacket {
+                                        unknown1: true,
+                                        inner: HouseInfo {
+                                            edit_mode_enabled: false,
+                                            unknown2: 0,
+                                            unknown3: false,
+                                            fixtures: 0,
+                                            unknown5: 0,
+                                            unknown6: 0,
+                                            unknown7: 0,
+                                        },
+                                    })],
+                                )]
+                            }
+                        }
+
                         _ => {
-                            let msg =
-                                format!("Command {cmd} exists in the registry but has no handler.");
+                            let msg = format!(
+                                "Command {cmd} exists in the registry but has no handler."
+                            );
                             server_msg(sender, &msg)
                         }
                     }

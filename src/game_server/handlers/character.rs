@@ -2170,6 +2170,7 @@ impl MinigameWinStatus {
 #[derive(Clone)]
 pub struct Toggles {
     pub console: bool,
+    pub free_camera: bool,
 }
 
 #[derive(Clone)]
