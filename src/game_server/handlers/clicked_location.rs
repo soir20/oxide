@@ -69,7 +69,7 @@ pub fn process_clicked_location(
 
                 broadcast_supplier?(game_server)
             }
-        }
+        },
         Err(_) => {
             let mut buffer = Vec::new();
             cursor.read_to_end(&mut buffer)?;
