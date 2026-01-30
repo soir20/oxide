@@ -194,7 +194,7 @@ pub fn process_chat_command(
                             }
 
                             server_msg(sender, &msg)
-                        }
+                        },
 
                         "console" => {
                             player_stats.toggles.console = !player_stats.toggles.console;
@@ -215,7 +215,7 @@ pub fn process_chat_command(
                                     },
                                 })],
                             )]
-                        }
+                        },
 
                         "script" => {
                             if args_len_is_less_than(arguments, 2) {
@@ -236,7 +236,7 @@ pub fn process_chat_command(
                                     },
                                 })],
                             )]
-                        }
+                        },
 
                         "tp" => {
                             if args_len_is_less_than(arguments, 4) {
@@ -258,110 +258,18 @@ pub fn process_chat_command(
                             let destination_rot = requester_read_handle.stats.rot;
 
                             teleport_within_zone(sender, destination_pos, destination_rot)
-                        }
+                        },
 
                         "clicktp" => {
                             player_stats.toggles.click_to_teleport =
                                 !player_stats.toggles.click_to_teleport;
-
                                 vec![Broadcast::Single(sender, vec![])]
-                        }
+                        },
 
                         "freecam" => {
-                            player_stats.toggles.free_camera =
-                                !player_stats.toggles.free_camera;
-
-                            if player_stats.toggles.free_camera {
-                                vec![Broadcast::Single(
-                                    sender,
-                                    vec![
-                                        GamePacket::serialize(&TunneledPacket {
-                                            unknown1: true,
-                                            inner: ExecuteScriptWithIntParams {
-                                                script_name:
-                                                    "GameOptions.SetFreeFlyHousingEdit".to_string(),
-                                                params: vec![1],
-                                            },
-                                        }),
-                                        GamePacket::serialize(&TunneledPacket {
-                                            unknown1: true,
-                                            inner: HouseInstanceData {
-                                                inner: InnerInstanceData {
-                                                    house_guid: 0,
-                                                    owner_guid: requester_guid,
-                                                    owner_name: "".to_string(),
-                                                    unknown3: 0,
-                                                    house_name: 0,
-                                                    player_given_name: "".to_string(),
-                                                    unknown4: 0,
-                                                    max_fixtures: 0,
-                                                    unknown6: 0,
-                                                    placed_fixture: vec![],
-                                                    unknown7: false,
-                                                    unknown8: 0,
-                                                    unknown9: 0,
-                                                    unknown10: false,
-                                                    unknown11: 0,
-                                                    unknown12: false,
-                                                    build_areas: vec![BuildArea {
-                                                        min: Pos {
-                                                            x: -100000.0,
-                                                            y: -100000.0,
-                                                            z: -100000.0,
-                                                            w: 1.0,
-                                                        },
-                                                        max: Pos {
-                                                            x: 100000.0,
-                                                            y: 100000.0,
-                                                            z: 100000.0,
-                                                            w: 1.0,
-                                                        },
-                                                    }],
-                                                    house_icon: 0,
-                                                    unknown14: false,
-                                                    unknown15: false,
-                                                    unknown16: false,
-                                                    unknown17: 0,
-                                                    unknown18: 0,
-                                                },
-                                                rooms: RoomInstances {
-                                                    unknown1: vec![],
-                                                    unknown2: vec![],
-                                                },
-                                            },
-                                        }),
-                                        GamePacket::serialize(&TunneledPacket {
-                                            unknown1: true,
-                                            inner: HouseInfo {
-                                                edit_mode_enabled: true,
-                                                unknown2: 0,
-                                                unknown3: true,
-                                                fixtures: 0,
-                                                unknown5: 0,
-                                                unknown6: 0,
-                                                unknown7: 0,
-                                            },
-                                        }),
-                                    ],
-                                )]
-                            } else {
-                                vec![Broadcast::Single(
-                                    sender,
-                                    vec![GamePacket::serialize(&TunneledPacket {
-                                        unknown1: true,
-                                        inner: HouseInfo {
-                                            edit_mode_enabled: false,
-                                            unknown2: 0,
-                                            unknown3: false,
-                                            fixtures: 0,
-                                            unknown5: 0,
-                                            unknown6: 0,
-                                            unknown7: 0,
-                                        },
-                                    })],
-                                )]
-                            }
-                        }
+                            player_stats.toggles.free_camera = !player_stats.toggles.free_camera;
+                            make_freecam_packets(sender, requester_guid, player_stats.toggles.free_camera)
+                        },
                         _ => {
                             let msg = format!(
                                 "Command {cmd} exists in the registry but has no handler."
@@ -376,4 +284,99 @@ pub fn process_chat_command(
         });
 
     broadcast_supplier?(game_server)
+}
+
+fn make_freecam_packets(sender: u32, requester_guid: u64, enabled: bool) -> Vec<Broadcast> {
+    if enabled {
+        vec![Broadcast::Single(
+            sender,
+            vec![
+                // Enable freecam incase it's disabled so the user doesn't have to open house settings and toggle it manually
+                GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: ExecuteScriptWithIntParams {
+                        script_name: "GameOptions.SetFreeFlyHousingEdit".to_string(),
+                        params: vec![1],
+                    },
+                }),
+                // Necessary because build area defines the freecam boundary
+                GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: HouseInstanceData {
+                        inner: InnerInstanceData {
+                            house_guid: 0,
+                            owner_guid: requester_guid,
+                            owner_name: "".to_string(),
+                            unknown3: 0,
+                            house_name: 0,
+                            player_given_name: "".to_string(),
+                            unknown4: 0,
+                            max_fixtures: 0,
+                            unknown6: 0,
+                            placed_fixture: vec![],
+                            unknown7: false,
+                            unknown8: 0,
+                            unknown9: 0,
+                            unknown10: false,
+                            unknown11: 0,
+                            unknown12: false,
+                            build_areas: vec![BuildArea {
+                                min: Pos {
+                                    x: -100000.0,
+                                    y: -100000.0,
+                                    z: -100000.0,
+                                    w: 1.0,
+                                },
+                                max: Pos {
+                                    x: 100000.0,
+                                    y: 100000.0,
+                                    z: 100000.0,
+                                    w: 1.0,
+                                },
+                            }],
+                            house_icon: 0,
+                            unknown14: false,
+                            unknown15: false,
+                            unknown16: false,
+                            unknown17: 0,
+                            unknown18: 0,
+                        },
+                        rooms: RoomInstances {
+                            unknown1: vec![],
+                            unknown2: vec![],
+                        },
+                    },
+                }),
+                // Enable edit mode to enter Free Camera
+                GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: HouseInfo {
+                        edit_mode_enabled: true,
+                        unknown2: 0,
+                        unknown3: true,
+                        fixtures: 0,
+                        unknown5: 0,
+                        unknown6: 0,
+                        unknown7: 0,
+                    },
+                }),
+            ],
+        )]
+    } else {
+        vec![Broadcast::Single(
+            sender,
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: HouseInfo {
+                    edit_mode_enabled: false,
+                    unknown2: 0,
+                    unknown3: false,
+                    fixtures: 0,
+                    unknown5: 0,
+                    unknown6: 0,
+                    unknown7: 0,
+                },
+            })],
+        )]
+    }
 }
