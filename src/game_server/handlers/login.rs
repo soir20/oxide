@@ -149,7 +149,7 @@ pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, P
                     toggles: Toggles {
                         console: false,
                         free_camera: false,
-                        teleport_on_click: false,
+                        click_to_teleport: false,
                     },
                 },
                 game_server,

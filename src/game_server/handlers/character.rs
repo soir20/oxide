@@ -2171,7 +2171,7 @@ impl MinigameWinStatus {
 pub struct Toggles {
     pub console: bool,
     pub free_camera: bool,
-    pub teleport_on_click: bool,
+    pub click_to_teleport: bool,
 }
 
 #[derive(Clone)]

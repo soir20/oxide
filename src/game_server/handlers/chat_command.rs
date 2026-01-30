@@ -45,9 +45,9 @@ static COMMANDS: &[CommandInfo] = &[
         usage: "./tp <x> <y> <z>",
     },
     CommandInfo {
-        name: "tponclick",
-        description: "Toggles teleportation upon clicking a location",
-        usage: "./tponclick",
+        name: "clicktp",
+        description: "Toggles click to teleport instead of click to move.",
+        usage: "./clicktp",
     },
     CommandInfo {
         name: "freecam",
@@ -260,9 +260,10 @@ pub fn process_chat_command(
                             teleport_within_zone(sender, destination_pos, destination_rot)
                         }
 
-                        "tponclick" => {
-                            player_stats.toggles.teleport_on_click =
-                                !player_stats.toggles.teleport_on_click;
+                        "clicktp" => {
+                            player_stats.toggles.click_to_teleport =
+                                !player_stats.toggles.click_to_teleport;
+
                                 vec![Broadcast::Single(sender, vec![])]
                         }
 

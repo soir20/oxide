@@ -55,7 +55,7 @@ pub fn process_clicked_location(
 
                             let destination_rot = compute_destination_rot(clicked_location.current_pos, clicked_location.clicked_pos);
 
-                            if player_stats.toggles.teleport_on_click {
+                            if player_stats.toggles.click_to_teleport {
                                 coerce_to_broadcast_supplier(move |_| {
                                     Ok(teleport_within_zone(sender, clicked_location.clicked_pos, destination_rot))
                                 })
