@@ -34,11 +34,11 @@ pub fn process_clicked_location(
                         read_guids: Vec::new(),
                         write_guids: vec![requester_guid],
                         character_consumer: move |_, _, characters_write, _| {
-                            let Some(requester_handle) = characters_write.get(&requester_guid) else {
+                            let Some(requester_read_handle) = characters_write.get(&requester_guid) else {
                                 return coerce_to_broadcast_supplier(|_| Ok(Vec::new()));
                             };
 
-                            let player_stats = match &requester_handle.stats.character_type {
+                            let player_stats = match &requester_read_handle.stats.character_type {
                                 CharacterType::Player(player) => player.as_ref(),
                                 _ => {
                                     return coerce_to_broadcast_supplier(move |_| {

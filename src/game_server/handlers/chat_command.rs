@@ -96,10 +96,6 @@ fn server_msg(sender: u32, msg: &str) -> Vec<Broadcast> {
     )]
 }
 
-fn has_no_arguments(args: &[String]) -> bool {
-    args.len() < 2
-}
-
 fn args_len_is_less_than(args: &[String], n: usize) -> bool {
     args.len() < n
 }
@@ -119,19 +115,19 @@ pub fn process_chat_command(
     arguments: &[String],
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-    let sender_guid = player_guid(sender);
+    let requester_guid = player_guid(sender);
 
     let broadcast_supplier: WriteLockingBroadcastSupplier = game_server
         .lock_enforcer()
         .read_characters(|_| CharacterLockRequest {
             read_guids: Vec::new(),
-            write_guids: vec![sender_guid],
+            write_guids: vec![requester_guid],
             character_consumer: move |_, _, mut characters_write, _| {
-                let Some(sender_handle) = characters_write.get_mut(&sender_guid) else {
+                let Some(requester_read_handle) = characters_write.get_mut(&requester_guid) else {
                     return coerce_to_broadcast_supplier(|_| Ok(Vec::new()));
                 };
 
-                let player_stats = match &mut sender_handle.stats.character_type {
+                let player_stats = match &mut requester_read_handle.stats.character_type {
                     CharacterType::Player(player) => player.as_mut(),
                     _ => {
                         return coerce_to_broadcast_supplier(move |_| {
@@ -175,10 +171,17 @@ pub fn process_chat_command(
                         });
                     }
 
+                    let err = |msg: &str| {
+                        let msg = msg.to_string();
+                        coerce_to_broadcast_supplier(move |_| {
+                            Ok(command_error(sender, &msg, cmd_info))
+                        })
+                    };
+
                     // TODO: Gate certain commands behind a moderator check
                     match cmd {
                         "help" => {
-                            let mut msg = String::from("Available commands:\n");
+                            let mut msg = "Available commands:\n".to_string();
                             msg.push_str(
                                 "Use ./<command> with the help flag (-h or -help) to list command-specific info\n\n",
                             );
@@ -215,10 +218,8 @@ pub fn process_chat_command(
                         }
 
                         "script" => {
-                            if has_no_arguments(arguments) {
-                                return coerce_to_broadcast_supplier(move |_| {
-                                    Ok(command_details(sender, cmd_info))
-                                });
+                            if args_len_is_less_than(arguments, 2) {
+                                return err("No arguments were provided");
                             }
 
                             let script_name = &arguments[1];
@@ -238,15 +239,8 @@ pub fn process_chat_command(
                         }
 
                         "tp" => {
-                            let err = |msg: &str {
-                                let msg = msg.to_string();
-                                coerce_to_broadcast_supplier(move |_| {
-                                    Ok(command_error(sender, &msg, cmd_info))
-                                })
-                            };
-
                             if args_len_is_less_than(arguments, 4) {
-                                return err("Not enough arguments");
+                                return err("Not enough arguments provided");
                             }
 
                             let coords = (
@@ -261,7 +255,7 @@ pub fn process_chat_command(
                             };
 
                             let destination_pos = Pos { x, y, z, w: 1.0 };
-                            let destination_rot = sender_handle.stats.rot;
+                            let destination_rot = requester_read_handle.stats.rot;
 
                             teleport_within_zone(sender, destination_pos, destination_rot)
                         }
@@ -293,7 +287,7 @@ pub fn process_chat_command(
                                             inner: HouseInstanceData {
                                                 inner: InnerInstanceData {
                                                     house_guid: 0,
-                                                    owner_guid: sender_guid,
+                                                    owner_guid: requester_guid,
                                                     owner_name: "".to_string(),
                                                     unknown3: 0,
                                                     house_name: 0,
@@ -367,7 +361,6 @@ pub fn process_chat_command(
                                 )]
                             }
                         }
-
                         _ => {
                             let msg = format!(
                                 "Command {cmd} exists in the registry but has no handler."
