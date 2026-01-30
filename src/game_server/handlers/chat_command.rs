@@ -52,7 +52,7 @@ static COMMANDS: &[CommandInfo] = &[
     CommandInfo {
         name: "freecam",
         description: "Toggles free camera.",
-        usage: "./freecam (Must be used again to properly exit; other methods can break clickable NPCs until doing so)",
+        usage: "./freecam - Run again when exiting to restore clickable NPCs. Disable freecam before changing zones; entering a new zone with it active and toggling will result in a crash. Do not enable this on your own lot, as it disables editing until you rejoin",
     },
 ];
 
