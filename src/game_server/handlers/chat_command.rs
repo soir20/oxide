@@ -3,7 +3,7 @@ use crate::game_server::{
         chat::{MessagePayload, MessageTypeData, SendMessage},
         housing::{BuildArea, HouseInfo, HouseInstanceData, InnerInstanceData, RoomInstances},
         tunnel::TunneledPacket,
-        ui::ExecuteScriptWithStringParams,
+        ui::{ExecuteScriptWithIntParams, ExecuteScriptWithStringParams},
         GamePacket, Name, Pos,
     },
     Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
@@ -238,7 +238,7 @@ pub fn process_chat_command(
                         }
 
                         "tp" => {
-                            let err = |msg: &str| {
+                            let err = |msg: &str {
                                 let msg = msg.to_string();
                                 coerce_to_broadcast_supplier(move |_| {
                                     Ok(command_error(sender, &msg, cmd_info))
@@ -282,10 +282,10 @@ pub fn process_chat_command(
                                     vec![
                                         GamePacket::serialize(&TunneledPacket {
                                             unknown1: true,
-                                            inner: ExecuteScriptWithStringParams {
+                                            inner: ExecuteScriptWithIntParams {
                                                 script_name:
                                                     "GameOptions.SetFreeFlyHousingEdit".to_string(),
-                                                params: vec!["1".to_string()],
+                                                params: vec![1],
                                             },
                                         }),
                                         GamePacket::serialize(&TunneledPacket {
