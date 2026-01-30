@@ -30,9 +30,9 @@ static COMMANDS: &[CommandInfo] = &[
         usage: "./help",
     },
     CommandInfo {
-        name: "toggleconsole",
+        name: "console",
         description: "Toggles the client console for debugging.",
-        usage: "./toggleconsole",
+        usage: "./console",
     },
     CommandInfo {
         name: "script",
@@ -43,6 +43,11 @@ static COMMANDS: &[CommandInfo] = &[
         name: "tp",
         description: "Teleport to a set of coordinates.",
         usage: "./tp <x> <y> <z>",
+    },
+    CommandInfo {
+        name: "tponclick",
+        description: "Toggles teleportation upon clicking a location",
+        usage: "./tponclick",
     },
     CommandInfo {
         name: "freecam",
@@ -188,7 +193,7 @@ pub fn process_chat_command(
                             server_msg(sender, &msg)
                         }
 
-                        "toggleconsole" => {
+                        "console" => {
                             player_stats.toggles.console = !player_stats.toggles.console;
 
                             let script = if player_stats.toggles.console {
@@ -259,6 +264,12 @@ pub fn process_chat_command(
                             let destination_rot = sender_handle.stats.rot;
 
                             teleport_within_zone(sender, destination_pos, destination_rot)
+                        }
+
+                        "tponclick" => {
+                            player_stats.toggles.teleport_on_click =
+                                !player_stats.toggles.teleport_on_click;
+                                vec![Broadcast::Single(sender, vec![])]
                         }
 
                         "freecam" => {

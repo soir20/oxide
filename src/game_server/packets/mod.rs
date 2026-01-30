@@ -1,4 +1,5 @@
 pub mod chat;
+pub mod clicked_location;
 pub mod client_update;
 pub mod combat;
 pub mod command;
