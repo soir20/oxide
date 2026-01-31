@@ -261,7 +261,7 @@ pub fn process_chat_command(
                         "loc" => {
                             let pos = requester_read_handle.stats.pos;
                             let rot = requester_read_handle.stats.rot;
-                            
+
                             let msg = format!(
                                 "Position: {}, {}, {}\nRotation: {} {} {}",
                                 pos.x, pos.y, pos.z,
@@ -281,7 +281,7 @@ pub fn process_chat_command(
                             let x = match resolve_relative_coord(current_pos.x, &arguments[1]) {
                                 Ok(coord) => coord, Err(input) => return err(&format!("Invalid X coordinate: {}", input)),
                             };
-                            
+
                             let y = match resolve_relative_coord(current_pos.y, &arguments[2]) {
                                 Ok(coord) => coord, Err(input) => return err(&format!("Invalid Y coordinate: {}", input)),
                             };
