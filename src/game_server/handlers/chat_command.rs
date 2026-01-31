@@ -264,11 +264,11 @@ pub fn process_chat_command(
                                 Ok(coord) => coord, Err(input) => return err(&format!("Invalid X coordinate: {}", input)),
                             };
                             
-                            let y = match resolve_relative_coord(current_pos.x, &arguments[2]) {
+                            let y = match resolve_relative_coord(current_pos.y, &arguments[2]) {
                                 Ok(coord) => coord, Err(input) => return err(&format!("Invalid Y coordinate: {}", input)),
                             };
 
-                            let z = match resolve_relative_coord(current_pos.x, &arguments[3]) {
+                            let z = match resolve_relative_coord(current_pos.z, &arguments[3]) {
                                 Ok(coord) => coord, Err(input) => return err(&format!("Invalid Z coordinate: {}", input)),
                             };
 
