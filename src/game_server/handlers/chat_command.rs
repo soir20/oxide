@@ -40,10 +40,15 @@ static COMMANDS: &[CommandInfo] = &[
         usage: "./script <script name> [params...]",
     },
     CommandInfo {
+        name: "loc",
+        description: "Prints your current location and rotation.",
+        usage: "./loc",
+    },
+    CommandInfo {
         name: "tp",
         description: "Teleport to absolute or relative coordinates.",
         usage: "./tp <x> <y> <z> (use ~ for relative coords)",
-   },
+    },
     CommandInfo {
         name: "clicktp",
         description: "Toggles click to teleport instead of click to move.",
@@ -251,6 +256,19 @@ pub fn process_chat_command(
                                     },
                                 })],
                             )]
+                        },
+
+                        "loc" => {
+                            let pos = requester_read_handle.stats.pos;
+                            let rot = requester_read_handle.stats.rot;
+                            
+                            let msg = format!(
+                                "Position: {}, {}, {}\nRotation: {} {} {}",
+                                pos.x, pos.y, pos.z,
+                                rot.x, rot.y, rot.z,
+                            );
+
+                            server_msg(sender, &msg)
                         },
 
                         "tp" => {
