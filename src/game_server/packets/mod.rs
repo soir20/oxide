@@ -1,4 +1,5 @@
 pub mod chat;
+pub mod clicked_location;
 pub mod client_update;
 pub mod combat;
 pub mod command;
@@ -240,7 +241,7 @@ impl DivAssign for Pos {
     }
 }
 
-#[derive(Clone, SerializePacket, DeserializePacket)]
+#[derive(Clone, SerializePacket, DeserializePacket, Default)]
 pub struct Name {
     pub first_name_id: u32,
     pub middle_name_id: u32,
