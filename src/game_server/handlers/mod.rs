@@ -47,7 +47,7 @@ pub fn distance3(x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32) -> f32 {
     (diff_x * diff_x + diff_y * diff_y + diff_z * diff_z).sqrt()
 }
 
-pub fn compute_direction(old_pos: Pos, new_pos: Pos) -> Pos {
+pub fn direction(old_pos: Pos, new_pos: Pos) -> Pos {
     let dir_x = new_pos.x - old_pos.x;
     let dir_y = new_pos.y - old_pos.y;
     let dir_z = new_pos.z - old_pos.z;
@@ -62,7 +62,7 @@ pub fn compute_direction(old_pos: Pos, new_pos: Pos) -> Pos {
 }
 
 pub fn offset_destination(old_pos: Pos, new_pos: Pos, offset: f32) -> Pos {
-    let unit_vector = compute_direction(old_pos, new_pos);
+    let unit_vector = direction(old_pos, new_pos);
 
     Pos {
         x: new_pos.x - offset * unit_vector.x,
@@ -72,8 +72,8 @@ pub fn offset_destination(old_pos: Pos, new_pos: Pos, offset: f32) -> Pos {
     }
 }
 
-pub fn compute_destination_rot(old_pos: Pos, new_pos: Pos) -> Pos {
-    let unit_vector = compute_direction(old_pos, new_pos);
+pub fn destination_rot(old_pos: Pos, new_pos: Pos) -> Pos {
+    let unit_vector = direction(old_pos, new_pos);
 
     Pos {
         x: unit_vector.x,
