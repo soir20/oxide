@@ -41,9 +41,9 @@ static COMMANDS: &[CommandInfo] = &[
     },
     CommandInfo {
         name: "tp",
-        description: "Teleport to a set of coordinates.",
-        usage: "./tp <x> <y> <z>",
-    },
+        description: "Teleport to absolute or relative coordinates.",
+        usage: "./tp <x> <y> <z> (use ~ for relative coords)",
+   },
     CommandInfo {
         name: "clicktp",
         description: "Toggles click to teleport instead of click to move.",
@@ -108,6 +108,21 @@ fn command_details(sender: u32, info: &CommandInfo) -> Vec<Broadcast> {
 fn command_error(sender: u32, error: &str, info: &CommandInfo) -> Vec<Broadcast> {
     let text = format!("Error: {}\nUsage: {}", error, info.usage);
     server_msg(sender, &text)
+}
+
+fn resolve_relative_coord(current_pos: f32, input: &str) -> Result<f32, String> {
+    if let Some(offset) = input.strip_prefix('~') {
+        if offset.is_empty() {
+            Ok(current_pos)
+        } else {
+            offset
+                .parse::<f32>()
+                .map(|v| current_pos + v)
+                .map_err(|_| input.to_string())
+        }
+    } else {
+        input.parse::<f32>().map_err(|_| input.to_string())
+    }
 }
 
 pub fn process_chat_command(
@@ -243,15 +258,18 @@ pub fn process_chat_command(
                                 return err("Not enough arguments provided");
                             }
 
-                            let coords = (
-                                arguments[1].parse::<f32>(),
-                                arguments[2].parse::<f32>(),
-                                arguments[3].parse::<f32>(),
-                            );
+                            let current_pos = requester_read_handle.stats.pos;
 
-                            let (x, y, z) = match coords {
-                                (Ok(x), Ok(y), Ok(z)) => (x, y, z),
-                                _ => return err("Invalid arguments provided"),
+                            let x = match resolve_relative_coord(current_pos.x, &arguments[1]) {
+                                Ok(coord) => coord, Err(input) => return err(&format!("Invalid X coordinate: {}", input)),
+                            };
+                            
+                            let y = match resolve_relative_coord(current_pos.x, &arguments[2]) {
+                                Ok(coord) => coord, Err(input) => return err(&format!("Invalid Y coordinate: {}", input)),
+                            };
+
+                            let z = match resolve_relative_coord(current_pos.x, &arguments[3]) {
+                                Ok(coord) => coord, Err(input) => return err(&format!("Invalid Z coordinate: {}", input)),
                             };
 
                             let destination_pos = Pos { x, y, z, w: 1.0 };
