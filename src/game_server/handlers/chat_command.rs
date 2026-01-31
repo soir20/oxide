@@ -65,6 +65,7 @@ fn server_msg(sender: u32, msg: &str) -> Vec<Broadcast> {
     vec![Broadcast::Single(
         sender,
         vec![
+            // Print to the chat
             GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: SendMessage {
@@ -81,6 +82,7 @@ fn server_msg(sender: u32, msg: &str) -> Vec<Broadcast> {
                     },
                 },
             }),
+            // Print to the console
             GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: SendMessage {
