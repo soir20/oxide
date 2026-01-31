@@ -41,7 +41,7 @@ static COMMANDS: &[CommandInfo] = &[
     },
     CommandInfo {
         name: "loc",
-        description: "Prints your current location and rotation.",
+        description: "Prints your current position and rotation.",
         usage: "./loc",
     },
     CommandInfo {
