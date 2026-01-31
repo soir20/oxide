@@ -200,7 +200,7 @@ pub fn process_chat_command(
                         })
                     };
 
-                    // TODO: Gate certain commands behind a moderator check
+                    // TODO: Gate commands behind a permission check
                     match cmd {
                         "help" => {
                             let mut msg = "Available commands:\n".to_string();
