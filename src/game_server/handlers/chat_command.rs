@@ -103,8 +103,8 @@ fn server_msg(sender: u32, msg: &str) -> Vec<Broadcast> {
     )]
 }
 
-fn args_len_is_less_than(args: &[String], n: usize) -> bool {
-    args.len() < n
+fn args_len_is_less_than(args: &[String], min_len: usize) -> bool {
+    args.len() < min_len
 }
 
 fn command_details(sender: u32, info: &CommandInfo) -> Vec<Broadcast> {
@@ -124,7 +124,7 @@ fn resolve_relative_coord(current_pos: f32, input: &str) -> Result<f32, String> 
         } else {
             offset
                 .parse::<f32>()
-                .map(|v| current_pos + v)
+                .map(|offset| current_pos + offset)
                 .map_err(|_| input.to_string())
         }
     } else {
