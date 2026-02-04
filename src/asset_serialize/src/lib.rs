@@ -26,16 +26,13 @@ pub struct Asset {
     offset: u64,
 }
 
-async fn list_assets_in_file(path: PathBuf) -> HashMap<String, Asset> {
+async fn list_assets_in_file(path: PathBuf, mut file: File) -> HashMap<String, Asset> {
     let is_pack = path
         .extension()
         .map(|ext| ext.to_ascii_lowercase() == "pack")
         .unwrap_or(false);
     match is_pack {
         true => {
-            let Ok(mut file) = OpenOptions::new().read(true).open(&path).await else {
-                return HashMap::new();
-            };
             let Ok(pack) = Pack::deserialize(path.clone(), &mut file).await else {
                 return HashMap::new();
             };
@@ -75,9 +72,12 @@ pub async fn list_assets<P: AsRef<Path>>(
         .follow_links(follow_links)
         .into_iter();
     for entry in walker.filter_map(|err| err.ok()) {
-        if entry.file_type().is_file() {
-            if predicate(entry.path()) {
-                futures.spawn(list_assets_in_file(entry.into_path()));
+        if predicate(entry.path()) {
+            // Per PathBuf#isFile():
+            // When the goal is simply to read from (or write to) the source, the most reliable way
+            // to test the source can be read (or written to) is to open it.
+            if let Ok(file) = OpenOptions::new().read(true).open(entry.path()).await {
+                futures.spawn(list_assets_in_file(entry.into_path(), file));
             }
         }
     }
