@@ -2,7 +2,7 @@ mod pack;
 
 pub use pack::*;
 
-use std::{collections::HashMap, path::PathBuf};
+use std::path::PathBuf;
 
 use tokio::fs::File;
 
@@ -18,8 +18,4 @@ pub trait DeserializeAsset: Sized {
         path: PathBuf,
         file: &mut File,
     ) -> impl std::future::Future<Output = Result<Self, tokio::io::Error>> + Send;
-}
-
-pub trait NestedAsset {
-    fn flatten(self) -> HashMap<String, Asset>;
 }

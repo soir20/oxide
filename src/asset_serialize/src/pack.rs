@@ -9,7 +9,7 @@ use tokio::{
     io::{AsyncReadExt, AsyncSeekExt},
 };
 
-use crate::{Asset, DeserializeAsset, NestedAsset};
+use crate::{Asset, DeserializeAsset};
 
 struct PackAsset {
     offset: u64,
@@ -60,7 +60,7 @@ impl DeserializeAsset for Pack {
     }
 }
 
-impl NestedAsset for Pack {
+impl Pack {
     fn flatten(self) -> HashMap<String, Asset> {
         self.assets
             .into_iter()
