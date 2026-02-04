@@ -1,11 +1,12 @@
 mod pack;
 
 pub use pack::*;
+use walkdir::WalkDir;
 
 use std::{
     collections::{HashMap, VecDeque},
     iter,
-    path::PathBuf,
+    path::{Path, PathBuf},
 };
 
 use tokio::{
@@ -63,36 +64,29 @@ async fn list_assets_in_file(path: PathBuf) -> HashMap<String, Asset> {
     }
 }
 
-pub async fn list_assets(
-    directory_path: &PathBuf,
-    mut predicate: impl FnMut(&PathBuf) -> bool,
+pub async fn list_assets<P: AsRef<Path>>(
+    directory_path: P,
+    follow_links: bool,
+    mut predicate: impl FnMut(&Path) -> bool,
 ) -> Result<HashMap<String, Asset>, tokio::io::Error> {
-    let mut queue = VecDeque::new();
-    queue.push_back(directory_path.clone());
     let mut futures = JoinSet::new();
 
-    while let Some(directory_path) = queue.pop_front() {
-        let Ok(mut directory) = read_dir(directory_path).await else {
-            continue;
-        };
-
-        while let Ok(Some(entry)) = directory.next_entry().await {
-            let file_path = entry.path();
-            match entry
-                .file_type()
-                .await
-                .is_ok_and(|file_type| file_type.is_dir())
-            {
-                true => queue.push_back(file_path),
-                false => {
-                    if predicate(&file_path) {
-                        futures.spawn(list_assets_in_file(file_path));
-                    }
-                }
+    let walker = WalkDir::new(&directory_path)
+        .follow_links(follow_links)
+        .into_iter();
+    for entry in walker.filter_map(|err| err.ok()) {
+        if entry.file_type().is_file() {
+            if predicate(entry.path()) {
+                futures.spawn(list_assets_in_file(entry.into_path()));
             }
         }
     }
 
-    let results = futures.join_all().await;
-    Ok(HashMap::new())
+    let mut final_result = HashMap::new();
+    futures
+        .join_all()
+        .await
+        .into_iter()
+        .for_each(|result| final_result.extend(result.into_iter()));
+    Ok(final_result)
 }
