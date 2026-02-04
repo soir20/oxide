@@ -14,7 +14,7 @@ use crate::{Asset, DeserializeAsset};
 struct PackAsset {
     offset: u64,
     size: u32,
-    crc: Option<u32>,
+    crc: u32,
 }
 
 pub struct Pack {
@@ -39,14 +39,7 @@ impl DeserializeAsset for Pack {
                 let size = file.read_u32().await?;
                 let crc = file.read_u32().await?;
 
-                assets.insert(
-                    name,
-                    PackAsset {
-                        offset,
-                        size,
-                        crc: Some(crc),
-                    },
-                );
+                assets.insert(name, PackAsset { offset, size, crc });
             }
 
             if next_group_offset == 0 {
@@ -61,7 +54,7 @@ impl DeserializeAsset for Pack {
 }
 
 impl Pack {
-    fn flatten(self) -> HashMap<String, Asset> {
+    pub fn flatten(self) -> HashMap<String, Asset> {
         self.assets
             .into_iter()
             .map(|(name, asset)| {
@@ -70,8 +63,6 @@ impl Pack {
                     Asset {
                         path: self.path.clone(),
                         offset: asset.offset,
-                        size: asset.size,
-                        crc: asset.crc,
                     },
                 )
             })
