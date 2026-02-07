@@ -1,5 +1,5 @@
 use std::{
-    collections::{HashMap, hash_map::IntoIter},
+    collections::{hash_map::IntoIter, HashMap},
     io::{ErrorKind, SeekFrom},
     path::{Path, PathBuf},
 };
@@ -9,7 +9,7 @@ use tokio::{
     io::{AsyncReadExt, AsyncSeekExt, BufReader},
 };
 
-use crate::{Asset, DeserializeAsset, Error, deserialize, deserialize_string, tell};
+use crate::{deserialize, deserialize_string, tell, Asset, DeserializeAsset, Error};
 
 pub struct PackAsset {
     pub offset: u64,
@@ -23,8 +23,8 @@ pub struct Pack {
 }
 
 impl DeserializeAsset for Pack {
-    async fn deserialize<P: AsRef<Path>>(path: P, file: &mut File) -> Result<Self, Error> {
-        let reader = BufReader::new(file);
+    async fn deserialize<P: AsRef<Path> + Send>(path: P, file: &mut File) -> Result<Self, Error> {
+        let mut reader = BufReader::new(file);
         let mut assets = HashMap::new();
         loop {
             let next_group_offset = deserialize(&mut reader, BufReader::read_u32).await? as u64;
@@ -53,7 +53,10 @@ impl DeserializeAsset for Pack {
             }
         }
 
-        Ok(Pack { path: path.as_ref().to_path_buf(), assets })
+        Ok(Pack {
+            path: path.as_ref().to_path_buf(),
+            assets,
+        })
     }
 }
 

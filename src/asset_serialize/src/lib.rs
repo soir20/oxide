@@ -43,17 +43,17 @@ pub struct Error {
 }
 
 pub trait DeserializeAsset: Sized {
-    fn deserialize<P: AsRef<Path>>(
+    fn deserialize<P: AsRef<Path> + Send>(
         path: P,
         file: &mut File,
     ) -> impl std::future::Future<Output = Result<Self, Error>> + Send;
 }
 
-async fn tell<'a>(file: &'a mut BufReader<&'a mut File>) -> Option<u64> {
+async fn tell(file: &mut BufReader<&mut File>) -> Option<u64> {
     file.seek(SeekFrom::Current(0)).await.ok()
 }
 
-async fn deserialize_string<'a>(file: &'a mut BufReader<&'a mut File>, len: usize) -> Result<String, Error> {
+async fn deserialize_string(file: &mut BufReader<&mut File>, len: usize) -> Result<String, Error> {
     let mut buffer = vec![0; len as usize];
 
     let result: Result<String, ErrorKind> = file
@@ -71,7 +71,9 @@ async fn deserialize_string<'a>(file: &'a mut BufReader<&'a mut File>, len: usiz
     }
 }
 
-async fn deserialize_null_terminated_string<'a>(file: &'a mut BufReader<&'a mut File>) -> Result<String, Error> {
+async fn deserialize_null_terminated_string(
+    file: &mut BufReader<&mut File>,
+) -> Result<String, Error> {
     let mut buffer = Vec::new();
 
     let result: Result<String, ErrorKind> = file
@@ -92,9 +94,9 @@ async fn deserialize_null_terminated_string<'a>(file: &'a mut BufReader<&'a mut 
     }
 }
 
-async fn deserialize<'a, T, Fut: Future<Output = Result<T, tokio::io::Error>>>(
-    file: &'a mut BufReader<&'a mut File>,
-    mut fun: impl FnMut(&'a mut BufReader<&'a mut File>) -> Fut,
+async fn deserialize<'a, 'b, T, Fut: Future<Output = Result<T, tokio::io::Error>>>(
+    file: &'a mut BufReader<&'b mut File>,
+    mut fun: impl FnMut(&'a mut BufReader<&'b mut File>) -> Fut,
 ) -> Result<T, Error> {
     match fun(file).await {
         Ok(value) => Ok(value),
