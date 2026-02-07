@@ -1,5 +1,5 @@
 use std::{
-    collections::HashMap,
+    collections::{hash_map::IntoIter, HashMap},
     io::{ErrorKind, SeekFrom},
     path::PathBuf,
 };
@@ -11,10 +11,10 @@ use tokio::{
 
 use crate::{Asset, DeserializeAsset};
 
-struct PackAsset {
-    offset: u64,
-    size: u32,
-    crc: u32,
+pub struct PackAsset {
+    pub offset: u64,
+    pub size: u32,
+    pub crc: u32,
 }
 
 pub struct Pack {
@@ -53,6 +53,16 @@ impl DeserializeAsset for Pack {
     }
 }
 
+impl IntoIterator for Pack {
+    type Item = (String, PackAsset);
+
+    type IntoIter = IntoIter<String, PackAsset>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.assets.into_iter()
+    }
+}
+
 impl Pack {
     pub fn flatten(self) -> HashMap<String, Asset> {
         self.assets
@@ -67,5 +77,9 @@ impl Pack {
                 )
             })
             .collect()
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = (&String, &PackAsset)> + use<'_> {
+        self.assets.iter()
     }
 }

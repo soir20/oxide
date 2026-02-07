@@ -4,13 +4,12 @@ pub use pack::*;
 use walkdir::WalkDir;
 
 use std::{
-    collections::{HashMap, VecDeque},
-    iter,
+    collections::HashMap,
     path::{Path, PathBuf},
 };
 
 use tokio::{
-    fs::{read_dir, File, OpenOptions},
+    fs::{File, OpenOptions},
     task::JoinSet,
 };
 
@@ -22,8 +21,8 @@ pub trait DeserializeAsset: Sized {
 }
 
 pub struct Asset {
-    path: PathBuf,
-    offset: u64,
+    pub path: PathBuf,
+    pub offset: u64,
 }
 
 async fn list_assets_in_file(path: PathBuf, mut file: File) -> HashMap<String, Asset> {
