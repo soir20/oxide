@@ -1,17 +1,46 @@
+mod adr;
 mod pack;
 
+pub use adr::*;
 pub use pack::*;
 use walkdir::WalkDir;
 
 use std::{
     collections::HashMap,
+    io::Cursor,
     path::{Path, PathBuf},
+    string::FromUtf8Error,
 };
 
 use tokio::{
     fs::{File, OpenOptions},
+    io::AsyncBufReadExt,
     task::JoinSet,
 };
+
+pub enum ErrorKind {
+    InvalidUtf8(FromUtf8Error),
+    Io(tokio::io::Error),
+    UnknownDiscriminant(u64),
+}
+
+impl From<FromUtf8Error> for ErrorKind {
+    fn from(value: FromUtf8Error) -> Self {
+        ErrorKind::InvalidUtf8(value)
+    }
+}
+
+impl From<tokio::io::Error> for ErrorKind {
+    fn from(value: tokio::io::Error) -> Self {
+        ErrorKind::Io(value)
+    }
+}
+
+pub struct Error {
+    pub kind: ErrorKind,
+    pub context: &'static str,
+    pub offset: u64,
+}
 
 pub trait DeserializeAsset: Sized {
     fn deserialize(
@@ -88,4 +117,19 @@ pub async fn list_assets<P: AsRef<Path>>(
         .into_iter()
         .for_each(|result| final_result.extend(result.into_iter()));
     Ok(final_result)
+}
+
+async fn deserialize_null_terminated_string(cursor: &mut Cursor<&[u8]>) -> Result<String, Error> {
+    let mut buffer = Vec::new();
+
+    cursor
+        .read_until(0, &mut buffer)
+        .await
+        .map_err(|err| err.into())
+        .and_then(|_| String::from_utf8(buffer).map_err(|err| err.into()))
+        .map_err(|err: ErrorKind| Error {
+            kind: err.into(),
+            context: "reading null-terminated string",
+            offset: cursor.position(),
+        })
 }
