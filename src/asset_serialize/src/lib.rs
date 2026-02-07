@@ -7,14 +7,15 @@ use walkdir::WalkDir;
 
 use std::{
     collections::HashMap,
-    io::Cursor,
+    future::Future,
+    io::SeekFrom,
     path::{Path, PathBuf},
     string::FromUtf8Error,
 };
 
 use tokio::{
     fs::{File, OpenOptions},
-    io::AsyncBufReadExt,
+    io::{AsyncBufReadExt, AsyncReadExt, AsyncSeekExt, BufReader},
     task::JoinSet,
 };
 
@@ -38,15 +39,70 @@ impl From<tokio::io::Error> for ErrorKind {
 
 pub struct Error {
     pub kind: ErrorKind,
-    pub context: &'static str,
-    pub offset: u64,
+    pub offset: Option<u64>,
 }
 
 pub trait DeserializeAsset: Sized {
-    fn deserialize(
-        path: PathBuf,
+    fn deserialize<P: AsRef<Path>>(
+        path: P,
         file: &mut File,
-    ) -> impl std::future::Future<Output = Result<Self, tokio::io::Error>> + Send;
+    ) -> impl std::future::Future<Output = Result<Self, Error>> + Send;
+}
+
+async fn tell<'a>(file: &'a mut BufReader<&'a mut File>) -> Option<u64> {
+    file.seek(SeekFrom::Current(0)).await.ok()
+}
+
+async fn deserialize_string<'a>(file: &'a mut BufReader<&'a mut File>, len: usize) -> Result<String, Error> {
+    let mut buffer = vec![0; len as usize];
+
+    let result: Result<String, ErrorKind> = file
+        .read_exact(&mut buffer)
+        .await
+        .map_err(|err| err.into())
+        .and_then(|_| String::from_utf8(buffer).map_err(|err| err.into()));
+
+    match result {
+        Ok(string) => Ok(string),
+        Err(kind) => Err(Error {
+            kind: kind,
+            offset: tell(file).await,
+        }),
+    }
+}
+
+async fn deserialize_null_terminated_string<'a>(file: &'a mut BufReader<&'a mut File>) -> Result<String, Error> {
+    let mut buffer = Vec::new();
+
+    let result: Result<String, ErrorKind> = file
+        .read_until(b'\0', &mut buffer)
+        .await
+        .map_err(|err| err.into())
+        .and_then(|_| {
+            buffer.pop_if(|last| *last == b'\0');
+            String::from_utf8(buffer).map_err(|err| err.into())
+        });
+
+    match result {
+        Ok(string) => Ok(string),
+        Err(kind) => Err(Error {
+            kind: kind,
+            offset: tell(file).await,
+        }),
+    }
+}
+
+async fn deserialize<'a, T, Fut: Future<Output = Result<T, tokio::io::Error>>>(
+    file: &'a mut BufReader<&'a mut File>,
+    mut fun: impl FnMut(&'a mut BufReader<&'a mut File>) -> Fut,
+) -> Result<T, Error> {
+    match fun(file).await {
+        Ok(value) => Ok(value),
+        Err(err) => Err(Error {
+            kind: err.into(),
+            offset: tell(file).await,
+        }),
+    }
 }
 
 pub struct Asset {
@@ -117,19 +173,4 @@ pub async fn list_assets<P: AsRef<Path>>(
         .into_iter()
         .for_each(|result| final_result.extend(result.into_iter()));
     Ok(final_result)
-}
-
-async fn deserialize_null_terminated_string(cursor: &mut Cursor<&[u8]>) -> Result<String, Error> {
-    let mut buffer = Vec::new();
-
-    cursor
-        .read_until(0, &mut buffer)
-        .await
-        .map_err(|err| err.into())
-        .and_then(|_| String::from_utf8(buffer).map_err(|err| err.into()))
-        .map_err(|err: ErrorKind| Error {
-            kind: err.into(),
-            context: "reading null-terminated string",
-            offset: cursor.position(),
-        })
 }

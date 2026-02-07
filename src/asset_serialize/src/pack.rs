@@ -1,15 +1,15 @@
 use std::{
-    collections::{hash_map::IntoIter, HashMap},
+    collections::{HashMap, hash_map::IntoIter},
     io::{ErrorKind, SeekFrom},
-    path::PathBuf,
+    path::{Path, PathBuf},
 };
 
 use tokio::{
     fs::File,
-    io::{AsyncReadExt, AsyncSeekExt},
+    io::{AsyncReadExt, AsyncSeekExt, BufReader},
 };
 
-use crate::{Asset, DeserializeAsset};
+use crate::{Asset, DeserializeAsset, Error, deserialize, deserialize_string, tell};
 
 pub struct PackAsset {
     pub offset: u64,
@@ -23,21 +23,20 @@ pub struct Pack {
 }
 
 impl DeserializeAsset for Pack {
-    async fn deserialize(path: PathBuf, file: &mut File) -> Result<Self, tokio::io::Error> {
+    async fn deserialize<P: AsRef<Path>>(path: P, file: &mut File) -> Result<Self, Error> {
+        let reader = BufReader::new(file);
         let mut assets = HashMap::new();
         loop {
-            let next_group_offset = file.read_u32().await? as u64;
-            let files_in_group = file.read_u32().await?;
+            let next_group_offset = deserialize(&mut reader, BufReader::read_u32).await? as u64;
+            let files_in_group = deserialize(&mut reader, BufReader::read_u32).await?;
 
             for _ in 0..files_in_group {
-                let name_len = file.read_u32().await?;
-                let mut name_buffer = vec![0; name_len as usize];
-                file.read_exact(&mut name_buffer).await?;
-                let name = String::from_utf8(name_buffer).map_err(|_| ErrorKind::InvalidData)?;
+                let name_len = deserialize(&mut reader, BufReader::read_u32).await?;
+                let name = deserialize_string(&mut reader, name_len as usize).await?;
 
-                let offset = file.read_u32().await? as u64;
-                let size = file.read_u32().await?;
-                let crc = file.read_u32().await?;
+                let offset = deserialize(&mut reader, BufReader::read_u32).await? as u64;
+                let size = deserialize(&mut reader, BufReader::read_u32).await?;
+                let crc = deserialize(&mut reader, BufReader::read_u32).await?;
 
                 assets.insert(name, PackAsset { offset, size, crc });
             }
@@ -46,10 +45,15 @@ impl DeserializeAsset for Pack {
                 break;
             }
 
-            file.seek(SeekFrom::Start(next_group_offset)).await?;
+            if let Err(err) = reader.seek(SeekFrom::Start(next_group_offset)).await {
+                return Err(Error {
+                    kind: err.into(),
+                    offset: tell(&mut reader).await,
+                });
+            }
         }
 
-        Ok(Pack { path, assets })
+        Ok(Pack { path: path.as_ref().to_path_buf(), assets })
     }
 }
 
