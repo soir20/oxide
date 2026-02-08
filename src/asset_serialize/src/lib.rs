@@ -8,7 +8,6 @@ use walkdir::WalkDir;
 use std::{
     collections::HashMap,
     future::Future,
-    io::SeekFrom,
     path::{Path, PathBuf},
     string::FromUtf8Error,
 };
@@ -50,10 +49,11 @@ pub trait DeserializeAsset: Sized {
 }
 
 async fn tell(file: &mut BufReader<&mut File>) -> Option<u64> {
-    file.seek(SeekFrom::Current(0)).await.ok()
+    file.stream_position().await.ok()
 }
 
 async fn deserialize_string(file: &mut BufReader<&mut File>, len: usize) -> Result<String, Error> {
+    let offset = tell(file).await;
     let mut buffer = vec![0; len as usize];
 
     let result: Result<String, ErrorKind> = file
@@ -64,16 +64,14 @@ async fn deserialize_string(file: &mut BufReader<&mut File>, len: usize) -> Resu
 
     match result {
         Ok(string) => Ok(string),
-        Err(kind) => Err(Error {
-            kind: kind,
-            offset: tell(file).await,
-        }),
+        Err(kind) => Err(Error { kind: kind, offset }),
     }
 }
 
 async fn deserialize_null_terminated_string(
     file: &mut BufReader<&mut File>,
 ) -> Result<String, Error> {
+    let offset = tell(file).await;
     let mut buffer = Vec::new();
 
     let result: Result<String, ErrorKind> = file
@@ -87,10 +85,7 @@ async fn deserialize_null_terminated_string(
 
     match result {
         Ok(string) => Ok(string),
-        Err(kind) => Err(Error {
-            kind: kind,
-            offset: tell(file).await,
-        }),
+        Err(kind) => Err(Error { kind: kind, offset }),
     }
 }
 
@@ -98,12 +93,13 @@ async fn deserialize<'a, 'b, T, Fut: Future<Output = Result<T, tokio::io::Error>
     file: &'a mut BufReader<&'b mut File>,
     mut fun: impl FnMut(&'a mut BufReader<&'b mut File>) -> Fut,
 ) -> Result<T, Error> {
+    let offset = tell(file).await;
     match fun(file).await {
         Ok(value) => Ok(value),
-        Err(err) => Err(Error {
-            kind: err.into(),
-            offset: tell(file).await,
-        }),
+        Err(err) => {
+            let kind = err.into();
+            Err(Error { kind, offset })
+        }
     }
 }
 

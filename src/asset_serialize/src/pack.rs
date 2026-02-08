@@ -45,10 +45,11 @@ impl DeserializeAsset for Pack {
                 break;
             }
 
+            let offset = tell(&mut reader).await;
             if let Err(err) = reader.seek(SeekFrom::Start(next_group_offset)).await {
                 return Err(Error {
                     kind: err.into(),
-                    offset: tell(&mut reader).await,
+                    offset,
                 });
             }
         }
