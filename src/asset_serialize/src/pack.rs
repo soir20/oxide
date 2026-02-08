@@ -1,6 +1,6 @@
 use std::{
     collections::{hash_map::IntoIter, HashMap},
-    io::{ErrorKind, SeekFrom},
+    io::SeekFrom,
     path::{Path, PathBuf},
 };
 
