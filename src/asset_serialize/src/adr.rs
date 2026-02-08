@@ -23,43 +23,43 @@ async fn deserialize_len(file: &mut BufReader<&mut File>) -> Result<i32, Error> 
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
-pub enum SkeletonType {
+pub enum SkeletonEntryType {
     AssetName = 1,
 }
 
-impl SkeletonType {
+impl SkeletonEntryType {
     async fn deserialize(file: &mut BufReader<&mut File>) -> Result<Self, Error> {
         let offset = tell(file).await;
         let value = deserialize(file, BufReader::read_u8).await?;
-        SkeletonType::try_from_primitive(value).map_err(|_| Error {
+        SkeletonEntryType::try_from_primitive(value).map_err(|_| Error {
             kind: ErrorKind::UnknownDiscriminant(value.into()),
             offset,
         })
     }
 }
 
-pub enum SkeletonTypeData {
+pub enum SkeletonData {
     AssetName { name: String },
 }
 
 pub struct SkeletonEntry {
-    pub skeleton_type: SkeletonType,
+    pub entry_type: SkeletonEntryType,
     pub len: i32,
-    pub data: SkeletonTypeData,
+    pub data: SkeletonData,
 }
 
 impl SkeletonEntry {
     async fn deserialize(file: &mut BufReader<&mut File>) -> Result<Self, Error> {
-        let skeleton_type = SkeletonType::deserialize(file).await?;
+        let entry_type = SkeletonEntryType::deserialize(file).await?;
         let len = deserialize_len(file).await?;
-        let data = match skeleton_type {
-            SkeletonType::AssetName => SkeletonTypeData::AssetName {
+        let data = match entry_type {
+            SkeletonEntryType::AssetName => SkeletonData::AssetName {
                 name: deserialize_null_terminated_string(file).await?,
             },
         };
 
         Ok(SkeletonEntry {
-            skeleton_type,
+            entry_type,
             len,
             data,
         })
