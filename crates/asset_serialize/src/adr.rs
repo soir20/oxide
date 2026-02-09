@@ -66,4 +66,59 @@ impl SkeletonEntry {
     }
 }
 
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum ModelEntryType {
+    ModelAssetName = 1,
+    MaterialAssetName = 2,
+    Radius = 3,
+}
+
+impl ModelEntryType {
+    async fn deserialize(file: &mut BufReader<&mut File>) -> Result<Self, Error> {
+        let offset = tell(file).await;
+        let value = deserialize(file, BufReader::read_u8).await?;
+        ModelEntryType::try_from_primitive(value).map_err(|_| Error {
+            kind: ErrorKind::UnknownDiscriminant(value.into()),
+            offset,
+        })
+    }
+}
+
+pub enum ModelData {
+    ModelAssetName { name: String },
+    MaterialAssetName { name: String },
+    Radius { radius: f32 },
+}
+
+pub struct ModelEntry {
+    pub entry_type: ModelEntryType,
+    pub len: i32,
+    pub data: ModelData,
+}
+
+impl ModelEntry {
+    async fn deserialize(file: &mut BufReader<&mut File>) -> Result<Self, Error> {
+        let entry_type = ModelEntryType::deserialize(file).await?;
+        let len = deserialize_len(file).await?;
+        let data = match entry_type {
+            ModelEntryType::ModelAssetName => ModelData::ModelAssetName {
+                name: deserialize_null_terminated_string(file).await?,
+            },
+            ModelEntryType::MaterialAssetName => ModelData::MaterialAssetName {
+                name: deserialize_null_terminated_string(file).await?,
+            },
+            ModelEntryType::Radius => ModelData::Radius {
+                radius: deserialize(file, BufReader::read_f32).await?,
+            },
+        };
+
+        Ok(ModelEntry {
+            entry_type,
+            len,
+            data,
+        })
+    }
+}
+
 pub struct Adr {}
