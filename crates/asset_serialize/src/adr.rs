@@ -124,9 +124,10 @@ impl ModelEntry {
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
 pub enum ParticleEntryType {
-    EmitterName = 1,
-    EffectAssetName = 2,
-    EffectId = 3,
+    EffectId = 1,
+    EmitterName = 2,
+    BoneName = 3,
+    EffectAssetName = 10,
 }
 
 impl ParticleEntryType {
@@ -141,9 +142,10 @@ impl ParticleEntryType {
 }
 
 pub enum ParticleData {
-    EmitterName { name: String },
-    EffectAssetName { name: String },
     EffectId { effect_id: i32 },
+    EmitterName { name: String },
+    BoneName { name: String },
+    EffectAssetName { name: String },
 }
 
 pub struct ParticleEntry {
@@ -157,14 +159,17 @@ impl ParticleEntry {
         let entry_type = ParticleEntryType::deserialize(file).await?;
         let len = deserialize_len(file).await?;
         let data = match entry_type {
+            ParticleEntryType::EffectId => ParticleData::EffectId {
+                effect_id: deserialize(file, BufReader::read_i32_le).await?,
+            },
             ParticleEntryType::EmitterName => ParticleData::EmitterName {
+                name: deserialize_null_terminated_string(file).await?,
+            },
+            ParticleEntryType::BoneName => ParticleData::BoneName {
                 name: deserialize_null_terminated_string(file).await?,
             },
             ParticleEntryType::EffectAssetName => ParticleData::EffectAssetName {
                 name: deserialize_null_terminated_string(file).await?,
-            },
-            ParticleEntryType::EffectId => ParticleData::EffectId {
-                effect_id: deserialize(file, BufReader::read_i32_le).await?,
             },
         };
 
