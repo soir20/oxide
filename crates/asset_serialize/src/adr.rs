@@ -68,6 +68,61 @@ impl SkeletonEntry {
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
+pub enum ParticleEntryType {
+    EmitterName = 1,
+    EffectAssetName = 2,
+    EffectId = 3,
+}
+
+impl ParticleEntryType {
+    async fn deserialize(file: &mut BufReader<&mut File>) -> Result<Self, Error> {
+        let offset = tell(file).await;
+        let value = deserialize(file, BufReader::read_u8).await?;
+        ParticleEntryType::try_from_primitive(value).map_err(|_| Error {
+            kind: ErrorKind::UnknownDiscriminant(value.into()),
+            offset,
+        })
+    }
+}
+
+pub enum ParticleData {
+    EmitterName { name: String },
+    EffectAssetName { name: String },
+    EffectId { effect_id: i32 },
+}
+
+pub struct ParticleEntry {
+    pub entry_type: ParticleEntryType,
+    pub len: i32,
+    pub data: ParticleData,
+}
+
+impl ParticleEntry {
+    async fn deserialize(file: &mut BufReader<&mut File>) -> Result<Self, Error> {
+        let entry_type = ParticleEntryType::deserialize(file).await?;
+        let len = deserialize_len(file).await?;
+        let data = match entry_type {
+            ParticleEntryType::EmitterName => ParticleData::EmitterName {
+                name: deserialize_null_terminated_string(file).await?,
+            },
+            ParticleEntryType::EffectAssetName => ParticleData::EffectAssetName {
+                name: deserialize_null_terminated_string(file).await?,
+            },
+            ParticleEntryType::EffectId => ParticleData::EffectId {
+                effect_id: deserialize(file, BufReader::read_i32_le).await?,
+            },
+        };
+
+        Ok(ParticleEntry {
+            entry_type,
+            len,
+            data,
+        })
+    }
+}
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
 pub enum ModelEntryType {
     ModelAssetName = 1,
     MaterialAssetName = 2,
