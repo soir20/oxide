@@ -258,4 +258,88 @@ impl ParticleArray {
     }
 }
 
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum AnimationEntryType {
+    AnimationName = 1,
+    AssetName = 2,
+    Duration = 4,
+    LoadType = 5,
+}
+
+impl AnimationEntryType {
+    async fn deserialize(file: &mut BufReader<&mut File>) -> Result<Self, Error> {
+        let offset = tell(file).await;
+        let value = deserialize(file, BufReader::read_u8).await?;
+        AnimationEntryType::try_from_primitive(value).map_err(|_| Error {
+            kind: ErrorKind::UnknownDiscriminant(value.into()),
+            offset,
+        })
+    }
+}
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum AnimationLoadType {
+    Unknown1 = 1,
+    Unknown2 = 2,
+}
+
+impl AnimationLoadType {
+    async fn deserialize(file: &mut BufReader<&mut File>) -> Result<Self, Error> {
+        let offset = tell(file).await;
+        let value = deserialize(file, BufReader::read_u8).await?;
+        AnimationLoadType::try_from_primitive(value).map_err(|_| Error {
+            kind: ErrorKind::UnknownDiscriminant(value.into()),
+            offset,
+        })
+    }
+}
+
+pub enum AnimationData {
+    AnimationName { name: String },
+    AssetName { name: String },
+    Duration { duration: f32 },
+    LoadType { load_type: AnimationLoadType },
+}
+
+pub struct AnimationEntry {
+    pub entry_type: AnimationEntryType,
+    pub len: i32,
+    pub data: AnimationData,
+    size: i32,
+}
+
+impl AnimationEntry {
+    async fn deserialize(file: &mut BufReader<&mut File>) -> Result<Self, Error> {
+        let entry_type = AnimationEntryType::deserialize(file).await?;
+        let (len, bytes_read) = deserialize_len_with_bytes_read(file).await?;
+        let data = match entry_type {
+            AnimationEntryType::AnimationName => AnimationData::AnimationName {
+                name: deserialize_null_terminated_string(file).await?,
+            },
+            AnimationEntryType::AssetName => AnimationData::AssetName {
+                name: deserialize_null_terminated_string(file).await?,
+            },
+            AnimationEntryType::Duration => AnimationData::Duration {
+                duration: deserialize(file, BufReader::read_f32).await?,
+            },
+            AnimationEntryType::LoadType => AnimationData::LoadType {
+                load_type: AnimationLoadType::deserialize(file).await?,
+            },
+        };
+
+        Ok(AnimationEntry {
+            entry_type,
+            len,
+            data,
+            size: bytes_read.saturating_add(len).saturating_add(1),
+        })
+    }
+
+    fn size(&self) -> i32 {
+        self.size
+    }
+}
+
 pub struct Adr {}
