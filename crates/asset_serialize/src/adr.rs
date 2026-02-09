@@ -400,4 +400,49 @@ impl AnimationArray {
     }
 }
 
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum CollisionEntryType {
+    AssetName = 1,
+}
+
+impl CollisionEntryType {
+    async fn deserialize(file: &mut BufReader<&mut File>) -> Result<Self, Error> {
+        let offset = tell(file).await;
+        let value = deserialize(file, BufReader::read_u8).await?;
+        CollisionEntryType::try_from_primitive(value).map_err(|_| Error {
+            kind: ErrorKind::UnknownDiscriminant(value.into()),
+            offset,
+        })
+    }
+}
+
+pub enum CollisionData {
+    AssetName { name: String },
+}
+
+pub struct CollisionEntry {
+    pub entry_type: CollisionEntryType,
+    pub len: i32,
+    pub data: CollisionData,
+}
+
+impl CollisionEntry {
+    async fn deserialize(file: &mut BufReader<&mut File>) -> Result<Self, Error> {
+        let entry_type = CollisionEntryType::deserialize(file).await?;
+        let len = deserialize_len(file).await?;
+        let data = match entry_type {
+            CollisionEntryType::AssetName => CollisionData::AssetName {
+                name: deserialize_null_terminated_string(file).await?,
+            },
+        };
+
+        Ok(CollisionEntry {
+            entry_type,
+            len,
+            data,
+        })
+    }
+}
+
 pub struct Adr {}
