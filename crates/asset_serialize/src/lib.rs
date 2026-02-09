@@ -52,6 +52,16 @@ async fn tell(file: &mut BufReader<&mut File>) -> Option<u64> {
     file.stream_position().await.ok()
 }
 
+async fn is_eof(file: &mut BufReader<&mut File>) -> Result<bool, Error> {
+    match file.fill_buf().await {
+        Ok(buffer) => Ok(buffer.is_empty()),
+        Err(err) => Err(Error {
+            kind: err.into(),
+            offset: tell(file).await,
+        }),
+    }
+}
+
 async fn deserialize_exact(file: &mut BufReader<&mut File>, len: usize) -> Result<Vec<u8>, Error> {
     let offset = tell(file).await;
     let mut buffer = vec![0; len as usize];

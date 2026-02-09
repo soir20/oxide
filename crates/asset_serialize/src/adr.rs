@@ -5,7 +5,8 @@ use tokio::{
 };
 
 use crate::{
-    deserialize, deserialize_exact, deserialize_null_terminated_string, tell, Error, ErrorKind,
+    deserialize, deserialize_exact, deserialize_null_terminated_string, is_eof, tell,
+    DeserializeAsset, Error, ErrorKind,
 };
 
 async fn deserialize_len_with_bytes_read(
@@ -482,13 +483,12 @@ pub struct AdrEntry {
     pub entry_type: AdrEntryType,
     pub len: i32,
     pub data: AdrData,
-    size: i32,
 }
 
 impl AdrEntry {
     async fn deserialize(file: &mut BufReader<&mut File>) -> Result<Self, Error> {
         let entry_type = AdrEntryType::deserialize(file).await?;
-        let (len, bytes_read) = deserialize_len_with_bytes_read(file).await?;
+        let len = deserialize_len(file).await?;
         let data = match entry_type {
             AdrEntryType::Unknown => AdrData::Unknown {
                 data: deserialize_exact(file, len as usize).await?,
@@ -517,13 +517,27 @@ impl AdrEntry {
             entry_type,
             len,
             data,
-            size: bytes_read.saturating_add(len).saturating_add(1),
         })
-    }
-
-    fn size(&self) -> i32 {
-        self.size
     }
 }
 
-pub struct Adr {}
+pub struct Adr {
+    pub entries: Vec<AdrEntry>,
+}
+
+impl DeserializeAsset for Adr {
+    fn deserialize<P: AsRef<std::path::Path> + Send>(
+        _: P,
+        file: &mut File,
+    ) -> impl std::future::Future<Output = Result<Self, Error>> + Send {
+        async {
+            let mut reader = BufReader::new(file);
+            let mut entries = Vec::new();
+            while !is_eof(&mut reader).await? {
+                entries.push(AdrEntry::deserialize(&mut reader).await?);
+            }
+
+            Ok(Adr { entries })
+        }
+    }
+}
