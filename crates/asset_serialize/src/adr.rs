@@ -299,7 +299,7 @@ impl AnimationLoadType {
 pub enum AnimationData {
     AnimationName { name: String },
     AssetName { name: String },
-    Duration { duration: f32 },
+    Duration { duration_seconds: f32 },
     LoadType { load_type: AnimationLoadType },
 }
 
@@ -322,7 +322,7 @@ impl AnimationEntry {
                 name: deserialize_null_terminated_string(file).await?,
             },
             AnimationEntryType::Duration => AnimationData::Duration {
-                duration: deserialize(file, BufReader::read_f32).await?,
+                duration_seconds: deserialize(file, BufReader::read_f32).await?,
             },
             AnimationEntryType::LoadType => AnimationData::LoadType {
                 load_type: AnimationLoadType::deserialize(file).await?,
