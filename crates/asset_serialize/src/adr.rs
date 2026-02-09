@@ -342,4 +342,62 @@ impl AnimationEntry {
     }
 }
 
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum AnimationArrayType {
+    AnimationEntry = 1,
+    Unknown = 0xFE,
+}
+
+impl AnimationArrayType {
+    async fn deserialize(file: &mut BufReader<&mut File>) -> Result<Self, Error> {
+        let offset = tell(file).await;
+        let value = deserialize(file, BufReader::read_u8).await?;
+        AnimationArrayType::try_from_primitive(value).map_err(|_| Error {
+            kind: ErrorKind::UnknownDiscriminant(value.into()),
+            offset,
+        })
+    }
+}
+
+pub enum AnimationArrayData {
+    AnimationEntry { entries: Vec<AnimationEntry> },
+    Unknown { data: Vec<u8> },
+}
+
+pub struct AnimationArray {
+    pub entry_type: AnimationArrayType,
+    pub len: i32,
+    pub data: AnimationArrayData,
+}
+
+impl AnimationArray {
+    async fn deserialize(file: &mut BufReader<&mut File>) -> Result<Self, Error> {
+        let entry_type = AnimationArrayType::deserialize(file).await?;
+        let len = deserialize_len(file).await?;
+        let data = match entry_type {
+            AnimationArrayType::AnimationEntry => {
+                let mut entries = Vec::new();
+                let mut bytes_read = 0;
+                while bytes_read < len {
+                    let entry = AnimationEntry::deserialize(file).await?;
+                    bytes_read = bytes_read.saturating_add(entry.size());
+                    entries.push(entry);
+                }
+
+                AnimationArrayData::AnimationEntry { entries }
+            }
+            AnimationArrayType::Unknown => AnimationArrayData::Unknown {
+                data: deserialize_exact(file, len as usize).await?,
+            },
+        };
+
+        Ok(AnimationArray {
+            entry_type,
+            len,
+            data,
+        })
+    }
+}
+
 pub struct Adr {}
