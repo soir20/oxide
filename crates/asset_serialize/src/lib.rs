@@ -52,20 +52,27 @@ async fn tell(file: &mut BufReader<&mut File>) -> Option<u64> {
     file.stream_position().await.ok()
 }
 
-async fn deserialize_string(file: &mut BufReader<&mut File>, len: usize) -> Result<String, Error> {
+async fn deserialize_exact(file: &mut BufReader<&mut File>, len: usize) -> Result<Vec<u8>, Error> {
     let offset = tell(file).await;
     let mut buffer = vec![0; len as usize];
 
-    let result: Result<String, ErrorKind> = file
-        .read_exact(&mut buffer)
-        .await
-        .map_err(|err| err.into())
-        .and_then(|_| String::from_utf8(buffer).map_err(|err| err.into()));
+    let result: Result<usize, ErrorKind> =
+        file.read_exact(&mut buffer).await.map_err(|err| err.into());
 
     match result {
-        Ok(string) => Ok(string),
+        Ok(_) => Ok(buffer),
         Err(kind) => Err(Error { kind: kind, offset }),
     }
+}
+
+async fn deserialize_string(file: &mut BufReader<&mut File>, len: usize) -> Result<String, Error> {
+    let offset = tell(file).await;
+    deserialize_exact(file, len).await.and_then(|buffer| {
+        String::from_utf8(buffer).map_err(|err| Error {
+            kind: err.into(),
+            offset,
+        })
+    })
 }
 
 async fn deserialize_null_terminated_string(
