@@ -54,8 +54,8 @@ impl<T: TryFromPrimitive<Primitive = u8>> DeserializeEntryType for T {
     }
 }
 
-trait DeserializeEntryData: Sized {
-    fn deserialize<T>(
+trait DeserializeEntryData<T>: Sized {
+    fn deserialize(
         entry_type: &T,
         file: &mut BufReader<&mut File>,
     ) -> impl std::future::Future<Output = Result<(Self, i32), Error>> + Send;
@@ -73,7 +73,7 @@ pub struct Entry<T, D> {
     pub data: D,
 }
 
-impl<T: DeserializeEntryType + Send, D: DeserializeEntryData + Send> DeserializeEntry<T, D>
+impl<T: DeserializeEntryType + Send, D: DeserializeEntryData<T> + Send> DeserializeEntry<T, D>
     for Entry<T, D>
 {
     async fn deserialize(file: &mut BufReader<&mut File>) -> Result<(Self, i32), Error> {
@@ -102,42 +102,21 @@ pub enum SkeletonEntryType {
     AssetName = 0x1,
 }
 
-impl SkeletonEntryType {
-    async fn deserialize(file: &mut BufReader<&mut File>) -> Result<Self, Error> {
-        let offset = tell(file).await;
-        let value = deserialize(file, BufReader::read_u8).await?;
-        SkeletonEntryType::try_from_primitive(value).map_err(|_| Error {
-            kind: ErrorKind::UnknownDiscriminant(value.into()),
-            offset,
-        })
-    }
-}
-
 pub enum SkeletonData {
     AssetName { name: String },
 }
 
-pub struct SkeletonEntry {
-    pub entry_type: SkeletonEntryType,
-    pub len: i32,
-    pub data: SkeletonData,
-}
-
-impl SkeletonEntry {
-    async fn deserialize(file: &mut BufReader<&mut File>) -> Result<Self, Error> {
-        let entry_type = SkeletonEntryType::deserialize(file).await?;
-        let len = deserialize_len(file).await?;
-        let data = match entry_type {
-            SkeletonEntryType::AssetName => SkeletonData::AssetName {
-                name: deserialize_null_terminated_string(file).await?,
-            },
-        };
-
-        Ok(SkeletonEntry {
-            entry_type,
-            len,
-            data,
-        })
+impl DeserializeEntryData<SkeletonEntryType> for SkeletonData {
+    async fn deserialize(
+        entry_type: &SkeletonEntryType,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            SkeletonEntryType::AssetName => {
+                let (name, bytes_read) = deserialize_null_terminated_string(file).await?;
+                Ok((SkeletonData::AssetName { name }, bytes_read as i32))
+            }
+        }
     }
 }
 
@@ -149,50 +128,33 @@ pub enum ModelEntryType {
     Radius = 0x3,
 }
 
-impl ModelEntryType {
-    async fn deserialize(file: &mut BufReader<&mut File>) -> Result<Self, Error> {
-        let offset = tell(file).await;
-        let value = deserialize(file, BufReader::read_u8).await?;
-        ModelEntryType::try_from_primitive(value).map_err(|_| Error {
-            kind: ErrorKind::UnknownDiscriminant(value.into()),
-            offset,
-        })
-    }
-}
-
 pub enum ModelData {
     ModelAssetName { name: String },
     MaterialAssetName { name: String },
     Radius { radius: f32 },
 }
 
-pub struct ModelEntry {
-    pub entry_type: ModelEntryType,
-    pub len: i32,
-    pub data: ModelData,
-}
+pub type ModelEntry = Entry<ModelEntryType, ModelData>;
 
-impl ModelEntry {
-    async fn deserialize(file: &mut BufReader<&mut File>) -> Result<Self, Error> {
-        let entry_type = ModelEntryType::deserialize(file).await?;
-        let len = deserialize_len(file).await?;
-        let data = match entry_type {
-            ModelEntryType::ModelAssetName => ModelData::ModelAssetName {
-                name: deserialize_null_terminated_string(file).await?,
-            },
-            ModelEntryType::MaterialAssetName => ModelData::MaterialAssetName {
-                name: deserialize_null_terminated_string(file).await?,
-            },
-            ModelEntryType::Radius => ModelData::Radius {
-                radius: deserialize(file, BufReader::read_f32).await?,
-            },
-        };
-
-        Ok(ModelEntry {
-            entry_type,
-            len,
-            data,
-        })
+impl DeserializeEntryData<ModelEntryType> for ModelData {
+    async fn deserialize(
+        entry_type: &ModelEntryType,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            ModelEntryType::ModelAssetName => {
+                let (name, bytes_read) = deserialize_null_terminated_string(file).await?;
+                Ok((ModelData::ModelAssetName { name }, bytes_read as i32))
+            }
+            ModelEntryType::MaterialAssetName => {
+                let (name, bytes_read) = deserialize_null_terminated_string(file).await?;
+                Ok((ModelData::MaterialAssetName { name }, bytes_read as i32))
+            }
+            ModelEntryType::Radius => {
+                let radius = deserialize(file, BufReader::read_f32).await?;
+                Ok((ModelData::Radius { radius }, 4))
+            }
+        }
     }
 }
 
@@ -609,7 +571,7 @@ mod tests {
     use walkdir::WalkDir;
 
     #[tokio::test]
-    //#[ignore]
+    #[ignore]
     async fn test_deserialize_adr() {
         let target_extension = "adr";
         let search_path = env::var("ADR_ROOT").unwrap();

@@ -64,7 +64,10 @@ async fn is_eof(file: &mut BufReader<&mut File>) -> Result<bool, Error> {
     }
 }
 
-async fn deserialize_exact(file: &mut BufReader<&mut File>, len: usize) -> Result<Vec<u8>, Error> {
+async fn deserialize_exact(
+    file: &mut BufReader<&mut File>,
+    len: usize,
+) -> Result<(Vec<u8>, usize), Error> {
     let offset = tell(file).await;
     let mut buffer = vec![0; len];
 
@@ -72,38 +75,47 @@ async fn deserialize_exact(file: &mut BufReader<&mut File>, len: usize) -> Resul
         file.read_exact(&mut buffer).await.map_err(|err| err.into());
 
     match result {
-        Ok(_) => Ok(buffer),
+        Ok(bytes_read) => Ok((buffer, bytes_read)),
         Err(kind) => Err(Error { kind, offset }),
     }
 }
 
-async fn deserialize_string(file: &mut BufReader<&mut File>, len: usize) -> Result<String, Error> {
+async fn deserialize_string(
+    file: &mut BufReader<&mut File>,
+    len: usize,
+) -> Result<(String, usize), Error> {
     let offset = tell(file).await;
-    deserialize_exact(file, len).await.and_then(|buffer| {
-        String::from_utf8(buffer).map_err(|err| Error {
-            kind: err.into(),
-            offset,
+    deserialize_exact(file, len)
+        .await
+        .and_then(|(buffer, bytes_read)| {
+            String::from_utf8(buffer)
+                .map(|string| (string, bytes_read))
+                .map_err(|err| Error {
+                    kind: err.into(),
+                    offset,
+                })
         })
-    })
 }
 
 async fn deserialize_null_terminated_string(
     file: &mut BufReader<&mut File>,
-) -> Result<String, Error> {
+) -> Result<(String, usize), Error> {
     let offset = tell(file).await;
     let mut buffer = Vec::new();
 
-    let result: Result<String, ErrorKind> = file
+    let result: Result<_, ErrorKind> = file
         .read_until(b'\0', &mut buffer)
         .await
         .map_err(|err| err.into())
-        .and_then(|_| {
+        .and_then(|bytes_read| {
             buffer.pop_if(|last| *last == b'\0');
-            String::from_utf8(buffer).map_err(|err| err.into())
+            String::from_utf8(buffer)
+                .map(|string| (string, bytes_read))
+                .map_err(|err| err.into())
         });
 
     match result {
-        Ok(string) => Ok(string),
+        Ok(value) => Ok(value),
         Err(kind) => Err(Error { kind, offset }),
     }
 }
