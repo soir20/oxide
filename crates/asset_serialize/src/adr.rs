@@ -35,6 +35,67 @@ async fn deserialize_len(file: &mut BufReader<&mut File>) -> Result<i32, Error> 
         .map(|(len, _)| len)
 }
 
+trait DeserializeEntryType: Sized {
+    fn deserialize(
+        file: &mut BufReader<&mut File>,
+    ) -> impl std::future::Future<Output = Result<(Self, i32), Error>> + Send;
+}
+
+impl<T: TryFromPrimitive<Primitive = u8>> DeserializeEntryType for T {
+    async fn deserialize(file: &mut BufReader<&mut File>) -> Result<(Self, i32), Error> {
+        let offset = tell(file).await;
+        let value = deserialize(file, BufReader::read_u8).await?;
+        let entry_type = Self::try_from_primitive(value).map_err(|_| Error {
+            kind: ErrorKind::UnknownDiscriminant(value.into()),
+            offset,
+        })?;
+
+        Ok((entry_type, 1))
+    }
+}
+
+trait DeserializeEntryData: Sized {
+    fn deserialize<T>(
+        entry_type: &T,
+        file: &mut BufReader<&mut File>,
+    ) -> impl std::future::Future<Output = Result<(Self, i32), Error>> + Send;
+}
+
+trait DeserializeEntry<T, D>: Sized {
+    fn deserialize(
+        file: &mut BufReader<&mut File>,
+    ) -> impl std::future::Future<Output = Result<(Self, i32), Error>> + Send;
+}
+
+pub struct Entry<T, D> {
+    pub entry_type: T,
+    pub len: i32,
+    pub data: D,
+}
+
+impl<T: DeserializeEntryType + Send, D: DeserializeEntryData + Send> DeserializeEntry<T, D>
+    for Entry<T, D>
+{
+    async fn deserialize(file: &mut BufReader<&mut File>) -> Result<(Self, i32), Error> {
+        let (entry_type, type_bytes_read) = T::deserialize(file).await?;
+        let (len, len_bytes_read) = deserialize_len_with_bytes_read(file).await?;
+        let (data, data_bytes_read) = D::deserialize(&entry_type, file).await?;
+
+        let total_bytes_read = type_bytes_read
+            .saturating_add(len_bytes_read)
+            .saturating_add(data_bytes_read);
+
+        Ok((
+            Entry {
+                entry_type,
+                len,
+                data,
+            },
+            total_bytes_read,
+        ))
+    }
+}
+
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
 pub enum SkeletonEntryType {
@@ -548,7 +609,7 @@ mod tests {
     use walkdir::WalkDir;
 
     #[tokio::test]
-    #[ignore]
+    //#[ignore]
     async fn test_deserialize_adr() {
         let target_extension = "adr";
         let search_path = env::var("ADR_ROOT").unwrap();
