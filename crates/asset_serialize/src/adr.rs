@@ -526,18 +526,16 @@ pub struct Adr {
 }
 
 impl DeserializeAsset for Adr {
-    fn deserialize<P: AsRef<std::path::Path> + Send>(
+    async fn deserialize<P: AsRef<std::path::Path> + Send>(
         _: P,
         file: &mut File,
-    ) -> impl std::future::Future<Output = Result<Self, Error>> + Send {
-        async {
-            let mut reader = BufReader::new(file);
-            let mut entries = Vec::new();
-            while !is_eof(&mut reader).await? {
-                entries.push(AdrEntry::deserialize(&mut reader).await?);
-            }
-
-            Ok(Adr { entries })
+    ) -> Result<Self, Error> {
+        let mut reader = BufReader::new(file);
+        let mut entries = Vec::new();
+        while !is_eof(&mut reader).await? {
+            entries.push(AdrEntry::deserialize(&mut reader).await?);
         }
+
+        Ok(Adr { entries })
     }
 }
