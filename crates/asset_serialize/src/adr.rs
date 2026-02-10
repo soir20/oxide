@@ -29,12 +29,6 @@ async fn deserialize_len_with_bytes_read(
     Ok((len, bytes_read))
 }
 
-async fn deserialize_len(file: &mut BufReader<&mut File>) -> Result<i32, Error> {
-    deserialize_len_with_bytes_read(file)
-        .await
-        .map(|(len, _)| len)
-}
-
 trait DeserializeEntryType: Sized {
     fn deserialize(
         file: &mut BufReader<&mut File>,
