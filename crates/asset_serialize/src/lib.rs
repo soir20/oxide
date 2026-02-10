@@ -18,6 +18,7 @@ use tokio::{
 
 use crate::pack::Pack;
 
+#[derive(Debug)]
 pub enum ErrorKind {
     InvalidUtf8(FromUtf8Error),
     Io(tokio::io::Error),
@@ -36,6 +37,7 @@ impl From<tokio::io::Error> for ErrorKind {
     }
 }
 
+#[derive(Debug)]
 pub struct Error {
     pub kind: ErrorKind,
     pub offset: Option<u64>,
