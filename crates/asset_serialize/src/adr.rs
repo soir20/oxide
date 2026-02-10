@@ -120,6 +120,8 @@ impl DeserializeEntryData<SkeletonEntryType> for SkeletonData {
     }
 }
 
+pub type SkeletonEntry = Entry<SkeletonEntryType, SkeletonData>;
+
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
 pub enum ModelEntryType {
@@ -133,8 +135,6 @@ pub enum ModelData {
     MaterialAssetName { name: String },
     Radius { radius: f32 },
 }
-
-pub type ModelEntry = Entry<ModelEntryType, ModelData>;
 
 impl DeserializeEntryData<ModelEntryType> for ModelData {
     async fn deserialize(
@@ -157,6 +157,8 @@ impl DeserializeEntryData<ModelEntryType> for ModelData {
         }
     }
 }
+
+pub type ModelEntry = Entry<ModelEntryType, ModelData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
