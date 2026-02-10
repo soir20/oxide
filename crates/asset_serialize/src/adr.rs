@@ -539,3 +539,35 @@ impl DeserializeAsset for Adr {
         Ok(Adr { entries })
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::env;
+
+    use super::*;
+    use walkdir::WalkDir;
+
+    #[tokio::test]
+    #[ignore]
+    async fn test_deserialize_adr() {
+        let target_extension = "adr";
+        let search_path = env::var("ADR_ROOT").unwrap();
+
+        for entry in WalkDir::new(search_path)
+            .into_iter()
+            .filter_map(|e| e.ok())
+            .filter(|e| {
+                e.path()
+                    .extension()
+                    .map_or(false, |ext| ext == target_extension)
+            })
+        {
+            let mut file = File::open(entry.path())
+                .await
+                .expect(&format!("Failed to open {}", entry.path().display()));
+            Adr::deserialize(entry.path(), &mut file)
+                .await
+                .expect(&format!("Failed to deserialize {}", entry.path().display()));
+        }
+    }
+}
