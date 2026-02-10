@@ -96,6 +96,21 @@ impl<T: DeserializeEntryType + Send, D: DeserializeEntryData<T> + Send> Deserial
     }
 }
 
+async fn deserialize_entries<T, D, E: DeserializeEntry<T, D>>(
+    file: &mut BufReader<&mut File>,
+    len: i32,
+) -> Result<(Vec<E>, i32), Error> {
+    let mut entries = Vec::new();
+    let mut bytes_read = 0;
+    while bytes_read < len {
+        let (entry, entry_bytes_read) = E::deserialize(file).await?;
+        bytes_read = bytes_read.saturating_add(entry_bytes_read);
+        entries.push(entry);
+    }
+
+    Ok((entries, bytes_read))
+}
+
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
 pub enum SkeletonEntryType {
@@ -211,56 +226,37 @@ pub enum ParticleArrayType {
     ParticleEntry = 0x2,
 }
 
-impl ParticleArrayType {
-    async fn deserialize(file: &mut BufReader<&mut File>) -> Result<Self, Error> {
-        let offset = tell(file).await;
-        let value = deserialize(file, BufReader::read_u8).await?;
-        ParticleArrayType::try_from_primitive(value).map_err(|_| Error {
-            kind: ErrorKind::UnknownDiscriminant(value.into()),
-            offset,
-        })
-    }
-}
-
 pub enum ParticleArrayData {
     Unknown { data: Vec<u8> },
     ParticleEntry { entries: Vec<ParticleEntry> },
 }
 
-pub struct ParticleArray {
-    pub entry_type: ParticleArrayType,
-    pub len: i32,
-    pub data: ParticleArrayData,
-}
-
-impl ParticleArray {
-    async fn deserialize(file: &mut BufReader<&mut File>) -> Result<Self, Error> {
-        let entry_type = ParticleArrayType::deserialize(file).await?;
-        let len = deserialize_len(file).await?;
-        let data = match entry_type {
-            ParticleArrayType::Unknown => ParticleArrayData::Unknown {
-                data: deserialize_exact(file, len as usize).await?,
-            },
-            ParticleArrayType::ParticleEntry => {
-                let mut entries = Vec::new();
-                let mut bytes_read = 0;
-                while bytes_read < len {
-                    let entry = ParticleEntry::deserialize(file).await?;
-                    bytes_read = bytes_read.saturating_add(entry.size());
-                    entries.push(entry);
-                }
-
-                ParticleArrayData::ParticleEntry { entries }
+impl DeserializeEntryData<ParticleArrayType> for ParticleArrayData {
+    async fn deserialize(
+        entry_type: &ParticleArrayType,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        let (len, len_bytes_read) = deserialize_len_with_bytes_read(file).await?;
+        match entry_type {
+            ParticleArrayType::Unknown => {
+                let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
+                Ok((
+                    ParticleArrayData::Unknown { data },
+                    len_bytes_read.saturating_add(bytes_read as i32),
+                ))
             }
-        };
-
-        Ok(ParticleArray {
-            entry_type,
-            len,
-            data,
-        })
+            ParticleArrayType::ParticleEntry => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((
+                    ParticleArrayData::ParticleEntry { entries },
+                    len_bytes_read.saturating_add(bytes_read as i32),
+                ))
+            }
+        }
     }
 }
+
+pub type ParticleArray = Entry<ParticleArrayType, ParticleArrayData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
@@ -320,56 +316,37 @@ pub enum AnimationArrayType {
     Unknown = 0xfe,
 }
 
-impl AnimationArrayType {
-    async fn deserialize(file: &mut BufReader<&mut File>) -> Result<Self, Error> {
-        let offset = tell(file).await;
-        let value = deserialize(file, BufReader::read_u8).await?;
-        AnimationArrayType::try_from_primitive(value).map_err(|_| Error {
-            kind: ErrorKind::UnknownDiscriminant(value.into()),
-            offset,
-        })
-    }
-}
-
 pub enum AnimationArrayData {
     AnimationEntry { entries: Vec<AnimationEntry> },
     Unknown { data: Vec<u8> },
 }
 
-pub struct AnimationArray {
-    pub entry_type: AnimationArrayType,
-    pub len: i32,
-    pub data: AnimationArrayData,
-}
-
-impl AnimationArray {
-    async fn deserialize(file: &mut BufReader<&mut File>) -> Result<Self, Error> {
-        let entry_type = AnimationArrayType::deserialize(file).await?;
-        let len = deserialize_len(file).await?;
-        let data = match entry_type {
+impl DeserializeEntryData<AnimationArrayType> for AnimationArrayData {
+    async fn deserialize(
+        entry_type: &AnimationArrayType,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        let (len, len_bytes_read) = deserialize_len_with_bytes_read(file).await?;
+        match entry_type {
             AnimationArrayType::AnimationEntry => {
-                let mut entries = Vec::new();
-                let mut bytes_read = 0;
-                while bytes_read < len {
-                    let entry = AnimationEntry::deserialize(file).await?;
-                    bytes_read = bytes_read.saturating_add(entry.size());
-                    entries.push(entry);
-                }
-
-                AnimationArrayData::AnimationEntry { entries }
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((
+                    AnimationArrayData::AnimationEntry { entries },
+                    len_bytes_read.saturating_add(bytes_read as i32),
+                ))
             }
-            AnimationArrayType::Unknown => AnimationArrayData::Unknown {
-                data: deserialize_exact(file, len as usize).await?,
-            },
-        };
-
-        Ok(AnimationArray {
-            entry_type,
-            len,
-            data,
-        })
+            AnimationArrayType::Unknown => {
+                let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
+                Ok((
+                    AnimationArrayData::Unknown { data },
+                    len_bytes_read.saturating_add(bytes_read as i32),
+                ))
+            }
+        }
     }
 }
+
+pub type AnimationArray = Entry<AnimationArrayType, AnimationArrayData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
