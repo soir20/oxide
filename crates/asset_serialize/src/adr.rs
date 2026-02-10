@@ -380,74 +380,83 @@ pub enum AdrEntryType {
     Unknown = 0x0,
     Skeleton = 0x1,
     Model = 0x2,
-    Particles = 0x3,
-    Animations = 0x9,
-    AnimatedParticles = 0xb,
+    Particle = 0x3,
+    Animation = 0x9,
+    AnimatedParticle = 0xb,
     Collision = 0xd,
-}
-
-impl AdrEntryType {
-    async fn deserialize(file: &mut BufReader<&mut File>) -> Result<Self, Error> {
-        let offset = tell(file).await;
-        let value = deserialize(file, BufReader::read_u8).await?;
-        AdrEntryType::try_from_primitive(value).map_err(|_| Error {
-            kind: ErrorKind::UnknownDiscriminant(value.into()),
-            offset,
-        })
-    }
 }
 
 pub enum AdrData {
     Unknown { data: Vec<u8> },
-    Skeleton { entry: SkeletonEntry },
-    Model { entry: ModelEntry },
-    Particles { entries: ParticleArray },
-    Animations { entries: AnimationArray },
-    AnimatedParticles { data: Vec<u8> },
-    Collision { entry: CollisionEntry },
+    Skeleton { entries: Vec<SkeletonEntry> },
+    Model { entries: Vec<ModelEntry> },
+    Particle { entries: Vec<ParticleArray> },
+    Animation { entries: Vec<AnimationArray> },
+    AnimatedParticle { data: Vec<u8> },
+    Collision { entries: Vec<CollisionEntry> },
 }
 
-pub struct AdrEntry {
-    pub entry_type: AdrEntryType,
-    pub len: i32,
-    pub data: AdrData,
-}
-
-impl AdrEntry {
-    async fn deserialize(file: &mut BufReader<&mut File>) -> Result<Self, Error> {
-        let entry_type = AdrEntryType::deserialize(file).await?;
-        let len = deserialize_len(file).await?;
-        let data = match entry_type {
-            AdrEntryType::Unknown => AdrData::Unknown {
-                data: deserialize_exact(file, len as usize).await?,
-            },
-            AdrEntryType::Skeleton => AdrData::Skeleton {
-                entry: SkeletonEntry::deserialize(file).await?,
-            },
-            AdrEntryType::Model => AdrData::Model {
-                entry: ModelEntry::deserialize(file).await?,
-            },
-            AdrEntryType::Particles => AdrData::Particles {
-                entries: ParticleArray::deserialize(file).await?,
-            },
-            AdrEntryType::Animations => AdrData::Animations {
-                entries: AnimationArray::deserialize(file).await?,
-            },
-            AdrEntryType::AnimatedParticles => AdrData::AnimatedParticles {
-                data: deserialize_exact(file, len as usize).await?,
-            },
-            AdrEntryType::Collision => AdrData::Collision {
-                entry: CollisionEntry::deserialize(file).await?,
-            },
-        };
-
-        Ok(AdrEntry {
-            entry_type,
-            len,
-            data,
-        })
+impl DeserializeEntryData<AdrEntryType> for AdrData {
+    async fn deserialize(
+        entry_type: &AdrEntryType,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        let (len, len_bytes_read) = deserialize_len_with_bytes_read(file).await?;
+        match entry_type {
+            AdrEntryType::Unknown => {
+                let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
+                Ok((
+                    AdrData::Unknown { data },
+                    len_bytes_read.saturating_add(bytes_read as i32),
+                ))
+            }
+            AdrEntryType::Skeleton => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((
+                    AdrData::Skeleton { entries },
+                    len_bytes_read.saturating_add(bytes_read as i32),
+                ))
+            }
+            AdrEntryType::Model => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((
+                    AdrData::Model { entries },
+                    len_bytes_read.saturating_add(bytes_read as i32),
+                ))
+            }
+            AdrEntryType::Particle => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((
+                    AdrData::Particle { entries },
+                    len_bytes_read.saturating_add(bytes_read as i32),
+                ))
+            }
+            AdrEntryType::Animation => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((
+                    AdrData::Animation { entries },
+                    len_bytes_read.saturating_add(bytes_read as i32),
+                ))
+            }
+            AdrEntryType::AnimatedParticle => {
+                let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
+                Ok((
+                    AdrData::AnimatedParticle { data },
+                    len_bytes_read.saturating_add(bytes_read as i32),
+                ))
+            }
+            AdrEntryType::Collision => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((
+                    AdrData::Collision { entries },
+                    len_bytes_read.saturating_add(bytes_read as i32),
+                ))
+            }
+        }
     }
 }
+
+pub type AdrEntry = Entry<AdrEntryType, AdrData>;
 
 pub struct Adr {
     pub entries: Vec<AdrEntry>,
@@ -461,7 +470,8 @@ impl DeserializeAsset for Adr {
         let mut reader = BufReader::new(file);
         let mut entries = Vec::new();
         while !is_eof(&mut reader).await? {
-            entries.push(AdrEntry::deserialize(&mut reader).await?);
+            let (entry, _) = AdrEntry::deserialize(&mut reader).await?;
+            entries.push(entry);
         }
 
         Ok(Adr { entries })

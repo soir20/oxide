@@ -32,7 +32,7 @@ impl DeserializeAsset for Pack {
 
             for _ in 0..files_in_group {
                 let name_len = deserialize(&mut reader, BufReader::read_u32).await?;
-                let name = deserialize_string(&mut reader, name_len as usize).await?;
+                let (name, _) = deserialize_string(&mut reader, name_len as usize).await?;
 
                 let offset = deserialize(&mut reader, BufReader::read_u32).await? as u64;
                 let size = deserialize(&mut reader, BufReader::read_u32).await?;
