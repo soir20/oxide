@@ -66,14 +66,14 @@ async fn is_eof(file: &mut BufReader<&mut File>) -> Result<bool, Error> {
 
 async fn deserialize_exact(file: &mut BufReader<&mut File>, len: usize) -> Result<Vec<u8>, Error> {
     let offset = tell(file).await;
-    let mut buffer = vec![0; len as usize];
+    let mut buffer = vec![0; len];
 
     let result: Result<usize, ErrorKind> =
         file.read_exact(&mut buffer).await.map_err(|err| err.into());
 
     match result {
         Ok(_) => Ok(buffer),
-        Err(kind) => Err(Error { kind: kind, offset }),
+        Err(kind) => Err(Error { kind, offset }),
     }
 }
 
@@ -104,7 +104,7 @@ async fn deserialize_null_terminated_string(
 
     match result {
         Ok(string) => Ok(string),
-        Err(kind) => Err(Error { kind: kind, offset }),
+        Err(kind) => Err(Error { kind, offset }),
     }
 }
 
@@ -130,7 +130,7 @@ pub struct Asset {
 async fn list_assets_in_file(path: PathBuf, mut file: File) -> HashMap<String, Asset> {
     let is_pack = path
         .extension()
-        .map(|ext| ext.to_ascii_lowercase() == "pack")
+        .map(|ext| ext.eq_ignore_ascii_case("pack"))
         .unwrap_or(false);
     match is_pack {
         true => {
