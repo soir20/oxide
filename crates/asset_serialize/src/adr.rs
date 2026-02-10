@@ -243,7 +243,7 @@ impl DeserializeEntryData<ParticleArrayType> for ParticleArrayData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((
                     ParticleArrayData::ParticleEntry { entries },
-                    len_bytes_read.saturating_add(bytes_read as i32),
+                    len_bytes_read.saturating_add(bytes_read),
                 ))
             }
         }
@@ -326,7 +326,7 @@ impl DeserializeEntryData<AnimationArrayType> for AnimationArrayData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((
                     AnimationArrayData::AnimationEntry { entries },
-                    len_bytes_read.saturating_add(bytes_read as i32),
+                    len_bytes_read.saturating_add(bytes_read),
                 ))
             }
             AnimationArrayType::Unknown => {
@@ -408,28 +408,28 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((
                     AdrData::Skeleton { entries },
-                    len_bytes_read.saturating_add(bytes_read as i32),
+                    len_bytes_read.saturating_add(bytes_read),
                 ))
             }
             AdrEntryType::Model => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((
                     AdrData::Model { entries },
-                    len_bytes_read.saturating_add(bytes_read as i32),
+                    len_bytes_read.saturating_add(bytes_read),
                 ))
             }
             AdrEntryType::Particle => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((
                     AdrData::Particle { entries },
-                    len_bytes_read.saturating_add(bytes_read as i32),
+                    len_bytes_read.saturating_add(bytes_read),
                 ))
             }
             AdrEntryType::Animation => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((
                     AdrData::Animation { entries },
-                    len_bytes_read.saturating_add(bytes_read as i32),
+                    len_bytes_read.saturating_add(bytes_read),
                 ))
             }
             AdrEntryType::AnimatedParticle => {
@@ -443,7 +443,7 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((
                     AdrData::Collision { entries },
-                    len_bytes_read.saturating_add(bytes_read as i32),
+                    len_bytes_read.saturating_add(bytes_read),
                 ))
             }
         }
@@ -480,7 +480,7 @@ mod tests {
     use walkdir::WalkDir;
 
     #[tokio::test]
-    #[ignore]
+    //#[ignore]
     async fn test_deserialize_adr() {
         let target_extension = "adr";
         let search_path = env::var("ADR_ROOT").unwrap();
