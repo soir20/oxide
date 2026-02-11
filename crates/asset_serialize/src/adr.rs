@@ -471,10 +471,11 @@ pub enum AdrEntryType {
     Collision = 0xd,
     Unknown8 = 0xe,
     Unknown9 = 0xf,
-    Unknown10 = 0x12,
-    Unknown11 = 0x14,
-    Unknown12 = 0x15,
-    Unknown13 = 0x16,
+    Unknown10 = 0x10,
+    Unknown11 = 0x12,
+    Unknown12 = 0x14,
+    Unknown13 = 0x15,
+    Unknown14 = 0x16,
 }
 
 pub enum AdrData {
@@ -497,6 +498,7 @@ pub enum AdrData {
     Unknown11 { data: Vec<u8> },
     Unknown12 { data: Vec<u8> },
     Unknown13 { data: Vec<u8> },
+    Unknown14 { data: Vec<u8> },
 }
 
 impl DeserializeEntryData<AdrEntryType> for AdrData {
@@ -581,6 +583,10 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
             AdrEntryType::Unknown13 => {
                 let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
                 Ok((AdrData::Unknown13 { data }, bytes_read as i32))
+            }
+            AdrEntryType::Unknown14 => {
+                let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
+                Ok((AdrData::Unknown14 { data }, bytes_read as i32))
             }
         }
     }
