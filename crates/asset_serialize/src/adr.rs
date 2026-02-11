@@ -145,12 +145,14 @@ pub enum ModelEntryType {
     ModelAssetName = 0x1,
     MaterialAssetName = 0x2,
     Radius = 0x3,
+    Unknown = 0x5,
 }
 
 pub enum ModelData {
     ModelAssetName { name: String },
     MaterialAssetName { name: String },
     Radius { radius: f32 },
+    Unknown { data: Vec<u8> },
 }
 
 impl DeserializeEntryData<ModelEntryType> for ModelData {
@@ -171,6 +173,10 @@ impl DeserializeEntryData<ModelEntryType> for ModelData {
             ModelEntryType::Radius => {
                 let radius = deserialize(file, BufReader::read_f32).await?;
                 Ok((ModelData::Radius { radius }, 4))
+            }
+            ModelEntryType::Unknown => {
+                let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
+                Ok((ModelData::Unknown { data }, bytes_read as i32))
             }
         }
     }
@@ -193,7 +199,8 @@ pub enum ParticleEntryType {
     EffectAssetName = 0xa,
     Unknown7 = 0xb,
     Unknown8 = 0xd,
-    Unknown9 = 0xfe,
+    Unknown9 = 0xe,
+    Unknown10 = 0xfe,
 }
 
 pub enum ParticleData {
@@ -210,6 +217,7 @@ pub enum ParticleData {
     Unknown7 { data: Vec<u8> },
     Unknown8 { data: Vec<u8> },
     Unknown9 { data: Vec<u8> },
+    Unknown10 { data: Vec<u8> },
 }
 
 impl DeserializeEntryData<ParticleEntryType> for ParticleData {
@@ -270,6 +278,10 @@ impl DeserializeEntryData<ParticleEntryType> for ParticleData {
             ParticleEntryType::Unknown9 => {
                 let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
                 Ok((ParticleData::Unknown9 { data }, bytes_read as i32))
+            }
+            ParticleEntryType::Unknown10 => {
+                let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
+                Ok((ParticleData::Unknown10 { data }, bytes_read as i32))
             }
         }
     }
@@ -448,18 +460,21 @@ pub enum AdrEntryType {
     Skeleton = 0x1,
     Model = 0x2,
     Particle = 0x3,
-    Unknown2 = 0x5,
-    Unknown3 = 0x6,
-    Unknown4 = 0x7,
+    Unknown2 = 0x4,
+    Unknown3 = 0x5,
+    Unknown4 = 0x6,
+    Unknown5 = 0x7,
     Animation = 0x9,
-    Unknown5 = 0xa,
+    Unknown6 = 0xa,
     AnimatedParticle = 0xb,
-    Unknown6 = 0xc,
+    Unknown7 = 0xc,
     Collision = 0xd,
-    Unknown7 = 0xf,
-    Unknown8 = 0x12,
-    Unknown9 = 0x15,
-    Unknown10 = 0x16,
+    Unknown8 = 0xe,
+    Unknown9 = 0xf,
+    Unknown10 = 0x12,
+    Unknown11 = 0x14,
+    Unknown12 = 0x15,
+    Unknown13 = 0x16,
 }
 
 pub enum AdrData {
@@ -470,15 +485,18 @@ pub enum AdrData {
     Unknown2 { data: Vec<u8> },
     Unknown3 { data: Vec<u8> },
     Unknown4 { data: Vec<u8> },
-    Animation { entries: Vec<AnimationArray> },
     Unknown5 { data: Vec<u8> },
-    AnimatedParticle { data: Vec<u8> },
+    Animation { entries: Vec<AnimationArray> },
     Unknown6 { data: Vec<u8> },
-    Collision { entries: Vec<CollisionEntry> },
+    AnimatedParticle { data: Vec<u8> },
     Unknown7 { data: Vec<u8> },
+    Collision { entries: Vec<CollisionEntry> },
     Unknown8 { data: Vec<u8> },
     Unknown9 { data: Vec<u8> },
     Unknown10 { data: Vec<u8> },
+    Unknown11 { data: Vec<u8> },
+    Unknown12 { data: Vec<u8> },
+    Unknown13 { data: Vec<u8> },
 }
 
 impl DeserializeEntryData<AdrEntryType> for AdrData {
@@ -516,29 +534,29 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
                 let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
                 Ok((AdrData::Unknown4 { data }, bytes_read as i32))
             }
-            AdrEntryType::Animation => {
-                let (entries, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((AdrData::Animation { entries }, bytes_read))
-            }
             AdrEntryType::Unknown5 => {
                 let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
                 Ok((AdrData::Unknown5 { data }, bytes_read as i32))
             }
-            AdrEntryType::AnimatedParticle => {
-                let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
-                Ok((AdrData::AnimatedParticle { data }, bytes_read as i32))
+            AdrEntryType::Animation => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AdrData::Animation { entries }, bytes_read))
             }
             AdrEntryType::Unknown6 => {
                 let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
                 Ok((AdrData::Unknown6 { data }, bytes_read as i32))
             }
-            AdrEntryType::Collision => {
-                let (entries, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((AdrData::Collision { entries }, bytes_read))
+            AdrEntryType::AnimatedParticle => {
+                let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
+                Ok((AdrData::AnimatedParticle { data }, bytes_read as i32))
             }
             AdrEntryType::Unknown7 => {
                 let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
                 Ok((AdrData::Unknown7 { data }, bytes_read as i32))
+            }
+            AdrEntryType::Collision => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AdrData::Collision { entries }, bytes_read))
             }
             AdrEntryType::Unknown8 => {
                 let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
@@ -551,6 +569,18 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
             AdrEntryType::Unknown10 => {
                 let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
                 Ok((AdrData::Unknown10 { data }, bytes_read as i32))
+            }
+            AdrEntryType::Unknown11 => {
+                let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
+                Ok((AdrData::Unknown11 { data }, bytes_read as i32))
+            }
+            AdrEntryType::Unknown12 => {
+                let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
+                Ok((AdrData::Unknown12 { data }, bytes_read as i32))
+            }
+            AdrEntryType::Unknown13 => {
+                let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
+                Ok((AdrData::Unknown13 { data }, bytes_read as i32))
             }
         }
     }
