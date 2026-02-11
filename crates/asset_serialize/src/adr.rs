@@ -242,10 +242,7 @@ impl DeserializeEntryData<ParticleArrayType> for ParticleArrayData {
             }
             ParticleArrayType::ParticleEntry => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((
-                    ParticleArrayData::ParticleEntry { entries },
-                    bytes_read as i32,
-                ))
+                Ok((ParticleArrayData::ParticleEntry { entries }, bytes_read))
             }
         }
     }
