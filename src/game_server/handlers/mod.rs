@@ -57,7 +57,7 @@ pub fn direction(old_pos: Pos, new_pos: Pos) -> Pos {
         x: dir_x / distance_required,
         y: dir_y / distance_required,
         z: dir_z / distance_required,
-        w: 1.0,
+        w: new_pos.w,
     }
 }
 
