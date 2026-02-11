@@ -22,7 +22,7 @@ use crate::pack::Pack;
 pub enum ErrorKind {
     InvalidUtf8(FromUtf8Error),
     Io(tokio::io::Error),
-    UnknownDiscriminant(u64),
+    UnknownDiscriminant(u64, &'static str),
 }
 
 impl From<FromUtf8Error> for ErrorKind {

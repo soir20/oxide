@@ -40,7 +40,7 @@ impl<T: TryFromPrimitive<Primitive = u8>> DeserializeEntryType for T {
         let offset = tell(file).await;
         let value = deserialize(file, BufReader::read_u8).await?;
         let entry_type = Self::try_from_primitive(value).map_err(|_| Error {
-            kind: ErrorKind::UnknownDiscriminant(value.into()),
+            kind: ErrorKind::UnknownDiscriminant(value.into(), T::NAME),
             offset,
         })?;
 
