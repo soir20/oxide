@@ -5,8 +5,8 @@ use tokio::{
 };
 
 use crate::{
-    deserialize, deserialize_exact, deserialize_null_terminated_string, is_eof, tell,
-    DeserializeAsset, Error, ErrorKind,
+    deserialize, deserialize_exact, deserialize_string, is_eof, tell, DeserializeAsset, Error,
+    ErrorKind,
 };
 
 async fn deserialize_len_with_bytes_read(
@@ -51,6 +51,7 @@ impl<T: TryFromPrimitive<Primitive = u8>> DeserializeEntryType for T {
 trait DeserializeEntryData<T>: Sized {
     fn deserialize(
         entry_type: &T,
+        entry_len: i32,
         file: &mut BufReader<&mut File>,
     ) -> impl std::future::Future<Output = Result<(Self, i32), Error>> + Send;
 }
@@ -73,7 +74,7 @@ impl<T: DeserializeEntryType + Send, D: DeserializeEntryData<T> + Send> Deserial
     async fn deserialize(file: &mut BufReader<&mut File>) -> Result<(Self, i32), Error> {
         let (entry_type, type_bytes_read) = T::deserialize(file).await?;
         let (len, len_bytes_read) = deserialize_len_with_bytes_read(file).await?;
-        let (data, data_bytes_read) = D::deserialize(&entry_type, file).await?;
+        let (data, data_bytes_read) = D::deserialize(&entry_type, len, file).await?;
 
         let total_bytes_read = type_bytes_read
             .saturating_add(len_bytes_read)
@@ -118,11 +119,12 @@ pub enum SkeletonData {
 impl DeserializeEntryData<SkeletonEntryType> for SkeletonData {
     async fn deserialize(
         entry_type: &SkeletonEntryType,
+        len: i32,
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             SkeletonEntryType::AssetName => {
-                let (name, bytes_read) = deserialize_null_terminated_string(file).await?;
+                let (name, bytes_read) = deserialize_string(file, len as usize).await?;
                 Ok((SkeletonData::AssetName { name }, bytes_read as i32))
             }
         }
@@ -148,15 +150,16 @@ pub enum ModelData {
 impl DeserializeEntryData<ModelEntryType> for ModelData {
     async fn deserialize(
         entry_type: &ModelEntryType,
+        len: i32,
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             ModelEntryType::ModelAssetName => {
-                let (name, bytes_read) = deserialize_null_terminated_string(file).await?;
+                let (name, bytes_read) = deserialize_string(file, len as usize).await?;
                 Ok((ModelData::ModelAssetName { name }, bytes_read as i32))
             }
             ModelEntryType::MaterialAssetName => {
-                let (name, bytes_read) = deserialize_null_terminated_string(file).await?;
+                let (name, bytes_read) = deserialize_string(file, len as usize).await?;
                 Ok((ModelData::MaterialAssetName { name }, bytes_read as i32))
             }
             ModelEntryType::Radius => {
@@ -188,6 +191,7 @@ pub enum ParticleData {
 impl DeserializeEntryData<ParticleEntryType> for ParticleData {
     async fn deserialize(
         entry_type: &ParticleEntryType,
+        len: i32,
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
@@ -196,15 +200,15 @@ impl DeserializeEntryData<ParticleEntryType> for ParticleData {
                 Ok((ParticleData::EffectId { effect_id }, 4))
             }
             ParticleEntryType::EmitterName => {
-                let (name, bytes_read) = deserialize_null_terminated_string(file).await?;
+                let (name, bytes_read) = deserialize_string(file, len as usize).await?;
                 Ok((ParticleData::EmitterName { name }, bytes_read as i32))
             }
             ParticleEntryType::BoneName => {
-                let (name, bytes_read) = deserialize_null_terminated_string(file).await?;
+                let (name, bytes_read) = deserialize_string(file, len as usize).await?;
                 Ok((ParticleData::BoneName { name }, bytes_read as i32))
             }
             ParticleEntryType::EffectAssetName => {
-                let (name, bytes_read) = deserialize_null_terminated_string(file).await?;
+                let (name, bytes_read) = deserialize_string(file, len as usize).await?;
                 Ok((ParticleData::EffectAssetName { name }, bytes_read as i32))
             }
         }
@@ -228,22 +232,19 @@ pub enum ParticleArrayData {
 impl DeserializeEntryData<ParticleArrayType> for ParticleArrayData {
     async fn deserialize(
         entry_type: &ParticleArrayType,
+        len: i32,
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
-        let (len, len_bytes_read) = deserialize_len_with_bytes_read(file).await?;
         match entry_type {
             ParticleArrayType::Unknown => {
                 let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
-                Ok((
-                    ParticleArrayData::Unknown { data },
-                    len_bytes_read.saturating_add(bytes_read as i32),
-                ))
+                Ok((ParticleArrayData::Unknown { data }, bytes_read as i32))
             }
             ParticleArrayType::ParticleEntry => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((
                     ParticleArrayData::ParticleEntry { entries },
-                    len_bytes_read.saturating_add(bytes_read),
+                    bytes_read as i32,
                 ))
             }
         }
@@ -278,15 +279,16 @@ pub enum AnimationData {
 impl DeserializeEntryData<AnimationEntryType> for AnimationData {
     async fn deserialize(
         entry_type: &AnimationEntryType,
+        len: i32,
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             AnimationEntryType::AnimationName => {
-                let (name, bytes_read) = deserialize_null_terminated_string(file).await?;
+                let (name, bytes_read) = deserialize_string(file, len as usize).await?;
                 Ok((AnimationData::AnimationName { name }, bytes_read as i32))
             }
             AnimationEntryType::AssetName => {
-                let (name, bytes_read) = deserialize_null_terminated_string(file).await?;
+                let (name, bytes_read) = deserialize_string(file, len as usize).await?;
                 Ok((AnimationData::AssetName { name }, bytes_read as i32))
             }
             AnimationEntryType::Duration => {
@@ -318,23 +320,17 @@ pub enum AnimationArrayData {
 impl DeserializeEntryData<AnimationArrayType> for AnimationArrayData {
     async fn deserialize(
         entry_type: &AnimationArrayType,
+        len: i32,
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
-        let (len, len_bytes_read) = deserialize_len_with_bytes_read(file).await?;
         match entry_type {
             AnimationArrayType::AnimationEntry => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((
-                    AnimationArrayData::AnimationEntry { entries },
-                    len_bytes_read.saturating_add(bytes_read),
-                ))
+                Ok((AnimationArrayData::AnimationEntry { entries }, bytes_read))
             }
             AnimationArrayType::Unknown => {
                 let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
-                Ok((
-                    AnimationArrayData::Unknown { data },
-                    len_bytes_read.saturating_add(bytes_read as i32),
-                ))
+                Ok((AnimationArrayData::Unknown { data }, bytes_read as i32))
             }
         }
     }
@@ -355,11 +351,12 @@ pub enum CollisionData {
 impl DeserializeEntryData<CollisionEntryType> for CollisionData {
     async fn deserialize(
         entry_type: &CollisionEntryType,
+        len: i32,
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             CollisionEntryType::AssetName => {
-                let (name, bytes_read) = deserialize_null_terminated_string(file).await?;
+                let (name, bytes_read) = deserialize_string(file, len as usize).await?;
                 Ok((CollisionData::AssetName { name }, bytes_read as i32))
             }
         }
@@ -393,58 +390,37 @@ pub enum AdrData {
 impl DeserializeEntryData<AdrEntryType> for AdrData {
     async fn deserialize(
         entry_type: &AdrEntryType,
+        len: i32,
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
-        let (len, len_bytes_read) = deserialize_len_with_bytes_read(file).await?;
         match entry_type {
             AdrEntryType::Unknown => {
                 let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
-                Ok((
-                    AdrData::Unknown { data },
-                    len_bytes_read.saturating_add(bytes_read as i32),
-                ))
+                Ok((AdrData::Unknown { data }, bytes_read as i32))
             }
             AdrEntryType::Skeleton => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((
-                    AdrData::Skeleton { entries },
-                    len_bytes_read.saturating_add(bytes_read),
-                ))
+                Ok((AdrData::Skeleton { entries }, bytes_read))
             }
             AdrEntryType::Model => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((
-                    AdrData::Model { entries },
-                    len_bytes_read.saturating_add(bytes_read),
-                ))
+                Ok((AdrData::Model { entries }, bytes_read))
             }
             AdrEntryType::Particle => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((
-                    AdrData::Particle { entries },
-                    len_bytes_read.saturating_add(bytes_read),
-                ))
+                Ok((AdrData::Particle { entries }, bytes_read))
             }
             AdrEntryType::Animation => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((
-                    AdrData::Animation { entries },
-                    len_bytes_read.saturating_add(bytes_read),
-                ))
+                Ok((AdrData::Animation { entries }, bytes_read))
             }
             AdrEntryType::AnimatedParticle => {
                 let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
-                Ok((
-                    AdrData::AnimatedParticle { data },
-                    len_bytes_read.saturating_add(bytes_read as i32),
-                ))
+                Ok((AdrData::AnimatedParticle { data }, bytes_read as i32))
             }
             AdrEntryType::Collision => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((
-                    AdrData::Collision { entries },
-                    len_bytes_read.saturating_add(bytes_read),
-                ))
+                Ok((AdrData::Collision { entries }, bytes_read))
             }
         }
     }
@@ -480,7 +456,7 @@ mod tests {
     use walkdir::WalkDir;
 
     #[tokio::test]
-    //#[ignore]
+    #[ignore]
     async fn test_deserialize_adr() {
         let target_extension = "adr";
         let search_path = env::var("ADR_ROOT").unwrap();

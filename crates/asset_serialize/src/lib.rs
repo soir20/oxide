@@ -87,7 +87,8 @@ async fn deserialize_string(
     let offset = tell(file).await;
     deserialize_exact(file, len)
         .await
-        .and_then(|(buffer, bytes_read)| {
+        .and_then(|(mut buffer, bytes_read)| {
+            buffer.pop_if(|last| *last == b'\0');
             String::from_utf8(buffer)
                 .map(|string| (string, bytes_read))
                 .map_err(|err| Error {
@@ -95,29 +96,6 @@ async fn deserialize_string(
                     offset,
                 })
         })
-}
-
-async fn deserialize_null_terminated_string(
-    file: &mut BufReader<&mut File>,
-) -> Result<(String, usize), Error> {
-    let offset = tell(file).await;
-    let mut buffer = Vec::new();
-
-    let result: Result<_, ErrorKind> = file
-        .read_until(b'\0', &mut buffer)
-        .await
-        .map_err(|err| err.into())
-        .and_then(|bytes_read| {
-            buffer.pop_if(|last| *last == b'\0');
-            String::from_utf8(buffer)
-                .map(|string| (string, bytes_read))
-                .map_err(|err| err.into())
-        });
-
-    match result {
-        Ok(value) => Ok(value),
-        Err(kind) => Err(Error { kind, offset }),
-    }
 }
 
 async fn deserialize<'a, 'b, T, Fut: Future<Output = Result<T, tokio::io::Error>>>(
