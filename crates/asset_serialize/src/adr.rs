@@ -370,10 +370,13 @@ pub enum AdrEntryType {
     Skeleton = 0x1,
     Model = 0x2,
     Particle = 0x3,
+    Unknown2 = 0x5,
     Animation = 0x9,
+    Unknown3 = 0xa,
     AnimatedParticle = 0xb,
+    Unknown4 = 0xc,
     Collision = 0xd,
-    Unknown2 = 0xf,
+    Unknown5 = 0xf,
 }
 
 pub enum AdrData {
@@ -381,10 +384,13 @@ pub enum AdrData {
     Skeleton { entries: Vec<SkeletonEntry> },
     Model { entries: Vec<ModelEntry> },
     Particle { entries: Vec<ParticleArray> },
-    Animation { entries: Vec<AnimationArray> },
-    AnimatedParticle { data: Vec<u8> },
-    Collision { entries: Vec<CollisionEntry> },
     Unknown2 { data: Vec<u8> },
+    Animation { entries: Vec<AnimationArray> },
+    Unknown3 { data: Vec<u8> },
+    AnimatedParticle { data: Vec<u8> },
+    Unknown4 { data: Vec<u8> },
+    Collision { entries: Vec<CollisionEntry> },
+    Unknown5 { data: Vec<u8> },
 }
 
 impl DeserializeEntryData<AdrEntryType> for AdrData {
@@ -410,21 +416,33 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((AdrData::Particle { entries }, bytes_read))
             }
+            AdrEntryType::Unknown2 => {
+                let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
+                Ok((AdrData::Unknown2 { data }, bytes_read as i32))
+            }
             AdrEntryType::Animation => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((AdrData::Animation { entries }, bytes_read))
+            }
+            AdrEntryType::Unknown3 => {
+                let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
+                Ok((AdrData::Unknown3 { data }, bytes_read as i32))
             }
             AdrEntryType::AnimatedParticle => {
                 let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
                 Ok((AdrData::AnimatedParticle { data }, bytes_read as i32))
             }
+            AdrEntryType::Unknown4 => {
+                let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
+                Ok((AdrData::Unknown4 { data }, bytes_read as i32))
+            }
             AdrEntryType::Collision => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((AdrData::Collision { entries }, bytes_read))
             }
-            AdrEntryType::Unknown2 => {
+            AdrEntryType::Unknown5 => {
                 let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
-                Ok((AdrData::Unknown2 { data }, bytes_read as i32))
+                Ok((AdrData::Unknown5 { data }, bytes_read as i32))
             }
         }
     }
@@ -460,7 +478,7 @@ mod tests {
     use walkdir::WalkDir;
 
     #[tokio::test]
-    #[ignore]
+    //#[ignore]
     async fn test_deserialize_adr() {
         let target_extension = "adr";
         let search_path = env::var("ADR_ROOT").unwrap();
