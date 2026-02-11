@@ -198,9 +198,10 @@ pub enum ParticleEntryType {
     Unknown6 = 0x9,
     EffectAssetName = 0xa,
     Unknown7 = 0xb,
-    Unknown8 = 0xd,
-    Unknown9 = 0xe,
-    Unknown10 = 0xfe,
+    Unknown8 = 0xc,
+    Unknown9 = 0xd,
+    Unknown10 = 0xe,
+    Unknown11 = 0xfe,
 }
 
 pub enum ParticleData {
@@ -218,6 +219,7 @@ pub enum ParticleData {
     Unknown8 { data: Vec<u8> },
     Unknown9 { data: Vec<u8> },
     Unknown10 { data: Vec<u8> },
+    Unknown11 { data: Vec<u8> },
 }
 
 impl DeserializeEntryData<ParticleEntryType> for ParticleData {
@@ -282,6 +284,10 @@ impl DeserializeEntryData<ParticleEntryType> for ParticleData {
             ParticleEntryType::Unknown10 => {
                 let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
                 Ok((ParticleData::Unknown10 { data }, bytes_read as i32))
+            }
+            ParticleEntryType::Unknown11 => {
+                let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
+                Ok((ParticleData::Unknown11 { data }, bytes_read as i32))
             }
         }
     }
