@@ -292,7 +292,7 @@ pub fn process_chat_command(
                                 Ok(coord) => coord, Err(input) => return err(&format!("Invalid Z coordinate: {}", input)),
                             };
 
-                            let destination_pos = Pos { x, y, z, w: 1.0 };
+                            let destination_pos = Pos { x, y, z, w: current_pos.w };
                             let destination_rot = requester_read_handle.stats.rot;
 
                             teleport_within_zone(sender, destination_pos, destination_rot)
