@@ -185,7 +185,7 @@ pub fn process_chat_command(
 
                     if arguments
                         .get(1)
-                        .map(|f| f == "-h" || f == "-help")
+                        .map(|f| f == "-h" || f == "--help")
                         .unwrap_or(false)
                     {
                         return coerce_to_broadcast_supplier(move |_| {
