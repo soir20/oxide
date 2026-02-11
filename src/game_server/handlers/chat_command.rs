@@ -360,15 +360,15 @@ fn make_freecam_packets(sender: u32, requester_guid: u64, enabled: bool) -> Vec<
                             unknown12: false,
                             build_areas: vec![BuildArea {
                                 min: Pos {
-                                    x: -100000.0,
-                                    y: -100000.0,
-                                    z: -100000.0,
+                                    x: F32::MIN,
+                                    y: F32::MIN,
+                                    z: F32::MIN,
                                     w: 1.0,
                                 },
                                 max: Pos {
-                                    x: 100000.0,
-                                    y: 100000.0,
-                                    z: 100000.0,
+                                    x: F32::MAX,
+                                    y: F32::MAX,
+                                    z: F32::MAX,
                                     w: 1.0,
                                 },
                             }],
