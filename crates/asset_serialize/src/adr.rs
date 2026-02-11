@@ -12,15 +12,15 @@ use crate::{
 async fn deserialize_len_with_bytes_read(
     file: &mut BufReader<&mut File>,
 ) -> Result<(i32, i32), Error> {
-    let len_marker = deserialize(file, BufReader::read_i8).await?;
+    let len_marker = deserialize(file, BufReader::read_u8).await?;
     let mut len: i32 = len_marker.into();
     let mut bytes_read = 1;
-    if len_marker < 0 {
-        if len_marker == -1 {
+    if len_marker >= 128 {
+        if len_marker == 0xff {
             len = deserialize(file, BufReader::read_i32_le).await?;
             bytes_read += 4;
         } else {
-            let len_byte2 = deserialize(file, BufReader::read_i8).await?;
+            let len_byte2 = deserialize(file, BufReader::read_u8).await?;
             len = ((i32::from(len_marker) & 0b0111_1111) << 8) | i32::from(len_byte2);
             bytes_read += 1;
         }
