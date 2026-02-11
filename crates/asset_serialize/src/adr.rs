@@ -184,14 +184,16 @@ pub enum ParticleEntryType {
     EffectId = 0x1,
     EmitterName = 0x2,
     BoneName = 0x3,
-    Unknown1 = 0x5,
-    Unknown2 = 0x6,
-    Unknown3 = 0x7,
-    Unknown4 = 0x8,
-    Unknown5 = 0x9,
+    Unknown1 = 0x4,
+    Unknown2 = 0x5,
+    Unknown3 = 0x6,
+    Unknown4 = 0x7,
+    Unknown5 = 0x8,
+    Unknown6 = 0x9,
     EffectAssetName = 0xa,
-    Unknown6 = 0xb,
-    Unknown7 = 0xfe,
+    Unknown7 = 0xb,
+    Unknown8 = 0xd,
+    Unknown9 = 0xfe,
 }
 
 pub enum ParticleData {
@@ -203,9 +205,11 @@ pub enum ParticleData {
     Unknown3 { data: Vec<u8> },
     Unknown4 { data: Vec<u8> },
     Unknown5 { data: Vec<u8> },
-    EffectAssetName { name: String },
     Unknown6 { data: Vec<u8> },
+    EffectAssetName { name: String },
     Unknown7 { data: Vec<u8> },
+    Unknown8 { data: Vec<u8> },
+    Unknown9 { data: Vec<u8> },
 }
 
 impl DeserializeEntryData<ParticleEntryType> for ParticleData {
@@ -247,17 +251,25 @@ impl DeserializeEntryData<ParticleEntryType> for ParticleData {
                 let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
                 Ok((ParticleData::Unknown5 { data }, bytes_read as i32))
             }
-            ParticleEntryType::EffectAssetName => {
-                let (name, bytes_read) = deserialize_string(file, len as usize).await?;
-                Ok((ParticleData::EffectAssetName { name }, bytes_read as i32))
-            }
             ParticleEntryType::Unknown6 => {
                 let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
                 Ok((ParticleData::Unknown6 { data }, bytes_read as i32))
             }
+            ParticleEntryType::EffectAssetName => {
+                let (name, bytes_read) = deserialize_string(file, len as usize).await?;
+                Ok((ParticleData::EffectAssetName { name }, bytes_read as i32))
+            }
             ParticleEntryType::Unknown7 => {
                 let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
                 Ok((ParticleData::Unknown7 { data }, bytes_read as i32))
+            }
+            ParticleEntryType::Unknown8 => {
+                let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
+                Ok((ParticleData::Unknown8 { data }, bytes_read as i32))
+            }
+            ParticleEntryType::Unknown9 => {
+                let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
+                Ok((ParticleData::Unknown9 { data }, bytes_read as i32))
             }
         }
     }
@@ -303,8 +315,10 @@ pub type ParticleArray = Entry<ParticleArrayType, ParticleArrayData>;
 pub enum AnimationEntryType {
     AnimationName = 0x1,
     AssetName = 0x2,
+    Unknown1 = 0x3,
     Duration = 0x4,
     LoadType = 0x5,
+    Unknown2 = 0x7,
 }
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
@@ -318,8 +332,10 @@ pub enum AnimationLoadType {
 pub enum AnimationData {
     AnimationName { name: String },
     AssetName { name: String },
+    Unknown1 { data: Vec<u8> },
     Duration { duration_seconds: f32 },
     LoadType { load_type: AnimationLoadType },
+    Unknown2 { data: Vec<u8> },
 }
 
 impl DeserializeEntryData<AnimationEntryType> for AnimationData {
@@ -337,6 +353,10 @@ impl DeserializeEntryData<AnimationEntryType> for AnimationData {
                 let (name, bytes_read) = deserialize_string(file, len as usize).await?;
                 Ok((AnimationData::AssetName { name }, bytes_read as i32))
             }
+            AnimationEntryType::Unknown1 => {
+                let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
+                Ok((AnimationData::Unknown1 { data }, bytes_read as i32))
+            }
             AnimationEntryType::Duration => {
                 let duration_seconds = deserialize(file, BufReader::read_f32).await?;
                 Ok((AnimationData::Duration { duration_seconds }, 4))
@@ -344,6 +364,10 @@ impl DeserializeEntryData<AnimationEntryType> for AnimationData {
             AnimationEntryType::LoadType => {
                 let (load_type, bytes_read) = AnimationLoadType::deserialize(file).await?;
                 Ok((AnimationData::LoadType { load_type }, bytes_read))
+            }
+            AnimationEntryType::Unknown2 => {
+                let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
+                Ok((AnimationData::Unknown2 { data }, bytes_read as i32))
             }
         }
     }
@@ -355,12 +379,14 @@ pub type AnimationEntry = Entry<AnimationEntryType, AnimationData>;
 #[repr(u8)]
 pub enum AnimationArrayType {
     AnimationEntry = 0x1,
-    Unknown = 0xfe,
+    Unknown1 = 0xa,
+    Unknown2 = 0xfe,
 }
 
 pub enum AnimationArrayData {
     AnimationEntry { entries: Vec<AnimationEntry> },
-    Unknown { data: Vec<u8> },
+    Unknown1 { data: Vec<u8> },
+    Unknown2 { data: Vec<u8> },
 }
 
 impl DeserializeEntryData<AnimationArrayType> for AnimationArrayData {
@@ -374,9 +400,13 @@ impl DeserializeEntryData<AnimationArrayType> for AnimationArrayData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((AnimationArrayData::AnimationEntry { entries }, bytes_read))
             }
-            AnimationArrayType::Unknown => {
+            AnimationArrayType::Unknown1 => {
                 let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
-                Ok((AnimationArrayData::Unknown { data }, bytes_read as i32))
+                Ok((AnimationArrayData::Unknown1 { data }, bytes_read as i32))
+            }
+            AnimationArrayType::Unknown2 => {
+                let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
+                Ok((AnimationArrayData::Unknown2 { data }, bytes_read as i32))
             }
         }
     }
