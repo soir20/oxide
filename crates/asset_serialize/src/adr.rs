@@ -365,23 +365,25 @@ pub type CollisionEntry = Entry<CollisionEntryType, CollisionData>;
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
 pub enum AdrEntryType {
-    Unknown = 0x0,
+    Unknown1 = 0x0,
     Skeleton = 0x1,
     Model = 0x2,
     Particle = 0x3,
     Animation = 0x9,
     AnimatedParticle = 0xb,
     Collision = 0xd,
+    Unknown2 = 0xf,
 }
 
 pub enum AdrData {
-    Unknown { data: Vec<u8> },
+    Unknown1 { data: Vec<u8> },
     Skeleton { entries: Vec<SkeletonEntry> },
     Model { entries: Vec<ModelEntry> },
     Particle { entries: Vec<ParticleArray> },
     Animation { entries: Vec<AnimationArray> },
     AnimatedParticle { data: Vec<u8> },
     Collision { entries: Vec<CollisionEntry> },
+    Unknown2 { data: Vec<u8> },
 }
 
 impl DeserializeEntryData<AdrEntryType> for AdrData {
@@ -391,9 +393,9 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
-            AdrEntryType::Unknown => {
+            AdrEntryType::Unknown1 => {
                 let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
-                Ok((AdrData::Unknown { data }, bytes_read as i32))
+                Ok((AdrData::Unknown1 { data }, bytes_read as i32))
             }
             AdrEntryType::Skeleton => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
@@ -418,6 +420,10 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
             AdrEntryType::Collision => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((AdrData::Collision { entries }, bytes_read))
+            }
+            AdrEntryType::Unknown2 => {
+                let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
+                Ok((AdrData::Unknown2 { data }, bytes_read as i32))
             }
         }
     }
