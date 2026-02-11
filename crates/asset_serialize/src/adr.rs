@@ -262,8 +262,9 @@ pub enum AnimationEntryType {
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
 pub enum AnimationLoadType {
-    Unknown1 = 0x1,
-    Unknown2 = 0x2,
+    Unknown1 = 0x0,
+    Unknown2 = 0x1,
+    Unknown3 = 0x2,
 }
 
 pub enum AnimationData {
