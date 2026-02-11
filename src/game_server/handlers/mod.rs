@@ -72,17 +72,6 @@ pub fn offset_destination(old_pos: Pos, new_pos: Pos, offset: f32) -> Pos {
     }
 }
 
-pub fn destination_rot(old_pos: Pos, new_pos: Pos) -> Pos {
-    let unit_vector = direction(old_pos, new_pos);
-
-    Pos {
-        x: unit_vector.x,
-        y: unit_vector.y,
-        z: unit_vector.z,
-        w: 1.0,
-    }
-}
-
 pub fn are_dates_in_same_week(
     date1: &DateTime<FixedOffset>,
     date2: &DateTime<FixedOffset>,

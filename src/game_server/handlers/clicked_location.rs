@@ -3,7 +3,7 @@ use std::io::{Cursor, Read};
 use packet_serialize::DeserializePacket;
 
 use crate::game_server::{
-    handlers::destination_rot,
+    handlers::direction,
     packets::clicked_location::{ClickedLocationOpCode, ClickedLocationRequest},
     Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
 };
@@ -53,7 +53,7 @@ pub fn process_clicked_location(
                                 }
                             };
 
-                            let destination_rot = destination_rot(clicked_location.current_pos, clicked_location.clicked_pos);
+                            let destination_rot = direction(clicked_location.current_pos, clicked_location.clicked_pos);
 
                             if player_stats.toggles.click_to_teleport {
                                 coerce_to_broadcast_supplier(move |_| {
