@@ -30,7 +30,9 @@ pub struct CommandEntry {
     pub description: String,
     pub usage: String,
     pub permission_level: Role,
+    pub notes: Option<Vec<String>>,
 }
+
 #[derive(Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct CommandConfig {
@@ -89,9 +91,22 @@ fn args_len_is_less_than(args: &[String], min_len: usize) -> bool {
     args.len() < min_len
 }
 
-fn command_details(sender: u32, info: &CommandEntry) -> Vec<Broadcast> {
-    let text = format!("{}\nUsage: {}", info.description, info.usage);
-    server_msg(sender, &text)
+pub fn command_details(sender: u32, entry: &CommandEntry) -> Vec<Broadcast> {
+    let mut msg = format!(
+        "Description: {}\nUsage: {}\n",
+        entry.description, entry.usage
+    );
+
+    if let Some(notes) = &entry.notes {
+        if !notes.is_empty() {
+            msg.push_str("Notes:\n");
+            for note in notes {
+                msg.push_str(&format!("  - {}\n", note));
+            }
+        }
+    }
+
+    server_msg(sender, &msg)
 }
 
 fn command_error(sender: u32, error: &str, info: &CommandEntry) -> Vec<Broadcast> {
@@ -196,11 +211,24 @@ pub fn process_chat_command(
                                 "Use ./<command> with the help flag (-h or --help) to list command-specific info\n\n",
                             );
 
-                            for (name, entry) in &available_commands {
+                            for (i, (name, entry)) in available_commands.iter().enumerate() {
                                 msg.push_str(&format!(
-                                    "  ./{} - {}\n    Usage: {}\n\n",
+                                    "  ./{} - {}\n    Usage: {}\n",
                                     name, entry.description, entry.usage
                                 ));
+
+                                if let Some(notes) = &entry.notes {
+                                    if !notes.is_empty() {
+                                        msg.push_str("    Notes:\n");
+                                        for note in notes {
+                                            msg.push_str(&format!("      - {}\n", note));
+                                        }
+                                    }
+                                }
+
+                                if i + 1 < available_commands.len() {
+                                    msg.push('\n');
+                                }
                             }
 
                             server_msg(sender, &msg)
