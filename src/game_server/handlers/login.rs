@@ -18,7 +18,7 @@ use crate::{
 };
 
 use super::{
-    character::{Character, Player, PreviousLocation, RemovalMode},
+    character::{Character, Player, PreviousLocation, RemovalMode, Role},
     guid::IndexedGuid,
     lock_enforcer::ZoneLockEnforcer,
     minigame::PlayerMinigameStats,
@@ -151,6 +151,7 @@ pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, P
                         free_camera: false,
                         click_to_teleport: false,
                     },
+                    role: Role::Admin,
                 },
                 game_server,
             ));

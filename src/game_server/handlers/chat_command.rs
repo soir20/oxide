@@ -1,65 +1,47 @@
-use crate::game_server::{
-    packets::{
-        chat::{MessagePayload, MessageTypeData, SendMessage},
-        housing::{BuildArea, HouseInfo, HouseInstanceData, InnerInstanceData, RoomInstances},
-        tunnel::TunneledPacket,
-        ui::{ExecuteScriptWithIntParams, ExecuteScriptWithStringParams},
-        GamePacket, Name, Pos,
+use std::{collections::HashMap, fs::File, path::Path};
+
+use crate::{
+    game_server::{
+        packets::{
+            chat::{MessagePayload, MessageTypeData, SendMessage},
+            housing::{BuildArea, HouseInfo, HouseInstanceData, InnerInstanceData, RoomInstances},
+            tunnel::TunneledPacket,
+            ui::{ExecuteScriptWithIntParams, ExecuteScriptWithStringParams},
+            GamePacket, Name, Pos,
+        },
+        Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
-    Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
+    ConfigError,
 };
 
+use serde::Deserialize;
+
 use super::{
-    character::{coerce_to_broadcast_supplier, CharacterType},
+    character::{coerce_to_broadcast_supplier, CharacterType, Role},
     lock_enforcer::CharacterLockRequest,
     unique_guid::player_guid,
     zone::teleport_within_zone,
     WriteLockingBroadcastSupplier,
 };
 
-struct CommandInfo {
-    name: &'static str,
-    description: &'static str,
-    usage: &'static str,
+#[derive(Clone, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
+pub struct CommandEntry {
+    pub description: String,
+    pub usage: String,
+    pub permission_level: Role,
+}
+#[derive(Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
+pub struct CommandConfig {
+    pub commands: HashMap<String, CommandEntry>,
 }
 
-static COMMANDS: &[CommandInfo] = &[
-    CommandInfo {
-        name: "help",
-        description: "Show a list of available commands.",
-        usage: "./help",
-    },
-    CommandInfo {
-        name: "console",
-        description: "Toggles the client console for debugging.",
-        usage: "./console",
-    },
-    CommandInfo {
-        name: "script",
-        description: "Run a client script with optional parameters.",
-        usage: "./script <script name> [params...]",
-    },
-    CommandInfo {
-        name: "loc",
-        description: "Prints your current position and rotation.",
-        usage: "./loc",
-    },
-    CommandInfo {
-        name: "tp",
-        description: "Teleport to absolute or relative coordinates.",
-        usage: "./tp <x> <y> <z> (use ~ for relative coords)",
-    },
-    CommandInfo {
-        name: "clicktp",
-        description: "Toggles click to teleport instead of click to move.",
-        usage: "./clicktp",
-    },
-    CommandInfo {
-        name: "freecam",
-        description: "Toggles free camera.",
-        usage: "./freecam - Run again when exiting to restore clickable NPCs. Disable freecam before changing zones; entering a new zone with it active and toggling will result in a crash. Do not enable this on your own lot, as it disables editing until you rejoin",
-    },
-];
+pub fn load_commands(config_dir: &Path) -> Result<CommandConfig, ConfigError> {
+    let mut file = File::open(config_dir.join("commands.yaml"))?;
+    let config: CommandConfig = serde_yaml::from_reader(&mut file)?;
+    Ok(config)
+}
 
 fn server_msg(sender: u32, msg: &str) -> Vec<Broadcast> {
     vec![Broadcast::Single(
@@ -107,12 +89,12 @@ fn args_len_is_less_than(args: &[String], min_len: usize) -> bool {
     args.len() < min_len
 }
 
-fn command_details(sender: u32, info: &CommandInfo) -> Vec<Broadcast> {
+fn command_details(sender: u32, info: &CommandEntry) -> Vec<Broadcast> {
     let text = format!("{}\nUsage: {}", info.description, info.usage);
     server_msg(sender, &text)
 }
 
-fn command_error(sender: u32, error: &str, info: &CommandInfo) -> Vec<Broadcast> {
+fn command_error(sender: u32, error: &str, info: &CommandEntry) -> Vec<Broadcast> {
     let text = format!("Error: {}\nUsage: {}", error, info.usage);
     server_msg(sender, &text)
 }
@@ -138,6 +120,7 @@ pub fn process_chat_command(
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let requester_guid = player_guid(sender);
+    let commands_registry = game_server.commands.commands.clone();
 
     let broadcast_supplier: WriteLockingBroadcastSupplier = game_server
         .lock_enforcer()
@@ -163,56 +146,65 @@ pub fn process_chat_command(
                     }
                 };
 
+                let available_commands: Vec<(&String, &CommandEntry)> = commands_registry
+                    .iter()
+                    .filter(|(_, entry)| player_stats.role.has_permission(entry.permission_level))
+                    .collect();
+
+                let has_any_permission = !available_commands.is_empty();
+
                 let response = {
                     let Some(cmd) = arguments.first().cloned() else {
-                        return coerce_to_broadcast_supplier(move |_| {
-                            Ok(server_msg(
-                                sender,
-                                "Use ./help for a list of available commands.",
-                            ))
-                        });
+                        if has_any_permission {
+                            return coerce_to_broadcast_supplier(move |_| {
+                                Ok(server_msg(sender, "Use ./help for a list of available commands."))
+                            });
+                        } else {
+                            return coerce_to_broadcast_supplier(|_| Ok(Vec::new()));
+                        }
                     };
 
-                    let (cmd, cmd_info) =
-                        if let Some(info) = COMMANDS.iter().find(|c| c.name == cmd) {
-                            (info.name, info)
+                    let Some(cmd_entry) = commands_registry.get(&cmd) else {
+                        if has_any_permission {
+                            let msg = format!(
+                                "Command {cmd} was not found in the registry. Use ./help for a list of available commands."
+                            );
+                            return coerce_to_broadcast_supplier(move |_| Ok(server_msg(sender, &msg)));
                         } else {
-                            let msg = format!("Unknown command {cmd}");
-                            return coerce_to_broadcast_supplier(move |_| {
-                                Ok(server_msg(sender, &msg))
-                            });
-                        };
+                            return coerce_to_broadcast_supplier(|_| Ok(Vec::new()));
+                        }
+                    };
 
-                    if arguments.iter().any(|a| a == "-h" || a == "--help") {
-                        return coerce_to_broadcast_supplier(move |_| {
-                            Ok(command_details(sender, cmd_info))
-                        });
+                    if !player_stats.role.has_permission(cmd_entry.permission_level) {
+                        return coerce_to_broadcast_supplier(|_| Ok(Vec::new()));
                     }
 
-                    let err = |msg: &str| {
-                        let msg = msg.to_string();
-                        coerce_to_broadcast_supplier(move |_| {
-                            Ok(command_error(sender, &msg, cmd_info))
-                        })
+                    if arguments.iter().any(|arg| arg == "-h" || arg == "--help") {
+                        let out = command_details(sender, cmd_entry);
+                        return coerce_to_broadcast_supplier(move |_| Ok(out));
+                    }
+
+                    let err = move |msg: &str| {
+                        let cmd_err = command_error(sender, msg, cmd_entry);
+                        coerce_to_broadcast_supplier(move |_| Ok(cmd_err))
                     };
 
-                    // TODO: Gate commands behind a permission check
-                    match cmd {
+                    match cmd.as_str() {
                         "help" => {
                             let mut msg = "Available commands:\n".to_string();
                             msg.push_str(
                                 "Use ./<command> with the help flag (-h or --help) to list command-specific info\n\n",
                             );
 
-                            for cmd in COMMANDS {
+                            for (name, entry) in &available_commands {
                                 msg.push_str(&format!(
                                     "  ./{} - {}\n    Usage: {}\n\n",
-                                    cmd.name, cmd.description, cmd.usage
+                                    name, entry.description, entry.usage
                                 ));
                             }
 
                             server_msg(sender, &msg)
-                        },
+                        }
 
                         "console" => {
                             player_stats.toggles.console = !player_stats.toggles.console;
@@ -233,7 +225,7 @@ pub fn process_chat_command(
                                     },
                                 })],
                             )]
-                        },
+                        }
 
                         "script" => {
                             if args_len_is_less_than(arguments, 2) {
@@ -254,7 +246,7 @@ pub fn process_chat_command(
                                     },
                                 })],
                             )]
-                        },
+                        }
 
                         "loc" => {
                             let pos = requester_read_handle.stats.pos;
@@ -267,7 +259,7 @@ pub fn process_chat_command(
                             );
 
                             server_msg(sender, &msg)
-                        },
+                        }
 
                         "tp" => {
                             if args_len_is_less_than(arguments, 4) {
@@ -277,38 +269,41 @@ pub fn process_chat_command(
                             let current_pos = requester_read_handle.stats.pos;
 
                             let x = match resolve_relative_coord(current_pos.x, &arguments[1]) {
-                                Ok(coord) => coord, Err(input) => return err(&format!("Invalid X coordinate: {}", input)),
+                                Ok(coord) => coord,
+                                Err(input) => return err(&format!("Invalid X coordinate: {}", input)),
                             };
 
                             let y = match resolve_relative_coord(current_pos.y, &arguments[2]) {
-                                Ok(coord) => coord, Err(input) => return err(&format!("Invalid Y coordinate: {}", input)),
+                                Ok(coord) => coord,
+                                Err(input) => return err(&format!("Invalid Y coordinate: {}", input)),
                             };
 
                             let z = match resolve_relative_coord(current_pos.z, &arguments[3]) {
-                                Ok(coord) => coord, Err(input) => return err(&format!("Invalid Z coordinate: {}", input)),
+                                Ok(coord) => coord,
+                                Err(input) => return err(&format!("Invalid Z coordinate: {}", input)),
                             };
 
                             let destination_pos = Pos { x, y, z, w: current_pos.w };
                             let destination_rot = requester_read_handle.stats.rot;
 
                             teleport_within_zone(sender, destination_pos, destination_rot)
-                        },
+                        }
 
                         "clicktp" => {
                             player_stats.toggles.click_to_teleport =
                                 !player_stats.toggles.click_to_teleport;
-                                vec![Broadcast::Single(sender, vec![])]
-                        },
+                            vec![Broadcast::Single(sender, vec![])]
+                        }
 
                         "freecam" => {
                             player_stats.toggles.free_camera = !player_stats.toggles.free_camera;
                             make_freecam_packets(sender, requester_guid, player_stats.toggles.free_camera)
-                        },
+                        }
+
                         _ => {
-                            let msg = format!(
+                            server_msg(sender, &format!(
                                 "Command {cmd} exists in the registry but has no handler."
-                            );
-                            server_msg(sender, &msg)
+                            ))
                         }
                     }
                 };

@@ -1,0 +1,35 @@
+commands:
+  help:
+    description: "Show a list of available commands."
+    usage: "./help"
+    permission_level: Emissary
+
+  console:
+    description: "Toggles the client console for debugging."
+    usage: "./console"
+    permission_level: Emissary
+
+  script:
+    description: "Run a client script with optional parameters."
+    usage: "./script <script name> [params...]"
+    permission_level: Emissary
+
+  loc:
+    description: "Prints your current position and rotation."
+    usage: "./loc"
+    permission_level: Emissary
+
+  tp:
+    description: "Teleport to absolute or relative coordinates."
+    usage: "./tp <x> <y> <z> (use ~ for relative coords)"
+    permission_level: Emissary
+
+  clicktp:
+    description: "Toggles click to teleport instead of click to move."
+    usage: "./clicktp"
+    permission_level: Emissary
+
+  freecam:
+    description: "Toggles free camera."
+    usage: "./freecam - Run again when exiting to restore clickable NPCs. Disable freecam before changing zones; entering a new zone with it active and toggling will result in a crash. Do not enable this on your own lot, as it disables editing until you rejoin"
+    permission_level: Emissary

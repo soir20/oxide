@@ -2167,6 +2167,22 @@ impl MinigameWinStatus {
     }
 }
 
+#[repr(u8)]
+#[derive(Clone, Copy, Deserialize, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum Role {
+    Citizen = 0,
+    Emissary = 1,
+    Counselor = 2,
+    Enforcer = 3,
+    Admin = 4,
+}
+
+impl Role {
+    pub fn has_permission(self, required: Role) -> bool {
+        self >= required
+    }
+}
+
 #[derive(Clone)]
 pub struct Toggles {
     pub console: bool,
@@ -2208,6 +2224,7 @@ pub struct Player {
     pub update_previous_location_on_leave: bool,
     pub previous_location: PreviousLocation,
     pub toggles: Toggles,
+    pub role: Role,
 }
 
 impl Player {
