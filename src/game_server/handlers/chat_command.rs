@@ -183,11 +183,7 @@ pub fn process_chat_command(
                             });
                         };
 
-                    if arguments
-                        .get(1)
-                        .map(|f| f == "-h" || f == "--help")
-                        .unwrap_or(false)
-                    {
+                    if arguments.iter().any(|a| a == "-h" || a == "--help") {
                         return coerce_to_broadcast_supplier(move |_| {
                             Ok(command_details(sender, cmd_info))
                         });
@@ -205,7 +201,7 @@ pub fn process_chat_command(
                         "help" => {
                             let mut msg = "Available commands:\n".to_string();
                             msg.push_str(
-                                "Use ./<command> with the help flag (-h or -help) to list command-specific info\n\n",
+                                "Use ./<command> with the help flag (-h or --help) to list command-specific info\n\n",
                             );
 
                             for cmd in COMMANDS {
