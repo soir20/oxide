@@ -173,8 +173,14 @@ impl DeserializeEntryData<ModelEntryType> for ModelData {
                 Ok((ModelData::MaterialAssetName { name }, bytes_read as i32))
             }
             ModelEntryType::Radius => {
-                let radius = deserialize(file, BufReader::read_f32).await?;
-                Ok((ModelData::Radius { radius }, 4))
+                let (mut radius_bytes, bytes_read) = deserialize_exact(file, len as usize).await?;
+                radius_bytes.resize(4, 0);
+                let radius = f32::from_be_bytes(
+                    radius_bytes
+                        .try_into()
+                        .expect("radius_bytes should contain 4 bytes"),
+                );
+                Ok((ModelData::Radius { radius }, bytes_read as i32))
             }
             ModelEntryType::Unknown1 => {
                 let (data, bytes_read) = deserialize_exact(file, len as usize).await?;
@@ -236,8 +242,15 @@ impl DeserializeEntryData<ParticleEntryType> for ParticleData {
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             ParticleEntryType::EffectId => {
-                let effect_id = deserialize(file, BufReader::read_i32_le).await?;
-                Ok((ParticleData::EffectId { effect_id }, 4))
+                let (mut effect_id_bytes, bytes_read) =
+                    deserialize_exact(file, len as usize).await?;
+                effect_id_bytes.resize(4, 0);
+                let effect_id = i32::from_le_bytes(
+                    effect_id_bytes
+                        .try_into()
+                        .expect("effect_id_bytes should contain 4 bytes"),
+                );
+                Ok((ParticleData::EffectId { effect_id }, bytes_read as i32))
             }
             ParticleEntryType::EmitterName => {
                 let (name, bytes_read) = deserialize_string(file, len as usize).await?;
@@ -383,8 +396,18 @@ impl DeserializeEntryData<AnimationEntryType> for AnimationData {
                 Ok((AnimationData::Unknown1 { data }, bytes_read as i32))
             }
             AnimationEntryType::Duration => {
-                let duration_seconds = deserialize(file, BufReader::read_f32).await?;
-                Ok((AnimationData::Duration { duration_seconds }, 4))
+                let (mut duration_bytes, bytes_read) =
+                    deserialize_exact(file, len as usize).await?;
+                duration_bytes.resize(4, 0);
+                let duration_seconds = f32::from_be_bytes(
+                    duration_bytes
+                        .try_into()
+                        .expect("duration_bytes should contain 4 bytes"),
+                );
+                Ok((
+                    AnimationData::Duration { duration_seconds },
+                    bytes_read as i32,
+                ))
             }
             AnimationEntryType::LoadType => {
                 let (load_type, bytes_read) = AnimationLoadType::deserialize(file).await?;
