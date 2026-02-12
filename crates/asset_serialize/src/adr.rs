@@ -586,7 +586,7 @@ mod tests {
     use walkdir::WalkDir;
 
     #[tokio::test]
-    //#[ignore]
+    #[ignore]
     async fn test_deserialize_adr() {
         let target_extension = "adr";
         let search_path = env::var("ADR_ROOT").unwrap();
