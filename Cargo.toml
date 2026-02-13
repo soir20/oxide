@@ -14,7 +14,7 @@ crossbeam-channel = "0.5.13"
 defer-lite = "1.0.0"
 enum-iterator = "2.1.0"
 evalexpr = "11.3.0"
-packet_serialize = { path = "src/packet_serialize" }
+packet_serialize = { path = "crates/packet_serialize" }
 priority-queue = "2.7.0"
 miniz_oxide = "0.7.2"
 num_enum = "0.7.2"
