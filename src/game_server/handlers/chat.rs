@@ -1,6 +1,7 @@
 use std::io::{Cursor, Read};
 
 use packet_serialize::DeserializePacket;
+use shlex::Shlex;
 
 use crate::game_server::{
     packets::{
@@ -12,6 +13,7 @@ use crate::game_server::{
 };
 
 use super::{
+    chat_command::process_chat_command,
     guid::GuidTableIndexer,
     lock_enforcer::CharacterLockRequest,
     unique_guid::{player_guid, shorten_player_guid},
@@ -45,6 +47,16 @@ pub fn process_chat_packet(
                                     )
                                 })?;
                             message.payload.channel_name.last_name = String::default();
+
+                            if let Some(cmd) = message.payload.message.trim_start().strip_prefix("./")
+                            {
+                                let arguments = Shlex::new(cmd).collect::<Vec<_>>();
+                                return process_chat_command(
+                                    sender,
+                                    &arguments,
+                                    game_server
+                                );
+                            }
 
                             match message.message_type_data {
                                 MessageTypeData::World => {

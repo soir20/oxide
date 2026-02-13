@@ -3,7 +3,7 @@ use packet_serialize::NullTerminatedString;
 use crate::{
     game_server::{
         handlers::{
-            character::{BattleClass, PlayerInventory},
+            character::{BattleClass, PlayerInventory, Toggles},
             minigame::{leave_active_minigame_if_any, LeaveMinigameTarget},
         },
         packets::{
@@ -18,7 +18,7 @@ use crate::{
 };
 
 use super::{
-    character::{Character, Player, PreviousLocation, RemovalMode},
+    character::{Character, Player, PreviousLocation, RemovalMode, Role},
     guid::IndexedGuid,
     lock_enforcer::ZoneLockEnforcer,
     minigame::PlayerMinigameStats,
@@ -146,6 +146,12 @@ pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, P
                         pos: player.inner.data.pos,
                         rot: player.inner.data.rot,
                     },
+                    toggles: Toggles {
+                        console: false,
+                        free_camera: false,
+                        click_to_teleport: false,
+                    },
+                    role: Role::Admin,
                 },
                 game_server,
             ));
