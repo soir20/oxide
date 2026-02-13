@@ -22,7 +22,7 @@ commands:
 
   tp:
     description: "Teleport to absolute or relative coordinates."
-    usage: "./tp <x> <y> <z> (use ~ for relative coords)"
+    usage: "./tp <x> <y> <z> (use tilde (~) for relative coords)"
     permission_level: Emissary
 
   clicktp:
