@@ -1,0 +1,12 @@
+[package]
+name = "asset_serialize"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+num_enum = "0.7.2"
+tokio = { version = "1.38.0", features = ["fs", "io-util", "rt"] }
+walkdir = "2.5.0"
+
+[dev-dependencies]
+tokio = { version = "1.38.0", features = ["macros"] }

@@ -21,9 +21,9 @@ use crate::channel_manager::{ChannelManager, ReceiveResult};
 use crate::game_server::GameServer;
 use crate::protocol::Channel;
 
+mod asset_server;
 mod channel_manager;
 mod game_server;
-mod http;
 mod protocol;
 
 thread_local! {
@@ -119,7 +119,7 @@ async fn main() {
         Arc::new(load_server_options(config_dir).expect("Unable to read server options"));
     server_options.validate();
 
-    spawn(http::start(
+    spawn(asset_server::start(
         server_options.bind_ip,
         server_options.https_port,
         config_dir,
