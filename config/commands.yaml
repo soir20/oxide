@@ -35,8 +35,6 @@ commands:
     usage: "./freecam"
     permission_level: Emissary
     notes:
-      - "Run again when exiting to restore clickable NPCs."
-      - >-
-        Disable freecam before changing zones; entering a new zone with it active
-        and toggling will result in a crash.
-      - "Do not enable this on your own lot, as it disables editing until you rejoin."
+      - "Re-run ./freecam to restore clickable NPCs."
+      - "Disable freecam before changing zones to avoid crashes."
+      - "Enabling freecam on your lot will prevent you from editing it until you rejoin."
