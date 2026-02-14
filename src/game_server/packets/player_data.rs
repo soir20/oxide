@@ -80,7 +80,6 @@ impl SerializePacket for Ability {
             Ability::Empty => {
                 0u32.serialize(buffer);
             }
-
             Ability::Unknown {
                 unknown2,
                 mana_cost,
@@ -91,7 +90,6 @@ impl SerializePacket for Ability {
                 mana_cost.serialize(buffer);
                 write_ability_end(buffer, common);
             }
-
             Ability::ItemDefinition {
                 item_definition_id,
                 common,
@@ -100,7 +98,6 @@ impl SerializePacket for Ability {
                 item_definition_id.serialize(buffer);
                 write_ability_end(buffer, common);
             }
-
             Ability::AbilityDefinition {
                 unknown2,
                 mana_cost,
