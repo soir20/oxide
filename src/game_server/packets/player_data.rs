@@ -29,118 +29,90 @@ pub struct ItemClassData {
 #[derive(Clone, SerializePacket)]
 pub struct BattleClassUnknown7 {}
 
+#[derive(Clone, Debug)]
+pub struct AbilityCommon {
+    pub icon_id: u32,
+    pub name_id: u32,
+    pub unknown7: u32,
+    pub unknown8: f32,
+    pub unknown9: f32,
+    pub ability_id: u32,
+    pub unknown11: u32,
+    pub unknown12: u32,
+    pub unknown13: u32,
+}
+
+fn write_ability_end(buffer: &mut Vec<u8>, c: &AbilityCommon) {
+    c.icon_id.serialize(buffer);
+    c.name_id.serialize(buffer);
+    c.unknown7.serialize(buffer);
+    c.unknown8.serialize(buffer);
+    c.unknown9.serialize(buffer);
+    c.ability_id.serialize(buffer);
+    c.unknown11.serialize(buffer);
+    c.unknown12.serialize(buffer);
+    c.unknown13.serialize(buffer);
+}
+
 #[allow(dead_code)]
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub enum Ability {
     Empty,
-    Type1(u32, u32, u32, u32, u32, u32, u32, u32, u32, bool),
-    Type2(u32, u32, u32, u32, u32, u32, u32, u32, bool),
-    Type3(u32, u32, u32, u32, u32, u32, u32, u32, u32, bool),
-    OtherType(u32, u32, u32, u32, u32, u32, u32, u32, bool),
+    Unknown {
+        unknown2: u32,
+        mana_cost: u32,
+        common: AbilityCommon,
+    },
+    ItemDefinition {
+        item_definition_id: u32,
+        common: AbilityCommon,
+    },
+    AbilityDefinition {
+        unknown2: u32,
+        mana_cost: u32,
+        common: AbilityCommon,
+    },
 }
 
 impl SerializePacket for Ability {
     fn serialize(&self, buffer: &mut Vec<u8>) {
         match self {
-            Ability::Empty => 0u32.serialize(buffer),
-            Ability::Type1(
+            Ability::Empty => {
+                0u32.serialize(buffer);
+            }
+
+            Ability::Unknown {
                 unknown2,
-                unknown3,
-                unknown5,
-                unknown6,
-                unknown7,
-                unknown8,
-                unknown9,
-                unknown10,
-                unknown11,
-                unknown12,
-            ) => {
+                mana_cost,
+                common,
+            } => {
                 1u32.serialize(buffer);
                 unknown2.serialize(buffer);
-                unknown3.serialize(buffer);
-                write_ability_end(
-                    *unknown5, *unknown6, *unknown7, *unknown8, *unknown9, *unknown10, *unknown11,
-                    *unknown12, buffer,
-                );
+                mana_cost.serialize(buffer);
+                write_ability_end(buffer, common);
             }
-            Ability::Type2(
-                unknown4,
-                unknown5,
-                unknown6,
-                unknown7,
-                unknown8,
-                unknown9,
-                unknown10,
-                unknown11,
-                unknown12,
-            ) => {
+
+            Ability::ItemDefinition {
+                item_definition_id,
+                common,
+            } => {
                 2u32.serialize(buffer);
-                unknown4.serialize(buffer);
-                write_ability_end(
-                    *unknown5, *unknown6, *unknown7, *unknown8, *unknown9, *unknown10, *unknown11,
-                    *unknown12, buffer,
-                );
+                item_definition_id.serialize(buffer);
+                write_ability_end(buffer, common);
             }
-            Ability::Type3(
+
+            Ability::AbilityDefinition {
                 unknown2,
-                unknown3,
-                unknown5,
-                unknown6,
-                unknown7,
-                unknown8,
-                unknown9,
-                unknown10,
-                unknown11,
-                unknown12,
-            ) => {
+                mana_cost,
+                common,
+            } => {
                 3u32.serialize(buffer);
                 unknown2.serialize(buffer);
-                unknown3.serialize(buffer);
-                write_ability_end(
-                    *unknown5, *unknown6, *unknown7, *unknown8, *unknown9, *unknown10, *unknown11,
-                    *unknown12, buffer,
-                );
-            }
-            Ability::OtherType(
-                unknown1,
-                unknown5,
-                unknown6,
-                unknown7,
-                unknown8,
-                unknown9,
-                unknown10,
-                unknown11,
-                unknown12,
-            ) => {
-                unknown1.serialize(buffer);
-                write_ability_end(
-                    *unknown5, *unknown6, *unknown7, *unknown8, *unknown9, *unknown10, *unknown11,
-                    *unknown12, buffer,
-                );
+                mana_cost.serialize(buffer);
+                write_ability_end(buffer, common);
             }
         }
     }
-}
-
-fn write_ability_end(
-    unknown5: u32,
-    unknown6: u32,
-    unknown7: u32,
-    unknown8: u32,
-    unknown9: u32,
-    unknown10: u32,
-    unknown11: u32,
-    unknown12: bool,
-    buffer: &mut Vec<u8>,
-) {
-    unknown5.serialize(buffer);
-    unknown6.serialize(buffer);
-    unknown7.serialize(buffer);
-    unknown8.serialize(buffer);
-    unknown9.serialize(buffer);
-    unknown10.serialize(buffer);
-    unknown11.serialize(buffer);
-    unknown12.serialize(buffer);
 }
 
 #[allow(dead_code)]
