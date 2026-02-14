@@ -56,7 +56,7 @@ fn write_ability_end(buffer: &mut Vec<u8>, c: &AbilityCommon) {
 
 #[allow(dead_code)]
 #[derive(Clone, Debug)]
-pub enum Ability {
+pub enum AbilityType {
     Empty,
     Unknown {
         unknown2: u32,
@@ -74,13 +74,13 @@ pub enum Ability {
     },
 }
 
-impl SerializePacket for Ability {
+impl SerializePacket for AbilityType {
     fn serialize(&self, buffer: &mut Vec<u8>) {
         match self {
-            Ability::Empty => {
+            AbilityType::Empty => {
                 0u32.serialize(buffer);
             }
-            Ability::Unknown {
+            AbilityType::Unknown {
                 unknown2,
                 mana_cost,
                 common,
@@ -90,7 +90,7 @@ impl SerializePacket for Ability {
                 mana_cost.serialize(buffer);
                 write_ability_end(buffer, common);
             }
-            Ability::ItemDefinition {
+            AbilityType::ItemDefinition {
                 item_definition_id,
                 common,
             } => {
@@ -98,7 +98,7 @@ impl SerializePacket for Ability {
                 item_definition_id.serialize(buffer);
                 write_ability_end(buffer, common);
             }
-            Ability::AbilityDefinition {
+            AbilityType::AbilityDefinition {
                 unknown2,
                 mana_cost,
                 common,
@@ -175,7 +175,7 @@ pub struct BattleClass {
     pub unknown8: u32,
     pub items: BTreeMap<EquipmentSlot, EquippedItem>,
     pub unknown9: u32,
-    pub abilities: Vec<Ability>,
+    pub abilities: Vec<AbilityType>,
     pub unknown10: LengthlessVec<BattleClassUnknown10>,
 }
 

@@ -2,7 +2,7 @@ use num_enum::TryFromPrimitive;
 
 use packet_serialize::{DeserializePacket, SerializePacket};
 
-use super::{player_data::Ability, GamePacket, OpCode, Pos, Target};
+use super::{player_data::AbilityType, GamePacket, OpCode, Pos, Target};
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
@@ -291,7 +291,7 @@ impl GamePacket for PulseLocationTargeting {
 
 #[derive(SerializePacket)]
 pub struct AbilitySetDefinition {
-    pub abilities: Vec<Ability>,
+    pub abilities: Vec<AbilityType>,
 }
 
 impl GamePacket for AbilitySetDefinition {
