@@ -223,7 +223,7 @@ pub struct AbilityDefinition {
     pub unknown7: f32,
     pub unknown8: u32,
     pub destination_land_composite_effect_id: u32, // unconfirmed
-    pub target_land_composite_effect_id: u32, // uncomfirmed
+    pub target_land_composite_effect_id: u32,      // uncomfirmed
     pub unknown11: u32,
     pub cast_animation_id: u32,
     pub land_animation_id: u32,
