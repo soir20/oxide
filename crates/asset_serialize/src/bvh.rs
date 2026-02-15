@@ -58,6 +58,8 @@ impl OriginalNode {
             },
         };
 
+        skip(file, 20).await?;
+
         Ok(OriginalNode {
             aabb_min,
             aabb_max,
@@ -131,6 +133,8 @@ impl SubtreeHeader {
         let quantized_aabb_max = deserialize_u16_le_vec3(file).await?;
         let root_node_index = deserialize(file, BufReader::read_i32_le).await?;
         let subtree_size = deserialize(file, BufReader::read_i32_le).await?;
+
+        skip(file, 12).await?;
 
         Ok(SubtreeHeader {
             quantized_aabb_min,
