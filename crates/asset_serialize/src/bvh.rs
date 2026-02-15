@@ -146,7 +146,7 @@ impl SubtreeHeader {
 }
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
-#[repr(u8)]
+#[repr(u32)]
 pub enum TraversalMode {
     Stackless = 0,
     StacklessCacheFriendly = 1,
@@ -156,7 +156,7 @@ pub enum TraversalMode {
 impl TraversalMode {
     async fn deserialize(file: &mut BufReader<&mut File>) -> Result<Self, Error> {
         let offset = tell(file).await;
-        let value = deserialize(file, BufReader::read_u8).await?;
+        let value = deserialize(file, BufReader::read_u32_le).await?;
         let traversal_mode = Self::try_from_primitive(value).map_err(|_| Error {
             kind: ErrorKind::UnknownDiscriminant(value.into(), Self::NAME),
             offset,
