@@ -4,8 +4,8 @@ use tokio::{
 };
 
 use crate::{
-    bvh::BoundingVolumeHierarchy, deserialize, deserialize_string, skip, DeserializeAsset, Error,
-    ErrorKind,
+    bvh::BoundingVolumeHierarchy, deserialize, deserialize_exact, deserialize_string, skip,
+    DeserializeAsset, Error, ErrorKind,
 };
 
 pub struct CollisionEntry {
@@ -22,24 +22,30 @@ impl CollisionEntry {
         }
 
         let vertex_count = deserialize(file, BufReader::read_i32_le).await?;
-        let mut vertices = Vec::new();
-        for _ in 0..vertex_count {
-            vertices.push([
-                deserialize(file, BufReader::read_f32_le).await?,
-                deserialize(file, BufReader::read_f32_le).await?,
-                deserialize(file, BufReader::read_f32_le).await?,
-            ]);
-        }
+        let (vertex_buffer, _) =
+            deserialize_exact(file, vertex_count.saturating_mul(12) as usize).await?;
+        let ungrouped_vertices: Vec<f32> = vertex_buffer.chunks_exact(4)
+            .map(TryInto::try_into)
+            .map(Result::unwrap)
+            .map(f32::from_le_bytes)
+            .collect();
+        let vertices = ungrouped_vertices.chunks_exact(3)
+            .map(TryInto::try_into)
+            .map(Result::unwrap)
+            .collect();
 
         let triangle_count = deserialize(file, BufReader::read_i32_le).await?;
-        let mut triangles = Vec::new();
-        for _ in 0..triangle_count {
-            triangles.push([
-                deserialize(file, BufReader::read_u16_le).await?,
-                deserialize(file, BufReader::read_u16_le).await?,
-                deserialize(file, BufReader::read_u16_le).await?,
-            ]);
-        }
+        let (triangle_buffer, _) =
+            deserialize_exact(file, triangle_count.saturating_mul(6) as usize).await?;
+        let ungrouped_triangles: Vec<u16> = triangle_buffer.chunks_exact(2)
+            .map(TryInto::try_into)
+            .map(Result::unwrap)
+            .map(u16::from_le_bytes)
+            .collect();
+        let triangles = ungrouped_triangles.chunks_exact(3)
+            .map(TryInto::try_into)
+            .map(Result::unwrap)
+            .collect();
 
         let _ = deserialize(file, BufReader::read_i32_le).await?;
         skip(file, 16).await?;
@@ -132,7 +138,7 @@ mod tests {
                     .expect(&format!("Failed to open {}", entry.path().display()));
                 Cdt::deserialize(entry.path(), &mut file)
                     .await
-                    .expect(&format!("Failed to deserialize {}", entry.path().display()))
+                    .expect(&format!("Failed to deserialize {}", entry.path().display()));
             });
         }
 
