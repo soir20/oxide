@@ -4,7 +4,8 @@ use tokio::{
 };
 
 use crate::{
-    bvh::BoundingVolumeHierarchy, deserialize, deserialize_string, skip, tell, Error, ErrorKind,
+    bvh::BoundingVolumeHierarchy, deserialize, deserialize_string, skip, DeserializeAsset, Error,
+    ErrorKind,
 };
 
 pub struct CollisionEntry {
@@ -60,9 +61,14 @@ pub struct Cdt {
     pub entries: Vec<CollisionEntry>,
 }
 
-impl Cdt {
-    async fn deserialize(file: &mut BufReader<&mut File>) -> Result<Self, Error> {
-        let (magic, _) = deserialize_string(file, 4).await?;
+impl DeserializeAsset for Cdt {
+    async fn deserialize<P: AsRef<std::path::Path> + Send>(
+        _: P,
+        file: &mut File,
+    ) -> Result<Self, Error> {
+        let mut reader = BufReader::new(file);
+
+        let (magic, _) = deserialize_string(&mut reader, 4).await?;
         if magic != "CDTA" {
             return Err(Error {
                 kind: ErrorKind::UnknownMagic(magic),
@@ -70,18 +76,18 @@ impl Cdt {
             });
         }
 
-        let version = deserialize(file, BufReader::read_i32_le).await?;
-        let packed_collision_type = deserialize(file, BufReader::read_u32_le).await?;
+        let version = deserialize(&mut reader, BufReader::read_i32_le).await?;
+        let packed_collision_type = deserialize(&mut reader, BufReader::read_u32_le).await?;
         let collision_type = packed_collision_type & 0b_0011_1111_1111_1111_1111_1111_1111_1111;
         let disable_cursor =
             packed_collision_type & 0b_0100_0000_0000_0000_0000_0000_0000_0000 != 0;
         let disable_camera_collision =
             packed_collision_type & 0b_1000_0000_0000_0000_0000_0000_0000_0000 != 0;
 
-        let entry_count = deserialize(file, BufReader::read_i32_le).await?;
+        let entry_count = deserialize(&mut reader, BufReader::read_i32_le).await?;
         let mut entries = Vec::new();
         for _ in 0..entry_count {
-            if let Some(entry) = CollisionEntry::deserialize(file).await? {
+            if let Some(entry) = CollisionEntry::deserialize(&mut reader).await? {
                 entries.push(entry);
             }
         }
@@ -93,5 +99,37 @@ impl Cdt {
             enable_camera_collision: !disable_camera_collision,
             entries,
         })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::env;
+
+    use super::*;
+    use walkdir::WalkDir;
+
+    #[tokio::test]
+    #[ignore]
+    async fn test_deserialize_adr() {
+        let target_extension = "cdt";
+        let search_path = env::var("CDT_ROOT").unwrap();
+
+        for entry in WalkDir::new(search_path)
+            .into_iter()
+            .filter_map(|e| e.ok())
+            .filter(|e| {
+                e.path()
+                    .extension()
+                    .map_or(false, |ext| ext == target_extension)
+            })
+        {
+            let mut file = File::open(entry.path())
+                .await
+                .expect(&format!("Failed to open {}", entry.path().display()));
+            Cdt::deserialize(entry.path(), &mut file)
+                .await
+                .expect(&format!("Failed to deserialize {}", entry.path().display()));
+        }
     }
 }
