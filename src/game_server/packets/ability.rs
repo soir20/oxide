@@ -1,11 +1,13 @@
+use std::io::Cursor;
+
 use num_enum::TryFromPrimitive;
 
-use packet_serialize::{DeserializePacket, SerializePacket};
+use packet_serialize::{DeserializePacket, DeserializePacketError, SerializePacket};
 
-use super::{player_data::AbilityType, GamePacket, OpCode, Pos, Target};
+use super::{player_data::AbilityType, ActionBarType, GamePacket, OpCode, Pos, Target};
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
-#[repr(u8)]
+#[repr(u16)]
 pub enum AbilityOpCode {
     AbilityFailed = 0x1,
     StartCasting = 0x3,
@@ -29,6 +31,87 @@ impl SerializePacket for AbilityOpCode {
         OpCode::Ability.serialize(buffer);
         (*self as u16).serialize(buffer);
     }
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct GuidAbilityTarget {
+    pub target_guid: u64,
+    pub target_guid2: u64, // Duplicate guid
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct AoeAbilityTarget {
+    pub pos: Pos,
+    pub guid: u64, // Unused for AOE
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct WithSelfAbilityTarget {
+    pub guid: u64,
+    pub target_guid: u64,
+}
+
+#[allow(dead_code)]
+pub enum AbilityTargetType {
+    Guid(GuidAbilityTarget),
+    Aoe(AoeAbilityTarget),
+    WithSelf(WithSelfAbilityTarget),
+}
+
+impl SerializePacket for AbilityTargetType {
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        match self {
+            AbilityTargetType::Guid(guid_target) => {
+                0u32.serialize(buffer);
+                guid_target.serialize(buffer);
+            }
+            AbilityTargetType::Aoe(aoe_target) => {
+                1u32.serialize(buffer);
+                aoe_target.serialize(buffer);
+            }
+            AbilityTargetType::WithSelf(with_self_target) => {
+                2u32.serialize(buffer);
+                with_self_target.serialize(buffer);
+            }
+        }
+    }
+}
+
+impl DeserializePacket for AbilityTargetType {
+    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<Self, DeserializePacketError>
+    where
+        Self: Sized,
+    {
+        let raw_tag: u32 = DeserializePacket::deserialize(cursor)?;
+        match raw_tag {
+            0 => {
+                let guid_target = GuidAbilityTarget::deserialize(cursor)?;
+                Ok(AbilityTargetType::Guid(guid_target))
+            }
+            1 => {
+                let aoe_target = AoeAbilityTarget::deserialize(cursor)?;
+                Ok(AbilityTargetType::Aoe(aoe_target))
+            }
+            2 => {
+                let with_self_target = WithSelfAbilityTarget::deserialize(cursor)?;
+                Ok(AbilityTargetType::WithSelf(with_self_target))
+            }
+            _ =>
+                Err(DeserializePacketError::UnknownDiscriminator),
+        }
+    }
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct RequestStartAbility {
+    pub action_bar_type: ActionBarType,
+    pub slot_index: u32,
+    pub target: AbilityTargetType,
+}
+
+impl GamePacket for RequestStartAbility {
+    type Header = AbilityOpCode;
+    const HEADER: Self::Header = AbilityOpCode::RequestStartAbility;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
