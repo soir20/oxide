@@ -106,6 +106,17 @@ pub struct QuantizedNode {
 }
 
 impl QuantizedNode {
+    pub fn unquantize(aabb: &[u16; 3], quantization: &[f32; 4]) -> [f32; 3] {
+        let x: f32 = aabb[0].into();
+        let y: f32 = aabb[1].into();
+        let z: f32 = aabb[2].into();
+        [
+            x / quantization[0],
+            y / quantization[1],
+            z / quantization[2],
+        ]
+    }
+
     async fn deserialize(file: &mut BufReader<&mut File>) -> Result<Self, Error> {
         let aabb_min = deserialize_u16_le_vec3(file).await?;
         let aabb_max = deserialize_u16_le_vec3(file).await?;
