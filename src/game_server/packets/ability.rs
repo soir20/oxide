@@ -36,7 +36,7 @@ impl SerializePacket for AbilityOpCode {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct GuidAbilityTarget {
     pub target_guid: u64,
-    pub target_guid2: u64, // Duplicate guid
+    pub target_guid2: u64, // Duplicate GUID
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -127,7 +127,7 @@ impl GamePacket for AbilityFailed {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct StartCasting {
     pub caster_guid: u64,
-    pub target_guid: u64,
+    pub caster_guid2: u64, // Duplicate GUID
     pub caster_composite_effect_id: u32,
     pub caster_animation_id: u32,
     pub ability_id: u32,
