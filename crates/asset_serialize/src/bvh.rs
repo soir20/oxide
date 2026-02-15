@@ -1,12 +1,10 @@
-use std::io::SeekFrom;
-
 use num_enum::TryFromPrimitive;
 use tokio::{
     fs::File,
-    io::{AsyncReadExt, AsyncSeekExt, BufReader},
+    io::{AsyncReadExt, BufReader},
 };
 
-use crate::{deserialize, tell, Error, ErrorKind};
+use crate::{deserialize, skip, tell, Error, ErrorKind};
 
 async fn deserialize_u16_le_vec3(file: &mut BufReader<&mut File>) -> Result<[u16; 3], Error> {
     Ok([
@@ -31,16 +29,6 @@ async fn deserialize_f32_le_vec4(file: &mut BufReader<&mut File>) -> Result<[f32
         deserialize(file, BufReader::read_f32_le).await?,
         deserialize(file, BufReader::read_f32_le).await?,
     ])
-}
-
-async fn skip(file: &mut BufReader<&mut File>, bytes: i64) -> Result<u64, Error> {
-    let offset = tell(file).await;
-    file.seek(SeekFrom::Current(bytes))
-        .await
-        .map_err(|err| Error {
-            kind: err.into(),
-            offset,
-        })
 }
 
 pub enum OriginalNodeIndex {

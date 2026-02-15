@@ -1,5 +1,6 @@
 pub mod adr;
 pub mod bvh;
+pub mod cdt;
 pub mod pack;
 
 use walkdir::WalkDir;
@@ -7,6 +8,7 @@ use walkdir::WalkDir;
 use std::{
     collections::HashMap,
     future::Future,
+    io::SeekFrom,
     path::{Path, PathBuf},
     string::FromUtf8Error,
 };
@@ -24,6 +26,7 @@ pub enum ErrorKind {
     InvalidUtf8(FromUtf8Error),
     Io(tokio::io::Error),
     UnknownDiscriminant(u64, &'static str),
+    UnknownMagic(String),
 }
 
 impl From<FromUtf8Error> for ErrorKind {
@@ -63,6 +66,16 @@ async fn is_eof(file: &mut BufReader<&mut File>) -> Result<bool, Error> {
             offset: tell(file).await,
         }),
     }
+}
+
+async fn skip(file: &mut BufReader<&mut File>, bytes: i64) -> Result<u64, Error> {
+    let offset = tell(file).await;
+    file.seek(SeekFrom::Current(bytes))
+        .await
+        .map_err(|err| Error {
+            kind: err.into(),
+            offset,
+        })
 }
 
 async fn deserialize_exact(
