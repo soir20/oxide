@@ -107,14 +107,16 @@ mod tests {
     use std::env;
 
     use super::*;
+    use tokio::task::JoinSet;
     use walkdir::WalkDir;
 
     #[tokio::test]
     #[ignore]
-    async fn test_deserialize_adr() {
+    async fn test_deserialize_cdt() {
         let target_extension = "cdt";
         let search_path = env::var("CDT_ROOT").unwrap();
 
+        let mut jobs = JoinSet::new();
         for entry in WalkDir::new(search_path)
             .into_iter()
             .filter_map(|e| e.ok())
@@ -124,12 +126,16 @@ mod tests {
                     .map_or(false, |ext| ext == target_extension)
             })
         {
-            let mut file = File::open(entry.path())
-                .await
-                .expect(&format!("Failed to open {}", entry.path().display()));
-            Cdt::deserialize(entry.path(), &mut file)
-                .await
-                .expect(&format!("Failed to deserialize {}", entry.path().display()));
+            jobs.spawn(async move {
+                let mut file = File::open(entry.path())
+                    .await
+                    .expect(&format!("Failed to open {}", entry.path().display()));
+                Cdt::deserialize(entry.path(), &mut file)
+                    .await
+                    .expect(&format!("Failed to deserialize {}", entry.path().display()))
+            });
         }
+
+        jobs.join_all().await;
     }
 }
