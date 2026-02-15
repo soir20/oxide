@@ -24,12 +24,14 @@ impl CollisionEntry {
         let vertex_count = deserialize(file, BufReader::read_i32_le).await?;
         let (vertex_buffer, _) =
             deserialize_exact(file, vertex_count.saturating_mul(12) as usize).await?;
-        let ungrouped_vertices: Vec<f32> = vertex_buffer.chunks_exact(4)
+        let ungrouped_vertices: Vec<f32> = vertex_buffer
+            .chunks_exact(4)
             .map(TryInto::try_into)
             .map(Result::unwrap)
             .map(f32::from_le_bytes)
             .collect();
-        let vertices = ungrouped_vertices.chunks_exact(3)
+        let vertices = ungrouped_vertices
+            .chunks_exact(3)
             .map(TryInto::try_into)
             .map(Result::unwrap)
             .collect();
@@ -37,12 +39,14 @@ impl CollisionEntry {
         let triangle_count = deserialize(file, BufReader::read_i32_le).await?;
         let (triangle_buffer, _) =
             deserialize_exact(file, triangle_count.saturating_mul(6) as usize).await?;
-        let ungrouped_triangles: Vec<u16> = triangle_buffer.chunks_exact(2)
+        let ungrouped_triangles: Vec<u16> = triangle_buffer
+            .chunks_exact(2)
             .map(TryInto::try_into)
             .map(Result::unwrap)
             .map(u16::from_le_bytes)
             .collect();
-        let triangles = ungrouped_triangles.chunks_exact(3)
+        let triangles = ungrouped_triangles
+            .chunks_exact(3)
             .map(TryInto::try_into)
             .map(Result::unwrap)
             .collect();
