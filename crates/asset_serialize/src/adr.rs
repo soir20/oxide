@@ -232,7 +232,8 @@ pub enum ParticleEmitterEntryType {
     OffsetY = 0x8,
     OffsetZ = 0x9,
     EffectAssetName = 0xa,
-    UnknownBoneName = 0xb,
+    SourceBoneName = 0xb,
+    LocalSpaceDerived = 0xc,
     WorldOrientation = 0xd,
     HardStop = 0xe,
 }
@@ -248,7 +249,8 @@ pub enum ParticleEmitterEntryData {
     OffsetY { data: Vec<u8> },
     OffsetZ { data: Vec<u8> },
     EffectAssetName { data: Vec<u8> },
-    UnknownBoneName { data: Vec<u8> },
+    SourceBoneName { data: Vec<u8> },
+    LocalSpaceDerived { is_local_space_derived: bool },
     WorldOrientation { data: Vec<u8> },
     HardStop { data: Vec<u8> },
 }
@@ -337,11 +339,20 @@ impl DeserializeEntryData<ParticleEmitterEntryType> for ParticleEmitterEntryData
                     usize_to_i32(bytes_read)?,
                 ))
             }
-            ParticleEmitterEntryType::UnknownBoneName => {
+            ParticleEmitterEntryType::SourceBoneName => {
                 let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
                 Ok((
-                    ParticleEmitterEntryData::UnknownBoneName { data },
+                    ParticleEmitterEntryData::SourceBoneName { data },
                     usize_to_i32(bytes_read)?,
+                ))
+            }
+            ParticleEmitterEntryType::LocalSpaceDerived => {
+                let (is_local_space_derived, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((
+                    ParticleEmitterEntryData::LocalSpaceDerived {
+                        is_local_space_derived: is_local_space_derived != 0,
+                    },
+                    bytes_read,
                 ))
             }
             ParticleEmitterEntryType::WorldOrientation => {
