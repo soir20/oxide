@@ -96,8 +96,7 @@ impl DeserializePacket for AbilityTargetType {
                 let with_self_target = WithSelfAbilityTarget::deserialize(cursor)?;
                 Ok(AbilityTargetType::WithSelf(with_self_target))
             }
-            _ =>
-                Err(DeserializePacketError::UnknownDiscriminator),
+            _ => Err(DeserializePacketError::UnknownDiscriminator),
         }
     }
 }
@@ -127,7 +126,7 @@ impl GamePacket for AbilityFailed {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct StartCasting {
     pub caster_guid: u64,
-    pub caster_guid2: u64, // Duplicate GUID
+    pub target_guid: u64,
     pub caster_composite_effect_id: u32,
     pub caster_animation_id: u32,
     pub ability_id: u32,
