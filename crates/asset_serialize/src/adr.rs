@@ -106,16 +106,34 @@ async fn deserialize_entries<T, D, E: DeserializeEntry<T, D>>(
     Ok((entries, bytes_read))
 }
 
+async fn deserialize_f32_be(
+    file: &mut BufReader<&mut File>,
+    len: i32,
+) -> Result<(f32, i32), Error> {
+    let (mut data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+    data.resize(4, 0);
+    Ok((
+        f32::from_be_bytes(data.try_into().expect("data should contain 4 bytes")),
+        usize_to_i32(bytes_read)?,
+    ))
+}
+
+async fn deserialize_u8(file: &mut BufReader<&mut File>, len: i32) -> Result<(u8, i32), Error> {
+    let (mut data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+    data.resize(1, 0);
+    Ok((data[0], usize_to_i32(bytes_read)?))
+}
+
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
 pub enum SkeletonEntryType {
     AssetName = 0x1,
-    Unknown = 0x2,
+    Scale = 0x2,
 }
 
 pub enum SkeletonData {
     AssetName { name: String },
-    Unknown { data: Vec<u8> },
+    Scale { scale: f32 },
 }
 
 impl DeserializeEntryData<SkeletonEntryType> for SkeletonData {
@@ -129,9 +147,9 @@ impl DeserializeEntryData<SkeletonEntryType> for SkeletonData {
                 let (name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
                 Ok((SkeletonData::AssetName { name }, usize_to_i32(bytes_read)?))
             }
-            SkeletonEntryType::Unknown => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((SkeletonData::Unknown { data }, usize_to_i32(bytes_read)?))
+            SkeletonEntryType::Scale => {
+                let (scale, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((SkeletonData::Scale { scale }, bytes_read))
             }
         }
     }
@@ -146,7 +164,7 @@ pub enum ModelEntryType {
     MaterialAssetName = 0x2,
     Radius = 0x3,
     Unknown1 = 0x4,
-    Unknown2 = 0x5,
+    ObjectTerrainData = 0x5,
 }
 
 pub enum ModelData {
@@ -154,7 +172,7 @@ pub enum ModelData {
     MaterialAssetName { name: String },
     Radius { radius: f32 },
     Unknown1 { data: Vec<u8> },
-    Unknown2 { data: Vec<u8> },
+    ObjectTerrainData { object_terrain_data_id: u8 },
 }
 
 impl DeserializeEntryData<ModelEntryType> for ModelData {
@@ -179,23 +197,21 @@ impl DeserializeEntryData<ModelEntryType> for ModelData {
                 ))
             }
             ModelEntryType::Radius => {
-                let (mut radius_bytes, bytes_read) =
-                    deserialize_exact(file, i32_to_usize(len)?).await?;
-                radius_bytes.resize(4, 0);
-                let radius = f32::from_be_bytes(
-                    radius_bytes
-                        .try_into()
-                        .expect("radius_bytes should contain 4 bytes"),
-                );
-                Ok((ModelData::Radius { radius }, usize_to_i32(bytes_read)?))
+                let (radius, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((ModelData::Radius { radius }, bytes_read))
             }
             ModelEntryType::Unknown1 => {
                 let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
                 Ok((ModelData::Unknown1 { data }, usize_to_i32(bytes_read)?))
             }
-            ModelEntryType::Unknown2 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((ModelData::Unknown2 { data }, usize_to_i32(bytes_read)?))
+            ModelEntryType::ObjectTerrainData => {
+                let (object_terrain_data_id, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((
+                    ModelData::ObjectTerrainData {
+                        object_terrain_data_id,
+                    },
+                    bytes_read,
+                ))
             }
         }
     }
@@ -334,18 +350,8 @@ impl DeserializeEntryData<AnimationEntryType> for AnimationData {
                 Ok((AnimationData::Unknown1 { data }, usize_to_i32(bytes_read)?))
             }
             AnimationEntryType::Duration => {
-                let (mut duration_bytes, bytes_read) =
-                    deserialize_exact(file, i32_to_usize(len)?).await?;
-                duration_bytes.resize(4, 0);
-                let duration_seconds = f32::from_be_bytes(
-                    duration_bytes
-                        .try_into()
-                        .expect("duration_bytes should contain 4 bytes"),
-                );
-                Ok((
-                    AnimationData::Duration { duration_seconds },
-                    usize_to_i32(bytes_read)?,
-                ))
+                let (duration_seconds, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((AnimationData::Duration { duration_seconds }, bytes_read))
             }
             AnimationEntryType::LoadType => {
                 let (load_type, bytes_read) = AnimationLoadType::deserialize(file).await?;
@@ -608,7 +614,7 @@ mod tests {
     use walkdir::WalkDir;
 
     #[tokio::test]
-    #[ignore]
+    //#[ignore]
     async fn test_deserialize_adr() {
         let target_extension = "adr";
         let search_path = env::var("ADR_ROOT").unwrap();
