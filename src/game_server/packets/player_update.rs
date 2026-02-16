@@ -161,7 +161,7 @@ pub struct HitPointModification {
     pub max_hp: u32,
     pub new_hp: u32,
     pub hp_delta: i32,
-    pub unknown2: bool,
+    pub show_double_exclamations: bool,
 }
 
 impl GamePacket for HitPointModification {
