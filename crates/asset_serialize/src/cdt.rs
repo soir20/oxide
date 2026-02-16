@@ -121,7 +121,7 @@ mod tests {
     use walkdir::WalkDir;
 
     #[tokio::test]
-    //#[ignore]
+    #[ignore]
     async fn test_deserialize_cdt() {
         let target_extension = "cdt";
         let search_path = env::var("CDT_ROOT").unwrap();
