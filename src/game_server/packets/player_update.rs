@@ -48,6 +48,7 @@ pub enum PlayerUpdateOpCode {
     MoveOnRail = 0x35,
     ClearRail = 0x36,
     MoveOnRelativeRail = 0x37,
+    UpdateShields = 0x39,
     SeekTarget = 0x3b,
     SeekTargetUpdate = 0x3c,
     UpdateWieldType = 0x3d,
@@ -151,6 +152,18 @@ impl GamePacket for AddPc {
     type Header = PlayerUpdateOpCode;
 
     const HEADER: Self::Header = PlayerUpdateOpCode::AddPc;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct UpdateShields {
+    pub guid: u64,
+    pub max_shields: u32,
+    pub current_shields: u32,
+}
+
+impl GamePacket for UpdateShields {
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::UpdateShields;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
