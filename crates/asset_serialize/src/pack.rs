@@ -9,7 +9,7 @@ use tokio::{
     io::{AsyncReadExt, AsyncSeekExt, BufReader},
 };
 
-use crate::{deserialize, deserialize_string, tell, Asset, DeserializeAsset, Error};
+use crate::{deserialize, deserialize_string, tell, u32_to_usize, Asset, DeserializeAsset, Error};
 
 pub struct PackAsset {
     pub offset: u64,
@@ -32,7 +32,7 @@ impl DeserializeAsset for Pack {
 
             for _ in 0..files_in_group {
                 let name_len = deserialize(&mut reader, BufReader::read_u32).await?;
-                let (name, _) = deserialize_string(&mut reader, name_len as usize).await?;
+                let (name, _) = deserialize_string(&mut reader, u32_to_usize(name_len)?).await?;
 
                 let offset = deserialize(&mut reader, BufReader::read_u32).await? as u64;
                 let size = deserialize(&mut reader, BufReader::read_u32).await?;
