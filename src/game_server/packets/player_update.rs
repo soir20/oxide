@@ -36,6 +36,7 @@ pub enum PlayerUpdateOpCode {
     SlotCompositeEffectOverride = 0x1f,
     Freeze = 0x20,
     ItemDefinitionsRequest = 0x22,
+    HitPointModification = 0x23,
     ItemDefinitionsReply = 0x25,
     UpdateCustomizations = 0x27,
     AddCompositeEffectTag = 0x29,
@@ -150,6 +151,22 @@ impl GamePacket for AddPc {
     type Header = PlayerUpdateOpCode;
 
     const HEADER: Self::Header = PlayerUpdateOpCode::AddPc;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct HitPointModification {
+    pub attacker_guid: u64,
+    pub receiver_guid: u64,
+    pub show_hp_delta: bool,
+    pub max_hp: u32,
+    pub new_hp: u32,
+    pub hp_delta: i32,
+    pub unknown2: bool,
+}
+
+impl GamePacket for HitPointModification {
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::HitPointModification;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
