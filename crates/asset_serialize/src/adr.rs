@@ -368,10 +368,12 @@ pub type ParticleEmitterEntry = Entry<ParticleEmitterEntryType, ParticleEmitterE
 #[repr(u8)]
 pub enum ParticleEmitterType {
     ParticleEmitter = 0x1,
+    Unknown = 0xfe,
 }
 
 pub enum ParticleEmitterData {
     ParticleEmitter { entries: Vec<ParticleEmitterEntry> },
+    Unknown { data: Vec<u8> },
 }
 
 impl DeserializeEntryData<ParticleEmitterType> for ParticleEmitterData {
@@ -384,6 +386,13 @@ impl DeserializeEntryData<ParticleEmitterType> for ParticleEmitterData {
             ParticleEmitterType::ParticleEmitter => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((ParticleEmitterData::ParticleEmitter { entries }, bytes_read))
+            }
+            ParticleEmitterType::Unknown => {
+                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+                Ok((
+                    ParticleEmitterData::Unknown { data },
+                    usize_to_i32(bytes_read)?,
+                ))
             }
         }
     }
@@ -746,7 +755,7 @@ mod tests {
     use walkdir::WalkDir;
 
     #[tokio::test]
-    //#[ignore]
+    #[ignore]
     async fn test_deserialize_adr() {
         let target_extension = "adr";
         let search_path = env::var("ADR_ROOT").unwrap();
