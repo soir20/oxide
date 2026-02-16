@@ -64,7 +64,6 @@ trait DeserializeEntry<T, D>: Sized {
 
 pub struct Entry<T, D> {
     pub entry_type: T,
-    pub len: i32,
     pub data: D,
 }
 
@@ -80,14 +79,7 @@ impl<T: DeserializeEntryType + Send, D: DeserializeEntryData<T> + Send> Deserial
             .saturating_add(len_bytes_read)
             .saturating_add(data_bytes_read);
 
-        Ok((
-            Entry {
-                entry_type,
-                len,
-                data,
-            },
-            total_bytes_read,
-        ))
+        Ok((Entry { entry_type, data }, total_bytes_read))
     }
 }
 
@@ -577,7 +569,7 @@ pub enum AdrEntryType {
     Skeleton = 0x1,
     Model = 0x2,
     ParticleEmitterArray = 0x3,
-    Unknown2 = 0x4,
+    MaterialArray = 0x4,
     Unknown3 = 0x5,
     Unknown4 = 0x6,
     Unknown5 = 0x7,
@@ -602,7 +594,7 @@ pub enum AdrData {
     Skeleton { entries: Vec<SkeletonEntry> },
     Model { entries: Vec<ModelEntry> },
     ParticleEmitterArray { entries: Vec<ParticleEmitterArray> },
-    Unknown2 { data: Vec<u8> },
+    MaterialArray { data: Vec<u8> },
     Unknown3 { data: Vec<u8> },
     Unknown4 { data: Vec<u8> },
     Unknown5 { data: Vec<u8> },
@@ -642,9 +634,9 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((AdrData::ParticleEmitterArray { entries }, bytes_read))
             }
-            AdrEntryType::Unknown2 => {
+            AdrEntryType::MaterialArray => {
                 let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((AdrData::Unknown2 { data }, usize_to_i32(bytes_read)?))
+                Ok((AdrData::MaterialArray { data }, usize_to_i32(bytes_read)?))
             }
             AdrEntryType::Unknown3 => {
                 let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
