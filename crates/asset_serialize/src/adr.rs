@@ -221,24 +221,24 @@ pub type ModelEntry = Entry<ModelEntryType, ModelData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
-pub enum ParticleEntryType {
+pub enum ParticleEmitterEntryType {
     EffectId = 0x1,
     Unknown7 = 0xfe,
 }
 
-pub enum ParticleData {
+pub enum ParticleEmitterEntryData {
     EffectId { effect_id: i32 },
     Unknown7 { data: Vec<u8> },
 }
 
-impl DeserializeEntryData<ParticleEntryType> for ParticleData {
+impl DeserializeEntryData<ParticleEmitterEntryType> for ParticleEmitterEntryData {
     async fn deserialize(
-        entry_type: &ParticleEntryType,
+        entry_type: &ParticleEmitterEntryType,
         len: i32,
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
-            ParticleEntryType::EffectId => {
+            ParticleEmitterEntryType::EffectId => {
                 let (mut effect_id_bytes, bytes_read) =
                     deserialize_exact(file, i32_to_usize(len)?).await?;
                 effect_id_bytes.resize(4, 0);
@@ -248,55 +248,88 @@ impl DeserializeEntryData<ParticleEntryType> for ParticleData {
                         .expect("effect_id_bytes should contain 4 bytes"),
                 );
                 Ok((
-                    ParticleData::EffectId { effect_id },
+                    ParticleEmitterEntryData::EffectId { effect_id },
                     usize_to_i32(bytes_read)?,
                 ))
             }
-            ParticleEntryType::Unknown7 => {
+            ParticleEmitterEntryType::Unknown7 => {
                 let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((ParticleData::Unknown7 { data }, usize_to_i32(bytes_read)?))
+                Ok((
+                    ParticleEmitterEntryData::Unknown7 { data },
+                    usize_to_i32(bytes_read)?,
+                ))
             }
         }
     }
 }
 
-pub type ParticleEntry = Entry<ParticleEntryType, ParticleData>;
+pub type ParticleEmitterEntry = Entry<ParticleEmitterEntryType, ParticleEmitterEntryData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
-pub enum ParticleArrayType {
-    Unknown = 0x1,
-    ParticleEntry = 0x2,
+pub enum ParticleEmitterType {
+    ParticleEmitter = 0x1,
 }
 
-pub enum ParticleArrayData {
-    Unknown { data: Vec<u8> },
-    ParticleEntry { entries: Vec<ParticleEntry> },
+pub enum ParticleEmitterData {
+    ParticleEmitter { entries: Vec<ParticleEmitterEntry> },
 }
 
-impl DeserializeEntryData<ParticleArrayType> for ParticleArrayData {
+impl DeserializeEntryData<ParticleEmitterType> for ParticleEmitterData {
     async fn deserialize(
-        entry_type: &ParticleArrayType,
+        entry_type: &ParticleEmitterType,
         len: i32,
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
-            ParticleArrayType::Unknown => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((
-                    ParticleArrayData::Unknown { data },
-                    usize_to_i32(bytes_read)?,
-                ))
-            }
-            ParticleArrayType::ParticleEntry => {
+            ParticleEmitterType::ParticleEmitter => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((ParticleArrayData::ParticleEntry { entries }, bytes_read))
+                Ok((ParticleEmitterData::ParticleEmitter { entries }, bytes_read))
             }
         }
     }
 }
 
-pub type ParticleArray = Entry<ParticleArrayType, ParticleArrayData>;
+pub type ParticleEmitter = Entry<ParticleEmitterType, ParticleEmitterData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum ParticleEmitterArrayType {
+    Unknown = 0x1,
+    ParticleEntry = 0x2,
+}
+
+pub enum ParticleEmitterArrayData {
+    Unknown { data: Vec<u8> },
+    ParticleEntry { entries: Vec<ParticleEmitter> },
+}
+
+impl DeserializeEntryData<ParticleEmitterArrayType> for ParticleEmitterArrayData {
+    async fn deserialize(
+        entry_type: &ParticleEmitterArrayType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            ParticleEmitterArrayType::Unknown => {
+                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+                Ok((
+                    ParticleEmitterArrayData::Unknown { data },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            ParticleEmitterArrayType::ParticleEntry => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((
+                    ParticleEmitterArrayData::ParticleEntry { entries },
+                    bytes_read,
+                ))
+            }
+        }
+    }
+}
+
+pub type ParticleEmitterArray = Entry<ParticleEmitterArrayType, ParticleEmitterArrayData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
@@ -435,7 +468,7 @@ pub type CollisionEntry = Entry<CollisionEntryType, CollisionData>;
 pub enum AdrEntryType {
     Skeleton = 0x1,
     Model = 0x2,
-    Particle = 0x3,
+    ParticleEmitterArray = 0x3,
     Unknown2 = 0x4,
     Unknown3 = 0x5,
     Unknown4 = 0x6,
@@ -460,7 +493,7 @@ pub enum AdrEntryType {
 pub enum AdrData {
     Skeleton { entries: Vec<SkeletonEntry> },
     Model { entries: Vec<ModelEntry> },
-    Particle { entries: Vec<ParticleArray> },
+    ParticleEmitterArray { entries: Vec<ParticleEmitterArray> },
     Unknown2 { data: Vec<u8> },
     Unknown3 { data: Vec<u8> },
     Unknown4 { data: Vec<u8> },
@@ -497,9 +530,9 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((AdrData::Model { entries }, bytes_read))
             }
-            AdrEntryType::Particle => {
+            AdrEntryType::ParticleEmitterArray => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((AdrData::Particle { entries }, bytes_read))
+                Ok((AdrData::ParticleEmitterArray { entries }, bytes_read))
             }
             AdrEntryType::Unknown2 => {
                 let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
@@ -614,7 +647,7 @@ mod tests {
     use walkdir::WalkDir;
 
     #[tokio::test]
-    //#[ignore]
+    #[ignore]
     async fn test_deserialize_adr() {
         let target_extension = "adr";
         let search_path = env::var("ADR_ROOT").unwrap();
