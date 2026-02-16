@@ -252,19 +252,19 @@ pub enum ParticleEmitterEntryType {
 
 pub enum ParticleEmitterEntryData {
     EffectId { effect_id: u16 },
-    EmitterName { data: Vec<u8> },
-    BoneName { data: Vec<u8> },
-    Heading { data: Vec<u8> },
-    Pitch { data: Vec<u8> },
-    Scale { data: Vec<u8> },
-    OffsetX { data: Vec<u8> },
-    OffsetY { data: Vec<u8> },
-    OffsetZ { data: Vec<u8> },
-    EffectAssetName { data: Vec<u8> },
-    SourceBoneName { data: Vec<u8> },
+    EmitterName { emitter_name: String },
+    BoneName { bone_name: String },
+    Heading { heading: f32 },
+    Pitch { pitch: f32 },
+    Scale { scale: f32 },
+    OffsetX { offset_x: f32 },
+    OffsetY { offset_y: f32 },
+    OffsetZ { offset_z: f32 },
+    EffectAssetName { asset_name: String },
+    SourceBoneName { bone_name: String },
     LocalSpaceDerived { is_local_space_derived: bool },
-    WorldOrientation { data: Vec<u8> },
-    HardStop { data: Vec<u8> },
+    WorldOrientation { use_world_orientation: bool },
+    HardStop { is_hard_stop: bool },
 }
 
 impl DeserializeEntryData<ParticleEmitterEntryType> for ParticleEmitterEntryData {
@@ -279,72 +279,55 @@ impl DeserializeEntryData<ParticleEmitterEntryType> for ParticleEmitterEntryData
                 Ok((ParticleEmitterEntryData::EffectId { effect_id }, bytes_read))
             }
             ParticleEmitterEntryType::EmitterName => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+                let (emitter_name, bytes_read) =
+                    deserialize_string(file, i32_to_usize(len)?).await?;
                 Ok((
-                    ParticleEmitterEntryData::EmitterName { data },
+                    ParticleEmitterEntryData::EmitterName { emitter_name },
                     usize_to_i32(bytes_read)?,
                 ))
             }
             ParticleEmitterEntryType::BoneName => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+                let (bone_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
                 Ok((
-                    ParticleEmitterEntryData::BoneName { data },
+                    ParticleEmitterEntryData::BoneName { bone_name },
                     usize_to_i32(bytes_read)?,
                 ))
             }
             ParticleEmitterEntryType::Heading => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((
-                    ParticleEmitterEntryData::Heading { data },
-                    usize_to_i32(bytes_read)?,
-                ))
+                let (heading, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((ParticleEmitterEntryData::Heading { heading }, bytes_read))
             }
             ParticleEmitterEntryType::Pitch => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((
-                    ParticleEmitterEntryData::Pitch { data },
-                    usize_to_i32(bytes_read)?,
-                ))
+                let (pitch, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((ParticleEmitterEntryData::Pitch { pitch }, bytes_read))
             }
             ParticleEmitterEntryType::Scale => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((
-                    ParticleEmitterEntryData::Scale { data },
-                    usize_to_i32(bytes_read)?,
-                ))
+                let (scale, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((ParticleEmitterEntryData::Scale { scale }, bytes_read))
             }
             ParticleEmitterEntryType::OffsetX => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((
-                    ParticleEmitterEntryData::OffsetX { data },
-                    usize_to_i32(bytes_read)?,
-                ))
+                let (offset_x, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((ParticleEmitterEntryData::OffsetX { offset_x }, bytes_read))
             }
             ParticleEmitterEntryType::OffsetY => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((
-                    ParticleEmitterEntryData::OffsetY { data },
-                    usize_to_i32(bytes_read)?,
-                ))
+                let (offset_y, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((ParticleEmitterEntryData::OffsetY { offset_y }, bytes_read))
             }
             ParticleEmitterEntryType::OffsetZ => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((
-                    ParticleEmitterEntryData::OffsetZ { data },
-                    usize_to_i32(bytes_read)?,
-                ))
+                let (offset_z, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((ParticleEmitterEntryData::OffsetZ { offset_z }, bytes_read))
             }
             ParticleEmitterEntryType::EffectAssetName => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+                let (asset_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
                 Ok((
-                    ParticleEmitterEntryData::EffectAssetName { data },
+                    ParticleEmitterEntryData::EffectAssetName { asset_name },
                     usize_to_i32(bytes_read)?,
                 ))
             }
             ParticleEmitterEntryType::SourceBoneName => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+                let (bone_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
                 Ok((
-                    ParticleEmitterEntryData::SourceBoneName { data },
+                    ParticleEmitterEntryData::SourceBoneName { bone_name },
                     usize_to_i32(bytes_read)?,
                 ))
             }
@@ -358,17 +341,21 @@ impl DeserializeEntryData<ParticleEmitterEntryType> for ParticleEmitterEntryData
                 ))
             }
             ParticleEmitterEntryType::WorldOrientation => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+                let (use_world_orientation, bytes_read) = deserialize_u8(file, len).await?;
                 Ok((
-                    ParticleEmitterEntryData::WorldOrientation { data },
-                    usize_to_i32(bytes_read)?,
+                    ParticleEmitterEntryData::WorldOrientation {
+                        use_world_orientation: use_world_orientation != 0,
+                    },
+                    bytes_read,
                 ))
             }
             ParticleEmitterEntryType::HardStop => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+                let (is_hard_stop, bytes_read) = deserialize_u8(file, len).await?;
                 Ok((
-                    ParticleEmitterEntryData::HardStop { data },
-                    usize_to_i32(bytes_read)?,
+                    ParticleEmitterEntryData::HardStop {
+                        is_hard_stop: is_hard_stop != 0,
+                    },
+                    bytes_read,
                 ))
             }
         }
