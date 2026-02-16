@@ -277,9 +277,9 @@ impl GamePacket for NameplateImageId {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct UpdatePower {
     pub guid: u64,
-    pub unknown1: u32,
-    pub unknown2: u32,
-    pub unknown3: u32,
+    pub new_power1: u32,
+    pub max_power: u32,
+    pub new_power2: u32,
 }
 
 impl GamePacket for UpdatePower {
