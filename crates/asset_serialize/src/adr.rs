@@ -433,6 +433,33 @@ pub type ParticleEmitterArray = Entry<ParticleEmitterArrayType, ParticleEmitterA
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
+pub enum MaterialArrayType {
+    Material = 1,
+}
+
+pub enum MaterialArrayData {
+    Material { entries: Vec<ParticleEmitter> },
+}
+
+impl DeserializeEntryData<MaterialArrayType> for MaterialArrayData {
+    async fn deserialize(
+        entry_type: &MaterialArrayType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            &MaterialArrayType::Material => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((MaterialArrayData::Material { entries }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type MaterialArray = Entry<MaterialArrayType, MaterialArrayData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
 pub enum AnimationEntryType {
     AnimationName = 0x1,
     AssetName = 0x2,
