@@ -4,8 +4,8 @@ use tokio::{
 };
 
 use crate::{
-    bvh::BoundingVolumeHierarchy, deserialize, deserialize_exact, deserialize_string, skip,
-    DeserializeAsset, Error, ErrorKind,
+    bvh::BoundingVolumeHierarchy, deserialize, deserialize_exact, deserialize_string, i32_to_usize,
+    skip, DeserializeAsset, Error, ErrorKind,
 };
 
 pub struct CollisionEntry {
@@ -23,7 +23,7 @@ impl CollisionEntry {
 
         let vertex_count = deserialize(file, BufReader::read_i32_le).await?;
         let (vertex_buffer, _) =
-            deserialize_exact(file, vertex_count.saturating_mul(12) as usize).await?;
+            deserialize_exact(file, i32_to_usize(vertex_count.saturating_mul(12))?).await?;
         let ungrouped_vertices: Vec<f32> = vertex_buffer
             .chunks_exact(4)
             .map(TryInto::try_into)
@@ -38,7 +38,7 @@ impl CollisionEntry {
 
         let triangle_count = deserialize(file, BufReader::read_i32_le).await?;
         let (triangle_buffer, _) =
-            deserialize_exact(file, triangle_count.saturating_mul(6) as usize).await?;
+            deserialize_exact(file, i32_to_usize(triangle_count.saturating_mul(6))?).await?;
         let ungrouped_triangles: Vec<u16> = triangle_buffer
             .chunks_exact(2)
             .map(TryInto::try_into)
@@ -121,7 +121,7 @@ mod tests {
     use walkdir::WalkDir;
 
     #[tokio::test]
-    #[ignore]
+    //#[ignore]
     async fn test_deserialize_cdt() {
         let target_extension = "cdt";
         let search_path = env::var("CDT_ROOT").unwrap();

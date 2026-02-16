@@ -9,6 +9,7 @@ use std::{
     collections::HashMap,
     future::Future,
     io::SeekFrom,
+    num::TryFromIntError,
     path::{Path, PathBuf},
     string::FromUtf8Error,
 };
@@ -25,6 +26,7 @@ use crate::pack::Pack;
 pub enum ErrorKind {
     InvalidUtf8(FromUtf8Error),
     Io(tokio::io::Error),
+    TryFromInt(TryFromIntError),
     UnknownDiscriminant(u64, &'static str),
     UnknownMagic(String),
 }
@@ -38,6 +40,12 @@ impl From<FromUtf8Error> for ErrorKind {
 impl From<tokio::io::Error> for ErrorKind {
     fn from(value: tokio::io::Error) -> Self {
         ErrorKind::Io(value)
+    }
+}
+
+impl From<TryFromIntError> for ErrorKind {
+    fn from(value: TryFromIntError) -> Self {
+        ErrorKind::TryFromInt(value)
     }
 }
 
@@ -124,6 +132,27 @@ async fn deserialize<'a, 'b, T, Fut: Future<Output = Result<T, tokio::io::Error>
             Err(Error { kind, offset })
         }
     }
+}
+
+fn i32_to_usize(value: i32) -> Result<usize, Error> {
+    value.try_into().map_err(|err: TryFromIntError| Error {
+        kind: err.into(),
+        offset: None,
+    })
+}
+
+fn u32_to_usize(value: u32) -> Result<usize, Error> {
+    value.try_into().map_err(|err: TryFromIntError| Error {
+        kind: err.into(),
+        offset: None,
+    })
+}
+
+fn usize_to_i32(value: usize) -> Result<i32, Error> {
+    value.try_into().map_err(|err: TryFromIntError| Error {
+        kind: err.into(),
+        offset: None,
+    })
 }
 
 pub struct Asset {
