@@ -16,16 +16,16 @@ impl SerializePacket for CombatOpCode {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct ProcessedAttack {
-    unknown1: u64,
-    unknown2: u64,
-    unknown3: u64,
-    unknown4: u32,
-    unknown5: u32,
-    unknown6: u32,
-    unknown7: bool,
-    unknown8: bool,
-    unknown9: u32,
-    unknown10: u32,
+    pub attacker_guid1: u64,
+    pub attacker_guid2: u64,
+    pub receiver_guid: u64,
+    pub damage_dealt: u32,
+    pub max_hp: u32,
+    pub receiver_composite_effect: u32,
+    pub use_hurt_animation: bool,
+    pub unknown1: bool,
+    pub attacker_composite_effect: u32,
+    pub current_health: u32,
 }
 
 impl GamePacket for ProcessedAttack {
