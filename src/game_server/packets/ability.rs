@@ -141,7 +141,7 @@ impl GamePacket for StartCasting {
 #[derive(SerializePacket)]
 pub struct LaunchAndLand {
     pub launcher_guid: u64,
-    pub target1: Vec<Target>,
+    pub targets: Vec<Target>,
     pub unknown1: i32,
     pub unknown2: u32,
     pub launcher_animation_id: u32,
@@ -156,7 +156,7 @@ pub struct LaunchAndLand {
     pub launcher_composite_effect_duration: f32,
     pub unknown13: f32,
     pub unknown14: u32,
-    pub action_bar_type: ActionBarType, // unconfirmed
+    pub action_bar_type: ActionBarType,
     pub slot_index: i32,
     pub unknown17: u32,
     pub override_launcher_guid: u64,
@@ -170,8 +170,8 @@ pub struct LaunchAndLand {
     pub unknown26: Pos,
     pub unknown27: Pos,
     pub projectile_adr_name: String,
-    pub projectile_bone_source: Target,
-    pub target3: Target,
+    pub projectile_origin: Target,
+    pub unknown_target: Target,
     pub unknown29: Pos,
     pub unknown30: f32,
     pub enable_target_tracking: bool,
