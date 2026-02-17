@@ -14,6 +14,8 @@ use handlers::character::{
     Character, CharacterCategory, CharacterType, Chunk, MinigameMatchmakingGroup,
 };
 use handlers::chat::process_chat_packet;
+use handlers::chat_command::{load_commands, CommandConfig};
+use handlers::clicked_location::process_clicked_location;
 use handlers::command::process_command;
 use handlers::guid::{GuidTable, GuidTableIndexer, IndexedGuid};
 use handlers::housing::process_housing_packet;
@@ -194,6 +196,7 @@ pub struct GameServer {
     points_of_interest: BTreeMap<u32, (u8, PointOfInterestConfig)>,
     start_time: Instant,
     zone_templates: BTreeMap<u8, ZoneTemplate>,
+    commands: CommandConfig,
 }
 
 impl GameServer {
@@ -220,6 +223,7 @@ impl GameServer {
             points_of_interest,
             start_time: Instant::now(),
             zone_templates: templates,
+            commands: load_commands(config_dir)?,
         })
     }
 
@@ -633,6 +637,9 @@ impl GameServer {
                                 },
                         })?;
                 }
+                OpCode::ClickedLocation => {
+                    broadcasts.append(&mut process_clicked_location(self, sender, &mut cursor)?);
+                }
                 OpCode::Command => {
                     broadcasts.append(&mut process_command(self, sender, &mut cursor)?);
                 }
@@ -787,7 +794,6 @@ impl GameServer {
                 OpCode::SecondsOffGmt => {}
                 OpCode::Purchase => {}
                 OpCode::Portrait => {}
-                OpCode::ClickedLocation => {}
                 _ => {
                     return Err(ProcessPacketError::new(
                         ProcessPacketErrorType::UnknownOpCode,
