@@ -446,9 +446,9 @@ pub type ParticleEmitterArray = Entry<ParticleEmitterArrayType, ParticleEmitterA
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
 pub enum MaterialEntryType {
-    Name = 1,
-    SemanticHash = 2,
-    UnknownHash = 3,
+    Name = 0x1,
+    SemanticHash = 0x2,
+    UnknownHash = 0x3,
 }
 
 pub enum MaterialEntryData {
@@ -485,7 +485,7 @@ pub type MaterialEntry = Entry<MaterialEntryType, MaterialEntryData>;
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
 pub enum MaterialType {
-    Material = 1,
+    Material = 0x1,
 }
 
 pub enum MaterialData {
@@ -512,15 +512,17 @@ pub type Material = Entry<MaterialType, MaterialData>;
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
 pub enum TextureAliasEntryType {
-    MaterialIndex = 2,
-    SemanticHash = 3,
-    Name = 4,
-    AssetName = 5,
-    OcclusionBitMask = 6,
-    IsDefault = 7,
+    Unknown = 0x1,
+    MaterialIndex = 0x2,
+    SemanticHash = 0x3,
+    Name = 0x4,
+    AssetName = 0x5,
+    OcclusionBitMask = 0x6,
+    IsDefault = 0x7,
 }
 
 pub enum TextureAliasEntryData {
+    Unknown { unknown: u8 },
     MaterialIndex { material_index: u8 },
     SemanticHash { hash: u32 },
     Name { name: String },
@@ -536,6 +538,10 @@ impl DeserializeEntryData<TextureAliasEntryType> for TextureAliasEntryData {
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
+            TextureAliasEntryType::Unknown => {
+                let (unknown, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((TextureAliasEntryData::Unknown { unknown }, bytes_read))
+            }
             TextureAliasEntryType::MaterialIndex => {
                 let (material_index, bytes_read) = deserialize_u8(file, len).await?;
                 Ok((
@@ -586,7 +592,7 @@ pub type TextureAliasEntry = Entry<TextureAliasEntryType, TextureAliasEntryData>
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
 pub enum TextureAliasType {
-    TextureAlias = 1,
+    TextureAlias = 0x1,
     Unknown = 0xfe,
 }
 
@@ -621,13 +627,13 @@ pub type TextureAlias = Entry<TextureAliasType, TextureAliasData>;
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
 pub enum TintAliasEntryType {
-    MaterialIndex = 2,
-    SemanticHash = 3,
-    Name = 4,
-    Red = 5,
-    Green = 6,
-    Blue = 7,
-    IsDefault = 8,
+    MaterialIndex = 0x2,
+    SemanticHash = 0x3,
+    Name = 0x4,
+    Red = 0x5,
+    Green = 0x6,
+    Blue = 0x7,
+    IsDefault = 0x8,
 }
 
 pub enum TintAliasEntryData {
@@ -692,13 +698,11 @@ pub type TintAliasEntry = Entry<TintAliasEntryType, TintAliasEntryData>;
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
 pub enum TintAliasType {
-    TintAlias = 1,
-    Unknown = 0xfe,
+    TintAlias = 0x1,
 }
 
 pub enum TintAliasData {
     TintAlias { entries: Vec<TintAliasEntry> },
-    Unknown { data: Vec<u8> },
 }
 
 impl DeserializeEntryData<TintAliasType> for TintAliasData {
@@ -711,10 +715,6 @@ impl DeserializeEntryData<TintAliasType> for TintAliasData {
             &TintAliasType::TintAlias => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((TintAliasData::TintAlias { entries }, bytes_read))
-            }
-            TintAliasType::Unknown => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((TintAliasData::Unknown { data }, usize_to_i32(bytes_read)?))
             }
         }
     }
