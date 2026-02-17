@@ -464,7 +464,7 @@ impl DeserializeEntryData<MaterialEntryType> for MaterialEntryData {
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
-            &MaterialEntryType::Name => {
+            MaterialEntryType::Name => {
                 let (name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
                 Ok((MaterialEntryData::Name { name }, usize_to_i32(bytes_read)?))
             }
@@ -499,7 +499,7 @@ impl DeserializeEntryData<MaterialType> for MaterialData {
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
-            &MaterialType::Material => {
+            MaterialType::Material => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((MaterialData::Material { entries }, bytes_read))
             }
@@ -553,7 +553,7 @@ impl DeserializeEntryData<TextureAliasEntryType> for TextureAliasEntryData {
                 let (hash, bytes_read) = deserialize_u32_le(file, len).await?;
                 Ok((TextureAliasEntryData::SemanticHash { hash }, bytes_read))
             }
-            &TextureAliasEntryType::Name => {
+            TextureAliasEntryType::Name => {
                 let (name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
                 Ok((
                     TextureAliasEntryData::Name { name },
@@ -608,7 +608,7 @@ impl DeserializeEntryData<TextureAliasType> for TextureAliasData {
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
-            &TextureAliasType::TextureAlias => {
+            TextureAliasType::TextureAlias => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((TextureAliasData::TextureAlias { entries }, bytes_read))
             }
@@ -664,7 +664,7 @@ impl DeserializeEntryData<TintAliasEntryType> for TintAliasEntryData {
                 let (hash, bytes_read) = deserialize_u32_le(file, len).await?;
                 Ok((TintAliasEntryData::SemanticHash { hash }, bytes_read))
             }
-            &TintAliasEntryType::Name => {
+            TintAliasEntryType::Name => {
                 let (name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
                 Ok((TintAliasEntryData::Name { name }, usize_to_i32(bytes_read)?))
             }
@@ -713,7 +713,7 @@ impl DeserializeEntryData<TintAliasType> for TintAliasData {
         len: i32,
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
-        match *entry_type {
+        match entry_type {
             TintAliasType::TintAlias => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((TintAliasData::TintAlias { entries }, bytes_read))
@@ -725,6 +725,86 @@ impl DeserializeEntryData<TintAliasType> for TintAliasData {
         }
     }
 }
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum EffectEntryType {
+    Type = 2,
+    Name = 3,
+    ToolName = 4,
+    Id = 5,
+}
+
+pub enum EffectEntryData {
+    Type { effect_type: u8 },
+    Name { name: String },
+    ToolName { tool_name: String },
+    Id { id: u16 },
+}
+
+impl DeserializeEntryData<EffectEntryType> for EffectEntryData {
+    async fn deserialize(
+        entry_type: &EffectEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            EffectEntryType::Type => {
+                let (effect_type, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((EffectEntryData::Type { effect_type }, bytes_read))
+            }
+            EffectEntryType::Name => {
+                let (name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((EffectEntryData::Name { name }, usize_to_i32(bytes_read)?))
+            }
+            EffectEntryType::ToolName => {
+                let (tool_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    EffectEntryData::ToolName { tool_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            EffectEntryType::Id => {
+                let (id, bytes_read) = deserialize_u16_le(file, len).await?;
+                Ok((EffectEntryData::Id { id }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type EffectEntry = Entry<EffectEntryType, EffectEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum EffectType {
+    Effect = 0x1,
+    Unknown = 0xfe,
+}
+
+pub enum EffectData {
+    Effect { entries: Vec<EffectEntry> },
+    Unknown { data: Vec<u8> },
+}
+
+impl DeserializeEntryData<EffectType> for EffectData {
+    async fn deserialize(
+        entry_type: &EffectType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            EffectType::Effect => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((EffectData::Effect { entries }, bytes_read))
+            }
+            EffectType::Unknown => {
+                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+                Ok((EffectData::Unknown { data }, usize_to_i32(bytes_read)?))
+            }
+        }
+    }
+}
+
+pub type Effect = Entry<EffectType, EffectData>;
 
 pub type TintAlias = Entry<TintAliasType, TintAliasData>;
 
@@ -869,7 +949,7 @@ pub enum AdrEntryType {
     MaterialArray = 0x4,
     TextureAliasArray = 0x5,
     TintAliasArray = 0x6,
-    Unknown5 = 0x7,
+    EffectArray = 0x7,
     Unknown6 = 0x8,
     Animation = 0x9,
     Unknown7 = 0xa,
@@ -894,7 +974,7 @@ pub enum AdrData {
     MaterialArray { materials: Vec<Material> },
     TextureAliasArray { texture_aliases: Vec<TextureAlias> },
     TintAliases { tint_aliases: Vec<TintAlias> },
-    Unknown5 { data: Vec<u8> },
+    Effects { effects: Vec<Effect> },
     Unknown6 { data: Vec<u8> },
     Animation { entries: Vec<AnimationArray> },
     Unknown7 { data: Vec<u8> },
@@ -943,9 +1023,9 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
                 let (tint_aliases, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((AdrData::TintAliases { tint_aliases }, bytes_read))
             }
-            AdrEntryType::Unknown5 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((AdrData::Unknown5 { data }, usize_to_i32(bytes_read)?))
+            AdrEntryType::EffectArray => {
+                let (effects, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AdrData::Effects { effects }, bytes_read))
             }
             AdrEntryType::Unknown6 => {
                 let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
