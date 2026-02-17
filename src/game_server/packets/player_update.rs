@@ -171,8 +171,8 @@ pub struct HitPointModification {
     pub attacker_guid: u64,
     pub receiver_guid: u64,
     pub show_hp_delta: bool,
-    pub max_hp: u32,
-    pub new_hp: u32,
+    pub max_hp: i32,
+    pub new_hp: i32,
     pub hp_delta: i32,
     pub show_double_exclamations: bool,
 }
