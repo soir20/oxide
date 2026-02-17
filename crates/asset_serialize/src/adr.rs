@@ -618,6 +618,109 @@ impl DeserializeEntryData<TextureAliasType> for TextureAliasData {
 }
 
 pub type TextureAlias = Entry<TextureAliasType, TextureAliasData>;
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum TintAliasEntryType {
+    MaterialIndex = 2,
+    SemanticHash = 3,
+    Name = 4,
+    Red = 5,
+    Green = 6,
+    Blue = 7,
+    IsDefault = 8,
+}
+
+pub enum TintAliasEntryData {
+    MaterialIndex { material_index: u8 },
+    SemanticHash { hash: u32 },
+    Name { name: String },
+    Red { red: f32 },
+    Green { green: f32 },
+    Blue { blue: f32 },
+    IsDefault { is_default: bool },
+}
+
+impl DeserializeEntryData<TintAliasEntryType> for TintAliasEntryData {
+    async fn deserialize(
+        entry_type: &TintAliasEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            TintAliasEntryType::MaterialIndex => {
+                let (material_index, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((
+                    TintAliasEntryData::MaterialIndex { material_index },
+                    bytes_read,
+                ))
+            }
+            TintAliasEntryType::SemanticHash => {
+                let (hash, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((TintAliasEntryData::SemanticHash { hash }, bytes_read))
+            }
+            &TintAliasEntryType::Name => {
+                let (name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((TintAliasEntryData::Name { name }, usize_to_i32(bytes_read)?))
+            }
+            TintAliasEntryType::Red => {
+                let (red, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((TintAliasEntryData::Red { red }, bytes_read))
+            }
+            TintAliasEntryType::Green => {
+                let (green, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((TintAliasEntryData::Green { green }, bytes_read))
+            }
+            TintAliasEntryType::Blue => {
+                let (blue, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((TintAliasEntryData::Blue { blue }, bytes_read))
+            }
+            TintAliasEntryType::IsDefault => {
+                let (is_default, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((
+                    TintAliasEntryData::IsDefault {
+                        is_default: is_default != 0,
+                    },
+                    bytes_read,
+                ))
+            }
+        }
+    }
+}
+
+pub type TintAliasEntry = Entry<TintAliasEntryType, TintAliasEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum TintAliasType {
+    TintAlias = 1,
+    Unknown = 0xfe,
+}
+
+pub enum TintAliasData {
+    TintAlias { entries: Vec<TintAliasEntry> },
+    Unknown { data: Vec<u8> },
+}
+
+impl DeserializeEntryData<TintAliasType> for TintAliasData {
+    async fn deserialize(
+        entry_type: &TintAliasType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            &TintAliasType::TintAlias => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((TintAliasData::TintAlias { entries }, bytes_read))
+            }
+            TintAliasType::Unknown => {
+                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+                Ok((TintAliasData::Unknown { data }, usize_to_i32(bytes_read)?))
+            }
+        }
+    }
+}
+
+pub type TintAlias = Entry<TintAliasType, TintAliasData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
@@ -759,7 +862,7 @@ pub enum AdrEntryType {
     ParticleEmitterArrayArray = 0x3,
     MaterialArray = 0x4,
     TextureAliasArray = 0x5,
-    Unknown4 = 0x6,
+    TintAliasArray = 0x6,
     Unknown5 = 0x7,
     Unknown6 = 0x8,
     Animation = 0x9,
@@ -784,7 +887,7 @@ pub enum AdrData {
     ParticleEmitterArrayArray { arrays: Vec<ParticleEmitterArray> },
     MaterialArray { materials: Vec<Material> },
     TextureAliasArray { texture_aliases: Vec<TextureAlias> },
-    Unknown4 { data: Vec<u8> },
+    TintAliases { tint_aliases: Vec<u8> },
     Unknown5 { data: Vec<u8> },
     Unknown6 { data: Vec<u8> },
     Animation { entries: Vec<AnimationArray> },
@@ -830,9 +933,13 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
                 let (texture_aliases, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((AdrData::TextureAliasArray { texture_aliases }, bytes_read))
             }
-            AdrEntryType::Unknown4 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((AdrData::Unknown4 { data }, usize_to_i32(bytes_read)?))
+            AdrEntryType::TintAliasArray => {
+                let (tint_aliases, bytes_read) =
+                    deserialize_exact(file, i32_to_usize(len)?).await?;
+                Ok((
+                    AdrData::TintAliases { tint_aliases },
+                    usize_to_i32(bytes_read)?,
+                ))
             }
             AdrEntryType::Unknown5 => {
                 let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
