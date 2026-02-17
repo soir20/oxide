@@ -484,30 +484,30 @@ pub type MaterialEntry = Entry<MaterialEntryType, MaterialEntryData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
-pub enum MaterialArrayType {
+pub enum MaterialType {
     Material = 1,
 }
 
-pub enum MaterialArrayData {
+pub enum MaterialData {
     Material { entries: Vec<MaterialEntry> },
 }
 
-impl DeserializeEntryData<MaterialArrayType> for MaterialArrayData {
+impl DeserializeEntryData<MaterialType> for MaterialData {
     async fn deserialize(
-        entry_type: &MaterialArrayType,
+        entry_type: &MaterialType,
         len: i32,
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
-            &MaterialArrayType::Material => {
+            &MaterialType::Material => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((MaterialArrayData::Material { entries }, bytes_read))
+                Ok((MaterialData::Material { entries }, bytes_read))
             }
         }
     }
 }
 
-pub type MaterialArray = Entry<MaterialArrayType, MaterialArrayData>;
+pub type Material = Entry<MaterialType, MaterialData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
@@ -646,7 +646,7 @@ pub type CollisionEntry = Entry<CollisionEntryType, CollisionData>;
 pub enum AdrEntryType {
     Skeleton = 0x1,
     Model = 0x2,
-    ParticleEmitterArray = 0x3,
+    ParticleEmitterArrayArray = 0x3,
     MaterialArray = 0x4,
     Unknown3 = 0x5,
     Unknown4 = 0x6,
@@ -671,8 +671,8 @@ pub enum AdrEntryType {
 pub enum AdrData {
     Skeleton { entries: Vec<SkeletonEntry> },
     Model { entries: Vec<ModelEntry> },
-    ParticleEmitterArray { entries: Vec<ParticleEmitterArray> },
-    MaterialArray { entries: Vec<MaterialArray> },
+    ParticleEmitterArrayArray { arrays: Vec<ParticleEmitterArray> },
+    MaterialArray { materials: Vec<Material> },
     Unknown3 { data: Vec<u8> },
     Unknown4 { data: Vec<u8> },
     Unknown5 { data: Vec<u8> },
@@ -708,13 +708,13 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((AdrData::Model { entries }, bytes_read))
             }
-            AdrEntryType::ParticleEmitterArray => {
-                let (entries, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((AdrData::ParticleEmitterArray { entries }, bytes_read))
+            AdrEntryType::ParticleEmitterArrayArray => {
+                let (arrays, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AdrData::ParticleEmitterArrayArray { arrays }, bytes_read))
             }
             AdrEntryType::MaterialArray => {
-                let (entries, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((AdrData::MaterialArray { entries }, bytes_read))
+                let (materials, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AdrData::MaterialArray { materials }, bytes_read))
             }
             AdrEntryType::Unknown3 => {
                 let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
