@@ -3,8 +3,7 @@ use std::io::{Cursor, Read};
 use packet_serialize::DeserializePacket;
 
 use crate::game_server::{
-    packets::ability::AbilityOpCode, Broadcast, ProcessPacketError,
-    ProcessPacketErrorType,
+    packets::ability::AbilityOpCode, Broadcast, ProcessPacketError, ProcessPacketErrorType,
 };
 
 pub fn process_ability(cursor: &mut Cursor<&[u8]>) -> Result<Vec<Broadcast>, ProcessPacketError> {
