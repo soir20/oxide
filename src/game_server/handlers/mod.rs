@@ -2,6 +2,7 @@ use chrono::{DateTime, Datelike, Days, FixedOffset, Weekday};
 
 use super::{packets::Pos, Broadcast, GameServer, ProcessPacketError};
 
+pub mod ability;
 pub mod character;
 pub mod chat;
 pub mod combat;

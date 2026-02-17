@@ -4,7 +4,7 @@ use num_enum::TryFromPrimitive;
 
 use packet_serialize::{DeserializePacket, DeserializePacketError, SerializePacket};
 
-use super::{player_data::AbilityType, ActionBarType, GamePacket, OpCode, Pos, Target};
+use super::{ActionBarType, GamePacket, OpCode, Pos, Target};
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u16)]

@@ -10,6 +10,7 @@ use std::vec;
 
 use crossbeam_channel::Sender;
 use enum_iterator::Sequence;
+use handlers::ability::process_ability;
 use handlers::character::{
     Character, CharacterCategory, CharacterType, Chunk, MinigameMatchmakingGroup,
 };
@@ -632,6 +633,9 @@ impl GameServer {
                                     })
                                 },
                         })?;
+                }
+                OpCode::Ability => {
+                    broadcasts.append(&mut process_ability(&mut cursor)?);
                 }
                 OpCode::Command => {
                     broadcasts.append(&mut process_command(self, sender, &mut cursor)?);
