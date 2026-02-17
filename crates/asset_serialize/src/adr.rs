@@ -828,7 +828,7 @@ pub enum AnimationLoadType {
     Unknown4 = 0x4,
 }
 
-pub enum AnimationData {
+pub enum AnimationEntryData {
     AnimationName { name: String },
     AssetName { name: String },
     Unknown1 { data: Vec<u8> },
@@ -837,7 +837,7 @@ pub enum AnimationData {
     Unknown2 { data: Vec<u8> },
 }
 
-impl DeserializeEntryData<AnimationEntryType> for AnimationData {
+impl DeserializeEntryData<AnimationEntryType> for AnimationEntryData {
     async fn deserialize(
         entry_type: &AnimationEntryType,
         len: i32,
@@ -847,27 +847,72 @@ impl DeserializeEntryData<AnimationEntryType> for AnimationData {
             AnimationEntryType::AnimationName => {
                 let (name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
                 Ok((
-                    AnimationData::AnimationName { name },
+                    AnimationEntryData::AnimationName { name },
                     usize_to_i32(bytes_read)?,
                 ))
             }
             AnimationEntryType::AssetName => {
                 let (name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
-                Ok((AnimationData::AssetName { name }, usize_to_i32(bytes_read)?))
+                Ok((
+                    AnimationEntryData::AssetName { name },
+                    usize_to_i32(bytes_read)?,
+                ))
             }
             AnimationEntryType::Unknown1 => {
                 let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((AnimationData::Unknown1 { data }, usize_to_i32(bytes_read)?))
+                Ok((
+                    AnimationEntryData::Unknown1 { data },
+                    usize_to_i32(bytes_read)?,
+                ))
             }
             AnimationEntryType::Duration => {
                 let (duration_seconds, bytes_read) = deserialize_f32_be(file, len).await?;
-                Ok((AnimationData::Duration { duration_seconds }, bytes_read))
+                Ok((
+                    AnimationEntryData::Duration { duration_seconds },
+                    bytes_read,
+                ))
             }
             AnimationEntryType::LoadType => {
                 let (load_type, bytes_read) = AnimationLoadType::deserialize(file).await?;
-                Ok((AnimationData::LoadType { load_type }, bytes_read))
+                Ok((AnimationEntryData::LoadType { load_type }, bytes_read))
             }
             AnimationEntryType::Unknown2 => {
+                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+                Ok((
+                    AnimationEntryData::Unknown2 { data },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+        }
+    }
+}
+
+pub type AnimationEntry = Entry<AnimationEntryType, AnimationEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum AnimationType {
+    Animation = 0x1,
+    Unknown2 = 0xfe,
+}
+
+pub enum AnimationData {
+    Animation { entries: Vec<AnimationEntry> },
+    Unknown2 { data: Vec<u8> },
+}
+
+impl DeserializeEntryData<AnimationType> for AnimationData {
+    async fn deserialize(
+        entry_type: &AnimationType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            AnimationType::Animation => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AnimationData::Animation { entries }, bytes_read))
+            }
+            AnimationType::Unknown2 => {
                 let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
                 Ok((AnimationData::Unknown2 { data }, usize_to_i32(bytes_read)?))
             }
@@ -875,43 +920,7 @@ impl DeserializeEntryData<AnimationEntryType> for AnimationData {
     }
 }
 
-pub type AnimationEntry = Entry<AnimationEntryType, AnimationData>;
-
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
-#[repr(u8)]
-pub enum AnimationArrayType {
-    AnimationEntry = 0x1,
-    Unknown2 = 0xfe,
-}
-
-pub enum AnimationArrayData {
-    AnimationEntry { entries: Vec<AnimationEntry> },
-    Unknown2 { data: Vec<u8> },
-}
-
-impl DeserializeEntryData<AnimationArrayType> for AnimationArrayData {
-    async fn deserialize(
-        entry_type: &AnimationArrayType,
-        len: i32,
-        file: &mut BufReader<&mut File>,
-    ) -> Result<(Self, i32), Error> {
-        match entry_type {
-            AnimationArrayType::AnimationEntry => {
-                let (entries, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((AnimationArrayData::AnimationEntry { entries }, bytes_read))
-            }
-            AnimationArrayType::Unknown2 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((
-                    AnimationArrayData::Unknown2 { data },
-                    usize_to_i32(bytes_read)?,
-                ))
-            }
-        }
-    }
-}
-
-pub type AnimationArray = Entry<AnimationArrayType, AnimationArrayData>;
+pub type Animation = Entry<AnimationType, AnimationData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
@@ -976,7 +985,7 @@ pub enum AdrData {
     TintAliasArray { tint_aliases: Vec<TintAlias> },
     EffectArray { effects: Vec<Effect> },
     Unknown6 { data: Vec<u8> },
-    AnimationArray { entries: Vec<AnimationArray> },
+    AnimationArray { animations: Vec<Animation> },
     Unknown7 { data: Vec<u8> },
     AnimatedParticle { data: Vec<u8> },
     Unknown8 { data: Vec<u8> },
@@ -1032,8 +1041,8 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
                 Ok((AdrData::Unknown6 { data }, usize_to_i32(bytes_read)?))
             }
             AdrEntryType::AnimationArray => {
-                let (entries, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((AdrData::AnimationArray { entries }, bytes_read))
+                let (animations, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AdrData::AnimationArray { animations }, bytes_read))
             }
             AdrEntryType::Unknown7 => {
                 let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
