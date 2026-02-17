@@ -951,7 +951,7 @@ pub enum AdrEntryType {
     TintAliasArray = 0x6,
     EffectArray = 0x7,
     Unknown6 = 0x8,
-    Animation = 0x9,
+    AnimationArray = 0x9,
     Unknown7 = 0xa,
     AnimatedParticle = 0xb,
     Unknown8 = 0xc,
@@ -973,10 +973,10 @@ pub enum AdrData {
     ParticleEmitterArrayArray { arrays: Vec<ParticleEmitterArray> },
     MaterialArray { materials: Vec<Material> },
     TextureAliasArray { texture_aliases: Vec<TextureAlias> },
-    TintAliases { tint_aliases: Vec<TintAlias> },
-    Effects { effects: Vec<Effect> },
+    TintAliasArray { tint_aliases: Vec<TintAlias> },
+    EffectArray { effects: Vec<Effect> },
     Unknown6 { data: Vec<u8> },
-    Animation { entries: Vec<AnimationArray> },
+    AnimationArray { entries: Vec<AnimationArray> },
     Unknown7 { data: Vec<u8> },
     AnimatedParticle { data: Vec<u8> },
     Unknown8 { data: Vec<u8> },
@@ -1021,19 +1021,19 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
             }
             AdrEntryType::TintAliasArray => {
                 let (tint_aliases, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((AdrData::TintAliases { tint_aliases }, bytes_read))
+                Ok((AdrData::TintAliasArray { tint_aliases }, bytes_read))
             }
             AdrEntryType::EffectArray => {
                 let (effects, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((AdrData::Effects { effects }, bytes_read))
+                Ok((AdrData::EffectArray { effects }, bytes_read))
             }
             AdrEntryType::Unknown6 => {
                 let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
                 Ok((AdrData::Unknown6 { data }, usize_to_i32(bytes_read)?))
             }
-            AdrEntryType::Animation => {
+            AdrEntryType::AnimationArray => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((AdrData::Animation { entries }, bytes_read))
+                Ok((AdrData::AnimationArray { entries }, bytes_read))
             }
             AdrEntryType::Unknown7 => {
                 let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
