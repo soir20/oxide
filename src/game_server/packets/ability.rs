@@ -156,7 +156,7 @@ pub struct LaunchAndLand {
     pub launcher_composite_effect_duration: f32,
     pub unknown13: f32,
     pub unknown14: u32,
-    pub unknown15: u32, // action bar related
+    pub action_bar_type: ActionBarType, // unconfirmed
     pub slot_index: i32,
     pub unknown17: u32,
     pub override_launcher_guid: u64,
