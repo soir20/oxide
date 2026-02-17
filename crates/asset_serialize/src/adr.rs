@@ -699,10 +699,12 @@ pub type TintAliasEntry = Entry<TintAliasEntryType, TintAliasEntryData>;
 #[repr(u8)]
 pub enum TintAliasType {
     TintAlias = 0x1,
+    Unknown = 0xfe,
 }
 
 pub enum TintAliasData {
     TintAlias { entries: Vec<TintAliasEntry> },
+    Unknown { data: Vec<u8> },
 }
 
 impl DeserializeEntryData<TintAliasType> for TintAliasData {
@@ -711,10 +713,14 @@ impl DeserializeEntryData<TintAliasType> for TintAliasData {
         len: i32,
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
-        match entry_type {
-            &TintAliasType::TintAlias => {
+        match *entry_type {
+            TintAliasType::TintAlias => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((TintAliasData::TintAlias { entries }, bytes_read))
+            }
+            TintAliasType::Unknown => {
+                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+                Ok((TintAliasData::Unknown { data }, usize_to_i32(bytes_read)?))
             }
         }
     }
@@ -887,7 +893,7 @@ pub enum AdrData {
     ParticleEmitterArrayArray { arrays: Vec<ParticleEmitterArray> },
     MaterialArray { materials: Vec<Material> },
     TextureAliasArray { texture_aliases: Vec<TextureAlias> },
-    TintAliases { tint_aliases: Vec<u8> },
+    TintAliases { tint_aliases: Vec<TintAlias> },
     Unknown5 { data: Vec<u8> },
     Unknown6 { data: Vec<u8> },
     Animation { entries: Vec<AnimationArray> },
@@ -934,12 +940,8 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
                 Ok((AdrData::TextureAliasArray { texture_aliases }, bytes_read))
             }
             AdrEntryType::TintAliasArray => {
-                let (tint_aliases, bytes_read) =
-                    deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((
-                    AdrData::TintAliases { tint_aliases },
-                    usize_to_i32(bytes_read)?,
-                ))
+                let (tint_aliases, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AdrData::TintAliases { tint_aliases }, bytes_read))
             }
             AdrEntryType::Unknown5 => {
                 let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
