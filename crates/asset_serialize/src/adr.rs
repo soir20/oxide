@@ -511,6 +511,116 @@ pub type Material = Entry<MaterialType, MaterialData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
+pub enum TextureAliasEntryType {
+    MaterialIndex = 2,
+    SemanticHash = 3,
+    Name = 4,
+    AssetName = 5,
+    OcclusionBitMask = 6,
+    IsDefault = 7,
+}
+
+pub enum TextureAliasEntryData {
+    MaterialIndex { material_index: u8 },
+    SemanticHash { hash: u32 },
+    Name { name: String },
+    AssetName { asset_name: String },
+    OcclusionBitMask { bit_mask: Vec<u8> },
+    IsDefault { is_default: bool },
+}
+
+impl DeserializeEntryData<TextureAliasEntryType> for TextureAliasEntryData {
+    async fn deserialize(
+        entry_type: &TextureAliasEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            TextureAliasEntryType::MaterialIndex => {
+                let (material_index, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((
+                    TextureAliasEntryData::MaterialIndex { material_index },
+                    bytes_read,
+                ))
+            }
+            TextureAliasEntryType::SemanticHash => {
+                let (hash, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((TextureAliasEntryData::SemanticHash { hash }, bytes_read))
+            }
+            &TextureAliasEntryType::Name => {
+                let (name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    TextureAliasEntryData::Name { name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            TextureAliasEntryType::AssetName => {
+                let (asset_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    TextureAliasEntryData::AssetName { asset_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            TextureAliasEntryType::OcclusionBitMask => {
+                let (bit_mask, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+                Ok((
+                    TextureAliasEntryData::OcclusionBitMask { bit_mask },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            TextureAliasEntryType::IsDefault => {
+                let (is_default, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((
+                    TextureAliasEntryData::IsDefault {
+                        is_default: is_default != 0,
+                    },
+                    bytes_read,
+                ))
+            }
+        }
+    }
+}
+
+pub type TextureAliasEntry = Entry<TextureAliasEntryType, TextureAliasEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum TextureAliasType {
+    TextureAlias = 1,
+    Unknown = 0xfe,
+}
+
+pub enum TextureAliasData {
+    TextureAlias { entries: Vec<TextureAliasEntry> },
+    Unknown { data: Vec<u8> },
+}
+
+impl DeserializeEntryData<TextureAliasType> for TextureAliasData {
+    async fn deserialize(
+        entry_type: &TextureAliasType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            &TextureAliasType::TextureAlias => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((TextureAliasData::TextureAlias { entries }, bytes_read))
+            }
+            TextureAliasType::Unknown => {
+                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+                Ok((
+                    TextureAliasData::Unknown { data },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+        }
+    }
+}
+
+pub type TextureAlias = Entry<TextureAliasType, TextureAliasData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
 pub enum AnimationEntryType {
     AnimationName = 0x1,
     AssetName = 0x2,
@@ -648,7 +758,7 @@ pub enum AdrEntryType {
     Model = 0x2,
     ParticleEmitterArrayArray = 0x3,
     MaterialArray = 0x4,
-    Unknown3 = 0x5,
+    TextureAliasArray = 0x5,
     Unknown4 = 0x6,
     Unknown5 = 0x7,
     Unknown6 = 0x8,
@@ -673,7 +783,7 @@ pub enum AdrData {
     Model { entries: Vec<ModelEntry> },
     ParticleEmitterArrayArray { arrays: Vec<ParticleEmitterArray> },
     MaterialArray { materials: Vec<Material> },
-    Unknown3 { data: Vec<u8> },
+    TextureAliasArray { texture_aliases: Vec<TextureAlias> },
     Unknown4 { data: Vec<u8> },
     Unknown5 { data: Vec<u8> },
     Unknown6 { data: Vec<u8> },
@@ -716,9 +826,9 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
                 let (materials, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((AdrData::MaterialArray { materials }, bytes_read))
             }
-            AdrEntryType::Unknown3 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((AdrData::Unknown3 { data }, usize_to_i32(bytes_read)?))
+            AdrEntryType::TextureAliasArray => {
+                let (texture_aliases, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AdrData::TextureAliasArray { texture_aliases }, bytes_read))
             }
             AdrEntryType::Unknown4 => {
                 let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
