@@ -1348,13 +1348,82 @@ pub type AnimationParticle = Entry<AnimationParticleType, AnimationParticleData>
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
+pub enum ActionPointEntryType {
+    Name = 0x1,
+    Time = 0x2,
+}
+
+pub enum ActionPointEntryData {
+    Name { name: String },
+    Time { time_seconds: f32 },
+}
+
+impl DeserializeEntryData<ActionPointEntryType> for ActionPointEntryData {
+    async fn deserialize(
+        entry_type: &ActionPointEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            ActionPointEntryType::Name => {
+                let (name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    ActionPointEntryData::Name { name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            ActionPointEntryType::Time => {
+                let (time_seconds, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((ActionPointEntryData::Time { time_seconds }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type ActionPointEntry = Entry<ActionPointEntryType, ActionPointEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum ActionPointType {
+    ActionPoint = 0x1,
+    Unknown = 0xfe,
+}
+
+pub enum ActionPointData {
+    ActionPoint { entries: Vec<ActionPointEntry> },
+    Unknown { data: Vec<u8> },
+}
+
+impl DeserializeEntryData<ActionPointType> for ActionPointData {
+    async fn deserialize(
+        entry_type: &ActionPointType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            ActionPointType::ActionPoint => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((ActionPointData::ActionPoint { entries }, bytes_read))
+            }
+            ActionPointType::Unknown => {
+                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+                Ok((ActionPointData::Unknown { data }, usize_to_i32(bytes_read)?))
+            }
+        }
+    }
+}
+
+pub type ActionPoint = Entry<ActionPointType, ActionPointData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
 pub enum AnimationActionPointEntryType {
-    Time = 0x1,
+    ActionPointArray = 0x1,
     Name = 0x2,
 }
 
 pub enum AnimationActionPointEntryData {
-    Time { time_seconds: f32 },
+    ActionPointArray { action_points: Vec<ActionPoint> },
     Name { name: String },
 }
 
@@ -1365,10 +1434,10 @@ impl DeserializeEntryData<AnimationActionPointEntryType> for AnimationActionPoin
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
-            AnimationActionPointEntryType::Time => {
-                let (time_seconds, bytes_read) = deserialize_f32_be(file, len).await?;
+            AnimationActionPointEntryType::ActionPointArray => {
+                let (action_points, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((
-                    AnimationActionPointEntryData::Time { time_seconds },
+                    AnimationActionPointEntryData::ActionPointArray { action_points },
                     bytes_read,
                 ))
             }
