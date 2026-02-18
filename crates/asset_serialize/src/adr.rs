@@ -1349,13 +1349,13 @@ pub type AnimationParticle = Entry<AnimationParticleType, AnimationParticleData>
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
 pub enum AnimationActionPointEntryType {
-    Name = 0x1,
-    Time = 0x2,
+    Time = 0x1,
+    Name = 0x2,
 }
 
 pub enum AnimationActionPointEntryData {
-    Name { name: String },
     Time { time_seconds: f32 },
+    Name { name: String },
 }
 
 impl DeserializeEntryData<AnimationActionPointEntryType> for AnimationActionPointEntryData {
@@ -1365,18 +1365,18 @@ impl DeserializeEntryData<AnimationActionPointEntryType> for AnimationActionPoin
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
-            AnimationActionPointEntryType::Name => {
-                let (name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
-                Ok((
-                    AnimationActionPointEntryData::Name { name },
-                    usize_to_i32(bytes_read)?,
-                ))
-            }
             AnimationActionPointEntryType::Time => {
                 let (time_seconds, bytes_read) = deserialize_f32_be(file, len).await?;
                 Ok((
                     AnimationActionPointEntryData::Time { time_seconds },
                     bytes_read,
+                ))
+            }
+            AnimationActionPointEntryType::Name => {
+                let (name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    AnimationActionPointEntryData::Name { name },
+                    usize_to_i32(bytes_read)?,
                 ))
             }
         }
