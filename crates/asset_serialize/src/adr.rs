@@ -920,36 +920,34 @@ pub type Animation = Entry<AnimationType, AnimationData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
-pub enum AnimationSoundEffectTriggerEventType {
+pub enum AnimationEffectTriggerEventType {
     Start = 0x1,
     End = 0x2,
 }
 
-pub enum AnimationSoundEffectTriggerEventData {
+pub enum AnimationEffectTriggerEventData {
     Start { start_seconds: f32 },
     End { end_seconds: f32 },
 }
 
-impl DeserializeEntryData<AnimationSoundEffectTriggerEventType>
-    for AnimationSoundEffectTriggerEventData
-{
+impl DeserializeEntryData<AnimationEffectTriggerEventType> for AnimationEffectTriggerEventData {
     async fn deserialize(
-        entry_type: &AnimationSoundEffectTriggerEventType,
+        entry_type: &AnimationEffectTriggerEventType,
         len: i32,
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
-            AnimationSoundEffectTriggerEventType::Start => {
+            AnimationEffectTriggerEventType::Start => {
                 let (start_seconds, bytes_read) = deserialize_f32_be(file, len).await?;
                 Ok((
-                    AnimationSoundEffectTriggerEventData::Start { start_seconds },
+                    AnimationEffectTriggerEventData::Start { start_seconds },
                     bytes_read,
                 ))
             }
-            AnimationSoundEffectTriggerEventType::End => {
+            AnimationEffectTriggerEventType::End => {
                 let (end_seconds, bytes_read) = deserialize_f32_be(file, len).await?;
                 Ok((
-                    AnimationSoundEffectTriggerEventData::End { end_seconds },
+                    AnimationEffectTriggerEventData::End { end_seconds },
                     bytes_read,
                 ))
             }
@@ -957,13 +955,13 @@ impl DeserializeEntryData<AnimationSoundEffectTriggerEventType>
     }
 }
 
-pub type AnimationSoundEffectTriggerEvent =
-    Entry<AnimationSoundEffectTriggerEventType, AnimationSoundEffectTriggerEventData>;
+pub type AnimationEffectTriggerEvent =
+    Entry<AnimationEffectTriggerEventType, AnimationEffectTriggerEventData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
 pub enum AnimationSoundEffectType {
-    TriggerEvents = 0x1,
+    TriggerEventArray = 0x1,
     Type = 0x2,
     Name = 0x3,
     ToolName = 0x4,
@@ -974,8 +972,8 @@ pub enum AnimationSoundEffectType {
 }
 
 pub enum AnimationSoundEffectData {
-    TriggerEvents {
-        trigger_events: Vec<AnimationSoundEffectTriggerEvent>,
+    TriggerEventArray {
+        trigger_events: Vec<AnimationEffectTriggerEvent>,
     },
     Type {
         effect_type: u8,
@@ -1007,10 +1005,10 @@ impl DeserializeEntryData<AnimationSoundEffectType> for AnimationSoundEffectData
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
-            AnimationSoundEffectType::TriggerEvents => {
+            AnimationSoundEffectType::TriggerEventArray => {
                 let (trigger_events, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((
-                    AnimationSoundEffectData::TriggerEvents { trigger_events },
+                    AnimationSoundEffectData::TriggerEventArray { trigger_events },
                     bytes_read,
                 ))
             }
@@ -1183,7 +1181,7 @@ pub enum AdrEntryType {
     Unknown6 = 0x8,
     AnimationArray = 0x9,
     AnimationSoundArray = 0xa,
-    AnimatedParticle = 0xb,
+    AnimatedParticleArray = 0xb,
     Unknown8 = 0xc,
     Collision = 0xd,
     Unknown9 = 0xe,
@@ -1208,7 +1206,7 @@ pub enum AdrData {
     Unknown6 { data: Vec<u8> },
     AnimationArray { animations: Vec<Animation> },
     AnimationSoundArray { sounds: Vec<AnimationSound> },
-    AnimatedParticle { data: Vec<u8> },
+    AnimatedParticleArray { data: Vec<u8> },
     Unknown8 { data: Vec<u8> },
     Collision { entries: Vec<CollisionEntry> },
     Unknown9 { data: Vec<u8> },
@@ -1269,10 +1267,10 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
                 let (sounds, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((AdrData::AnimationSoundArray { sounds }, bytes_read))
             }
-            AdrEntryType::AnimatedParticle => {
+            AdrEntryType::AnimatedParticleArray => {
                 let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
                 Ok((
-                    AdrData::AnimatedParticle { data },
+                    AdrData::AnimatedParticleArray { data },
                     usize_to_i32(bytes_read)?,
                 ))
             }
