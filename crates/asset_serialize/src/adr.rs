@@ -1143,6 +1143,211 @@ pub type AnimationSound = Entry<AnimationSoundType, AnimationSoundData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
+pub enum AnimationParticleEffectType {
+    TriggerEventArray = 0x1,
+    Type = 0x2,
+    Name = 0x3,
+    ToolName = 0x4,
+    Id = 0x5,
+    PlayOnce = 0x6,
+    LoadType = 0x7,
+    Unknown = 0xfe,
+}
+
+pub enum AnimationParticleEffectData {
+    TriggerEventArray {
+        trigger_events: Vec<AnimationEffectTriggerEvent>,
+    },
+    Type {
+        effect_type: u8,
+    },
+    Name {
+        name: String,
+    },
+    ToolName {
+        tool_name: String,
+    },
+    Id {
+        id: u16,
+    },
+    PlayOnce {
+        should_play_once: bool,
+    },
+    LoadType {
+        load_type: AnimationLoadType,
+    },
+    Unknown {
+        data: Vec<u8>,
+    },
+}
+
+impl DeserializeEntryData<AnimationParticleEffectType> for AnimationParticleEffectData {
+    async fn deserialize(
+        entry_type: &AnimationParticleEffectType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            AnimationParticleEffectType::TriggerEventArray => {
+                let (trigger_events, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((
+                    AnimationParticleEffectData::TriggerEventArray { trigger_events },
+                    bytes_read,
+                ))
+            }
+            AnimationParticleEffectType::Type => {
+                let (effect_type, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((
+                    AnimationParticleEffectData::Type { effect_type },
+                    bytes_read,
+                ))
+            }
+            AnimationParticleEffectType::Name => {
+                let (name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    AnimationParticleEffectData::Name { name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            AnimationParticleEffectType::ToolName => {
+                let (tool_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    AnimationParticleEffectData::ToolName { tool_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            AnimationParticleEffectType::Id => {
+                let (id, bytes_read) = deserialize_u16_le(file, len).await?;
+                Ok((AnimationParticleEffectData::Id { id }, bytes_read))
+            }
+            AnimationParticleEffectType::PlayOnce => {
+                let (should_play_once, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((
+                    AnimationParticleEffectData::PlayOnce {
+                        should_play_once: should_play_once != 0,
+                    },
+                    bytes_read,
+                ))
+            }
+            AnimationParticleEffectType::LoadType => {
+                let (load_type, bytes_read) = AnimationLoadType::deserialize(file).await?;
+                Ok((
+                    AnimationParticleEffectData::LoadType { load_type },
+                    bytes_read,
+                ))
+            }
+            AnimationParticleEffectType::Unknown => {
+                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+                Ok((
+                    AnimationParticleEffectData::Unknown { data },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+        }
+    }
+}
+
+pub type AnimationParticleEffect = Entry<AnimationParticleEffectType, AnimationParticleEffectData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum AnimationParticleEntryType {
+    EffectArray = 0x1,
+    Name = 0x2,
+    Unknown = 0xfe,
+}
+
+pub enum AnimationParticleEntryData {
+    EffectArray {
+        effects: Vec<AnimationParticleEffect>,
+    },
+    Name {
+        name: String,
+    },
+    Unknown {
+        data: Vec<u8>,
+    },
+}
+
+impl DeserializeEntryData<AnimationParticleEntryType> for AnimationParticleEntryData {
+    async fn deserialize(
+        entry_type: &AnimationParticleEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            AnimationParticleEntryType::EffectArray => {
+                let (effects, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((
+                    AnimationParticleEntryData::EffectArray { effects },
+                    bytes_read,
+                ))
+            }
+            AnimationParticleEntryType::Name => {
+                let (name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    AnimationParticleEntryData::Name { name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            AnimationParticleEntryType::Unknown => {
+                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+                Ok((
+                    AnimationParticleEntryData::Unknown { data },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+        }
+    }
+}
+
+pub type AnimationParticleEntry = Entry<AnimationParticleEntryType, AnimationParticleEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum AnimationParticleType {
+    AnimationParticle = 0x1,
+    Unknown = 0xfe,
+}
+
+pub enum AnimationParticleData {
+    AnimationParticle {
+        entries: Vec<AnimationParticleEntry>,
+    },
+    Unknown {
+        data: Vec<u8>,
+    },
+}
+
+impl DeserializeEntryData<AnimationParticleType> for AnimationParticleData {
+    async fn deserialize(
+        entry_type: &AnimationParticleType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            AnimationParticleType::AnimationParticle => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((
+                    AnimationParticleData::AnimationParticle { entries },
+                    bytes_read,
+                ))
+            }
+            AnimationParticleType::Unknown => {
+                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+                Ok((
+                    AnimationParticleData::Unknown { data },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+        }
+    }
+}
+
+pub type AnimationParticle = Entry<AnimationParticleType, AnimationParticleData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
 pub enum CollisionEntryType {
     AssetName = 0x1,
 }
@@ -1181,7 +1386,7 @@ pub enum AdrEntryType {
     Unknown6 = 0x8,
     AnimationArray = 0x9,
     AnimationSoundArray = 0xa,
-    AnimatedParticleArray = 0xb,
+    AnimationParticleArray = 0xb,
     Unknown8 = 0xc,
     Collision = 0xd,
     Unknown9 = 0xe,
@@ -1206,7 +1411,7 @@ pub enum AdrData {
     Unknown6 { data: Vec<u8> },
     AnimationArray { animations: Vec<Animation> },
     AnimationSoundArray { sounds: Vec<AnimationSound> },
-    AnimatedParticleArray { data: Vec<u8> },
+    AnimationParticleArray { particles: Vec<AnimationParticle> },
     Unknown8 { data: Vec<u8> },
     Collision { entries: Vec<CollisionEntry> },
     Unknown9 { data: Vec<u8> },
@@ -1267,12 +1472,9 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
                 let (sounds, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((AdrData::AnimationSoundArray { sounds }, bytes_read))
             }
-            AdrEntryType::AnimatedParticleArray => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((
-                    AdrData::AnimatedParticleArray { data },
-                    usize_to_i32(bytes_read)?,
-                ))
+            AdrEntryType::AnimationParticleArray => {
+                let (particles, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AdrData::AnimationParticleArray { particles }, bytes_read))
             }
             AdrEntryType::Unknown8 => {
                 let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
