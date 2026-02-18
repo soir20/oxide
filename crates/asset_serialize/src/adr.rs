@@ -1348,6 +1348,89 @@ pub type AnimationParticle = Entry<AnimationParticleType, AnimationParticleData>
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
+pub enum AnimationActionPointEntryType {
+    Name = 0x1,
+    Time = 0x2,
+}
+
+pub enum AnimationActionPointEntryData {
+    Name { name: String },
+    Time { time_seconds: f32 },
+}
+
+impl DeserializeEntryData<AnimationActionPointEntryType> for AnimationActionPointEntryData {
+    async fn deserialize(
+        entry_type: &AnimationActionPointEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            AnimationActionPointEntryType::Name => {
+                let (name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    AnimationActionPointEntryData::Name { name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            AnimationActionPointEntryType::Time => {
+                let (time_seconds, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((
+                    AnimationActionPointEntryData::Time { time_seconds },
+                    bytes_read,
+                ))
+            }
+        }
+    }
+}
+
+pub type AnimationActionPointEntry =
+    Entry<AnimationActionPointEntryType, AnimationActionPointEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum AnimationActionPointType {
+    AnimationActionPoint = 0x1,
+    Unknown = 0xfe,
+}
+
+pub enum AnimationActionPointData {
+    AnimationActionPoint {
+        entries: Vec<AnimationActionPointEntry>,
+    },
+    Unknown {
+        data: Vec<u8>,
+    },
+}
+
+impl DeserializeEntryData<AnimationActionPointType> for AnimationActionPointData {
+    async fn deserialize(
+        entry_type: &AnimationActionPointType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            AnimationActionPointType::AnimationActionPoint => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((
+                    AnimationActionPointData::AnimationActionPoint { entries },
+                    bytes_read,
+                ))
+            }
+            AnimationActionPointType::Unknown => {
+                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+                Ok((
+                    AnimationActionPointData::Unknown { data },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+        }
+    }
+}
+
+pub type AnimationActionPoint = Entry<AnimationActionPointType, AnimationActionPointData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
 pub enum CollisionEntryType {
     AssetName = 0x1,
 }
@@ -1387,7 +1470,7 @@ pub enum AdrEntryType {
     AnimationArray = 0x9,
     AnimationSoundArray = 0xa,
     AnimationParticleArray = 0xb,
-    Unknown8 = 0xc,
+    AnimationActionPoint = 0xc,
     Collision = 0xd,
     Unknown9 = 0xe,
     Unknown10 = 0xf,
@@ -1401,28 +1484,72 @@ pub enum AdrEntryType {
 }
 
 pub enum AdrData {
-    Skeleton { entries: Vec<SkeletonEntry> },
-    Model { entries: Vec<ModelEntry> },
-    ParticleEmitterArrayArray { arrays: Vec<ParticleEmitterArray> },
-    MaterialArray { materials: Vec<Material> },
-    TextureAliasArray { texture_aliases: Vec<TextureAlias> },
-    TintAliasArray { tint_aliases: Vec<TintAlias> },
-    EffectArray { effects: Vec<Effect> },
-    Unknown6 { data: Vec<u8> },
-    AnimationArray { animations: Vec<Animation> },
-    AnimationSoundArray { sounds: Vec<AnimationSound> },
-    AnimationParticleArray { particles: Vec<AnimationParticle> },
-    Unknown8 { data: Vec<u8> },
-    Collision { entries: Vec<CollisionEntry> },
-    Unknown9 { data: Vec<u8> },
-    Unknown10 { data: Vec<u8> },
-    Unknown11 { data: Vec<u8> },
-    Unknown12 { data: Vec<u8> },
-    Unknown13 { data: Vec<u8> },
-    Unknown14 { data: Vec<u8> },
-    Unknown15 { data: Vec<u8> },
-    Unknown16 { data: Vec<u8> },
-    Unknown17 { data: Vec<u8> },
+    Skeleton {
+        entries: Vec<SkeletonEntry>,
+    },
+    Model {
+        entries: Vec<ModelEntry>,
+    },
+    ParticleEmitterArrayArray {
+        arrays: Vec<ParticleEmitterArray>,
+    },
+    MaterialArray {
+        materials: Vec<Material>,
+    },
+    TextureAliasArray {
+        texture_aliases: Vec<TextureAlias>,
+    },
+    TintAliasArray {
+        tint_aliases: Vec<TintAlias>,
+    },
+    EffectArray {
+        effects: Vec<Effect>,
+    },
+    Unknown6 {
+        data: Vec<u8>,
+    },
+    AnimationArray {
+        animations: Vec<Animation>,
+    },
+    AnimationSoundArray {
+        sounds: Vec<AnimationSound>,
+    },
+    AnimationParticleArray {
+        particles: Vec<AnimationParticle>,
+    },
+    AnimationActionPoint {
+        action_points: Vec<AnimationActionPoint>,
+    },
+    Collision {
+        entries: Vec<CollisionEntry>,
+    },
+    Unknown9 {
+        data: Vec<u8>,
+    },
+    Unknown10 {
+        data: Vec<u8>,
+    },
+    Unknown11 {
+        data: Vec<u8>,
+    },
+    Unknown12 {
+        data: Vec<u8>,
+    },
+    Unknown13 {
+        data: Vec<u8>,
+    },
+    Unknown14 {
+        data: Vec<u8>,
+    },
+    Unknown15 {
+        data: Vec<u8>,
+    },
+    Unknown16 {
+        data: Vec<u8>,
+    },
+    Unknown17 {
+        data: Vec<u8>,
+    },
 }
 
 impl DeserializeEntryData<AdrEntryType> for AdrData {
@@ -1476,9 +1603,9 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
                 let (particles, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((AdrData::AnimationParticleArray { particles }, bytes_read))
             }
-            AdrEntryType::Unknown8 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((AdrData::Unknown8 { data }, usize_to_i32(bytes_read)?))
+            AdrEntryType::AnimationActionPoint => {
+                let (action_points, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AdrData::AnimationActionPoint { action_points }, bytes_read))
             }
             AdrEntryType::Collision => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
