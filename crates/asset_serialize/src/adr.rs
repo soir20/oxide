@@ -926,8 +926,8 @@ pub enum AnimationSoundEffectTriggerEventType {
 }
 
 pub enum AnimationSoundEffectTriggerEventData {
-    Start { start: f32 },
-    End { end: f32 },
+    Start { start_seconds: f32 },
+    End { end_seconds: f32 },
 }
 
 impl DeserializeEntryData<AnimationSoundEffectTriggerEventType>
@@ -940,16 +940,16 @@ impl DeserializeEntryData<AnimationSoundEffectTriggerEventType>
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             AnimationSoundEffectTriggerEventType::Start => {
-                let (start, bytes_read) = deserialize_f32_be(file, len).await?;
+                let (start_seconds, bytes_read) = deserialize_f32_be(file, len).await?;
                 Ok((
-                    AnimationSoundEffectTriggerEventData::Start { start },
+                    AnimationSoundEffectTriggerEventData::Start { start_seconds },
                     bytes_read,
                 ))
             }
             AnimationSoundEffectTriggerEventType::End => {
-                let (end, bytes_read) = deserialize_f32_be(file, len).await?;
+                let (end_seconds, bytes_read) = deserialize_f32_be(file, len).await?;
                 Ok((
-                    AnimationSoundEffectTriggerEventData::End { end },
+                    AnimationSoundEffectTriggerEventData::End { end_seconds },
                     bytes_read,
                 ))
             }
@@ -970,6 +970,7 @@ pub enum AnimationSoundEffectType {
     Id = 0x5,
     PlayOnce = 0x6,
     LoadType = 0x7,
+    Unknown = 0xfe,
 }
 
 pub enum AnimationSoundEffectData {
@@ -993,6 +994,9 @@ pub enum AnimationSoundEffectData {
     },
     LoadType {
         load_type: AnimationLoadType,
+    },
+    Unknown {
+        data: Vec<u8>,
     },
 }
 
@@ -1045,6 +1049,13 @@ impl DeserializeEntryData<AnimationSoundEffectType> for AnimationSoundEffectData
                 let (load_type, bytes_read) = AnimationLoadType::deserialize(file).await?;
                 Ok((AnimationSoundEffectData::LoadType { load_type }, bytes_read))
             }
+            AnimationSoundEffectType::Unknown => {
+                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+                Ok((
+                    AnimationSoundEffectData::Unknown { data },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
         }
     }
 }
@@ -1056,11 +1067,13 @@ pub type AnimationSoundEffect = Entry<AnimationSoundEffectType, AnimationSoundEf
 pub enum AnimationSoundEntryType {
     EffectArray = 0x1,
     Name = 0x2,
+    Unknown = 0xfe,
 }
 
 pub enum AnimationSoundEntryData {
     EffectArray { effects: Vec<AnimationSoundEffect> },
     Name { name: String },
+    Unknown { data: Vec<u8> },
 }
 
 impl DeserializeEntryData<AnimationSoundEntryType> for AnimationSoundEntryData {
@@ -1078,6 +1091,13 @@ impl DeserializeEntryData<AnimationSoundEntryType> for AnimationSoundEntryData {
                 let (name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
                 Ok((
                     AnimationSoundEntryData::Name { name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            AnimationSoundEntryType::Unknown => {
+                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+                Ok((
+                    AnimationSoundEntryData::Unknown { data },
                     usize_to_i32(bytes_read)?,
                 ))
             }
