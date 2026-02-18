@@ -178,16 +178,16 @@ pub type SkeletonEntry = Entry<SkeletonEntryType, SkeletonData>;
 pub enum ModelEntryType {
     ModelAssetName = 0x1,
     MaterialAssetName = 0x2,
-    Radius = 0x3,
-    Unknown1 = 0x4,
+    UpdateRadius = 0x3,
+    WaterDisplacementHeight = 0x4,
     ObjectTerrainData = 0x5,
 }
 
 pub enum ModelData {
     ModelAssetName { name: String },
     MaterialAssetName { name: String },
-    Radius { radius: f32 },
-    Unknown1 { data: Vec<u8> },
+    UpdateRadius { radius: f32 },
+    WaterDisplacementHeight { height: f32 },
     ObjectTerrainData { object_terrain_data_id: u8 },
 }
 
@@ -212,13 +212,13 @@ impl DeserializeEntryData<ModelEntryType> for ModelData {
                     usize_to_i32(bytes_read)?,
                 ))
             }
-            ModelEntryType::Radius => {
+            ModelEntryType::UpdateRadius => {
                 let (radius, bytes_read) = deserialize_f32_be(file, len).await?;
-                Ok((ModelData::Radius { radius }, bytes_read))
+                Ok((ModelData::UpdateRadius { radius }, bytes_read))
             }
-            ModelEntryType::Unknown1 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((ModelData::Unknown1 { data }, usize_to_i32(bytes_read)?))
+            ModelEntryType::WaterDisplacementHeight => {
+                let (height, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((ModelData::WaterDisplacementHeight { height }, bytes_read))
             }
             ModelEntryType::ObjectTerrainData => {
                 let (object_terrain_data_id, bytes_read) = deserialize_u8(file, len).await?;
