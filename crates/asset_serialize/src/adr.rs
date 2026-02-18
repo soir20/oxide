@@ -811,12 +811,12 @@ pub type TintAlias = Entry<TintAliasType, TintAliasData>;
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
 pub enum AnimationEntryType {
-    AnimationName = 0x1,
+    Name = 0x1,
     AssetName = 0x2,
-    Unknown1 = 0x3,
+    PlayBackScale = 0x3,
     Duration = 0x4,
     LoadType = 0x5,
-    Unknown2 = 0x7,
+    EffectsPersist = 0x7,
 }
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
@@ -829,12 +829,12 @@ pub enum AnimationLoadType {
 }
 
 pub enum AnimationEntryData {
-    AnimationName { name: String },
+    Name { name: String },
     AssetName { name: String },
-    Unknown1 { data: Vec<u8> },
+    PlayBackScale { scale: f32 },
     Duration { duration_seconds: f32 },
     LoadType { load_type: AnimationLoadType },
-    Unknown2 { data: Vec<u8> },
+    EffectsPersist { do_effects_persist: bool },
 }
 
 impl DeserializeEntryData<AnimationEntryType> for AnimationEntryData {
@@ -844,12 +844,9 @@ impl DeserializeEntryData<AnimationEntryType> for AnimationEntryData {
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
-            AnimationEntryType::AnimationName => {
+            AnimationEntryType::Name => {
                 let (name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
-                Ok((
-                    AnimationEntryData::AnimationName { name },
-                    usize_to_i32(bytes_read)?,
-                ))
+                Ok((AnimationEntryData::Name { name }, usize_to_i32(bytes_read)?))
             }
             AnimationEntryType::AssetName => {
                 let (name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
@@ -858,12 +855,9 @@ impl DeserializeEntryData<AnimationEntryType> for AnimationEntryData {
                     usize_to_i32(bytes_read)?,
                 ))
             }
-            AnimationEntryType::Unknown1 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((
-                    AnimationEntryData::Unknown1 { data },
-                    usize_to_i32(bytes_read)?,
-                ))
+            AnimationEntryType::PlayBackScale => {
+                let (scale, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((AnimationEntryData::PlayBackScale { scale }, bytes_read))
             }
             AnimationEntryType::Duration => {
                 let (duration_seconds, bytes_read) = deserialize_f32_be(file, len).await?;
@@ -876,11 +870,13 @@ impl DeserializeEntryData<AnimationEntryType> for AnimationEntryData {
                 let (load_type, bytes_read) = AnimationLoadType::deserialize(file).await?;
                 Ok((AnimationEntryData::LoadType { load_type }, bytes_read))
             }
-            AnimationEntryType::Unknown2 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+            AnimationEntryType::EffectsPersist => {
+                let (do_effects_persist, bytes_read) = deserialize_u8(file, len).await?;
                 Ok((
-                    AnimationEntryData::Unknown2 { data },
-                    usize_to_i32(bytes_read)?,
+                    AnimationEntryData::EffectsPersist {
+                        do_effects_persist: do_effects_persist != 0,
+                    },
+                    bytes_read,
                 ))
             }
         }
