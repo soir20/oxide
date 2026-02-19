@@ -679,7 +679,7 @@ impl SaberDuelGame {
                 hover_description: HoverDescriptionMode::default(),
                 procedure_on_interact: None,
                 one_shot_interaction: None,
-                triggered_npc_guids: None,
+                triggered_npc_guids: Vec::new(),
                 notification_icon: None,
             })),
             None,

@@ -303,7 +303,8 @@ pub struct BaseNpcConfig {
     pub enemy_prioritization: HashMap<String, i8>,
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
     pub one_shot_interaction: Option<OneShotInteractionConfig>,
-    pub triggered_npc_keys_on_interact: Option<Vec<String>>,
+    #[serde(default)]
+    pub triggered_npc_keys_on_interact: Vec<String>,
     pub notification_icon: Option<u32>,
 }
 
@@ -330,7 +331,7 @@ pub struct BaseNpc {
     pub hover_description: HoverDescriptionMode,
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
     pub one_shot_interaction: Option<OneShotInteractionTemplate>,
-    pub triggered_npc_guids: Option<Vec<u64>>,
+    pub triggered_npc_guids: Vec<u64>,
     pub notification_icon: Option<u32>,
 }
 
@@ -533,18 +534,16 @@ impl BaseNpc {
             })
             .unwrap_or_default();
 
-        if let Some(triggered_guids) = &self.triggered_npc_guids {
-            for guid in triggered_guids {
-                if let Ok(mut triggered_packets) = trigger_synchronized_interaction(
-                    *guid,
-                    nearby_player_guids,
-                    requester,
-                    player_stats,
-                    zone_instance,
-                    game_server,
-                ) {
-                    packets.append(&mut triggered_packets);
-                }
+        for guid in &self.triggered_npc_guids {
+            if let Ok(mut triggered_packets) = trigger_synchronized_interaction(
+                *guid,
+                nearby_player_guids,
+                requester,
+                player_stats,
+                zone_instance,
+                game_server,
+            ) {
+                packets.append(&mut triggered_packets);
             }
         }
 
@@ -2313,7 +2312,7 @@ pub struct BaseNpcTemplate {
     pub hover_description: HoverDescriptionMode,
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
     pub one_shot_interaction: Option<OneShotInteractionTemplate>,
-    pub triggered_npc_keys_on_interact: Option<Vec<String>>,
+    pub triggered_npc_keys_on_interact: Vec<String>,
     pub notification_icon: Option<u32>,
 }
 
@@ -2327,14 +2326,12 @@ impl BaseNpcTemplate {
     ) -> Self {
         let mut rng = thread_rng();
 
-        if let Some(triggered_keys) = &config.triggered_npc_keys_on_interact {
-            if let Some(base_key) = &config.key {
-                if triggered_keys.contains(base_key) {
-                    panic!(
-                        "(NPC: {}) in (Zone GUID: {}) contains a self-reference in its (Triggered NPC Keys: {:?})",
-                        npc_name, zone_guid, triggered_keys,
-                    );
-                }
+        if let Some(base_key) = &config.key {
+            if config.triggered_npc_keys_on_interact.contains(base_key) {
+                panic!(
+                    "(NPC: {}) in (Zone GUID: {}) contains a self-reference in its (Triggered NPC Keys: {:?})",
+                    npc_name, zone_guid, &config.triggered_npc_keys_on_interact,
+                );
             }
         }
 
@@ -2499,11 +2496,11 @@ impl BaseNpcTemplate {
             hover_description: self.hover_description,
             procedure_on_interact: self.procedure_on_interact.clone(),
             one_shot_interaction: self.one_shot_interaction.clone(),
-            triggered_npc_guids: self.triggered_npc_keys_on_interact.as_ref().map(|keys| {
-                keys.iter()
-                    .filter_map(|key| keys_to_guid.get(key).copied())
-                    .collect()
-            }),
+            triggered_npc_guids: self
+                .triggered_npc_keys_on_interact
+                .iter()
+                .filter_map(|key| keys_to_guid.get(key).copied())
+                .collect(),
             notification_icon: self.notification_icon,
         }
     }
