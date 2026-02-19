@@ -770,10 +770,10 @@ impl OneShotInteractionTemplate {
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct WanderConfig {
-    pub wander_radius: f32,
-    pub wander_origin: Pos,
+    pub radius: f32,
+    pub origin: Pos,
     #[serde(default)]
-    pub min_wander_offset: f32,
+    pub min_offset: f32,
 }
 
 #[derive(Clone, Deserialize)]
@@ -798,8 +798,7 @@ pub struct TickableStep {
     pub new_rot_offset_y: f32,
     #[serde(default)]
     pub new_rot_offset_z: f32,
-    #[serde(flatten)]
-    pub wander_config: Option<WanderConfig>,
+    pub wander: Option<WanderConfig>,
     pub one_shot_animation_id: Option<i32>,
     #[serde(default)]
     pub animation_delay_seconds: f32,
@@ -955,23 +954,23 @@ impl TickableStep {
             pos_update = Some(potential_pos_update);
         }
 
-        if let Some(wander) = &self.wander_config {
+        if let Some(wander) = &self.wander {
             let mut rng = thread_rng();
 
-            let mut offset_x = rng.gen_range(-wander.wander_radius..wander.wander_radius);
-            let mut offset_z = rng.gen_range(-wander.wander_radius..wander.wander_radius);
+            let mut offset_x = rng.gen_range(-wander.radius..wander.radius);
+            let mut offset_z = rng.gen_range(-wander.radius..wander.radius);
 
-            if offset_x.abs() < wander.min_wander_offset {
-                offset_x = offset_x.signum() * wander.min_wander_offset;
+            if offset_x.abs() < wander.min_offset {
+                offset_x = offset_x.signum() * wander.min_offset;
             }
-            if offset_z.abs() < wander.min_wander_offset {
-                offset_z = offset_z.signum() * wander.min_wander_offset;
+            if offset_z.abs() < wander.min_offset {
+                offset_z = offset_z.signum() * wander.min_offset;
             }
 
             let new_pos = Pos {
-                x: wander.wander_origin.x + offset_x,
-                y: wander.wander_origin.y,
-                z: wander.wander_origin.z + offset_z,
+                x: wander.origin.x + offset_x,
+                y: wander.origin.y,
+                z: wander.origin.z + offset_z,
                 w: character.pos.w,
             };
 
