@@ -53,18 +53,11 @@ pub struct DialogConfig {
 
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub struct NewDialogConfig {
-    pub npc_key: Option<String>,
-    pub new_dialog: DialogConfig,
-    pub synchronized_effects: Option<Vec<DialogEffectsReferenceConfig>>,
-}
-
-#[derive(Clone, Deserialize)]
-#[serde(deny_unknown_fields)]
 pub struct DialogChoiceConfig {
     pub button_key: String,
-    #[serde(flatten)]
-    pub new_dialog: Option<NewDialogConfig>,
+    pub npc_key: Option<String>,
+    pub new_dialog: Option<DialogConfig>,
+    pub synchronized_effects: Option<Vec<DialogEffectsReferenceConfig>>,
     #[serde(default)]
     pub close_dialog: bool,
     #[serde(flatten, default)]
@@ -247,9 +240,7 @@ impl DialogChoiceTemplate {
                 )
             });
 
-        let new_dialog = choice.new_dialog.as_ref().map(|new_dialog| {
-            let config = &new_dialog.new_dialog;
-
+        let new_dialog = choice.new_dialog.as_ref().map(|config| {
             let choices = config
                 .choices
                 .iter()
@@ -280,8 +271,8 @@ impl DialogChoiceTemplate {
                 zoom: config.zoom,
                 show_players: config.show_players,
                 choices,
-                npc_key: new_dialog.npc_key.clone(),
-                synchronized_effects: new_dialog.synchronized_effects.clone(),
+                npc_key: choice.npc_key.clone(),
+                synchronized_effects: choice.synchronized_effects.clone(),
             }
         });
 
