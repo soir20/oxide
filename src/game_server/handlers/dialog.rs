@@ -57,7 +57,8 @@ pub struct DialogChoiceConfig {
     pub button_key: String,
     pub npc_key: Option<String>,
     pub new_dialog: Option<DialogConfig>,
-    pub synchronized_effects: Option<Vec<DialogEffectsReferenceConfig>>,
+    #[serde(default)]
+    pub synchronized_effects: Vec<DialogEffectsReferenceConfig>,
     #[serde(default)]
     pub close_dialog: bool,
     #[serde(flatten, default)]
@@ -81,8 +82,7 @@ pub fn handle_dialog_buttons(
             .filter_map(|choice| {
                 choice.new_dialog
                     .as_ref()
-                    .and_then(|dialog| dialog.synchronized_effects.as_ref())
-                    .map(|effects| effects.iter().map(|effect| effect.npc_guid))
+                    .map(|dialog| dialog.synchronized_effects.iter().map(|effect| effect.npc_guid))
             })
             .flatten()
             .collect(),
@@ -129,55 +129,53 @@ pub fn handle_dialog_buttons(
                     },
                 }));
 
-                if let Some(effects) = &dialog.synchronized_effects {
-                    for effect in effects {
-                        if let Some(character) = characters_write.get_mut(&effect.npc_guid) {
-                            if let Some(model_id) = effect.apply_temporary_model_id {
-                                if let Some(temporary_model_id) = character.stats.temporary_model_id {
-                                    packets.push(GamePacket::serialize(&TunneledPacket {
-                                        unknown1: true,
-                                        inner: RemoveTemporaryModel {
-                                            guid: effect.npc_guid,
-                                            model_id: temporary_model_id,
-                                        },
-                                    }));
-                                }
-
-                                character.stats.temporary_model_id = Some(model_id);
+                for effect in &dialog.synchronized_effects {
+                    if let Some(character) = characters_write.get_mut(&effect.npc_guid) {
+                        if let Some(model_id) = effect.apply_temporary_model_id {
+                            if let Some(temporary_model_id) = character.stats.temporary_model_id {
                                 packets.push(GamePacket::serialize(&TunneledPacket {
                                     unknown1: true,
-                                    inner: UpdateTemporaryModel {
-                                        model_id,
+                                    inner: RemoveTemporaryModel {
                                         guid: effect.npc_guid,
+                                        model_id: temporary_model_id,
                                     },
                                 }));
                             }
 
-                            if effect.remove_temporary_model {
-                                if let Some(temporary_model_id) = character.stats.temporary_model_id {
-                                    packets.push(GamePacket::serialize(&TunneledPacket {
-                                        unknown1: true,
-                                        inner: RemoveTemporaryModel {
-                                            guid: effect.npc_guid,
-                                            model_id: temporary_model_id,
-                                        },
-                                    }));
-                                    character.stats.temporary_model_id = None;
-                                }
-                            }
+                            character.stats.temporary_model_id = Some(model_id);
+                            packets.push(GamePacket::serialize(&TunneledPacket {
+                                unknown1: true,
+                                inner: UpdateTemporaryModel {
+                                    model_id,
+                                    guid: effect.npc_guid,
+                                },
+                            }));
+                        }
 
-                            if let Some(animation_id) = effect.animation_id {
+                        if effect.remove_temporary_model {
+                            if let Some(temporary_model_id) = character.stats.temporary_model_id {
                                 packets.push(GamePacket::serialize(&TunneledPacket {
                                     unknown1: true,
-                                    inner: QueueAnimation {
-                                        character_guid: effect.npc_guid,
-                                        animation_id,
-                                        queue_pos: 0,
-                                        delay_seconds: 0.0,
-                                        duration_seconds: effect.duration_millis as f32 / 1000.0,
+                                    inner: RemoveTemporaryModel {
+                                        guid: effect.npc_guid,
+                                        model_id: temporary_model_id,
                                     },
                                 }));
+                                character.stats.temporary_model_id = None;
                             }
+                        }
+
+                        if let Some(animation_id) = effect.animation_id {
+                            packets.push(GamePacket::serialize(&TunneledPacket {
+                                unknown1: true,
+                                inner: QueueAnimation {
+                                    character_guid: effect.npc_guid,
+                                    animation_id,
+                                    queue_pos: 0,
+                                    delay_seconds: 0.0,
+                                    duration_seconds: effect.duration_millis as f32 / 1000.0,
+                                },
+                            }));
                         }
                     }
                 }
@@ -214,7 +212,7 @@ pub struct DialogTemplate {
     pub show_players: bool,
     pub choices: Vec<DialogChoiceReference>,
     pub npc_key: Option<String>,
-    pub synchronized_effects: Option<Vec<DialogEffectsReferenceConfig>>,
+    pub synchronized_effects: Vec<DialogEffectsReferenceConfig>,
 }
 
 #[derive(Clone)]
@@ -303,7 +301,7 @@ pub struct DialogInstance {
     pub show_players: bool,
     pub choices: Vec<DialogChoiceReference>,
     pub speaker_guid: Option<u64>,
-    pub synchronized_effects: Option<Vec<DialogEffectsInstance>>,
+    pub synchronized_effects: Vec<DialogEffectsInstance>,
 }
 
 impl DialogInstance {
@@ -318,39 +316,37 @@ impl DialogInstance {
                 .unwrap_or_else(|| panic!("Unknown (NPC Key: {}) referenced in dialog", key))
         });
 
-        let synchronized_effects = template.synchronized_effects.as_ref().map(|effects| {
-            effects
-                .iter()
-                .map(|effect| {
-                    let npc_guid = character_keys_to_guid
-                        .get(&effect.npc_key)
-                        .copied()
-                        .unwrap_or_else(|| {
-                            panic!(
-                                "Unknown (NPC Key: {}) referenced in synchronized dialog effects",
-                                effect.npc_key
-                            )
-                        });
+        let synchronized_effects = template.synchronized_effects
+            .iter()
+            .map(|effect| {
+                let npc_guid = character_keys_to_guid
+                    .get(&effect.npc_key)
+                    .copied()
+                    .unwrap_or_else(|| {
+                        panic!(
+                            "Unknown (NPC Key: {}) referenced in synchronized dialog effects",
+                            effect.npc_key
+                        )
+                    });
 
-                    if let Some(speaker_guid) = speaker_guid {
-                        if npc_guid == speaker_guid {
-                            panic!(
-                                "(Speaker GUID: {}) cannot be referenced in its own synchronized effects",
-                                speaker_guid
-                            );
-                        }
+                if let Some(speaker_guid) = speaker_guid {
+                    if npc_guid == speaker_guid {
+                        panic!(
+                            "(Speaker GUID: {}) cannot be referenced in its own synchronized effects",
+                            speaker_guid
+                        );
                     }
+                }
 
-                    DialogEffectsInstance {
-                        npc_guid,
-                        animation_id: effect.animation_id,
-                        apply_temporary_model_id: effect.apply_temporary_model_id,
-                        remove_temporary_model: effect.remove_temporary_model,
-                        duration_millis: effect.duration_millis,
-                    }
-                })
-                .collect()
-        });
+                DialogEffectsInstance {
+                    npc_guid,
+                    animation_id: effect.animation_id,
+                    apply_temporary_model_id: effect.apply_temporary_model_id,
+                    remove_temporary_model: effect.remove_temporary_model,
+                    duration_millis: effect.duration_millis,
+                }
+            })
+            .collect();
 
         DialogInstance {
             camera_placement: template.camera_placement,
