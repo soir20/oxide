@@ -1210,8 +1210,8 @@ pub struct TickableProcedureReference {
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct TickableProcedureConfig {
-    #[serde(flatten)]
-    pub reference: TickableProcedureReference,
+    #[serde(default = "default_weight")]
+    pub weight: u32,
     pub steps: Vec<TickableStep>,
     #[serde(default)]
     pub next_possible_procedures: Vec<TickableProcedureReference>,
@@ -1454,7 +1454,7 @@ impl TickableProcedure {
                 WeightedAliasIndex::new(
                     all_procedures
                         .values()
-                        .map(|procedure| procedure.reference.weight)
+                        .map(|procedure| procedure.weight)
                         .collect(),
                 ),
                 all_procedures.keys().cloned().collect(),
@@ -1648,7 +1648,7 @@ impl TickableProcedureTracker {
                 if first_possible_procedures.is_empty() {
                     let weights = procedures
                         .values()
-                        .map(|procedure| procedure.reference.weight)
+                        .map(|procedure| procedure.weight)
                         .collect();
                     (weights, procedures.keys().collect())
                 } else {
@@ -1656,7 +1656,7 @@ impl TickableProcedureTracker {
                         .iter()
                         .map(|procedure_key| {
                             if let Some(procedure) = procedures.get(procedure_key) {
-                                procedure.reference.weight
+                                procedure.weight
                             } else {
                                 panic!("Reference to unknown procedure {procedure_key}");
                             }
