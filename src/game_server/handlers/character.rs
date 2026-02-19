@@ -301,6 +301,10 @@ pub struct BaseNpcConfig {
     pub enemy_types: HashSet<String>,
     #[serde(default)]
     pub enemy_prioritization: HashMap<String, i8>,
+    pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
+    pub one_shot_interaction: Option<OneShotInteractionConfig>,
+    pub triggered_npc_keys_on_interact: Option<Vec<String>>,
+    pub notification_icon: Option<u32>,
 }
 
 #[derive(Clone)]
@@ -324,6 +328,10 @@ pub struct BaseNpc {
     pub clickable: bool,
     pub spawn_animation_id: i32,
     pub hover_description: HoverDescriptionMode,
+    pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
+    pub one_shot_interaction: Option<OneShotInteractionTemplate>,
+    pub triggered_npc_guids: Option<Vec<u64>>,
+    pub notification_icon: Option<u32>,
 }
 
 impl BaseNpc {
@@ -331,144 +339,217 @@ impl BaseNpc {
         &self,
         character: &CharacterStats,
         override_is_spawned: bool,
-    ) -> Option<(AddNpc, SingleNpcRelevance)> {
+    ) -> Vec<Vec<u8>> {
         if !character.is_spawned && !override_is_spawned {
-            return None;
+            return Vec::new();
         }
-        Some((
-            AddNpc {
-                guid: Guid::guid(character),
-                name_id: self.name_id,
-                model_id: character.model_id,
-                unknown3: false,
-                chat_text_color: Character::DEFAULT_CHAT_TEXT_COLOR,
-                chat_bubble_color: Character::DEFAULT_CHAT_BUBBLE_COLOR,
-                chat_scale: 1,
-                scale: character.scale,
-                pos: character.pos,
-                rot: character.rot,
-                spawn_animation_id: self.spawn_animation_id,
-                attachments: self.attachments.clone(),
-                hostility: Hostility::Neutral,
-                unknown10: 1,
-                texture_alias: self.texture_alias.clone(),
-                tint_name: "".to_string(),
-                tint_id: 0,
-                unknown11: true,
-                offset_y: 0.0,
-                composite_effect_id: self.composite_effect_id.unwrap_or_default(),
-                wield_type: character.wield_type(),
-                name_override: "".to_string(),
-                hide_name: !self.show_name,
-                name_offset_x: self.name_offset_x,
-                name_offset_y: self.name_offset_y,
-                name_offset_z: self.name_offset_z,
-                terrain_object_id: self.terrain_object_id,
-                enable_attachments: !self.attachments.is_empty(),
-                speed: character.speed.total(),
-                unknown21: false,
-                interactable_size_pct: 100,
-                walk_animation_id: -1,
-                sprint_animation_id: -1,
-                stand_animation_id: character.stand_animation_id,
-                unknown26: false,
-                disable_gravity: !self.enable_gravity,
-                sub_title_id: self.sub_title_id.unwrap_or_default(),
-                one_shot_animation_id: 0,
-                temporary_model: 0,
-                effects: vec![],
-                disable_interact_popup: !self.enable_interact_popup,
-                unused_death_animation_id: 0, // can cause crashes when death anim is enabled upon removal, but has no visual effect
-                unknown34: false,
-                show_health: false,
-                hide_despawn_fade: false,
-                enable_tilt: self.enable_tilt,
-                base_attachment_group: BaseAttachmentGroup {
-                    unknown1: 0,
-                    unknown2: "".to_string(),
-                    unknown3: "".to_string(),
-                    unknown4: 0,
-                    unknown5: "".to_string(),
-                },
-                tilt: Pos {
-                    x: 0.0,
-                    y: 0.0,
-                    z: 0.0,
-                    w: 0.0,
-                },
-                unknown40: 0,
-                bounce_area_id: self.bounce_area_id,
-                image_set_id: 0,
-                clickable: self.clickable,
-                rider_guid: 0,
-                physics: character.physics,
-                interact_popup_radius: self
-                    .interact_popup_radius
-                    .unwrap_or(character.interact_radius),
-                target: Target::default(),
-                variables: vec![],
-                rail_id: 0,
-                rail_elapsed_seconds: 0.0,
-                rail_offset: Pos {
-                    x: 0.0,
-                    y: 0.0,
-                    z: 0.0,
-                    w: 0.0,
-                },
-                unknown54: 0,
-                rail_unknown1: 0.0,
-                rail_unknown2: 0.0,
-                auto_interact_radius: character.auto_interact_radius,
-                head_customization_override: "".to_string(),
-                hair_customization_override: "".to_string(),
-                body_customization_override: "".to_string(),
-                override_terrain_model: !self.use_terrain_model,
-                hover_glow: 0,
-                hover_description: self
-                    .hover_description
-                    .resolve_hover_description(self.name_id),
-                fly_over_effect: 0,
-                unknown65: 0,
-                unknown66: 0,
-                unknown67: 0,
-                disable_move_to_interact: false,
-                unknown69: 0.0,
-                unknown70: 0.0,
-                unknown71: 0,
-                icon_id: Icon::None,
-            },
-            SingleNpcRelevance {
-                guid: Guid::guid(character),
-                cursor: character.cursor,
-                unknown1: false,
-            },
-        ))
-    }
-}
 
-impl From<BaseNpcConfig> for BaseNpc {
-    fn from(value: BaseNpcConfig) -> Self {
-        BaseNpc {
-            texture_alias: value.texture_alias,
-            name_id: value.name_id,
-            sub_title_id: value.sub_title_id,
-            terrain_object_id: value.terrain_object_id,
-            name_offset_x: value.name_offset_x,
-            name_offset_y: value.name_offset_y,
-            name_offset_z: value.name_offset_z,
-            enable_interact_popup: value.enable_interact_popup,
-            interact_popup_radius: value.interact_popup_radius,
-            show_name: value.show_name,
-            bounce_area_id: value.bounce_area_id,
-            enable_gravity: value.enable_gravity,
-            enable_tilt: value.enable_tilt,
-            use_terrain_model: value.use_terrain_model,
-            attachments: Vec::new(),
-            composite_effect_id: value.composite_effect_id,
-            clickable: value.clickable,
-            spawn_animation_id: value.spawn_animation_id,
-            hover_description: value.hover_description,
+        let mut packets = vec![
+            GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: AddNpc {
+                    guid: Guid::guid(character),
+                    name_id: self.name_id,
+                    model_id: character.model_id,
+                    unknown3: false,
+                    chat_text_color: Character::DEFAULT_CHAT_TEXT_COLOR,
+                    chat_bubble_color: Character::DEFAULT_CHAT_BUBBLE_COLOR,
+                    chat_scale: 1,
+                    scale: character.scale,
+                    pos: character.pos,
+                    rot: character.rot,
+                    spawn_animation_id: self.spawn_animation_id,
+                    attachments: self.attachments.clone(),
+                    hostility: Hostility::Neutral,
+                    unknown10: 1,
+                    texture_alias: self.texture_alias.clone(),
+                    tint_name: "".to_string(),
+                    tint_id: 0,
+                    unknown11: true,
+                    offset_y: 0.0,
+                    composite_effect_id: self.composite_effect_id.unwrap_or_default(),
+                    wield_type: character.wield_type(),
+                    name_override: "".to_string(),
+                    hide_name: !self.show_name,
+                    name_offset_x: self.name_offset_x,
+                    name_offset_y: self.name_offset_y,
+                    name_offset_z: self.name_offset_z,
+                    terrain_object_id: self.terrain_object_id,
+                    enable_attachments: !self.attachments.is_empty(),
+                    speed: character.speed.total(),
+                    unknown21: false,
+                    interactable_size_pct: 100,
+                    walk_animation_id: -1,
+                    sprint_animation_id: -1,
+                    stand_animation_id: character.stand_animation_id,
+                    unknown26: false,
+                    disable_gravity: !self.enable_gravity,
+                    sub_title_id: self.sub_title_id.unwrap_or_default(),
+                    one_shot_animation_id: 0,
+                    temporary_model: 0,
+                    effects: vec![],
+                    disable_interact_popup: !self.enable_interact_popup,
+                    unused_death_animation_id: 0, // can cause crashes when death anim is enabled upon removal, but has no visual effect
+                    unknown34: false,
+                    show_health: false,
+                    hide_despawn_fade: false,
+                    enable_tilt: self.enable_tilt,
+                    base_attachment_group: BaseAttachmentGroup {
+                        unknown1: 0,
+                        unknown2: "".to_string(),
+                        unknown3: "".to_string(),
+                        unknown4: 0,
+                        unknown5: "".to_string(),
+                    },
+                    tilt: Pos {
+                        x: 0.0,
+                        y: 0.0,
+                        z: 0.0,
+                        w: 0.0,
+                    },
+                    unknown40: 0,
+                    bounce_area_id: self.bounce_area_id,
+                    image_set_id: 0,
+                    clickable: self.clickable,
+                    rider_guid: 0,
+                    physics: character.physics,
+                    interact_popup_radius: self
+                        .interact_popup_radius
+                        .unwrap_or(character.interact_radius),
+                    target: Target::default(),
+                    variables: vec![],
+                    rail_id: 0,
+                    rail_elapsed_seconds: 0.0,
+                    rail_offset: Pos {
+                        x: 0.0,
+                        y: 0.0,
+                        z: 0.0,
+                        w: 0.0,
+                    },
+                    unknown54: 0,
+                    rail_unknown1: 0.0,
+                    rail_unknown2: 0.0,
+                    auto_interact_radius: character.auto_interact_radius,
+                    head_customization_override: "".to_string(),
+                    hair_customization_override: "".to_string(),
+                    body_customization_override: "".to_string(),
+                    override_terrain_model: !self.use_terrain_model,
+                    hover_glow: 0,
+                    hover_description: self
+                        .hover_description
+                        .resolve_hover_description(self.name_id),
+                    fly_over_effect: 0,
+                    unknown65: 0,
+                    unknown66: 0,
+                    unknown67: 0,
+                    disable_move_to_interact: false,
+                    unknown69: 0.0,
+                    unknown70: 0.0,
+                    unknown71: 0,
+                    icon_id: Icon::None,
+                },
+            }),
+            GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: NpcRelevance {
+                    new_states: vec![SingleNpcRelevance {
+                        guid: Guid::guid(character),
+                        cursor: character.cursor,
+                        unknown1: false,
+                    }],
+                },
+            }),
+        ];
+
+        if let Some(icon_id) = self.notification_icon {
+            packets.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: AddNotifications {
+                    notifications: vec![SingleNotification {
+                        guid: Guid::guid(character),
+                        unknown1: 0,
+                        notification: Some(NotificationData {
+                            unknown1: 0,
+                            icon_id,
+                            unknown3: 0,
+                            name_id: 0,
+                            unknown4: 0,
+                            hide_icon: false,
+                            unknown6: 0,
+                        }),
+                        unknown2: false,
+                    }],
+                },
+            }));
         }
+
+        packets
+    }
+
+    pub fn interact(
+        &self,
+        character: &mut Character,
+        nearby_player_guids: &[u32],
+        requester: u32,
+        player_stats: &mut Player,
+        zone_instance: &ZoneInstance,
+        game_server: &GameServer,
+    ) -> (Option<String>, WriteLockingBroadcastSupplier) {
+        if let Some(active_procedure_key) = character.current_tickable_procedure() {
+            if let Some(active_procedure) = character
+                .tickable_procedure_tracker
+                .procedures
+                .get(active_procedure_key)
+            {
+                if !active_procedure.is_interruptible() {
+                    let empty_supplier = coerce_to_broadcast_supplier(|_| Ok(Vec::new()));
+                    return (None, empty_supplier);
+                }
+            }
+        }
+
+        let procedure = self.procedure_on_interact.as_ref().map(|options| {
+            let weights: Vec<u32> = options.iter().map(|p| p.weight).collect();
+            let distribution =
+                WeightedAliasIndex::new(weights).expect("Failed to build alias index");
+            let index = distribution.sample(&mut thread_rng());
+            options[index].procedure.clone()
+        });
+
+        let mut packets = self
+            .one_shot_interaction
+            .as_ref()
+            .and_then(|action| {
+                action
+                    .apply(
+                        &mut character.stats,
+                        nearby_player_guids,
+                        requester,
+                        player_stats,
+                        zone_instance,
+                        game_server,
+                    )
+                    .ok()
+            })
+            .unwrap_or_default();
+
+        if let Some(triggered_guids) = &self.triggered_npc_guids {
+            for guid in triggered_guids {
+                if let Ok(mut triggered_packets) = trigger_synchronized_interaction(
+                    *guid,
+                    nearby_player_guids,
+                    requester,
+                    player_stats,
+                    zone_instance,
+                    game_server,
+                ) {
+                    packets.append(&mut triggered_packets);
+                }
+            }
+        }
+
+        let broadcast_supplier = coerce_to_broadcast_supplier(move |_| Ok(packets));
+        (procedure, broadcast_supplier)
     }
 }
 
@@ -1772,222 +1853,6 @@ impl TickableProcedureTracker {
     }
 }
 
-pub trait NpcConfig {
-    const DISCRIMINANT: u8;
-    const DEFAULT_AUTO_INTERACT_RADIUS: f32;
-
-    fn base_config(&self) -> &BaseNpcConfig;
-}
-
-#[derive(Clone, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct AmbientNpcConfig {
-    #[serde(flatten)]
-    pub base_npc: BaseNpcConfig,
-    pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
-    pub one_shot_interaction: Option<OneShotInteractionConfig>,
-    pub triggered_npc_keys_on_interact: Option<Vec<String>>,
-    pub notification_icon: Option<u32>,
-}
-
-impl NpcConfig for AmbientNpcConfig {
-    const DISCRIMINANT: u8 = AMBIENT_NPC_DISCRIMINANT;
-    const DEFAULT_AUTO_INTERACT_RADIUS: f32 = 0.0;
-
-    fn base_config(&self) -> &BaseNpcConfig {
-        &self.base_npc
-    }
-}
-
-impl ToCharacterTypeTemplate for AmbientNpcConfig {
-    fn to_character_type_template(
-        &self,
-        button_keys_to_id: &HashMap<String, u32>,
-        zone_guid: u8,
-        npc_name: &str,
-    ) -> CharacterTypeTemplate {
-        if let Some(triggered_keys) = &self.triggered_npc_keys_on_interact {
-            if let Some(base_key) = &self.base_config().key {
-                if triggered_keys.contains(base_key) {
-                    panic!(
-                        "(NPC: {}) in (Zone GUID: {}) contains a self-reference in its (Triggered NPC Keys: {:?})",
-                        npc_name, zone_guid, triggered_keys,
-                    );
-                }
-            }
-        }
-
-        let resolved_action = self.one_shot_interaction.as_ref().map(|action_config| {
-            OneShotInteractionTemplate::from_config(
-                action_config,
-                zone_guid,
-                button_keys_to_id,
-                npc_name,
-            )
-        });
-
-        CharacterTypeTemplate::AmbientNpc(AmbientNpcTemplate {
-            base_npc: self.base_npc.clone().into(),
-            procedure_on_interact: self.procedure_on_interact.clone(),
-            one_shot_interaction: resolved_action,
-            triggered_npc_keys_on_interact: self.triggered_npc_keys_on_interact.clone(),
-            notification_icon: self.notification_icon,
-        })
-    }
-}
-
-#[derive(Clone)]
-pub struct AmbientNpcTemplate {
-    pub base_npc: BaseNpc,
-    pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
-    pub one_shot_interaction: Option<OneShotInteractionTemplate>,
-    pub triggered_npc_keys_on_interact: Option<Vec<String>>,
-    pub notification_icon: Option<u32>,
-}
-
-impl AmbientNpcTemplate {
-    pub fn instantiate(&self, keys_to_guid: &HashMap<&String, u64>) -> AmbientNpc {
-        AmbientNpc {
-            base_npc: self.base_npc.clone(),
-            procedure_on_interact: self.procedure_on_interact.clone(),
-            one_shot_interaction: self.one_shot_interaction.clone(),
-            triggered_npc_guids: self.triggered_npc_keys_on_interact.as_ref().map(|keys| {
-                keys.iter()
-                    .filter_map(|key| keys_to_guid.get(key).copied())
-                    .collect()
-            }),
-            notification_icon: self.notification_icon,
-        }
-    }
-}
-
-#[derive(Clone)]
-pub struct AmbientNpc {
-    pub base_npc: BaseNpc,
-    pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
-    pub one_shot_interaction: Option<OneShotInteractionTemplate>,
-    pub triggered_npc_guids: Option<Vec<u64>>,
-    pub notification_icon: Option<u32>,
-}
-
-impl AmbientNpc {
-    pub fn add_packets(
-        &self,
-        character: &CharacterStats,
-        override_is_spawned: bool,
-    ) -> Vec<Vec<u8>> {
-        let Some((add_npc, enable_interaction)) =
-            self.base_npc.add_packets(character, override_is_spawned)
-        else {
-            return Vec::new();
-        };
-
-        let mut packets = Vec::new();
-
-        packets.push(GamePacket::serialize(&TunneledPacket {
-            unknown1: true,
-            inner: add_npc,
-        }));
-
-        packets.push(GamePacket::serialize(&TunneledPacket {
-            unknown1: true,
-            inner: NpcRelevance {
-                new_states: vec![enable_interaction],
-            },
-        }));
-
-        if let Some(icon_id) = self.notification_icon {
-            packets.push(GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: AddNotifications {
-                    notifications: vec![SingleNotification {
-                        guid: Guid::guid(character),
-                        unknown1: 0,
-                        notification: Some(NotificationData {
-                            unknown1: 0,
-                            icon_id,
-                            unknown3: 0,
-                            name_id: 0,
-                            unknown4: 0,
-                            hide_icon: false,
-                            unknown6: 0,
-                        }),
-                        unknown2: false,
-                    }],
-                },
-            }));
-        }
-
-        packets
-    }
-
-    pub fn interact(
-        &self,
-        character: &mut Character,
-        nearby_player_guids: &[u32],
-        requester: u32,
-        player_stats: &mut Player,
-        zone_instance: &ZoneInstance,
-        game_server: &GameServer,
-    ) -> (Option<String>, WriteLockingBroadcastSupplier) {
-        if let Some(active_procedure_key) = character.current_tickable_procedure() {
-            if let Some(active_procedure) = character
-                .tickable_procedure_tracker
-                .procedures
-                .get(active_procedure_key)
-            {
-                if !active_procedure.is_interruptible() {
-                    let empty_supplier = coerce_to_broadcast_supplier(|_| Ok(Vec::new()));
-                    return (None, empty_supplier);
-                }
-            }
-        }
-
-        let procedure = self.procedure_on_interact.as_ref().map(|options| {
-            let weights: Vec<u32> = options.iter().map(|p| p.weight).collect();
-            let distribution =
-                WeightedAliasIndex::new(weights).expect("Failed to build alias index");
-            let index = distribution.sample(&mut thread_rng());
-            options[index].procedure.clone()
-        });
-
-        let mut packets = self
-            .one_shot_interaction
-            .as_ref()
-            .and_then(|action| {
-                action
-                    .apply(
-                        &mut character.stats,
-                        nearby_player_guids,
-                        requester,
-                        player_stats,
-                        zone_instance,
-                        game_server,
-                    )
-                    .ok()
-            })
-            .unwrap_or_default();
-
-        if let Some(triggered_guids) = &self.triggered_npc_guids {
-            for guid in triggered_guids {
-                if let Ok(mut triggered_packets) = trigger_synchronized_interaction(
-                    *guid,
-                    nearby_player_guids,
-                    requester,
-                    player_stats,
-                    zone_instance,
-                    game_server,
-                ) {
-                    packets.append(&mut triggered_packets);
-                }
-            }
-        }
-
-        let broadcast_supplier = coerce_to_broadcast_supplier(move |_| Ok(packets));
-        (procedure, broadcast_supplier)
-    }
-}
-
 fn trigger_synchronized_interaction(
     target_guid: u64,
     nearby_player_guids: &[u32],
@@ -2385,28 +2250,10 @@ pub struct CurrentFixture {
 }
 
 #[derive(Clone)]
-pub enum CharacterTypeTemplate {
-    AmbientNpc(AmbientNpcTemplate),
-}
-
-#[derive(Clone)]
 pub enum CharacterType {
-    AmbientNpc(Box<AmbientNpc>),
+    AmbientNpc(Box<BaseNpc>),
     Player(Box<Player>),
     Fixture(u64, CurrentFixture),
-}
-
-impl CharacterType {
-    pub fn from_template(
-        template: CharacterTypeTemplate,
-        keys_to_guid: &HashMap<&String, u64>,
-    ) -> Self {
-        match template {
-            CharacterTypeTemplate::AmbientNpc(template) => {
-                CharacterType::AmbientNpc(Box::new(template.instantiate(keys_to_guid)))
-            }
-        }
-    }
 }
 
 #[derive(Copy, Clone, Eq, PartialOrd, PartialEq, Ord, Sequence)]
@@ -2417,17 +2264,8 @@ pub enum CharacterCategory {
     NpcBasic,
 }
 
-pub trait ToCharacterTypeTemplate {
-    fn to_character_type_template(
-        &self,
-        button_keys_to_id: &HashMap<String, u32>,
-        zone_guid: u8,
-        npc_name: &str,
-    ) -> CharacterTypeTemplate;
-}
-
 #[derive(Clone)]
-pub struct NpcTemplate {
+pub struct BaseNpcTemplate {
     pub key: Option<String>,
     pub discriminant: u8,
     pub index: u16,
@@ -2438,7 +2276,6 @@ pub struct NpcTemplate {
     pub scale: f32,
     pub speed: f32,
     pub stand_animation_id: i32,
-    pub character_type: CharacterTypeTemplate,
     pub mount_id: Option<u32>,
     pub cursor: Option<u8>,
     pub interact_radius: f32,
@@ -2455,62 +2292,121 @@ pub struct NpcTemplate {
     pub auto_target_radius: f32,
     pub enemy_types: HashSet<String>,
     pub enemy_prioritization: HashMap<String, i8>,
+    pub texture_alias: String,
+    pub name_id: u32,
+    pub sub_title_id: Option<u32>,
+    pub terrain_object_id: u32,
+    pub name_offset_x: f32,
+    pub name_offset_y: f32,
+    pub name_offset_z: f32,
+    pub enable_interact_popup: bool,
+    pub interact_popup_radius: Option<f32>,
+    pub show_name: bool,
+    pub bounce_area_id: i32,
+    pub enable_gravity: bool,
+    pub enable_tilt: bool,
+    pub use_terrain_model: bool,
+    pub attachments: Vec<Attachment>,
+    pub composite_effect_id: Option<u32>,
+    pub clickable: bool,
+    pub spawn_animation_id: i32,
+    pub hover_description: HoverDescriptionMode,
+    pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
+    pub one_shot_interaction: Option<OneShotInteractionTemplate>,
+    pub triggered_npc_keys_on_interact: Option<Vec<String>>,
+    pub notification_icon: Option<u32>,
 }
 
-impl NpcTemplate {
-    pub fn from_config<T: NpcConfig + ToCharacterTypeTemplate>(
-        config: T,
+impl BaseNpcTemplate {
+    pub fn from_config(
+        config: BaseNpcConfig,
         index: u16,
         button_keys_to_id: &HashMap<String, u32>,
         zone_guid: u8,
         npc_name: &str,
     ) -> Self {
         let mut rng = thread_rng();
-        NpcTemplate {
-            key: config.base_config().key.clone(),
-            discriminant: T::DISCRIMINANT,
+
+        if let Some(triggered_keys) = &config.triggered_npc_keys_on_interact {
+            if let Some(base_key) = &config.key {
+                if triggered_keys.contains(base_key) {
+                    panic!(
+                        "(NPC: {}) in (Zone GUID: {}) contains a self-reference in its (Triggered NPC Keys: {:?})",
+                        npc_name, zone_guid, triggered_keys,
+                    );
+                }
+            }
+        }
+
+        let resolved_action = config.one_shot_interaction.as_ref().map(|action_config| {
+            OneShotInteractionTemplate::from_config(
+                action_config,
+                zone_guid,
+                button_keys_to_id,
+                npc_name,
+            )
+        });
+
+        BaseNpcTemplate {
+            key: config.key.clone(),
+            discriminant: AMBIENT_NPC_DISCRIMINANT,
             index,
             model_id: config
-                .base_config()
                 .possible_model_ids
                 .choose(&mut rng)
                 .copied()
-                .unwrap_or(config.base_config().model_id),
+                .unwrap_or(config.model_id),
             pos: config
-                .base_config()
                 .possible_pos
                 .choose(&mut rng)
                 .cloned()
-                .unwrap_or(config.base_config().pos),
-            rot: config.base_config().rot,
-            possible_pos: config.base_config().possible_pos.clone(),
-            scale: config.base_config().scale,
-            speed: config.base_config().speed,
-            tickable_procedures: config.base_config().tickable_procedures.clone(),
-            first_possible_procedures: config.base_config().first_possible_procedures.clone(),
-            synchronize_with: config.base_config().synchronize_with.clone(),
-            stand_animation_id: config.base_config().stand_animation_id,
-            cursor: config.base_config().cursor,
-            interact_radius: config.base_config().interact_radius,
+                .unwrap_or(config.pos),
+            rot: config.rot,
+            possible_pos: config.possible_pos.clone(),
+            scale: config.scale,
+            speed: config.speed,
+            tickable_procedures: config.tickable_procedures.clone(),
+            first_possible_procedures: config.first_possible_procedures.clone(),
+            synchronize_with: config.synchronize_with.clone(),
+            stand_animation_id: config.stand_animation_id,
+            cursor: config.cursor,
+            interact_radius: config.interact_radius,
             auto_interact_radius: config
-                .base_config()
                 .auto_interact_radius
-                .unwrap_or(T::DEFAULT_AUTO_INTERACT_RADIUS),
-            move_to_interact_offset: config.base_config().move_to_interact_offset,
-            is_spawned: config.base_config().is_spawned,
-            physics: config.base_config().physics,
-            character_type: config.to_character_type_template(
-                button_keys_to_id,
-                zone_guid,
-                npc_name,
-            ),
+                .unwrap_or(0.0),
+            move_to_interact_offset: config.move_to_interact_offset,
+            is_spawned: config.is_spawned,
+            physics: config.physics,
             mount_id: None,
             wield_type: WieldType::None,
-            max_distance_from_target: config.base_config().max_distance_from_target,
-            max_distance_from_origin: config.base_config().max_distance_from_origin,
-            auto_target_radius: config.base_config().auto_target_radius,
-            enemy_types: config.base_config().enemy_types.clone(),
-            enemy_prioritization: config.base_config().enemy_prioritization.clone(),
+            max_distance_from_target: config.max_distance_from_target,
+            max_distance_from_origin: config.max_distance_from_origin,
+            auto_target_radius: config.auto_target_radius,
+            enemy_types: config.enemy_types.clone(),
+            enemy_prioritization: config.enemy_prioritization.clone(),
+            texture_alias: config.texture_alias,
+            name_id: config.name_id,
+            sub_title_id: config.sub_title_id,
+            terrain_object_id: config.terrain_object_id,
+            name_offset_x: config.name_offset_x,
+            name_offset_y: config.name_offset_y,
+            name_offset_z: config.name_offset_z,
+            enable_interact_popup: config.enable_interact_popup,
+            interact_popup_radius: config.interact_popup_radius,
+            show_name: config.show_name,
+            bounce_area_id: config.bounce_area_id,
+            enable_gravity: config.enable_gravity,
+            enable_tilt: config.enable_tilt,
+            use_terrain_model: config.use_terrain_model,
+            attachments: Vec::new(),
+            composite_effect_id: config.composite_effect_id,
+            clickable: config.clickable,
+            spawn_animation_id: config.spawn_animation_id,
+            hover_description: config.hover_description,
+            procedure_on_interact: config.procedure_on_interact.clone(),
+            one_shot_interaction: resolved_action,
+            triggered_npc_keys_on_interact: config.triggered_npc_keys_on_interact.clone(),
+            notification_icon: config.notification_icon,
         }
     }
 
@@ -2534,10 +2430,7 @@ impl NpcTemplate {
                 possible_pos: self.possible_pos.clone(),
                 chunk_size,
                 scale: self.scale,
-                character_type: CharacterType::from_template(
-                    self.character_type.clone(),
-                    keys_to_guid,
-                ),
+                character_type: CharacterType::AmbientNpc(Box::new(self.instantiate(keys_to_guid))),
                 mount: self.mount_id.map(|mount_id| CharacterMount {
                     mount_id,
                     mount_guid: mount_guid(guid),
@@ -2582,6 +2475,38 @@ impl NpcTemplate {
                     .copied()
                     .unwrap_or_else(|| panic!("Tried to synchronize with unknown NPC {key}"))
             }),
+        }
+    }
+
+    fn instantiate(&self, keys_to_guid: &HashMap<&String, u64>) -> BaseNpc {
+        BaseNpc {
+            texture_alias: self.texture_alias.clone(),
+            name_id: self.name_id,
+            sub_title_id: self.sub_title_id,
+            terrain_object_id: self.terrain_object_id,
+            name_offset_x: self.name_offset_x,
+            name_offset_y: self.name_offset_y,
+            name_offset_z: self.name_offset_z,
+            enable_interact_popup: self.enable_interact_popup,
+            interact_popup_radius: self.interact_popup_radius,
+            show_name: self.show_name,
+            bounce_area_id: self.bounce_area_id,
+            enable_gravity: self.enable_gravity,
+            enable_tilt: self.enable_tilt,
+            use_terrain_model: self.use_terrain_model,
+            attachments: self.attachments.clone(),
+            composite_effect_id: self.composite_effect_id,
+            clickable: self.clickable,
+            spawn_animation_id: self.spawn_animation_id,
+            hover_description: self.hover_description,
+            procedure_on_interact: self.procedure_on_interact.clone(),
+            one_shot_interaction: self.one_shot_interaction.clone(),
+            triggered_npc_guids: self.triggered_npc_keys_on_interact.as_ref().map(|keys| {
+                keys.iter()
+                    .filter_map(|key| keys_to_guid.get(key).copied())
+                    .collect()
+            }),
+            notification_icon: self.notification_icon,
         }
     }
 }
