@@ -250,10 +250,7 @@ pub enum MinigameType {
     SaberStrike {
         saber_strike_stage_id: u32,
     },
-    SaberDuel {
-        #[serde(flatten)]
-        config: Box<SaberDuelConfig>,
-    },
+    SaberDuel(Box<SaberDuelConfig>),
 }
 
 impl MinigameType {
@@ -497,7 +494,7 @@ impl SharedMinigameTypeData {
                 _ => SharedMinigameTypeData::default(),
             },
             MinigameType::SaberStrike { .. } => SharedMinigameTypeData::default(),
-            MinigameType::SaberDuel { config } => SharedMinigameTypeData::SaberDuel {
+            MinigameType::SaberDuel(config) => SharedMinigameTypeData::SaberDuel {
                 game: Box::new(SaberDuelGame::new(
                     *config.to_owned(),
                     player1,
