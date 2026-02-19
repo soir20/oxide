@@ -555,15 +555,15 @@ impl OneShotAction {
     }
 }
 
-#[derive(Copy, Clone, Deserialize)]
+#[derive(Copy, Clone, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct PlayerOneShotAction {
-    pub player_one_shot_animation_id: Option<i32>,
+    pub animation_id: Option<i32>,
     #[serde(default)]
-    pub player_animation_delay_seconds: u32,
-    pub player_composite_effect_id: Option<u32>,
+    pub animation_delay_seconds: u32,
+    pub composite_effect_id: Option<u32>,
     #[serde(default)]
-    pub player_composite_effect_delay_millis: u32,
+    pub composite_effect_delay_millis: u32,
 }
 
 #[derive(Clone, Deserialize)]
@@ -571,8 +571,8 @@ pub struct PlayerOneShotAction {
 pub struct OneShotInteractionConfig {
     #[serde(flatten, default)]
     pub one_shot_action: OneShotAction,
-    #[serde(flatten)]
-    pub player_one_shot_action: PlayerOneShotAction,
+    #[serde(default)]
+    pub player_reaction: PlayerOneShotAction,
     pub one_shot_animation_id: Option<i32>,
     #[serde(default)]
     pub animation_delay_seconds: f32,
@@ -624,7 +624,7 @@ impl OneShotInteractionTemplate {
             one_shot_action: config.one_shot_action.clone(),
             dialog_option_id,
             hud_message: config.hud_message,
-            player_one_shot_action: config.player_one_shot_action,
+            player_one_shot_action: config.player_reaction,
             one_shot_animation_id: config.one_shot_animation_id,
             animation_delay_seconds: config.animation_delay_seconds,
             composite_effect_id: config.composite_effect_id,
@@ -679,30 +679,27 @@ impl OneShotInteractionTemplate {
             }));
         }
 
-        if let Some(animation_id) = self.player_one_shot_action.player_one_shot_animation_id {
+        if let Some(animation_id) = self.player_one_shot_action.animation_id {
             packets_for_all.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: QueueAnimation {
                     character_guid: player_guid(requester),
                     animation_id,
                     queue_pos: 0,
-                    delay_seconds: self.player_one_shot_action.player_animation_delay_seconds
-                        as f32,
+                    delay_seconds: self.player_one_shot_action.animation_delay_seconds as f32,
                     duration_seconds: self.duration_millis as f32 / 1000.0,
                 },
             }));
         }
 
-        if let Some(composite_effect_id) = self.player_one_shot_action.player_composite_effect_id {
+        if let Some(composite_effect_id) = self.player_one_shot_action.composite_effect_id {
             packets_for_all.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: PlayCompositeEffect {
                     guid: player_guid(requester),
                     triggered_by_guid: 0,
                     composite_effect: composite_effect_id,
-                    delay_millis: self
-                        .player_one_shot_action
-                        .player_composite_effect_delay_millis,
+                    delay_millis: self.player_one_shot_action.composite_effect_delay_millis,
                     duration_millis: self.duration_millis as u32,
                     pos: Pos::default(),
                 },
