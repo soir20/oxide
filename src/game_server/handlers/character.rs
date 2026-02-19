@@ -2371,9 +2371,7 @@ impl BaseNpcTemplate {
             stand_animation_id: config.stand_animation_id,
             cursor: config.cursor,
             interact_radius: config.interact_radius,
-            auto_interact_radius: config
-                .auto_interact_radius
-                .unwrap_or(0.0),
+            auto_interact_radius: config.auto_interact_radius.unwrap_or(0.0),
             move_to_interact_offset: config.move_to_interact_offset,
             is_spawned: config.is_spawned,
             physics: config.physics,

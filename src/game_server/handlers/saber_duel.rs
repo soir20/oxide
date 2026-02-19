@@ -13,8 +13,8 @@ use serde::{Deserialize, Deserializer};
 use crate::game_server::{
     handlers::{
         character::{
-            default_spawn_animation_id, BaseNpc, Character, CharacterType,
-            HoverDescriptionMode, MinigameMatchmakingGroup, MinigameStatus, PlayerInventory,
+            default_spawn_animation_id, BaseNpc, Character, CharacterType, HoverDescriptionMode,
+            MinigameMatchmakingGroup, MinigameStatus, PlayerInventory,
         },
         inventory::{
             attachments_from_equipped_items, player_has_saber_equipped, wield_type_from_inventory,

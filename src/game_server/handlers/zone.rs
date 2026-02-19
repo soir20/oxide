@@ -12,21 +12,34 @@ use serde::Deserialize;
 use serde_yaml::{Mapping, Value};
 
 use crate::{
-    ConfigError, game_server::{
-        Broadcast, GameServer, LogLevel, ProcessPacketError, ProcessPacketErrorType, handlers::{
-            character::BaseNpcConfig, dialog::{DialogChoiceConfig, DialogChoiceInstance, DialogChoiceTemplate}, distance3_pos, offset_destination
-        }, packets::{
-            GamePacket, Pos, client_update::Position, command::MoveToInteract, housing::BuildArea, item::{ItemDefinition, WieldType}, login::{ClientBeginZoning, ZoneDetails}, player_update::Customization, tunnel::TunneledPacket, ui::{ExecuteScriptWithIntParams, ExecuteScriptWithStringParams}
-        }
-    }, info
+    game_server::{
+        handlers::{
+            character::BaseNpcConfig,
+            dialog::{DialogChoiceConfig, DialogChoiceInstance, DialogChoiceTemplate},
+            distance3_pos, offset_destination,
+        },
+        packets::{
+            client_update::Position,
+            command::MoveToInteract,
+            housing::BuildArea,
+            item::{ItemDefinition, WieldType},
+            login::{ClientBeginZoning, ZoneDetails},
+            player_update::Customization,
+            tunnel::TunneledPacket,
+            ui::{ExecuteScriptWithIntParams, ExecuteScriptWithStringParams},
+            GamePacket, Pos,
+        },
+        Broadcast, GameServer, LogLevel, ProcessPacketError, ProcessPacketErrorType,
+    },
+    info, ConfigError,
 };
 
 use super::{
     character::{
-        coerce_to_broadcast_supplier, Character, CharacterCategory,
+        coerce_to_broadcast_supplier, BaseNpcTemplate, Character, CharacterCategory,
         CharacterLocationIndex, CharacterMatchmakingGroupIndex, CharacterNameIndex,
-        CharacterSquadIndex, CharacterSynchronizationIndex, CharacterType, Chunk, BaseNpcTemplate,
-        PreviousFixture, PreviousLocation, RemovalMode,
+        CharacterSquadIndex, CharacterSynchronizationIndex, CharacterType, Chunk, PreviousFixture,
+        PreviousLocation, RemovalMode,
     },
     guid::{Guid, GuidTable, GuidTableIndexer, GuidTableWriteHandle, IndexedGuid},
     housing::prepare_init_house_packets,
