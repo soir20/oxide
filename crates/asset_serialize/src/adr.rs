@@ -1532,7 +1532,7 @@ pub enum CoveredSlotEntryType {
 }
 
 pub enum CoveredSlotEntryData {
-    BoneId { bone_id: u8 },
+    SlotId { slot_id: u8 },
 }
 
 impl DeserializeEntryData<CoveredSlotEntryType> for CoveredSlotEntryData {
@@ -1544,7 +1544,10 @@ impl DeserializeEntryData<CoveredSlotEntryType> for CoveredSlotEntryData {
         match entry_type {
             CoveredSlotEntryType::BoneId => {
                 let (bone_id, bytes_read) = deserialize_u8(file, len).await?;
-                Ok((CoveredSlotEntryData::BoneId { bone_id }, bytes_read))
+                Ok((
+                    CoveredSlotEntryData::SlotId { slot_id: bone_id },
+                    bytes_read,
+                ))
             }
         }
     }
@@ -1555,13 +1558,15 @@ pub type CoveredSlotEntry = Entry<CoveredSlotEntryType, CoveredSlotEntryData>;
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
 pub enum OcclusionEntryType {
+    Unknown1 = 0x1,
     BitMask = 0x2,
     CoveredSlot = 0x4,
     Unknown = 0xfe,
 }
 
 pub enum OcclusionData {
-    BitMask { bit_mask: Vec<u8> },
+    SlotBitMask { bit_mask: Vec<u8> },
+    BoneBitMask { bit_mask: Vec<u8> },
     CoveredSlot { entries: Vec<CoveredSlotEntry> },
     Unknown { data: Vec<u8> },
 }
@@ -1573,10 +1578,17 @@ impl DeserializeEntryData<OcclusionEntryType> for OcclusionData {
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
+            OcclusionEntryType::Unknown1 => {
+                let (bit_mask, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+                Ok((
+                    OcclusionData::SlotBitMask { bit_mask },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
             OcclusionEntryType::BitMask => {
                 let (bit_mask, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
                 Ok((
-                    OcclusionData::BitMask { bit_mask },
+                    OcclusionData::BoneBitMask { bit_mask },
                     usize_to_i32(bytes_read)?,
                 ))
             }
