@@ -1558,8 +1558,8 @@ pub type CoveredSlotEntry = Entry<CoveredSlotEntryType, CoveredSlotEntryData>;
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
 pub enum OcclusionEntryType {
-    Unknown1 = 0x1,
-    BitMask = 0x2,
+    SlotBitMask = 0x1,
+    BoneBitMask = 0x2,
     CoveredSlot = 0x4,
     Unknown = 0xfe,
 }
@@ -1578,14 +1578,14 @@ impl DeserializeEntryData<OcclusionEntryType> for OcclusionData {
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
-            OcclusionEntryType::Unknown1 => {
+            OcclusionEntryType::SlotBitMask => {
                 let (bit_mask, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
                 Ok((
                     OcclusionData::SlotBitMask { bit_mask },
                     usize_to_i32(bytes_read)?,
                 ))
             }
-            OcclusionEntryType::BitMask => {
+            OcclusionEntryType::BoneBitMask => {
                 let (bit_mask, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
                 Ok((
                     OcclusionData::BoneBitMask { bit_mask },
