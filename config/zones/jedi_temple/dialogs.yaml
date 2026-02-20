@@ -16,21 +16,18 @@ jedi_temple:
     #
 
     - button_key: Blaster Training
-      script:
-        OpenMinigameStageGroup:
-          stage_group_id: 11
+      script: !OpenMinigameStageGroup
+        stage_group_id: 11
       close_dialog: true
 
     - button_key: Lightsaber Duel
-      script:
-        OpenMinigameStageGroup:
-          stage_group_id: 31000
+      script: !OpenMinigameStageGroup
+        stage_group_id: 31000
       close_dialog: true
 
     - button_key: Saber Strike
-      script:
-        OpenMinigameStageGroup:
-          stage_group_id: 13
+      script: !OpenMinigameStageGroup
+        stage_group_id: 13
       close_dialog: true
 
     #

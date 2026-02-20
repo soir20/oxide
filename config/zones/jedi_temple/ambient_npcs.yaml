@@ -214,7 +214,8 @@ jedi_temple:
       interact_radius: 5
       move_to_interact_offset: 4
       one_shot_interaction:
-        player_one_shot_animation_id: 3014
+        player_reaction:
+          animation_id: 3014
         one_shot_animation_id: 2548
         duration_millis: 2000
 
@@ -597,8 +598,7 @@ jedi_temple:
         remove:
           steps:
             - spawned_state: Despawn
-              removal_mode:
-                Graceful: {}
+              removal_mode: !Graceful {}
               min_duration_millis: 6000
           next_possible_procedures:
             - procedure: spawn
@@ -640,8 +640,7 @@ jedi_temple:
         remove:
           steps:
             - spawned_state: Despawn
-              removal_mode:
-                Graceful: {}
+              removal_mode: !Graceful {}
               min_duration_millis: 6000
           next_possible_procedures:
             - procedure: spawn
@@ -716,7 +715,8 @@ jedi_temple:
       interact_radius: 5
       move_to_interact_offset: 4.9
       one_shot_interaction:
-        player_one_shot_animation_id: 3014
+        player_reaction:
+          animation_id: 3014
         one_shot_animation_id: 2302
         duration_millis: 6000
     hanger_clone_with_missile_rack:
@@ -737,7 +737,8 @@ jedi_temple:
       interact_radius: 5
       move_to_interact_offset: 4.9
       one_shot_interaction:
-        player_one_shot_animation_id: 3014
+        player_reaction:
+          animation_id: 3014
         one_shot_animation_id: 2555
         duration_millis: 8000
 
@@ -862,7 +863,8 @@ jedi_temple:
       interact_radius: 5
       move_to_interact_offset: 4.9
       one_shot_interaction:
-        player_one_shot_animation_id: 3014
+        player_reaction:
+          animation_id: 3014
         one_shot_animation_id: 2302
         duration_millis: 7000
 
@@ -1151,7 +1153,8 @@ jedi_temple:
       interact_radius: 5
       move_to_interact_offset: 4.9
       one_shot_interaction:
-        player_one_shot_animation_id: 3014
+        player_reaction:
+          animation_id: 3014
         one_shot_animation_id: 2302
         duration_millis: 8000
 
@@ -1849,7 +1852,8 @@ jedi_temple:
         w: 0
       stand_animation_id: 2501
       one_shot_interaction:
-        player_one_shot_animation_id: 3014
+        player_reaction:
+          animation_id: 3014
         one_shot_animation_id: 2502
         duration_millis: 5000
     training_room_main_platform_lift:
@@ -2139,7 +2143,8 @@ jedi_temple:
       move_to_interact_offset: 3.2
       one_shot_interaction:
         composite_effect_id: 1959
-        player_one_shot_animation_id: 3014
+        player_reaction:
+          animation_id: 3014
         duration_millis: 5000
     # Guard Top Right Main Hall Door
     clone_guard_veranda_1:
@@ -2304,7 +2309,8 @@ jedi_temple:
       interact_radius: 5
       move_to_interact_offset: 4.9
       one_shot_interaction:
-        player_one_shot_animation_id: 3014
+        player_reaction:
+          animation_id: 3014
         one_shot_animation_id: 2561
         duration_millis: 5000
     workshop_zombie_droid:
@@ -2325,7 +2331,8 @@ jedi_temple:
       interact_radius: 5
       move_to_interact_offset: 4.9
       one_shot_interaction:
-        player_one_shot_animation_id: 3014
+        player_reaction:
+          animation_id: 3014
         one_shot_animation_id: 2559
         duration_millis: 12000
     # Pink Astromech Droid
@@ -2385,7 +2392,8 @@ jedi_temple:
       cursor: 54
       enable_interact_popup: false
       one_shot_interaction:
-        player_one_shot_animation_id: 3014
+        player_reaction:
+          animation_id: 3014
         one_shot_animation_id: 2563
         duration_millis: 5000
       interact_radius: 5

@@ -43,7 +43,8 @@ members_only:
       cursor: 54
       enable_interact_popup: false
       one_shot_interaction:
-        player_one_shot_animation_id: 3014
+        player_reaction:
+          animation_id: 3014
         one_shot_animation_id: 2550
         duration_millis: 1000
       interact_radius: 5
@@ -76,7 +77,8 @@ members_only:
       cursor: 54
       enable_interact_popup: false
       one_shot_interaction:
-        player_one_shot_animation_id: 3014
+        player_reaction:
+          animation_id: 3014
         one_shot_animation_id: 2550
         duration_millis: 1000
       interact_radius: 5
@@ -109,7 +111,8 @@ members_only:
       cursor: 54
       enable_interact_popup: false
       one_shot_interaction:
-        player_one_shot_animation_id: 3014
+        player_reaction:
+          animation_id: 3014
         one_shot_animation_id: 2550
         duration_millis: 1000
       interact_radius: 5
@@ -273,7 +276,8 @@ members_only:
       interact_radius: 5
       move_to_interact_offset: 4.9
       one_shot_interaction:
-        player_one_shot_animation_id: 3014
+        player_reaction:
+          animation_id: 3014
         one_shot_animation_id: 2302
         duration_millis: 7000
     members_only_jedi_table:

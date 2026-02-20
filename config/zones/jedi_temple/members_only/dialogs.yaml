@@ -2,9 +2,8 @@
 members_only:
   dialog_choices:
     - button_key: Crystal Attunement
-      script:
-        OpenMinigameStageGroup:
-          stage_group_id: 16000
+      script: !OpenMinigameStageGroup
+        stage_group_id: 16000
       close_dialog: true
 
     - button_key: Ki-Adi-Mundi
