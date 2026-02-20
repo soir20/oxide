@@ -14,6 +14,7 @@ use serde_yaml::{Mapping, Value};
 use crate::{
     game_server::{
         handlers::{
+            character::BaseNpcConfig,
             dialog::{DialogChoiceConfig, DialogChoiceInstance, DialogChoiceTemplate},
             distance3_pos, offset_destination,
         },
@@ -35,10 +36,10 @@ use crate::{
 
 use super::{
     character::{
-        coerce_to_broadcast_supplier, AmbientNpcConfig, Character, CharacterCategory,
+        coerce_to_broadcast_supplier, BaseNpcTemplate, Character, CharacterCategory,
         CharacterLocationIndex, CharacterMatchmakingGroupIndex, CharacterNameIndex,
-        CharacterSquadIndex, CharacterSynchronizationIndex, CharacterType, Chunk, NpcTemplate,
-        PreviousFixture, PreviousLocation, RemovalMode,
+        CharacterSquadIndex, CharacterSynchronizationIndex, CharacterType, Chunk, PreviousFixture,
+        PreviousLocation, RemovalMode,
     },
     guid::{Guid, GuidTable, GuidTableIndexer, GuidTableWriteHandle, IndexedGuid},
     housing::prepare_init_house_packets,
@@ -96,7 +97,7 @@ pub struct ZoneConfig {
     jump_height_multiplier: f32,
     gravity_multiplier: f32,
     #[serde(default)]
-    ambient_npcs: BTreeMap<String, AmbientNpcConfig>,
+    ambient_npcs: BTreeMap<String, BaseNpcConfig>,
     seconds_per_day: u32,
     #[serde(default = "default_true")]
     update_previous_location_on_leave: bool,
@@ -122,7 +123,7 @@ pub struct ZoneTemplate {
     pub gravity_multiplier: f32,
     hide_ui: bool,
     is_combat: bool,
-    characters: Vec<NpcTemplate>,
+    characters: Vec<BaseNpcTemplate>,
     pub seconds_per_day: u32,
     update_previous_location_on_leave: bool,
     map_id: u32,
@@ -186,7 +187,7 @@ impl From<ZoneConfig> for ZoneTemplate {
 
         {
             for (name, ambient_npc) in value.ambient_npcs {
-                characters.push(NpcTemplate::from_config(
+                characters.push(BaseNpcTemplate::from_config(
                     ambient_npc.clone(),
                     index,
                     &button_keys_to_id,

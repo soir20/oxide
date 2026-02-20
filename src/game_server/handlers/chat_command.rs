@@ -30,7 +30,8 @@ pub struct CommandEntry {
     pub description: String,
     pub usage: String,
     pub permission_level: Role,
-    pub notes: Option<Vec<String>>,
+    #[serde(default)]
+    pub notes: Vec<String>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -97,12 +98,10 @@ pub fn command_details(sender: u32, entry: &CommandEntry) -> Vec<Broadcast> {
         entry.description, entry.usage
     );
 
-    if let Some(notes) = &entry.notes {
-        if !notes.is_empty() {
-            msg.push_str("Notes:\n");
-            for note in notes {
-                msg.push_str(&format!("  - {}\n", note));
-            }
+    if !entry.notes.is_empty() {
+        msg.push_str("Notes:\n");
+        for note in entry.notes.iter() {
+            msg.push_str(&format!("  - {}\n", note));
         }
     }
 
@@ -217,12 +216,10 @@ pub fn process_chat_command(
                                     name, entry.description, entry.usage
                                 ));
 
-                                if let Some(notes) = &entry.notes {
-                                    if !notes.is_empty() {
-                                        msg.push_str("    Notes:\n");
-                                        for note in notes {
-                                            msg.push_str(&format!("      - {}\n", note));
-                                        }
+                                if !entry.notes.is_empty() {
+                                    msg.push_str("    Notes:\n");
+                                    for note in entry.notes.iter() {
+                                        msg.push_str(&format!("      - {}\n", note));
                                     }
                                 }
 
