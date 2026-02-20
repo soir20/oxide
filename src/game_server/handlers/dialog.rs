@@ -49,6 +49,7 @@ pub struct DialogConfig {
     pub zoom: f32,
     #[serde(default)]
     pub show_players: bool,
+    #[serde(default)]
     pub choices: Vec<DialogChoiceReferenceConfig>,
 }
 
