@@ -1596,6 +1596,64 @@ pub type OcclusionEntry = Entry<OcclusionEntryType, OcclusionData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
+pub enum UsageEntryType {
+    Usage = 0x1,
+    AttachmentBone = 0x2,
+    ValidatePcNpc = 0x3,
+    InheritAnimations = 0x4,
+}
+
+pub enum UsageData {
+    Usage { usage: u8 },
+    AttachmentBone { bone_name: String },
+    ValidatePcNpc { validate: bool },
+    InheritAnimations { should_inherit_animations: bool },
+}
+
+impl DeserializeEntryData<UsageEntryType> for UsageData {
+    async fn deserialize(
+        entry_type: &UsageEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            UsageEntryType::Usage => {
+                let (usage, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((UsageData::Usage { usage }, bytes_read))
+            }
+            UsageEntryType::AttachmentBone => {
+                let (bone_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    UsageData::AttachmentBone { bone_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            UsageEntryType::ValidatePcNpc => {
+                let (validate, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((
+                    UsageData::ValidatePcNpc {
+                        validate: validate != 0,
+                    },
+                    bytes_read,
+                ))
+            }
+            UsageEntryType::InheritAnimations => {
+                let (should_inherit_animations, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((
+                    UsageData::InheritAnimations {
+                        should_inherit_animations: should_inherit_animations != 0,
+                    },
+                    bytes_read,
+                ))
+            }
+        }
+    }
+}
+
+pub type UsageEntry = Entry<UsageEntryType, UsageData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
 pub enum AdrEntryType {
     Skeleton = 0x1,
     Model = 0x2,
@@ -1611,7 +1669,7 @@ pub enum AdrEntryType {
     AnimationActionPoint = 0xc,
     Collision = 0xd,
     Occlusion = 0xe,
-    Unknown10 = 0xf,
+    Usage = 0xf,
     Unknown11 = 0x10,
     Unknown12 = 0x11,
     Unknown13 = 0x12,
@@ -1664,8 +1722,8 @@ pub enum AdrData {
     Occlusion {
         entries: Vec<OcclusionEntry>,
     },
-    Unknown10 {
-        data: Vec<u8>,
+    Usage {
+        entries: Vec<UsageEntry>,
     },
     Unknown11 {
         data: Vec<u8>,
@@ -1753,9 +1811,9 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((AdrData::Occlusion { entries }, bytes_read))
             }
-            AdrEntryType::Unknown10 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((AdrData::Unknown10 { data }, usize_to_i32(bytes_read)?))
+            AdrEntryType::Usage => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AdrData::Usage { entries }, bytes_read))
             }
             AdrEntryType::Unknown11 => {
                 let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
