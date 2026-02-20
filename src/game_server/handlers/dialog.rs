@@ -2,6 +2,7 @@ use serde::Deserialize;
 use std::collections::HashMap;
 
 use crate::game_server::{
+    handlers::character::ScriptType,
     packets::{
         command::{DialogChoice, EnterDialog, ExitDialog},
         player_update::{QueueAnimation, RemoveTemporaryModel, UpdateTemporaryModel},
@@ -61,8 +62,11 @@ pub struct DialogChoiceConfig {
     pub synchronized_effects: Vec<DialogEffectsReferenceConfig>,
     #[serde(default)]
     pub close_dialog: bool,
-    #[serde(flatten, default)]
-    pub one_shot_action: OneShotAction,
+    #[serde(default)]
+    pub award_credits: u32,
+    #[serde(default)]
+    pub script: ScriptType,
+    pub point_of_interest: Option<u16>,
 }
 
 pub fn handle_dialog_buttons(
@@ -277,7 +281,11 @@ impl DialogChoiceTemplate {
         DialogChoiceTemplate {
             button_id,
             new_dialog,
-            one_shot_action: choice.one_shot_action.clone(),
+            one_shot_action: OneShotAction {
+                award_credits: choice.award_credits,
+                script: choice.script.clone(),
+                point_of_interest: choice.point_of_interest,
+            },
             close_dialog: choice.close_dialog,
         }
     }

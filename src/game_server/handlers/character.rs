@@ -649,8 +649,11 @@ pub struct PlayerOneShotAction {
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct OneShotInteractionConfig {
-    #[serde(flatten, default)]
-    pub one_shot_action: OneShotAction,
+    #[serde(default)]
+    pub award_credits: u32,
+    #[serde(default)]
+    pub script: ScriptType,
+    pub point_of_interest: Option<u16>,
     #[serde(default)]
     pub player_reaction: PlayerOneShotAction,
     pub one_shot_animation_id: Option<i32>,
@@ -701,7 +704,11 @@ impl OneShotInteractionTemplate {
         });
 
         OneShotInteractionTemplate {
-            one_shot_action: config.one_shot_action.clone(),
+            one_shot_action: OneShotAction {
+                award_credits: config.award_credits,
+                script: config.script.clone(),
+                point_of_interest: config.point_of_interest,
+            },
             dialog_option_id,
             hud_message: config.hud_message,
             player_one_shot_action: config.player_reaction,
