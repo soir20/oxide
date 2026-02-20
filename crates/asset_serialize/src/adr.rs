@@ -1598,16 +1598,18 @@ pub type OcclusionEntry = Entry<OcclusionEntryType, OcclusionData>;
 #[repr(u8)]
 pub enum UsageEntryType {
     Usage = 0x1,
-    AttachmentBone = 0x2,
+    AttachmentBoneName = 0x2,
     ValidatePcNpc = 0x3,
     InheritAnimations = 0x4,
+    ReplicationBoneName = 0x5,
 }
 
 pub enum UsageData {
     Usage { usage: u8 },
-    AttachmentBone { bone_name: String },
+    AttachmentBoneName { bone_name: String },
     ValidatePcNpc { validate: bool },
     InheritAnimations { should_inherit_animations: bool },
+    ReplicationBoneName { bone_name: String },
 }
 
 impl DeserializeEntryData<UsageEntryType> for UsageData {
@@ -1621,10 +1623,10 @@ impl DeserializeEntryData<UsageEntryType> for UsageData {
                 let (usage, bytes_read) = deserialize_u8(file, len).await?;
                 Ok((UsageData::Usage { usage }, bytes_read))
             }
-            UsageEntryType::AttachmentBone => {
+            UsageEntryType::AttachmentBoneName => {
                 let (bone_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
                 Ok((
-                    UsageData::AttachmentBone { bone_name },
+                    UsageData::AttachmentBoneName { bone_name },
                     usize_to_i32(bytes_read)?,
                 ))
             }
@@ -1644,6 +1646,13 @@ impl DeserializeEntryData<UsageEntryType> for UsageData {
                         should_inherit_animations: should_inherit_animations != 0,
                     },
                     bytes_read,
+                ))
+            }
+            UsageEntryType::ReplicationBoneName => {
+                let (bone_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    UsageData::ReplicationBoneName { bone_name },
+                    usize_to_i32(bytes_read)?,
                 ))
             }
         }
