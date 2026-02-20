@@ -1527,6 +1527,36 @@ pub type CollisionEntry = Entry<CollisionEntryType, CollisionData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
+pub enum OcclusionEntryType {
+    OcclusionBitMask = 0x2,
+}
+
+pub enum OcclusionData {
+    OcclusionBitMask { bit_mask: Vec<u8> },
+}
+
+impl DeserializeEntryData<OcclusionEntryType> for OcclusionData {
+    async fn deserialize(
+        entry_type: &OcclusionEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            OcclusionEntryType::OcclusionBitMask => {
+                let (bit_mask, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+                Ok((
+                    OcclusionData::OcclusionBitMask { bit_mask },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+        }
+    }
+}
+
+pub type OcclusionEntry = Entry<OcclusionEntryType, OcclusionData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
 pub enum AdrEntryType {
     Skeleton = 0x1,
     Model = 0x2,
@@ -1541,7 +1571,7 @@ pub enum AdrEntryType {
     AnimationParticleArray = 0xb,
     AnimationActionPoint = 0xc,
     Collision = 0xd,
-    Unknown9 = 0xe,
+    Occlusion = 0xe,
     Unknown10 = 0xf,
     Unknown11 = 0x10,
     Unknown12 = 0x11,
@@ -1592,8 +1622,8 @@ pub enum AdrData {
     Collision {
         entries: Vec<CollisionEntry>,
     },
-    Unknown9 {
-        data: Vec<u8>,
+    Occlusion {
+        entries: Vec<OcclusionEntry>,
     },
     Unknown10 {
         data: Vec<u8>,
@@ -1680,9 +1710,9 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((AdrData::Collision { entries }, bytes_read))
             }
-            AdrEntryType::Unknown9 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((AdrData::Unknown9 { data }, usize_to_i32(bytes_read)?))
+            AdrEntryType::Occlusion => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AdrData::Occlusion { entries }, bytes_read))
             }
             AdrEntryType::Unknown10 => {
                 let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
