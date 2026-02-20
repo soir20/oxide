@@ -1527,12 +1527,43 @@ pub type CollisionEntry = Entry<CollisionEntryType, CollisionData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
+pub enum CoveredSlotEntryType {
+    BoneId = 0x1,
+}
+
+pub enum CoveredSlotEntryData {
+    BoneId { bone_id: u8 },
+}
+
+impl DeserializeEntryData<CoveredSlotEntryType> for CoveredSlotEntryData {
+    async fn deserialize(
+        entry_type: &CoveredSlotEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            CoveredSlotEntryType::BoneId => {
+                let (bone_id, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((CoveredSlotEntryData::BoneId { bone_id }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type CoveredSlotEntry = Entry<CoveredSlotEntryType, CoveredSlotEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
 pub enum OcclusionEntryType {
-    OcclusionBitMask = 0x2,
+    BitMask = 0x2,
+    CoveredSlot = 0x4,
+    Unknown = 0xfe,
 }
 
 pub enum OcclusionData {
-    OcclusionBitMask { bit_mask: Vec<u8> },
+    BitMask { bit_mask: Vec<u8> },
+    CoveredSlot { entries: Vec<CoveredSlotEntry> },
+    Unknown { data: Vec<u8> },
 }
 
 impl DeserializeEntryData<OcclusionEntryType> for OcclusionData {
@@ -1542,12 +1573,20 @@ impl DeserializeEntryData<OcclusionEntryType> for OcclusionData {
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
-            OcclusionEntryType::OcclusionBitMask => {
+            OcclusionEntryType::BitMask => {
                 let (bit_mask, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
                 Ok((
-                    OcclusionData::OcclusionBitMask { bit_mask },
+                    OcclusionData::BitMask { bit_mask },
                     usize_to_i32(bytes_read)?,
                 ))
+            }
+            OcclusionEntryType::CoveredSlot => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((OcclusionData::CoveredSlot { entries }, bytes_read))
+            }
+            OcclusionEntryType::Unknown => {
+                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+                Ok((OcclusionData::Unknown { data }, usize_to_i32(bytes_read)?))
             }
         }
     }
