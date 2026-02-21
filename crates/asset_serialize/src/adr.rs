@@ -1559,14 +1559,14 @@ pub type CoveredSlotEntry = Entry<CoveredSlotEntryType, CoveredSlotEntryData>;
 #[repr(u8)]
 pub enum OcclusionEntryType {
     SlotBitMask = 0x1,
-    BoneBitMask = 0x2,
+    BitMask = 0x2,
     CoveredSlot = 0x4,
     Unknown = 0xfe,
 }
 
 pub enum OcclusionData {
     SlotBitMask { bit_mask: Vec<u8> },
-    BoneBitMask { bit_mask: Vec<u8> },
+    BitMask { bit_mask: Vec<u8> },
     CoveredSlot { entries: Vec<CoveredSlotEntry> },
     Unknown { data: Vec<u8> },
 }
@@ -1585,10 +1585,10 @@ impl DeserializeEntryData<OcclusionEntryType> for OcclusionData {
                     usize_to_i32(bytes_read)?,
                 ))
             }
-            OcclusionEntryType::BoneBitMask => {
+            OcclusionEntryType::BitMask => {
                 let (bit_mask, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
                 Ok((
-                    OcclusionData::BoneBitMask { bit_mask },
+                    OcclusionData::BitMask { bit_mask },
                     usize_to_i32(bytes_read)?,
                 ))
             }
