@@ -1731,6 +1731,69 @@ pub type HatHairEntry = Entry<HatHairEntryType, HatHairEntryData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
+pub enum EquippedSlotEntryType {
+    Type = 0x1,
+    SlotId = 0x2,
+    ParentAttachSlot = 0x3,
+    ChildAttachSlot = 0x4,
+    SlotName = 0x5,
+}
+
+pub enum EquippedSlotEntryData {
+    Type { equipped_slot_type: u8 },
+    SlotId { slot_id: u8 },
+    ParentAttachSlot { slot_name: String },
+    ChildAttachSlot { slot_name: String },
+    SlotName { slot_name: String },
+}
+
+impl DeserializeEntryData<EquippedSlotEntryType> for EquippedSlotEntryData {
+    async fn deserialize(
+        entry_type: &EquippedSlotEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            EquippedSlotEntryType::Type => {
+                let (equipped_slot_type, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((
+                    EquippedSlotEntryData::Type { equipped_slot_type },
+                    bytes_read,
+                ))
+            }
+            EquippedSlotEntryType::SlotId => {
+                let (slot_id, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((EquippedSlotEntryData::SlotId { slot_id }, bytes_read))
+            }
+            EquippedSlotEntryType::ParentAttachSlot => {
+                let (slot_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    EquippedSlotEntryData::ParentAttachSlot { slot_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            EquippedSlotEntryType::ChildAttachSlot => {
+                let (slot_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    EquippedSlotEntryData::ChildAttachSlot { slot_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            EquippedSlotEntryType::SlotName => {
+                let (slot_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    EquippedSlotEntryData::SlotName { slot_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+        }
+    }
+}
+
+pub type EquippedSlotEntry = Entry<EquippedSlotEntryType, EquippedSlotEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
 pub enum AdrEntryType {
     Skeleton = 0x1,
     Model = 0x2,
@@ -1749,7 +1812,7 @@ pub enum AdrEntryType {
     Usage = 0xf,
     HatHair = 0x10,
     Unknown12 = 0x11,
-    Unknown13 = 0x12,
+    EquippedSlot = 0x12,
     Unknown14 = 0x13,
     Unknown15 = 0x14,
     Unknown16 = 0x15,
@@ -1808,8 +1871,8 @@ pub enum AdrData {
     Unknown12 {
         data: Vec<u8>,
     },
-    Unknown13 {
-        data: Vec<u8>,
+    EquippedSlot {
+        entries: Vec<EquippedSlotEntry>,
     },
     Unknown14 {
         data: Vec<u8>,
@@ -1900,9 +1963,9 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
                 let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
                 Ok((AdrData::Unknown12 { data }, usize_to_i32(bytes_read)?))
             }
-            AdrEntryType::Unknown13 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((AdrData::Unknown13 { data }, usize_to_i32(bytes_read)?))
+            AdrEntryType::EquippedSlot => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AdrData::EquippedSlot { entries }, bytes_read))
             }
             AdrEntryType::Unknown14 => {
                 let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
