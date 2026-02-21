@@ -17,6 +17,12 @@ use serde::Deserialize;
 pub const SABER_ITEM_TYPE: u32 = 25;
 
 #[derive(Debug, Deserialize)]
+pub struct ItemAbilityConfig {
+    pub ability_icon: u32,
+    pub ability_name: u32,
+}
+
+#[derive(Debug, Deserialize)]
 pub struct ItemConfig {
     pub guid: u32,
     pub name_id: u32,
@@ -53,12 +59,6 @@ pub struct ItemConfig {
     pub customization_id: u32,
     #[serde(default)]
     pub abilities: Vec<ItemAbilityConfig>,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct ItemAbilityConfig {
-    pub ability_icon: u32,
-    pub ability_name: u32,
 }
 
 impl From<ItemAbilityConfig> for ItemAbility {
