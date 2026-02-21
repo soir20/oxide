@@ -144,10 +144,12 @@ async fn deserialize_u32_le(
 #[repr(u8)]
 pub enum EntryCountEntryType {
     EntryCount = 0x1,
+    EntryCount2 = 0x4,
 }
 
 pub enum EntryCountEntryData {
     EntryCount { entry_count: u32 },
+    EntryCount2 { entry_count: u32 },
 }
 
 impl DeserializeEntryData<EntryCountEntryType> for EntryCountEntryData {
@@ -160,6 +162,10 @@ impl DeserializeEntryData<EntryCountEntryType> for EntryCountEntryData {
             EntryCountEntryType::EntryCount => {
                 let (entry_count, bytes_read) = deserialize_u32_le(file, len).await?;
                 Ok((EntryCountEntryData::EntryCount { entry_count }, bytes_read))
+            }
+            EntryCountEntryType::EntryCount2 => {
+                let (entry_count, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((EntryCountEntryData::EntryCount2 { entry_count }, bytes_read))
             }
         }
     }
@@ -1628,7 +1634,7 @@ pub enum UsageEntryType {
     ReplicationBoneName = 0x5,
 }
 
-pub enum UsageData {
+pub enum UsageEntryData {
     Usage { usage: u8 },
     AttachmentBoneName { bone_name: String },
     ValidatePcNpc { validate: bool },
@@ -1636,7 +1642,7 @@ pub enum UsageData {
     ReplicationBoneName { bone_name: String },
 }
 
-impl DeserializeEntryData<UsageEntryType> for UsageData {
+impl DeserializeEntryData<UsageEntryType> for UsageEntryData {
     async fn deserialize(
         entry_type: &UsageEntryType,
         len: i32,
@@ -1645,19 +1651,19 @@ impl DeserializeEntryData<UsageEntryType> for UsageData {
         match entry_type {
             UsageEntryType::Usage => {
                 let (usage, bytes_read) = deserialize_u8(file, len).await?;
-                Ok((UsageData::Usage { usage }, bytes_read))
+                Ok((UsageEntryData::Usage { usage }, bytes_read))
             }
             UsageEntryType::AttachmentBoneName => {
                 let (bone_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
                 Ok((
-                    UsageData::AttachmentBoneName { bone_name },
+                    UsageEntryData::AttachmentBoneName { bone_name },
                     usize_to_i32(bytes_read)?,
                 ))
             }
             UsageEntryType::ValidatePcNpc => {
                 let (validate, bytes_read) = deserialize_u8(file, len).await?;
                 Ok((
-                    UsageData::ValidatePcNpc {
+                    UsageEntryData::ValidatePcNpc {
                         validate: validate != 0,
                     },
                     bytes_read,
@@ -1666,7 +1672,7 @@ impl DeserializeEntryData<UsageEntryType> for UsageData {
             UsageEntryType::InheritAnimations => {
                 let (should_inherit_animations, bytes_read) = deserialize_u8(file, len).await?;
                 Ok((
-                    UsageData::InheritAnimations {
+                    UsageEntryData::InheritAnimations {
                         should_inherit_animations: should_inherit_animations != 0,
                     },
                     bytes_read,
@@ -1675,7 +1681,7 @@ impl DeserializeEntryData<UsageEntryType> for UsageData {
             UsageEntryType::ReplicationBoneName => {
                 let (bone_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
                 Ok((
-                    UsageData::ReplicationBoneName { bone_name },
+                    UsageEntryData::ReplicationBoneName { bone_name },
                     usize_to_i32(bytes_read)?,
                 ))
             }
@@ -1683,7 +1689,45 @@ impl DeserializeEntryData<UsageEntryType> for UsageData {
     }
 }
 
-pub type UsageEntry = Entry<UsageEntryType, UsageData>;
+pub type UsageEntry = Entry<UsageEntryType, UsageEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum HatHairEntryType {
+    CoverFacialHair = 0x1,
+    Type = 0x2,
+}
+
+pub enum HatHairEntryData {
+    CoverFacialHair { should_cover_facial_hair: bool },
+    Type { hat_hair_type: u8 },
+}
+
+impl DeserializeEntryData<HatHairEntryType> for HatHairEntryData {
+    async fn deserialize(
+        entry_type: &HatHairEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            HatHairEntryType::CoverFacialHair => {
+                let (should_cover_facial_hair, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((
+                    HatHairEntryData::CoverFacialHair {
+                        should_cover_facial_hair: should_cover_facial_hair != 0,
+                    },
+                    bytes_read,
+                ))
+            }
+            HatHairEntryType::Type => {
+                let (hat_hair_type, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((HatHairEntryData::Type { hat_hair_type }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type HatHairEntry = Entry<HatHairEntryType, HatHairEntryData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
@@ -1703,7 +1747,7 @@ pub enum AdrEntryType {
     Collision = 0xd,
     Occlusion = 0xe,
     Usage = 0xf,
-    Unknown11 = 0x10,
+    HatHair = 0x10,
     Unknown12 = 0x11,
     Unknown13 = 0x12,
     Unknown14 = 0x13,
@@ -1758,8 +1802,8 @@ pub enum AdrData {
     Usage {
         entries: Vec<UsageEntry>,
     },
-    Unknown11 {
-        data: Vec<u8>,
+    HatHair {
+        entries: Vec<HatHairEntry>,
     },
     Unknown12 {
         data: Vec<u8>,
@@ -1848,9 +1892,9 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((AdrData::Usage { entries }, bytes_read))
             }
-            AdrEntryType::Unknown11 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((AdrData::Unknown11 { data }, usize_to_i32(bytes_read)?))
+            AdrEntryType::HatHair => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AdrData::HatHair { entries }, bytes_read))
             }
             AdrEntryType::Unknown12 => {
                 let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
