@@ -142,6 +142,33 @@ async fn deserialize_u32_le(
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
+pub enum EntryCountEntryType {
+    EntryCount = 0x1,
+}
+
+pub enum EntryCountEntryData {
+    EntryCount { entry_count: u32 },
+}
+
+impl DeserializeEntryData<EntryCountEntryType> for EntryCountEntryData {
+    async fn deserialize(
+        entry_type: &EntryCountEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            EntryCountEntryType::EntryCount => {
+                let (entry_count, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((EntryCountEntryData::EntryCount { entry_count }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type EntryCountEntry = Entry<EntryCountEntryType, EntryCountEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
 pub enum SkeletonEntryType {
     AssetName = 0x1,
     Scale = 0x2,
@@ -372,12 +399,12 @@ pub type ParticleEmitterEntry = Entry<ParticleEmitterEntryType, ParticleEmitterE
 #[repr(u8)]
 pub enum ParticleEmitterType {
     ParticleEmitter = 0x1,
-    Unknown = 0xfe,
+    EntryCount = 0xfe,
 }
 
 pub enum ParticleEmitterData {
     ParticleEmitter { entries: Vec<ParticleEmitterEntry> },
-    Unknown { data: Vec<u8> },
+    EntryCount { entries: Vec<EntryCountEntry> },
 }
 
 impl DeserializeEntryData<ParticleEmitterType> for ParticleEmitterData {
@@ -391,12 +418,9 @@ impl DeserializeEntryData<ParticleEmitterType> for ParticleEmitterData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((ParticleEmitterData::ParticleEmitter { entries }, bytes_read))
             }
-            ParticleEmitterType::Unknown => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((
-                    ParticleEmitterData::Unknown { data },
-                    usize_to_i32(bytes_read)?,
-                ))
+            ParticleEmitterType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((ParticleEmitterData::EntryCount { entries }, bytes_read))
             }
         }
     }
@@ -486,10 +510,12 @@ pub type MaterialEntry = Entry<MaterialEntryType, MaterialEntryData>;
 #[repr(u8)]
 pub enum MaterialType {
     Material = 0x1,
+    EntryCount = 0xfe,
 }
 
 pub enum MaterialData {
     Material { entries: Vec<MaterialEntry> },
+    EntryCount { entries: Vec<EntryCountEntry> },
 }
 
 impl DeserializeEntryData<MaterialType> for MaterialData {
@@ -502,6 +528,10 @@ impl DeserializeEntryData<MaterialType> for MaterialData {
             MaterialType::Material => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((MaterialData::Material { entries }, bytes_read))
+            }
+            MaterialType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((MaterialData::EntryCount { entries }, bytes_read))
             }
         }
     }
@@ -593,12 +623,12 @@ pub type TextureAliasEntry = Entry<TextureAliasEntryType, TextureAliasEntryData>
 #[repr(u8)]
 pub enum TextureAliasType {
     TextureAlias = 0x1,
-    Unknown = 0xfe,
+    EntryCount = 0xfe,
 }
 
 pub enum TextureAliasData {
     TextureAlias { entries: Vec<TextureAliasEntry> },
-    Unknown { data: Vec<u8> },
+    EntryCount { entries: Vec<EntryCountEntry> },
 }
 
 impl DeserializeEntryData<TextureAliasType> for TextureAliasData {
@@ -612,12 +642,9 @@ impl DeserializeEntryData<TextureAliasType> for TextureAliasData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((TextureAliasData::TextureAlias { entries }, bytes_read))
             }
-            TextureAliasType::Unknown => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((
-                    TextureAliasData::Unknown { data },
-                    usize_to_i32(bytes_read)?,
-                ))
+            TextureAliasType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((TextureAliasData::EntryCount { entries }, bytes_read))
             }
         }
     }
@@ -699,12 +726,12 @@ pub type TintAliasEntry = Entry<TintAliasEntryType, TintAliasEntryData>;
 #[repr(u8)]
 pub enum TintAliasType {
     TintAlias = 0x1,
-    Unknown = 0xfe,
+    EntryCount = 0xfe,
 }
 
 pub enum TintAliasData {
     TintAlias { entries: Vec<TintAliasEntry> },
-    Unknown { data: Vec<u8> },
+    EntryCount { entries: Vec<EntryCountEntry> },
 }
 
 impl DeserializeEntryData<TintAliasType> for TintAliasData {
@@ -718,9 +745,9 @@ impl DeserializeEntryData<TintAliasType> for TintAliasData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((TintAliasData::TintAlias { entries }, bytes_read))
             }
-            TintAliasType::Unknown => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((TintAliasData::Unknown { data }, usize_to_i32(bytes_read)?))
+            TintAliasType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((TintAliasData::EntryCount { entries }, bytes_read))
             }
         }
     }
@@ -777,12 +804,12 @@ pub type EffectEntry = Entry<EffectEntryType, EffectEntryData>;
 #[repr(u8)]
 pub enum EffectType {
     Effect = 0x1,
-    Unknown = 0xfe,
+    EntryCount = 0xfe,
 }
 
 pub enum EffectData {
     Effect { entries: Vec<EffectEntry> },
-    Unknown { data: Vec<u8> },
+    EntryCount { entries: Vec<EntryCountEntry> },
 }
 
 impl DeserializeEntryData<EffectType> for EffectData {
@@ -796,9 +823,9 @@ impl DeserializeEntryData<EffectType> for EffectData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((EffectData::Effect { entries }, bytes_read))
             }
-            EffectType::Unknown => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((EffectData::Unknown { data }, usize_to_i32(bytes_read)?))
+            EffectType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((EffectData::EntryCount { entries }, bytes_read))
             }
         }
     }
@@ -889,12 +916,12 @@ pub type AnimationEntry = Entry<AnimationEntryType, AnimationEntryData>;
 #[repr(u8)]
 pub enum AnimationType {
     Animation = 0x1,
-    Unknown2 = 0xfe,
+    EntryCount = 0xfe,
 }
 
 pub enum AnimationData {
     Animation { entries: Vec<AnimationEntry> },
-    Unknown2 { data: Vec<u8> },
+    EntryCount { entries: Vec<EntryCountEntry> },
 }
 
 impl DeserializeEntryData<AnimationType> for AnimationData {
@@ -908,9 +935,9 @@ impl DeserializeEntryData<AnimationType> for AnimationData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((AnimationData::Animation { entries }, bytes_read))
             }
-            AnimationType::Unknown2 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((AnimationData::Unknown2 { data }, usize_to_i32(bytes_read)?))
+            AnimationType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AnimationData::EntryCount { entries }, bytes_read))
             }
         }
     }
@@ -1109,12 +1136,12 @@ pub type AnimationSoundEntry = Entry<AnimationSoundEntryType, AnimationSoundEntr
 #[repr(u8)]
 pub enum AnimationSoundType {
     AnimationSound = 0x1,
-    Unknown = 0xfe,
+    EntryCount = 0xfe,
 }
 
 pub enum AnimationSoundData {
     AnimationSound { entries: Vec<AnimationSoundEntry> },
-    Unknown { data: Vec<u8> },
+    EntryCount { entries: Vec<EntryCountEntry> },
 }
 
 impl DeserializeEntryData<AnimationSoundType> for AnimationSoundData {
@@ -1128,12 +1155,9 @@ impl DeserializeEntryData<AnimationSoundType> for AnimationSoundData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((AnimationSoundData::AnimationSound { entries }, bytes_read))
             }
-            AnimationSoundType::Unknown => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((
-                    AnimationSoundData::Unknown { data },
-                    usize_to_i32(bytes_read)?,
-                ))
+            AnimationSoundType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AnimationSoundData::EntryCount { entries }, bytes_read))
             }
         }
     }
@@ -1307,15 +1331,15 @@ pub type AnimationParticleEntry = Entry<AnimationParticleEntryType, AnimationPar
 #[repr(u8)]
 pub enum AnimationParticleType {
     AnimationParticle = 0x1,
-    Unknown = 0xfe,
+    EntryCount = 0xfe,
 }
 
 pub enum AnimationParticleData {
     AnimationParticle {
         entries: Vec<AnimationParticleEntry>,
     },
-    Unknown {
-        data: Vec<u8>,
+    EntryCount {
+        entries: Vec<EntryCountEntry>,
     },
 }
 
@@ -1333,12 +1357,9 @@ impl DeserializeEntryData<AnimationParticleType> for AnimationParticleData {
                     bytes_read,
                 ))
             }
-            AnimationParticleType::Unknown => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((
-                    AnimationParticleData::Unknown { data },
-                    usize_to_i32(bytes_read)?,
-                ))
+            AnimationParticleType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AnimationParticleData::EntryCount { entries }, bytes_read))
             }
         }
     }
@@ -1386,12 +1407,12 @@ pub type ActionPointEntry = Entry<ActionPointEntryType, ActionPointEntryData>;
 #[repr(u8)]
 pub enum ActionPointType {
     ActionPoint = 0x1,
-    Unknown = 0xfe,
+    EntryCount = 0xfe,
 }
 
 pub enum ActionPointData {
     ActionPoint { entries: Vec<ActionPointEntry> },
-    Unknown { data: Vec<u8> },
+    EntryCount { entries: Vec<EntryCountEntry> },
 }
 
 impl DeserializeEntryData<ActionPointType> for ActionPointData {
@@ -1405,9 +1426,9 @@ impl DeserializeEntryData<ActionPointType> for ActionPointData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((ActionPointData::ActionPoint { entries }, bytes_read))
             }
-            ActionPointType::Unknown => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((ActionPointData::Unknown { data }, usize_to_i32(bytes_read)?))
+            ActionPointType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((ActionPointData::EntryCount { entries }, bytes_read))
             }
         }
     }
@@ -1459,15 +1480,15 @@ pub type AnimationActionPointEntry =
 #[repr(u8)]
 pub enum AnimationActionPointType {
     AnimationActionPoint = 0x1,
-    Unknown = 0xfe,
+    EntryCount = 0xfe,
 }
 
 pub enum AnimationActionPointData {
     AnimationActionPoint {
         entries: Vec<AnimationActionPointEntry>,
     },
-    Unknown {
-        data: Vec<u8>,
+    EntryCount {
+        entries: Vec<EntryCountEntry>,
     },
 }
 
@@ -1485,12 +1506,9 @@ impl DeserializeEntryData<AnimationActionPointType> for AnimationActionPointData
                     bytes_read,
                 ))
             }
-            AnimationActionPointType::Unknown => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((
-                    AnimationActionPointData::Unknown { data },
-                    usize_to_i32(bytes_read)?,
-                ))
+            AnimationActionPointType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AnimationActionPointData::EntryCount { entries }, bytes_read))
             }
         }
     }
@@ -1561,14 +1579,14 @@ pub enum OcclusionEntryType {
     SlotBitMask = 0x1,
     BitMask = 0x2,
     CoveredSlot = 0x4,
-    Unknown = 0xfe,
+    EntryCount = 0xfe,
 }
 
 pub enum OcclusionData {
     SlotBitMask { bit_mask: Vec<u8> },
     BitMask { bit_mask: Vec<u8> },
     CoveredSlot { entries: Vec<CoveredSlotEntry> },
-    Unknown { data: Vec<u8> },
+    EntryCount { entries: Vec<EntryCountEntry> },
 }
 
 impl DeserializeEntryData<OcclusionEntryType> for OcclusionData {
@@ -1596,9 +1614,9 @@ impl DeserializeEntryData<OcclusionEntryType> for OcclusionData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((OcclusionData::CoveredSlot { entries }, bytes_read))
             }
-            OcclusionEntryType::Unknown => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((OcclusionData::Unknown { data }, usize_to_i32(bytes_read)?))
+            OcclusionEntryType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((OcclusionData::EntryCount { entries }, bytes_read))
             }
         }
     }
