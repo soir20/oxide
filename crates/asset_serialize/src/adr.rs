@@ -1794,44 +1794,44 @@ pub type EquippedSlotEntry = Entry<EquippedSlotEntryType, EquippedSlotEntryData>
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
-pub enum MountSeatEntranceEntryType {
+pub enum MountSeatEntranceExitEntryType {
     Bone = 0x1,
     Animation = 0x2,
     Location = 0x3,
 }
 
-pub enum MountSeatEntranceEntryData {
+pub enum MountSeatEntranceExitEntryData {
     Bone { bone_name: String },
     Animation { animation_name: String },
     Location { location: String },
 }
 
-impl DeserializeEntryData<MountSeatEntranceEntryType> for MountSeatEntranceEntryData {
+impl DeserializeEntryData<MountSeatEntranceExitEntryType> for MountSeatEntranceExitEntryData {
     async fn deserialize(
-        entry_type: &MountSeatEntranceEntryType,
+        entry_type: &MountSeatEntranceExitEntryType,
         len: i32,
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
-            MountSeatEntranceEntryType::Bone => {
+            MountSeatEntranceExitEntryType::Bone => {
                 let (bone_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
                 Ok((
-                    MountSeatEntranceEntryData::Bone { bone_name },
+                    MountSeatEntranceExitEntryData::Bone { bone_name },
                     usize_to_i32(bytes_read)?,
                 ))
             }
-            MountSeatEntranceEntryType::Animation => {
+            MountSeatEntranceExitEntryType::Animation => {
                 let (animation_name, bytes_read) =
                     deserialize_string(file, i32_to_usize(len)?).await?;
                 Ok((
-                    MountSeatEntranceEntryData::Animation { animation_name },
+                    MountSeatEntranceExitEntryData::Animation { animation_name },
                     usize_to_i32(bytes_read)?,
                 ))
             }
-            MountSeatEntranceEntryType::Location => {
+            MountSeatEntranceExitEntryType::Location => {
                 let (location, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
                 Ok((
-                    MountSeatEntranceEntryData::Location { location },
+                    MountSeatEntranceExitEntryData::Location { location },
                     usize_to_i32(bytes_read)?,
                 ))
             }
@@ -1839,19 +1839,24 @@ impl DeserializeEntryData<MountSeatEntranceEntryType> for MountSeatEntranceEntry
     }
 }
 
-pub type MountSeatEntranceEntry = Entry<MountSeatEntranceEntryType, MountSeatEntranceEntryData>;
+pub type MountSeatEntranceExitEntry =
+    Entry<MountSeatEntranceExitEntryType, MountSeatEntranceExitEntryData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
 pub enum MountSeatEntryType {
     Entrance = 0x1,
+    Exit = 0x2,
     Bone = 0x3,
     Animation = 0x4,
 }
 
 pub enum MountSeatEntryData {
     Entrance {
-        entries: Vec<MountSeatEntranceEntry>,
+        entries: Vec<MountSeatEntranceExitEntry>,
+    },
+    Exit {
+        entries: Vec<MountSeatEntranceExitEntry>,
     },
     Bone {
         bone_name: String,
@@ -1871,6 +1876,10 @@ impl DeserializeEntryData<MountSeatEntryType> for MountSeatEntryData {
             MountSeatEntryType::Entrance => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((MountSeatEntryData::Entrance { entries }, bytes_read))
+            }
+            MountSeatEntryType::Exit => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((MountSeatEntryData::Exit { entries }, bytes_read))
             }
             MountSeatEntryType::Bone => {
                 let (bone_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
@@ -1898,11 +1907,13 @@ pub type MountSeatEntry = Entry<MountSeatEntryType, MountSeatEntryData>;
 pub enum MountEntryType {
     Seat = 0x1,
     RunToIdleAnimation = 0x9,
+    EntryCount = 0xfe,
 }
 
 pub enum MountEntryData {
     Seat { entries: Vec<MountSeatEntry> },
     RunToIdleAnimation { animation_name: String },
+    EntryCount { entries: Vec<EntryCountEntry> },
 }
 
 impl DeserializeEntryData<MountEntryType> for MountEntryData {
@@ -1923,6 +1934,10 @@ impl DeserializeEntryData<MountEntryType> for MountEntryData {
                     MountEntryData::RunToIdleAnimation { animation_name },
                     usize_to_i32(bytes_read)?,
                 ))
+            }
+            MountEntryType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((MountEntryData::EntryCount { entries }, bytes_read))
             }
         }
     }
