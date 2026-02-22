@@ -2280,7 +2280,7 @@ pub enum AdrData {
         entries: Vec<HatHairEntry>,
     },
     Shadow {
-        data: Vec<u8>,
+        entries: Vec<ShadowEntry>,
     },
     EquippedSlot {
         entries: Vec<EquippedSlotEntry>,
@@ -2371,8 +2371,8 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
                 Ok((AdrData::HatHair { entries }, bytes_read))
             }
             AdrEntryType::Shadow => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((AdrData::Shadow { data }, usize_to_i32(bytes_read)?))
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AdrData::Shadow { entries }, bytes_read))
             }
             AdrEntryType::EquippedSlot => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
