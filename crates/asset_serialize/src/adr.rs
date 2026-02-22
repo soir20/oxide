@@ -1794,6 +1794,144 @@ pub type EquippedSlotEntry = Entry<EquippedSlotEntryType, EquippedSlotEntryData>
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
+pub enum MountSeatEntranceEntryType {
+    Bone = 0x1,
+    Animation = 0x2,
+    Location = 0x3,
+}
+
+pub enum MountSeatEntranceEntryData {
+    Bone { bone_name: String },
+    Animation { animation_name: String },
+    Location { location: String },
+}
+
+impl DeserializeEntryData<MountSeatEntranceEntryType> for MountSeatEntranceEntryData {
+    async fn deserialize(
+        entry_type: &MountSeatEntranceEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            MountSeatEntranceEntryType::Bone => {
+                let (bone_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    MountSeatEntranceEntryData::Bone { bone_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            MountSeatEntranceEntryType::Animation => {
+                let (animation_name, bytes_read) =
+                    deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    MountSeatEntranceEntryData::Animation { animation_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            MountSeatEntranceEntryType::Location => {
+                let (location, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    MountSeatEntranceEntryData::Location { location },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+        }
+    }
+}
+
+pub type MountSeatEntranceEntry = Entry<MountSeatEntranceEntryType, MountSeatEntranceEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum MountSeatEntryType {
+    Entrance = 0x1,
+    Bone = 0x3,
+    Animation = 0x4,
+}
+
+pub enum MountSeatEntryData {
+    Entrance {
+        entries: Vec<MountSeatEntranceEntry>,
+    },
+    Bone {
+        bone_name: String,
+    },
+    Animation {
+        animation_name: String,
+    },
+}
+
+impl DeserializeEntryData<MountSeatEntryType> for MountSeatEntryData {
+    async fn deserialize(
+        entry_type: &MountSeatEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            MountSeatEntryType::Entrance => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((MountSeatEntryData::Entrance { entries }, bytes_read))
+            }
+            MountSeatEntryType::Bone => {
+                let (bone_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    MountSeatEntryData::Bone { bone_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            MountSeatEntryType::Animation => {
+                let (animation_name, bytes_read) =
+                    deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    MountSeatEntryData::Animation { animation_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+        }
+    }
+}
+
+pub type MountSeatEntry = Entry<MountSeatEntryType, MountSeatEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum MountEntryType {
+    Seat = 0x1,
+    RunToIdleAnimation = 0x9,
+}
+
+pub enum MountEntryData {
+    Seat { entries: Vec<MountSeatEntry> },
+    RunToIdleAnimation { animation_name: String },
+}
+
+impl DeserializeEntryData<MountEntryType> for MountEntryData {
+    async fn deserialize(
+        entry_type: &MountEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            MountEntryType::Seat => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((MountEntryData::Seat { entries }, bytes_read))
+            }
+            MountEntryType::RunToIdleAnimation => {
+                let (animation_name, bytes_read) =
+                    deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    MountEntryData::RunToIdleAnimation { animation_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+        }
+    }
+}
+
+pub type MountEntry = Entry<MountEntryType, MountEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
 pub enum AdrEntryType {
     Skeleton = 0x1,
     Model = 0x2,
@@ -1814,7 +1952,7 @@ pub enum AdrEntryType {
     Unknown12 = 0x11,
     EquippedSlot = 0x12,
     Unknown14 = 0x13,
-    Unknown15 = 0x14,
+    Mount = 0x14,
     Unknown16 = 0x15,
     Unknown17 = 0x16,
 }
@@ -1877,8 +2015,8 @@ pub enum AdrData {
     Unknown14 {
         data: Vec<u8>,
     },
-    Unknown15 {
-        data: Vec<u8>,
+    Mount {
+        entries: Vec<MountEntry>,
     },
     Unknown16 {
         data: Vec<u8>,
@@ -1971,9 +2109,9 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
                 let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
                 Ok((AdrData::Unknown14 { data }, usize_to_i32(bytes_read)?))
             }
-            AdrEntryType::Unknown15 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((AdrData::Unknown15 { data }, usize_to_i32(bytes_read)?))
+            AdrEntryType::Mount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AdrData::Mount { entries }, bytes_read))
             }
             AdrEntryType::Unknown16 => {
                 let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
