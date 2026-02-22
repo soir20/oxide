@@ -1731,6 +1731,41 @@ pub type HatHairEntry = Entry<HatHairEntryType, HatHairEntryData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
+pub enum ShadowEntryType {
+    CheckShadowVisibility = 0x1,
+}
+
+pub enum ShadowEntryData {
+    CheckShadowVisibility {
+        should_check_shadow_visibility: bool,
+    },
+}
+
+impl DeserializeEntryData<ShadowEntryType> for ShadowEntryData {
+    async fn deserialize(
+        entry_type: &ShadowEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            ShadowEntryType::CheckShadowVisibility => {
+                let (should_check_shadow_visibility, bytes_read) =
+                    deserialize_u8(file, len).await?;
+                Ok((
+                    ShadowEntryData::CheckShadowVisibility {
+                        should_check_shadow_visibility: should_check_shadow_visibility != 0,
+                    },
+                    bytes_read,
+                ))
+            }
+        }
+    }
+}
+
+pub type ShadowEntry = Entry<ShadowEntryType, ShadowEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
 pub enum EquippedSlotEntryType {
     Type = 0x1,
     SlotId = 0x2,
@@ -2187,9 +2222,9 @@ pub enum AdrEntryType {
     Occlusion = 0xe,
     Usage = 0xf,
     HatHair = 0x10,
-    Unknown12 = 0x11,
+    Shadow = 0x11,
     EquippedSlot = 0x12,
-    Unknown14 = 0x13,
+    BorrowedSkeleton = 0x13,
     Mount = 0x14,
     AnimationCompositeArray = 0x15,
     Unknown17 = 0x16,
@@ -2244,13 +2279,13 @@ pub enum AdrData {
     HatHair {
         entries: Vec<HatHairEntry>,
     },
-    Unknown12 {
+    Shadow {
         data: Vec<u8>,
     },
     EquippedSlot {
         entries: Vec<EquippedSlotEntry>,
     },
-    Unknown14 {
+    BorrowedSkeleton {
         data: Vec<u8>,
     },
     Mount {
@@ -2335,17 +2370,20 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((AdrData::HatHair { entries }, bytes_read))
             }
-            AdrEntryType::Unknown12 => {
+            AdrEntryType::Shadow => {
                 let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((AdrData::Unknown12 { data }, usize_to_i32(bytes_read)?))
+                Ok((AdrData::Shadow { data }, usize_to_i32(bytes_read)?))
             }
             AdrEntryType::EquippedSlot => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((AdrData::EquippedSlot { entries }, bytes_read))
             }
-            AdrEntryType::Unknown14 => {
+            AdrEntryType::BorrowedSkeleton => {
                 let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((AdrData::Unknown14 { data }, usize_to_i32(bytes_read)?))
+                Ok((
+                    AdrData::BorrowedSkeleton { data },
+                    usize_to_i32(bytes_read)?,
+                ))
             }
             AdrEntryType::Mount => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
