@@ -858,10 +858,11 @@ pub enum AnimationEntryType {
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
 pub enum AnimationLoadType {
-    Unknown1 = 0x0,
-    Unknown2 = 0x1,
-    Unknown3 = 0x2,
-    Unknown4 = 0x4,
+    Required = 0x0,
+    Preload = 0x1,
+    OnDemand = 0x2,
+    InheritFromParent = 0x3,
+    RequiredFirst = 0x4,
 }
 
 pub enum AnimationEntryData {
@@ -2245,8 +2246,8 @@ impl DeserializeEntryData<JointEntryType> for JointEntryData {
                 Ok((JointEntryData::YawLimit { yaw_limit }, bytes_read))
             }
             JointEntryType::TurnRate => {
-                let (unknown, bytes_read) = deserialize_f32_be(file, len).await?;
-                Ok((JointEntryData::TurnRate { turn_rate: unknown }, bytes_read))
+                let (turn_rate, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((JointEntryData::TurnRate { turn_rate }, bytes_read))
             }
         }
     }
