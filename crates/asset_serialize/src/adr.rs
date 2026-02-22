@@ -477,13 +477,11 @@ pub type ParticleEmitterArray = Entry<ParticleEmitterArrayType, ParticleEmitterA
 #[repr(u8)]
 pub enum MaterialTagEntryType {
     Name = 0x1,
-    Unknown = 0x2,
     SemanticHash = 0x3,
 }
 
 pub enum MaterialTagEntryData {
     Name { name: String },
-    Unknown { hash: u32 },
     SemanticHash { hash: u32 },
 }
 
@@ -500,10 +498,6 @@ impl DeserializeEntryData<MaterialTagEntryType> for MaterialTagEntryData {
                     MaterialTagEntryData::Name { name },
                     usize_to_i32(bytes_read)?,
                 ))
-            }
-            MaterialTagEntryType::Unknown => {
-                let (hash, bytes_read) = deserialize_u32_le(file, len).await?;
-                Ok((MaterialTagEntryData::Unknown { hash }, bytes_read))
             }
             MaterialTagEntryType::SemanticHash => {
                 let (hash, bytes_read) = deserialize_u32_le(file, len).await?;
