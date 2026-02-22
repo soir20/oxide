@@ -1827,13 +1827,13 @@ pub type EquippedSlotEntry = Entry<EquippedSlotEntryType, EquippedSlotEntryData>
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
 pub enum MountSeatEntranceExitEntryType {
-    Bone = 0x1,
+    BoneName = 0x1,
     Animation = 0x2,
     Location = 0x3,
 }
 
 pub enum MountSeatEntranceExitEntryData {
-    Bone { bone_name: String },
+    BoneName { bone_name: String },
     Animation { animation_name: String },
     Location { location: String },
 }
@@ -1845,10 +1845,10 @@ impl DeserializeEntryData<MountSeatEntranceExitEntryType> for MountSeatEntranceE
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
-            MountSeatEntranceExitEntryType::Bone => {
+            MountSeatEntranceExitEntryType::BoneName => {
                 let (bone_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
                 Ok((
-                    MountSeatEntranceExitEntryData::Bone { bone_name },
+                    MountSeatEntranceExitEntryData::BoneName { bone_name },
                     usize_to_i32(bytes_read)?,
                 ))
             }
@@ -1879,7 +1879,7 @@ pub type MountSeatEntranceExitEntry =
 pub enum MountSeatEntryType {
     Entrance = 0x1,
     Exit = 0x2,
-    Bone = 0x3,
+    BoneName = 0x3,
     Animation = 0x4,
 }
 
@@ -1913,7 +1913,7 @@ impl DeserializeEntryData<MountSeatEntryType> for MountSeatEntryData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((MountSeatEntryData::Exit { entries }, bytes_read))
             }
-            MountSeatEntryType::Bone => {
+            MountSeatEntryType::BoneName => {
                 let (bone_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
                 Ok((
                     MountSeatEntryData::Bone { bone_name },
@@ -2202,6 +2202,138 @@ pub type AnimationComposite = Entry<AnimationCompositeType, AnimationCompositeDa
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
+pub enum JointEntryType {
+    BoneName = 0x1,
+    Unknown1 = 0x2,
+    Unknown2 = 0x3,
+    Unknown3 = 0x4,
+}
+
+pub enum JointEntryData {
+    BoneName { bone_name: String },
+    Unknown1 { unknown: f32 },
+    Unknown2 { unknown: f32 },
+    Unknown3 { unknown: f32 },
+}
+
+impl DeserializeEntryData<JointEntryType> for JointEntryData {
+    async fn deserialize(
+        entry_type: &JointEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            JointEntryType::BoneName => {
+                let (bone_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    JointEntryData::BoneName { bone_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            JointEntryType::Unknown1 => {
+                let (unknown, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((JointEntryData::Unknown1 { unknown }, bytes_read))
+            }
+            JointEntryType::Unknown2 => {
+                let (unknown, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((JointEntryData::Unknown2 { unknown }, bytes_read))
+            }
+            JointEntryType::Unknown3 => {
+                let (unknown, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((JointEntryData::Unknown3 { unknown }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type JointEntry = Entry<JointEntryType, JointEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum LookControlEntryType {
+    Name = 0x1,
+    Type = 0x2,
+    Joint = 0x3,
+    EffectorBone = 0x4,
+    EntryCount = 0xfe,
+}
+
+pub enum LookControlEntryData {
+    Name { name: String },
+    Type { look_control_type: u8 },
+    Joint { entries: Vec<JointEntry> },
+    EffectorBone { bone_name: String },
+    EntryCount { entries: Vec<EntryCountEntry> },
+}
+
+impl DeserializeEntryData<LookControlEntryType> for LookControlEntryData {
+    async fn deserialize(
+        entry_type: &LookControlEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            LookControlEntryType::Name => {
+                let (name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    LookControlEntryData::Name { name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            LookControlEntryType::Type => {
+                let (look_control_type, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((LookControlEntryData::Type { look_control_type }, bytes_read))
+            }
+            LookControlEntryType::Joint => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((LookControlEntryData::Joint { entries }, bytes_read))
+            }
+            LookControlEntryType::EffectorBone => {
+                let (bone_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    LookControlEntryData::EffectorBone { bone_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            LookControlEntryType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((LookControlEntryData::EntryCount { entries }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type LookControlEntry = Entry<LookControlEntryType, LookControlEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum LookControlType {
+    LookControl = 0x1,
+}
+
+pub enum LookControlData {
+    LookControl { entries: Vec<LookControlEntry> },
+}
+
+impl DeserializeEntryData<LookControlType> for LookControlData {
+    async fn deserialize(
+        entry_type: &LookControlType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            LookControlType::LookControl => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((LookControlData::LookControl { entries }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type LookControl = Entry<LookControlType, LookControlData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
 pub enum AdrEntryType {
     Skeleton = 0x1,
     Model = 0x2,
@@ -2224,7 +2356,7 @@ pub enum AdrEntryType {
     BorrowedSkeleton = 0x13,
     Mount = 0x14,
     AnimationCompositeArray = 0x15,
-    Unknown17 = 0x16,
+    LookControlArray = 0x16,
 }
 
 pub enum AdrData {
@@ -2291,8 +2423,8 @@ pub enum AdrData {
     AnimationCompositeArray {
         composites: Vec<AnimationComposite>,
     },
-    Unknown17 {
-        data: Vec<u8>,
+    LookControlArray {
+        look_controls: Vec<LookControl>,
     },
 }
 
@@ -2395,9 +2527,9 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
                 let (composites, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((AdrData::AnimationCompositeArray { composites }, bytes_read))
             }
-            AdrEntryType::Unknown17 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((AdrData::Unknown17 { data }, usize_to_i32(bytes_read)?))
+            AdrEntryType::LookControlArray => {
+                let (look_controls, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AdrData::LookControlArray { look_controls }, bytes_read))
             }
         }
     }
