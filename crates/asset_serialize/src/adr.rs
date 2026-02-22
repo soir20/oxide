@@ -2204,16 +2204,16 @@ pub type AnimationComposite = Entry<AnimationCompositeType, AnimationCompositeDa
 #[repr(u8)]
 pub enum JointEntryType {
     BoneName = 0x1,
-    Unknown1 = 0x2,
-    Unknown2 = 0x3,
-    Unknown3 = 0x4,
+    PitchLimit = 0x2,
+    YawLimit = 0x3,
+    TurnRate = 0x4,
 }
 
 pub enum JointEntryData {
     BoneName { bone_name: String },
-    Unknown1 { unknown: f32 },
-    Unknown2 { unknown: f32 },
-    Unknown3 { unknown: f32 },
+    PitchLimit { pitch_limit: f32 },
+    YawLimit { yaw_limit: f32 },
+    TurnRate { turn_rate: f32 },
 }
 
 impl DeserializeEntryData<JointEntryType> for JointEntryData {
@@ -2230,17 +2230,17 @@ impl DeserializeEntryData<JointEntryType> for JointEntryData {
                     usize_to_i32(bytes_read)?,
                 ))
             }
-            JointEntryType::Unknown1 => {
-                let (unknown, bytes_read) = deserialize_f32_be(file, len).await?;
-                Ok((JointEntryData::Unknown1 { unknown }, bytes_read))
+            JointEntryType::PitchLimit => {
+                let (pitch_limit, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((JointEntryData::PitchLimit { pitch_limit }, bytes_read))
             }
-            JointEntryType::Unknown2 => {
-                let (unknown, bytes_read) = deserialize_f32_be(file, len).await?;
-                Ok((JointEntryData::Unknown2 { unknown }, bytes_read))
+            JointEntryType::YawLimit => {
+                let (yaw_limit, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((JointEntryData::YawLimit { yaw_limit }, bytes_read))
             }
-            JointEntryType::Unknown3 => {
+            JointEntryType::TurnRate => {
                 let (unknown, bytes_read) = deserialize_f32_be(file, len).await?;
-                Ok((JointEntryData::Unknown3 { unknown }, bytes_read))
+                Ok((JointEntryData::TurnRate { turn_rate: unknown }, bytes_read))
             }
         }
     }
