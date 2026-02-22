@@ -144,12 +144,14 @@ async fn deserialize_u32_le(
 #[repr(u8)]
 pub enum EntryCountEntryType {
     EntryCount = 0x1,
-    EntryCount2 = 0x4,
+    EntryCount3 = 0x3,
+    EntryCount4 = 0x4,
 }
 
 pub enum EntryCountEntryData {
     EntryCount { entry_count: u32 },
-    EntryCount2 { entry_count: u32 },
+    EntryCount3 { entry_count: u32 },
+    EntryCount4 { entry_count: u32 },
 }
 
 impl DeserializeEntryData<EntryCountEntryType> for EntryCountEntryData {
@@ -163,9 +165,13 @@ impl DeserializeEntryData<EntryCountEntryType> for EntryCountEntryData {
                 let (entry_count, bytes_read) = deserialize_u32_le(file, len).await?;
                 Ok((EntryCountEntryData::EntryCount { entry_count }, bytes_read))
             }
-            EntryCountEntryType::EntryCount2 => {
+            EntryCountEntryType::EntryCount3 => {
                 let (entry_count, bytes_read) = deserialize_u32_le(file, len).await?;
-                Ok((EntryCountEntryData::EntryCount2 { entry_count }, bytes_read))
+                Ok((EntryCountEntryData::EntryCount3 { entry_count }, bytes_read))
+            }
+            EntryCountEntryType::EntryCount4 => {
+                let (entry_count, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((EntryCountEntryData::EntryCount4 { entry_count }, bytes_read))
             }
         }
     }
