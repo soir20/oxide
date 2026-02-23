@@ -276,34 +276,34 @@ pub type ModelEntry = Entry<ModelEntryType, ModelData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
-pub enum SoundEmitterEffectAssetEntryType {
-    EffectAssetName = 0x1,
+pub enum SoundEmitterAssetEntryType {
+    AssetName = 0x1,
     TimeOffset = 0x2,
 }
 
-pub enum SoundEmitterEffectAssetEntryData {
-    EffectAssetName { asset_name: String },
+pub enum SoundEmitterAssetEntryData {
+    AssetName { asset_name: String },
     TimeOffset { time_offset_millis: f32 },
 }
 
-impl DeserializeEntryData<SoundEmitterEffectAssetEntryType> for SoundEmitterEffectAssetEntryData {
+impl DeserializeEntryData<SoundEmitterAssetEntryType> for SoundEmitterAssetEntryData {
     async fn deserialize(
-        entry_type: &SoundEmitterEffectAssetEntryType,
+        entry_type: &SoundEmitterAssetEntryType,
         len: i32,
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
-            SoundEmitterEffectAssetEntryType::EffectAssetName => {
+            SoundEmitterAssetEntryType::AssetName => {
                 let (asset_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
                 Ok((
-                    SoundEmitterEffectAssetEntryData::EffectAssetName { asset_name },
+                    SoundEmitterAssetEntryData::AssetName { asset_name },
                     usize_to_i32(bytes_read)?,
                 ))
             }
-            SoundEmitterEffectAssetEntryType::TimeOffset => {
+            SoundEmitterAssetEntryType::TimeOffset => {
                 let (time_offset_millis, bytes_read) = deserialize_f32_be(file, len).await?;
                 Ok((
-                    SoundEmitterEffectAssetEntryData::TimeOffset { time_offset_millis },
+                    SoundEmitterAssetEntryData::TimeOffset { time_offset_millis },
                     bytes_read,
                 ))
             }
@@ -311,14 +311,13 @@ impl DeserializeEntryData<SoundEmitterEffectAssetEntryType> for SoundEmitterEffe
     }
 }
 
-pub type SoundEmitterEffectAssetEntry =
-    Entry<SoundEmitterEffectAssetEntryType, SoundEmitterEffectAssetEntryData>;
+pub type SoundEmitterAssetEntry = Entry<SoundEmitterAssetEntryType, SoundEmitterAssetEntryData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
 pub enum SoundEmitterEntryType {
-    EffectAsset = 0x1,
-    EffectId = 0x2,
+    Asset = 0x1,
+    Id = 0x2,
     EmitterName = 0x3,
     Category = 0xe,
     SubCategory = 0xf,
@@ -334,11 +333,11 @@ pub enum SoundEmitterEntryType {
 }
 
 pub enum SoundEmitterEntryData {
-    EffectAsset {
-        entries: Vec<SoundEmitterEffectAssetEntry>,
+    Asset {
+        entries: Vec<SoundEmitterAssetEntry>,
     },
-    EffectId {
-        effect_id: u16,
+    Id {
+        id: u16,
     },
     EmitterName {
         asset_name: String,
@@ -385,13 +384,13 @@ impl DeserializeEntryData<SoundEmitterEntryType> for SoundEmitterEntryData {
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
-            SoundEmitterEntryType::EffectAsset => {
+            SoundEmitterEntryType::Asset => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((SoundEmitterEntryData::EffectAsset { entries }, bytes_read))
+                Ok((SoundEmitterEntryData::Asset { entries }, bytes_read))
             }
-            SoundEmitterEntryType::EffectId => {
-                let (effect_id, bytes_read) = deserialize_u16_le(file, len).await?;
-                Ok((SoundEmitterEntryData::EffectId { effect_id }, bytes_read))
+            SoundEmitterEntryType::Id => {
+                let (id, bytes_read) = deserialize_u16_le(file, len).await?;
+                Ok((SoundEmitterEntryData::Id { id }, bytes_read))
             }
             SoundEmitterEntryType::EmitterName => {
                 let (asset_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
@@ -514,7 +513,7 @@ pub type SoundEmitter = Entry<SoundEmitterType, SoundEmitterData>;
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
 pub enum ParticleEmitterEntryType {
-    EffectId = 0x1,
+    Id = 0x1,
     EmitterName = 0x2,
     BoneName = 0x3,
     Heading = 0x4,
@@ -523,7 +522,7 @@ pub enum ParticleEmitterEntryType {
     OffsetX = 0x7,
     OffsetY = 0x8,
     OffsetZ = 0x9,
-    EffectAssetName = 0xa,
+    AssetName = 0xa,
     SourceBoneName = 0xb,
     LocalSpaceDerived = 0xc,
     WorldOrientation = 0xd,
@@ -531,7 +530,7 @@ pub enum ParticleEmitterEntryType {
 }
 
 pub enum ParticleEmitterEntryData {
-    EffectId { effect_id: u16 },
+    Id { id: u16 },
     EmitterName { emitter_name: String },
     BoneName { bone_name: String },
     Heading { heading: f32 },
@@ -540,7 +539,7 @@ pub enum ParticleEmitterEntryData {
     OffsetX { offset_x: f32 },
     OffsetY { offset_y: f32 },
     OffsetZ { offset_z: f32 },
-    EffectAssetName { asset_name: String },
+    AssetName { asset_name: String },
     SourceBoneName { bone_name: String },
     LocalSpaceDerived { is_local_space_derived: bool },
     WorldOrientation { use_world_orientation: bool },
@@ -554,9 +553,9 @@ impl DeserializeEntryData<ParticleEmitterEntryType> for ParticleEmitterEntryData
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
-            ParticleEmitterEntryType::EffectId => {
-                let (effect_id, bytes_read) = deserialize_u16_le(file, len).await?;
-                Ok((ParticleEmitterEntryData::EffectId { effect_id }, bytes_read))
+            ParticleEmitterEntryType::Id => {
+                let (id, bytes_read) = deserialize_u16_le(file, len).await?;
+                Ok((ParticleEmitterEntryData::Id { id }, bytes_read))
             }
             ParticleEmitterEntryType::EmitterName => {
                 let (emitter_name, bytes_read) =
@@ -597,10 +596,10 @@ impl DeserializeEntryData<ParticleEmitterEntryType> for ParticleEmitterEntryData
                 let (offset_z, bytes_read) = deserialize_f32_be(file, len).await?;
                 Ok((ParticleEmitterEntryData::OffsetZ { offset_z }, bytes_read))
             }
-            ParticleEmitterEntryType::EffectAssetName => {
+            ParticleEmitterEntryType::AssetName => {
                 let (asset_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
                 Ok((
-                    ParticleEmitterEntryData::EffectAssetName { asset_name },
+                    ParticleEmitterEntryData::AssetName { asset_name },
                     usize_to_i32(bytes_read)?,
                 ))
             }
