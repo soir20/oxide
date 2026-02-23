@@ -761,6 +761,9 @@ impl DeserializeEntryData<TintAliasType> for TintAliasData {
         }
     }
 }
+
+pub type TintAlias = Entry<TintAliasType, TintAliasData>;
+
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
 pub enum EffectEntryType {
@@ -842,7 +845,68 @@ impl DeserializeEntryData<EffectType> for EffectData {
 
 pub type Effect = Entry<EffectType, EffectData>;
 
-pub type TintAlias = Entry<TintAliasType, TintAliasData>;
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum RenderSettingEntryType {
+    MaxDistanceFromCamera = 0x2,
+}
+
+pub enum RenderSettingEntryData {
+    MaxDistanceFromCamera { distance: f32 },
+}
+
+impl DeserializeEntryData<RenderSettingEntryType> for RenderSettingEntryData {
+    async fn deserialize(
+        entry_type: &RenderSettingEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            RenderSettingEntryType::MaxDistanceFromCamera => {
+                let (distance, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((
+                    RenderSettingEntryData::MaxDistanceFromCamera { distance },
+                    bytes_read,
+                ))
+            }
+        }
+    }
+}
+
+pub type RenderSettingEntry = Entry<RenderSettingEntryType, RenderSettingEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum RenderSettingType {
+    RenderSetting = 0x1,
+    EntryCount = 0xfe,
+}
+
+pub enum RenderSettingData {
+    RenderSetting { entries: Vec<RenderSettingEntry> },
+    EntryCount { entries: Vec<EntryCountEntry> },
+}
+
+impl DeserializeEntryData<RenderSettingType> for RenderSettingData {
+    async fn deserialize(
+        entry_type: &RenderSettingType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            RenderSettingType::RenderSetting => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((RenderSettingData::RenderSetting { entries }, bytes_read))
+            }
+            RenderSettingType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((RenderSettingData::EntryCount { entries }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type RenderSetting = Entry<RenderSettingType, RenderSettingData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
@@ -2349,7 +2413,7 @@ pub enum AdrEntryType {
     TextureAliasArray = 0x5,
     TintAliasArray = 0x6,
     EffectArray = 0x7,
-    Unknown6 = 0x8,
+    RenderSettingArray = 0x8,
     AnimationArray = 0x9,
     AnimationSoundArray = 0xa,
     AnimationParticleArray = 0xb,
@@ -2388,8 +2452,8 @@ pub enum AdrData {
     EffectArray {
         effects: Vec<Effect>,
     },
-    Unknown6 {
-        data: Vec<u8>,
+    RenderSettingArray {
+        render_settings: Vec<RenderSetting>,
     },
     AnimationArray {
         animations: Vec<Animation>,
@@ -2475,9 +2539,9 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
                 let (effects, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((AdrData::EffectArray { effects }, bytes_read))
             }
-            AdrEntryType::Unknown6 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((AdrData::Unknown6 { data }, usize_to_i32(bytes_read)?))
+            AdrEntryType::RenderSettingArray => {
+                let (render_settings, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AdrData::RenderSettingArray { render_settings }, bytes_read))
             }
             AdrEntryType::AnimationArray => {
                 let (animations, bytes_read) = deserialize_entries(file, len).await?;
