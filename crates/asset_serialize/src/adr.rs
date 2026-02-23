@@ -1614,7 +1614,7 @@ pub type CollisionEntry = Entry<CollisionEntryType, CollisionData>;
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
 pub enum CoveredSlotEntryType {
-    BoneId = 0x1,
+    SlotId = 0x1,
 }
 
 pub enum CoveredSlotEntryData {
@@ -1628,7 +1628,7 @@ impl DeserializeEntryData<CoveredSlotEntryType> for CoveredSlotEntryData {
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
-            CoveredSlotEntryType::BoneId => {
+            CoveredSlotEntryType::SlotId => {
                 let (bone_id, bytes_read) = deserialize_u8(file, len).await?;
                 Ok((
                     CoveredSlotEntryData::SlotId { slot_id: bone_id },
