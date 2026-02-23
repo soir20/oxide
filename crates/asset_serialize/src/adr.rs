@@ -276,6 +276,243 @@ pub type ModelEntry = Entry<ModelEntryType, ModelData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
+pub enum SoundEmitterEffectAssetEntryType {
+    EffectAssetName = 0x1,
+    TimeOffset = 0x2,
+}
+
+pub enum SoundEmitterEffectAssetEntryData {
+    EffectAssetName { asset_name: String },
+    TimeOffset { time_offset_millis: f32 },
+}
+
+impl DeserializeEntryData<SoundEmitterEffectAssetEntryType> for SoundEmitterEffectAssetEntryData {
+    async fn deserialize(
+        entry_type: &SoundEmitterEffectAssetEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            SoundEmitterEffectAssetEntryType::EffectAssetName => {
+                let (asset_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    SoundEmitterEffectAssetEntryData::EffectAssetName { asset_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            SoundEmitterEffectAssetEntryType::TimeOffset => {
+                let (time_offset_millis, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((
+                    SoundEmitterEffectAssetEntryData::TimeOffset { time_offset_millis },
+                    bytes_read,
+                ))
+            }
+        }
+    }
+}
+
+pub type SoundEmitterEffectAssetEntry =
+    Entry<SoundEmitterEffectAssetEntryType, SoundEmitterEffectAssetEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum SoundEmitterEntryType {
+    EffectAsset = 0x1,
+    EffectId = 0x2,
+    EmitterName = 0x3,
+    Category = 0xe,
+    SubCategory = 0xf,
+    FadeTime = 0x10,
+    FadeOutTime = 0x11,
+    Volume = 0x13,
+    VolumeOffset = 0x14,
+    RateMultiplier = 0x15,
+    RateMultiplierOffset = 0x16,
+    RoomTypeScalar = 0x17,
+    ClipDistance = 0x1b,
+    EntryCount = 0xfe,
+}
+
+pub enum SoundEmitterEntryData {
+    EffectAsset {
+        entries: Vec<SoundEmitterEffectAssetEntry>,
+    },
+    EffectId {
+        effect_id: u16,
+    },
+    EmitterName {
+        asset_name: String,
+    },
+    Category {
+        category: u8,
+    },
+    SubCategory {
+        sub_category: u8,
+    },
+    FadeTime {
+        fade_time_millis: f32,
+    },
+    FadeOutTime {
+        fade_out_time_millis: f32,
+    },
+    Volume {
+        volume: f32,
+    },
+    VolumeOffset {
+        volume_offset: f32,
+    },
+    RateMultiplier {
+        rate_multiplier: f32,
+    },
+    RateMultiplierOffset {
+        rate_multiplier_offset: f32,
+    },
+    RoomTypeScalar {
+        room_type_scalar: f32,
+    },
+    ClipDistance {
+        clip_distance: f32,
+    },
+    EntryCount {
+        entries: Vec<EntryCountEntry>,
+    },
+}
+
+impl DeserializeEntryData<SoundEmitterEntryType> for SoundEmitterEntryData {
+    async fn deserialize(
+        entry_type: &SoundEmitterEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            SoundEmitterEntryType::EffectAsset => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((SoundEmitterEntryData::EffectAsset { entries }, bytes_read))
+            }
+            SoundEmitterEntryType::EffectId => {
+                let (effect_id, bytes_read) = deserialize_u16_le(file, len).await?;
+                Ok((SoundEmitterEntryData::EffectId { effect_id }, bytes_read))
+            }
+            SoundEmitterEntryType::EmitterName => {
+                let (asset_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    SoundEmitterEntryData::EmitterName { asset_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            SoundEmitterEntryType::Category => {
+                let (category, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((SoundEmitterEntryData::Category { category }, bytes_read))
+            }
+            SoundEmitterEntryType::SubCategory => {
+                let (sub_category, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((
+                    SoundEmitterEntryData::SubCategory { sub_category },
+                    bytes_read,
+                ))
+            }
+            SoundEmitterEntryType::FadeTime => {
+                let (fade_time_millis, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((
+                    SoundEmitterEntryData::FadeTime { fade_time_millis },
+                    bytes_read,
+                ))
+            }
+            SoundEmitterEntryType::FadeOutTime => {
+                let (fade_out_time_millis, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((
+                    SoundEmitterEntryData::FadeOutTime {
+                        fade_out_time_millis,
+                    },
+                    bytes_read,
+                ))
+            }
+            SoundEmitterEntryType::Volume => {
+                let (volume, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((SoundEmitterEntryData::Volume { volume }, bytes_read))
+            }
+            SoundEmitterEntryType::VolumeOffset => {
+                let (volume_offset, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((
+                    SoundEmitterEntryData::VolumeOffset { volume_offset },
+                    bytes_read,
+                ))
+            }
+            SoundEmitterEntryType::RateMultiplier => {
+                let (rate_multiplier, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((
+                    SoundEmitterEntryData::RateMultiplier { rate_multiplier },
+                    bytes_read,
+                ))
+            }
+            SoundEmitterEntryType::RateMultiplierOffset => {
+                let (rate_multiplier_offset, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((
+                    SoundEmitterEntryData::RateMultiplierOffset {
+                        rate_multiplier_offset,
+                    },
+                    bytes_read,
+                ))
+            }
+            SoundEmitterEntryType::RoomTypeScalar => {
+                let (room_type_scalar, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((
+                    SoundEmitterEntryData::RoomTypeScalar { room_type_scalar },
+                    bytes_read,
+                ))
+            }
+            SoundEmitterEntryType::ClipDistance => {
+                let (clip_distance, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((
+                    SoundEmitterEntryData::ClipDistance { clip_distance },
+                    bytes_read,
+                ))
+            }
+            SoundEmitterEntryType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((SoundEmitterEntryData::EntryCount { entries }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type SoundEmitterEntry = Entry<SoundEmitterEntryType, SoundEmitterEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum SoundEmitterType {
+    SoundEmitter = 0x1,
+    EntryCount = 0xfe,
+}
+
+pub enum SoundEmitterData {
+    SoundEmitter { entries: Vec<SoundEmitterEntry> },
+    EntryCount { entries: Vec<EntryCountEntry> },
+}
+
+impl DeserializeEntryData<SoundEmitterType> for SoundEmitterData {
+    async fn deserialize(
+        entry_type: &SoundEmitterType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            SoundEmitterType::SoundEmitter => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((SoundEmitterData::SoundEmitter { entries }, bytes_read))
+            }
+            SoundEmitterType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((SoundEmitterData::EntryCount { entries }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type SoundEmitter = Entry<SoundEmitterType, SoundEmitterData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
 pub enum ParticleEmitterEntryType {
     EffectId = 0x1,
     EmitterName = 0x2,
@@ -443,13 +680,17 @@ pub type ParticleEmitter = Entry<ParticleEmitterType, ParticleEmitterData>;
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
 pub enum ParticleEmitterArrayType {
-    Unknown = 0x1,
-    ParticleEmitter = 0x2,
+    SoundEmitterArray = 0x1,
+    ParticleEmitterArray = 0x2,
 }
 
 pub enum ParticleEmitterArrayData {
-    Unknown { data: Vec<u8> },
-    ParticleEmitter { entries: Vec<ParticleEmitter> },
+    SoundEmitterArray {
+        sound_emitters: Vec<SoundEmitter>,
+    },
+    ParticleEmitterArray {
+        particle_emitters: Vec<ParticleEmitter>,
+    },
 }
 
 impl DeserializeEntryData<ParticleEmitterArrayType> for ParticleEmitterArrayData {
@@ -459,17 +700,17 @@ impl DeserializeEntryData<ParticleEmitterArrayType> for ParticleEmitterArrayData
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
-            ParticleEmitterArrayType::Unknown => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+            ParticleEmitterArrayType::SoundEmitterArray => {
+                let (sound_emitters, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((
-                    ParticleEmitterArrayData::Unknown { data },
-                    usize_to_i32(bytes_read)?,
+                    ParticleEmitterArrayData::SoundEmitterArray { sound_emitters },
+                    bytes_read,
                 ))
             }
-            ParticleEmitterArrayType::ParticleEmitter => {
-                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+            ParticleEmitterArrayType::ParticleEmitterArray => {
+                let (particle_emitters, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((
-                    ParticleEmitterArrayData::ParticleEmitter { entries },
+                    ParticleEmitterArrayData::ParticleEmitterArray { particle_emitters },
                     bytes_read,
                 ))
             }
