@@ -279,11 +279,13 @@ pub type ModelEntry = Entry<ModelEntryType, ModelData>;
 pub enum SoundEmitterAssetEntryType {
     AssetName = 0x1,
     TimeOffset = 0x2,
+    Weight = 0x3,
 }
 
 pub enum SoundEmitterAssetEntryData {
     AssetName { asset_name: String },
     TimeOffset { time_offset_millis: f32 },
+    Weight { weight: f32 },
 }
 
 impl DeserializeEntryData<SoundEmitterAssetEntryType> for SoundEmitterAssetEntryData {
@@ -306,6 +308,10 @@ impl DeserializeEntryData<SoundEmitterAssetEntryType> for SoundEmitterAssetEntry
                     SoundEmitterAssetEntryData::TimeOffset { time_offset_millis },
                     bytes_read,
                 ))
+            }
+            SoundEmitterAssetEntryType::Weight => {
+                let (weight, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((SoundEmitterAssetEntryData::Weight { weight }, bytes_read))
             }
         }
     }
