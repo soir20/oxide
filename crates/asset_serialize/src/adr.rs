@@ -332,7 +332,7 @@ pub enum SoundEmitterEntryType {
     OffsetX = 0x8,
     OffsetY = 0x9,
     OffsetZ = 0xa,
-    Unknown11 = 0xb,
+    ControlType = 0xb,
     PlayListType = 0xc,
     PlayBackType = 0xd,
     Category = 0xe,
@@ -385,8 +385,8 @@ pub enum SoundEmitterEntryData {
     OffsetZ {
         offset_z: f32,
     },
-    Unknown11 {
-        unknown: u8,
+    ControlType {
+        control_type: u8,
     },
     PlayListType {
         play_list_type: u8,
@@ -500,9 +500,12 @@ impl DeserializeEntryData<SoundEmitterEntryType> for SoundEmitterEntryData {
                 let (offset_z, bytes_read) = deserialize_f32_be(file, len).await?;
                 Ok((SoundEmitterEntryData::OffsetZ { offset_z }, bytes_read))
             }
-            SoundEmitterEntryType::Unknown11 => {
-                let (unknown, bytes_read) = deserialize_u8(file, len).await?;
-                Ok((SoundEmitterEntryData::Unknown11 { unknown }, bytes_read))
+            SoundEmitterEntryType::ControlType => {
+                let (control_type, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((
+                    SoundEmitterEntryData::ControlType { control_type },
+                    bytes_read,
+                ))
             }
             SoundEmitterEntryType::PlayListType => {
                 let (play_list_type, bytes_read) = deserialize_u8(file, len).await?;
