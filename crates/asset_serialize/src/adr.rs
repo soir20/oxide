@@ -340,7 +340,7 @@ pub enum SoundEmitterEntryType {
     RateMultiplierOffset = 0x16,
     RoomTypeScalar = 0x17,
     Unknown24 = 0x18,
-    Unknown26 = 0x1a,
+    AttenuationDistance = 0x1a,
     ClipDistance = 0x1b,
     DelayBetweenSounds = 0x1c,
     DelayBetweenSoundsOffset = 0x1d,
@@ -402,8 +402,8 @@ pub enum SoundEmitterEntryData {
     Unknown24 {
         unknown: u8,
     },
-    Unknown26 {
-        unknown: f32,
+    AttenuationDistance {
+        distance: f32,
     },
     ClipDistance {
         clip_distance: f32,
@@ -529,9 +529,12 @@ impl DeserializeEntryData<SoundEmitterEntryType> for SoundEmitterEntryData {
                 let (unknown, bytes_read) = deserialize_u8(file, len).await?;
                 Ok((SoundEmitterEntryData::Unknown24 { unknown }, bytes_read))
             }
-            SoundEmitterEntryType::Unknown26 => {
-                let (unknown, bytes_read) = deserialize_f32_be(file, len).await?;
-                Ok((SoundEmitterEntryData::Unknown26 { unknown }, bytes_read))
+            SoundEmitterEntryType::AttenuationDistance => {
+                let (distance, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((
+                    SoundEmitterEntryData::AttenuationDistance { distance },
+                    bytes_read,
+                ))
             }
             SoundEmitterEntryType::ClipDistance => {
                 let (clip_distance, bytes_read) = deserialize_f32_be(file, len).await?;
