@@ -1275,25 +1275,34 @@ pub type Effect = Entry<EffectType, EffectData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
-pub enum RenderSettingEntryType {
-    MaxDistanceFromCamera = 0x2,
+pub enum LevelOfDetailAssetEntryType {
+    AssetName = 0x1,
+    Distance = 0x2,
 }
 
-pub enum RenderSettingEntryData {
-    MaxDistanceFromCamera { distance: f32 },
+pub enum LevelOfDetailAssetEntryData {
+    AssetName { asset_name: String },
+    Distance { distance: f32 },
 }
 
-impl DeserializeEntryData<RenderSettingEntryType> for RenderSettingEntryData {
+impl DeserializeEntryData<LevelOfDetailAssetEntryType> for LevelOfDetailAssetEntryData {
     async fn deserialize(
-        entry_type: &RenderSettingEntryType,
+        entry_type: &LevelOfDetailAssetEntryType,
         len: i32,
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
-            RenderSettingEntryType::MaxDistanceFromCamera => {
+            LevelOfDetailAssetEntryType::AssetName => {
+                let (asset_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    LevelOfDetailAssetEntryData::AssetName { asset_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            LevelOfDetailAssetEntryType::Distance => {
                 let (distance, bytes_read) = deserialize_f32_be(file, len).await?;
                 Ok((
-                    RenderSettingEntryData::MaxDistanceFromCamera { distance },
+                    LevelOfDetailAssetEntryData::Distance { distance },
                     bytes_read,
                 ))
             }
@@ -1301,40 +1310,80 @@ impl DeserializeEntryData<RenderSettingEntryType> for RenderSettingEntryData {
     }
 }
 
-pub type RenderSettingEntry = Entry<RenderSettingEntryType, RenderSettingEntryData>;
+pub type LevelOfDetailAssetEntry = Entry<LevelOfDetailAssetEntryType, LevelOfDetailAssetEntryData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
-pub enum RenderSettingType {
-    RenderSetting = 0x1,
-    EntryCount = 0xfe,
+pub enum LevelOfDetailEntryType {
+    Asset = 0x1,
+    Lod0aMaxDistanceFromCamera = 0x2,
 }
 
-pub enum RenderSettingData {
-    RenderSetting { entries: Vec<RenderSettingEntry> },
-    EntryCount { entries: Vec<EntryCountEntry> },
+pub enum LevelOfDetailEntryData {
+    Asset {
+        entries: Vec<LevelOfDetailAssetEntry>,
+    },
+    Lod0aMaxDistanceFromCamera {
+        distance: f32,
+    },
 }
 
-impl DeserializeEntryData<RenderSettingType> for RenderSettingData {
+impl DeserializeEntryData<LevelOfDetailEntryType> for LevelOfDetailEntryData {
     async fn deserialize(
-        entry_type: &RenderSettingType,
+        entry_type: &LevelOfDetailEntryType,
         len: i32,
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
-            RenderSettingType::RenderSetting => {
+            LevelOfDetailEntryType::Asset => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((RenderSettingData::RenderSetting { entries }, bytes_read))
+                Ok((LevelOfDetailEntryData::Asset { entries }, bytes_read))
             }
-            RenderSettingType::EntryCount => {
-                let (entries, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((RenderSettingData::EntryCount { entries }, bytes_read))
+            LevelOfDetailEntryType::Lod0aMaxDistanceFromCamera => {
+                let (distance, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((
+                    LevelOfDetailEntryData::Lod0aMaxDistanceFromCamera { distance },
+                    bytes_read,
+                ))
             }
         }
     }
 }
 
-pub type RenderSetting = Entry<RenderSettingType, RenderSettingData>;
+pub type LevelOfDetailEntry = Entry<LevelOfDetailEntryType, LevelOfDetailEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum LevelOfDetailType {
+    LevelOfDetail = 0x1,
+    EntryCount = 0xfe,
+}
+
+pub enum LevelOfDetailData {
+    LevelOfDetail { entries: Vec<LevelOfDetailEntry> },
+    EntryCount { entries: Vec<EntryCountEntry> },
+}
+
+impl DeserializeEntryData<LevelOfDetailType> for LevelOfDetailData {
+    async fn deserialize(
+        entry_type: &LevelOfDetailType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            LevelOfDetailType::LevelOfDetail => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((LevelOfDetailData::LevelOfDetail { entries }, bytes_read))
+            }
+            LevelOfDetailType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((LevelOfDetailData::EntryCount { entries }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type LevelOfDetail = Entry<LevelOfDetailType, LevelOfDetailData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
@@ -2841,7 +2890,7 @@ pub enum AdrEntryType {
     TextureAliasArray = 0x5,
     TintAliasArray = 0x6,
     EffectArray = 0x7,
-    RenderSettingArray = 0x8,
+    LevelOfDetailArray = 0x8,
     AnimationArray = 0x9,
     AnimationSoundArray = 0xa,
     AnimationParticleArray = 0xb,
@@ -2880,8 +2929,8 @@ pub enum AdrData {
     EffectArray {
         effects: Vec<Effect>,
     },
-    RenderSettingArray {
-        render_settings: Vec<RenderSetting>,
+    LevelOfDetailArray {
+        levels_of_detail: Vec<LevelOfDetail>,
     },
     AnimationArray {
         animations: Vec<Animation>,
@@ -2967,9 +3016,9 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
                 let (effects, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((AdrData::EffectArray { effects }, bytes_read))
             }
-            AdrEntryType::RenderSettingArray => {
-                let (render_settings, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((AdrData::RenderSettingArray { render_settings }, bytes_read))
+            AdrEntryType::LevelOfDetailArray => {
+                let (levels_of_detail, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AdrData::LevelOfDetailArray { levels_of_detail }, bytes_read))
             }
             AdrEntryType::AnimationArray => {
                 let (animations, bytes_read) = deserialize_entries(file, len).await?;
