@@ -343,6 +343,7 @@ pub enum SoundEmitterEntryType {
     Unknown26 = 0x1a,
     ClipDistance = 0x1b,
     DelayBetweenSounds = 0x1c,
+    DelayBetweenSoundsOffset = 0x1d,
     EntryCount = 0xfe,
 }
 
@@ -409,6 +410,9 @@ pub enum SoundEmitterEntryData {
     },
     DelayBetweenSounds {
         delay_between_sounds_millis: f32,
+    },
+    DelayBetweenSoundsOffset {
+        delay_between_sounds_offset_millis: f32,
     },
     EntryCount {
         entries: Vec<EntryCountEntry>,
@@ -542,6 +546,16 @@ impl DeserializeEntryData<SoundEmitterEntryType> for SoundEmitterEntryData {
                 Ok((
                     SoundEmitterEntryData::DelayBetweenSounds {
                         delay_between_sounds_millis,
+                    },
+                    bytes_read,
+                ))
+            }
+            SoundEmitterEntryType::DelayBetweenSoundsOffset => {
+                let (delay_between_sounds_offset_millis, bytes_read) =
+                    deserialize_f32_be(file, len).await?;
+                Ok((
+                    SoundEmitterEntryData::DelayBetweenSoundsOffset {
+                        delay_between_sounds_offset_millis,
                     },
                     bytes_read,
                 ))
