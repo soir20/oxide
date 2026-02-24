@@ -325,13 +325,14 @@ pub enum SoundEmitterEntryType {
     Asset = 0x1,
     Id = 0x2,
     EmitterName = 0x3,
-    Heading = 0x4,
-    Pitch = 0x5,
-    Scale = 0x6,
-    OffsetX = 0x7,
-    OffsetY = 0x8,
-    OffsetZ = 0x9,
-    Unknown10 = 0xa,
+    BoneName = 0x4,
+    Heading = 0x5,
+    Pitch = 0x6,
+    Scale = 0x7,
+    OffsetX = 0x8,
+    OffsetY = 0x9,
+    OffsetZ = 0xa,
+    Unknown11 = 0xb,
     PlayListType = 0xc,
     PlayBackType = 0xd,
     Category = 0xe,
@@ -345,6 +346,7 @@ pub enum SoundEmitterEntryType {
     RateMultiplierOffset = 0x16,
     RoomTypeScalar = 0x17,
     Unknown24 = 0x18,
+    Unknown25 = 0x19,
     AttenuationDistance = 0x1a,
     ClipDistance = 0x1b,
     DelayBetweenSounds = 0x1c,
@@ -361,6 +363,9 @@ pub enum SoundEmitterEntryData {
     },
     EmitterName {
         asset_name: String,
+    },
+    BoneName {
+        bone_name: String,
     },
     Heading {
         heading: f32,
@@ -380,8 +385,8 @@ pub enum SoundEmitterEntryData {
     OffsetZ {
         offset_z: f32,
     },
-    Unknown10 {
-        unknown: f32,
+    Unknown11 {
+        unknown: u8,
     },
     PlayListType {
         play_list_type: u8,
@@ -420,6 +425,9 @@ pub enum SoundEmitterEntryData {
         room_type_scalar: f32,
     },
     Unknown24 {
+        unknown: u8,
+    },
+    Unknown25 {
         unknown: u8,
     },
     AttenuationDistance {
@@ -461,6 +469,13 @@ impl DeserializeEntryData<SoundEmitterEntryType> for SoundEmitterEntryData {
                     usize_to_i32(bytes_read)?,
                 ))
             }
+            SoundEmitterEntryType::BoneName => {
+                let (bone_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    SoundEmitterEntryData::BoneName { bone_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
             SoundEmitterEntryType::Heading => {
                 let (heading, bytes_read) = deserialize_f32_be(file, len).await?;
                 Ok((SoundEmitterEntryData::Heading { heading }, bytes_read))
@@ -485,9 +500,9 @@ impl DeserializeEntryData<SoundEmitterEntryType> for SoundEmitterEntryData {
                 let (offset_z, bytes_read) = deserialize_f32_be(file, len).await?;
                 Ok((SoundEmitterEntryData::OffsetZ { offset_z }, bytes_read))
             }
-            SoundEmitterEntryType::Unknown10 => {
-                let (unknown, bytes_read) = deserialize_f32_be(file, len).await?;
-                Ok((SoundEmitterEntryData::Unknown10 { unknown }, bytes_read))
+            SoundEmitterEntryType::Unknown11 => {
+                let (unknown, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((SoundEmitterEntryData::Unknown11 { unknown }, bytes_read))
             }
             SoundEmitterEntryType::PlayListType => {
                 let (play_list_type, bytes_read) = deserialize_u8(file, len).await?;
@@ -571,6 +586,10 @@ impl DeserializeEntryData<SoundEmitterEntryType> for SoundEmitterEntryData {
             SoundEmitterEntryType::Unknown24 => {
                 let (unknown, bytes_read) = deserialize_u8(file, len).await?;
                 Ok((SoundEmitterEntryData::Unknown24 { unknown }, bytes_read))
+            }
+            SoundEmitterEntryType::Unknown25 => {
+                let (unknown, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((SoundEmitterEntryData::Unknown25 { unknown }, bytes_read))
             }
             SoundEmitterEntryType::AttenuationDistance => {
                 let (distance, bytes_read) = deserialize_f32_be(file, len).await?;
