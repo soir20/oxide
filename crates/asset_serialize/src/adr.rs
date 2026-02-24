@@ -1387,6 +1387,16 @@ pub type LevelOfDetail = Entry<LevelOfDetailType, LevelOfDetailData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
+pub enum AnimationLoadType {
+    Required = 0x0,
+    Preload = 0x1,
+    OnDemand = 0x2,
+    InheritFromParent = 0x3,
+    RequiredFirst = 0x4,
+}
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
 pub enum AnimationEntryType {
     Name = 0x1,
     AssetName = 0x2,
@@ -1394,16 +1404,6 @@ pub enum AnimationEntryType {
     Duration = 0x4,
     LoadType = 0x5,
     EffectsPersist = 0x7,
-}
-
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
-#[repr(u8)]
-pub enum AnimationLoadType {
-    Required = 0x0,
-    Preload = 0x1,
-    OnDemand = 0x2,
-    InheritFromParent = 0x3,
-    RequiredFirst = 0x4,
 }
 
 pub enum AnimationEntryData {
