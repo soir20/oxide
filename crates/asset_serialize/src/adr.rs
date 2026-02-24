@@ -771,12 +771,12 @@ pub type ParticleEmitter = Entry<ParticleEmitterType, ParticleEmitterData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
-pub enum ParticleEmitterArrayType {
+pub enum EmitterArrayType {
     SoundEmitterArray = 0x1,
     ParticleEmitterArray = 0x2,
 }
 
-pub enum ParticleEmitterArrayData {
+pub enum EmitterArrayData {
     SoundEmitterArray {
         sound_emitters: Vec<SoundEmitter>,
     },
@@ -785,24 +785,24 @@ pub enum ParticleEmitterArrayData {
     },
 }
 
-impl DeserializeEntryData<ParticleEmitterArrayType> for ParticleEmitterArrayData {
+impl DeserializeEntryData<EmitterArrayType> for EmitterArrayData {
     async fn deserialize(
-        entry_type: &ParticleEmitterArrayType,
+        entry_type: &EmitterArrayType,
         len: i32,
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
-            ParticleEmitterArrayType::SoundEmitterArray => {
+            EmitterArrayType::SoundEmitterArray => {
                 let (sound_emitters, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((
-                    ParticleEmitterArrayData::SoundEmitterArray { sound_emitters },
+                    EmitterArrayData::SoundEmitterArray { sound_emitters },
                     bytes_read,
                 ))
             }
-            ParticleEmitterArrayType::ParticleEmitterArray => {
+            EmitterArrayType::ParticleEmitterArray => {
                 let (particle_emitters, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((
-                    ParticleEmitterArrayData::ParticleEmitterArray { particle_emitters },
+                    EmitterArrayData::ParticleEmitterArray { particle_emitters },
                     bytes_read,
                 ))
             }
@@ -810,7 +810,7 @@ impl DeserializeEntryData<ParticleEmitterArrayType> for ParticleEmitterArrayData
     }
 }
 
-pub type ParticleEmitterArray = Entry<ParticleEmitterArrayType, ParticleEmitterArrayData>;
+pub type EmitterArray = Entry<EmitterArrayType, EmitterArrayData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
@@ -2741,7 +2741,7 @@ pub type LookControl = Entry<LookControlType, LookControlData>;
 pub enum AdrEntryType {
     Skeleton = 0x1,
     Model = 0x2,
-    ParticleEmitterArrayArray = 0x3,
+    EmitterArrayArray = 0x3,
     MaterialTagArray = 0x4,
     TextureAliasArray = 0x5,
     TintAliasArray = 0x6,
@@ -2770,8 +2770,8 @@ pub enum AdrData {
     Model {
         entries: Vec<ModelEntry>,
     },
-    ParticleEmitterArrayArray {
-        arrays: Vec<ParticleEmitterArray>,
+    EmitterArrayArray {
+        arrays: Vec<EmitterArray>,
     },
     MaterialTagArray {
         material_tags: Vec<MaterialTag>,
@@ -2847,9 +2847,9 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((AdrData::Model { entries }, bytes_read))
             }
-            AdrEntryType::ParticleEmitterArrayArray => {
+            AdrEntryType::EmitterArrayArray => {
                 let (arrays, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((AdrData::ParticleEmitterArrayArray { arrays }, bytes_read))
+                Ok((AdrData::EmitterArrayArray { arrays }, bytes_read))
             }
             AdrEntryType::MaterialTagArray => {
                 let (materials, bytes_read) = deserialize_entries(file, len).await?;
