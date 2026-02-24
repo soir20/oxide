@@ -884,12 +884,18 @@ pub type EmitterArray = Entry<EmitterArrayType, EmitterArrayData>;
 #[repr(u8)]
 pub enum MaterialTagEntryType {
     Name = 0x1,
+    MaterialIndex = 0x2,
     SemanticHash = 0x3,
+    TintSetId = 0x4,
+    DefaultTintId = 0x5,
 }
 
 pub enum MaterialTagEntryData {
     Name { name: String },
+    MaterialIndex { material_index: u8 },
     SemanticHash { hash: u32 },
+    TintSetId { tint_set_id: u32 },
+    DefaultTintId { tint_id: u32 },
 }
 
 impl DeserializeEntryData<MaterialTagEntryType> for MaterialTagEntryData {
@@ -906,9 +912,24 @@ impl DeserializeEntryData<MaterialTagEntryType> for MaterialTagEntryData {
                     usize_to_i32(bytes_read)?,
                 ))
             }
+            MaterialTagEntryType::MaterialIndex => {
+                let (material_index, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((
+                    MaterialTagEntryData::MaterialIndex { material_index },
+                    bytes_read,
+                ))
+            }
             MaterialTagEntryType::SemanticHash => {
                 let (hash, bytes_read) = deserialize_u32_le(file, len).await?;
                 Ok((MaterialTagEntryData::SemanticHash { hash }, bytes_read))
+            }
+            MaterialTagEntryType::TintSetId => {
+                let (tint_set_id, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((MaterialTagEntryData::TintSetId { tint_set_id }, bytes_read))
+            }
+            MaterialTagEntryType::DefaultTintId => {
+                let (tint_id, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((MaterialTagEntryData::DefaultTintId { tint_id }, bytes_read))
             }
         }
     }
