@@ -1085,6 +1085,7 @@ pub type TextureAlias = Entry<TextureAliasType, TextureAliasData>;
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
 pub enum TintAliasEntryType {
+    Unknown = 0x1,
     MaterialIndex = 0x2,
     SemanticHash = 0x3,
     Name = 0x4,
@@ -1095,6 +1096,7 @@ pub enum TintAliasEntryType {
 }
 
 pub enum TintAliasEntryData {
+    Unknown { unknown: u8 },
     MaterialIndex { material_index: u8 },
     SemanticHash { hash: u32 },
     Name { name: String },
@@ -1111,6 +1113,10 @@ impl DeserializeEntryData<TintAliasEntryType> for TintAliasEntryData {
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
+            TintAliasEntryType::Unknown => {
+                let (unknown, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((TintAliasEntryData::Unknown { unknown }, bytes_read))
+            }
             TintAliasEntryType::MaterialIndex => {
                 let (material_index, bytes_read) = deserialize_u8(file, len).await?;
                 Ok((
