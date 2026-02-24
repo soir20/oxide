@@ -1403,6 +1403,7 @@ pub enum AnimationEntryType {
     PlayBackScale = 0x3,
     Duration = 0x4,
     LoadType = 0x5,
+    Required = 0x6,
     EffectsPersist = 0x7,
 }
 
@@ -1412,6 +1413,7 @@ pub enum AnimationEntryData {
     PlayBackScale { scale: f32 },
     Duration { duration_seconds: f32 },
     LoadType { load_type: AnimationLoadType },
+    Required { required: bool },
     EffectsPersist { do_effects_persist: bool },
 }
 
@@ -1447,6 +1449,15 @@ impl DeserializeEntryData<AnimationEntryType> for AnimationEntryData {
             AnimationEntryType::LoadType => {
                 let (load_type, bytes_read) = AnimationLoadType::deserialize(file).await?;
                 Ok((AnimationEntryData::LoadType { load_type }, bytes_read))
+            }
+            AnimationEntryType::Required => {
+                let (required, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((
+                    AnimationEntryData::Required {
+                        required: required != 0,
+                    },
+                    bytes_read,
+                ))
             }
             AnimationEntryType::EffectsPersist => {
                 let (do_effects_persist, bytes_read) = deserialize_u8(file, len).await?;
@@ -3113,7 +3124,7 @@ mod tests {
     use walkdir::WalkDir;
 
     #[tokio::test]
-    #[ignore]
+    //#[ignore]
     async fn test_deserialize_adr() {
         let target_extension = "adr";
         let search_path = env::var("ADR_ROOT").unwrap();
