@@ -988,7 +988,7 @@ pub enum TextureAliasEntryData {
     SemanticHash { hash: u32 },
     Name { name: String },
     AssetName { asset_name: String },
-    OcclusionBitMask { bit_mask: Vec<u8> },
+    OcclusionBitMask { bit_mask: u32 },
     IsDefault { is_default: bool },
 }
 
@@ -1029,10 +1029,10 @@ impl DeserializeEntryData<TextureAliasEntryType> for TextureAliasEntryData {
                 ))
             }
             TextureAliasEntryType::OcclusionBitMask => {
-                let (bit_mask, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+                let (bit_mask, bytes_read) = deserialize_u32_le(file, len).await?;
                 Ok((
                     TextureAliasEntryData::OcclusionBitMask { bit_mask },
-                    usize_to_i32(bytes_read)?,
+                    bytes_read,
                 ))
             }
             TextureAliasEntryType::IsDefault => {
@@ -1979,8 +1979,8 @@ pub enum OcclusionEntryType {
 }
 
 pub enum OcclusionData {
-    SlotBitMask { bit_mask: Vec<u8> },
-    BitMask { bit_mask: Vec<u8> },
+    SlotBitMask { bit_mask: u32 },
+    BitMask { bit_mask: u32 },
     CoveredSlot { entries: Vec<CoveredSlotEntry> },
     EntryCount { entries: Vec<EntryCountEntry> },
 }
@@ -1993,18 +1993,12 @@ impl DeserializeEntryData<OcclusionEntryType> for OcclusionData {
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             OcclusionEntryType::SlotBitMask => {
-                let (bit_mask, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((
-                    OcclusionData::SlotBitMask { bit_mask },
-                    usize_to_i32(bytes_read)?,
-                ))
+                let (bit_mask, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((OcclusionData::SlotBitMask { bit_mask }, bytes_read))
             }
             OcclusionEntryType::BitMask => {
-                let (bit_mask, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((
-                    OcclusionData::BitMask { bit_mask },
-                    usize_to_i32(bytes_read)?,
-                ))
+                let (bit_mask, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((OcclusionData::BitMask { bit_mask }, bytes_read))
             }
             OcclusionEntryType::CoveredSlot => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
