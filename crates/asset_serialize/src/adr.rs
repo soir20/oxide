@@ -1690,69 +1690,78 @@ pub type AnimationEffect = Entry<AnimationEffectType, AnimationEffectData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
-pub enum AnimationSoundType {
+pub enum AnimationSoundEffectType {
     EffectArray = 0x1,
     EntryCount = 0xfe,
 }
 
-pub enum AnimationSoundData {
+pub enum AnimationSoundEffectData {
     EffectArray { effects: Vec<AnimationEffect> },
     EntryCount { entries: Vec<EntryCountEntry> },
 }
 
-impl DeserializeEntryData<AnimationSoundType> for AnimationSoundData {
+impl DeserializeEntryData<AnimationSoundEffectType> for AnimationSoundEffectData {
     async fn deserialize(
-        entry_type: &AnimationSoundType,
+        entry_type: &AnimationSoundEffectType,
         len: i32,
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
-            AnimationSoundType::EffectArray => {
+            AnimationSoundEffectType::EffectArray => {
                 let (effects, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((AnimationSoundData::EffectArray { effects }, bytes_read))
+                Ok((
+                    AnimationSoundEffectData::EffectArray { effects },
+                    bytes_read,
+                ))
             }
-            AnimationSoundType::EntryCount => {
+            AnimationSoundEffectType::EntryCount => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((AnimationSoundData::EntryCount { entries }, bytes_read))
+                Ok((AnimationSoundEffectData::EntryCount { entries }, bytes_read))
             }
         }
     }
 }
 
-pub type AnimationSound = Entry<AnimationSoundType, AnimationSoundData>;
+pub type AnimationSoundEffect = Entry<AnimationSoundEffectType, AnimationSoundEffectData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
-pub enum AnimationParticleType {
+pub enum AnimationParticleEffectType {
     EffectArray = 0x1,
     EntryCount = 0xfe,
 }
 
-pub enum AnimationParticleData {
+pub enum AnimationParticleEffectData {
     EffectArray { effects: Vec<AnimationEffect> },
     EntryCount { entries: Vec<EntryCountEntry> },
 }
 
-impl DeserializeEntryData<AnimationParticleType> for AnimationParticleData {
+impl DeserializeEntryData<AnimationParticleEffectType> for AnimationParticleEffectData {
     async fn deserialize(
-        entry_type: &AnimationParticleType,
+        entry_type: &AnimationParticleEffectType,
         len: i32,
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
-            AnimationParticleType::EffectArray => {
+            AnimationParticleEffectType::EffectArray => {
                 let (effects, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((AnimationParticleData::EffectArray { effects }, bytes_read))
+                Ok((
+                    AnimationParticleEffectData::EffectArray { effects },
+                    bytes_read,
+                ))
             }
-            AnimationParticleType::EntryCount => {
+            AnimationParticleEffectType::EntryCount => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((AnimationParticleData::EntryCount { entries }, bytes_read))
+                Ok((
+                    AnimationParticleEffectData::EntryCount { entries },
+                    bytes_read,
+                ))
             }
         }
     }
 }
 
-pub type AnimationParticle = Entry<AnimationParticleType, AnimationParticleData>;
+pub type AnimationParticleEffect = Entry<AnimationParticleEffectType, AnimationParticleEffectData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
@@ -2389,36 +2398,43 @@ pub type MountEntry = Entry<MountEntryType, MountEntryData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
-pub enum AnimationCompositeType {
+pub enum AnimationCompositeEffectType {
     EffectArray = 0x1,
     EntryCount = 0xfe,
 }
 
-pub enum AnimationCompositeData {
+pub enum AnimationCompositeEffectData {
     EffectArray { effects: Vec<AnimationEffect> },
     EntryCount { entries: Vec<EntryCountEntry> },
 }
 
-impl DeserializeEntryData<AnimationCompositeType> for AnimationCompositeData {
+impl DeserializeEntryData<AnimationCompositeEffectType> for AnimationCompositeEffectData {
     async fn deserialize(
-        entry_type: &AnimationCompositeType,
+        entry_type: &AnimationCompositeEffectType,
         len: i32,
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
-            AnimationCompositeType::EffectArray => {
+            AnimationCompositeEffectType::EffectArray => {
                 let (effects, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((AnimationCompositeData::EffectArray { effects }, bytes_read))
+                Ok((
+                    AnimationCompositeEffectData::EffectArray { effects },
+                    bytes_read,
+                ))
             }
-            AnimationCompositeType::EntryCount => {
+            AnimationCompositeEffectType::EntryCount => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((AnimationCompositeData::EntryCount { entries }, bytes_read))
+                Ok((
+                    AnimationCompositeEffectData::EntryCount { entries },
+                    bytes_read,
+                ))
             }
         }
     }
 }
 
-pub type AnimationComposite = Entry<AnimationCompositeType, AnimationCompositeData>;
+pub type AnimationCompositeEffect =
+    Entry<AnimationCompositeEffectType, AnimationCompositeEffectData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
@@ -2564,8 +2580,8 @@ pub enum AdrEntryType {
     EffectArray = 0x7,
     LevelOfDetailArray = 0x8,
     AnimationArray = 0x9,
-    AnimationSoundArray = 0xa,
-    AnimationParticleArray = 0xb,
+    AnimationSoundEffectArray = 0xa,
+    AnimationParticleEffectArray = 0xb,
     AnimationActionPoint = 0xc,
     Collision = 0xd,
     Occlusion = 0xe,
@@ -2575,7 +2591,7 @@ pub enum AdrEntryType {
     EquippedSlot = 0x12,
     BorrowedSkeleton = 0x13,
     Mount = 0x14,
-    AnimationCompositeArray = 0x15,
+    AnimationCompositeEffectArray = 0x15,
     LookControlArray = 0x16,
 }
 
@@ -2607,11 +2623,11 @@ pub enum AdrData {
     AnimationArray {
         animations: Vec<Animation>,
     },
-    AnimationSoundArray {
-        sounds: Vec<AnimationSound>,
+    AnimationSoundEffectArray {
+        sounds: Vec<AnimationSoundEffect>,
     },
-    AnimationParticleArray {
-        particles: Vec<AnimationParticle>,
+    AnimationParticleEffectArray {
+        particles: Vec<AnimationParticleEffect>,
     },
     AnimationActionPoint {
         action_points: Vec<AnimationActionPoint>,
@@ -2640,8 +2656,8 @@ pub enum AdrData {
     Mount {
         entries: Vec<MountEntry>,
     },
-    AnimationCompositeArray {
-        composites: Vec<AnimationComposite>,
+    AnimationCompositeEffectArray {
+        composites: Vec<AnimationCompositeEffect>,
     },
     LookControlArray {
         look_controls: Vec<LookControl>,
@@ -2696,13 +2712,16 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
                 let (animations, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((AdrData::AnimationArray { animations }, bytes_read))
             }
-            AdrEntryType::AnimationSoundArray => {
+            AdrEntryType::AnimationSoundEffectArray => {
                 let (sounds, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((AdrData::AnimationSoundArray { sounds }, bytes_read))
+                Ok((AdrData::AnimationSoundEffectArray { sounds }, bytes_read))
             }
-            AdrEntryType::AnimationParticleArray => {
+            AdrEntryType::AnimationParticleEffectArray => {
                 let (particles, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((AdrData::AnimationParticleArray { particles }, bytes_read))
+                Ok((
+                    AdrData::AnimationParticleEffectArray { particles },
+                    bytes_read,
+                ))
             }
             AdrEntryType::AnimationActionPoint => {
                 let (action_points, bytes_read) = deserialize_entries(file, len).await?;
@@ -2743,9 +2762,12 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((AdrData::Mount { entries }, bytes_read))
             }
-            AdrEntryType::AnimationCompositeArray => {
+            AdrEntryType::AnimationCompositeEffectArray => {
                 let (composites, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((AdrData::AnimationCompositeArray { composites }, bytes_read))
+                Ok((
+                    AdrData::AnimationCompositeEffectArray { composites },
+                    bytes_read,
+                ))
             }
             AdrEntryType::LookControlArray => {
                 let (look_controls, bytes_read) = deserialize_entries(file, len).await?;
