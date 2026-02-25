@@ -839,12 +839,12 @@ pub type ParticleEmitter = Entry<ParticleEmitterType, ParticleEmitterData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
-pub enum EmitterArrayType {
+pub enum EffectDefinitionArrayType {
     SoundEmitterArray = 0x1,
     ParticleEmitterArray = 0x2,
 }
 
-pub enum EmitterArrayData {
+pub enum EffectDefinitionArrayData {
     SoundEmitterArray {
         sound_emitters: Vec<SoundEmitter>,
     },
@@ -853,24 +853,24 @@ pub enum EmitterArrayData {
     },
 }
 
-impl DeserializeEntryData<EmitterArrayType> for EmitterArrayData {
+impl DeserializeEntryData<EffectDefinitionArrayType> for EffectDefinitionArrayData {
     async fn deserialize(
-        entry_type: &EmitterArrayType,
+        entry_type: &EffectDefinitionArrayType,
         len: i32,
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
-            EmitterArrayType::SoundEmitterArray => {
+            EffectDefinitionArrayType::SoundEmitterArray => {
                 let (sound_emitters, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((
-                    EmitterArrayData::SoundEmitterArray { sound_emitters },
+                    EffectDefinitionArrayData::SoundEmitterArray { sound_emitters },
                     bytes_read,
                 ))
             }
-            EmitterArrayType::ParticleEmitterArray => {
+            EffectDefinitionArrayType::ParticleEmitterArray => {
                 let (particle_emitters, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((
-                    EmitterArrayData::ParticleEmitterArray { particle_emitters },
+                    EffectDefinitionArrayData::ParticleEmitterArray { particle_emitters },
                     bytes_read,
                 ))
             }
@@ -878,7 +878,7 @@ impl DeserializeEntryData<EmitterArrayType> for EmitterArrayData {
     }
 }
 
-pub type EmitterArray = Entry<EmitterArrayType, EmitterArrayData>;
+pub type EffectDefinitionArray = Entry<EffectDefinitionArrayType, EffectDefinitionArrayData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
@@ -2573,7 +2573,7 @@ pub type LookControl = Entry<LookControlType, LookControlData>;
 pub enum AdrEntryType {
     Skeleton = 0x1,
     Model = 0x2,
-    EmitterArrayArray = 0x3,
+    EffectDefinitionArrayArray = 0x3,
     MaterialTagArray = 0x4,
     TextureAliasArray = 0x5,
     TintAliasArray = 0x6,
@@ -2602,8 +2602,8 @@ pub enum AdrData {
     Model {
         entries: Vec<ModelEntry>,
     },
-    EmitterArrayArray {
-        arrays: Vec<EmitterArray>,
+    EffectDefinitionArrayArray {
+        arrays: Vec<EffectDefinitionArray>,
     },
     MaterialTagArray {
         material_tags: Vec<MaterialTag>,
@@ -2679,9 +2679,9 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((AdrData::Model { entries }, bytes_read))
             }
-            AdrEntryType::EmitterArrayArray => {
+            AdrEntryType::EffectDefinitionArrayArray => {
                 let (arrays, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((AdrData::EmitterArrayArray { arrays }, bytes_read))
+                Ok((AdrData::EffectDefinitionArrayArray { arrays }, bytes_read))
             }
             AdrEntryType::MaterialTagArray => {
                 let (materials, bytes_read) = deserialize_entries(file, len).await?;
@@ -2725,7 +2725,10 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
             }
             AdrEntryType::AnimationActionPointArray => {
                 let (action_points, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((AdrData::AnimationActionPointArray { action_points }, bytes_read))
+                Ok((
+                    AdrData::AnimationActionPointArray { action_points },
+                    bytes_read,
+                ))
             }
             AdrEntryType::Collision => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
