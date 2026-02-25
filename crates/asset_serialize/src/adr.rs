@@ -2243,11 +2243,21 @@ pub type EquippedSlotEntry = Entry<EquippedSlotEntryType, EquippedSlotEntryData>
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
 pub enum BoneMetadataEntryType {
-    EntryCount = 0xfe,
+    BoneName = 0x1,
+    CollisionType = 0x2,
+    Joint1 = 0x3,
+    Weight1 = 0x4,
+    Joint2 = 0x5,
+    Weight2 = 0x6,
 }
 
 pub enum BoneMetadataEntryData {
-    EntryCount { entries: Vec<EntryCountEntry> },
+    BoneName { bone_name: String },
+    CollisionType { collision_type: u8 },
+    Joint1 { joint_name: String },
+    Weight1 { weight: f32 },
+    Joint2 { joint_name: String },
+    Weight2 { weight: f32 },
 }
 
 impl DeserializeEntryData<BoneMetadataEntryType> for BoneMetadataEntryData {
@@ -2257,15 +2267,80 @@ impl DeserializeEntryData<BoneMetadataEntryType> for BoneMetadataEntryData {
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
-            BoneMetadataEntryType::EntryCount => {
-                let (entries, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((BoneMetadataEntryData::EntryCount { entries }, bytes_read))
+            BoneMetadataEntryType::BoneName => {
+                let (bone_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    BoneMetadataEntryData::BoneName { bone_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            BoneMetadataEntryType::CollisionType => {
+                let (collision_type, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((
+                    BoneMetadataEntryData::CollisionType { collision_type },
+                    bytes_read,
+                ))
+            }
+            BoneMetadataEntryType::Joint1 => {
+                let (joint_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    BoneMetadataEntryData::Joint1 { joint_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            BoneMetadataEntryType::Weight1 => {
+                let (weight, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((BoneMetadataEntryData::Weight1 { weight }, bytes_read))
+            }
+            BoneMetadataEntryType::Joint2 => {
+                let (joint_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    BoneMetadataEntryData::Joint2 { joint_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            BoneMetadataEntryType::Weight2 => {
+                let (weight, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((BoneMetadataEntryData::Weight2 { weight }, bytes_read))
             }
         }
     }
 }
 
 pub type BoneMetadataEntry = Entry<BoneMetadataEntryType, BoneMetadataEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum BoneMetadataType {
+    BoneMetadata = 0x1,
+    EntryCount = 0xfe,
+}
+
+pub enum BoneMetadataData {
+    BoneMetadata { entries: Vec<BoneMetadataEntry> },
+    EntryCount { entries: Vec<EntryCountEntry> },
+}
+
+impl DeserializeEntryData<BoneMetadataType> for BoneMetadataData {
+    async fn deserialize(
+        entry_type: &BoneMetadataType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            BoneMetadataType::BoneMetadata => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((BoneMetadataData::BoneMetadata { entries }, bytes_read))
+            }
+            BoneMetadataType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((BoneMetadataData::EntryCount { entries }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type BoneMetadata = Entry<BoneMetadataType, BoneMetadataData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
@@ -2633,7 +2708,7 @@ pub enum AdrEntryType {
     HatHair = 0x10,
     Shadow = 0x11,
     EquippedSlot = 0x12,
-    BoneMetadata = 0x13,
+    BoneMetadataArray = 0x13,
     Mount = 0x14,
     AnimationCompositeEffectArray = 0x15,
     LookControlArray = 0x16,
@@ -2694,8 +2769,8 @@ pub enum AdrData {
     EquippedSlot {
         entries: Vec<EquippedSlotEntry>,
     },
-    BoneMetadata {
-        entries: Vec<BoneMetadataEntry>,
+    BoneMetadataArray {
+        bone_metadata: Vec<BoneMetadata>,
     },
     Mount {
         entries: Vec<MountEntry>,
@@ -2798,9 +2873,9 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((AdrData::EquippedSlot { entries }, bytes_read))
             }
-            AdrEntryType::BoneMetadata => {
-                let (entries, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((AdrData::BoneMetadata { entries }, bytes_read))
+            AdrEntryType::BoneMetadataArray => {
+                let (bone_metadata, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AdrData::BoneMetadataArray { bone_metadata }, bytes_read))
             }
             AdrEntryType::Mount => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
