@@ -1549,7 +1549,7 @@ pub type AnimationEffectTriggerEvent =
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
-pub enum AnimationEffectType {
+pub enum AnimationEffectEntryType {
     TriggerEventArray = 0x1,
     Type = 0x2,
     Name = 0x3,
@@ -1560,7 +1560,7 @@ pub enum AnimationEffectType {
     EntryCount = 0xfe,
 }
 
-pub enum AnimationEffectData {
+pub enum AnimationEffectEntryData {
     TriggerEventArray {
         trigger_events: Vec<AnimationEffectTriggerEvent>,
     },
@@ -1587,64 +1587,64 @@ pub enum AnimationEffectData {
     },
 }
 
-impl DeserializeEntryData<AnimationEffectType> for AnimationEffectData {
+impl DeserializeEntryData<AnimationEffectEntryType> for AnimationEffectEntryData {
     async fn deserialize(
-        entry_type: &AnimationEffectType,
+        entry_type: &AnimationEffectEntryType,
         len: i32,
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
-            AnimationEffectType::TriggerEventArray => {
+            AnimationEffectEntryType::TriggerEventArray => {
                 let (trigger_events, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((
-                    AnimationEffectData::TriggerEventArray { trigger_events },
+                    AnimationEffectEntryData::TriggerEventArray { trigger_events },
                     bytes_read,
                 ))
             }
-            AnimationEffectType::Type => {
+            AnimationEffectEntryType::Type => {
                 let (effect_type, bytes_read) = deserialize_u8(file, len).await?;
-                Ok((AnimationEffectData::Type { effect_type }, bytes_read))
+                Ok((AnimationEffectEntryData::Type { effect_type }, bytes_read))
             }
-            AnimationEffectType::Name => {
+            AnimationEffectEntryType::Name => {
                 let (name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
                 Ok((
-                    AnimationEffectData::Name { name },
+                    AnimationEffectEntryData::Name { name },
                     usize_to_i32(bytes_read)?,
                 ))
             }
-            AnimationEffectType::ToolName => {
+            AnimationEffectEntryType::ToolName => {
                 let (tool_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
                 Ok((
-                    AnimationEffectData::ToolName { tool_name },
+                    AnimationEffectEntryData::ToolName { tool_name },
                     usize_to_i32(bytes_read)?,
                 ))
             }
-            AnimationEffectType::Id => {
+            AnimationEffectEntryType::Id => {
                 let (id, bytes_read) = deserialize_u16_le(file, len).await?;
-                Ok((AnimationEffectData::Id { id }, bytes_read))
+                Ok((AnimationEffectEntryData::Id { id }, bytes_read))
             }
-            AnimationEffectType::PlayOnce => {
+            AnimationEffectEntryType::PlayOnce => {
                 let (should_play_once, bytes_read) = deserialize_u8(file, len).await?;
                 Ok((
-                    AnimationEffectData::PlayOnce {
+                    AnimationEffectEntryData::PlayOnce {
                         should_play_once: should_play_once != 0,
                     },
                     bytes_read,
                 ))
             }
-            AnimationEffectType::LoadType => {
+            AnimationEffectEntryType::LoadType => {
                 let (load_type, bytes_read) = AnimationLoadType::deserialize(file).await?;
-                Ok((AnimationEffectData::LoadType { load_type }, bytes_read))
+                Ok((AnimationEffectEntryData::LoadType { load_type }, bytes_read))
             }
-            AnimationEffectType::EntryCount => {
+            AnimationEffectEntryType::EntryCount => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((AnimationEffectData::EntryCount { entries }, bytes_read))
+                Ok((AnimationEffectEntryData::EntryCount { entries }, bytes_read))
             }
         }
     }
 }
 
-pub type AnimationEffect = Entry<AnimationEffectType, AnimationEffectData>;
+pub type AnimationEffectEntry = Entry<AnimationEffectEntryType, AnimationEffectEntryData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
@@ -1655,7 +1655,7 @@ pub enum AnimationSoundEntryType {
 }
 
 pub enum AnimationSoundEntryData {
-    EffectArray { effects: Vec<AnimationEffect> },
+    EffectArray { effects: Vec<AnimationEffectEntry> },
     Name { name: String },
     EntryCount { entries: Vec<EntryCountEntry> },
 }
@@ -1730,7 +1730,7 @@ pub enum AnimationParticleEntryType {
 }
 
 pub enum AnimationParticleEntryData {
-    EffectArray { effects: Vec<AnimationEffect> },
+    EffectArray { effects: Vec<AnimationEffectEntry> },
     Name { name: String },
     EntryCount { entries: Vec<EntryCountEntry> },
 }
@@ -2451,7 +2451,7 @@ pub enum AnimationCompositeEntryType {
 }
 
 pub enum AnimationCompositeEntryData {
-    EffectArray { effects: Vec<AnimationEffect> },
+    EffectArray { effects: Vec<AnimationEffectEntry> },
     Name { name: String },
     EntryCount { entries: Vec<EntryCountEntry> },
 }
