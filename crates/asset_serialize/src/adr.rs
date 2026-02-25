@@ -110,8 +110,29 @@ async fn deserialize_f32_be(
     ))
 }
 
+async fn check_int_overflow(
+    file: &mut BufReader<&mut File>,
+    expected_bytes: usize,
+    actual_bytes: usize,
+) -> Result<(), Error> {
+    if actual_bytes > expected_bytes {
+        return Err(Error {
+            kind: ErrorKind::IntegerOverflow {
+                expected_bytes,
+                actual_bytes,
+            },
+            offset: tell(file)
+                .await
+                .map(|offset| offset.saturating_sub(actual_bytes.try_into().unwrap_or_default())),
+        });
+    }
+
+    Ok(())
+}
+
 async fn deserialize_u8(file: &mut BufReader<&mut File>, len: i32) -> Result<(u8, i32), Error> {
     let (mut data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+    check_int_overflow(file, 1, bytes_read).await?;
     data.resize(1, 0);
     Ok((data[0], usize_to_i32(bytes_read)?))
 }
@@ -121,6 +142,7 @@ async fn deserialize_u16_le(
     len: i32,
 ) -> Result<(u16, i32), Error> {
     let (mut data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+    check_int_overflow(file, 2, bytes_read).await?;
     data.resize(2, 0);
     Ok((
         u16::from_le_bytes(data.try_into().expect("data should contain 2 bytes")),
@@ -133,6 +155,7 @@ async fn deserialize_u32_le(
     len: i32,
 ) -> Result<(u32, i32), Error> {
     let (mut data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+    check_int_overflow(file, 4, bytes_read).await?;
     data.resize(4, 0);
     Ok((
         u32::from_le_bytes(data.try_into().expect("data should contain 4 bytes")),

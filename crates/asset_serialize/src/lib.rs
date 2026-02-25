@@ -24,6 +24,10 @@ use crate::pack::Pack;
 
 #[derive(Debug)]
 pub enum ErrorKind {
+    IntegerOverflow {
+        expected_bytes: usize,
+        actual_bytes: usize,
+    },
     InvalidUtf8(FromUtf8Error),
     Io(tokio::io::Error),
     TryFromInt(TryFromIntError),
