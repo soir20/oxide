@@ -2445,7 +2445,7 @@ pub enum MountEntryType {
     Seat = 0x1,
     StandAnimation = 0x5,
     SprintAnimation = 0x7,
-    SprintToStandAnimation = 0x9,
+    AnimationPrefix = 0x9,
     EntryCount = 0xfe,
 }
 
@@ -2453,7 +2453,7 @@ pub enum MountEntryData {
     Seat { entries: Vec<MountSeatEntry> },
     StandAnimation { animation_name: String },
     SprintAnimation { animation_name: String },
-    SprintToStandAnimation { animation_name: String },
+    AnimationPrefix { animation_prefix: String },
     EntryCount { entries: Vec<EntryCountEntry> },
 }
 
@@ -2484,11 +2484,11 @@ impl DeserializeEntryData<MountEntryType> for MountEntryData {
                     usize_to_i32(bytes_read)?,
                 ))
             }
-            MountEntryType::SprintToStandAnimation => {
-                let (animation_name, bytes_read) =
+            MountEntryType::AnimationPrefix => {
+                let (animation_prefix, bytes_read) =
                     deserialize_string(file, i32_to_usize(len)?).await?;
                 Ok((
-                    MountEntryData::SprintToStandAnimation { animation_name },
+                    MountEntryData::AnimationPrefix { animation_prefix },
                     usize_to_i32(bytes_read)?,
                 ))
             }
