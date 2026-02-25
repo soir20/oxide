@@ -1691,12 +1691,12 @@ pub type AnimationEffect = Entry<AnimationEffectType, AnimationEffectData>;
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
 pub enum AnimationSoundType {
-    AnimationSound = 0x1,
+    EffectArray = 0x1,
     EntryCount = 0xfe,
 }
 
 pub enum AnimationSoundData {
-    AnimationSound { entries: Vec<AnimationEffect> },
+    EffectArray { effects: Vec<AnimationEffect> },
     EntryCount { entries: Vec<EntryCountEntry> },
 }
 
@@ -1707,9 +1707,9 @@ impl DeserializeEntryData<AnimationSoundType> for AnimationSoundData {
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
-            AnimationSoundType::AnimationSound => {
-                let (entries, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((AnimationSoundData::AnimationSound { entries }, bytes_read))
+            AnimationSoundType::EffectArray => {
+                let (effects, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AnimationSoundData::EffectArray { effects }, bytes_read))
             }
             AnimationSoundType::EntryCount => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
