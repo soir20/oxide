@@ -2242,6 +2242,33 @@ pub type EquippedSlotEntry = Entry<EquippedSlotEntryType, EquippedSlotEntryData>
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
+pub enum BoneMetadataEntryType {
+    EntryCount = 0xfe,
+}
+
+pub enum BoneMetadataEntryData {
+    EntryCount { entries: Vec<EntryCountEntry> },
+}
+
+impl DeserializeEntryData<BoneMetadataEntryType> for BoneMetadataEntryData {
+    async fn deserialize(
+        entry_type: &BoneMetadataEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            BoneMetadataEntryType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((BoneMetadataEntryData::EntryCount { entries }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type BoneMetadataEntry = Entry<BoneMetadataEntryType, BoneMetadataEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
 pub enum MountSeatEntranceExitEntryType {
     BoneName = 0x1,
     Animation = 0x2,
@@ -2606,7 +2633,7 @@ pub enum AdrEntryType {
     HatHair = 0x10,
     Shadow = 0x11,
     EquippedSlot = 0x12,
-    BorrowedSkeleton = 0x13,
+    BoneMetadata = 0x13,
     Mount = 0x14,
     AnimationCompositeEffectArray = 0x15,
     LookControlArray = 0x16,
@@ -2667,8 +2694,8 @@ pub enum AdrData {
     EquippedSlot {
         entries: Vec<EquippedSlotEntry>,
     },
-    BorrowedSkeleton {
-        data: Vec<u8>,
+    BoneMetadata {
+        entries: Vec<BoneMetadataEntry>,
     },
     Mount {
         entries: Vec<MountEntry>,
@@ -2771,12 +2798,9 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((AdrData::EquippedSlot { entries }, bytes_read))
             }
-            AdrEntryType::BorrowedSkeleton => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((
-                    AdrData::BorrowedSkeleton { data },
-                    usize_to_i32(bytes_read)?,
-                ))
+            AdrEntryType::BoneMetadata => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AdrData::BoneMetadata { entries }, bytes_read))
             }
             AdrEntryType::Mount => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
