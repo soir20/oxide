@@ -137,19 +137,6 @@ async fn deserialize_u8(file: &mut BufReader<&mut File>, len: i32) -> Result<(u8
     Ok((data[0], usize_to_i32(bytes_read)?))
 }
 
-async fn deserialize_u16_le(
-    file: &mut BufReader<&mut File>,
-    len: i32,
-) -> Result<(u16, i32), Error> {
-    let (mut data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-    check_int_overflow(file, 2, bytes_read).await?;
-    data.resize(2, 0);
-    Ok((
-        u16::from_le_bytes(data.try_into().expect("data should contain 2 bytes")),
-        usize_to_i32(bytes_read)?,
-    ))
-}
-
 async fn deserialize_u32_le(
     file: &mut BufReader<&mut File>,
     len: i32,
@@ -382,7 +369,7 @@ pub enum SoundEmitterEntryData {
         entries: Vec<SoundEmitterAssetEntry>,
     },
     Id {
-        id: u16,
+        id: u32,
     },
     EmitterName {
         asset_name: String,
@@ -482,7 +469,7 @@ impl DeserializeEntryData<SoundEmitterEntryType> for SoundEmitterEntryData {
                 Ok((SoundEmitterEntryData::Asset { entries }, bytes_read))
             }
             SoundEmitterEntryType::Id => {
-                let (id, bytes_read) = deserialize_u16_le(file, len).await?;
+                let (id, bytes_read) = deserialize_u32_le(file, len).await?;
                 Ok((SoundEmitterEntryData::Id { id }, bytes_read))
             }
             SoundEmitterEntryType::EmitterName => {
@@ -714,7 +701,7 @@ pub enum ParticleEmitterEntryType {
 }
 
 pub enum ParticleEmitterEntryData {
-    Id { id: u16 },
+    Id { id: u32 },
     EmitterName { emitter_name: String },
     BoneName { bone_name: String },
     Heading { heading: f32 },
@@ -738,7 +725,7 @@ impl DeserializeEntryData<ParticleEmitterEntryType> for ParticleEmitterEntryData
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             ParticleEmitterEntryType::Id => {
-                let (id, bytes_read) = deserialize_u16_le(file, len).await?;
+                let (id, bytes_read) = deserialize_u32_le(file, len).await?;
                 Ok((ParticleEmitterEntryData::Id { id }, bytes_read))
             }
             ParticleEmitterEntryType::EmitterName => {
@@ -1228,7 +1215,7 @@ pub enum EffectEntryData {
     Type { effect_type: u8 },
     Name { name: String },
     ToolName { tool_name: String },
-    Id { id: u16 },
+    Id { id: u32 },
 }
 
 impl DeserializeEntryData<EffectEntryType> for EffectEntryData {
@@ -1254,7 +1241,7 @@ impl DeserializeEntryData<EffectEntryType> for EffectEntryData {
                 ))
             }
             EffectEntryType::Id => {
-                let (id, bytes_read) = deserialize_u16_le(file, len).await?;
+                let (id, bytes_read) = deserialize_u32_le(file, len).await?;
                 Ok((EffectEntryData::Id { id }, bytes_read))
             }
         }
@@ -1597,7 +1584,7 @@ pub enum AnimationEffectEntryData {
         tool_name: String,
     },
     Id {
-        id: u16,
+        id: u32,
     },
     PlayOnce {
         should_play_once: bool,
@@ -1643,7 +1630,7 @@ impl DeserializeEntryData<AnimationEffectEntryType> for AnimationEffectEntryData
                 ))
             }
             AnimationEffectEntryType::Id => {
-                let (id, bytes_read) = deserialize_u16_le(file, len).await?;
+                let (id, bytes_read) = deserialize_u32_le(file, len).await?;
                 Ok((AnimationEffectEntryData::Id { id }, bytes_read))
             }
             AnimationEffectEntryType::PlayOnce => {
