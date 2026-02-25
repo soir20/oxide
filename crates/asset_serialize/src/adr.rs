@@ -2582,7 +2582,7 @@ pub enum AdrEntryType {
     AnimationArray = 0x9,
     AnimationSoundEffectArray = 0xa,
     AnimationParticleEffectArray = 0xb,
-    AnimationActionPoint = 0xc,
+    AnimationActionPointArray = 0xc,
     Collision = 0xd,
     Occlusion = 0xe,
     Usage = 0xf,
@@ -2629,7 +2629,7 @@ pub enum AdrData {
     AnimationParticleEffectArray {
         particles: Vec<AnimationParticleEffect>,
     },
-    AnimationActionPoint {
+    AnimationActionPointArray {
         action_points: Vec<AnimationActionPoint>,
     },
     Collision {
@@ -2723,9 +2723,9 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
                     bytes_read,
                 ))
             }
-            AdrEntryType::AnimationActionPoint => {
+            AdrEntryType::AnimationActionPointArray => {
                 let (action_points, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((AdrData::AnimationActionPoint { action_points }, bytes_read))
+                Ok((AdrData::AnimationActionPointArray { action_points }, bytes_read))
             }
             AdrEntryType::Collision => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
