@@ -355,7 +355,7 @@ pub enum SoundEmitterEntryType {
     RateMultiplier = 0x15,
     RateMultiplierOffset = 0x16,
     RoomTypeScalar = 0x17,
-    Unknown24 = 0x18,
+    AttenuateReverbWithDistance = 0x18,
     Unknown25 = 0x19,
     AttenuationDistance = 0x1a,
     ClipDistance = 0x1b,
@@ -434,8 +434,8 @@ pub enum SoundEmitterEntryData {
     RoomTypeScalar {
         room_type_scalar: f32,
     },
-    Unknown24 {
-        unknown: u8,
+    AttenuateReverbWithDistance {
+        should_attenuate: bool,
     },
     Unknown25 {
         unknown: u32,
@@ -596,9 +596,14 @@ impl DeserializeEntryData<SoundEmitterEntryType> for SoundEmitterEntryData {
                     bytes_read,
                 ))
             }
-            SoundEmitterEntryType::Unknown24 => {
-                let (unknown, bytes_read) = deserialize_u8(file, len).await?;
-                Ok((SoundEmitterEntryData::Unknown24 { unknown }, bytes_read))
+            SoundEmitterEntryType::AttenuateReverbWithDistance => {
+                let (should_attenuate, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((
+                    SoundEmitterEntryData::AttenuateReverbWithDistance {
+                        should_attenuate: should_attenuate != 0,
+                    },
+                    bytes_read,
+                ))
             }
             SoundEmitterEntryType::Unknown25 => {
                 let (unknown, bytes_read) = deserialize_u32_le(file, len).await?;
