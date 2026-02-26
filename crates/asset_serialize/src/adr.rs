@@ -902,7 +902,7 @@ pub enum MaterialTagEntryType {
 
 pub enum MaterialTagEntryData {
     Name { name: String },
-    MaterialIndex { material_index: u8 },
+    MaterialIndex { material_index: u32 },
     SemanticHash { hash: u32 },
     TintSetId { tint_set_id: u32 },
     DefaultTintId { tint_id: u32 },
@@ -923,7 +923,7 @@ impl DeserializeEntryData<MaterialTagEntryType> for MaterialTagEntryData {
                 ))
             }
             MaterialTagEntryType::MaterialIndex => {
-                let (material_index, bytes_read) = deserialize_u8(file, len).await?;
+                let (material_index, bytes_read) = deserialize_u32_le(file, len).await?;
                 Ok((
                     MaterialTagEntryData::MaterialIndex { material_index },
                     bytes_read,
@@ -993,8 +993,8 @@ pub enum TextureAliasEntryType {
 }
 
 pub enum TextureAliasEntryData {
-    ModelType { model_type: u8 },
-    MaterialIndex { material_index: u8 },
+    ModelType { model_type: u32 },
+    MaterialIndex { material_index: u32 },
     SemanticHash { hash: u32 },
     Name { name: String },
     AssetName { asset_name: String },
@@ -1010,11 +1010,11 @@ impl DeserializeEntryData<TextureAliasEntryType> for TextureAliasEntryData {
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             TextureAliasEntryType::ModelType => {
-                let (model_type, bytes_read) = deserialize_u8(file, len).await?;
+                let (model_type, bytes_read) = deserialize_u32_le(file, len).await?;
                 Ok((TextureAliasEntryData::ModelType { model_type }, bytes_read))
             }
             TextureAliasEntryType::MaterialIndex => {
-                let (material_index, bytes_read) = deserialize_u8(file, len).await?;
+                let (material_index, bytes_read) = deserialize_u32_le(file, len).await?;
                 Ok((
                     TextureAliasEntryData::MaterialIndex { material_index },
                     bytes_read,
@@ -1106,8 +1106,8 @@ pub enum TintAliasEntryType {
 }
 
 pub enum TintAliasEntryData {
-    ModelType { model_type: u8 },
-    MaterialIndex { material_index: u8 },
+    ModelType { model_type: u32 },
+    MaterialIndex { material_index: u32 },
     SemanticHash { hash: u32 },
     Name { name: String },
     Red { red: f32 },
@@ -1124,11 +1124,11 @@ impl DeserializeEntryData<TintAliasEntryType> for TintAliasEntryData {
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             TintAliasEntryType::ModelType => {
-                let (model_type, bytes_read) = deserialize_u8(file, len).await?;
+                let (model_type, bytes_read) = deserialize_u32_le(file, len).await?;
                 Ok((TintAliasEntryData::ModelType { model_type }, bytes_read))
             }
             TintAliasEntryType::MaterialIndex => {
-                let (material_index, bytes_read) = deserialize_u8(file, len).await?;
+                let (material_index, bytes_read) = deserialize_u32_le(file, len).await?;
                 Ok((
                     TintAliasEntryData::MaterialIndex { material_index },
                     bytes_read,
@@ -1956,7 +1956,7 @@ pub enum CoveredSlotEntryType {
 }
 
 pub enum CoveredSlotEntryData {
-    SlotId { slot_id: u8 },
+    SlotId { slot_id: u32 },
 }
 
 impl DeserializeEntryData<CoveredSlotEntryType> for CoveredSlotEntryData {
@@ -1967,7 +1967,7 @@ impl DeserializeEntryData<CoveredSlotEntryType> for CoveredSlotEntryData {
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             CoveredSlotEntryType::SlotId => {
-                let (bone_id, bytes_read) = deserialize_u8(file, len).await?;
+                let (bone_id, bytes_read) = deserialize_u32_le(file, len).await?;
                 Ok((
                     CoveredSlotEntryData::SlotId { slot_id: bone_id },
                     bytes_read,
@@ -2176,7 +2176,7 @@ pub enum EquippedSlotEntryType {
 
 pub enum EquippedSlotEntryData {
     Type { equipped_slot_type: u8 },
-    SlotId { slot_id: u8 },
+    SlotId { slot_id: u32 },
     ParentAttachSlot { slot_name: String },
     ChildAttachSlot { slot_name: String },
     SlotName { slot_name: String },
@@ -2197,7 +2197,7 @@ impl DeserializeEntryData<EquippedSlotEntryType> for EquippedSlotEntryData {
                 ))
             }
             EquippedSlotEntryType::SlotId => {
-                let (slot_id, bytes_read) = deserialize_u8(file, len).await?;
+                let (slot_id, bytes_read) = deserialize_u32_le(file, len).await?;
                 Ok((EquippedSlotEntryData::SlotId { slot_id }, bytes_read))
             }
             EquippedSlotEntryType::ParentAttachSlot => {
@@ -2240,7 +2240,7 @@ pub enum BoneMetadataEntryType {
 
 pub enum BoneMetadataEntryData {
     BoneName { bone_name: String },
-    CollisionType { collision_type: u8 },
+    CollisionType { collision_type: u32 },
     Joint1 { joint_name: String },
     Weight1 { weight: f32 },
     Joint2 { joint_name: String },
@@ -2262,7 +2262,7 @@ impl DeserializeEntryData<BoneMetadataEntryType> for BoneMetadataEntryData {
                 ))
             }
             BoneMetadataEntryType::CollisionType => {
-                let (collision_type, bytes_read) = deserialize_u8(file, len).await?;
+                let (collision_type, bytes_read) = deserialize_u32_le(file, len).await?;
                 Ok((
                     BoneMetadataEntryData::CollisionType { collision_type },
                     bytes_read,
