@@ -237,7 +237,7 @@ pub enum ModelData {
     MaterialAssetName { name: String },
     UpdateRadius { radius: f32 },
     WaterDisplacementHeight { height: f32 },
-    ObjectTerrainData { object_terrain_data_id: u8 },
+    ObjectTerrainData { object_terrain_data_id: u32 },
 }
 
 impl DeserializeEntryData<ModelEntryType> for ModelData {
@@ -270,7 +270,7 @@ impl DeserializeEntryData<ModelEntryType> for ModelData {
                 Ok((ModelData::WaterDisplacementHeight { height }, bytes_read))
             }
             ModelEntryType::ObjectTerrainData => {
-                let (object_terrain_data_id, bytes_read) = deserialize_u8(file, len).await?;
+                let (object_terrain_data_id, bytes_read) = deserialize_u32_le(file, len).await?;
                 Ok((
                     ModelData::ObjectTerrainData {
                         object_terrain_data_id,
@@ -405,10 +405,10 @@ pub enum SoundEmitterEntryData {
         play_back_type: u8,
     },
     Category {
-        category: u8,
+        category: u32,
     },
     SubCategory {
-        sub_category: u8,
+        sub_category: u32,
     },
     FadeTime {
         fade_time_millis: f32,
@@ -417,7 +417,7 @@ pub enum SoundEmitterEntryData {
         fade_out_time_millis: f32,
     },
     LoadType {
-        load_type: u8,
+        load_type: u32,
     },
     Volume {
         volume: f32,
@@ -438,7 +438,7 @@ pub enum SoundEmitterEntryData {
         unknown: u8,
     },
     Unknown25 {
-        unknown: u8,
+        unknown: u32,
     },
     AttenuationDistance {
         distance: f32,
@@ -532,11 +532,11 @@ impl DeserializeEntryData<SoundEmitterEntryType> for SoundEmitterEntryData {
                 ))
             }
             SoundEmitterEntryType::Category => {
-                let (category, bytes_read) = deserialize_u8(file, len).await?;
+                let (category, bytes_read) = deserialize_u32_le(file, len).await?;
                 Ok((SoundEmitterEntryData::Category { category }, bytes_read))
             }
             SoundEmitterEntryType::SubCategory => {
-                let (sub_category, bytes_read) = deserialize_u8(file, len).await?;
+                let (sub_category, bytes_read) = deserialize_u32_le(file, len).await?;
                 Ok((
                     SoundEmitterEntryData::SubCategory { sub_category },
                     bytes_read,
@@ -559,7 +559,7 @@ impl DeserializeEntryData<SoundEmitterEntryType> for SoundEmitterEntryData {
                 ))
             }
             SoundEmitterEntryType::LoadType => {
-                let (load_type, bytes_read) = deserialize_u8(file, len).await?;
+                let (load_type, bytes_read) = deserialize_u32_le(file, len).await?;
                 Ok((SoundEmitterEntryData::LoadType { load_type }, bytes_read))
             }
             SoundEmitterEntryType::Volume => {
@@ -601,7 +601,7 @@ impl DeserializeEntryData<SoundEmitterEntryType> for SoundEmitterEntryData {
                 Ok((SoundEmitterEntryData::Unknown24 { unknown }, bytes_read))
             }
             SoundEmitterEntryType::Unknown25 => {
-                let (unknown, bytes_read) = deserialize_u8(file, len).await?;
+                let (unknown, bytes_read) = deserialize_u32_le(file, len).await?;
                 Ok((SoundEmitterEntryData::Unknown25 { unknown }, bytes_read))
             }
             SoundEmitterEntryType::AttenuationDistance => {
