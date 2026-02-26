@@ -2443,6 +2443,7 @@ pub type MountSeatEntry = Entry<MountSeatEntryType, MountSeatEntryData>;
 #[repr(u8)]
 pub enum MountEntryType {
     Seat = 0x1,
+    MinOccupancy = 0x4,
     StandAnimation = 0x5,
     StandToSprintAnimation = 0x6,
     SprintAnimation = 0x7,
@@ -2453,6 +2454,7 @@ pub enum MountEntryType {
 
 pub enum MountEntryData {
     Seat { entries: Vec<MountSeatEntry> },
+    MinOccupancy { min_occupancy: u32 },
     StandAnimation { animation_name: String },
     StandToSprintAnimation { animation_name: String },
     SprintAnimation { animation_name: String },
@@ -2471,6 +2473,10 @@ impl DeserializeEntryData<MountEntryType> for MountEntryData {
             MountEntryType::Seat => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((MountEntryData::Seat { entries }, bytes_read))
+            }
+            MountEntryType::MinOccupancy => {
+                let (min_occupancy, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((MountEntryData::MinOccupancy { min_occupancy }, bytes_read))
             }
             MountEntryType::StandAnimation => {
                 let (animation_name, bytes_read) =
