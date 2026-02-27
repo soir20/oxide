@@ -5,8 +5,6 @@
   description_id: 14
   icon_set_id: 710
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 200
   item_class: -1
   required_battle_class: 0
@@ -32,24 +30,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 9
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: EyeColor
   customization_id: 150000
-  unknown40: 0
-  stats: []
-  abilities: []
 # Brown Eyes
 - guid: 10001
   name_id: 422
   description_id: 14
   icon_set_id: 706
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -75,24 +64,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 9
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: EyeColor
   customization_id: 150001
-  unknown40: 0
-  stats: []
-  abilities: []
 # Yellow Eyes
 - guid: 10002
   name_id: 420
   description_id: 14
   icon_set_id: 711
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 200
   item_class: -1
   required_battle_class: 0
@@ -118,24 +98,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 9
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: EyeColor
   customization_id: 150002
-  unknown40: 0
-  stats: []
-  abilities: []
 # Green Eyes
 - guid: 10003
   name_id: 430
   description_id: 14
   icon_set_id: 707
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -161,24 +132,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 9
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: EyeColor
   customization_id: 150003
-  unknown40: 0
-  stats: []
-  abilities: []
 # Blue Eyes
 - guid: 10004
   name_id: 424
   description_id: 14
   icon_set_id: 705
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -204,24 +166,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 9
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: EyeColor
   customization_id: 150004
-  unknown40: 0
-  stats: []
-  abilities: []
 # Purple Eyes
 - guid: 10005
   name_id: 432
   description_id: 14
   icon_set_id: 709
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 150
   item_class: -1
   required_battle_class: 0
@@ -247,24 +200,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 9
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: EyeColor
   customization_id: 150005
-  unknown40: 0
-  stats: []
-  abilities: []
 # Magenta Eyes
 - guid: 10006
   name_id: 434
   description_id: 14
   icon_set_id: 708
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 400
   item_class: -1
   required_battle_class: 0
@@ -290,24 +234,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 9
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: EyeColor
   customization_id: 150006
-  unknown40: 0
-  stats: []
-  abilities: []
 # Black Eyes
 - guid: 10007
   name_id: 426
   description_id: 14
   icon_set_id: 704
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -333,24 +268,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 9
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: EyeColor
   customization_id: 150007
-  unknown40: 0
-  stats: []
-  abilities: []
 # Red Eyes
 - guid: 10008
   name_id: 43485
   description_id: 14
   icon_set_id: 1809
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 200
   item_class: -1
   required_battle_class: 0
@@ -376,24 +302,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 12
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: EyeColor
   customization_id: 150008
-  unknown40: 0
-  stats: []
-  abilities: []
 # Orange Eyes
 - guid: 10009
   name_id: 43484
   description_id: 14
   icon_set_id: 1808
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 400
   item_class: -1
   required_battle_class: 0
@@ -419,24 +336,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 12
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: EyeColor
   customization_id: 150009
-  unknown40: 0
-  stats: []
-  abilities: []
 # Yellow Eyes
 - guid: 10010
   name_id: 420
   description_id: 14
   icon_set_id: 1811
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 200
   item_class: -1
   required_battle_class: 0
@@ -462,24 +370,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 12
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: EyeColor
   customization_id: 150010
-  unknown40: 0
-  stats: []
-  abilities: []
 # Yellow Green Eyes
 - guid: 10011
   name_id: 43488
   description_id: 14
   icon_set_id: 1812
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 300
   item_class: -1
   required_battle_class: 0
@@ -505,24 +404,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 12
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: EyeColor
   customization_id: 150011
-  unknown40: 0
-  stats: []
-  abilities: []
 # Teal Eyes
 - guid: 10012
   name_id: 43486
   description_id: 14
   icon_set_id: 1810
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 300
   item_class: -1
   required_battle_class: 0
@@ -548,13 +438,6 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 12
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: EyeColor
   customization_id: 150012
-  unknown40: 0
-  stats: []
-  abilities: []

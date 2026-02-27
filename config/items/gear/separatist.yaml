@@ -5,8 +5,6 @@
   description_id: 14
   icon_set_id: 1113
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -32,24 +30,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Bravis Sith Hood
 - guid: 220001
   name_id: 1420
   description_id: 14
   icon_set_id: 1116
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -75,24 +64,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Bravis Sith Gloves
 - guid: 220002
   name_id: 1378
   description_id: 14
   icon_set_id: 1115
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -118,24 +98,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Bravis Sith Boots
 - guid: 220003
   name_id: 1360
   description_id: 14
   icon_set_id: 1114
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -161,24 +132,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Savek Sith Suit
 - guid: 220004
   name_id: 886
   description_id: 14
   icon_set_id: 487
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -204,24 +166,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Savek Sith Hood
 - guid: 220005
   name_id: 882
   description_id: 14
   icon_set_id: 490
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -247,24 +200,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Savek Sith Gloves
 - guid: 220006
   name_id: 884
   description_id: 14
   icon_set_id: 489
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -290,24 +234,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Savek Sith Boots
 - guid: 220007
   name_id: 888
   description_id: 14
   icon_set_id: 488
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -333,24 +268,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Moralo Eval's Prison Outfit
 - guid: 220008
   name_id: 4588
   description_id: 14
   icon_set_id: 2660
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -376,24 +302,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Lux Bonteri's Suit
 - guid: 220009
   name_id: 4548
   description_id: 14
   icon_set_id: 2630
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -419,24 +336,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Lux Bonteri's Beanie
 - guid: 220010
   name_id: 4546
   description_id: 14
   icon_set_id: 2628
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -462,24 +370,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Lux Bonteri's Gloves
 - guid: 220011
   name_id: 4547
   description_id: 14
   icon_set_id: 2629
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -505,24 +404,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Lux Bonteri's Boots
 - guid: 220012
   name_id: 4549
   description_id: 14
   icon_set_id: 2631
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -548,24 +438,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Count Dooku's Original Robes
 - guid: 220013
   name_id: 1309
   description_id: 14
   icon_set_id: 1080
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -591,24 +472,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Count Dooku's Original Boots
 - guid: 220014
   name_id: 1305
   description_id: 14
   icon_set_id: 1081
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -634,24 +506,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Count Dooku's Robes
 - guid: 220015
   name_id: 32929
   description_id: 14
   icon_set_id: 1080
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -677,24 +540,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Count Dooku's Boots
 - guid: 220016
   name_id: 32930
   description_id: 14
   icon_set_id: 1081
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -720,24 +574,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Captain Argyus' Armor
 - guid: 220017
   name_id: 8918
   description_id: 14
   icon_set_id: 109
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -763,24 +608,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Captain Argyus' Helmet
 - guid: 220018
   name_id: 8924
   description_id: 14
   icon_set_id: 206
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -806,24 +642,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Captain Argyus' Gloves
 - guid: 220019
   name_id: 8922
   description_id: 14
   icon_set_id: 178
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -849,24 +676,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Captain Argyus' Boots
 - guid: 220020
   name_id: 8920
   description_id: 14
   icon_set_id: 132
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -892,24 +710,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Osi Sobeck's Suit
 - guid: 220021
   name_id: 43189
   description_id: 14
   icon_set_id: 1787
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -935,24 +744,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Osi Sobeck's Bracers
 - guid: 220022
   name_id: 43188
   description_id: 14
   icon_set_id: 1788
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -978,24 +778,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Separatist Scientist's Coat
 - guid: 220023
   name_id: 1311
   description_id: 14
   icon_set_id: 1084
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1021,24 +812,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Separatist Scientist's Breather
 - guid: 220024
   name_id: 1408
   description_id: 14
   icon_set_id: 1087
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1064,24 +846,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Separatist Scientist's Gloves
 - guid: 220025
   name_id: 1380
   description_id: 14
   icon_set_id: 1086
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1107,24 +880,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Separatist Scientist's Boots
 - guid: 220026
   name_id: 1346
   description_id: 14
   icon_set_id: 1085
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1150,24 +914,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Lok Durd's Robes
 - guid: 220027
   name_id: 361
   description_id: 14
   icon_set_id: 101
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1193,24 +948,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Lok Durd's Fancy Hat
 - guid: 220028
   name_id: 363
   description_id: 14
   icon_set_id: 201
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1236,24 +982,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Lok Durd's Boots
 - guid: 220029
   name_id: 360
   description_id: 14
   icon_set_id: 143
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1279,24 +1016,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mina Bonteri's Suit
 - guid: 220030
   name_id: 1923
   description_id: 14
   icon_set_id: 1452
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1322,24 +1050,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mina Bonteri's Boots
 - guid: 220031
   name_id: 1925
   description_id: 14
   icon_set_id: 1453
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1365,24 +1084,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Zabrak Sith Robes
 - guid: 220032
   name_id: 14780
   description_id: 14
   icon_set_id: 461
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1408,24 +1118,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Zabrak Sith Gloves
 - guid: 220033
   name_id: 956
   description_id: 14
   icon_set_id: 463
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1451,24 +1152,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Zabrak Sith Boots
 - guid: 220034
   name_id: 950
   description_id: 14
   icon_set_id: 462
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1494,24 +1186,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Asajj Ventress' Battle Suit
 - guid: 220035
   name_id: 138
   description_id: 14
   icon_set_id: 81
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1537,24 +1220,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Asajj Ventress' Wraps
 - guid: 220036
   name_id: 140
   description_id: 14
   icon_set_id: 118
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1580,24 +1254,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Savage Opress' Armor
 - guid: 220037
   name_id: 32973
   description_id: 14
   icon_set_id: 1605
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1623,24 +1288,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Savage Opress' Cuffs
 - guid: 220038
   name_id: 32972
   description_id: 14
   icon_set_id: 1607
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1666,24 +1322,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Savage Opress' Boots
 - guid: 220039
   name_id: 32974
   description_id: 14
   icon_set_id: 1606
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1709,24 +1356,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Darth Sidious' Robes
 - guid: 220040
   name_id: 1323
   description_id: 14
   icon_set_id: 1082
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1752,24 +1390,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Darth Sidious' Hood
 - guid: 220041
   name_id: 1418
   description_id: 14
   icon_set_id: 1083
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1795,24 +1424,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Sith Warrior Robe
 - guid: 220042
   name_id: 52793
   description_id: 14
   icon_set_id: 3114
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1838,24 +1458,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Sith Warrior Mask
 - guid: 220043
   name_id: 52796
   description_id: 14
   icon_set_id: 3117
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1881,24 +1492,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Sith Warrior Gauntlets
 - guid: 220044
   name_id: 52794
   description_id: 14
   icon_set_id: 3116
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1924,24 +1526,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Sith Warrior Boots
 - guid: 220045
   name_id: 52795
   description_id: 14
   icon_set_id: 3115
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1967,24 +1560,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Sith Infiltrator Armor
 - guid: 220046
   name_id: 2685
   description_id: 14
   icon_set_id: 2852
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2010,24 +1594,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Sith Infiltrator Helm
 - guid: 220047
   name_id: 2683
   description_id: 14
   icon_set_id: 2850
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2053,24 +1628,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Sith Infiltrator Gauntlets
 - guid: 220048
   name_id: 2684
   description_id: 14
   icon_set_id: 2851
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2096,24 +1662,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Sith Infiltrator Greaves
 - guid: 220049
   name_id: 2686
   description_id: 14
   icon_set_id: 2853
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2139,24 +1696,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Sith Marauder Robe
 - guid: 220050
   name_id: 43703
   description_id: 14
   icon_set_id: 1880
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2182,24 +1730,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Sith Marauder Helm
 - guid: 220051
   name_id: 43701
   description_id: 14
   icon_set_id: 1883
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2225,24 +1764,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Sith Marauder Vambraces
 - guid: 220052
   name_id: 43702
   description_id: 14
   icon_set_id: 1882
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2268,24 +1798,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Sith Marauder Greaves
 - guid: 220053
   name_id: 43704
   description_id: 14
   icon_set_id: 1881
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2311,24 +1832,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Sith Inquisitor Suit
 - guid: 220054
   name_id: 4926
   description_id: 14
   icon_set_id: 1876
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2354,24 +1866,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Sith Inquisitor Helm
 - guid: 220055
   name_id: 4924
   description_id: 14
   icon_set_id: 1879
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2397,24 +1900,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Sith Inquisitor Gauntlets
 - guid: 220056
   name_id: 4925
   description_id: 14
   icon_set_id: 1878
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2440,24 +1934,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Sith Inquisitor Boots
 - guid: 220057
   name_id: 4927
   description_id: 14
   icon_set_id: 1877
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2483,24 +1968,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Crimson Kofun Armor
 - guid: 220058
   name_id: 53972
   description_id: 14
   icon_set_id: 3272
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2526,24 +2002,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Crimson Kofun Helmet
 - guid: 220059
   name_id: 53970
   description_id: 14
   icon_set_id: 3270
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2569,24 +2036,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Crimson Kofun Arm Wraps
 - guid: 220060
   name_id: 53971
   description_id: 14
   icon_set_id: 3271
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2612,24 +2070,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Crimson Kofun Leg Wraps
 - guid: 220061
   name_id: 53973
   description_id: 14
   icon_set_id: 3273
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2655,24 +2104,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Dark Sith Cowl
 - guid: 220062
   name_id: 4979
   description_id: 14
   icon_set_id: 3015
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2698,24 +2138,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Maroon Sith Cowl
 - guid: 220063
   name_id: 4978
   description_id: 14
   icon_set_id: 3016
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2741,24 +2172,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Red Sith Cowl
 - guid: 220064
   name_id: 4977
   description_id: 14
   icon_set_id: 3017
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2784,24 +2206,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Crimson Prowler Suit
 - guid: 220065
   name_id: 60196
   description_id: 14
   icon_set_id: 3717
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2827,24 +2240,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Crimson Prowler Hood
 - guid: 220066
   name_id: 60194
   description_id: 14
   icon_set_id: 3720
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2870,24 +2274,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Crimson Prowler Gloves
 - guid: 220067
   name_id: 60195
   description_id: 14
   icon_set_id: 3719
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2913,24 +2308,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Crimson Prowler Boots
 - guid: 220068
   name_id: 60197
   description_id: 14
   icon_set_id: 3718
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2956,13 +2342,6 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []

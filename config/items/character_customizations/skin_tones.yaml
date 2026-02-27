@@ -5,8 +5,6 @@
   description_id: 14
   icon_set_id: 715
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -32,24 +30,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 1
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: SkinTone
   customization_id: 120000
-  unknown40: 0
-  stats: []
-  abilities: []
 # Peach Skin
 - guid: 60001
   name_id: 13874
   description_id: 14
   icon_set_id: 716
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -75,24 +64,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 1
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: SkinTone
   customization_id: 120001
-  unknown40: 0
-  stats: []
-  abilities: []
 # Golden Skin
 - guid: 60002
   name_id: 553
   description_id: 14
   icon_set_id: 713
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -118,24 +98,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 1
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: SkinTone
   customization_id: 120002
-  unknown40: 0
-  stats: []
-  abilities: []
 # Warm Tan Skin
 - guid: 60003
   name_id: 556
   description_id: 14
   icon_set_id: 718
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -161,24 +132,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 1
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: SkinTone
   customization_id: 120003
-  unknown40: 0
-  stats: []
-  abilities: []
 # Tan Skin
 - guid: 60004
   name_id: 13876
   description_id: 14
   icon_set_id: 717
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -204,24 +166,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 1
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: SkinTone
   customization_id: 120004
-  unknown40: 0
-  stats: []
-  abilities: []
 # Brown Skin
 - guid: 60005
   name_id: 13875
   description_id: 14
   icon_set_id: 714
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -247,24 +200,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 1
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: SkinTone
   customization_id: 120005
-  unknown40: 0
-  stats: []
-  abilities: []
 # Brown Skin
 - guid: 60006
   name_id: 13875
   description_id: 14
   icon_set_id: 712
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -290,24 +234,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 1
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: SkinTone
   customization_id: 120006
-  unknown40: 0
-  stats: []
-  abilities: []
 # Blue Skin
 - guid: 60007
   name_id: 552
   description_id: 14
   icon_set_id: 728
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -333,24 +268,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 3
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: SkinTone
   customization_id: 120007
-  unknown40: 0
-  stats: []
-  abilities: []
 # Teal Skin
 - guid: 60008
   name_id: 562
   description_id: 14
   icon_set_id: 734
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -376,24 +302,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 3
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: SkinTone
   customization_id: 120008
-  unknown40: 0
-  stats: []
-  abilities: []
 # Green Skin
 - guid: 60009
   name_id: 558
   description_id: 14
   icon_set_id: 731
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -419,24 +336,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 3
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: SkinTone
   customization_id: 120009
-  unknown40: 0
-  stats: []
-  abilities: []
 # Yellow Skin
 - guid: 60010
   name_id: 563
   description_id: 14
   icon_set_id: 735
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -462,24 +370,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 3
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: SkinTone
   customization_id: 120010
-  unknown40: 0
-  stats: []
-  abilities: []
 # Peach Skin
 - guid: 60011
   name_id: 561
   description_id: 14
   icon_set_id: 733
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -505,24 +404,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 3
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: SkinTone
   customization_id: 120011
-  unknown40: 0
-  stats: []
-  abilities: []
 # Orange Skin
 - guid: 60012
   name_id: 560
   description_id: 14
   icon_set_id: 732
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -548,24 +438,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 3
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: SkinTone
   customization_id: 120012
-  unknown40: 0
-  stats: []
-  abilities: []
 # Brown Skin
 - guid: 60013
   name_id: 770
   description_id: 14
   icon_set_id: 729
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -591,24 +472,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 3
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: SkinTone
   customization_id: 120013
-  unknown40: 0
-  stats: []
-  abilities: []
 # Grey Skin
 - guid: 60014
   name_id: 559
   description_id: 14
   icon_set_id: 730
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -634,24 +506,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 3
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: SkinTone
   customization_id: 120014
-  unknown40: 0
-  stats: []
-  abilities: []
 # Red Skin
 - guid: 60015
   name_id: 1249
   description_id: 14
   icon_set_id: 738
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -677,24 +540,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 3
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: SkinTone
   customization_id: 120015
-  unknown40: 0
-  stats: []
-  abilities: []
 # Pink Skin
 - guid: 60016
   name_id: 1251
   description_id: 14
   icon_set_id: 739
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -720,24 +574,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 3
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: SkinTone
   customization_id: 120016
-  unknown40: 0
-  stats: []
-  abilities: []
 # Khaki Skin
 - guid: 60017
   name_id: 782
   description_id: 14
   icon_set_id: 745
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -763,24 +608,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 4
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: SkinTone
   customization_id: 120017
-  unknown40: 0
-  stats: []
-  abilities: []
 # Yellow Skin
 - guid: 60018
   name_id: 780
   description_id: 14
   icon_set_id: 747
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -806,24 +642,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 4
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: SkinTone
   customization_id: 120018
-  unknown40: 0
-  stats: []
-  abilities: []
 # Red Skin
 - guid: 60019
   name_id: 776
   description_id: 14
   icon_set_id: 746
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -849,24 +676,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 4
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: SkinTone
   customization_id: 120019
-  unknown40: 0
-  stats: []
-  abilities: []
 # Brown Skin
 - guid: 60020
   name_id: 778
   description_id: 14
   icon_set_id: 744
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -892,24 +710,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 4
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: SkinTone
   customization_id: 120020
-  unknown40: 0
-  stats: []
-  abilities: []
 # Amber Skin
 - guid: 60021
   name_id: 772
   description_id: 14
   icon_set_id: 725
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -935,24 +744,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 5
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: SkinTone
   customization_id: 120021
-  unknown40: 0
-  stats: []
-  abilities: []
 # Orange Skin
 - guid: 60022
   name_id: 15428
   description_id: 14
   icon_set_id: 726
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -978,24 +778,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 5
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: SkinTone
   customization_id: 120022
-  unknown40: 0
-  stats: []
-  abilities: []
 # Red Skin
 - guid: 60023
   name_id: 774
   description_id: 14
   icon_set_id: 727
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -1021,24 +812,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 5
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: SkinTone
   customization_id: 120023
-  unknown40: 0
-  stats: []
-  abilities: []
 # Pantoran Blue
 - guid: 60024
   name_id: 1681
   description_id: 14
   icon_set_id: 1316
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1064,24 +846,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 10
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: SkinTone
   customization_id: 120024
-  unknown40: 0
-  stats: []
-  abilities: []
 # Grey Scales
 - guid: 60025
   name_id: 43475
   description_id: 14
   icon_set_id: 1806
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -1107,24 +880,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 12
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: SkinTone
   customization_id: 120025
-  unknown40: 0
-  stats: []
-  abilities: []
 # Green Scales
 - guid: 60026
   name_id: 43483
   description_id: 14
   icon_set_id: 1805
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -1150,24 +914,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 12
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: SkinTone
   customization_id: 120026
-  unknown40: 0
-  stats: []
-  abilities: []
 # Bright Green Scales
 - guid: 60027
   name_id: 43473
   description_id: 14
   icon_set_id: 1803
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -1193,24 +948,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 12
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: SkinTone
   customization_id: 120027
-  unknown40: 0
-  stats: []
-  abilities: []
 # Yellow Scales
 - guid: 60028
   name_id: 43474
   description_id: 14
   icon_set_id: 1807
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -1236,24 +982,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 12
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: SkinTone
   customization_id: 120028
-  unknown40: 0
-  stats: []
-  abilities: []
 # Brown Scales
 - guid: 60029
   name_id: 43476
   description_id: 14
   icon_set_id: 1804
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -1279,13 +1016,6 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 12
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: SkinTone
   customization_id: 120029
-  unknown40: 0
-  stats: []
-  abilities: []

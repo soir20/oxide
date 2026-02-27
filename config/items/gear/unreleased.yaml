@@ -5,8 +5,6 @@
   description_id: 14
   icon_set_id: 480
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -32,24 +30,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Luke Skywalker's Boots
 - guid: 230001
   name_id: 365
   description_id: 14
   icon_set_id: 122
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -75,24 +64,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Kyle Katarn's Boots
 - guid: 230002
   name_id: 206
   description_id: 14
   icon_set_id: 142
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -118,24 +98,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Kyle Katarn's Uniform
 - guid: 230003
   name_id: 204
   description_id: 14
   icon_set_id: 673
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -161,24 +132,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Kyle Katarn's Gloves
 - guid: 230004
   name_id: 202
   description_id: 14
   icon_set_id: 676
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -204,24 +166,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Kyle Katarn's Boots
 - guid: 230005
   name_id: 206
   description_id: 14
   icon_set_id: 680
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -247,24 +200,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Lando Calrissian's Suit
 - guid: 230006
   name_id: 1462
   description_id: 14
   icon_set_id: 673
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -290,24 +234,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Lando Calrissian's Shoes
 - guid: 230007
   name_id: 1472
   description_id: 14
   icon_set_id: 680
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -333,24 +268,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Tamtel Skreej's Armor
 - guid: 230008
   name_id: 930
   description_id: 14
   icon_set_id: 495
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -376,24 +302,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Tamtel Skreej's Helm
 - guid: 230009
   name_id: 928
   description_id: 14
   icon_set_id: 497
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -419,24 +336,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Tamtel Skreej's Boots
 - guid: 230010
   name_id: 932
   description_id: 14
   icon_set_id: 496
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -462,24 +370,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mara Jade's Battle Suit
 - guid: 230011
   name_id: 216
   description_id: 14
   icon_set_id: 104
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -505,24 +404,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mara Jade's Gloves
 - guid: 230012
   name_id: 214
   description_id: 14
   icon_set_id: 174
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -548,24 +438,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mara Jade's Boots
 - guid: 230013
   name_id: 218
   description_id: 14
   icon_set_id: 147
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -591,24 +472,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Imperial Royal Guard Armor
 - guid: 230014
   name_id: 1650
   description_id: 14
   icon_set_id: 673
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -634,24 +506,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Imperial Royal Guard Helmet
 - guid: 230015
   name_id: 1646
   description_id: 14
   icon_set_id: 677
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -677,24 +540,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Imperial Royal Guard Gloves
 - guid: 230016
   name_id: 1648
   description_id: 14
   icon_set_id: 676
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -720,24 +574,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Imperial Royal Guard Boots
 - guid: 230017
   name_id: 1652
   description_id: 14
   icon_set_id: 680
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -763,24 +608,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Dash Rendar's Suit
 - guid: 230018
   name_id: 1565
   description_id: 14
   icon_set_id: 673
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -806,24 +642,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Dash Rendar's Gloves
 - guid: 230019
   name_id: 1563
   description_id: 14
   icon_set_id: 676
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -849,24 +676,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Dash Rendar's Boots
 - guid: 230020
   name_id: 1567
   description_id: 14
   icon_set_id: 680
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -892,24 +710,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Han Solo's Outfit
 - guid: 230021
   name_id: 302
   description_id: 14
   icon_set_id: 673
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -935,24 +744,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Han Solo's Boots
 - guid: 230022
   name_id: 304
   description_id: 14
   icon_set_id: 680
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -978,24 +778,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Rebel Pilot Jumpsuit
 - guid: 230023
   name_id: 240
   description_id: 14
   icon_set_id: 108
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1021,24 +812,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Rebel Pilot Helmet
 - guid: 230024
   name_id: 236
   description_id: 14
   icon_set_id: 205
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1064,24 +846,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Rebel Pilot Gloves
 - guid: 230025
   name_id: 238
   description_id: 14
   icon_set_id: 177
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1107,24 +880,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Rebel Pilot Boots
 - guid: 230026
   name_id: 242
   description_id: 14
   icon_set_id: 150
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1150,24 +914,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Rebel Pilot Jumpsuit
 - guid: 230027
   name_id: 240
   description_id: 14
   icon_set_id: 673
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1193,24 +948,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Rebel Pilot Helmet
 - guid: 230028
   name_id: 236
   description_id: 14
   icon_set_id: 677
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1236,24 +982,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Rebel Pilot Jumpsuit
 - guid: 230029
   name_id: 240
   description_id: 14
   icon_set_id: 673
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1279,24 +1016,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Rebel Pilot Helmet
 - guid: 230030
   name_id: 236
   description_id: 14
   icon_set_id: 677
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1322,24 +1050,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Unknown boots
 - guid: 230031
   name_id: 0
   description_id: 14
   icon_set_id: 680
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1365,13 +1084,6 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []

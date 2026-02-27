@@ -5,8 +5,6 @@
   description_id: 14
   icon_set_id: 2511
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -32,24 +30,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Zygerrian Guard Helmet
 - guid: 190001
   name_id: 4452
   description_id: 14
   icon_set_id: 2510
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -75,24 +64,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Zygerrian Guard Boots
 - guid: 190002
   name_id: 4454
   description_id: 14
   icon_set_id: 2512
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -118,24 +98,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Bo Katan's Death Watch Suit
 - guid: 190003
   name_id: 4552
   description_id: 14
   icon_set_id: 2634
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -161,24 +132,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Bo Katan's Death Watch Helmet
 - guid: 190004
   name_id: 4550
   description_id: 14
   icon_set_id: 2632
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -204,24 +166,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Bo Katan's Death Watch Gloves
 - guid: 190005
   name_id: 4551
   description_id: 14
   icon_set_id: 2633
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -247,24 +200,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Bo Katan's Death Watch Boots
 - guid: 190006
   name_id: 4553
   description_id: 14
   icon_set_id: 2635
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -290,24 +234,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Krismo Sodi's Kage Uniform
 - guid: 190007
   name_id: 4715
   description_id: 14
   icon_set_id: 2762
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -333,24 +268,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Krismo Sodi's Hooded Mask
 - guid: 190008
   name_id: 4713
   description_id: 14
   icon_set_id: 2760
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -376,24 +302,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Krismo Sodi's Gloves
 - guid: 190009
   name_id: 4714
   description_id: 14
   icon_set_id: 2761
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -419,24 +336,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Krismo Sodi's Boots
 - guid: 190010
   name_id: 4716
   description_id: 14
   icon_set_id: 2763
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -462,24 +370,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Pre Vizsla's Armor
 - guid: 190011
   name_id: 1194
   description_id: 14
   icon_set_id: 376
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -505,24 +404,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Pre Vizsla's Helmet
 - guid: 190012
   name_id: 1200
   description_id: 14
   icon_set_id: 394
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -548,24 +438,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Pre Vizsla's Gloves
 - guid: 190013
   name_id: 1198
   description_id: 14
   icon_set_id: 388
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -591,24 +472,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Pre Vizsla's Boots
 - guid: 190014
   name_id: 1196
   description_id: 14
   icon_set_id: 382
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -634,24 +506,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Pre Vizsla's Death Watch Armor
 - guid: 190015
   name_id: 54427
   description_id: 14
   icon_set_id: 3697
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -677,24 +540,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Pre Vizsla's Death Watch Helmet
 - guid: 190016
   name_id: 54425
   description_id: 14
   icon_set_id: 3695
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -720,24 +574,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Pre Vizsla's Death Watch Gloves
 - guid: 190017
   name_id: 54426
   description_id: 14
   icon_set_id: 3696
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -763,24 +608,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Pre Vizsla's Death Watch Boots
 - guid: 190018
   name_id: 54428
   description_id: 14
   icon_set_id: 3698
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -806,24 +642,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # King Katuunko's Suit
 - guid: 190019
   name_id: 1620
   description_id: 14
   icon_set_id: 1246
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -849,24 +676,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # King Katuunko's Visor
 - guid: 190020
   name_id: 1616
   description_id: 14
   icon_set_id: 1249
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -892,24 +710,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # King Katuunko's Handguards
 - guid: 190021
   name_id: 1618
   description_id: 14
   icon_set_id: 1248
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -935,24 +744,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # King Katuunko's Boots
 - guid: 190022
   name_id: 1622
   description_id: 14
   icon_set_id: 1247
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -978,24 +778,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Baron Papanoida's Suit
 - guid: 190023
   name_id: 1642
   description_id: 14
   icon_set_id: 1323
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1021,24 +812,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Baron Papanoida's Hat
 - guid: 190024
   name_id: 1638
   description_id: 14
   icon_set_id: 1326
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1064,24 +846,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Baron Papanoida's Gloves
 - guid: 190025
   name_id: 1640
   description_id: 14
   icon_set_id: 1325
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1107,24 +880,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Baron Papanoida's Boots
 - guid: 190026
   name_id: 1644
   description_id: 14
   icon_set_id: 1324
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1150,24 +914,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Satine's Royal Guard Armor
 - guid: 190027
   name_id: 1761
   description_id: 14
   icon_set_id: 1349
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1193,24 +948,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Satine's Royal Guard Helm
 - guid: 190028
   name_id: 1757
   description_id: 14
   icon_set_id: 1352
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1236,24 +982,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Satine's Royal Guard Gloves
 - guid: 190029
   name_id: 1759
   description_id: 14
   icon_set_id: 1351
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1279,24 +1016,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Satine's Royal Guard Boots
 - guid: 190030
   name_id: 1763
   description_id: 14
   icon_set_id: 1350
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1322,24 +1050,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Duchess Satine's Robes
 - guid: 190031
   name_id: 1845
   description_id: 14
   icon_set_id: 1378
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1365,24 +1084,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Duchess Satine's Headdress
 - guid: 190032
   name_id: 1837
   description_id: 14
   icon_set_id: 1380
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1408,24 +1118,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Duchess Satine's Boots
 - guid: 190033
   name_id: 1840
   description_id: 14
   icon_set_id: 1379
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1451,24 +1152,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mandalorian Secret Service Armor
 - guid: 190034
   name_id: 1769
   description_id: 14
   icon_set_id: 1374
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1494,24 +1186,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mandalorian Secret Service Helmet
 - guid: 190035
   name_id: 1765
   description_id: 14
   icon_set_id: 1377
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1537,24 +1220,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mandalorian Secret Service Gloves
 - guid: 190036
   name_id: 1767
   description_id: 14
   icon_set_id: 1376
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1580,24 +1254,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mandalorian Secret Service Boots
 - guid: 190037
   name_id: 1771
   description_id: 14
   icon_set_id: 1375
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1623,24 +1288,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mother Talzin's Robes
 - guid: 190038
   name_id: 32931
   description_id: 14
   icon_set_id: 1595
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1666,24 +1322,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mother Talzin's Hood
 - guid: 190039
   name_id: 32932
   description_id: 14
   icon_set_id: 1597
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1709,24 +1356,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mother Talzin's Boots
 - guid: 190040
   name_id: 32934
   description_id: 14
   icon_set_id: 1596
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1752,24 +1390,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Nightsister Ventress' Outfit
 - guid: 190041
   name_id: 32981
   description_id: 14
   icon_set_id: 1612
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1795,24 +1424,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Nightsister Ventress' Hood
 - guid: 190042
   name_id: 32979
   description_id: 14
   icon_set_id: 1615
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1838,24 +1458,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Nightsister Ventress' Gloves
 - guid: 190043
   name_id: 32980
   description_id: 14
   icon_set_id: 1614
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1881,24 +1492,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Nightsister Ventress' Boots
 - guid: 190044
   name_id: 32982
   description_id: 14
   icon_set_id: 1613
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1924,24 +1526,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mortis Son's Suit
 - guid: 190045
   name_id: 33559
   description_id: 14
   icon_set_id: 1659
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -1967,24 +1560,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mortis Son's Collar
 - guid: 190046
   name_id: 33557
   description_id: 14
   icon_set_id: 1657
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2010,24 +1594,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mortis Son's Gloves
 - guid: 190047
   name_id: 33558
   description_id: 14
   icon_set_id: 1658
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2053,24 +1628,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mortis Son's Boots
 - guid: 190048
   name_id: 33560
   description_id: 14
   icon_set_id: 1660
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2096,24 +1662,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Garnac's Suit
 - guid: 190049
   name_id: 43515
   description_id: 14
   icon_set_id: 1838
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2139,24 +1696,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mandalorian Deathwatch Suit
 - guid: 190050
   name_id: 4303
   description_id: 14
   icon_set_id: 2423
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2182,24 +1730,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mandalorian Deathwatch Helmet
 - guid: 190051
   name_id: 4301
   description_id: 14
   icon_set_id: 2426
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2225,24 +1764,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mandalorian Deathwatch Gloves
 - guid: 190052
   name_id: 4302
   description_id: 14
   icon_set_id: 2425
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2268,24 +1798,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mandalorian Deathwatch Boots
 - guid: 190053
   name_id: 4304
   description_id: 14
   icon_set_id: 2424
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2311,24 +1832,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mandalorian Mercenary Armor
 - guid: 190054
   name_id: 2664
   description_id: 14
   icon_set_id: 2164
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2354,24 +1866,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mandalorian Mercenary Helmet
 - guid: 190055
   name_id: 2662
   description_id: 14
   icon_set_id: 2167
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2397,24 +1900,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mandalorian Mercenary Gloves
 - guid: 190056
   name_id: 2663
   description_id: 14
   icon_set_id: 2166
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2440,24 +1934,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mandalorian Mercenary Boots
 - guid: 190057
   name_id: 2665
   description_id: 14
   icon_set_id: 2165
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2483,24 +1968,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Death Watch Armor
 - guid: 190058
   name_id: 178
   description_id: 14
   icon_set_id: 95
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2526,24 +2002,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Death Watch Helmet
 - guid: 190059
   name_id: 174
   description_id: 14
   icon_set_id: 200
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2569,24 +2036,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Death Watch Gloves
 - guid: 190060
   name_id: 176
   description_id: 14
   icon_set_id: 169
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2612,24 +2070,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Death Watch Boots
 - guid: 190061
   name_id: 180
   description_id: 14
   icon_set_id: 137
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2655,24 +2104,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Tusken Raider Robes
 - guid: 190062
   name_id: 256
   description_id: 14
   icon_set_id: 115
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2698,24 +2138,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Tusken Raider Helmet
 - guid: 190063
   name_id: 252
   description_id: 14
   icon_set_id: 209
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2741,24 +2172,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Tusken Raider Gloves
 - guid: 190064
   name_id: 254
   description_id: 14
   icon_set_id: 183
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2784,24 +2206,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Tusken Raider Boots
 - guid: 190065
   name_id: 258
   description_id: 14
   icon_set_id: 153
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2827,24 +2240,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Captain Typho's Armor
 - guid: 190066
   name_id: 1329
   description_id: 14
   icon_set_id: 1197
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2870,24 +2274,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Captain Typho's Eyepatch
 - guid: 190067
   name_id: 1424
   description_id: 14
   icon_set_id: 1200
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2913,24 +2308,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Captain Typho's Gloves
 - guid: 190068
   name_id: 1392
   description_id: 14
   icon_set_id: 1199
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2956,24 +2342,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Captain Typho's Boots
 - guid: 190069
   name_id: 1350
   description_id: 14
   icon_set_id: 1198
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -2999,24 +2376,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Lama Su's Armor
 - guid: 190070
   name_id: 1577
   description_id: 14
   icon_set_id: 1237
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -3042,24 +2410,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Lama Su's Boots
 - guid: 190071
   name_id: 1579
   description_id: 14
   icon_set_id: 1239
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -3085,24 +2444,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Toydarian Royal Guard Uniform
 - guid: 190072
   name_id: 1662
   description_id: 14
   icon_set_id: 1250
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -3128,24 +2478,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Toydarian Royal Guard Helmet
 - guid: 190073
   name_id: 1658
   description_id: 14
   icon_set_id: 1253
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -3171,24 +2512,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Toydarian Royal Guard Gloves
 - guid: 190074
   name_id: 1660
   description_id: 14
   icon_set_id: 1252
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -3214,24 +2546,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Toydarian Royal Guard Boots
 - guid: 190075
   name_id: 1664
   description_id: 14
   icon_set_id: 1251
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -3257,24 +2580,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Ion Papanoida's Uniform
 - guid: 190076
   name_id: 1573
   description_id: 14
   icon_set_id: 1319
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -3300,24 +2614,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Ion Papanoida's Hat
 - guid: 190077
   name_id: 1569
   description_id: 14
   icon_set_id: 1322
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -3343,24 +2648,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Ion Papanoida's Gloves
 - guid: 190078
   name_id: 1571
   description_id: 14
   icon_set_id: 1321
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -3386,24 +2682,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Ion Papanoida's Boots
 - guid: 190079
   name_id: 1575
   description_id: 14
   icon_set_id: 1320
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -3429,24 +2716,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mandalorian Police Captain Armor
 - guid: 190080
   name_id: 1743
   description_id: 14
   icon_set_id: 1342
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -3472,24 +2750,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mandalorian Police Captain Helmet
 - guid: 190081
   name_id: 1739
   description_id: 14
   icon_set_id: 1345
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -3515,24 +2784,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mandalorian Police Captain Gloves
 - guid: 190082
   name_id: 1741
   description_id: 14
   icon_set_id: 1344
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -3558,24 +2818,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mandalorian Police Captain Boots
 - guid: 190083
   name_id: 1745
   description_id: 14
   icon_set_id: 1343
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -3601,24 +2852,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Tee Va's Robe
 - guid: 190084
   name_id: 1773
   description_id: 14
   icon_set_id: 1346
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -3644,24 +2886,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Tee Va's Headdress
 - guid: 190085
   name_id: 1813
   description_id: 14
   icon_set_id: 1348
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -3687,24 +2920,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Tee Va's Sandals
 - guid: 190086
   name_id: 1775
   description_id: 14
   icon_set_id: 1347
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -3730,24 +2954,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mandalorian Cadet Uniform
 - guid: 190087
   name_id: 1848
   description_id: 14
   icon_set_id: 1383
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -3773,24 +2988,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mandalorian Cadet Visor
 - guid: 190088
   name_id: 1846
   description_id: 14
   icon_set_id: 1381
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -3816,24 +3022,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mandalorian Cadet Boots
 - guid: 190089
   name_id: 1850
   description_id: 14
   icon_set_id: 1382
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -3859,24 +3056,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Coruscant Engineer Uniform
 - guid: 190090
   name_id: 1911
   description_id: 14
   icon_set_id: 1448
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -3902,24 +3090,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Coruscant Engineer Hat
 - guid: 190091
   name_id: 1907
   description_id: 14
   icon_set_id: 1451
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -3945,24 +3124,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Coruscant Engineer Gloves
 - guid: 190092
   name_id: 1909
   description_id: 14
   icon_set_id: 1450
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -3988,24 +3158,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Coruscant Engineer Boots
 - guid: 190093
   name_id: 1913
   description_id: 14
   icon_set_id: 1449
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -4031,24 +3192,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Sochek's Suit
 - guid: 190094
   name_id: 43514
   description_id: 14
   icon_set_id: 1844
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -4074,24 +3226,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Sochek's Goggles
 - guid: 190095
   name_id: 43513
   description_id: 14
   icon_set_id: 1845
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -4117,24 +3260,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Captain Ackbar's Uniform
 - guid: 190096
   name_id: 2340
   description_id: 14
   icon_set_id: 2328
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -4160,24 +3294,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Captain Ackbar's Helmet
 - guid: 190097
   name_id: 2338
   description_id: 14
   icon_set_id: 2330
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -4203,24 +3328,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Captain Ackbar's Boots
 - guid: 190098
   name_id: 2342
   description_id: 14
   icon_set_id: 2329
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -4246,24 +3362,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Gungan Warrior Armor
 - guid: 190099
   name_id: 2356
   description_id: 14
   icon_set_id: 2331
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -4289,24 +3396,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Gungan Warrior Mask
 - guid: 190100
   name_id: 2352
   description_id: 14
   icon_set_id: 2333
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -4332,24 +3430,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Gungan Warrior Gloves
 - guid: 190101
   name_id: 2354
   description_id: 14
   icon_set_id: 2332
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -4375,24 +3464,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Lee-Char's Suit
 - guid: 190102
   name_id: 2362
   description_id: 14
   icon_set_id: 2334
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -4418,24 +3498,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Lee-Char's Crown
 - guid: 190103
   name_id: 2360
   description_id: 14
   icon_set_id: 2336
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -4461,24 +3532,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Lee-Char's Boots
 - guid: 190104
   name_id: 2364
   description_id: 14
   icon_set_id: 2335
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -4504,24 +3566,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Boss Lyonie's Robes
 - guid: 190105
   name_id: 2390
   description_id: 14
   icon_set_id: 2366
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -4547,24 +3600,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Boss Lyonie's Headdress
 - guid: 190106
   name_id: 2389
   description_id: 14
   icon_set_id: 2365
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -4590,24 +3634,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Balnab Hunter Suit
 - guid: 190107
   name_id: 2949
   description_id: 14
   icon_set_id: 2388
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -4633,24 +3668,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Balnab Hunter Helmet
 - guid: 190108
   name_id: 2947
   description_id: 14
   icon_set_id: 2390
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -4676,24 +3702,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Balnab Hunter Boots
 - guid: 190109
   name_id: 2951
   description_id: 14
   icon_set_id: 2389
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -4719,24 +3736,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Umbaran Suit
 - guid: 190110
   name_id: 4299
   description_id: 14
   icon_set_id: 2408
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -4762,24 +3770,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Umbaran Gloves
 - guid: 190111
   name_id: 4298
   description_id: 14
   icon_set_id: 2410
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -4805,24 +3804,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Umbaran Boots
 - guid: 190112
   name_id: 4300
   description_id: 14
   icon_set_id: 2409
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -4848,24 +3838,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Hondo Ohnaka's Tunic
 - guid: 190113
   name_id: 1315
   description_id: 14
   icon_set_id: 1096
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -4891,24 +3872,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Hondo Ohnaka's Cap
 - guid: 190114
   name_id: 1414
   description_id: 14
   icon_set_id: 1099
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -4934,24 +3906,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Hondo Ohnaka's Wraps
 - guid: 190115
   name_id: 1384
   description_id: 14
   icon_set_id: 1098
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -4977,24 +3940,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Hondo Ohnaka's Boots
 - guid: 190116
   name_id: 1352
   description_id: 14
   icon_set_id: 1097
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -5020,24 +3974,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Nightsister's Robes
 - guid: 190117
   name_id: 32940
   description_id: 14
   icon_set_id: 1598
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -5063,24 +4008,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Nightsister's Hood
 - guid: 190118
   name_id: 32938
   description_id: 14
   icon_set_id: 1601
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -5106,24 +4042,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Nightsister's Wrist Wraps
 - guid: 190119
   name_id: 32939
   description_id: 14
   icon_set_id: 1600
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -5149,24 +4076,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Nightsister's Boots
 - guid: 190120
   name_id: 32941
   description_id: 14
   icon_set_id: 1599
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -5192,24 +4110,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Nightbrother Tunic
 - guid: 190121
   name_id: 32985
   description_id: 14
   icon_set_id: 1625
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -5235,24 +4144,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Nightbrother Bracers
 - guid: 190122
   name_id: 32984
   description_id: 14
   icon_set_id: 1627
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -5278,24 +4178,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Nightbrother Boots
 - guid: 190123
   name_id: 32986
   description_id: 14
   icon_set_id: 1626
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -5321,24 +4212,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mortis Father's Suit
 - guid: 190124
   name_id: 33784
   description_id: 14
   icon_set_id: 1665
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -5364,24 +4246,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mortis Father's Hat
 - guid: 190125
   name_id: 33783
   description_id: 14
   icon_set_id: 1667
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -5407,24 +4280,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mortis Father's Boots
 - guid: 190126
   name_id: 33785
   description_id: 14
   icon_set_id: 1666
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -5450,24 +4314,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Cassie Cryar's Suit
 - guid: 190127
   name_id: 820
   description_id: 14
   icon_set_id: 442
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -5493,24 +4348,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Cassie Cryar's Gloves
 - guid: 190128
   name_id: 818
   description_id: 14
   icon_set_id: 444
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -5536,24 +4382,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Cassie Cryar's Shoes
 - guid: 190129
   name_id: 822
   description_id: 14
   icon_set_id: 443
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -5579,24 +4416,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Coruscant Underworld Garb
 - guid: 190130
   name_id: 1202
   description_id: 14
   icon_set_id: 375
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -5622,24 +4450,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Coruscant Underworld Headgear
 - guid: 190131
   name_id: 1208
   description_id: 14
   icon_set_id: 393
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -5665,24 +4484,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Coruscant Underworld Gloves
 - guid: 190132
   name_id: 1206
   description_id: 14
   icon_set_id: 387
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -5708,24 +4518,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Coruscant Underworld Boots
 - guid: 190133
   name_id: 1204
   description_id: 14
   icon_set_id: 381
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -5751,24 +4552,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Major Rigosso's Suit
 - guid: 190134
   name_id: 4764
   description_id: 14
   icon_set_id: 2806
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -5794,24 +4586,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Major Rigosso's Gloves
 - guid: 190135
   name_id: 4763
   description_id: 14
   icon_set_id: 2805
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -5837,24 +4620,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Major Rigosso's Boots
 - guid: 190136
   name_id: 4765
   description_id: 14
   icon_set_id: 2807
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -5880,24 +4654,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Usk Bunker General Suit
 - guid: 190137
   name_id: 4776
   description_id: 14
   icon_set_id: 2817
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -5923,24 +4688,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Usk Bunker General Gloves
 - guid: 190138
   name_id: 4775
   description_id: 14
   icon_set_id: 2816
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -5966,24 +4722,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Usk Bunker General Boots
 - guid: 190139
   name_id: 4777
   description_id: 14
   icon_set_id: 2818
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -6009,24 +4756,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Grek Bunker General Suit
 - guid: 190140
   name_id: 4772
   description_id: 14
   icon_set_id: 2813
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -6052,24 +4790,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Grek Bunker General Gloves
 - guid: 190141
   name_id: 4771
   description_id: 14
   icon_set_id: 2812
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -6095,24 +4824,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Grek Bunker General Boots
 - guid: 190142
   name_id: 4773
   description_id: 14
   icon_set_id: 2814
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -6138,24 +4858,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Umbaran General Suit
 - guid: 190143
   name_id: 4780
   description_id: 14
   icon_set_id: 2821
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -6181,24 +4892,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Umbaran General Gloves
 - guid: 190144
   name_id: 4779
   description_id: 14
   icon_set_id: 2820
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -6224,24 +4926,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Umbaran General Boots
 - guid: 190145
   name_id: 4781
   description_id: 14
   icon_set_id: 2822
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -6267,24 +4960,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Gerrera's Suit
 - guid: 190146
   name_id: 52906
   description_id: 14
   icon_set_id: 3149
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -6310,24 +4994,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Gerrera's Gloves
 - guid: 190147
   name_id: 52905
   description_id: 14
   icon_set_id: 3148
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -6353,24 +5028,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Gerrera's Boots
 - guid: 190148
   name_id: 52907
   description_id: 14
   icon_set_id: 3150
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -6396,24 +5062,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Senatorial Naboo Bodysuit
 - guid: 190149
   name_id: 248
   description_id: 14
   icon_set_id: 110
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -6439,24 +5096,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Senatorial Naboo Headwrap
 - guid: 190150
   name_id: 246
   description_id: 14
   icon_set_id: 207
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -6482,24 +5130,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Senatorial Naboo Boots
 - guid: 190151
   name_id: 250
   description_id: 14
   icon_set_id: 151
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -6525,24 +5164,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Onderon Guard Suit
 - guid: 190152
   name_id: 53542
   description_id: 14
   icon_set_id: 3182
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -6568,24 +5198,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Onderon Guard Helmet
 - guid: 190153
   name_id: 53540
   description_id: 14
   icon_set_id: 3180
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -6611,24 +5232,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Onderon Guard Gloves
 - guid: 190154
   name_id: 53541
   description_id: 14
   icon_set_id: 3181
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -6654,24 +5266,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Onderon Guard Boots
 - guid: 190155
   name_id: 53543
   description_id: 14
   icon_set_id: 3183
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -6697,24 +5300,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Police Guard Armor
 - guid: 190156
   name_id: 43707
   description_id: 14
   icon_set_id: 1884
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -6740,24 +5334,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Police Guard Helmet
 - guid: 190157
   name_id: 43705
   description_id: 14
   icon_set_id: 1887
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -6783,24 +5368,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Police Guard Gloves
 - guid: 190158
   name_id: 43706
   description_id: 14
   icon_set_id: 1886
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -6826,24 +5402,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Police Guard Boots
 - guid: 190159
   name_id: 43708
   description_id: 14
   icon_set_id: 1885
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -6869,24 +5436,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Jiro's Suit
 - guid: 190160
   name_id: 52886
   description_id: 14
   icon_set_id: 3813
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -6912,24 +5470,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Jiro's Gloves
 - guid: 190161
   name_id: 54547
   description_id: 14
   icon_set_id: 3812
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -6955,24 +5504,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Jiro's Boots
 - guid: 190162
   name_id: 52887
   description_id: 14
   icon_set_id: 3814
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -6998,24 +5538,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Craggy Pirate Suit
 - guid: 190163
   name_id: 54495
   description_id: 14
   icon_set_id: 3748
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -7041,24 +5572,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Craggy Pirate Gloves
 - guid: 190164
   name_id: 54494
   description_id: 14
   icon_set_id: 3747
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -7084,24 +5606,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Craggy Pirate Boots
 - guid: 190165
   name_id: 54496
   description_id: 14
   icon_set_id: 3749
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -7127,24 +5640,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Weequay Pirate Suit
 - guid: 190166
   name_id: 53546
   description_id: 14
   icon_set_id: 3187
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -7170,24 +5674,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Weequay Pirate Bandana
 - guid: 190167
   name_id: 53544
   description_id: 14
   icon_set_id: 3185
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -7213,24 +5708,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Weequay Pirate Gloves
 - guid: 190168
   name_id: 53545
   description_id: 14
   icon_set_id: 3186
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -7256,24 +5742,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Weequay Pirate Boots
 - guid: 190169
   name_id: 53547
   description_id: 14
   icon_set_id: 3188
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -7299,24 +5776,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Black Sun Armor
 - guid: 190170
   name_id: 54508
   description_id: 14
   icon_set_id: 3763
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -7342,24 +5810,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Black Sun Helmet
 - guid: 190171
   name_id: 54506
   description_id: 14
   icon_set_id: 3762
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -7385,24 +5844,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Black Sun Foot Soldier Boots
 - guid: 190172
   name_id: 54203
   description_id: 14
   icon_set_id: 3764
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -7428,24 +5878,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Nikto Spacesuit
 - guid: 190173
   name_id: 60771
   description_id: 14
   icon_set_id: 3855
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -7471,24 +5912,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Nikto Helmet
 - guid: 190174
   name_id: 60774
   description_id: 14
   icon_set_id: 3858
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -7514,24 +5946,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Nikto Gloves
 - guid: 190175
   name_id: 60772
   description_id: 14
   icon_set_id: 3857
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -7557,24 +5980,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Nikto Boots
 - guid: 190176
   name_id: 60773
   description_id: 14
   icon_set_id: 3856
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -7600,24 +6014,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Ming Po Robe
 - guid: 190177
   name_id: 52835
   description_id: 14
   icon_set_id: 3061
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -7643,24 +6048,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Ming Po Gloves
 - guid: 190178
   name_id: 52834
   description_id: 14
   icon_set_id: 3060
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -7686,24 +6082,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Ming Po Boots
 - guid: 190179
   name_id: 52836
   description_id: 14
   icon_set_id: 3062
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -7729,24 +6116,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Ming Po Robe
 - guid: 190180
   name_id: 52835
   description_id: 14
   icon_set_id: 673
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -7772,24 +6150,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Ming Po Gloves
 - guid: 190181
   name_id: 52834
   description_id: 14
   icon_set_id: 676
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -7815,24 +6184,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Ming Po Boots
 - guid: 190182
   name_id: 52836
   description_id: 14
   icon_set_id: 680
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -7858,24 +6218,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Ming Po Militia Suit
 - guid: 190183
   name_id: 52855
   description_id: 14
   icon_set_id: 3083
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -7901,24 +6252,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Ming Po Militia Helmet
 - guid: 190184
   name_id: 52853
   description_id: 14
   icon_set_id: 3081
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -7944,24 +6286,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Ming Po Militia Gloves
 - guid: 190185
   name_id: 52854
   description_id: 14
   icon_set_id: 3082
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -7987,24 +6320,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Ming Po Militia Boots
 - guid: 190186
   name_id: 52856
   description_id: 14
   icon_set_id: 3084
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -8030,24 +6354,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Cold Warrior Armor
 - guid: 190187
   name_id: 52062
   description_id: 14
   icon_set_id: 2971
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -8073,24 +6388,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Cold Warrior Helmet
 - guid: 190188
   name_id: 52061
   description_id: 14
   icon_set_id: 2974
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -8116,24 +6422,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Cold Warrior Gloves
 - guid: 190189
   name_id: 52063
   description_id: 14
   icon_set_id: 2973
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -8159,24 +6456,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Cold Warrior Boots
 - guid: 190190
   name_id: 52064
   description_id: 14
   icon_set_id: 2972
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -8202,24 +6490,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Carlac Death Watch Elite Suit
 - guid: 190191
   name_id: 4905
   description_id: 14
   icon_set_id: 2936
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -8245,24 +6524,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Carlac Death Watch Elite Helmet
 - guid: 190192
   name_id: 4903
   description_id: 14
   icon_set_id: 2934
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -8288,24 +6558,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Carlac Death Watch Elite Gloves
 - guid: 190193
   name_id: 4904
   description_id: 14
   icon_set_id: 2935
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -8331,24 +6592,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Carlac Death Watch Elite Boots
 - guid: 190194
   name_id: 4906
   description_id: 14
   icon_set_id: 2937
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -8374,24 +6626,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Cobalt Death Watch Commander Suit
 - guid: 190195
   name_id: 53717
   description_id: 14
   icon_set_id: 3234
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -8417,24 +6660,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Cobalt Death Watch Commander Helmet
 - guid: 190196
   name_id: 53715
   description_id: 14
   icon_set_id: 3232
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -8460,24 +6694,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Cobalt Death Watch Commander Gloves
 - guid: 190197
   name_id: 53716
   description_id: 14
   icon_set_id: 3233
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -8503,24 +6728,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Cobalt Death Watch Commander Boots
 - guid: 190198
   name_id: 53718
   description_id: 14
   icon_set_id: 3235
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -8546,24 +6762,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Orange Death Watch Commander Suit
 - guid: 190199
   name_id: 53709
   description_id: 14
   icon_set_id: 3226
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -8589,24 +6796,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Orange Death Watch Commander Helmet
 - guid: 190200
   name_id: 53707
   description_id: 14
   icon_set_id: 3224
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -8632,24 +6830,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Orange Death Watch Commander Gloves
 - guid: 190201
   name_id: 53708
   description_id: 14
   icon_set_id: 3225
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -8675,24 +6864,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Orange Death Watch Commander Boots
 - guid: 190202
   name_id: 53710
   description_id: 14
   icon_set_id: 3227
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -8718,24 +6898,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Azure Death Watch Commander Suit
 - guid: 190203
   name_id: 53721
   description_id: 14
   icon_set_id: 3238
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -8761,24 +6932,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Azure Death Watch Commander Helmet
 - guid: 190204
   name_id: 53719
   description_id: 14
   icon_set_id: 3236
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -8804,24 +6966,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Azure Death Watch Commander Gloves
 - guid: 190205
   name_id: 53720
   description_id: 14
   icon_set_id: 3237
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -8847,24 +7000,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Azure Death Watch Commander Boots
 - guid: 190206
   name_id: 53722
   description_id: 14
   icon_set_id: 3239
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -8890,24 +7034,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Byzantium Death Watch Commander Suit
 - guid: 190207
   name_id: 53713
   description_id: 14
   icon_set_id: 3230
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -8933,24 +7068,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Byzantium Death Watch Commander Helmet
 - guid: 190208
   name_id: 53711
   description_id: 14
   icon_set_id: 3228
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -8976,24 +7102,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Byzantium Death Watch Commander Gloves
 - guid: 190209
   name_id: 53712
   description_id: 14
   icon_set_id: 3229
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -9019,24 +7136,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Byzantium Death Watch Commander Boots
 - guid: 190210
   name_id: 53714
   description_id: 14
   icon_set_id: 3231
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -9062,24 +7170,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Death Watch Night Owl Armor
 - guid: 190211
   name_id: 54255
   description_id: 14
   icon_set_id: 3634
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -9105,24 +7204,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Death Watch Night Owl Helmet
 - guid: 190212
   name_id: 54253
   description_id: 14
   icon_set_id: 3632
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -9148,24 +7238,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Death Watch Night Owl Gloves
 - guid: 190213
   name_id: 54254
   description_id: 14
   icon_set_id: 3633
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -9191,24 +7272,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Death Watch Night Owl Boots
 - guid: 190214
   name_id: 54256
   description_id: 14
   icon_set_id: 3635
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -9234,24 +7306,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Death Watch Lieutenant Armor
 - guid: 190215
   name_id: 54249
   description_id: 14
   icon_set_id: 3629
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -9277,24 +7340,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Death Watch Lieutenant Helmet
 - guid: 190216
   name_id: 54247
   description_id: 14
   icon_set_id: 3627
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -9320,24 +7374,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Death Watch Lieutenant Gloves
 - guid: 190217
   name_id: 54248
   description_id: 14
   icon_set_id: 3628
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -9363,24 +7408,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Death Watch Lieutenant Boots
 - guid: 190218
   name_id: 54250
   description_id: 14
   icon_set_id: 3630
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -9406,24 +7442,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Super Commando Captain Armor
 - guid: 190219
   name_id: 54416
   description_id: 14
   icon_set_id: 3687
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -9449,24 +7476,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Super Commando Captain Helmet
 - guid: 190220
   name_id: 54414
   description_id: 14
   icon_set_id: 3685
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -9492,24 +7510,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Super Commando Captain Gloves
 - guid: 190221
   name_id: 54415
   description_id: 14
   icon_set_id: 3686
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -9535,24 +7544,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Super Commando Captain Boots
 - guid: 190222
   name_id: 54417
   description_id: 14
   icon_set_id: 3688
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -9578,24 +7578,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mandalorian Super Commando Armor
 - guid: 190223
   name_id: 54435
   description_id: 14
   icon_set_id: 3699
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -9621,24 +7612,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mandalorian Super Commando Helmet
 - guid: 190224
   name_id: 54433
   description_id: 14
   icon_set_id: 3700
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -9664,24 +7646,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Camouflaged Death Watch Armor
 - guid: 190225
   name_id: 2697
   description_id: 14
   icon_set_id: 2591
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -9707,24 +7680,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Camouflaged Death Watch Helmet
 - guid: 190226
   name_id: 2695
   description_id: 14
   icon_set_id: 2589
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -9750,24 +7714,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Camouflaged Death Watch Gloves
 - guid: 190227
   name_id: 2696
   description_id: 14
   icon_set_id: 2590
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -9793,24 +7748,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Camouflaged Death Watch Boots
 - guid: 190228
   name_id: 2698
   description_id: 14
   icon_set_id: 2592
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -9836,24 +7782,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Gold Death Watch Armor
 - guid: 190229
   name_id: 2693
   description_id: 14
   icon_set_id: 2741
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -9879,24 +7816,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Gold Death Watch Helmet
 - guid: 190230
   name_id: 2691
   description_id: 14
   icon_set_id: 2739
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -9922,24 +7850,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Gold Death Watch Gloves
 - guid: 190231
   name_id: 2692
   description_id: 14
   icon_set_id: 2740
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -9965,24 +7884,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Gold Death Watch Boots
 - guid: 190232
   name_id: 2694
   description_id: 14
   icon_set_id: 2742
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -10008,24 +7918,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # wearable_body_mandalorian_mustafar
 - guid: 190233
   name_id: 2701
   description_id: 14
   icon_set_id: 673
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -10051,24 +7952,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # wearable_head_mandalorian_mustafar
 - guid: 190234
   name_id: 2699
   description_id: 14
   icon_set_id: 677
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -10094,24 +7986,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # wearable_hands_mandalorian_mustafar
 - guid: 190235
   name_id: 2700
   description_id: 14
   icon_set_id: 676
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -10137,24 +8020,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # wearable_feet_mandalorian_mustafar
 - guid: 190236
   name_id: 2702
   description_id: 14
   icon_set_id: 680
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -10180,24 +8054,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Vicious Savage's Pants
 - guid: 190237
   name_id: 44885
   description_id: 14
   icon_set_id: 2118
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -10223,24 +8088,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Dark Side Acolyte Suit
 - guid: 190238
   name_id: 4747
   description_id: 14
   icon_set_id: 2787
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -10266,24 +8122,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Dark Side Acolyte Cloak
 - guid: 190239
   name_id: 4745
   description_id: 14
   icon_set_id: 2785
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -10309,24 +8156,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Dark Side Acolyte Gloves
 - guid: 190240
   name_id: 4746
   description_id: 14
   icon_set_id: 2786
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -10352,24 +8190,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Dark Side Acolyte Boots
 - guid: 190241
   name_id: 4748
   description_id: 14
   icon_set_id: 2788
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -10395,24 +8224,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Dark Side Adept Suit
 - guid: 190242
   name_id: 4743
   description_id: 14
   icon_set_id: 2783
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -10438,24 +8258,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Dark Side Adept Cloak
 - guid: 190243
   name_id: 4741
   description_id: 14
   icon_set_id: 2781
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -10481,24 +8292,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Dark Side Adept Gloves
 - guid: 190244
   name_id: 4742
   description_id: 14
   icon_set_id: 2782
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -10524,24 +8326,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Dark Side Adept Boots
 - guid: 190245
   name_id: 4744
   description_id: 14
   icon_set_id: 2784
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -10567,24 +8360,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Byzantium Sith Agent Suit
 - guid: 190246
   name_id: 4947
   description_id: 14
   icon_set_id: 3005
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -10610,24 +8394,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Byzantium Sith Agent Hood
 - guid: 190247
   name_id: 4945
   description_id: 14
   icon_set_id: 3003
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -10653,24 +8428,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Byzantium Sith Agent Gloves
 - guid: 190248
   name_id: 4946
   description_id: 14
   icon_set_id: 3004
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -10696,24 +8462,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Byzantium Sith Agent Boots
 - guid: 190249
   name_id: 4948
   description_id: 14
   icon_set_id: 3006
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -10739,24 +8496,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Carmine Sith Agent Suit
 - guid: 190250
   name_id: 4951
   description_id: 14
   icon_set_id: 3009
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -10782,24 +8530,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Carmine Sith Agent Hood
 - guid: 190251
   name_id: 4949
   description_id: 14
   icon_set_id: 3007
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -10825,24 +8564,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Carmine Sith Agent Gloves
 - guid: 190252
   name_id: 4950
   description_id: 14
   icon_set_id: 3008
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -10868,24 +8598,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Carmine Sith Agent Boots
 - guid: 190253
   name_id: 4952
   description_id: 14
   icon_set_id: 3010
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -10911,24 +8632,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Gray Sith Agent Suit
 - guid: 190254
   name_id: 4955
   description_id: 14
   icon_set_id: 3013
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -10954,24 +8666,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Gray Sith Agent Hood
 - guid: 190255
   name_id: 4953
   description_id: 14
   icon_set_id: 3011
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -10997,24 +8700,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Gray Sith Agent Gloves
 - guid: 190256
   name_id: 4954
   description_id: 14
   icon_set_id: 3012
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -11040,24 +8734,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Gray Sith Agent Boots
 - guid: 190257
   name_id: 4956
   description_id: 14
   icon_set_id: 3014
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -11083,24 +8768,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Darth Maul's Suit
 - guid: 190258
   name_id: 54481
   description_id: 14
   icon_set_id: 3706
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -11126,24 +8802,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Darth Maul's Gloves
 - guid: 190259
   name_id: 54480
   description_id: 14
   icon_set_id: 3705
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -11169,24 +8836,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Darth Maul's Robotic Legs
 - guid: 190260
   name_id: 54482
   description_id: 14
   icon_set_id: 3707
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -11212,24 +8870,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Scoundrel Suit
 - guid: 190261
   name_id: 54609
   description_id: 14
   icon_set_id: 3841
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -11255,24 +8904,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Scoundrel Shoes
 - guid: 190262
   name_id: 54610
   description_id: 14
   icon_set_id: 3842
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -11298,24 +8938,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Smuggler Vest
 - guid: 190263
   name_id: 54608
   description_id: 14
   icon_set_id: 3839
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -11341,24 +8972,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Smuggler Boots
 - guid: 190264
   name_id: 54607
   description_id: 14
   icon_set_id: 3840
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -11384,13 +9006,6 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []

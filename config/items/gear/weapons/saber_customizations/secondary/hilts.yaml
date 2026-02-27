@@ -5,8 +5,6 @@
   description_id: 14
   icon_set_id: 221
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -32,24 +30,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Adi Gallia's Lightsaber
 - guid: 140011
   name_id: 8768
   description_id: 14
   icon_set_id: 222
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -75,24 +64,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # 'Umbara Academy: Ghost Attack 1'
 - guid: 140013
   name_id: 51036
   description_id: 14
   icon_set_id: 425
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -118,24 +98,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Ahsoka Tano's Offhand Lightsaber
 - guid: 140014
   name_id: 19893
   description_id: 14
   icon_set_id: 1459
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -161,24 +132,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Anakin Skywalker's Lightsaber
 - guid: 140015
   name_id: 8762
   description_id: 14
   icon_set_id: 223
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -204,24 +166,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # 'Umbara Academy: Ghost Attack 2'
 - guid: 140016
   name_id: 51037
   description_id: 14
   icon_set_id: 425
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -247,24 +200,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Barriss Offee's Lightsaber
 - guid: 140017
   name_id: 14786
   description_id: 14
   icon_set_id: 508
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -290,24 +234,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Byph's Lightsaber
 - guid: 140018
   name_id: 53615
   description_id: 14
   icon_set_id: 3207
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -333,24 +268,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Miko Jedi Lightsaber
 - guid: 140019
   name_id: 14788
   description_id: 14
   icon_set_id: 509
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -376,24 +302,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Sith Infiltrator Lightsaber
 - guid: 140020
   name_id: 4976
   description_id: 14
   icon_set_id: 3045
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -419,24 +336,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Pre Vizsla's Darksaber
 - guid: 140021
   name_id: 8763
   description_id: 14
   icon_set_id: 224
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -462,24 +370,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Dolovite Darksaber
 - guid: 140022
   name_id: 54592
   description_id: 14
   icon_set_id: 3829
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -505,24 +404,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Phrik Darksaber
 - guid: 140023
   name_id: 54521
   description_id: 14
   icon_set_id: 3791
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -548,24 +438,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Darth Maul's Lightsaber
 - guid: 140024
   name_id: 4718
   description_id: 14
   icon_set_id: 2764
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -591,24 +472,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Count Dooku's Lightsaber
 - guid: 140025
   name_id: 8766
   description_id: 14
   icon_set_id: 225
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -634,24 +506,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Eeth Koth's Lightsaber
 - guid: 140026
   name_id: 2440
   description_id: 14
   icon_set_id: 226
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -677,24 +540,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Jedi Exile Lightsaber
 - guid: 140027
   name_id: 54602
   description_id: 14
   icon_set_id: 3835
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -720,24 +574,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Forked Lightsaber
 - guid: 140028
   name_id: 54593
   description_id: 14
   icon_set_id: 3828
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -763,24 +608,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Ganodi's Lightsaber
 - guid: 140029
   name_id: 53620
   description_id: 14
   icon_set_id: 3212
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -806,24 +642,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Ultimate FX Gungan Lightsaber
 - guid: 140030
   name_id: 2650
   description_id: 14
   icon_set_id: 2136
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -849,24 +676,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Gungi's Lightsaber
 - guid: 140031
   name_id: 53616
   description_id: 14
   icon_set_id: 3208
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -892,24 +710,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Jocasta Nu's Lightsaber
 - guid: 140032
   name_id: 8769
   description_id: 14
   icon_set_id: 227
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -935,24 +744,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Kashyyyk Lightsaber
 - guid: 140033
   name_id: 44507
   description_id: 14
   icon_set_id: 1993
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -978,24 +778,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mestare Lightsaber
 - guid: 140034
   name_id: 44850
   description_id: 14
   icon_set_id: 510
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -1021,24 +812,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Katooni's Lightsaber
 - guid: 140035
   name_id: 53621
   description_id: 14
   icon_set_id: 3213
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -1064,24 +846,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Ki-Adi-Mundi's Lightsaber
 - guid: 140036
   name_id: 2444
   description_id: 14
   icon_set_id: 228
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -1107,24 +880,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Kit Fisto's Lightsaber
 - guid: 140037
   name_id: 8767
   description_id: 14
   icon_set_id: 229
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -1150,24 +914,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Kyle Katarn's Lightsaber
 - guid: 140038
   name_id: 974
   description_id: 14
   icon_set_id: 511
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -1193,24 +948,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Sulon Jedi Lightsaber
 - guid: 140039
   name_id: 60157
   description_id: 14
   icon_set_id: 511
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -1236,24 +982,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Luke Skywalker's Lightsaber
 - guid: 140040
   name_id: 8770
   description_id: 14
   icon_set_id: 230
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -1279,24 +1016,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Luminara Unduli's Lightsaber
 - guid: 140041
   name_id: 8771
   description_id: 14
   icon_set_id: 231
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -1322,24 +1050,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Plo Koon's Lightsaber
 - guid: 140042
   name_id: 308
   description_id: 14
   icon_set_id: 232
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -1365,24 +1084,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mace Windu's Lightsaber
 - guid: 140043
   name_id: 8772
   description_id: 14
   icon_set_id: 233
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -1408,24 +1118,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # 'Umbara Academy: Ghost Attack 3'
 - guid: 140044
   name_id: 51038
   description_id: 14
   icon_set_id: 425
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -1451,24 +1152,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Obi-Wan Kenobi's Lightsaber
 - guid: 140045
   name_id: 8773
   description_id: 14
   icon_set_id: 234
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -1494,24 +1186,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Petro's Lightsaber
 - guid: 140046
   name_id: 53617
   description_id: 14
   icon_set_id: 3209
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -1537,24 +1220,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Shotem Jedi Lightsaber
 - guid: 140047
   name_id: 976
   description_id: 14
   icon_set_id: 512
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -1580,24 +1254,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Shotem Master Lightsaber
 - guid: 140048
   name_id: 60678
   description_id: 14
   icon_set_id: 3788
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -1623,24 +1288,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Quinlan Vos' Lightsaber
 - guid: 140049
   name_id: 19637
   description_id: 14
   icon_set_id: 1436
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -1666,24 +1322,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Saesee Tiin's Lightsaber
 - guid: 140050
   name_id: 43190
   description_id: 14
   icon_set_id: 1792
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -1709,24 +1356,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Shaak Ti's Lightsaber
 - guid: 140051
   name_id: 14792
   description_id: 14
   icon_set_id: 513
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -1752,24 +1390,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Darth Sidious' Lightsaber
 - guid: 140052
   name_id: 8774
   description_id: 14
   icon_set_id: 235
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -1795,24 +1424,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Bravis Sith Lightsaber
 - guid: 140053
   name_id: 978
   description_id: 14
   icon_set_id: 514
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -1838,24 +1458,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Crimson Prowler Lightsaber
 - guid: 140054
   name_id: 60198
   description_id: 14
   icon_set_id: 3721
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -1881,24 +1492,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Ermi Jedi Lightsaber
 - guid: 140055
   name_id: 980
   description_id: 14
   icon_set_id: 515
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -1924,24 +1526,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Talz Lightsaber
 - guid: 140056
   name_id: 4824
   description_id: 14
   icon_set_id: 2863
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -1967,24 +1560,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Training Lightsaber
 - guid: 140057
   name_id: 8775
   description_id: 14
   icon_set_id: 236
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -2010,24 +1594,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Ancient Cobal Lightsaber
 - guid: 140058
   name_id: 982
   description_id: 14
   icon_set_id: 516
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -2053,24 +1628,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Savek Lightsaber
 - guid: 140059
   name_id: 14794
   description_id: 14
   icon_set_id: 517
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -2096,24 +1662,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Asajj Ventress' Left Lightsaber
 - guid: 140061
   name_id: 8776
   description_id: 14
   icon_set_id: 237
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -2139,24 +1696,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Yoda's Lightsaber
 - guid: 140062
   name_id: 1797
   description_id: 14
   icon_set_id: 3169
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -2182,24 +1730,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Zatt's Lightsaber
 - guid: 140063
   name_id: 53619
   description_id: 14
   icon_set_id: 3211
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -2225,24 +1764,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Dahgee Jedi Lightsaber
 - guid: 140064
   name_id: 986
   description_id: 14
   icon_set_id: 1148
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10
   required_battle_class: 0
@@ -2268,13 +1798,6 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []

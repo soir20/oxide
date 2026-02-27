@@ -5,8 +5,6 @@
   description_id: 14
   icon_set_id: 2680
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10000
   required_battle_class: 0
@@ -32,24 +30,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Bowcaster
 - guid: 80001
   name_id: 14784
   description_id: 14
   icon_set_id: 506
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10000
   required_battle_class: 0
@@ -75,24 +64,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Cad Bane's Blaster Rifle
 - guid: 80002
   name_id: 4543
   description_id: 14
   icon_set_id: 2654
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10000
   required_battle_class: 0
@@ -118,24 +98,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Clone Trooper Blaster
 - guid: 80003
   name_id: 314
   description_id: 14
   icon_set_id: 213
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10000
   required_battle_class: 0
@@ -161,24 +132,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # DC-17m Interchangable Weapons System
 - guid: 80004
   name_id: 0
   description_id: 14
   icon_set_id: 681
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10000
   required_battle_class: 0
@@ -204,24 +166,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mandalorian Blaster Rifle
 - guid: 80005
   name_id: 14782
   description_id: 14
   icon_set_id: 507
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10000
   required_battle_class: 0
@@ -247,24 +200,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Cold Warrior Rifle
 - guid: 80006
   name_id: 52060
   description_id: 14
   icon_set_id: 2976
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10000
   required_battle_class: 0
@@ -290,24 +234,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Blaster Test E11
 - guid: 80007
   name_id: 2561
   description_id: 14
   icon_set_id: 214
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10000
   required_battle_class: 0
@@ -333,24 +268,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Boba Fett's Blaster Rifle
 - guid: 80008
   name_id: 8789
   description_id: 14
   icon_set_id: 215
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10001
   required_battle_class: 0
@@ -376,24 +302,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Ming Po Militia Rifle
 - guid: 80009
   name_id: 52857
   description_id: 14
   icon_set_id: 3085
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10000
   required_battle_class: 0
@@ -419,24 +336,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Umbaran Blaster Rifle
 - guid: 80010
   name_id: 4320
   description_id: 14
   icon_set_id: 2448
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10000
   required_battle_class: 0
@@ -462,24 +370,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Usk Bunker General Blaster Rifle
 - guid: 80011
   name_id: 4778
   description_id: 14
   icon_set_id: 2819
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10000
   required_battle_class: 0
@@ -505,24 +404,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Grek Bunker General Blaster Rifle
 - guid: 80012
   name_id: 4774
   description_id: 14
   icon_set_id: 2815
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10000
   required_battle_class: 0
@@ -548,24 +438,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Zygerrian Blaster Rifle
 - guid: 80013
   name_id: 4455
   description_id: 14
   icon_set_id: 2513
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10000
   required_battle_class: 0
@@ -591,24 +472,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Cupid Clone's Bow
 - guid: 80014
   name_id: 33888
   description_id: 14
   icon_set_id: 1674
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 21
   required_battle_class: 0
@@ -634,24 +506,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Nightsister's Bow
 - guid: 80015
   name_id: 32965
   description_id: 14
   icon_set_id: 1624
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 21
   required_battle_class: 0
@@ -677,24 +540,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Cryo-Cannon
 - guid: 80016
   name_id: 4610
   description_id: 14
   icon_set_id: 2678
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10008
   required_battle_class: 0
@@ -720,24 +574,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Plasma Thrower
 - guid: 80017
   name_id: 4611
   description_id: 14
   icon_set_id: 2679
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10008
   required_battle_class: 0
@@ -763,24 +608,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Republic Grenade Launcher
 - guid: 80018
   name_id: 4768
   description_id: 14
   icon_set_id: 2809
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10008
   required_battle_class: 0
@@ -806,24 +642,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Accelerated Thermal Carbine
 - guid: 80019
   name_id: 4857
   description_id: 14
   icon_set_id: 2882
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10008
   required_battle_class: 0
@@ -849,24 +676,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Rail Cannon
 - guid: 80020
   name_id: 54518
   description_id: 14
   icon_set_id: 3771
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10008
   required_battle_class: 0
@@ -892,24 +710,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Hip-Mounted Cannon
 - guid: 80021
   name_id: 4769
   description_id: 14
   icon_set_id: 2810
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10008
   required_battle_class: 0
@@ -935,23 +744,14 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 - guid: 80022
   name_id: 0
   description_id: 14
   icon_set_id: 681
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10008
   required_battle_class: 0
@@ -977,24 +777,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mandalorian Repeater
 - guid: 80023
   name_id: 54520
   description_id: 14
   icon_set_id: 3790
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10008
   required_battle_class: 0
@@ -1020,24 +811,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Republic Flamethrower
 - guid: 80024
   name_id: 8790
   description_id: 14
   icon_set_id: 216
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10008
   required_battle_class: 0
@@ -1063,24 +845,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Spring Fever
 - guid: 80025
   name_id: 43859
   description_id: 14
   icon_set_id: 1935
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10008
   required_battle_class: 0
@@ -1106,24 +879,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Rotary Blaster Cannon
 - guid: 80026
   name_id: 8794
   description_id: 14
   icon_set_id: 217
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10008
   required_battle_class: 0
@@ -1149,24 +913,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Repeater Cannon
 - guid: 80027
   name_id: 54594
   description_id: 14
   icon_set_id: 3827
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10008
   required_battle_class: 0
@@ -1192,23 +947,14 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 - guid: 80028
   name_id: 0
   description_id: 14
   icon_set_id: 681
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10002
   required_battle_class: 0
@@ -1234,24 +980,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Republic Missile Launcher
 - guid: 80029
   name_id: 2424
   description_id: 14
   icon_set_id: 218
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10002
   required_battle_class: 0
@@ -1277,24 +1014,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Turbolaser
 - guid: 80030
   name_id: 4770
   description_id: 14
   icon_set_id: 2811
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10002
   required_battle_class: 0
@@ -1320,24 +1048,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Balnab Hunter Rifle
 - guid: 80031
   name_id: 3130
   description_id: 14
   icon_set_id: 2391
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10001
   required_battle_class: 0
@@ -1363,24 +1082,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Bossk's Long Rifle
 - guid: 80032
   name_id: 4749
   description_id: 14
   icon_set_id: 2789
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10001
   required_battle_class: 0
@@ -1406,24 +1116,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Grand Officer Rifle
 - guid: 80033
   name_id: 52798
   description_id: 14
   icon_set_id: 3108
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10001
   required_battle_class: 0
@@ -1449,24 +1150,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Aurra Sing's Hunting Rifle
 - guid: 80034
   name_id: 2408
   description_id: 14
   icon_set_id: 238
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10001
   required_battle_class: 0
@@ -1492,24 +1184,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Clone Trooper Blaster Rifle
 - guid: 80035
   name_id: 8781
   description_id: 14
   icon_set_id: 240
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10001
   required_battle_class: 0
@@ -1535,24 +1218,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Blinged-Out Trooper Rifle
 - guid: 80036
   name_id: 8784
   description_id: 14
   icon_set_id: 239
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10001
   required_battle_class: 0
@@ -1578,24 +1252,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Felucian Commando Rifle
 - guid: 80037
   name_id: 60183
   description_id: 14
   icon_set_id: 3726
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10001
   required_battle_class: 0
@@ -1621,24 +1286,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Shadow Tech Rifle
 - guid: 80038
   name_id: 4482
   description_id: 14
   icon_set_id: 2571
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10001
   required_battle_class: 0
@@ -1664,24 +1320,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mandalorian Shatterer Battle Rifle
 - guid: 80039
   name_id: 8780
   description_id: 14
   icon_set_id: 241
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10001
   required_battle_class: 0
@@ -1707,24 +1354,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Rako Hardeen's Sniper Rifle
 - guid: 80040
   name_id: 4542
   description_id: 14
   icon_set_id: 2659
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10001
   required_battle_class: 0
@@ -1750,24 +1388,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Onderon Long Rifle
 - guid: 80041
   name_id: 53491
   description_id: 14
   icon_set_id: 3158
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10001
   required_battle_class: 0
@@ -1793,24 +1422,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Energized Disruptor
 - guid: 80042
   name_id: 4882
   description_id: 14
   icon_set_id: 2924
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 9
   required_battle_class: 0
@@ -1836,24 +1456,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Light Plasma Pistol
 - guid: 80043
   name_id: 4883
   description_id: 14
   icon_set_id: 2925
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 9
   required_battle_class: 0
@@ -1879,24 +1490,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Major Rigosso's Quarzite Pistol
 - guid: 80044
   name_id: 4766
   description_id: 14
   icon_set_id: 2808
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 9
   required_battle_class: 0
@@ -1922,24 +1524,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Major Rigosso's Offhand Quarzite Pistol
 - guid: 80045
   name_id: 4767
   description_id: 14
   icon_set_id: 2808
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 9
   required_battle_class: 0
@@ -1965,24 +1558,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Black Sun Blaster Pistol
 - guid: 80046
   name_id: 54263
   description_id: 14
   icon_set_id: 3637
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 9
   required_battle_class: 0
@@ -2008,24 +1592,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Quarzite Boba Fett's Blaster
 - guid: 80047
   name_id: 4685
   description_id: 14
   icon_set_id: 2734
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 9
   required_battle_class: 0
@@ -2051,24 +1626,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Subtram Hunter Blaster
 - guid: 80048
   name_id: 60672
   description_id: 14
   icon_set_id: 3783
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 9
   required_battle_class: 0
@@ -2094,24 +1660,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Quarzite Boba Fett's Offhand Blaster
 - guid: 80049
   name_id: 4686
   description_id: 14
   icon_set_id: 2734
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 9
   required_battle_class: 0
@@ -2137,24 +1694,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Subtram Hunter Offhand Blaster
 - guid: 80050
   name_id: 60673
   description_id: 14
   icon_set_id: 3783
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 9
   required_battle_class: 0
@@ -2180,24 +1728,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Captain Rex's Right Blaster
 - guid: 80051
   name_id: 2410
   description_id: 14
   icon_set_id: 244
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 9
   required_battle_class: 0
@@ -2223,24 +1762,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Vigilance
 - guid: 80052
   name_id: 2896
   description_id: 14
   icon_set_id: 2312
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 9
   required_battle_class: 0
@@ -2266,24 +1796,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Negotiator
 - guid: 80053
   name_id: 2897
   description_id: 14
   icon_set_id: 2312
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 9
   required_battle_class: 0
@@ -2309,24 +1830,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Captain Rex's Left Blaster
 - guid: 80054
   name_id: 65
   description_id: 14
   icon_set_id: 244
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 9
   required_battle_class: 0
@@ -2352,24 +1864,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Rebel Pilot Blaster
 - guid: 80055
   name_id: 2412
   description_id: 14
   icon_set_id: 245
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 9
   required_battle_class: 0
@@ -2395,24 +1898,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Han Solo's Blaster Pistol
 - guid: 80056
   name_id: 2414
   description_id: 14
   icon_set_id: 246
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 9
   required_battle_class: 0
@@ -2438,24 +1932,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Assassin Aurra Sing's Right Blaster
 - guid: 80057
   name_id: 1803
   description_id: 14
   icon_set_id: 1409
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 9
   required_battle_class: 0
@@ -2481,24 +1966,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Assassin Aurra Sing's Left Blaster
 - guid: 80058
   name_id: 1805
   description_id: 14
   icon_set_id: 1409
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 9
   required_battle_class: 0
@@ -2524,24 +2000,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Royal Hold-out Blaster Pistol
 - guid: 80059
   name_id: 8791
   description_id: 14
   icon_set_id: 247
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 9
   required_battle_class: 0
@@ -2567,24 +2034,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Cad Bane's Right Blaster
 - guid: 80060
   name_id: 8779
   description_id: 14
   icon_set_id: 248
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 9
   required_battle_class: 0
@@ -2610,24 +2068,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Cad Bane's Left Blaster
 - guid: 80061
   name_id: 1293
   description_id: 14
   icon_set_id: 248
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 9
   required_battle_class: 0
@@ -2653,24 +2102,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Corrupt Warlord Right Pistol
 - guid: 80062
   name_id: 52805
   description_id: 14
   icon_set_id: 3143
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 9
   required_battle_class: 0
@@ -2696,24 +2136,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Corrupt Warlord Left Pistol
 - guid: 80063
   name_id: 52804
   description_id: 14
   icon_set_id: 3143
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 9
   required_battle_class: 0
@@ -2739,24 +2170,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Papanoida Blaster
 - guid: 80064
   name_id: 1713
   description_id: 14
   icon_set_id: 1327
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 9
   required_battle_class: 0
@@ -2782,24 +2204,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Pyke Blaster Pistol
 - guid: 80065
   name_id: 54264
   description_id: 14
   icon_set_id: 3638
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 9
   required_battle_class: 0
@@ -2825,24 +2238,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Covert Diplomat Blaster Pistol
 - guid: 80066
   name_id: 8792
   description_id: 14
   icon_set_id: 249
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 9
   required_battle_class: 0
@@ -2868,24 +2272,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Renegade Heavy Blaster Pistol
 - guid: 80067
   name_id: 54522
   description_id: 14
   icon_set_id: 3792
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 9
   required_battle_class: 0
@@ -2911,23 +2306,14 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 - guid: 80068
   name_id: 0
   description_id: 14
   icon_set_id: 3792
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 9
   required_battle_class: 0
@@ -2953,24 +2339,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Onderon Blaster Pistol
 - guid: 80069
   name_id: 53492
   description_id: 14
   icon_set_id: 3159
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 9
   required_battle_class: 0
@@ -2996,24 +2373,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Naboo Security Blaster Pistol
 - guid: 80070
   name_id: 8793
   description_id: 14
   icon_set_id: 250
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 9
   required_battle_class: 0
@@ -3039,24 +2407,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Gungan Double-headed Spear
 - guid: 80071
   name_id: 3068
   description_id: 14
   icon_set_id: 2337
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10004
   required_battle_class: 0
@@ -3082,24 +2441,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Captain Rex's Zygerrian Electrostaff
 - guid: 80072
   name_id: 4463
   description_id: 14
   icon_set_id: 2518
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10004
   required_battle_class: 0
@@ -3125,24 +2475,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Imperial Royal Guard Force Pike
 - guid: 80073
   name_id: 8799
   description_id: 14
   icon_set_id: 251
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10004
   required_battle_class: 0
@@ -3168,24 +2509,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # IG-113's Electrostaff
 - guid: 80074
   name_id: 4959
   description_id: 14
   icon_set_id: 3002
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10004
   required_battle_class: 0
@@ -3211,24 +2543,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Satine's Royal Guard Staff
 - guid: 80075
   name_id: 1811
   description_id: 14
   icon_set_id: 1353
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10004
   required_battle_class: 0
@@ -3254,24 +2577,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Savage Opress' Pike
 - guid: 80076
   name_id: 32983
   description_id: 14
   icon_set_id: 1632
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10004
   required_battle_class: 0
@@ -3297,24 +2611,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Skeletal Clone Trooper Scythe
 - guid: 80077
   name_id: 4280
   description_id: 14
   icon_set_id: 2399
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10004
   required_battle_class: 0
@@ -3340,24 +2645,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Tamtel Skreej's Pike
 - guid: 80078
   name_id: 8798
   description_id: 14
   icon_set_id: 252
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10004
   required_battle_class: 0
@@ -3383,24 +2679,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Gaffi Stick
 - guid: 80079
   name_id: 300
   description_id: 14
   icon_set_id: 253
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10004
   required_battle_class: 0
@@ -3426,24 +2713,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Pink Gaffi Stick
 - guid: 80080
   name_id: 97
   description_id: 14
   icon_set_id: 518
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10004
   required_battle_class: 0
@@ -3469,24 +2747,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Blue Sparkler
 - guid: 80081
   name_id: 44661
   description_id: 14
   icon_set_id: 2001
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10007
   required_battle_class: 0
@@ -3512,24 +2781,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Green Sparkler
 - guid: 80082
   name_id: 44662
   description_id: 14
   icon_set_id: 2002
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10007
   required_battle_class: 0
@@ -3555,24 +2815,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Orange Sparkler
 - guid: 80083
   name_id: 44663
   description_id: 14
   icon_set_id: 2003
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10007
   required_battle_class: 0
@@ -3598,24 +2849,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Purple Sparkler
 - guid: 80084
   name_id: 44664
   description_id: 14
   icon_set_id: 2004
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10007
   required_battle_class: 0
@@ -3641,24 +2883,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Red Sparkler
 - guid: 80085
   name_id: 44665
   description_id: 14
   icon_set_id: 2005
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10007
   required_battle_class: 0
@@ -3684,24 +2917,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # White Sparkler
 - guid: 80086
   name_id: 44666
   description_id: 14
   icon_set_id: 2006
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10007
   required_battle_class: 0
@@ -3727,24 +2951,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Yellow Sparkler
 - guid: 80087
   name_id: 44667
   description_id: 14
   icon_set_id: 2007
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10007
   required_battle_class: 0
@@ -3770,24 +2985,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # His cane
 - guid: 80088
   name_id: 10423
   description_id: 14
   icon_set_id: 681
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: 10007
   required_battle_class: 0
@@ -3813,13 +3019,6 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []

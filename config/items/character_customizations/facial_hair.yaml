@@ -5,8 +5,6 @@
   description_id: 14
   icon_set_id: 530
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 200
   item_class: -1
   required_battle_class: 0
@@ -32,24 +30,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 1
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacialHair
   customization_id: 160000
-  unknown40: 0
-  stats: []
-  abilities: []
 # Alderaanian Senator's Goatee
 - guid: 20001
   name_id: 768
   description_id: 14
   icon_set_id: 529
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 150
   item_class: -1
   required_battle_class: 0
@@ -75,24 +64,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 1
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacialHair
   customization_id: 160001
-  unknown40: 0
-  stats: []
-  abilities: []
 # Clean Shaven
 - guid: 20002
   name_id: 5848
   description_id: 14
   icon_set_id: 532
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 10
   item_class: -1
   required_battle_class: 0
@@ -118,24 +98,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 1
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacialHair
   customization_id: 160002
-  unknown40: 0
-  stats: []
-  abilities: []
 # General's Beard
 - guid: 20003
   name_id: 321
   description_id: 14
   icon_set_id: 528
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -161,24 +132,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 1
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacialHair
   customization_id: 160003
-  unknown40: 0
-  stats: []
-  abilities: []
 # Clean Shaven
 - guid: 20004
   name_id: 5848
   description_id: 14
   icon_set_id: 588
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 10
   item_class: -1
   required_battle_class: 0
@@ -204,24 +166,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 2
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacialHair
   customization_id: 160004
-  unknown40: 0
-  stats: []
-  abilities: []
 # Goatee
 - guid: 20005
   name_id: 13781
   description_id: 14
   icon_set_id: 585
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -247,23 +200,14 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 2
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacialHair
   customization_id: 160005
-  unknown40: 0
-  stats: []
-  abilities: []
 - guid: 20006
   name_id: 0
   description_id: 14
   icon_set_id: 0
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -289,24 +233,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 2
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacialHair
   customization_id: 160006
-  unknown40: 0
-  stats: []
-  abilities: []
 # Splitchin Beard
 - guid: 20007
   name_id: 13782
   description_id: 14
   icon_set_id: 586
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -332,24 +267,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 2
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacialHair
   customization_id: 160007
-  unknown40: 0
-  stats: []
-  abilities: []
 # Tripchin Beard
 - guid: 20008
   name_id: 13831
   description_id: 14
   icon_set_id: 587
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -375,24 +301,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 2
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacialHair
   customization_id: 160008
-  unknown40: 0
-  stats: []
-  abilities: []
 # Clean Shaven
 - guid: 20009
   name_id: 18052
   description_id: 14
   icon_set_id: 1289
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 20
   item_class: -1
   required_battle_class: 0
@@ -418,24 +335,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 10
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacialHair
   customization_id: 160009
-  unknown40: 0
-  stats: []
-  abilities: []
 # Double Patch
 - guid: 20010
   name_id: 18053
   description_id: 14
   icon_set_id: 1284
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -461,24 +369,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 10
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacialHair
   customization_id: 160010
-  unknown40: 0
-  stats: []
-  abilities: []
 # Magnum
 - guid: 20011
   name_id: 18055
   description_id: 14
   icon_set_id: 1286
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -504,24 +403,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 10
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacialHair
   customization_id: 160011
-  unknown40: 0
-  stats: []
-  abilities: []
 # Papanoida's Beard
 - guid: 20012
   name_id: 18056
   description_id: 14
   icon_set_id: 1287
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 200
   item_class: -1
   required_battle_class: 0
@@ -547,24 +437,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 10
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacialHair
   customization_id: 160012
-  unknown40: 0
-  stats: []
-  abilities: []
 # Sharp Goatee
 - guid: 20013
   name_id: 18054
   description_id: 14
   icon_set_id: 1285
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -590,24 +471,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 10
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacialHair
   customization_id: 160013
-  unknown40: 0
-  stats: []
-  abilities: []
 # Single Patch
 - guid: 20014
   name_id: 18051
   description_id: 14
   icon_set_id: 1288
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -633,13 +505,6 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 10
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacialHair
   customization_id: 160014
-  unknown40: 0
-  stats: []
-  abilities: []

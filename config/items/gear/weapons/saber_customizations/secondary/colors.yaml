@@ -5,8 +5,6 @@
   description_id: 14
   icon_set_id: 398
   tint: 20
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -32,24 +30,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Green
 - guid: 130001
   name_id: 2528
   description_id: 14
   icon_set_id: 399
   tint: 21
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -75,24 +64,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Yellow
 - guid: 130002
   name_id: 2529
   description_id: 14
   icon_set_id: 408
   tint: 22
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -118,24 +98,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Orange
 - guid: 130003
   name_id: 2530
   description_id: 14
   icon_set_id: 401
   tint: 23
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -161,24 +132,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Red
 - guid: 130004
   name_id: 2531
   description_id: 14
   icon_set_id: 404
   tint: 24
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -204,24 +166,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Purple
 - guid: 130005
   name_id: 2532
   description_id: 14
   icon_set_id: 403
   tint: 25
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -247,24 +200,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Silver
 - guid: 130006
   name_id: 2533
   description_id: 14
   icon_set_id: 405
   tint: 26
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -290,24 +234,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Teal
 - guid: 130007
   name_id: 2534
   description_id: 14
   icon_set_id: 406
   tint: 27
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -333,24 +268,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Pink
 - guid: 130008
   name_id: 2535
   description_id: 14
   icon_set_id: 402
   tint: 28
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -376,24 +302,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Light Green
 - guid: 130009
   name_id: 2536
   description_id: 14
   icon_set_id: 400
   tint: 29
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -419,24 +336,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # White
 - guid: 130010
   name_id: 2537
   description_id: 14
   icon_set_id: 407
   tint: 30
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -462,24 +370,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Black
 - guid: 130011
   name_id: 2538
   description_id: 14
   icon_set_id: 397
   tint: 31
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -505,24 +404,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []
 # Sith Crystal
 - guid: 130012
   name_id: 51152
   description_id: 14
   icon_set_id: 2772
   tint: 47
-  unknown6: 0
-  unknown7: 0
   cost: 0
   item_class: -1
   required_battle_class: 0
@@ -548,13 +438,6 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 0
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: None
   customization_id: 0
-  unknown40: 0
-  stats: []
-  abilities: []

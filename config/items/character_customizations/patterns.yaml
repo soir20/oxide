@@ -5,8 +5,6 @@
   description_id: 14
   icon_set_id: 607
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -32,24 +30,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 2
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170000
-  unknown40: 0
-  stats: []
-  abilities: []
 # Crescent Scar
 - guid: 50001
   name_id: 590
   description_id: 14
   icon_set_id: 604
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -75,24 +64,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 2
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170001
-  unknown40: 0
-  stats: []
-  abilities: []
 # Eye Scar
 - guid: 50002
   name_id: 584
   description_id: 14
   icon_set_id: 601
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -118,24 +98,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 2
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170002
-  unknown40: 0
-  stats: []
-  abilities: []
 # Full Scar
 - guid: 50003
   name_id: 588
   description_id: 14
   icon_set_id: 602
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -161,24 +132,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 2
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170003
-  unknown40: 0
-  stats: []
-  abilities: []
 # Hardcase Tattoo
 - guid: 50004
   name_id: 54304
   description_id: 14
   icon_set_id: 3655
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -204,24 +166,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 2
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170004
-  unknown40: 0
-  stats: []
-  abilities: []
 # Lefty Scar
 - guid: 50005
   name_id: 576
   description_id: 14
   icon_set_id: 605
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -247,24 +200,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 2
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170005
-  unknown40: 0
-  stats: []
-  abilities: []
 # No Pattern
 - guid: 50006
   name_id: 2600
   description_id: 14
   icon_set_id: 588
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 20
   item_class: -1
   required_battle_class: 0
@@ -290,24 +234,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 2
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170006
-  unknown40: 0
-  stats: []
-  abilities: []
 # Republic Tattoo
 - guid: 50007
   name_id: 592
   description_id: 14
   icon_set_id: 606
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 200
   item_class: -1
   required_battle_class: 0
@@ -333,24 +268,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 2
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170007
-  unknown40: 0
-  stats: []
-  abilities: []
 # Side Scar
 - guid: 50008
   name_id: 586
   description_id: 14
   icon_set_id: 603
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -376,24 +302,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 2
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170008
-  unknown40: 0
-  stats: []
-  abilities: []
 # Square Tattoo
 - guid: 50009
   name_id: 582
   description_id: 14
   icon_set_id: 608
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -419,24 +336,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 2
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170009
-  unknown40: 0
-  stats: []
-  abilities: []
 # Track Tattoo
 - guid: 50010
   name_id: 580
   description_id: 14
   icon_set_id: 609
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -462,24 +370,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 2
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170010
-  unknown40: 0
-  stats: []
-  abilities: []
 # Whiskers
 - guid: 50011
   name_id: 578
   description_id: 14
   icon_set_id: 610
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -505,23 +404,14 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 2
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170011
-  unknown40: 0
-  stats: []
-  abilities: []
 - guid: 50012
   name_id: 0
   description_id: 14
   icon_set_id: 0
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -547,24 +437,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 2
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170012
-  unknown40: 0
-  stats: []
-  abilities: []
 # Aayla's Lekku Wraps
 - guid: 50013
   name_id: 13853
   description_id: 14
   icon_set_id: 636
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 150
   item_class: -1
   required_battle_class: 0
@@ -590,24 +471,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 3
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170013
-  unknown40: 0
-  stats: []
-  abilities: []
 # Aayla's Lekku Pattern
 - guid: 50014
   name_id: 13854
   description_id: 14
   icon_set_id: 635
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 300
   item_class: -1
   required_battle_class: 0
@@ -633,24 +505,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 3
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170014
-  unknown40: 0
-  stats: []
-  abilities: []
 # Lekku Crescents Pattern
 - guid: 50015
   name_id: 13849
   description_id: 14
   icon_set_id: 633
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -676,24 +539,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 3
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170015
-  unknown40: 0
-  stats: []
-  abilities: []
 # Lekku Crosswraps
 - guid: 50016
   name_id: 13850
   description_id: 14
   icon_set_id: 634
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -719,24 +573,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 3
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170016
-  unknown40: 0
-  stats: []
-  abilities: []
 # Lekku Spots Pattern
 - guid: 50017
   name_id: 13856
   description_id: 14
   icon_set_id: 637
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 150
   item_class: -1
   required_battle_class: 0
@@ -762,24 +607,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 3
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170017
-  unknown40: 0
-  stats: []
-  abilities: []
 # Lekku Stripes Pattern
 - guid: 50018
   name_id: 13857
   description_id: 14
   icon_set_id: 638
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -805,24 +641,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 3
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170018
-  unknown40: 0
-  stats: []
-  abilities: []
 # Lekku Suncircle Pattern
 - guid: 50019
   name_id: 13858
   description_id: 14
   icon_set_id: 640
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -848,24 +675,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 3
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170019
-  unknown40: 0
-  stats: []
-  abilities: []
 # Lekku Swirls Pattern
 - guid: 50020
   name_id: 13848
   description_id: 14
   icon_set_id: 639
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -891,24 +709,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 3
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170020
-  unknown40: 0
-  stats: []
-  abilities: []
 # No Pattern
 - guid: 50021
   name_id: 2600
   description_id: 14
   icon_set_id: 1164
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 20
   item_class: -1
   required_battle_class: 0
@@ -934,24 +743,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 3
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170021
-  unknown40: 0
-  stats: []
-  abilities: []
 # Claw Pattern
 - guid: 50022
   name_id: 15438
   description_id: 14
   icon_set_id: 656
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 500
   item_class: -1
   required_battle_class: 0
@@ -977,24 +777,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 4
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170022
-  unknown40: 0
-  stats: []
-  abilities: []
 # Crawl Pattern
 - guid: 50023
   name_id: 13873
   description_id: 14
   icon_set_id: 657
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -1020,24 +811,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 4
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170023
-  unknown40: 0
-  stats: []
-  abilities: []
 # Crescent Pattern
 - guid: 50024
   name_id: 13872
   description_id: 14
   icon_set_id: 658
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -1063,24 +845,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 4
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170024
-  unknown40: 0
-  stats: []
-  abilities: []
 # Diamond Pattern
 - guid: 50025
   name_id: 33042
   description_id: 14
   icon_set_id: 1633
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -1106,24 +879,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 4
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170025
-  unknown40: 0
-  stats: []
-  abilities: []
 # Eeth's Pattern
 - guid: 50026
   name_id: 13866
   description_id: 14
   icon_set_id: 662
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 200
   item_class: -1
   required_battle_class: 0
@@ -1149,24 +913,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 4
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170026
-  unknown40: 0
-  stats: []
-  abilities: []
 # Fire Pattern
 - guid: 50027
   name_id: 33044
   description_id: 14
   icon_set_id: 1634
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -1192,24 +947,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 4
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170027
-  unknown40: 0
-  stats: []
-  abilities: []
 # Flame Pattern
 - guid: 50028
   name_id: 13870
   description_id: 14
   icon_set_id: 660
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -1235,24 +981,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 4
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170028
-  unknown40: 0
-  stats: []
-  abilities: []
 # Kass' Pattern
 - guid: 50029
   name_id: 13867
   description_id: 14
   icon_set_id: 661
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -1278,24 +1015,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 4
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170029
-  unknown40: 0
-  stats: []
-  abilities: []
 # Line Pattern
 - guid: 50030
   name_id: 13871
   description_id: 14
   icon_set_id: 663
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -1321,24 +1049,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 4
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170030
-  unknown40: 0
-  stats: []
-  abilities: []
 # Opress Pattern
 - guid: 50031
   name_id: 33046
   description_id: 14
   icon_set_id: 1635
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 200
   item_class: -1
   required_battle_class: 0
@@ -1364,24 +1083,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 4
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170031
-  unknown40: 0
-  stats: []
-  abilities: []
 # Strips Pattern
 - guid: 50032
   name_id: 33048
   description_id: 14
   icon_set_id: 1636
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -1407,24 +1117,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 4
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170032
-  unknown40: 0
-  stats: []
-  abilities: []
 # Sugi's Pattern
 - guid: 50033
   name_id: 13865
   description_id: 14
   icon_set_id: 664
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -1450,24 +1151,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 4
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170033
-  unknown40: 0
-  stats: []
-  abilities: []
 # Swoop Pattern
 - guid: 50034
   name_id: 15439
   description_id: 14
   icon_set_id: 665
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 600
   item_class: -1
   required_battle_class: 0
@@ -1493,24 +1185,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 4
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170034
-  unknown40: 0
-  stats: []
-  abilities: []
 # Triangle Pattern
 - guid: 50035
   name_id: 13869
   description_id: 14
   icon_set_id: 666
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -1536,24 +1219,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 4
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170035
-  unknown40: 0
-  stats: []
-  abilities: []
 # Zabrak Sith Pattern
 - guid: 50036
   name_id: 13868
   description_id: 14
   icon_set_id: 659
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 600
   item_class: -1
   required_battle_class: 0
@@ -1579,24 +1253,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 4
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170036
-  unknown40: 0
-  stats: []
-  abilities: []
 # Curl Pattern
 - guid: 50037
   name_id: 598
   description_id: 14
   icon_set_id: 620
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -1622,24 +1287,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 5
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170037
-  unknown40: 0
-  stats: []
-  abilities: []
 # Dot Pattern
 - guid: 50038
   name_id: 596
   description_id: 14
   icon_set_id: 621
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -1665,24 +1321,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 5
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170038
-  unknown40: 0
-  stats: []
-  abilities: []
 # Eyebrow Pattern
 - guid: 50039
   name_id: 600
   description_id: 14
   icon_set_id: 622
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -1708,24 +1355,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 5
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170039
-  unknown40: 0
-  stats: []
-  abilities: []
 # Lightning Pattern
 - guid: 50040
   name_id: 604
   description_id: 14
   icon_set_id: 1372
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 150
   item_class: -1
   required_battle_class: 0
@@ -1751,24 +1389,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 5
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170040
-  unknown40: 0
-  stats: []
-  abilities: []
 # Shaak Pattern
 - guid: 50041
   name_id: 1870
   description_id: 14
   icon_set_id: 1371
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -1794,24 +1423,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 5
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170041
-  unknown40: 0
-  stats: []
-  abilities: []
 # Stacks Pattern
 - guid: 50042
   name_id: 15427
   description_id: 14
   icon_set_id: 623
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -1837,24 +1457,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 5
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170042
-  unknown40: 0
-  stats: []
-  abilities: []
 # Teardrop Pattern
 - guid: 50043
   name_id: 602
   description_id: 14
   icon_set_id: 624
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -1880,24 +1491,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 5
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170043
-  unknown40: 0
-  stats: []
-  abilities: []
 # V Pattern
 - guid: 50044
   name_id: 13877
   description_id: 14
   icon_set_id: 619
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -1923,24 +1525,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 5
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170044
-  unknown40: 0
-  stats: []
-  abilities: []
 # Brow Arc Pattern
 - guid: 50045
   name_id: 18064
   description_id: 14
   icon_set_id: 1297
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -1966,24 +1559,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 10
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170045
-  unknown40: 0
-  stats: []
-  abilities: []
 # Chicho Pattern
 - guid: 50046
   name_id: 18062
   description_id: 14
   icon_set_id: 1298
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -2009,24 +1593,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 10
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170046
-  unknown40: 0
-  stats: []
-  abilities: []
 # Chin Arc Pattern
 - guid: 50047
   name_id: 18063
   description_id: 14
   icon_set_id: 1299
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -2052,24 +1627,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 10
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170047
-  unknown40: 0
-  stats: []
-  abilities: []
 # Chuchi Pattern
 - guid: 50048
   name_id: 18058
   description_id: 14
   icon_set_id: 1300
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -2095,24 +1661,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 10
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170048
-  unknown40: 0
-  stats: []
-  abilities: []
 # Crooked  Pattern
 - guid: 50049
   name_id: 18069
   description_id: 14
   icon_set_id: 1301
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -2138,24 +1695,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 10
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170049
-  unknown40: 0
-  stats: []
-  abilities: []
 # Guard Pattern
 - guid: 50050
   name_id: 18059
   description_id: 14
   icon_set_id: 1302
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -2181,24 +1729,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 10
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170050
-  unknown40: 0
-  stats: []
-  abilities: []
 # Ion Pattern
 - guid: 50051
   name_id: 18061
   description_id: 14
   icon_set_id: 1303
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -2224,24 +1763,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 10
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170051
-  unknown40: 0
-  stats: []
-  abilities: []
 # Lines Pattern
 - guid: 50052
   name_id: 18065
   description_id: 14
   icon_set_id: 1304
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -2267,24 +1797,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 10
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170052
-  unknown40: 0
-  stats: []
-  abilities: []
 # Papanoida Pattern
 - guid: 50053
   name_id: 18060
   description_id: 14
   icon_set_id: 1305
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 200
   item_class: -1
   required_battle_class: 0
@@ -2310,24 +1831,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 10
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170053
-  unknown40: 0
-  stats: []
-  abilities: []
 # Slope Pattern
 - guid: 50054
   name_id: 18066
   description_id: 14
   icon_set_id: 1306
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -2353,24 +1865,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 10
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170054
-  unknown40: 0
-  stats: []
-  abilities: []
 # Squares  Pattern
 - guid: 50055
   name_id: 18068
   description_id: 14
   icon_set_id: 1307
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -2396,24 +1899,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 10
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170055
-  unknown40: 0
-  stats: []
-  abilities: []
 # T-bone  Pattern
 - guid: 50056
   name_id: 18067
   description_id: 14
   icon_set_id: 1308
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -2439,24 +1933,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 10
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170056
-  unknown40: 0
-  stats: []
-  abilities: []
 # Garnac Pattern
 - guid: 50057
   name_id: 43477
   description_id: 14
   icon_set_id: 1823
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 500
   item_class: -1
   required_battle_class: 0
@@ -2482,24 +1967,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 12
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170057
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mask Pattern
 - guid: 50058
   name_id: 43478
   description_id: 14
   icon_set_id: 1824
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 200
   item_class: -1
   required_battle_class: 0
@@ -2525,24 +2001,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 12
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170058
-  unknown40: 0
-  stats: []
-  abilities: []
 # Mohawk Pattern
 - guid: 50059
   name_id: 43479
   description_id: 14
   icon_set_id: 1825
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -2568,24 +2035,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 12
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170059
-  unknown40: 0
-  stats: []
-  abilities: []
 # Scratch Pattern
 - guid: 50060
   name_id: 43480
   description_id: 14
   icon_set_id: 1826
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -2611,24 +2069,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 12
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170060
-  unknown40: 0
-  stats: []
-  abilities: []
 # Simple Pattern
 - guid: 50061
   name_id: 43481
   description_id: 14
   icon_set_id: 1827
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -2654,24 +2103,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 12
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170061
-  unknown40: 0
-  stats: []
-  abilities: []
 # Sunfire Pattern
 - guid: 50062
   name_id: 43482
   description_id: 14
   icon_set_id: 1828
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -2697,13 +2137,6 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 12
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: FacePattern
   customization_id: 170062
-  unknown40: 0
-  stats: []
-  abilities: []

@@ -5,8 +5,6 @@
   description_id: 14
   icon_set_id: 755
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 200
   item_class: -1
   required_battle_class: 0
@@ -32,24 +30,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 6
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: HairColor
   customization_id: 140000
-  unknown40: 0
-  stats: []
-  abilities: []
 # Red Hair
 - guid: 30001
   name_id: 454
   description_id: 14
   icon_set_id: 757
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -75,24 +64,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 6
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: HairColor
   customization_id: 140001
-  unknown40: 0
-  stats: []
-  abilities: []
 # Blonde Hair
 - guid: 30002
   name_id: 440
   description_id: 14
   icon_set_id: 749
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -118,24 +98,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 6
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: HairColor
   customization_id: 140002
-  unknown40: 0
-  stats: []
-  abilities: []
 # Dirty Blonde Hair
 - guid: 30003
   name_id: 442
   description_id: 14
   icon_set_id: 750
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -161,24 +132,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 6
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: HairColor
   customization_id: 140003
-  unknown40: 0
-  stats: []
-  abilities: []
 # Light Brown Hair
 - guid: 30004
   name_id: 444
   description_id: 14
   icon_set_id: 753
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -204,24 +166,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 6
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: HairColor
   customization_id: 140004
-  unknown40: 0
-  stats: []
-  abilities: []
 # Brown Hair
 - guid: 30005
   name_id: 446
   description_id: 14
   icon_set_id: 751
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -247,24 +200,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 6
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: HairColor
   customization_id: 140005
-  unknown40: 0
-  stats: []
-  abilities: []
 # Dark Green Hair
 - guid: 30006
   name_id: 450
   description_id: 14
   icon_set_id: 754
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -290,24 +234,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 6
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: HairColor
   customization_id: 140006
-  unknown40: 0
-  stats: []
-  abilities: []
 # Dark Blue Hair
 - guid: 30007
   name_id: 18047
   description_id: 14
   icon_set_id: 3598
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 200
   item_class: -1
   required_battle_class: 0
@@ -333,24 +268,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 6
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: HairColor
   customization_id: 140007
-  unknown40: 0
-  stats: []
-  abilities: []
 # Dark Purple Hair
 - guid: 30008
   name_id: 448
   description_id: 14
   icon_set_id: 756
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -376,24 +302,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 6
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: HairColor
   customization_id: 140008
-  unknown40: 0
-  stats: []
-  abilities: []
 # White Hair
 - guid: 30009
   name_id: 93
   description_id: 14
   icon_set_id: 758
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -419,24 +336,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 6
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: HairColor
   customization_id: 140009
-  unknown40: 0
-  stats: []
-  abilities: []
 # Grey Hair
 - guid: 30010
   name_id: 91
   description_id: 14
   icon_set_id: 752
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -462,24 +370,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 6
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: HairColor
   customization_id: 140010
-  unknown40: 0
-  stats: []
-  abilities: []
 # Black Hair
 - guid: 30011
   name_id: 95
   description_id: 14
   icon_set_id: 748
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -505,24 +404,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 6
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: HairColor
   customization_id: 140011
-  unknown40: 0
-  stats: []
-  abilities: []
 # Red
 - guid: 30012
   name_id: 2634
   description_id: 14
   icon_set_id: 724
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -548,24 +438,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 5
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: HairColor
   customization_id: 140012
-  unknown40: 0
-  stats: []
-  abilities: []
 # Blue
 - guid: 30013
   name_id: 2630
   description_id: 14
   icon_set_id: 722
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -591,24 +472,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 5
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: HairColor
   customization_id: 140013
-  unknown40: 0
-  stats: []
-  abilities: []
 # Purple
 - guid: 30014
   name_id: 2632
   description_id: 14
   icon_set_id: 723
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -634,24 +506,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 5
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: HairColor
   customization_id: 140014
-  unknown40: 0
-  stats: []
-  abilities: []
 # Dark Red Hair
 - guid: 30015
   name_id: 18049
   description_id: 14
   icon_set_id: 1313
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -677,24 +540,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 10
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: HairColor
   customization_id: 140015
-  unknown40: 0
-  stats: []
-  abilities: []
 # Yellow-Green Hair
 - guid: 30016
   name_id: 18050
   description_id: 14
   icon_set_id: 1309
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -720,24 +574,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 10
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: HairColor
   customization_id: 140016
-  unknown40: 0
-  stats: []
-  abilities: []
 # Teal Hair
 - guid: 30017
   name_id: 18046
   description_id: 14
   icon_set_id: 1310
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -763,24 +608,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 10
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: HairColor
   customization_id: 140017
-  unknown40: 0
-  stats: []
-  abilities: []
 # Dark Blue Hair
 - guid: 30018
   name_id: 18047
   description_id: 14
   icon_set_id: 1315
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -806,24 +642,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 10
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: HairColor
   customization_id: 140018
-  unknown40: 0
-  stats: []
-  abilities: []
 # Purple Hair
 - guid: 30019
   name_id: 18044
   description_id: 14
   icon_set_id: 1311
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 100
   item_class: -1
   required_battle_class: 0
@@ -849,24 +676,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 10
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: HairColor
   customization_id: 140019
-  unknown40: 0
-  stats: []
-  abilities: []
 # Dark Purple Hair
 - guid: 30020
   name_id: 18048
   description_id: 14
   icon_set_id: 1314
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 50
   item_class: -1
   required_battle_class: 0
@@ -892,24 +710,15 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 10
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: HairColor
   customization_id: 140020
-  unknown40: 0
-  stats: []
-  abilities: []
 # Pink Hair
 - guid: 30021
   name_id: 18045
   description_id: 14
   icon_set_id: 1312
   tint: 0
-  unknown6: 0
-  unknown7: 0
   cost: 200
   item_class: -1
   required_battle_class: 0
@@ -935,13 +744,6 @@
   is_tintable: false
   tint_alias: ''
   disable_preview: false
-  unknown33: false
   race_set_id: 10
-  unknown35: false
-  unknown36: 0
-  unknown37: 0
   customization_slot: HairColor
   customization_id: 140021
-  unknown40: 0
-  stats: []
-  abilities: []
