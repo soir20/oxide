@@ -80,8 +80,6 @@ pub struct ItemConfig {
     #[serde(default = "default_stack_size")]
     pub max_stack_size: i32,
     #[serde(default)]
-    pub is_tintable: bool,
-    #[serde(default)]
     pub tint_alias: String,
     #[serde(default)]
     pub disable_preview: bool,
@@ -141,7 +139,7 @@ impl From<ItemConfig> for ItemDefinition {
             passive_ability_id: 0,
             single_use: cfg.single_use,
             max_stack_size: cfg.max_stack_size,
-            is_tintable: cfg.is_tintable,
+            is_tintable: !cfg.tint_alias.trim().is_empty(),
             tint_alias: cfg.tint_alias,
             disable_preview: cfg.disable_preview,
             unknown33: false,

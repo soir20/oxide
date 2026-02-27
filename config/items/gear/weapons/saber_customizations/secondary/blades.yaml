@@ -8,7 +8,6 @@
   model_name: Wield_LightsaberBlade_Basic.adr
   texture_alias: white_square
   item_type: 1
-  is_tintable: true
   tint_alias: lightsaber
 # Dark Beam Crystal
 - guid: 120001
@@ -19,7 +18,6 @@
   model_name: Wield_LightsaberBlade_Darksaber.adr
   texture_alias: BlackSwirl
   item_type: 1
-  is_tintable: true
   tint_alias: lightsaber
 # Ancient Darksaber Crystal
 - guid: 120002
@@ -30,7 +28,6 @@
   model_name: Wield_LightsaberBlade_Darksaber_Ancient.adr
   texture_alias: BlackSlick
   item_type: 1
-  is_tintable: true
   tint_alias: lightsaber
 # Cobal Crystal
 - guid: 120003
@@ -41,7 +38,6 @@
   model_name: Wield_LightsaberBlade_FX_Basic_Buggy.adr
   texture_alias: white_square
   item_type: 1
-  is_tintable: true
   tint_alias: lightsaber
 # Compressed Beam Crystal
 - guid: 120004
@@ -52,7 +48,6 @@
   model_name: Wield_LightsaberBlade_FX_Basic_Compressed.adr
   texture_alias: white_square
   item_type: 1
-  is_tintable: true
   tint_alias: lightsaber
 # Pulsing Beam Crystal
 - guid: 120005
@@ -63,7 +58,6 @@
   model_name: Wield_LightsaberBlade_FX_Basic_Pulsing.adr
   texture_alias: white_square
   item_type: 1
-  is_tintable: true
   tint_alias: lightsaber
 # Radiating Ring Crystal
 - guid: 120006
@@ -75,7 +69,6 @@
   texture_alias: white_square
   item_type: 1
   composite_effect: 3004
-  is_tintable: true
   tint_alias: lightsaber
 # Sparking Beam Crystal
 - guid: 120007
@@ -86,7 +79,6 @@
   model_name: Wield_LightsaberBlade_FX_Basic_Sparking.adr
   texture_alias: white_square
   item_type: 1
-  is_tintable: true
   tint_alias: lightsaber
 # Spiraling Beam Crystal
 - guid: 120008
@@ -97,7 +89,6 @@
   model_name: Wield_LightsaberBlade_FX_Basic_Spiral.adr
   texture_alias: white_square
   item_type: 1
-  is_tintable: true
   tint_alias: lightsaber
 # Unstable Beam Crystal
 - guid: 120009
@@ -108,7 +99,6 @@
   model_name: Wield_LightsaberBlade_FX_Basic_Unstable.adr
   texture_alias: white_square
   item_type: 1
-  is_tintable: true
   tint_alias: lightsaber
 # Kashyyyk Crystal
 - guid: 120010
@@ -119,7 +109,6 @@
   model_name: Wield_LightsaberBlade_FX_Kashyyk.adr
   texture_alias: white_square
   item_type: 1
-  is_tintable: true
   tint_alias: lightsaber
 # Forked Crystal
 - guid: 120011
@@ -130,7 +119,6 @@
   model_name: Wield_LightsaberBlade_Forked.adr
   texture_alias: white_square
   item_type: 1
-  is_tintable: true
   tint_alias: lightsaber
 # Gungan Crystal
 - guid: 120012
@@ -141,7 +129,6 @@
   model_name: Wield_LightsaberBlade_Gungan.adr
   texture_alias: Gungan
   item_type: 1
-  is_tintable: true
   tint_alias: lightsaber
 # Mestare Crystal
 - guid: 120013
@@ -152,7 +139,6 @@
   model_name: Wield_LightsaberBlade_Katana.adr
   texture_alias: white_square
   item_type: 1
-  is_tintable: true
   tint_alias: lightsaber
 # Short Crystal
 - guid: 120014
@@ -163,7 +149,6 @@
   model_name: Wield_LightsaberBlade_Short.adr
   texture_alias: white_square
   item_type: 1
-  is_tintable: true
   tint_alias: lightsaber
 # Tapered Beam Crystal
 - guid: 120015
@@ -174,7 +159,6 @@
   model_name: Wield_LightsaberBlade_Tapered.adr
   texture_alias: white_square
   item_type: 1
-  is_tintable: true
   tint_alias: lightsaber
 # Compressed Tapered Beam Crystal
 - guid: 120016
@@ -185,7 +169,6 @@
   model_name: Wield_LightsaberBlade_TaperedCompressed.adr
   texture_alias: white_square
   item_type: 1
-  is_tintable: true
   tint_alias: lightsaber
 # Tapered Halo Crystal
 - guid: 120017
@@ -197,7 +180,6 @@
   texture_alias: white_square
   item_type: 1
   composite_effect: 3004
-  is_tintable: true
   tint_alias: lightsaber
 # Unstable Tapered Beam Crystal
 - guid: 120018
@@ -208,7 +190,6 @@
   model_name: Wield_LightsaberBlade_TaperedUnstable.adr
   texture_alias: white_square
   item_type: 1
-  is_tintable: true
   tint_alias: lightsaber
 # Dahgee Crystal
 - guid: 120019
@@ -219,5 +200,4 @@
   model_name: Wield_LightsaberBlade_ZebraCrystal.adr
   texture_alias: ZebraCrystal
   item_type: 1
-  is_tintable: true
   tint_alias: lightsaber
