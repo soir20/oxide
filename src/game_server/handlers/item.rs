@@ -1,8 +1,4 @@
-use std::{
-    collections::BTreeMap,
-    fs::File,
-    path::Path,
-};
+use std::{collections::BTreeMap, fs::File, path::Path};
 
 use crate::{
     game_server::packets::{
@@ -166,8 +162,7 @@ pub fn load_item_definitions(
         .filter_map(|entry| entry.ok())
         .filter(|entry| {
             let path = entry.path();
-            entry.file_type().is_file()
-                && path.extension().is_some_and(|ext| ext == "yaml")
+            entry.file_type().is_file() && path.extension().is_some_and(|ext| ext == "yaml")
         })
         .map(|entry| entry.into_path());
 
