@@ -5,7 +5,6 @@
   description_id: 14
   icon_set_id: 530
   cost: 200
-  item_class: -1
   slot: !Customization FacialHair
   required_gender: 1
   item_type: 12
@@ -19,7 +18,6 @@
   description_id: 14
   icon_set_id: 529
   cost: 150
-  item_class: -1
   slot: !Customization FacialHair
   required_gender: 1
   item_type: 12
@@ -33,7 +31,6 @@
   description_id: 14
   icon_set_id: 532
   cost: 10
-  item_class: -1
   slot: !Customization FacialHair
   required_gender: 1
   item_type: 12
@@ -47,7 +44,6 @@
   description_id: 14
   icon_set_id: 528
   cost: 100
-  item_class: -1
   slot: !Customization FacialHair
   required_gender: 1
   item_type: 12
@@ -61,7 +57,6 @@
   description_id: 14
   icon_set_id: 588
   cost: 10
-  item_class: -1
   slot: !Customization FacialHair
   required_gender: 1
   item_type: 12
@@ -75,7 +70,6 @@
   description_id: 14
   icon_set_id: 585
   cost: 100
-  item_class: -1
   slot: !Customization FacialHair
   required_gender: 1
   item_type: 12
@@ -86,7 +80,6 @@
 - guid: 20006
   description_id: 14
   cost: 100
-  item_class: -1
   slot: !Customization FacialHair
   required_gender: 1
   item_type: 12
@@ -100,7 +93,6 @@
   description_id: 14
   icon_set_id: 586
   cost: 100
-  item_class: -1
   slot: !Customization FacialHair
   required_gender: 1
   item_type: 12
@@ -114,7 +106,6 @@
   description_id: 14
   icon_set_id: 587
   cost: 100
-  item_class: -1
   slot: !Customization FacialHair
   required_gender: 1
   item_type: 12
@@ -128,7 +119,6 @@
   description_id: 14
   icon_set_id: 1289
   cost: 20
-  item_class: -1
   slot: !Customization FacialHair
   required_gender: 1
   item_type: 12
@@ -142,7 +132,6 @@
   description_id: 14
   icon_set_id: 1284
   cost: 50
-  item_class: -1
   slot: !Customization FacialHair
   required_gender: 1
   item_type: 12
@@ -156,7 +145,6 @@
   description_id: 14
   icon_set_id: 1286
   cost: 50
-  item_class: -1
   slot: !Customization FacialHair
   required_gender: 1
   item_type: 12
@@ -170,7 +158,6 @@
   description_id: 14
   icon_set_id: 1287
   cost: 200
-  item_class: -1
   slot: !Customization FacialHair
   required_gender: 1
   item_type: 12
@@ -184,7 +171,6 @@
   description_id: 14
   icon_set_id: 1285
   cost: 100
-  item_class: -1
   slot: !Customization FacialHair
   required_gender: 1
   item_type: 12
@@ -198,7 +184,6 @@
   description_id: 14
   icon_set_id: 1288
   cost: 50
-  item_class: -1
   slot: !Customization FacialHair
   required_gender: 1
   item_type: 12

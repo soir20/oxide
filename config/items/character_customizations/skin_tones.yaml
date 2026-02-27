@@ -5,7 +5,6 @@
   description_id: 14
   icon_set_id: 715
   cost: 50
-  item_class: -1
   slot: !Customization SkinTone
   item_type: 12
   max_stack_size: 2
@@ -18,7 +17,6 @@
   description_id: 14
   icon_set_id: 716
   cost: 50
-  item_class: -1
   slot: !Customization SkinTone
   item_type: 12
   max_stack_size: 2
@@ -31,7 +29,6 @@
   description_id: 14
   icon_set_id: 713
   cost: 50
-  item_class: -1
   slot: !Customization SkinTone
   item_type: 12
   max_stack_size: 2
@@ -44,7 +41,6 @@
   description_id: 14
   icon_set_id: 718
   cost: 50
-  item_class: -1
   slot: !Customization SkinTone
   item_type: 12
   max_stack_size: 2
@@ -57,7 +53,6 @@
   description_id: 14
   icon_set_id: 717
   cost: 50
-  item_class: -1
   slot: !Customization SkinTone
   item_type: 12
   max_stack_size: 2
@@ -70,7 +65,6 @@
   description_id: 14
   icon_set_id: 714
   cost: 50
-  item_class: -1
   slot: !Customization SkinTone
   item_type: 12
   max_stack_size: 2
@@ -83,7 +77,6 @@
   description_id: 14
   icon_set_id: 712
   cost: 50
-  item_class: -1
   slot: !Customization SkinTone
   item_type: 12
   max_stack_size: 2
@@ -96,7 +89,6 @@
   description_id: 14
   icon_set_id: 728
   cost: 50
-  item_class: -1
   slot: !Customization SkinTone
   item_type: 12
   max_stack_size: 2
@@ -109,7 +101,6 @@
   description_id: 14
   icon_set_id: 734
   cost: 50
-  item_class: -1
   slot: !Customization SkinTone
   item_type: 12
   max_stack_size: 2
@@ -122,7 +113,6 @@
   description_id: 14
   icon_set_id: 731
   cost: 50
-  item_class: -1
   slot: !Customization SkinTone
   item_type: 12
   max_stack_size: 2
@@ -135,7 +125,6 @@
   description_id: 14
   icon_set_id: 735
   cost: 50
-  item_class: -1
   slot: !Customization SkinTone
   item_type: 12
   max_stack_size: 2
@@ -148,7 +137,6 @@
   description_id: 14
   icon_set_id: 733
   cost: 50
-  item_class: -1
   slot: !Customization SkinTone
   required_gender: 1
   item_type: 12
@@ -162,7 +150,6 @@
   description_id: 14
   icon_set_id: 732
   cost: 50
-  item_class: -1
   slot: !Customization SkinTone
   item_type: 12
   max_stack_size: 2
@@ -175,7 +162,6 @@
   description_id: 14
   icon_set_id: 729
   cost: 50
-  item_class: -1
   slot: !Customization SkinTone
   required_gender: 1
   item_type: 12
@@ -189,7 +175,6 @@
   description_id: 14
   icon_set_id: 730
   cost: 50
-  item_class: -1
   slot: !Customization SkinTone
   item_type: 12
   max_stack_size: 2
@@ -202,7 +187,6 @@
   description_id: 14
   icon_set_id: 738
   cost: 100
-  item_class: -1
   slot: !Customization SkinTone
   required_gender: 2
   item_type: 12
@@ -216,7 +200,6 @@
   description_id: 14
   icon_set_id: 739
   cost: 100
-  item_class: -1
   slot: !Customization SkinTone
   required_gender: 2
   item_type: 12
@@ -230,7 +213,6 @@
   description_id: 14
   icon_set_id: 745
   cost: 50
-  item_class: -1
   slot: !Customization SkinTone
   item_type: 12
   max_stack_size: 2
@@ -243,7 +225,6 @@
   description_id: 14
   icon_set_id: 747
   cost: 50
-  item_class: -1
   slot: !Customization SkinTone
   item_type: 12
   max_stack_size: 2
@@ -256,7 +237,6 @@
   description_id: 14
   icon_set_id: 746
   cost: 50
-  item_class: -1
   slot: !Customization SkinTone
   item_type: 12
   max_stack_size: 2
@@ -269,7 +249,6 @@
   description_id: 14
   icon_set_id: 744
   cost: 50
-  item_class: -1
   slot: !Customization SkinTone
   item_type: 12
   max_stack_size: 2
@@ -282,7 +261,6 @@
   description_id: 14
   icon_set_id: 725
   cost: 50
-  item_class: -1
   slot: !Customization SkinTone
   item_type: 12
   max_stack_size: 2
@@ -295,7 +273,6 @@
   description_id: 14
   icon_set_id: 726
   cost: 50
-  item_class: -1
   slot: !Customization SkinTone
   item_type: 12
   max_stack_size: 2
@@ -308,7 +285,6 @@
   description_id: 14
   icon_set_id: 727
   cost: 50
-  item_class: -1
   slot: !Customization SkinTone
   item_type: 12
   max_stack_size: 2
@@ -320,7 +296,6 @@
   name_id: 1681
   description_id: 14
   icon_set_id: 1316
-  item_class: -1
   slot: !Customization SkinTone
   item_type: 12
   max_stack_size: 2
@@ -333,7 +308,6 @@
   description_id: 14
   icon_set_id: 1806
   cost: 50
-  item_class: -1
   slot: !Customization SkinTone
   item_type: 12
   max_stack_size: 2
@@ -346,7 +320,6 @@
   description_id: 14
   icon_set_id: 1805
   cost: 50
-  item_class: -1
   slot: !Customization SkinTone
   item_type: 12
   max_stack_size: 2
@@ -359,7 +332,6 @@
   description_id: 14
   icon_set_id: 1803
   cost: 100
-  item_class: -1
   slot: !Customization SkinTone
   item_type: 12
   max_stack_size: 2
@@ -372,7 +344,6 @@
   description_id: 14
   icon_set_id: 1807
   cost: 100
-  item_class: -1
   slot: !Customization SkinTone
   item_type: 12
   max_stack_size: 2
@@ -385,7 +356,6 @@
   description_id: 14
   icon_set_id: 1804
   cost: 100
-  item_class: -1
   slot: !Customization SkinTone
   item_type: 12
   max_stack_size: 2

@@ -4,379 +4,319 @@
   name_id: 2358
   description_id: 14
   icon_set_id: 2327
-  item_class: -1
   slot: !Equipment Head
   model_name: Wear_<race>_<gender>_Head_PadmeScubaHelmet.adr
   texture_alias: PadmeScuba
   item_type: 1
   category: 60
-  max_stack_size: 1
 # Senator Ballroom Garb
 - guid: 200001
   name_id: 1583
   description_id: 14
   icon_set_id: 1929
-  item_class: -1
   slot: !Equipment Body
   model_name: Wear_Human_<gender>_Body_NabooBallroom.adr
   texture_alias: NabooFormal
   item_type: 1
   category: 61
-  max_stack_size: 1
 # Senator Ballroom Gloves
 - guid: 200002
   name_id: 1581
   description_id: 14
   icon_set_id: 1931
-  item_class: -1
   slot: !Equipment Hands
   model_name: Wear_Human_<gender>_Hands_NabooBallroomGloves.adr
   texture_alias: NabooFormal
   item_type: 1
   category: 62
-  max_stack_size: 1
 # Senator Ballroom Shoes
 - guid: 200003
   name_id: 1585
   description_id: 14
   icon_set_id: 1930
-  item_class: -1
   slot: !Equipment Feet
   model_name: Wear_Human_<gender>_Feet_NabooBallroom.adr
   texture_alias: NabooFormal
   item_type: 1
   category: 63
-  max_stack_size: 1
 # Senator Kharrus' Robes
 - guid: 200004
   name_id: 1654
   description_id: 14
   icon_set_id: 1927
-  item_class: -1
   slot: !Equipment Body
   model_name: Wear_Human_<gender>_Body_SenatorKharrusRobe.adr
   texture_alias: SenatorKharrus
   item_type: 1
   category: 61
   members: true
-  max_stack_size: 1
 # Senator Kharrus' Boots
 - guid: 200005
   name_id: 1656
   description_id: 14
   icon_set_id: 1928
-  item_class: -1
   slot: !Equipment Feet
   model_name: Wear_Human_<gender>_Feet_SenatorialNabooBoots.adr
   texture_alias: SenatorKharrus
   item_type: 1
   category: 63
   members: true
-  max_stack_size: 1
 # Palpatine's Robes
 - guid: 200006
   name_id: 20387
   description_id: 14
   icon_set_id: 1102
-  item_class: -1
   slot: !Equipment Body
   model_name: Wear_Human_<gender>_Body_PalpatineRobe.adr
   texture_alias: Palpatine
   item_type: 1
   category: 61
   members: true
-  max_stack_size: 1
 # Palpatine's Shoes
 - guid: 200007
   name_id: 1354
   description_id: 14
   icon_set_id: 1103
-  item_class: -1
   slot: !Equipment Feet
   model_name: Wear_Human_<gender>_Feet_LokDurdBoots.adr
   texture_alias: Palpatine
   item_type: 1
   category: 63
   members: true
-  max_stack_size: 1
 # Bail Organa's Robes
 - guid: 200008
   name_id: 1612
   description_id: 14
   icon_set_id: 1244
-  item_class: -1
   slot: !Equipment Body
   model_name: Wear_Human_<gender>_Body_BailOrganaSuit.adr
   texture_alias: BailOrgana
   item_type: 1
   category: 61
   members: true
-  max_stack_size: 1
 # Bail Organa's Boots
 - guid: 200009
   name_id: 1614
   description_id: 14
   icon_set_id: 1245
-  item_class: -1
   slot: !Equipment Feet
   model_name: Wear_Human_<gender>_Feet_BailOrganaBoots.adr
   texture_alias: BailOrgana
   item_type: 1
   category: 63
   members: true
-  max_stack_size: 1
 # Admiral Yularen's Uniform
 - guid: 200010
   name_id: 136
   description_id: 14
   icon_set_id: 116
-  item_class: -1
   slot: !Equipment Body
   model_name: Wear_Human_<gender>_Body_WullfYularenUniform.adr
   texture_alias: WullfYularen
   item_type: 1
   category: 61
   members: true
-  max_stack_size: 1
 # Republic Fleet Officer Uniform
 - guid: 200011
   name_id: 8540
   description_id: 14
   icon_set_id: 106
-  item_class: -1
   slot: !Equipment Body
   model_name: Wear_Human_<gender>_Body_OfficerUniform.adr
   texture_alias: OfficerGrey
   item_type: 1
   category: 61
   members: true
-  max_stack_size: 1
 # Republic Fleet Officer Hat
 - guid: 200012
   name_id: 8542
   description_id: 14
   icon_set_id: 203
-  item_class: -1
   slot: !Equipment Head
   model_name: Wear_<race>_<gender>_Head_OfficerCap.adr
   texture_alias: OfficerGrey
   item_type: 1
   category: 60
   members: true
-  max_stack_size: 1
 # Republic Fleet Officer Gloves
 - guid: 200013
   name_id: 312
   description_id: 14
   icon_set_id: 181
-  item_class: -1
   slot: !Equipment Hands
   model_name: Wear_Human_<gender>_Hands_ShortGloves.adr
   texture_alias: OfficerGrey
   item_type: 1
   category: 62
   members: true
-  max_stack_size: 1
 # Republic Fleet Officer Boots
 - guid: 200014
   name_id: 310
   description_id: 14
   icon_set_id: 139
-  item_class: -1
   slot: !Equipment Feet
   model_name: Wear_Human_<gender>_Feet_HeeledRidgeBoots.adr
   texture_alias: OfficerGrey
   item_type: 1
   category: 63
   members: true
-  max_stack_size: 1
 # Orn Free Taa's Robes
 - guid: 200015
   name_id: 878
   description_id: 14
   icon_set_id: 481
-  item_class: -1
   slot: !Equipment Body
   model_name: Wear_Human_<gender>_Body_OrnFreeTaRobes.adr
   texture_alias: OrnFreeTa
   item_type: 1
   category: 61
   members: true
-  max_stack_size: 1
 # Orn Free Taa's Boots
 - guid: 200016
   name_id: 880
   description_id: 14
   icon_set_id: 482
-  item_class: -1
   slot: !Equipment Feet
   model_name: Wear_Human_<gender>_Feet_LokDurdBoots.adr
   texture_alias: OrnFreeTa
   item_type: 1
   category: 63
   members: true
-  max_stack_size: 1
 # Republic Technician's Jumpsuit
 - guid: 200017
   name_id: 850
   description_id: 14
   icon_set_id: 464
-  item_class: -1
   slot: !Equipment Body
   model_name: Wear_Human_<gender>_Body_FleetMechanicJumpsuit.adr
   texture_alias: FleetMechanic
   item_type: 1
   category: 61
   members: true
-  max_stack_size: 1
 # Republic Technician's Helmet
 - guid: 200018
   name_id: 846
   description_id: 14
   icon_set_id: 467
-  item_class: -1
   slot: !Equipment Head
   model_name: Wear_<race>_<gender>_Head_FleetMechanicHelmet.adr
   texture_alias: FleetMechanic
   item_type: 1
   category: 60
   members: true
-  max_stack_size: 1
 # Republic Technician's Gloves
 - guid: 200019
   name_id: 848
   description_id: 14
   icon_set_id: 466
-  item_class: -1
   slot: !Equipment Hands
   model_name: Wear_Human_<gender>_Hands_ShortGloves.adr
   texture_alias: FleetMechanic
   item_type: 1
   category: 62
   members: true
-  max_stack_size: 1
 # Republic Technician's Boots
 - guid: 200020
   name_id: 852
   description_id: 14
   icon_set_id: 465
-  item_class: -1
   slot: !Equipment Feet
   model_name: Wear_Human_<gender>_Feet_HeeledRidgeBoots.adr
   texture_alias: FleetMechanic
   item_type: 1
   category: 63
   members: true
-  max_stack_size: 1
 # Medical Officer Uniform
 - guid: 200021
   name_id: 874
   description_id: 14
   icon_set_id: 377
-  item_class: -1
   slot: !Equipment Body
   model_name: Wear_Human_<gender>_Body_OfficerUniform.adr
   texture_alias: OfficerWhite
   item_type: 1
   category: 61
   members: true
-  max_stack_size: 1
 # Medical Officer Cap
 - guid: 200022
   name_id: 870
   description_id: 14
   icon_set_id: 395
-  item_class: -1
   slot: !Equipment Head
   model_name: Wear_<race>_<gender>_Head_OfficerCap.adr
   texture_alias: OfficerWhite
   item_type: 1
   category: 60
   members: true
-  max_stack_size: 1
 # Medical Officer Gloves
 - guid: 200023
   name_id: 872
   description_id: 14
   icon_set_id: 389
-  item_class: -1
   slot: !Equipment Hands
   model_name: Wear_Human_<gender>_Hands_ShortGloves.adr
   texture_alias: OfficerWhite
   item_type: 1
   category: 62
   members: true
-  max_stack_size: 1
 # Medical Officer Boots
 - guid: 200024
   name_id: 876
   description_id: 14
   icon_set_id: 383
-  item_class: -1
   slot: !Equipment Feet
   model_name: Wear_Human_<gender>_Feet_HeeledRidgeBoots.adr
   texture_alias: OfficerWhite
   item_type: 1
   category: 63
   members: true
-  max_stack_size: 1
 # General Snow Uniform Coat
 - guid: 200025
   name_id: 856
   description_id: 14
   icon_set_id: 471
-  item_class: -1
   slot: !Equipment Body
   model_name: Wear_Human_<gender>_Body_GeneralSnowUniform.adr
   texture_alias: GeneralSnowUniform
   item_type: 1
   category: 61
-  max_stack_size: 1
 # General Snow Uniform Hood
 - guid: 200026
   name_id: 860
   description_id: 14
   icon_set_id: 475
-  item_class: -1
   slot: !Equipment Head
   model_name: Wear_<race>_<gender>_Head_GeneralSnowHoodieUp.adr
   texture_alias: GeneralSnowUniform
   item_type: 1
   category: 60
-  max_stack_size: 1
 # General Snow Uniform Gloves
 - guid: 200027
   name_id: 854
   description_id: 14
   icon_set_id: 473
-  item_class: -1
   slot: !Equipment Hands
   model_name: Wear_Human_<gender>_Hands_GeneralSnowGauntlets.adr
   texture_alias: GeneralSnowUniform
   item_type: 1
   category: 62
-  max_stack_size: 1
 # General Snow Uniform Boots
 - guid: 200028
   name_id: 858
   description_id: 14
   icon_set_id: 472
-  item_class: -1
   slot: !Equipment Feet
   model_name: Wear_Human_<gender>_Feet_GeneralSnowBoots.adr
   texture_alias: GeneralSnowUniform
   item_type: 1
   category: 63
-  max_stack_size: 1
 # Republic General's Snow Hat - Do Not Use
 - guid: 200029
   name_id: 1490
   description_id: 14
   icon_set_id: 474
-  item_class: -1
   slot: !Equipment Head
   model_name: Wear_Human_<gender>_Head_GeneralSnowHoodieDown.adr
   texture_alias: GeneralSnowHoodieDown
   item_type: 1
   category: 60
-  max_stack_size: 1

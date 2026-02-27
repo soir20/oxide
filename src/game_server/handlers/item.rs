@@ -81,6 +81,7 @@ pub struct ItemConfig {
     pub max_stack_size: i32,
     #[serde(default)]
     pub is_tintable: bool,
+    #[serde(default)]
     pub tint_alias: String,
     #[serde(default)]
     pub disable_preview: bool,

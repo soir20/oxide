@@ -5,7 +5,6 @@
   description_id: 14
   icon_set_id: 531
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -19,7 +18,6 @@
   description_id: 14
   icon_set_id: 542
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -33,7 +31,6 @@
   description_id: 14
   icon_set_id: 532
   cost: 20
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -47,7 +44,6 @@
   description_id: 14
   icon_set_id: 533
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -61,7 +57,6 @@
   description_id: 14
   icon_set_id: 534
   cost: 200
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -75,7 +70,6 @@
   description_id: 14
   icon_set_id: 536
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -89,7 +83,6 @@
   description_id: 14
   icon_set_id: 535
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -103,7 +96,6 @@
   description_id: 14
   icon_set_id: 537
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -117,7 +109,6 @@
   description_id: 14
   icon_set_id: 538
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -131,7 +122,6 @@
   description_id: 14
   icon_set_id: 539
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -145,7 +135,6 @@
   description_id: 14
   icon_set_id: 540
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -159,7 +148,6 @@
   description_id: 14
   icon_set_id: 3657
   cost: 200
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -173,7 +161,6 @@
   description_id: 14
   icon_set_id: 541
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -187,7 +174,6 @@
   description_id: 14
   icon_set_id: 3596
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -201,7 +187,6 @@
   description_id: 14
   icon_set_id: 1437
   cost: 200
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -215,7 +200,6 @@
   description_id: 14
   icon_set_id: 519
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -229,7 +213,6 @@
   description_id: 14
   icon_set_id: 520
   cost: 20
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -243,7 +226,6 @@
   description_id: 14
   icon_set_id: 521
   cost: 200
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -257,7 +239,6 @@
   description_id: 14
   icon_set_id: 611
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -271,7 +252,6 @@
   description_id: 14
   icon_set_id: 612
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -285,7 +265,6 @@
   description_id: 14
   icon_set_id: 523
   cost: 200
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -299,7 +278,6 @@
   description_id: 14
   icon_set_id: 522
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -313,7 +291,6 @@
   description_id: 14
   icon_set_id: 524
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -327,7 +304,6 @@
   description_id: 14
   icon_set_id: 525
   cost: 200
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -341,7 +317,6 @@
   description_id: 14
   icon_set_id: 3656
   cost: 200
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -355,7 +330,6 @@
   description_id: 14
   icon_set_id: 1466
   cost: 200
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -369,7 +343,6 @@
   description_id: 14
   icon_set_id: 526
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -383,7 +356,6 @@
   description_id: 14
   icon_set_id: 613
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -397,7 +369,6 @@
   description_id: 14
   icon_set_id: 527
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -411,7 +382,6 @@
   description_id: 14
   icon_set_id: 3597
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -425,7 +395,6 @@
   description_id: 14
   icon_set_id: 614
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -439,7 +408,6 @@
   description_id: 14
   icon_set_id: 588
   cost: 20
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -453,7 +421,6 @@
   description_id: 14
   icon_set_id: 589
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -467,7 +434,6 @@
   description_id: 14
   icon_set_id: 590
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -481,7 +447,6 @@
   description_id: 14
   icon_set_id: 591
   cost: 30
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -495,7 +460,6 @@
   description_id: 14
   icon_set_id: 592
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -509,7 +473,6 @@
   description_id: 14
   icon_set_id: 593
   cost: 30
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -523,7 +486,6 @@
   description_id: 14
   icon_set_id: 594
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -537,7 +499,6 @@
   description_id: 14
   icon_set_id: 595
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -551,7 +512,6 @@
   description_id: 14
   icon_set_id: 596
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -565,7 +525,6 @@
   description_id: 14
   icon_set_id: 597
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -579,7 +538,6 @@
   description_id: 14
   icon_set_id: 598
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -593,7 +551,6 @@
   description_id: 14
   icon_set_id: 599
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -607,7 +564,6 @@
   description_id: 14
   icon_set_id: 600
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -621,7 +577,6 @@
   description_id: 14
   icon_set_id: 567
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -635,7 +590,6 @@
   description_id: 14
   icon_set_id: 564
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -649,7 +603,6 @@
   description_id: 14
   icon_set_id: 563
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -663,7 +616,6 @@
   description_id: 14
   icon_set_id: 570
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -677,7 +629,6 @@
   description_id: 14
   icon_set_id: 566
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -691,7 +642,6 @@
   description_id: 14
   icon_set_id: 568
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -705,7 +655,6 @@
   description_id: 14
   icon_set_id: 565
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -719,7 +668,6 @@
   description_id: 14
   icon_set_id: 569
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -733,7 +681,6 @@
   description_id: 14
   icon_set_id: 556
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -747,7 +694,6 @@
   description_id: 14
   icon_set_id: 555
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -761,7 +707,6 @@
   description_id: 14
   icon_set_id: 562
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -775,7 +720,6 @@
   description_id: 14
   icon_set_id: 558
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -789,7 +733,6 @@
   description_id: 14
   icon_set_id: 560
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -803,7 +746,6 @@
   description_id: 14
   icon_set_id: 559
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -817,7 +759,6 @@
   description_id: 14
   icon_set_id: 557
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -831,7 +772,6 @@
   description_id: 14
   icon_set_id: 561
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -845,7 +785,6 @@
   description_id: 14
   icon_set_id: 580
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -859,7 +798,6 @@
   description_id: 14
   icon_set_id: 1166
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -873,7 +811,6 @@
   description_id: 14
   icon_set_id: 655
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -887,7 +824,6 @@
   description_id: 14
   icon_set_id: 578
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -901,7 +837,6 @@
   description_id: 14
   icon_set_id: 579
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -915,7 +850,6 @@
   description_id: 14
   icon_set_id: 654
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -929,7 +863,6 @@
   description_id: 14
   icon_set_id: 581
   cost: 300
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -943,7 +876,6 @@
   description_id: 14
   icon_set_id: 3658
   cost: 300
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -957,7 +889,6 @@
   description_id: 14
   icon_set_id: 582
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -971,7 +902,6 @@
   description_id: 14
   icon_set_id: 583
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -985,7 +915,6 @@
   description_id: 14
   icon_set_id: 584
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -999,7 +928,6 @@
   description_id: 14
   icon_set_id: 573
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -1013,7 +941,6 @@
   description_id: 14
   icon_set_id: 1165
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -1027,7 +954,6 @@
   description_id: 14
   icon_set_id: 642
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -1041,7 +967,6 @@
   description_id: 14
   icon_set_id: 571
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -1055,7 +980,6 @@
   description_id: 14
   icon_set_id: 572
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -1069,7 +993,6 @@
   description_id: 14
   icon_set_id: 641
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -1083,7 +1006,6 @@
   description_id: 14
   icon_set_id: 574
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -1097,7 +1019,6 @@
   description_id: 14
   icon_set_id: 3678
   cost: 250
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -1111,7 +1032,6 @@
   description_id: 14
   icon_set_id: 575
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -1125,7 +1045,6 @@
   description_id: 14
   icon_set_id: 576
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -1139,7 +1058,6 @@
   description_id: 14
   icon_set_id: 577
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -1153,7 +1071,6 @@
   description_id: 14
   icon_set_id: 549
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -1167,7 +1084,6 @@
   description_id: 14
   icon_set_id: 553
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -1181,7 +1097,6 @@
   description_id: 14
   icon_set_id: 551
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -1195,7 +1110,6 @@
   description_id: 14
   icon_set_id: 543
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -1209,7 +1123,6 @@
   description_id: 14
   icon_set_id: 547
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -1223,7 +1136,6 @@
   description_id: 14
   icon_set_id: 545
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -1237,7 +1149,6 @@
   description_id: 14
   icon_set_id: 1289
   cost: 20
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -1251,7 +1162,6 @@
   description_id: 14
   icon_set_id: 1290
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -1265,7 +1175,6 @@
   description_id: 14
   icon_set_id: 1291
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -1279,7 +1188,6 @@
   description_id: 14
   icon_set_id: 1292
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -1293,7 +1201,6 @@
   description_id: 14
   icon_set_id: 1293
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -1307,7 +1214,6 @@
   description_id: 14
   icon_set_id: 1294
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -1321,7 +1227,6 @@
   description_id: 14
   icon_set_id: 1295
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -1335,7 +1240,6 @@
   description_id: 14
   icon_set_id: 1296
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -1349,7 +1253,6 @@
   description_id: 14
   icon_set_id: 1261
   cost: 20
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -1363,7 +1266,6 @@
   description_id: 14
   icon_set_id: 1262
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -1377,7 +1279,6 @@
   description_id: 14
   icon_set_id: 1263
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -1391,7 +1292,6 @@
   description_id: 14
   icon_set_id: 1264
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -1405,7 +1305,6 @@
   description_id: 14
   icon_set_id: 1265
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -1419,7 +1318,6 @@
   description_id: 14
   icon_set_id: 1266
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -1433,7 +1331,6 @@
   description_id: 14
   icon_set_id: 1267
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -1447,7 +1344,6 @@
   description_id: 14
   icon_set_id: 1269
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -1461,7 +1357,6 @@
   description_id: 14
   icon_set_id: 1268
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -1475,7 +1370,6 @@
   description_id: 14
   icon_set_id: 1270
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -1489,7 +1383,6 @@
   description_id: 14
   icon_set_id: 1271
   cost: 50
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -1503,7 +1396,6 @@
   description_id: 14
   icon_set_id: 1829
   cost: 20
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -1517,7 +1409,6 @@
   description_id: 14
   icon_set_id: 1830
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -1531,7 +1422,6 @@
   description_id: 14
   icon_set_id: 1835
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -1545,7 +1435,6 @@
   description_id: 14
   icon_set_id: 1831
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -1559,7 +1448,6 @@
   description_id: 14
   icon_set_id: 1836
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -1573,7 +1461,6 @@
   description_id: 14
   icon_set_id: 1832
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 1
   item_type: 12
@@ -1587,7 +1474,6 @@
   description_id: 14
   icon_set_id: 1819
   cost: 20
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -1601,7 +1487,6 @@
   description_id: 14
   icon_set_id: 1820
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -1615,7 +1500,6 @@
   description_id: 14
   icon_set_id: 1833
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -1629,7 +1513,6 @@
   description_id: 14
   icon_set_id: 1821
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -1643,7 +1526,6 @@
   description_id: 14
   icon_set_id: 1834
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12
@@ -1657,7 +1539,6 @@
   description_id: 14
   icon_set_id: 1822
   cost: 100
-  item_class: -1
   slot: !Customization HairStyle
   required_gender: 2
   item_type: 12

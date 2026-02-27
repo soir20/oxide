@@ -5,7 +5,6 @@
   description_id: 14
   icon_set_id: 607
   cost: 50
-  item_class: -1
   slot: !Customization FacePattern
   required_gender: 1
   item_type: 12
@@ -19,7 +18,6 @@
   description_id: 14
   icon_set_id: 604
   cost: 100
-  item_class: -1
   slot: !Customization FacePattern
   required_gender: 1
   item_type: 12
@@ -33,7 +31,6 @@
   description_id: 14
   icon_set_id: 601
   cost: 50
-  item_class: -1
   slot: !Customization FacePattern
   required_gender: 1
   item_type: 12
@@ -47,7 +44,6 @@
   description_id: 14
   icon_set_id: 602
   cost: 50
-  item_class: -1
   slot: !Customization FacePattern
   required_gender: 1
   item_type: 12
@@ -61,7 +57,6 @@
   description_id: 14
   icon_set_id: 3655
   cost: 100
-  item_class: -1
   slot: !Customization FacePattern
   required_gender: 1
   item_type: 12
@@ -75,7 +70,6 @@
   description_id: 14
   icon_set_id: 605
   cost: 50
-  item_class: -1
   slot: !Customization FacePattern
   required_gender: 1
   item_type: 12
@@ -89,7 +83,6 @@
   description_id: 14
   icon_set_id: 588
   cost: 20
-  item_class: -1
   slot: !Customization FacePattern
   required_gender: 1
   item_type: 12
@@ -103,7 +96,6 @@
   description_id: 14
   icon_set_id: 606
   cost: 200
-  item_class: -1
   slot: !Customization FacePattern
   required_gender: 1
   item_type: 12
@@ -117,7 +109,6 @@
   description_id: 14
   icon_set_id: 603
   cost: 50
-  item_class: -1
   slot: !Customization FacePattern
   required_gender: 1
   item_type: 12
@@ -131,7 +122,6 @@
   description_id: 14
   icon_set_id: 608
   cost: 100
-  item_class: -1
   slot: !Customization FacePattern
   required_gender: 1
   item_type: 12
@@ -145,7 +135,6 @@
   description_id: 14
   icon_set_id: 609
   cost: 100
-  item_class: -1
   slot: !Customization FacePattern
   required_gender: 1
   item_type: 12
@@ -159,7 +148,6 @@
   description_id: 14
   icon_set_id: 610
   cost: 50
-  item_class: -1
   slot: !Customization FacePattern
   required_gender: 1
   item_type: 12
@@ -170,7 +158,6 @@
 - guid: 50012
   description_id: 14
   cost: 50
-  item_class: -1
   slot: !Customization FacePattern
   required_gender: 1
   item_type: 12
@@ -184,7 +171,6 @@
   description_id: 14
   icon_set_id: 636
   cost: 150
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -197,7 +183,6 @@
   description_id: 14
   icon_set_id: 635
   cost: 300
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -210,7 +195,6 @@
   description_id: 14
   icon_set_id: 633
   cost: 50
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -223,7 +207,6 @@
   description_id: 14
   icon_set_id: 634
   cost: 50
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -236,7 +219,6 @@
   description_id: 14
   icon_set_id: 637
   cost: 150
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -249,7 +231,6 @@
   description_id: 14
   icon_set_id: 638
   cost: 100
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -262,7 +243,6 @@
   description_id: 14
   icon_set_id: 640
   cost: 100
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -275,7 +255,6 @@
   description_id: 14
   icon_set_id: 639
   cost: 100
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -288,7 +267,6 @@
   description_id: 14
   icon_set_id: 1164
   cost: 20
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -301,7 +279,6 @@
   description_id: 14
   icon_set_id: 656
   cost: 500
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -314,7 +291,6 @@
   description_id: 14
   icon_set_id: 657
   cost: 50
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -327,7 +303,6 @@
   description_id: 14
   icon_set_id: 658
   cost: 100
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -340,7 +315,6 @@
   description_id: 14
   icon_set_id: 1633
   cost: 100
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -353,7 +327,6 @@
   description_id: 14
   icon_set_id: 662
   cost: 200
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -366,7 +339,6 @@
   description_id: 14
   icon_set_id: 1634
   cost: 100
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -379,7 +351,6 @@
   description_id: 14
   icon_set_id: 660
   cost: 100
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -392,7 +363,6 @@
   description_id: 14
   icon_set_id: 661
   cost: 100
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -405,7 +375,6 @@
   description_id: 14
   icon_set_id: 663
   cost: 100
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -418,7 +387,6 @@
   description_id: 14
   icon_set_id: 1635
   cost: 200
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -431,7 +399,6 @@
   description_id: 14
   icon_set_id: 1636
   cost: 100
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -444,7 +411,6 @@
   description_id: 14
   icon_set_id: 664
   cost: 50
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -457,7 +423,6 @@
   description_id: 14
   icon_set_id: 665
   cost: 600
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -470,7 +435,6 @@
   description_id: 14
   icon_set_id: 666
   cost: 100
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -483,7 +447,6 @@
   description_id: 14
   icon_set_id: 659
   cost: 600
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -496,7 +459,6 @@
   description_id: 14
   icon_set_id: 620
   cost: 50
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -509,7 +471,6 @@
   description_id: 14
   icon_set_id: 621
   cost: 50
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -522,7 +483,6 @@
   description_id: 14
   icon_set_id: 622
   cost: 50
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -535,7 +495,6 @@
   description_id: 14
   icon_set_id: 1372
   cost: 150
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -548,7 +507,6 @@
   description_id: 14
   icon_set_id: 1371
   cost: 100
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -561,7 +519,6 @@
   description_id: 14
   icon_set_id: 623
   cost: 100
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -574,7 +531,6 @@
   description_id: 14
   icon_set_id: 624
   cost: 50
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -587,7 +543,6 @@
   description_id: 14
   icon_set_id: 619
   cost: 100
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -600,7 +555,6 @@
   description_id: 14
   icon_set_id: 1297
   cost: 50
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -613,7 +567,6 @@
   description_id: 14
   icon_set_id: 1298
   cost: 50
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -626,7 +579,6 @@
   description_id: 14
   icon_set_id: 1299
   cost: 50
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -639,7 +591,6 @@
   description_id: 14
   icon_set_id: 1300
   cost: 100
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -652,7 +603,6 @@
   description_id: 14
   icon_set_id: 1301
   cost: 50
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -665,7 +615,6 @@
   description_id: 14
   icon_set_id: 1302
   cost: 100
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -678,7 +627,6 @@
   description_id: 14
   icon_set_id: 1303
   cost: 100
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -691,7 +639,6 @@
   description_id: 14
   icon_set_id: 1304
   cost: 50
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -704,7 +651,6 @@
   description_id: 14
   icon_set_id: 1305
   cost: 200
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -717,7 +663,6 @@
   description_id: 14
   icon_set_id: 1306
   cost: 50
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -730,7 +675,6 @@
   description_id: 14
   icon_set_id: 1307
   cost: 50
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -743,7 +687,6 @@
   description_id: 14
   icon_set_id: 1308
   cost: 50
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -756,7 +699,6 @@
   description_id: 14
   icon_set_id: 1823
   cost: 500
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -769,7 +711,6 @@
   description_id: 14
   icon_set_id: 1824
   cost: 200
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -782,7 +723,6 @@
   description_id: 14
   icon_set_id: 1825
   cost: 100
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -795,7 +735,6 @@
   description_id: 14
   icon_set_id: 1826
   cost: 100
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -808,7 +747,6 @@
   description_id: 14
   icon_set_id: 1827
   cost: 50
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2
@@ -821,7 +759,6 @@
   description_id: 14
   icon_set_id: 1828
   cost: 100
-  item_class: -1
   slot: !Customization FacePattern
   item_type: 12
   max_stack_size: 2

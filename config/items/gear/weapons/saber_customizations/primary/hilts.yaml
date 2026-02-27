@@ -10,7 +10,6 @@
   texture_alias: DarkForcePhaseIII
   item_type: 25
   category: 64
-  max_stack_size: 1
 # Zabrak Sith Lightsaber
 - guid: 110001
   name_id: 8764
@@ -23,7 +22,6 @@
   item_type: 25
   category: 64
   members: true
-  max_stack_size: 1
 # Nelona Lightsaber
 - guid: 110002
   name_id: 4806
@@ -35,7 +33,6 @@
   texture_alias: Nelona
   item_type: 25
   category: 64
-  max_stack_size: 1
 # Savage Opress' Lightsaber
 - guid: 110003
   name_id: 33110
@@ -47,7 +44,6 @@
   texture_alias: Opress
   item_type: 25
   category: 64
-  max_stack_size: 1
 # Sith Warrior Lightsaber
 - guid: 110004
   name_id: 52792
@@ -59,7 +55,6 @@
   texture_alias: SithAffil
   item_type: 25
   category: 64
-  max_stack_size: 1
 # Ahsoka Tano's Reverse Lightsaber
 - guid: 110005
   name_id: 8761
@@ -72,7 +67,6 @@
   item_type: 25
   category: 64
   members: true
-  max_stack_size: 1
 # Sith Inquisitor Lightsaber
 - guid: 110006
   name_id: 4907
@@ -84,7 +78,6 @@
   texture_alias: DarkForcePhaseII
   item_type: 25
   category: 64
-  max_stack_size: 1
 # Forgotten Jedi Reverse Lightsaber
 - guid: 110007
   name_id: 60286
@@ -97,7 +90,6 @@
   item_type: 25
   category: 64
   members: true
-  max_stack_size: 1
 # Jedi Champion Reverse Lightsaber
 - guid: 110008
   name_id: 52786
@@ -110,7 +102,6 @@
   item_type: 25
   category: 64
   members: true
-  max_stack_size: 1
 # Kofun Lightsaber
 - guid: 110009
   name_id: 4823
@@ -122,7 +113,6 @@
   texture_alias: Samurai
   item_type: 25
   category: 64
-  max_stack_size: 1
 # Aayla Secura's Lightsaber
 - guid: 110010
   name_id: 306
@@ -134,7 +124,6 @@
   texture_alias: AaylaSecura
   item_type: 25
   category: 64
-  max_stack_size: 1
 # Adi Gallia's Lightsaber
 - guid: 110011
   name_id: 8768
@@ -147,7 +136,6 @@
   item_type: 25
   category: 64
   members: true
-  max_stack_size: 1
 # Ahsoka Tano's Lightsaber
 - guid: 110012
   name_id: 19895
@@ -159,7 +147,6 @@
   texture_alias: Ahsoka
   item_type: 25
   category: 64
-  max_stack_size: 1
 # 'Umbara Academy: Ghost Attack 1'
 - guid: 110013
   name_id: 51036
@@ -171,7 +158,6 @@
   texture_alias: Ahsoka
   item_type: 25
   category: 64
-  max_stack_size: 1
 # Anakin Skywalker's Lightsaber
 - guid: 110015
   name_id: 8762
@@ -183,7 +169,6 @@
   texture_alias: Anakin
   item_type: 25
   category: 64
-  max_stack_size: 1
 # 'Umbara Academy: Ghost Attack 2'
 - guid: 110016
   name_id: 51037
@@ -195,7 +180,6 @@
   texture_alias: Anakin
   item_type: 25
   category: 64
-  max_stack_size: 1
 # Barriss Offee's Lightsaber
 - guid: 110017
   name_id: 14786
@@ -208,7 +192,6 @@
   item_type: 25
   category: 64
   members: true
-  max_stack_size: 1
 # Byph's Lightsaber
 - guid: 110018
   name_id: 53615
@@ -221,7 +204,6 @@
   item_type: 25
   category: 64
   members: true
-  max_stack_size: 1
 # Miko Jedi Lightsaber
 - guid: 110019
   name_id: 14788
@@ -233,7 +215,6 @@
   texture_alias: CompressedCrystal
   item_type: 25
   category: 64
-  max_stack_size: 1
 # Sith Infiltrator Lightsaber
 - guid: 110020
   name_id: 4976
@@ -245,7 +226,6 @@
   texture_alias: DarkForcePhaseI
   item_type: 25
   category: 64
-  max_stack_size: 1
 # Pre Vizsla's Darksaber
 - guid: 110021
   name_id: 8763
@@ -257,7 +237,6 @@
   texture_alias: PreVizsla
   item_type: 25
   category: 64
-  max_stack_size: 1
 # Dolovite Darksaber
 - guid: 110022
   name_id: 54592
@@ -269,7 +248,6 @@
   texture_alias: Gold
   item_type: 25
   category: 64
-  max_stack_size: 1
 # Phrik Darksaber
 - guid: 110023
   name_id: 54521
@@ -281,7 +259,6 @@
   texture_alias: PreVizsla
   item_type: 25
   category: 64
-  max_stack_size: 1
 # Darth Maul's Lightsaber
 - guid: 110024
   name_id: 4718
@@ -294,7 +271,6 @@
   item_type: 25
   category: 64
   members: true
-  max_stack_size: 1
 # Count Dooku's Lightsaber
 - guid: 110025
   name_id: 8766
@@ -306,7 +282,6 @@
   texture_alias: Dooku
   item_type: 25
   category: 64
-  max_stack_size: 1
 # Eeth Koth's Lightsaber
 - guid: 110026
   name_id: 2440
@@ -318,7 +293,6 @@
   texture_alias: EethKoth
   item_type: 25
   category: 64
-  max_stack_size: 1
 # Jedi Exile Lightsaber
 - guid: 110027
   name_id: 54602
@@ -330,7 +304,6 @@
   texture_alias: Exile
   item_type: 25
   category: 64
-  max_stack_size: 1
 # Forked Lightsaber
 - guid: 110028
   name_id: 54593
@@ -342,7 +315,6 @@
   texture_alias: Forked
   item_type: 25
   category: 64
-  max_stack_size: 1
 # Ganodi's Lightsaber
 - guid: 110029
   name_id: 53620
@@ -355,7 +327,6 @@
   item_type: 25
   category: 64
   members: true
-  max_stack_size: 1
 # Ultimate FX Gungan Lightsaber
 - guid: 110030
   name_id: 2650
@@ -367,7 +338,6 @@
   texture_alias: Gungan
   item_type: 25
   category: 64
-  max_stack_size: 1
 # Gungi's Lightsaber
 - guid: 110031
   name_id: 53616
@@ -380,7 +350,6 @@
   item_type: 25
   category: 64
   members: true
-  max_stack_size: 1
 # Jocasta Nu's Lightsaber
 - guid: 110032
   name_id: 8769
@@ -393,7 +362,6 @@
   item_type: 25
   category: 64
   members: true
-  max_stack_size: 1
 # Kashyyyk Lightsaber
 - guid: 110033
   name_id: 44507
@@ -406,7 +374,6 @@
   item_type: 25
   category: 64
   members: true
-  max_stack_size: 1
 # Mestare Lightsaber
 - guid: 110034
   name_id: 44850
@@ -418,7 +385,6 @@
   texture_alias: SamuraiJedi
   item_type: 25
   category: 64
-  max_stack_size: 1
 # Katooni's Lightsaber
 - guid: 110035
   name_id: 53621
@@ -431,7 +397,6 @@
   item_type: 25
   category: 64
   members: true
-  max_stack_size: 1
 # Ki-Adi-Mundi's Lightsaber
 - guid: 110036
   name_id: 2444
@@ -443,7 +408,6 @@
   texture_alias: KiAdiMundi
   item_type: 25
   category: 64
-  max_stack_size: 1
 # Kit Fisto's Lightsaber
 - guid: 110037
   name_id: 8767
@@ -455,7 +419,6 @@
   texture_alias: KitFisto
   item_type: 25
   category: 64
-  max_stack_size: 1
 # Kyle Katarn's Lightsaber
 - guid: 110038
   name_id: 974
@@ -467,7 +430,6 @@
   texture_alias: KyleKatarn
   item_type: 25
   category: 64
-  max_stack_size: 1
 # Sulon Jedi Lightsaber
 - guid: 110039
   name_id: 60157
@@ -479,7 +441,6 @@
   texture_alias: KyleKatarn
   item_type: 25
   category: 64
-  max_stack_size: 1
 # Luke Skywalker's Lightsaber
 - guid: 110040
   name_id: 8770
@@ -491,7 +452,6 @@
   texture_alias: LukeSkywalker
   item_type: 25
   category: 64
-  max_stack_size: 1
 # Luminara Unduli's Lightsaber
 - guid: 110041
   name_id: 8771
@@ -504,7 +464,6 @@
   item_type: 25
   category: 64
   members: true
-  max_stack_size: 1
 # Plo Koon's Lightsaber
 - guid: 110042
   name_id: 308
@@ -517,7 +476,6 @@
   item_type: 25
   category: 64
   members: true
-  max_stack_size: 1
 # Mace Windu's Lightsaber
 - guid: 110043
   name_id: 8772
@@ -529,7 +487,6 @@
   texture_alias: MaceWindu
   item_type: 25
   category: 64
-  max_stack_size: 1
 # 'Umbara Academy: Ghost Attack 3'
 - guid: 110044
   name_id: 51038
@@ -541,7 +498,6 @@
   texture_alias: MaceWindu
   item_type: 25
   category: 64
-  max_stack_size: 1
 # Obi-Wan Kenobi's Lightsaber
 - guid: 110045
   name_id: 8773
@@ -554,7 +510,6 @@
   item_type: 25
   category: 64
   members: true
-  max_stack_size: 1
 # Petro's Lightsaber
 - guid: 110046
   name_id: 53617
@@ -567,7 +522,6 @@
   item_type: 25
   category: 64
   members: true
-  max_stack_size: 1
 # Shotem Jedi Lightsaber
 - guid: 110047
   name_id: 976
@@ -579,7 +533,6 @@
   texture_alias: PulsatingCrystal
   item_type: 25
   category: 64
-  max_stack_size: 1
 # Shotem Master Lightsaber
 - guid: 110048
   name_id: 60678
@@ -591,7 +544,6 @@
   texture_alias: PulsingCrystalBlue
   item_type: 25
   category: 64
-  max_stack_size: 1
 # Quinlan Vos' Lightsaber
 - guid: 110049
   name_id: 19637
@@ -603,7 +555,6 @@
   texture_alias: QuinlanVos
   item_type: 25
   category: 64
-  max_stack_size: 1
 # Saesee Tiin's Lightsaber
 - guid: 110050
   name_id: 43190
@@ -615,7 +566,6 @@
   texture_alias: SaeseeTiin
   item_type: 25
   category: 64
-  max_stack_size: 1
 # Shaak Ti's Lightsaber
 - guid: 110051
   name_id: 14792
@@ -628,7 +578,6 @@
   item_type: 25
   category: 64
   members: true
-  max_stack_size: 1
 # Darth Sidious' Lightsaber
 - guid: 110052
   name_id: 8774
@@ -640,7 +589,6 @@
   texture_alias: Sidious
   item_type: 25
   category: 64
-  max_stack_size: 1
 # Bravis Sith Lightsaber
 - guid: 110053
   name_id: 978
@@ -653,7 +601,6 @@
   item_type: 25
   category: 64
   members: true
-  max_stack_size: 1
 # Crimson Prowler Lightsaber
 - guid: 110054
   name_id: 60198
@@ -665,7 +612,6 @@
   texture_alias: DarkKnight
   item_type: 25
   category: 64
-  max_stack_size: 1
 # Ermi Jedi Lightsaber
 - guid: 110055
   name_id: 980
@@ -678,7 +624,6 @@
   item_type: 25
   category: 64
   members: true
-  max_stack_size: 1
 # Talz Lightsaber
 - guid: 110056
   name_id: 4824
@@ -690,7 +635,6 @@
   texture_alias: Talz
   item_type: 25
   category: 64
-  max_stack_size: 1
 # Training Lightsaber
 - guid: 110057
   name_id: 8775
@@ -702,7 +646,6 @@
   texture_alias: Padawan1
   item_type: 25
   category: 64
-  max_stack_size: 1
 # Ancient Cobal Lightsaber
 - guid: 110058
   name_id: 982
@@ -714,7 +657,6 @@
   texture_alias: BuggyCrystal
   item_type: 25
   category: 64
-  max_stack_size: 1
 # Savek Lightsaber
 - guid: 110059
   name_id: 14794
@@ -727,7 +669,6 @@
   item_type: 25
   category: 64
   members: true
-  max_stack_size: 1
 # Asajj Ventress' Right Lightsaber
 - guid: 110060
   name_id: 8777
@@ -740,7 +681,6 @@
   item_type: 25
   category: 64
   members: true
-  max_stack_size: 1
 # Yoda's Lightsaber
 - guid: 110062
   name_id: 1797
@@ -752,7 +692,6 @@
   texture_alias: Yoda
   item_type: 25
   category: 64
-  max_stack_size: 1
 # Zatt's Lightsaber
 - guid: 110063
   name_id: 53619
@@ -765,7 +704,6 @@
   item_type: 25
   category: 64
   members: true
-  max_stack_size: 1
 # Dahgee Jedi Lightsaber
 - guid: 110064
   name_id: 986
@@ -778,7 +716,6 @@
   item_type: 25
   category: 64
   members: true
-  max_stack_size: 1
 # Yoda's Lightsaber (NPC only)
 - guid: 110065
   name_id: 1797
@@ -789,4 +726,3 @@
   model_name: Wield_LightsaberHiltStandard_Yoda_LightsaberDueling.adr
   texture_alias: Yoda
   item_type: 25
-  max_stack_size: 1

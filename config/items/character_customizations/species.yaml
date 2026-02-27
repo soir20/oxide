@@ -6,7 +6,6 @@
   description_id: 14
   icon_set_id: 1171
   cost: 600
-  item_class: -1
   slot: !Customization None
   required_gender: 1
   item_type: 12
@@ -19,7 +18,6 @@
   description_id: 14
   icon_set_id: 1173
   cost: 600
-  item_class: -1
   slot: !Customization None
   required_gender: 1
   item_type: 12
@@ -32,7 +30,6 @@
   description_id: 14
   icon_set_id: 1318
   cost: 600
-  item_class: -1
   slot: !Customization None
   required_gender: 1
   item_type: 12
@@ -45,7 +42,6 @@
   description_id: 14
   icon_set_id: 1175
   cost: 600
-  item_class: -1
   slot: !Customization None
   required_gender: 1
   item_type: 12
@@ -58,7 +54,6 @@
   description_id: 14
   icon_set_id: 1849
   cost: 600
-  item_class: -1
   slot: !Customization None
   required_gender: 1
   item_type: 12
@@ -71,7 +66,6 @@
   description_id: 14
   icon_set_id: 1177
   cost: 600
-  item_class: -1
   slot: !Customization None
   required_gender: 1
   item_type: 12
@@ -84,7 +78,6 @@
   description_id: 14
   icon_set_id: 1179
   cost: 600
-  item_class: -1
   slot: !Customization None
   required_gender: 1
   item_type: 12
@@ -98,7 +91,6 @@
   description_id: 14
   icon_set_id: 1172
   cost: 600
-  item_class: -1
   slot: !Customization None
   required_gender: 2
   item_type: 12
@@ -111,7 +103,6 @@
   description_id: 14
   icon_set_id: 1317
   cost: 600
-  item_class: -1
   slot: !Customization None
   required_gender: 2
   item_type: 12
@@ -124,7 +115,6 @@
   description_id: 14
   icon_set_id: 1174
   cost: 600
-  item_class: -1
   slot: !Customization None
   required_gender: 2
   item_type: 12
@@ -137,7 +127,6 @@
   description_id: 14
   icon_set_id: 1850
   cost: 600
-  item_class: -1
   slot: !Customization None
   required_gender: 2
   item_type: 12
@@ -150,7 +139,6 @@
   description_id: 14
   icon_set_id: 1176
   cost: 600
-  item_class: -1
   slot: !Customization None
   required_gender: 2
   item_type: 12
@@ -163,7 +151,6 @@
   description_id: 14
   icon_set_id: 1178
   cost: 600
-  item_class: -1
   slot: !Customization None
   required_gender: 2
   item_type: 12

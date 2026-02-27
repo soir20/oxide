@@ -4,12 +4,10 @@
   name_id: 2526
   description_id: 14
   icon_set_id: 419
-  item_class: -1
   slot: !Equipment SecondarySaberShape
   model_name: Wield_LightsaberBlade_Basic.adr
   texture_alias: white_square
   item_type: 1
-  max_stack_size: 1
   is_tintable: true
   tint_alias: lightsaber
 # Dark Beam Crystal
@@ -17,12 +15,10 @@
   name_id: 1258
   description_id: 14
   icon_set_id: 410
-  item_class: -1
   slot: !Equipment SecondarySaberShape
   model_name: Wield_LightsaberBlade_Darksaber.adr
   texture_alias: BlackSwirl
   item_type: 1
-  max_stack_size: 1
   is_tintable: true
   tint_alias: lightsaber
 # Ancient Darksaber Crystal
@@ -30,12 +26,10 @@
   name_id: 54524
   description_id: 14
   icon_set_id: 410
-  item_class: -1
   slot: !Equipment SecondarySaberShape
   model_name: Wield_LightsaberBlade_Darksaber_Ancient.adr
   texture_alias: BlackSlick
   item_type: 1
-  max_stack_size: 1
   is_tintable: true
   tint_alias: lightsaber
 # Cobal Crystal
@@ -43,12 +37,10 @@
   name_id: 1524
   description_id: 14
   icon_set_id: 396
-  item_class: -1
   slot: !Equipment SecondarySaberShape
   model_name: Wield_LightsaberBlade_FX_Basic_Buggy.adr
   texture_alias: white_square
   item_type: 1
-  max_stack_size: 1
   is_tintable: true
   tint_alias: lightsaber
 # Compressed Beam Crystal
@@ -56,12 +48,10 @@
   name_id: 1253
   description_id: 14
   icon_set_id: 409
-  item_class: -1
   slot: !Equipment SecondarySaberShape
   model_name: Wield_LightsaberBlade_FX_Basic_Compressed.adr
   texture_alias: white_square
   item_type: 1
-  max_stack_size: 1
   is_tintable: true
   tint_alias: lightsaber
 # Pulsing Beam Crystal
@@ -69,12 +59,10 @@
   name_id: 1254
   description_id: 14
   icon_set_id: 412
-  item_class: -1
   slot: !Equipment SecondarySaberShape
   model_name: Wield_LightsaberBlade_FX_Basic_Pulsing.adr
   texture_alias: white_square
   item_type: 1
-  max_stack_size: 1
   is_tintable: true
   tint_alias: lightsaber
 # Radiating Ring Crystal
@@ -82,13 +70,11 @@
   name_id: 54484
   description_id: 14
   icon_set_id: 3745
-  item_class: -1
   slot: !Equipment SecondarySaberShape
   model_name: Wield_LightsaberBlade_FX_Basic_Ring.adr
   texture_alias: white_square
   item_type: 1
   composite_effect: 3004
-  max_stack_size: 1
   is_tintable: true
   tint_alias: lightsaber
 # Sparking Beam Crystal
@@ -96,12 +82,10 @@
   name_id: 1255
   description_id: 14
   icon_set_id: 413
-  item_class: -1
   slot: !Equipment SecondarySaberShape
   model_name: Wield_LightsaberBlade_FX_Basic_Sparking.adr
   texture_alias: white_square
   item_type: 1
-  max_stack_size: 1
   is_tintable: true
   tint_alias: lightsaber
 # Spiraling Beam Crystal
@@ -109,12 +93,10 @@
   name_id: 1256
   description_id: 14
   icon_set_id: 414
-  item_class: -1
   slot: !Equipment SecondarySaberShape
   model_name: Wield_LightsaberBlade_FX_Basic_Spiral.adr
   texture_alias: white_square
   item_type: 1
-  max_stack_size: 1
   is_tintable: true
   tint_alias: lightsaber
 # Unstable Beam Crystal
@@ -122,12 +104,10 @@
   name_id: 1257
   description_id: 14
   icon_set_id: 416
-  item_class: -1
   slot: !Equipment SecondarySaberShape
   model_name: Wield_LightsaberBlade_FX_Basic_Unstable.adr
   texture_alias: white_square
   item_type: 1
-  max_stack_size: 1
   is_tintable: true
   tint_alias: lightsaber
 # Kashyyyk Crystal
@@ -135,12 +115,10 @@
   name_id: 44509
   description_id: 14
   icon_set_id: 1996
-  item_class: -1
   slot: !Equipment SecondarySaberShape
   model_name: Wield_LightsaberBlade_FX_Kashyyk.adr
   texture_alias: white_square
   item_type: 1
-  max_stack_size: 1
   is_tintable: true
   tint_alias: lightsaber
 # Forked Crystal
@@ -148,12 +126,10 @@
   name_id: 54597
   description_id: 14
   icon_set_id: 419
-  item_class: -1
   slot: !Equipment SecondarySaberShape
   model_name: Wield_LightsaberBlade_Forked.adr
   texture_alias: white_square
   item_type: 1
-  max_stack_size: 1
   is_tintable: true
   tint_alias: lightsaber
 # Gungan Crystal
@@ -161,12 +137,10 @@
   name_id: 2652
   description_id: 14
   icon_set_id: 2142
-  item_class: -1
   slot: !Equipment SecondarySaberShape
   model_name: Wield_LightsaberBlade_Gungan.adr
   texture_alias: Gungan
   item_type: 1
-  max_stack_size: 1
   is_tintable: true
   tint_alias: lightsaber
 # Mestare Crystal
@@ -174,12 +148,10 @@
   name_id: 44851
   description_id: 14
   icon_set_id: 411
-  item_class: -1
   slot: !Equipment SecondarySaberShape
   model_name: Wield_LightsaberBlade_Katana.adr
   texture_alias: white_square
   item_type: 1
-  max_stack_size: 1
   is_tintable: true
   tint_alias: lightsaber
 # Short Crystal
@@ -187,12 +159,10 @@
   name_id: 1931
   description_id: 14
   icon_set_id: 417
-  item_class: -1
   slot: !Equipment SecondarySaberShape
   model_name: Wield_LightsaberBlade_Short.adr
   texture_alias: white_square
   item_type: 1
-  max_stack_size: 1
   is_tintable: true
   tint_alias: lightsaber
 # Tapered Beam Crystal
@@ -200,12 +170,10 @@
   name_id: 1259
   description_id: 14
   icon_set_id: 415
-  item_class: -1
   slot: !Equipment SecondarySaberShape
   model_name: Wield_LightsaberBlade_Tapered.adr
   texture_alias: white_square
   item_type: 1
-  max_stack_size: 1
   is_tintable: true
   tint_alias: lightsaber
 # Compressed Tapered Beam Crystal
@@ -213,12 +181,10 @@
   name_id: 53018
   description_id: 14
   icon_set_id: 409
-  item_class: -1
   slot: !Equipment SecondarySaberShape
   model_name: Wield_LightsaberBlade_TaperedCompressed.adr
   texture_alias: white_square
   item_type: 1
-  max_stack_size: 1
   is_tintable: true
   tint_alias: lightsaber
 # Tapered Halo Crystal
@@ -226,13 +192,11 @@
   name_id: 54492
   description_id: 14
   icon_set_id: 3745
-  item_class: -1
   slot: !Equipment SecondarySaberShape
   model_name: Wield_LightsaberBlade_TaperedHalo.adr
   texture_alias: white_square
   item_type: 1
   composite_effect: 3004
-  max_stack_size: 1
   is_tintable: true
   tint_alias: lightsaber
 # Unstable Tapered Beam Crystal
@@ -240,12 +204,10 @@
   name_id: 53017
   description_id: 14
   icon_set_id: 416
-  item_class: -1
   slot: !Equipment SecondarySaberShape
   model_name: Wield_LightsaberBlade_TaperedUnstable.adr
   texture_alias: white_square
   item_type: 1
-  max_stack_size: 1
   is_tintable: true
   tint_alias: lightsaber
 # Dahgee Crystal
@@ -253,11 +215,9 @@
   name_id: 44197
   description_id: 14
   icon_set_id: 418
-  item_class: -1
   slot: !Equipment SecondarySaberShape
   model_name: Wield_LightsaberBlade_ZebraCrystal.adr
   texture_alias: ZebraCrystal
   item_type: 1
-  max_stack_size: 1
   is_tintable: true
   tint_alias: lightsaber

@@ -5,7 +5,6 @@
   description_id: 14
   icon_set_id: 755
   cost: 200
-  item_class: -1
   slot: !Customization HairColor
   item_type: 12
   max_stack_size: 2
@@ -18,7 +17,6 @@
   description_id: 14
   icon_set_id: 757
   cost: 50
-  item_class: -1
   slot: !Customization HairColor
   item_type: 12
   max_stack_size: 2
@@ -31,7 +29,6 @@
   description_id: 14
   icon_set_id: 749
   cost: 50
-  item_class: -1
   slot: !Customization HairColor
   item_type: 12
   max_stack_size: 2
@@ -44,7 +41,6 @@
   description_id: 14
   icon_set_id: 750
   cost: 50
-  item_class: -1
   slot: !Customization HairColor
   item_type: 12
   max_stack_size: 2
@@ -57,7 +53,6 @@
   description_id: 14
   icon_set_id: 753
   cost: 50
-  item_class: -1
   slot: !Customization HairColor
   item_type: 12
   max_stack_size: 2
@@ -70,7 +65,6 @@
   description_id: 14
   icon_set_id: 751
   cost: 50
-  item_class: -1
   slot: !Customization HairColor
   item_type: 12
   max_stack_size: 2
@@ -83,7 +77,6 @@
   description_id: 14
   icon_set_id: 754
   cost: 100
-  item_class: -1
   slot: !Customization HairColor
   item_type: 12
   max_stack_size: 2
@@ -96,7 +89,6 @@
   description_id: 14
   icon_set_id: 3598
   cost: 200
-  item_class: -1
   slot: !Customization HairColor
   item_type: 12
   max_stack_size: 2
@@ -109,7 +101,6 @@
   description_id: 14
   icon_set_id: 756
   cost: 100
-  item_class: -1
   slot: !Customization HairColor
   item_type: 12
   max_stack_size: 2
@@ -122,7 +113,6 @@
   description_id: 14
   icon_set_id: 758
   cost: 50
-  item_class: -1
   slot: !Customization HairColor
   item_type: 12
   max_stack_size: 2
@@ -135,7 +125,6 @@
   description_id: 14
   icon_set_id: 752
   cost: 50
-  item_class: -1
   slot: !Customization HairColor
   item_type: 12
   max_stack_size: 2
@@ -148,7 +137,6 @@
   description_id: 14
   icon_set_id: 748
   cost: 50
-  item_class: -1
   slot: !Customization HairColor
   item_type: 12
   max_stack_size: 2
@@ -161,7 +149,6 @@
   description_id: 14
   icon_set_id: 724
   cost: 50
-  item_class: -1
   slot: !Customization HairColor
   item_type: 12
   max_stack_size: 2
@@ -174,7 +161,6 @@
   description_id: 14
   icon_set_id: 722
   cost: 50
-  item_class: -1
   slot: !Customization HairColor
   item_type: 12
   max_stack_size: 2
@@ -187,7 +173,6 @@
   description_id: 14
   icon_set_id: 723
   cost: 50
-  item_class: -1
   slot: !Customization HairColor
   item_type: 12
   max_stack_size: 2
@@ -200,7 +185,6 @@
   description_id: 14
   icon_set_id: 1313
   cost: 50
-  item_class: -1
   slot: !Customization HairColor
   item_type: 12
   max_stack_size: 2
@@ -213,7 +197,6 @@
   description_id: 14
   icon_set_id: 1309
   cost: 100
-  item_class: -1
   slot: !Customization HairColor
   item_type: 12
   max_stack_size: 2
@@ -226,7 +209,6 @@
   description_id: 14
   icon_set_id: 1310
   cost: 100
-  item_class: -1
   slot: !Customization HairColor
   item_type: 12
   max_stack_size: 2
@@ -239,7 +221,6 @@
   description_id: 14
   icon_set_id: 1315
   cost: 50
-  item_class: -1
   slot: !Customization HairColor
   item_type: 12
   max_stack_size: 2
@@ -252,7 +233,6 @@
   description_id: 14
   icon_set_id: 1311
   cost: 100
-  item_class: -1
   slot: !Customization HairColor
   item_type: 12
   max_stack_size: 2
@@ -265,7 +245,6 @@
   description_id: 14
   icon_set_id: 1314
   cost: 50
-  item_class: -1
   slot: !Customization HairColor
   item_type: 12
   max_stack_size: 2
@@ -278,7 +257,6 @@
   description_id: 14
   icon_set_id: 1312
   cost: 200
-  item_class: -1
   slot: !Customization HairColor
   item_type: 12
   max_stack_size: 2
