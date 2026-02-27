@@ -26,6 +26,15 @@ async fn deserialize_len_with_bytes_read(
         }
     }
 
+    if len < 0 {
+        return Err(Error {
+            kind: ErrorKind::NegativeLen(len),
+            offset: tell(file)
+                .await
+                .map(|offset| offset.saturating_sub(bytes_read.try_into().unwrap_or_default())),
+        });
+    }
+
     Ok((len, bytes_read))
 }
 

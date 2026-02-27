@@ -30,6 +30,7 @@ pub enum ErrorKind {
     },
     InvalidUtf8(FromUtf8Error),
     Io(tokio::io::Error),
+    NegativeLen(i32),
     TryFromInt(TryFromIntError),
     UnknownDiscriminant(u64, &'static str),
     UnknownMagic(String),
