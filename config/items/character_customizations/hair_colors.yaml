@@ -1,6 +1,6 @@
 ---
 # Orange Hair
-- guid: 140000
+- guid: 30000
   name_id: 452
   description_id: 14
   icon_set_id: 755
@@ -43,7 +43,7 @@
   stats: []
   abilities: []
 # Red Hair
-- guid: 140001
+- guid: 30001
   name_id: 454
   description_id: 14
   icon_set_id: 757
@@ -86,7 +86,7 @@
   stats: []
   abilities: []
 # Blonde Hair
-- guid: 140002
+- guid: 30002
   name_id: 440
   description_id: 14
   icon_set_id: 749
@@ -129,7 +129,7 @@
   stats: []
   abilities: []
 # Dirty Blonde Hair
-- guid: 140003
+- guid: 30003
   name_id: 442
   description_id: 14
   icon_set_id: 750
@@ -172,7 +172,7 @@
   stats: []
   abilities: []
 # Light Brown Hair
-- guid: 140004
+- guid: 30004
   name_id: 444
   description_id: 14
   icon_set_id: 753
@@ -215,7 +215,7 @@
   stats: []
   abilities: []
 # Brown Hair
-- guid: 140005
+- guid: 30005
   name_id: 446
   description_id: 14
   icon_set_id: 751
@@ -258,7 +258,7 @@
   stats: []
   abilities: []
 # Dark Green Hair
-- guid: 140006
+- guid: 30006
   name_id: 450
   description_id: 14
   icon_set_id: 754
@@ -301,7 +301,7 @@
   stats: []
   abilities: []
 # Dark Blue Hair
-- guid: 140007
+- guid: 30007
   name_id: 18047
   description_id: 14
   icon_set_id: 3598
@@ -344,7 +344,7 @@
   stats: []
   abilities: []
 # Dark Purple Hair
-- guid: 140008
+- guid: 30008
   name_id: 448
   description_id: 14
   icon_set_id: 756
@@ -387,7 +387,7 @@
   stats: []
   abilities: []
 # White Hair
-- guid: 140009
+- guid: 30009
   name_id: 93
   description_id: 14
   icon_set_id: 758
@@ -430,7 +430,7 @@
   stats: []
   abilities: []
 # Grey Hair
-- guid: 140010
+- guid: 30010
   name_id: 91
   description_id: 14
   icon_set_id: 752
@@ -473,7 +473,7 @@
   stats: []
   abilities: []
 # Black Hair
-- guid: 140011
+- guid: 30011
   name_id: 95
   description_id: 14
   icon_set_id: 748
@@ -516,7 +516,7 @@
   stats: []
   abilities: []
 # Red
-- guid: 140012
+- guid: 30012
   name_id: 2634
   description_id: 14
   icon_set_id: 724
@@ -559,7 +559,7 @@
   stats: []
   abilities: []
 # Blue
-- guid: 140013
+- guid: 30013
   name_id: 2630
   description_id: 14
   icon_set_id: 722
@@ -602,7 +602,7 @@
   stats: []
   abilities: []
 # Purple
-- guid: 140014
+- guid: 30014
   name_id: 2632
   description_id: 14
   icon_set_id: 723
@@ -645,7 +645,7 @@
   stats: []
   abilities: []
 # Dark Red Hair
-- guid: 140015
+- guid: 30015
   name_id: 18049
   description_id: 14
   icon_set_id: 1313
@@ -688,7 +688,7 @@
   stats: []
   abilities: []
 # Yellow-Green Hair
-- guid: 140016
+- guid: 30016
   name_id: 18050
   description_id: 14
   icon_set_id: 1309
@@ -731,7 +731,7 @@
   stats: []
   abilities: []
 # Teal Hair
-- guid: 140017
+- guid: 30017
   name_id: 18046
   description_id: 14
   icon_set_id: 1310
@@ -774,7 +774,7 @@
   stats: []
   abilities: []
 # Dark Blue Hair
-- guid: 140018
+- guid: 30018
   name_id: 18047
   description_id: 14
   icon_set_id: 1315
@@ -817,7 +817,7 @@
   stats: []
   abilities: []
 # Purple Hair
-- guid: 140019
+- guid: 30019
   name_id: 18044
   description_id: 14
   icon_set_id: 1311
@@ -860,7 +860,7 @@
   stats: []
   abilities: []
 # Dark Purple Hair
-- guid: 140020
+- guid: 30020
   name_id: 18048
   description_id: 14
   icon_set_id: 1314
@@ -903,7 +903,7 @@
   stats: []
   abilities: []
 # Pink Hair
-- guid: 140021
+- guid: 30021
   name_id: 18045
   description_id: 14
   icon_set_id: 1312

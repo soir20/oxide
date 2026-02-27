@@ -1,7 +1,7 @@
 ---
 # Start of male species
 # Clone
-- guid: 180000
+- guid: 70000
   name_id: 436
   description_id: 14
   icon_set_id: 1171
@@ -44,7 +44,7 @@
   stats: []
   abilities: []
 # Human
-- guid: 180001
+- guid: 70001
   name_id: 4
   description_id: 14
   icon_set_id: 1173
@@ -87,7 +87,7 @@
   stats: []
   abilities: []
 # Pantoran
-- guid: 180002
+- guid: 70002
   name_id: 1677
   description_id: 14
   icon_set_id: 1318
@@ -130,7 +130,7 @@
   stats: []
   abilities: []
 # Togruta
-- guid: 180003
+- guid: 70003
   name_id: 439
   description_id: 14
   icon_set_id: 1175
@@ -173,7 +173,7 @@
   stats: []
   abilities: []
 # Trandoshan
-- guid: 180004
+- guid: 70004
   name_id: 2174
   description_id: 14
   icon_set_id: 1849
@@ -216,7 +216,7 @@
   stats: []
   abilities: []
 # Twi'lek
-- guid: 180005
+- guid: 70005
   name_id: 437
   description_id: 14
   icon_set_id: 1177
@@ -259,7 +259,7 @@
   stats: []
   abilities: []
 # Zabrak
-- guid: 180006
+- guid: 70006
   name_id: 438
   description_id: 14
   icon_set_id: 1179
@@ -303,7 +303,7 @@
   abilities: []
 # Start of female species
 # Human
-- guid: 180007
+- guid: 70007
   name_id: 4
   description_id: 14
   icon_set_id: 1172
@@ -346,7 +346,7 @@
   stats: []
   abilities: []
 # Pantoran
-- guid: 180008
+- guid: 70008
   name_id: 1677
   description_id: 14
   icon_set_id: 1317
@@ -389,7 +389,7 @@
   stats: []
   abilities: []
 # Togruta
-- guid: 180009
+- guid: 70009
   name_id: 439
   description_id: 14
   icon_set_id: 1174
@@ -432,7 +432,7 @@
   stats: []
   abilities: []
 # Trandoshan
-- guid: 180010
+- guid: 70010
   name_id: 2174
   description_id: 14
   icon_set_id: 1850
@@ -475,7 +475,7 @@
   stats: []
   abilities: []
 # Twi'lek
-- guid: 180011
+- guid: 70011
   name_id: 437
   description_id: 14
   icon_set_id: 1176
@@ -518,7 +518,7 @@
   stats: []
   abilities: []
 # Zabrak
-- guid: 180012
+- guid: 70012
   name_id: 438
   description_id: 14
   icon_set_id: 1178

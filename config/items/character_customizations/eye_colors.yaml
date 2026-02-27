@@ -1,6 +1,6 @@
 ---
 # Red Eyes
-- guid: 150000
+- guid: 10000
   name_id: 428
   description_id: 14
   icon_set_id: 710
@@ -43,7 +43,7 @@
   stats: []
   abilities: []
 # Brown Eyes
-- guid: 150001
+- guid: 10001
   name_id: 422
   description_id: 14
   icon_set_id: 706
@@ -86,7 +86,7 @@
   stats: []
   abilities: []
 # Yellow Eyes
-- guid: 150002
+- guid: 10002
   name_id: 420
   description_id: 14
   icon_set_id: 711
@@ -129,7 +129,7 @@
   stats: []
   abilities: []
 # Green Eyes
-- guid: 150003
+- guid: 10003
   name_id: 430
   description_id: 14
   icon_set_id: 707
@@ -172,7 +172,7 @@
   stats: []
   abilities: []
 # Blue Eyes
-- guid: 150004
+- guid: 10004
   name_id: 424
   description_id: 14
   icon_set_id: 705
@@ -215,7 +215,7 @@
   stats: []
   abilities: []
 # Purple Eyes
-- guid: 150005
+- guid: 10005
   name_id: 432
   description_id: 14
   icon_set_id: 709
@@ -258,7 +258,7 @@
   stats: []
   abilities: []
 # Magenta Eyes
-- guid: 150006
+- guid: 10006
   name_id: 434
   description_id: 14
   icon_set_id: 708
@@ -301,7 +301,7 @@
   stats: []
   abilities: []
 # Black Eyes
-- guid: 150007
+- guid: 10007
   name_id: 426
   description_id: 14
   icon_set_id: 704
@@ -344,7 +344,7 @@
   stats: []
   abilities: []
 # Red Eyes
-- guid: 150008
+- guid: 10008
   name_id: 43485
   description_id: 14
   icon_set_id: 1809
@@ -387,7 +387,7 @@
   stats: []
   abilities: []
 # Orange Eyes
-- guid: 150009
+- guid: 10009
   name_id: 43484
   description_id: 14
   icon_set_id: 1808
@@ -430,7 +430,7 @@
   stats: []
   abilities: []
 # Yellow Eyes
-- guid: 150010
+- guid: 10010
   name_id: 420
   description_id: 14
   icon_set_id: 1811
@@ -473,7 +473,7 @@
   stats: []
   abilities: []
 # Yellow Green Eyes
-- guid: 150011
+- guid: 10011
   name_id: 43488
   description_id: 14
   icon_set_id: 1812
@@ -516,7 +516,7 @@
   stats: []
   abilities: []
 # Teal Eyes
-- guid: 150012
+- guid: 10012
   name_id: 43486
   description_id: 14
   icon_set_id: 1810

@@ -51,1127 +51,1127 @@
   customization_slot: HeadModel
   customization_param1: Char_ZabrakFemaleHead.adr
   customization_param2: 110012
-- guid: 120000
+- guid: 60000
   customization_slot: SkinTone
   customization_param1: HumanPale
-  customization_param2: 120000
-- guid: 120001
+  customization_param2: 60000
+- guid: 60001
   customization_slot: SkinTone
   customization_param1: HumanPeach
-  customization_param2: 120001
-- guid: 120002
+  customization_param2: 60001
+- guid: 60002
   customization_slot: SkinTone
   customization_param1: HumanGolden
-  customization_param2: 120002
-- guid: 120003
+  customization_param2: 60002
+- guid: 60003
   customization_slot: SkinTone
   customization_param1: HumanWarmTan
-  customization_param2: 120003
-- guid: 120004
+  customization_param2: 60003
+- guid: 60004
   customization_slot: SkinTone
   customization_param1: HumanTan
-  customization_param2: 120004
-- guid: 120005
+  customization_param2: 60004
+- guid: 60005
   customization_slot: SkinTone
   customization_param1: HumanLightBrown
-  customization_param2: 120005
-- guid: 120006
+  customization_param2: 60005
+- guid: 60006
   customization_slot: SkinTone
   customization_param1: HumanBrown
-  customization_param2: 120006
-- guid: 120007
+  customization_param2: 60006
+- guid: 60007
   customization_slot: SkinTone
   customization_param1: TwilekBlue
-  customization_param2: 120007
-- guid: 120008
+  customization_param2: 60007
+- guid: 60008
   customization_slot: SkinTone
   customization_param1: TwilekTeal
-  customization_param2: 120008
-- guid: 120009
+  customization_param2: 60008
+- guid: 60009
   customization_slot: SkinTone
   customization_param1: TwilekGreen
-  customization_param2: 120009
-- guid: 120010
+  customization_param2: 60009
+- guid: 60010
   customization_slot: SkinTone
   customization_param1: TwilekYellow
-  customization_param2: 120010
-- guid: 120011
+  customization_param2: 60010
+- guid: 60011
   customization_slot: SkinTone
   customization_param1: TwilekPeach
-  customization_param2: 120011
-- guid: 120012
+  customization_param2: 60011
+- guid: 60012
   customization_slot: SkinTone
   customization_param1: TwilekOrange
-  customization_param2: 120012
-- guid: 120013
+  customization_param2: 60012
+- guid: 60013
   customization_slot: SkinTone
   customization_param1: TwilekBrown
-  customization_param2: 120013
-- guid: 120014
+  customization_param2: 60013
+- guid: 60014
   customization_slot: SkinTone
   customization_param1: TwilekGrey
-  customization_param2: 120014
-- guid: 120015
+  customization_param2: 60014
+- guid: 60015
   customization_slot: SkinTone
   customization_param1: TwilekRed
-  customization_param2: 120015
-- guid: 120016
+  customization_param2: 60015
+- guid: 60016
   customization_slot: SkinTone
   customization_param1: TwilekPink
-  customization_param2: 120016
-- guid: 120017
+  customization_param2: 60016
+- guid: 60017
   customization_slot: SkinTone
   customization_param1: ZabrakKhaki
-  customization_param2: 120017
-- guid: 120018
+  customization_param2: 60017
+- guid: 60018
   customization_slot: SkinTone
   customization_param1: ZabrakYellow
-  customization_param2: 120018
-- guid: 120019
+  customization_param2: 60018
+- guid: 60019
   customization_slot: SkinTone
   customization_param1: ZabrakRed
-  customization_param2: 120019
-- guid: 120020
+  customization_param2: 60019
+- guid: 60020
   customization_slot: SkinTone
   customization_param1: ZabrakBrown
-  customization_param2: 120020
-- guid: 120021
+  customization_param2: 60020
+- guid: 60021
   customization_slot: SkinTone
   customization_param1: TogrutaAmber
-  customization_param2: 120021
-- guid: 120022
+  customization_param2: 60021
+- guid: 60022
   customization_slot: SkinTone
   customization_param1: TogrutaOrange
-  customization_param2: 120022
-- guid: 120023
+  customization_param2: 60022
+- guid: 60023
   customization_slot: SkinTone
   customization_param1: TogrutaRed
-  customization_param2: 120023
-- guid: 120024
+  customization_param2: 60023
+- guid: 60024
   customization_slot: SkinTone
   customization_param1: PantoranBlue
-  customization_param2: 120024
-- guid: 120025
+  customization_param2: 60024
+- guid: 60025
   customization_slot: SkinTone
   customization_param1: TrandoshanGrey
-  customization_param2: 120025
-- guid: 120026
+  customization_param2: 60025
+- guid: 60026
   customization_slot: SkinTone
   customization_param1: TrandoshanGreen
-  customization_param2: 120026
-- guid: 120027
+  customization_param2: 60026
+- guid: 60027
   customization_slot: SkinTone
   customization_param1: TrandoshanBrightGreen
-  customization_param2: 120027
-- guid: 120028
+  customization_param2: 60027
+- guid: 60028
   customization_slot: SkinTone
   customization_param1: TrandoshanYellow
-  customization_param2: 120028
-- guid: 120029
+  customization_param2: 60028
+- guid: 60029
   customization_slot: SkinTone
   customization_param1: TrandoshanBrown
-  customization_param2: 120029
-- guid: 120030
+  customization_param2: 60029
+- guid: 60030
   customization_slot: SkinTone
   customization_param1: CloneTan
-  customization_param2: 120030
-- guid: 130000
+  customization_param2: 60030
+- guid: 40000
   customization_slot: HairStyle
   customization_param1: Cust_HumanMale_Hair_Anakin.adr
-  customization_param2: 130000
-- guid: 130001
+  customization_param2: 40000
+- guid: 40001
   customization_slot: HairStyle
   customization_param1: Cust_HumanMale_Hair_Swirly.adr
-  customization_param2: 130001
-- guid: 130002
+  customization_param2: 40001
+- guid: 40002
   customization_slot: HairStyle
   customization_param1: Cust_HumanMale_Hair_Bald.adr
-  customization_param2: 130002
-- guid: 130003
+  customization_param2: 40002
+- guid: 40003
   customization_slot: HairStyle
   customization_param1: Cust_HumanMale_Hair_Curley.adr
-  customization_param2: 130003
-- guid: 130004
+  customization_param2: 40003
+- guid: 40004
   customization_slot: HairStyle
   customization_param1: Cust_HumanMale_Hair_FauxHawk.adr
-  customization_param2: 130004
-- guid: 130005
+  customization_param2: 40004
+- guid: 40005
   customization_slot: HairStyle
   customization_param1: Cust_HumanMale_Hair_FrontFlip.adr
-  customization_param2: 130005
-- guid: 130006
+  customization_param2: 40005
+- guid: 40006
   customization_slot: HairStyle
   customization_param1: Cust_HumanMale_Hair_Forward.adr
-  customization_param2: 130006
-- guid: 130007
+  customization_param2: 40006
+- guid: 40007
   customization_slot: HairStyle
   customization_param1: Cust_HumanMale_Hair_HanSolo.adr
-  customization_param2: 130007
-- guid: 130008
+  customization_param2: 40007
+- guid: 40008
   customization_slot: HairStyle
   customization_param1: Cust_HumanMale_Hair_Jaybo.adr
-  customization_param2: 130008
-- guid: 130009
+  customization_param2: 40008
+- guid: 40009
   customization_slot: HairStyle
   customization_param1: Cust_HumanMale_Hair_Kenobi.adr
-  customization_param2: 130009
-- guid: 130010
+  customization_param2: 40009
+- guid: 40010
   customization_slot: HairStyle
   customization_param1: Cust_HumanMale_Hair_Luke.adr
-  customization_param2: 130010
-- guid: 130011
+  customization_param2: 40010
+- guid: 40011
   customization_slot: HairStyle
   customization_param1: Cust_HumanMale_Hair_LuxBonteri.adr
-  customization_param2: 130011
-- guid: 130012
+  customization_param2: 40011
+- guid: 40012
   customization_slot: HairStyle
   customization_param1: Cust_HumanMale_Hair_Quigon.adr
-  customization_param2: 130012
-- guid: 130013
+  customization_param2: 40012
+- guid: 40013
   customization_slot: HairStyle
   customization_param1: Cust_HumanMale_Hair_Saw.adr
-  customization_param2: 130013
-- guid: 130014
+  customization_param2: 40013
+- guid: 40014
   customization_slot: HairStyle
   customization_param1: Cust_HumanMale_Hair_QuinlanVos.adr
-  customization_param2: 130014
-- guid: 130015
+  customization_param2: 40014
+- guid: 40015
   customization_slot: HairStyle
   customization_param1: Cust_HumanFemale_Hair_AuraSing.adr
-  customization_param2: 130015
-- guid: 130016
+  customization_param2: 40015
+- guid: 40016
   customization_slot: HairStyle
   customization_param1: Cust_HumanFemale_Hair_Bald.adr
-  customization_param2: 130016
-- guid: 130017
+  customization_param2: 40016
+- guid: 40017
   customization_slot: HairStyle
   customization_param1: Cust_HumanFemale_Hair_Braid.adr
-  customization_param2: 130017
-- guid: 130018
+  customization_param2: 40017
+- guid: 40018
   customization_slot: HairStyle
   customization_param1: Cust_HumanFemale_Hair_Buns.adr
-  customization_param2: 130018
-- guid: 130019
+  customization_param2: 40018
+- guid: 40019
   customization_slot: HairStyle
   customization_param1: Cust_HumanFemale_Hair_CassieCryar.adr
-  customization_param2: 130019
-- guid: 130020
+  customization_param2: 40019
+- guid: 40020
   customization_slot: HairStyle
   customization_param1: Cust_HumanFemale_Hair_LowerBuns.adr
-  customization_param2: 130020
-- guid: 130021
+  customization_param2: 40020
+- guid: 40021
   customization_slot: HairStyle
   customization_param1: Cust_HumanFemale_Hair_FlipUnder.adr
-  customization_param2: 130021
-- guid: 130022
+  customization_param2: 40021
+- guid: 40022
   customization_slot: HairStyle
   customization_param1: Cust_HumanFemale_Hair_LuxuryBob.adr
-  customization_param2: 130022
-- guid: 130023
+  customization_param2: 40022
+- guid: 40023
   customization_slot: HairStyle
   customization_param1: Cust_HumanFemale_Hair_MaraJade.adr
-  customization_param2: 130023
-- guid: 130024
+  customization_param2: 40023
+- guid: 40024
   customization_slot: HairStyle
   customization_param1: Cust_HumanFemale_Hair_PadmeHeaddress.adr
-  customization_param2: 130024
-- guid: 130025
+  customization_param2: 40024
+- guid: 40025
   customization_slot: HairStyle
   customization_param1: Cust_HumanFemale_Hair_Headpiece.adr
-  customization_param2: 130025
-- guid: 130026
+  customization_param2: 40025
+- guid: 40026
   customization_slot: HairStyle
   customization_param1: Cust_HumanFemale_Hair_PonyTailRings.adr
-  customization_param2: 130026
-- guid: 130027
+  customization_param2: 40026
+- guid: 40027
   customization_slot: HairStyle
   customization_param1: Cust_HumanFemale_Hair_MultiPonytail.adr
-  customization_param2: 130027
-- guid: 130028
+  customization_param2: 40027
+- guid: 40028
   customization_slot: HairStyle
   customization_param1: Cust_HumanFemale_Hair_Short.adr
-  customization_param2: 130028
-- guid: 130029
+  customization_param2: 40028
+- guid: 40029
   customization_slot: HairStyle
   customization_param1: Cust_HumanFemale_Hair_Steela.adr
-  customization_param2: 130029
-- guid: 130030
+  customization_param2: 40029
+- guid: 40030
   customization_slot: HairStyle
   customization_param1: Cust_HumanFemale_Hair_UpdoBun.adr
-  customization_param2: 130030
-- guid: 130031
+  customization_param2: 40030
+- guid: 40031
   customization_slot: HairStyle
   customization_param1: Cust_Clone_Hair_Bald.adr
-  customization_param2: 130031
-- guid: 130032
+  customization_param2: 40031
+- guid: 40032
   customization_slot: HairStyle
   customization_param1: Cust_Clone_Hair_Boomer.adr
-  customization_param2: 130032
-- guid: 130033
+  customization_param2: 40032
+- guid: 40033
   customization_slot: HairStyle
   customization_param1: Cust_Clone_Hair_Boost.adr
-  customization_param2: 130033
-- guid: 130034
+  customization_param2: 40033
+- guid: 40034
   customization_slot: HairStyle
   customization_param1: Cust_Clone_Hair_BusinessMan.adr
-  customization_param2: 130034
-- guid: 130035
+  customization_param2: 40034
+- guid: 40035
   customization_slot: HairStyle
   customization_param1: Cust_Clone_Hair_Caesar.adr
-  customization_param2: 130035
-- guid: 130036
+  customization_param2: 40035
+- guid: 40036
   customization_slot: HairStyle
   customization_param1: Cust_Clone_Hair_CornRows.adr
-  customization_param2: 130036
-- guid: 130037
+  customization_param2: 40036
+- guid: 40037
   customization_slot: HairStyle
   customization_param1: Cust_Clone_Hair_Curly.adr
-  customization_param2: 130037
-- guid: 130038
+  customization_param2: 40037
+- guid: 40038
   customization_slot: HairStyle
   customization_param1: Cust_Clone_Hair_Flattop.adr
-  customization_param2: 130038
-- guid: 130039
+  customization_param2: 40038
+- guid: 40039
   customization_slot: HairStyle
   customization_param1: Cust_Clone_Hair_IceCold.adr
-  customization_param2: 130039
-- guid: 130040
+  customization_param2: 40039
+- guid: 40040
   customization_slot: HairStyle
   customization_param1: Cust_Clone_Hair_Razorhawk.adr
-  customization_param2: 130040
-- guid: 130041
+  customization_param2: 40040
+- guid: 40041
   customization_slot: HairStyle
   customization_param1: Cust_Clone_Hair_Rex.adr
-  customization_param2: 130041
-- guid: 130042
+  customization_param2: 40041
+- guid: 40042
   customization_slot: HairStyle
   customization_param1: Cust_Clone_Hair_Ridges.adr
-  customization_param2: 130042
-- guid: 130043
+  customization_param2: 40042
+- guid: 40043
   customization_slot: HairStyle
   customization_param1: Cust_Clone_Hair_TopKnot.adr
-  customization_param2: 130043
-- guid: 130044
+  customization_param2: 40043
+- guid: 40044
   customization_slot: HairStyle
   customization_param1: Cust_TwilekMale_Tails_Plain.adr
-  customization_param2: 130044
-- guid: 130045
+  customization_param2: 40044
+- guid: 40045
   customization_slot: HairStyle
   customization_param1: Cust_TwilekMale_Tails_Curled.adr
-  customization_param2: 130045
-- guid: 130046
+  customization_param2: 40045
+- guid: 40046
   customization_slot: HairStyle
   customization_param1: Cust_TwilekMale_Tails_Both.adr
-  customization_param2: 130046
-- guid: 130047
+  customization_param2: 40046
+- guid: 40047
   customization_slot: HairStyle
   customization_param1: Cust_TwilekMale_Tails_TwistedCircle.adr
-  customization_param2: 130047
-- guid: 130048
+  customization_param2: 40047
+- guid: 40048
   customization_slot: HairStyle
   customization_param1: Cust_TwilekMale_Tails_Left.adr
-  customization_param2: 130048
-- guid: 130049
+  customization_param2: 40048
+- guid: 40049
   customization_slot: HairStyle
   customization_param1: Cust_TwilekMale_Tails_Right.adr
-  customization_param2: 130049
-- guid: 130050
+  customization_param2: 40049
+- guid: 40050
   customization_slot: HairStyle
   customization_param1: Cust_TwilekMale_Tails_FatTail.adr
-  customization_param2: 130050
-- guid: 130051
+  customization_param2: 40050
+- guid: 40051
   customization_slot: HairStyle
   customization_param1: Cust_TwilekMale_Tails_Twist.adr
-  customization_param2: 130051
-- guid: 130052
+  customization_param2: 40051
+- guid: 40052
   customization_slot: HairStyle
   customization_param1: Cust_TwilekFemale_Tails_Curled.adr
-  customization_param2: 130052
-- guid: 130053
+  customization_param2: 40052
+- guid: 40053
   customization_slot: HairStyle
   customization_param1: Cust_TwilekFemale_Tails_BothSides.adr
-  customization_param2: 130053
-- guid: 130054
+  customization_param2: 40053
+- guid: 40054
   customization_slot: HairStyle
   customization_param1: Cust_TwilekFemale_Tails_TwistedCircle.adr
-  customization_param2: 130054
-- guid: 130055
+  customization_param2: 40054
+- guid: 40055
   customization_slot: HairStyle
   customization_param1: Cust_TwilekFemale_Tails_LeftSide.adr
-  customization_param2: 130055
-- guid: 130056
+  customization_param2: 40055
+- guid: 40056
   customization_slot: HairStyle
   customization_param1: Cust_TwilekFemale_Tails_RightSide.adr
-  customization_param2: 130056
-- guid: 130057
+  customization_param2: 40056
+- guid: 40057
   customization_slot: HairStyle
   customization_param1: Cust_TwilekFemale_Tails_Thin.adr
-  customization_param2: 130057
-- guid: 130058
+  customization_param2: 40057
+- guid: 40058
   customization_slot: HairStyle
   customization_param1: Cust_TwilekFemale_Tails_FatTail.adr
-  customization_param2: 130058
-- guid: 130059
+  customization_param2: 40058
+- guid: 40059
   customization_slot: HairStyle
   customization_param1: Cust_TwilekFemale_Tails_Twist.adr
-  customization_param2: 130059
-- guid: 130060
+  customization_param2: 40059
+- guid: 40060
   customization_slot: HairStyle
   customization_param1: Cust_ZabrakMale_Horns_HornCrown.adr
-  customization_param2: 130060
-- guid: 130061
+  customization_param2: 40060
+- guid: 40061
   customization_slot: HairStyle
   customization_param1: Cust_ZabrakMale_Horns_Dreads.adr
-  customization_param2: 130061
-- guid: 130062
+  customization_param2: 40061
+- guid: 40062
   customization_slot: HairStyle
   customization_param1: Cust_ZabrakMale_Horns_Emohawk.adr
-  customization_param2: 130062
-- guid: 130063
+  customization_param2: 40062
+- guid: 40063
   customization_slot: HairStyle
   customization_param1: Cust_ZabrakMale_Horns_4Corners.adr
-  customization_param2: 130063
-- guid: 130064
+  customization_param2: 40063
+- guid: 40064
   customization_slot: HairStyle
   customization_param1: Cust_ZabrakMale_Horns_HeavyBrow.adr
-  customization_param2: 130064
-- guid: 130065
+  customization_param2: 40064
+- guid: 40065
   customization_slot: HairStyle
   customization_param1: Cust_ZabrakMale_Horns_EethKoth.adr
-  customization_param2: 130065
-- guid: 130066
+  customization_param2: 40065
+- guid: 40066
   customization_slot: HairStyle
   customization_param1: Cust_ZabrakMale_Horns_Mohawk.adr
-  customization_param2: 130066
-- guid: 130067
+  customization_param2: 40066
+- guid: 40067
   customization_slot: HairStyle
   customization_param1: Cust_ZabrakMale_Horns_SavageOpressBroken.adr
-  customization_param2: 130067
-- guid: 130068
+  customization_param2: 40067
+- guid: 40068
   customization_slot: HairStyle
   customization_param1: Cust_ZabrakMale_Horns_Spiky.adr
-  customization_param2: 130068
-- guid: 130069
+  customization_param2: 40068
+- guid: 40069
   customization_slot: HairStyle
   customization_param1: Cust_ZabrakMale_Horns_SpikyMohawk.adr
-  customization_param2: 130069
-- guid: 130070
+  customization_param2: 40069
+- guid: 40070
   customization_slot: HairStyle
   customization_param1: Cust_ZabrakMale_Horns_SugiTopKnot.adr
-  customization_param2: 130070
-- guid: 130071
+  customization_param2: 40070
+- guid: 40071
   customization_slot: HairStyle
   customization_param1: Cust_ZabrakFemale_Horns_HornCrown.adr
-  customization_param2: 130071
-- guid: 130072
+  customization_param2: 40071
+- guid: 40072
   customization_slot: HairStyle
   customization_param1: Cust_ZabrakFemale_Horns_Dreads.adr
-  customization_param2: 130072
-- guid: 130073
+  customization_param2: 40072
+- guid: 40073
   customization_slot: HairStyle
   customization_param1: Cust_ZabrakFemale_Horns_Emohawk.adr
-  customization_param2: 130073
-- guid: 130074
+  customization_param2: 40073
+- guid: 40074
   customization_slot: HairStyle
   customization_param1: Cust_ZabrakFemale_Horns_4Corners.adr
-  customization_param2: 130074
-- guid: 130075
+  customization_param2: 40074
+- guid: 40075
   customization_slot: HairStyle
   customization_param1: Cust_ZabrakFemale_Horns_HeavyBrow.adr
-  customization_param2: 130075
-- guid: 130076
+  customization_param2: 40075
+- guid: 40076
   customization_slot: HairStyle
   customization_param1: Cust_ZabrakFemale_Horns_EethKoth.adr
-  customization_param2: 130076
-- guid: 130077
+  customization_param2: 40076
+- guid: 40077
   customization_slot: HairStyle
   customization_param1: Cust_ZabrakFemale_Horns_Mohawk.adr
-  customization_param2: 130077
-- guid: 130078
+  customization_param2: 40077
+- guid: 40078
   customization_slot: HairStyle
   customization_param1: Cust_ZabrakFemale_Horns_SavageOpressBroken.adr
-  customization_param2: 130078
-- guid: 130079
+  customization_param2: 40078
+- guid: 40079
   customization_slot: HairStyle
   customization_param1: Cust_ZabrakFemale_Horns_Spiky.adr
-  customization_param2: 130079
-- guid: 130080
+  customization_param2: 40079
+- guid: 40080
   customization_slot: HairStyle
   customization_param1: Cust_ZabrakFemale_Horns_SpikyMohawk.adr
-  customization_param2: 130080
-- guid: 130081
+  customization_param2: 40080
+- guid: 40081
   customization_slot: HairStyle
   customization_param1: Cust_ZabrakFemale_Horns_SugiTopknot.adr
-  customization_param2: 130081
-- guid: 130082
+  customization_param2: 40081
+- guid: 40082
   customization_slot: HairStyle
   customization_param1: Cust_TogrutaMale_HeadTails_ForkTop.adr
-  customization_param2: 130082
-- guid: 130083
+  customization_param2: 40082
+- guid: 40083
   customization_slot: HairStyle
   customization_param1: Cust_TogrutaMale_HeadTails_TanoTop.adr
-  customization_param2: 130083
-- guid: 130084
+  customization_param2: 40083
+- guid: 40084
   customization_slot: HairStyle
   customization_param1: Cust_TogrutaMale_HeadTails_SpikeTop.adr
-  customization_param2: 130084
-- guid: 130085
+  customization_param2: 40084
+- guid: 40085
   customization_slot: HairStyle
   customization_param1: Cust_TogrutaFemale_HeadTails_ForkTop.adr
-  customization_param2: 130085
-- guid: 130086
+  customization_param2: 40085
+- guid: 40086
   customization_slot: HairStyle
   customization_param1: Cust_TogrutaFemale_HeadTails_TanoTop.adr
-  customization_param2: 130086
-- guid: 130087
+  customization_param2: 40086
+- guid: 40087
   customization_slot: HairStyle
   customization_param1: Cust_TogrutaFemale_HeadTails_SpikeTop.adr
-  customization_param2: 130087
-- guid: 130088
+  customization_param2: 40087
+- guid: 40088
   customization_slot: HairStyle
   customization_param1: Cust_PantoranMale_Hair_Bald.adr
-  customization_param2: 130088
-- guid: 130089
+  customization_param2: 40088
+- guid: 40089
   customization_slot: HairStyle
   customization_param1: Cust_PantoranMale_Hair_Caesar.adr
-  customization_param2: 130089
-- guid: 130090
+  customization_param2: 40089
+- guid: 40090
   customization_slot: HairStyle
   customization_param1: Cust_PantoranMale_Hair_ChairmanChiCho.adr
-  customization_param2: 130090
-- guid: 130091
+  customization_param2: 40090
+- guid: 40091
   customization_slot: HairStyle
   customization_param1: Cust_PantoranMale_Hair_DuckTail.adr
-  customization_param2: 130091
-- guid: 130092
+  customization_param2: 40091
+- guid: 40092
   customization_slot: HairStyle
   customization_param1: Cust_PantoranMale_Hair_FauxHawk.adr
-  customization_param2: 130092
-- guid: 130093
+  customization_param2: 40092
+- guid: 40093
   customization_slot: HairStyle
   customization_param1: Cust_PantoranMale_Hair_Flattop.adr
-  customization_param2: 130093
-- guid: 130094
+  customization_param2: 40093
+- guid: 40094
   customization_slot: HairStyle
   customization_param1: Cust_PantoranMale_Hair_PonyTail.adr
-  customization_param2: 130094
-- guid: 130095
+  customization_param2: 40094
+- guid: 40095
   customization_slot: HairStyle
   customization_param1: Cust_PantoranMale_Hair_PuffyPart.adr
-  customization_param2: 130095
-- guid: 130096
+  customization_param2: 40095
+- guid: 40096
   customization_slot: HairStyle
   customization_param1: Cust_PantoranFemale_Hair_Bald.adr
-  customization_param2: 130096
-- guid: 130097
+  customization_param2: 40096
+- guid: 40097
   customization_slot: HairStyle
   customization_param1: Cust_PantoranFemale_Hair_GoldBob.adr
-  customization_param2: 130097
-- guid: 130098
+  customization_param2: 40097
+- guid: 40098
   customization_slot: HairStyle
   customization_param1: Cust_PantoranFemale_Hair_GoldBuns.adr
-  customization_param2: 130098
-- guid: 130099
+  customization_param2: 40098
+- guid: 40099
   customization_slot: HairStyle
   customization_param1: Cust_PantoranFemale_Hair_GoldSpiralBuns.adr
-  customization_param2: 130099
-- guid: 130100
+  customization_param2: 40099
+- guid: 40100
   customization_slot: HairStyle
   customization_param1: Cust_PantoranFemale_Hair_LowPigTails.adr
-  customization_param2: 130100
-- guid: 130101
+  customization_param2: 40100
+- guid: 40101
   customization_slot: HairStyle
   customization_param1: Cust_PantoranFemale_Hair_LowRightPigTail.adr
-  customization_param2: 130101
-- guid: 130102
+  customization_param2: 40101
+- guid: 40102
   customization_slot: HairStyle
   customization_param1: Cust_PantoranFemale_Hair_PigTails.adr
-  customization_param2: 130102
-- guid: 130103
+  customization_param2: 40102
+- guid: 40103
   customization_slot: HairStyle
   customization_param1: Cust_PantoranFemale_Hair_ShortGold.adr
-  customization_param2: 130103
-- guid: 130104
+  customization_param2: 40103
+- guid: 40104
   customization_slot: HairStyle
   customization_param1: Cust_PantoranFemale_Hair_Short.adr
-  customization_param2: 130104
-- guid: 130105
+  customization_param2: 40104
+- guid: 40105
   customization_slot: HairStyle
   customization_param1: Cust_PantoranFemale_Hair_SideSwoop.adr
-  customization_param2: 130105
-- guid: 130106
+  customization_param2: 40105
+- guid: 40106
   customization_slot: HairStyle
   customization_param1: Cust_PantoranFemale_Hair_TopBun.adr
-  customization_param2: 130106
-- guid: 130107
+  customization_param2: 40106
+- guid: 40107
   customization_slot: HairStyle
   customization_param1: Cust_TrandoshanMale_Spikes_Bald.adr
-  customization_param2: 130107
-- guid: 130108
+  customization_param2: 40107
+- guid: 40108
   customization_slot: HairStyle
   customization_param1: Cust_TrandoshanMale_Spikes_LobsterLumps.adr
-  customization_param2: 130108
-- guid: 130109
+  customization_param2: 40108
+- guid: 40109
   customization_slot: HairStyle
   customization_param1: Cust_TrandoshanMale_Spikes_ShellPlates.adr
-  customization_param2: 130109
-- guid: 130110
+  customization_param2: 40109
+- guid: 40110
   customization_slot: HairStyle
   customization_param1: Cust_TrandoshanMale_Spikes_ShortSpikes.adr
-  customization_param2: 130110
-- guid: 130111
+  customization_param2: 40110
+- guid: 40111
   customization_slot: HairStyle
   customization_param1: Cust_TrandoshanMale_Spikes_SpikeCrown.adr
-  customization_param2: 130111
-- guid: 130112
+  customization_param2: 40111
+- guid: 40112
   customization_slot: HairStyle
   customization_param1: Cust_TrandoshanMale_Spikes_TallSpikes.adr
-  customization_param2: 130112
-- guid: 130113
+  customization_param2: 40112
+- guid: 40113
   customization_slot: HairStyle
   customization_param1: Cust_TrandoshanFemale_Spikes_Bald.adr
-  customization_param2: 130113
-- guid: 130114
+  customization_param2: 40113
+- guid: 40114
   customization_slot: HairStyle
   customization_param1: Cust_TrandoshanFemale_Spikes_LobsterLumps.adr
-  customization_param2: 130114
-- guid: 130115
+  customization_param2: 40114
+- guid: 40115
   customization_slot: HairStyle
   customization_param1: Cust_TrandoshanFemale_Spikes_ShellPlates.adr
-  customization_param2: 130115
-- guid: 130116
+  customization_param2: 40115
+- guid: 40116
   customization_slot: HairStyle
   customization_param1: Cust_TrandoshanFemale_Spikes_ShortSpikes.adr
-  customization_param2: 130116
-- guid: 130117
+  customization_param2: 40116
+- guid: 40117
   customization_slot: HairStyle
   customization_param1: Cust_TrandoshanFemale_Spikes_SpikeCrown.adr
-  customization_param2: 130117
-- guid: 130118
+  customization_param2: 40117
+- guid: 40118
   customization_slot: HairStyle
   customization_param1: Cust_TrandoshanFemale_Spikes_TallSpikes.adr
-  customization_param2: 130118
-- guid: 140000
+  customization_param2: 40118
+- guid: 30000
   customization_slot: HairColor
   customization_param1: ''
   customization_param2: 15
-- guid: 140001
+- guid: 30001
   customization_slot: HairColor
   customization_param1: ''
   customization_param2: 16
-- guid: 140002
+- guid: 30002
   customization_slot: HairColor
   customization_param1: ''
   customization_param2: 9
-- guid: 140003
+- guid: 30003
   customization_slot: HairColor
   customization_param1: ''
   customization_param2: 10
-- guid: 140004
+- guid: 30004
   customization_slot: HairColor
   customization_param1: ''
   customization_param2: 11
-- guid: 140005
+- guid: 30005
   customization_slot: HairColor
   customization_param1: ''
   customization_param2: 12
-- guid: 140006
+- guid: 30006
   customization_slot: HairColor
   customization_param1: ''
   customization_param2: 14
-- guid: 140007
+- guid: 30007
   customization_slot: HairColor
   customization_param1: ''
   customization_param2: 48
-- guid: 140008
+- guid: 30008
   customization_slot: HairColor
   customization_param1: ''
   customization_param2: 13
-- guid: 140009
+- guid: 30009
   customization_slot: HairColor
   customization_param1: ''
   customization_param2: 18
-- guid: 140010
+- guid: 30010
   customization_slot: HairColor
   customization_param1: ''
   customization_param2: 17
-- guid: 140011
+- guid: 30011
   customization_slot: HairColor
   customization_param1: ''
   customization_param2: 19
-- guid: 140012
+- guid: 30012
   customization_slot: HairColor
   customization_param1: ''
   customization_param2: 34
-- guid: 140013
+- guid: 30013
   customization_slot: HairColor
   customization_param1: ''
   customization_param2: 32
-- guid: 140014
+- guid: 30014
   customization_slot: HairColor
   customization_param1: ''
   customization_param2: 33
-- guid: 140015
+- guid: 30015
   customization_slot: HairColor
   customization_param1: ''
   customization_param2: 40
-- guid: 140016
+- guid: 30016
   customization_slot: HairColor
   customization_param1: ''
   customization_param2: 41
-- guid: 140017
+- guid: 30017
   customization_slot: HairColor
   customization_param1: ''
   customization_param2: 37
-- guid: 140018
+- guid: 30018
   customization_slot: HairColor
   customization_param1: ''
   customization_param2: 38
-- guid: 140019
+- guid: 30019
   customization_slot: HairColor
   customization_param1: ''
   customization_param2: 35
-- guid: 140020
+- guid: 30020
   customization_slot: HairColor
   customization_param1: ''
   customization_param2: 39
-- guid: 140021
+- guid: 30021
   customization_slot: HairColor
   customization_param1: ''
   customization_param2: 36
 # Default customization for non-applicable species
-- guid: 140022
+- guid: 30022
   customization_slot: HairColor
   customization_param1: ''
   customization_param2: 0
-- guid: 150000
+- guid: 10000
   customization_slot: EyeColor
   customization_param1: ''
   customization_param2: 5
-- guid: 150001
+- guid: 10001
   customization_slot: EyeColor
   customization_param1: ''
   customization_param2: 2
-- guid: 150002
+- guid: 10002
   customization_slot: EyeColor
   customization_param1: ''
   customization_param2: 1
-- guid: 150003
+- guid: 10003
   customization_slot: EyeColor
   customization_param1: ''
   customization_param2: 6
-- guid: 150004
+- guid: 10004
   customization_slot: EyeColor
   customization_param1: ''
   customization_param2: 3
-- guid: 150005
+- guid: 10005
   customization_slot: EyeColor
   customization_param1: ''
   customization_param2: 7
-- guid: 150006
+- guid: 10006
   customization_slot: EyeColor
   customization_param1: ''
   customization_param2: 8
-- guid: 150007
+- guid: 10007
   customization_slot: EyeColor
   customization_param1: ''
   customization_param2: 4
-- guid: 150008
+- guid: 10008
   customization_slot: EyeColor
   customization_param1: ''
   customization_param2: 43
-- guid: 150009
+- guid: 10009
   customization_slot: EyeColor
   customization_param1: ''
   customization_param2: 44
-- guid: 150010
+- guid: 10010
   customization_slot: EyeColor
   customization_param1: ''
   customization_param2: 45
-- guid: 150011
+- guid: 10011
   customization_slot: EyeColor
   customization_param1: ''
   customization_param2: 42
-- guid: 150012
+- guid: 10012
   customization_slot: EyeColor
   customization_param1: ''
   customization_param2: 46
 # Default customization for non-applicable species
-- guid: 150013
+- guid: 10013
   customization_slot: EyeColor
   customization_param1: ''
   customization_param2: 0
-- guid: 160000
+- guid: 20000
   customization_slot: FacialHair
   customization_param1: Cust_HumanMale_FacialHair_Yularen.adr
-  customization_param2: 160000
-- guid: 160001
+  customization_param2: 20000
+- guid: 20001
   customization_slot: FacialHair
   customization_param1: Cust_HumanMale_FacialHair_Smitts.adr
-  customization_param2: 160001
-- guid: 160002
+  customization_param2: 20001
+- guid: 20002
   customization_slot: FacialHair
   customization_param1: Cust_HumanMale_FacialHair_CleanShaven.adr
-  customization_param2: 160002
-- guid: 160003
+  customization_param2: 20002
+- guid: 20003
   customization_slot: FacialHair
   customization_param1: Cust_HumanMale_FacialHair_Kenobi.adr
-  customization_param2: 160003
-- guid: 160004
+  customization_param2: 20003
+- guid: 20004
   customization_slot: FacialHair
   customization_param1: Cust_Clone_FacialHair_CleanShaven.adr
-  customization_param2: 160004
-- guid: 160005
+  customization_param2: 20004
+- guid: 20005
   customization_slot: FacialHair
   customization_param1: Cust_Clone_FacialHair_Goatee.adr
-  customization_param2: 160005
-- guid: 160006
+  customization_param2: 20005
+- guid: 20006
   customization_slot: FacialHair
   customization_param1: Cust_Clone_FacialHair_PiellEye.adr
-  customization_param2: 160006
-- guid: 160007
+  customization_param2: 20006
+- guid: 20007
   customization_slot: FacialHair
   customization_param1: Cust_Clone_FacialHair_SplitChin.adr
-  customization_param2: 160007
-- guid: 160008
+  customization_param2: 20007
+- guid: 20008
   customization_slot: FacialHair
   customization_param1: Cust_Clone_FacialHair_TripleChin.adr
-  customization_param2: 160008
-- guid: 160009
+  customization_param2: 20008
+- guid: 20009
   customization_slot: FacialHair
   customization_param1: Cust_PantoranMale_FacialHair_CleanShaven.adr
-  customization_param2: 160009
-- guid: 160010
+  customization_param2: 20009
+- guid: 20010
   customization_slot: FacialHair
   customization_param1: Cust_PantoranMale_FacialHair_DoublePatch.adr
-  customization_param2: 160010
-- guid: 160011
+  customization_param2: 20010
+- guid: 20011
   customization_slot: FacialHair
   customization_param1: Cust_PantoranMale_FacialHair_Magnum.adr
-  customization_param2: 160011
-- guid: 160012
+  customization_param2: 20011
+- guid: 20012
   customization_slot: FacialHair
   customization_param1: Cust_PantoranMale_FacialHair_Papanoida.adr
-  customization_param2: 160012
-- guid: 160013
+  customization_param2: 20012
+- guid: 20013
   customization_slot: FacialHair
   customization_param1: Cust_PantoranMale_FacialHair_GoateeSharp.adr
-  customization_param2: 160013
-- guid: 160014
+  customization_param2: 20013
+- guid: 20014
   customization_slot: FacialHair
   customization_param1: Cust_PantoranMale_FacialHair_Patch.adr
-  customization_param2: 160014
+  customization_param2: 20014
 # Default customization for non-applicable species
-- guid: 160015
+- guid: 20015
   customization_slot: FacialHair
   customization_param1: Cust_HumanMale_FacialHair_CleanShaven.adr
-  customization_param2: 160015
-- guid: 170000
+  customization_param2: 20015
+- guid: 50000
   customization_slot: FacePattern
   customization_param1: RexScar
-  customization_param2: 170000
-- guid: 170001
+  customization_param2: 50000
+- guid: 50001
   customization_slot: FacePattern
   customization_param1: CrescentScar
-  customization_param2: 170001
-- guid: 170002
+  customization_param2: 50001
+- guid: 50002
   customization_slot: FacePattern
   customization_param1: CodyEyeScar
-  customization_param2: 170002
-- guid: 170003
+  customization_param2: 50002
+- guid: 50003
   customization_slot: FacePattern
   customization_param1: CodyFullScar
-  customization_param2: 170003
-- guid: 170004
+  customization_param2: 50003
+- guid: 50004
   customization_slot: FacePattern
   customization_param1: HardcaseTat
-  customization_param2: 170004
-- guid: 170005
+  customization_param2: 50004
+- guid: 50005
   customization_slot: FacePattern
   customization_param1: LeftEyeScar
-  customization_param2: 170005
-- guid: 170006
+  customization_param2: 50005
+- guid: 50006
   customization_slot: FacePattern
   customization_param1: None
-  customization_param2: 170006
-- guid: 170007
+  customization_param2: 50006
+- guid: 50007
   customization_slot: FacePattern
   customization_param1: RepublicTattoo
-  customization_param2: 170007
-- guid: 170008
+  customization_param2: 50007
+- guid: 50008
   customization_slot: FacePattern
   customization_param1: CodySideScar
-  customization_param2: 170008
-- guid: 170009
+  customization_param2: 50008
+- guid: 50009
   customization_slot: FacePattern
   customization_param1: SquarishTattoo
-  customization_param2: 170009
-- guid: 170010
+  customization_param2: 50009
+- guid: 50010
   customization_slot: FacePattern
   customization_param1: TrackTattoo
-  customization_param2: 170010
-- guid: 170011
+  customization_param2: 50010
+- guid: 50011
   customization_slot: FacePattern
   customization_param1: Whiskers
-  customization_param2: 170011
-- guid: 170012
+  customization_param2: 50011
+- guid: 50012
   customization_slot: FacePattern
   customization_param1: PiellScar
-  customization_param2: 170012
-- guid: 170013
+  customization_param2: 50012
+- guid: 50013
   customization_slot: FacePattern
   customization_param1: SecuraWraps
-  customization_param2: 170013
-- guid: 170014
+  customization_param2: 50013
+- guid: 50014
   customization_slot: FacePattern
   customization_param1: SecuraWraps&Spots
-  customization_param2: 170014
-- guid: 170015
+  customization_param2: 50014
+- guid: 50015
   customization_slot: FacePattern
   customization_param1: Crescents
-  customization_param2: 170015
-- guid: 170016
+  customization_param2: 50015
+- guid: 50016
   customization_slot: FacePattern
   customization_param1: CrissCrossWraps
-  customization_param2: 170016
-- guid: 170017
+  customization_param2: 50016
+- guid: 50017
   customization_slot: FacePattern
   customization_param1: Spots
-  customization_param2: 170017
-- guid: 170018
+  customization_param2: 50017
+- guid: 50018
   customization_slot: FacePattern
   customization_param1: Stripes
-  customization_param2: 170018
-- guid: 170019
+  customization_param2: 50018
+- guid: 50019
   customization_slot: FacePattern
   customization_param1: SunCircle
-  customization_param2: 170019
-- guid: 170020
+  customization_param2: 50019
+- guid: 50020
   customization_slot: FacePattern
   customization_param1: Swirls
-  customization_param2: 170020
-- guid: 170021
+  customization_param2: 50020
+- guid: 50021
   customization_slot: FacePattern
   customization_param1: None
-  customization_param2: 170021
-- guid: 170022
+  customization_param2: 50021
+- guid: 50022
   customization_slot: FacePattern
   customization_param1: Claw
-  customization_param2: 170022
-- guid: 170023
+  customization_param2: 50022
+- guid: 50023
   customization_slot: FacePattern
   customization_param1: Crawl
-  customization_param2: 170023
-- guid: 170024
+  customization_param2: 50023
+- guid: 50024
   customization_slot: FacePattern
   customization_param1: Crescent
-  customization_param2: 170024
-- guid: 170025
+  customization_param2: 50024
+- guid: 50025
   customization_slot: FacePattern
   customization_param1: Diamond
-  customization_param2: 170025
-- guid: 170026
+  customization_param2: 50025
+- guid: 50026
   customization_slot: FacePattern
   customization_param1: Koth
-  customization_param2: 170026
-- guid: 170027
+  customization_param2: 50026
+- guid: 50027
   customization_slot: FacePattern
   customization_param1: Fire
-  customization_param2: 170027
-- guid: 170028
+  customization_param2: 50027
+- guid: 50028
   customization_slot: FacePattern
   customization_param1: Flame
-  customization_param2: 170028
-- guid: 170029
+  customization_param2: 50028
+- guid: 50029
   customization_slot: FacePattern
   customization_param1: Kass
-  customization_param2: 170029
-- guid: 170030
+  customization_param2: 50029
+- guid: 50030
   customization_slot: FacePattern
   customization_param1: Mannequin
-  customization_param2: 170030
-- guid: 170031
+  customization_param2: 50030
+- guid: 50031
   customization_slot: FacePattern
   customization_param1: Opress
-  customization_param2: 170031
-- guid: 170032
+  customization_param2: 50031
+- guid: 50032
   customization_slot: FacePattern
   customization_param1: Strips
-  customization_param2: 170032
-- guid: 170033
+  customization_param2: 50032
+- guid: 50033
   customization_slot: FacePattern
   customization_param1: Sugi
-  customization_param2: 170033
-- guid: 170034
+  customization_param2: 50033
+- guid: 50034
   customization_slot: FacePattern
   customization_param1: Swoop
-  customization_param2: 170034
-- guid: 170035
+  customization_param2: 50034
+- guid: 50035
   customization_slot: FacePattern
   customization_param1: Triangle
-  customization_param2: 170035
-- guid: 170036
+  customization_param2: 50035
+- guid: 50036
   customization_slot: FacePattern
   customization_param1: DarthMaul
-  customization_param2: 170036
-- guid: 170037
+  customization_param2: 50036
+- guid: 50037
   customization_slot: FacePattern
   customization_param1: Curl
-  customization_param2: 170037
-- guid: 170038
+  customization_param2: 50037
+- guid: 50038
   customization_slot: FacePattern
   customization_param1: Dots
-  customization_param2: 170038
-- guid: 170039
+  customization_param2: 50038
+- guid: 50039
   customization_slot: FacePattern
   customization_param1: Eyebrow
-  customization_param2: 170039
-- guid: 170040
+  customization_param2: 50039
+- guid: 50040
   customization_slot: FacePattern
   customization_param1: Lightning
-  customization_param2: 170040
-- guid: 170041
+  customization_param2: 50040
+- guid: 50041
   customization_slot: FacePattern
   customization_param1: ShaakTi
-  customization_param2: 170041
-- guid: 170042
+  customization_param2: 50041
+- guid: 50042
   customization_slot: FacePattern
   customization_param1: Stacks
-  customization_param2: 170042
-- guid: 170043
+  customization_param2: 50042
+- guid: 50043
   customization_slot: FacePattern
   customization_param1: Teardrop
-  customization_param2: 170043
-- guid: 170044
+  customization_param2: 50043
+- guid: 50044
   customization_slot: FacePattern
   customization_param1: V
-  customization_param2: 170044
-- guid: 170045
+  customization_param2: 50044
+- guid: 50045
   customization_slot: FacePattern
   customization_param1: BrowArc
-  customization_param2: 170045
-- guid: 170046
+  customization_param2: 50045
+- guid: 50046
   customization_slot: FacePattern
   customization_param1: Chicho
-  customization_param2: 170046
-- guid: 170047
+  customization_param2: 50046
+- guid: 50047
   customization_slot: FacePattern
   customization_param1: ChinArc
-  customization_param2: 170047
-- guid: 170048
+  customization_param2: 50047
+- guid: 50048
   customization_slot: FacePattern
   customization_param1: Chuchi
-  customization_param2: 170048
-- guid: 170049
+  customization_param2: 50048
+- guid: 50049
   customization_slot: FacePattern
   customization_param1: Crooked
-  customization_param2: 170049
-- guid: 170050
+  customization_param2: 50049
+- guid: 50050
   customization_slot: FacePattern
   customization_param1: Guard
-  customization_param2: 170050
-- guid: 170051
+  customization_param2: 50050
+- guid: 50051
   customization_slot: FacePattern
   customization_param1: Ion
-  customization_param2: 170051
-- guid: 170052
+  customization_param2: 50051
+- guid: 50052
   customization_slot: FacePattern
   customization_param1: Lines
-  customization_param2: 170052
-- guid: 170053
+  customization_param2: 50052
+- guid: 50053
   customization_slot: FacePattern
   customization_param1: Papanoida
-  customization_param2: 170053
-- guid: 170054
+  customization_param2: 50053
+- guid: 50054
   customization_slot: FacePattern
   customization_param1: Slope
-  customization_param2: 170054
-- guid: 170055
+  customization_param2: 50054
+- guid: 50055
   customization_slot: FacePattern
   customization_param1: Squares
-  customization_param2: 170055
-- guid: 170056
+  customization_param2: 50055
+- guid: 50056
   customization_slot: FacePattern
   customization_param1: Tbone
-  customization_param2: 170056
-- guid: 170057
+  customization_param2: 50056
+- guid: 50057
   customization_slot: FacePattern
   customization_param1: Garnac
-  customization_param2: 170057
-- guid: 170058
+  customization_param2: 50057
+- guid: 50058
   customization_slot: FacePattern
   customization_param1: Mask
-  customization_param2: 170058
-- guid: 170059
+  customization_param2: 50058
+- guid: 50059
   customization_slot: FacePattern
   customization_param1: Mohawk
-  customization_param2: 170059
-- guid: 170060
+  customization_param2: 50059
+- guid: 50060
   customization_slot: FacePattern
   customization_param1: Scratch
-  customization_param2: 170060
-- guid: 170061
+  customization_param2: 50060
+- guid: 50061
   customization_slot: FacePattern
   customization_param1: Simple
-  customization_param2: 170061
-- guid: 170062
+  customization_param2: 50061
+- guid: 50062
   customization_slot: FacePattern
   customization_param1: Sunfire
-  customization_param2: 170062
+  customization_param2: 50062
 # Default customization for non-applicable species
-- guid: 170063
+- guid: 50063
   customization_slot: FacePattern
   customization_param1: None
-  customization_param2: 170063
-- guid: 180000
+  customization_param2: 50063
+- guid: 70000
   customization_slot: BodyModel
   customization_param1: ''
   customization_param2: 484
-- guid: 180001
+- guid: 70001
   customization_slot: BodyModel
   customization_param1: ''
   customization_param2: 11
-- guid: 180002
+- guid: 70002
   customization_slot: BodyModel
   customization_param1: ''
   customization_param2: 1100
-- guid: 180003
+- guid: 70003
   customization_slot: BodyModel
   customization_param1: ''
   customization_param2: 487
-- guid: 180004
+- guid: 70004
   customization_slot: BodyModel
   customization_param1: ''
   customization_param2: 1443
-- guid: 180005
+- guid: 70005
   customization_slot: BodyModel
   customization_param1: ''
   customization_param2: 485
-- guid: 180006
+- guid: 70006
   customization_slot: BodyModel
   customization_param1: ''
   customization_param2: 486
-- guid: 180007
+- guid: 70007
   customization_slot: BodyModel
   customization_param1: ''
   customization_param2: 202
-- guid: 180008
+- guid: 70008
   customization_slot: BodyModel
   customization_param1: ''
   customization_param2: 1101
-- guid: 180009
+- guid: 70009
   customization_slot: BodyModel
   customization_param1: ''
   customization_param2: 490
-- guid: 180010
+- guid: 70010
   customization_slot: BodyModel
   customization_param1: ''
   customization_param2: 1491
-- guid: 180011
+- guid: 70011
   customization_slot: BodyModel
   customization_param1: ''
   customization_param2: 488
-- guid: 180012
+- guid: 70012
   customization_slot: BodyModel
   customization_param1: ''
   customization_param2: 489

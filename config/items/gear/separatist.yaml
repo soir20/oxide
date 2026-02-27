@@ -1,6 +1,6 @@
 ---
 # Bravis Sith Suit
-- guid: 10267
+- guid: 220000
   name_id: 1325
   description_id: 14
   icon_set_id: 1113
@@ -43,7 +43,7 @@
   stats: []
   abilities: []
 # Bravis Sith Hood
-- guid: 20207
+- guid: 220001
   name_id: 1420
   description_id: 14
   icon_set_id: 1116
@@ -86,7 +86,7 @@
   stats: []
   abilities: []
 # Bravis Sith Gloves
-- guid: 30108
+- guid: 220002
   name_id: 1378
   description_id: 14
   icon_set_id: 1115
@@ -129,7 +129,7 @@
   stats: []
   abilities: []
 # Bravis Sith Boots
-- guid: 40249
+- guid: 220003
   name_id: 1360
   description_id: 14
   icon_set_id: 1114
@@ -172,7 +172,7 @@
   stats: []
   abilities: []
 # Savek Sith Suit
-- guid: 10282
+- guid: 220004
   name_id: 886
   description_id: 14
   icon_set_id: 487
@@ -215,7 +215,7 @@
   stats: []
   abilities: []
 # Savek Sith Hood
-- guid: 20217
+- guid: 220005
   name_id: 882
   description_id: 14
   icon_set_id: 490
@@ -258,7 +258,7 @@
   stats: []
   abilities: []
 # Savek Sith Gloves
-- guid: 30230
+- guid: 220006
   name_id: 884
   description_id: 14
   icon_set_id: 489
@@ -301,7 +301,7 @@
   stats: []
   abilities: []
 # Savek Sith Boots
-- guid: 40262
+- guid: 220007
   name_id: 888
   description_id: 14
   icon_set_id: 488
@@ -344,7 +344,7 @@
   stats: []
   abilities: []
 # Moralo Eval's Prison Outfit
-- guid: 10208
+- guid: 220008
   name_id: 4588
   description_id: 14
   icon_set_id: 2660
@@ -387,7 +387,7 @@
   stats: []
   abilities: []
 # Lux Bonteri's Suit
-- guid: 10193
+- guid: 220009
   name_id: 4548
   description_id: 14
   icon_set_id: 2630
@@ -430,7 +430,7 @@
   stats: []
   abilities: []
 # Lux Bonteri's Beanie
-- guid: 20156
+- guid: 220010
   name_id: 4546
   description_id: 14
   icon_set_id: 2628
@@ -473,7 +473,7 @@
   stats: []
   abilities: []
 # Lux Bonteri's Gloves
-- guid: 30210
+- guid: 220011
   name_id: 4547
   description_id: 14
   icon_set_id: 2629
@@ -516,7 +516,7 @@
   stats: []
   abilities: []
 # Lux Bonteri's Boots
-- guid: 40200
+- guid: 220012
   name_id: 4549
   description_id: 14
   icon_set_id: 2631
@@ -559,7 +559,7 @@
   stats: []
   abilities: []
 # Count Dooku's Original Robes
-- guid: 10122
+- guid: 220013
   name_id: 1309
   description_id: 14
   icon_set_id: 1080
@@ -602,7 +602,7 @@
   stats: []
   abilities: []
 # Count Dooku's Original Boots
-- guid: 40124
+- guid: 220014
   name_id: 1305
   description_id: 14
   icon_set_id: 1081
@@ -645,7 +645,7 @@
   stats: []
   abilities: []
 # Count Dooku's Robes
-- guid: 10123
+- guid: 220015
   name_id: 32929
   description_id: 14
   icon_set_id: 1080
@@ -688,7 +688,7 @@
   stats: []
   abilities: []
 # Count Dooku's Boots
-- guid: 40125
+- guid: 220016
   name_id: 32930
   description_id: 14
   icon_set_id: 1081
@@ -731,7 +731,7 @@
   stats: []
   abilities: []
 # Captain Argyus' Armor
-- guid: 10252
+- guid: 220017
   name_id: 8918
   description_id: 14
   icon_set_id: 109
@@ -774,7 +774,7 @@
   stats: []
   abilities: []
 # Captain Argyus' Helmet
-- guid: 20199
+- guid: 220018
   name_id: 8924
   description_id: 14
   icon_set_id: 206
@@ -817,7 +817,7 @@
   stats: []
   abilities: []
 # Captain Argyus' Gloves
-- guid: 30202
+- guid: 220019
   name_id: 8922
   description_id: 14
   icon_set_id: 178
@@ -860,7 +860,7 @@
   stats: []
   abilities: []
 # Captain Argyus' Boots
-- guid: 40046
+- guid: 220020
   name_id: 8920
   description_id: 14
   icon_set_id: 132
@@ -903,7 +903,7 @@
   stats: []
   abilities: []
 # Osi Sobeck's Suit
-- guid: 10228
+- guid: 220021
   name_id: 43189
   description_id: 14
   icon_set_id: 1787
@@ -946,7 +946,7 @@
   stats: []
   abilities: []
 # Osi Sobeck's Bracers
-- guid: 30186
+- guid: 220022
   name_id: 43188
   description_id: 14
   icon_set_id: 1788
@@ -989,7 +989,7 @@
   stats: []
   abilities: []
 # Separatist Scientist's Coat
-- guid: 10152
+- guid: 220023
   name_id: 1311
   description_id: 14
   icon_set_id: 1084
@@ -1032,7 +1032,7 @@
   stats: []
   abilities: []
 # Separatist Scientist's Breather
-- guid: 20127
+- guid: 220024
   name_id: 1408
   description_id: 14
   icon_set_id: 1087
@@ -1075,7 +1075,7 @@
   stats: []
   abilities: []
 # Separatist Scientist's Gloves
-- guid: 30139
+- guid: 220025
   name_id: 1380
   description_id: 14
   icon_set_id: 1086
@@ -1118,7 +1118,7 @@
   stats: []
   abilities: []
 # Separatist Scientist's Boots
-- guid: 40150
+- guid: 220026
   name_id: 1346
   description_id: 14
   icon_set_id: 1085
@@ -1161,7 +1161,7 @@
   stats: []
   abilities: []
 # Lok Durd's Robes
-- guid: 10190
+- guid: 220027
   name_id: 361
   description_id: 14
   icon_set_id: 101
@@ -1204,7 +1204,7 @@
   stats: []
   abilities: []
 # Lok Durd's Fancy Hat
-- guid: 20153
+- guid: 220028
   name_id: 363
   description_id: 14
   icon_set_id: 201
@@ -1247,7 +1247,7 @@
   stats: []
   abilities: []
 # Lok Durd's Boots
-- guid: 40189
+- guid: 220029
   name_id: 360
   description_id: 14
   icon_set_id: 143
@@ -1290,7 +1290,7 @@
   stats: []
   abilities: []
 # Mina Bonteri's Suit
-- guid: 10204
+- guid: 220030
   name_id: 1923
   description_id: 14
   icon_set_id: 1452
@@ -1333,7 +1333,7 @@
   stats: []
   abilities: []
 # Mina Bonteri's Boots
-- guid: 40208
+- guid: 220031
   name_id: 1925
   description_id: 14
   icon_set_id: 1453
@@ -1376,7 +1376,7 @@
   stats: []
   abilities: []
 # Zabrak Sith Robes
-- guid: 10134
+- guid: 220032
   name_id: 14780
   description_id: 14
   icon_set_id: 461
@@ -1419,7 +1419,7 @@
   stats: []
   abilities: []
 # Zabrak Sith Gloves
-- guid: 30157
+- guid: 220033
   name_id: 956
   description_id: 14
   icon_set_id: 463
@@ -1462,7 +1462,7 @@
   stats: []
   abilities: []
 # Zabrak Sith Boots
-- guid: 40266
+- guid: 220034
   name_id: 950
   description_id: 14
   icon_set_id: 462
@@ -1505,7 +1505,7 @@
   stats: []
   abilities: []
 # Asajj Ventress' Battle Suit
-- guid: 10016
+- guid: 220035
   name_id: 138
   description_id: 14
   icon_set_id: 81
@@ -1548,7 +1548,7 @@
   stats: []
   abilities: []
 # Asajj Ventress' Wraps
-- guid: 40015
+- guid: 220036
   name_id: 140
   description_id: 14
   icon_set_id: 118
@@ -1591,7 +1591,7 @@
   stats: []
   abilities: []
 # Savage Opress' Armor
-- guid: 10250
+- guid: 220037
   name_id: 32973
   description_id: 14
   icon_set_id: 1605
@@ -1634,7 +1634,7 @@
   stats: []
   abilities: []
 # Savage Opress' Cuffs
-- guid: 30201
+- guid: 220038
   name_id: 32972
   description_id: 14
   icon_set_id: 1607
@@ -1677,7 +1677,7 @@
   stats: []
   abilities: []
 # Savage Opress' Boots
-- guid: 40243
+- guid: 220039
   name_id: 32974
   description_id: 14
   icon_set_id: 1606
@@ -1720,7 +1720,7 @@
   stats: []
   abilities: []
 # Darth Sidious' Robes
-- guid: 10256
+- guid: 220040
   name_id: 1323
   description_id: 14
   icon_set_id: 1082
@@ -1763,7 +1763,7 @@
   stats: []
   abilities: []
 # Darth Sidious' Hood
-- guid: 20201
+- guid: 220041
   name_id: 1418
   description_id: 14
   icon_set_id: 1083
@@ -1806,7 +1806,7 @@
   stats: []
   abilities: []
 # Sith Warrior Robe
-- guid: 10264
+- guid: 220042
   name_id: 52793
   description_id: 14
   icon_set_id: 3114
@@ -1849,7 +1849,7 @@
   stats: []
   abilities: []
 # Sith Warrior Mask
-- guid: 20205
+- guid: 220043
   name_id: 52796
   description_id: 14
   icon_set_id: 3117
@@ -1892,7 +1892,7 @@
   stats: []
   abilities: []
 # Sith Warrior Gauntlets
-- guid: 30124
+- guid: 220044
   name_id: 52794
   description_id: 14
   icon_set_id: 3116
@@ -1935,7 +1935,7 @@
   stats: []
   abilities: []
 # Sith Warrior Boots
-- guid: 40131
+- guid: 220045
   name_id: 52795
   description_id: 14
   icon_set_id: 3115
@@ -1978,7 +1978,7 @@
   stats: []
   abilities: []
 # Sith Infiltrator Armor
-- guid: 10130
+- guid: 220046
   name_id: 2685
   description_id: 14
   icon_set_id: 2852
@@ -2021,7 +2021,7 @@
   stats: []
   abilities: []
 # Sith Infiltrator Helm
-- guid: 20107
+- guid: 220047
   name_id: 2683
   description_id: 14
   icon_set_id: 2850
@@ -2064,7 +2064,7 @@
   stats: []
   abilities: []
 # Sith Infiltrator Gauntlets
-- guid: 30121
+- guid: 220048
   name_id: 2684
   description_id: 14
   icon_set_id: 2851
@@ -2107,7 +2107,7 @@
   stats: []
   abilities: []
 # Sith Infiltrator Greaves
-- guid: 40130
+- guid: 220049
   name_id: 2686
   description_id: 14
   icon_set_id: 2853
@@ -2150,7 +2150,7 @@
   stats: []
   abilities: []
 # Sith Marauder Robe
-- guid: 10132
+- guid: 220050
   name_id: 43703
   description_id: 14
   icon_set_id: 1880
@@ -2193,7 +2193,7 @@
   stats: []
   abilities: []
 # Sith Marauder Helm
-- guid: 20109
+- guid: 220051
   name_id: 43701
   description_id: 14
   icon_set_id: 1883
@@ -2236,7 +2236,7 @@
   stats: []
   abilities: []
 # Sith Marauder Vambraces
-- guid: 30123
+- guid: 220052
   name_id: 43702
   description_id: 14
   icon_set_id: 1882
@@ -2279,7 +2279,7 @@
   stats: []
   abilities: []
 # Sith Marauder Greaves
-- guid: 40133
+- guid: 220053
   name_id: 43704
   description_id: 14
   icon_set_id: 1881
@@ -2322,7 +2322,7 @@
   stats: []
   abilities: []
 # Sith Inquisitor Suit
-- guid: 10131
+- guid: 220054
   name_id: 4926
   description_id: 14
   icon_set_id: 1876
@@ -2365,7 +2365,7 @@
   stats: []
   abilities: []
 # Sith Inquisitor Helm
-- guid: 20108
+- guid: 220055
   name_id: 4924
   description_id: 14
   icon_set_id: 1879
@@ -2408,7 +2408,7 @@
   stats: []
   abilities: []
 # Sith Inquisitor Gauntlets
-- guid: 30122
+- guid: 220056
   name_id: 4925
   description_id: 14
   icon_set_id: 1878
@@ -2451,7 +2451,7 @@
   stats: []
   abilities: []
 # Sith Inquisitor Boots
-- guid: 40132
+- guid: 220057
   name_id: 4927
   description_id: 14
   icon_set_id: 1877
@@ -2494,7 +2494,7 @@
   stats: []
   abilities: []
 # Crimson Kofun Armor
-- guid: 10248
+- guid: 220058
   name_id: 53972
   description_id: 14
   icon_set_id: 3272
@@ -2537,7 +2537,7 @@
   stats: []
   abilities: []
 # Crimson Kofun Helmet
-- guid: 20196
+- guid: 220059
   name_id: 53970
   description_id: 14
   icon_set_id: 3270
@@ -2580,7 +2580,7 @@
   stats: []
   abilities: []
 # Crimson Kofun Arm Wraps
-- guid: 30199
+- guid: 220060
   name_id: 53971
   description_id: 14
   icon_set_id: 3271
@@ -2623,7 +2623,7 @@
   stats: []
   abilities: []
 # Crimson Kofun Leg Wraps
-- guid: 40241
+- guid: 220061
   name_id: 53973
   description_id: 14
   icon_set_id: 3273
@@ -2666,7 +2666,7 @@
   stats: []
   abilities: []
 # Dark Sith Cowl
-- guid: 20191
+- guid: 220062
   name_id: 4979
   description_id: 14
   icon_set_id: 3015
@@ -2709,7 +2709,7 @@
   stats: []
   abilities: []
 # Maroon Sith Cowl
-- guid: 20192
+- guid: 220063
   name_id: 4978
   description_id: 14
   icon_set_id: 3016
@@ -2752,7 +2752,7 @@
   stats: []
   abilities: []
 # Red Sith Cowl
-- guid: 20193
+- guid: 220064
   name_id: 4977
   description_id: 14
   icon_set_id: 3017
@@ -2795,7 +2795,7 @@
   stats: []
   abilities: []
 # Crimson Prowler Suit
-- guid: 10269
+- guid: 220065
   name_id: 60196
   description_id: 14
   icon_set_id: 3717
@@ -2838,7 +2838,7 @@
   stats: []
   abilities: []
 # Crimson Prowler Hood
-- guid: 20209
+- guid: 220066
   name_id: 60194
   description_id: 14
   icon_set_id: 3720
@@ -2881,7 +2881,7 @@
   stats: []
   abilities: []
 # Crimson Prowler Gloves
-- guid: 30112
+- guid: 220067
   name_id: 60195
   description_id: 14
   icon_set_id: 3719
@@ -2924,7 +2924,7 @@
   stats: []
   abilities: []
 # Crimson Prowler Boots
-- guid: 40251
+- guid: 220068
   name_id: 60197
   description_id: 14
   icon_set_id: 3718

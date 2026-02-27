@@ -1,6 +1,6 @@
 ---
 # Ion Blaster
-- guid: 110000
+- guid: 80000
   name_id: 4612
   description_id: 14
   icon_set_id: 2680
@@ -43,7 +43,7 @@
   stats: []
   abilities: []
 # Bowcaster
-- guid: 110001
+- guid: 80001
   name_id: 14784
   description_id: 14
   icon_set_id: 506
@@ -86,7 +86,7 @@
   stats: []
   abilities: []
 # Cad Bane's Blaster Rifle
-- guid: 110002
+- guid: 80002
   name_id: 4543
   description_id: 14
   icon_set_id: 2654
@@ -129,7 +129,7 @@
   stats: []
   abilities: []
 # Clone Trooper Blaster
-- guid: 110003
+- guid: 80003
   name_id: 314
   description_id: 14
   icon_set_id: 213
@@ -172,7 +172,7 @@
   stats: []
   abilities: []
 # DC-17m Interchangable Weapons System
-- guid: 110004
+- guid: 80004
   name_id: 0
   description_id: 14
   icon_set_id: 681
@@ -215,7 +215,7 @@
   stats: []
   abilities: []
 # Mandalorian Blaster Rifle
-- guid: 110005
+- guid: 80005
   name_id: 14782
   description_id: 14
   icon_set_id: 507
@@ -258,7 +258,7 @@
   stats: []
   abilities: []
 # Cold Warrior Rifle
-- guid: 110006
+- guid: 80006
   name_id: 52060
   description_id: 14
   icon_set_id: 2976
@@ -301,7 +301,7 @@
   stats: []
   abilities: []
 # Blaster Test E11
-- guid: 110007
+- guid: 80007
   name_id: 2561
   description_id: 14
   icon_set_id: 214
@@ -344,7 +344,7 @@
   stats: []
   abilities: []
 # Boba Fett's Blaster Rifle
-- guid: 110008
+- guid: 80008
   name_id: 8789
   description_id: 14
   icon_set_id: 215
@@ -387,7 +387,7 @@
   stats: []
   abilities: []
 # Ming Po Militia Rifle
-- guid: 110009
+- guid: 80009
   name_id: 52857
   description_id: 14
   icon_set_id: 3085
@@ -430,7 +430,7 @@
   stats: []
   abilities: []
 # Umbaran Blaster Rifle
-- guid: 110010
+- guid: 80010
   name_id: 4320
   description_id: 14
   icon_set_id: 2448
@@ -473,7 +473,7 @@
   stats: []
   abilities: []
 # Usk Bunker General Blaster Rifle
-- guid: 110011
+- guid: 80011
   name_id: 4778
   description_id: 14
   icon_set_id: 2819
@@ -516,7 +516,7 @@
   stats: []
   abilities: []
 # Grek Bunker General Blaster Rifle
-- guid: 110012
+- guid: 80012
   name_id: 4774
   description_id: 14
   icon_set_id: 2815
@@ -559,7 +559,7 @@
   stats: []
   abilities: []
 # Zygerrian Blaster Rifle
-- guid: 110013
+- guid: 80013
   name_id: 4455
   description_id: 14
   icon_set_id: 2513
@@ -602,7 +602,7 @@
   stats: []
   abilities: []
 # Cupid Clone's Bow
-- guid: 110014
+- guid: 80014
   name_id: 33888
   description_id: 14
   icon_set_id: 1674
@@ -645,7 +645,7 @@
   stats: []
   abilities: []
 # Nightsister's Bow
-- guid: 110015
+- guid: 80015
   name_id: 32965
   description_id: 14
   icon_set_id: 1624
@@ -688,7 +688,7 @@
   stats: []
   abilities: []
 # Cryo-Cannon
-- guid: 110016
+- guid: 80016
   name_id: 4610
   description_id: 14
   icon_set_id: 2678
@@ -731,7 +731,7 @@
   stats: []
   abilities: []
 # Plasma Thrower
-- guid: 110017
+- guid: 80017
   name_id: 4611
   description_id: 14
   icon_set_id: 2679
@@ -774,7 +774,7 @@
   stats: []
   abilities: []
 # Republic Grenade Launcher
-- guid: 110018
+- guid: 80018
   name_id: 4768
   description_id: 14
   icon_set_id: 2809
@@ -817,7 +817,7 @@
   stats: []
   abilities: []
 # Accelerated Thermal Carbine
-- guid: 110019
+- guid: 80019
   name_id: 4857
   description_id: 14
   icon_set_id: 2882
@@ -860,7 +860,7 @@
   stats: []
   abilities: []
 # Rail Cannon
-- guid: 110020
+- guid: 80020
   name_id: 54518
   description_id: 14
   icon_set_id: 3771
@@ -903,7 +903,7 @@
   stats: []
   abilities: []
 # Hip-Mounted Cannon
-- guid: 110021
+- guid: 80021
   name_id: 4769
   description_id: 14
   icon_set_id: 2810
@@ -945,7 +945,7 @@
   unknown40: 0
   stats: []
   abilities: []
-- guid: 110022
+- guid: 80022
   name_id: 0
   description_id: 14
   icon_set_id: 681
@@ -988,7 +988,7 @@
   stats: []
   abilities: []
 # Mandalorian Repeater
-- guid: 110023
+- guid: 80023
   name_id: 54520
   description_id: 14
   icon_set_id: 3790
@@ -1031,7 +1031,7 @@
   stats: []
   abilities: []
 # Republic Flamethrower
-- guid: 110024
+- guid: 80024
   name_id: 8790
   description_id: 14
   icon_set_id: 216
@@ -1074,7 +1074,7 @@
   stats: []
   abilities: []
 # Spring Fever
-- guid: 110025
+- guid: 80025
   name_id: 43859
   description_id: 14
   icon_set_id: 1935
@@ -1117,7 +1117,7 @@
   stats: []
   abilities: []
 # Rotary Blaster Cannon
-- guid: 110026
+- guid: 80026
   name_id: 8794
   description_id: 14
   icon_set_id: 217
@@ -1160,7 +1160,7 @@
   stats: []
   abilities: []
 # Repeater Cannon
-- guid: 110027
+- guid: 80027
   name_id: 54594
   description_id: 14
   icon_set_id: 3827
@@ -1202,7 +1202,7 @@
   unknown40: 0
   stats: []
   abilities: []
-- guid: 110028
+- guid: 80028
   name_id: 0
   description_id: 14
   icon_set_id: 681
@@ -1245,7 +1245,7 @@
   stats: []
   abilities: []
 # Republic Missile Launcher
-- guid: 110029
+- guid: 80029
   name_id: 2424
   description_id: 14
   icon_set_id: 218
@@ -1288,7 +1288,7 @@
   stats: []
   abilities: []
 # Turbolaser
-- guid: 110030
+- guid: 80030
   name_id: 4770
   description_id: 14
   icon_set_id: 2811
@@ -1331,7 +1331,7 @@
   stats: []
   abilities: []
 # Balnab Hunter Rifle
-- guid: 110031
+- guid: 80031
   name_id: 3130
   description_id: 14
   icon_set_id: 2391
@@ -1374,7 +1374,7 @@
   stats: []
   abilities: []
 # Bossk's Long Rifle
-- guid: 110032
+- guid: 80032
   name_id: 4749
   description_id: 14
   icon_set_id: 2789
@@ -1417,7 +1417,7 @@
   stats: []
   abilities: []
 # Grand Officer Rifle
-- guid: 110033
+- guid: 80033
   name_id: 52798
   description_id: 14
   icon_set_id: 3108
@@ -1460,7 +1460,7 @@
   stats: []
   abilities: []
 # Aurra Sing's Hunting Rifle
-- guid: 110034
+- guid: 80034
   name_id: 2408
   description_id: 14
   icon_set_id: 238
@@ -1503,7 +1503,7 @@
   stats: []
   abilities: []
 # Clone Trooper Blaster Rifle
-- guid: 110035
+- guid: 80035
   name_id: 8781
   description_id: 14
   icon_set_id: 240
@@ -1546,7 +1546,7 @@
   stats: []
   abilities: []
 # Blinged-Out Trooper Rifle
-- guid: 110036
+- guid: 80036
   name_id: 8784
   description_id: 14
   icon_set_id: 239
@@ -1589,7 +1589,7 @@
   stats: []
   abilities: []
 # Felucian Commando Rifle
-- guid: 110037
+- guid: 80037
   name_id: 60183
   description_id: 14
   icon_set_id: 3726
@@ -1632,7 +1632,7 @@
   stats: []
   abilities: []
 # Shadow Tech Rifle
-- guid: 110038
+- guid: 80038
   name_id: 4482
   description_id: 14
   icon_set_id: 2571
@@ -1675,7 +1675,7 @@
   stats: []
   abilities: []
 # Mandalorian Shatterer Battle Rifle
-- guid: 110039
+- guid: 80039
   name_id: 8780
   description_id: 14
   icon_set_id: 241
@@ -1718,7 +1718,7 @@
   stats: []
   abilities: []
 # Rako Hardeen's Sniper Rifle
-- guid: 110040
+- guid: 80040
   name_id: 4542
   description_id: 14
   icon_set_id: 2659
@@ -1761,7 +1761,7 @@
   stats: []
   abilities: []
 # Onderon Long Rifle
-- guid: 110041
+- guid: 80041
   name_id: 53491
   description_id: 14
   icon_set_id: 3158
@@ -1804,7 +1804,7 @@
   stats: []
   abilities: []
 # Energized Disruptor
-- guid: 110042
+- guid: 80042
   name_id: 4882
   description_id: 14
   icon_set_id: 2924
@@ -1847,7 +1847,7 @@
   stats: []
   abilities: []
 # Light Plasma Pistol
-- guid: 110043
+- guid: 80043
   name_id: 4883
   description_id: 14
   icon_set_id: 2925
@@ -1890,7 +1890,7 @@
   stats: []
   abilities: []
 # Major Rigosso's Quarzite Pistol
-- guid: 110044
+- guid: 80044
   name_id: 4766
   description_id: 14
   icon_set_id: 2808
@@ -1933,7 +1933,7 @@
   stats: []
   abilities: []
 # Major Rigosso's Offhand Quarzite Pistol
-- guid: 110045
+- guid: 80045
   name_id: 4767
   description_id: 14
   icon_set_id: 2808
@@ -1976,7 +1976,7 @@
   stats: []
   abilities: []
 # Black Sun Blaster Pistol
-- guid: 110046
+- guid: 80046
   name_id: 54263
   description_id: 14
   icon_set_id: 3637
@@ -2019,7 +2019,7 @@
   stats: []
   abilities: []
 # Quarzite Boba Fett's Blaster
-- guid: 110047
+- guid: 80047
   name_id: 4685
   description_id: 14
   icon_set_id: 2734
@@ -2062,7 +2062,7 @@
   stats: []
   abilities: []
 # Subtram Hunter Blaster
-- guid: 110048
+- guid: 80048
   name_id: 60672
   description_id: 14
   icon_set_id: 3783
@@ -2105,7 +2105,7 @@
   stats: []
   abilities: []
 # Quarzite Boba Fett's Offhand Blaster
-- guid: 110049
+- guid: 80049
   name_id: 4686
   description_id: 14
   icon_set_id: 2734
@@ -2148,7 +2148,7 @@
   stats: []
   abilities: []
 # Subtram Hunter Offhand Blaster
-- guid: 110050
+- guid: 80050
   name_id: 60673
   description_id: 14
   icon_set_id: 3783
@@ -2191,7 +2191,7 @@
   stats: []
   abilities: []
 # Captain Rex's Right Blaster
-- guid: 110051
+- guid: 80051
   name_id: 2410
   description_id: 14
   icon_set_id: 244
@@ -2234,7 +2234,7 @@
   stats: []
   abilities: []
 # Vigilance
-- guid: 110052
+- guid: 80052
   name_id: 2896
   description_id: 14
   icon_set_id: 2312
@@ -2277,7 +2277,7 @@
   stats: []
   abilities: []
 # Negotiator
-- guid: 110053
+- guid: 80053
   name_id: 2897
   description_id: 14
   icon_set_id: 2312
@@ -2320,7 +2320,7 @@
   stats: []
   abilities: []
 # Captain Rex's Left Blaster
-- guid: 110054
+- guid: 80054
   name_id: 65
   description_id: 14
   icon_set_id: 244
@@ -2363,7 +2363,7 @@
   stats: []
   abilities: []
 # Rebel Pilot Blaster
-- guid: 110055
+- guid: 80055
   name_id: 2412
   description_id: 14
   icon_set_id: 245
@@ -2406,7 +2406,7 @@
   stats: []
   abilities: []
 # Han Solo's Blaster Pistol
-- guid: 110056
+- guid: 80056
   name_id: 2414
   description_id: 14
   icon_set_id: 246
@@ -2449,7 +2449,7 @@
   stats: []
   abilities: []
 # Assassin Aurra Sing's Right Blaster
-- guid: 110057
+- guid: 80057
   name_id: 1803
   description_id: 14
   icon_set_id: 1409
@@ -2492,7 +2492,7 @@
   stats: []
   abilities: []
 # Assassin Aurra Sing's Left Blaster
-- guid: 110058
+- guid: 80058
   name_id: 1805
   description_id: 14
   icon_set_id: 1409
@@ -2535,7 +2535,7 @@
   stats: []
   abilities: []
 # Royal Hold-out Blaster Pistol
-- guid: 110059
+- guid: 80059
   name_id: 8791
   description_id: 14
   icon_set_id: 247
@@ -2578,7 +2578,7 @@
   stats: []
   abilities: []
 # Cad Bane's Right Blaster
-- guid: 110060
+- guid: 80060
   name_id: 8779
   description_id: 14
   icon_set_id: 248
@@ -2621,7 +2621,7 @@
   stats: []
   abilities: []
 # Cad Bane's Left Blaster
-- guid: 110061
+- guid: 80061
   name_id: 1293
   description_id: 14
   icon_set_id: 248
@@ -2664,7 +2664,7 @@
   stats: []
   abilities: []
 # Corrupt Warlord Right Pistol
-- guid: 110062
+- guid: 80062
   name_id: 52805
   description_id: 14
   icon_set_id: 3143
@@ -2707,7 +2707,7 @@
   stats: []
   abilities: []
 # Corrupt Warlord Left Pistol
-- guid: 110063
+- guid: 80063
   name_id: 52804
   description_id: 14
   icon_set_id: 3143
@@ -2750,7 +2750,7 @@
   stats: []
   abilities: []
 # Papanoida Blaster
-- guid: 110064
+- guid: 80064
   name_id: 1713
   description_id: 14
   icon_set_id: 1327
@@ -2793,7 +2793,7 @@
   stats: []
   abilities: []
 # Pyke Blaster Pistol
-- guid: 110065
+- guid: 80065
   name_id: 54264
   description_id: 14
   icon_set_id: 3638
@@ -2836,7 +2836,7 @@
   stats: []
   abilities: []
 # Covert Diplomat Blaster Pistol
-- guid: 110066
+- guid: 80066
   name_id: 8792
   description_id: 14
   icon_set_id: 249
@@ -2879,7 +2879,7 @@
   stats: []
   abilities: []
 # Renegade Heavy Blaster Pistol
-- guid: 110067
+- guid: 80067
   name_id: 54522
   description_id: 14
   icon_set_id: 3792
@@ -2921,7 +2921,7 @@
   unknown40: 0
   stats: []
   abilities: []
-- guid: 110068
+- guid: 80068
   name_id: 0
   description_id: 14
   icon_set_id: 3792
@@ -2964,7 +2964,7 @@
   stats: []
   abilities: []
 # Onderon Blaster Pistol
-- guid: 110069
+- guid: 80069
   name_id: 53492
   description_id: 14
   icon_set_id: 3159
@@ -3007,7 +3007,7 @@
   stats: []
   abilities: []
 # Naboo Security Blaster Pistol
-- guid: 110070
+- guid: 80070
   name_id: 8793
   description_id: 14
   icon_set_id: 250
@@ -3050,7 +3050,7 @@
   stats: []
   abilities: []
 # Gungan Double-headed Spear
-- guid: 110071
+- guid: 80071
   name_id: 3068
   description_id: 14
   icon_set_id: 2337
@@ -3093,7 +3093,7 @@
   stats: []
   abilities: []
 # Captain Rex's Zygerrian Electrostaff
-- guid: 110072
+- guid: 80072
   name_id: 4463
   description_id: 14
   icon_set_id: 2518
@@ -3136,7 +3136,7 @@
   stats: []
   abilities: []
 # Imperial Royal Guard Force Pike
-- guid: 110073
+- guid: 80073
   name_id: 8799
   description_id: 14
   icon_set_id: 251
@@ -3179,7 +3179,7 @@
   stats: []
   abilities: []
 # IG-113's Electrostaff
-- guid: 110074
+- guid: 80074
   name_id: 4959
   description_id: 14
   icon_set_id: 3002
@@ -3222,7 +3222,7 @@
   stats: []
   abilities: []
 # Satine's Royal Guard Staff
-- guid: 110075
+- guid: 80075
   name_id: 1811
   description_id: 14
   icon_set_id: 1353
@@ -3265,7 +3265,7 @@
   stats: []
   abilities: []
 # Savage Opress' Pike
-- guid: 110076
+- guid: 80076
   name_id: 32983
   description_id: 14
   icon_set_id: 1632
@@ -3308,7 +3308,7 @@
   stats: []
   abilities: []
 # Skeletal Clone Trooper Scythe
-- guid: 110077
+- guid: 80077
   name_id: 4280
   description_id: 14
   icon_set_id: 2399
@@ -3351,7 +3351,7 @@
   stats: []
   abilities: []
 # Tamtel Skreej's Pike
-- guid: 110078
+- guid: 80078
   name_id: 8798
   description_id: 14
   icon_set_id: 252
@@ -3394,7 +3394,7 @@
   stats: []
   abilities: []
 # Gaffi Stick
-- guid: 110079
+- guid: 80079
   name_id: 300
   description_id: 14
   icon_set_id: 253
@@ -3437,7 +3437,7 @@
   stats: []
   abilities: []
 # Pink Gaffi Stick
-- guid: 110080
+- guid: 80080
   name_id: 97
   description_id: 14
   icon_set_id: 518
@@ -3480,7 +3480,7 @@
   stats: []
   abilities: []
 # Blue Sparkler
-- guid: 110081
+- guid: 80081
   name_id: 44661
   description_id: 14
   icon_set_id: 2001
@@ -3523,7 +3523,7 @@
   stats: []
   abilities: []
 # Green Sparkler
-- guid: 110082
+- guid: 80082
   name_id: 44662
   description_id: 14
   icon_set_id: 2002
@@ -3566,7 +3566,7 @@
   stats: []
   abilities: []
 # Orange Sparkler
-- guid: 110083
+- guid: 80083
   name_id: 44663
   description_id: 14
   icon_set_id: 2003
@@ -3609,7 +3609,7 @@
   stats: []
   abilities: []
 # Purple Sparkler
-- guid: 110084
+- guid: 80084
   name_id: 44664
   description_id: 14
   icon_set_id: 2004
@@ -3652,7 +3652,7 @@
   stats: []
   abilities: []
 # Red Sparkler
-- guid: 110085
+- guid: 80085
   name_id: 44665
   description_id: 14
   icon_set_id: 2005
@@ -3695,7 +3695,7 @@
   stats: []
   abilities: []
 # White Sparkler
-- guid: 110086
+- guid: 80086
   name_id: 44666
   description_id: 14
   icon_set_id: 2006
@@ -3738,7 +3738,7 @@
   stats: []
   abilities: []
 # Yellow Sparkler
-- guid: 110087
+- guid: 80087
   name_id: 44667
   description_id: 14
   icon_set_id: 2007
@@ -3781,7 +3781,7 @@
   stats: []
   abilities: []
 # His cane
-- guid: 110088
+- guid: 80088
   name_id: 10423
   description_id: 14
   icon_set_id: 681

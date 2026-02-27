@@ -1,6 +1,6 @@
 ---
 # Lightsaber Beam Crystal
-- guid: 50000
+- guid: 90000
   name_id: 2526
   description_id: 14
   icon_set_id: 419
@@ -43,7 +43,7 @@
   stats: []
   abilities: []
 # Dark Beam Crystal
-- guid: 50001
+- guid: 90001
   name_id: 1258
   description_id: 14
   icon_set_id: 410
@@ -86,7 +86,7 @@
   stats: []
   abilities: []
 # Ancient Darksaber Crystal
-- guid: 50002
+- guid: 90002
   name_id: 54524
   description_id: 14
   icon_set_id: 410
@@ -129,7 +129,7 @@
   stats: []
   abilities: []
 # Cobal Crystal
-- guid: 50003
+- guid: 90003
   name_id: 1524
   description_id: 14
   icon_set_id: 396
@@ -172,7 +172,7 @@
   stats: []
   abilities: []
 # Compressed Beam Crystal
-- guid: 50004
+- guid: 90004
   name_id: 1253
   description_id: 14
   icon_set_id: 409
@@ -215,7 +215,7 @@
   stats: []
   abilities: []
 # Pulsing Beam Crystal
-- guid: 50005
+- guid: 90005
   name_id: 1254
   description_id: 14
   icon_set_id: 412
@@ -258,7 +258,7 @@
   stats: []
   abilities: []
 # Radiating Ring Crystal
-- guid: 50006
+- guid: 90006
   name_id: 54484
   description_id: 14
   icon_set_id: 3745
@@ -301,7 +301,7 @@
   stats: []
   abilities: []
 # Sparking Beam Crystal
-- guid: 50007
+- guid: 90007
   name_id: 1255
   description_id: 14
   icon_set_id: 413
@@ -344,7 +344,7 @@
   stats: []
   abilities: []
 # Spiraling Beam Crystal
-- guid: 50008
+- guid: 90008
   name_id: 1256
   description_id: 14
   icon_set_id: 414
@@ -387,7 +387,7 @@
   stats: []
   abilities: []
 # Unstable Beam Crystal
-- guid: 50009
+- guid: 90009
   name_id: 1257
   description_id: 14
   icon_set_id: 416
@@ -430,7 +430,7 @@
   stats: []
   abilities: []
 # Kashyyyk Crystal
-- guid: 50010
+- guid: 90010
   name_id: 44509
   description_id: 14
   icon_set_id: 1996
@@ -473,7 +473,7 @@
   stats: []
   abilities: []
 # Forked Crystal
-- guid: 50011
+- guid: 90011
   name_id: 54597
   description_id: 14
   icon_set_id: 419
@@ -516,7 +516,7 @@
   stats: []
   abilities: []
 # Gungan Crystal
-- guid: 50012
+- guid: 90012
   name_id: 2652
   description_id: 14
   icon_set_id: 2142
@@ -559,7 +559,7 @@
   stats: []
   abilities: []
 # Mestare Crystal
-- guid: 50013
+- guid: 90013
   name_id: 44851
   description_id: 14
   icon_set_id: 411
@@ -602,7 +602,7 @@
   stats: []
   abilities: []
 # Short Crystal
-- guid: 50014
+- guid: 90014
   name_id: 1931
   description_id: 14
   icon_set_id: 417
@@ -645,7 +645,7 @@
   stats: []
   abilities: []
 # Tapered Beam Crystal
-- guid: 50015
+- guid: 90015
   name_id: 1259
   description_id: 14
   icon_set_id: 415
@@ -688,7 +688,7 @@
   stats: []
   abilities: []
 # Compressed Tapered Beam Crystal
-- guid: 50016
+- guid: 90016
   name_id: 53018
   description_id: 14
   icon_set_id: 409
@@ -731,7 +731,7 @@
   stats: []
   abilities: []
 # Tapered Halo Crystal
-- guid: 50017
+- guid: 90017
   name_id: 54492
   description_id: 14
   icon_set_id: 3745
@@ -774,7 +774,7 @@
   stats: []
   abilities: []
 # Unstable Tapered Beam Crystal
-- guid: 50018
+- guid: 90018
   name_id: 53017
   description_id: 14
   icon_set_id: 416
@@ -817,7 +817,7 @@
   stats: []
   abilities: []
 # Dahgee Crystal
-- guid: 50019
+- guid: 90019
   name_id: 44197
   description_id: 14
   icon_set_id: 418

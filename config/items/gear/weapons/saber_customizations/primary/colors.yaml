@@ -1,6 +1,6 @@
 ---
 # Blue
-- guid: 60000
+- guid: 100000
   name_id: 2527
   description_id: 14
   icon_set_id: 398
@@ -43,7 +43,7 @@
   stats: []
   abilities: []
 # Green
-- guid: 60001
+- guid: 100001
   name_id: 2528
   description_id: 14
   icon_set_id: 399
@@ -86,7 +86,7 @@
   stats: []
   abilities: []
 # Yellow
-- guid: 60002
+- guid: 100002
   name_id: 2529
   description_id: 14
   icon_set_id: 408
@@ -129,7 +129,7 @@
   stats: []
   abilities: []
 # Orange
-- guid: 60003
+- guid: 100003
   name_id: 2530
   description_id: 14
   icon_set_id: 401
@@ -172,7 +172,7 @@
   stats: []
   abilities: []
 # Red
-- guid: 60004
+- guid: 100004
   name_id: 2531
   description_id: 14
   icon_set_id: 404
@@ -215,7 +215,7 @@
   stats: []
   abilities: []
 # Purple
-- guid: 60005
+- guid: 100005
   name_id: 2532
   description_id: 14
   icon_set_id: 403
@@ -258,7 +258,7 @@
   stats: []
   abilities: []
 # Silver
-- guid: 60006
+- guid: 100006
   name_id: 2533
   description_id: 14
   icon_set_id: 405
@@ -301,7 +301,7 @@
   stats: []
   abilities: []
 # Teal
-- guid: 60007
+- guid: 100007
   name_id: 2534
   description_id: 14
   icon_set_id: 406
@@ -344,7 +344,7 @@
   stats: []
   abilities: []
 # Pink
-- guid: 60008
+- guid: 100008
   name_id: 2535
   description_id: 14
   icon_set_id: 402
@@ -387,7 +387,7 @@
   stats: []
   abilities: []
 # Light Green
-- guid: 60009
+- guid: 100009
   name_id: 2536
   description_id: 14
   icon_set_id: 400
@@ -430,7 +430,7 @@
   stats: []
   abilities: []
 # White
-- guid: 60010
+- guid: 100010
   name_id: 2537
   description_id: 14
   icon_set_id: 407
@@ -473,7 +473,7 @@
   stats: []
   abilities: []
 # Black
-- guid: 60011
+- guid: 100011
   name_id: 2538
   description_id: 14
   icon_set_id: 397
@@ -516,7 +516,7 @@
   stats: []
   abilities: []
 # Sith Crystal
-- guid: 60012
+- guid: 100012
   name_id: 51152
   description_id: 14
   icon_set_id: 2772

@@ -1,6 +1,6 @@
 ---
 # Adi Gallia's Tunic
-- guid: 10000
+- guid: 180000
   name_id: 914
   description_id: 14
   icon_set_id: 432
@@ -43,7 +43,7 @@
   stats: []
   abilities: []
 # Adi Gallia's Headdress
-- guid: 20000
+- guid: 180001
   name_id: 962
   description_id: 14
   icon_set_id: 435
@@ -86,7 +86,7 @@
   stats: []
   abilities: []
 # Adi Gallia's Gloves
-- guid: 30165
+- guid: 180002
   name_id: 912
   description_id: 14
   icon_set_id: 434
@@ -129,7 +129,7 @@
   stats: []
   abilities: []
 # Adi Gallia's Boots
-- guid: 40031
+- guid: 180003
   name_id: 916
   description_id: 14
   icon_set_id: 433
@@ -172,7 +172,7 @@
   stats: []
   abilities: []
 # Anakin Skywalker's Original Robes
-- guid: 10009
+- guid: 180004
   name_id: 2514
   description_id: 14
   icon_set_id: 80
@@ -215,7 +215,7 @@
   stats: []
   abilities: []
 # Anakin Skywalker's Original Gloves
-- guid: 30006
+- guid: 180005
   name_id: 2516
   description_id: 14
   icon_set_id: 154
@@ -258,7 +258,7 @@
   stats: []
   abilities: []
 # Anakin Skywalker's Original Boots
-- guid: 40007
+- guid: 180006
   name_id: 2515
   description_id: 14
   icon_set_id: 117
@@ -301,7 +301,7 @@
   stats: []
   abilities: []
 # Anakin Skywalker's Robes
-- guid: 10010
+- guid: 180007
   name_id: 1903
   description_id: 14
   icon_set_id: 1445
@@ -344,7 +344,7 @@
   stats: []
   abilities: []
 # Anakin Skywalker's Gloves
-- guid: 30009
+- guid: 180008
   name_id: 1901
   description_id: 14
   icon_set_id: 1447
@@ -387,7 +387,7 @@
   stats: []
   abilities: []
 # Anakin Skywalker's Boots
-- guid: 40008
+- guid: 180009
   name_id: 1905
   description_id: 14
   icon_set_id: 1446
@@ -430,7 +430,7 @@
   stats: []
   abilities: []
 # Republic Diver Gloves
-- guid: 30008
+- guid: 180010
   name_id: 2346
   description_id: 14
   icon_set_id: 2325
@@ -473,7 +473,7 @@
   stats: []
   abilities: []
 # Republic Diver Flippers
-- guid: 40013
+- guid: 180011
   name_id: 2350
   description_id: 14
   icon_set_id: 2324
@@ -516,7 +516,7 @@
   stats: []
   abilities: []
 # Diver Anakin Skywalker
-- guid: 10008
+- guid: 180012
   name_id: 2899
   description_id: 14
   icon_set_id: 2323
@@ -559,7 +559,7 @@
   stats: []
   abilities: []
 # Diver Anakin Skywalker's Helmet
-- guid: 20001
+- guid: 180013
   name_id: 2344
   description_id: 14
   icon_set_id: 2326
@@ -602,7 +602,7 @@
   stats: []
   abilities: []
 # Mace Windu's Robes
-- guid: 10194
+- guid: 180014
   name_id: 8896
   description_id: 14
   icon_set_id: 103
@@ -645,7 +645,7 @@
   stats: []
   abilities: []
 # Mace Windu's Gloves
-- guid: 30164
+- guid: 180015
   name_id: 8900
   description_id: 14
   icon_set_id: 173
@@ -688,7 +688,7 @@
   stats: []
   abilities: []
 # Mace Windu's Boots
-- guid: 40201
+- guid: 180016
   name_id: 8898
   description_id: 14
   icon_set_id: 146
@@ -731,7 +731,7 @@
   stats: []
   abilities: []
 # Shotem Jedi Robes
-- guid: 10236
+- guid: 180017
   name_id: 1319
   description_id: 14
   icon_set_id: 1104
@@ -774,7 +774,7 @@
   stats: []
   abilities: []
 # Shotem Jedi Visor
-- guid: 20185
+- guid: 180018
   name_id: 1416
   description_id: 14
   icon_set_id: 1107
@@ -817,7 +817,7 @@
   stats: []
   abilities: []
 # Shotem Jedi Gloves
-- guid: 30192
+- guid: 180019
   name_id: 1386
   description_id: 14
   icon_set_id: 1106
@@ -860,7 +860,7 @@
   stats: []
   abilities: []
 # Shotem Jedi Boots
-- guid: 40233
+- guid: 180020
   name_id: 1356
   description_id: 14
   icon_set_id: 1105
@@ -903,7 +903,7 @@
   stats: []
   abilities: []
 # Shotem Master Robes
-- guid: 10237
+- guid: 180021
   name_id: 60676
   description_id: 14
   icon_set_id: 3786
@@ -946,7 +946,7 @@
   stats: []
   abilities: []
 # Shotem Master Visor
-- guid: 20186
+- guid: 180022
   name_id: 60674
   description_id: 14
   icon_set_id: 3784
@@ -989,7 +989,7 @@
   stats: []
   abilities: []
 # Shotem Master Gloves
-- guid: 30193
+- guid: 180023
   name_id: 60675
   description_id: 14
   icon_set_id: 3785
@@ -1032,7 +1032,7 @@
   stats: []
   abilities: []
 # Shotem Master Boots
-- guid: 40234
+- guid: 180024
   name_id: 60677
   description_id: 14
   icon_set_id: 3787
@@ -1075,7 +1075,7 @@
   stats: []
   abilities: []
 # Miko Jedi Tunic
-- guid: 10119
+- guid: 180025
   name_id: 842
   description_id: 14
   icon_set_id: 458
@@ -1118,7 +1118,7 @@
   stats: []
   abilities: []
 # Miko Jedi Gloves
-- guid: 30007
+- guid: 180026
   name_id: 840
   description_id: 14
   icon_set_id: 460
@@ -1161,7 +1161,7 @@
   stats: []
   abilities: []
 # Miko Jedi Boots
-- guid: 40032
+- guid: 180027
   name_id: 844
   description_id: 14
   icon_set_id: 459
@@ -1204,7 +1204,7 @@
   stats: []
   abilities: []
 # Quinlan Vos' Jedi Robes
-- guid: 10238
+- guid: 180028
   name_id: 1753
   description_id: 14
   icon_set_id: 1433
@@ -1247,7 +1247,7 @@
   stats: []
   abilities: []
 # Quinlan Vos' Wraps
-- guid: 30194
+- guid: 180029
   name_id: 1751
   description_id: 14
   icon_set_id: 1435
@@ -1290,7 +1290,7 @@
   stats: []
   abilities: []
 # Quinlan Vos' Boots
-- guid: 40235
+- guid: 180030
   name_id: 1755
   description_id: 14
   icon_set_id: 1434
@@ -1333,7 +1333,7 @@
   stats: []
   abilities: []
 # Ahsoka Tano's Original Tunic
-- guid: 10004
+- guid: 180031
   name_id: 920
   description_id: 14
   icon_set_id: 436
@@ -1376,7 +1376,7 @@
   stats: []
   abilities: []
 # Ahsoka Tano's Original Gloves
-- guid: 30003
+- guid: 180032
   name_id: 918
   description_id: 14
   icon_set_id: 438
@@ -1419,7 +1419,7 @@
   stats: []
   abilities: []
 # Ahsoka Tano's Original Boots
-- guid: 40001
+- guid: 180033
   name_id: 922
   description_id: 14
   icon_set_id: 437
@@ -1462,7 +1462,7 @@
   stats: []
   abilities: []
 # Ahsoka Tano's Tunic
-- guid: 10005
+- guid: 180034
   name_id: 1897
   description_id: 14
   icon_set_id: 1444
@@ -1505,7 +1505,7 @@
   stats: []
   abilities: []
 # Ahsoka Tano's Gloves
-- guid: 30004
+- guid: 180035
   name_id: 1893
   description_id: 14
   icon_set_id: 1443
@@ -1548,7 +1548,7 @@
   stats: []
   abilities: []
 # Ahsoka Tano's Boots
-- guid: 40002
+- guid: 180036
   name_id: 1899
   description_id: 14
   icon_set_id: 1442
@@ -1591,7 +1591,7 @@
   stats: []
   abilities: []
 # Ahsoka Tano's Zygerrian Suit
-- guid: 10007
+- guid: 180037
   name_id: 4450
   description_id: 14
   icon_set_id: 2508
@@ -1634,7 +1634,7 @@
   stats: []
   abilities: []
 # Ahsoka Tano's Zygerrian Shoes
-- guid: 40006
+- guid: 180038
   name_id: 4451
   description_id: 14
   icon_set_id: 2509
@@ -1677,7 +1677,7 @@
   stats: []
   abilities: []
 # Saesee Tiin's Flight Gear
-- guid: 10244
+- guid: 180039
   name_id: 44894
   description_id: 14
   icon_set_id: 2130
@@ -1720,7 +1720,7 @@
   stats: []
   abilities: []
 # Saesee Tiin's Robes
-- guid: 10245
+- guid: 180040
   name_id: 43186
   description_id: 14
   icon_set_id: 1789
@@ -1763,7 +1763,7 @@
   stats: []
   abilities: []
 # Saesee Tiin's Gloves
-- guid: 30147
+- guid: 180041
   name_id: 43185
   description_id: 14
   icon_set_id: 1791
@@ -1806,7 +1806,7 @@
   stats: []
   abilities: []
 # Saesee Tiin's Boots
-- guid: 40171
+- guid: 180042
   name_id: 43187
   description_id: 14
   icon_set_id: 1790
@@ -1849,7 +1849,7 @@
   stats: []
   abilities: []
 # Temple Guard Cloak
-- guid: 10170
+- guid: 180043
   name_id: 54476
   description_id: 14
   icon_set_id: 3710
@@ -1892,7 +1892,7 @@
   stats: []
   abilities: []
 # Temple Guard Mask
-- guid: 20147
+- guid: 180044
   name_id: 54474
   description_id: 14
   icon_set_id: 3708
@@ -1935,7 +1935,7 @@
   stats: []
   abilities: []
 # Temple Guard Gloves
-- guid: 30151
+- guid: 180045
   name_id: 54475
   description_id: 14
   icon_set_id: 3709
@@ -1978,7 +1978,7 @@
   stats: []
   abilities: []
 # Temple Guard Boots
-- guid: 40173
+- guid: 180046
   name_id: 54477
   description_id: 14
   icon_set_id: 3711
@@ -2021,7 +2021,7 @@
   stats: []
   abilities: []
 # Covert Anakin Tunic
-- guid: 10011
+- guid: 180047
   name_id: 43963
   description_id: 14
   icon_set_id: 1947
@@ -2064,7 +2064,7 @@
   stats: []
   abilities: []
 # Covert Anakin Gloves
-- guid: 30010
+- guid: 180048
   name_id: 43962
   description_id: 14
   icon_set_id: 1949
@@ -2107,7 +2107,7 @@
   stats: []
   abilities: []
 # Covert Anakin Boots
-- guid: 40009
+- guid: 180049
   name_id: 43964
   description_id: 14
   icon_set_id: 1948
@@ -2150,7 +2150,7 @@
   stats: []
   abilities: []
 # Fiery Ahsoka Tunic
-- guid: 10006
+- guid: 180050
   name_id: 44191
   description_id: 14
   icon_set_id: 1957
@@ -2193,7 +2193,7 @@
   stats: []
   abilities: []
 # Fiery Ahsoka Gloves
-- guid: 30005
+- guid: 180051
   name_id: 44190
   description_id: 14
   icon_set_id: 1959
@@ -2236,7 +2236,7 @@
   stats: []
   abilities: []
 # Fiery Ahsoka Boots
-- guid: 40003
+- guid: 180052
   name_id: 44192
   description_id: 14
   icon_set_id: 1958
@@ -2279,7 +2279,7 @@
   stats: []
   abilities: []
 # Sassy Ahsoka Tunic
-- guid: 10003
+- guid: 180053
   name_id: 44378
   description_id: 14
   icon_set_id: 1978
@@ -2322,7 +2322,7 @@
   stats: []
   abilities: []
 # Sassy Ahsoka Gloves
-- guid: 30000
+- guid: 180054
   name_id: 44377
   description_id: 14
   icon_set_id: 1980
@@ -2365,7 +2365,7 @@
   stats: []
   abilities: []
 # Sassy Ahsoka Boots
-- guid: 40004
+- guid: 180055
   name_id: 44376
   description_id: 14
   icon_set_id: 1979
@@ -2408,7 +2408,7 @@
   stats: []
   abilities: []
 # Adept Ahsoka Tunic
-- guid: 10001
+- guid: 180056
   name_id: 44503
   description_id: 14
   icon_set_id: 1986
@@ -2451,7 +2451,7 @@
   stats: []
   abilities: []
 # Adept Ahsoka Gloves
-- guid: 30001
+- guid: 180057
   name_id: 44502
   description_id: 14
   icon_set_id: 1985
@@ -2494,7 +2494,7 @@
   stats: []
   abilities: []
 # Adept Ahsoka Boots
-- guid: 40000
+- guid: 180058
   name_id: 44504
   description_id: 14
   icon_set_id: 1987
@@ -2537,7 +2537,7 @@
   stats: []
   abilities: []
 # Icy Anakin Tunic
-- guid: 10013
+- guid: 180059
   name_id: 44669
   description_id: 14
   icon_set_id: 2008
@@ -2580,7 +2580,7 @@
   stats: []
   abilities: []
 # Icy Anakin Gloves
-- guid: 30012
+- guid: 180060
   name_id: 44668
   description_id: 14
   icon_set_id: 2010
@@ -2623,7 +2623,7 @@
   stats: []
   abilities: []
 # Icy Anakin Boots
-- guid: 40011
+- guid: 180061
   name_id: 44670
   description_id: 14
   icon_set_id: 2009
@@ -2666,7 +2666,7 @@
   stats: []
   abilities: []
 # Ancient Cobal Robes
-- guid: 10031
+- guid: 180062
   name_id: 814
   description_id: 14
   icon_set_id: 439
@@ -2709,7 +2709,7 @@
   stats: []
   abilities: []
 # Ancient Cobal Gloves
-- guid: 30205
+- guid: 180063
   name_id: 812
   description_id: 14
   icon_set_id: 441
@@ -2752,7 +2752,7 @@
   stats: []
   abilities: []
 # Ancient Cobal Boots
-- guid: 40191
+- guid: 180064
   name_id: 816
   description_id: 14
   icon_set_id: 440
@@ -2795,7 +2795,7 @@
   stats: []
   abilities: []
 # Mestare Jedi Robes
-- guid: 10246
+- guid: 180065
   name_id: 44852
   description_id: 14
   icon_set_id: 1108
@@ -2838,7 +2838,7 @@
   stats: []
   abilities: []
 # Mestare Jedi Gloves
-- guid: 30197
+- guid: 180066
   name_id: 44854
   description_id: 14
   icon_set_id: 1110
@@ -2881,7 +2881,7 @@
   stats: []
   abilities: []
 # Mestare Jedi Boots
-- guid: 40239
+- guid: 180067
   name_id: 44853
   description_id: 14
   icon_set_id: 1109
@@ -2924,7 +2924,7 @@
   stats: []
   abilities: []
 # Mustafar Anakin's Tunic
-- guid: 10012
+- guid: 180068
   name_id: 44842
   description_id: 14
   icon_set_id: 2099
@@ -2967,7 +2967,7 @@
   stats: []
   abilities: []
 # Mustafar Anakin's Gloves
-- guid: 30011
+- guid: 180069
   name_id: 44841
   description_id: 14
   icon_set_id: 2098
@@ -3010,7 +3010,7 @@
   stats: []
   abilities: []
 # Mustafar Anakin's Boots
-- guid: 40010
+- guid: 180070
   name_id: 44843
   description_id: 14
   icon_set_id: 2100
@@ -3053,7 +3053,7 @@
   stats: []
   abilities: []
 # Kashyyyk Obi-Wan's Robes
-- guid: 10219
+- guid: 180071
   name_id: 2661
   description_id: 14
   icon_set_id: 2161
@@ -3096,7 +3096,7 @@
   stats: []
   abilities: []
 # Kashyyyk Obi-Wan's Gloves
-- guid: 30182
+- guid: 180072
   name_id: 2660
   description_id: 14
   icon_set_id: 2163
@@ -3139,7 +3139,7 @@
   stats: []
   abilities: []
 # Kashyyyk Obi-Wan's Boots
-- guid: 40221
+- guid: 180073
   name_id: 2659
   description_id: 14
   icon_set_id: 2162
@@ -3182,7 +3182,7 @@
   stats: []
   abilities: []
 # Tranquil Ahoska's Tunic
-- guid: 10002
+- guid: 180074
   name_id: 2667
   description_id: 14
   icon_set_id: 2298
@@ -3225,7 +3225,7 @@
   stats: []
   abilities: []
 # Tranquil Ahsoka's Gloves
-- guid: 30002
+- guid: 180075
   name_id: 2666
   description_id: 14
   icon_set_id: 2297
@@ -3268,7 +3268,7 @@
   stats: []
   abilities: []
 # Tranquil Ahsoka's Boots
-- guid: 40005
+- guid: 180076
   name_id: 2668
   description_id: 14
   icon_set_id: 2299
@@ -3311,7 +3311,7 @@
   stats: []
   abilities: []
 # Camo Obi-Wan's Robes
-- guid: 10221
+- guid: 180077
   name_id: 2670
   description_id: 14
   icon_set_id: 2295
@@ -3354,7 +3354,7 @@
   stats: []
   abilities: []
 # Camo Obi-Wan's Gloves
-- guid: 30184
+- guid: 180078
   name_id: 2669
   description_id: 14
   icon_set_id: 2294
@@ -3397,7 +3397,7 @@
   stats: []
   abilities: []
 # Camo Obi-Wan's Boots
-- guid: 40222
+- guid: 180079
   name_id: 2671
   description_id: 14
   icon_set_id: 2296
@@ -3440,7 +3440,7 @@
   stats: []
   abilities: []
 # Obi-Wan Kenobi's Original Uniform
-- guid: 10216
+- guid: 180080
   name_id: 8534
   description_id: 14
   icon_set_id: 105
@@ -3483,7 +3483,7 @@
   stats: []
   abilities: []
 # Obi-Wan Kenobi's Original Gloves
-- guid: 30179
+- guid: 180081
   name_id: 8538
   description_id: 14
   icon_set_id: 175
@@ -3526,7 +3526,7 @@
   stats: []
   abilities: []
 # Obi-Wan Kenobi's Original Boots
-- guid: 40218
+- guid: 180082
   name_id: 8536
   description_id: 14
   icon_set_id: 148
@@ -3569,7 +3569,7 @@
   stats: []
   abilities: []
 # Obi-Wan Kenobi's Robes
-- guid: 10217
+- guid: 180083
   name_id: 32936
   description_id: 14
   icon_set_id: 1602
@@ -3612,7 +3612,7 @@
   stats: []
   abilities: []
 # Obi-Wan Kenobi's Gloves
-- guid: 30180
+- guid: 180084
   name_id: 32935
   description_id: 14
   icon_set_id: 1604
@@ -3655,7 +3655,7 @@
   stats: []
   abilities: []
 # Obi-Wan Kenobi's Boots
-- guid: 40219
+- guid: 180085
   name_id: 32937
   description_id: 14
   icon_set_id: 1603
@@ -3698,7 +3698,7 @@
   stats: []
   abilities: []
 # Plo Koon's Robes
-- guid: 10233
+- guid: 180086
   name_id: 232
   description_id: 14
   icon_set_id: 107
@@ -3741,7 +3741,7 @@
   stats: []
   abilities: []
 # Plo Koon's Mask
-- guid: 20180
+- guid: 180087
   name_id: 228
   description_id: 14
   icon_set_id: 204
@@ -3784,7 +3784,7 @@
   stats: []
   abilities: []
 # Plo Koon's Gloves
-- guid: 30189
+- guid: 180088
   name_id: 230
   description_id: 14
   icon_set_id: 176
@@ -3827,7 +3827,7 @@
   stats: []
   abilities: []
 # Plo Koon's Boots
-- guid: 40228
+- guid: 180089
   name_id: 234
   description_id: 14
   icon_set_id: 149
@@ -3870,7 +3870,7 @@
   stats: []
   abilities: []
 # Cold Weather Plo's Suit
-- guid: 10232
+- guid: 180090
   name_id: 44875
   description_id: 14
   icon_set_id: 2105
@@ -3913,7 +3913,7 @@
   stats: []
   abilities: []
 # Cold Weather Plo's Hood
-- guid: 20181
+- guid: 180091
   name_id: 44873
   description_id: 14
   icon_set_id: 2103
@@ -3956,7 +3956,7 @@
   stats: []
   abilities: []
 # Cold Weather Plo's Gloves
-- guid: 30190
+- guid: 180092
   name_id: 44874
   description_id: 14
   icon_set_id: 2104
@@ -3999,7 +3999,7 @@
   stats: []
   abilities: []
 # Cold Weather Plo's Boots
-- guid: 40230
+- guid: 180093
   name_id: 44876
   description_id: 14
   icon_set_id: 2106
@@ -4042,7 +4042,7 @@
   stats: []
   abilities: []
 # Ermi Jedi Robe
-- guid: 10270
+- guid: 180094
   name_id: 1327
   description_id: 14
   icon_set_id: 1117
@@ -4085,7 +4085,7 @@
   stats: []
   abilities: []
 # Ermi Jedi Hood
-- guid: 20210
+- guid: 180095
   name_id: 1422
   description_id: 14
   icon_set_id: 1120
@@ -4128,7 +4128,7 @@
   stats: []
   abilities: []
 # Ermi Jedi Gloves
-- guid: 30219
+- guid: 180096
   name_id: 1390
   description_id: 14
   icon_set_id: 1119
@@ -4171,7 +4171,7 @@
   stats: []
   abilities: []
 # Ermi Jedi Boots
-- guid: 40252
+- guid: 180097
   name_id: 1362
   description_id: 14
   icon_set_id: 1118
@@ -4214,7 +4214,7 @@
   stats: []
   abilities: []
 # Shaak Ti's Robe
-- guid: 10255
+- guid: 180098
   name_id: 1464
   description_id: 14
   icon_set_id: 1111
@@ -4257,7 +4257,7 @@
   stats: []
   abilities: []
 # Shaak Ti's Boots
-- guid: 40198
+- guid: 180099
   name_id: 1474
   description_id: 14
   icon_set_id: 1112
@@ -4300,7 +4300,7 @@
   stats: []
   abilities: []
 # Luminara Unduli's Robes
-- guid: 10191
+- guid: 180100
   name_id: 210
   description_id: 14
   icon_set_id: 102
@@ -4343,7 +4343,7 @@
   stats: []
   abilities: []
 # Luminara Unduli's Headdress
-- guid: 20154
+- guid: 180101
   name_id: 208
   description_id: 14
   icon_set_id: 202
@@ -4386,7 +4386,7 @@
   stats: []
   abilities: []
 # Luminara Unduli's Boots
-- guid: 40197
+- guid: 180102
   name_id: 212
   description_id: 14
   icon_set_id: 145
@@ -4429,7 +4429,7 @@
   stats: []
   abilities: []
 # Kalifa's Suit
-- guid: 10174
+- guid: 180103
   name_id: 43511
   description_id: 14
   icon_set_id: 1842
@@ -4472,7 +4472,7 @@
   stats: []
   abilities: []
 # Kalifa's Boots
-- guid: 40229
+- guid: 180104
   name_id: 43512
   description_id: 14
   icon_set_id: 1843
@@ -4515,7 +4515,7 @@
   stats: []
   abilities: []
 # Dahgee Jedi Robes
-- guid: 10291
+- guid: 180105
   name_id: 1506
   description_id: 14
   icon_set_id: 1141
@@ -4558,7 +4558,7 @@
   stats: []
   abilities: []
 # Dahgee Jedi Gloves
-- guid: 30158
+- guid: 180106
   name_id: 1500
   description_id: 14
   icon_set_id: 1143
@@ -4601,7 +4601,7 @@
   stats: []
   abilities: []
 # Dahgee Jedi Boots
-- guid: 40272
+- guid: 180107
   name_id: 1476
   description_id: 14
   icon_set_id: 1142
@@ -4644,7 +4644,7 @@
   stats: []
   abilities: []
 # Aquatic Obi-Wan Tunic
-- guid: 10218
+- guid: 180108
   name_id: 44500
   description_id: 14
   icon_set_id: 1983
@@ -4687,7 +4687,7 @@
   stats: []
   abilities: []
 # Aquatic Obi-Wan Gloves
-- guid: 30181
+- guid: 180109
   name_id: 44499
   description_id: 14
   icon_set_id: 1982
@@ -4730,7 +4730,7 @@
   stats: []
   abilities: []
 # Aquatic Obi-Wan Boots
-- guid: 40220
+- guid: 180110
   name_id: 44501
   description_id: 14
   icon_set_id: 1984
@@ -4773,7 +4773,7 @@
   stats: []
   abilities: []
 # Fiery Obi-Wan's Tunic
-- guid: 10220
+- guid: 180111
   name_id: 44829
   description_id: 14
   icon_set_id: 2063
@@ -4816,7 +4816,7 @@
   stats: []
   abilities: []
 # Fiery Obi-Wan's Gloves
-- guid: 30183
+- guid: 180112
   name_id: 44828
   description_id: 14
   icon_set_id: 2062
@@ -4859,7 +4859,7 @@
   stats: []
   abilities: []
 # Fiery Obi-Wan's Boots
-- guid: 40223
+- guid: 180113
   name_id: 44830
   description_id: 14
   icon_set_id: 2064
@@ -4902,7 +4902,7 @@
   stats: []
   abilities: []
 # wearable_body_anakin_tatooine
-- guid: 10014
+- guid: 180114
   name_id: 2673
   description_id: 14
   icon_set_id: 673
@@ -4945,7 +4945,7 @@
   stats: []
   abilities: []
 # wearable_hands_anakin_tatooine
-- guid: 30013
+- guid: 180115
   name_id: 2672
   description_id: 14
   icon_set_id: 676
@@ -4988,7 +4988,7 @@
   stats: []
   abilities: []
 # wearable_feet_anakin_tatooine
-- guid: 40012
+- guid: 180116
   name_id: 2674
   description_id: 14
   icon_set_id: 680
@@ -5031,7 +5031,7 @@
   stats: []
   abilities: []
 # Kit Fisto's Robes
-- guid: 10178
+- guid: 180117
   name_id: 8902
   description_id: 14
   icon_set_id: 99
@@ -5074,7 +5074,7 @@
   stats: []
   abilities: []
 # Kit Fisto's Gloves
-- guid: 30154
+- guid: 180118
   name_id: 8906
   description_id: 14
   icon_set_id: 170
@@ -5117,7 +5117,7 @@
   stats: []
   abilities: []
 # Kit Fisto's Boots
-- guid: 40177
+- guid: 180119
   name_id: 8904
   description_id: 14
   icon_set_id: 141
@@ -5160,7 +5160,7 @@
   stats: []
   abilities: []
 # Cold Weather Kit Fisto's Suit
-- guid: 10176
+- guid: 180120
   name_id: 44879
   description_id: 14
   icon_set_id: 2110
@@ -5203,7 +5203,7 @@
   stats: []
   abilities: []
 # Cold Weather Kit Fisto's Hood
-- guid: 20149
+- guid: 180121
   name_id: 44877
   description_id: 14
   icon_set_id: 2108
@@ -5246,7 +5246,7 @@
   stats: []
   abilities: []
 # Cold Weather Kit Fisto's Gloves
-- guid: 30213
+- guid: 180122
   name_id: 44878
   description_id: 14
   icon_set_id: 2109
@@ -5289,7 +5289,7 @@
   stats: []
   abilities: []
 # Cold Weather Kit Fisto's Boots
-- guid: 40178
+- guid: 180123
   name_id: 44880
   description_id: 14
   icon_set_id: 2111
@@ -5332,7 +5332,7 @@
   stats: []
   abilities: []
 # Flanneled Cold Weather Kit Fisto's Suit
-- guid: 10177
+- guid: 180124
   name_id: 2677
   description_id: 14
   icon_set_id: 3334
@@ -5375,7 +5375,7 @@
   stats: []
   abilities: []
 # Flanneled Cold Weather Kit Fisto's Hood
-- guid: 20150
+- guid: 180125
   name_id: 2675
   description_id: 14
   icon_set_id: 3332
@@ -5418,7 +5418,7 @@
   stats: []
   abilities: []
 # Flanneled Cold Weather Kit Fisto's Gloves
-- guid: 30214
+- guid: 180126
   name_id: 2676
   description_id: 14
   icon_set_id: 3333
@@ -5461,7 +5461,7 @@
   stats: []
   abilities: []
 # Flanneled Cold Weather Kit Fisto's Boots
-- guid: 40179
+- guid: 180127
   name_id: 2678
   description_id: 14
   icon_set_id: 3335
@@ -5504,7 +5504,7 @@
   stats: []
   abilities: []
 # Simple Padawan Robes
-- guid: 10257
+- guid: 180128
   name_id: 8611
   description_id: 14
   icon_set_id: 112
@@ -5547,7 +5547,7 @@
   stats: []
   abilities: []
 # Light Padawan Helmet
-- guid: 20224
+- guid: 180129
   name_id: 8546
   description_id: 14
   icon_set_id: 211
@@ -5590,7 +5590,7 @@
   stats: []
   abilities: []
 # Brown Padawan Boots
-- guid: 40028
+- guid: 180130
   name_id: 67
   description_id: 14
   icon_set_id: 123
@@ -5633,7 +5633,7 @@
   stats: []
   abilities: []
 # Green Padawan Robes
-- guid: 10258
+- guid: 180131
   name_id: 8610
   description_id: 14
   icon_set_id: 111
@@ -5676,7 +5676,7 @@
   stats: []
   abilities: []
 # Tan Padawan Boots
-- guid: 40030
+- guid: 180132
   name_id: 8880
   description_id: 14
   icon_set_id: 121
@@ -5719,7 +5719,7 @@
   stats: []
   abilities: []
 # Dark Padawan Helmet
-- guid: 20225
+- guid: 180133
   name_id: 8882
   description_id: 14
   icon_set_id: 210
@@ -5762,7 +5762,7 @@
   stats: []
   abilities: []
 # Long Padawan Robes
-- guid: 10259
+- guid: 180134
   name_id: 8609
   description_id: 14
   icon_set_id: 113
@@ -5805,7 +5805,7 @@
   stats: []
   abilities: []
 # Rusty Padawan Boots
-- guid: 40195
+- guid: 180135
   name_id: 8886
   description_id: 14
   icon_set_id: 144
@@ -5848,7 +5848,7 @@
   stats: []
   abilities: []
 # Bariss' Cloak
-- guid: 10021
+- guid: 180136
   name_id: 54470
   description_id: 14
   icon_set_id: 3714
@@ -5891,7 +5891,7 @@
   stats: []
   abilities: []
 # Bariss' Hood
-- guid: 20011
+- guid: 180137
   name_id: 54468
   description_id: 14
   icon_set_id: 3712
@@ -5934,7 +5934,7 @@
   stats: []
   abilities: []
 # Bariss' Gloves
-- guid: 30016
+- guid: 180138
   name_id: 54469
   description_id: 14
   icon_set_id: 3713
@@ -5977,7 +5977,7 @@
   stats: []
   abilities: []
 # Bariss' Shoes
-- guid: 40126
+- guid: 180139
   name_id: 54471
   description_id: 14
   icon_set_id: 3715
@@ -6020,7 +6020,7 @@
   stats: []
   abilities: []
 # Adept Jedi Cloak
-- guid: 10268
+- guid: 180140
   name_id: 4619
   description_id: 14
   icon_set_id: 2686
@@ -6063,7 +6063,7 @@
   stats: []
   abilities: []
 # Adept Jedi Hood
-- guid: 20208
+- guid: 180141
   name_id: 4617
   description_id: 14
   icon_set_id: 2684
@@ -6106,7 +6106,7 @@
   stats: []
   abilities: []
 # Adept Jedi Vambrace
-- guid: 30111
+- guid: 180142
   name_id: 4618
   description_id: 14
   icon_set_id: 2685
@@ -6149,7 +6149,7 @@
   stats: []
   abilities: []
 # Adept Jedi Greaves
-- guid: 40250
+- guid: 180143
   name_id: 4620
   description_id: 14
   icon_set_id: 2687
@@ -6192,7 +6192,7 @@
   stats: []
   abilities: []
 # Kofun Jedi Armor
-- guid: 10247
+- guid: 180144
   name_id: 4818
   description_id: 14
   icon_set_id: 2848
@@ -6235,7 +6235,7 @@
   stats: []
   abilities: []
 # Kofun Jedi Helm
-- guid: 20195
+- guid: 180145
   name_id: 4816
   description_id: 14
   icon_set_id: 2846
@@ -6278,7 +6278,7 @@
   stats: []
   abilities: []
 # Kofun Jedi Hand Wraps
-- guid: 30198
+- guid: 180146
   name_id: 4817
   description_id: 14
   icon_set_id: 2847
@@ -6321,7 +6321,7 @@
   stats: []
   abilities: []
 # Kofun Jedi Leg Wraps
-- guid: 40240
+- guid: 180147
   name_id: 4819
   description_id: 14
   icon_set_id: 2849
@@ -6364,7 +6364,7 @@
   stats: []
   abilities: []
 # Forgotten Jedi Armor
-- guid: 10157
+- guid: 180148
   name_id: 60289
   description_id: 14
   icon_set_id: 3738
@@ -6407,7 +6407,7 @@
   stats: []
   abilities: []
 # Forgotten Jedi Breather
-- guid: 20131
+- guid: 180149
   name_id: 60287
   description_id: 14
   icon_set_id: 3736
@@ -6450,7 +6450,7 @@
   stats: []
   abilities: []
 # Forgotten Jedi Gloves
-- guid: 30141
+- guid: 180150
   name_id: 60288
   description_id: 14
   icon_set_id: 3737
@@ -6493,7 +6493,7 @@
   stats: []
   abilities: []
 # Forgotten Jedi Boots
-- guid: 40155
+- guid: 180151
   name_id: 60290
   description_id: 14
   icon_set_id: 3739
@@ -6536,7 +6536,7 @@
   stats: []
   abilities: []
 # Jedi Exile Tunic
-- guid: 10156
+- guid: 180152
   name_id: 54600
   description_id: 14
   icon_set_id: 3833
@@ -6579,7 +6579,7 @@
   stats: []
   abilities: []
 # Jedi Exile Cowl
-- guid: 20130
+- guid: 180153
   name_id: 54598
   description_id: 14
   icon_set_id: 3831
@@ -6622,7 +6622,7 @@
   stats: []
   abilities: []
 # Jedi Exile Gloves
-- guid: 30142
+- guid: 180154
   name_id: 54599
   description_id: 14
   icon_set_id: 3832
@@ -6665,7 +6665,7 @@
   stats: []
   abilities: []
 # Jedi Exile Boots
-- guid: 40154
+- guid: 180155
   name_id: 54601
   description_id: 14
   icon_set_id: 3834
@@ -6708,7 +6708,7 @@
   stats: []
   abilities: []
 # Jedi Champion Robe
-- guid: 10189
+- guid: 180156
   name_id: 52787
   description_id: 14
   icon_set_id: 3110
@@ -6751,7 +6751,7 @@
   stats: []
   abilities: []
 # Jedi Champion Hood
-- guid: 20152
+- guid: 180157
   name_id: 52790
   description_id: 14
   icon_set_id: 3113
@@ -6794,7 +6794,7 @@
   stats: []
   abilities: []
 # Jedi Champion Gauntlets
-- guid: 30162
+- guid: 180158
   name_id: 52788
   description_id: 14
   icon_set_id: 3112
@@ -6837,7 +6837,7 @@
   stats: []
   abilities: []
 # Jedi Champion Boots
-- guid: 40188
+- guid: 180159
   name_id: 52789
   description_id: 14
   icon_set_id: 3111
@@ -6880,7 +6880,7 @@
   stats: []
   abilities: []
 # Even Piell's Climbing Suit
-- guid: 10155
+- guid: 180160
   name_id: 44891
   description_id: 14
   icon_set_id: 2125
@@ -6923,7 +6923,7 @@
   stats: []
   abilities: []
 # Even Piell's Gloves
-- guid: 30127
+- guid: 180161
   name_id: 44890
   description_id: 14
   icon_set_id: 2124
@@ -6966,7 +6966,7 @@
   stats: []
   abilities: []
 # Even Piell's Boots
-- guid: 40267
+- guid: 180162
   name_id: 44892
   description_id: 14
   icon_set_id: 2126
@@ -7009,7 +7009,7 @@
   stats: []
   abilities: []
 # Jocasta Nu's Robes
-- guid: 10173
+- guid: 180163
   name_id: 198
   description_id: 14
   icon_set_id: 98
@@ -7052,7 +7052,7 @@
   stats: []
   abilities: []
 # Jocasta Nu's Shoes
-- guid: 40175
+- guid: 180164
   name_id: 200
   description_id: 14
   icon_set_id: 140
@@ -7095,7 +7095,7 @@
   stats: []
   abilities: []
 # Sulon Jedi Suit
-- guid: 10182
+- guid: 180165
   name_id: 54605
   description_id: 14
   icon_set_id: 3837
@@ -7138,7 +7138,7 @@
   stats: []
   abilities: []
 # Sulon Jedi Gloves
-- guid: 30160
+- guid: 180166
   name_id: 54604
   description_id: 14
   icon_set_id: 3836
@@ -7181,7 +7181,7 @@
   stats: []
   abilities: []
 # Sulon Jedi Boots
-- guid: 40182
+- guid: 180167
   name_id: 54606
   description_id: 14
   icon_set_id: 3838

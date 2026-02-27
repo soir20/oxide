@@ -144,7 +144,7 @@ pub fn make_test_player(
                             EquipmentSlot::Head,
                             EquippedItem {
                                 slot: EquipmentSlot::Head,
-                                guid: 20172,
+                                guid: 200022,
                                 category: 0,
                             },
                         ),
@@ -152,7 +152,7 @@ pub fn make_test_player(
                             EquipmentSlot::Hands,
                             EquippedItem {
                                 slot: EquipmentSlot::Hands,
-                                guid: 30167,
+                                guid: 190036,
                                 category: 0,
                             },
                         ),
@@ -160,7 +160,7 @@ pub fn make_test_player(
                             EquipmentSlot::Body,
                             EquippedItem {
                                 slot: EquipmentSlot::Body,
-                                guid: 10237,
+                                guid: 180021,
                                 category: 0,
                             },
                         ),
@@ -168,7 +168,7 @@ pub fn make_test_player(
                             EquipmentSlot::Feet,
                             EquippedItem {
                                 slot: EquipmentSlot::Feet,
-                                guid: 40065,
+                                guid: 160144,
                                 category: 0,
                             },
                         ),
@@ -176,7 +176,7 @@ pub fn make_test_player(
                             EquipmentSlot::PrimaryWeapon,
                             EquippedItem {
                                 slot: EquipmentSlot::PrimaryWeapon,
-                                guid: 110052,
+                                guid: 80052,
                                 category: 0,
                             },
                         ),
@@ -440,13 +440,13 @@ pub fn make_test_player(
 pub fn make_test_customizations() -> BTreeMap<CustomizationSlot, u32> {
     let mut customizations = BTreeMap::new();
     customizations.insert(CustomizationSlot::HeadModel, 110000);
-    customizations.insert(CustomizationSlot::SkinTone, 120030);
-    customizations.insert(CustomizationSlot::HairStyle, 130034);
-    customizations.insert(CustomizationSlot::HairColor, 140004);
-    customizations.insert(CustomizationSlot::EyeColor, 150013);
-    customizations.insert(CustomizationSlot::FacialHair, 160004);
-    customizations.insert(CustomizationSlot::FacePattern, 170009);
-    customizations.insert(CustomizationSlot::BodyModel, 180000);
+    customizations.insert(CustomizationSlot::SkinTone, 60030);
+    customizations.insert(CustomizationSlot::HairStyle, 40034);
+    customizations.insert(CustomizationSlot::HairColor, 30004);
+    customizations.insert(CustomizationSlot::EyeColor, 10013);
+    customizations.insert(CustomizationSlot::FacialHair, 20004);
+    customizations.insert(CustomizationSlot::FacePattern, 50009);
+    customizations.insert(CustomizationSlot::BodyModel, 70000);
     customizations
 }
 

@@ -1,6 +1,6 @@
 ---
 # Luke Skywalker's Robes
-- guid: 10260
+- guid: 230000
   name_id: 924
   description_id: 14
   icon_set_id: 480
@@ -43,7 +43,7 @@
   stats: []
   abilities: []
 # Luke Skywalker's Boots
-- guid: 40029
+- guid: 230001
   name_id: 365
   description_id: 14
   icon_set_id: 122
@@ -86,7 +86,7 @@
   stats: []
   abilities: []
 # Kyle Katarn's Boots
-- guid: 40181
+- guid: 230002
   name_id: 206
   description_id: 14
   icon_set_id: 142
@@ -129,7 +129,7 @@
   stats: []
   abilities: []
 # Kyle Katarn's Uniform
-- guid: 10181
+- guid: 230003
   name_id: 204
   description_id: 14
   icon_set_id: 673
@@ -172,7 +172,7 @@
   stats: []
   abilities: []
 # Kyle Katarn's Gloves
-- guid: 30159
+- guid: 230004
   name_id: 202
   description_id: 14
   icon_set_id: 676
@@ -215,7 +215,7 @@
   stats: []
   abilities: []
 # Kyle Katarn's Boots
-- guid: 40183
+- guid: 230005
   name_id: 206
   description_id: 14
   icon_set_id: 680
@@ -258,7 +258,7 @@
   stats: []
   abilities: []
 # Lando Calrissian's Suit
-- guid: 10186
+- guid: 230006
   name_id: 1462
   description_id: 14
   icon_set_id: 673
@@ -301,7 +301,7 @@
   stats: []
   abilities: []
 # Lando Calrissian's Shoes
-- guid: 40186
+- guid: 230007
   name_id: 1472
   description_id: 14
   icon_set_id: 680
@@ -344,7 +344,7 @@
   stats: []
   abilities: []
 # Tamtel Skreej's Armor
-- guid: 10265
+- guid: 230008
   name_id: 930
   description_id: 14
   icon_set_id: 495
@@ -387,7 +387,7 @@
   stats: []
   abilities: []
 # Tamtel Skreej's Helm
-- guid: 20213
+- guid: 230009
   name_id: 928
   description_id: 14
   icon_set_id: 497
@@ -430,7 +430,7 @@
   stats: []
   abilities: []
 # Tamtel Skreej's Boots
-- guid: 40196
+- guid: 230010
   name_id: 932
   description_id: 14
   icon_set_id: 496
@@ -473,7 +473,7 @@
   stats: []
   abilities: []
 # Mara Jade's Battle Suit
-- guid: 10202
+- guid: 230011
   name_id: 216
   description_id: 14
   icon_set_id: 104
@@ -516,7 +516,7 @@
   stats: []
   abilities: []
 # Mara Jade's Gloves
-- guid: 30171
+- guid: 230012
   name_id: 214
   description_id: 14
   icon_set_id: 174
@@ -559,7 +559,7 @@
   stats: []
   abilities: []
 # Mara Jade's Boots
-- guid: 40206
+- guid: 230013
   name_id: 218
   description_id: 14
   icon_set_id: 147
@@ -602,7 +602,7 @@
   stats: []
   abilities: []
 # Imperial Royal Guard Armor
-- guid: 10168
+- guid: 230014
   name_id: 1650
   description_id: 14
   icon_set_id: 673
@@ -645,7 +645,7 @@
   stats: []
   abilities: []
 # Imperial Royal Guard Helmet
-- guid: 20144
+- guid: 230015
   name_id: 1646
   description_id: 14
   icon_set_id: 677
@@ -688,7 +688,7 @@
   stats: []
   abilities: []
 # Imperial Royal Guard Gloves
-- guid: 30208
+- guid: 230016
   name_id: 1648
   description_id: 14
   icon_set_id: 676
@@ -731,7 +731,7 @@
   stats: []
   abilities: []
 # Imperial Royal Guard Boots
-- guid: 40168
+- guid: 230017
   name_id: 1652
   description_id: 14
   icon_set_id: 680
@@ -774,7 +774,7 @@
   stats: []
   abilities: []
 # Dash Rendar's Suit
-- guid: 10135
+- guid: 230018
   name_id: 1565
   description_id: 14
   icon_set_id: 673
@@ -817,7 +817,7 @@
   stats: []
   abilities: []
 # Dash Rendar's Gloves
-- guid: 30126
+- guid: 230019
   name_id: 1563
   description_id: 14
   icon_set_id: 676
@@ -860,7 +860,7 @@
   stats: []
   abilities: []
 # Dash Rendar's Boots
-- guid: 40033
+- guid: 230020
   name_id: 1567
   description_id: 14
   icon_set_id: 680
@@ -903,7 +903,7 @@
   stats: []
   abilities: []
 # Han Solo's Outfit
-- guid: 10165
+- guid: 230021
   name_id: 302
   description_id: 14
   icon_set_id: 673
@@ -946,7 +946,7 @@
   stats: []
   abilities: []
 # Han Solo's Boots
-- guid: 40163
+- guid: 230022
   name_id: 304
   description_id: 14
   icon_set_id: 680
@@ -989,7 +989,7 @@
   stats: []
   abilities: []
 # Rebel Pilot Jumpsuit
-- guid: 10240
+- guid: 230023
   name_id: 240
   description_id: 14
   icon_set_id: 108
@@ -1032,7 +1032,7 @@
   stats: []
   abilities: []
 # Rebel Pilot Helmet
-- guid: 20188
+- guid: 230024
   name_id: 236
   description_id: 14
   icon_set_id: 205
@@ -1075,7 +1075,7 @@
   stats: []
   abilities: []
 # Rebel Pilot Gloves
-- guid: 30196
+- guid: 230025
   name_id: 238
   description_id: 14
   icon_set_id: 177
@@ -1118,7 +1118,7 @@
   stats: []
   abilities: []
 # Rebel Pilot Boots
-- guid: 40237
+- guid: 230026
   name_id: 242
   description_id: 14
   icon_set_id: 150
@@ -1161,7 +1161,7 @@
   stats: []
   abilities: []
 # Rebel Pilot Jumpsuit
-- guid: 10241
+- guid: 230027
   name_id: 240
   description_id: 14
   icon_set_id: 673
@@ -1204,7 +1204,7 @@
   stats: []
   abilities: []
 # Rebel Pilot Helmet
-- guid: 20189
+- guid: 230028
   name_id: 236
   description_id: 14
   icon_set_id: 677
@@ -1247,7 +1247,7 @@
   stats: []
   abilities: []
 # Rebel Pilot Jumpsuit
-- guid: 10242
+- guid: 230029
   name_id: 240
   description_id: 14
   icon_set_id: 673
@@ -1290,7 +1290,7 @@
   stats: []
   abilities: []
 # Rebel Pilot Helmet
-- guid: 20190
+- guid: 230030
   name_id: 236
   description_id: 14
   icon_set_id: 677
@@ -1333,7 +1333,7 @@
   stats: []
   abilities: []
 # Unknown boots
-- guid: 40158
+- guid: 230031
   name_id: 0
   description_id: 14
   icon_set_id: 680

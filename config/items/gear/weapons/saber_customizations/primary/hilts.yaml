@@ -1,6 +1,6 @@
 ---
 # Sith Marauder Lightsaber
-- guid: 70000
+- guid: 110000
   name_id: 4975
   description_id: 14
   icon_set_id: 3044
@@ -43,7 +43,7 @@
   stats: []
   abilities: []
 # Zabrak Sith Lightsaber
-- guid: 70001
+- guid: 110001
   name_id: 8764
   description_id: 14
   icon_set_id: 219
@@ -86,7 +86,7 @@
   stats: []
   abilities: []
 # Nelona Lightsaber
-- guid: 70002
+- guid: 110002
   name_id: 4806
   description_id: 14
   icon_set_id: 2838
@@ -129,7 +129,7 @@
   stats: []
   abilities: []
 # Savage Opress' Lightsaber
-- guid: 70003
+- guid: 110003
   name_id: 33110
   description_id: 14
   icon_set_id: 1656
@@ -172,7 +172,7 @@
   stats: []
   abilities: []
 # Sith Warrior Lightsaber
-- guid: 70004
+- guid: 110004
   name_id: 52792
   description_id: 14
   icon_set_id: 3118
@@ -215,7 +215,7 @@
   stats: []
   abilities: []
 # Ahsoka Tano's Reverse Lightsaber
-- guid: 70005
+- guid: 110005
   name_id: 8761
   description_id: 14
   icon_set_id: 220
@@ -258,7 +258,7 @@
   stats: []
   abilities: []
 # Sith Inquisitor Lightsaber
-- guid: 70006
+- guid: 110006
   name_id: 4907
   description_id: 14
   icon_set_id: 2938
@@ -301,7 +301,7 @@
   stats: []
   abilities: []
 # Forgotten Jedi Reverse Lightsaber
-- guid: 70007
+- guid: 110007
   name_id: 60286
   description_id: 14
   icon_set_id: 3735
@@ -344,7 +344,7 @@
   stats: []
   abilities: []
 # Jedi Champion Reverse Lightsaber
-- guid: 70008
+- guid: 110008
   name_id: 52786
   description_id: 14
   icon_set_id: 3133
@@ -387,7 +387,7 @@
   stats: []
   abilities: []
 # Kofun Lightsaber
-- guid: 70009
+- guid: 110009
   name_id: 4823
   description_id: 14
   icon_set_id: 2862
@@ -430,7 +430,7 @@
   stats: []
   abilities: []
 # Aayla Secura's Lightsaber
-- guid: 70010
+- guid: 110010
   name_id: 306
   description_id: 14
   icon_set_id: 221
@@ -473,7 +473,7 @@
   stats: []
   abilities: []
 # Adi Gallia's Lightsaber
-- guid: 70011
+- guid: 110011
   name_id: 8768
   description_id: 14
   icon_set_id: 222
@@ -516,7 +516,7 @@
   stats: []
   abilities: []
 # Ahsoka Tano's Lightsaber
-- guid: 70012
+- guid: 110012
   name_id: 19895
   description_id: 14
   icon_set_id: 220
@@ -559,7 +559,7 @@
   stats: []
   abilities: []
 # 'Umbara Academy: Ghost Attack 1'
-- guid: 70013
+- guid: 110013
   name_id: 51036
   description_id: 14
   icon_set_id: 425
@@ -602,7 +602,7 @@
   stats: []
   abilities: []
 # Anakin Skywalker's Lightsaber
-- guid: 70015
+- guid: 110015
   name_id: 8762
   description_id: 14
   icon_set_id: 223
@@ -645,7 +645,7 @@
   stats: []
   abilities: []
 # 'Umbara Academy: Ghost Attack 2'
-- guid: 70016
+- guid: 110016
   name_id: 51037
   description_id: 14
   icon_set_id: 425
@@ -688,7 +688,7 @@
   stats: []
   abilities: []
 # Barriss Offee's Lightsaber
-- guid: 70017
+- guid: 110017
   name_id: 14786
   description_id: 14
   icon_set_id: 508
@@ -731,7 +731,7 @@
   stats: []
   abilities: []
 # Byph's Lightsaber
-- guid: 70018
+- guid: 110018
   name_id: 53615
   description_id: 14
   icon_set_id: 3207
@@ -774,7 +774,7 @@
   stats: []
   abilities: []
 # Miko Jedi Lightsaber
-- guid: 70019
+- guid: 110019
   name_id: 14788
   description_id: 14
   icon_set_id: 509
@@ -817,7 +817,7 @@
   stats: []
   abilities: []
 # Sith Infiltrator Lightsaber
-- guid: 70020
+- guid: 110020
   name_id: 4976
   description_id: 14
   icon_set_id: 3045
@@ -860,7 +860,7 @@
   stats: []
   abilities: []
 # Pre Vizsla's Darksaber
-- guid: 70021
+- guid: 110021
   name_id: 8763
   description_id: 14
   icon_set_id: 224
@@ -903,7 +903,7 @@
   stats: []
   abilities: []
 # Dolovite Darksaber
-- guid: 70022
+- guid: 110022
   name_id: 54592
   description_id: 14
   icon_set_id: 3829
@@ -946,7 +946,7 @@
   stats: []
   abilities: []
 # Phrik Darksaber
-- guid: 70023
+- guid: 110023
   name_id: 54521
   description_id: 14
   icon_set_id: 3791
@@ -989,7 +989,7 @@
   stats: []
   abilities: []
 # Darth Maul's Lightsaber
-- guid: 70024
+- guid: 110024
   name_id: 4718
   description_id: 14
   icon_set_id: 2764
@@ -1032,7 +1032,7 @@
   stats: []
   abilities: []
 # Count Dooku's Lightsaber
-- guid: 70025
+- guid: 110025
   name_id: 8766
   description_id: 14
   icon_set_id: 225
@@ -1075,7 +1075,7 @@
   stats: []
   abilities: []
 # Eeth Koth's Lightsaber
-- guid: 70026
+- guid: 110026
   name_id: 2440
   description_id: 14
   icon_set_id: 226
@@ -1118,7 +1118,7 @@
   stats: []
   abilities: []
 # Jedi Exile Lightsaber
-- guid: 70027
+- guid: 110027
   name_id: 54602
   description_id: 14
   icon_set_id: 3835
@@ -1161,7 +1161,7 @@
   stats: []
   abilities: []
 # Forked Lightsaber
-- guid: 70028
+- guid: 110028
   name_id: 54593
   description_id: 14
   icon_set_id: 3828
@@ -1204,7 +1204,7 @@
   stats: []
   abilities: []
 # Ganodi's Lightsaber
-- guid: 70029
+- guid: 110029
   name_id: 53620
   description_id: 14
   icon_set_id: 3212
@@ -1247,7 +1247,7 @@
   stats: []
   abilities: []
 # Ultimate FX Gungan Lightsaber
-- guid: 70030
+- guid: 110030
   name_id: 2650
   description_id: 14
   icon_set_id: 2136
@@ -1290,7 +1290,7 @@
   stats: []
   abilities: []
 # Gungi's Lightsaber
-- guid: 70031
+- guid: 110031
   name_id: 53616
   description_id: 14
   icon_set_id: 3208
@@ -1333,7 +1333,7 @@
   stats: []
   abilities: []
 # Jocasta Nu's Lightsaber
-- guid: 70032
+- guid: 110032
   name_id: 8769
   description_id: 14
   icon_set_id: 227
@@ -1376,7 +1376,7 @@
   stats: []
   abilities: []
 # Kashyyyk Lightsaber
-- guid: 70033
+- guid: 110033
   name_id: 44507
   description_id: 14
   icon_set_id: 1993
@@ -1419,7 +1419,7 @@
   stats: []
   abilities: []
 # Mestare Lightsaber
-- guid: 70034
+- guid: 110034
   name_id: 44850
   description_id: 14
   icon_set_id: 510
@@ -1462,7 +1462,7 @@
   stats: []
   abilities: []
 # Katooni's Lightsaber
-- guid: 70035
+- guid: 110035
   name_id: 53621
   description_id: 14
   icon_set_id: 3213
@@ -1505,7 +1505,7 @@
   stats: []
   abilities: []
 # Ki-Adi-Mundi's Lightsaber
-- guid: 70036
+- guid: 110036
   name_id: 2444
   description_id: 14
   icon_set_id: 228
@@ -1548,7 +1548,7 @@
   stats: []
   abilities: []
 # Kit Fisto's Lightsaber
-- guid: 70037
+- guid: 110037
   name_id: 8767
   description_id: 14
   icon_set_id: 229
@@ -1591,7 +1591,7 @@
   stats: []
   abilities: []
 # Kyle Katarn's Lightsaber
-- guid: 70038
+- guid: 110038
   name_id: 974
   description_id: 14
   icon_set_id: 511
@@ -1634,7 +1634,7 @@
   stats: []
   abilities: []
 # Sulon Jedi Lightsaber
-- guid: 70039
+- guid: 110039
   name_id: 60157
   description_id: 14
   icon_set_id: 511
@@ -1677,7 +1677,7 @@
   stats: []
   abilities: []
 # Luke Skywalker's Lightsaber
-- guid: 70040
+- guid: 110040
   name_id: 8770
   description_id: 14
   icon_set_id: 230
@@ -1720,7 +1720,7 @@
   stats: []
   abilities: []
 # Luminara Unduli's Lightsaber
-- guid: 70041
+- guid: 110041
   name_id: 8771
   description_id: 14
   icon_set_id: 231
@@ -1763,7 +1763,7 @@
   stats: []
   abilities: []
 # Plo Koon's Lightsaber
-- guid: 70042
+- guid: 110042
   name_id: 308
   description_id: 14
   icon_set_id: 232
@@ -1806,7 +1806,7 @@
   stats: []
   abilities: []
 # Mace Windu's Lightsaber
-- guid: 70043
+- guid: 110043
   name_id: 8772
   description_id: 14
   icon_set_id: 233
@@ -1849,7 +1849,7 @@
   stats: []
   abilities: []
 # 'Umbara Academy: Ghost Attack 3'
-- guid: 70044
+- guid: 110044
   name_id: 51038
   description_id: 14
   icon_set_id: 425
@@ -1892,7 +1892,7 @@
   stats: []
   abilities: []
 # Obi-Wan Kenobi's Lightsaber
-- guid: 70045
+- guid: 110045
   name_id: 8773
   description_id: 14
   icon_set_id: 234
@@ -1935,7 +1935,7 @@
   stats: []
   abilities: []
 # Petro's Lightsaber
-- guid: 70046
+- guid: 110046
   name_id: 53617
   description_id: 14
   icon_set_id: 3209
@@ -1978,7 +1978,7 @@
   stats: []
   abilities: []
 # Shotem Jedi Lightsaber
-- guid: 70047
+- guid: 110047
   name_id: 976
   description_id: 14
   icon_set_id: 512
@@ -2021,7 +2021,7 @@
   stats: []
   abilities: []
 # Shotem Master Lightsaber
-- guid: 70048
+- guid: 110048
   name_id: 60678
   description_id: 14
   icon_set_id: 3788
@@ -2064,7 +2064,7 @@
   stats: []
   abilities: []
 # Quinlan Vos' Lightsaber
-- guid: 70049
+- guid: 110049
   name_id: 19637
   description_id: 14
   icon_set_id: 1436
@@ -2107,7 +2107,7 @@
   stats: []
   abilities: []
 # Saesee Tiin's Lightsaber
-- guid: 70050
+- guid: 110050
   name_id: 43190
   description_id: 14
   icon_set_id: 1792
@@ -2150,7 +2150,7 @@
   stats: []
   abilities: []
 # Shaak Ti's Lightsaber
-- guid: 70051
+- guid: 110051
   name_id: 14792
   description_id: 14
   icon_set_id: 513
@@ -2193,7 +2193,7 @@
   stats: []
   abilities: []
 # Darth Sidious' Lightsaber
-- guid: 70052
+- guid: 110052
   name_id: 8774
   description_id: 14
   icon_set_id: 235
@@ -2236,7 +2236,7 @@
   stats: []
   abilities: []
 # Bravis Sith Lightsaber
-- guid: 70053
+- guid: 110053
   name_id: 978
   description_id: 14
   icon_set_id: 514
@@ -2279,7 +2279,7 @@
   stats: []
   abilities: []
 # Crimson Prowler Lightsaber
-- guid: 70054
+- guid: 110054
   name_id: 60198
   description_id: 14
   icon_set_id: 3721
@@ -2322,7 +2322,7 @@
   stats: []
   abilities: []
 # Ermi Jedi Lightsaber
-- guid: 70055
+- guid: 110055
   name_id: 980
   description_id: 14
   icon_set_id: 515
@@ -2365,7 +2365,7 @@
   stats: []
   abilities: []
 # Talz Lightsaber
-- guid: 70056
+- guid: 110056
   name_id: 4824
   description_id: 14
   icon_set_id: 2863
@@ -2408,7 +2408,7 @@
   stats: []
   abilities: []
 # Training Lightsaber
-- guid: 70057
+- guid: 110057
   name_id: 8775
   description_id: 14
   icon_set_id: 236
@@ -2451,7 +2451,7 @@
   stats: []
   abilities: []
 # Ancient Cobal Lightsaber
-- guid: 70058
+- guid: 110058
   name_id: 982
   description_id: 14
   icon_set_id: 516
@@ -2494,7 +2494,7 @@
   stats: []
   abilities: []
 # Savek Lightsaber
-- guid: 70059
+- guid: 110059
   name_id: 14794
   description_id: 14
   icon_set_id: 517
@@ -2537,7 +2537,7 @@
   stats: []
   abilities: []
 # Asajj Ventress' Right Lightsaber
-- guid: 70060
+- guid: 110060
   name_id: 8777
   description_id: 14
   icon_set_id: 237
@@ -2580,7 +2580,7 @@
   stats: []
   abilities: []
 # Yoda's Lightsaber
-- guid: 70062
+- guid: 110062
   name_id: 1797
   description_id: 14
   icon_set_id: 3169
@@ -2623,7 +2623,7 @@
   stats: []
   abilities: []
 # Zatt's Lightsaber
-- guid: 70063
+- guid: 110063
   name_id: 53619
   description_id: 14
   icon_set_id: 3211
@@ -2666,7 +2666,7 @@
   stats: []
   abilities: []
 # Dahgee Jedi Lightsaber
-- guid: 70064
+- guid: 110064
   name_id: 986
   description_id: 14
   icon_set_id: 1148
@@ -2709,7 +2709,7 @@
   stats: []
   abilities: []
 # Yoda's Lightsaber (NPC only)
-- guid: 70065
+- guid: 110065
   name_id: 1797
   description_id: 14
   icon_set_id: 3169

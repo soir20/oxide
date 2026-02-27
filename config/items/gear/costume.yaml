@@ -1,6 +1,6 @@
 ---
 # Blinged-Out Trooper Armor
-- guid: 10058
+- guid: 170000
   name_id: 14164
   description_id: 14
   icon_set_id: 446
@@ -43,7 +43,7 @@
   stats: []
   abilities: []
 # Blinged-Out Trooper Helmet
-- guid: 20032
+- guid: 170001
   name_id: 14170
   description_id: 14
   icon_set_id: 449
@@ -86,7 +86,7 @@
   stats: []
   abilities: []
 # Blinged-Out Trooper Gloves
-- guid: 30035
+- guid: 170002
   name_id: 14168
   description_id: 14
   icon_set_id: 448
@@ -129,7 +129,7 @@
   stats: []
   abilities: []
 # Blinged-Out Trooper Boots
-- guid: 40041
+- guid: 170003
   name_id: 14166
   description_id: 14
   icon_set_id: 447
@@ -172,7 +172,7 @@
   stats: []
   abilities: []
 # Skeletal Clone Trooper Armor
-- guid: 10096
+- guid: 170004
   name_id: 4278
   description_id: 14
   icon_set_id: 2397
@@ -215,7 +215,7 @@
   stats: []
   abilities: []
 # Skeletal Clone Trooper Helmet
-- guid: 20093
+- guid: 170005
   name_id: 4276
   description_id: 14
   icon_set_id: 2395
@@ -258,7 +258,7 @@
   stats: []
   abilities: []
 # Skeletal Clone Trooper Gloves
-- guid: 30104
+- guid: 170006
   name_id: 4277
   description_id: 14
   icon_set_id: 2396
@@ -301,7 +301,7 @@
   stats: []
   abilities: []
 # Skeletal Clone Trooper Boots
-- guid: 40115
+- guid: 170007
   name_id: 4279
   description_id: 14
   icon_set_id: 2398
@@ -344,7 +344,7 @@
   stats: []
   abilities: []
 # Spiked Trooper Armor
-- guid: 10158
+- guid: 170008
   name_id: 894
   description_id: 14
   icon_set_id: 498
@@ -387,7 +387,7 @@
   stats: []
   abilities: []
 # Spiked Trooper Helmet
-- guid: 20132
+- guid: 170009
   name_id: 890
   description_id: 14
   icon_set_id: 501
@@ -430,7 +430,7 @@
   stats: []
   abilities: []
 # Spiked Trooper Gloves
-- guid: 30143
+- guid: 170010
   name_id: 892
   description_id: 14
   icon_set_id: 500
@@ -473,7 +473,7 @@
   stats: []
   abilities: []
 # Spiked Trooper Boots
-- guid: 40156
+- guid: 170011
   name_id: 896
   description_id: 14
   icon_set_id: 499
@@ -516,7 +516,7 @@
   stats: []
   abilities: []
 # Pirate Jedi Coat
-- guid: 10231
+- guid: 170012
   name_id: 2973
   description_id: 14
   icon_set_id: 2384
@@ -559,7 +559,7 @@
   stats: []
   abilities: []
 # Pirate Jedi Hat
-- guid: 20179
+- guid: 170013
   name_id: 2969
   description_id: 14
   icon_set_id: 2382
@@ -602,7 +602,7 @@
   stats: []
   abilities: []
 # Pirate Jedi Gloves
-- guid: 30188
+- guid: 170014
   name_id: 2971
   description_id: 14
   icon_set_id: 2383
@@ -645,7 +645,7 @@
   stats: []
   abilities: []
 # Pirate Jedi Pegleg
-- guid: 40227
+- guid: 170015
   name_id: 2975
   description_id: 14
   icon_set_id: 2385
@@ -688,7 +688,7 @@
   stats: []
   abilities: []
 # Purple Wampa Suit
-- guid: 10284
+- guid: 170016
   name_id: 938
   description_id: 14
   icon_set_id: 483
@@ -731,7 +731,7 @@
   stats: []
   abilities: []
 # Purple Wampa Mask
-- guid: 20221
+- guid: 170017
   name_id: 968
   description_id: 14
   icon_set_id: 486
@@ -774,7 +774,7 @@
   stats: []
   abilities: []
 # Purple Wampa Claws
-- guid: 30232
+- guid: 170018
   name_id: 958
   description_id: 14
   icon_set_id: 485
@@ -817,7 +817,7 @@
   stats: []
   abilities: []
 # Purple Wampa Feet
-- guid: 40265
+- guid: 170019
   name_id: 946
   description_id: 14
   icon_set_id: 484
@@ -860,7 +860,7 @@
   stats: []
   abilities: []
 # Zillo Beast Suit
-- guid: 10292
+- guid: 170020
   name_id: 1331
   description_id: 14
   icon_set_id: 1144
@@ -903,7 +903,7 @@
   stats: []
   abilities: []
 # Zillo Beast Head
-- guid: 20226
+- guid: 170021
   name_id: 1426
   description_id: 14
   icon_set_id: 1147
@@ -946,7 +946,7 @@
   stats: []
   abilities: []
 # Zillo Beast Gloves
-- guid: 30235
+- guid: 170022
   name_id: 1394
   description_id: 14
   icon_set_id: 1146
@@ -989,7 +989,7 @@
   stats: []
   abilities: []
 # Zillo Beast Shoes
-- guid: 40273
+- guid: 170023
   name_id: 1364
   description_id: 14
   icon_set_id: 1145
@@ -1032,7 +1032,7 @@
   stats: []
   abilities: []
 # Pink Tusken Raider Robes
-- guid: 10275
+- guid: 170024
   name_id: 224
   description_id: 14
   icon_set_id: 114
@@ -1075,7 +1075,7 @@
   stats: []
   abilities: []
 # Pink Tusken Raider Helmet
-- guid: 20215
+- guid: 170025
   name_id: 220
   description_id: 14
   icon_set_id: 208
@@ -1118,7 +1118,7 @@
   stats: []
   abilities: []
 # Pink Tusken Raider Gloves
-- guid: 30223
+- guid: 170026
   name_id: 222
   description_id: 14
   icon_set_id: 182
@@ -1161,7 +1161,7 @@
   stats: []
   abilities: []
 # Pink Tusken Raider Boots
-- guid: 40255
+- guid: 170027
   name_id: 226
   description_id: 14
   icon_set_id: 152
@@ -1204,7 +1204,7 @@
   stats: []
   abilities: []
 # Count Dooku Pumpkinhead
-- guid: 20140
+- guid: 170028
   name_id: 53065
   description_id: 14
   icon_set_id: 3144
@@ -1247,7 +1247,7 @@
   stats: []
   abilities: []
 # General Grievous Pumpkinhead
-- guid: 20141
+- guid: 170029
   name_id: 53066
   description_id: 14
   icon_set_id: 3145
@@ -1290,7 +1290,7 @@
   stats: []
   abilities: []
 # Asajj Ventress Pumpkinhead
-- guid: 20142
+- guid: 170030
   name_id: 53067
   description_id: 14
   icon_set_id: 3146
@@ -1333,7 +1333,7 @@
   stats: []
   abilities: []
 # Grievous Mask
-- guid: 20137
+- guid: 170031
   name_id: 1624
   description_id: 14
   icon_set_id: 1386
@@ -1376,7 +1376,7 @@
   stats: []
   abilities: []
 # Gungan Mask
-- guid: 20138
+- guid: 170032
   name_id: 1626
   description_id: 14
   icon_set_id: 1387
@@ -1419,7 +1419,7 @@
   stats: []
   abilities: []
 # Jabba Mask
-- guid: 20146
+- guid: 170033
   name_id: 1842
   description_id: 14
   icon_set_id: 1388
@@ -1462,7 +1462,7 @@
   stats: []
   abilities: []
 # Ortolan Mask
-- guid: 20163
+- guid: 170034
   name_id: 1630
   description_id: 14
   icon_set_id: 1389
@@ -1505,7 +1505,7 @@
   stats: []
   abilities: []
 # Padme Amidala Mask
-- guid: 20175
+- guid: 170035
   name_id: 1856
   description_id: 14
   icon_set_id: 1390
@@ -1548,7 +1548,7 @@
   stats: []
   abilities: []
 # Chancellor Palpatine Mask
-- guid: 20177
+- guid: 170036
   name_id: 1858
   description_id: 14
   icon_set_id: 1391
@@ -1591,7 +1591,7 @@
   stats: []
   abilities: []
 # Protocol Droid Mask
-- guid: 20184
+- guid: 170037
   name_id: 1860
   description_id: 14
   icon_set_id: 1392
@@ -1634,7 +1634,7 @@
   stats: []
   abilities: []
 # Yoda Mask
-- guid: 20223
+- guid: 170038
   name_id: 1666
   description_id: 14
   icon_set_id: 1393
@@ -1677,7 +1677,7 @@
   stats: []
   abilities: []
 # Life Day Robe
-- guid: 10188
+- guid: 170039
   name_id: 20305
   description_id: 14
   icon_set_id: 1480
@@ -1720,7 +1720,7 @@
   stats: []
   abilities: []
 # Life Day Boots
-- guid: 40194
+- guid: 170040
   name_id: 20307
   description_id: 14
   icon_set_id: 1481
@@ -1763,7 +1763,7 @@
   stats: []
   abilities: []
 # Life Day Clone Trooper Armor
-- guid: 10083
+- guid: 170041
   name_id: 20321
   description_id: 14
   icon_set_id: 1488
@@ -1806,7 +1806,7 @@
   stats: []
   abilities: []
 # Life Day Clone Trooper Helm
-- guid: 20077
+- guid: 170042
   name_id: 20317
   description_id: 14
   icon_set_id: 1486
@@ -1849,7 +1849,7 @@
   stats: []
   abilities: []
 # Life Day Clone Trooper Gloves
-- guid: 30087
+- guid: 170043
   name_id: 20319
   description_id: 14
   icon_set_id: 1487
@@ -1892,7 +1892,7 @@
   stats: []
   abilities: []
 # Life Day Clone Trooper Boots
-- guid: 40096
+- guid: 170044
   name_id: 20323
   description_id: 14
   icon_set_id: 1489
@@ -1935,7 +1935,7 @@
   stats: []
   abilities: []
 # Nutcracker Clone Trooper Armor
-- guid: 10054
+- guid: 170045
   name_id: 20313
   description_id: 14
   icon_set_id: 1484
@@ -1978,7 +1978,7 @@
   stats: []
   abilities: []
 # Nutcracker Clone Trooper Helm
-- guid: 20061
+- guid: 170046
   name_id: 20309
   description_id: 14
   icon_set_id: 1482
@@ -2021,7 +2021,7 @@
   stats: []
   abilities: []
 # Nutcracker Clone Trooper Gloves
-- guid: 30075
+- guid: 170047
   name_id: 20311
   description_id: 14
   icon_set_id: 1483
@@ -2064,7 +2064,7 @@
   stats: []
   abilities: []
 # Nutcracker Clone Trooper Boots
-- guid: 40062
+- guid: 170048
   name_id: 20315
   description_id: 14
   icon_set_id: 1485
@@ -2107,7 +2107,7 @@
   stats: []
   abilities: []
 # Obi-Wan's Festive Robe
-- guid: 10222
+- guid: 170049
   name_id: 4510
   description_id: 14
   icon_set_id: 2580
@@ -2150,7 +2150,7 @@
   stats: []
   abilities: []
 # Obi-Wan's Festive Hat
-- guid: 20197
+- guid: 170050
   name_id: 4508
   description_id: 14
   icon_set_id: 2578
@@ -2193,7 +2193,7 @@
   stats: []
   abilities: []
 # Obi-Wan's Festive Gloves
-- guid: 30215
+- guid: 170051
   name_id: 4509
   description_id: 14
   icon_set_id: 2579
@@ -2236,7 +2236,7 @@
   stats: []
   abilities: []
 # Obi-Wan's Festive Boots
-- guid: 40268
+- guid: 170052
   name_id: 4511
   description_id: 14
   icon_set_id: 2581
@@ -2279,7 +2279,7 @@
   stats: []
   abilities: []
 # Wampa Suit
-- guid: 10285
+- guid: 170053
   name_id: 940
   description_id: 14
   icon_set_id: 502
@@ -2322,7 +2322,7 @@
   stats: []
   abilities: []
 # Wampa Mask
-- guid: 20220
+- guid: 170054
   name_id: 970
   description_id: 14
   icon_set_id: 505
@@ -2365,7 +2365,7 @@
   stats: []
   abilities: []
 # Wampa Claws
-- guid: 30233
+- guid: 170055
   name_id: 960
   description_id: 14
   icon_set_id: 504
@@ -2408,7 +2408,7 @@
   stats: []
   abilities: []
 # Wampa Feet
-- guid: 40264
+- guid: 170056
   name_id: 948
   description_id: 14
   icon_set_id: 503
@@ -2451,7 +2451,7 @@
   stats: []
   abilities: []
 # St. Patrick's Clone Armor
-- guid: 10094
+- guid: 170057
   name_id: 54411
   description_id: 14
   icon_set_id: 3681
@@ -2494,7 +2494,7 @@
   stats: []
   abilities: []
 # St. Patrick's Clone Helmet
-- guid: 20092
+- guid: 170058
   name_id: 54409
   description_id: 14
   icon_set_id: 3679
@@ -2537,7 +2537,7 @@
   stats: []
   abilities: []
 # St. Patrick's Clone Gloves
-- guid: 30100
+- guid: 170059
   name_id: 54410
   description_id: 14
   icon_set_id: 3680
@@ -2580,7 +2580,7 @@
   stats: []
   abilities: []
 # St. Patrick's Clone Boots
-- guid: 40111
+- guid: 170060
   name_id: 54412
   description_id: 14
   icon_set_id: 3682
@@ -2623,7 +2623,7 @@
   stats: []
   abilities: []
 # Cupid Clone's Armor
-- guid: 10125
+- guid: 170061
   name_id: 33885
   description_id: 14
   icon_set_id: 1669
@@ -2666,7 +2666,7 @@
   stats: []
   abilities: []
 # Cupid Clone's Helmet
-- guid: 20041
+- guid: 170062
   name_id: 33884
   description_id: 14
   icon_set_id: 1672
@@ -2709,7 +2709,7 @@
   stats: []
   abilities: []
 # Cupid Clone's Gloves
-- guid: 30041
+- guid: 170063
   name_id: 33886
   description_id: 14
   icon_set_id: 1671
@@ -2752,7 +2752,7 @@
   stats: []
   abilities: []
 # Cupid Clone's Boots
-- guid: 40079
+- guid: 170064
   name_id: 33887
   description_id: 14
   icon_set_id: 1670
@@ -2795,7 +2795,7 @@
   stats: []
   abilities: []
 # Boba Phat's Suit
-- guid: 10027
+- guid: 170065
   name_id: 1454
   description_id: 14
   icon_set_id: 673
@@ -2838,7 +2838,7 @@
   stats: []
   abilities: []
 # Boba Phat's Gloves
-- guid: 30027
+- guid: 170066
   name_id: 1478
   description_id: 14
   icon_set_id: 676
@@ -2881,7 +2881,7 @@
   stats: []
   abilities: []
 # Lurmen Suit
-- guid: 10192
+- guid: 170067
   name_id: 0
   description_id: 14
   icon_set_id: 673
@@ -2924,7 +2924,7 @@
   stats: []
   abilities: []
 # Lurmen Beanie
-- guid: 20155
+- guid: 170068
   name_id: 0
   description_id: 14
   icon_set_id: 677
@@ -2967,7 +2967,7 @@
   stats: []
   abilities: []
 # Lurmen Gloves
-- guid: 30163
+- guid: 170069
   name_id: 0
   description_id: 14
   icon_set_id: 676
@@ -3010,7 +3010,7 @@
   stats: []
   abilities: []
 # Lurmen Boots
-- guid: 40199
+- guid: 170070
   name_id: 0
   description_id: 14
   icon_set_id: 680
@@ -3053,7 +3053,7 @@
   stats: []
   abilities: []
 # Petro's Gypsy Suit
-- guid: 10230
+- guid: 170071
   name_id: 53605
   description_id: 14
   icon_set_id: 3204
@@ -3096,7 +3096,7 @@
   stats: []
   abilities: []
 # Petro's Gypsy Helmet
-- guid: 20178
+- guid: 170072
   name_id: 53603
   description_id: 14
   icon_set_id: 3202
@@ -3139,7 +3139,7 @@
   stats: []
   abilities: []
 # Petro's Gypsy Gloves
-- guid: 30187
+- guid: 170073
   name_id: 53604
   description_id: 14
   icon_set_id: 3203
@@ -3182,7 +3182,7 @@
   stats: []
   abilities: []
 # Petro's Gypsy Boots
-- guid: 40226
+- guid: 170074
   name_id: 53606
   description_id: 14
   icon_set_id: 3205

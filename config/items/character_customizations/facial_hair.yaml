@@ -1,6 +1,6 @@
 ---
 # Admiral's Mustache
-- guid: 160000
+- guid: 20000
   name_id: 13836
   description_id: 14
   icon_set_id: 530
@@ -43,7 +43,7 @@
   stats: []
   abilities: []
 # Alderaanian Senator's Goatee
-- guid: 160001
+- guid: 20001
   name_id: 768
   description_id: 14
   icon_set_id: 529
@@ -86,7 +86,7 @@
   stats: []
   abilities: []
 # Clean Shaven
-- guid: 160002
+- guid: 20002
   name_id: 5848
   description_id: 14
   icon_set_id: 532
@@ -129,7 +129,7 @@
   stats: []
   abilities: []
 # General's Beard
-- guid: 160003
+- guid: 20003
   name_id: 321
   description_id: 14
   icon_set_id: 528
@@ -172,7 +172,7 @@
   stats: []
   abilities: []
 # Clean Shaven
-- guid: 160004
+- guid: 20004
   name_id: 5848
   description_id: 14
   icon_set_id: 588
@@ -215,7 +215,7 @@
   stats: []
   abilities: []
 # Goatee
-- guid: 160005
+- guid: 20005
   name_id: 13781
   description_id: 14
   icon_set_id: 585
@@ -257,7 +257,7 @@
   unknown40: 0
   stats: []
   abilities: []
-- guid: 160006
+- guid: 20006
   name_id: 0
   description_id: 14
   icon_set_id: 0
@@ -300,7 +300,7 @@
   stats: []
   abilities: []
 # Splitchin Beard
-- guid: 160007
+- guid: 20007
   name_id: 13782
   description_id: 14
   icon_set_id: 586
@@ -343,7 +343,7 @@
   stats: []
   abilities: []
 # Tripchin Beard
-- guid: 160008
+- guid: 20008
   name_id: 13831
   description_id: 14
   icon_set_id: 587
@@ -386,7 +386,7 @@
   stats: []
   abilities: []
 # Clean Shaven
-- guid: 160009
+- guid: 20009
   name_id: 18052
   description_id: 14
   icon_set_id: 1289
@@ -429,7 +429,7 @@
   stats: []
   abilities: []
 # Double Patch
-- guid: 160010
+- guid: 20010
   name_id: 18053
   description_id: 14
   icon_set_id: 1284
@@ -472,7 +472,7 @@
   stats: []
   abilities: []
 # Magnum
-- guid: 160011
+- guid: 20011
   name_id: 18055
   description_id: 14
   icon_set_id: 1286
@@ -515,7 +515,7 @@
   stats: []
   abilities: []
 # Papanoida's Beard
-- guid: 160012
+- guid: 20012
   name_id: 18056
   description_id: 14
   icon_set_id: 1287
@@ -558,7 +558,7 @@
   stats: []
   abilities: []
 # Sharp Goatee
-- guid: 160013
+- guid: 20013
   name_id: 18054
   description_id: 14
   icon_set_id: 1285
@@ -601,7 +601,7 @@
   stats: []
   abilities: []
 # Single Patch
-- guid: 160014
+- guid: 20014
   name_id: 18051
   description_id: 14
   icon_set_id: 1288

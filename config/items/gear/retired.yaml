@@ -1,6 +1,6 @@
 ---
 # Han Solo's Outfit
-- guid: 10164
+- guid: 210000
   name_id: 302
   description_id: 14
   icon_set_id: 96
@@ -43,7 +43,7 @@
   stats: []
   abilities: []
 # Han Solo's Boots
-- guid: 40160
+- guid: 210001
   name_id: 304
   description_id: 14
   icon_set_id: 138
@@ -86,7 +86,7 @@
   stats: []
   abilities: []
 # Lando Calrissian's Suit
-- guid: 10184
+- guid: 210002
   name_id: 1462
   description_id: 14
   icon_set_id: 1100
@@ -129,7 +129,7 @@
   stats: []
   abilities: []
 # Lando Calrissian's Shoes
-- guid: 40184
+- guid: 210003
   name_id: 1472
   description_id: 14
   icon_set_id: 1101
@@ -172,7 +172,7 @@
   stats: []
   abilities: []
 # Kyle Katarn's Uniform
-- guid: 10180
+- guid: 210004
   name_id: 204
   description_id: 14
   icon_set_id: 100
@@ -215,7 +215,7 @@
   stats: []
   abilities: []
 # Kyle Katarn's Gloves
-- guid: 30156
+- guid: 210005
   name_id: 202
   description_id: 14
   icon_set_id: 171

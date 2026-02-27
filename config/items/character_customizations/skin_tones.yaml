@@ -1,6 +1,6 @@
 ---
 # Pale Skin
-- guid: 120000
+- guid: 60000
   name_id: 554
   description_id: 14
   icon_set_id: 715
@@ -43,7 +43,7 @@
   stats: []
   abilities: []
 # Peach Skin
-- guid: 120001
+- guid: 60001
   name_id: 13874
   description_id: 14
   icon_set_id: 716
@@ -86,7 +86,7 @@
   stats: []
   abilities: []
 # Golden Skin
-- guid: 120002
+- guid: 60002
   name_id: 553
   description_id: 14
   icon_set_id: 713
@@ -129,7 +129,7 @@
   stats: []
   abilities: []
 # Warm Tan Skin
-- guid: 120003
+- guid: 60003
   name_id: 556
   description_id: 14
   icon_set_id: 718
@@ -172,7 +172,7 @@
   stats: []
   abilities: []
 # Tan Skin
-- guid: 120004
+- guid: 60004
   name_id: 13876
   description_id: 14
   icon_set_id: 717
@@ -215,7 +215,7 @@
   stats: []
   abilities: []
 # Brown Skin
-- guid: 120005
+- guid: 60005
   name_id: 13875
   description_id: 14
   icon_set_id: 714
@@ -258,7 +258,7 @@
   stats: []
   abilities: []
 # Brown Skin
-- guid: 120006
+- guid: 60006
   name_id: 13875
   description_id: 14
   icon_set_id: 712
@@ -301,7 +301,7 @@
   stats: []
   abilities: []
 # Blue Skin
-- guid: 120007
+- guid: 60007
   name_id: 552
   description_id: 14
   icon_set_id: 728
@@ -344,7 +344,7 @@
   stats: []
   abilities: []
 # Teal Skin
-- guid: 120008
+- guid: 60008
   name_id: 562
   description_id: 14
   icon_set_id: 734
@@ -387,7 +387,7 @@
   stats: []
   abilities: []
 # Green Skin
-- guid: 120009
+- guid: 60009
   name_id: 558
   description_id: 14
   icon_set_id: 731
@@ -430,7 +430,7 @@
   stats: []
   abilities: []
 # Yellow Skin
-- guid: 120010
+- guid: 60010
   name_id: 563
   description_id: 14
   icon_set_id: 735
@@ -473,7 +473,7 @@
   stats: []
   abilities: []
 # Peach Skin
-- guid: 120011
+- guid: 60011
   name_id: 561
   description_id: 14
   icon_set_id: 733
@@ -516,7 +516,7 @@
   stats: []
   abilities: []
 # Orange Skin
-- guid: 120012
+- guid: 60012
   name_id: 560
   description_id: 14
   icon_set_id: 732
@@ -559,7 +559,7 @@
   stats: []
   abilities: []
 # Brown Skin
-- guid: 120013
+- guid: 60013
   name_id: 770
   description_id: 14
   icon_set_id: 729
@@ -602,7 +602,7 @@
   stats: []
   abilities: []
 # Grey Skin
-- guid: 120014
+- guid: 60014
   name_id: 559
   description_id: 14
   icon_set_id: 730
@@ -645,7 +645,7 @@
   stats: []
   abilities: []
 # Red Skin
-- guid: 120015
+- guid: 60015
   name_id: 1249
   description_id: 14
   icon_set_id: 738
@@ -688,7 +688,7 @@
   stats: []
   abilities: []
 # Pink Skin
-- guid: 120016
+- guid: 60016
   name_id: 1251
   description_id: 14
   icon_set_id: 739
@@ -731,7 +731,7 @@
   stats: []
   abilities: []
 # Khaki Skin
-- guid: 120017
+- guid: 60017
   name_id: 782
   description_id: 14
   icon_set_id: 745
@@ -774,7 +774,7 @@
   stats: []
   abilities: []
 # Yellow Skin
-- guid: 120018
+- guid: 60018
   name_id: 780
   description_id: 14
   icon_set_id: 747
@@ -817,7 +817,7 @@
   stats: []
   abilities: []
 # Red Skin
-- guid: 120019
+- guid: 60019
   name_id: 776
   description_id: 14
   icon_set_id: 746
@@ -860,7 +860,7 @@
   stats: []
   abilities: []
 # Brown Skin
-- guid: 120020
+- guid: 60020
   name_id: 778
   description_id: 14
   icon_set_id: 744
@@ -903,7 +903,7 @@
   stats: []
   abilities: []
 # Amber Skin
-- guid: 120021
+- guid: 60021
   name_id: 772
   description_id: 14
   icon_set_id: 725
@@ -946,7 +946,7 @@
   stats: []
   abilities: []
 # Orange Skin
-- guid: 120022
+- guid: 60022
   name_id: 15428
   description_id: 14
   icon_set_id: 726
@@ -989,7 +989,7 @@
   stats: []
   abilities: []
 # Red Skin
-- guid: 120023
+- guid: 60023
   name_id: 774
   description_id: 14
   icon_set_id: 727
@@ -1032,7 +1032,7 @@
   stats: []
   abilities: []
 # Pantoran Blue
-- guid: 120024
+- guid: 60024
   name_id: 1681
   description_id: 14
   icon_set_id: 1316
@@ -1075,7 +1075,7 @@
   stats: []
   abilities: []
 # Grey Scales
-- guid: 120025
+- guid: 60025
   name_id: 43475
   description_id: 14
   icon_set_id: 1806
@@ -1118,7 +1118,7 @@
   stats: []
   abilities: []
 # Green Scales
-- guid: 120026
+- guid: 60026
   name_id: 43483
   description_id: 14
   icon_set_id: 1805
@@ -1161,7 +1161,7 @@
   stats: []
   abilities: []
 # Bright Green Scales
-- guid: 120027
+- guid: 60027
   name_id: 43473
   description_id: 14
   icon_set_id: 1803
@@ -1204,7 +1204,7 @@
   stats: []
   abilities: []
 # Yellow Scales
-- guid: 120028
+- guid: 60028
   name_id: 43474
   description_id: 14
   icon_set_id: 1807
@@ -1247,7 +1247,7 @@
   stats: []
   abilities: []
 # Brown Scales
-- guid: 120029
+- guid: 60029
   name_id: 43476
   description_id: 14
   icon_set_id: 1804
