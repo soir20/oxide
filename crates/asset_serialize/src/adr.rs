@@ -606,10 +606,10 @@ impl DeserializeEntryData<SoundEmitterEntryType> for SoundEmitterEntryData {
                 ))
             }
             SoundEmitterEntryType::MaxConcurrentSounds => {
-                let (unknown, bytes_read) = deserialize_u32_le(file, len).await?;
+                let (max_concurrent_sounds, bytes_read) = deserialize_u32_le(file, len).await?;
                 Ok((
                     SoundEmitterEntryData::MaxConcurrentSounds {
-                        max_concurrent_sounds: unknown,
+                        max_concurrent_sounds,
                     },
                     bytes_read,
                 ))
