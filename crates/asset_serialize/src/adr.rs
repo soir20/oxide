@@ -356,7 +356,7 @@ pub enum SoundEmitterEntryType {
     RateMultiplierOffset = 0x16,
     RoomTypeScalar = 0x17,
     AttenuateReverbWithDistance = 0x18,
-    Unknown25 = 0x19,
+    MaxConcurrentSounds = 0x19,
     AttenuationDistance = 0x1a,
     ClipDistance = 0x1b,
     DelayBetweenSounds = 0x1c,
@@ -437,8 +437,8 @@ pub enum SoundEmitterEntryData {
     AttenuateReverbWithDistance {
         should_attenuate: bool,
     },
-    Unknown25 {
-        unknown: u32,
+    MaxConcurrentSounds {
+        max_concurrent_sounds: u32,
     },
     AttenuationDistance {
         distance: f32,
@@ -605,9 +605,14 @@ impl DeserializeEntryData<SoundEmitterEntryType> for SoundEmitterEntryData {
                     bytes_read,
                 ))
             }
-            SoundEmitterEntryType::Unknown25 => {
+            SoundEmitterEntryType::MaxConcurrentSounds => {
                 let (unknown, bytes_read) = deserialize_u32_le(file, len).await?;
-                Ok((SoundEmitterEntryData::Unknown25 { unknown }, bytes_read))
+                Ok((
+                    SoundEmitterEntryData::MaxConcurrentSounds {
+                        max_concurrent_sounds: unknown,
+                    },
+                    bytes_read,
+                ))
             }
             SoundEmitterEntryType::AttenuationDistance => {
                 let (distance, bytes_read) = deserialize_f32_be(file, len).await?;
