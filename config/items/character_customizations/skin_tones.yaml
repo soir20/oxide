@@ -4,32 +4,11 @@
   name_id: 554
   description_id: 14
   icon_set_id: 715
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization SkinTone
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: SkinTone
   customization_id: 120000
@@ -38,32 +17,11 @@
   name_id: 13874
   description_id: 14
   icon_set_id: 716
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization SkinTone
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: SkinTone
   customization_id: 120001
@@ -72,32 +30,11 @@
   name_id: 553
   description_id: 14
   icon_set_id: 713
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization SkinTone
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: SkinTone
   customization_id: 120002
@@ -106,32 +43,11 @@
   name_id: 556
   description_id: 14
   icon_set_id: 718
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization SkinTone
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: SkinTone
   customization_id: 120003
@@ -140,32 +56,11 @@
   name_id: 13876
   description_id: 14
   icon_set_id: 717
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization SkinTone
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: SkinTone
   customization_id: 120004
@@ -174,32 +69,11 @@
   name_id: 13875
   description_id: 14
   icon_set_id: 714
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization SkinTone
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: SkinTone
   customization_id: 120005
@@ -208,32 +82,11 @@
   name_id: 13875
   description_id: 14
   icon_set_id: 712
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization SkinTone
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: SkinTone
   customization_id: 120006
@@ -242,32 +95,11 @@
   name_id: 552
   description_id: 14
   icon_set_id: 728
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization SkinTone
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 3
   customization_slot: SkinTone
   customization_id: 120007
@@ -276,32 +108,11 @@
   name_id: 562
   description_id: 14
   icon_set_id: 734
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization SkinTone
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 3
   customization_slot: SkinTone
   customization_id: 120008
@@ -310,32 +121,11 @@
   name_id: 558
   description_id: 14
   icon_set_id: 731
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization SkinTone
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 3
   customization_slot: SkinTone
   customization_id: 120009
@@ -344,32 +134,11 @@
   name_id: 563
   description_id: 14
   icon_set_id: 735
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization SkinTone
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 3
   customization_slot: SkinTone
   customization_id: 120010
@@ -378,32 +147,12 @@
   name_id: 561
   description_id: 14
   icon_set_id: 733
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization SkinTone
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 3
   customization_slot: SkinTone
   customization_id: 120011
@@ -412,32 +161,11 @@
   name_id: 560
   description_id: 14
   icon_set_id: 732
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization SkinTone
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 3
   customization_slot: SkinTone
   customization_id: 120012
@@ -446,32 +174,12 @@
   name_id: 770
   description_id: 14
   icon_set_id: 729
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization SkinTone
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 3
   customization_slot: SkinTone
   customization_id: 120013
@@ -480,32 +188,11 @@
   name_id: 559
   description_id: 14
   icon_set_id: 730
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization SkinTone
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 3
   customization_slot: SkinTone
   customization_id: 120014
@@ -514,32 +201,12 @@
   name_id: 1249
   description_id: 14
   icon_set_id: 738
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization SkinTone
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 3
   customization_slot: SkinTone
   customization_id: 120015
@@ -548,32 +215,12 @@
   name_id: 1251
   description_id: 14
   icon_set_id: 739
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization SkinTone
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 3
   customization_slot: SkinTone
   customization_id: 120016
@@ -582,32 +229,11 @@
   name_id: 782
   description_id: 14
   icon_set_id: 745
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization SkinTone
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: SkinTone
   customization_id: 120017
@@ -616,32 +242,11 @@
   name_id: 780
   description_id: 14
   icon_set_id: 747
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization SkinTone
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: SkinTone
   customization_id: 120018
@@ -650,32 +255,11 @@
   name_id: 776
   description_id: 14
   icon_set_id: 746
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization SkinTone
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: SkinTone
   customization_id: 120019
@@ -684,32 +268,11 @@
   name_id: 778
   description_id: 14
   icon_set_id: 744
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization SkinTone
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: SkinTone
   customization_id: 120020
@@ -718,32 +281,11 @@
   name_id: 772
   description_id: 14
   icon_set_id: 725
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization SkinTone
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 5
   customization_slot: SkinTone
   customization_id: 120021
@@ -752,32 +294,11 @@
   name_id: 15428
   description_id: 14
   icon_set_id: 726
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization SkinTone
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 5
   customization_slot: SkinTone
   customization_id: 120022
@@ -786,32 +307,11 @@
   name_id: 774
   description_id: 14
   icon_set_id: 727
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization SkinTone
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 5
   customization_slot: SkinTone
   customization_id: 120023
@@ -820,32 +320,10 @@
   name_id: 1681
   description_id: 14
   icon_set_id: 1316
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Customization SkinTone
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 10
   customization_slot: SkinTone
   customization_id: 120024
@@ -854,32 +332,11 @@
   name_id: 43475
   description_id: 14
   icon_set_id: 1806
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization SkinTone
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 12
   customization_slot: SkinTone
   customization_id: 120025
@@ -888,32 +345,11 @@
   name_id: 43483
   description_id: 14
   icon_set_id: 1805
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization SkinTone
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 12
   customization_slot: SkinTone
   customization_id: 120026
@@ -922,32 +358,11 @@
   name_id: 43473
   description_id: 14
   icon_set_id: 1803
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization SkinTone
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 12
   customization_slot: SkinTone
   customization_id: 120027
@@ -956,32 +371,11 @@
   name_id: 43474
   description_id: 14
   icon_set_id: 1807
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization SkinTone
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 12
   customization_slot: SkinTone
   customization_id: 120028
@@ -990,32 +384,11 @@
   name_id: 43476
   description_id: 14
   icon_set_id: 1804
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization SkinTone
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 12
   customization_slot: SkinTone
   customization_id: 120029

@@ -5,33 +5,12 @@
   name_id: 436
   description_id: 14
   icon_set_id: 1171
-  tint: 0
   cost: 600
   item_class: -1
-  required_battle_class: 0
   slot: !Customization None
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
   customization_slot: BodyModel
   customization_id: 180000
 # Human
@@ -39,33 +18,12 @@
   name_id: 4
   description_id: 14
   icon_set_id: 1173
-  tint: 0
   cost: 600
   item_class: -1
-  required_battle_class: 0
   slot: !Customization None
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
   customization_slot: BodyModel
   customization_id: 180001
 # Pantoran
@@ -73,33 +31,12 @@
   name_id: 1677
   description_id: 14
   icon_set_id: 1318
-  tint: 0
   cost: 600
   item_class: -1
-  required_battle_class: 0
   slot: !Customization None
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
   customization_slot: BodyModel
   customization_id: 180002
 # Togruta
@@ -107,33 +44,12 @@
   name_id: 439
   description_id: 14
   icon_set_id: 1175
-  tint: 0
   cost: 600
   item_class: -1
-  required_battle_class: 0
   slot: !Customization None
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
   customization_slot: BodyModel
   customization_id: 180003
 # Trandoshan
@@ -141,33 +57,12 @@
   name_id: 2174
   description_id: 14
   icon_set_id: 1849
-  tint: 0
   cost: 600
   item_class: -1
-  required_battle_class: 0
   slot: !Customization None
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
   customization_slot: BodyModel
   customization_id: 180004
 # Twi'lek
@@ -175,33 +70,12 @@
   name_id: 437
   description_id: 14
   icon_set_id: 1177
-  tint: 0
   cost: 600
   item_class: -1
-  required_battle_class: 0
   slot: !Customization None
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
   customization_slot: BodyModel
   customization_id: 180005
 # Zabrak
@@ -209,33 +83,12 @@
   name_id: 438
   description_id: 14
   icon_set_id: 1179
-  tint: 0
   cost: 600
   item_class: -1
-  required_battle_class: 0
   slot: !Customization None
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
   customization_slot: BodyModel
   customization_id: 180006
 # Start of female species
@@ -244,33 +97,12 @@
   name_id: 4
   description_id: 14
   icon_set_id: 1172
-  tint: 0
   cost: 600
   item_class: -1
-  required_battle_class: 0
   slot: !Customization None
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
   customization_slot: BodyModel
   customization_id: 180007
 # Pantoran
@@ -278,33 +110,12 @@
   name_id: 1677
   description_id: 14
   icon_set_id: 1317
-  tint: 0
   cost: 600
   item_class: -1
-  required_battle_class: 0
   slot: !Customization None
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
   customization_slot: BodyModel
   customization_id: 180008
 # Togruta
@@ -312,33 +123,12 @@
   name_id: 439
   description_id: 14
   icon_set_id: 1174
-  tint: 0
   cost: 600
   item_class: -1
-  required_battle_class: 0
   slot: !Customization None
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
   customization_slot: BodyModel
   customization_id: 180009
 # Trandoshan
@@ -346,33 +136,12 @@
   name_id: 2174
   description_id: 14
   icon_set_id: 1850
-  tint: 0
   cost: 600
   item_class: -1
-  required_battle_class: 0
   slot: !Customization None
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
   customization_slot: BodyModel
   customization_id: 180010
 # Twi'lek
@@ -380,33 +149,12 @@
   name_id: 437
   description_id: 14
   icon_set_id: 1176
-  tint: 0
   cost: 600
   item_class: -1
-  required_battle_class: 0
   slot: !Customization None
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
   customization_slot: BodyModel
   customization_id: 180011
 # Zabrak
@@ -414,32 +162,11 @@
   name_id: 438
   description_id: 14
   icon_set_id: 1178
-  tint: 0
   cost: 600
   item_class: -1
-  required_battle_class: 0
   slot: !Customization None
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
   customization_slot: BodyModel
   customization_id: 180012

@@ -4,32 +4,12 @@
   name_id: 402
   description_id: 14
   icon_set_id: 531
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: HairStyle
   customization_id: 130000
@@ -38,32 +18,12 @@
   name_id: 2584
   description_id: 14
   icon_set_id: 542
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: HairStyle
   customization_id: 130001
@@ -72,32 +32,12 @@
   name_id: 1435
   description_id: 14
   icon_set_id: 532
-  tint: 0
   cost: 20
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: HairStyle
   customization_id: 130002
@@ -106,32 +46,12 @@
   name_id: 15416
   description_id: 14
   icon_set_id: 533
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: HairStyle
   customization_id: 130003
@@ -140,32 +60,12 @@
   name_id: 404
   description_id: 14
   icon_set_id: 534
-  tint: 0
   cost: 200
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: HairStyle
   customization_id: 130004
@@ -174,32 +74,12 @@
   name_id: 406
   description_id: 14
   icon_set_id: 536
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: HairStyle
   customization_id: 130005
@@ -208,32 +88,12 @@
   name_id: 2996
   description_id: 14
   icon_set_id: 535
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: HairStyle
   customization_id: 130006
@@ -242,32 +102,12 @@
   name_id: 764
   description_id: 14
   icon_set_id: 537
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: HairStyle
   customization_id: 130007
@@ -276,32 +116,12 @@
   name_id: 15417
   description_id: 14
   icon_set_id: 538
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: HairStyle
   customization_id: 130008
@@ -310,32 +130,12 @@
   name_id: 2583
   description_id: 14
   icon_set_id: 539
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: HairStyle
   customization_id: 130009
@@ -344,32 +144,12 @@
   name_id: 15418
   description_id: 14
   icon_set_id: 540
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: HairStyle
   customization_id: 130010
@@ -378,32 +158,12 @@
   name_id: 54306
   description_id: 14
   icon_set_id: 3657
-  tint: 0
   cost: 200
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: HairStyle
   customization_id: 130011
@@ -412,32 +172,12 @@
   name_id: 15419
   description_id: 14
   icon_set_id: 541
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: HairStyle
   customization_id: 130012
@@ -446,32 +186,12 @@
   name_id: 54174
   description_id: 14
   icon_set_id: 3596
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: HairStyle
   customization_id: 130013
@@ -480,32 +200,12 @@
   name_id: 19639
   description_id: 14
   icon_set_id: 1437
-  tint: 0
   cost: 200
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: HairStyle
   customization_id: 130014
@@ -514,32 +214,12 @@
   name_id: 15413
   description_id: 14
   icon_set_id: 519
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: HairStyle
   customization_id: 130015
@@ -548,32 +228,12 @@
   name_id: 1715
   description_id: 14
   icon_set_id: 520
-  tint: 0
   cost: 20
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: HairStyle
   customization_id: 130016
@@ -582,32 +242,12 @@
   name_id: 390
   description_id: 14
   icon_set_id: 521
-  tint: 0
   cost: 200
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: HairStyle
   customization_id: 130017
@@ -616,32 +256,12 @@
   name_id: 2588
   description_id: 14
   icon_set_id: 611
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: HairStyle
   customization_id: 130018
@@ -650,32 +270,12 @@
   name_id: 15414
   description_id: 14
   icon_set_id: 612
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: HairStyle
   customization_id: 130019
@@ -684,32 +284,12 @@
   name_id: 392
   description_id: 14
   icon_set_id: 523
-  tint: 0
   cost: 200
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: HairStyle
   customization_id: 130020
@@ -718,32 +298,12 @@
   name_id: 2589
   description_id: 14
   icon_set_id: 522
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: HairStyle
   customization_id: 130021
@@ -752,32 +312,12 @@
   name_id: 15415
   description_id: 14
   icon_set_id: 524
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: HairStyle
   customization_id: 130022
@@ -786,32 +326,12 @@
   name_id: 13834
   description_id: 14
   icon_set_id: 525
-  tint: 0
   cost: 200
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: HairStyle
   customization_id: 130023
@@ -820,32 +340,12 @@
   name_id: 54305
   description_id: 14
   icon_set_id: 3656
-  tint: 0
   cost: 200
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: HairStyle
   customization_id: 130024
@@ -854,32 +354,12 @@
   name_id: 19986
   description_id: 14
   icon_set_id: 1466
-  tint: 0
   cost: 200
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: HairStyle
   customization_id: 130025
@@ -888,32 +368,12 @@
   name_id: 2591
   description_id: 14
   icon_set_id: 526
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: HairStyle
   customization_id: 130026
@@ -922,32 +382,12 @@
   name_id: 2590
   description_id: 14
   icon_set_id: 613
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: HairStyle
   customization_id: 130027
@@ -956,32 +396,12 @@
   name_id: 394
   description_id: 14
   icon_set_id: 527
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: HairStyle
   customization_id: 130028
@@ -990,32 +410,12 @@
   name_id: 54173
   description_id: 14
   icon_set_id: 3597
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: HairStyle
   customization_id: 130029
@@ -1024,32 +424,12 @@
   name_id: 2592
   description_id: 14
   icon_set_id: 614
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 1
   customization_slot: HairStyle
   customization_id: 130030
@@ -1058,32 +438,12 @@
   name_id: 1715
   description_id: 14
   icon_set_id: 588
-  tint: 0
   cost: 20
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 2
   customization_slot: HairStyle
   customization_id: 130031
@@ -1092,32 +452,12 @@
   name_id: 396
   description_id: 14
   icon_set_id: 589
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 2
   customization_slot: HairStyle
   customization_id: 130032
@@ -1126,32 +466,12 @@
   name_id: 398
   description_id: 14
   icon_set_id: 590
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 2
   customization_slot: HairStyle
   customization_id: 130033
@@ -1160,32 +480,12 @@
   name_id: 13777
   description_id: 14
   icon_set_id: 591
-  tint: 0
   cost: 30
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 2
   customization_slot: HairStyle
   customization_id: 130034
@@ -1194,32 +494,12 @@
   name_id: 15409
   description_id: 14
   icon_set_id: 592
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 2
   customization_slot: HairStyle
   customization_id: 130035
@@ -1228,32 +508,12 @@
   name_id: 13778
   description_id: 14
   icon_set_id: 593
-  tint: 0
   cost: 30
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 2
   customization_slot: HairStyle
   customization_id: 130036
@@ -1262,32 +522,12 @@
   name_id: 15410
   description_id: 14
   icon_set_id: 594
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 2
   customization_slot: HairStyle
   customization_id: 130037
@@ -1296,32 +536,12 @@
   name_id: 400
   description_id: 14
   icon_set_id: 595
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 2
   customization_slot: HairStyle
   customization_id: 130038
@@ -1330,32 +550,12 @@
   name_id: 13779
   description_id: 14
   icon_set_id: 596
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 2
   customization_slot: HairStyle
   customization_id: 130039
@@ -1364,32 +564,12 @@
   name_id: 15411
   description_id: 14
   icon_set_id: 597
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 2
   customization_slot: HairStyle
   customization_id: 130040
@@ -1398,32 +578,12 @@
   name_id: 766
   description_id: 14
   icon_set_id: 598
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 2
   customization_slot: HairStyle
   customization_id: 130041
@@ -1432,32 +592,12 @@
   name_id: 15412
   description_id: 14
   icon_set_id: 599
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 2
   customization_slot: HairStyle
   customization_id: 130042
@@ -1466,32 +606,12 @@
   name_id: 13780
   description_id: 14
   icon_set_id: 600
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 2
   customization_slot: HairStyle
   customization_id: 130043
@@ -1500,32 +620,12 @@
   name_id: 414
   description_id: 14
   icon_set_id: 567
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 3
   customization_slot: HairStyle
   customization_id: 130044
@@ -1534,32 +634,12 @@
   name_id: 15429
   description_id: 14
   icon_set_id: 564
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 3
   customization_slot: HairStyle
   customization_id: 130045
@@ -1568,32 +648,12 @@
   name_id: 13842
   description_id: 14
   icon_set_id: 563
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 3
   customization_slot: HairStyle
   customization_id: 130046
@@ -1602,32 +662,12 @@
   name_id: 15432
   description_id: 14
   icon_set_id: 570
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 3
   customization_slot: HairStyle
   customization_id: 130047
@@ -1636,32 +676,12 @@
   name_id: 13843
   description_id: 14
   icon_set_id: 566
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 3
   customization_slot: HairStyle
   customization_id: 130048
@@ -1670,32 +690,12 @@
   name_id: 13844
   description_id: 14
   icon_set_id: 568
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 3
   customization_slot: HairStyle
   customization_id: 130049
@@ -1704,32 +704,12 @@
   name_id: 15430
   description_id: 14
   icon_set_id: 565
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 3
   customization_slot: HairStyle
   customization_id: 130050
@@ -1738,32 +718,12 @@
   name_id: 15431
   description_id: 14
   icon_set_id: 569
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 3
   customization_slot: HairStyle
   customization_id: 130051
@@ -1772,32 +732,12 @@
   name_id: 15429
   description_id: 14
   icon_set_id: 556
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 3
   customization_slot: HairStyle
   customization_id: 130052
@@ -1806,32 +746,12 @@
   name_id: 13845
   description_id: 14
   icon_set_id: 555
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 3
   customization_slot: HairStyle
   customization_id: 130053
@@ -1840,32 +760,12 @@
   name_id: 15432
   description_id: 14
   icon_set_id: 562
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 3
   customization_slot: HairStyle
   customization_id: 130054
@@ -1874,32 +774,12 @@
   name_id: 13846
   description_id: 14
   icon_set_id: 558
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 3
   customization_slot: HairStyle
   customization_id: 130055
@@ -1908,32 +788,12 @@
   name_id: 13847
   description_id: 14
   icon_set_id: 560
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 3
   customization_slot: HairStyle
   customization_id: 130056
@@ -1942,32 +802,12 @@
   name_id: 1441
   description_id: 14
   icon_set_id: 559
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 3
   customization_slot: HairStyle
   customization_id: 130057
@@ -1976,32 +816,12 @@
   name_id: 15430
   description_id: 14
   icon_set_id: 557
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 3
   customization_slot: HairStyle
   customization_id: 130058
@@ -2010,32 +830,12 @@
   name_id: 15431
   description_id: 14
   icon_set_id: 561
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 3
   customization_slot: HairStyle
   customization_id: 130059
@@ -2044,32 +844,12 @@
   name_id: 15435
   description_id: 14
   icon_set_id: 580
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: HairStyle
   customization_id: 130060
@@ -2078,32 +858,12 @@
   name_id: 13860
   description_id: 14
   icon_set_id: 1166
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: HairStyle
   customization_id: 130061
@@ -2112,32 +872,12 @@
   name_id: 15434
   description_id: 14
   icon_set_id: 655
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: HairStyle
   customization_id: 130062
@@ -2146,32 +886,12 @@
   name_id: 784
   description_id: 14
   icon_set_id: 578
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: HairStyle
   customization_id: 130063
@@ -2180,32 +900,12 @@
   name_id: 13861
   description_id: 14
   icon_set_id: 579
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: HairStyle
   customization_id: 130064
@@ -2214,32 +914,12 @@
   name_id: 15433
   description_id: 14
   icon_set_id: 654
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: HairStyle
   customization_id: 130065
@@ -2248,32 +928,12 @@
   name_id: 786
   description_id: 14
   icon_set_id: 581
-  tint: 0
   cost: 300
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: HairStyle
   customization_id: 130066
@@ -2282,32 +942,12 @@
   name_id: 54307
   description_id: 14
   icon_set_id: 3658
-  tint: 0
   cost: 300
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: HairStyle
   customization_id: 130067
@@ -2316,32 +956,12 @@
   name_id: 15436
   description_id: 14
   icon_set_id: 582
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: HairStyle
   customization_id: 130068
@@ -2350,32 +970,12 @@
   name_id: 15437
   description_id: 14
   icon_set_id: 583
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: HairStyle
   customization_id: 130069
@@ -2384,32 +984,12 @@
   name_id: 788
   description_id: 14
   icon_set_id: 584
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: HairStyle
   customization_id: 130070
@@ -2418,32 +998,12 @@
   name_id: 15435
   description_id: 14
   icon_set_id: 573
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: HairStyle
   customization_id: 130071
@@ -2452,32 +1012,12 @@
   name_id: 13860
   description_id: 14
   icon_set_id: 1165
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: HairStyle
   customization_id: 130072
@@ -2486,32 +1026,12 @@
   name_id: 15434
   description_id: 14
   icon_set_id: 642
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: HairStyle
   customization_id: 130073
@@ -2520,32 +1040,12 @@
   name_id: 784
   description_id: 14
   icon_set_id: 571
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: HairStyle
   customization_id: 130074
@@ -2554,32 +1054,12 @@
   name_id: 13861
   description_id: 14
   icon_set_id: 572
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: HairStyle
   customization_id: 130075
@@ -2588,32 +1068,12 @@
   name_id: 15433
   description_id: 14
   icon_set_id: 641
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: HairStyle
   customization_id: 130076
@@ -2622,32 +1082,12 @@
   name_id: 786
   description_id: 14
   icon_set_id: 574
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: HairStyle
   customization_id: 130077
@@ -2656,32 +1096,12 @@
   name_id: 54307
   description_id: 14
   icon_set_id: 3678
-  tint: 0
   cost: 250
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: HairStyle
   customization_id: 130078
@@ -2690,32 +1110,12 @@
   name_id: 15436
   description_id: 14
   icon_set_id: 575
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: HairStyle
   customization_id: 130079
@@ -2724,32 +1124,12 @@
   name_id: 15437
   description_id: 14
   icon_set_id: 576
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: HairStyle
   customization_id: 130080
@@ -2758,32 +1138,12 @@
   name_id: 788
   description_id: 14
   icon_set_id: 577
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: HairStyle
   customization_id: 130081
@@ -2792,32 +1152,12 @@
   name_id: 13839
   description_id: 14
   icon_set_id: 549
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 5
   customization_slot: HairStyle
   customization_id: 130082
@@ -2826,32 +1166,12 @@
   name_id: 13841
   description_id: 14
   icon_set_id: 553
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 5
   customization_slot: HairStyle
   customization_id: 130083
@@ -2860,32 +1180,12 @@
   name_id: 13840
   description_id: 14
   icon_set_id: 551
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 5
   customization_slot: HairStyle
   customization_id: 130084
@@ -2894,32 +1194,12 @@
   name_id: 13839
   description_id: 14
   icon_set_id: 543
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 5
   customization_slot: HairStyle
   customization_id: 130085
@@ -2928,32 +1208,12 @@
   name_id: 13841
   description_id: 14
   icon_set_id: 547
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 5
   customization_slot: HairStyle
   customization_id: 130086
@@ -2962,32 +1222,12 @@
   name_id: 13840
   description_id: 14
   icon_set_id: 545
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 5
   customization_slot: HairStyle
   customization_id: 130087
@@ -2996,32 +1236,12 @@
   name_id: 1717
   description_id: 14
   icon_set_id: 1289
-  tint: 0
   cost: 20
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 10
   customization_slot: HairStyle
   customization_id: 130088
@@ -3030,32 +1250,12 @@
   name_id: 18037
   description_id: 14
   icon_set_id: 1290
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 10
   customization_slot: HairStyle
   customization_id: 130089
@@ -3064,32 +1264,12 @@
   name_id: 18038
   description_id: 14
   icon_set_id: 1291
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 10
   customization_slot: HairStyle
   customization_id: 130090
@@ -3098,32 +1278,12 @@
   name_id: 18039
   description_id: 14
   icon_set_id: 1292
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 10
   customization_slot: HairStyle
   customization_id: 130091
@@ -3132,32 +1292,12 @@
   name_id: 18040
   description_id: 14
   icon_set_id: 1293
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 10
   customization_slot: HairStyle
   customization_id: 130092
@@ -3166,32 +1306,12 @@
   name_id: 18041
   description_id: 14
   icon_set_id: 1294
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 10
   customization_slot: HairStyle
   customization_id: 130093
@@ -3200,32 +1320,12 @@
   name_id: 18042
   description_id: 14
   icon_set_id: 1295
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 10
   customization_slot: HairStyle
   customization_id: 130094
@@ -3234,32 +1334,12 @@
   name_id: 18043
   description_id: 14
   icon_set_id: 1296
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 10
   customization_slot: HairStyle
   customization_id: 130095
@@ -3268,32 +1348,12 @@
   name_id: 1717
   description_id: 14
   icon_set_id: 1261
-  tint: 0
   cost: 20
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 10
   customization_slot: HairStyle
   customization_id: 130096
@@ -3302,32 +1362,12 @@
   name_id: 18027
   description_id: 14
   icon_set_id: 1262
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 10
   customization_slot: HairStyle
   customization_id: 130097
@@ -3336,32 +1376,12 @@
   name_id: 18028
   description_id: 14
   icon_set_id: 1263
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 10
   customization_slot: HairStyle
   customization_id: 130098
@@ -3370,32 +1390,12 @@
   name_id: 18029
   description_id: 14
   icon_set_id: 1264
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 10
   customization_slot: HairStyle
   customization_id: 130099
@@ -3404,32 +1404,12 @@
   name_id: 18030
   description_id: 14
   icon_set_id: 1265
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 10
   customization_slot: HairStyle
   customization_id: 130100
@@ -3438,32 +1418,12 @@
   name_id: 18031
   description_id: 14
   icon_set_id: 1266
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 10
   customization_slot: HairStyle
   customization_id: 130101
@@ -3472,32 +1432,12 @@
   name_id: 18032
   description_id: 14
   icon_set_id: 1267
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 10
   customization_slot: HairStyle
   customization_id: 130102
@@ -3506,32 +1446,12 @@
   name_id: 18034
   description_id: 14
   icon_set_id: 1269
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 10
   customization_slot: HairStyle
   customization_id: 130103
@@ -3540,32 +1460,12 @@
   name_id: 18033
   description_id: 14
   icon_set_id: 1268
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 10
   customization_slot: HairStyle
   customization_id: 130104
@@ -3574,32 +1474,12 @@
   name_id: 18035
   description_id: 14
   icon_set_id: 1270
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 10
   customization_slot: HairStyle
   customization_id: 130105
@@ -3608,32 +1488,12 @@
   name_id: 18036
   description_id: 14
   icon_set_id: 1271
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 10
   customization_slot: HairStyle
   customization_id: 130106
@@ -3642,32 +1502,12 @@
   name_id: 43468
   description_id: 14
   icon_set_id: 1829
-  tint: 0
   cost: 20
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 12
   customization_slot: HairStyle
   customization_id: 130107
@@ -3676,32 +1516,12 @@
   name_id: 43469
   description_id: 14
   icon_set_id: 1830
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 12
   customization_slot: HairStyle
   customization_id: 130108
@@ -3710,32 +1530,12 @@
   name_id: 43470
   description_id: 14
   icon_set_id: 1835
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 12
   customization_slot: HairStyle
   customization_id: 130109
@@ -3744,32 +1544,12 @@
   name_id: 43471
   description_id: 14
   icon_set_id: 1831
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 12
   customization_slot: HairStyle
   customization_id: 130110
@@ -3778,32 +1558,12 @@
   name_id: 43472
   description_id: 14
   icon_set_id: 1836
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 12
   customization_slot: HairStyle
   customization_id: 130111
@@ -3812,32 +1572,12 @@
   name_id: 43467
   description_id: 14
   icon_set_id: 1832
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 12
   customization_slot: HairStyle
   customization_id: 130112
@@ -3846,32 +1586,12 @@
   name_id: 43468
   description_id: 14
   icon_set_id: 1819
-  tint: 0
   cost: 20
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 12
   customization_slot: HairStyle
   customization_id: 130113
@@ -3880,32 +1600,12 @@
   name_id: 43469
   description_id: 14
   icon_set_id: 1820
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 12
   customization_slot: HairStyle
   customization_id: 130114
@@ -3914,32 +1614,12 @@
   name_id: 43470
   description_id: 14
   icon_set_id: 1833
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 12
   customization_slot: HairStyle
   customization_id: 130115
@@ -3948,32 +1628,12 @@
   name_id: 43471
   description_id: 14
   icon_set_id: 1821
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 12
   customization_slot: HairStyle
   customization_id: 130116
@@ -3982,32 +1642,12 @@
   name_id: 43472
   description_id: 14
   icon_set_id: 1834
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 12
   customization_slot: HairStyle
   customization_id: 130117
@@ -4016,32 +1656,12 @@
   name_id: 43467
   description_id: 14
   icon_set_id: 1822
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization HairStyle
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 2
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 12
   customization_slot: HairStyle
   customization_id: 130118

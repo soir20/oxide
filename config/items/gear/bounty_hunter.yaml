@@ -4,2208 +4,800 @@
   name_id: 1313
   description_id: 14
   icon_set_id: 1088
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_EmboSuit.adr
   texture_alias: Embo
-  required_gender: 0
   item_type: 1
   category: 61
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Embo's Helmet
 - guid: 150001
   name_id: 1410
   description_id: 14
   icon_set_id: 1091
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_<race>_<gender>_Head_EmboHelmet.adr
   texture_alias: Embo
-  required_gender: 0
   item_type: 1
   category: 60
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Embo's Gloves
 - guid: 150002
   name_id: 1382
   description_id: 14
   icon_set_id: 1090
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Hands
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_<race>_<gender>_Hands_EmboGloves.adr
   texture_alias: Embo
-  required_gender: 0
   item_type: 1
   category: 62
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Embo's Boots
 - guid: 150003
   name_id: 1348
   description_id: 14
   icon_set_id: 1089
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_EmboBoots.adr
   texture_alias: Embo
-  required_gender: 0
   item_type: 1
   category: 63
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Aurra Sing's Body Suit
 - guid: 150004
   name_id: 146
   description_id: 14
   icon_set_id: 82
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_AurraSingJumpsuit.adr
   texture_alias: AurraSing
-  required_gender: 0
   item_type: 1
   category: 61
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Aurra Sing's Antenna
 - guid: 150005
   name_id: 142
   description_id: 14
   icon_set_id: 187
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Head_AurraSingAntenna.adr
   texture_alias: AurraSing
-  required_gender: 0
   item_type: 1
   category: 60
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Aurra Sing's Wrist Wraps
 - guid: 150006
   name_id: 144
   description_id: 14
   icon_set_id: 155
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Hands
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Hands_AurraSingWraps.adr
   texture_alias: AurraSing
-  required_gender: 0
   item_type: 1
   category: 62
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Aurra Sing's Boots
 - guid: 150007
   name_id: 148
   description_id: 14
   icon_set_id: 119
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_AurraSingBoots.adr
   texture_alias: AurraSing
-  required_gender: 0
   item_type: 1
   category: 63
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Assassin Aurra Sing's Suit
 - guid: 150008
   name_id: 1727
   description_id: 14
   icon_set_id: 1406
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_AurraSingSniperSuit.adr
   texture_alias: AurraSingSniper
-  required_gender: 0
   item_type: 1
   category: 61
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Assassin Aurra Sing's Mask
 - guid: 150009
   name_id: 1725
   description_id: 14
   icon_set_id: 1408
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_<race>_<gender>_Head_AurraSingSniperMask.adr
   texture_alias: AurraSingSniper
-  required_gender: 0
   item_type: 1
   category: 60
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Assassin Aurra Sing's Boots
 - guid: 150010
   name_id: 1881
   description_id: 14
   icon_set_id: 1407
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_AurraSingBoots.adr
   texture_alias: AurraSingSniper
-  required_gender: 0
   item_type: 1
   category: 63
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Robonino's Suit
 - guid: 150011
   name_id: 20055
   description_id: 14
   icon_set_id: 1472
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_RoboninoSuit.adr
   texture_alias: Robonino
-  required_gender: 0
   item_type: 1
   category: 61
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Robonino's Eyepatch
 - guid: 150012
   name_id: 20054
   description_id: 14
   icon_set_id: 1471
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_<race>_<gender>_Head_RoboninoEyepiece.adr
   texture_alias: Robonino
-  required_gender: 0
   item_type: 1
   category: 60
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Robonino's Boots
 - guid: 150013
   name_id: 20056
   description_id: 14
   icon_set_id: 1473
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_RoboninoBoots.adr
   texture_alias: Robonino
-  required_gender: 0
   item_type: 1
   category: 63
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Chata Hyoki's Suit
 - guid: 150014
   name_id: 20052
   description_id: 14
   icon_set_id: 1469
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_ChataHyokiSuit.adr
   texture_alias: ChataHyoki
-  required_gender: 0
   item_type: 1
   category: 61
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Chata Hyoki's Helmet
 - guid: 150015
   name_id: 20050
   description_id: 14
   icon_set_id: 1467
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Head_ChataHyokiHeadgear.adr
   texture_alias: ChataHyoki
-  required_gender: 0
   item_type: 1
   category: 60
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Chata Hyoki's Gloves
 - guid: 150016
   name_id: 20051
   description_id: 14
   icon_set_id: 1468
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Hands
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Hands_ChataHyokiGuantlets.adr
   texture_alias: ChataHyoki
-  required_gender: 0
   item_type: 1
   category: 62
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Chata Hyoki's Boots
 - guid: 150017
   name_id: 20053
   description_id: 14
   icon_set_id: 1470
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_ChataHyokiBoots.adr
   texture_alias: ChataHyoki
-  required_gender: 0
   item_type: 1
   category: 63
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Cad Bane's Jacket
 - guid: 150018
   name_id: 8510
   description_id: 14
   icon_set_id: 84
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_CadBaneJacket.adr
   texture_alias: CadBane
-  required_gender: 0
   item_type: 1
   category: 61
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Cad Bane's Hat
 - guid: 150019
   name_id: 8513
   description_id: 14
   icon_set_id: 189
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_<race>_<gender>_Head_CadBaneHat.adr
   texture_alias: CadBane
-  required_gender: 0
   item_type: 1
   category: 60
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Cad Bane's Gloves
 - guid: 150020
   name_id: 8512
   description_id: 14
   icon_set_id: 157
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Hands
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_<race>_<gender>_Hands_CadBaneGauntlets.adr
   texture_alias: CadBane
-  required_gender: 0
   item_type: 1
   category: 62
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Cad Bane's Boots
 - guid: 150021
   name_id: 8511
   description_id: 14
   icon_set_id: 124
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_CadBaneBoots.adr
   texture_alias: CadBane
-  required_gender: 0
   item_type: 1
   category: 63
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Cad Bane's Fugitive Vest
 - guid: 150022
   name_id: 4586
   description_id: 14
   icon_set_id: 2652
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_CadBaneSeason4Vest.adr
   texture_alias: CadBane
-  required_gender: 0
   item_type: 1
   category: 61
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Cad Bane's Fugitive Hat
 - guid: 150023
   name_id: 4584
   description_id: 14
   icon_set_id: 2650
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_<race>_<gender>_Head_CadBaneSeason4Hat.adr
   texture_alias: CadBane
-  required_gender: 0
   item_type: 1
   category: 60
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Cad Bane's Fugitive Gloves
 - guid: 150024
   name_id: 4585
   description_id: 14
   icon_set_id: 2651
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Hands
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_<race>_<gender>_Hands_CadBaneSeason4Gloves.adr
   texture_alias: CadBane
-  required_gender: 0
   item_type: 1
   category: 62
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Cad Bane's Fugitive Boots
 - guid: 150025
   name_id: 4587
   description_id: 14
   icon_set_id: 2653
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_CadBaneSeason4Boots.adr
   texture_alias: CadBane
-  required_gender: 0
   item_type: 1
   category: 63
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Quarzite Boba Fett's Suit
 - guid: 150026
   name_id: 4703
   description_id: 14
   icon_set_id: 2751
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_BobaFettYoungSuit.adr
   texture_alias: BobaFettYoung
-  required_gender: 0
   item_type: 1
   category: 61
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Quarzite Boba Fett's Helmet
 - guid: 150027
   name_id: 4701
   description_id: 14
   icon_set_id: 2749
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Head_BobaFettYoungHelmet.adr
   texture_alias: BobaFettYoung
-  required_gender: 0
   item_type: 1
   category: 60
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Quarzite Boba Fett's Gauntlets
 - guid: 150028
   name_id: 4702
   description_id: 14
   icon_set_id: 2750
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Hands
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Hands_BobaFettYoungGloves.adr
   texture_alias: BobaFettYoung
-  required_gender: 0
   item_type: 1
   category: 62
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Quarzite Boba Fett's Boots
 - guid: 150029
   name_id: 4704
   description_id: 14
   icon_set_id: 2752
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_BobaFettYoungBoots.adr
   texture_alias: BobaFettYoung
-  required_gender: 0
   item_type: 1
   category: 63
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Subtram Hunter Suit
 - guid: 150030
   name_id: 60670
   description_id: 14
   icon_set_id: 3781
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_BobaFettYoungSuit.adr
   texture_alias: BobaGreen
-  required_gender: 0
   item_type: 1
   category: 61
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Subtram Hunter Helmet
 - guid: 150031
   name_id: 60668
   description_id: 14
   icon_set_id: 3779
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Head_BobaFettYoungHelmet.adr
   texture_alias: BobaGreen
-  required_gender: 0
   item_type: 1
   category: 60
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Subtram Hunter Gauntlets
 - guid: 150032
   name_id: 60669
   description_id: 14
   icon_set_id: 3780
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Hands
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Hands_BobaFettYoungGloves.adr
   texture_alias: BobaGreen
-  required_gender: 0
   item_type: 1
   category: 62
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Subtram Hunter Boots
 - guid: 150033
   name_id: 60671
   description_id: 14
   icon_set_id: 3782
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_BobaFettYoungBoots.adr
   texture_alias: BobaGreen
-  required_gender: 0
   item_type: 1
   category: 63
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Dengar's Armor
 - guid: 150034
   name_id: 4683
   description_id: 14
   icon_set_id: 2737
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_DengarSuit.adr
   texture_alias: Dengar
-  required_gender: 0
   item_type: 1
   category: 61
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Dengar's Headwrap
 - guid: 150035
   name_id: 4681
   description_id: 14
   icon_set_id: 2735
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_<race>_<gender>_Head_DengarHood.adr
   texture_alias: Dengar
-  required_gender: 0
   item_type: 1
   category: 60
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Dengar's Gloves
 - guid: 150036
   name_id: 4682
   description_id: 14
   icon_set_id: 2736
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Hands
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Hands_DengarGloves.adr
   texture_alias: Dengar
-  required_gender: 0
   item_type: 1
   category: 62
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Dengar's Boots
 - guid: 150037
   name_id: 4684
   description_id: 14
   icon_set_id: 2738
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_DengarBoots.adr
   texture_alias: Dengar
-  required_gender: 0
   item_type: 1
   category: 63
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Asajj Ventress' Bounty Hunter Suit
 - guid: 150038
   name_id: 4671
   description_id: 14
   icon_set_id: 2731
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_AsajjVentressSeason4Suit.adr
   texture_alias: AsajjSeason4
-  required_gender: 0
   item_type: 1
   category: 61
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Asajj Ventress' Bounty Hunter Helmet
 - guid: 150039
   name_id: 54413
   description_id: 14
   icon_set_id: 3684
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_<race>_<gender>_Head_VentressMask.adr
   texture_alias: VentressMask
-  required_gender: 0
   item_type: 1
   category: 60
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Asajj Ventress' Bounty Hunter Gloves
 - guid: 150040
   name_id: 4670
   description_id: 14
   icon_set_id: 2730
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Hands
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Hands_AsajjVentressSeason4Gloves.adr
   texture_alias: AsajjSeason4
-  required_gender: 0
   item_type: 1
   category: 62
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Asajj Ventress' Bounty Hunter Boots
 - guid: 150041
   name_id: 4672
   description_id: 14
   icon_set_id: 2732
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_AsajjVentressSeason4Boots.adr
   texture_alias: AsajjSeason4
-  required_gender: 0
   item_type: 1
   category: 63
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Derrown's Bounty Suit
 - guid: 150042
   name_id: 4625
   description_id: 14
   icon_set_id: 2690
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_DerrownSuit.adr
   texture_alias: Derrown
-  required_gender: 0
   item_type: 1
   category: 61
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Derrown's Bounty Helm
 - guid: 150043
   name_id: 4623
   description_id: 14
   icon_set_id: 2688
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_<race>_<gender>_Head_DerrownHelm.adr
   texture_alias: Derrown
-  required_gender: 0
   item_type: 1
   category: 60
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Derrown's Bounty Gloves
 - guid: 150044
   name_id: 4624
   description_id: 14
   icon_set_id: 2689
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Hands
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_<race>_<gender>_Hands_DerrownGloves.adr
   texture_alias: Derrown
-  required_gender: 0
   item_type: 1
   category: 62
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Derrown's Bounty Boots
 - guid: 150045
   name_id: 4626
   description_id: 14
   icon_set_id: 2691
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_EmboBoots.adr
   texture_alias: Derrown
-  required_gender: 0
   item_type: 1
   category: 63
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Twazzi's Bounty Suit
 - guid: 150046
   name_id: 4614
   description_id: 14
   icon_set_id: 2682
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_TwazziSuit.adr
   texture_alias: Twazzi
-  required_gender: 0
   item_type: 1
   category: 61
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Twazzi's Bounty Gloves
 - guid: 150047
   name_id: 4613
   description_id: 14
   icon_set_id: 2681
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Hands
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_<race>_<gender>_Hands_TwazziGloves.adr
   texture_alias: Twazzi
-  required_gender: 0
   item_type: 1
   category: 62
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Twazzi's Bounty Boots
 - guid: 150048
   name_id: 4615
   description_id: 14
   icon_set_id: 2683
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_TwazziBoots.adr
   texture_alias: Twazzi
-  required_gender: 0
   item_type: 1
   category: 63
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Rako Hardeen's Fugitive Vest
 - guid: 150049
   name_id: 4593
   description_id: 14
   icon_set_id: 2657
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_RakoHardeenUniform.adr
   texture_alias: RakoHardeen
-  required_gender: 0
   item_type: 1
   category: 61
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Rako Hardeen's Fugitive Helmet
 - guid: 150050
   name_id: 4591
   description_id: 14
   icon_set_id: 2655
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_<race>_<gender>_Head_RakoHardeenHelm.adr
   texture_alias: RakoHardeen
-  required_gender: 0
   item_type: 1
   category: 60
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Rako Hardeen's Fugitive Gloves
 - guid: 150051
   name_id: 4592
   description_id: 14
   icon_set_id: 2656
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Hands
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Hands_GeneralSnowGauntlets.adr
   texture_alias: RakoHardeen
-  required_gender: 0
   item_type: 1
   category: 62
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Rako Hardeen's Fugitive Boots
 - guid: 150052
   name_id: 4594
   description_id: 14
   icon_set_id: 2658
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_RakoHardeenBoots.adr
   texture_alias: RakoHardeen
-  required_gender: 0
   item_type: 1
   category: 63
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Corrupt Warlord Duster
 - guid: 150053
   name_id: 52806
   description_id: 14
   icon_set_id: 3139
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_MercenaryAffiliationSuit.adr
   texture_alias: Mercenary
-  required_gender: 0
   item_type: 1
   category: 61
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Corrupt Warlord Visor
 - guid: 150054
   name_id: 52809
   description_id: 14
   icon_set_id: 3142
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Head_MercenaryAffiliationGoggles.adr
   texture_alias: Mercenary
-  required_gender: 0
   item_type: 1
   category: 60
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Corrupt Warlord Gloves
 - guid: 150055
   name_id: 52807
   description_id: 14
   icon_set_id: 3141
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Hands
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Hands_MercenaryAffiliationGloves.adr
   texture_alias: Mercenary
-  required_gender: 0
   item_type: 1
   category: 62
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Corrupt Warlord Boots
 - guid: 150056
   name_id: 52808
   description_id: 14
   icon_set_id: 3140
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_MercenaryAffiliationBoots.adr
   texture_alias: Mercenary
-  required_gender: 0
   item_type: 1
   category: 63
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Latts Razzi Suit
 - guid: 150057
   name_id: 4821
   description_id: 14
   icon_set_id: 2855
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_LattsRazziSuit.adr
   texture_alias: LattsRazzi
-  required_gender: 0
   item_type: 1
   category: 61
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Latts Razzi Gloves
 - guid: 150058
   name_id: 4820
   description_id: 14
   icon_set_id: 2854
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Hands
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_<race>_<gender>_Hands_LattsRazziGloves.adr
   texture_alias: LattsRazzi
-  required_gender: 0
   item_type: 1
   category: 62
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Latts Razzi Boots
 - guid: 150059
   name_id: 4822
   description_id: 14
   icon_set_id: 2856
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_<race>_<gender>_Feet_LattsRazziBoots.adr
   texture_alias: LattsRazzi
-  required_gender: 0
   item_type: 1
   category: 63
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Bossk's Jumpsuit
 - guid: 150060
   name_id: 4739
   description_id: 14
   icon_set_id: 2779
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_BosskSuit.adr
   texture_alias: Bossk
-  required_gender: 0
   item_type: 1
   category: 61
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Boba Fett's Armor
 - guid: 150061
   name_id: 154
   description_id: 14
   icon_set_id: 83
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_BobaSuit.adr
   texture_alias: BobaFett
-  required_gender: 0
   item_type: 1
   category: 61
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Boba Fett's Helmet
 - guid: 150062
   name_id: 150
   description_id: 14
   icon_set_id: 188
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Head_BobaHelmet.adr
   texture_alias: BobaFett
-  required_gender: 0
   item_type: 1
   category: 60
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Boba Fett's Gloves
 - guid: 150063
   name_id: 152
   description_id: 14
   icon_set_id: 156
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Hands
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Hands_BobaGloves.adr
   texture_alias: BobaFett
-  required_gender: 0
   item_type: 1
   category: 62
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Boba Fett's Boots
 - guid: 150064
   name_id: 156
   description_id: 14
   icon_set_id: 120
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_BobaSneakers.adr
   texture_alias: BobaFett
-  required_gender: 0
   item_type: 1
   category: 63
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0

@@ -4,32 +4,12 @@
   name_id: 792
   description_id: 14
   icon_set_id: 607
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 2
   customization_slot: FacePattern
   customization_id: 170000
@@ -38,32 +18,12 @@
   name_id: 590
   description_id: 14
   icon_set_id: 604
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 2
   customization_slot: FacePattern
   customization_id: 170001
@@ -72,32 +32,12 @@
   name_id: 584
   description_id: 14
   icon_set_id: 601
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 2
   customization_slot: FacePattern
   customization_id: 170002
@@ -106,32 +46,12 @@
   name_id: 588
   description_id: 14
   icon_set_id: 602
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 2
   customization_slot: FacePattern
   customization_id: 170003
@@ -140,32 +60,12 @@
   name_id: 54304
   description_id: 14
   icon_set_id: 3655
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 2
   customization_slot: FacePattern
   customization_id: 170004
@@ -174,32 +74,12 @@
   name_id: 576
   description_id: 14
   icon_set_id: 605
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 2
   customization_slot: FacePattern
   customization_id: 170005
@@ -208,32 +88,12 @@
   name_id: 2600
   description_id: 14
   icon_set_id: 588
-  tint: 0
   cost: 20
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 2
   customization_slot: FacePattern
   customization_id: 170006
@@ -242,32 +102,12 @@
   name_id: 592
   description_id: 14
   icon_set_id: 606
-  tint: 0
   cost: 200
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 2
   customization_slot: FacePattern
   customization_id: 170007
@@ -276,32 +116,12 @@
   name_id: 586
   description_id: 14
   icon_set_id: 603
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 2
   customization_slot: FacePattern
   customization_id: 170008
@@ -310,32 +130,12 @@
   name_id: 582
   description_id: 14
   icon_set_id: 608
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 2
   customization_slot: FacePattern
   customization_id: 170009
@@ -344,32 +144,12 @@
   name_id: 580
   description_id: 14
   icon_set_id: 609
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 2
   customization_slot: FacePattern
   customization_id: 170010
@@ -378,65 +158,23 @@
   name_id: 578
   description_id: 14
   icon_set_id: 610
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 2
   customization_slot: FacePattern
   customization_id: 170011
 - guid: 50012
-  name_id: 0
   description_id: 14
-  icon_set_id: 0
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
   required_gender: 1
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 2
   customization_slot: FacePattern
   customization_id: 170012
@@ -445,32 +183,11 @@
   name_id: 13853
   description_id: 14
   icon_set_id: 636
-  tint: 0
   cost: 150
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 3
   customization_slot: FacePattern
   customization_id: 170013
@@ -479,32 +196,11 @@
   name_id: 13854
   description_id: 14
   icon_set_id: 635
-  tint: 0
   cost: 300
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 3
   customization_slot: FacePattern
   customization_id: 170014
@@ -513,32 +209,11 @@
   name_id: 13849
   description_id: 14
   icon_set_id: 633
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 3
   customization_slot: FacePattern
   customization_id: 170015
@@ -547,32 +222,11 @@
   name_id: 13850
   description_id: 14
   icon_set_id: 634
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 3
   customization_slot: FacePattern
   customization_id: 170016
@@ -581,32 +235,11 @@
   name_id: 13856
   description_id: 14
   icon_set_id: 637
-  tint: 0
   cost: 150
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 3
   customization_slot: FacePattern
   customization_id: 170017
@@ -615,32 +248,11 @@
   name_id: 13857
   description_id: 14
   icon_set_id: 638
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 3
   customization_slot: FacePattern
   customization_id: 170018
@@ -649,32 +261,11 @@
   name_id: 13858
   description_id: 14
   icon_set_id: 640
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 3
   customization_slot: FacePattern
   customization_id: 170019
@@ -683,32 +274,11 @@
   name_id: 13848
   description_id: 14
   icon_set_id: 639
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 3
   customization_slot: FacePattern
   customization_id: 170020
@@ -717,32 +287,11 @@
   name_id: 2600
   description_id: 14
   icon_set_id: 1164
-  tint: 0
   cost: 20
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 3
   customization_slot: FacePattern
   customization_id: 170021
@@ -751,32 +300,11 @@
   name_id: 15438
   description_id: 14
   icon_set_id: 656
-  tint: 0
   cost: 500
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: FacePattern
   customization_id: 170022
@@ -785,32 +313,11 @@
   name_id: 13873
   description_id: 14
   icon_set_id: 657
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: FacePattern
   customization_id: 170023
@@ -819,32 +326,11 @@
   name_id: 13872
   description_id: 14
   icon_set_id: 658
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: FacePattern
   customization_id: 170024
@@ -853,32 +339,11 @@
   name_id: 33042
   description_id: 14
   icon_set_id: 1633
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: FacePattern
   customization_id: 170025
@@ -887,32 +352,11 @@
   name_id: 13866
   description_id: 14
   icon_set_id: 662
-  tint: 0
   cost: 200
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: FacePattern
   customization_id: 170026
@@ -921,32 +365,11 @@
   name_id: 33044
   description_id: 14
   icon_set_id: 1634
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: FacePattern
   customization_id: 170027
@@ -955,32 +378,11 @@
   name_id: 13870
   description_id: 14
   icon_set_id: 660
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: FacePattern
   customization_id: 170028
@@ -989,32 +391,11 @@
   name_id: 13867
   description_id: 14
   icon_set_id: 661
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: FacePattern
   customization_id: 170029
@@ -1023,32 +404,11 @@
   name_id: 13871
   description_id: 14
   icon_set_id: 663
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: FacePattern
   customization_id: 170030
@@ -1057,32 +417,11 @@
   name_id: 33046
   description_id: 14
   icon_set_id: 1635
-  tint: 0
   cost: 200
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: FacePattern
   customization_id: 170031
@@ -1091,32 +430,11 @@
   name_id: 33048
   description_id: 14
   icon_set_id: 1636
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: FacePattern
   customization_id: 170032
@@ -1125,32 +443,11 @@
   name_id: 13865
   description_id: 14
   icon_set_id: 664
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: FacePattern
   customization_id: 170033
@@ -1159,32 +456,11 @@
   name_id: 15439
   description_id: 14
   icon_set_id: 665
-  tint: 0
   cost: 600
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: FacePattern
   customization_id: 170034
@@ -1193,32 +469,11 @@
   name_id: 13869
   description_id: 14
   icon_set_id: 666
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: FacePattern
   customization_id: 170035
@@ -1227,32 +482,11 @@
   name_id: 13868
   description_id: 14
   icon_set_id: 659
-  tint: 0
   cost: 600
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 4
   customization_slot: FacePattern
   customization_id: 170036
@@ -1261,32 +495,11 @@
   name_id: 598
   description_id: 14
   icon_set_id: 620
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 5
   customization_slot: FacePattern
   customization_id: 170037
@@ -1295,32 +508,11 @@
   name_id: 596
   description_id: 14
   icon_set_id: 621
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 5
   customization_slot: FacePattern
   customization_id: 170038
@@ -1329,32 +521,11 @@
   name_id: 600
   description_id: 14
   icon_set_id: 622
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 5
   customization_slot: FacePattern
   customization_id: 170039
@@ -1363,32 +534,11 @@
   name_id: 604
   description_id: 14
   icon_set_id: 1372
-  tint: 0
   cost: 150
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 5
   customization_slot: FacePattern
   customization_id: 170040
@@ -1397,32 +547,11 @@
   name_id: 1870
   description_id: 14
   icon_set_id: 1371
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 5
   customization_slot: FacePattern
   customization_id: 170041
@@ -1431,32 +560,11 @@
   name_id: 15427
   description_id: 14
   icon_set_id: 623
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 5
   customization_slot: FacePattern
   customization_id: 170042
@@ -1465,32 +573,11 @@
   name_id: 602
   description_id: 14
   icon_set_id: 624
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 5
   customization_slot: FacePattern
   customization_id: 170043
@@ -1499,32 +586,11 @@
   name_id: 13877
   description_id: 14
   icon_set_id: 619
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 5
   customization_slot: FacePattern
   customization_id: 170044
@@ -1533,32 +599,11 @@
   name_id: 18064
   description_id: 14
   icon_set_id: 1297
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 10
   customization_slot: FacePattern
   customization_id: 170045
@@ -1567,32 +612,11 @@
   name_id: 18062
   description_id: 14
   icon_set_id: 1298
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 10
   customization_slot: FacePattern
   customization_id: 170046
@@ -1601,32 +625,11 @@
   name_id: 18063
   description_id: 14
   icon_set_id: 1299
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 10
   customization_slot: FacePattern
   customization_id: 170047
@@ -1635,32 +638,11 @@
   name_id: 18058
   description_id: 14
   icon_set_id: 1300
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 10
   customization_slot: FacePattern
   customization_id: 170048
@@ -1669,32 +651,11 @@
   name_id: 18069
   description_id: 14
   icon_set_id: 1301
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 10
   customization_slot: FacePattern
   customization_id: 170049
@@ -1703,32 +664,11 @@
   name_id: 18059
   description_id: 14
   icon_set_id: 1302
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 10
   customization_slot: FacePattern
   customization_id: 170050
@@ -1737,32 +677,11 @@
   name_id: 18061
   description_id: 14
   icon_set_id: 1303
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 10
   customization_slot: FacePattern
   customization_id: 170051
@@ -1771,32 +690,11 @@
   name_id: 18065
   description_id: 14
   icon_set_id: 1304
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 10
   customization_slot: FacePattern
   customization_id: 170052
@@ -1805,32 +703,11 @@
   name_id: 18060
   description_id: 14
   icon_set_id: 1305
-  tint: 0
   cost: 200
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 10
   customization_slot: FacePattern
   customization_id: 170053
@@ -1839,32 +716,11 @@
   name_id: 18066
   description_id: 14
   icon_set_id: 1306
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 10
   customization_slot: FacePattern
   customization_id: 170054
@@ -1873,32 +729,11 @@
   name_id: 18068
   description_id: 14
   icon_set_id: 1307
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 10
   customization_slot: FacePattern
   customization_id: 170055
@@ -1907,32 +742,11 @@
   name_id: 18067
   description_id: 14
   icon_set_id: 1308
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 10
   customization_slot: FacePattern
   customization_id: 170056
@@ -1941,32 +755,11 @@
   name_id: 43477
   description_id: 14
   icon_set_id: 1823
-  tint: 0
   cost: 500
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 12
   customization_slot: FacePattern
   customization_id: 170057
@@ -1975,32 +768,11 @@
   name_id: 43478
   description_id: 14
   icon_set_id: 1824
-  tint: 0
   cost: 200
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 12
   customization_slot: FacePattern
   customization_id: 170058
@@ -2009,32 +781,11 @@
   name_id: 43479
   description_id: 14
   icon_set_id: 1825
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 12
   customization_slot: FacePattern
   customization_id: 170059
@@ -2043,32 +794,11 @@
   name_id: 43480
   description_id: 14
   icon_set_id: 1826
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 12
   customization_slot: FacePattern
   customization_id: 170060
@@ -2077,32 +807,11 @@
   name_id: 43481
   description_id: 14
   icon_set_id: 1827
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 12
   customization_slot: FacePattern
   customization_id: 170061
@@ -2111,32 +820,11 @@
   name_id: 43482
   description_id: 14
   icon_set_id: 1828
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization FacePattern
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 12
   customization_slot: FacePattern
   customization_id: 170062

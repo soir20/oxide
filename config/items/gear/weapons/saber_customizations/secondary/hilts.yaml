@@ -4,1800 +4,603 @@
   name_id: 306
   description_id: 14
   icon_set_id: 221
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_AaylaSecura.adr
   texture_alias: AaylaSecura
-  required_gender: 0
   item_type: 25
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Adi Gallia's Lightsaber
 - guid: 140011
   name_id: 8768
   description_id: 14
   icon_set_id: 222
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_AdiGallia.adr
   texture_alias: AdiGallia
-  required_gender: 0
   item_type: 25
-  category: 0
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # 'Umbara Academy: Ghost Attack 1'
 - guid: 140013
   name_id: 51036
   description_id: 14
   icon_set_id: 425
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_AhsokaV2_Ghost.adr
   texture_alias: Ahsoka
-  required_gender: 0
   item_type: 25
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Ahsoka Tano's Offhand Lightsaber
 - guid: 140014
   name_id: 19893
   description_id: 14
   icon_set_id: 1459
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment SecondaryWeapon
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_AhsokaV2_LEFT.adr
   texture_alias: Ahsoka
-  required_gender: 0
   item_type: 25
   category: 64
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Anakin Skywalker's Lightsaber
 - guid: 140015
   name_id: 8762
   description_id: 14
   icon_set_id: 223
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_Anakin.adr
   texture_alias: Anakin
-  required_gender: 0
   item_type: 25
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # 'Umbara Academy: Ghost Attack 2'
 - guid: 140016
   name_id: 51037
   description_id: 14
   icon_set_id: 425
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_Anakin_Ghost.adr
   texture_alias: Anakin
-  required_gender: 0
   item_type: 25
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Barriss Offee's Lightsaber
 - guid: 140017
   name_id: 14786
   description_id: 14
   icon_set_id: 508
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_BarrissOffee.adr
   texture_alias: BarrissOffee
-  required_gender: 0
   item_type: 25
-  category: 0
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Byph's Lightsaber
 - guid: 140018
   name_id: 53615
   description_id: 14
   icon_set_id: 3207
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_Byph.adr
   texture_alias: Byph
-  required_gender: 0
   item_type: 25
-  category: 0
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Miko Jedi Lightsaber
 - guid: 140019
   name_id: 14788
   description_id: 14
   icon_set_id: 509
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_CompressedCrystal.adr
   texture_alias: CompressedCrystal
-  required_gender: 0
   item_type: 25
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Sith Infiltrator Lightsaber
 - guid: 140020
   name_id: 4976
   description_id: 14
   icon_set_id: 3045
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_DarkForcePhaseI.adr
   texture_alias: DarkForcePhaseI
-  required_gender: 0
   item_type: 25
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Pre Vizsla's Darksaber
 - guid: 140021
   name_id: 8763
   description_id: 14
   icon_set_id: 224
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_Darksaber.adr
   texture_alias: PreVizsla
-  required_gender: 0
   item_type: 25
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Dolovite Darksaber
 - guid: 140022
   name_id: 54592
   description_id: 14
   icon_set_id: 3829
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_Darksaber.adr
   texture_alias: Gold
-  required_gender: 0
   item_type: 25
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Phrik Darksaber
 - guid: 140023
   name_id: 54521
   description_id: 14
   icon_set_id: 3791
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_Darksaber_Ancient.adr
   texture_alias: PreVizsla
-  required_gender: 0
   item_type: 25
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Darth Maul's Lightsaber
 - guid: 140024
   name_id: 4718
   description_id: 14
   icon_set_id: 2764
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_DarthMaul.adr
   texture_alias: Maul
-  required_gender: 0
   item_type: 25
-  category: 0
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Count Dooku's Lightsaber
 - guid: 140025
   name_id: 8766
   description_id: 14
   icon_set_id: 225
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_Dooku.adr
   texture_alias: Dooku
-  required_gender: 0
   item_type: 25
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Eeth Koth's Lightsaber
 - guid: 140026
   name_id: 2440
   description_id: 14
   icon_set_id: 226
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_EethKoth.adr
   texture_alias: EethKoth
-  required_gender: 0
   item_type: 25
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Jedi Exile Lightsaber
 - guid: 140027
   name_id: 54602
   description_id: 14
   icon_set_id: 3835
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_Exile.adr
   texture_alias: Exile
-  required_gender: 0
   item_type: 25
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Forked Lightsaber
 - guid: 140028
   name_id: 54593
   description_id: 14
   icon_set_id: 3828
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_Forked.adr
   texture_alias: Forked
-  required_gender: 0
   item_type: 25
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Ganodi's Lightsaber
 - guid: 140029
   name_id: 53620
   description_id: 14
   icon_set_id: 3212
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_Ganodi.adr
   texture_alias: Ganodi
-  required_gender: 0
   item_type: 25
-  category: 0
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Ultimate FX Gungan Lightsaber
 - guid: 140030
   name_id: 2650
   description_id: 14
   icon_set_id: 2136
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_Gungan.adr
   texture_alias: Gungan
-  required_gender: 0
   item_type: 25
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Gungi's Lightsaber
 - guid: 140031
   name_id: 53616
   description_id: 14
   icon_set_id: 3208
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_Gungi.adr
   texture_alias: Gundi
-  required_gender: 0
   item_type: 25
-  category: 0
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Jocasta Nu's Lightsaber
 - guid: 140032
   name_id: 8769
   description_id: 14
   icon_set_id: 227
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_Jocasta.adr
   texture_alias: Jocasta
-  required_gender: 0
   item_type: 25
-  category: 0
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Kashyyyk Lightsaber
 - guid: 140033
   name_id: 44507
   description_id: 14
   icon_set_id: 1993
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_Kashyyk.adr
   texture_alias: Kashyyk
-  required_gender: 0
   item_type: 25
-  category: 0
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Mestare Lightsaber
 - guid: 140034
   name_id: 44850
   description_id: 14
   icon_set_id: 510
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_Katana.adr
   texture_alias: SamuraiJedi
-  required_gender: 0
   item_type: 25
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Katooni's Lightsaber
 - guid: 140035
   name_id: 53621
   description_id: 14
   icon_set_id: 3213
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_Katooni.adr
   texture_alias: Katooni
-  required_gender: 0
   item_type: 25
-  category: 0
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Ki-Adi-Mundi's Lightsaber
 - guid: 140036
   name_id: 2444
   description_id: 14
   icon_set_id: 228
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_KiAdiMundi.adr
   texture_alias: KiAdiMundi
-  required_gender: 0
   item_type: 25
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Kit Fisto's Lightsaber
 - guid: 140037
   name_id: 8767
   description_id: 14
   icon_set_id: 229
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_KitFisto.adr
   texture_alias: KitFisto
-  required_gender: 0
   item_type: 25
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Kyle Katarn's Lightsaber
 - guid: 140038
   name_id: 974
   description_id: 14
   icon_set_id: 511
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_KyleKatarn.adr
   texture_alias: KyleKatarn
-  required_gender: 0
   item_type: 25
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Sulon Jedi Lightsaber
 - guid: 140039
   name_id: 60157
   description_id: 14
   icon_set_id: 511
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_KyleKatarn.adr
   texture_alias: KyleKatarn
-  required_gender: 0
   item_type: 25
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Luke Skywalker's Lightsaber
 - guid: 140040
   name_id: 8770
   description_id: 14
   icon_set_id: 230
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_LukeSkywalker.adr
   texture_alias: LukeSkywalker
-  required_gender: 0
   item_type: 25
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Luminara Unduli's Lightsaber
 - guid: 140041
   name_id: 8771
   description_id: 14
   icon_set_id: 231
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_Luminara.adr
   texture_alias: Luminara
-  required_gender: 0
   item_type: 25
-  category: 0
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Plo Koon's Lightsaber
 - guid: 140042
   name_id: 308
   description_id: 14
   icon_set_id: 232
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_Luminara.adr
   texture_alias: PloKoon
-  required_gender: 0
   item_type: 25
-  category: 0
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Mace Windu's Lightsaber
 - guid: 140043
   name_id: 8772
   description_id: 14
   icon_set_id: 233
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_MaceWindu.adr
   texture_alias: MaceWindu
-  required_gender: 0
   item_type: 25
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # 'Umbara Academy: Ghost Attack 3'
 - guid: 140044
   name_id: 51038
   description_id: 14
   icon_set_id: 425
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_MaceWindu_Ghost.adr
   texture_alias: MaceWindu
-  required_gender: 0
   item_type: 25
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Obi-Wan Kenobi's Lightsaber
 - guid: 140045
   name_id: 8773
   description_id: 14
   icon_set_id: 234
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_ObiWan.adr
   texture_alias: ObiWan
-  required_gender: 0
   item_type: 25
-  category: 0
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Petro's Lightsaber
 - guid: 140046
   name_id: 53617
   description_id: 14
   icon_set_id: 3209
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_Petro.adr
   texture_alias: Petro
-  required_gender: 0
   item_type: 25
-  category: 0
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Shotem Jedi Lightsaber
 - guid: 140047
   name_id: 976
   description_id: 14
   icon_set_id: 512
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_Pulsating.adr
   texture_alias: PulsatingCrystal
-  required_gender: 0
   item_type: 25
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Shotem Master Lightsaber
 - guid: 140048
   name_id: 60678
   description_id: 14
   icon_set_id: 3788
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_Pulsating.adr
   texture_alias: PulsingCrystalBlue
-  required_gender: 0
   item_type: 25
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Quinlan Vos' Lightsaber
 - guid: 140049
   name_id: 19637
   description_id: 14
   icon_set_id: 1436
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_QuinlanVos.adr
   texture_alias: QuinlanVos
-  required_gender: 0
   item_type: 25
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Saesee Tiin's Lightsaber
 - guid: 140050
   name_id: 43190
   description_id: 14
   icon_set_id: 1792
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_SaeseeTiin.adr
   texture_alias: SaeseeTiin
-  required_gender: 0
   item_type: 25
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Shaak Ti's Lightsaber
 - guid: 140051
   name_id: 14792
   description_id: 14
   icon_set_id: 513
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_ShaakTi.adr
   texture_alias: ShaakTi
-  required_gender: 0
   item_type: 25
-  category: 0
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Darth Sidious' Lightsaber
 - guid: 140052
   name_id: 8774
   description_id: 14
   icon_set_id: 235
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_Sidious.adr
   texture_alias: Sidious
-  required_gender: 0
   item_type: 25
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Bravis Sith Lightsaber
 - guid: 140053
   name_id: 978
   description_id: 14
   icon_set_id: 514
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_SparkingCrystal.adr
   texture_alias: SparkingCrystal
-  required_gender: 0
   item_type: 25
-  category: 0
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Crimson Prowler Lightsaber
 - guid: 140054
   name_id: 60198
   description_id: 14
   icon_set_id: 3721
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_SparkingCrystal.adr
   texture_alias: DarkKnight
-  required_gender: 0
   item_type: 25
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Ermi Jedi Lightsaber
 - guid: 140055
   name_id: 980
   description_id: 14
   icon_set_id: 515
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_Spiraling.adr
   texture_alias: Spiraling
-  required_gender: 0
   item_type: 25
-  category: 0
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Talz Lightsaber
 - guid: 140056
   name_id: 4824
   description_id: 14
   icon_set_id: 2863
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_Talz.adr
   texture_alias: Talz
-  required_gender: 0
   item_type: 25
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Training Lightsaber
 - guid: 140057
   name_id: 8775
   description_id: 14
   icon_set_id: 236
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_Training.adr
   texture_alias: Padawan1
-  required_gender: 0
   item_type: 25
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Ancient Cobal Lightsaber
 - guid: 140058
   name_id: 982
   description_id: 14
   icon_set_id: 516
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_Training.adr
   texture_alias: BuggyCrystal
-  required_gender: 0
   item_type: 25
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Savek Lightsaber
 - guid: 140059
   name_id: 14794
   description_id: 14
   icon_set_id: 517
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_Unstable.adr
   texture_alias: Unstable
-  required_gender: 0
   item_type: 25
-  category: 0
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Asajj Ventress' Left Lightsaber
 - guid: 140061
   name_id: 8776
   description_id: 14
   icon_set_id: 237
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment SecondaryWeapon
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_Ventress_LEFT.adr
   texture_alias: Ventress
-  required_gender: 0
   item_type: 25
   category: 64
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Yoda's Lightsaber
 - guid: 140062
   name_id: 1797
   description_id: 14
   icon_set_id: 3169
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_Yoda.adr
   texture_alias: Yoda
-  required_gender: 0
   item_type: 25
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Zatt's Lightsaber
 - guid: 140063
   name_id: 53619
   description_id: 14
   icon_set_id: 3211
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_Zatt.adr
   texture_alias: Zatt
-  required_gender: 0
   item_type: 25
-  category: 0
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Dahgee Jedi Lightsaber
 - guid: 140064
   name_id: 986
   description_id: 14
   icon_set_id: 1148
-  tint: 0
-  cost: 0
   item_class: 10
-  required_battle_class: 0
   slot: !Equipment None
-  disable_trade: false
-  disable_sale: false
   model_name: Wield_LightsaberHiltStandard_Zebra.adr
   texture_alias: ZebraStripes
-  required_gender: 0
   item_type: 25
-  category: 0
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0

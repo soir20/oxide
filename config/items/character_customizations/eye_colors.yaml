@@ -4,32 +4,11 @@
   name_id: 428
   description_id: 14
   icon_set_id: 710
-  tint: 0
   cost: 200
   item_class: -1
-  required_battle_class: 0
   slot: !Customization EyeColor
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 9
   customization_slot: EyeColor
   customization_id: 150000
@@ -38,32 +17,11 @@
   name_id: 422
   description_id: 14
   icon_set_id: 706
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization EyeColor
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 9
   customization_slot: EyeColor
   customization_id: 150001
@@ -72,32 +30,11 @@
   name_id: 420
   description_id: 14
   icon_set_id: 711
-  tint: 0
   cost: 200
   item_class: -1
-  required_battle_class: 0
   slot: !Customization EyeColor
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 9
   customization_slot: EyeColor
   customization_id: 150002
@@ -106,32 +43,11 @@
   name_id: 430
   description_id: 14
   icon_set_id: 707
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization EyeColor
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 9
   customization_slot: EyeColor
   customization_id: 150003
@@ -140,32 +56,11 @@
   name_id: 424
   description_id: 14
   icon_set_id: 705
-  tint: 0
   cost: 50
   item_class: -1
-  required_battle_class: 0
   slot: !Customization EyeColor
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 9
   customization_slot: EyeColor
   customization_id: 150004
@@ -174,32 +69,11 @@
   name_id: 432
   description_id: 14
   icon_set_id: 709
-  tint: 0
   cost: 150
   item_class: -1
-  required_battle_class: 0
   slot: !Customization EyeColor
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 9
   customization_slot: EyeColor
   customization_id: 150005
@@ -208,32 +82,11 @@
   name_id: 434
   description_id: 14
   icon_set_id: 708
-  tint: 0
   cost: 400
   item_class: -1
-  required_battle_class: 0
   slot: !Customization EyeColor
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 9
   customization_slot: EyeColor
   customization_id: 150006
@@ -242,32 +95,11 @@
   name_id: 426
   description_id: 14
   icon_set_id: 704
-  tint: 0
   cost: 100
   item_class: -1
-  required_battle_class: 0
   slot: !Customization EyeColor
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 9
   customization_slot: EyeColor
   customization_id: 150007
@@ -276,32 +108,11 @@
   name_id: 43485
   description_id: 14
   icon_set_id: 1809
-  tint: 0
   cost: 200
   item_class: -1
-  required_battle_class: 0
   slot: !Customization EyeColor
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 12
   customization_slot: EyeColor
   customization_id: 150008
@@ -310,32 +121,11 @@
   name_id: 43484
   description_id: 14
   icon_set_id: 1808
-  tint: 0
   cost: 400
   item_class: -1
-  required_battle_class: 0
   slot: !Customization EyeColor
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 12
   customization_slot: EyeColor
   customization_id: 150009
@@ -344,32 +134,11 @@
   name_id: 420
   description_id: 14
   icon_set_id: 1811
-  tint: 0
   cost: 200
   item_class: -1
-  required_battle_class: 0
   slot: !Customization EyeColor
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 12
   customization_slot: EyeColor
   customization_id: 150010
@@ -378,32 +147,11 @@
   name_id: 43488
   description_id: 14
   icon_set_id: 1812
-  tint: 0
   cost: 300
   item_class: -1
-  required_battle_class: 0
   slot: !Customization EyeColor
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 12
   customization_slot: EyeColor
   customization_id: 150011
@@ -412,32 +160,11 @@
   name_id: 43486
   description_id: 14
   icon_set_id: 1810
-  tint: 0
   cost: 300
   item_class: -1
-  required_battle_class: 0
   slot: !Customization EyeColor
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 12
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 2
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
   race_set_id: 12
   customization_slot: EyeColor
   customization_id: 150012

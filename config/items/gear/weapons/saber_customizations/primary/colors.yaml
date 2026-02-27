@@ -5,439 +5,127 @@
   description_id: 14
   icon_set_id: 398
   tint: 20
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment PrimarySaberColor
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 1
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Green
 - guid: 100001
   name_id: 2528
   description_id: 14
   icon_set_id: 399
   tint: 21
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment PrimarySaberColor
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 1
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Yellow
 - guid: 100002
   name_id: 2529
   description_id: 14
   icon_set_id: 408
   tint: 22
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment PrimarySaberColor
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 1
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Orange
 - guid: 100003
   name_id: 2530
   description_id: 14
   icon_set_id: 401
   tint: 23
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment PrimarySaberColor
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 1
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Red
 - guid: 100004
   name_id: 2531
   description_id: 14
   icon_set_id: 404
   tint: 24
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment PrimarySaberColor
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 1
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Purple
 - guid: 100005
   name_id: 2532
   description_id: 14
   icon_set_id: 403
   tint: 25
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment PrimarySaberColor
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 1
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Silver
 - guid: 100006
   name_id: 2533
   description_id: 14
   icon_set_id: 405
   tint: 26
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment PrimarySaberColor
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 1
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Teal
 - guid: 100007
   name_id: 2534
   description_id: 14
   icon_set_id: 406
   tint: 27
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment PrimarySaberColor
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 1
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Pink
 - guid: 100008
   name_id: 2535
   description_id: 14
   icon_set_id: 402
   tint: 28
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment PrimarySaberColor
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 1
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Light Green
 - guid: 100009
   name_id: 2536
   description_id: 14
   icon_set_id: 400
   tint: 29
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment PrimarySaberColor
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 1
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # White
 - guid: 100010
   name_id: 2537
   description_id: 14
   icon_set_id: 407
   tint: 30
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment PrimarySaberColor
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 1
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Black
 - guid: 100011
   name_id: 2538
   description_id: 14
   icon_set_id: 397
   tint: 31
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment PrimarySaberColor
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 1
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Sith Crystal
 - guid: 100012
   name_id: 51152
   description_id: 14
   icon_set_id: 2772
   tint: 47
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment PrimarySaberColor
-  disable_trade: false
-  disable_sale: false
-  model_name: ''
-  texture_alias: ''
-  required_gender: 0
   item_type: 1
-  category: 0
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0

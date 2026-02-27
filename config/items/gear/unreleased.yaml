@@ -4,1086 +4,381 @@
   name_id: 924
   description_id: 14
   icon_set_id: 480
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_SimpleGiPouches.adr
   texture_alias: LukeTatooine
-  required_gender: 0
   item_type: 1
   category: 61
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Luke Skywalker's Boots
 - guid: 230001
   name_id: 365
   description_id: 14
   icon_set_id: 122
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_Boots.adr
   texture_alias: LukeTatooine
-  required_gender: 0
   item_type: 1
   category: 63
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Kyle Katarn's Boots
 - guid: 230002
   name_id: 206
   description_id: 14
   icon_set_id: 142
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_KyleKatarnBoots.adr
   texture_alias: KyleKatarn
-  required_gender: 0
   item_type: 1
   category: 63
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Kyle Katarn's Uniform
 - guid: 230003
   name_id: 204
   description_id: 14
   icon_set_id: 673
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_KyleKatarnSuit.adr
   texture_alias: KyleKatarnDark
-  required_gender: 0
   item_type: 1
   category: 61
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Kyle Katarn's Gloves
 - guid: 230004
   name_id: 202
   description_id: 14
   icon_set_id: 676
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Hands
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Hands_KyleKatarnGloves.adr
   texture_alias: KyleKatarnDark
-  required_gender: 0
   item_type: 1
   category: 62
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Kyle Katarn's Boots
 - guid: 230005
   name_id: 206
   description_id: 14
   icon_set_id: 680
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_KyleKatarnBoots.adr
   texture_alias: KyleKatarnDark
-  required_gender: 0
   item_type: 1
   category: 63
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Lando Calrissian's Suit
 - guid: 230006
   name_id: 1462
   description_id: 14
   icon_set_id: 673
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_LandoSuit.adr
   texture_alias: LandoArmor
-  required_gender: 0
   item_type: 1
   category: 61
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Lando Calrissian's Shoes
 - guid: 230007
   name_id: 1472
   description_id: 14
   icon_set_id: 680
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_LandoShoes.adr
   texture_alias: LandoArmor
-  required_gender: 0
   item_type: 1
   category: 63
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Tamtel Skreej's Armor
 - guid: 230008
   name_id: 930
   description_id: 14
   icon_set_id: 495
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_SkiffGuardArmor.adr
   texture_alias: TamtelSkreej
-  required_gender: 0
   item_type: 1
   category: 61
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Tamtel Skreej's Helm
 - guid: 230009
   name_id: 928
   description_id: 14
   icon_set_id: 497
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Head_TuskHelm.adr
   texture_alias: TamtelSkreej
-  required_gender: 0
   item_type: 1
   category: 60
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Tamtel Skreej's Boots
 - guid: 230010
   name_id: 932
   description_id: 14
   icon_set_id: 496
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_LooseBoots.adr
   texture_alias: TamtelSkreej
-  required_gender: 0
   item_type: 1
   category: 63
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Mara Jade's Battle Suit
 - guid: 230011
   name_id: 216
   description_id: 14
   icon_set_id: 104
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_MaraJadeSuit.adr
   texture_alias: MaraJade
-  required_gender: 0
   item_type: 1
   category: 61
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Mara Jade's Gloves
 - guid: 230012
   name_id: 214
   description_id: 14
   icon_set_id: 174
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Hands
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Hands_MaraJadeGloves.adr
   texture_alias: MaraJade
-  required_gender: 0
   item_type: 1
   category: 62
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Mara Jade's Boots
 - guid: 230013
   name_id: 218
   description_id: 14
   icon_set_id: 147
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_MaraJadeBoots.adr
   texture_alias: MaraJade
-  required_gender: 0
   item_type: 1
   category: 63
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Imperial Royal Guard Armor
 - guid: 230014
   name_id: 1650
   description_id: 14
   icon_set_id: 673
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_ImperialRoyalGuardSuit.adr
   texture_alias: RoyalGuard
-  required_gender: 0
   item_type: 1
   category: 61
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Imperial Royal Guard Helmet
 - guid: 230015
   name_id: 1646
   description_id: 14
   icon_set_id: 677
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Head_ImperialRoyalGuardHelmWrap.adr
   texture_alias: RoyalGuard
-  required_gender: 0
   item_type: 1
   category: 60
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Imperial Royal Guard Gloves
 - guid: 230016
   name_id: 1648
   description_id: 14
   icon_set_id: 676
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Hands
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Hands_ShortGloves.adr
   texture_alias: RoyalGuard
-  required_gender: 0
   item_type: 1
   category: 62
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Imperial Royal Guard Boots
 - guid: 230017
   name_id: 1652
   description_id: 14
   icon_set_id: 680
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_HeeledRidgeBoots.adr
   texture_alias: RoyalGuard
-  required_gender: 0
   item_type: 1
   category: 63
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Dash Rendar's Suit
 - guid: 230018
   name_id: 1565
   description_id: 14
   icon_set_id: 673
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_DashRendarSuit.adr
   texture_alias: DashRendar
-  required_gender: 0
   item_type: 1
   category: 61
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Dash Rendar's Gloves
 - guid: 230019
   name_id: 1563
   description_id: 14
   icon_set_id: 676
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Hands
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Hands_DashRendarGloves.adr
   texture_alias: DashRendar
-  required_gender: 0
   item_type: 1
   category: 62
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Dash Rendar's Boots
 - guid: 230020
   name_id: 1567
   description_id: 14
   icon_set_id: 680
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_Boots.adr
   texture_alias: DashRendar
-  required_gender: 0
   item_type: 1
   category: 63
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Han Solo's Outfit
 - guid: 230021
   name_id: 302
   description_id: 14
   icon_set_id: 673
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_HanSoloSuit.adr
   texture_alias: HanSoloJacket
-  required_gender: 0
   item_type: 1
   category: 61
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Han Solo's Boots
 - guid: 230022
   name_id: 304
   description_id: 14
   icon_set_id: 680
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_HanSoloBoots.adr
   texture_alias: HanSoloJacket
-  required_gender: 0
   item_type: 1
   category: 63
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Rebel Pilot Jumpsuit
 - guid: 230023
   name_id: 240
   description_id: 14
   icon_set_id: 108
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_RebelPilotSuit.adr
   texture_alias: RebelPilot
-  required_gender: 0
   item_type: 1
   category: 61
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Rebel Pilot Helmet
 - guid: 230024
   name_id: 236
   description_id: 14
   icon_set_id: 205
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Head_RebelPilotHelm.adr
   texture_alias: RebelPilot
-  required_gender: 0
   item_type: 1
   category: 60
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Rebel Pilot Gloves
 - guid: 230025
   name_id: 238
   description_id: 14
   icon_set_id: 177
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Hands
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Hands_RebelPilotGloves.adr
   texture_alias: Black
-  required_gender: 0
   item_type: 1
   category: 62
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Rebel Pilot Boots
 - guid: 230026
   name_id: 242
   description_id: 14
   icon_set_id: 150
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_RebelPilotBoots.adr
   texture_alias: Black
-  required_gender: 0
   item_type: 1
   category: 63
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Rebel Pilot Jumpsuit
 - guid: 230027
   name_id: 240
   description_id: 14
   icon_set_id: 673
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_RebelPilotSuit.adr
   texture_alias: Green
-  required_gender: 0
   item_type: 1
   category: 61
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Rebel Pilot Helmet
 - guid: 230028
   name_id: 236
   description_id: 14
   icon_set_id: 677
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Head_RebelPilotHelm.adr
   texture_alias: Green
-  required_gender: 0
   item_type: 1
   category: 60
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Rebel Pilot Jumpsuit
 - guid: 230029
   name_id: 240
   description_id: 14
   icon_set_id: 673
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_RebelPilotSuit.adr
   texture_alias: Red
-  required_gender: 0
   item_type: 1
   category: 61
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Rebel Pilot Helmet
 - guid: 230030
   name_id: 236
   description_id: 14
   icon_set_id: 677
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Head_RebelPilotHelm.adr
   texture_alias: Red
-  required_gender: 0
   item_type: 1
   category: 60
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Unknown boots
 - guid: 230031
-  name_id: 0
   description_id: 14
   icon_set_id: 680
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_FrontAngledBoots.adr
   texture_alias: BrownIndigo
-  required_gender: 0
   item_type: 1
   category: 63
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0

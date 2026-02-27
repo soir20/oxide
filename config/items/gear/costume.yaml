@@ -4,2548 +4,924 @@
   name_id: 14164
   description_id: 14
   icon_set_id: 446
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_CloneBlingArmor.adr
   texture_alias: CloneBling
-  required_gender: 0
   item_type: 1
   category: 61
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Blinged-Out Trooper Helmet
 - guid: 170001
   name_id: 14170
   description_id: 14
   icon_set_id: 449
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Head_CloneBlingHelm.adr
   texture_alias: CloneBling
-  required_gender: 0
   item_type: 1
   category: 60
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Blinged-Out Trooper Gloves
 - guid: 170002
   name_id: 14168
   description_id: 14
   icon_set_id: 448
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Hands
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Hands_CloneBlingGloves.adr
   texture_alias: CloneBling
-  required_gender: 0
   item_type: 1
   category: 62
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Blinged-Out Trooper Boots
 - guid: 170003
   name_id: 14166
   description_id: 14
   icon_set_id: 447
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_CloneBlingBoots.adr
   texture_alias: CloneBling
-  required_gender: 0
   item_type: 1
   category: 63
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Skeletal Clone Trooper Armor
 - guid: 170004
   name_id: 4278
   description_id: 14
   icon_set_id: 2397
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_CloneSeason4ArmorGlow.adr
   texture_alias: Skeleton
-  required_gender: 0
   item_type: 1
   category: 61
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Skeletal Clone Trooper Helmet
 - guid: 170005
   name_id: 4276
   description_id: 14
   icon_set_id: 2395
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Head_CloneSeason4HelmGlow.adr
   texture_alias: Skeleton
-  required_gender: 0
   item_type: 1
   category: 60
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Skeletal Clone Trooper Gloves
 - guid: 170006
   name_id: 4277
   description_id: 14
   icon_set_id: 2396
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Hands
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Hands_CloneSeason4GlovesGlow.adr
   texture_alias: Skeleton
-  required_gender: 0
   item_type: 1
   category: 62
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Skeletal Clone Trooper Boots
 - guid: 170007
   name_id: 4279
   description_id: 14
   icon_set_id: 2398
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_CloneSeason4BootsGlow.adr
   texture_alias: Skeleton
-  required_gender: 0
   item_type: 1
   category: 63
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Spiked Trooper Armor
 - guid: 170008
   name_id: 894
   description_id: 14
   icon_set_id: 498
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_FeralCloneArmor.adr
   texture_alias: TribalMarkings
-  required_gender: 0
   item_type: 1
   category: 61
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Spiked Trooper Helmet
 - guid: 170009
   name_id: 890
   description_id: 14
   icon_set_id: 501
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Head_FeralCloneHelm.adr
   texture_alias: TribalMarkings
-  required_gender: 0
   item_type: 1
   category: 60
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Spiked Trooper Gloves
 - guid: 170010
   name_id: 892
   description_id: 14
   icon_set_id: 500
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Hands
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Hands_FeralCloneGloves.adr
   texture_alias: TribalMarkings
-  required_gender: 0
   item_type: 1
   category: 62
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Spiked Trooper Boots
 - guid: 170011
   name_id: 896
   description_id: 14
   icon_set_id: 499
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_FeralCloneBoots.adr
   texture_alias: TribalMarkings
-  required_gender: 0
   item_type: 1
   category: 63
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Pirate Jedi Coat
 - guid: 170012
   name_id: 2973
   description_id: 14
   icon_set_id: 2384
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_PirateJediCoat.adr
   texture_alias: PiratePurple
-  required_gender: 0
   item_type: 1
   category: 61
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Pirate Jedi Hat
 - guid: 170013
   name_id: 2969
   description_id: 14
   icon_set_id: 2382
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_<race>_<gender>_Head_PirateJediHat.adr
   texture_alias: PiratePurple
-  required_gender: 0
   item_type: 1
   category: 60
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Pirate Jedi Gloves
 - guid: 170014
   name_id: 2971
   description_id: 14
   icon_set_id: 2383
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Hands
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Hands_PirateJediGloves.adr
   texture_alias: PiratePurple
-  required_gender: 0
   item_type: 1
   category: 62
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Pirate Jedi Pegleg
 - guid: 170015
   name_id: 2975
   description_id: 14
   icon_set_id: 2385
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_PirateJediPegleg.adr
   texture_alias: PiratePurple
-  required_gender: 0
   item_type: 1
   category: 63
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Purple Wampa Suit
 - guid: 170016
   name_id: 938
   description_id: 14
   icon_set_id: 483
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_WampaSuit.adr
   texture_alias: PurpleFur
-  required_gender: 0
   item_type: 1
   category: 61
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Purple Wampa Mask
 - guid: 170017
   name_id: 968
   description_id: 14
   icon_set_id: 486
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Head_WampaHead.adr
   texture_alias: PurpleFur
-  required_gender: 0
   item_type: 1
   category: 60
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Purple Wampa Claws
 - guid: 170018
   name_id: 958
   description_id: 14
   icon_set_id: 485
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Hands
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Hands_WampaClaws.adr
   texture_alias: PurpleFur
-  required_gender: 0
   item_type: 1
   category: 62
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Purple Wampa Feet
 - guid: 170019
   name_id: 946
   description_id: 14
   icon_set_id: 484
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_WampaFeet.adr
   texture_alias: PurpleFur
-  required_gender: 0
   item_type: 1
   category: 63
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Zillo Beast Suit
 - guid: 170020
   name_id: 1331
   description_id: 14
   icon_set_id: 1144
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_ZilloBeastSuit.adr
   texture_alias: ZilloBeast
-  required_gender: 0
   item_type: 1
   category: 61
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Zillo Beast Head
 - guid: 170021
   name_id: 1426
   description_id: 14
   icon_set_id: 1147
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_<race>_<gender>_Head_ZilloBeastHelmet.adr
   texture_alias: ZilloBeast
-  required_gender: 0
   item_type: 1
   category: 60
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Zillo Beast Gloves
 - guid: 170022
   name_id: 1394
   description_id: 14
   icon_set_id: 1146
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Hands
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Hands_ZilloBeastGloves.adr
   texture_alias: ZilloBeast
-  required_gender: 0
   item_type: 1
   category: 62
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Zillo Beast Shoes
 - guid: 170023
   name_id: 1364
   description_id: 14
   icon_set_id: 1145
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_ZilloBeastShoes.adr
   texture_alias: ZilloBeast
-  required_gender: 0
   item_type: 1
   category: 63
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Pink Tusken Raider Robes
 - guid: 170024
   name_id: 224
   description_id: 14
   icon_set_id: 114
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_TuskenRaiderRobe.adr
   texture_alias: TuskenRaiderPink
-  required_gender: 0
   item_type: 1
   category: 61
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Pink Tusken Raider Helmet
 - guid: 170025
   name_id: 220
   description_id: 14
   icon_set_id: 208
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Head_TuskenRaiderHelmet.adr
   texture_alias: TuskenRaiderPink
-  required_gender: 0
   item_type: 1
   category: 60
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Pink Tusken Raider Gloves
 - guid: 170026
   name_id: 222
   description_id: 14
   icon_set_id: 182
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Hands
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Hands_TuskenRaiderGloves.adr
   texture_alias: TuskenRaiderPink
-  required_gender: 0
   item_type: 1
   category: 62
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Pink Tusken Raider Boots
 - guid: 170027
   name_id: 226
   description_id: 14
   icon_set_id: 152
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_TuskenRaiderBoots.adr
   texture_alias: TuskenRaiderPink
-  required_gender: 0
   item_type: 1
   category: 63
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Count Dooku Pumpkinhead
 - guid: 170028
   name_id: 53065
   description_id: 14
   icon_set_id: 3144
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Head_HalloweenPumpkinDooku.adr
   texture_alias: PumpkinDooku
-  required_gender: 0
   item_type: 1
   category: 60
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # General Grievous Pumpkinhead
 - guid: 170029
   name_id: 53066
   description_id: 14
   icon_set_id: 3145
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Head_HalloweenPumpkinGrievous.adr
   texture_alias: PumpkinGrievous
-  required_gender: 0
   item_type: 1
   category: 60
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Asajj Ventress Pumpkinhead
 - guid: 170030
   name_id: 53067
   description_id: 14
   icon_set_id: 3146
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Head_HalloweenPumpkinVentress.adr
   texture_alias: Default0
-  required_gender: 0
   item_type: 1
   category: 60
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Grievous Mask
 - guid: 170031
   name_id: 1624
   description_id: 14
   icon_set_id: 1386
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Head_GrievousMask.adr
   texture_alias: Grievous
-  required_gender: 0
   item_type: 1
   category: 60
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Gungan Mask
 - guid: 170032
   name_id: 1626
   description_id: 14
   icon_set_id: 1387
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Head_GunganMask.adr
   texture_alias: Gungan
-  required_gender: 0
   item_type: 1
   category: 60
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Jabba Mask
 - guid: 170033
   name_id: 1842
   description_id: 14
   icon_set_id: 1388
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Head_JabbaMask.adr
   texture_alias: Jabba
-  required_gender: 0
   item_type: 1
   category: 60
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Ortolan Mask
 - guid: 170034
   name_id: 1630
   description_id: 14
   icon_set_id: 1389
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Head_MaxReboMask.adr
   texture_alias: MaxRebo
-  required_gender: 0
   item_type: 1
   category: 60
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Padme Amidala Mask
 - guid: 170035
   name_id: 1856
   description_id: 14
   icon_set_id: 1390
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Head_PadmeMask.adr
   texture_alias: Padme
-  required_gender: 0
   item_type: 1
   category: 60
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Chancellor Palpatine Mask
 - guid: 170036
   name_id: 1858
   description_id: 14
   icon_set_id: 1391
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Head_PalpatineMask.adr
   texture_alias: Palpatine
-  required_gender: 0
   item_type: 1
   category: 60
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Protocol Droid Mask
 - guid: 170037
   name_id: 1860
   description_id: 14
   icon_set_id: 1392
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Head_ProtocolDroidMask.adr
   texture_alias: ProtocolDroid
-  required_gender: 0
   item_type: 1
   category: 60
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Yoda Mask
 - guid: 170038
   name_id: 1666
   description_id: 14
   icon_set_id: 1393
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Head_YodaMask.adr
   texture_alias: Yoda
-  required_gender: 0
   item_type: 1
   category: 60
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Life Day Robe
 - guid: 170039
   name_id: 20305
   description_id: 14
   icon_set_id: 1480
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_LifeDayRobe.adr
   texture_alias: LifeDayRobe
-  required_gender: 0
   item_type: 1
   category: 61
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Life Day Boots
 - guid: 170040
   name_id: 20307
   description_id: 14
   icon_set_id: 1481
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_LokDurdBoots.adr
   texture_alias: LifeDayRobe
-  required_gender: 0
   item_type: 1
   category: 63
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Life Day Clone Trooper Armor
 - guid: 170041
   name_id: 20321
   description_id: 14
   icon_set_id: 1488
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_CloneLifeDayArmor.adr
   texture_alias: RedRibbon
-  required_gender: 0
   item_type: 1
   category: 61
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Life Day Clone Trooper Helm
 - guid: 170042
   name_id: 20317
   description_id: 14
   icon_set_id: 1486
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Head_CloneLifeDayHelmet.adr
   texture_alias: RedRibbon
-  required_gender: 0
   item_type: 1
   category: 60
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Life Day Clone Trooper Gloves
 - guid: 170043
   name_id: 20319
   description_id: 14
   icon_set_id: 1487
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Hands
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Hands_CloneLifeDayGloves.adr
   texture_alias: RedRibbon
-  required_gender: 0
   item_type: 1
   category: 62
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Life Day Clone Trooper Boots
 - guid: 170044
   name_id: 20323
   description_id: 14
   icon_set_id: 1489
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_CloneLifeDayBoots.adr
   texture_alias: RedRibbon
-  required_gender: 0
   item_type: 1
   category: 63
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Nutcracker Clone Trooper Armor
 - guid: 170045
   name_id: 20313
   description_id: 14
   icon_set_id: 1484
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_CloneBasicArmor.adr
   texture_alias: Nutcracker
-  required_gender: 0
   item_type: 1
   category: 61
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Nutcracker Clone Trooper Helm
 - guid: 170046
   name_id: 20309
   description_id: 14
   icon_set_id: 1482
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Head_CloneHelm.adr
   texture_alias: Nutcracker
-  required_gender: 0
   item_type: 1
   category: 60
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Nutcracker Clone Trooper Gloves
 - guid: 170047
   name_id: 20311
   description_id: 14
   icon_set_id: 1483
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Hands
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Hands_CloneGloves.adr
   texture_alias: Nutcracker
-  required_gender: 0
   item_type: 1
   category: 62
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Nutcracker Clone Trooper Boots
 - guid: 170048
   name_id: 20315
   description_id: 14
   icon_set_id: 1485
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_CloneBoots.adr
   texture_alias: Nutcracker
-  required_gender: 0
   item_type: 1
   category: 63
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Obi-Wan's Festive Robe
 - guid: 170049
   name_id: 4510
   description_id: 14
   icon_set_id: 2580
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_ObiwanV2Tunic.adr
   texture_alias: ObiClaus
-  required_gender: 0
   item_type: 1
   category: 61
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Obi-Wan's Festive Hat
 - guid: 170050
   name_id: 4508
   description_id: 14
   icon_set_id: 2578
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_<race>_<gender>_Head_SantaHat.adr
   texture_alias: ObiClaus
-  required_gender: 0
   item_type: 1
   category: 60
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Obi-Wan's Festive Gloves
 - guid: 170051
   name_id: 4509
   description_id: 14
   icon_set_id: 2579
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Hands
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Hands_ShortGlovesFat.adr
   texture_alias: ObiClaus
-  required_gender: 0
   item_type: 1
   category: 62
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Obi-Wan's Festive Boots
 - guid: 170052
   name_id: 4511
   description_id: 14
   icon_set_id: 2581
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_WideBoots.adr
   texture_alias: ObiClaus
-  required_gender: 0
   item_type: 1
   category: 63
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Wampa Suit
 - guid: 170053
   name_id: 940
   description_id: 14
   icon_set_id: 502
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_WampaSuit.adr
   texture_alias: WhiteFur
-  required_gender: 0
   item_type: 1
   category: 61
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Wampa Mask
 - guid: 170054
   name_id: 970
   description_id: 14
   icon_set_id: 505
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Head_WampaHead.adr
   texture_alias: WhiteFur
-  required_gender: 0
   item_type: 1
   category: 60
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Wampa Claws
 - guid: 170055
   name_id: 960
   description_id: 14
   icon_set_id: 504
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Hands
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Hands_WampaClaws.adr
   texture_alias: WhiteFur
-  required_gender: 0
   item_type: 1
   category: 62
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Wampa Feet
 - guid: 170056
   name_id: 948
   description_id: 14
   icon_set_id: 503
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_WampaFeet.adr
   texture_alias: WhiteFur
-  required_gender: 0
   item_type: 1
   category: 63
   members: true
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # St. Patrick's Clone Armor
 - guid: 170057
   name_id: 54411
   description_id: 14
   icon_set_id: 3681
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_CloneSeason4Armor.adr
   texture_alias: CloneStPatrick
-  required_gender: 0
   item_type: 1
   category: 61
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # St. Patrick's Clone Helmet
 - guid: 170058
   name_id: 54409
   description_id: 14
   icon_set_id: 3679
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Head_CloneSeason4Helm.adr
   texture_alias: CloneStPatrick
-  required_gender: 0
   item_type: 1
   category: 60
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # St. Patrick's Clone Gloves
 - guid: 170059
   name_id: 54410
   description_id: 14
   icon_set_id: 3680
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Hands
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Hands_CloneSeason4Gloves.adr
   texture_alias: CloneStPatrick
-  required_gender: 0
   item_type: 1
   category: 62
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # St. Patrick's Clone Boots
 - guid: 170060
   name_id: 54412
   description_id: 14
   icon_set_id: 3682
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_CloneSeason4Boots.adr
   texture_alias: CloneStPatrick
-  required_gender: 0
   item_type: 1
   category: 63
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Cupid Clone's Armor
 - guid: 170061
   name_id: 33885
   description_id: 14
   icon_set_id: 1669
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_CupidCloneCommandoArmor.adr
   texture_alias: Cupid
-  required_gender: 0
   item_type: 1
   category: 61
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Cupid Clone's Helmet
 - guid: 170062
   name_id: 33884
   description_id: 14
   icon_set_id: 1672
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Head_CloneCommandoHelm.adr
   texture_alias: Cupid
-  required_gender: 0
   item_type: 1
   category: 60
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Cupid Clone's Gloves
 - guid: 170063
   name_id: 33886
   description_id: 14
   icon_set_id: 1671
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Hands
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Hands_CloneCommandoGloves.adr
   texture_alias: Cupid
-  required_gender: 0
   item_type: 1
   category: 62
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Cupid Clone's Boots
 - guid: 170064
   name_id: 33887
   description_id: 14
   icon_set_id: 1670
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_CloneCommandoBoots.adr
   texture_alias: Cupid
-  required_gender: 0
   item_type: 1
   category: 63
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Boba Phat's Suit
 - guid: 170065
   name_id: 1454
   description_id: 14
   icon_set_id: 673
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_BobaPhatSuit.adr
   texture_alias: BobaPhat
-  required_gender: 0
   item_type: 1
   category: 61
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Boba Phat's Gloves
 - guid: 170066
   name_id: 1478
   description_id: 14
   icon_set_id: 676
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Hands
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Hands_BobaPhatGloves.adr
   texture_alias: BobaPhat
-  required_gender: 0
   item_type: 1
   category: 62
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Lurmen Suit
 - guid: 170067
-  name_id: 0
   description_id: 14
   icon_set_id: 673
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_LurmenOutfit.adr
   texture_alias: WagToo
-  required_gender: 0
   item_type: 1
   category: 61
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Lurmen Beanie
 - guid: 170068
-  name_id: 0
   description_id: 14
   icon_set_id: 677
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Head_LurmenBeanie.adr
   texture_alias: WagToo
-  required_gender: 0
   item_type: 1
   category: 60
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Lurmen Gloves
 - guid: 170069
-  name_id: 0
   description_id: 14
   icon_set_id: 676
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Hands
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Hands_LurmenGloves.adr
   texture_alias: WagToo
-  required_gender: 0
   item_type: 1
   category: 62
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Lurmen Boots
 - guid: 170070
-  name_id: 0
   description_id: 14
   icon_set_id: 680
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_LurmenBoots.adr
   texture_alias: WagToo
-  required_gender: 0
   item_type: 1
   category: 63
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Petro's Gypsy Suit
 - guid: 170071
   name_id: 53605
   description_id: 14
   icon_set_id: 3204
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Body
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Body_PetroDisguiseSuit.adr
   texture_alias: Petro
-  required_gender: 0
   item_type: 1
   category: 61
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Petro's Gypsy Helmet
 - guid: 170072
   name_id: 53603
   description_id: 14
   icon_set_id: 3202
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Head
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Head_PetroDisguiseMask.adr
   texture_alias: Petro
-  required_gender: 0
   item_type: 1
   category: 60
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Petro's Gypsy Gloves
 - guid: 170073
   name_id: 53604
   description_id: 14
   icon_set_id: 3203
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Hands
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Hands_PetroDisguiseGloves.adr
   texture_alias: Petro
-  required_gender: 0
   item_type: 1
   category: 62
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
 # Petro's Gypsy Boots
 - guid: 170074
   name_id: 53606
   description_id: 14
   icon_set_id: 3205
-  tint: 0
-  cost: 0
   item_class: -1
-  required_battle_class: 0
   slot: !Equipment Feet
-  disable_trade: false
-  disable_sale: false
   model_name: Wear_Human_<gender>_Feet_PetroDisguiseBoots.adr
   texture_alias: Petro
-  required_gender: 0
   item_type: 1
   category: 63
-  members: false
-  non_minigame: false
-  weapon_trail_effect: 0
-  composite_effect: 0
-  power_rating: 0
-  min_battle_class_level: 0
-  rarity: 0
-  activatable_ability_id: 0
-  passive_ability_id: 0
-  single_use: false
   max_stack_size: 1
-  is_tintable: false
-  tint_alias: ''
-  disable_preview: false
-  race_set_id: 0
-  customization_slot: None
-  customization_id: 0
