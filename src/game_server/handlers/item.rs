@@ -66,10 +66,8 @@ pub struct ItemConfig {
     pub members: bool,
     #[serde(default)]
     pub non_minigame: bool,
-    #[serde(default)]
-    pub weapon_trail_effect: u32,
-    #[serde(default)]
-    pub composite_effect: u32,
+    pub weapon_trail_effect: Option<u32>,
+    pub composite_effect: Option<u32>,
     #[serde(default)]
     pub power_rating: u32,
     #[serde(default)]
@@ -131,8 +129,8 @@ impl From<ItemConfig> for ItemDefinition {
             category: cfg.category,
             members: cfg.members,
             non_minigame: cfg.non_minigame,
-            weapon_trail_effect: cfg.weapon_trail_effect,
-            composite_effect: cfg.composite_effect,
+            weapon_trail_effect: cfg.weapon_trail_effect.unwrap_or_default(),
+            composite_effect: cfg.composite_effect.unwrap_or_default(),
             power_rating: cfg.power_rating,
             min_battle_class_level: cfg.min_battle_class_level,
             rarity: cfg.rarity,
