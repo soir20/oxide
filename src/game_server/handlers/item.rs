@@ -31,6 +31,7 @@ pub struct ItemAbilityConfig {
 }
 
 #[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct ItemConfig {
     pub guid: u32,
     #[serde(default)]
