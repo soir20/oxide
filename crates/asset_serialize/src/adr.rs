@@ -39,7 +39,7 @@ async fn deserialize_len_with_bytes_read<W: AsyncSeekExt + AsyncReadExt + Unpin>
     let mut bytes_read = 1;
     if len_marker >= 128 {
         if len_marker == 0xff {
-            len = deserialize(file, W::read_i32).await?;
+            len = deserialize(file, W::read_i32_le).await?;
             bytes_read += 4;
         } else {
             let len_byte2 = deserialize(file, W::read_u8).await?;
