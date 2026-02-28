@@ -1,18 +1,15 @@
 use num_enum::TryFromPrimitive;
 use tokio::{
     fs::File,
-    io::{AsyncReadExt, AsyncSeekExt, AsyncWriteExt, BufReader},
+    io::{AsyncReadExt, AsyncSeekExt, BufReader},
 };
 
 use crate::{
     deserialize, deserialize_exact, deserialize_string, i32_to_usize, is_eof, serialize, tell,
-    usize_to_i32, DeserializeAsset, Error, ErrorKind,
+    usize_to_i32, AsyncReader, AsyncWriter, DeserializeAsset, Error, ErrorKind,
 };
 
-async fn serialize_len<W: AsyncSeekExt + AsyncWriteExt + Unpin>(
-    file: &mut W,
-    len: i32,
-) -> Result<(), Error> {
+async fn serialize_len<W: AsyncWriter>(file: &mut W, len: i32) -> Result<(), Error> {
     if len < 0 {
         return Err(Error {
             kind: ErrorKind::NegativeLen(len),
@@ -37,18 +34,18 @@ async fn serialize_len<W: AsyncSeekExt + AsyncWriteExt + Unpin>(
     Ok(())
 }
 
-async fn deserialize_len_with_bytes_read(
-    file: &mut BufReader<&mut File>,
+async fn deserialize_len_with_bytes_read<W: AsyncSeekExt + AsyncReadExt + Unpin>(
+    file: &mut W,
 ) -> Result<(i32, i32), Error> {
-    let len_marker = deserialize(file, BufReader::read_u8).await?;
+    let len_marker = deserialize(file, W::read_u8).await?;
     let mut len: i32 = len_marker.into();
     let mut bytes_read = 1;
     if len_marker >= 128 {
         if len_marker == 0xff {
-            len = deserialize(file, BufReader::read_i32).await?;
+            len = deserialize(file, W::read_i32).await?;
             bytes_read += 4;
         } else {
-            let len_byte2 = deserialize(file, BufReader::read_u8).await?;
+            let len_byte2 = deserialize(file, W::read_u8).await?;
             len = ((i32::from(len_marker) & 0b0111_1111) << 8) | i32::from(len_byte2);
             bytes_read += 1;
         }
@@ -67,15 +64,15 @@ async fn deserialize_len_with_bytes_read(
 }
 
 trait DeserializeEntryType: Sized {
-    fn deserialize(
-        file: &mut BufReader<&mut File>,
+    fn deserialize<R: AsyncReader>(
+        file: &mut R,
     ) -> impl std::future::Future<Output = Result<(Self, i32), Error>> + Send;
 }
 
 impl<T: TryFromPrimitive<Primitive = u8>> DeserializeEntryType for T {
-    async fn deserialize(file: &mut BufReader<&mut File>) -> Result<(Self, i32), Error> {
+    async fn deserialize<R: AsyncReader>(file: &mut R) -> Result<(Self, i32), Error> {
         let offset = tell(file).await;
-        let value = deserialize(file, BufReader::read_u8).await?;
+        let value = deserialize(file, R::read_u8).await?;
         let entry_type = Self::try_from_primitive(value).map_err(|_| Error {
             kind: ErrorKind::UnknownDiscriminant(value.into(), T::NAME),
             offset,
@@ -86,16 +83,16 @@ impl<T: TryFromPrimitive<Primitive = u8>> DeserializeEntryType for T {
 }
 
 trait DeserializeEntryData<T>: Sized {
-    fn deserialize(
+    fn deserialize<R: AsyncReader>(
         entry_type: &T,
         entry_len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> impl std::future::Future<Output = Result<(Self, i32), Error>> + Send;
 }
 
 trait DeserializeEntry<T, D>: Sized {
-    fn deserialize(
-        file: &mut BufReader<&mut File>,
+    fn deserialize<R: AsyncReader>(
+        file: &mut R,
     ) -> impl std::future::Future<Output = Result<(Self, i32), Error>> + Send;
 }
 
@@ -107,7 +104,7 @@ pub struct Entry<T, D> {
 impl<T: DeserializeEntryType + Send, D: DeserializeEntryData<T> + Send> DeserializeEntry<T, D>
     for Entry<T, D>
 {
-    async fn deserialize(file: &mut BufReader<&mut File>) -> Result<(Self, i32), Error> {
+    async fn deserialize<R: AsyncReader>(file: &mut R) -> Result<(Self, i32), Error> {
         let (entry_type, type_bytes_read) = T::deserialize(file).await?;
         let (len, len_bytes_read) = deserialize_len_with_bytes_read(file).await?;
         let (data, data_bytes_read) = D::deserialize(&entry_type, len, file).await?;
@@ -120,8 +117,8 @@ impl<T: DeserializeEntryType + Send, D: DeserializeEntryData<T> + Send> Deserial
     }
 }
 
-async fn deserialize_entries<T, D, E: DeserializeEntry<T, D>>(
-    file: &mut BufReader<&mut File>,
+async fn deserialize_entries<R: AsyncReader, T, D, E: DeserializeEntry<T, D>>(
+    file: &mut R,
     len: i32,
 ) -> Result<(Vec<E>, i32), Error> {
     let mut entries = Vec::new();
@@ -135,10 +132,7 @@ async fn deserialize_entries<T, D, E: DeserializeEntry<T, D>>(
     Ok((entries, bytes_read))
 }
 
-async fn deserialize_f32_be(
-    file: &mut BufReader<&mut File>,
-    len: i32,
-) -> Result<(f32, i32), Error> {
+async fn deserialize_f32_be<R: AsyncReader>(file: &mut R, len: i32) -> Result<(f32, i32), Error> {
     let (mut data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
     data.resize(4, 0);
     Ok((
@@ -147,8 +141,8 @@ async fn deserialize_f32_be(
     ))
 }
 
-async fn check_int_overflow(
-    file: &mut BufReader<&mut File>,
+async fn check_int_overflow<R: AsyncReader>(
+    file: &mut R,
     expected_bytes: usize,
     actual_bytes: usize,
 ) -> Result<(), Error> {
@@ -167,17 +161,14 @@ async fn check_int_overflow(
     Ok(())
 }
 
-async fn deserialize_u8(file: &mut BufReader<&mut File>, len: i32) -> Result<(u8, i32), Error> {
+async fn deserialize_u8<R: AsyncReader>(file: &mut R, len: i32) -> Result<(u8, i32), Error> {
     let (mut data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
     check_int_overflow(file, 1, bytes_read).await?;
     data.resize(1, 0);
     Ok((data[0], usize_to_i32(bytes_read)?))
 }
 
-async fn deserialize_u32_le(
-    file: &mut BufReader<&mut File>,
-    len: i32,
-) -> Result<(u32, i32), Error> {
+async fn deserialize_u32_le<R: AsyncReader>(file: &mut R, len: i32) -> Result<(u32, i32), Error> {
     let (mut data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
     check_int_overflow(file, 4, bytes_read).await?;
     data.resize(4, 0);
@@ -202,10 +193,10 @@ pub enum EntryCountEntryData {
 }
 
 impl DeserializeEntryData<EntryCountEntryType> for EntryCountEntryData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &EntryCountEntryType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             EntryCountEntryType::EntryCount => {
@@ -239,10 +230,10 @@ pub enum SkeletonData {
 }
 
 impl DeserializeEntryData<SkeletonEntryType> for SkeletonData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &SkeletonEntryType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             SkeletonEntryType::AssetName => {
@@ -278,10 +269,10 @@ pub enum ModelData {
 }
 
 impl DeserializeEntryData<ModelEntryType> for ModelData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &ModelEntryType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             ModelEntryType::ModelAssetName => {
@@ -336,10 +327,10 @@ pub enum SoundEmitterAssetEntryData {
 }
 
 impl DeserializeEntryData<SoundEmitterAssetEntryType> for SoundEmitterAssetEntryData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &SoundEmitterAssetEntryType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             SoundEmitterAssetEntryType::AssetName => {
@@ -495,10 +486,10 @@ pub enum SoundEmitterEntryData {
 }
 
 impl DeserializeEntryData<SoundEmitterEntryType> for SoundEmitterEntryData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &SoundEmitterEntryType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             SoundEmitterEntryType::Asset => {
@@ -708,10 +699,10 @@ pub enum SoundEmitterData {
 }
 
 impl DeserializeEntryData<SoundEmitterType> for SoundEmitterData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &SoundEmitterType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             SoundEmitterType::SoundEmitter => {
@@ -765,10 +756,10 @@ pub enum ParticleEmitterEntryData {
 }
 
 impl DeserializeEntryData<ParticleEmitterEntryType> for ParticleEmitterEntryData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &ParticleEmitterEntryType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             ParticleEmitterEntryType::Id => {
@@ -874,10 +865,10 @@ pub enum ParticleEmitterData {
 }
 
 impl DeserializeEntryData<ParticleEmitterType> for ParticleEmitterData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &ParticleEmitterType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             ParticleEmitterType::ParticleEmitter => {
@@ -911,10 +902,10 @@ pub enum EffectDefinitionArrayData {
 }
 
 impl DeserializeEntryData<EffectDefinitionArrayType> for EffectDefinitionArrayData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &EffectDefinitionArrayType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             EffectDefinitionArrayType::SoundEmitterArray => {
@@ -956,10 +947,10 @@ pub enum MaterialTagEntryData {
 }
 
 impl DeserializeEntryData<MaterialTagEntryType> for MaterialTagEntryData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &MaterialTagEntryType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             MaterialTagEntryType::Name => {
@@ -1007,10 +998,10 @@ pub enum MaterialTagData {
 }
 
 impl DeserializeEntryData<MaterialTagType> for MaterialTagData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &MaterialTagType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             MaterialTagType::MaterialTag => {
@@ -1050,10 +1041,10 @@ pub enum TextureAliasEntryData {
 }
 
 impl DeserializeEntryData<TextureAliasEntryType> for TextureAliasEntryData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &TextureAliasEntryType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             TextureAliasEntryType::ModelType => {
@@ -1120,10 +1111,10 @@ pub enum TextureAliasData {
 }
 
 impl DeserializeEntryData<TextureAliasType> for TextureAliasData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &TextureAliasType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             TextureAliasType::TextureAlias => {
@@ -1164,10 +1155,10 @@ pub enum TintAliasEntryData {
 }
 
 impl DeserializeEntryData<TintAliasEntryType> for TintAliasEntryData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &TintAliasEntryType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             TintAliasEntryType::ModelType => {
@@ -1229,10 +1220,10 @@ pub enum TintAliasData {
 }
 
 impl DeserializeEntryData<TintAliasType> for TintAliasData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &TintAliasType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             TintAliasType::TintAlias => {
@@ -1266,10 +1257,10 @@ pub enum EffectEntryData {
 }
 
 impl DeserializeEntryData<EffectEntryType> for EffectEntryData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &EffectEntryType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             EffectEntryType::Type => {
@@ -1310,10 +1301,10 @@ pub enum EffectData {
 }
 
 impl DeserializeEntryData<EffectType> for EffectData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &EffectType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             EffectType::Effect => {
@@ -1343,10 +1334,10 @@ pub enum LevelOfDetailAssetEntryData {
 }
 
 impl DeserializeEntryData<LevelOfDetailAssetEntryType> for LevelOfDetailAssetEntryData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &LevelOfDetailAssetEntryType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             LevelOfDetailAssetEntryType::AssetName => {
@@ -1386,10 +1377,10 @@ pub enum LevelOfDetailEntryData {
 }
 
 impl DeserializeEntryData<LevelOfDetailEntryType> for LevelOfDetailEntryData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &LevelOfDetailEntryType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             LevelOfDetailEntryType::Asset => {
@@ -1422,10 +1413,10 @@ pub enum LevelOfDetailData {
 }
 
 impl DeserializeEntryData<LevelOfDetailType> for LevelOfDetailData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &LevelOfDetailType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             LevelOfDetailType::LevelOfDetail => {
@@ -1475,10 +1466,10 @@ pub enum AnimationEntryData {
 }
 
 impl DeserializeEntryData<AnimationEntryType> for AnimationEntryData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &AnimationEntryType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             AnimationEntryType::Name => {
@@ -1544,10 +1535,10 @@ pub enum AnimationData {
 }
 
 impl DeserializeEntryData<AnimationType> for AnimationData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &AnimationType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             AnimationType::Animation => {
@@ -1577,10 +1568,10 @@ pub enum AnimationEffectTriggerEventData {
 }
 
 impl DeserializeEntryData<AnimationEffectTriggerEventType> for AnimationEffectTriggerEventData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &AnimationEffectTriggerEventType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             AnimationEffectTriggerEventType::Start => {
@@ -1645,10 +1636,10 @@ pub enum AnimationEffectEntryData {
 }
 
 impl DeserializeEntryData<AnimationEffectEntryType> for AnimationEffectEntryData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &AnimationEffectEntryType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             AnimationEffectEntryType::TriggerEventArray => {
@@ -1718,10 +1709,10 @@ pub enum AnimationEffectData {
 }
 
 impl DeserializeEntryData<AnimationEffectType> for AnimationEffectData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &AnimationEffectType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             AnimationEffectType::Effect => {
@@ -1758,10 +1749,10 @@ pub enum AnimationSoundEffectData {
 }
 
 impl DeserializeEntryData<AnimationSoundEffectType> for AnimationSoundEffectData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &AnimationSoundEffectType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             AnimationSoundEffectType::EffectArray => {
@@ -1794,10 +1785,10 @@ pub enum AnimationParticleEffectData {
 }
 
 impl DeserializeEntryData<AnimationParticleEffectType> for AnimationParticleEffectData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &AnimationParticleEffectType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             AnimationParticleEffectType::EffectArray => {
@@ -1833,10 +1824,10 @@ pub enum ActionPointEntryData {
 }
 
 impl DeserializeEntryData<ActionPointEntryType> for ActionPointEntryData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &ActionPointEntryType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             ActionPointEntryType::Name => {
@@ -1869,10 +1860,10 @@ pub enum ActionPointData {
 }
 
 impl DeserializeEntryData<ActionPointType> for ActionPointData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &ActionPointType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             ActionPointType::ActionPoint => {
@@ -1902,10 +1893,10 @@ pub enum AnimationActionPointEntryData {
 }
 
 impl DeserializeEntryData<AnimationActionPointEntryType> for AnimationActionPointEntryData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &AnimationActionPointEntryType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             AnimationActionPointEntryType::ActionPointArray => {
@@ -1946,10 +1937,10 @@ pub enum AnimationActionPointData {
 }
 
 impl DeserializeEntryData<AnimationActionPointType> for AnimationActionPointData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &AnimationActionPointType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             AnimationActionPointType::AnimationActionPoint => {
@@ -1980,10 +1971,10 @@ pub enum CollisionData {
 }
 
 impl DeserializeEntryData<CollisionEntryType> for CollisionData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &CollisionEntryType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             CollisionEntryType::AssetName => {
@@ -2007,10 +1998,10 @@ pub enum CoveredSlotEntryData {
 }
 
 impl DeserializeEntryData<CoveredSlotEntryType> for CoveredSlotEntryData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &CoveredSlotEntryType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             CoveredSlotEntryType::SlotId => {
@@ -2043,10 +2034,10 @@ pub enum OcclusionData {
 }
 
 impl DeserializeEntryData<OcclusionEntryType> for OcclusionData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &OcclusionEntryType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             OcclusionEntryType::SlotBitMask => {
@@ -2090,10 +2081,10 @@ pub enum UsageEntryData {
 }
 
 impl DeserializeEntryData<UsageEntryType> for UsageEntryData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &UsageEntryType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             UsageEntryType::Usage => {
@@ -2151,10 +2142,10 @@ pub enum HatHairEntryData {
 }
 
 impl DeserializeEntryData<HatHairEntryType> for HatHairEntryData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &HatHairEntryType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             HatHairEntryType::CoverFacialHair => {
@@ -2189,10 +2180,10 @@ pub enum ShadowEntryData {
 }
 
 impl DeserializeEntryData<ShadowEntryType> for ShadowEntryData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &ShadowEntryType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             ShadowEntryType::CheckShadowVisibility => {
@@ -2230,10 +2221,10 @@ pub enum EquippedSlotEntryData {
 }
 
 impl DeserializeEntryData<EquippedSlotEntryType> for EquippedSlotEntryData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &EquippedSlotEntryType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             EquippedSlotEntryType::Type => {
@@ -2295,10 +2286,10 @@ pub enum BoneMetadataEntryData {
 }
 
 impl DeserializeEntryData<BoneMetadataEntryType> for BoneMetadataEntryData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &BoneMetadataEntryType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             BoneMetadataEntryType::BoneName => {
@@ -2356,10 +2347,10 @@ pub enum BoneMetadataData {
 }
 
 impl DeserializeEntryData<BoneMetadataType> for BoneMetadataData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &BoneMetadataType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             BoneMetadataType::BoneMetadata => {
@@ -2391,10 +2382,10 @@ pub enum MountSeatEntranceExitEntryData {
 }
 
 impl DeserializeEntryData<MountSeatEntranceExitEntryType> for MountSeatEntranceExitEntryData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &MountSeatEntranceExitEntryType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             MountSeatEntranceExitEntryType::BoneName => {
@@ -2451,10 +2442,10 @@ pub enum MountSeatEntryData {
 }
 
 impl DeserializeEntryData<MountSeatEntryType> for MountSeatEntryData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &MountSeatEntryType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             MountSeatEntryType::Entrance => {
@@ -2511,10 +2502,10 @@ pub enum MountEntryData {
 }
 
 impl DeserializeEntryData<MountEntryType> for MountEntryData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &MountEntryType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             MountEntryType::Seat => {
@@ -2588,10 +2579,10 @@ pub enum AnimationCompositeEffectData {
 }
 
 impl DeserializeEntryData<AnimationCompositeEffectType> for AnimationCompositeEffectData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &AnimationCompositeEffectType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             AnimationCompositeEffectType::EffectArray => {
@@ -2632,10 +2623,10 @@ pub enum JointEntryData {
 }
 
 impl DeserializeEntryData<JointEntryType> for JointEntryData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &JointEntryType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             JointEntryType::BoneName => {
@@ -2682,10 +2673,10 @@ pub enum LookControlEntryData {
 }
 
 impl DeserializeEntryData<LookControlEntryType> for LookControlEntryData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &LookControlEntryType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             LookControlEntryType::Name => {
@@ -2731,10 +2722,10 @@ pub enum LookControlData {
 }
 
 impl DeserializeEntryData<LookControlType> for LookControlData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &LookControlType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             LookControlType::LookControl => {
@@ -2844,10 +2835,10 @@ pub enum AdrData {
 }
 
 impl DeserializeEntryData<AdrEntryType> for AdrData {
-    async fn deserialize(
+    async fn deserialize<R: AsyncReader>(
         entry_type: &AdrEntryType,
         len: i32,
-        file: &mut BufReader<&mut File>,
+        file: &mut R,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
             AdrEntryType::Skeleton => {
@@ -2963,14 +2954,13 @@ pub struct Adr {
 }
 
 impl DeserializeAsset for Adr {
-    async fn deserialize<P: AsRef<std::path::Path> + Send>(
+    async fn deserialize<R: AsyncReader, P: AsRef<std::path::Path> + Send>(
         _: P,
-        file: &mut File,
+        file: &mut R,
     ) -> Result<Self, Error> {
-        let mut reader = BufReader::new(file);
         let mut entries = Vec::new();
-        while !is_eof(&mut reader).await? {
-            let (entry, _) = AdrEntry::deserialize(&mut reader).await?;
+        while !is_eof(file).await? {
+            let (entry, _) = AdrEntry::deserialize(file).await?;
             entries.push(entry);
         }
 

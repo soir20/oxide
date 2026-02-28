@@ -1,33 +1,30 @@
 use num_enum::TryFromPrimitive;
-use tokio::{
-    fs::File,
-    io::{AsyncReadExt, BufReader},
-};
+use tokio::io::AsyncReadExt;
 
-use crate::{deserialize, skip, tell, Error, ErrorKind};
+use crate::{deserialize, skip, tell, AsyncReader, Error, ErrorKind};
 
-async fn deserialize_u16_le_vec3(file: &mut BufReader<&mut File>) -> Result<[u16; 3], Error> {
+async fn deserialize_u16_le_vec3<R: AsyncReader>(file: &mut R) -> Result<[u16; 3], Error> {
     Ok([
-        deserialize(file, BufReader::read_u16_le).await?,
-        deserialize(file, BufReader::read_u16_le).await?,
-        deserialize(file, BufReader::read_u16_le).await?,
+        deserialize(file, R::read_u16_le).await?,
+        deserialize(file, R::read_u16_le).await?,
+        deserialize(file, R::read_u16_le).await?,
     ])
 }
 
-async fn deserialize_f32_le_vec3(file: &mut BufReader<&mut File>) -> Result<[f32; 3], Error> {
+async fn deserialize_f32_le_vec3<R: AsyncReader>(file: &mut R) -> Result<[f32; 3], Error> {
     Ok([
-        deserialize(file, BufReader::read_f32_le).await?,
-        deserialize(file, BufReader::read_f32_le).await?,
-        deserialize(file, BufReader::read_f32_le).await?,
+        deserialize(file, R::read_f32_le).await?,
+        deserialize(file, R::read_f32_le).await?,
+        deserialize(file, R::read_f32_le).await?,
     ])
 }
 
-async fn deserialize_f32_le_vec4(file: &mut BufReader<&mut File>) -> Result<[f32; 4], Error> {
+async fn deserialize_f32_le_vec4<R: AsyncReader>(file: &mut R) -> Result<[f32; 4], Error> {
     Ok([
-        deserialize(file, BufReader::read_f32_le).await?,
-        deserialize(file, BufReader::read_f32_le).await?,
-        deserialize(file, BufReader::read_f32_le).await?,
-        deserialize(file, BufReader::read_f32_le).await?,
+        deserialize(file, R::read_f32_le).await?,
+        deserialize(file, R::read_f32_le).await?,
+        deserialize(file, R::read_f32_le).await?,
+        deserialize(file, R::read_f32_le).await?,
     ])
 }
 
@@ -43,12 +40,12 @@ pub struct OriginalNode {
 }
 
 impl OriginalNode {
-    async fn deserialize(file: &mut BufReader<&mut File>) -> Result<Self, Error> {
+    async fn deserialize<R: AsyncReader>(file: &mut R) -> Result<Self, Error> {
         let aabb_min = deserialize_f32_le_vec3(file).await?;
         let aabb_max = deserialize_f32_le_vec3(file).await?;
-        let escape_index = deserialize(file, BufReader::read_i32_le).await?;
-        let sub_part = deserialize(file, BufReader::read_i32_le).await?;
-        let triangle_index = deserialize(file, BufReader::read_i32_le).await?;
+        let escape_index = deserialize(file, R::read_i32_le).await?;
+        let sub_part = deserialize(file, R::read_i32_le).await?;
+        let triangle_index = deserialize(file, R::read_i32_le).await?;
 
         let index = match escape_index >= 0 {
             true => OriginalNodeIndex::Escape { escape_index },
@@ -107,10 +104,10 @@ impl QuantizedNode {
         ]
     }
 
-    async fn deserialize(file: &mut BufReader<&mut File>) -> Result<Self, Error> {
+    async fn deserialize<R: AsyncReader>(file: &mut R) -> Result<Self, Error> {
         let aabb_min = deserialize_u16_le_vec3(file).await?;
         let aabb_max = deserialize_u16_le_vec3(file).await?;
-        let escape_or_triangle_index = deserialize(file, BufReader::read_i32_le).await?;
+        let escape_or_triangle_index = deserialize(file, R::read_i32_le).await?;
 
         Ok(QuantizedNode {
             aabb_min,
@@ -128,11 +125,11 @@ pub struct SubtreeHeader {
 }
 
 impl SubtreeHeader {
-    async fn deserialize(file: &mut BufReader<&mut File>) -> Result<Self, Error> {
+    async fn deserialize<R: AsyncReader>(file: &mut R) -> Result<Self, Error> {
         let quantized_aabb_min = deserialize_u16_le_vec3(file).await?;
         let quantized_aabb_max = deserialize_u16_le_vec3(file).await?;
-        let root_node_index = deserialize(file, BufReader::read_i32_le).await?;
-        let subtree_size = deserialize(file, BufReader::read_i32_le).await?;
+        let root_node_index = deserialize(file, R::read_i32_le).await?;
+        let subtree_size = deserialize(file, R::read_i32_le).await?;
 
         skip(file, 12).await?;
 
@@ -154,9 +151,9 @@ pub enum TraversalMode {
 }
 
 impl TraversalMode {
-    async fn deserialize(file: &mut BufReader<&mut File>) -> Result<Self, Error> {
+    async fn deserialize<R: AsyncReader>(file: &mut R) -> Result<Self, Error> {
         let offset = tell(file).await;
-        let value = deserialize(file, BufReader::read_u32_le).await?;
+        let value = deserialize(file, R::read_u32_le).await?;
         let traversal_mode = Self::try_from_primitive(value).map_err(|_| Error {
             kind: ErrorKind::UnknownDiscriminant(value.into(), Self::NAME),
             offset,
@@ -182,17 +179,17 @@ pub struct BoundingVolumeHierarchy {
 }
 
 impl BoundingVolumeHierarchy {
-    pub(crate) async fn deserialize(file: &mut BufReader<&mut File>) -> Result<Self, Error> {
+    pub(crate) async fn deserialize<R: AsyncReader>(file: &mut R) -> Result<Self, Error> {
         let aabb_min = deserialize_f32_le_vec4(file).await?;
         let aabb_max = deserialize_f32_le_vec4(file).await?;
         let quantization = deserialize_f32_le_vec4(file).await?;
-        let bullet_version = deserialize(file, BufReader::read_i32_le).await?;
-        let node_count = deserialize(file, BufReader::read_i32_le).await?;
-        let use_quantization = deserialize(file, BufReader::read_u8).await? != 0;
+        let bullet_version = deserialize(file, R::read_i32_le).await?;
+        let node_count = deserialize(file, R::read_i32_le).await?;
+        let use_quantization = deserialize(file, R::read_u8).await? != 0;
         skip(file, 83).await?;
         let traversal_mode = TraversalMode::deserialize(file).await?;
         skip(file, 20).await?;
-        let subtree_header_count = deserialize(file, BufReader::read_i32_le).await?;
+        let subtree_header_count = deserialize(file, R::read_i32_le).await?;
         skip(file, 8).await?;
 
         let nodes = match use_quantization {

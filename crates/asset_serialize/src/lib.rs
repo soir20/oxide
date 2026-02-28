@@ -16,7 +16,7 @@ use std::{
 
 use tokio::{
     fs::{File, OpenOptions},
-    io::{AsyncBufReadExt, AsyncReadExt, AsyncSeekExt, BufReader},
+    io::{AsyncBufReadExt, AsyncReadExt, AsyncSeekExt, AsyncWriteExt, BufReader},
     task::JoinSet,
 };
 
@@ -61,17 +61,22 @@ pub struct Error {
 }
 
 pub trait DeserializeAsset: Sized {
-    fn deserialize<P: AsRef<Path> + Send>(
+    fn deserialize<R: AsyncReader, P: AsRef<Path> + Send>(
         path: P,
-        file: &mut File,
+        file: &mut R,
     ) -> impl std::future::Future<Output = Result<Self, Error>> + Send;
 }
+
+pub trait AsyncReader: AsyncSeekExt + AsyncBufReadExt + Unpin + Send {}
+impl<R: AsyncSeekExt + AsyncBufReadExt + Unpin + Send> AsyncReader for R {}
+pub trait AsyncWriter: AsyncSeekExt + AsyncWriteExt + Unpin {}
+impl<W: AsyncSeekExt + AsyncWriteExt + Unpin> AsyncWriter for W {}
 
 async fn tell<R: AsyncSeekExt + Unpin>(file: &mut R) -> Option<u64> {
     file.stream_position().await.ok()
 }
 
-async fn is_eof(file: &mut BufReader<&mut File>) -> Result<bool, Error> {
+async fn is_eof<R: AsyncSeekExt + AsyncBufReadExt + Unpin>(file: &mut R) -> Result<bool, Error> {
     match file.fill_buf().await {
         Ok(buffer) => Ok(buffer.is_empty()),
         Err(err) => Err(Error {
@@ -81,7 +86,7 @@ async fn is_eof(file: &mut BufReader<&mut File>) -> Result<bool, Error> {
     }
 }
 
-async fn skip(file: &mut BufReader<&mut File>, bytes: i64) -> Result<u64, Error> {
+async fn skip<R: AsyncSeekExt + Unpin>(file: &mut R, bytes: i64) -> Result<u64, Error> {
     let offset = tell(file).await;
     file.seek(SeekFrom::Current(bytes))
         .await
@@ -91,8 +96,8 @@ async fn skip(file: &mut BufReader<&mut File>, bytes: i64) -> Result<u64, Error>
         })
 }
 
-async fn deserialize_exact(
-    file: &mut BufReader<&mut File>,
+async fn deserialize_exact<R: AsyncReader>(
+    file: &mut R,
     len: usize,
 ) -> Result<(Vec<u8>, usize), Error> {
     let offset = tell(file).await;
@@ -107,8 +112,8 @@ async fn deserialize_exact(
     }
 }
 
-async fn deserialize_string(
-    file: &mut BufReader<&mut File>,
+async fn deserialize_string<R: AsyncReader>(
+    file: &mut R,
     len: usize,
 ) -> Result<(String, usize), Error> {
     let offset = tell(file).await;
@@ -145,9 +150,14 @@ async fn serialize<
     }
 }
 
-async fn deserialize<'a, 'b, T, Fut: Future<Output = Result<T, tokio::io::Error>>>(
-    file: &'a mut BufReader<&'b mut File>,
-    mut fun: impl FnMut(&'a mut BufReader<&'b mut File>) -> Fut,
+async fn deserialize<
+    'a,
+    W: AsyncSeekExt + AsyncReadExt + Unpin + 'a,
+    T,
+    Fut: Future<Output = Result<T, tokio::io::Error>>,
+>(
+    file: &'a mut W,
+    mut fun: impl FnMut(&'a mut W) -> Fut,
 ) -> Result<T, Error> {
     let offset = tell(file).await;
     match fun(file).await {
@@ -192,7 +202,8 @@ async fn list_assets_in_file(path: PathBuf, mut file: File) -> HashMap<String, A
         .unwrap_or(false);
     match is_pack {
         true => {
-            let Ok(pack) = Pack::deserialize(path.clone(), &mut file).await else {
+            let mut reader = BufReader::new(&mut file);
+            let Ok(pack) = Pack::deserialize(path.clone(), &mut reader).await else {
                 return HashMap::new();
             };
 
