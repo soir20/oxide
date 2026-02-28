@@ -1,11 +1,8 @@
-use tokio::{
-    fs::File,
-    io::{AsyncReadExt, BufReader},
-};
+use tokio::io::AsyncReadExt;
 
 use crate::{
     bvh::BoundingVolumeHierarchy, deserialize, deserialize_exact, deserialize_string, i32_to_usize,
-    skip, DeserializeAsset, Error, ErrorKind,
+    skip, AsyncReader, DeserializeAsset, Error, ErrorKind,
 };
 
 pub struct CollisionEntry {
@@ -15,13 +12,13 @@ pub struct CollisionEntry {
 }
 
 impl CollisionEntry {
-    async fn deserialize(file: &mut BufReader<&mut File>) -> Result<Option<Self>, Error> {
-        let should_skip_entry = deserialize(file, BufReader::read_i32_le).await?;
+    async fn deserialize<R: AsyncReader>(file: &mut R) -> Result<Option<Self>, Error> {
+        let should_skip_entry = deserialize(file, R::read_i32_le).await?;
         if should_skip_entry > 0 {
             return Ok(None);
         }
 
-        let vertex_count = deserialize(file, BufReader::read_i32_le).await?;
+        let vertex_count = deserialize(file, R::read_i32_le).await?;
         let (vertex_buffer, _) =
             deserialize_exact(file, i32_to_usize(vertex_count.saturating_mul(12))?).await?;
         let ungrouped_vertices: Vec<f32> = vertex_buffer
@@ -36,7 +33,7 @@ impl CollisionEntry {
             .map(Result::unwrap)
             .collect();
 
-        let triangle_count = deserialize(file, BufReader::read_i32_le).await?;
+        let triangle_count = deserialize(file, R::read_i32_le).await?;
         let (triangle_buffer, _) =
             deserialize_exact(file, i32_to_usize(triangle_count.saturating_mul(6))?).await?;
         let ungrouped_triangles: Vec<u16> = triangle_buffer
@@ -51,7 +48,7 @@ impl CollisionEntry {
             .map(Result::unwrap)
             .collect();
 
-        let _ = deserialize(file, BufReader::read_i32_le).await?;
+        let _ = deserialize(file, R::read_i32_le).await?;
         skip(file, 16).await?;
         let bvh = BoundingVolumeHierarchy::deserialize(file).await?;
 
@@ -72,13 +69,11 @@ pub struct Cdt {
 }
 
 impl DeserializeAsset for Cdt {
-    async fn deserialize<P: AsRef<std::path::Path> + Send>(
+    async fn deserialize<R: AsyncReader, P: AsRef<std::path::Path> + Send>(
         _: P,
-        file: &mut File,
+        file: &mut R,
     ) -> Result<Self, Error> {
-        let mut reader = BufReader::new(file);
-
-        let (magic, _) = deserialize_string(&mut reader, 4).await?;
+        let (magic, _) = deserialize_string(file, 4).await?;
         if magic != "CDTA" {
             return Err(Error {
                 kind: ErrorKind::UnknownMagic(magic),
@@ -86,18 +81,18 @@ impl DeserializeAsset for Cdt {
             });
         }
 
-        let version = deserialize(&mut reader, BufReader::read_i32_le).await?;
-        let packed_collision_type = deserialize(&mut reader, BufReader::read_u32_le).await?;
+        let version = deserialize(file, R::read_i32_le).await?;
+        let packed_collision_type = deserialize(file, R::read_u32_le).await?;
         let collision_type = packed_collision_type & 0b_0011_1111_1111_1111_1111_1111_1111_1111;
         let disable_cursor =
             packed_collision_type & 0b_0100_0000_0000_0000_0000_0000_0000_0000 != 0;
         let disable_camera_collision =
             packed_collision_type & 0b_1000_0000_0000_0000_0000_0000_0000_0000 != 0;
 
-        let entry_count = deserialize(&mut reader, BufReader::read_i32_le).await?;
+        let entry_count = deserialize(file, R::read_i32_le).await?;
         let mut entries = Vec::new();
         for _ in 0..entry_count {
-            if let Some(entry) = CollisionEntry::deserialize(&mut reader).await? {
+            if let Some(entry) = CollisionEntry::deserialize(file).await? {
                 entries.push(entry);
             }
         }
@@ -117,6 +112,8 @@ mod tests {
     use std::env;
 
     use super::*;
+    use tokio::fs::File;
+    use tokio::io::BufReader;
     use tokio::task::JoinSet;
     use walkdir::WalkDir;
 
@@ -137,10 +134,10 @@ mod tests {
             })
         {
             jobs.spawn(async move {
-                let mut file = File::open(entry.path())
+                let file = File::open(entry.path())
                     .await
                     .expect(&format!("Failed to open {}", entry.path().display()));
-                Cdt::deserialize(entry.path(), &mut file)
+                Cdt::deserialize(entry.path(), &mut BufReader::new(file))
                     .await
                     .expect(&format!("Failed to deserialize {}", entry.path().display()));
             });
