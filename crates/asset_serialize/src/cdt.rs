@@ -112,6 +112,8 @@ mod tests {
     use std::env;
 
     use super::*;
+    use tokio::fs::File;
+    use tokio::io::BufReader;
     use tokio::task::JoinSet;
     use walkdir::WalkDir;
 
@@ -135,7 +137,7 @@ mod tests {
                 let mut file = File::open(entry.path())
                     .await
                     .expect(&format!("Failed to open {}", entry.path().display()));
-                Cdt::deserialize(entry.path(), &mut file)
+                Cdt::deserialize(entry.path(), &mut BufReader::new(file))
                     .await
                     .expect(&format!("Failed to deserialize {}", entry.path().display()));
             });

@@ -2971,6 +2971,8 @@ mod tests {
     use std::io::Cursor;
 
     use super::*;
+    use tokio::fs::File;
+    use tokio::io::BufReader;
     use walkdir::WalkDir;
 
     #[tokio::test]
@@ -2980,6 +2982,12 @@ mod tests {
             .await
             .unwrap();
         assert_eq!(vec![0x0], buffer);
+        assert_eq!(
+            (0, 1),
+            deserialize_len_with_bytes_read(&mut Cursor::new(buffer))
+                .await
+                .unwrap()
+        );
 
         let mut buffer = Vec::new();
         serialize_len(&mut Cursor::new(&mut buffer), 1)
@@ -3036,7 +3044,7 @@ mod tests {
             let mut file = File::open(entry.path())
                 .await
                 .expect(&format!("Failed to open {}", entry.path().display()));
-            Adr::deserialize(entry.path(), &mut file)
+            Adr::deserialize(entry.path(), &mut BufReader::new(file))
                 .await
                 .expect(&format!("Failed to deserialize {}", entry.path().display()));
         }
