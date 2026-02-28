@@ -2994,36 +2994,72 @@ mod tests {
             .await
             .unwrap();
         assert_eq!(vec![0x1], buffer);
+        assert_eq!(
+            (1, 1),
+            deserialize_len_with_bytes_read(&mut Cursor::new(buffer))
+                .await
+                .unwrap()
+        );
 
         let mut buffer = Vec::new();
         serialize_len(&mut Cursor::new(&mut buffer), 0x7f)
             .await
             .unwrap();
         assert_eq!(vec![0x7f], buffer);
+        assert_eq!(
+            (0x7f, 1),
+            deserialize_len_with_bytes_read(&mut Cursor::new(buffer))
+                .await
+                .unwrap()
+        );
 
         let mut buffer = Vec::new();
         serialize_len(&mut Cursor::new(&mut buffer), 0xff)
             .await
             .unwrap();
         assert_eq!(vec![0x80, 0xff], buffer);
+        assert_eq!(
+            (0xff, 2),
+            deserialize_len_with_bytes_read(&mut Cursor::new(buffer))
+                .await
+                .unwrap()
+        );
 
         let mut buffer = Vec::new();
         serialize_len(&mut Cursor::new(&mut buffer), 0x7eff)
             .await
             .unwrap();
         assert_eq!(vec![0xfe, 0xff], buffer);
+        assert_eq!(
+            (0x7eff, 2),
+            deserialize_len_with_bytes_read(&mut Cursor::new(buffer))
+                .await
+                .unwrap()
+        );
 
         let mut buffer = Vec::new();
         serialize_len(&mut Cursor::new(&mut buffer), 0x7ffe)
             .await
             .unwrap();
         assert_eq!(vec![0xff, 0xfe, 0x7f, 0x0, 0x0], buffer);
+        assert_eq!(
+            (0x7ffe, 5),
+            deserialize_len_with_bytes_read(&mut Cursor::new(buffer))
+                .await
+                .unwrap()
+        );
 
         let mut buffer = Vec::new();
         serialize_len(&mut Cursor::new(&mut buffer), 0x7fff)
             .await
             .unwrap();
         assert_eq!(vec![0xff, 0xff, 0x7f, 0x0, 0x0], buffer);
+        assert_eq!(
+            (0x7fff, 5),
+            deserialize_len_with_bytes_read(&mut Cursor::new(buffer))
+                .await
+                .unwrap()
+        );
     }
 
     #[tokio::test]
@@ -3041,7 +3077,7 @@ mod tests {
                     .map_or(false, |ext| ext == target_extension)
             })
         {
-            let mut file = File::open(entry.path())
+            let file = File::open(entry.path())
                 .await
                 .expect(&format!("Failed to open {}", entry.path().display()));
             Adr::deserialize(entry.path(), &mut BufReader::new(file))

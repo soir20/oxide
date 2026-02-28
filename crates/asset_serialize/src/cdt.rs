@@ -134,7 +134,7 @@ mod tests {
             })
         {
             jobs.spawn(async move {
-                let mut file = File::open(entry.path())
+                let file = File::open(entry.path())
                     .await
                     .expect(&format!("Failed to open {}", entry.path().display()));
                 Cdt::deserialize(entry.path(), &mut BufReader::new(file))
