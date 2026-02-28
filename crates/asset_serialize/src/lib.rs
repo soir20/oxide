@@ -67,7 +67,7 @@ pub trait DeserializeAsset: Sized {
     ) -> impl std::future::Future<Output = Result<Self, Error>> + Send;
 }
 
-async fn tell(file: &mut BufReader<&mut File>) -> Option<u64> {
+async fn tell<R: AsyncSeekExt + Unpin>(file: &mut R) -> Option<u64> {
     file.stream_position().await.ok()
 }
 
@@ -123,6 +123,26 @@ async fn deserialize_string(
                     offset,
                 })
         })
+}
+
+async fn serialize<
+    'a,
+    W: AsyncSeekExt + Unpin + 'a,
+    T,
+    Fut: Future<Output = Result<(), tokio::io::Error>>,
+>(
+    file: &'a mut W,
+    mut fun: impl FnMut(&'a mut W, T) -> Fut,
+    value: T,
+) -> Result<(), Error> {
+    let offset = tell(file).await;
+    match fun(file, value).await {
+        Ok(value) => Ok(value),
+        Err(err) => {
+            let kind = err.into();
+            Err(Error { kind, offset })
+        }
+    }
 }
 
 async fn deserialize<'a, 'b, T, Fut: Future<Output = Result<T, tokio::io::Error>>>(

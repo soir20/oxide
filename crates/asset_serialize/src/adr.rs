@@ -1,13 +1,41 @@
 use num_enum::TryFromPrimitive;
 use tokio::{
     fs::File,
-    io::{AsyncReadExt, BufReader},
+    io::{AsyncReadExt, AsyncSeekExt, AsyncWriteExt, BufReader},
 };
 
 use crate::{
-    deserialize, deserialize_exact, deserialize_string, i32_to_usize, is_eof, tell, usize_to_i32,
-    DeserializeAsset, Error, ErrorKind,
+    deserialize, deserialize_exact, deserialize_string, i32_to_usize, is_eof, serialize, tell,
+    usize_to_i32, DeserializeAsset, Error, ErrorKind,
 };
+
+async fn serialize_len<'a, W: AsyncSeekExt + AsyncWriteExt + Unpin>(
+    file: &'a mut W,
+    len: i32,
+) -> Result<(), Error> {
+    if len < 0 {
+        return Err(Error {
+            kind: ErrorKind::NegativeLen(len),
+            offset: tell(file).await,
+        });
+    }
+
+    if len >= 128 {
+        if len > i16::MAX.into() {
+            serialize(file, W::write_u8, 0xff).await?;
+            serialize(file, W::write_i32, len).await?;
+        } else {
+            let upper_byte = ((len & 0b0111_1111_0000_0000) >> 8) as u8 & 0b1000_0000;
+            let lower_byte = (len & 0xff) as u8;
+            serialize(file, W::write_u8, upper_byte).await?;
+            serialize(file, W::write_u8, lower_byte).await?;
+        }
+    } else {
+        serialize(file, W::write_u8, (len & 0xff) as u8).await?;
+    }
+
+    Ok(())
+}
 
 async fn deserialize_len_with_bytes_read(
     file: &mut BufReader<&mut File>,
