@@ -1,8 +1,5 @@
 use num_enum::TryFromPrimitive;
-use tokio::{
-    fs::File,
-    io::{AsyncReadExt, AsyncSeekExt, BufReader},
-};
+use tokio::io::{AsyncReadExt, AsyncSeekExt};
 
 use crate::{
     deserialize, deserialize_exact, deserialize_string, i32_to_usize, is_eof, serialize, tell,
